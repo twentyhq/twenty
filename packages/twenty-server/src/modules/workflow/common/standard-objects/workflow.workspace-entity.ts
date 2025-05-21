@@ -18,7 +18,6 @@ import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sy
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowAutomatedTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
@@ -124,17 +123,6 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   runs: Relation<WorkflowRunWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
-    standardId: WORKFLOW_STANDARD_FIELD_IDS.eventListeners,
-    type: RelationType.ONE_TO_MANY,
-    label: msg`Event Listeners`,
-    description: msg`Workflow event listeners linked to the workflow.`,
-    inverseSideTarget: () => WorkflowEventListenerWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @WorkspaceIsSystem()
-  eventListeners: Relation<WorkflowEventListenerWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.automatedTriggers,
