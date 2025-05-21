@@ -156,7 +156,7 @@ export default defineConfig(({ command, mode }) => {
     },
 
     build: {
-      minify: '',
+      minify: 'esbuild',
       outDir: 'build',
       sourcemap: VITE_BUILD_SOURCEMAP === 'true',
       rollupOptions: {
@@ -207,6 +207,7 @@ export default defineConfig(({ command, mode }) => {
               return 'vendor';
             }
 
+            // Split application code by module
             if (id.includes('/modules/settings/')) {
               return 'settings';
             }
