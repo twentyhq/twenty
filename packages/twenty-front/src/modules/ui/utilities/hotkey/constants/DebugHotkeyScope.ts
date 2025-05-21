@@ -1,1 +1,1 @@
-export const DEBUG_HOTKEY_SCOPE = true;
+export const DEBUG_HOTKEY_SCOPE = false;
