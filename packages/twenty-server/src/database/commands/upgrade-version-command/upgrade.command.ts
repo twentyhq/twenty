@@ -1,8 +1,13 @@
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+
+import { exec } from 'child_process';
+import { promisify } from 'util';
 
 import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
 
+import { ActiveOrSuspendedWorkspacesMigrationCommandOptions } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import {
   AllCommands,
   UpgradeCommandRunner,
@@ -23,12 +28,45 @@ import { CopyTypeormMigrationsCommand } from 'src/database/commands/upgrade-vers
 import { MigrateWorkflowEventListenersToAutomatedTriggersCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-migrate-workflow-event-listeners-to-automated-triggers.command';
 import { RemoveRelationForeignKeyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-remove-relation-foreign-key-field-metadata.command';
 import { UpgradeSearchVectorOnPersonEntityCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-upgrade-search-vector-on-person-entity.command';
+import { FixCreatedByDefaultValueCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-created-by-default-value.command';
 import { FixStandardSelectFieldsPositionCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-fix-standard-select-fields-position.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
-import { FixCreatedByDefaultValueCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-created-by-default-value.command';
+
+const execPromise = promisify(exec);
+
+@Injectable()
+export class DatabaseMigrationService {
+  private logger = new console.Console(process.stdout, process.stderr);
+
+  async runMigrations(): Promise<void> {
+    this.logger.log('Running global database migrations');
+
+    try {
+      // Run migrations for metadata and core datasources
+      this.logger.log('Running metadata datasource migrations...');
+      const metadataResult = await execPromise(
+        'npx -y typeorm migration:run -d dist/src/database/typeorm/metadata/metadata.datasource',
+      );
+
+      this.logger.log(metadataResult.stdout);
+
+      this.logger.log('Running core datasource migrations...');
+      const coreResult = await execPromise(
+        'npx -y typeorm migration:run -d dist/src/database/typeorm/core/core.datasource',
+      );
+
+      this.logger.log(coreResult.stdout);
+
+      this.logger.log('Database migrations completed successfully');
+    } catch (error) {
+      this.logger.error('Error running database migrations:', error);
+      throw error;
+    }
+  }
+}
 
 @Command({
   name: 'upgrade',
@@ -43,6 +81,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly twentyConfigService: TwentyConfigService,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     protected readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
+
+    private readonly databaseMigrationService: DatabaseMigrationService,
 
     // 0.43 Commands
     protected readonly migrateRichTextContentPatchCommand: MigrateRichTextContentPatchCommand,
@@ -145,5 +185,14 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       '0.53.0': commands_053,
       '0.54.0': commands_054,
     };
+  }
+
+  override async runMigrationCommand(
+    passedParams: string[],
+    options: ActiveOrSuspendedWorkspacesMigrationCommandOptions,
+  ): Promise<void> {
+    await this.databaseMigrationService.runMigrations();
+
+    await super.runMigrationCommand(passedParams, options);
   }
 }
