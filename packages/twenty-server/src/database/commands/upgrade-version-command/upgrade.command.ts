@@ -5,7 +5,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 
 import { Command } from 'nest-commander';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandOptions } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import {
@@ -41,11 +41,56 @@ const execPromise = promisify(exec);
 export class DatabaseMigrationService {
   private logger = new console.Console(process.stdout, process.stderr);
 
+  constructor(
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
+  ) {}
+
+  async shouldRunMigrations(): Promise<boolean> {
+    try {
+      // Check if any workspace exists
+      const workspaceCount = await this.workspaceRepository.count();
+
+      if (workspaceCount === 0) {
+        // If no workspaces, run migrations (fresh installation)
+        this.logger.log(
+          'No workspaces found. Running migrations for fresh installation.',
+        );
+
+        return true;
+      }
+
+      const version053Count = await this.workspaceRepository.count({
+        where: {
+          version: Like('0.53%'),
+        },
+      });
+
+      if (version053Count > 0) {
+        this.logger.log(
+          `Found ${version053Count} workspace(s) on version 0.53. Will run database migrations.`,
+        );
+
+        return true;
+      } else {
+        this.logger.log(
+          'No workspace found on version 0.53. Skipping database migrations.',
+        );
+
+        return false;
+      }
+    } catch (error) {
+      this.logger.error('Error checking workspace versions:', error);
+
+      // Default to running migrations in case of error
+      return true;
+    }
+  }
+
   async runMigrations(): Promise<void> {
     this.logger.log('Running global database migrations');
 
     try {
-      // Run migrations for metadata and core datasources
       this.logger.log('Running metadata datasource migrations...');
       const metadataResult = await execPromise(
         'npx -y typeorm migration:run -d dist/src/database/typeorm/metadata/metadata.datasource',
@@ -191,8 +236,19 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     passedParams: string[],
     options: ActiveOrSuspendedWorkspacesMigrationCommandOptions,
   ): Promise<void> {
-    await this.databaseMigrationService.runMigrations();
+    // Only run migrations if we have at least one workspace on version 0.53
+    const shouldRunMigrations =
+      await this.databaseMigrationService.shouldRunMigrations();
 
+    if (shouldRunMigrations) {
+      await this.databaseMigrationService.runMigrations();
+    } else {
+      this.logger.log(
+        'Skipping database migrations as no workspace is on version 0.53.',
+      );
+    }
+
+    // Continue with the regular upgrade process
     await super.runMigrationCommand(passedParams, options);
   }
 }
