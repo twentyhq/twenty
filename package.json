@@ -191,7 +191,6 @@
     "tsup": "^8.2.4",
     "type-fest": "4.10.1",
     "typescript": "5.3.3",
-    "use-context-selector": "^2.0.0",
     "use-debounce": "^10.0.0",
     "uuid": "^9.0.0",
     "vite-tsconfig-paths": "^4.2.1",

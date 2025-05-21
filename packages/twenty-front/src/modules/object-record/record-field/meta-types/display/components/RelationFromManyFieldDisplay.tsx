@@ -20,7 +20,7 @@ export const RelationFromManyFieldDisplay = () => {
 
   const { fieldName, objectMetadataNameSingular } = fieldDefinition.metadata;
 
-  const objectNameSingular =
+  const relationObjectNameSingular =
     fieldDefinition?.metadata.relationObjectMetadataNameSingular;
 
   const { activityTargetObjectRecords } = useActivityTargetObjectRecords(
@@ -28,7 +28,7 @@ export const RelationFromManyFieldDisplay = () => {
     fieldValue as NoteTarget[] | TaskTarget[],
   );
 
-  if (!fieldValue || !objectNameSingular) {
+  if (!fieldValue || !relationObjectNameSingular) {
     return null;
   }
 
@@ -64,6 +64,7 @@ export const RelationFromManyFieldDisplay = () => {
 
       return record;
     });
+
     return (
       <ExpandableList isChipCountDisplayed={isFocused}>
         {formattedRecords

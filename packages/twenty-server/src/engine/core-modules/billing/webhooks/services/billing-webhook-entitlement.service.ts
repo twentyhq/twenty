@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import Stripe from 'stripe';
@@ -10,15 +10,14 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
-import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { transformStripeEntitlementUpdatedEventToDatabaseEntitlement } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-entitlement-updated-event-to-database-entitlement.util';
 @Injectable()
 export class BillingWebhookEntitlementService {
-  protected readonly logger = new Logger(BillingWebhookEntitlementService.name);
   constructor(
-    @InjectRepository(BillingSubscription, 'core')
-    private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
+    @InjectRepository(BillingCustomer, 'core')
+    private readonly billingCustomerRepository: Repository<BillingCustomer>,
     @InjectRepository(BillingEntitlement, 'core')
     private readonly billingEntitlementRepository: Repository<BillingEntitlement>,
   ) {}
@@ -26,19 +25,18 @@ export class BillingWebhookEntitlementService {
   async processStripeEvent(
     data: Stripe.EntitlementsActiveEntitlementSummaryUpdatedEvent.Data,
   ) {
-    const billingSubscription =
-      await this.billingSubscriptionRepository.findOne({
-        where: { stripeCustomerId: data.object.customer },
-      });
+    const billingCustomer = await this.billingCustomerRepository.findOne({
+      where: { stripeCustomerId: data.object.customer },
+    });
 
-    if (!billingSubscription) {
+    if (!billingCustomer) {
       throw new BillingException(
         'Billing customer not found',
         BillingExceptionCode.BILLING_CUSTOMER_NOT_FOUND,
       );
     }
 
-    const workspaceId = billingSubscription.workspaceId;
+    const workspaceId = billingCustomer.workspaceId;
 
     await this.billingEntitlementRepository.upsert(
       transformStripeEntitlementUpdatedEventToDatabaseEntitlement(

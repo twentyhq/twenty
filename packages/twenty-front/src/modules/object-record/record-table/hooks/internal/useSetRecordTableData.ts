@@ -2,7 +2,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
-import { useSetRecordValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
+
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useSetIsRecordTableFocusActive } from '@/object-record/record-table/record-table-cell/hooks/useSetIsRecordTableFocusActive';
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
@@ -27,8 +27,6 @@ export const useSetRecordTableData = ({
   recordTableId,
   onEntityCountChange,
 }: useSetRecordTableDataProps) => {
-  const setRecordValueInContextSelector = useSetRecordValue();
-
   const recordIndexRecordIdsByGroupFamilyState =
     useRecoilComponentCallbackStateV2(
       recordIndexRecordIdsByGroupComponentFamilyState,
@@ -82,7 +80,6 @@ export const useSetRecordTableData = ({
             };
 
             set(recordStoreFamilyState(record.id), newRecord);
-            setRecordValueInContextSelector(record.id, newRecord);
           }
         }
 
@@ -130,7 +127,6 @@ export const useSetRecordTableData = ({
       setRecordTableHoverPosition,
       onEntityCountChange,
       isRowSelectedFamilyState,
-      setRecordValueInContextSelector,
     ],
   );
 };
