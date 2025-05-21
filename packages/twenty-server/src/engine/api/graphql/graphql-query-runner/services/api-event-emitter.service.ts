@@ -33,13 +33,19 @@ export class ApiEventEmitterService {
     });
   }
 
-  public emitUpdateEvents<T extends ObjectRecord>(
-    existingRecords: T[],
-    records: T[],
-    updatedFields: string[],
-    authContext: AuthContext,
-    objectMetadataItem: ObjectMetadataInterface,
-  ): void {
+  public emitUpdateEvents<T extends ObjectRecord>({
+    existingRecords,
+    records,
+    updatedFields,
+    authContext,
+    objectMetadataItem,
+  }: {
+    existingRecords: T[];
+    records: T[];
+    updatedFields: string[];
+    authContext: AuthContext;
+    objectMetadataItem: ObjectMetadataInterface;
+  }): void {
     const mappedExistingRecords = existingRecords.reduce(
       (acc, { id, ...record }) => ({
         ...acc,
