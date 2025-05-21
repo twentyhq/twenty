@@ -106,13 +106,11 @@ export const useMultipleRecordPickerPerformSearch = () => {
           after: loadMore ? paginationState.endCursor : null,
         });
 
-        const existingMorphItems = loadMore
-          ? getLoadable(
-              multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
-                instanceId: multipleRecordPickerInstanceId,
-              }),
-            ).getValue()
-          : [];
+        const existingMorphItems = getLoadable(
+          multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
+            instanceId: multipleRecordPickerInstanceId,
+          }),
+        ).getValue();
 
         const allPickedItems = [
           ...existingMorphItems.filter(({ isSelected }) => isSelected),
