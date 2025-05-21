@@ -4,7 +4,6 @@ import { RecoilRoot, useRecoilValue } from 'recoil';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { act } from 'react';
 
 jest.mock('@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope');
@@ -13,13 +12,6 @@ const mockSetHotkeyScopeAndMemorizePreviousScope = jest.fn();
 const mockGoBackToPreviousHotkeyScope = jest.fn();
 
 const modalId = 'test-modal-id';
-const customHotkeyScope: HotkeyScope = {
-  scope: 'test-scope',
-  customScopes: {
-    goto: true,
-    commandMenu: true,
-  },
-};
 
 describe('useModal', () => {
   beforeEach(() => {
