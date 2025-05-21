@@ -65,7 +65,7 @@ export const useObjectRecordSearchRecords = ({
   const effectiveData = loading ? previousData : data;
 
   const searchRecords = useMemo(
-    () => effectiveData?.search || [],
+    () => effectiveData?.search.edges.map((edge) => edge.node) || [],
     [effectiveData],
   );
 

@@ -1,24 +1,20 @@
 import gql from 'graphql-tag';
 
-import { ObjectRecordFilterInput } from 'src/engine/core-modules/search/dtos/object-record-filter-input';
-
-export type SearchFactoryParams = {
-  searchInput: string;
-  excludedObjectNameSingulars?: string[];
-  includedObjectNameSingulars?: string[];
-  filter?: ObjectRecordFilterInput;
-};
+import { SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
 
 export const searchFactory = ({
   searchInput,
   excludedObjectNameSingulars,
   includedObjectNameSingulars,
   filter,
-}: SearchFactoryParams) => ({
+  after,
+  limit = 50,
+}: SearchArgs) => ({
   query: gql`
     query Search(
       $searchInput: String!
       $limit: Int!
+      $after: String
       $excludedObjectNameSingulars: [String!]
       $includedObjectNameSingulars: [String!]
       $filter: ObjectRecordFilterInput
@@ -26,22 +22,33 @@ export const searchFactory = ({
       search(
         searchInput: $searchInput
         limit: $limit
+        after: $after
         excludedObjectNameSingulars: $excludedObjectNameSingulars
         includedObjectNameSingulars: $includedObjectNameSingulars
         filter: $filter
       ) {
-        recordId
-        objectNameSingular
-        label
-        imageUrl
-        tsRankCD
-        tsRank
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+        edges {
+          node {
+            recordId
+            objectNameSingular
+            label
+            imageUrl
+            tsRankCD
+            tsRank
+          }
+          cursor
+        }
       }
     }
   `,
   variables: {
     searchInput,
-    limit: 50,
+    limit,
+    after,
     excludedObjectNameSingulars,
     includedObjectNameSingulars,
     filter,

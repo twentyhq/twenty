@@ -1688,7 +1688,7 @@ export type Query = {
   objects: ObjectConnection;
   plans: Array<BillingPlanOutput>;
   relationMetadata: RelationMetadataConnection;
-  search: Array<SearchRecord>;
+  search: SearchResultConnection;
   validatePasswordResetToken: ValidatePasswordResetToken;
   versionInfo: VersionInfo;
 };
@@ -1828,11 +1828,11 @@ export type QueryRelationMetadataArgs = {
 
 
 export type QuerySearchArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
   excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']>>;
   filter?: InputMaybe<ObjectRecordFilterInput>;
   includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']>>;
   limit: Scalars['Int']['input'];
-  offset?: InputMaybe<Scalars['Int']['input']>;
   searchInput: Scalars['String']['input'];
 };
 
@@ -2045,6 +2045,24 @@ export type SearchRecord = {
   recordId: Scalars['String']['output'];
   tsRank: Scalars['Float']['output'];
   tsRankCD: Scalars['Float']['output'];
+};
+
+export type SearchResultConnection = {
+  __typename?: 'SearchResultConnection';
+  edges: Array<SearchResultEdge>;
+  pageInfo: SearchResultPageInfo;
+};
+
+export type SearchResultEdge = {
+  __typename?: 'SearchResultEdge';
+  cursor: Scalars['String']['output'];
+  node: SearchRecord;
+};
+
+export type SearchResultPageInfo = {
+  __typename?: 'SearchResultPageInfo';
+  endCursor?: Maybe<Scalars['String']['output']>;
+  hasNextPage: Scalars['Boolean']['output'];
 };
 
 export type SendInvitationsOutput = {

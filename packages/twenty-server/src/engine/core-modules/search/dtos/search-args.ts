@@ -15,10 +15,9 @@ export class SearchArgs {
   @Max(100, { message: 'Limit cannot exceed 100 items' })
   limit: number;
 
-  @Field(() => Int, { nullable: true })
+  @Field(() => String, { nullable: true })
   @IsOptional()
-  @IsInt()
-  offset?: number;
+  after?: string;
 
   @IsArray()
   @Field(() => [String], { nullable: true })
