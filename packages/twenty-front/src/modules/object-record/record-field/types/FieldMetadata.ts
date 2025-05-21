@@ -201,9 +201,9 @@ export type FieldEmailsValue = {
   additionalEmails: string[] | null;
 };
 export type FieldLinksValue = {
-  primaryLinkLabel: string;
-  primaryLinkUrl: string;
-  secondaryLinks?: { label: string; url: string }[] | null;
+  primaryLinkLabel: string | null;
+  primaryLinkUrl: string | null;
+  secondaryLinks?: { label: string | null; url: string | null }[] | null;
 };
 export type FieldCurrencyValue = {
   currencyCode: CurrencyCode;

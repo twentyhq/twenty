@@ -1,10 +1,11 @@
 import { useLinksField } from '@/object-record/record-field/meta-types/hooks/useLinksField';
 import { LinksFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/LinksFieldMenuItem';
+import { getFieldLinkDefinedLinks } from '@/object-record/record-field/meta-types/input/utils/getFieldLinkDefinedLinks';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/states/recordFieldInputIsFieldInErrorComponentState';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useMemo } from 'react';
-import { absoluteUrlSchema, isDefined } from 'twenty-shared/utils';
+import { absoluteUrlSchema } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
@@ -19,26 +20,13 @@ export const LinksFieldInput = ({
 }: LinksFieldInputProps) => {
   const { persistLinksField, fieldValue, fieldDefinition } = useLinksField();
 
-  const links = useMemo<{ url: string; label: string }[]>(
-    () =>
-      [
-        fieldValue.primaryLinkUrl
-          ? {
-              url: fieldValue.primaryLinkUrl,
-              label: fieldValue.primaryLinkLabel,
-            }
-          : null,
-        ...(fieldValue.secondaryLinks ?? []),
-      ].filter(isDefined),
-    [
-      fieldValue.primaryLinkLabel,
-      fieldValue.primaryLinkUrl,
-      fieldValue.secondaryLinks,
-    ],
+  const links = useMemo<{ url: string; label: string | null }[]>(
+    () => getFieldLinkDefinedLinks(fieldValue),
+    [fieldValue],
   );
 
   const handlePersistLinks = (
-    updatedLinks: { url: string; label: string }[],
+    updatedLinks: { url: string | null; label: string | null }[],
   ) => {
     const [nextPrimaryLink, ...nextSecondaryLinks] = updatedLinks;
     persistLinksField({
