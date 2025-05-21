@@ -309,3 +309,32 @@ export type FieldMetadataSettings =
   | { format: string }
   | { format: string }
   | { format: string };
+
+export type FieldValue =
+  | FieldTextValue
+  | FieldUUidValue
+  | FieldDateTimeValue
+  | FieldDateValue
+  | FieldNumberValue
+  | FieldBooleanValue
+  | FieldEmailsValue
+  | FieldLinksValue
+  | FieldCurrencyValue
+  | FieldFullNameValue
+  | FieldAddressValue
+  | FieldRatingValue
+  | FieldSelectValue
+  | FieldMultiSelectValue
+  | FieldRelationValue<FieldRelationToOneValue>
+  | FieldRelationValue<FieldRelationFromManyValue>
+  | FieldJsonValue
+  | FieldRichTextV2Value
+  | FieldRichTextValue
+  | FieldActorValue
+  | FieldArrayValue
+  | FieldPhonesValue;
+
+export type FieldDefinition<T extends FieldMetadata> = {
+  metadata: T;
+  defaultValue?: FieldValue;
+};
