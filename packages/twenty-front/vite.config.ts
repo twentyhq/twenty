@@ -169,23 +169,31 @@ export default defineConfig(({ command, mode }) => {
       rollupOptions: {
         output: {
           manualChunks: (id) => {
-            // Monaco TypeScript worker - separate this specifically
-            if (id.includes('monaco-editor/esm/vs/language/typescript/ts.worker')) {
-              return 'monaco-typescript-worker';
-            }
-
-            // Monaco language specific chunks
-            if (id.includes('monaco-editor/esm/vs/language/typescript')) {
-              return 'monaco-typescript';
+            if (id.includes('typescript/lib/typescript.js')) {
+              return 'typescript-lib';
             }
             
-            if (id.includes('monaco-editor/esm/vs/language/json')) {
-              return 'monaco-json';
+
+            if (id.includes('shiki')) {
+              if (id.includes('/langs/typescript.mjs') || id.includes('/langs/json.mjs')) {
+                return 'shiki-supported-langs';
+              }
+              if (id.includes('/langs/')) {
+                return 'not-loaded';
+              }
+              return 'shiki-core';
             }
 
-            // Monaco core editor
-            if (id.includes('monaco-editor') && !id.includes('/language/')) {
-              return 'monaco-editor-core';
+            if (id.includes('monaco-editor')) {
+
+              if (id.includes('/basic-languages/') && id.includes('typescript')) {
+                return 'monaco-core';
+              }
+              if (id.includes('/basic-languages/')) {
+                return 'not-loaded';
+              }
+
+              return 'monaco-core';
             }
 
             // Other large libraries in separate chunks
@@ -218,7 +226,11 @@ export default defineConfig(({ command, mode }) => {
               !dep.includes('blocknote') &&
               !dep.includes('monaco') &&
               !dep.includes('nivo') &&
-              !dep.includes('settings')
+              !dep.includes('settings') &&
+              !dep.includes('shiki') &&
+              !dep.includes('monaco-core') &&
+              !dep.includes('typescript-lib') &&
+              !dep.includes('not-loaded')
             );
         },
       },
