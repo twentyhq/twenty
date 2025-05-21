@@ -44,14 +44,11 @@ const StyledSubjectAndBody = styled.div`
   overflow: hidden;
 `;
 
-const StyledSubject = styled.span<{ flex: number }>`
+const StyledSubject = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  flex-shrink: 0;
-  flex: ${({ flex }) => flex};
-  max-width: max-content;
 `;
 
 const StyledBody = styled.span`
@@ -59,6 +56,7 @@ const StyledBody = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  flex: 1;
 `;
 
 const StyledReceivedAt = styled.div`
@@ -146,13 +144,7 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
 
       <StyledSubjectAndBody>
         {visibility !== MessageChannelVisibility.METADATA && (
-          <StyledSubject
-            flex={
-              visibility === MessageChannelVisibility.SHARE_EVERYTHING ? 0 : 1
-            }
-          >
-            {thread.subject}
-          </StyledSubject>
+          <StyledSubject>{thread.subject}</StyledSubject>
         )}
         {visibility === MessageChannelVisibility.SHARE_EVERYTHING && (
           <StyledBody>{thread.lastMessageBody}</StyledBody>
