@@ -169,11 +169,16 @@ export default defineConfig(({ command, mode }) => {
       rollupOptions: {
         output: {
           manualChunks: (id) => {
+            if (id.includes('/modules/settings/')) return 'settings';
+
+            if (!id.includes('node_modules')) {
+              return null;
+            }
+
             if (id.includes('typescript/lib/typescript.js')) {
               return 'typescript-lib';
             }
             
-
             if (id.includes('shiki')) {
               if (id.includes('/langs/typescript.mjs') || id.includes('/langs/json.mjs')) {
                 return 'shiki-supported-langs';
@@ -196,25 +201,26 @@ export default defineConfig(({ command, mode }) => {
               return 'monaco-core';
             }
 
-            // Other large libraries in separate chunks
-            if (id.includes('@scalar')) return 'scalar';
-            if (id.includes('twenty-ui')) return 'twenty-ui';
-            if (id.includes('react-dom')) return 'react-dom';
-            if (id.includes('react-router')) return 'react-router';
-            if (id.includes('@apollo')) return 'apollo';
-            if (id.includes('@lingui')) return 'lingui';
-            if (id.includes('@nivo')) return 'nivo';
-            if (id.includes('recoil')) return 'recoil';
-            if (id.includes('@tiptap')) return 'tiptap';
-            if (id.includes('@blocknote')) return 'blocknote';
-            if (id.includes('@react-pdf')) return 'react-pdf';
-            if (id.includes('xlsx-ugnis')) return 'xlsx-ugnis';
-            if (id.includes('@sentry')) return 'sentry';
-
-            // Application modules
-            if (id.includes('/modules/settings/')) return 'settings';
-            
-            return null;
+              // React and React DOM should be in the same chunk to avoid initialization issues
+              if (id.includes('react') || id.includes('react-dom')) {
+                return 'react-vendor';
+              }
+              
+              // Other vendor chunks
+              if (id.includes('@scalar')) return 'scalar';
+              if (id.includes('twenty-ui')) return 'twenty-ui';
+              if (id.includes('react-router')) return 'react-router';
+              if (id.includes('@apollo')) return 'apollo';
+              if (id.includes('@lingui')) return 'lingui';
+              if (id.includes('@nivo')) return 'nivo';
+              if (id.includes('recoil')) return 'recoil';
+              if (id.includes('@tiptap')) return 'tiptap';
+              if (id.includes('@blocknote')) return 'blocknote';
+              if (id.includes('@react-pdf')) return 'react-pdf';
+              if (id.includes('xlsx-ugnis')) return 'xlsx-ugnis';
+              if (id.includes('@sentry')) return 'sentry';
+              
+              return null;
           },
         },
       },
