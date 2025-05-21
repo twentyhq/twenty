@@ -202,7 +202,7 @@ export default defineConfig(({ command, mode }) => {
             }
 
               // React and React DOM should be in the same chunk to avoid initialization issues
-              if (id.includes('react') || id.includes('react-dom')) {
+              if (id.includes('react') || id.includes('react-dom') || id.includes('@nivo')) {
                 return 'react-vendor';
               }
               
@@ -212,7 +212,7 @@ export default defineConfig(({ command, mode }) => {
               if (id.includes('react-router')) return 'react-router';
               if (id.includes('@apollo')) return 'apollo';
               if (id.includes('@lingui')) return 'lingui';
-              if (id.includes('@nivo')) return 'nivo';
+              // if (id.includes('@nivo')) return 'nivo';
               if (id.includes('recoil')) return 'recoil';
               if (id.includes('@tiptap')) return 'tiptap';
               if (id.includes('@blocknote')) return 'blocknote';
@@ -224,6 +224,7 @@ export default defineConfig(({ command, mode }) => {
           },
         },
       },
+      external: ['react', 'react-dom'],
       modulePreload: {
         resolveDependencies: (filename, deps, { hostId }) => {
             // Don't preload heavy chunks that aren't needed immediately
@@ -233,7 +234,7 @@ export default defineConfig(({ command, mode }) => {
               !dep.includes('react-pdf') &&
               !dep.includes('blocknote') &&
               !dep.includes('monaco') &&
-              !dep.includes('nivo') &&
+              // !dep.includes('nivo') &&
               !dep.includes('settings') &&
               !dep.includes('shiki') &&
               !dep.includes('monaco-core') &&
