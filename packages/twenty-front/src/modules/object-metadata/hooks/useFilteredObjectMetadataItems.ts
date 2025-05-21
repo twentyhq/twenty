@@ -22,7 +22,7 @@ export const useFilteredObjectMetadataItems = () => {
     [isWorkflowEnabled],
   );
 
-  const activeObjectMetadataItems = useMemo(
+  const activeNonSystemObjectMetadataItems = useMemo(
     () =>
       objectMetadataItems.filter(
         ({ isActive, isSystem, nameSingular }) =>
@@ -31,8 +31,17 @@ export const useFilteredObjectMetadataItems = () => {
     [isWorkflowToBeFiltered, objectMetadataItems],
   );
 
-  const alphaSortedActiveObjectMetadataItems = activeObjectMetadataItems.sort(
-    (a, b) => {
+  const activeObjectMetadataItems = useMemo(
+    () =>
+      objectMetadataItems.filter(
+        ({ isActive, nameSingular }) =>
+          isActive && !isWorkflowToBeFiltered(nameSingular),
+      ),
+    [isWorkflowToBeFiltered, objectMetadataItems],
+  );
+
+  const alphaSortedActiveNonSystemObjectMetadataItems =
+    activeNonSystemObjectMetadataItems.sort((a, b) => {
       if (a.nameSingular < b.nameSingular) {
         return -1;
       }
@@ -40,15 +49,14 @@ export const useFilteredObjectMetadataItems = () => {
         return 1;
       }
       return 0;
-    },
-  );
+    });
 
-  const inactiveObjectMetadataItems = objectMetadataItems.filter(
+  const inactiveNonSystemObjectMetadataItems = objectMetadataItems.filter(
     ({ isActive, isSystem }) => !isActive && !isSystem,
   );
 
   const findActiveObjectMetadataItemByNamePlural = (namePlural: string) =>
-    activeObjectMetadataItems.find(
+    activeNonSystemObjectMetadataItems.find(
       (activeObjectMetadataItem) =>
         activeObjectMetadataItem.namePlural === namePlural,
     );
@@ -64,12 +72,13 @@ export const useFilteredObjectMetadataItems = () => {
     );
 
   return {
+    activeNonSystemObjectMetadataItems,
     activeObjectMetadataItems,
     findObjectMetadataItemById,
     findObjectMetadataItemByNamePlural,
     findActiveObjectMetadataItemByNamePlural,
-    inactiveObjectMetadataItems,
+    inactiveNonSystemObjectMetadataItems,
     objectMetadataItems,
-    alphaSortedActiveObjectMetadataItems,
+    alphaSortedActiveNonSystemObjectMetadataItems,
   };
 };
