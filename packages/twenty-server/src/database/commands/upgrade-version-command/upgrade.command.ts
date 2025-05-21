@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 
+import chalk from 'chalk';
 import { Command } from 'nest-commander';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
@@ -278,17 +279,18 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     passedParams: string[],
     options: ActiveOrSuspendedWorkspacesMigrationCommandOptions,
   ): Promise<void> {
-    // Only run migrations if we have at least one workspace on version 0.53
     const shouldRunMigrateAsPartOfUpgrade =
       await this.databaseMigrationService.shouldRunMigrationsIfAllWorkspaceAreAboveVersion0_53();
 
-    if (shouldRunMigrateAsPartOfUpgrade) {
-      await this.databaseMigrationService.runMigrations();
-    } else {
-      this.logger.log('Skipping database migrations.');
+    if (!shouldRunMigrateAsPartOfUpgrade) {
+      this.logger.log(
+        chalk.red(
+          'Not able to run migrate command, aborting the whole migrate-upgrade operation',
+        ),
+      );
+      throw new Error('Could not run migration aborting');
     }
 
-    // Continue with the regular upgrade process
     await super.runMigrationCommand(passedParams, options);
   }
 }
