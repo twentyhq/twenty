@@ -3,15 +3,15 @@ import { RecoilRoot } from 'recoil';
 
 import { AppPath } from '@/types/AppPath';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
-import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
+import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
-jest.mock('~/hooks/useIsMatchingLocation');
-const mockUseIsMatchingLocation = jest.mocked(useIsMatchingLocation);
+jest.mock('~/utils/isMatchingLocation');
+const mockIsMatchingLocation = jest.mocked(isMatchingLocation);
 
 const setupMockIsMatchingLocation = (pathname: string) => {
-  mockUseIsMatchingLocation.mockReturnValueOnce({
-    isMatchingLocation: (path: string) => path === pathname,
-  });
+  mockIsMatchingLocation.mockImplementation(
+    (_location, path) => path === pathname,
+  );
 };
 
 const getResult = () =>
