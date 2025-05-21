@@ -11,8 +11,8 @@ import { MESSAGING_THROTTLE_MAX_ATTEMPTS } from 'src/modules/messaging/message-i
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
-  MessageNetworkExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import { MessageNetworkExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-network.exception';
 import {
   MessageImportException,
   MessageImportExceptionCode,

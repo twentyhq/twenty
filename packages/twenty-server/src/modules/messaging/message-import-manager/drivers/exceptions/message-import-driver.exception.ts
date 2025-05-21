@@ -15,11 +15,3 @@ export enum MessageImportDriverExceptionCode {
   NO_NEXT_SYNC_CURSOR = 'NO_NEXT_SYNC_CURSOR',
   SYNC_CURSOR_ERROR = 'SYNC_CURSOR_ERROR',
 }
-
-export enum MessageNetworkExceptionCode {
-  ECONNRESET = 'ECONNRESET',
-  ENOTFOUND = 'ENOTFOUND',
-  ECONNABORTED = 'ECONNABORTED',
-  ETIMEDOUT = 'ETIMEDOUT',
-  ERR_NETWORK = 'ERR_NETWORK',
-}

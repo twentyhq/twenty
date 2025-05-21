@@ -3,8 +3,8 @@ import { GaxiosError } from 'gaxios';
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
-  MessageNetworkExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import { MessageNetworkExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-network.exception';
 
 export const parseGaxiosError = (
   error: GaxiosError,

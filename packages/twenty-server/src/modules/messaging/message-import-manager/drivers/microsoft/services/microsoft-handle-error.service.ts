@@ -4,7 +4,6 @@ import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
-import { MicrosoftImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/microsoft/exceptions/microsoft-import-driver.exception';
 import { isMicrosoftClientTemporaryError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/is-temporary-error.utils';
 import { parseMicrosoftMessagesImportError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/parse-microsoft-messages-import.util';
 
@@ -23,7 +22,10 @@ export class MicrosoftHandleErrorService {
       isBodyString && isMicrosoftClientTemporaryError(error.body);
 
     if (isTemporaryError) {
-      throw new MicrosoftImportDriverException(error.body, error.code, 429);
+      throw new MessageImportDriverException(
+        `code: ${error.code} - body: ${error.body}`,
+        MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+      );
     }
 
     if (!error.statusCode) {
