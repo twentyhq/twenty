@@ -170,6 +170,11 @@ export default defineConfig(({ command, mode }) => {
           },
         },
       },
+      modulePreload: {
+        resolveDependencies: (filename, deps, { hostId }) => {
+          return deps.filter(dep => !dep.includes('scalar'));
+        },
+      },
     },
 
     envPrefix: 'REACT_APP_',
