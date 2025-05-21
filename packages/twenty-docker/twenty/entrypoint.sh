@@ -24,7 +24,6 @@ setup_and_migrate_db() {
         NODE_OPTIONS="--max-old-space-size=1500" tsx ./scripts/setup-db.ts
     fi
     
-    yarn database:migrate:prod
     yarn command:prod upgrade
     echo "Successfully migrated DB!"
 }
