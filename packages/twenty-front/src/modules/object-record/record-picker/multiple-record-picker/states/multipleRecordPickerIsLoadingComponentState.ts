@@ -4,6 +4,6 @@ import { createComponentStateV2 } from '@/ui/utilities/state/component-state/uti
 export const multipleRecordPickerIsLoadingComponentState =
   createComponentStateV2<boolean>({
     key: 'multipleRecordPickerIsLoadingComponentState',
-    defaultValue: true,
+    defaultValue: false,
     componentInstanceContext: MultipleRecordPickerComponentInstanceContext,
   });
