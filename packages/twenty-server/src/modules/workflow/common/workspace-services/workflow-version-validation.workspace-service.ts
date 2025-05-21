@@ -71,7 +71,9 @@ export class WorkflowVersionValidationWorkspaceService {
         payload.id,
       );
 
-    assertWorkflowVersionIsDraft(workflowVersion);
+    if (Object.keys(payload.data).length > 1 || !payload.data.name) {
+      assertWorkflowVersionIsDraft(workflowVersion);
+    }
 
     if (payload.data.status && payload.data.status !== workflowVersion.status) {
       throw new WorkflowQueryValidationException(
