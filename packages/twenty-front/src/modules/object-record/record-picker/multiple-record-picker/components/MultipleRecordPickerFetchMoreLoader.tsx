@@ -2,11 +2,7 @@ import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-pic
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { multipleRecordPickerPaginationState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPaginationState';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
-import {
-  multipleRecordPickerHasNextPageSelector,
-  multipleRecordPickerIsLoadingInitialSelector,
-  multipleRecordPickerIsLoadingMoreSelector,
-} from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPaginationSelectors';
+import { multipleRecordPickerPaginationSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPaginationSelectors';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
@@ -30,8 +26,8 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
     MultipleRecordPickerComponentInstanceContext,
   );
 
-  const isLoadingInitial = useRecoilComponentValueV2(
-    multipleRecordPickerIsLoadingInitialSelector,
+  const paginationState = useRecoilComponentValueV2(
+    multipleRecordPickerPaginationSelector,
     componentInstanceId,
   );
 
@@ -79,23 +75,15 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
     rootMargin: '200px',
   });
 
-  const hasNextPage = useRecoilComponentValueV2(
-    multipleRecordPickerHasNextPageSelector,
-    componentInstanceId,
-  );
-
-  const isLoadingMore = useRecoilComponentValueV2(
-    multipleRecordPickerIsLoadingMoreSelector,
-    componentInstanceId,
-  );
-
-  if (!hasNextPage || isLoadingInitial) {
+  if (!paginationState.hasNextPage || paginationState.isLoadingInitial) {
     return null;
   }
 
   return (
     <div ref={ref}>
-      {isLoadingMore && <StyledText>Loading more...</StyledText>}
+      {paginationState.isLoadingMore && (
+        <StyledText>Loading more...</StyledText>
+      )}
     </div>
   );
 };
