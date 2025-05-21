@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+
 import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -10,13 +11,13 @@ import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dto
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataValidationService } from 'src/engine/metadata-modules/field-metadata/field-metadata-validation.service';
 import {
-    FieldMetadataException,
-    FieldMetadataExceptionCode,
+  FieldMetadataException,
+  FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import {
-    beneathDatabaseIdentifierMinimumLength,
-    exceedsDatabaseIdentifierMaximumLength,
+  beneathDatabaseIdentifierMinimumLength,
+  exceedsDatabaseIdentifierMaximumLength,
 } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
 import { isSnakeCaseString } from 'src/utils/is-snake-case-string';
 

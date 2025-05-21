@@ -11,10 +11,10 @@ import {
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-
-import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { CreateOneFieldFactoryInput } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata-query-factory.util';
 import { isDefined } from 'twenty-shared/utils';
+
+import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 
 const { failingTestCases, successfulTestCases } =
   UPDATE_CREATE_ONE_FIELD_METADATA_SELECT_TEST_CASES;
@@ -36,6 +36,7 @@ describe('Field metadata select update tests group', () => {
       position: 2,
     },
   ];
+
   beforeEach(async () => {
     const { data } = await createOneObjectMetadata({
       input: {
@@ -88,6 +89,7 @@ describe('Field metadata select update tests group', () => {
         title: 'should succeed with default value and no options',
       },
     ];
+
   test.each([...successfulTestCases, ...updateSpecificSuccessfulTestCases])(
     'Update $title',
     async ({ context: { input, expectedOptions } }) => {
@@ -111,6 +113,7 @@ describe('Field metadata select update tests group', () => {
       updatedOptions.forEach((option) => expect(option.id).toBeDefined());
 
       const optionsToCompare = expectedOptions ?? input.options;
+
       expect(updatedOptions.length).toBe(optionsToCompare.length);
       expect(updatedOptions).toMatchObject(optionsToCompare);
 
@@ -132,6 +135,7 @@ describe('Field metadata select update tests group', () => {
         title: 'should fail with unknown default value and no options',
       },
     ];
+
   test.each([...updateSpecificFailingTestCases, ...failingTestCases])(
     'Update $title',
     async ({ context: { input } }) => {

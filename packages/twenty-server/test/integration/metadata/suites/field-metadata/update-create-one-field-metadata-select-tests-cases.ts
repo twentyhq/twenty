@@ -1,8 +1,8 @@
 import { EachTestingContext } from 'twenty-shared/testing';
 import { v4 } from 'uuid';
+import { CreateOneFieldFactoryInput } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata-query-factory.util';
 
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { CreateOneFieldFactoryInput } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata-query-factory.util';
 
 export type UpdateCreateFieldMetadataSelectTestCase = EachTestingContext<{
   input: Partial<CreateOneFieldFactoryInput> &

@@ -142,24 +142,23 @@ describe('updateOne', () => {
     });
 
     it('should throw an error if the default value is not in the options', async () => {
-      const { data: createdFieldMetadata, errors: createdFieldMetadataErrors } =
-        await createOneFieldMetadata({
-          input: {
-            objectMetadataId: createdObjectMetadataId,
-            type: FieldMetadataType.SELECT,
-            name: 'testName',
-            label: 'Test name',
-            isLabelSyncedWithName: true,
-            options: [
-              {
-                label: 'Option 1',
-                value: 'OPTION_1',
-                color: 'green',
-                position: 1,
-              },
-            ],
-          },
-        });
+      const { data: createdFieldMetadata } = await createOneFieldMetadata({
+        input: {
+          objectMetadataId: createdObjectMetadataId,
+          type: FieldMetadataType.SELECT,
+          name: 'testName',
+          label: 'Test name',
+          isLabelSyncedWithName: true,
+          options: [
+            {
+              label: 'Option 1',
+              value: 'OPTION_1',
+              color: 'green',
+              position: 1,
+            },
+          ],
+        },
+      });
 
       const { errors } = await updateOneFieldMetadata({
         input: {
