@@ -3,6 +3,7 @@ import { GaxiosError } from 'gaxios';
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
+  MessageNetworkExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 
 export const parseGaxiosError = (
@@ -11,11 +12,11 @@ export const parseGaxiosError = (
   const { code } = error;
 
   switch (code) {
-    case 'ECONNRESET':
-    case 'ENOTFOUND':
-    case 'ECONNABORTED':
-    case 'ETIMEDOUT':
-    case 'ERR_NETWORK':
+    case MessageNetworkExceptionCode.ECONNRESET:
+    case MessageNetworkExceptionCode.ENOTFOUND:
+    case MessageNetworkExceptionCode.ECONNABORTED:
+    case MessageNetworkExceptionCode.ETIMEDOUT:
+    case MessageNetworkExceptionCode.ERR_NETWORK:
       return new MessageImportDriverException(
         error.message,
         MessageImportDriverExceptionCode.TEMPORARY_ERROR,
