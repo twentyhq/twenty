@@ -71,12 +71,13 @@ describe('useCommandMenu', () => {
     });
 
     expect(result.current.isCommandMenuOpened).toBe(true);
-    expect(mockSetHotkeyScopeAndMemorizePreviousScope).toHaveBeenCalledWith(
-      CommandMenuHotkeyScope.CommandMenuFocused,
-      {
+    expect(mockSetHotkeyScopeAndMemorizePreviousScope).toHaveBeenCalledWith({
+      scope: CommandMenuHotkeyScope.CommandMenuFocused,
+      memoizeKey: 'command-menu',
+      customScopes: {
         commandMenuOpen: true,
       },
-    );
+    });
 
     act(() => {
       result.current.commandMenu.closeCommandMenu();
@@ -95,12 +96,13 @@ describe('useCommandMenu', () => {
     });
 
     expect(result.current.isCommandMenuOpened).toBe(true);
-    expect(mockSetHotkeyScopeAndMemorizePreviousScope).toHaveBeenCalledWith(
-      CommandMenuHotkeyScope.CommandMenuFocused,
-      {
+    expect(mockSetHotkeyScopeAndMemorizePreviousScope).toHaveBeenCalledWith({
+      scope: CommandMenuHotkeyScope.CommandMenuFocused,
+      memoizeKey: 'command-menu',
+      customScopes: {
         commandMenuOpen: true,
       },
-    );
+    });
 
     act(() => {
       result.current.commandMenu.toggleCommandMenu();

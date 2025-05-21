@@ -31,7 +31,9 @@ export const useMapKeyboardToFocus = (recordTableId?: string) => {
   useScopedHotkeys(
     [Key.ArrowUp],
     () => {
-      setHotkeyScopeAndMemorizePreviousScope(TableHotkeyScope.TableFocus);
+      setHotkeyScopeAndMemorizePreviousScope({
+        scope: TableHotkeyScope.TableFocus,
+      });
       move('up');
     },
     RecordIndexHotkeyScope.RecordIndex,
@@ -41,7 +43,9 @@ export const useMapKeyboardToFocus = (recordTableId?: string) => {
   useScopedHotkeys(
     [Key.ArrowDown],
     () => {
-      setHotkeyScopeAndMemorizePreviousScope(TableHotkeyScope.TableFocus);
+      setHotkeyScopeAndMemorizePreviousScope({
+        scope: TableHotkeyScope.TableFocus,
+      });
       move('down');
     },
     RecordIndexHotkeyScope.RecordIndex,

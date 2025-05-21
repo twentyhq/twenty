@@ -15,9 +15,9 @@ export const useKeyboardShortcutMenu = () => {
     ({ set }) =>
       () => {
         set(isKeyboardShortcutMenuOpenedState, true);
-        setHotkeyScopeAndMemorizePreviousScope(
-          AppHotkeyScope.KeyboardShortcutMenu,
-        );
+        setHotkeyScopeAndMemorizePreviousScope({
+          scope: AppHotkeyScope.KeyboardShortcutMenu,
+        });
       },
     [setHotkeyScopeAndMemorizePreviousScope],
   );
