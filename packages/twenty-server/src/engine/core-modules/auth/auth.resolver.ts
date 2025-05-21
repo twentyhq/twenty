@@ -37,6 +37,7 @@ import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/r
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { EmailVerificationExceptionFilter } from 'src/engine/core-modules/email-verification/email-verification-exception-filter.util';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
@@ -66,7 +67,11 @@ import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input
 import { AuthService } from './services/auth.service';
 
 @Resolver()
-@UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
+@UseFilters(
+  AuthGraphqlApiExceptionFilter,
+  PermissionsGraphqlApiExceptionFilter,
+  EmailVerificationExceptionFilter,
+)
 export class AuthResolver {
   constructor(
     @InjectRepository(User, 'core')

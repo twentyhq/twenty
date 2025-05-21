@@ -89,13 +89,13 @@ export class GraphqlQueryUpdateManyResolverService extends GraphqlQueryBaseResol
       objectMetadataMaps,
     );
 
-    this.apiEventEmitterService.emitUpdateEvents(
-      formattedExistingRecords,
-      formattedUpdatedRecords,
-      Object.keys(executionArgs.args.data),
+    this.apiEventEmitterService.emitUpdateEvents({
+      existingRecords: formattedExistingRecords,
+      records: formattedUpdatedRecords,
+      updatedFields: Object.keys(executionArgs.args.data),
       authContext,
-      objectMetadataItemWithFieldMaps,
-    );
+      objectMetadataItem: objectMetadataItemWithFieldMaps,
+    });
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
