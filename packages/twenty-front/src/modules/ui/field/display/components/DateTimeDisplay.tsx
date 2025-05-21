@@ -1,6 +1,8 @@
 import { FieldDateMetadataSettings } from '@/object-record/record-field/types/FieldMetadata';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
+import { useRecoilValue } from 'recoil';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 import { EllipsisDisplay } from './EllipsisDisplay';
 
@@ -13,8 +15,8 @@ export const DateTimeDisplay = ({
   value,
   dateFieldSettings,
 }: DateTimeDisplayProps) => {
-  const { dateFormat, timeFormat, timeZone, dateFnsLocale } =
-    useContext(UserContext);
+  const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
+  const dateLocale = useRecoilValue(dateLocaleState);
 
   const formattedDate = formatDateTimeString({
     value,
@@ -22,7 +24,7 @@ export const DateTimeDisplay = ({
     dateFormat,
     timeFormat,
     dateFieldSettings,
-    locale: dateFnsLocale,
+    localeCatalog: dateLocale.localeCatalog,
   });
 
   return <EllipsisDisplay>{formattedDate}</EllipsisDisplay>;

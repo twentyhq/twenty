@@ -4,7 +4,6 @@ import { DateFormat } from '@/localization/constants/DateFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { DateFieldDisplay } from '@/object-record/record-field/meta-types/display/components/DateFieldDisplay';
 import { UserContext } from '@/users/contexts/UserContext';
-import { enUS } from 'date-fns/locale';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { getFieldDecorator } from '~/testing/decorators/getFieldDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -23,7 +22,6 @@ const meta: Meta = {
             dateFormat: DateFormat.SYSTEM,
             timeFormat: TimeFormat.SYSTEM,
             timeZone: 'UTC',
-            dateFnsLocale: enUS,
           }}
         >
           <Story />

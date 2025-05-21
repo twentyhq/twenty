@@ -5,7 +5,6 @@ import { UserContext } from '@/users/contexts/UserContext';
 import { expect } from '@storybook/jest';
 import type { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/testing-library';
-import { enUS } from 'date-fns/locale';
 import { DateDisplay } from '../DateDisplay';
 
 const meta: Meta<typeof DateDisplay> = {
@@ -18,7 +17,6 @@ const meta: Meta<typeof DateDisplay> = {
           dateFormat: DateFormat.DAY_FIRST,
           timeFormat: TimeFormat.HOUR_24,
           timeZone: 'Pacific/Tahiti', // Needed for our test on time difference
-          dateFnsLocale: enUS,
         }}
       >
         <Story />

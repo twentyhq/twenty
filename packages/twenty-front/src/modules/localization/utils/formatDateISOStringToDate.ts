@@ -5,14 +5,14 @@ export const formatDateISOStringToDate = ({
   date,
   timeZone,
   dateFormat,
-  locale,
+  localeCatalog,
 }: {
   date: string;
   timeZone: string;
   dateFormat: DateFormat;
-  locale?: Locale;
+  localeCatalog?: Locale;
 }) => {
   return formatInTimeZone(new Date(date), timeZone, dateFormat, {
-    locale,
+    locale: localeCatalog,
   });
 };

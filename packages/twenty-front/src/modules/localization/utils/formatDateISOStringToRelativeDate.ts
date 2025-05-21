@@ -5,17 +5,18 @@ import {
   isToday,
   isTomorrow,
   isYesterday,
+  Locale,
   startOfDay,
 } from 'date-fns';
 
 export const formatDateISOStringToRelativeDate = ({
   isoDate,
   isDayMaximumPrecision = false,
-  locale,
+  localeCatalog,
 }: {
   isoDate: string;
   isDayMaximumPrecision?: boolean;
-  locale?: Locale;
+  localeCatalog: Locale;
 }) => {
   const now = new Date();
   const targetDate = new Date(isoDate);
@@ -29,11 +30,11 @@ export const formatDateISOStringToRelativeDate = ({
   if (isDayMaximumPrecision || !isWithin24h)
     return formatDistance(startOfDay(targetDate), startOfDay(now), {
       addSuffix: true,
-      locale,
+      locale: localeCatalog,
     });
 
   return formatDistance(targetDate, now, {
     addSuffix: true,
-    locale,
+    locale: localeCatalog,
   });
 };
