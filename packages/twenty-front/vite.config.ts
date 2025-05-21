@@ -208,6 +208,8 @@ export default defineConfig(({ command, mode }) => {
             if (id.includes('@tiptap')) return 'tiptap';
             if (id.includes('@blocknote')) return 'blocknote';
             if (id.includes('@react-pdf')) return 'react-pdf';
+            if (id.includes('xlsx-ugnis')) return 'xlsx-ugnis';
+            if (id.includes('@sentry')) return 'sentry';
 
             // Application modules
             if (id.includes('/modules/settings/')) return 'settings';
@@ -230,6 +232,7 @@ export default defineConfig(({ command, mode }) => {
               !dep.includes('shiki') &&
               !dep.includes('monaco-core') &&
               !dep.includes('typescript-lib') &&
+              !dep.includes('xlsx-ugnis') &&
               !dep.includes('not-loaded')
             );
         },
