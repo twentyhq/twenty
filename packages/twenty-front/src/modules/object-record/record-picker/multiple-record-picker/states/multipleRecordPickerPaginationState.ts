@@ -11,7 +11,7 @@ export const multipleRecordPickerPaginationState =
     key: 'multipleRecordPickerPaginationState',
     defaultValue: {
       endCursor: null,
-      hasNextPage: true,
+      hasNextPage: false,
     },
     componentInstanceContext: MultipleRecordPickerComponentInstanceContext,
   });
