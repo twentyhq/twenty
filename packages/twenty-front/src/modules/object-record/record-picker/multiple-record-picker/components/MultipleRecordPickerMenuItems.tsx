@@ -4,7 +4,6 @@ import { MultipleRecordPickerFetchMoreLoader } from '@/object-record/record-pick
 import { MultipleRecordPickerMenuItem } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItem';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
-import { multipleRecordPickerHasNextPageSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPaginationSelectors';
 import { multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector';
 import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
@@ -47,11 +46,6 @@ export const MultipleRecordPickerMenuItems = ({
 
   const pickableRecordIds = useRecoilComponentValueV2(
     multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector,
-    componentInstanceId,
-  );
-
-  const hasNextPage = useRecoilComponentValueV2(
-    multipleRecordPickerHasNextPageSelector,
     componentInstanceId,
   );
 
@@ -113,7 +107,7 @@ export const MultipleRecordPickerMenuItems = ({
               />
             );
           })}
-          {hasNextPage && <MultipleRecordPickerFetchMoreLoader />}
+          <MultipleRecordPickerFetchMoreLoader />
         </SelectableList>
       )}
     </DropdownMenuItemsContainer>
