@@ -1,5 +1,6 @@
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
+import { multipleRecordPickerPaginationState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPaginationState';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import {
   multipleRecordPickerHasNextPageSelector,
@@ -29,16 +30,6 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
     MultipleRecordPickerComponentInstanceContext,
   );
 
-  const hasNextPage = useRecoilComponentValueV2(
-    multipleRecordPickerHasNextPageSelector,
-    componentInstanceId,
-  );
-
-  const isLoadingMore = useRecoilComponentValueV2(
-    multipleRecordPickerIsLoadingMoreSelector,
-    componentInstanceId,
-  );
-
   const isLoadingInitial = useRecoilComponentValueV2(
     multipleRecordPickerIsLoadingInitialSelector,
     componentInstanceId,
@@ -52,24 +43,27 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
   const { performSearch } = useMultipleRecordPickerPerformSearch();
 
   const fetchMore = useRecoilCallback(
-    () => async () => {
-      if (isLoadingMore || !hasNextPage) {
-        return;
-      }
+    ({ snapshot }) =>
+      async () => {
+        const paginationState = snapshot
+          .getLoadable(
+            multipleRecordPickerPaginationState.atomFamily({
+              instanceId: componentInstanceId,
+            }),
+          )
+          .getValue();
 
-      performSearch({
-        multipleRecordPickerInstanceId: componentInstanceId,
-        forceSearchFilter: searchFilter,
-        loadMore: true,
-      });
-    },
-    [
-      componentInstanceId,
-      hasNextPage,
-      isLoadingMore,
-      performSearch,
-      searchFilter,
-    ],
+        if (paginationState.isLoadingMore || !paginationState.hasNextPage) {
+          return;
+        }
+
+        performSearch({
+          multipleRecordPickerInstanceId: componentInstanceId,
+          forceSearchFilter: searchFilter,
+          loadMore: true,
+        });
+      },
+    [componentInstanceId, performSearch, searchFilter],
   );
 
   const { ref } = useInView({
@@ -84,6 +78,16 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
     threshold: 0,
     rootMargin: '200px',
   });
+
+  const hasNextPage = useRecoilComponentValueV2(
+    multipleRecordPickerHasNextPageSelector,
+    componentInstanceId,
+  );
+
+  const isLoadingMore = useRecoilComponentValueV2(
+    multipleRecordPickerIsLoadingMoreSelector,
+    componentInstanceId,
+  );
 
   if (!hasNextPage || isLoadingInitial) {
     return null;
