@@ -1,4 +1,4 @@
-export type FocusGlobalHotkeysConfig = {
+export type GlobalHotkeysConfig = {
   enableGlobalHotkeysWithModifiers: boolean;
   enableGlobalHotkeysConflictingWithKeyboard: boolean;
 };

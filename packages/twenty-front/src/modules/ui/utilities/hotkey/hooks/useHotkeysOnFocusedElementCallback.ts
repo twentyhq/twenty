@@ -5,7 +5,7 @@ import {
 } from 'react-hotkeys-hook/dist/types';
 import { useRecoilCallback } from 'recoil';
 import { logDebug } from '~/utils/logDebug';
-import { currentFocusIdSelector } from '../../focus/states/currentFocusIdentifierSelector';
+import { currentFocusIdSelector } from '../../focus/states/currentFocusIdSelector';
 import { DEBUG_HOTKEY_SCOPE } from '../constants/DebugHotkeyScope';
 
 export const useHotkeysOnFocusedElementCallback = (

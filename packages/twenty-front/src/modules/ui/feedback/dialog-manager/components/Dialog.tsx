@@ -4,6 +4,7 @@ import { Key } from 'ts-key-enum';
 
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
+import { DIALOG_LISTENER_ID } from '@/ui/feedback/dialog-manager/constants/DialogListenerId';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRef } from 'react';
@@ -127,7 +128,7 @@ export const Dialog = ({
     callback: () => {
       onClose?.();
     },
-    listenerId: 'DIALOG_LISTENER_ID',
+    listenerId: DIALOG_LISTENER_ID,
   });
 
   return (

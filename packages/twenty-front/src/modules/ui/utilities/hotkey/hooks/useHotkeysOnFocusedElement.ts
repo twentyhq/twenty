@@ -7,15 +7,23 @@ import { isDefined } from 'twenty-shared/utils';
 
 type UseHotkeysOptionsWithoutBuggyOptions = Omit<Options, 'enabled'>;
 
-export const useHotkeysOnFocusedElement = (
-  keys: Keys,
-  callback: HotkeyCallback,
-  focusId: string,
+export const useHotkeysOnFocusedElement = ({
+  keys,
+  callback,
+  focusId,
   // TODO: Remove this once we've migrated hotkey scopes to the new api
-  scope: string,
-  dependencies?: unknown[],
-  options?: UseHotkeysOptionsWithoutBuggyOptions,
-) => {
+  scope,
+  dependencies,
+  options,
+}: {
+  keys: Keys;
+  callback: HotkeyCallback;
+  focusId: string;
+  // TODO: Remove this once we've migrated hotkey scopes to the new api
+  scope: string;
+  dependencies?: unknown[];
+  options?: UseHotkeysOptionsWithoutBuggyOptions;
+}) => {
   const [pendingHotkey, setPendingHotkey] = useRecoilState(pendingHotkeyState);
 
   const callScopedHotkeyCallback =

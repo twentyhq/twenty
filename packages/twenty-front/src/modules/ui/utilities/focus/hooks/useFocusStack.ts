@@ -1,10 +1,10 @@
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { FocusGlobalHotkeysConfig } from '@/ui/utilities/focus/types/FocusGlobalHotkeysConfig';
 import { FocusStackItem } from '@/ui/utilities/focus/types/FocusStackItem';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { previousHotkeyScopeFamilyState } from '@/ui/utilities/hotkey/states/internal/previousHotkeyScopeFamilyState';
+import { GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilCallback } from 'recoil';
 
@@ -14,7 +14,7 @@ export const useFocusStack = () => {
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  const pushFocusIdentifier = useRecoilCallback(
+  const pushFocusItem = useRecoilCallback(
     ({ set }) =>
       ({
         focusId,
@@ -28,7 +28,7 @@ export const useFocusStack = () => {
           type: FocusComponentType;
           instanceId: string;
         };
-        globalHotkeysConfig?: Partial<FocusGlobalHotkeysConfig>;
+        globalHotkeysConfig?: Partial<GlobalHotkeysConfig>;
         // TODO: Remove this once we've migrated hotkey scopes to the new api
         hotkeyScope: HotkeyScope;
         memoizeKey: string;
@@ -48,10 +48,10 @@ export const useFocusStack = () => {
           },
         };
 
-        set(focusStackState, (previousFocusStack) => [
-          ...previousFocusStack.filter(
-            (existingFocusStackItem) =>
-              existingFocusStackItem.focusId !== focusId,
+        set(focusStackState, (currentFocusStack) => [
+          ...currentFocusStack.filter(
+            (currentFocusStackItem) =>
+              currentFocusStackItem.focusId !== focusId,
           ),
           focusStackItem,
         ]);
@@ -93,7 +93,7 @@ export const useFocusStack = () => {
     [],
   );
 
-  const resetFocusStackToFocusIdentifier = useRecoilCallback(
+  const resetFocusStackToFocusItem = useRecoilCallback(
     ({ set }) =>
       ({
         focusStackItem,
@@ -114,9 +114,9 @@ export const useFocusStack = () => {
   );
 
   return {
-    pushFocusIdentifier,
+    pushFocusItem,
     removeFocusId,
     resetFocusStack,
-    resetFocusStackToFocusIdentifier,
+    resetFocusStackToFocusItem,
   };
 };

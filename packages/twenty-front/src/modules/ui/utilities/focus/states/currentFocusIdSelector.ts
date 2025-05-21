@@ -5,6 +5,7 @@ export const currentFocusIdSelector = selector<string | undefined>({
   key: 'currentFocusIdSelector',
   get: ({ get }) => {
     const focusStack = get(focusStackState);
+
     return focusStack.at(-1)?.focusId;
   },
 });

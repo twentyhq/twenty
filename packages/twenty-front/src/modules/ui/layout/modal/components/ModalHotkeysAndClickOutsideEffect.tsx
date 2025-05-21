@@ -19,27 +19,29 @@ export const ModalHotkeysAndClickOutsideEffect = ({
   onClose,
   modalId,
 }: ModalHotkeysAndClickOutsideEffectProps) => {
-  useHotkeysOnFocusedElement(
-    [Key.Enter],
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Enter],
+    callback: () => {
       onEnter?.();
     },
-    modalId,
-    ModalHotkeyScope.ModalFocus,
-    [onEnter],
-  );
+    focusId: modalId,
+    // TODO: Remove this once we've migrated hotkey scopes to the new api
+    scope: ModalHotkeyScope.ModalFocus,
+    dependencies: [onEnter],
+  });
 
-  useHotkeysOnFocusedElement(
-    [Key.Escape],
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: () => {
       if (isClosable && onClose !== undefined) {
         onClose();
       }
     },
-    modalId,
-    ModalHotkeyScope.ModalFocus,
-    [isClosable, onClose],
-  );
+    focusId: modalId,
+    // TODO: Remove this once we've migrated hotkey scopes to the new api
+    scope: ModalHotkeyScope.ModalFocus,
+    dependencies: [isClosable, onClose],
+  });
 
   useListenClickOutside({
     refs: [modalRef],

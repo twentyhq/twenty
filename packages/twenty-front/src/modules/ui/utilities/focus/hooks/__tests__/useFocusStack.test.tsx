@@ -1,5 +1,5 @@
 import { useFocusStack } from '@/ui/utilities/focus/hooks/useFocusStack';
-import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdentifierSelector';
+import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { renderHook } from '@testing-library/react';
@@ -10,20 +10,20 @@ const renderHooks = () => {
   const { result } = renderHook(
     () => {
       const {
-        pushFocusIdentifier,
+        pushFocusItem,
         removeFocusId,
         resetFocusStack,
-        resetFocusStackToFocusIdentifier,
+        resetFocusStackToFocusItem,
       } = useFocusStack();
 
       const focusStack = useRecoilValue(focusStackState);
       const currentFocusId = useRecoilValue(currentFocusIdSelector);
 
       return {
-        pushFocusIdentifier,
+        pushFocusItem,
         removeFocusId,
         resetFocusStack,
-        resetFocusStackToFocusIdentifier,
+        resetFocusStackToFocusItem,
         focusStack,
         currentFocusId,
       };
@@ -42,7 +42,7 @@ describe('useFocusStack', () => {
 
     expect(result.current.focusStack).toEqual([]);
 
-    const focusIdentifier = {
+    const focusItem = {
       focusId: 'test-focus-id',
       componentInstance: {
         componentType: FocusComponentType.MODAL,
@@ -55,21 +55,21 @@ describe('useFocusStack', () => {
     };
 
     await act(async () => {
-      result.current.pushFocusIdentifier({
-        focusId: focusIdentifier.focusId,
+      result.current.pushFocusItem({
+        focusId: focusItem.focusId,
         component: {
-          type: focusIdentifier.componentInstance.componentType,
-          instanceId: focusIdentifier.componentInstance.componentInstanceId,
+          type: focusItem.componentInstance.componentType,
+          instanceId: focusItem.componentInstance.componentInstanceId,
         },
         hotkeyScope: { scope: 'test-scope' },
         memoizeKey: 'global',
       });
     });
 
-    expect(result.current.focusStack).toEqual([focusIdentifier]);
-    expect(result.current.currentFocusId).toEqual(focusIdentifier.focusId);
+    expect(result.current.focusStack).toEqual([focusItem]);
+    expect(result.current.currentFocusId).toEqual(focusItem.focusId);
 
-    const anotherFocusIdentifier = {
+    const anotherFocusItem = {
       focusId: 'another-focus-id',
       componentInstance: {
         componentType: FocusComponentType.MODAL,
@@ -82,12 +82,12 @@ describe('useFocusStack', () => {
     };
 
     await act(async () => {
-      result.current.pushFocusIdentifier({
-        focusId: anotherFocusIdentifier.focusId,
+      result.current.pushFocusItem({
+        focusId: anotherFocusItem.focusId,
         component: {
-          type: anotherFocusIdentifier.componentInstance.componentType,
+          type: anotherFocusItem.componentInstance.componentType,
           instanceId:
-            anotherFocusIdentifier.componentInstance.componentInstanceId,
+            anotherFocusItem.componentInstance.componentInstanceId,
         },
         hotkeyScope: { scope: 'test-scope' },
         memoizeKey: 'global',
@@ -95,18 +95,18 @@ describe('useFocusStack', () => {
     });
 
     expect(result.current.focusStack).toEqual([
-      focusIdentifier,
-      anotherFocusIdentifier,
+      focusItem,
+      anotherFocusItem,
     ]);
     expect(result.current.currentFocusId).toEqual(
-      anotherFocusIdentifier.focusId,
+      anotherFocusItem.focusId,
     );
   });
 
   it('should remove focus id from the stack', async () => {
     const { result } = renderHooks();
 
-    const firstFocusIdentifier = {
+    const firstFocusItem = {
       focusId: 'first-focus-id',
       componentInstance: {
         componentType: FocusComponentType.MODAL,
@@ -118,7 +118,7 @@ describe('useFocusStack', () => {
       },
     };
 
-    const secondFocusIdentifier = {
+    const secondFocusItem = {
       focusId: 'second-focus-id',
       componentInstance: {
         componentType: FocusComponentType.MODAL,
@@ -131,12 +131,12 @@ describe('useFocusStack', () => {
     };
 
     await act(async () => {
-      result.current.pushFocusIdentifier({
-        focusId: firstFocusIdentifier.focusId,
+      result.current.pushFocusItem({
+        focusId: firstFocusItem.focusId,
         component: {
-          type: firstFocusIdentifier.componentInstance.componentType,
+          type: firstFocusItem.componentInstance.componentType,
           instanceId:
-            firstFocusIdentifier.componentInstance.componentInstanceId,
+            firstFocusItem.componentInstance.componentInstanceId,
         },
         hotkeyScope: { scope: 'test-scope' },
         memoizeKey: 'global',
@@ -144,12 +144,12 @@ describe('useFocusStack', () => {
     });
 
     await act(async () => {
-      result.current.pushFocusIdentifier({
-        focusId: secondFocusIdentifier.focusId,
+      result.current.pushFocusItem({
+        focusId: secondFocusItem.focusId,
         component: {
-          type: secondFocusIdentifier.componentInstance.componentType,
+          type: secondFocusItem.componentInstance.componentType,
           instanceId:
-            secondFocusIdentifier.componentInstance.componentInstanceId,
+            secondFocusItem.componentInstance.componentInstanceId,
         },
         hotkeyScope: { scope: 'test-scope' },
         memoizeKey: 'global',
@@ -157,30 +157,30 @@ describe('useFocusStack', () => {
     });
 
     expect(result.current.focusStack).toEqual([
-      firstFocusIdentifier,
-      secondFocusIdentifier,
+      firstFocusItem,
+      secondFocusItem,
     ]);
     expect(result.current.currentFocusId).toEqual(
-      secondFocusIdentifier.focusId,
+      secondFocusItem.focusId,
     );
 
     await act(async () => {
       result.current.removeFocusId({
-        focusId: firstFocusIdentifier.focusId,
+        focusId: firstFocusItem.focusId,
         memoizeKey: 'global',
       });
     });
 
-    expect(result.current.focusStack).toEqual([secondFocusIdentifier]);
+    expect(result.current.focusStack).toEqual([secondFocusItem]);
     expect(result.current.currentFocusId).toEqual(
-      secondFocusIdentifier.focusId,
+      secondFocusItem.focusId,
     );
   });
 
   it('should reset the focus stack', async () => {
     const { result } = renderHooks();
 
-    const focusIdentifier = {
+    const focusItem = {
       focusId: 'test-focus-id',
       componentInstance: {
         componentType: FocusComponentType.MODAL,
@@ -193,19 +193,19 @@ describe('useFocusStack', () => {
     };
 
     await act(async () => {
-      result.current.pushFocusIdentifier({
-        focusId: focusIdentifier.focusId,
+      result.current.pushFocusItem({
+        focusId: focusItem.focusId,
         component: {
-          type: focusIdentifier.componentInstance.componentType,
-          instanceId: focusIdentifier.componentInstance.componentInstanceId,
+          type: focusItem.componentInstance.componentType,
+          instanceId: focusItem.componentInstance.componentInstanceId,
         },
         hotkeyScope: { scope: 'test-scope' },
         memoizeKey: 'global',
       });
     });
 
-    expect(result.current.focusStack).toEqual([focusIdentifier]);
-    expect(result.current.currentFocusId).toEqual(focusIdentifier.focusId);
+    expect(result.current.focusStack).toEqual([focusItem]);
+    expect(result.current.currentFocusId).toEqual(focusItem.focusId);
     await act(async () => {
       result.current.resetFocusStack();
     });
@@ -217,7 +217,7 @@ describe('useFocusStack', () => {
   it('should reset the focus stack to a specific focus identifier', async () => {
     const { result } = renderHooks();
 
-    const firstFocusIdentifier = {
+    const firstFocusItem = {
       focusId: 'first-focus-id',
       componentInstance: {
         componentType: FocusComponentType.MODAL,
@@ -229,7 +229,7 @@ describe('useFocusStack', () => {
       },
     };
 
-    const secondFocusIdentifier = {
+    const secondFocusItem = {
       focusId: 'second-focus-id',
       componentInstance: {
         componentType: FocusComponentType.MODAL,
@@ -242,12 +242,12 @@ describe('useFocusStack', () => {
     };
 
     await act(async () => {
-      result.current.pushFocusIdentifier({
-        focusId: firstFocusIdentifier.focusId,
+      result.current.pushFocusItem({
+        focusId: firstFocusItem.focusId,
         component: {
-          type: firstFocusIdentifier.componentInstance.componentType,
+          type: firstFocusItem.componentInstance.componentType,
           instanceId:
-            firstFocusIdentifier.componentInstance.componentInstanceId,
+            firstFocusItem.componentInstance.componentInstanceId,
         },
         hotkeyScope: { scope: 'test-scope' },
         memoizeKey: 'global',
@@ -255,12 +255,12 @@ describe('useFocusStack', () => {
     });
 
     await act(async () => {
-      result.current.pushFocusIdentifier({
-        focusId: secondFocusIdentifier.focusId,
+      result.current.pushFocusItem({
+        focusId: secondFocusItem.focusId,
         component: {
-          type: secondFocusIdentifier.componentInstance.componentType,
+          type: secondFocusItem.componentInstance.componentType,
           instanceId:
-            secondFocusIdentifier.componentInstance.componentInstanceId,
+            secondFocusItem.componentInstance.componentInstanceId,
         },
         hotkeyScope: { scope: 'test-scope' },
         memoizeKey: 'global',
@@ -268,14 +268,14 @@ describe('useFocusStack', () => {
     });
 
     expect(result.current.focusStack).toEqual([
-      firstFocusIdentifier,
-      secondFocusIdentifier,
+      firstFocusItem,
+      secondFocusItem,
     ]);
     expect(result.current.currentFocusId).toEqual(
-      secondFocusIdentifier.focusId,
+      secondFocusItem.focusId,
     );
 
-    const newFocusIdentifier = {
+    const newFocusItem = {
       focusId: 'new-focus-id',
       componentInstance: {
         componentType: FocusComponentType.MODAL,
@@ -288,22 +288,22 @@ describe('useFocusStack', () => {
     };
 
     await act(async () => {
-      result.current.resetFocusStackToFocusIdentifier({
+      result.current.resetFocusStackToFocusItem({
         focusStackItem: {
-          focusId: newFocusIdentifier.focusId,
+          focusId: newFocusItem.focusId,
           componentInstance: {
-            componentType: newFocusIdentifier.componentInstance.componentType,
+            componentType: newFocusItem.componentInstance.componentType,
             componentInstanceId:
-              newFocusIdentifier.componentInstance.componentInstanceId,
+              newFocusItem.componentInstance.componentInstanceId,
           },
-          globalHotkeysConfig: newFocusIdentifier.globalHotkeysConfig,
+          globalHotkeysConfig: newFocusItem.globalHotkeysConfig,
         },
         hotkeyScope: { scope: 'test-scope' },
         memoizeKey: 'global',
       });
     });
 
-    expect(result.current.focusStack).toEqual([newFocusIdentifier]);
-    expect(result.current.currentFocusId).toEqual(newFocusIdentifier.focusId);
+    expect(result.current.focusStack).toEqual([newFocusItem]);
+    expect(result.current.currentFocusId).toEqual(newFocusItem.focusId);
   });
 });
