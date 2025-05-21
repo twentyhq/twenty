@@ -8,47 +8,71 @@ import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import React, { Suspense } from 'react';
 import {
-    createBrowserRouter,
-    createRoutesFromElements,
-    Route,
+  createBrowserRouter,
+  createRoutesFromElements,
+  Route,
 } from 'react-router-dom';
 
 // Use React.lazy for code splitting with named exports
-const SignInUp = React.lazy(() => 
-  import('~/pages/auth/SignInUp').then(module => ({ default: module.SignInUp }))
+const SignInUp = React.lazy(() =>
+  import('~/pages/auth/SignInUp').then((module) => ({
+    default: module.SignInUp,
+  })),
 );
-const PasswordReset = React.lazy(() => 
-  import('~/pages/auth/PasswordReset').then(module => ({ default: module.PasswordReset }))
+const PasswordReset = React.lazy(() =>
+  import('~/pages/auth/PasswordReset').then((module) => ({
+    default: module.PasswordReset,
+  })),
 );
-const NotFound = React.lazy(() => 
-  import('~/pages/not-found/NotFound').then(module => ({ default: module.NotFound }))
+const NotFound = React.lazy(() =>
+  import('~/pages/not-found/NotFound').then((module) => ({
+    default: module.NotFound,
+  })),
 );
-const RecordIndexPage = React.lazy(() => 
-  import('~/pages/object-record/RecordIndexPage').then(module => ({ default: module.RecordIndexPage }))
+const RecordIndexPage = React.lazy(() =>
+  import('~/pages/object-record/RecordIndexPage').then((module) => ({
+    default: module.RecordIndexPage,
+  })),
 );
-const RecordShowPage = React.lazy(() => 
-  import('~/pages/object-record/RecordShowPage').then(module => ({ default: module.RecordShowPage }))
+const RecordShowPage = React.lazy(() =>
+  import('~/pages/object-record/RecordShowPage').then((module) => ({
+    default: module.RecordShowPage,
+  })),
 );
-const ChooseYourPlan = React.lazy(() => 
-  import('~/pages/onboarding/ChooseYourPlan').then(module => ({ default: module.ChooseYourPlan }))
+const ChooseYourPlan = React.lazy(() =>
+  import('~/pages/onboarding/ChooseYourPlan').then((module) => ({
+    default: module.ChooseYourPlan,
+  })),
 );
-const CreateProfile = React.lazy(() => 
-  import('~/pages/onboarding/CreateProfile').then(module => ({ default: module.CreateProfile }))
+const CreateProfile = React.lazy(() =>
+  import('~/pages/onboarding/CreateProfile').then((module) => ({
+    default: module.CreateProfile,
+  })),
 );
-const CreateWorkspace = React.lazy(() => 
-  import('~/pages/onboarding/CreateWorkspace').then(module => ({ default: module.CreateWorkspace }))
+const CreateWorkspace = React.lazy(() =>
+  import('~/pages/onboarding/CreateWorkspace').then((module) => ({
+    default: module.CreateWorkspace,
+  })),
 );
-const InviteTeam = React.lazy(() => 
-  import('~/pages/onboarding/InviteTeam').then(module => ({ default: module.InviteTeam }))
+const InviteTeam = React.lazy(() =>
+  import('~/pages/onboarding/InviteTeam').then((module) => ({
+    default: module.InviteTeam,
+  })),
 );
-const PaymentSuccess = React.lazy(() => 
-  import('~/pages/onboarding/PaymentSuccess').then(module => ({ default: module.PaymentSuccess }))
+const PaymentSuccess = React.lazy(() =>
+  import('~/pages/onboarding/PaymentSuccess').then((module) => ({
+    default: module.PaymentSuccess,
+  })),
 );
-const SyncEmails = React.lazy(() => 
-  import('~/pages/onboarding/SyncEmails').then(module => ({ default: module.SyncEmails }))
+const SyncEmails = React.lazy(() =>
+  import('~/pages/onboarding/SyncEmails').then((module) => ({
+    default: module.SyncEmails,
+  })),
 );
-const Authorize = React.lazy(() => 
-  import('~/pages/auth/Authorize').then(module => ({ default: module.Authorize }))
+const Authorize = React.lazy(() =>
+  import('~/pages/auth/Authorize').then((module) => ({
+    default: module.Authorize,
+  })),
 );
 
 // Loading component for suspense fallback

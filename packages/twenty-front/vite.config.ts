@@ -166,6 +166,10 @@ export default defineConfig(({ command, mode }) => {
               return 'scalar';
             }
 
+            if (id.includes('twenty-ui')) {
+              return 'twenty-ui';
+            }
+
             if (id.includes('react-dom')) {
               return 'react-dom';
             }
