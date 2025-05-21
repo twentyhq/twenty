@@ -6,7 +6,7 @@ import wyw from '@wyw-in-js/vite';
 import fs from 'fs';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
-import { defineConfig, loadEnv, searchForWorkspaceRoot } from 'vite';
+import { defineConfig, loadEnv, PluginOption, searchForWorkspaceRoot } from 'vite';
 import checker from 'vite-plugin-checker';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
@@ -151,7 +151,7 @@ export default defineConfig(({ command, mode }) => {
         gzipSize: true,
         brotliSize: true,
         filename: 'dist/stats.html'
-      }),
+      }) as PluginOption // https://github.com/btd/rollup-plugin-visualizer/issues/162#issuecomment-1538265997,
     ],
 
     optimizeDeps: {
@@ -169,85 +169,57 @@ export default defineConfig(({ command, mode }) => {
       rollupOptions: {
         output: {
           manualChunks: (id) => {
-            if (id.includes('@scalar')) {
-              return 'scalar';
+            // Monaco TypeScript worker - separate this specifically
+            if (id.includes('monaco-editor/esm/vs/language/typescript/ts.worker')) {
+              return 'monaco-typescript-worker';
             }
 
-            if (id.includes('twenty-ui')) {
-              return 'twenty-ui';
+            // Monaco language specific chunks
+            if (id.includes('monaco-editor/esm/vs/language/typescript')) {
+              return 'monaco-typescript';
+            }
+            
+            if (id.includes('monaco-editor/esm/vs/language/json')) {
+              return 'monaco-json';
             }
 
-            if (id.includes('react-dom')) {
-              return 'react-dom';
+            // Monaco core editor
+            if (id.includes('monaco-editor') && !id.includes('/language/')) {
+              return 'monaco-editor-core';
             }
 
-            if (id.includes('react-router')) {
-              return 'react-router';
-            }
+            // Other large libraries in separate chunks
+            if (id.includes('@scalar')) return 'scalar';
+            if (id.includes('twenty-ui')) return 'twenty-ui';
+            if (id.includes('react-dom')) return 'react-dom';
+            if (id.includes('react-router')) return 'react-router';
+            if (id.includes('@apollo')) return 'apollo';
+            if (id.includes('@lingui')) return 'lingui';
+            if (id.includes('@nivo')) return 'nivo';
+            if (id.includes('recoil')) return 'recoil';
+            if (id.includes('@tiptap')) return 'tiptap';
+            if (id.includes('@blocknote')) return 'blocknote';
+            if (id.includes('@react-pdf')) return 'react-pdf';
 
-            if (id.includes('@apollo')) {
-              return 'apollo';
-            }
-
-            if (id.includes('@lingui')) {
-              return 'lingui';
-            }
-
-            if (id.includes('@nivo')) {
-              return 'nivo';
-            }
-
-            if (id.includes('recoil')) {
-              return 'recoil';
-            }
-
-            if (id.includes('@tiptap')) {
-              return 'tiptap';
-            }
-
-            if (id.includes('@blocknote')) {
-              return 'blocknote';
-            }
-
-            if (id.includes('@react-pdf')) {
-              return 'react-pdf';
-            }
-
-            if (id.includes('monaco-editor')) {
-              return 'monaco-editor';
-            }
-
-
-            // Split application code by module
-            if (id.includes('/modules/settings/')) {
-              return 'settings';
-            }
-
-            /*
-            if (id.includes('/modules/auth/')) {
-              return 'auth';
-            }
-
-            if (id.includes('/modules/object-record/')) {
-              return 'object-record';
-            }
-
-            if (id.includes('/modules/ui/')) {
-              return 'ui-components';
-            }
-
-            if (id.includes('/pages/onboarding/')) {
-              return 'onboarding';
-            }
-            */
-
+            // Application modules
+            if (id.includes('/modules/settings/')) return 'settings';
+            
             return null;
           },
         },
       },
       modulePreload: {
         resolveDependencies: (filename, deps, { hostId }) => {
-          return deps.filter(dep => !dep.includes('scalar'));
+            // Don't preload heavy chunks that aren't needed immediately
+            return deps.filter(dep => 
+              !dep.includes('scalar') &&
+              !dep.includes('tiptap') &&
+              !dep.includes('react-pdf') &&
+              !dep.includes('blocknote') &&
+              !dep.includes('monaco') &&
+              !dep.includes('nivo') &&
+              !dep.includes('settings')
+            );
         },
       },
     },
