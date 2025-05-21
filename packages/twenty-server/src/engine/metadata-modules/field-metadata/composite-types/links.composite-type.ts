@@ -37,3 +37,19 @@ export type LinksMetadata = {
   primaryLinkUrl: string;
   secondaryLinks: LinkMetadata[] | null;
 };
+
+export type LinkMetadataNullable = {
+  label: string | null;
+  url: string | null;
+};
+
+export type LinksMetadataNullable = {
+  primaryLinkLabel: string | null;
+  primaryLinkUrl: string | null;
+  secondaryLinks:
+    | {
+        label: string | null;
+        url: string | null;
+      }[]
+    | null;
+};

@@ -7,8 +7,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { lowercaseDomain } from 'src/engine/api/graphql/workspace-query-runner/utils/query-runner-links.util';
+import { replaceEmptyPrimaryLink } from 'src/engine/core-modules/record-transformer/utils/replace-empty-primary-link.util';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
-import { LinkMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
+import { LinkMetadataNullable } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import {
   RichTextV2Metadata,
   richTextV2ValueSchema,
@@ -130,37 +131,47 @@ export class RecordInputTransformerService {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private transformLinksValue(value: any): any {
     if (!value) {
       return value;
     }
 
-    const newPrimaryLinkUrl = lowercaseDomain(value?.primaryLinkUrl);
+    const primaryLinkUrlRaw = value.primaryLinkUrl as string | null | undefined;
+    const primaryLinkLabelRaw = value.primaryLinkLabel as
+      | string
+      | null
+      | undefined;
+    const secondaryLinksRaw = value.secondaryLinks as string | null | undefined;
 
-    let secondaryLinks = value?.secondaryLinks;
+    let secondaryLinksArray: LinkMetadataNullable[] | null = null;
 
-    if (secondaryLinks) {
+    if (isDefined(secondaryLinksRaw)) {
       try {
-        const secondaryLinksArray = JSON.parse(secondaryLinks);
-
-        secondaryLinks = JSON.stringify(
-          secondaryLinksArray.map((link: LinkMetadata) => {
-            return {
-              ...link,
-              url: lowercaseDomain(link.url),
-            };
-          }),
-        );
+        secondaryLinksArray = JSON.parse(secondaryLinksRaw);
       } catch {
-        /* empty */
+        secondaryLinksArray = null;
       }
     }
 
+    const { primaryLinkLabel, primaryLinkUrl, secondaryLinks } =
+      replaceEmptyPrimaryLink({
+        primaryLinkUrl: primaryLinkUrlRaw,
+        primaryLinkLabel: primaryLinkLabelRaw,
+        secondaryLinks: secondaryLinksArray,
+      });
+
     return {
       ...value,
-      primaryLinkUrl: newPrimaryLinkUrl,
-      secondaryLinks,
+      primaryLinkUrl: isDefined(primaryLinkUrl)
+        ? lowercaseDomain(primaryLinkUrl)
+        : primaryLinkUrl,
+      primaryLinkLabel,
+      secondaryLinks: JSON.stringify(
+        secondaryLinks?.map((link) => ({
+          ...link,
+          url: isDefined(link.url) ? lowercaseDomain(link.url) : link.url,
+        })),
+      ),
     };
   }
 
