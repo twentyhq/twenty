@@ -28,10 +28,10 @@ export class ChatbotFlowResolver {
     );
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => ChatbotFlow)
   async updateChatbotFlow(
     @Args('updateChatbotInput') updateChatbotInput: UpdateChatbotFlowInput,
-  ): Promise<boolean> {
+  ): Promise<ChatbotFlow | null> {
     return await this.chatbotFlowService.updateFlow(updateChatbotInput);
   }
 

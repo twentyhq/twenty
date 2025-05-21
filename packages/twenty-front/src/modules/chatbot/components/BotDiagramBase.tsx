@@ -8,7 +8,6 @@ import { useGetChatbotFlowById } from '@/chatbot/hooks/useGetChatbotFlowById';
 import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
 import { useValidateChatbotFlow } from '@/chatbot/hooks/useValidateChatbotFlow';
 import { chatbotFlowIdState } from '@/chatbot/state/chatbotFlowIdState';
-import { chatbotFlowState } from '@/chatbot/state/chatbotFlowState';
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
 import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
 import { useTheme } from '@emotion/react';
@@ -18,6 +17,7 @@ import {
   applyEdgeChanges,
   applyNodeChanges,
   Background,
+  Connection,
   Edge,
   Node,
   NodeTypes,
@@ -27,7 +27,7 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, TagColor } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/input';
@@ -79,12 +79,22 @@ const StyledResetReactflowStyles = styled.div`
 
 const StyledStatusTagContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
   left: 0;
-  padding: ${({ theme }) => theme.spacing(2)};
-  position: absolute;
   top: 0;
+  position: absolute;
+  padding: ${({ theme }) => theme.spacing(4)};
+`;
+
+const StyledButtonContainer = styled.div`
+  display: flex;
+  right: 0;
+  top: 0;
+  position: absolute;
+  padding: ${({ theme }) => theme.spacing(4)};
+`;
+
+const StyledButton = styled(Button)`
+  height: 24px;
 `;
 
 export const BotDiagramBase = ({
@@ -93,8 +103,8 @@ export const BotDiagramBase = ({
   tagText,
 }: BotDiagramBaseProps) => {
   const theme = useTheme();
-  const [nodes, setNodes] = useState<Node[]>([]);
-  const [edges, setEdges] = useState<Edge[]>([]);
+  const [nodes, setNodes] = useState<Node[]>(initialNodes);
+  const [edges, setEdges] = useState<Edge[]>(initialEdges);
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance<
     Node,
     Edge
@@ -109,33 +119,26 @@ export const BotDiagramBase = ({
     chatbotFlowId ?? '',
   );
 
-  const setChatbotFlow = useSetRecoilState(chatbotFlowState);
-
   // eslint-disable-next-line @nx/workspace-no-state-useref
   const hasValidatedRef = useRef(false);
 
-  type FlowType = () => [Node[], Edge[]];
+  type FlowType = () => [Node[], Edge[]] | undefined;
 
   const defineFlow: FlowType = () => {
-    if (
-      chatbotFlowData &&
-      Array.isArray(chatbotFlowData.nodes) &&
-      chatbotFlowData.nodes.length > 0 &&
-      Array.isArray(chatbotFlowData.edges) &&
-      chatbotFlowData.edges.length > 0
-    ) {
-      setChatbotFlow(chatbotFlowData);
-      return [chatbotFlowData.nodes, chatbotFlowData.edges];
+    if (!chatbotFlowData) {
+      return undefined;
     }
 
-    setChatbotFlow(chatbotFlowData);
-    return [initialNodes, initialEdges];
+    return [chatbotFlowData.nodes, chatbotFlowData.edges];
   };
 
   useEffect(() => {
-    const [resNode, resEdges] = defineFlow();
-    setNodes(resNode);
-    setEdges(resEdges);
+    const [resNode, resEdges] = defineFlow() ?? [];
+
+    if (resNode && resEdges) {
+      setNodes(resNode);
+      setEdges(resEdges);
+    }
   }, [chatbotFlowData]);
 
   useEffect(() => {
@@ -174,8 +177,34 @@ export const BotDiagramBase = ({
   );
 
   const onConnect: OnConnect = useCallback(
-    (connection) => setEdges((eds) => addEdge(connection, eds)),
-    [setEdges],
+    (connection) => {
+      const targetAlreadyConnected = edges.some(
+        (edge) => edge.target === connection.target,
+      );
+
+      if (!targetAlreadyConnected) {
+        setEdges((eds) => addEdge(connection, eds));
+      }
+    },
+    [edges, setEdges],
+  );
+
+  const isValidConnection = useCallback(
+    (connection: Edge | Connection) => {
+      const { source, sourceHandle, target, targetHandle } = connection;
+      if (!source || !target) return false;
+
+      const sameSourceHandleAlreadyUsed = edges.some(
+        (edge) => edge.source === source && edge.sourceHandle === sourceHandle,
+      );
+
+      const sameTargetHandleAlreadyUsed = edges.some(
+        (edge) => edge.target === target && edge.targetHandle === targetHandle,
+      );
+
+      return !sameSourceHandleAlreadyUsed && !sameTargetHandleAlreadyUsed;
+    },
+    [edges],
   );
 
   const reactflow = useReactFlow();
@@ -224,16 +253,18 @@ export const BotDiagramBase = ({
         onConnect={onConnect}
         onInit={setRfInstance}
         fitViewOptions={{ padding: 2 }}
+        isValidConnection={isValidConnection}
         fitView
-        // nodesDraggable={false}
       >
         <Background color={theme.border.color.medium} size={2} />
       </ReactFlow>
 
       <StyledStatusTagContainer data-testid={'tagContainerBotDiagram'}>
         <Tag color={tagColor} text={tagText} />
-        <Button accent="blue" title="Save" onClick={onSave} />
       </StyledStatusTagContainer>
+      <StyledButtonContainer>
+        <StyledButton accent="blue" title="Save" onClick={onSave} />
+      </StyledButtonContainer>
     </StyledResetReactflowStyles>
   );
 };

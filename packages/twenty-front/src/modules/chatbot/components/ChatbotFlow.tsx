@@ -31,14 +31,13 @@ export const ChatbotFlow = ({
 }: {
   targetableObject: TargetableObject;
 }) => {
-  const { chatbot, refetch } = useGetChatbot(targetableObject.id);
+  const { chatbot } = useGetChatbot(targetableObject.id);
 
   const setChatbotFlowId = useSetRecoilState(chatbotFlowIdState);
 
   useEffect(() => {
     setChatbotFlowId(targetableObject.id);
-    refetch();
-  }, [chatbot]);
+  }, [chatbot, setChatbotFlowId, targetableObject.id]);
 
   const status = chatbot?.statuses ?? 'DEACTIVATED';
 

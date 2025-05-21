@@ -8,7 +8,7 @@ import { chatbotFlowState } from '@/chatbot/state/chatbotFlowState';
 import { createNode } from '@/chatbot/utils/createNode';
 import { RightDrawerStepListContainer } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepContainer';
 import { RightDrawerWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepTitle';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemCommand } from 'twenty-ui/navigation';
 
@@ -16,7 +16,6 @@ export const CommandMenuChatbotFlowPage = () => {
   const { getIcon } = useIcons();
 
   const chatbotFlow = useRecoilValue(chatbotFlowState);
-  const setChatbotFlow = useSetRecoilState(chatbotFlowState);
 
   const { updateFlow } = useUpdateChatbotFlow();
 
@@ -32,14 +31,14 @@ export const CommandMenuChatbotFlowPage = () => {
       return;
     }
 
-    const { id, __typename, ...chatbotFlowWithoutId } = chatbotFlow;
+    const { id, __typename, workspace, ...chatbotFlowWithoutId } = chatbotFlow;
 
     const updatedChatbotFlow = {
       ...chatbotFlowWithoutId,
       nodes: [...chatbotFlow.nodes, newNode],
+      viewport: { x: 0, y: 0, zoom: 0 },
     };
 
-    setChatbotFlow(updatedChatbotFlow);
     updateFlow(updatedChatbotFlow);
   };
 

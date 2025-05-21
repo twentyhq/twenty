@@ -123,11 +123,12 @@ export const ChatbotFlowImageEventForm = ({
       node.id === selectedNode.id ? updatedNode : node,
     );
 
-    const { id, __typename, ...chatbotFlowWithoutId } = chatbotFlow;
+    const { id, __typename, workspace, ...chatbotFlowWithoutId } = chatbotFlow;
 
     const updatedChatbotFlow = {
       ...chatbotFlowWithoutId,
       nodes: updatedNodes,
+      viewport: { x: 0, y: 0, zoom: 0 },
     };
 
     setChatbotFlowSelectedNode(updatedNode);
@@ -157,11 +158,13 @@ export const ChatbotFlowImageEventForm = ({
         node.id === selectedNode.id ? updatedNode : node,
       );
 
-      const { id, __typename, ...chatbotFlowWithoutId } = chatbotFlow;
+      const { id, __typename, workspace, ...chatbotFlowWithoutId } =
+        chatbotFlow;
 
       const updatedChatbotFlow = {
         ...chatbotFlowWithoutId,
         nodes: updatedNodes,
+        viewport: { x: 0, y: 0, zoom: 0 },
       };
 
       setChatbotFlowSelectedNode(updatedNode);
@@ -186,11 +189,12 @@ export const ChatbotFlowImageEventForm = ({
       node.id === selectedNode.id ? updatedNode : node,
     );
 
-    const { id, __typename, ...chatbotFlowWithoutId } = chatbotFlow;
+    const { id, __typename, workspace, ...chatbotFlowWithoutId } = chatbotFlow;
 
     const updatedChatbotFlow = {
       ...chatbotFlowWithoutId,
       nodes: updatedNodes,
+      viewport: { x: 0, y: 0, zoom: 0 },
     };
 
     setChatbotFlowSelectedNode(updatedNode);

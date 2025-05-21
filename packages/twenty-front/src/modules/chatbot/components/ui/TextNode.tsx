@@ -29,6 +29,7 @@ const StyledTextContainer = styled.div`
   outline: none;
   padding: ${({ theme }) => theme.spacing(2)};
   white-space: pre-wrap;
+  word-break: break-all;
   width: 100%;
 `;
 
@@ -47,14 +48,19 @@ function TextNode({
   const { updateNodeData } = useReactFlow();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const connections = useNodeConnections({
+  const targetConnections = useNodeConnections({
     id,
     handleType: 'target',
   });
 
+  const sourceConnections = useNodeConnections({
+    id,
+    handleType: 'source',
+  });
+
   useEffect(() => {
-    if (connections.length > 0) {
-      const connection = connections[0];
+    if (targetConnections.length > 0) {
+      const connection = targetConnections[0];
       const sourceHandle = connection.sourceHandle || '';
       const nodeId = connection.source;
 
@@ -65,13 +71,25 @@ function TextNode({
       });
     }
 
-    if (data.nodeStart) {
-      updateNodeData(id, {
-        ...data,
-        outgoingNodeId: '2',
-      });
+    if (sourceConnections.length > 0) {
+      const connection = sourceConnections[0];
+      const sourceHandle = connection.sourceHandle;
+      const nodeId = connection.target;
+
+      if (data.nodeStart) {
+        updateNodeData(id, {
+          ...data,
+          outgoingNodeId: nodeId || '2',
+        });
+      } else {
+        updateNodeData(id, {
+          ...data,
+          outgoingEdgeId: sourceHandle,
+          outgoingNodeId: nodeId,
+        });
+      }
     }
-  }, [connections]);
+  }, [targetConnections, sourceConnections]);
 
   useEffect(() => {
     // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
@@ -99,13 +117,11 @@ function TextNode({
           {data.text ?? 'Insert text to be sent'}
         </StyledTextContainer>
       </StyledDiv>
-      {data.nodeStart && (
-        <Handle
-          type="source"
-          position={Position.Bottom}
-          isConnectable={isConnectable}
-        />
-      )}
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        isConnectable={isConnectable}
+      />
     </BaseNode>
   );
 }
