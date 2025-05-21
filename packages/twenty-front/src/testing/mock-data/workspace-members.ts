@@ -1,7 +1,12 @@
 import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
-export const mockWorkspaceMembers: WorkspaceMember[] = [
+export type MockWorkspaceMember = Omit<
+  WorkspaceMember,
+  'agentId' | 'userPhone'
+>;
+
+export const mockWorkspaceMembers: MockWorkspaceMember[] = [
   {
     id: '20202020-1553-45c6-a028-5a9064cce07f',
     name: {

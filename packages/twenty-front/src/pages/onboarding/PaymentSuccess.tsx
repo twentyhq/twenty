@@ -14,7 +14,7 @@ import { MainButton } from 'twenty-ui/input';
 import { RGBA } from 'twenty-ui/theme';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
 import { useSaveBillingPlan } from '~/pages/onboarding/hooks/useSaveBillingPlan';
-import { selectedPlanState } from '~/pages/onboarding/Plans';
+import { Plan, selectedPlanState } from '~/pages/onboarding/Plans';
 
 const StyledCheckContainer = styled.div`
   align-items: center;
@@ -41,9 +41,7 @@ export const PaymentSuccess = () => {
     theme.name === 'light' ? theme.grayScale.gray90 : theme.grayScale.gray10;
 
   const { enqueueSnackBar } = useSnackBar();
-  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
-    currentWorkspaceMemberState,
-  );
+  const [currentWorkspaceMember] = useRecoilState(currentWorkspaceMemberState);
   const { savePlan } = useSaveBillingPlan();
 
   // eslint-disable-next-line @nx/workspace-matching-state-variable
@@ -55,7 +53,7 @@ export const PaymentSuccess = () => {
         throw new Error('User is not logged in');
       }
 
-      const onboardingId = selectedPlanId.id;
+      const onboardingId = (selectedPlanId as Plan).id;
 
       await savePlan(onboardingId);
 

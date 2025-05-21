@@ -2,11 +2,13 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { Search } from '@/chat/call-center/components/Search';
 import { StartChat } from '@/chat/call-center/components/StartChat';
 import { TemplateMessage } from '@/chat/call-center/components/TemplateMessage';
+import { PANEL_SIDE_HEADER_MODAL_ID } from '@/chat/call-center/constants/PanelSideHeaderModalId';
 import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
 import { useGetWhatsappTemplates } from '@/chat/call-center/hooks/useGetWhatsappTemplates';
 import { useWhatsappTemplateMessage } from '@/chat/call-center/hooks/useWhatsappTemplateMessage';
 import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
 import { Modal } from '@/ui/layout/modal/components/Modal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext, useEffect, useState } from 'react';
@@ -68,6 +70,7 @@ const StyledModalContent = styled(Modal.Content)`
 export const PaneSideHeader = () => {
   const theme = useTheme();
   const { getIcon } = useIcons();
+  const { openModal } = useModal();
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
@@ -136,6 +139,8 @@ export const PaneSideHeader = () => {
   // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
   if (loading) return <></>;
 
+  openModal(PANEL_SIDE_HEADER_MODAL_ID);
+
   return (
     <>
       <StyledPaneHeaderContainer>
@@ -191,7 +196,7 @@ export const PaneSideHeader = () => {
       </StyledPaneHeaderContainer>
 
       {phoneNumber !== null && (
-        <StyledModal>
+        <StyledModal modalId={PANEL_SIDE_HEADER_MODAL_ID}>
           <StyledModalHeader>
             <StyledH1Title
               title={'Choose a template to send'}

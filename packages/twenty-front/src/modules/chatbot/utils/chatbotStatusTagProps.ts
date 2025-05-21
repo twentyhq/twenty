@@ -1,4 +1,4 @@
-import { TagColor } from 'twenty-ui';
+import { TagColor } from 'twenty-ui/components';
 
 type ChatbotStatus = 'DRAFT' | 'ACTIVE' | 'DEACTIVATED';
 

@@ -1,10 +1,12 @@
 import { Details } from '@/chat/call-center/components/Details';
 import { TransferChatOptionsDropdown } from '@/chat/call-center/components/TransferChatOptionsDropdown';
+import { PANEL_CHAT_HEADER_MODAL_ID } from '@/chat/call-center/constants/PanelChatHeaderModalId';
 import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
 import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
 import { TicketDataType } from '@/chat/types/TicketDataType';
 import { isWhatsappDocument } from '@/chat/utils/isWhatsappDocument';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
@@ -56,7 +58,8 @@ export const PaneChatHeader = () => {
     CallCenterContext,
   ) as CallCenterContextType;
   const [isDetailsOpen, setIsDetailsOpen] = useState<boolean>(false);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  const { toggleModal } = useModal();
 
   if (!selectedChat) return;
 
@@ -86,7 +89,7 @@ export const PaneChatHeader = () => {
         </StyledDiv>
         <StyledActionsContainer>
           <StyledIconButton
-            onClick={() => setIsModalOpen(!isModalOpen)}
+            onClick={() => toggleModal(PANEL_CHAT_HEADER_MODAL_ID)}
             variant="primary"
             accent="danger"
             size="medium"
@@ -115,8 +118,7 @@ export const PaneChatHeader = () => {
         </StyledActionsContainer>
       </StyledChatHeader>
       <ConfirmationModal
-        isOpen={isModalOpen}
-        setIsOpen={setIsModalOpen}
+        modalId={PANEL_CHAT_HEADER_MODAL_ID}
         title={'Close service'}
         subtitle={
           <>
