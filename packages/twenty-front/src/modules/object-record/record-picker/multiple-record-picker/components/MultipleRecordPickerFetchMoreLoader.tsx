@@ -4,7 +4,6 @@ import { multipleRecordPickerIsLoadingComponentState } from '@/object-record/rec
 import { multipleRecordPickerPaginationState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPaginationState';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { multipleRecordPickerPaginationSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPaginationSelector';
-import { multipleRecordPickerPickableMorphItemsLengthComponentSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPickableMorphItemsLengthComponentSelector';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
@@ -35,11 +34,6 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
 
   const isLoading = useRecoilComponentValueV2(
     multipleRecordPickerIsLoadingComponentState,
-    componentInstanceId,
-  );
-
-  const itemsLength = useRecoilComponentValueV2(
-    multipleRecordPickerPickableMorphItemsLengthComponentSelector,
     componentInstanceId,
   );
 
