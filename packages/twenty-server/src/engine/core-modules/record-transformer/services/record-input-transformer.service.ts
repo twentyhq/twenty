@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { lowercaseDomain } from 'src/engine/api/graphql/workspace-query-runner/utils/query-runner-links.util';
-import { replaceEmptyPrimaryLink } from 'src/engine/core-modules/record-transformer/utils/replace-empty-primary-link.util';
+import { removeEmptyLinks } from 'src/engine/core-modules/record-transformer/utils/remove-empty-links';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { LinkMetadataNullable } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import {
@@ -136,12 +136,9 @@ export class RecordInputTransformerService {
       return value;
     }
 
-    const primaryLinkUrlRaw = value.primaryLinkUrl as string | null | undefined;
-    const primaryLinkLabelRaw = value.primaryLinkLabel as
-      | string
-      | null
-      | undefined;
-    const secondaryLinksRaw = value.secondaryLinks as string | null | undefined;
+    const primaryLinkUrlRaw = value.primaryLinkUrl as string | null;
+    const primaryLinkLabelRaw = value.primaryLinkLabel as string | null;
+    const secondaryLinksRaw = value.secondaryLinks as string | null;
 
     let secondaryLinksArray: LinkMetadataNullable[] | null = null;
 
@@ -154,7 +151,7 @@ export class RecordInputTransformerService {
     }
 
     const { primaryLinkLabel, primaryLinkUrl, secondaryLinks } =
-      replaceEmptyPrimaryLink({
+      removeEmptyLinks({
         primaryLinkUrl: primaryLinkUrlRaw,
         primaryLinkLabel: primaryLinkLabelRaw,
         secondaryLinks: secondaryLinksArray,
