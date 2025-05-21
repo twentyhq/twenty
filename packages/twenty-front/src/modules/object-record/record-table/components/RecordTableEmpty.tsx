@@ -1,6 +1,12 @@
 import { StyledTable } from '@/object-record/record-table/components/RecordTableStyles';
 import { RecordTableEmptyState } from '@/object-record/record-table/empty-state/components/RecordTableEmptyState';
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
+import styled from '@emotion/styled';
+
+const StyledEmptyStateContainer = styled.div`
+  height: 100%;
+  overflow: hidden;
+`;
 
 export interface RecordTableEmptyProps {
   tableBodyRef: React.RefObject<HTMLTableElement>;
@@ -8,10 +14,10 @@ export interface RecordTableEmptyProps {
 }
 
 export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => (
-  <>
+  <StyledEmptyStateContainer>
     <StyledTable ref={tableBodyRef}>
       <RecordTableHeader />
     </StyledTable>
     <RecordTableEmptyState />
-  </>
+  </StyledEmptyStateContainer>
 );
