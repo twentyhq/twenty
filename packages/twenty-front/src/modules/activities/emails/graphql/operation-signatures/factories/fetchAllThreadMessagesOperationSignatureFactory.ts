@@ -15,7 +15,7 @@ export const fetchAllThreadMessagesOperationSignatureFactory: RecordGqlOperation
           receivedAt: 'AscNullsLast',
         },
       ],
-      limit: 30,
+      limit: 60,
     },
     fields: {
       id: true,

@@ -155,7 +155,7 @@ const mocks = [
         filter: { messageThreadId: { eq: '1' } },
         orderBy: [{ receivedAt: 'AscNullsLast' }],
         lastCursor: undefined,
-        limit: 10,
+        limit: 60,
       },
     },
     result: jest.fn(() => ({
