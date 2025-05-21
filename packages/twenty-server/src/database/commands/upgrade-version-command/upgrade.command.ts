@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { exec } from 'child_process';
@@ -39,7 +39,7 @@ const execPromise = promisify(exec);
 
 @Injectable()
 export class DatabaseMigrationService {
-  private logger = new console.Console(process.stdout, process.stderr);
+  private logger = new Logger(DatabaseMigrationService.name);
 
   constructor(
     @InjectRepository(Workspace, 'core')
