@@ -86,6 +86,8 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
 
     if (!isNonEmptyString(workspace.logo)) return;
 
+    this.logger.log('Processing workspace logo for workspace', workspace.id);
+
     const isFileFound = await this.checkIfFileIsFound(
       workspace.logo,
       workspace.id,
@@ -122,6 +124,7 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
 
       const attachmentIdsToSoftDeleteChunk = await Promise.all(
         attachmentsChunk.map(async (attachment) => {
+          this.logger.log('Processing attachment', attachment.id);
           const isFileFound = await this.checkIfFileIsFound(
             attachment.fullPath,
             workspaceId,
@@ -164,6 +167,8 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
     const workspaceMemberIdsToUpdate: string[] = [];
 
     for (const workspaceMember of workspaceMembers) {
+      this.logger.log('Processing workspaceMember', workspaceMember.id);
+
       const isFileFound = await this.checkIfFileIsFound(
         workspaceMember.avatarUrl,
         workspaceId,
@@ -201,6 +206,8 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
     const personIdsToUpdate: string[] = [];
 
     for (const person of people) {
+      this.logger.log('Processing person', person.id);
+
       const isFileFound = await this.checkIfFileIsFound(
         person.avatarUrl,
         workspaceId,
