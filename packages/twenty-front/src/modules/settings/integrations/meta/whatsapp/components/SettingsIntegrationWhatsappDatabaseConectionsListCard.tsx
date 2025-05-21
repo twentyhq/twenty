@@ -3,7 +3,7 @@
 /* eslint-disable unused-imports/no-unused-vars */
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { SettingsSelectStatusPill } from '@/settings/integrations/meta/components/SettingsSelectStatusPill';
 import { useFindAllWhatsappIntegrations } from '@/settings/integrations/meta/whatsapp/hooks/useFindAllWhatsappIntegrations';
@@ -12,6 +12,7 @@ import { SettingsIntegration } from '@/settings/integrations/types/SettingsInteg
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useEffect, useState } from 'react';
 // eslint-disable-next-line no-restricted-imports
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { IconPencil, IconPlus, IconPointFilled } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { Card, CardFooter } from 'twenty-ui/layout';
@@ -95,14 +96,14 @@ const StyledButton = styled.button`
   }
 `;
 
+export const CONFIRM_DISABLE_INBOX_MODAL_ID = 'confirm-disable-inbox-modal';
+
 export const SettingsIntegrationWhatsappDatabaseConectionsListCard = ({
   integration,
 }: SettingsIntegrationWhatsappDatabaseConectionsListCardProps) => {
-  // const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();
-  const { databaseKey = '' } = useParams();
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const { openModal } = useModal();
   const [changeType, setChangeType] = useState<ChangeType>();
   const [selectedIntegrationId, setSelectedIntegrationId] =
     useState<string>('');
@@ -118,7 +119,7 @@ export const SettingsIntegrationWhatsappDatabaseConectionsListCard = ({
   const handleStatusIntegration = (integrationId: string) => {
     setChangeType(ChangeType.DisableWhatsapp);
     setSelectedIntegrationId(integrationId);
-    setIsModalOpen(true);
+    openModal(CONFIRM_DISABLE_INBOX_MODAL_ID);
   };
 
   const handleConfirmChange = () => {
@@ -193,8 +194,7 @@ export const SettingsIntegrationWhatsappDatabaseConectionsListCard = ({
         </StyledFooter>
       </StyledIntegrationsSection>
       <ConfirmationModal
-        isOpen={isModalOpen}
-        setIsOpen={setIsModalOpen}
+        modalId={CONFIRM_DISABLE_INBOX_MODAL_ID}
         title={`Disable Inbox`}
         subtitle={
           <>{`This will disabled this inbox and all chat conversations.`}</>

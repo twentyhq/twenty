@@ -509,6 +509,22 @@ export type CreateInterIntegrationInput = {
   workspaceId: Scalars['ID'];
 };
 
+export type CreateIssuerInput = {
+  cep: Scalars['String'];
+  city: Scalars['String'];
+  cnaeCode?: InputMaybe<Scalars['String']>;
+  cnpj: Scalars['String'];
+  cpf?: InputMaybe<Scalars['String']>;
+  ie?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  neighborhood: Scalars['String'];
+  number: Scalars['String'];
+  state: Scalars['String'];
+  street: Scalars['String'];
+  taxRegime: Scalars['String'];
+  workspaceId: Scalars['ID'];
+};
+
 export type CreateOneFieldMetadataInput = {
   /** The record to create */
   field: CreateFieldInput;
@@ -1063,6 +1079,26 @@ export type InvalidatePassword = {
   success: Scalars['Boolean'];
 };
 
+export type IssuerDto = {
+  __typename?: 'IssuerDto';
+  cep: Scalars['String'];
+  city: Scalars['String'];
+  cnaeCode?: Maybe<Scalars['String']>;
+  cnpj: Scalars['String'];
+  cpf?: Maybe<Scalars['String']>;
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  ie?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  neighborhood: Scalars['String'];
+  number: Scalars['String'];
+  state: Scalars['String'];
+  street: Scalars['String'];
+  taxRegime: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  workspace: Workspace;
+};
+
 export type LinkLogsWorkspaceEntity = {
   __typename?: 'LinkLogsWorkspaceEntity';
   id: Scalars['String'];
@@ -1125,6 +1161,7 @@ export type Mutation = {
   createDraftFromWorkflowVersion: WorkflowVersion;
   createFocusNfeIntegration: FocusNfeIntegrationPublicDto;
   createInterIntegration: InterIntegration;
+  createIssuer: IssuerDto;
   createOIDCIdentityProvider: SetupSsoOutput;
   createObjectEvent: Analytics;
   createOneAppToken: AppToken;
@@ -1144,6 +1181,7 @@ export type Mutation = {
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean'];
   deleteFocusNfeIntegration: Scalars['Boolean'];
+  deleteIssuer: Scalars['Boolean'];
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneRole: Scalars['String'];
@@ -1197,6 +1235,7 @@ export type Mutation = {
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateFocusNfeIntegration: FocusNfeIntegrationPublicDto;
   updateInterIntegration: InterIntegration;
+  updateIssuer: IssuerDto;
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneField: Field;
   updateOneObject: Object;
@@ -1292,6 +1331,11 @@ export type MutationCreateInterIntegrationArgs = {
 };
 
 
+export type MutationCreateIssuerArgs = {
+  createInput: CreateIssuerInput;
+};
+
+
 export type MutationCreateOidcIdentityProviderArgs = {
   input: SetupOidcSsoInput;
 };
@@ -1372,6 +1416,11 @@ export type MutationDeleteDatabaseConfigVariableArgs = {
 
 export type MutationDeleteFocusNfeIntegrationArgs = {
   focusNfeIntegrationId: Scalars['String'];
+};
+
+
+export type MutationDeleteIssuerArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -1615,6 +1664,12 @@ export type MutationUpdateFocusNfeIntegrationArgs = {
 
 export type MutationUpdateInterIntegrationArgs = {
   updateInput: UpdateInterIntegrationInput;
+};
+
+
+export type MutationUpdateIssuerArgs = {
+  id: Scalars['ID'];
+  updateInput: UpdateIssuerInput;
 };
 
 
@@ -2005,6 +2060,8 @@ export type Query = {
   getFocusNfeIntegrationsByWorkspace: Array<FocusNfeIntegrationPublicDto>;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getInterAccountInfo: Scalars['String'];
+  getIssuerById: IssuerDto;
+  getIssuersByWorkspace: Array<IssuerDto>;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
@@ -2130,6 +2187,11 @@ export type QueryGetIndicatorHealthStatusArgs = {
 
 export type QueryGetInterAccountInfoArgs = {
   integrationId: Scalars['String'];
+};
+
+
+export type QueryGetIssuerByIdArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -2901,6 +2963,22 @@ export type UpdateInterIntegrationInput = {
   integrationName?: InputMaybe<Scalars['String']>;
   privateKey?: InputMaybe<Scalars['String']>;
   status?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateIssuerInput = {
+  cep?: InputMaybe<Scalars['String']>;
+  city?: InputMaybe<Scalars['String']>;
+  cnaeCode?: InputMaybe<Scalars['String']>;
+  cnpj?: InputMaybe<Scalars['String']>;
+  cpf?: InputMaybe<Scalars['String']>;
+  ie?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  neighborhood?: InputMaybe<Scalars['String']>;
+  number?: InputMaybe<Scalars['String']>;
+  state?: InputMaybe<Scalars['String']>;
+  street?: InputMaybe<Scalars['String']>;
+  taxRegime?: InputMaybe<Scalars['String']>;
+  workspaceId?: InputMaybe<Scalars['ID']>;
 };
 
 export type UpdateLabPublicFeatureFlagInput = {
@@ -3755,6 +3833,13 @@ export type CreateFocusNfeIntegrationMutationVariables = Exact<{
 
 export type CreateFocusNfeIntegrationMutation = { __typename?: 'Mutation', createFocusNfeIntegration: { __typename?: 'FocusNfeIntegrationPublicDto', id: string, integrationName?: string | null, status: string, workspace?: { __typename?: 'Workspace', id: any } | null } };
 
+export type CreateIssuerMutationVariables = Exact<{
+  createInput: CreateIssuerInput;
+}>;
+
+
+export type CreateIssuerMutation = { __typename?: 'Mutation', createIssuer: { __typename?: 'IssuerDto', id: string, name: string, cnpj: string } };
+
 export type ToggleFocusNfeIntegrationStatusMutationVariables = Exact<{
   focusNfeIntegrationId: Scalars['String'];
 }>;
@@ -3768,6 +3853,19 @@ export type UpdateFocusNfeIntegrationMutationVariables = Exact<{
 
 
 export type UpdateFocusNfeIntegrationMutation = { __typename?: 'Mutation', updateFocusNfeIntegration: { __typename?: 'FocusNfeIntegrationPublicDto', id: string, integrationName?: string | null, status: string, createdAt: string, updatedAt: string, workspace?: { __typename?: 'Workspace', displayName?: string | null, id: any } | null } };
+
+export type UpdateIssuerMutationVariables = Exact<{
+  id: Scalars['ID'];
+  updateInput: UpdateIssuerInput;
+}>;
+
+
+export type UpdateIssuerMutation = { __typename?: 'Mutation', updateIssuer: { __typename?: 'IssuerDto', id: string, name: string, cnpj: string, cpf?: string | null, ie?: string | null, cnaeCode?: string | null, cep: string, street: string, number: string, neighborhood: string, city: string, state: string, taxRegime: string } };
+
+export type GetIssuersByWorkspaceQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetIssuersByWorkspaceQuery = { __typename?: 'Query', getIssuersByWorkspace: Array<{ __typename?: 'IssuerDto', id: string, name: string, cnpj: string, cpf?: string | null, ie?: string | null, cnaeCode?: string | null, cep: string, street: string, number: string, neighborhood: string, city: string, state: string, taxRegime: string, createdAt: string, updatedAt: string }> };
 
 export type GetFocusNfeIntegrationsByWorkspaceQueryVariables = Exact<{
   workspaceId: Scalars['String'];
@@ -6703,6 +6801,41 @@ export function useCreateFocusNfeIntegrationMutation(baseOptions?: Apollo.Mutati
 export type CreateFocusNfeIntegrationMutationHookResult = ReturnType<typeof useCreateFocusNfeIntegrationMutation>;
 export type CreateFocusNfeIntegrationMutationResult = Apollo.MutationResult<CreateFocusNfeIntegrationMutation>;
 export type CreateFocusNfeIntegrationMutationOptions = Apollo.BaseMutationOptions<CreateFocusNfeIntegrationMutation, CreateFocusNfeIntegrationMutationVariables>;
+export const CreateIssuerDocument = gql`
+    mutation CreateIssuer($createInput: CreateIssuerInput!) {
+  createIssuer(createInput: $createInput) {
+    id
+    name
+    cnpj
+  }
+}
+    `;
+export type CreateIssuerMutationFn = Apollo.MutationFunction<CreateIssuerMutation, CreateIssuerMutationVariables>;
+
+/**
+ * __useCreateIssuerMutation__
+ *
+ * To run a mutation, you first call `useCreateIssuerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateIssuerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createIssuerMutation, { data, loading, error }] = useCreateIssuerMutation({
+ *   variables: {
+ *      createInput: // value for 'createInput'
+ *   },
+ * });
+ */
+export function useCreateIssuerMutation(baseOptions?: Apollo.MutationHookOptions<CreateIssuerMutation, CreateIssuerMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateIssuerMutation, CreateIssuerMutationVariables>(CreateIssuerDocument, options);
+      }
+export type CreateIssuerMutationHookResult = ReturnType<typeof useCreateIssuerMutation>;
+export type CreateIssuerMutationResult = Apollo.MutationResult<CreateIssuerMutation>;
+export type CreateIssuerMutationOptions = Apollo.BaseMutationOptions<CreateIssuerMutation, CreateIssuerMutationVariables>;
 export const ToggleFocusNfeIntegrationStatusDocument = gql`
     mutation ToggleFocusNfeIntegrationStatus($focusNfeIntegrationId: String!) {
   toggleFocusNfeIntegrationStatus(focusNfeIntegrationId: $focusNfeIntegrationId)
@@ -6775,6 +6908,100 @@ export function useUpdateFocusNfeIntegrationMutation(baseOptions?: Apollo.Mutati
 export type UpdateFocusNfeIntegrationMutationHookResult = ReturnType<typeof useUpdateFocusNfeIntegrationMutation>;
 export type UpdateFocusNfeIntegrationMutationResult = Apollo.MutationResult<UpdateFocusNfeIntegrationMutation>;
 export type UpdateFocusNfeIntegrationMutationOptions = Apollo.BaseMutationOptions<UpdateFocusNfeIntegrationMutation, UpdateFocusNfeIntegrationMutationVariables>;
+export const UpdateIssuerDocument = gql`
+    mutation UpdateIssuer($id: ID!, $updateInput: UpdateIssuerInput!) {
+  updateIssuer(id: $id, updateInput: $updateInput) {
+    id
+    name
+    cnpj
+    cpf
+    ie
+    cnaeCode
+    cep
+    street
+    number
+    neighborhood
+    city
+    state
+    taxRegime
+  }
+}
+    `;
+export type UpdateIssuerMutationFn = Apollo.MutationFunction<UpdateIssuerMutation, UpdateIssuerMutationVariables>;
+
+/**
+ * __useUpdateIssuerMutation__
+ *
+ * To run a mutation, you first call `useUpdateIssuerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateIssuerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateIssuerMutation, { data, loading, error }] = useUpdateIssuerMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      updateInput: // value for 'updateInput'
+ *   },
+ * });
+ */
+export function useUpdateIssuerMutation(baseOptions?: Apollo.MutationHookOptions<UpdateIssuerMutation, UpdateIssuerMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateIssuerMutation, UpdateIssuerMutationVariables>(UpdateIssuerDocument, options);
+      }
+export type UpdateIssuerMutationHookResult = ReturnType<typeof useUpdateIssuerMutation>;
+export type UpdateIssuerMutationResult = Apollo.MutationResult<UpdateIssuerMutation>;
+export type UpdateIssuerMutationOptions = Apollo.BaseMutationOptions<UpdateIssuerMutation, UpdateIssuerMutationVariables>;
+export const GetIssuersByWorkspaceDocument = gql`
+    query GetIssuersByWorkspace {
+  getIssuersByWorkspace {
+    id
+    name
+    cnpj
+    cpf
+    ie
+    cnaeCode
+    cep
+    street
+    number
+    neighborhood
+    city
+    state
+    taxRegime
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useGetIssuersByWorkspaceQuery__
+ *
+ * To run a query within a React component, call `useGetIssuersByWorkspaceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetIssuersByWorkspaceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetIssuersByWorkspaceQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetIssuersByWorkspaceQuery(baseOptions?: Apollo.QueryHookOptions<GetIssuersByWorkspaceQuery, GetIssuersByWorkspaceQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetIssuersByWorkspaceQuery, GetIssuersByWorkspaceQueryVariables>(GetIssuersByWorkspaceDocument, options);
+      }
+export function useGetIssuersByWorkspaceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetIssuersByWorkspaceQuery, GetIssuersByWorkspaceQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetIssuersByWorkspaceQuery, GetIssuersByWorkspaceQueryVariables>(GetIssuersByWorkspaceDocument, options);
+        }
+export type GetIssuersByWorkspaceQueryHookResult = ReturnType<typeof useGetIssuersByWorkspaceQuery>;
+export type GetIssuersByWorkspaceLazyQueryHookResult = ReturnType<typeof useGetIssuersByWorkspaceLazyQuery>;
+export type GetIssuersByWorkspaceQueryResult = Apollo.QueryResult<GetIssuersByWorkspaceQuery, GetIssuersByWorkspaceQueryVariables>;
 export const GetFocusNfeIntegrationsByWorkspaceDocument = gql`
     query GetFocusNfeIntegrationsByWorkspace($workspaceId: String!) {
   getFocusNfeIntegrationsByWorkspace(workspaceId: $workspaceId) {

@@ -13,9 +13,9 @@ import { SettingsIntegrationFocusNfeDatabase } from '~/pages/settings/integratio
 import { SettingsIntegrationInterDatabase } from '~/pages/settings/integrations/inter/SettingsIntegrationInterDatabase';
 import { SettingsIntegrationInterEditDatabaseConnection } from '~/pages/settings/integrations/inter/SettingsIntegrationInterEditDatabaseConnection';
 import { SettingsIntegrationInterNewDatabaseConnection } from '~/pages/settings/integrations/inter/SettingsIntegrationInterNewDatabaseConnection';
-import { SettingsIntegrationWhatsappDatabase } from '~/pages/settings/integrations/SettingsIntegrationWhatsappDatabase';
-import { SettingsIntegrationWhatsappEditDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationWhatsappEditDatabaseConnection';
-import { SettingsIntegrationWhatsappNewDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationWhatsappNewDatabaseConnection';
+import { SettingsIntegrationWhatsappDatabase } from '~/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappDatabase';
+import { SettingsIntegrationWhatsappEditDatabaseConnection } from '~/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappEditDatabaseConnection';
+import { SettingsIntegrationWhatsappNewDatabaseConnection } from '~/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappNewDatabaseConnection';
 import { SettingsServiceCenter } from '~/pages/settings/service-center/SettingsServiceCenter';
 import { SettingsServiceCenterAgents } from '~/pages/settings/service-center/SettingsServiceCenterAgents';
 import { SettingsServiceCenterEditAgent } from '~/pages/settings/service-center/SettingsServiceCenterEditAgent';
