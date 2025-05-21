@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
+import { MicrosoftImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/microsoft/exceptions/microsoft-import-driver.exception';
 import { MicrosoftGraphBatchResponse } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.interface';
 import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
@@ -43,7 +44,7 @@ export class MicrosoftGetMessagesService {
 
       return messages;
     } catch (error) {
-      this.microsoftHandleErrorService.handleMicrosoftMessageFetchError(error);
+      this.microsoftHandleErrorService.handleMicrosoftGetMessagesError(error);
 
       return [];
     }
@@ -69,8 +70,10 @@ export class MicrosoftGetMessagesService {
 
     const messages = parsedResponses.map((response) => {
       if ('error' in response) {
-        this.microsoftHandleErrorService.throwMicrosoftBatchError(
-          response.error,
+        throw new MicrosoftImportDriverException(
+          response.error.message,
+          response.error.code,
+          response.error.statusCode,
         );
       }
 
