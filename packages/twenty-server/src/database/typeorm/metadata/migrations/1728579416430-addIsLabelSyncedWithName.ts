@@ -7,13 +7,13 @@ export class AddIsLabelSyncedWithName1728579416430
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "metadata"."objectMetadata" ADD "isLabelSyncedWithName" boolean NOT NULL DEFAULT false`,
+      `ALTER TABLE "core"."objectMetadata" ADD "isLabelSyncedWithName" boolean NOT NULL DEFAULT false`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "metadata"."objectMetadata" DROP COLUMN "isLabelSyncedWithName"`,
+      `ALTER TABLE "core"."objectMetadata" DROP COLUMN "isLabelSyncedWithName"`,
     );
   }
 }
