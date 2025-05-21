@@ -51,8 +51,8 @@ export const useMultipleRecordPickerPerformSearch = () => {
           }),
           {
             ...paginationState,
-            currentOffset: loadMore ? paginationState.currentOffset : 0,
-            hasMore: loadMore ? paginationState.hasMore : true,
+            endCursor: loadMore ? paginationState.endCursor : null,
+            hasNextPage: loadMore ? paginationState.hasNextPage : true,
             isLoadingMore: loadMore,
             isLoadingInitial: !loadMore,
           },
@@ -94,6 +94,7 @@ export const useMultipleRecordPickerPerformSearch = () => {
         const [
           searchRecordsFilteredOnPickedRecords,
           searchRecordsExcludingPickedRecords,
+          pageInfo,
         ] = await performSearchQueries({
           client,
           searchFilter,
@@ -101,7 +102,8 @@ export const useMultipleRecordPickerPerformSearch = () => {
           pickedRecordIds: selectedPickableMorphItems.map(
             ({ recordId }) => recordId,
           ),
-          limitPerObject: MULTIPLE_RECORD_PICKER_PAGE_SIZE,
+          limit: MULTIPLE_RECORD_PICKER_PAGE_SIZE,
+          after: loadMore ? paginationState.endCursor : null,
         });
 
         const existingMorphItems = loadMore
@@ -334,21 +336,14 @@ export const useMultipleRecordPickerPerformSearch = () => {
           );
         }
 
-        const hasMore =
-          searchRecordsExcludingPickedRecords.length ===
-          MULTIPLE_RECORD_PICKER_PAGE_SIZE;
-        const newOffset = loadMore
-          ? paginationState.currentOffset + MULTIPLE_RECORD_PICKER_PAGE_SIZE
-          : MULTIPLE_RECORD_PICKER_PAGE_SIZE;
-
         set(
           multipleRecordPickerPaginationState.atomFamily({
             instanceId: multipleRecordPickerInstanceId,
           }),
           {
             ...paginationState,
-            currentOffset: newOffset,
-            hasMore,
+            endCursor: pageInfo.endCursor,
+            hasNextPage: pageInfo.hasNextPage,
             isLoadingMore: false,
             isLoadingInitial: false,
           },
@@ -365,16 +360,24 @@ const performSearchQueries = async ({
   searchFilter,
   searchableObjectMetadataItems,
   pickedRecordIds,
-  limitPerObject = MULTIPLE_RECORD_PICKER_PAGE_SIZE,
+  limit = MULTIPLE_RECORD_PICKER_PAGE_SIZE,
+  after = null,
 }: {
   client: ApolloClient<object>;
   searchFilter: string;
   searchableObjectMetadataItems: ObjectMetadataItem[];
   pickedRecordIds: string[];
-  limitPerObject?: number;
-}): Promise<[SearchRecord[], SearchRecord[]]> => {
+  limit?: number;
+  after?: string | null;
+}): Promise<
+  [
+    SearchRecord[],
+    SearchRecord[],
+    { hasNextPage: boolean; endCursor: string | null },
+  ]
+> => {
   if (searchableObjectMetadataItems.length === 0) {
-    return [[], []];
+    return [[], [], { hasNextPage: false, endCursor: null }];
   }
 
   const searchRecords = async (filter: any) => {
@@ -386,13 +389,17 @@ const performSearchQueries = async ({
           ({ nameSingular }) => nameSingular,
         ),
         filter,
-        limit: MULTIPLE_RECORD_PICKER_PAGE_SIZE,
+        limit,
+        after,
       },
     });
-    return data.search.edges.map((edge: SearchResultEdge) => edge.node);
+    return {
+      records: data.search.edges.map((edge: SearchResultEdge) => edge.node),
+      pageInfo: data.search.pageInfo,
+    };
   };
 
-  const searchRecordsExcludingPickedRecords = await searchRecords(
+  const searchRecordsExcludingPickedRecordsResult = await searchRecords(
     pickedRecordIds.length > 0
       ? {
           not: {
@@ -404,17 +411,18 @@ const performSearchQueries = async ({
       : undefined,
   );
 
-  const searchRecordsIncludingPickedRecords =
+  const searchRecordsIncludingPickedRecordsResult =
     pickedRecordIds.length > 0
       ? await searchRecords({
           id: {
             in: pickedRecordIds,
           },
         })
-      : [];
+      : { records: [], pageInfo: { hasNextPage: false, endCursor: null } };
 
   return [
-    searchRecordsIncludingPickedRecords,
-    searchRecordsExcludingPickedRecords,
+    searchRecordsIncludingPickedRecordsResult.records,
+    searchRecordsExcludingPickedRecordsResult.records,
+    searchRecordsExcludingPickedRecordsResult.pageInfo,
   ];
 };

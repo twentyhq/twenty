@@ -2,8 +2,8 @@ import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/re
 import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
 
 export type MultipleRecordPickerPaginationState = {
-  currentOffset: number;
-  hasMore: boolean;
+  endCursor: string | null;
+  hasNextPage: boolean;
   isLoadingMore: boolean;
   isLoadingInitial: boolean;
 };
@@ -12,8 +12,8 @@ export const multipleRecordPickerPaginationState =
   createComponentStateV2<MultipleRecordPickerPaginationState>({
     key: 'multipleRecordPickerPaginationState',
     defaultValue: {
-      currentOffset: 0,
-      hasMore: true,
+      endCursor: null,
+      hasNextPage: true,
       isLoadingMore: false,
       isLoadingInitial: true,
     },

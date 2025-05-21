@@ -2,24 +2,8 @@ import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/re
 import { multipleRecordPickerPaginationState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPaginationState';
 import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
 
-export const multipleRecordPickerCurrentOffsetSelector =
-  createComponentSelectorV2({
-    key: 'multipleRecordPickerCurrentOffsetSelector',
-    componentInstanceContext: MultipleRecordPickerComponentInstanceContext,
-    get:
-      ({ instanceId }) =>
-      ({ get }) => {
-        const paginationState = get(
-          multipleRecordPickerPaginationState.atomFamily({
-            instanceId,
-          }),
-        );
-        return paginationState.currentOffset;
-      },
-  });
-
-export const multipleRecordPickerHasMoreSelector = createComponentSelectorV2({
-  key: 'multipleRecordPickerHasMoreSelector',
+export const multipleRecordPickerEndCursorSelector = createComponentSelectorV2({
+  key: 'multipleRecordPickerEndCursorSelector',
   componentInstanceContext: MultipleRecordPickerComponentInstanceContext,
   get:
     ({ instanceId }) =>
@@ -29,9 +13,25 @@ export const multipleRecordPickerHasMoreSelector = createComponentSelectorV2({
           instanceId,
         }),
       );
-      return paginationState.hasMore;
+      return paginationState.endCursor;
     },
 });
+
+export const multipleRecordPickerHasNextPageSelector =
+  createComponentSelectorV2({
+    key: 'multipleRecordPickerHasNextPageSelector',
+    componentInstanceContext: MultipleRecordPickerComponentInstanceContext,
+    get:
+      ({ instanceId }) =>
+      ({ get }) => {
+        const paginationState = get(
+          multipleRecordPickerPaginationState.atomFamily({
+            instanceId,
+          }),
+        );
+        return paginationState.hasNextPage;
+      },
+  });
 
 export const multipleRecordPickerIsLoadingMoreSelector =
   createComponentSelectorV2({

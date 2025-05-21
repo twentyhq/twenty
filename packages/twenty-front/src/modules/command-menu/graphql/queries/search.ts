@@ -4,6 +4,7 @@ export const SEARCH_QUERY = gql`
   query Search(
     $searchInput: String!
     $limit: Int!
+    $after: String
     $excludedObjectNameSingulars: [String!]
     $includedObjectNameSingulars: [String!]
     $filter: ObjectRecordFilterInput
@@ -11,6 +12,7 @@ export const SEARCH_QUERY = gql`
     search(
       searchInput: $searchInput
       limit: $limit
+      after: $after
       excludedObjectNameSingulars: $excludedObjectNameSingulars
       includedObjectNameSingulars: $includedObjectNameSingulars
       filter: $filter
