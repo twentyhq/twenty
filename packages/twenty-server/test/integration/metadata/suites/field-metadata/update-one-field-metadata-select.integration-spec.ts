@@ -1,4 +1,7 @@
-import { UPDATE_CREATE_ONE_FIELD_METADATA_SELECT_TEST_CASES } from 'test/integration/metadata/suites/field-metadata/update-create-one-field-metadata-select-tests-cases';
+import {
+  UPDATE_CREATE_ONE_FIELD_METADATA_SELECT_TEST_CASES,
+  UpdateCreateFieldMetadataSelectTestCase,
+} from 'test/integration/metadata/suites/field-metadata/update-create-one-field-metadata-select-tests-cases';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import {
@@ -48,6 +51,12 @@ describe('Field metadata select update tests group', () => {
             color: 'green',
             position: 1,
           },
+          {
+            label: 'Option 2',
+            value: 'OPTION_2',
+            color: 'green',
+            position: 2,
+          },
         ],
       },
       gqlFields: `
@@ -64,19 +73,45 @@ describe('Field metadata select update tests group', () => {
     });
   });
 
-  test.each(successfulTestCases)(
+  const updateSpecificSuccessfulTestCases: UpdateCreateFieldMetadataSelectTestCase[] =
+    [
+      {
+        context: {
+          input: {
+            defaultValue: 'OPTION_2',
+            options: undefined as unknown as FieldMetadataComplexOption[],
+          },
+          expectedOptions: [
+            {
+              label: 'Option 1',
+              value: 'OPTION_1',
+              color: 'green',
+              position: 1,
+            },
+            {
+              label: 'Option 2',
+              value: 'OPTION_2',
+              color: 'green',
+              position: 2,
+            },
+          ],
+        },
+        title:
+          'It should update field metadata default value even without providing options',
+      },
+    ];
+  test.each([...successfulTestCases, ...updateSpecificSuccessfulTestCases])(
     '$title',
-    async ({ context: { options, expectedOptions } }) => {
+    async ({ context: { input, expectedOptions } }) => {
       const { data, errors } = await updateOneFieldMetadata({
         input: {
           idToUpdate: createdFieldMetadata,
-          updatePayload: {
-            options,
-          },
+          updatePayload: input,
         },
         gqlFields: `
         id
         options
+        defaultValue
         `,
       });
 
@@ -84,31 +119,45 @@ describe('Field metadata select update tests group', () => {
       const updatedOptions: FieldMetadataComplexOption[] =
         data.updateOneField.options;
 
-      const optionsToCompare = expectedOptions ?? options;
-
       expect(errors).toBeUndefined();
-      expect(updatedOptions.length).toBe(optionsToCompare.length);
       updatedOptions.forEach((option) => expect(option.id).toBeDefined());
+
+      const optionsToCompare = expectedOptions ?? input.options;
+      expect(updatedOptions.length).toBe(optionsToCompare.length);
       expect(updatedOptions).toMatchObject(optionsToCompare);
     },
   );
 
-  test.each(failingTestCases)('$title', async ({ context: { options } }) => {
-    const { data, errors } = await updateOneFieldMetadata({
-      input: {
-        idToUpdate: createdFieldMetadata,
-        updatePayload: {
-          options,
+  const updateSpecificFailingTestCases: UpdateCreateFieldMetadataSelectTestCase[] =
+    [
+      {
+        context: {
+          input: {
+            defaultValue: 'OPTION_42',
+            options: undefined as unknown as FieldMetadataComplexOption[],
+          },
         },
+        title:
+          'It should fail to update field metadata default value witha an unknown option even with no provided options',
       },
-      gqlFields: `
+    ];
+  test.each([...updateSpecificFailingTestCases, ...failingTestCases])(
+    '$title',
+    async ({ context: { input } }) => {
+      const { data, errors } = await updateOneFieldMetadata({
+        input: {
+          idToUpdate: createdFieldMetadata,
+          updatePayload: input,
+        },
+        gqlFields: `
         id
         options
         `,
-    });
+      });
 
-    expect(data).toBeNull();
-    expect(errors).toBeDefined();
-    expect(errors).toMatchSnapshot();
-  });
+      expect(data).toBeNull();
+      expect(errors).toBeDefined();
+      expect(errors).toMatchSnapshot();
+    },
+  );
 });

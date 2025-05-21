@@ -39,7 +39,7 @@ describe('Field metadata select creation tests group', () => {
 
   test.each(successfulTestCases)(
     '$title',
-    async ({ context: { options, expectedOptions } }) => {
+    async ({ context: { input, expectedOptions } }) => {
       const { data, errors } = await createOneFieldMetadata({
         input: {
           objectMetadataId: createdObjectMetadataId,
@@ -47,7 +47,7 @@ describe('Field metadata select creation tests group', () => {
           name: 'testField',
           label: 'Test Field',
           isLabelSyncedWithName: false,
-          options,
+          ...input,
         },
         gqlFields: `
         id
@@ -60,7 +60,7 @@ describe('Field metadata select creation tests group', () => {
       const createdOptions: FieldMetadataComplexOption[] =
         data.createOneField.options;
 
-      const optionsToCompare = expectedOptions ?? options;
+      const optionsToCompare = expectedOptions ?? input.options;
 
       expect(errors).toBeUndefined();
       expect(createdOptions.length).toBe(optionsToCompare.length);
@@ -69,7 +69,7 @@ describe('Field metadata select creation tests group', () => {
     },
   );
 
-  test.each(failingTestCases)('$title', async ({ context: { options } }) => {
+  test.each(failingTestCases)('$title', async ({ context: { input } }) => {
     const { data, errors } = await createOneFieldMetadata({
       input: {
         objectMetadataId: createdObjectMetadataId,
@@ -77,7 +77,7 @@ describe('Field metadata select creation tests group', () => {
         name: 'testField',
         label: 'Test Field',
         isLabelSyncedWithName: false,
-        options,
+        ...input,
       },
       gqlFields: `
         id
