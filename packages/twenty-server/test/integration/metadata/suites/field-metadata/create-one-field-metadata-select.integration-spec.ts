@@ -1,4 +1,7 @@
-import { UPDATE_CREATE_ONE_FIELD_METADATA_SELECT_TEST_CASES } from 'test/integration/metadata/suites/field-metadata/update-create-one-field-metadata-select-tests-cases';
+import {
+  UPDATE_CREATE_ONE_FIELD_METADATA_SELECT_TEST_CASES,
+  UpdateCreateFieldMetadataSelectTestCase,
+} from 'test/integration/metadata/suites/field-metadata/update-create-one-field-metadata-select-tests-cases';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import {
   LISTING_NAME_PLURAL,
@@ -38,7 +41,7 @@ describe('Field metadata select creation tests group', () => {
   });
 
   test.each(successfulTestCases)(
-    '$title',
+    'Create $title',
     async ({ context: { input, expectedOptions } }) => {
       const { data, errors } = await createOneFieldMetadata({
         input: {
@@ -69,24 +72,47 @@ describe('Field metadata select creation tests group', () => {
     },
   );
 
-  test.each(failingTestCases)('$title', async ({ context: { input } }) => {
-    const { data, errors } = await createOneFieldMetadata({
-      input: {
-        objectMetadataId: createdObjectMetadataId,
-        type: FieldMetadataType.SELECT,
-        name: 'testField',
-        label: 'Test Field',
-        isLabelSyncedWithName: false,
-        ...input,
+  const createSpecificFailingTestCases: UpdateCreateFieldMetadataSelectTestCase[] =
+    [
+      {
+        title: 'should fail with null options',
+        context: {
+          input: {
+            options: null as unknown as FieldMetadataComplexOption[],
+          },
+        },
       },
-      gqlFields: `
+      {
+        title: 'should fail with undefined options',
+        context: {
+          input: {
+            options: undefined as unknown as FieldMetadataComplexOption[],
+          },
+        },
+      },
+    ];
+
+  test.each([...failingTestCases, ...createSpecificFailingTestCases])(
+    'Create $title',
+    async ({ context: { input } }) => {
+      const { data, errors } = await createOneFieldMetadata({
+        input: {
+          objectMetadataId: createdObjectMetadataId,
+          type: FieldMetadataType.SELECT,
+          name: 'testField',
+          label: 'Test Field',
+          isLabelSyncedWithName: false,
+          ...input,
+        },
+        gqlFields: `
         id
         options
         `,
-    });
+      });
 
-    expect(data).toBeNull();
-    expect(errors).toBeDefined();
-    expect(errors).toMatchSnapshot();
-  });
+      expect(data).toBeNull();
+      expect(errors).toBeDefined();
+      expect(errors).toMatchSnapshot();
+    },
+  );
 });

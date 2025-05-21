@@ -96,12 +96,11 @@ describe('Field metadata select update tests group', () => {
             },
           ],
         },
-        title:
-          'It should update field metadata default value even without providing options',
+        title: 'should succeed with default value and no options',
       },
     ];
   test.each([...successfulTestCases, ...updateSpecificSuccessfulTestCases])(
-    '$title',
+    'Update $title',
     async ({ context: { input, expectedOptions } }) => {
       const { data, errors } = await updateOneFieldMetadata({
         input: {
@@ -115,6 +114,7 @@ describe('Field metadata select update tests group', () => {
         `,
       });
 
+      console.log(data, errors);
       expect(data.updateOneField).toBeDefined();
       const updatedOptions: FieldMetadataComplexOption[] =
         data.updateOneField.options;
@@ -137,12 +137,11 @@ describe('Field metadata select update tests group', () => {
             options: undefined as unknown as FieldMetadataComplexOption[],
           },
         },
-        title:
-          'It should fail to update field metadata default value witha an unknown option even with no provided options',
+        title: 'should fail with unknown default value and no options',
       },
     ];
   test.each([...updateSpecificFailingTestCases, ...failingTestCases])(
-    '$title',
+    'Update $title',
     async ({ context: { input } }) => {
       const { data, errors } = await updateOneFieldMetadata({
         input: {
