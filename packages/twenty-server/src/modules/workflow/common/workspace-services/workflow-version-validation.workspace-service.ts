@@ -71,7 +71,9 @@ export class WorkflowVersionValidationWorkspaceService {
         payload.id,
       );
 
-    if (Object.keys(payload.data).length > 1 || !payload.data.name) {
+    // If the only field updated is the name, we can update the workflow version
+    // Otherwise, we need to assert that the workflow version is a draft
+    if (!(Object.keys(payload.data).length === 1 && payload.data.name)) {
       assertWorkflowVersionIsDraft(workflowVersion);
     }
 
