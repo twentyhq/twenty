@@ -5,7 +5,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 
 import { Command } from 'nest-commander';
-import { Like, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandOptions } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import {
@@ -34,6 +34,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
+import { compareVersionMajorAndMinor } from 'src/utils/version/compare-version-minor-and-major';
 
 const execPromise = promisify(exec);
 
@@ -46,45 +47,17 @@ export class DatabaseMigrationService {
     private readonly workspaceRepository: Repository<Workspace>,
   ) {}
 
-  async shouldRunMigrations(): Promise<boolean> {
-    try {
-      // Check if any workspace exists
-      const workspaceCount = await this.workspaceRepository.count();
+  async shouldRunMigrationsIfAllWorkspaceAreAboveVersion0_53(): Promise<boolean> {
+    const coreWorkspaceSchemaExists = await this.checkCoreWorkspaceExists();
 
-      if (workspaceCount === 0) {
-        // If no workspaces, run migrations (fresh installation)
-        this.logger.log(
-          'No workspaces found. Running migrations for fresh installation.',
-        );
-
-        return true;
-      }
-
-      const version053Count = await this.workspaceRepository.count({
-        where: {
-          version: Like('0.53%'),
-        },
-      });
-
-      if (version053Count > 0) {
-        this.logger.log(
-          `Found ${version053Count} workspace(s) on version 0.53. Will run database migrations.`,
-        );
-
-        return true;
-      } else {
-        this.logger.log(
-          'No workspace found on version 0.53. Skipping database migrations.',
-        );
-
-        return false;
-      }
-    } catch (error) {
-      this.logger.error('Error checking workspace versions:', error);
-
-      // Default to running migrations in case of error
+    if (!coreWorkspaceSchemaExists) {
+      this.logger.log(
+        'core.workspace does not exist. Running migrations for fresh installation.',
+      );
       return true;
     }
+
+    return await this.areAllWorkspacesAboveVersion0_53();
   }
 
   async runMigrations(): Promise<void> {
@@ -108,6 +81,49 @@ export class DatabaseMigrationService {
       this.logger.log('Database migrations completed successfully');
     } catch (error) {
       this.logger.error('Error running database migrations:', error);
+      throw error;
+    }
+  }
+
+  private async checkCoreWorkspaceExists(): Promise<boolean> {
+    try {
+      const result = await this.workspaceRepository.query(`
+        SELECT EXISTS (
+          SELECT 1 
+          FROM information_schema.tables 
+          WHERE table_schema = 'core' 
+          AND table_name = 'workspace'
+        );
+      `);
+
+      return result[0].exists;
+    } catch (error) {
+      this.logger.error('Error checking core.workspace existence:', error);
+      return false;
+    }
+  }
+
+  private async areAllWorkspacesAboveVersion0_53(): Promise<boolean> {
+    try {
+      const allWorkspaces = await this.workspaceRepository.find();
+
+      if (allWorkspaces.length === 0) {
+        this.logger.log(
+          'No workspaces found. Running migrations for fresh installation.',
+        );
+
+        return true;
+      }
+
+      const workspacesBelowVersion = allWorkspaces.filter(
+        ({ version }) =>
+          version === null ||
+          compareVersionMajorAndMinor(version, '0.53.0') === 'lower',
+      );
+
+      return workspacesBelowVersion.length === 0;
+    } catch (error) {
+      this.logger.error('Error checking workspaces below version:', error);
       throw error;
     }
   }
@@ -237,10 +253,10 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     options: ActiveOrSuspendedWorkspacesMigrationCommandOptions,
   ): Promise<void> {
     // Only run migrations if we have at least one workspace on version 0.53
-    const shouldRunMigrations =
-      await this.databaseMigrationService.shouldRunMigrations();
+    const shouldRunMigrateAsPartOfUpgrade =
+      await this.databaseMigrationService.shouldRunMigrationsIfAllWorkspaceAreAboveVersion0_53();
 
-    if (shouldRunMigrations) {
+    if (shouldRunMigrateAsPartOfUpgrade) {
       await this.databaseMigrationService.runMigrations();
     } else {
       this.logger.log(
