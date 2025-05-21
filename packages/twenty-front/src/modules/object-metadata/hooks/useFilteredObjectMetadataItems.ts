@@ -22,8 +22,6 @@ export const useFilteredObjectMetadataItems = () => {
     [isWorkflowEnabled],
   );
 
-  // should naming include that its filtering out workflow related items?
-  // but it will be too long
   const activeNonSystemObjectMetadataItems = useMemo(
     () =>
       objectMetadataItems.filter(
