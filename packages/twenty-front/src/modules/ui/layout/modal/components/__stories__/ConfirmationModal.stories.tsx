@@ -2,6 +2,8 @@ import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 
 import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
+import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { internalHotkeysEnabledScopesState } from '@/ui/utilities/hotkey/states/internal/internalHotkeysEnabledScopesState';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -29,6 +31,20 @@ const initializeState = ({ set }: { set: (atom: any, value: any) => void }) => {
   });
 
   set(internalHotkeysEnabledScopesState, [ModalHotkeyScope.ModalFocus]);
+
+  set(focusStackState, [
+    {
+      focusId: 'confirmation-modal',
+      componentInstance: {
+        componentType: FocusComponentType.MODAL,
+        componentInstanceId: 'confirmation-modal',
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysWithModifiers: true,
+        enableGlobalHotkeysConflictingWithKeyboard: true,
+      },
+    },
+  ]);
 };
 
 const meta: Meta<typeof ConfirmationModal> = {
