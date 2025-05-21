@@ -6,6 +6,8 @@ import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
+import { UndecoratedLink } from 'twenty-ui/navigation';
+import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { SignInUpEmailField } from '@/auth/sign-in-up/components/internal/SignInUpEmailField';
@@ -39,7 +41,8 @@ import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
-import { useCreateUserAndWorkspace } from '@/auth/sign-in-up/hooks/useCreateUserAndWorkspace';
+import { useCreateWorkspaceFromWorkspaceList } from '@/auth/sign-in-up/hooks/useCreateWorkspaceFromWorkspaceList';
+import { AppPath } from '@/types/AppPath';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -132,11 +135,13 @@ export const SignInUpGlobalScopeForm = () => {
   const authProviders = useRecoilValue(authProvidersState);
   const signInUpStep = useRecoilValue(signInUpStepState);
   const availableWorkspaces = useRecoilValue(availableWorkspacesState);
+  const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
 
   const { checkUserExists } = useAuth();
   const { readCaptchaToken } = useReadCaptchaToken();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
-  const { createUserAndWorkspace } = useCreateUserAndWorkspace();
+  const { handleCreateWorkspaceFromWorkspaceList } =
+    useCreateWorkspaceFromWorkspaceList();
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
   const setAvailableWorkspaces = useSetRecoilState(availableWorkspacesState);
@@ -216,52 +221,47 @@ export const SignInUpGlobalScopeForm = () => {
     }
   };
 
-  const handleWorkspaceSelect = async (workspaceIndex: number) => {
-    const workspace = availableWorkspaces[workspaceIndex];
-    if (isDefined(workspace)) {
-      await redirectToWorkspaceDomain(
-        getWorkspaceUrl(workspace.workspaceUrls),
-        pathname,
-        { email: form.getValues('email') },
-      );
-    }
-  };
-
   return (
     <>
       {signInUpStep === SignInUpStep.WorkspaceSelection && (
         <StyledWorkspaceContainer>
-          {availableWorkspaces.map((workspace, index) => (
-            <StyledWorkspaceItem
+          {availableWorkspaces.map((workspace) => (
+            <UndecoratedLink
               key={workspace.id}
-              onClick={() => handleWorkspaceSelect(index)}
+              to={buildWorkspaceUrl(
+                getWorkspaceUrl(workspace.workspaceUrls),
+                AppPath.SignInUp,
+                {
+                  email: form.getValues('email'),
+                },
+              )}
             >
-              <StyledWorkspaceContent>
-                <Avatar
-                  placeholder={workspace.displayName || ''}
-                  avatarUrl={workspace.logo ?? DEFAULT_WORKSPACE_LOGO}
-                  size="lg"
-                />
-                <StyledWorkspaceTextContainer>
-                  <StyledWorkspaceName>
-                    {workspace.displayName || workspace.id}
-                  </StyledWorkspaceName>
-                  <StyledWorkspaceUrl>
-                    {
-                      new URL(
-                        workspace.workspaceUrls.customUrl ||
-                          workspace.workspaceUrls.subdomainUrl,
-                      ).hostname
-                    }
-                  </StyledWorkspaceUrl>
-                </StyledWorkspaceTextContainer>
-                <StyledChevronIcon>
-                  <IconChevronRight size={theme.icon.size.md} />
-                </StyledChevronIcon>
-              </StyledWorkspaceContent>
-            </StyledWorkspaceItem>
+              <StyledWorkspaceItem>
+                <StyledWorkspaceContent>
+                  <Avatar
+                    placeholder={workspace.displayName || ''}
+                    avatarUrl={workspace.logo ?? DEFAULT_WORKSPACE_LOGO}
+                    size="lg"
+                  />
+                  <StyledWorkspaceTextContainer>
+                    <StyledWorkspaceName>
+                      {workspace.displayName || workspace.id}
+                    </StyledWorkspaceName>
+                    <StyledWorkspaceUrl>
+                      {
+                        new URL(getWorkspaceUrl(workspace.workspaceUrls))
+                          .hostname
+                      }
+                    </StyledWorkspaceUrl>
+                  </StyledWorkspaceTextContainer>
+                  <StyledChevronIcon>
+                    <IconChevronRight size={theme.icon.size.md} />
+                  </StyledChevronIcon>
+                </StyledWorkspaceContent>
+              </StyledWorkspaceItem>
+            </UndecoratedLink>
           ))}
-          <StyledWorkspaceItem onClick={createUserAndWorkspace}>
+          <StyledWorkspaceItem onClick={handleCreateWorkspaceFromWorkspaceList}>
             <StyledWorkspaceContent>
               <StyledWorkspaceLogo>
                 <IconPlus size={theme.icon.size.lg} />

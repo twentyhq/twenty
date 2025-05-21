@@ -21,6 +21,7 @@ import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/l
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 
 @Controller('auth/google')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -30,6 +31,7 @@ export class GoogleAuthController {
     private readonly authService: AuthService,
     private readonly guardRedirectService: GuardRedirectService,
     private readonly domainManagerService: DomainManagerService,
+    private readonly userWorkspaceService: UserWorkspaceService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
   ) {}
@@ -45,105 +47,8 @@ export class GoogleAuthController {
   @UseGuards(GoogleProviderEnabledGuard, GoogleOauthGuard)
   @UseFilters(AuthOAuthExceptionFilter)
   async googleAuthRedirect(@Req() req: GoogleRequest, @Res() res: Response) {
-    const {
-      firstName,
-      lastName,
-      email,
-      picture,
-      workspaceInviteHash,
-      workspaceId,
-      billingCheckoutSessionState,
-      action,
-      locale,
-    } = req.user;
-
-    if (
-      !workspaceId &&
-      !workspaceInviteHash &&
-      action === 'list-available-workspaces'
-    ) {
-      return res.redirect(
-        this.authService.computeRedirectURIForWorkspaceSelection({
-          firstName,
-          lastName,
-          email,
-          picture,
-        }),
-      );
-    }
-
-    const currentWorkspace =
-      action === 'create-new-workspace'
-        ? undefined
-        : await this.authService.findWorkspaceForSignInUp({
-            workspaceId,
-            workspaceInviteHash,
-            email,
-            authProvider: 'google',
-          });
-
-    try {
-      const invitation =
-        currentWorkspace && email
-          ? await this.authService.findInvitationForSignInUp({
-              currentWorkspace,
-              email,
-            })
-          : undefined;
-
-      const existingUser = await this.userRepository.findOne({
-        where: { email },
-      });
-
-      const { userData } = this.authService.formatUserDataPayload(
-        {
-          firstName,
-          lastName,
-          email,
-          picture,
-          locale,
-        },
-        existingUser,
-      );
-
-      await this.authService.checkAccessForSignIn({
-        userData,
-        invitation,
-        workspaceInviteHash,
-        workspace: currentWorkspace,
-      });
-
-      const { user, workspace } = await this.authService.signInUp({
-        invitation,
-        workspace: currentWorkspace,
-        userData,
-        authParams: {
-          provider: 'google',
-        },
-        billingCheckoutSessionState,
-      });
-
-      const loginToken = await this.loginTokenService.generateLoginToken(
-        user.email,
-        workspace.id,
-      );
-
-      return res.redirect(
-        this.authService.computeRedirectURI({
-          loginToken: loginToken.token,
-          workspace,
-          billingCheckoutSessionState,
-        }),
-      );
-    } catch (err) {
-      return res.redirect(
-        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
-          err,
-          this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
-            currentWorkspace,
-          ),
-        ),
-      );
-    }
+    return res.redirect(
+      await this.authService.signInUpWithSocialSSO(req.user, 'google'),
+    );
   }
 }

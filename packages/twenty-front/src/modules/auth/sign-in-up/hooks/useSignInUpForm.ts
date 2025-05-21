@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { z } from 'zod';
 
@@ -14,7 +14,7 @@ import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/i
 import { isDefined } from 'twenty-shared/utils';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { useAuth } from '@/auth/hooks/useAuth';
-import { userDataForNewUserAndWorkspaceState } from '@/auth/states/userDataForNewUserAndWorkspaceState';
+import { signInUpCallbackState } from '@/auth/states/signInUpCallbackState';
 
 const makeValidationSchema = (signInUpStep: SignInUpStep) =>
   z
@@ -33,11 +33,8 @@ const makeValidationSchema = (signInUpStep: SignInUpStep) =>
 
 export type Form = z.infer<ReturnType<typeof makeValidationSchema>>;
 export const useSignInUpForm = () => {
-  const location = useLocation();
   const [signInUpStep, setSignInUpStep] = useRecoilState(signInUpStepState);
-  const setUserDataForNewUserAndWorkspace = useSetRecoilState(
-    userDataForNewUserAndWorkspaceState,
-  );
+  const setSignInUpCallbackState = useSetRecoilState(signInUpCallbackState);
 
   const { listAvailableWorkspacesQuery } = useAuth();
 
@@ -53,9 +50,7 @@ export const useSignInUpForm = () => {
   const [searchParams] = useSearchParams();
   const prefilledEmail = searchParams.get('email');
 
-  const userDataForNewUserAndWorkspaceSearchParams = searchParams.get(
-    'userDataForNewUserAndWorkspace',
-  );
+  const signInUpCallback = searchParams.get('signInUpCallback');
 
   const form = useForm<Form>({
     mode: 'onSubmit',
@@ -69,17 +64,10 @@ export const useSignInUpForm = () => {
   });
 
   useEffect(() => {
-    if (isDefined(prefilledEmail)) {
-      form.setValue('email', prefilledEmail);
-    }
+    if (isDefined(signInUpCallback) && availableWorkspaces.length === 0) {
+      const signInUpCallbackData = JSON.parse(signInUpCallback);
 
-    if (
-      isDefined(userDataForNewUserAndWorkspaceSearchParams) &&
-      availableWorkspaces.length === 0
-    ) {
-      const userData = JSON.parse(userDataForNewUserAndWorkspaceSearchParams);
-
-      setUserDataForNewUserAndWorkspace(userData);
+      setSignInUpCallbackState(signInUpCallbackData);
 
       listAvailableWorkspacesQuery({
         variables: {
@@ -92,22 +80,24 @@ export const useSignInUpForm = () => {
 
       setSignInUpStep(SignInUpStep.WorkspaceSelection);
     }
+  }, [
+    availableWorkspaces.length,
+    listAvailableWorkspacesQuery,
+    setAvailableWorkspaces,
+    setSignInUpStep,
+    setSignInUpCallbackState,
+    signInUpCallback,
+  ]);
+
+  useEffect(() => {
+    if (isDefined(prefilledEmail)) {
+      form.setValue('email', prefilledEmail);
+    }
 
     if (isDeveloperDefaultSignInPrefilled === true) {
       form.setValue('email', prefilledEmail ?? 'tim@apple.dev');
       form.setValue('password', 'tim@apple.dev');
     }
-  }, [
-    form,
-    isDeveloperDefaultSignInPrefilled,
-    prefilledEmail,
-    location.search,
-    userDataForNewUserAndWorkspaceSearchParams,
-    setUserDataForNewUserAndWorkspace,
-    availableWorkspaces.length,
-    listAvailableWorkspacesQuery,
-    setSignInUpStep,
-    setAvailableWorkspaces,
-  ]);
+  }, [form, isDeveloperDefaultSignInPrefilled, prefilledEmail]);
   return { form: form };
 };

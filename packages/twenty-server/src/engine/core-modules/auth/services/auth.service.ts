@@ -58,6 +58,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { CheckUserExistOutput } from 'src/engine/core-modules/auth/dto/user-exists.entity';
 import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -696,6 +697,125 @@ export class AuthService {
       throw new AuthException(
         'User does not have access to this workspace',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+  }
+
+  async signInUpWithSocialSSO(
+    {
+      firstName,
+      lastName,
+      email,
+      picture,
+      workspaceInviteHash,
+      workspaceId,
+      billingCheckoutSessionState,
+      action,
+      locale,
+    }: MicrosoftRequest['user'] | GoogleRequest['user'],
+    authProvider: 'google' | 'microsoft',
+  ): string {
+    const availableWorkspacesCount =
+      action === 'list-available-workspaces'
+        ? (
+            await this.userWorkspaceService.findAvailableWorkspacesByEmail(
+              email,
+            )
+          ).length
+        : 0;
+
+    const existingUser = await this.userRepository.findOne({
+      where: { email },
+    });
+
+    if (
+      !workspaceId &&
+      !workspaceInviteHash &&
+      action === 'list-available-workspaces' &&
+      availableWorkspacesCount !== 0
+    ) {
+      return this.computeRedirectURIForWorkspaceSelection(
+        !existingUser
+          ? {
+              authProvider,
+              newUser: {
+                firstName,
+                lastName,
+                email,
+                picture,
+              },
+            }
+          : { authProvider, existingUser: { email } },
+      );
+    }
+
+    const currentWorkspace =
+      action === 'create-new-workspace'
+        ? undefined
+        : await this.findWorkspaceForSignInUp({
+            workspaceId,
+            workspaceInviteHash,
+            email,
+            authProvider,
+          });
+
+    try {
+      const invitation =
+        currentWorkspace && email
+          ? await this.findInvitationForSignInUp({
+              currentWorkspace,
+              email,
+            })
+          : undefined;
+
+      const existingUser = await this.userRepository.findOne({
+        where: { email },
+      });
+
+      const { userData } = this.formatUserDataPayload(
+        {
+          firstName,
+          lastName,
+          email,
+          picture,
+          locale,
+        },
+        existingUser,
+      );
+
+      await this.checkAccessForSignIn({
+        userData,
+        invitation,
+        workspaceInviteHash,
+        workspace: currentWorkspace,
+      });
+
+      const { user, workspace } = await this.signInUp({
+        invitation,
+        workspace: currentWorkspace,
+        userData,
+        authParams: {
+          provider: 'google',
+        },
+        billingCheckoutSessionState,
+      });
+
+      const loginToken = await this.loginTokenService.generateLoginToken(
+        user.email,
+        workspace.id,
+      );
+
+      return this.computeRedirectURI({
+        loginToken: loginToken.token,
+        workspace,
+        billingCheckoutSessionState,
+      });
+    } catch (err) {
+      return this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
+        err,
+        this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
+          currentWorkspace,
+        ),
       );
     }
   }
