@@ -28,10 +28,12 @@ export const LinksFieldInput = ({
   const handlePersistLinks = (
     updatedLinks: { url: string | null; label: string | null }[],
   ) => {
-    const [nextPrimaryLink, ...nextSecondaryLinks] = updatedLinks;
+    const nextPrimaryLink = updatedLinks.at(0);
+    const nextSecondaryLinks = updatedLinks.slice(1);
+
     persistLinksField({
-      primaryLinkUrl: nextPrimaryLink?.url ?? '',
-      primaryLinkLabel: nextPrimaryLink?.label ?? '',
+      primaryLinkUrl: nextPrimaryLink?.url ?? null,
+      primaryLinkLabel: nextPrimaryLink?.label ?? null,
       secondaryLinks: nextSecondaryLinks,
     });
   };
@@ -62,7 +64,7 @@ export const LinksFieldInput = ({
         errorMessage: '',
       })}
       onError={handleError}
-      formatInput={(input) => ({ url: input, label: '' })}
+      formatInput={(input) => ({ url: input, label: null })}
       renderItem={({
         value: link,
         index,
