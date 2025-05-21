@@ -300,7 +300,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       result.identifiers.push({ id: recordId });
       result.generatedMaps.push({ id: recordId });
 
-      const updatedRecord = await repository.findOne({
+      const [updatedRecord] = await repository.find({
         where: { id: recordId },
       });
 
@@ -308,21 +308,21 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
         continue;
       }
 
-      const formattedUpdatedRecord = formatResult<ObjectRecord>(
+      const record = formatResult<ObjectRecord>(
         updatedRecord,
         objectMetadataItemWithFieldMaps,
         objectMetadataMaps,
       );
 
-      const formattedRecordToUpdate = formatResult<ObjectRecord>(
-        existingRecords.find((r) => r.id === recordId),
+      const existingRecord = formatResult<ObjectRecord>(
+        existingRecords.find((record) => record.id === recordId),
         objectMetadataItemWithFieldMaps,
         objectMetadataMaps,
       );
 
       this.apiEventEmitterService.emitUpdateEvents({
-        existingRecords: [formattedRecordToUpdate],
-        records: [formattedUpdatedRecord],
+        existingRecords: [existingRecord],
+        records: [record],
         updatedFields: Object.keys(formattedPartialRecordToUpdate),
         authContext,
         objectMetadataItem: objectMetadataItemWithFieldMaps,
@@ -355,9 +355,9 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       result.raw.push(...insertResult.raw);
 
       formattedInsertedRecords.push(
-        ...insertResult.raw.map((r: ObjectRecord) =>
+        ...insertResult.raw.map((record: ObjectRecord) =>
           formatResult<ObjectRecord>(
-            r,
+            record,
             objectMetadataItemWithFieldMaps,
             objectMetadataMaps,
           ),
