@@ -54,6 +54,7 @@ export class DatabaseMigrationService {
       this.logger.log(
         'core.workspace does not exist. Running migrations for fresh installation.',
       );
+
       return true;
     }
 
@@ -99,6 +100,7 @@ export class DatabaseMigrationService {
       return result[0].exists;
     } catch (error) {
       this.logger.error('Error checking core.workspace existence:', error);
+
       return false;
     }
   }
