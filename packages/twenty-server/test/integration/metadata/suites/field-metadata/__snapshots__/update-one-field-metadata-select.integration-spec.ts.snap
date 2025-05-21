@@ -1,28 +1,94 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Field metadata select update tests group It should fail to create a field metadata with an undefined option label 1`] = `
+exports[`Field metadata select update tests group Update should fail with an invalid default value 1`] = `
 [
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Option label is required",
+    "message": "Default value for existing options is invalid: invalid",
   },
 ]
 `;
 
-exports[`Field metadata select update tests group It should fail to create a field metadata with an undefined option value 1`] = `
+exports[`Field metadata select update tests group Update should fail with an unknown default value 1`] = `
 [
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Option value is required",
+    "message": "Default value for existing options is invalid: 'OPTION_424242'",
   },
 ]
 `;
 
-exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: empty string id  1`] = `
+exports[`Field metadata select update tests group Update should fail with comma in option label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Label must not contain a comma",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group Update should fail with duplicated option ids 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Duplicated option id "fd1f11fd-3f05-4a33-bddf-800c3412ce98"",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group Update should fail with duplicated option positions 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Duplicated option position "1"",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group Update should fail with duplicated option values 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Duplicated option value "OPTION_1"",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group Update should fail with duplicated trimmed option values 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Duplicated option value "OPTION_1"",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group Update should fail with empty options 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Options are required for enum fields",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group Update should fail with empty string id 1`] = `
 [
   {
     "extensions": {
@@ -33,7 +99,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
 ]
 `;
 
-exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: empty string label  1`] = `
+exports[`Field metadata select update tests group Update should fail with empty string label 1`] = `
 [
   {
     "extensions": {
@@ -44,7 +110,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
 ]
 `;
 
-exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: empty string value  1`] = `
+exports[`Field metadata select update tests group Update should fail with empty string value 1`] = `
 [
   {
     "extensions": {
@@ -55,7 +121,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
 ]
 `;
 
-exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: not a string id  1`] = `
+exports[`Field metadata select update tests group Update should fail with invalid option id 1`] = `
 [
   {
     "extensions": {
@@ -66,7 +132,29 @@ exports[`Field metadata select update tests group It should fail to create a fie
 ]
 `;
 
-exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: not a string label  1`] = `
+exports[`Field metadata select update tests group Update should fail with invalid option value format 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group Update should fail with not a string id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Option id is invalid",
+  },
+]
+`;
+
+exports[`Field metadata select update tests group Update should fail with not a string label 1`] = `
 [
   {
     "extensions": {
@@ -78,7 +166,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
 ]
 `;
 
-exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: not a string value  1`] = `
+exports[`Field metadata select update tests group Update should fail with not a string value 1`] = `
 [
   {
     "extensions": {
@@ -89,7 +177,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
 ]
 `;
 
-exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: null id  1`] = `
+exports[`Field metadata select update tests group Update should fail with null id 1`] = `
 [
   {
     "extensions": {
@@ -100,7 +188,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
 ]
 `;
 
-exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: null label  1`] = `
+exports[`Field metadata select update tests group Update should fail with null label 1`] = `
 [
   {
     "extensions": {
@@ -111,7 +199,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
 ]
 `;
 
-exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: null value  1`] = `
+exports[`Field metadata select update tests group Update should fail with null value 1`] = `
 [
   {
     "extensions": {
@@ -122,7 +210,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
 ]
 `;
 
-exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: only white spaces id  1`] = `
+exports[`Field metadata select update tests group Update should fail with only white spaces id 1`] = `
 [
   {
     "extensions": {
@@ -133,7 +221,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
 ]
 `;
 
-exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: only white spaces label  1`] = `
+exports[`Field metadata select update tests group Update should fail with only white spaces label 1`] = `
 [
   {
     "extensions": {
@@ -144,7 +232,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
 ]
 `;
 
-exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: only white spaces value  1`] = `
+exports[`Field metadata select update tests group Update should fail with only white spaces value 1`] = `
 [
   {
     "extensions": {
@@ -155,7 +243,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
 ]
 `;
 
-exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: too long id  1`] = `
+exports[`Field metadata select update tests group Update should fail with too long id 1`] = `
 [
   {
     "extensions": {
@@ -166,7 +254,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
 ]
 `;
 
-exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: too long label  1`] = `
+exports[`Field metadata select update tests group Update should fail with too long label 1`] = `
 [
   {
     "extensions": {
@@ -177,7 +265,7 @@ exports[`Field metadata select update tests group It should fail to create a fie
 ]
 `;
 
-exports[`Field metadata select update tests group It should fail to create a field metadata with an option having: too long value  1`] = `
+exports[`Field metadata select update tests group Update should fail with too long value 1`] = `
 [
   {
     "extensions": {
@@ -188,112 +276,35 @@ exports[`Field metadata select update tests group It should fail to create a fie
 ]
 `;
 
-exports[`Field metadata select update tests group It should fail to create duplicated trimmed options values 1`] = `
+exports[`Field metadata select update tests group Update should fail with undefined option label 1`] = `
 [
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Duplicated option value "OPTION_1"",
+    "message": "Option label is required",
   },
 ]
 `;
 
-exports[`Field metadata select update tests group It should fail to create field metadata with an option label that contains a comma 1`] = `
+exports[`Field metadata select update tests group Update should fail with undefined option value 1`] = `
 [
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Label must not contain a comma",
+    "message": "Option value is required",
   },
 ]
 `;
 
-exports[`Field metadata select update tests group It should fail to create field metadata with an option value that do not follow UPPER_CASE and snake_case 1`] = `
+exports[`Field metadata select update tests group Update should fail with unknown default value and no options 1`] = `
 [
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
-  },
-]
-`;
-
-exports[`Field metadata select update tests group It should fail to create field metadata with empty options 1`] = `
-[
-  {
-    "extensions": {
-      "code": "BAD_USER_INPUT",
-    },
-    "message": "Options are required for enum fields",
-  },
-]
-`;
-
-exports[`Field metadata select update tests group It should fail to create field metadata with null options 1`] = `
-[
-  {
-    "extensions": {
-      "code": "BAD_USER_INPUT",
-    },
-    "message": "Options are required for enum fields",
-  },
-]
-`;
-
-exports[`Field metadata select update tests group It should fail to create field metadata with options having duplicated values 1`] = `
-[
-  {
-    "extensions": {
-      "code": "BAD_USER_INPUT",
-    },
-    "message": "Duplicated option value "OPTION_1"",
-  },
-]
-`;
-
-exports[`Field metadata select update tests group It should fail to create field metadata with undefined options 1`] = `
-[
-  {
-    "extensions": {
-      "code": "BAD_USER_INPUT",
-    },
-    "message": "Options are required for enum fields",
-  },
-]
-`;
-
-exports[`Field metadata select update tests group It should fail to create option with invalid id 1`] = `
-[
-  {
-    "extensions": {
-      "code": "BAD_USER_INPUT",
-    },
-    "message": "Option id is invalid",
-  },
-]
-`;
-
-exports[`Field metadata select update tests group It should fail to create two options with the same id 1`] = `
-[
-  {
-    "extensions": {
-      "code": "BAD_USER_INPUT",
-    },
-    "message": "Duplicated option id "fd1f11fd-3f05-4a33-bddf-800c3412ce98"",
-  },
-]
-`;
-
-exports[`Field metadata select update tests group It should fail to create two options with the same position 1`] = `
-[
-  {
-    "extensions": {
-      "code": "BAD_USER_INPUT",
-    },
-    "message": "Duplicated option position "1"",
+    "message": "Default value for existing options is invalid: 'OPTION_42'",
   },
 ]
 `;

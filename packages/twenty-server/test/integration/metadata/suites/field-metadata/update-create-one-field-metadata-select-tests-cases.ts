@@ -31,7 +31,7 @@ const successfulTestCases: UpdateCreateFieldMetadataSelectTestCase[] = [
     title: 'should succeed with valid default value',
     context: {
       input: {
-        defaultValue: 'OPTION_1',
+        defaultValue: "'OPTION_1'",
         options: [
           {
             label: 'Option 1',
@@ -303,10 +303,26 @@ const failingTestCases: UpdateCreateFieldMetadataSelectTestCase[] = [
     },
   },
   {
-    title: 'should fail with an unknown default value',
+    title: 'should fail with an invalid default value',
     context: {
       input: {
         defaultValue: 'invalid',
+        options: [
+          {
+            label: 'Option 1',
+            value: 'OPTION_1',
+            color: 'green',
+            position: 1,
+          },
+        ],
+      },
+    },
+  },
+  {
+    title: 'should fail with an unknown default value',
+    context: {
+      input: {
+        defaultValue: "'OPTION_424242'",
         options: [
           {
             label: 'Option 1',

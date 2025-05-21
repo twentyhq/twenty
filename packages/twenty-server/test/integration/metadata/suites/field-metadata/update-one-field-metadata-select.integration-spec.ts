@@ -13,6 +13,8 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import { CreateOneFieldFactoryInput } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata-query-factory.util';
+import { isDefined } from 'twenty-shared/utils';
 
 const { failingTestCases, successfulTestCases } =
   UPDATE_CREATE_ONE_FIELD_METADATA_SELECT_TEST_CASES;
@@ -20,7 +22,20 @@ const { failingTestCases, successfulTestCases } =
 describe('Field metadata select update tests group', () => {
   let createdObjectMetadataId: string;
   let createdFieldMetadata: string;
-
+  const initialOptions: CreateOneFieldFactoryInput['options'] = [
+    {
+      label: 'Option 1',
+      value: 'OPTION_1',
+      color: 'green',
+      position: 1,
+    },
+    {
+      label: 'Option 2',
+      value: 'OPTION_2',
+      color: 'green',
+      position: 2,
+    },
+  ];
   beforeEach(async () => {
     const { data } = await createOneObjectMetadata({
       input: {
@@ -44,20 +59,7 @@ describe('Field metadata select update tests group', () => {
         name: 'testField',
         label: 'Test Field',
         isLabelSyncedWithName: false,
-        options: [
-          {
-            label: 'Option 1',
-            value: 'OPTION_1',
-            color: 'green',
-            position: 1,
-          },
-          {
-            label: 'Option 2',
-            value: 'OPTION_2',
-            color: 'green',
-            position: 2,
-          },
-        ],
+        options: initialOptions,
       },
       gqlFields: `
         id
@@ -78,23 +80,10 @@ describe('Field metadata select update tests group', () => {
       {
         context: {
           input: {
-            defaultValue: 'OPTION_2',
+            defaultValue: "'OPTION_2'",
             options: undefined as unknown as FieldMetadataComplexOption[],
           },
-          expectedOptions: [
-            {
-              label: 'Option 1',
-              value: 'OPTION_1',
-              color: 'green',
-              position: 1,
-            },
-            {
-              label: 'Option 2',
-              value: 'OPTION_2',
-              color: 'green',
-              position: 2,
-            },
-          ],
+          expectedOptions: initialOptions,
         },
         title: 'should succeed with default value and no options',
       },
@@ -114,7 +103,6 @@ describe('Field metadata select update tests group', () => {
         `,
       });
 
-      console.log(data, errors);
       expect(data.updateOneField).toBeDefined();
       const updatedOptions: FieldMetadataComplexOption[] =
         data.updateOneField.options;
@@ -125,6 +113,10 @@ describe('Field metadata select update tests group', () => {
       const optionsToCompare = expectedOptions ?? input.options;
       expect(updatedOptions.length).toBe(optionsToCompare.length);
       expect(updatedOptions).toMatchObject(optionsToCompare);
+
+      if (isDefined(input.defaultValue)) {
+        expect(data.updateOneField.defaultValue).toEqual(input.defaultValue);
+      }
     },
   );
 
@@ -133,7 +125,7 @@ describe('Field metadata select update tests group', () => {
       {
         context: {
           input: {
-            defaultValue: 'OPTION_42',
+            defaultValue: "'OPTION_42'",
             options: undefined as unknown as FieldMetadataComplexOption[],
           },
         },
