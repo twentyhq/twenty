@@ -44,8 +44,10 @@ export const PaymentSuccess = () => {
   const [currentWorkspaceMember] = useRecoilState(currentWorkspaceMemberState);
   const { savePlan } = useSaveBillingPlan();
 
-  // eslint-disable-next-line @nx/workspace-matching-state-variable
-  const [selectedPlanId] = useRecoilState(selectedPlanState);
+  const params = new URLSearchParams(window.location.search);
+  const planId = params.get('planId');
+
+  console.log('planId', planId);
 
   const onSubmit = async () => {
     try {
@@ -53,9 +55,7 @@ export const PaymentSuccess = () => {
         throw new Error('User is not logged in');
       }
 
-      const onboardingId = (selectedPlanId as Plan).id;
-
-      await savePlan(onboardingId);
+      await savePlan(String(planId));
 
       setNextOnboardingStatus();
     } catch (error: any) {
