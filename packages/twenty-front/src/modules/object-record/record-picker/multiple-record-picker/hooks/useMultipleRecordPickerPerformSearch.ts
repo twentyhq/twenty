@@ -108,7 +108,6 @@ export const useMultipleRecordPickerPerformSearch = () => {
           pickedRecordIds: selectedPickableMorphItems.map(
             ({ recordId }) => recordId,
           ),
-          limit: MULTIPLE_RECORD_PICKER_PAGE_SIZE,
           after: loadMore ? paginationState.endCursor : null,
         });
 
