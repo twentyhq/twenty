@@ -19,7 +19,7 @@ export const UserProvider = ({ children }: React.PropsWithChildren) => {
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
-  const [locale, setLocale] = useState<Locale | null>();
+  const [locale, setLocale] = useState<Locale | undefined>();
 
   useEffect(() => {
     getDateFnsLocale(currentWorkspaceMember?.locale).then((loc) => {

@@ -1,5 +1,6 @@
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
+import { Locale } from 'date-fns';
 import { createContext } from 'react';
 
 export type UserContextType = {
