@@ -3,6 +3,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import gql from 'graphql-tag';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { generateEmptyJestRecordNode } from '~/testing/jest/generateEmptyJestRecordNode';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { useEmailThreadInCommandMenu } from '../useEmailThreadInCommandMenu';
@@ -155,7 +156,7 @@ const mocks = [
         filter: { messageThreadId: { eq: '1' } },
         orderBy: [{ receivedAt: 'AscNullsLast' }],
         lastCursor: undefined,
-        limit: 60,
+        limit: QUERY_MAX_RECORDS,
       },
     },
     result: jest.fn(() => ({
