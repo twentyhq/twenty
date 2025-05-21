@@ -5,8 +5,8 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 
 import { Command } from 'nest-commander';
-import { In, Repository } from 'typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { In, Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandOptions } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import {
@@ -51,7 +51,7 @@ export class DatabaseMigrationService {
   // TODO centralize with ActiveOrSuspendedRunner method
   private async loadActiveOrSuspendedWorkspace() {
     return await this.workspaceRepository.find({
-      select: ['id'],
+      select: ['id', 'version'],
       where: {
         activationStatus: In([
           WorkspaceActivationStatus.ACTIVE,
