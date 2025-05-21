@@ -12,11 +12,15 @@ import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/worksp
 export class ApiEventEmitterService {
   constructor(private readonly workspaceEventEmitter: WorkspaceEventEmitter) {}
 
-  public emitCreateEvents<T extends ObjectRecord>(
-    records: T[],
-    authContext: AuthContext,
-    objectMetadataItem: ObjectMetadataInterface,
-  ): void {
+  public emitCreateEvents<T extends ObjectRecord>({
+    records,
+    authContext,
+    objectMetadataItem,
+  }: {
+    records: T[];
+    authContext: AuthContext;
+    objectMetadataItem: ObjectMetadataInterface;
+  }): void {
     this.workspaceEventEmitter.emitDatabaseBatchEvent({
       objectMetadataNameSingular: objectMetadataItem.nameSingular,
       action: DatabaseEventAction.CREATED,
@@ -84,11 +88,15 @@ export class ApiEventEmitterService {
     });
   }
 
-  public emitDeletedEvents<T extends ObjectRecord>(
-    records: T[],
-    authContext: AuthContext,
-    objectMetadataItem: ObjectMetadataInterface,
-  ): void {
+  public emitDeletedEvents<T extends ObjectRecord>({
+    records,
+    authContext,
+    objectMetadataItem,
+  }: {
+    records: T[];
+    authContext: AuthContext;
+    objectMetadataItem: ObjectMetadataInterface;
+  }): void {
     this.workspaceEventEmitter.emitDatabaseBatchEvent({
       objectMetadataNameSingular: objectMetadataItem.nameSingular,
       action: DatabaseEventAction.DELETED,
@@ -107,11 +115,15 @@ export class ApiEventEmitterService {
     });
   }
 
-  public emitRestoreEvents<T extends ObjectRecord>(
-    records: T[],
-    authContext: AuthContext,
-    objectMetadataItem: ObjectMetadataInterface,
-  ): void {
+  public emitRestoreEvents<T extends ObjectRecord>({
+    records,
+    authContext,
+    objectMetadataItem,
+  }: {
+    records: T[];
+    authContext: AuthContext;
+    objectMetadataItem: ObjectMetadataInterface;
+  }): void {
     this.workspaceEventEmitter.emitDatabaseBatchEvent({
       objectMetadataNameSingular: objectMetadataItem.nameSingular,
       action: DatabaseEventAction.RESTORED,
@@ -130,11 +142,15 @@ export class ApiEventEmitterService {
     });
   }
 
-  public emitDestroyEvents<T extends ObjectRecord>(
-    records: T[],
-    authContext: AuthContext,
-    objectMetadataItem: ObjectMetadataInterface,
-  ): void {
+  public emitDestroyEvents<T extends ObjectRecord>({
+    records,
+    authContext,
+    objectMetadataItem,
+  }: {
+    records: T[];
+    authContext: AuthContext;
+    objectMetadataItem: ObjectMetadataInterface;
+  }): void {
     this.workspaceEventEmitter.emitDatabaseBatchEvent({
       objectMetadataNameSingular: objectMetadataItem.nameSingular,
       action: DatabaseEventAction.DESTROYED,

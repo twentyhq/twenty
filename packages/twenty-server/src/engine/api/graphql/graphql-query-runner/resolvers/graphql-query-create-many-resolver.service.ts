@@ -365,11 +365,11 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       );
     }
 
-    this.apiEventEmitterService.emitCreateEvents(
-      formattedInsertedRecords,
+    this.apiEventEmitterService.emitCreateEvents({
+      records: formattedInsertedRecords,
       authContext,
-      objectMetadataItemWithFieldMaps,
-    );
+      objectMetadataItem: objectMetadataItemWithFieldMaps,
+    });
   }
 
   private async fetchUpsertedRecords(

@@ -47,11 +47,11 @@ export class GraphqlQueryRestoreOneResolverService extends GraphqlQueryBaseResol
       objectMetadataMaps,
     );
 
-    this.apiEventEmitterService.emitRestoreEvents(
-      formattedRestoredRecords,
+    this.apiEventEmitterService.emitRestoreEvents({
+      records: formattedRestoredRecords,
       authContext,
-      objectMetadataItemWithFieldMaps,
-    );
+      objectMetadataItem: objectMetadataItemWithFieldMaps,
+    });
 
     if (formattedRestoredRecords.length === 0) {
       throw new GraphqlQueryRunnerException(
