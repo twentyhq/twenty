@@ -127,7 +127,7 @@ export const Dialog = ({
     callback: () => {
       onClose?.();
     },
-    listenerId: DialogHotkeyScope.Dialog,
+    listenerId: 'DIALOG_LISTENER_ID',
   });
 
   return (

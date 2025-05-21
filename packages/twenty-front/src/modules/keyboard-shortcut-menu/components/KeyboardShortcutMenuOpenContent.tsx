@@ -20,7 +20,7 @@ export const KeyboardShortcutMenuOpenContent = () => {
     () => {
       closeKeyboardShortcutMenu();
     },
-    true,
+    false,
     AppHotkeyScope.KeyboardShortcutMenuOpen,
     [closeKeyboardShortcutMenu],
   );

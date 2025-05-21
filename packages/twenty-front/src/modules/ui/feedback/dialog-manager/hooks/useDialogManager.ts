@@ -26,7 +26,7 @@ export const useDialogManager = (props?: useDialogManagerProps) => {
       (id: string) => {
         set(dialogInternalScopedState({ scopeId: scopeId }), (prevState) => ({
           ...prevState,
-          queue: prevState.queue.filter((snackBar) => snackBar.id !== id),
+          queue: prevState.queue.filter((dialog) => dialog.id !== id),
         }));
 
         goBackToPreviousHotkeyScope(DIALOG_MANAGER_HOTKEY_SCOPE_MEMOIZE_KEY);

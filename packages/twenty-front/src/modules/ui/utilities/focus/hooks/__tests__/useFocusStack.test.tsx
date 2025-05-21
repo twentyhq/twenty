@@ -50,7 +50,7 @@ describe('useFocusStack', () => {
       },
       globalHotkeysConfig: {
         enableGlobalHotkeysWithModifiers: true,
-        enableConflictingWithKeyboardGlobalHotkeys: true,
+        enableGlobalHotkeysConflictingWithKeyboard: true,
       },
     };
 
@@ -77,7 +77,7 @@ describe('useFocusStack', () => {
       },
       globalHotkeysConfig: {
         enableGlobalHotkeysWithModifiers: true,
-        enableConflictingWithKeyboardGlobalHotkeys: true,
+        enableGlobalHotkeysConflictingWithKeyboard: true,
       },
     };
 
@@ -114,7 +114,7 @@ describe('useFocusStack', () => {
       },
       globalHotkeysConfig: {
         enableGlobalHotkeysWithModifiers: true,
-        enableConflictingWithKeyboardGlobalHotkeys: true,
+        enableGlobalHotkeysConflictingWithKeyboard: true,
       },
     };
 
@@ -126,7 +126,7 @@ describe('useFocusStack', () => {
       },
       globalHotkeysConfig: {
         enableGlobalHotkeysWithModifiers: true,
-        enableConflictingWithKeyboardGlobalHotkeys: true,
+        enableGlobalHotkeysConflictingWithKeyboard: true,
       },
     };
 
@@ -188,7 +188,7 @@ describe('useFocusStack', () => {
       },
       globalHotkeysConfig: {
         enableGlobalHotkeysWithModifiers: true,
-        enableConflictingWithKeyboardGlobalHotkeys: true,
+        enableGlobalHotkeysConflictingWithKeyboard: true,
       },
     };
 
@@ -225,7 +225,7 @@ describe('useFocusStack', () => {
       },
       globalHotkeysConfig: {
         enableGlobalHotkeysWithModifiers: true,
-        enableConflictingWithKeyboardGlobalHotkeys: true,
+        enableGlobalHotkeysConflictingWithKeyboard: true,
       },
     };
 
@@ -237,7 +237,7 @@ describe('useFocusStack', () => {
       },
       globalHotkeysConfig: {
         enableGlobalHotkeysWithModifiers: true,
-        enableConflictingWithKeyboardGlobalHotkeys: true,
+        enableGlobalHotkeysConflictingWithKeyboard: true,
       },
     };
 

@@ -52,31 +52,6 @@ describe('useModal', () => {
     expect(result.current.isModalOpened).toBe(true);
   });
 
-  it('should open a modal with custom hotkey scope', () => {
-    const { result } = renderHook(
-      () => {
-        const modal = useModal();
-        const isModalOpened = useRecoilValue(
-          isModalOpenedComponentState.atomFamily({ instanceId: modalId }),
-        );
-        return { modal, isModalOpened };
-      },
-      {
-        wrapper: RecoilRoot,
-      },
-    );
-
-    act(() => {
-      result.current.modal.openModal(modalId);
-    });
-
-    expect(result.current.isModalOpened).toBe(true);
-    expect(mockSetHotkeyScopeAndMemorizePreviousScope).toHaveBeenCalledWith(
-      customHotkeyScope.scope,
-      customHotkeyScope.customScopes,
-    );
-  });
-
   it('should close a modal', () => {
     const { result } = renderHook(
       () => {
@@ -152,30 +127,5 @@ describe('useModal', () => {
 
     expect(result.current.isModalOpened).toBe(false);
     expect(mockGoBackToPreviousHotkeyScope).toHaveBeenCalled();
-  });
-
-  it('should toggle a modal with custom hotkey scope', () => {
-    const { result } = renderHook(
-      () => {
-        const modal = useModal();
-        const isModalOpened = useRecoilValue(
-          isModalOpenedComponentState.atomFamily({ instanceId: modalId }),
-        );
-        return { modal, isModalOpened };
-      },
-      {
-        wrapper: RecoilRoot,
-      },
-    );
-
-    act(() => {
-      result.current.modal.toggleModal(modalId);
-    });
-
-    expect(result.current.isModalOpened).toBe(true);
-    expect(mockSetHotkeyScopeAndMemorizePreviousScope).toHaveBeenCalledWith(
-      customHotkeyScope.scope,
-      customHotkeyScope.customScopes,
-    );
   });
 });
