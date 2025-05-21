@@ -79,7 +79,9 @@ export type FieldLinksMetadata = BaseFieldMetadata & {
 export type FieldCurrencyMetadata = BaseFieldMetadata & {
   placeHolder: string;
   isPositive?: boolean;
-  settings?: null;
+  settings?: {
+    format: 'short' | 'full';
+  };
 };
 
 export type FieldFullNameMetadata = BaseFieldMetadata & {
@@ -288,3 +290,22 @@ export type FieldPhonesValue = {
   primaryPhoneCallingCode?: string;
   additionalPhones?: PhoneRecord[] | null;
 };
+
+export type FieldMetadataSettings =
+  | FieldCurrencyMetadata['settings']
+  | FieldDateMetadataSettings
+  | { decimals?: number; type?: FieldNumberVariant }
+  | { options: { value: string; label: string }[] }
+  | { options: { value: string; label: string }[] }
+  | { relationFieldMetadataId: string }
+  | { format: string }
+  | { format: string }
+  | { format: string }
+  | { format: string }
+  | { format: string }
+  | { format: string }
+  | { format: string }
+  | { format: string }
+  | { format: string }
+  | { format: string }
+  | { format: string };

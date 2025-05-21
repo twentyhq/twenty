@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { currencyFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/currencyFieldDefaultValueSchema';
+import { Separator } from '@/settings/components/Separator';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
@@ -10,9 +11,13 @@ import { Select } from '@/ui/input/components/Select';
 import { useLingui } from '@lingui/react/macro';
 import { IconCurrencyDollar } from 'twenty-ui/display';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
+import { SettingsDataModelFieldCurrencyFormatForm } from './SettingsDataModelFieldCurrencyFormatForm';
 
 export const settingsDataModelFieldCurrencyFormSchema = z.object({
   defaultValue: currencyFieldDefaultValueSchema,
+  settings: z.object({
+    format: z.enum(['short', 'full']),
+  }),
 });
 
 export type SettingsDataModelFieldCurrencyFormValues = z.infer<
@@ -21,7 +26,7 @@ export type SettingsDataModelFieldCurrencyFormValues = z.infer<
 
 type SettingsDataModelFieldCurrencyFormProps = {
   disabled?: boolean;
-  fieldMetadataItem: Pick<FieldMetadataItem, 'defaultValue'>;
+  fieldMetadataItem: Pick<FieldMetadataItem, 'defaultValue' | 'settings'>;
 };
 
 export const SettingsDataModelFieldCurrencyForm = ({
@@ -29,8 +34,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
   fieldMetadataItem,
 }: SettingsDataModelFieldCurrencyFormProps) => {
   const { t } = useLingui();
-  const { control } =
-    useFormContext<SettingsDataModelFieldCurrencyFormValues>();
+  const { control } = useFormContext<SettingsDataModelFieldCurrencyFormValues>();
 
   const { initialAmountMicrosValue, initialCurrencyCodeValue } =
     useCurrencySettingsFormInitialValues({ fieldMetadataItem });
@@ -68,6 +72,11 @@ export const SettingsDataModelFieldCurrencyForm = ({
             />
           </SettingsOptionCardContentSelect>
         )}
+      />
+      <Separator />
+      <SettingsDataModelFieldCurrencyFormatForm
+        disabled={disabled}
+        fieldMetadataItem={fieldMetadataItem}
       />
     </>
   );

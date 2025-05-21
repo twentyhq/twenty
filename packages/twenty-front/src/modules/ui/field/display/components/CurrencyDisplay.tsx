@@ -9,9 +9,10 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type CurrencyDisplayProps = {
   currencyValue: FieldCurrencyValue | null | undefined;
+  format?: 'short' | 'full';
 };
 
-export const CurrencyDisplay = ({ currencyValue }: CurrencyDisplayProps) => {
+export const CurrencyDisplay = ({ currencyValue, format = 'short' }: CurrencyDisplayProps) => {
   const theme = useTheme();
 
   const shouldDisplayCurrency = isDefined(currencyValue?.currencyCode);
@@ -39,7 +40,7 @@ export const CurrencyDisplay = ({ currencyValue }: CurrencyDisplayProps) => {
           />{' '}
         </>
       )}
-      {amountToDisplay !== null ? formatAmount(amountToDisplay) : ''}
+      {amountToDisplay !== null ? formatAmount(amountToDisplay, format) : ''}
     </EllipsisDisplay>
   );
 };
