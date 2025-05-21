@@ -82,6 +82,7 @@
     "eslint-plugin-storybook": "^0.6.15",
     "eslint-plugin-unicorn": "^51.0.1",
     "eslint-plugin-unused-imports": "^3.0.0",
-    "optionator": "^0.9.1"
+    "optionator": "^0.9.1",
+    "rollup-plugin-visualizer": "^5.14.0"
   }
 }

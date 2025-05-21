@@ -5,6 +5,7 @@ import react from '@vitejs/plugin-react-swc';
 import wyw from '@wyw-in-js/vite';
 import fs from 'fs';
 import path from 'path';
+import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig, loadEnv, searchForWorkspaceRoot } from 'vite';
 import checker from 'vite-plugin-checker';
 import svgr from 'vite-plugin-svgr';
@@ -145,6 +146,12 @@ export default defineConfig(({ command, mode }) => {
           presets: ['@babel/preset-typescript', '@babel/preset-react'],
         },
       }),
+      visualizer({
+        open: true,
+        gzipSize: true,
+        brotliSize: true,
+        filename: 'dist/stats.html'
+      }),
     ],
 
     optimizeDeps: {
@@ -210,16 +217,13 @@ export default defineConfig(({ command, mode }) => {
               return 'monaco-editor';
             }
 
-            if (id.includes('node_modules')) {
-              // Other libraries that aren't explicitly handled above
-              return 'vendor';
-            }
 
             // Split application code by module
             if (id.includes('/modules/settings/')) {
               return 'settings';
             }
 
+            /*
             if (id.includes('/modules/auth/')) {
               return 'auth';
             }
@@ -235,6 +239,7 @@ export default defineConfig(({ command, mode }) => {
             if (id.includes('/pages/onboarding/')) {
               return 'onboarding';
             }
+            */
 
             return null;
           },
