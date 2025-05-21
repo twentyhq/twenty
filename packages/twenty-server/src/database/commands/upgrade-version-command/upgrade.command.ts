@@ -47,6 +47,7 @@ export class DatabaseMigrationService {
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
+    protected readonly copyTypeormMigrationsCommand: CopyTypeormMigrationsCommand,
   ) {}
 
   // TODO centralize with ActiveOrSuspendedRunner method
@@ -86,6 +87,10 @@ export class DatabaseMigrationService {
 
     try {
       this.logger.log('Running metadata datasource migrations...');
+      await this.copyTypeormMigrationsCommand.runMigrationCommand([], {
+        dryRun: false,
+        verbose: false,
+      });
       const metadataResult = await execPromise(
         'npx -y typeorm migration:run -d dist/src/database/typeorm/metadata/metadata.datasource',
       );
@@ -251,7 +256,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       afterSyncMetadata: [
         this.migrateWorkflowEventListenersToAutomatedTriggersCommand,
         this.backfillWorkflowNextStepIdsCommand,
-        this.copyTypeormMigrationsCommand,
         this.upgradeSearchVectorOnPersonEntityCommand,
       ],
     };
@@ -290,6 +294,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       );
       throw new Error('Could not run migration aborting');
     }
+
+    await this.databaseMigrationService.runMigrations();
 
     await super.runMigrationCommand(passedParams, options);
   }
