@@ -7,7 +7,7 @@ import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 jest.mock('react-router-dom', () => ({
-  useLocation: jest.fn().mockReturnValue({ pathname: '' }),
+  useLocation: jest.fn(),
 }));
 
 const mockUseLocation = reactRouterDom.useLocation as jest.Mock;
