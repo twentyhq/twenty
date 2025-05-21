@@ -69,6 +69,10 @@ import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'sr
 import { FieldMetadataValidationService } from './field-metadata-validation.service';
 import { FieldMetadataEntity } from './field-metadata.entity';
 
+import {
+  FieldMetadataComplexOption,
+  FieldMetadataDefaultOption,
+} from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { generateDefaultValue } from './utils/generate-default-value';
 import { generateRatingOptions } from './utils/generate-rating-optionts.util';
 
@@ -201,7 +205,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           updatableFieldInput.defaultValue !== undefined
             ? updatableFieldInput.defaultValue
             : existingFieldMetadata.defaultValue,
-        options: this.prepareCustomFieldMetadataOptions(fieldMetadataInput),
+        ...this.prepareCustomFieldMetadataOptions(
+          fieldMetadataInput.options ?? existingFieldMetadata.options,
+        ),
       };
 
       await this.validateFieldMetadata<UpdateFieldInput>(
@@ -691,20 +697,21 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   }
 
   private prepareCustomFieldMetadataOptions(
-    fieldMetadataInput: UpdateFieldInput | CreateFieldInput,
-  ) {
-    if (!isDefined(fieldMetadataInput.options)) {
+    options?: FieldMetadataDefaultOption[] | FieldMetadataComplexOption[],
+  ): undefined | Pick<FieldMetadataEntity, 'options'> {
+    if (!isDefined(options)) {
       return undefined;
     }
 
-    return fieldMetadataInput.options.map((option) => ({
-      id: uuidV4(),
-      ...trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(option, [
-        'label',
-        'value',
-        'id',
-      ]),
-    }));
+    return {
+      options: options.map((option) => ({
+        id: uuidV4(),
+        ...trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
+          option,
+          ['label', 'value', 'id'],
+        ),
+      })),
+    };
   }
 
   private prepareCustomFieldMetadata(fieldMetadataInput: CreateFieldInput) {
@@ -721,7 +728,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       defaultValue:
         fieldMetadataInput.defaultValue ??
         generateDefaultValue(fieldMetadataInput.type),
-      options: this.prepareCustomFieldMetadataOptions(fieldMetadataInput),
+      ...this.prepareCustomFieldMetadataOptions(fieldMetadataInput.options),
       isActive: true,
       isCustom: true,
     };

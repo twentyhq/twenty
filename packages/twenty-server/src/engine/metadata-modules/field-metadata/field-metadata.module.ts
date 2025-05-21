@@ -17,6 +17,7 @@ import { FieldMetadataResolver } from 'src/engine/metadata-modules/field-metadat
 import { BeforeUpdateOneField } from 'src/engine/metadata-modules/field-metadata/hooks/before-update-one-field.hook';
 import { FieldMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/field-metadata/interceptors/field-metadata-graphql-api-exception.interceptor';
 import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/relation/field-metadata-relation.service';
+import { FieldMetadataEnumValidationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service';
 import { FieldMetadataRelatedRecordsService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-related-records.service';
 import { IsFieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-default-value.validator';
 import { IsFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-options.validator';
@@ -29,7 +30,6 @@ import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 import { ViewModule } from 'src/modules/view/view.module';
-import { FieldMetadataEnumValidationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service';
 
 import { FieldMetadataEntity } from './field-metadata.entity';
 import { FieldMetadataService } from './field-metadata.service';
@@ -60,8 +60,8 @@ import { UpdateFieldInput } from './dtos/update-field.input';
         IsFieldMetadataDefaultValue,
         FieldMetadataService,
         FieldMetadataRelatedRecordsService,
-        FieldMetadataEnumValidationService,
         FieldMetadataValidationService,
+        FieldMetadataEnumValidationService,
       ],
       resolvers: [
         {
@@ -97,6 +97,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
     FieldMetadataService,
     FieldMetadataRelationService,
     FieldMetadataRelatedRecordsService,
+    FieldMetadataValidationService,
     FieldMetadataEnumValidationService,
     FieldMetadataResolver,
     BeforeUpdateOneField,
@@ -106,6 +107,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
     FieldMetadataRelationService,
     FieldMetadataRelatedRecordsService,
     FieldMetadataEnumValidationService,
+    FieldMetadataValidationService,
   ],
 })
 export class FieldMetadataModule {}

@@ -83,6 +83,14 @@ describe('trim-and-remove-duplicated-whitespaces-from-object-string-properties',
         expected: { description: 'This is a test' },
       },
     },
+    {
+      title: 'should trim only provided keys fields',
+      context: {
+        input: { name: '  John   Doe  ', description: ' this      is a test   ' },
+        keys: ['description'],
+        expected: { name: '  John   Doe  ', description: 'this is a test' },
+      },
+    },
   ];
 
   test.each(testCases)('$title', ({ context: { input, keys, expected } }) => {

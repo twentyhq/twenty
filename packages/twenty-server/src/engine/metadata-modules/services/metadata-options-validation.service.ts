@@ -1,39 +1,32 @@
-import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
-import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
-
-import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
-import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
-import { FieldMetadataValidationService } from 'src/engine/metadata-modules/field-metadata/field-metadata-validation.service';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { sanitizeObjectStringProperties } from '../../../utils/sanitize-object-string-properties';
+import { CreateFieldInput } from '../field-metadata/dtos/create-field.input';
+import { UpdateFieldInput } from '../field-metadata/dtos/update-field.input';
 import {
     FieldMetadataException,
     FieldMetadataExceptionCode,
-} from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+} from '../field-metadata/field-metadata.exception';
+import { FieldMetadataOptions } from '../field-metadata/interfaces/field-metadata-options.interface';
+import { isEnumFieldMetadataType } from '../field-metadata/utils/is-enum-field-metadata-type.util';
 import {
     beneathDatabaseIdentifierMinimumLength,
     exceedsDatabaseIdentifierMaximumLength,
-} from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
-import { isSnakeCaseString } from 'src/utils/is-snake-case-string';
+} from '../utils/validate-database-identifier-length.utils';
+
+const SNAKE_CASE_REGEX = /^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$/;
 
 type Validator<T> = { validator: (str: T) => boolean; message: string };
 
-@Injectable()
-export class FieldMetadataEnumValidationService {
-  constructor(
-    private readonly fieldMetadataValidationService: FieldMetadataValidationService,
-  ) {}
-
+export class MetadataOptionsValidationService {
   private validatorRunner<T>(
     elementToValidate: T,
     { message, validator }: Validator<T>,
   ) {
     const shouldThrow = validator(elementToValidate);
-
     if (shouldThrow) {
       throw new FieldMetadataException(
         message,
@@ -96,15 +89,15 @@ export class FieldMetadataEnumValidationService {
       },
       {
         validator: exceedsDatabaseIdentifierMaximumLength,
-        message: `Option value "${sanitizedValue}" exceeds 63 characters`,
+        message: 'exceedsDatabaseIdentifierMaximumLength',
       },
       {
         validator: beneathDatabaseIdentifierMinimumLength,
-        message: `Option value "${sanitizedValue}" is beneath 1 character`,
+        message: 'beneathDatabaseIdentifierMinimumLength',
       },
       {
-        validator: (value) => !isSnakeCaseString(value),
-        message: `Value must be in UPPER_CASE and follow snake_case "${sanitizedValue}"`,
+        validator: (value) => !SNAKE_CASE_REGEX.test(value),
+        message: 'Value must be in UPPER_CASE and follow snake_case',
       },
     ];
 
@@ -154,13 +147,12 @@ export class FieldMetadataEnumValidationService {
   }: {
     fieldMetadataInput: CreateFieldInput | UpdateFieldInput;
     fieldMetadataType: FieldMetadataType;
-  }) {
+  }): Promise<void> {
     if (!isEnumFieldMetadataType(fieldMetadataType)) {
       return;
     }
 
     const { options } = fieldMetadataInput;
-
     if (!isDefined(options) || options.length === 0) {
       throw new FieldMetadataException(
         'Options are required for enum fields',
@@ -168,20 +160,56 @@ export class FieldMetadataEnumValidationService {
       );
     }
 
-    for (const option of options) {
+    const sanitizedOptions = options.map((option) =>
+      sanitizeObjectStringProperties(option, ['label', 'value', 'id']),
+    );
+
+    // Validate individual options
+    for (const option of sanitizedOptions) {
       this.validateMetadataOptionId(option.id);
       this.validateMetadataOptionValue(option.value);
       this.validateMetadataOptionLabel(option.label);
     }
 
-    this.validateDuplicates(options);
+    // Validate duplicates
+    this.validateDuplicates(sanitizedOptions);
 
+    // Validate default value if present
     if (isDefined(fieldMetadataInput.defaultValue)) {
-      await this.fieldMetadataValidationService.validateDefaultValueOrThrow({
+      await this.validateDefaultValue({
         fieldType: fieldMetadataType,
-        options,
-        defaultValue: fieldMetadataInput.defaultValue ?? null,
+        options: sanitizedOptions,
+        defaultValue: fieldMetadataInput.defaultValue,
       });
+    }
+  }
+
+  async validateDefaultValue({
+    fieldType,
+    options,
+    defaultValue,
+  }: {
+    fieldType: FieldMetadataType;
+    options: FieldMetadataOptions;
+    defaultValue: unknown;
+  }): Promise<void> {
+    if (!isDefined(defaultValue)) {
+      return;
+    }
+
+    if (typeof defaultValue !== 'string') {
+      throw new FieldMetadataException(
+        'Default value must be a string for enum fields',
+        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      );
+    }
+
+    const validOptionValues = new Set(options.map((option) => option.value));
+    if (!validOptionValues.has(defaultValue)) {
+      throw new FieldMetadataException(
+        `Default value "${defaultValue}" is not a valid option`,
+        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      );
     }
   }
 }
