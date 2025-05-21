@@ -286,10 +286,8 @@ export class AuthService {
   }
 
   async checkUserExists(email: string): Promise<UserExists | UserNotExists> {
-    const user = await this.userRepository.findOne({
-      where: {
-        email,
-      },
+    const user = await this.userRepository.findOneBy({
+      email,
     });
 
     if (userValidator.isDefined(user)) {
