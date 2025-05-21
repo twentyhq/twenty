@@ -1,8 +1,10 @@
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
+import { multipleRecordPickerIsLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsLoadingComponentState';
 import { multipleRecordPickerPaginationState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPaginationState';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { multipleRecordPickerPaginationSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPaginationSelectors';
+import { multipleRecordPickerPickableMorphItemsLengthComponentSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPickableMorphItemsLengthComponentSelector';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
@@ -31,6 +33,16 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
     componentInstanceId,
   );
 
+  const isLoading = useRecoilComponentValueV2(
+    multipleRecordPickerIsLoadingComponentState,
+    componentInstanceId,
+  );
+
+  const itemsLength = useRecoilComponentValueV2(
+    multipleRecordPickerPickableMorphItemsLengthComponentSelector,
+    componentInstanceId,
+  );
+
   const searchFilter = useRecoilComponentValueV2(
     multipleRecordPickerSearchFilterComponentState,
     componentInstanceId,
@@ -49,7 +61,7 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
           )
           .getValue();
 
-        if (paginationState.isLoadingMore || !paginationState.hasNextPage) {
+        if (isLoading || !paginationState.hasNextPage) {
           return;
         }
 
@@ -59,7 +71,7 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
           loadMore: true,
         });
       },
-    [componentInstanceId, performSearch, searchFilter],
+    [componentInstanceId, performSearch, searchFilter, isLoading],
   );
 
   const { ref } = useInView({
@@ -75,15 +87,11 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
     rootMargin: '200px',
   });
 
-  if (!paginationState.hasNextPage || paginationState.isLoadingInitial) {
+  if (!paginationState.hasNextPage) {
     return null;
   }
 
   return (
-    <div ref={ref}>
-      {paginationState.isLoadingMore && (
-        <StyledText>Loading more...</StyledText>
-      )}
-    </div>
+    <div ref={ref}>{isLoading && <StyledText>Loading more...</StyledText>}</div>
   );
 };

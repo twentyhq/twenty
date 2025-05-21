@@ -1,6 +1,6 @@
 import { MultipleRecordPickerMenuItems } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItems';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
-import { multipleRecordPickerPaginationSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPaginationSelectors';
+import { multipleRecordPickerIsLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsLoadingComponentState';
 import { multipleRecordPickerPickableMorphItemsLengthComponentSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPickableMorphItemsLengthComponentSelector';
 import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
@@ -17,8 +17,8 @@ export const MultipleRecordPickerItemsDisplay = ({
     MultipleRecordPickerComponentInstanceContext,
   );
 
-  const paginationState = useRecoilComponentValueV2(
-    multipleRecordPickerPaginationSelector,
+  const isLoading = useRecoilComponentValueV2(
+    multipleRecordPickerIsLoadingComponentState,
     componentInstanceId,
   );
 
@@ -30,7 +30,7 @@ export const MultipleRecordPickerItemsDisplay = ({
   return (
     <>
       <DropdownMenuSeparator />
-      {paginationState.isLoadingInitial && itemsLength === 0 ? (
+      {isLoading && itemsLength === 0 ? (
         <DropdownMenuSkeletonItem />
       ) : (
         <MultipleRecordPickerMenuItems onChange={onChange} />

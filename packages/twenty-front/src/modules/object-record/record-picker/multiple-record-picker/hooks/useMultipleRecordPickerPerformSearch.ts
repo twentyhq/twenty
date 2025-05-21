@@ -1,6 +1,7 @@
 import { SEARCH_QUERY } from '@/command-menu/graphql/queries/search';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { usePerformCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/usePerformCombinedFindManyRecords';
+import { multipleRecordPickerIsLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsLoadingComponentState';
 import { multipleRecordPickerPaginationState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPaginationState';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
@@ -46,6 +47,13 @@ export const useMultipleRecordPickerPerformSearch = () => {
         ).getValue();
 
         set(
+          multipleRecordPickerIsLoadingComponentState.atomFamily({
+            instanceId: multipleRecordPickerInstanceId,
+          }),
+          true,
+        );
+
+        set(
           multipleRecordPickerPaginationState.atomFamily({
             instanceId: multipleRecordPickerInstanceId,
           }),
@@ -53,8 +61,6 @@ export const useMultipleRecordPickerPerformSearch = () => {
             ...paginationState,
             endCursor: loadMore ? paginationState.endCursor : null,
             hasNextPage: loadMore ? paginationState.hasNextPage : true,
-            isLoadingMore: loadMore,
-            isLoadingInitial: !loadMore,
           },
         );
 
@@ -342,9 +348,14 @@ export const useMultipleRecordPickerPerformSearch = () => {
             ...paginationState,
             endCursor: pageInfo.endCursor,
             hasNextPage: pageInfo.hasNextPage,
-            isLoadingMore: false,
-            isLoadingInitial: false,
           },
+        );
+
+        set(
+          multipleRecordPickerIsLoadingComponentState.atomFamily({
+            instanceId: multipleRecordPickerInstanceId,
+          }),
+          false,
         );
       },
     [client, performCombinedFindManyRecords],
