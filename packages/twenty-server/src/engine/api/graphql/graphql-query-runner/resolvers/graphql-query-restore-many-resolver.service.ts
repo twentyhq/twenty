@@ -54,11 +54,11 @@ export class GraphqlQueryRestoreManyResolverService extends GraphqlQueryBaseReso
       objectMetadataMaps,
     );
 
-    this.apiEventEmitterService.emitRestoreEvents(
-      formattedRestoredRecords,
+    this.apiEventEmitterService.emitRestoreEvents({
+      records: formattedRestoredRecords,
       authContext,
-      objectMetadataItemWithFieldMaps,
-    );
+      objectMetadataItem: objectMetadataItemWithFieldMaps,
+    });
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({

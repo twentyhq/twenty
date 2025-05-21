@@ -53,11 +53,11 @@ export class GraphqlQueryCreateOneResolverService extends GraphqlQueryBaseResolv
       objectMetadataMaps,
     );
 
-    this.apiEventEmitterService.emitCreateEvents(
-      upsertedRecords,
+    this.apiEventEmitterService.emitCreateEvents({
+      records: upsertedRecords,
       authContext,
-      objectMetadataItemWithFieldMaps,
-    );
+      objectMetadataItem: objectMetadataItemWithFieldMaps,
+    });
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({

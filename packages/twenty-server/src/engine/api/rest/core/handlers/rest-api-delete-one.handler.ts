@@ -23,11 +23,11 @@ export class RestApiDeleteOneHandler extends RestApiBaseHandler {
 
     await repository.delete(recordId);
 
-    this.apiEventEmitterService.emitDestroyEvents(
-      [recordToDelete],
-      this.getAuthContextFromRequest(request),
-      objectMetadata.objectMetadataMapItem,
-    );
+    this.apiEventEmitterService.emitDestroyEvents({
+      records: [recordToDelete],
+      authContext: this.getAuthContextFromRequest(request),
+      objectMetadataItem: objectMetadata.objectMetadataMapItem,
+    });
 
     return this.formatResult({
       operation: 'delete',
