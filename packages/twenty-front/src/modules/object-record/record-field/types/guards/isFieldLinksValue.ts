@@ -3,10 +3,15 @@ import { z } from 'zod';
 import { FieldLinksValue } from '../FieldMetadata';
 
 export const linksSchema = z.object({
-  primaryLinkLabel: z.string(),
-  primaryLinkUrl: absoluteUrlSchema.or(z.string().length(0)),
+  primaryLinkLabel: z.string().nullable(),
+  primaryLinkUrl: absoluteUrlSchema.or(z.string().length(0)).nullable(),
   secondaryLinks: z
-    .array(z.object({ label: z.string(), url: absoluteUrlSchema }))
+    .array(
+      z.object({
+        label: z.string().nullable(),
+        url: absoluteUrlSchema.nullable(),
+      }),
+    )
     .nullable(),
 }) satisfies z.ZodType<FieldLinksValue>;
 
