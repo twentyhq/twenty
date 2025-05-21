@@ -8,8 +8,13 @@ import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { HorizontalSeparator, IconMicrosoft } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
+import { SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
 
-export const SignInUpWithMicrosoft = () => {
+export const SignInUpWithMicrosoft = ({
+  action,
+}: {
+  action: SocialSSOSignInUpActionType;
+}) => {
   const theme = useTheme();
   const { t } = useLingui();
 
@@ -21,7 +26,7 @@ export const SignInUpWithMicrosoft = () => {
       <MainButton
         Icon={() => <IconMicrosoft size={theme.icon.size.md} />}
         title={t`Continue with Microsoft`}
-        onClick={signInWithMicrosoft}
+        onClick={() => signInWithMicrosoft({ action })}
         variant={signInUpStep === SignInUpStep.Init ? undefined : 'secondary'}
         fullWidth
       />

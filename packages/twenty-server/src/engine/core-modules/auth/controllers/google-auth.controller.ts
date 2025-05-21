@@ -21,7 +21,6 @@ import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/l
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 
 @Controller('auth/google')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -61,10 +60,15 @@ export class GoogleAuthController {
     if (
       !workspaceId &&
       !workspaceInviteHash &&
-      action === 'list-available-workspace'
+      action === 'list-available-workspaces'
     ) {
       return res.redirect(
-        this.authService.computeRedirectURIForWorkspaceSelection(email),
+        this.authService.computeRedirectURIForWorkspaceSelection({
+          firstName,
+          lastName,
+          email,
+          picture,
+        }),
       );
     }
 

@@ -9,6 +9,7 @@ import { memo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { HorizontalSeparator, IconGoogle } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
+import { SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
 
 const GoogleIcon = memo(() => {
   const theme = useTheme();
@@ -18,10 +19,7 @@ const GoogleIcon = memo(() => {
 export const SignInUpWithGoogle = ({
   action,
 }: {
-  action:
-    | 'create-new-workspace'
-    | 'list-available-workspace'
-    | 'join-workspace';
+  action: SocialSSOSignInUpActionType;
 }) => {
   const { t } = useLingui();
   const signInUpStep = useRecoilValue(signInUpStepState);

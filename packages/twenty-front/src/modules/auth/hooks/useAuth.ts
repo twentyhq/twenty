@@ -507,6 +507,7 @@ export const useAuth = () => {
       workspacePersonalInviteToken?: string;
       workspaceInviteHash?: string;
       billingCheckoutSession?: BillingCheckoutSession;
+      action: string;
     }) => {
       redirect(buildRedirectUrl('/auth/microsoft', params));
     },

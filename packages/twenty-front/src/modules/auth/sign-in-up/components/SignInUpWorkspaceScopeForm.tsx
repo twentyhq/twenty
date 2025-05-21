@@ -40,7 +40,9 @@ export const SignInUpWorkspaceScopeForm = () => {
           <SignInUpWithGoogle action="join-workspace" />
         )}
 
-        {workspaceAuthProviders.microsoft && <SignInUpWithMicrosoft />}
+        {workspaceAuthProviders.microsoft && (
+          <SignInUpWithMicrosoft action="join-workspace" />
+        )}
 
         {workspaceAuthProviders.sso.length > 0 && <SignInUpWithSSO />}
 

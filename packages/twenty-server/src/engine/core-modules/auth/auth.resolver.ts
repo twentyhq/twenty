@@ -65,6 +65,7 @@ import { EmailAndCaptchaInput } from './dto/user-exists.input';
 import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.entity';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
+import { CreateUserAndWorkspaceInput } from 'src/engine/core-modules/auth/dto/create-user-and-workspace.input';
 
 @Resolver()
 @UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
@@ -250,6 +251,32 @@ export class AuthResolver {
       user.email,
       workspace,
       signUpInput.locale ?? SOURCE_LOCALE,
+    );
+
+    const loginToken = await this.loginTokenService.generateLoginToken(
+      user.email,
+      workspace.id,
+    );
+
+    return {
+      loginToken,
+      workspace: {
+        id: workspace.id,
+        workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
+      },
+    };
+  }
+
+  @UseGuards(CaptchaGuard)
+  @Mutation(() => SignUpOutput)
+  async createUserAndWorkspace(
+    @Args() createUserAndWorkspaceInput: CreateUserAndWorkspaceInput,
+  ): Promise<SignUpOutput> {
+    const { user, workspace } = await this.signInUpService.signUpOnNewWorkspace(
+      {
+        type: 'newUserWithPicture',
+        newUserWithPicture: createUserAndWorkspaceInput,
+      },
     );
 
     const loginToken = await this.loginTokenService.generateLoginToken(

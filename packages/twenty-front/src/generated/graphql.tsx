@@ -909,6 +909,7 @@ export type Mutation = {
   createOneRole: Role;
   createOneServerlessFunction: ServerlessFunction;
   createSAMLIdentityProvider: SetupSsoOutput;
+  createUserAndWorkspace: SignUpOutput;
   createWorkflowVersionStep: WorkflowAction;
   deactivateWorkflowVersion: Scalars['Boolean'];
   deleteApprovedAccessDomain: Scalars['Boolean'];
@@ -1046,6 +1047,16 @@ export type MutationCreateOneServerlessFunctionArgs = {
 
 export type MutationCreateSamlIdentityProviderArgs = {
   input: SetupSamlSsoInput;
+};
+
+
+export type MutationCreateUserAndWorkspaceArgs = {
+  captchaToken?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
+  firstName?: InputMaybe<Scalars['String']>;
+  lastName?: InputMaybe<Scalars['String']>;
+  locale?: InputMaybe<Scalars['String']>;
+  picture?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -2552,6 +2563,18 @@ export type AuthorizeAppMutationVariables = Exact<{
 
 export type AuthorizeAppMutation = { __typename?: 'Mutation', authorizeApp: { __typename?: 'AuthorizeApp', redirectUrl: string } };
 
+export type CreateUserAndWorkspaceMutationVariables = Exact<{
+  email: Scalars['String'];
+  firstName?: InputMaybe<Scalars['String']>;
+  lastName?: InputMaybe<Scalars['String']>;
+  picture?: InputMaybe<Scalars['String']>;
+  captchaToken?: InputMaybe<Scalars['String']>;
+  locale?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type CreateUserAndWorkspaceMutation = { __typename?: 'Mutation', createUserAndWorkspace: { __typename?: 'SignUpOutput', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, workspace: { __typename?: 'WorkspaceUrlsAndId', id: string, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null } } } };
+
 export type EmailPasswordResetLinkMutationVariables = Exact<{
   email: Scalars['String'];
   workspaceId: Scalars['String'];
@@ -3662,6 +3685,60 @@ export function useAuthorizeAppMutation(baseOptions?: Apollo.MutationHookOptions
 export type AuthorizeAppMutationHookResult = ReturnType<typeof useAuthorizeAppMutation>;
 export type AuthorizeAppMutationResult = Apollo.MutationResult<AuthorizeAppMutation>;
 export type AuthorizeAppMutationOptions = Apollo.BaseMutationOptions<AuthorizeAppMutation, AuthorizeAppMutationVariables>;
+export const CreateUserAndWorkspaceDocument = gql`
+    mutation CreateUserAndWorkspace($email: String!, $firstName: String, $lastName: String, $picture: String, $captchaToken: String, $locale: String) {
+  createUserAndWorkspace(
+    email: $email
+    firstName: $firstName
+    lastName: $lastName
+    picture: $picture
+    captchaToken: $captchaToken
+    locale: $locale
+  ) {
+    loginToken {
+      ...AuthTokenFragment
+    }
+    workspace {
+      id
+      workspaceUrls {
+        subdomainUrl
+        customUrl
+      }
+    }
+  }
+}
+    ${AuthTokenFragmentFragmentDoc}`;
+export type CreateUserAndWorkspaceMutationFn = Apollo.MutationFunction<CreateUserAndWorkspaceMutation, CreateUserAndWorkspaceMutationVariables>;
+
+/**
+ * __useCreateUserAndWorkspaceMutation__
+ *
+ * To run a mutation, you first call `useCreateUserAndWorkspaceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateUserAndWorkspaceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createUserAndWorkspaceMutation, { data, loading, error }] = useCreateUserAndWorkspaceMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *      firstName: // value for 'firstName'
+ *      lastName: // value for 'lastName'
+ *      picture: // value for 'picture'
+ *      captchaToken: // value for 'captchaToken'
+ *      locale: // value for 'locale'
+ *   },
+ * });
+ */
+export function useCreateUserAndWorkspaceMutation(baseOptions?: Apollo.MutationHookOptions<CreateUserAndWorkspaceMutation, CreateUserAndWorkspaceMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateUserAndWorkspaceMutation, CreateUserAndWorkspaceMutationVariables>(CreateUserAndWorkspaceDocument, options);
+      }
+export type CreateUserAndWorkspaceMutationHookResult = ReturnType<typeof useCreateUserAndWorkspaceMutation>;
+export type CreateUserAndWorkspaceMutationResult = Apollo.MutationResult<CreateUserAndWorkspaceMutation>;
+export type CreateUserAndWorkspaceMutationOptions = Apollo.BaseMutationOptions<CreateUserAndWorkspaceMutation, CreateUserAndWorkspaceMutationVariables>;
 export const EmailPasswordResetLinkDocument = gql`
     mutation EmailPasswordResetLink($email: String!, $workspaceId: String!) {
   emailPasswordResetLink(email: $email, workspaceId: $workspaceId) {

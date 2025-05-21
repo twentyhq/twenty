@@ -39,7 +39,7 @@ import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
-import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
+import { useCreateUserAndWorkspace } from '@/auth/sign-in-up/hooks/useCreateUserAndWorkspace';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -136,12 +136,12 @@ export const SignInUpGlobalScopeForm = () => {
   const { checkUserExists } = useAuth();
   const { readCaptchaToken } = useReadCaptchaToken();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
+  const { createUserAndWorkspace } = useCreateUserAndWorkspace();
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
   const setAvailableWorkspaces = useSetRecoilState(availableWorkspacesState);
   const theme = useTheme();
   const { t } = useLingui();
-  const { signInWithGoogle } = useSignInWithGoogle();
 
   const isRequestingCaptchaToken = useRecoilValue(
     isRequestingCaptchaTokenState,
@@ -227,12 +227,6 @@ export const SignInUpGlobalScopeForm = () => {
     }
   };
 
-  const handleCreateWorkspace = async () => {
-    signInWithGoogle({
-      action: 'create-new-workspace',
-    });
-  };
-
   return (
     <>
       {signInUpStep === SignInUpStep.WorkspaceSelection && (
@@ -267,7 +261,7 @@ export const SignInUpGlobalScopeForm = () => {
               </StyledWorkspaceContent>
             </StyledWorkspaceItem>
           ))}
-          <StyledWorkspaceItem onClick={handleCreateWorkspace}>
+          <StyledWorkspaceItem onClick={createUserAndWorkspace}>
             <StyledWorkspaceContent>
               <StyledWorkspaceLogo>
                 <IconPlus size={theme.icon.size.lg} />
@@ -285,9 +279,11 @@ export const SignInUpGlobalScopeForm = () => {
       {signInUpStep !== SignInUpStep.WorkspaceSelection && (
         <StyledContentContainer>
           {authProviders.google && (
-            <SignInUpWithGoogle action="list-available-workspace" />
+            <SignInUpWithGoogle action="list-available-workspaces" />
           )}
-          {authProviders.microsoft && <SignInUpWithMicrosoft />}
+          {authProviders.microsoft && (
+            <SignInUpWithMicrosoft action="list-available-workspaces" />
+          )}
           {(authProviders.google || authProviders.microsoft) && (
             <HorizontalSeparator />
           )}

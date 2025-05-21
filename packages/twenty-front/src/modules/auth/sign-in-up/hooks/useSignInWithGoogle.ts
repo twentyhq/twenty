@@ -2,6 +2,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
+import { SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
 
 export const useSignInWithGoogle = () => {
   const workspaceInviteHash = useParams().workspaceInviteHash;
@@ -17,14 +18,7 @@ export const useSignInWithGoogle = () => {
   const { signInWithGoogle } = useAuth();
 
   return {
-    signInWithGoogle: ({
-      action,
-    }: {
-      action:
-        | 'create-new-workspace'
-        | 'list-available-workspace'
-        | 'join-workspace';
-    }) =>
+    signInWithGoogle: ({ action }: { action: SocialSSOSignInUpActionType }) =>
       signInWithGoogle({
         workspaceInviteHash,
         workspacePersonalInviteToken,

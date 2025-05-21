@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useLocation, useSearchParams } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { z } from 'zod';
 
 import {
@@ -14,6 +14,7 @@ import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/i
 import { isDefined } from 'twenty-shared/utils';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { useAuth } from '@/auth/hooks/useAuth';
+import { userDataForNewUserAndWorkspaceState } from '@/auth/states/userDataForNewUserAndWorkspaceState';
 
 const makeValidationSchema = (signInUpStep: SignInUpStep) =>
   z
@@ -34,6 +35,9 @@ export type Form = z.infer<ReturnType<typeof makeValidationSchema>>;
 export const useSignInUpForm = () => {
   const location = useLocation();
   const [signInUpStep, setSignInUpStep] = useRecoilState(signInUpStepState);
+  const setUserDataForNewUserAndWorkspace = useSetRecoilState(
+    userDataForNewUserAndWorkspaceState,
+  );
 
   const { listAvailableWorkspacesQuery } = useAuth();
 
@@ -48,8 +52,9 @@ export const useSignInUpForm = () => {
   );
   const [searchParams] = useSearchParams();
   const prefilledEmail = searchParams.get('email');
-  const emailForWorkspacesSelection = searchParams.get(
-    'emailForWorkspacesSelection',
+
+  const userDataForNewUserAndWorkspaceSearchParams = searchParams.get(
+    'userDataForNewUserAndWorkspace',
   );
 
   const form = useForm<Form>({
@@ -69,17 +74,22 @@ export const useSignInUpForm = () => {
     }
 
     if (
-      isDefined(emailForWorkspacesSelection) &&
+      isDefined(userDataForNewUserAndWorkspaceSearchParams) &&
       availableWorkspaces.length === 0
     ) {
+      const userData = JSON.parse(userDataForNewUserAndWorkspaceSearchParams);
+
+      setUserDataForNewUserAndWorkspace(userData);
+
       listAvailableWorkspacesQuery({
         variables: {
-          email: emailForWorkspacesSelection,
+          email: userData.email,
         },
         onCompleted: (data) => {
           setAvailableWorkspaces(data.listAvailableWorkspaces);
         },
       });
+
       setSignInUpStep(SignInUpStep.WorkspaceSelection);
     }
 
@@ -92,7 +102,8 @@ export const useSignInUpForm = () => {
     isDeveloperDefaultSignInPrefilled,
     prefilledEmail,
     location.search,
-    emailForWorkspacesSelection,
+    userDataForNewUserAndWorkspaceSearchParams,
+    setUserDataForNewUserAndWorkspace,
     availableWorkspaces.length,
     listAvailableWorkspacesQuery,
     setSignInUpStep,

@@ -512,11 +512,15 @@ export class AuthService {
     return workspace;
   }
 
-  computeRedirectURIForWorkspaceSelection(email: string) {
+  computeRedirectURIForWorkspaceSelection(
+    userDataForNewUserAndWorkspace: SignInUpNewUserPayload,
+  ) {
     const url = this.domainManagerService.buildBaseUrl({
       pathname: '/welcome',
       searchParams: {
-        emailForWorkspacesSelection: email,
+        userDataForNewUserAndWorkspace: JSON.stringify(
+          userDataForNewUserAndWorkspace,
+        ),
       },
     });
 

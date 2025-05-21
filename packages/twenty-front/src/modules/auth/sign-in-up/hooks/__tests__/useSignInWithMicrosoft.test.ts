@@ -43,7 +43,9 @@ describe('useSignInWithMicrosoft', () => {
     const { result } = renderHook(() => useSignInWithMicrosoft(), {
       wrapper: Wrapper,
     });
-    result.current.signInWithMicrosoft();
+    result.current.signInWithMicrosoft({
+      action: 'join-workspace',
+    });
 
     expect(signInWithMicrosoftMock).toHaveBeenCalledWith({
       workspaceInviteHash: workspaceInviteHashMock,
@@ -67,7 +69,9 @@ describe('useSignInWithMicrosoft', () => {
     const { result } = renderHook(() => useSignInWithMicrosoft(), {
       wrapper: Wrapper,
     });
-    result.current.signInWithMicrosoft();
+    result.current.signInWithMicrosoft({
+      action: 'join-workspace',
+    });
 
     expect(signInWithMicrosoftMock).toHaveBeenCalledWith({
       billingCheckoutSession: mockBillingCheckoutSession,

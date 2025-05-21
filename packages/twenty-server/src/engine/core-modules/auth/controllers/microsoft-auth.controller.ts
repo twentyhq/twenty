@@ -53,22 +53,35 @@ export class MicrosoftAuthController {
       picture,
       workspaceInviteHash,
       workspaceId,
+      action,
       billingCheckoutSessionState,
       locale,
     } = req.user;
 
-    if (!workspaceId && !workspaceInviteHash) {
+    if (
+      !workspaceId &&
+      !workspaceInviteHash &&
+      action === 'list-available-workspaces'
+    ) {
       return res.redirect(
-        this.authService.computeRedirectURIForWorkspaceSelection(email),
+        this.authService.computeRedirectURIForWorkspaceSelection({
+          firstName,
+          lastName,
+          email,
+          picture,
+        }),
       );
     }
 
-    const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
-      workspaceId,
-      workspaceInviteHash,
-      email,
-      authProvider: 'microsoft',
-    });
+    const currentWorkspace =
+      action === 'create-new-workspace'
+        ? undefined
+        : await this.authService.findWorkspaceForSignInUp({
+            workspaceId,
+            workspaceInviteHash,
+            email,
+            authProvider: 'microsoft',
+          });
 
     try {
       const invitation =
