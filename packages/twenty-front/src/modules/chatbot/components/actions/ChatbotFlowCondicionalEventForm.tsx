@@ -118,7 +118,6 @@ export const ChatbotFlowCondicionalEventForm = ({
   const { updateFlow } = useUpdateChatbotFlow();
 
   const chatbotFlow = useRecoilValue(chatbotFlowState);
-  const setChatbotFlow = useSetRecoilState(chatbotFlowState);
   const setChatbotFlowSelectedNode = useSetRecoilState(
     chatbotFlowSelectedNodeState,
   );
@@ -189,7 +188,6 @@ export const ChatbotFlowCondicionalEventForm = ({
 
     setChatbotFlowSelectedNode(updatedNode);
     updateFlow(updatedChatbotFlow);
-    setChatbotFlow(updatedChatbotFlow);
   };
 
   const handleTitleBlur = () => persistNode();

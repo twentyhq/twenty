@@ -60,7 +60,7 @@ export class ChatbotFlowService {
     });
   }
 
-  async updateFlow(flow: UpdateChatbotFlowInput): Promise<boolean> {
+  async updateFlow(flow: UpdateChatbotFlowInput): Promise<ChatbotFlow | null> {
     const chatbotFlow = await this.chatbotFlowRepository.findOne({
       where: {
         chatbotId: flow.chatbotId,
@@ -78,8 +78,6 @@ export class ChatbotFlowService {
       ...newFlow,
     };
 
-    await this.chatbotFlowRepository.save(updateFlow);
-
-    return true;
+    return await this.chatbotFlowRepository.save(updateFlow);
   }
 }

@@ -29,6 +29,7 @@ const StyledTextContainer = styled.div`
   outline: none;
   padding: ${({ theme }) => theme.spacing(2)};
   white-space: pre-wrap;
+  word-break: break-all;
   width: 100%;
 `;
 

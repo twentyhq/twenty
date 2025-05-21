@@ -105,7 +105,6 @@ export const ChatbotFlowTextEventForm = ({
   const { updateFlow } = useUpdateChatbotFlow();
 
   const chatbotFlow = useRecoilValue(chatbotFlowState);
-  const setChatbotFlow = useSetRecoilState(chatbotFlowState);
   const setChatbotFlowSelectedNode = useSetRecoilState(
     chatbotFlowSelectedNodeState,
   );
@@ -161,7 +160,6 @@ export const ChatbotFlowTextEventForm = ({
 
     setChatbotFlowSelectedNode(updatedNode);
     updateFlow(updatedChatbotFlow);
-    setChatbotFlow(updatedChatbotFlow);
   };
 
   return (

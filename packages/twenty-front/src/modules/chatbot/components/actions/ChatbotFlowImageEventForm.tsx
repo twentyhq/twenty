@@ -100,7 +100,6 @@ export const ChatbotFlowImageEventForm = ({
   const { uploadFileToBucket } = useUploadFileToBucket();
 
   const chatbotFlow = useRecoilValue(chatbotFlowState);
-  const setChatbotFlow = useSetRecoilState(chatbotFlowState);
   const setChatbotFlowSelectedNode = useSetRecoilState(
     chatbotFlowSelectedNodeState,
   );
@@ -134,7 +133,6 @@ export const ChatbotFlowImageEventForm = ({
 
     setChatbotFlowSelectedNode(updatedNode);
     updateFlow(updatedChatbotFlow);
-    setChatbotFlow(updatedChatbotFlow);
   };
 
   const handleSendFile = async (file: File) => {
@@ -171,7 +169,6 @@ export const ChatbotFlowImageEventForm = ({
 
       setChatbotFlowSelectedNode(updatedNode);
       updateFlow(updatedChatbotFlow);
-      setChatbotFlow(updatedChatbotFlow);
     }
   };
 
@@ -202,7 +199,6 @@ export const ChatbotFlowImageEventForm = ({
 
     setChatbotFlowSelectedNode(updatedNode);
     updateFlow(updatedChatbotFlow);
-    setChatbotFlow(updatedChatbotFlow);
   };
 
   return (
