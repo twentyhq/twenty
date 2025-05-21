@@ -25,6 +25,10 @@ import {
 import { IconCancel, IconCreditCard, IconIdBadge2, IconMessageCircleCog, IconWallet } from '@tabler/icons-react';
 
 import styled from '@emotion/styled';
+import { ChangeSubscriptionPlan } from '~/pages/settings/billing/ChangeSubscriptionPlan';
+import { useState } from 'react';
+import { Modal } from '@/ui/layout/modal/components/Modal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 
 const StyledSettingsBillingButton = styled.button`
     display: flex;
@@ -49,12 +53,24 @@ const BillingDetailsButton = () => {
 }
 
 const ChangeSubscriptionButton = () => {
+    const CHANGE_PLAN_MODAL_ID = 'change-subscription-plan-modal';
+
+    const { openModal } = useModal();
+
+    const handleClick = () => {
+        openModal(CHANGE_PLAN_MODAL_ID);
+    };
+
     return (
         <div>
-                <StyledSettingsBillingButton>
+                <StyledSettingsBillingButton onClick={() => handleClick()}>
                     <IconCreditCard size={15} />
                     <span>Change plan</span>
                 </StyledSettingsBillingButton>
+
+                <Modal modalId={CHANGE_PLAN_MODAL_ID} isClosable>
+                    <ChangeSubscriptionPlan />
+                </Modal>
         </div>
     );
 }
