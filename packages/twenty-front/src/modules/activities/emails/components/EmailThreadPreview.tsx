@@ -143,14 +143,20 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
       </StyledHeading>
 
       <StyledSubjectAndBody>
-        {visibility !== MessageChannelVisibility.METADATA && (
-          <StyledSubject>{thread.subject}</StyledSubject>
+        {visibility === MessageChannelVisibility.METADATA && (
+          <EmailThreadNotShared visibility={visibility} />
+        )}
+        {visibility === MessageChannelVisibility.SUBJECT && (
+          <>
+            <StyledSubject>{thread.subject}</StyledSubject>
+            <EmailThreadNotShared visibility={visibility} />
+          </>
         )}
         {visibility === MessageChannelVisibility.SHARE_EVERYTHING && (
-          <StyledBody>{thread.lastMessageBody}</StyledBody>
-        )}
-        {visibility !== MessageChannelVisibility.SHARE_EVERYTHING && (
-          <EmailThreadNotShared visibility={visibility} />
+          <>
+            <StyledSubject>{thread.subject}</StyledSubject>
+            <StyledBody>{thread.lastMessageBody}</StyledBody>
+          </>
         )}
       </StyledSubjectAndBody>
       <StyledReceivedAt>
