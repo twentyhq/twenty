@@ -16,6 +16,7 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
 
+// to improve - https://github.com/twentyhq/twenty/issues/12190
 export const useEmailThreadInCommandMenu = () => {
   const viewableRecordId = useRecoilComponentValueV2(
     viewableRecordIdComponentState,
