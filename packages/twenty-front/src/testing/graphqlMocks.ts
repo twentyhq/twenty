@@ -23,7 +23,6 @@ import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataByDomain';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { isDefined } from 'twenty-shared/utils';
-import { getMockedConnectedAccount } from '~/testing/mock-data/connected-accounts';
 import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/mock-metadata-query-result';
 import { getRolesMock } from '~/testing/mock-data/roles';
 import { mockedTasks } from '~/testing/mock-data/tasks';
@@ -691,13 +690,6 @@ export const graphqlMocks = {
         `,
         { status: 200 },
       );
-    }),
-    graphql.query('FindManyConnectedAccounts', () => {
-      return HttpResponse.json({
-        data: {
-          connectedAccounts: getMockedConnectedAccount(),
-        },
-      });
     }),
   ],
 };

@@ -1,6 +1,7 @@
 import { WorkflowSendEmailAction } from '@/workflow/types/Workflow';
 import { Meta, StoryObj } from '@storybook/react';
-import { fn } from '@storybook/test';
+import { expect, fn, within } from '@storybook/test';
+import { graphql, HttpResponse } from 'msw';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -9,7 +10,10 @@ import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/Workflow
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedConnectedAccounts } from '~/testing/mock-data/connected-accounts';
+import {
+  getMockedConnectedAccount,
+  mockedConnectedAccounts,
+} from '~/testing/mock-data/connected-accounts';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
 import { WorkflowEditActionSendEmail } from '../WorkflowEditActionSendEmail';
 
@@ -45,7 +49,7 @@ const CONFIGURED_ACTION: WorkflowSendEmailAction = {
   settings: {
     input: {
       connectedAccountId: mockedConnectedAccounts[0].accountOwnerId,
-      email: 'tim@twenty.com',
+      email: 'test@twenty.com',
       subject: 'Welcome to Twenty!',
       body: 'Dear Tim,\n\nWelcome to Twenty! We are excited to have you on board.\n\nBest regards,\nThe Team',
     },
@@ -65,7 +69,18 @@ const meta: Meta<typeof WorkflowEditActionSendEmail> = {
   title: 'Modules/Workflow/WorkflowEditActionSendEmail',
   component: WorkflowEditActionSendEmail,
   parameters: {
-    msw: graphqlMocks,
+    msw: {
+      handlers: [
+        ...graphqlMocks.handlers,
+        graphql.query('FindManyConnectedAccounts', () => {
+          return HttpResponse.json({
+            data: {
+              connectedAccounts: getMockedConnectedAccount(),
+            },
+          });
+        }),
+      ],
+    },
   },
   args: {
     action: DEFAULT_ACTION,
@@ -92,6 +107,15 @@ export const Default: Story = {
       onActionUpdate: fn(),
     },
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Send Email')).toBeVisible();
+
+    expect(await canvas.findByText('Account')).toBeVisible();
+    expect(await canvas.findByText('Subject')).toBeVisible();
+    expect(await canvas.findByText('Body')).toBeVisible();
+  },
 };
 
 export const Configured: Story = {
@@ -100,5 +124,20 @@ export const Configured: Story = {
     actionOptions: {
       onActionUpdate: fn(),
     },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Send Welcome Email')).toBeVisible();
+
+    expect(await canvas.findByText('Account')).toBeVisible();
+    expect(await canvas.findByText('Subject')).toBeVisible();
+    expect(await canvas.findByText('Body')).toBeVisible();
+
+    const emailInput = await canvas.findByText('tim@twenty.com');
+    expect(emailInput).toBeVisible();
+
+    const subjectInput = await canvas.findByText('Welcome to Twenty!');
+    expect(subjectInput).toBeVisible();
   },
 };
