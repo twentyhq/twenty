@@ -6,6 +6,7 @@ import { promisify } from 'util';
 
 import { Command } from 'nest-commander';
 import { In, Repository } from 'typeorm';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandOptions } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import {
@@ -35,7 +36,6 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 import { compareVersionMajorAndMinor } from 'src/utils/version/compare-version-minor-and-major';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 const execPromise = promisify(exec);
 
@@ -128,6 +128,7 @@ export class DatabaseMigrationService {
     try {
       const allActiveOrSuspendedWorkspaces =
         await this.loadActiveOrSuspendedWorkspace();
+
       if (allActiveOrSuspendedWorkspaces.length === 0) {
         this.logger.log(
           'No workspaces found. Running migrations for fresh installation.',
