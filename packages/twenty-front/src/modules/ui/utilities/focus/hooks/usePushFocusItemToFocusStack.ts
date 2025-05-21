@@ -9,8 +9,22 @@ import { useRecoilCallback } from 'recoil';
 export const usePushFocusItemToFocusStack = () => {
   const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
 
-  return useRecoilCallback(
+  const addOrMoveItemToTheTopOfTheStack = useRecoilCallback(
     ({ set }) =>
+      (focusStackItem: FocusStackItem) => {
+        set(focusStackState, (currentFocusStack) => [
+          ...currentFocusStack.filter(
+            (currentFocusStackItem) =>
+              currentFocusStackItem.focusId !== focusStackItem.focusId,
+          ),
+          focusStackItem,
+        ]);
+      },
+    [],
+  );
+
+  return useRecoilCallback(
+    () =>
       ({
         focusId,
         component,
@@ -43,13 +57,7 @@ export const usePushFocusItemToFocusStack = () => {
           },
         };
 
-        set(focusStackState, (currentFocusStack) => [
-          ...currentFocusStack.filter(
-            (currentFocusStackItem) =>
-              currentFocusStackItem.focusId !== focusId,
-          ),
-          focusStackItem,
-        ]);
+        addOrMoveItemToTheTopOfTheStack(focusStackItem);
 
         // TODO: Remove this once we've migrated hotkey scopes to the new api
         setHotkeyScopeAndMemorizePreviousScope({
@@ -58,6 +66,6 @@ export const usePushFocusItemToFocusStack = () => {
           memoizeKey,
         });
       },
-    [setHotkeyScopeAndMemorizePreviousScope],
+    [setHotkeyScopeAndMemorizePreviousScope, addOrMoveItemToTheTopOfTheStack],
   );
 };
