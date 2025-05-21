@@ -7,11 +7,12 @@ import {
   LISTING_NAME_PLURAL,
   LISTING_NAME_SINGULAR,
 } from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { isDefined } from 'twenty-shared/utils';
 
 const { failingTestCases, successfulTestCases } =
   UPDATE_CREATE_ONE_FIELD_METADATA_SELECT_TEST_CASES;
@@ -55,6 +56,7 @@ describe('Field metadata select creation tests group', () => {
         gqlFields: `
         id
         options
+        defaultValue
         `,
       });
 
@@ -69,6 +71,10 @@ describe('Field metadata select creation tests group', () => {
       expect(createdOptions.length).toBe(optionsToCompare.length);
       createdOptions.forEach((option) => expect(option.id).toBeDefined());
       expect(createdOptions).toMatchObject(optionsToCompare);
+
+      if (isDefined(input.defaultValue)) {
+        expect(data.createOneField.defaultValue).toEqual(input.defaultValue);
+      }
     },
   );
 

@@ -9,14 +9,18 @@ import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-
 import { isDefined } from 'twenty-shared/utils';
 
 export const forceCreateOneObjectMetadata = async ({
-  labelSingular = LISTING_NAME_SINGULAR,
-  labelPlural = LISTING_NAME_PLURAL,
-  nameSingular = LISTING_NAME_SINGULAR,
-  namePlural = LISTING_NAME_PLURAL,
-  isLabelSyncedWithName = true,
-  icon = 'IconBuildingSkyscraper',
-  ...rest
-}: Partial<CreateOneObjectFactoryInput>) => {
+  input: {
+    labelSingular = LISTING_NAME_SINGULAR,
+    labelPlural = LISTING_NAME_PLURAL,
+    nameSingular = LISTING_NAME_SINGULAR,
+    namePlural = LISTING_NAME_PLURAL,
+    isLabelSyncedWithName = true,
+    icon = 'IconBuildingSkyscraper',
+    ...rest
+  },
+}: {
+  input: Partial<CreateOneObjectFactoryInput>;
+}) => {
   const result = await createOneObjectMetadata({
     input: {
       labelSingular,
