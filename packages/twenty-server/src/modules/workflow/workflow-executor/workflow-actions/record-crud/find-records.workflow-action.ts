@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { Entity } from '@microsoft/microsoft-graph-types';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { ObjectLiteral } from 'typeorm';
 
 import {
@@ -10,7 +11,6 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
 
-import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
