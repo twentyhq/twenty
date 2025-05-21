@@ -206,6 +206,10 @@ export default defineConfig(({ command, mode }) => {
               return 'react-pdf';
             }
 
+            if (id.includes('monaco-editor')) {
+              return 'monaco-editor';
+            }
+
             if (id.includes('node_modules')) {
               // Other libraries that aren't explicitly handled above
               return 'vendor';
