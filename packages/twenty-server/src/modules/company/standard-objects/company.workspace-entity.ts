@@ -80,26 +80,6 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   domainName: LinksMetadata;
 
   @WorkspaceField({
-    standardId: COMPANY_STANDARD_FIELD_IDS.employees,
-    type: FieldMetadataType.NUMBER,
-    label: msg`Employees`,
-    description: msg`Number of employees in the company`,
-    icon: 'IconUsers',
-  })
-  @WorkspaceIsNullable()
-  employees: number | null;
-
-  @WorkspaceField({
-    standardId: COMPANY_STANDARD_FIELD_IDS.linkedinLink,
-    type: FieldMetadataType.LINKS,
-    label: msg`Linkedin`,
-    description: msg`The company Linkedin account`,
-    icon: 'IconBrandLinkedin',
-  })
-  @WorkspaceIsNullable()
-  linkedinLink: LinksMetadata | null;
-
-  @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.xLink,
     type: FieldMetadataType.LINKS,
     label: msg`X`,
