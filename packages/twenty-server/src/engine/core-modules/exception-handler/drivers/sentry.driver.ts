@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ExceptionHandlerOptions } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-options.interface';
 
-import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
+import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
 import { ExceptionHandlerDriverInterface } from 'src/engine/core-modules/exception-handler/interfaces';
 import { CustomException } from 'src/utils/custom-exception';
 

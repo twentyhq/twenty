@@ -37,6 +37,6 @@ export class WorkflowTriggerGraphqlApiExceptionFilter
   implements ExceptionFilter
 {
   catch(exception: WorkflowTriggerException) {
-    return handleWorkflowTriggerException(exception);
+    handleWorkflowTriggerException(exception);
   }
 }
