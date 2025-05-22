@@ -29,14 +29,13 @@ import { AuthService } from './auth.service';
 
 jest.mock('bcrypt');
 
-const UserFindOneMock = jest.fn();
-
 const twentyConfigServiceGetMock = jest.fn();
 
 describe('AuthService', () => {
   let service: AuthService;
   let userService: UserService;
   let workspaceRepository: Repository<Workspace>;
+  let userRepository: Repository<User>;
   let authSsoService: AuthSsoService;
   let userWorkspaceService: UserWorkspaceService;
   let domainManagerService: DomainManagerService;
@@ -55,7 +54,7 @@ describe('AuthService', () => {
         {
           provide: getRepositoryToken(User, 'core'),
           useValue: {
-            findOne: UserFindOneMock,
+            findOne: jest.fn(),
           },
         },
         {
@@ -148,6 +147,9 @@ describe('AuthService', () => {
     workspaceRepository = module.get<Repository<Workspace>>(
       getRepositoryToken(Workspace, 'core'),
     );
+    userRepository = module.get<Repository<User>>(
+      getRepositoryToken(User, 'core'),
+    );
   });
 
   beforeEach(() => {
@@ -168,11 +170,11 @@ describe('AuthService', () => {
 
     (bcrypt.compare as jest.Mock).mockReturnValueOnce(true);
 
-    UserFindOneMock.mockReturnValueOnce({
+    jest.spyOn(userRepository, 'findOne').mockReturnValueOnce({
       email: user.email,
       passwordHash: 'passwordHash',
       captchaToken: user.captchaToken,
-    });
+    } as unknown as Promise<User>);
 
     jest
       .spyOn(userWorkspaceService, 'checkUserWorkspaceExists')
@@ -201,11 +203,13 @@ describe('AuthService', () => {
       captchaToken: 'captchaToken',
     };
 
-    UserFindOneMock.mockReturnValueOnce({
-      email: user.email,
-      passwordHash: 'passwordHash',
-      captchaToken: user.captchaToken,
-    });
+    const UserFindOneSpy = jest
+      .spyOn(userRepository, 'findOne')
+      .mockReturnValueOnce({
+        email: user.email,
+        passwordHash: 'passwordHash',
+        captchaToken: user.captchaToken,
+      } as unknown as Promise<User>);
 
     (bcrypt.compare as jest.Mock).mockReturnValueOnce(true);
     jest
@@ -246,7 +250,7 @@ describe('AuthService', () => {
       workspaceInvitationValidatePersonalInvitationSpy,
     ).toHaveBeenCalledTimes(1);
     expect(addUserToWorkspaceIfUserNotInWorkspaceSpy).toHaveBeenCalledTimes(1);
-    expect(UserFindOneMock).toHaveBeenCalledTimes(1);
+    expect(UserFindOneSpy).toHaveBeenCalledTimes(1);
   });
 
   describe('checkAccessForSignIn', () => {
