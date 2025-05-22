@@ -35,9 +35,7 @@ export const useInlineCell = (
   const { goBackToPreviousDropdownFocusId } =
     useGoBackToPreviousDropdownFocusId();
 
-  const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope(
-    INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY,
-  );
+  const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
 
   const initFieldInputDraftValue = useInitDraftValueV2();
 
@@ -45,7 +43,7 @@ export const useInlineCell = (
     onCloseEditMode?.();
     setIsInlineCellInEditMode(false);
 
-    goBackToPreviousHotkeyScope();
+    goBackToPreviousHotkeyScope(INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY);
 
     goBackToPreviousDropdownFocusId();
   };

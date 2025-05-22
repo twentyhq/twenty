@@ -7,13 +7,13 @@ export class RemoveServerlessSourceCodeHashColumn1726240847733
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "metadata"."serverlessFunction" DROP COLUMN "sourceCodeHash"`,
+      `ALTER TABLE "core"."serverlessFunction" DROP COLUMN "sourceCodeHash"`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "metadata"."serverlessFunction" ADD "sourceCodeHash" character varying NOT NULL`,
+      `ALTER TABLE "core"."serverlessFunction" ADD "sourceCodeHash" character varying NOT NULL`,
     );
   }
 }

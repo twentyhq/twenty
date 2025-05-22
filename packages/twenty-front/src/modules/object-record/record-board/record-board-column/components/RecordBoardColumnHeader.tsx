@@ -79,12 +79,12 @@ export const RecordBoardColumnHeader = () => {
 
   const handleBoardColumnMenuOpen = () => {
     setIsBoardColumnMenuOpen(true);
-    setHotkeyScopeAndMemorizePreviousScope(
-      RecordBoardColumnHotkeyScope.BoardColumn,
-      {
+    setHotkeyScopeAndMemorizePreviousScope({
+      scope: RecordBoardColumnHotkeyScope.BoardColumn,
+      customScopes: {
         goto: false,
       },
-    );
+    });
   };
 
   const handleBoardColumnMenuClose = () => {

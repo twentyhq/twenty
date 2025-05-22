@@ -11,7 +11,6 @@ import {
   WorkflowCommonException,
   WorkflowCommonExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-common.exception';
-import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -137,21 +136,12 @@ export class WorkflowCommonWorkspaceService {
         'workflowRun',
       );
 
-    const workflowEventListenerRepository =
-      await this.twentyORMManager.getRepository<WorkflowEventListenerWorkspaceEntity>(
-        'workflowEventListener',
-      );
-
     const workflowAutomatedTriggerRepository =
       await this.twentyORMManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
         'workflowAutomatedTrigger',
       );
 
     workflowIds.forEach((workflowId) => {
-      workflowEventListenerRepository.softDelete({
-        workflowId,
-      });
-
       workflowAutomatedTriggerRepository.softDelete({
         workflowId,
       });

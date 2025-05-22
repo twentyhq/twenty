@@ -52,11 +52,11 @@ export class GraphqlQueryDestroyManyResolverService extends GraphqlQueryBaseReso
       objectMetadataMaps,
     );
 
-    this.apiEventEmitterService.emitDestroyEvents(
-      deletedRecords,
+    this.apiEventEmitterService.emitDestroyEvents({
+      records: deletedRecords,
       authContext,
-      objectMetadataItemWithFieldMaps,
-    );
+      objectMetadataItem: objectMetadataItemWithFieldMaps,
+    });
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({

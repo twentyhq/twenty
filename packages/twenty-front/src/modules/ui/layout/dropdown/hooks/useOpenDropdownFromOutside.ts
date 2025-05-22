@@ -19,7 +19,9 @@ export const useOpenDropdownFromOutside = () => {
         );
 
         setActiveDropdownFocusIdAndMemorizePrevious(dropdownId);
-        setHotkeyScopeAndMemorizePreviousScope(dropdownId);
+        setHotkeyScopeAndMemorizePreviousScope({
+          scope: dropdownId,
+        });
 
         set(dropdownOpenState, true);
       };
