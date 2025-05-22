@@ -207,13 +207,18 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             )
           : fieldMetadataInput;
 
+      const optionsForUpdate = isDefined(fieldMetadataInput.options)
+        ? this.prepareCustomFieldMetadataOptions(fieldMetadataInput.options)
+        : undefined;
+      const defaultValueForUpdate =
+        updatableFieldInput.defaultValue !== undefined
+          ? updatableFieldInput.defaultValue
+          : existingFieldMetadata.defaultValue;
+
       const fieldMetadataForUpdate = {
         ...updatableFieldInput,
-        defaultValue:
-          updatableFieldInput.defaultValue !== undefined
-            ? updatableFieldInput.defaultValue
-            : existingFieldMetadata.defaultValue,
-        ...this.prepareCustomFieldMetadataOptions(fieldMetadataInput.options),
+        defaultValue: defaultValueForUpdate,
+        ...optionsForUpdate,
       };
 
       await this.validateFieldMetadata({
@@ -708,12 +713,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   }
 
   private prepareCustomFieldMetadataOptions(
-    options?: FieldMetadataDefaultOption[] | FieldMetadataComplexOption[],
+    options: FieldMetadataDefaultOption[] | FieldMetadataComplexOption[],
   ): undefined | Pick<FieldMetadataEntity, 'options'> {
-    if (!isDefined(options)) {
-      return undefined;
-    }
-
     return {
       options: options.map((option) => ({
         id: uuidV4(),
@@ -726,6 +727,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   }
 
   private prepareCustomFieldMetadata(fieldMetadataInput: CreateFieldInput) {
+    const options = fieldMetadataInput.options
+      ? this.prepareCustomFieldMetadataOptions(fieldMetadataInput.options)
+      : undefined;
+    const defaultValue =
+      fieldMetadataInput.defaultValue ??
+      generateDefaultValue(fieldMetadataInput.type);
+
     return {
       id: v4(),
       createdAt: new Date(),
@@ -736,10 +744,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         fieldMetadataInput.isNullable,
         fieldMetadataInput.isRemoteCreation,
       ),
-      defaultValue:
-        fieldMetadataInput.defaultValue ??
-        generateDefaultValue(fieldMetadataInput.type),
-      ...this.prepareCustomFieldMetadataOptions(fieldMetadataInput.options),
+      defaultValue,
+      ...options,
       isActive: true,
       isCustom: true,
     };
