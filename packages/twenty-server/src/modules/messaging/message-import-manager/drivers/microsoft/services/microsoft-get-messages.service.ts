@@ -3,7 +3,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
+import { MicrosoftImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/microsoft/exceptions/microsoft-import-driver.exception';
 import { MicrosoftGraphBatchResponse } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.interface';
 import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
@@ -43,7 +45,7 @@ export class MicrosoftGetMessagesService {
 
       return messages;
     } catch (error) {
-      this.microsoftHandleErrorService.handleMicrosoftMessageFetchError(error);
+      this.microsoftHandleErrorService.handleMicrosoftGetMessagesError(error);
 
       return [];
     }
@@ -69,8 +71,10 @@ export class MicrosoftGetMessagesService {
 
     const messages = parsedResponses.map((response) => {
       if ('error' in response) {
-        this.microsoftHandleErrorService.throwMicrosoftBatchError(
-          response.error,
+        throw new MicrosoftImportDriverException(
+          response.error.message,
+          response.error.code,
+          response.error.statusCode,
         );
       }
 
@@ -80,18 +84,24 @@ export class MicrosoftGetMessagesService {
           'from',
         ),
         ...formatAddressObjectAsParticipants(
-          // @ts-expect-error legacy noImplicitAny
-          response?.toRecipients?.map((recipient) => recipient.emailAddress),
+          response?.toRecipients
+            ?.filter(isDefined)
+            // @ts-expect-error legacy noImplicitAny
+            .map((recipient) => recipient.emailAddress),
           'to',
         ),
         ...formatAddressObjectAsParticipants(
-          // @ts-expect-error legacy noImplicitAny
-          response?.ccRecipients?.map((recipient) => recipient.emailAddress),
+          response?.ccRecipients
+            ?.filter(isDefined)
+            // @ts-expect-error legacy noImplicitAny
+            .map((recipient) => recipient.emailAddress),
           'cc',
         ),
         ...formatAddressObjectAsParticipants(
-          // @ts-expect-error legacy noImplicitAny
-          response?.bccRecipients?.map((recipient) => recipient.emailAddress),
+          response?.bccRecipients
+            ?.filter(isDefined)
+            // @ts-expect-error legacy noImplicitAny
+            .map((recipient) => recipient.emailAddress),
           'bcc',
         ),
       ];
@@ -108,10 +118,12 @@ export class MicrosoftGetMessagesService {
           response.body?.contentType === 'text' ? response.body?.content : '',
         headerMessageId: response.internetMessageId,
         messageThreadExternalId: response.conversationId,
-        direction: computeMessageDirection(
-          response.from.emailAddress.address,
-          connectedAccount,
-        ),
+        direction: response.from
+          ? computeMessageDirection(
+              response.from.emailAddress.address,
+              connectedAccount,
+            )
+          : MessageDirection.INCOMING,
         participants: safeParticipantsFormat,
         attachments: [],
       };

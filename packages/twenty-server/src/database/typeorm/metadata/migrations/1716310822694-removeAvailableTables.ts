@@ -5,13 +5,13 @@ export class RemoveAvailableTables1716310822694 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "metadata"."remoteServer" DROP COLUMN "availableTables"`,
+      `ALTER TABLE "core"."remoteServer" DROP COLUMN "availableTables"`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "metadata"."remoteServer" ADD "availableTables" jsonb`,
+      `ALTER TABLE "core"."remoteServer" ADD "availableTables" jsonb`,
     );
   }
 }

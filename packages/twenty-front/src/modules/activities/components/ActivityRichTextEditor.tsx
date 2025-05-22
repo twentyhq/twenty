@@ -353,9 +353,9 @@ export const ActivityRichTextEditor = ({
   );
 
   const handleBlockEditorFocus = () => {
-    setHotkeyScopeAndMemorizePreviousScope(
-      ActivityEditorHotkeyScope.ActivityBody,
-    );
+    setHotkeyScopeAndMemorizePreviousScope({
+      scope: ActivityEditorHotkeyScope.ActivityBody,
+    });
   };
 
   const handlerBlockEditorBlur = () => {

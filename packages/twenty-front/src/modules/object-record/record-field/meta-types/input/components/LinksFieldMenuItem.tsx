@@ -4,11 +4,11 @@ import { MultiItemFieldMenuItem } from './MultiItemFieldMenuItem';
 type LinksFieldMenuItemProps = {
   dropdownId: string;
   isPrimary?: boolean;
-  label: string;
+  label: string | null;
+  url: string;
   onEdit?: () => void;
   onSetAsPrimary?: () => void;
   onDelete?: () => void;
-  url: string;
 };
 
 export const LinksFieldMenuItem = ({

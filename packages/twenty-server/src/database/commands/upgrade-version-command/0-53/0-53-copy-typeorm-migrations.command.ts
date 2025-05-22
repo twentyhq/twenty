@@ -4,9 +4,9 @@ import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
 
 import {
-  ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-  RunOnWorkspaceArgs,
-} from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+  MigrationCommandOptions,
+  MigrationCommandRunner,
+} from 'src/database/commands/command-runners/migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
@@ -14,21 +14,19 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
   name: 'upgrade:0-53:copy-typeorm-migrations',
   description: 'Copy _typeorm_migrations from metadata schema to core schema',
 })
-export class CopyTypeormMigrationsCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
+export class CopyTypeormMigrationsCommand extends MigrationCommandRunner {
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager);
+    super();
   }
 
-  async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
-    // This command doesn't need to run per workspace, only once
-    if (args.index !== 0) {
-      return;
-    }
-
+  override async runMigrationCommand(
+    _passedParams: string[],
+    options: MigrationCommandOptions,
+  ): Promise<void> {
     this.logger.log(
       'Starting to copy _typeorm_migrations from metadata to core',
     );
@@ -48,7 +46,7 @@ export class CopyTypeormMigrationsCommand extends ActiveOrSuspendedWorkspacesMig
         `Found ${metadataMigrations.length} migrations in metadata schema`,
       );
 
-      if (args.options?.dryRun) {
+      if (options?.dryRun) {
         this.logger.log('Dry run mode - no changes will be applied');
 
         return;

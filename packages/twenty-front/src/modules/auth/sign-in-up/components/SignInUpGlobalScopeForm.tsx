@@ -176,7 +176,7 @@ export const SignInUpGlobalScopeForm = () => {
     const token = await readCaptchaToken();
     await checkUserExists.checkUserExistsQuery({
       variables: {
-        email: form.getValues('email'),
+        email: form.getValues('email').toLowerCase().trim(),
         captchaToken: token,
       },
       onError: (error) => {

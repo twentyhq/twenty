@@ -27,6 +27,7 @@ import {
 import { GetAuthorizationUrlForSSOInput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.input';
 import { GetAuthorizationUrlForSSOOutput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.output';
 import { GetLoginTokenFromEmailVerificationTokenInput } from 'src/engine/core-modules/auth/dto/get-login-token-from-email-verification-token.input';
+import { GetLoginTokenFromEmailVerificationTokenOutput } from 'src/engine/core-modules/auth/dto/get-login-token-from-email-verification-token.output';
 import { SignUpOutput } from 'src/engine/core-modules/auth/dto/sign-up.output';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
@@ -36,6 +37,7 @@ import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/r
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { EmailVerificationExceptionFilter } from 'src/engine/core-modules/email-verification/email-verification-exception-filter.util';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
@@ -68,7 +70,11 @@ import { AuthService } from './services/auth.service';
 import { CreateUserAndWorkspaceInput } from 'src/engine/core-modules/auth/dto/create-user-and-workspace.input';
 
 @Resolver()
-@UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
+@UseFilters(
+  AuthGraphqlApiExceptionFilter,
+  PermissionsGraphqlApiExceptionFilter,
+  EmailVerificationExceptionFilter,
+)
 export class AuthResolver {
   constructor(
     @InjectRepository(User, 'core')
@@ -94,7 +100,9 @@ export class AuthResolver {
   async checkUserExists(
     @Args() checkUserExistsInput: EmailAndCaptchaInput,
   ): Promise<CheckUserExistOutput> {
-    return await this.authService.checkUserExists(checkUserExistsInput.email);
+    return await this.authService.checkUserExists(
+      checkUserExistsInput.email.toLowerCase(),
+    );
   }
 
   @UseGuards(CaptchaGuard)

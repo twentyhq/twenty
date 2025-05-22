@@ -2,6 +2,10 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { WorkspaceJoinColumnsMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-join-columns-metadata-args.interface';
 import { WorkspaceRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-relation-metadata-args.interface';
 
+import {
+  RelationException,
+  RelationExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/relation.exception';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 
 export const getJoinColumn = (
@@ -31,8 +35,9 @@ export const getJoinColumn = (
     filteredJoinColumnsMetadataArgsCollection.length > 0 &&
     oppositeFilteredJoinColumnsMetadataArgsCollection.length > 0
   ) {
-    throw new Error(
+    throw new RelationException(
       `Join column for ${relationMetadataArgs.name} relation is present on both sides`,
+      RelationExceptionCode.RELATION_JOIN_COLUMN_ON_BOTH_SIDES,
     );
   }
 
@@ -52,8 +57,9 @@ export const getJoinColumn = (
       );
 
     if (!inverseSideRelationMetadataArgs) {
-      throw new Error(
+      throw new RelationException(
         `Inverse side join column of relation ${relationMetadataArgs.name} is missing`,
+        RelationExceptionCode.MISSING_RELATION_JOIN_COLUMN,
       );
     }
 
@@ -67,16 +73,18 @@ export const getJoinColumn = (
 
   // Check if there are multiple join columns for the relation
   if (filteredJoinColumnsMetadataArgsCollection.length > 1) {
-    throw new Error(
+    throw new RelationException(
       `Multiple join columns found for relation ${relationMetadataArgs.name}`,
+      RelationExceptionCode.MULTIPLE_JOIN_COLUMNS_FOUND,
     );
   }
 
   const joinColumnsMetadataArgs = filteredJoinColumnsMetadataArgsCollection[0];
 
   if (!joinColumnsMetadataArgs) {
-    throw new Error(
+    throw new RelationException(
       `Join column is missing for relation ${relationMetadataArgs.name}`,
+      RelationExceptionCode.MISSING_RELATION_JOIN_COLUMN,
     );
   }
 

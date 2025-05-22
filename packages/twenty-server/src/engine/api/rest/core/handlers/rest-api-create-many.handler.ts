@@ -54,11 +54,11 @@ export class RestApiCreateManyHandler extends RestApiBaseHandler {
 
     const createdRecords = await repository.save(recordsToCreate);
 
-    this.apiEventEmitterService.emitCreateEvents(
-      createdRecords,
-      this.getAuthContextFromRequest(request),
-      objectMetadata.objectMetadataMapItem,
-    );
+    this.apiEventEmitterService.emitCreateEvents({
+      records: createdRecords,
+      authContext: this.getAuthContextFromRequest(request),
+      objectMetadataItem: objectMetadata.objectMetadataMapItem,
+    });
 
     const records = await this.getRecord({
       recordIds: createdRecords.map((record) => record.id),
