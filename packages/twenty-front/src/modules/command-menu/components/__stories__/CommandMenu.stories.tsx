@@ -172,7 +172,13 @@ export const NoResultsSearchFallback: Story = {
         graphql.query('Search', () => {
           return HttpResponse.json({
             data: {
-              search: [],
+              search: {
+                edges: [],
+                pageInfo: {
+                  hasNextPage: false,
+                  endCursor: null,
+                },
+              },
             },
           });
         }),
