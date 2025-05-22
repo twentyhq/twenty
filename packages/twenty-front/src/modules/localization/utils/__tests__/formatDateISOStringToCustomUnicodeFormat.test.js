@@ -1,5 +1,6 @@
 import { formatDateISOStringToCustomUnicodeFormat } from '@/localization/utils/formatDateISOStringToCustomUnicodeFormat';
 import { formatInTimeZone } from 'date-fns-tz';
+import { enUS } from 'date-fns/locale';
 
 jest.mock('date-fns-tz');
 
@@ -15,16 +16,18 @@ describe('formatDateISOStringToCustomUnicodeFormat', () => {
   it('should use provided timezone', () => {
     formatInTimeZone.mockReturnValue('06:30');
 
-    const result = formatDateISOStringToCustomUnicodeFormat(
-      mockDate,
-      mockTimeZone,
-      mockTimeFormat,
-    );
+    const result = formatDateISOStringToCustomUnicodeFormat({
+      date: mockDate,
+      timeZone: mockTimeZone,
+      dateFormat: mockTimeFormat,
+      localeCatalog: enUS,
+    });
 
     expect(formatInTimeZone).toHaveBeenCalledWith(
       new Date(mockDate),
       mockTimeZone,
       mockTimeFormat,
+      { locale: enUS },
     );
     expect(result).toBe('06:30');
   });
@@ -34,16 +37,18 @@ describe('formatDateISOStringToCustomUnicodeFormat', () => {
       throw new Error();
     });
 
-    const result = formatDateISOStringToCustomUnicodeFormat(
-      mockDate,
-      mockTimeZone,
-      'f',
-    );
+    const result = formatDateISOStringToCustomUnicodeFormat({
+      date: mockDate,
+      timeZone: mockTimeZone,
+      dateFormat: 'f',
+      localeCatalog: enUS,
+    });
 
     expect(formatInTimeZone).toHaveBeenCalledWith(
       new Date(mockDate),
       mockTimeZone,
       'f',
+      { locale: enUS },
     );
     expect(result).toBe('Invalid format string');
   });
