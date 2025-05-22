@@ -21,6 +21,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { Readable } from 'cloudflare/_shims';
 
 @Command({
   name: 'upgrade:0-54:clean-not-found-files',
@@ -60,11 +61,15 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
     if (path.startsWith('https://')) return true; // seed data
 
     try {
-      await this.fileService.getFileStream(
+      const fileStream = await this.fileService.getFileStream(
         dirname(path),
         basename(path),
         workspaceId,
       );
+
+      fileStream.on('data', () => {
+        (fileStream as unknown as Readable).destroy();
+      });
     } catch (error) {
       if (
         error instanceof FileStorageException &&
