@@ -87,7 +87,7 @@ export const useListenClickOutside = <T extends Element>({
           .getValue();
 
         const clickedElement = event.target as HTMLElement;
-        const isClickedOnExcluded = false;
+        let isClickedOnExcluded = false;
         let currentElement: HTMLElement | null = clickedElement;
 
         while (currentElement) {
@@ -98,7 +98,7 @@ export const useListenClickOutside = <T extends Element>({
 
           const clickOutsideId = currentDataAttributes?.clickOutsideId;
 
-          const isClickedOnExcluded =
+          isClickedOnExcluded =
             isGloballyExcluded ||
             (isDefined(clickOutsideId) &&
               isDefined(excludedClickOutsideIds) &&
