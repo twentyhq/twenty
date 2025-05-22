@@ -193,4 +193,23 @@ describe('Core REST API Create One endpoint', () => {
         expect(res.body.error).toBe('BadRequestException');
       });
   });
+
+  it('should return a BadRequestException when trying to create an opportunity with an invalid enum', async () => {
+    const requestBody = {
+      stage: 'INVALID_ENUM_VALUE',
+    };
+
+    await makeRestAPIRequest({
+      method: 'post',
+      path: `/opportunities`,
+      body: requestBody,
+    })
+      .expect(400)
+      .expect((res) => {
+        expect(res.body.messages[0]).toMatch(
+          /invalid input value for enum workspace_[a-z0-9]+\.opportunity_stage_enum: "INVALID_ENUM_VALUE"/,
+        );
+        expect(res.body.error).toBe('BadRequestException');
+      });
+  });
 });
