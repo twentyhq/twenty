@@ -14,11 +14,15 @@ export const mapPaginatedObjectMetadataItemsToObjectMetadataItems = ({
           object.node.labelIdentifierFieldMetadataId,
         );
 
-      const { fieldsList, ...objectWithoutFieldsList } = object.node;
+      // TODO: Find out why the metadata api is returnning the fieldsList propely
+      // @ts-ignore
+      const { fields, fieldsList, ...objectWithoutFieldsList } = object.node;
 
       return {
         ...objectWithoutFieldsList,
-        fields: fieldsList,
+        //fields: fieldsList,
+        // @ts-ignore
+        fields: fields.edges.map((field) => field.node),
         labelIdentifierFieldMetadataId,
         indexMetadatas: object.node.indexMetadatas?.edges.map((index) => ({
           ...index.node,

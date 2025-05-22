@@ -1315,7 +1315,7 @@ export type Mutation = {
   unsyncRemoteTable: RemoteTable;
   updateAgent: Agent;
   updateBillingPlans: BillingPlans;
-  updateChatbotFlow: Scalars['Boolean']['output'];
+  updateChatbotFlow: ChatbotFlow;
   updateDatabaseConfigVariable: Scalars['Boolean']['output'];
   updateFocusNfeIntegration: FocusNfeIntegrationPublicDto;
   updateInterIntegration: InterIntegration;

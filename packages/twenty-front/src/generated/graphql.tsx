@@ -1231,7 +1231,7 @@ export type Mutation = {
   trackAnalytics: Analytics;
   updateAgent: Agent;
   updateBillingPlans: BillingPlans;
-  updateChatbotFlow: Scalars['Boolean'];
+  updateChatbotFlow: ChatbotFlow;
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateFocusNfeIntegration: FocusNfeIntegrationPublicDto;
   updateInterIntegration: InterIntegration;
@@ -3701,7 +3701,7 @@ export type UpdateChatbotFlowMutationVariables = Exact<{
 }>;
 
 
-export type UpdateChatbotFlowMutation = { __typename?: 'Mutation', updateChatbotFlow: boolean };
+export type UpdateChatbotFlowMutation = { __typename?: 'Mutation', updateChatbotFlow: { __typename?: 'ChatbotFlow', id: any, nodes?: Array<any> | null, edges?: Array<any> | null, chatbotId: string, viewport?: any | null } };
 
 export type ValidateChatbotFlowMutationVariables = Exact<{
   chatbotInput: ChatbotFlowInput;
@@ -5964,7 +5964,13 @@ export type UploadFileToBucketMutationResult = Apollo.MutationResult<UploadFileT
 export type UploadFileToBucketMutationOptions = Apollo.BaseMutationOptions<UploadFileToBucketMutation, UploadFileToBucketMutationVariables>;
 export const UpdateChatbotFlowDocument = gql`
     mutation updateChatbotFlow($updateChatbotInput: UpdateChatbotFlowInput!) {
-  updateChatbotFlow(updateChatbotInput: $updateChatbotInput)
+  updateChatbotFlow(updateChatbotInput: $updateChatbotInput) {
+    id
+    nodes
+    edges
+    chatbotId
+    viewport
+  }
 }
     `;
 export type UpdateChatbotFlowMutationFn = Apollo.MutationFunction<UpdateChatbotFlowMutation, UpdateChatbotFlowMutationVariables>;
