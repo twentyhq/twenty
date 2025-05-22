@@ -3,6 +3,7 @@ import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-t
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useLeaveTableFocus } from '@/object-record/record-table/hooks/internal/useLeaveTableFocus';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
+import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilValue } from 'recoil';
@@ -18,6 +19,8 @@ export const RecordTableBodyFocusClickOutsideEffect = ({
   const leaveTableFocus = useLeaveTableFocus(recordTableId);
 
   const currentHotkeyScope = useRecoilValue(currentHotkeyScopeState);
+
+  const setHotkeyScope = useSetHotkeyScope();
 
   useListenClickOutside({
     excludeClassNames: [
@@ -38,6 +41,7 @@ export const RecordTableBodyFocusClickOutsideEffect = ({
       }
 
       leaveTableFocus();
+      setHotkeyScope(RecordIndexHotkeyScope.RecordIndex);
     },
   });
 
