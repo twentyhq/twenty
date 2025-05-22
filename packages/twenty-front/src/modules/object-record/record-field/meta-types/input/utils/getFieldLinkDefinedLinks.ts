@@ -1,6 +1,6 @@
 import { FieldLinksValue } from '@/object-record/record-field/types/FieldMetadata';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isValidUrl } from 'twenty-shared/utils';
 
 export const getFieldLinkDefinedLinks = (fieldValue: FieldLinksValue) => {
   return [
@@ -23,5 +23,6 @@ export const getFieldLinkDefinedLinks = (fieldValue: FieldLinksValue) => {
         label: link.label,
       };
     })
-    .filter(isDefined);
+    .filter(isDefined)
+    .filter(({ url }) => isValidUrl(url));
 };

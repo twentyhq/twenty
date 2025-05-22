@@ -416,3 +416,31 @@ export const Cancel: Story = {
     expect(cancelJestFn).toHaveBeenCalledTimes(1);
   },
 };
+
+export const InvalidUrls: Story = {
+  args: {
+    value: {
+      primaryLinkUrl: 'lydia,com',
+      primaryLinkLabel: 'Invalid URL',
+      secondaryLinks: [
+        { url: 'wikipedia', label: 'Missing Protocol' },
+        { url: '\\invalid', label: 'Invalid Characters' },
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const input = await canvas.findByPlaceholderText('URL');
+    await expect(input).toBeVisible();
+    await expect(input).toHaveValue('');
+
+    await waitFor(() => {
+      expect(canvas.queryByRole('link')).toBeNull();
+    });
+
+    expect(canvas.queryByText('Invalid URL')).not.toBeInTheDocument();
+    expect(canvas.queryByText('Missing Protocol')).not.toBeInTheDocument();
+    expect(canvas.queryByText('Invalid Characters')).not.toBeInTheDocument();
+  },
+};

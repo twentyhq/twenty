@@ -2,6 +2,7 @@ import {
   booleanFieldDefinition,
   fieldMetadataId,
   fullNameFieldDefinition,
+  linksFieldDefinition,
   relationFieldDefinition,
   selectFieldDefinition,
 } from '@/object-record/record-field/__mocks__/fieldDefinitions';
@@ -109,6 +110,106 @@ describe('isFieldValueEmpty', () => {
       isFieldValueEmpty({
         fieldDefinition: fullNameFieldDefinition,
         fieldValue: { firstName: 'Sheldon', lastName: '' },
+      }),
+    ).toBe(false);
+  });
+
+  it('should return correct value for links field', () => {
+    // Empty cases
+    expect(
+      isFieldValueEmpty({
+        fieldDefinition: linksFieldDefinition,
+        fieldValue: {
+          primaryLinkUrl: null,
+          primaryLinkLabel: null,
+          secondaryLinks: [],
+        },
+      }),
+    ).toBe(true);
+
+    expect(
+      isFieldValueEmpty({
+        fieldDefinition: linksFieldDefinition,
+        fieldValue: null,
+      }),
+    ).toBe(true);
+
+    // Valid primary link only
+    expect(
+      isFieldValueEmpty({
+        fieldDefinition: linksFieldDefinition,
+        fieldValue: {
+          primaryLinkUrl: 'https://www.twenty.com',
+          primaryLinkLabel: 'Twenty Website',
+          secondaryLinks: [],
+        },
+      }),
+    ).toBe(false);
+
+    // Valid secondary link only
+    expect(
+      isFieldValueEmpty({
+        fieldDefinition: linksFieldDefinition,
+        fieldValue: {
+          primaryLinkUrl: null,
+          primaryLinkLabel: null,
+          secondaryLinks: [
+            { url: 'https://docs.twenty.com', label: 'Documentation' },
+          ],
+        },
+      }),
+    ).toBe(false);
+
+    // Invalid primary link but valid secondary link
+    expect(
+      isFieldValueEmpty({
+        fieldDefinition: linksFieldDefinition,
+        fieldValue: {
+          primaryLinkUrl: 'lydia,com',
+          primaryLinkLabel: 'Invalid URL',
+          secondaryLinks: [
+            { url: 'https://docs.twenty.com', label: 'Documentation' },
+          ],
+        },
+      }),
+    ).toBe(false);
+
+    // Valid primary link but invalid secondary link
+    expect(
+      isFieldValueEmpty({
+        fieldDefinition: linksFieldDefinition,
+        fieldValue: {
+          primaryLinkUrl: 'https://www.twenty.com',
+          primaryLinkLabel: 'Twenty Website',
+          secondaryLinks: [{ url: 'wikipedia', label: 'Invalid URL' }],
+        },
+      }),
+    ).toBe(false);
+
+    // All invalid links
+    expect(
+      isFieldValueEmpty({
+        fieldDefinition: linksFieldDefinition,
+        fieldValue: {
+          primaryLinkUrl: 'lydia,com',
+          primaryLinkLabel: 'Invalid URL',
+          secondaryLinks: [{ url: 'wikipedia', label: 'Invalid URL' }],
+        },
+      }),
+    ).toBe(true);
+
+    // Multiple secondary links with mix of valid and invalid
+    expect(
+      isFieldValueEmpty({
+        fieldDefinition: linksFieldDefinition,
+        fieldValue: {
+          primaryLinkUrl: null,
+          primaryLinkLabel: null,
+          secondaryLinks: [
+            { url: 'wikipedia', label: 'Invalid URL' },
+            { url: 'https://docs.twenty.com', label: 'Documentation' },
+          ],
+        },
       }),
     ).toBe(false);
   });
