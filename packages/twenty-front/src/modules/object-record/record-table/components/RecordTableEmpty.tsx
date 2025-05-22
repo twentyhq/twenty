@@ -10,7 +10,6 @@ const StyledEmptyStateContainer = styled.div`
 
 export interface RecordTableEmptyProps {
   tableBodyRef: React.RefObject<HTMLTableElement>;
-  hasRecordGroups: boolean;
 }
 
 export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => (
