@@ -687,6 +687,7 @@ describe('UserWorkspaceService', () => {
           'workspaces',
           'workspaces.workspace',
           'workspaces.workspace.workspaceSSOIdentityProviders',
+          'workspaces.workspace.approvedAccessDomains',
         ],
       });
       expect(result).toHaveLength(2);
@@ -795,6 +796,7 @@ describe('UserWorkspaceService', () => {
           'workspaces',
           'workspaces.workspace',
           'workspaces.workspace.workspaceSSOIdentityProviders',
+          'workspaces.workspace.approvedAccessDomains',
         ],
       });
       expect(result).toHaveLength(2);
