@@ -4,12 +4,13 @@ import { clickOutsideListenerMouseDownHappenedComponentState } from '@/ui/utilit
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import React, { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 
 const CLICK_OUTSIDE_DEBUG_MODE = false;
 
 export type ClickOutsideListenerProps<T extends Element> = {
   refs: Array<React.RefObject<T>>;
-  excludeClassNames?: string[];
+  excludedClickOutsideIds?: string[];
   callback: (event: MouseEvent | TouchEvent) => void;
   listenerId: string;
   enabled?: boolean;
@@ -17,7 +18,7 @@ export type ClickOutsideListenerProps<T extends Element> = {
 
 export const useListenClickOutside = <T extends Element>({
   refs,
-  excludeClassNames,
+  excludedClickOutsideIds,
   callback,
   listenerId,
   enabled = true,
@@ -86,16 +87,22 @@ export const useListenClickOutside = <T extends Element>({
           .getValue();
 
         const clickedElement = event.target as HTMLElement;
-        let isClickedOnExcluded = false;
+        const isClickedOnExcluded = false;
         let currentElement: HTMLElement | null = clickedElement;
 
         while (currentElement) {
-          const currentClassList = currentElement.classList;
+          const currentDataAttributes = currentElement.dataset;
 
-          isClickedOnExcluded =
-            excludeClassNames?.some((className) =>
-              currentClassList.contains(className),
-            ) ?? false;
+          const isGloballyExcluded =
+            currentDataAttributes?.globallyPreventClickOutside === 'true';
+
+          const clickOutsideId = currentDataAttributes?.clickOutsideId;
+
+          const isClickedOnExcluded =
+            isGloballyExcluded ||
+            (isDefined(clickOutsideId) &&
+              isDefined(excludedClickOutsideIds) &&
+              excludedClickOutsideIds.includes(clickOutsideId));
 
           if (isClickedOnExcluded) {
             break;
@@ -140,7 +147,7 @@ export const useListenClickOutside = <T extends Element>({
       clickOutsideListenerIsMouseDownInsideState,
       clickOutsideListenerMouseDownHappenedState,
       refs,
-      excludeClassNames,
+      excludedClickOutsideIds,
       callback,
       listenerId,
     ],

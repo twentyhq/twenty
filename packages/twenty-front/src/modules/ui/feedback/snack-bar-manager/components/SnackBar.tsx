@@ -203,6 +203,7 @@ export const SnackBar = ({
       onMouseLeave={handleMouseLeave}
       title={message || defaultAriaLabelByVariant[variant]}
       {...{ className, id, role, variant }}
+      data-globally-prevent-click-outside
     >
       <StyledProgressBar
         barColor={theme.snackBar[variant].backgroundColor}

@@ -1,3 +1,4 @@
+import { DIALOG_MANAGER_CLICK_OUTSIDE_ID } from '@/ui/feedback/dialog-manager/constants/DialogManageClickOutsideId';
 import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
 import { MODAL_CLICK_OUTSIDE_LISTENER_EXCLUDED_CLASS_NAME } from '@/ui/layout/modal/constants/ModalClickOutsideListenerExcludedClassName';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -45,9 +46,9 @@ export const ModalHotkeysAndClickOutsideEffect = ({
 
   useListenClickOutside({
     refs: [modalRef],
-    excludeClassNames: [
+    excludedClickOutsideIds: [
       MODAL_CLICK_OUTSIDE_LISTENER_EXCLUDED_CLASS_NAME,
-      'dialog-manager-dialog',
+      DIALOG_MANAGER_CLICK_OUTSIDE_ID,
     ],
     listenerId: `MODAL_CLICK_OUTSIDE_LISTENER_ID_${modalId}`,
     callback: () => {
