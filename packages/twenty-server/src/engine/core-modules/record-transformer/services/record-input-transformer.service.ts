@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { ServerBlockNoteEditor } from '@blocknote/server-util';
+import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -142,7 +143,7 @@ export class RecordInputTransformerService {
 
     let secondaryLinksArray: LinkMetadataNullable[] | null = null;
 
-    if (isDefined(secondaryLinksRaw)) {
+    if (isNonEmptyString(secondaryLinksRaw)) {
       try {
         secondaryLinksArray = JSON.parse(secondaryLinksRaw);
       } catch {
