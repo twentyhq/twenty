@@ -691,15 +691,11 @@ describe('UserWorkspaceService', () => {
         ],
       });
       expect(result).toHaveLength(2);
-      expect(result[0]).toEqual({
+      expect(result.find(({ id }) => workspace1.id === id)).toEqual({
         id: workspace1.id,
         displayName: workspace1.displayName,
-        workspaceUrls: {
-          customUrl: 'https://crm.custom1.com',
-          subdomainUrl: 'https://workspace1.twenty.com',
-        },
         logo: workspace1.logo,
-        sso: [
+        workspaceSSOIdentityProviders: [
           {
             id: 'sso-id-1',
             name: 'SSO Provider 1',
@@ -707,17 +703,20 @@ describe('UserWorkspaceService', () => {
             type: 'type1',
             status: 'Active',
           },
+          {
+            id: 'sso-id-2',
+            issuer: 'issuer2',
+            name: 'SSO Provider 2',
+            status: 'Inactive',
+            type: 'type2',
+          },
         ],
       });
-      expect(result[1]).toEqual({
+      expect(result.find(({ id }) => workspace2.id === id)).toEqual({
         id: workspace2.id,
         displayName: workspace2.displayName,
-        workspaceUrls: {
-          customUrl: 'https://crm.custom2.com',
-          subdomainUrl: 'https://workspace2.twenty.com',
-        },
         logo: workspace2.logo,
-        sso: [],
+        workspaceSSOIdentityProviders: [],
       });
     });
 
@@ -800,15 +799,11 @@ describe('UserWorkspaceService', () => {
         ],
       });
       expect(result).toHaveLength(2);
-      expect(result[0]).toEqual({
+      expect(result.find(({ id }) => workspace1.id === id)).toEqual({
         id: workspace1.id,
         displayName: workspace1.displayName,
-        workspaceUrls: {
-          customUrl: 'https://crm.custom1.com',
-          subdomainUrl: 'https://workspace1.twenty.com',
-        },
         logo: workspace1.logo,
-        sso: [
+        workspaceSSOIdentityProviders: [
           {
             id: 'sso-id-1',
             name: 'SSO Provider 1',
@@ -816,17 +811,20 @@ describe('UserWorkspaceService', () => {
             type: 'type1',
             status: 'Active',
           },
+          {
+            id: 'sso-id-2',
+            issuer: 'issuer2',
+            name: 'SSO Provider 2',
+            status: 'Inactive',
+            type: 'type2',
+          },
         ],
       });
-      expect(result[1]).toEqual({
+      expect(result.find(({ id }) => workspace2.id === id)).toEqual({
         id: workspace2.id,
         displayName: workspace2.displayName,
-        workspaceUrls: {
-          customUrl: 'https://crm.custom2.com',
-          subdomainUrl: 'https://workspace2.twenty.com',
-        },
         logo: workspace2.logo,
-        sso: [],
+        workspaceSSOIdentityProviders: [],
       });
     });
 
