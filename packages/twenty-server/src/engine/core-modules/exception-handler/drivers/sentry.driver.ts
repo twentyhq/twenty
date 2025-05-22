@@ -55,7 +55,10 @@ export class ExceptionHandlerSentryDriver
           });
         }
 
-        if (exception instanceof CustomException) {
+        if (
+          exception instanceof CustomException &&
+          exception.code !== 'UNKNOWN'
+        ) {
           scope.setTag('customExceptionCode', exception.code);
           scope.setFingerprint([exception.code]);
           exception.name = exception.code
