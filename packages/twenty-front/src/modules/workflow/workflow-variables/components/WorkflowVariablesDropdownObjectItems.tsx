@@ -8,6 +8,7 @@ import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepH
 import { isBaseOutputSchema } from '@/workflow/workflow-variables/utils/isBaseOutputSchema';
 import { isRecordOutputSchema } from '@/workflow/workflow-variables/utils/isRecordOutputSchema';
 
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { useState } from 'react';
 import {
@@ -98,7 +99,7 @@ export const WorkflowVariablesDropdownObjectItems = ({
     : options;
 
   return (
-    <>
+    <DropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -144,6 +145,6 @@ export const WorkflowVariablesDropdownObjectItems = ({
           />
         ))}
       </DropdownMenuItemsContainer>
-    </>
+    </DropdownContent>
   );
 };

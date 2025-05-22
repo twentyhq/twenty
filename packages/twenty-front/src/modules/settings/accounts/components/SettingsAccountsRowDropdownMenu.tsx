@@ -4,6 +4,7 @@ import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -54,45 +55,46 @@ export const SettingsAccountsRowDropdownMenu = ({
         clickableComponent={
           <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
         }
-        dropdownWidth={160}
         dropdownComponents={
-          <DropdownMenuItemsContainer>
-            <MenuItem
-              LeftIcon={IconMail}
-              text={t`Emails settings`}
-              onClick={() => {
-                navigate(SettingsPath.AccountsEmails);
-                closeDropdown();
-              }}
-            />
-            <MenuItem
-              LeftIcon={IconCalendarEvent}
-              text={t`Calendar settings`}
-              onClick={() => {
-                navigate(SettingsPath.AccountsCalendars);
-                closeDropdown();
-              }}
-            />
-            {account.authFailedAt && (
+          <DropdownContent>
+            <DropdownMenuItemsContainer>
               <MenuItem
-                LeftIcon={IconRefresh}
-                text={t`Reconnect`}
+                LeftIcon={IconMail}
+                text={t`Emails settings`}
                 onClick={() => {
-                  triggerApisOAuth(account.provider);
+                  navigate(SettingsPath.AccountsEmails);
                   closeDropdown();
                 }}
               />
-            )}
-            <MenuItem
-              accent="danger"
-              LeftIcon={IconTrash}
-              text={t`Remove account`}
-              onClick={() => {
-                closeDropdown();
-                openModal(DELETE_ACCOUNT_MODAL_ID);
-              }}
-            />
-          </DropdownMenuItemsContainer>
+              <MenuItem
+                LeftIcon={IconCalendarEvent}
+                text={t`Calendar settings`}
+                onClick={() => {
+                  navigate(SettingsPath.AccountsCalendars);
+                  closeDropdown();
+                }}
+              />
+              {account.authFailedAt && (
+                <MenuItem
+                  LeftIcon={IconRefresh}
+                  text={t`Reconnect`}
+                  onClick={() => {
+                    triggerApisOAuth(account.provider);
+                    closeDropdown();
+                  }}
+                />
+              )}
+              <MenuItem
+                accent="danger"
+                LeftIcon={IconTrash}
+                text={t`Remove account`}
+                onClick={() => {
+                  closeDropdown();
+                  openModal(DELETE_ACCOUNT_MODAL_ID);
+                }}
+              />
+            </DropdownMenuItemsContainer>
+          </DropdownContent>
         }
       />
       <ConfirmationModal

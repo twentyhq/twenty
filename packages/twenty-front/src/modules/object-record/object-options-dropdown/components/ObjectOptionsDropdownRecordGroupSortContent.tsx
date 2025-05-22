@@ -6,6 +6,7 @@ import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-gr
 import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupSort';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -58,7 +59,7 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
   ];
 
   return (
-    <>
+    <DropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -123,6 +124,6 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
           </SelectableListItem>
         </SelectableList>
       </DropdownMenuItemsContainer>
-    </>
+    </DropdownContent>
   );
 };
