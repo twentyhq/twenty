@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isValidUrl } from 'twenty-shared/utils';
 
 import { LinkMetadataNullable } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 
@@ -33,6 +33,12 @@ export const removeEmptyLinks = ({
       };
     })
     .filter(isDefined);
+
+  for (const link of filteredLinks) {
+    if (!isValidUrl(link.url)) {
+      throw new Error('Invalid URL');
+    }
+  }
 
   const firstLink = filteredLinks.at(0);
   const otherLinks = filteredLinks.slice(1);
