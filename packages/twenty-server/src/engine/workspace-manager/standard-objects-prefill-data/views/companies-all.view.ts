@@ -36,7 +36,7 @@ export const seedCompaniesAllView = (
             COMPANY_STANDARD_FIELD_IDS.domainName
           ],
         position: 1,
-        isVisible: true,
+        isVisible: false,
         size: 100,
         aggregateOperation: AGGREGATE_OPERATIONS.count,
       },
@@ -46,7 +46,7 @@ export const seedCompaniesAllView = (
             COMPANY_STANDARD_FIELD_IDS.createdBy
           ],
         position: 2,
-        isVisible: true,
+        isVisible: false,
         size: 150,
       },
       {
@@ -55,7 +55,7 @@ export const seedCompaniesAllView = (
             COMPANY_STANDARD_FIELD_IDS.accountOwner
           ],
         position: 3,
-        isVisible: true,
+        isVisible: false,
         size: 150,
       },
       {
@@ -64,28 +64,8 @@ export const seedCompaniesAllView = (
             BASE_OBJECT_STANDARD_FIELD_IDS.createdAt
           ],
         position: 4,
-        isVisible: true,
+        isVisible: false,
         size: 150,
-      },
-      {
-        fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.company].fields[
-            COMPANY_STANDARD_FIELD_IDS.employees
-          ],
-        position: 5,
-        isVisible: true,
-        size: 150,
-        aggregateOperation: AGGREGATE_OPERATIONS.max,
-      },
-      {
-        fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.company].fields[
-            COMPANY_STANDARD_FIELD_IDS.linkedinLink
-          ],
-        position: 6,
-        isVisible: true,
-        size: 170,
-        aggregateOperation: AGGREGATE_OPERATIONS.percentageEmpty,
       },
       {
         fieldMetadataId:
