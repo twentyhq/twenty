@@ -9,6 +9,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 
 @Injectable()
+// eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class AuthSsoService {
   constructor(
     @InjectRepository(Workspace, 'core')
