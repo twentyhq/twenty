@@ -9,28 +9,34 @@ import {
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 
+export const handleWorkflowTriggerException = (
+  exception: WorkflowTriggerException,
+) => {
+  switch (exception.code) {
+    case WorkflowTriggerExceptionCode.INVALID_INPUT:
+    case WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION:
+    case WorkflowTriggerExceptionCode.INVALID_ACTION_TYPE:
+    case WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER:
+    case WorkflowTriggerExceptionCode.INVALID_WORKFLOW_STATUS:
+    case WorkflowTriggerExceptionCode.FORBIDDEN:
+      throw new UserInputError(exception.message);
+    case WorkflowTriggerExceptionCode.NOT_FOUND:
+      throw new NotFoundError(exception.message);
+    case WorkflowTriggerExceptionCode.INTERNAL_ERROR:
+      throw exception;
+    default: {
+      const _exhaustiveCheck: never = exception.code;
+
+      throw exception;
+    }
+  }
+};
+
 @Catch(WorkflowTriggerException)
 export class WorkflowTriggerGraphqlApiExceptionFilter
   implements ExceptionFilter
 {
   catch(exception: WorkflowTriggerException) {
-    switch (exception.code) {
-      case WorkflowTriggerExceptionCode.INVALID_INPUT:
-      case WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION:
-      case WorkflowTriggerExceptionCode.INVALID_ACTION_TYPE:
-      case WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER:
-      case WorkflowTriggerExceptionCode.INVALID_WORKFLOW_STATUS:
-      case WorkflowTriggerExceptionCode.FORBIDDEN:
-        throw new UserInputError(exception.message);
-      case WorkflowTriggerExceptionCode.NOT_FOUND:
-        throw new NotFoundError(exception.message);
-      case WorkflowTriggerExceptionCode.INTERNAL_ERROR:
-        throw exception;
-      default: {
-        const _exhaustiveCheck: never = exception.code;
-
-        throw exception;
-      }
-    }
+    return handleWorkflowTriggerException(exception);
   }
 }
