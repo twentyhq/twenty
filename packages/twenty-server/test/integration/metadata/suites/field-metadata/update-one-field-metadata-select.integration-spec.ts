@@ -9,12 +9,12 @@ import {
   LISTING_NAME_PLURAL,
   LISTING_NAME_SINGULAR,
 } from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 const { failingTestCases, successfulTestCases } =
   UPDATE_CREATE_ONE_FIELD_METADATA_SELECT_TEST_CASES;
@@ -76,9 +76,50 @@ describe('Field metadata select update tests group', () => {
     });
   });
 
+  it('Should update default value to null even if it was set before', async () => {
+    const expectedDefaultValue = `'${initialOptions[0].value}'`;
+    const { data: firstUdpate } = await updateOneFieldMetadata({
+      input: {
+        idToUpdate: createdFieldMetadata,
+        updatePayload: {
+          defaultValue: expectedDefaultValue,
+        },
+      },
+      gqlFields: `
+        id
+        defaultValue
+        `,
+    });
+
+    expect(firstUdpate.updateOneField.defaultValue).toEqual(
+      expectedDefaultValue,
+    );
+
+    const updatedOptions = initialOptions.slice(1);
+    const { data: secondUpdate, errors } = await updateOneFieldMetadata({
+      input: {
+        idToUpdate: createdFieldMetadata,
+        updatePayload: {
+          defaultValue: null,
+          options: updatedOptions,
+        },
+      },
+      gqlFields: `
+        id
+        options
+        defaultValue
+        `,
+    });
+
+    expect(errors).toBeUndefined();
+    expect(secondUpdate.updateOneField.defaultValue).toBeNull();
+    expect(secondUpdate.updateOneField.options).toMatchObject(updatedOptions)
+  });
+
   const updateSpecificSuccessfulTestCases: UpdateCreateFieldMetadataSelectTestCase[] =
     [
       {
+        title: 'should succeed with default value and no options',
         context: {
           input: {
             defaultValue: "'OPTION_2'",
@@ -86,7 +127,6 @@ describe('Field metadata select update tests group', () => {
           },
           expectedOptions: initialOptions,
         },
-        title: 'should succeed with default value and no options',
       },
     ];
 
@@ -126,13 +166,13 @@ describe('Field metadata select update tests group', () => {
   const updateSpecificFailingTestCases: UpdateCreateFieldMetadataSelectTestCase[] =
     [
       {
+        title: 'should fail with unknown default value and no options',
         context: {
           input: {
             defaultValue: "'OPTION_42'",
             options: undefined as unknown as FieldMetadataComplexOption[],
           },
         },
-        title: 'should fail with unknown default value and no options',
       },
     ];
 

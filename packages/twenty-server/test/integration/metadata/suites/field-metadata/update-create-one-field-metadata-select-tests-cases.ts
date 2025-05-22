@@ -1,6 +1,6 @@
+import { CreateOneFieldFactoryInput } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata-query-factory.util';
 import { EachTestingContext } from 'twenty-shared/testing';
 import { v4 } from 'uuid';
-import { CreateOneFieldFactoryInput } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata-query-factory.util';
 
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 
@@ -104,6 +104,23 @@ const successfulTestCases: UpdateCreateFieldMetadataSelectTestCase[] = [
           position: 1,
         },
       ],
+    },
+  },
+  {
+    title: 'should succeed with null default value',
+    context: {
+      input: {
+        defaultValue: null,
+        options: [
+          {
+            label: 'Option 1',
+            value: 'OPTION_1',
+            color: 'green',
+            position: 1,
+            id: '26c602c3-cba9-4d83-92d4-4ba7dbae2f31',
+          },
+        ],
+      },
     },
   },
 ];
