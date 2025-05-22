@@ -13,7 +13,12 @@ import {
 } from 'src/modules/messaging/message-import-manager/exceptions/message-import.exception';
 import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
 
+export type GetEmptyMailboxResponse = {
+  isEmptyMailbox: true;
+};
+
 export type GetFullMessageListResponse = {
+  isEmptyMailbox: false;
   messageExternalIds: string[];
   nextSyncCursor: string;
 };
@@ -48,15 +53,23 @@ export class MessagingGetMessageListService {
     messageChannel: MessageChannelWorkspaceEntity,
   ): Promise<GetFullMessageListForFoldersResponse[]> {
     switch (messageChannel.connectedAccount.provider) {
-      case ConnectedAccountProvider.GOOGLE:
+      case ConnectedAccountProvider.GOOGLE: {
+        const fullMessageList =
+          await this.gmailGetMessageListService.getFullMessageList(
+            messageChannel.connectedAccount,
+          );
+
+        if (fullMessageList.isEmptyMailbox) {
+          return [];
+        }
+
         return [
           {
-            ...(await this.gmailGetMessageListService.getFullMessageList(
-              messageChannel.connectedAccount,
-            )),
+            ...fullMessageList,
             folderId: undefined,
           },
         ];
+      }
       case ConnectedAccountProvider.MICROSOFT: {
         const folderRepository =
           await this.twentyORMManager.getRepository<MessageFolderWorkspaceEntity>(

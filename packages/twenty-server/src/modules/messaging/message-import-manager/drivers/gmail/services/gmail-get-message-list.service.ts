@@ -16,6 +16,7 @@ import { GmailHandleErrorService } from 'src/modules/messaging/message-import-ma
 import { computeGmailCategoryExcludeSearchFilter } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-category-excude-search-filter.util';
 import { computeGmailCategoryLabelId } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-category-label-id.util';
 import {
+  GetEmptyMailboxResponse,
   GetFullMessageListResponse,
   GetPartialMessageListResponse,
 } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
@@ -34,13 +35,14 @@ export class GmailGetMessageListService {
       ConnectedAccountWorkspaceEntity,
       'provider' | 'refreshToken' | 'id' | 'handle'
     >,
-  ): Promise<GetFullMessageListResponse> {
+  ): Promise<GetFullMessageListResponse | GetEmptyMailboxResponse> {
     const gmailClient =
       await this.gmailClientProvider.getGmailClient(connectedAccount);
 
     let pageToken: string | undefined;
     let hasMoreMessages = true;
-    let firstMessageExternalId: string | undefined;
+    let firstMessageExternalId: string | null | undefined;
+    let isFirstIteration = true;
     const messageExternalIds: string[] = [];
 
     while (hasMoreMessages) {
@@ -64,18 +66,23 @@ export class GmailGetMessageListService {
           };
         });
 
-      pageToken = messageList.data.nextPageToken ?? undefined;
-      hasMoreMessages = !!pageToken;
-
       const { messages } = messageList.data;
+      const hasMessages = messages && messages.length > 0;
 
-      if (!messages || messages.length === 0) {
+      if (isFirstIteration) {
+        if (!hasMessages) {
+          return { isEmptyMailbox: true };
+        }
+        firstMessageExternalId = messages[0]?.id;
+        isFirstIteration = false;
+      }
+
+      if (!hasMessages) {
         break;
       }
 
-      if (!firstMessageExternalId) {
-        firstMessageExternalId = messageList.data.messages?.[0].id ?? undefined;
-      }
+      pageToken = messageList.data.nextPageToken ?? undefined;
+      hasMoreMessages = !!pageToken;
 
       // @ts-expect-error legacy noImplicitAny
       messageExternalIds.push(...messages.map((message) => message.id));
@@ -109,7 +116,7 @@ export class GmailGetMessageListService {
       );
     }
 
-    return { messageExternalIds, nextSyncCursor };
+    return { messageExternalIds, nextSyncCursor, isEmptyMailbox: false };
   }
 
   public async getPartialMessageList(
