@@ -11,7 +11,6 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { z } from 'zod';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useCreateApprovedAccessDomainMutation } from '~/generated/graphql';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -117,11 +116,10 @@ export const SettingsSecurityApprovedAccessDomain = () => {
                 fieldState: { error },
               }) => (
                 <TextInput
+                  autoFocus
                   autoComplete="off"
                   value={value}
-                  onChange={(domain: string) => {
-                    onChange(domain);
-                  }}
+                  onChange={onChange}
                   fullWidth
                   placeholder="yourdomain.com"
                   error={error?.message}
