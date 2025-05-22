@@ -2,7 +2,6 @@ import { GoToHotkeyItemEffect } from '@/app/effect-components/GoToHotkeyItemEffe
 import { useNonSystemActiveObjectMetadataItems } from '@/object-metadata/hooks/useNonSystemActiveObjectMetadataItems';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
-import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useGoToHotkeys } from '@/ui/utilities/hotkey/hooks/useGoToHotkeys';
 import { useLocation } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
@@ -21,7 +20,7 @@ export const GotoHotkeysEffectsProvider = () => {
         () => {
           set(isNavigationDrawerExpandedState, true);
           set(navigationDrawerExpandedMemorizedState, true);
-          set(navigationMemorizedUrlState, location.pathname + location.search);
+          // set(navigationMemorizedUrlState, location.pathname + location.search);
         },
       [location.pathname, location.search],
     ),
