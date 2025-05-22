@@ -2,6 +2,7 @@ import {
   UPDATE_CREATE_ONE_FIELD_METADATA_SELECT_TEST_CASES,
   UpdateCreateFieldMetadataSelectTestCase,
 } from 'test/integration/metadata/suites/field-metadata/update-create-one-field-metadata-select-tests-cases';
+import { CreateOneFieldFactoryInput } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata-query-factory.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import {
@@ -11,7 +12,6 @@ import {
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { CreateOneFieldFactoryInput } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata-query-factory.util';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';

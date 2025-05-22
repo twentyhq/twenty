@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 
@@ -158,7 +158,7 @@ export class FieldMetadataEnumValidationService {
     }
   }
 
-  private validateFieldMetadataOptions(
+  private validateFieldMetadataInputOptions(
     fieldMetadataInput: FieldMetadataUpdateCreateInput,
   ) {
     const { options } = fieldMetadataInput;
@@ -188,7 +188,13 @@ export class FieldMetadataEnumValidationService {
       return;
     }
 
-    this.validateFieldMetadataOptions(fieldMetadataInput);
+    const isUpdate = isDefined(existingFieldMetadata);
+    const shouldSkipFieldMetadataInputOptionsValidation =
+      isUpdate && fieldMetadataInput.options === undefined;
+
+    if (!shouldSkipFieldMetadataInputOptionsValidation) {
+      this.validateFieldMetadataInputOptions(fieldMetadataInput);
+    }
 
     if (isDefined(fieldMetadataInput.defaultValue)) {
       const options =
