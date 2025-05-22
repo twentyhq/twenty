@@ -48,6 +48,7 @@ describe('useSignInWithMicrosoft', () => {
     });
 
     expect(signInWithMicrosoftMock).toHaveBeenCalledWith({
+      action: 'join-workspace',
       workspaceInviteHash: workspaceInviteHashMock,
       workspacePersonalInviteToken: inviteTokenMock,
       billingCheckoutSession: mockBillingCheckoutSession,
@@ -74,6 +75,7 @@ describe('useSignInWithMicrosoft', () => {
     });
 
     expect(signInWithMicrosoftMock).toHaveBeenCalledWith({
+      action: 'join-workspace',
       billingCheckoutSession: mockBillingCheckoutSession,
       workspaceInviteHash: workspaceInviteHashMock,
       workspacePersonalInviteToken: undefined,

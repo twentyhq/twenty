@@ -48,6 +48,7 @@ describe('useSignInWithGoogle', () => {
     });
 
     expect(signInWithGoogleMock).toHaveBeenCalledWith({
+      action: 'join-workspace',
       workspaceInviteHash: 'testHash',
       workspacePersonalInviteToken: 'testToken',
       billingCheckoutSession: mockBillingCheckoutSession,
@@ -73,6 +74,7 @@ describe('useSignInWithGoogle', () => {
     });
 
     expect(signInWithGoogleMock).toHaveBeenCalledWith({
+      action: 'join-workspace',
       workspaceInviteHash: 'testHash',
       workspacePersonalInviteToken: undefined,
       billingCheckoutSession: mockBillingCheckoutSession,
