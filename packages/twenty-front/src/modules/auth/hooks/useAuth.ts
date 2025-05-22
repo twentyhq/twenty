@@ -67,6 +67,9 @@ import { iconsState } from 'twenty-ui/display';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
+import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
+import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -75,6 +78,7 @@ export const useAuth = () => {
     currentWorkspaceMemberState,
   );
   const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
+  const setAvailableWorkspaces = useSetRecoilState(availableWorkspacesState);
 
   const setCurrentWorkspaceMembers = useSetRecoilState(
     currentWorkspaceMembersState,
@@ -85,6 +89,8 @@ export const useAuth = () => {
   );
 
   const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
+  const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
+  const { readCaptchaToken } = useReadCaptchaToken();
 
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
@@ -110,6 +116,21 @@ export const useAuth = () => {
   const [checkUserExistsQuery, { data: checkUserExistsData }] =
     useCheckUserExistsLazyQuery();
   const [listAvailableWorkspacesQuery] = useListAvailableWorkspacesLazyQuery();
+
+  const getAvailableWorkspaces = async (email: string) => {
+    const token = await readCaptchaToken();
+
+    listAvailableWorkspacesQuery({
+      variables: {
+        email,
+        captchaToken: token,
+      },
+      onCompleted: (data) => {
+        requestFreshCaptchaToken();
+        setAvailableWorkspaces(data.listAvailableWorkspaces);
+      },
+    });
+  };
 
   const client = useApolloClient();
 
@@ -529,6 +550,6 @@ export const useAuth = () => {
     signInWithCredentials: handleCredentialsSignIn,
     signInWithGoogle: handleGoogleLogin,
     signInWithMicrosoft: handleMicrosoftLogin,
-    listAvailableWorkspacesQuery: listAvailableWorkspacesQuery,
+    getAvailableWorkspaces,
   };
 };

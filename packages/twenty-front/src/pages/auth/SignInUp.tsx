@@ -26,6 +26,7 @@ import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
 import { PublicWorkspaceDataOutput } from '~/generated/graphql';
+import { SignInUpGlobalScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpGlobalScopeFormEffect';
 
 const StandardContent = ({
   workspacePublicData,
@@ -95,7 +96,12 @@ export const SignInUp = () => {
     if (loading) return null;
 
     if (isDefaultDomain && isMultiWorkspaceEnabled) {
-      return <SignInUpGlobalScopeForm />;
+      return (
+        <>
+          <SignInUpGlobalScopeFormEffect />
+          <SignInUpGlobalScopeForm />
+        </>
+      );
     }
 
     if (
@@ -118,7 +124,12 @@ export const SignInUp = () => {
       );
     }
 
-    return <SignInUpGlobalScopeForm />;
+    return (
+      <>
+        <SignInUpGlobalScopeFormEffect />
+        <SignInUpGlobalScopeForm />
+      </>
+    );
   }, [
     isDefaultDomain,
     isMultiWorkspaceEnabled,

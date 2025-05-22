@@ -1,5 +1,8 @@
 import { useCreateUserAndWorkspaceMutation } from '~/generated/graphql';
-import { signInUpCallbackState } from '@/auth/states/signInUpCallbackState';
+import {
+   SignInUpCallbackNewUser,
+  signInUpCallbackState,
+} from '@/auth/states/signInUpCallbackState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -31,11 +34,17 @@ export const useCreateWorkspaceFromWorkspaceList = () => {
 
   const signInUpCallback = useRecoilValue(signInUpCallbackState);
 
-  const createUserAndWorkspace = () => {
+  const createUserAndWorkspace = async (params: SignInUpCallbackNewUser) => {
     const token = await readCaptchaToken();
+
+    const { email, firstName, lastName, picture } = params;
+
     return createUserAndWorkspaceMutation({
       variables: {
-        ...signInUpCallback,
+        email,
+        firstName,
+        lastName,
+        picture,
         captchaToken: token,
       },
       onCompleted: async (data) => {
@@ -57,13 +66,13 @@ export const useCreateWorkspaceFromWorkspaceList = () => {
   };
 
   const handleCreateWorkspaceFromWorkspaceList = async () => {
-    if (isDefined(signInUpCallback) && isDefined(signInUpCallback.newUser)) {
-      return createUserAndWorkspace();
+    if (isDefined(signInUpCallback) && signInUpCallback.type === 'newUser') {
+      return createUserAndWorkspace(signInUpCallback);
     }
 
     if (
       isDefined(signInUpCallback) &&
-      isDefined(signInUpCallback.existingUser) &&
+      signInUpCallback.type === 'existingUser' &&
       signInUpCallback.authProvider === 'google'
     ) {
       return signInWithGoogle({
@@ -73,7 +82,7 @@ export const useCreateWorkspaceFromWorkspaceList = () => {
 
     if (
       isDefined(signInUpCallback) &&
-      isDefined(signInUpCallback.existingUser) &&
+      signInUpCallback.type === 'existingUser' &&
       signInUpCallback.authProvider === 'microsoft'
     ) {
       return signInWithMicrosoft({

@@ -12,9 +12,6 @@ import {
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { isDefined } from 'twenty-shared/utils';
-import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
-import { useAuth } from '@/auth/hooks/useAuth';
-import { signInUpCallbackState } from '@/auth/states/signInUpCallbackState';
 
 const makeValidationSchema = (signInUpStep: SignInUpStep) =>
   z
@@ -34,13 +31,6 @@ const makeValidationSchema = (signInUpStep: SignInUpStep) =>
 export type Form = z.infer<ReturnType<typeof makeValidationSchema>>;
 export const useSignInUpForm = () => {
   const [signInUpStep, setSignInUpStep] = useRecoilState(signInUpStepState);
-  const setSignInUpCallbackState = useSetRecoilState(signInUpCallbackState);
-
-  const { listAvailableWorkspacesQuery } = useAuth();
-
-  const [availableWorkspaces, setAvailableWorkspaces] = useRecoilState(
-    availableWorkspacesState,
-  );
 
   const validationSchema = makeValidationSchema(signInUpStep); // Create schema based on the current step
 
@@ -49,8 +39,6 @@ export const useSignInUpForm = () => {
   );
   const [searchParams] = useSearchParams();
   const prefilledEmail = searchParams.get('email');
-
-  const signInUpCallback = searchParams.get('signInUpCallback');
 
   const form = useForm<Form>({
     mode: 'onSubmit',
@@ -63,31 +51,6 @@ export const useSignInUpForm = () => {
     resolver: zodResolver(validationSchema),
   });
 
-  useEffect(() => {
-    if (isDefined(signInUpCallback) && availableWorkspaces.length === 0) {
-      const signInUpCallbackData = JSON.parse(signInUpCallback);
-
-      setSignInUpCallbackState(signInUpCallbackData);
-
-      listAvailableWorkspacesQuery({
-        variables: {
-          email: userData.email,
-        },
-        onCompleted: (data) => {
-          setAvailableWorkspaces(data.listAvailableWorkspaces);
-        },
-      });
-
-      setSignInUpStep(SignInUpStep.WorkspaceSelection);
-    }
-  }, [
-    availableWorkspaces.length,
-    listAvailableWorkspacesQuery,
-    setAvailableWorkspaces,
-    setSignInUpStep,
-    setSignInUpCallbackState,
-    signInUpCallback,
-  ]);
 
   useEffect(() => {
     if (isDefined(prefilledEmail)) {

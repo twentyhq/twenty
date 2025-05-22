@@ -223,59 +223,62 @@ export const SignInUpGlobalScopeForm = () => {
 
   return (
     <>
-      {signInUpStep === SignInUpStep.WorkspaceSelection && (
-        <StyledWorkspaceContainer>
-          {availableWorkspaces.map((workspace) => (
-            <UndecoratedLink
-              key={workspace.id}
-              to={buildWorkspaceUrl(
-                getWorkspaceUrl(workspace.workspaceUrls),
-                AppPath.SignInUp,
-                {
-                  email: form.getValues('email'),
-                },
-              )}
+      {signInUpStep === SignInUpStep.WorkspaceSelection &&
+        availableWorkspaces.length > 0 && (
+          <StyledWorkspaceContainer>
+            {availableWorkspaces.map((workspace) => (
+              <UndecoratedLink
+                key={workspace.id}
+                to={buildWorkspaceUrl(
+                  getWorkspaceUrl(workspace.workspaceUrls),
+                  AppPath.SignInUp,
+                  {
+                    email: form.getValues('email'),
+                  },
+                )}
+              >
+                <StyledWorkspaceItem>
+                  <StyledWorkspaceContent>
+                    <Avatar
+                      placeholder={workspace.displayName || ''}
+                      avatarUrl={workspace.logo ?? DEFAULT_WORKSPACE_LOGO}
+                      size="lg"
+                    />
+                    <StyledWorkspaceTextContainer>
+                      <StyledWorkspaceName>
+                        {workspace.displayName || workspace.id}
+                      </StyledWorkspaceName>
+                      <StyledWorkspaceUrl>
+                        {
+                          new URL(getWorkspaceUrl(workspace.workspaceUrls))
+                            .hostname
+                        }
+                      </StyledWorkspaceUrl>
+                    </StyledWorkspaceTextContainer>
+                    <StyledChevronIcon>
+                      <IconChevronRight size={theme.icon.size.md} />
+                    </StyledChevronIcon>
+                  </StyledWorkspaceContent>
+                </StyledWorkspaceItem>
+              </UndecoratedLink>
+            ))}
+            <StyledWorkspaceItem
+              onClick={handleCreateWorkspaceFromWorkspaceList}
             >
-              <StyledWorkspaceItem>
-                <StyledWorkspaceContent>
-                  <Avatar
-                    placeholder={workspace.displayName || ''}
-                    avatarUrl={workspace.logo ?? DEFAULT_WORKSPACE_LOGO}
-                    size="lg"
-                  />
-                  <StyledWorkspaceTextContainer>
-                    <StyledWorkspaceName>
-                      {workspace.displayName || workspace.id}
-                    </StyledWorkspaceName>
-                    <StyledWorkspaceUrl>
-                      {
-                        new URL(getWorkspaceUrl(workspace.workspaceUrls))
-                          .hostname
-                      }
-                    </StyledWorkspaceUrl>
-                  </StyledWorkspaceTextContainer>
-                  <StyledChevronIcon>
-                    <IconChevronRight size={theme.icon.size.md} />
-                  </StyledChevronIcon>
-                </StyledWorkspaceContent>
-              </StyledWorkspaceItem>
-            </UndecoratedLink>
-          ))}
-          <StyledWorkspaceItem onClick={handleCreateWorkspaceFromWorkspaceList}>
-            <StyledWorkspaceContent>
-              <StyledWorkspaceLogo>
-                <IconPlus size={theme.icon.size.lg} />
-              </StyledWorkspaceLogo>
-              <StyledWorkspaceTextContainer>
-                <StyledWorkspaceName>{t`Create a workspace`}</StyledWorkspaceName>
-              </StyledWorkspaceTextContainer>
-              <StyledChevronIcon>
-                <IconChevronRight size={theme.icon.size.md} />
-              </StyledChevronIcon>
-            </StyledWorkspaceContent>
-          </StyledWorkspaceItem>
-        </StyledWorkspaceContainer>
-      )}
+              <StyledWorkspaceContent>
+                <StyledWorkspaceLogo>
+                  <IconPlus size={theme.icon.size.lg} />
+                </StyledWorkspaceLogo>
+                <StyledWorkspaceTextContainer>
+                  <StyledWorkspaceName>{t`Create a workspace`}</StyledWorkspaceName>
+                </StyledWorkspaceTextContainer>
+                <StyledChevronIcon>
+                  <IconChevronRight size={theme.icon.size.md} />
+                </StyledChevronIcon>
+              </StyledWorkspaceContent>
+            </StyledWorkspaceItem>
+          </StyledWorkspaceContainer>
+        )}
       {signInUpStep !== SignInUpStep.WorkspaceSelection && (
         <StyledContentContainer>
           {authProviders.google && (

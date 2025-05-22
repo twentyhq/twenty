@@ -59,6 +59,9 @@ import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.
 import { CheckUserExistOutput } from 'src/engine/core-modules/auth/dto/user-exists.entity';
 import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
+import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -67,6 +70,8 @@ export class AuthService {
     private readonly accessTokenService: AccessTokenService,
     private readonly domainManagerService: DomainManagerService,
     private readonly refreshTokenService: RefreshTokenService,
+    private readonly loginTokenService: LoginTokenService,
+    private readonly guardRedirectService: GuardRedirectService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly authSsoService: AuthSsoService,
@@ -513,21 +518,6 @@ export class AuthService {
     return workspace;
   }
 
-  computeRedirectURIForWorkspaceSelection(
-    userDataForNewUserAndWorkspace: SignInUpNewUserPayload,
-  ) {
-    const url = this.domainManagerService.buildBaseUrl({
-      pathname: '/welcome',
-      searchParams: {
-        userDataForNewUserAndWorkspace: JSON.stringify(
-          userDataForNewUserAndWorkspace,
-        ),
-      },
-    });
-
-    return url.toString();
-  }
-
   computeRedirectURI({
     loginToken,
     workspace,
@@ -714,7 +704,7 @@ export class AuthService {
       locale,
     }: MicrosoftRequest['user'] | GoogleRequest['user'],
     authProvider: 'google' | 'microsoft',
-  ): string {
+  ): Promise<string> {
     const availableWorkspacesCount =
       action === 'list-available-workspaces'
         ? (
@@ -734,19 +724,29 @@ export class AuthService {
       action === 'list-available-workspaces' &&
       availableWorkspacesCount !== 0
     ) {
-      return this.computeRedirectURIForWorkspaceSelection(
-        !existingUser
-          ? {
-              authProvider,
-              newUser: {
-                firstName,
-                lastName,
-                email,
-                picture,
-              },
-            }
-          : { authProvider, existingUser: { email } },
-      );
+      const url = this.domainManagerService.buildBaseUrl({
+        pathname: '/welcome',
+        searchParams: {
+          signInUpCallback: JSON.stringify(
+            existingUser
+              ? {
+                  authProvider,
+                  type: 'existingUser',
+                  email,
+                }
+              : {
+                  authProvider,
+                  type: 'newUser',
+                  firstName,
+                  lastName,
+                  email,
+                  picture,
+                },
+          ),
+        },
+      });
+
+      return url.toString();
     }
 
     const currentWorkspace =
