@@ -7,6 +7,7 @@ import { FixStandardSelectFieldsPositionCommand } from 'src/database/commands/up
 import { LowercaseUserAndInvitationEmailsCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-lowercase-user-and-invitation-emails.command';
 import { MigrateDefaultAvatarUrlToUserWorkspaceCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-migrate-default-avatar-url-to-user-workspace.command';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -31,6 +32,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     WorkspaceMigrationRunnerModule,
     WorkspaceMetadataVersionModule,
     FileModule,
+    FileStorageModule,
   ],
   providers: [
     FixStandardSelectFieldsPositionCommand,
