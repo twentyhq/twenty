@@ -156,7 +156,15 @@ export const WorkflowEditTriggerWebhookForm = ({
 
               let formattedExpectedBody = {};
               try {
-                formattedExpectedBody = JSON.parse(newExpectedBody || '{}');
+                formattedExpectedBody = JSON.parse(
+                  newExpectedBody || '{}',
+                  (key, value) => {
+                    if (isDefined(key) && key.includes(' ')) {
+                      throw new Error(t`JSON keys cannot contain spaces`);
+                    }
+                    return value;
+                  },
+                );
               } catch (e) {
                 setErrorMessages((prev) => ({
                   ...prev,

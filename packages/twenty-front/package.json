@@ -3,9 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true NODE_OPTIONS=--max-old-space-size=4500 npx vite build && sh ./scripts/inject-runtime-env.sh",
-    "build:sourcemaps": "VITE_BUILD_SOURCEMAP=true VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true NODE_OPTIONS=--max-old-space-size=7000 npx vite build && sh ./scripts/inject-runtime-env.sh",
-    "start:prod": "NODE_ENV=production npx vite --host",
+    "build": "VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true NODE_OPTIONS=--max-old-space-size=8192 npx vite build && sh ./scripts/inject-runtime-env.sh",
+    "build:sourcemaps": "VITE_BUILD_SOURCEMAP=true VITE_DISABLE_TYPESCRIPT_CHECKER=true VITE_DISABLE_ESLINT_CHECKER=true NODE_OPTIONS=--max-old-space-size=8192 npx vite build && sh ./scripts/inject-runtime-env.sh",
+    "start:prod": "NODE_ENV=production npx serve -s build",
     "tsup": "npx tsup"
   },
   "engines": {
@@ -82,6 +82,7 @@
     "eslint-plugin-storybook": "^0.6.15",
     "eslint-plugin-unicorn": "^51.0.1",
     "eslint-plugin-unused-imports": "^3.0.0",
-    "optionator": "^0.9.1"
+    "optionator": "^0.9.1",
+    "rollup-plugin-visualizer": "^5.14.0"
   }
 }

@@ -47,11 +47,11 @@ export class GraphqlQueryDeleteOneResolverService extends GraphqlQueryBaseResolv
       objectMetadataMaps,
     );
 
-    this.apiEventEmitterService.emitDeletedEvents(
-      formattedDeletedRecords,
+    this.apiEventEmitterService.emitDeletedEvents({
+      records: formattedDeletedRecords,
       authContext,
-      objectMetadataItemWithFieldMaps,
-    );
+      objectMetadataItem: objectMetadataItemWithFieldMaps,
+    });
 
     if (formattedDeletedRecords.length === 0) {
       throw new GraphqlQueryRunnerException(

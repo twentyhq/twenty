@@ -12,6 +12,7 @@ import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import { MessageNetworkExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-network.exception';
 import {
   MessageImportException,
   MessageImportExceptionCode,
@@ -51,6 +52,11 @@ export class MessageImportExceptionHandlerService {
         );
         break;
       case MessageImportDriverExceptionCode.TEMPORARY_ERROR:
+      case MessageNetworkExceptionCode.ECONNABORTED:
+      case MessageNetworkExceptionCode.ENOTFOUND:
+      case MessageNetworkExceptionCode.ECONNRESET:
+      case MessageNetworkExceptionCode.ETIMEDOUT:
+      case MessageNetworkExceptionCode.ERR_NETWORK:
         await this.handleTemporaryException(
           syncStep,
           messageChannel,

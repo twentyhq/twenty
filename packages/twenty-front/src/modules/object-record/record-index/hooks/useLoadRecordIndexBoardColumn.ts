@@ -14,7 +14,7 @@ import { useRecordBoardRecordGqlFields } from '@/object-record/record-index/hook
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { useSetRecordValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
+
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
@@ -32,7 +32,6 @@ export const useLoadRecordIndexBoardColumn = ({
   recordBoardId,
   columnId,
 }: UseLoadRecordIndexBoardProps) => {
-  const setRecordValueInContextSelector = useSetRecordValue();
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
@@ -102,10 +101,7 @@ export const useLoadRecordIndexBoardColumn = ({
 
   useEffect(() => {
     upsertRecordsInStore(records);
-    for (const record of records) {
-      setRecordValueInContextSelector(record.id, record);
-    }
-  }, [records, upsertRecordsInStore, setRecordValueInContextSelector]);
+  }, [records, upsertRecordsInStore]);
 
   return {
     records,

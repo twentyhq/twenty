@@ -2348,6 +2348,11 @@ msgstr "全局"
 msgid "Go to Companies"
 msgstr ""
 
+#. js-lingui-id: dHvI9O
+#: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
+msgid "Go to Draft"
+msgstr ""
+
 #. js-lingui-id: BQE4ob
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Notes"
@@ -2371,7 +2376,9 @@ msgid "Go to runs"
 msgstr "前往運行"
 
 #. js-lingui-id: mT57+Q
+#: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Settings"
 msgstr "前往設置"
@@ -2539,6 +2546,11 @@ msgstr "身份提供者"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Identity Provider Metadata XML"
 msgstr "身份提供者元數據 XML"
+
+#. js-lingui-id: ZfP/Ap
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
+msgid "If this is unexpected, please verify your settings."
+msgstr ""
 
 #. js-lingui-id: j843N3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -2765,6 +2777,11 @@ msgstr "意大利語"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Japanese"
 msgstr "日語"
+
+#. js-lingui-id: VIK/N0
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
+msgid "JSON keys cannot contain spaces"
+msgstr ""
 
 #. js-lingui-id: OGXtL8
 #: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
@@ -3256,6 +3273,11 @@ msgstr "無連接帳戶"
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "No country"
 msgstr "無國家"
+
+#. js-lingui-id: 7tCnBa
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
+msgid "No Data Available for Remote Table"
+msgstr ""
 
 #. js-lingui-id: pxvJ9B
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -3811,6 +3833,8 @@ msgid "Record image"
 msgstr "記錄圖像"
 
 #. js-lingui-id: K6/7kH
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
 msgid "Record label"
 msgstr "記錄標籤"
@@ -4871,12 +4895,18 @@ msgstr "時間戳和參與者將與您的團隊共享。"
 
 #. js-lingui-id: ecUA8p
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
+#: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Today"
 msgstr "今天"
 
 #. js-lingui-id: XArpJK
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 msgid "Toggle all object permissions"
+msgstr ""
+
+#. js-lingui-id: BRMXj0
+#: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
+msgid "Tomorrow"
 msgstr ""
 
 #. js-lingui-id: vb0Q0/
@@ -5324,6 +5354,11 @@ msgstr "寫入秘鑰"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "yes"
 msgstr "是"
+
+#. js-lingui-id: y/0uwd
+#: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
+msgid "Yesterday"
+msgstr ""
 
 #. js-lingui-id: qsAug0
 #: src/modules/spreadsheet-import/components/MatchColumnSelect.tsx

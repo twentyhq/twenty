@@ -1,3 +1,5 @@
+import { ForbiddenException } from '@nestjs/common';
+
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import {
@@ -29,6 +31,8 @@ export const computeRelationType = (
     case RelationMetadataType.MANY_TO_MANY:
       return 'many-to-many';
     default:
-      throw new Error('Invalid relation type');
+      throw new ForbiddenException(
+        `Invalid relation type: ${relationMetadata.relationType}`,
+      );
   }
 };

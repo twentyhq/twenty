@@ -3,9 +3,9 @@ import { FocusEventHandler, useId } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { RGBA } from 'twenty-ui/theme';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { InputHotkeyScope } from '../types/InputHotkeyScope';
-import { RGBA } from 'twenty-ui/theme';
 
 const MAX_ROWS = 5;
 
@@ -89,7 +89,9 @@ export const TextArea = ({
   } = usePreviousHotkeyScope();
 
   const handleFocus: FocusEventHandler<HTMLTextAreaElement> = () => {
-    setHotkeyScopeAndMemorizePreviousScope(InputHotkeyScope.TextInput);
+    setHotkeyScopeAndMemorizePreviousScope({
+      scope: InputHotkeyScope.TextInput,
+    });
   };
 
   const handleBlur: FocusEventHandler<HTMLTextAreaElement> = () => {

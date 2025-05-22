@@ -45,15 +45,14 @@ export const RecordTitleFullNameFieldDisplay = () => {
     .join(' ')
     .trim();
 
-  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope(
-    INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY,
-  );
+  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
   return (
     <StyledDiv
       onClick={() => {
-        setHotkeyScopeAndMemorizePreviousScope(
-          TitleInputHotkeyScope.TitleInput,
-        );
+        setHotkeyScopeAndMemorizePreviousScope({
+          scope: TitleInputHotkeyScope.TitleInput,
+          memoizeKey: INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY,
+        });
         openInlineCell();
       }}
     >

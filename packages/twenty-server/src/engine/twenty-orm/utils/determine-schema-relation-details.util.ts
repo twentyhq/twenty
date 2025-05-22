@@ -4,6 +4,10 @@ import { RelationType } from 'typeorm/metadata/types/RelationTypes';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import {
+  RelationException,
+  RelationExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/relation.exception';
 import { converRelationTypeToTypeORMRelationType } from 'src/engine/twenty-orm/utils/convert-relation-type-to-typeorm-relation-type.util';
 
 interface RelationDetails {
@@ -26,7 +30,10 @@ export async function determineSchemaRelationDetails(
   );
 
   if (!fieldMetadata.relationTargetObjectMetadataId) {
-    throw new Error('Relation target object metadata ID is missing');
+    throw new RelationException(
+      'Relation target object metadata ID is missing',
+      RelationExceptionCode.RELATION_OBJECT_METADATA_NOT_FOUND,
+    );
   }
 
   const sourceObjectMetadata =
@@ -35,11 +42,17 @@ export async function determineSchemaRelationDetails(
     objectMetadataMaps.byId[fieldMetadata.relationTargetObjectMetadataId];
 
   if (!sourceObjectMetadata || !targetObjectMetadata) {
-    throw new Error(`Object metadata not found for field ${fieldMetadata.id}`);
+    throw new RelationException(
+      `Object metadata not found for field ${fieldMetadata.id}`,
+      RelationExceptionCode.RELATION_OBJECT_METADATA_NOT_FOUND,
+    );
   }
 
   if (!fieldMetadata.relationTargetFieldMetadataId) {
-    throw new Error('Relation target field metadata ID is missing');
+    throw new RelationException(
+      'Relation target field metadata ID is missing',
+      RelationExceptionCode.RELATION_TARGET_FIELD_METADATA_ID_NOT_FOUND,
+    );
   }
 
   const targetFieldMetadata =

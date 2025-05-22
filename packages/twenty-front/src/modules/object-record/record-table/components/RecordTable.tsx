@@ -11,9 +11,7 @@ import { RecordTableScrollToFocusedRowEffect } from '@/object-record/record-tabl
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { isRecordTableCellFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableCellFocusActiveComponentState';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
-import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
@@ -48,16 +46,6 @@ export const RecordTable = () => {
   const recordTableIsEmpty =
     !isRecordTableInitialLoading && allRecordIds.length === 0;
 
-  const isRecordTableCellFocusActive = useRecoilComponentValueV2(
-    isRecordTableCellFocusActiveComponentState,
-    recordTableId,
-  );
-
-  const isRecordTableRowFocusActive = useRecoilComponentValueV2(
-    isRecordTableRowFocusActiveComponentState,
-    recordTableId,
-  );
-
   if (!isNonEmptyString(objectNameSingular)) {
     return <></>;
   }
@@ -77,16 +65,10 @@ export const RecordTable = () => {
         hasRecordGroups={hasRecordGroups}
         tableBodyRef={tableBodyRef}
       />
-
-      {isRecordTableCellFocusActive && <RecordTableScrollToFocusedCellEffect />}
-
-      {isRecordTableRowFocusActive && <RecordTableScrollToFocusedRowEffect />}
-
+      <RecordTableScrollToFocusedCellEffect />
+      <RecordTableScrollToFocusedRowEffect />
       {recordTableIsEmpty && !hasRecordGroups ? (
-        <RecordTableEmpty
-          tableBodyRef={tableBodyRef}
-          hasRecordGroups={hasRecordGroups}
-        />
+        <RecordTableEmpty tableBodyRef={tableBodyRef} />
       ) : (
         <RecordTableContent
           tableBodyRef={tableBodyRef}

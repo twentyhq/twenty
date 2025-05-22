@@ -3,15 +3,15 @@ import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext'
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { SettingsAccountsCalendarDisplaySettings } from '@/settings/accounts/components/SettingsAccountsCalendarDisplaySettings';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { Section } from '@react-email/components';
 import { addMinutes, endOfDay, min, startOfDay } from 'date-fns';
 import { useRecoilValue } from 'recoil';
+import { H2Title } from 'twenty-ui/display';
 import {
   CalendarChannelVisibility,
   TimelineCalendarEvent,
 } from '~/generated/graphql';
-import { t } from '@lingui/core/macro';
-import { H2Title } from 'twenty-ui/display';
 
 const StyledGeneralContainer = styled.div`
   display: flex;
@@ -78,12 +78,9 @@ export const SettingsAccountsCalendarChannelsGeneral = () => {
         />
         <CalendarContext.Provider
           value={{
-            currentCalendarEvent: exampleCalendarEvent,
             calendarEventsByDayTime: {
               [exampleDayTime]: [exampleCalendarEvent],
             },
-            getNextCalendarEvent: () => undefined,
-            updateCurrentCalendarEvent: () => {},
           }}
         >
           <CalendarMonthCard dayTimes={[exampleDayTime]} />

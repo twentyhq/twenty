@@ -5,8 +5,7 @@ import { LayoutCard } from '@/ui/layout/tab/types/LayoutCard';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import styled from '@emotion/styled';
-import * as React from 'react';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { IconComponent } from 'twenty-ui/display';
 import { Tab } from './Tab';
 

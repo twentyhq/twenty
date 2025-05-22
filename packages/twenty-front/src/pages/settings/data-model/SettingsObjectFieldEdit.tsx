@@ -12,7 +12,6 @@ import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMe
 import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdateOneFieldMetadataItem';
 import { formatFieldMetadataItemInput } from '@/object-metadata/utils/formatFieldMetadataItemInput';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
-import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
@@ -161,7 +160,7 @@ export const SettingsObjectFieldEdit = () => {
   };
 
   return (
-    <RecordFieldValueSelectorContextProvider>
+    <>
       {/* eslint-disable-next-line react/jsx-props-no-spreading */}
       <FormProvider {...formConfig}>
         <SubMenuTopBarContainer
@@ -265,6 +264,6 @@ export const SettingsObjectFieldEdit = () => {
           </SettingsPageContainer>
         </SubMenuTopBarContainer>
       </FormProvider>
-    </RecordFieldValueSelectorContextProvider>
+    </>
   );
 };

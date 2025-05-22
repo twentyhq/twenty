@@ -197,9 +197,9 @@ export const IconPicker = ({
               <DropdownMenuSeparator />
               <div
                 onMouseEnter={() => {
-                  setHotkeyScopeAndMemorizePreviousScope(
-                    IconPickerHotkeyScope.IconPicker,
-                  );
+                  setHotkeyScopeAndMemorizePreviousScope({
+                    scope: IconPickerHotkeyScope.IconPicker,
+                  });
                 }}
                 onMouseLeave={goBackToPreviousHotkeyScope}
               >
