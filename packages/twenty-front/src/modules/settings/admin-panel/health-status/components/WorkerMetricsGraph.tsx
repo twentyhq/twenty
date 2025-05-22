@@ -11,8 +11,10 @@ import {
 } from '~/generated/graphql';
 
 // Dynamically import the Nivo chart to ensure it's bundled separately
-const NivoLineChartComponent = lazy(() => 
-  import('./NivoLineChart').then(module => ({ default: module.NivoLineChart }))
+const NivoLineChartComponent = lazy(() =>
+  import('./NivoLineChart').then((module) => ({
+    default: module.NivoLineChart,
+  })),
 );
 
 const StyledGraphContainer = styled.div`
@@ -125,7 +127,7 @@ export const WorkerMetricsGraph = ({
               <StyledLoadingMessage>{t`Loading chart...`}</StyledLoadingMessage>
             }
           >
-            <NivoLineChartComponent 
+            <NivoLineChartComponent
               data={metricsData}
               timeRange={timeRange}
               maxYValue={getMaxYValue()}

@@ -172,10 +172,6 @@ export default defineConfig(({ command, mode }) => {
             if (id.includes('commonjsHelpers')) return 'commonjsHelpers'
 
             if (!id.includes('node_modules')) {
-              // Admin health components with Nivo dependencies should go in a settings chunk
-              if (id.includes('admin-panel/health-status') || id.includes('NivoLineChart')) {
-                return 'settings-admin';
-              }
               return null;
             }
 
@@ -214,8 +210,7 @@ export default defineConfig(({ command, mode }) => {
             if (id.includes('twenty-ui')) return 'twenty-ui';
             if (id.includes('@apollo')) return 'apollo';
             if (id.includes('@lingui')) return 'lingui';
-            // Make sure ANY Nivo module is aggressively chunked
-            if (id.includes('@nivo') || id.includes('d3-')) return 'nivo';
+            if (id.includes('@nivo')) return 'nivo';
             if (id.includes('recoil')) return 'recoil';
             if (id.includes('@tiptap')) return 'tiptap';
             if (id.includes('@blocknote')) return 'blocknote';
@@ -227,7 +222,6 @@ export default defineConfig(({ command, mode }) => {
           },
         },
       },
-      external: ['react', 'react-dom'],
       modulePreload: {
         resolveDependencies: (filename, deps, { hostId }) => {
             // Don't preload heavy chunks that aren't needed immediately
@@ -238,7 +232,6 @@ export default defineConfig(({ command, mode }) => {
               !dep.includes('blocknote') &&
               !dep.includes('monaco') &&
               !dep.includes('nivo') &&
-              !dep.includes('settings') &&
               !dep.includes('shiki') &&
               !dep.includes('monaco-core') &&
               !dep.includes('typescript-lib') &&
