@@ -6,7 +6,6 @@ import { Repository } from 'typeorm';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -14,7 +13,6 @@ export class AuthSsoService {
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    private readonly userWorkspaceService: UserWorkspaceService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
@@ -34,16 +32,6 @@ export class AuthSsoService {
     }
 
     throw new Error(`${authProvider} is not a valid auth provider.`);
-  }
-
-  private filterWorkspacesOnAuthProvider(
-    workspaces: Array<Workspace>,
-    authProvider: WorkspaceAuthProvider,
-  ) {
-    return workspaces.filter(
-      (workspace) =>
-        workspace[this.getAuthProviderColumnNameByProvider(authProvider)],
-    );
   }
 
   async findWorkspaceFromWorkspaceIdOrAuthProvider(
