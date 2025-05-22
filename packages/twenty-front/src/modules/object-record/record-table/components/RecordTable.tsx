@@ -68,10 +68,7 @@ export const RecordTable = () => {
       <RecordTableScrollToFocusedCellEffect />
       <RecordTableScrollToFocusedRowEffect />
       {recordTableIsEmpty && !hasRecordGroups ? (
-        <RecordTableEmpty
-          tableBodyRef={tableBodyRef}
-          hasRecordGroups={hasRecordGroups}
-        />
+        <RecordTableEmpty tableBodyRef={tableBodyRef} />
       ) : (
         <RecordTableContent
           tableBodyRef={tableBodyRef}

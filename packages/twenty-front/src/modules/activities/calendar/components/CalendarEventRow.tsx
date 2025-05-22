@@ -1,13 +1,10 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { format } from 'date-fns';
-import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { CalendarCurrentEventCursor } from '@/activities/calendar/components/CalendarCurrentEventCursor';
 import { CalendarEventNotSharedContent } from '@/activities/calendar/components/CalendarEventNotSharedContent';
 import { CalendarEventParticipantsAvatarGroup } from '@/activities/calendar/components/CalendarEventParticipantsAvatarGroup';
-import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
 import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendarEventEndDate';
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
@@ -88,7 +85,6 @@ export const CalendarEventRow = ({
 }: CalendarEventRowProps) => {
   const theme = useTheme();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const { displayCurrentEventCursor = false } = useContext(CalendarContext);
   const { openCalendarEventInCommandMenu } =
     useOpenCalendarEventInCommandMenu();
 
@@ -142,9 +138,6 @@ export const CalendarEventRow = ({
         <CalendarEventParticipantsAvatarGroup
           participants={calendarEvent.participants}
         />
-      )}
-      {displayCurrentEventCursor && (
-        <CalendarCurrentEventCursor calendarEvent={calendarEvent} />
       )}
     </StyledContainer>
   );

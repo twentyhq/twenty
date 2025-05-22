@@ -2343,6 +2343,11 @@ msgstr "Global"
 msgid "Go to Companies"
 msgstr "Go to Companies"
 
+#. js-lingui-id: dHvI9O
+#: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
+msgid "Go to Draft"
+msgstr "Go to Draft"
+
 #. js-lingui-id: BQE4ob
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Notes"
@@ -2366,7 +2371,9 @@ msgid "Go to runs"
 msgstr "Go to runs"
 
 #. js-lingui-id: mT57+Q
+#: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Settings"
 msgstr "Go to Settings"
@@ -2534,6 +2541,11 @@ msgstr "Identity Provider"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Identity Provider Metadata XML"
 msgstr "Identity Provider Metadata XML"
+
+#. js-lingui-id: ZfP/Ap
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
+msgid "If this is unexpected, please verify your settings."
+msgstr "If this is unexpected, please verify your settings."
 
 #. js-lingui-id: j843N3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -3256,6 +3268,11 @@ msgstr "No connected account"
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "No country"
 msgstr "No country"
+
+#. js-lingui-id: 7tCnBa
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
+msgid "No Data Available for Remote Table"
+msgstr "No Data Available for Remote Table"
 
 #. js-lingui-id: pxvJ9B
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -4873,6 +4890,7 @@ msgstr "Timestamp and participants will be shared with your team."
 
 #. js-lingui-id: ecUA8p
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
+#: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Today"
 msgstr "Today"
 
@@ -4880,6 +4898,11 @@ msgstr "Today"
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 msgid "Toggle all object permissions"
 msgstr "Toggle all object permissions"
+
+#. js-lingui-id: BRMXj0
+#: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
+msgid "Tomorrow"
+msgstr "Tomorrow"
 
 #. js-lingui-id: vb0Q0/
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -5326,6 +5349,11 @@ msgstr "Write a secret"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "yes"
 msgstr "yes"
+
+#. js-lingui-id: y/0uwd
+#: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
+msgid "Yesterday"
+msgstr "Yesterday"
 
 #. js-lingui-id: qsAug0
 #: src/modules/spreadsheet-import/components/MatchColumnSelect.tsx

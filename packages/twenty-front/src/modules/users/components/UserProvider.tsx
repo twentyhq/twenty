@@ -5,19 +5,20 @@ import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingStat
 import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
 import { AppPath } from '@/types/AppPath';
 import { UserContext } from '@/users/contexts/UserContext';
-import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
+import { useLocation } from 'react-router-dom';
 import { UserOrMetadataLoader } from '~/loading/components/UserOrMetadataLoader';
+import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 export const UserProvider = ({ children }: React.PropsWithChildren) => {
   const isCurrentUserLoaded = useRecoilValue(isCurrentUserLoadedState);
-  const { isMatchingLocation } = useIsMatchingLocation();
+  const location = useLocation();
 
   const dateTimeFormat = useRecoilValue(dateTimeFormatState);
 
   return !isCurrentUserLoaded &&
-    !isMatchingLocation(AppPath.Verify) &&
-    !isMatchingLocation(AppPath.VerifyEmail) &&
-    !isMatchingLocation(AppPath.CreateWorkspace) ? (
+    !isMatchingLocation(location, AppPath.Verify) &&
+    !isMatchingLocation(location, AppPath.VerifyEmail) &&
+    !isMatchingLocation(location, AppPath.CreateWorkspace) ? (
     <UserOrMetadataLoader />
   ) : (
     <UserContext.Provider

@@ -5,10 +5,10 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { prefetchIndexViewIdFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchIndexViewIdFromObjectMetadataItemFamilySelector';
 import { AppPath } from '@/types/AppPath';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
+import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 const getViewId = (
   viewIdFromQueryParams: string | null,
@@ -31,9 +31,12 @@ const getViewId = (
 };
 
 export const MainContextStoreProvider = () => {
-  const { isMatchingLocation } = useIsMatchingLocation();
-  const isRecordIndexPage = isMatchingLocation(AppPath.RecordIndexPage);
-  const isRecordShowPage = isMatchingLocation(AppPath.RecordShowPage);
+  const location = useLocation();
+  const isRecordIndexPage = isMatchingLocation(
+    location,
+    AppPath.RecordIndexPage,
+  );
+  const isRecordShowPage = isMatchingLocation(location, AppPath.RecordShowPage);
   const isSettingsPage = useIsSettingsPage();
 
   const objectNamePlural = useParams().objectNamePlural ?? '';
