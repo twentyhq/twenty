@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { z } from 'zod';
 
 import {
@@ -30,7 +30,7 @@ const makeValidationSchema = (signInUpStep: SignInUpStep) =>
 
 export type Form = z.infer<ReturnType<typeof makeValidationSchema>>;
 export const useSignInUpForm = () => {
-  const [signInUpStep, setSignInUpStep] = useRecoilState(signInUpStepState);
+  const signInUpStep = useRecoilValue(signInUpStepState);
 
   const validationSchema = makeValidationSchema(signInUpStep); // Create schema based on the current step
 
@@ -50,7 +50,6 @@ export const useSignInUpForm = () => {
     },
     resolver: zodResolver(validationSchema),
   });
-
 
   useEffect(() => {
     if (isDefined(prefilledEmail)) {

@@ -1,6 +1,6 @@
 import { useCreateUserAndWorkspaceMutation } from '~/generated/graphql';
 import {
-   SignInUpCallbackNewUser,
+  SignInUpCallbackNewUser,
   signInUpCallbackState,
 } from '@/auth/states/signInUpCallbackState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';

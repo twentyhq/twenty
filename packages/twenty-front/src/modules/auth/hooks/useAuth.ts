@@ -120,7 +120,7 @@ export const useAuth = () => {
   const getAvailableWorkspaces = async (email: string) => {
     const token = await readCaptchaToken();
 
-    listAvailableWorkspacesQuery({
+     listAvailableWorkspacesQuery({
       variables: {
         email,
         captchaToken: token,

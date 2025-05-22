@@ -6,11 +6,11 @@ export type SignInUpCallbackNewUser = {
   firstName?: string | null;
   lastName?: string | null;
   picture?: string | null;
-}
+};
 
 export type SignInUpCallbackExistingUser = {
   type: 'existingUser';
-}
+};
 
 export type SignInUpCallback = { authProvider: 'google' | 'microsoft' } & (
   | SignInUpCallbackNewUser

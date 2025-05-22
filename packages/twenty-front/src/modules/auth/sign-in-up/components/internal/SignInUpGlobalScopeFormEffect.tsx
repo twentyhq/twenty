@@ -30,10 +30,9 @@ export const SignInUpGlobalScopeFormEffect = () => {
       setSignInUpStep(SignInUpStep.WorkspaceSelection);
     }
   }, [
-    availableWorkspaces.length,
+    availableWorkspaces,
     setSignInUpStep,
     setSignInUpCallbackState,
-    signInUpCallback,
     getAvailableWorkspaces,
   ]);
 
