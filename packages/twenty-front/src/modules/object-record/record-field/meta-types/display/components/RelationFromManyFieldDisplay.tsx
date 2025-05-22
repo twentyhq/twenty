@@ -56,7 +56,7 @@ export const RelationFromManyFieldDisplay = () => {
         return {
           ...record,
           [relationFieldName]: {
-            id: 'a7b2c3d4-e5f6-4789-a123-456789abcdef', // fake fallback uuid
+            id: '20202020-e5f6-4789-a123-456789abcdef', // fake fallback uuid
             title: pascalCase(relationFieldName),
           },
         };
