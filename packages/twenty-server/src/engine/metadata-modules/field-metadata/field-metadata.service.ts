@@ -20,6 +20,10 @@ import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
 import {
+  FieldMetadataComplexOption,
+  FieldMetadataDefaultOption,
+} from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import {
   RelationDefinitionDTO,
   RelationDefinitionType,
 } from 'src/engine/metadata-modules/field-metadata/dtos/relation-definition.dto';
@@ -65,10 +69,6 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { ViewService } from 'src/modules/view/services/view.service';
 import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'src/utils/trim-and-remove-duplicated-whitespaces-from-object-string-properties';
-import {
-  FieldMetadataComplexOption,
-  FieldMetadataDefaultOption,
-} from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 
 import { FieldMetadataValidationService } from './field-metadata-validation.service';
 import { FieldMetadataEntity } from './field-metadata.entity';
@@ -206,7 +206,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             ? updatableFieldInput.defaultValue
             : existingFieldMetadata.defaultValue,
         ...this.prepareCustomFieldMetadataOptions(
-          fieldMetadataInput.options ?? existingFieldMetadata.options,
+          fieldMetadataInput.options,
         ),
       };
 

@@ -176,13 +176,5 @@ export class FieldMetadataEnumValidationService {
     }
 
     this.validateDuplicates(options);
-
-    if (isDefined(fieldMetadataInput.defaultValue)) {
-      await this.fieldMetadataValidationService.validateDefaultValueOrThrow({
-        fieldType: fieldMetadataType,
-        options,
-        defaultValue: fieldMetadataInput.defaultValue ?? null,
-      });
-    }
   }
 }
