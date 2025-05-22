@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataValidationService } from 'src/engine/metadata-modules/field-metadata/field-metadata-validation.service';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
@@ -22,6 +23,14 @@ import {
 import { isSnakeCaseString } from 'src/utils/is-snake-case-string';
 
 type Validator<T> = { validator: (str: T) => boolean; message: string };
+
+type FieldMetadataUpdateCreateInput = CreateFieldInput | UpdateFieldInput;
+
+type ValidateEnumFieldMetadataArgs = {
+  existingFieldMetadata?: FieldMetadataEntity;
+  fieldMetadataInput: FieldMetadataUpdateCreateInput;
+  fieldMetadataType: FieldMetadataType;
+};
 
 @Injectable()
 export class FieldMetadataEnumValidationService {
@@ -149,17 +158,9 @@ export class FieldMetadataEnumValidationService {
     }
   }
 
-  async validateMetadataOptions({
-    fieldMetadataInput,
-    fieldMetadataType,
-  }: {
-    fieldMetadataInput: CreateFieldInput | UpdateFieldInput;
-    fieldMetadataType: FieldMetadataType;
-  }) {
-    if (!isEnumFieldMetadataType(fieldMetadataType)) {
-      return;
-    }
-
+  private validateFieldMetadataOptions(
+    fieldMetadataInput: FieldMetadataUpdateCreateInput,
+  ) {
     const { options } = fieldMetadataInput;
 
     if (!isDefined(options) || options.length === 0) {
@@ -176,5 +177,35 @@ export class FieldMetadataEnumValidationService {
     }
 
     this.validateDuplicates(options);
+  }
+
+  async validateEnumFieldMetadataInput({
+    fieldMetadataInput,
+    fieldMetadataType,
+    existingFieldMetadata,
+  }: ValidateEnumFieldMetadataArgs) {
+    if (!isEnumFieldMetadataType(fieldMetadataType)) {
+      return;
+    }
+
+    this.validateFieldMetadataOptions(fieldMetadataInput);
+
+    if (isDefined(fieldMetadataInput.defaultValue)) {
+      const options =
+        fieldMetadataInput.options ?? existingFieldMetadata?.options;
+
+      if (!isDefined(options)) {
+        throw new FieldMetadataException(
+          'Should never occur, could not retrieve any options to validate default value',
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        );
+      }
+
+      await this.fieldMetadataValidationService.validateDefaultValueOrThrow({
+        fieldType: fieldMetadataType,
+        options,
+        defaultValue: fieldMetadataInput.defaultValue,
+      });
+    }
   }
 }

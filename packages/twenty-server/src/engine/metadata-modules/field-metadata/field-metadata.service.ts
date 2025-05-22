@@ -76,6 +76,14 @@ import { FieldMetadataEntity } from './field-metadata.entity';
 import { generateDefaultValue } from './utils/generate-default-value';
 import { generateRatingOptions } from './utils/generate-rating-optionts.util';
 
+type ValidateFieldMetadataArgs<T extends UpdateFieldInput | CreateFieldInput> =
+  {
+    fieldMetadataType: FieldMetadataType;
+    fieldMetadataInput: T;
+    objectMetadata: ObjectMetadataEntity;
+    existingFieldMetadata?: FieldMetadataEntity;
+  };
+
 @Injectable()
 export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntity> {
   constructor(
@@ -205,16 +213,15 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           updatableFieldInput.defaultValue !== undefined
             ? updatableFieldInput.defaultValue
             : existingFieldMetadata.defaultValue,
-        ...this.prepareCustomFieldMetadataOptions(
-          fieldMetadataInput.options,
-        ),
+        ...this.prepareCustomFieldMetadataOptions(fieldMetadataInput.options),
       };
 
-      await this.validateFieldMetadata<UpdateFieldInput>(
-        existingFieldMetadata.type,
-        fieldMetadataForUpdate,
+      await this.validateFieldMetadata({
+        fieldMetadataType: existingFieldMetadata.type,
+        existingFieldMetadata,
+        fieldMetadataInput: fieldMetadataForUpdate,
         objectMetadata,
-      );
+      });
 
       const isLabelSyncedWithName =
         fieldMetadataForUpdate.isLabelSyncedWithName ??
@@ -598,11 +605,12 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
   private async validateFieldMetadata<
     T extends UpdateFieldInput | CreateFieldInput,
-  >(
-    fieldMetadataType: FieldMetadataType,
-    fieldMetadataInput: T,
-    objectMetadata: ObjectMetadataEntity,
-  ): Promise<T> {
+  >({
+    fieldMetadataInput,
+    fieldMetadataType,
+    objectMetadata,
+    existingFieldMetadata,
+  }: ValidateFieldMetadataArgs<T>): Promise<T> {
     if (fieldMetadataInput.name) {
       try {
         validateMetadataNameOrThrow(fieldMetadataInput.name);
@@ -643,10 +651,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       }
     }
 
-    await this.fieldMetadataEnumValidationService.validateMetadataOptions({
-      fieldMetadataInput,
-      fieldMetadataType,
-    });
+    await this.fieldMetadataEnumValidationService.validateEnumFieldMetadataInput(
+      {
+        fieldMetadataInput,
+        fieldMetadataType,
+        existingFieldMetadata,
+      },
+    );
 
     if (fieldMetadataInput.settings) {
       await this.fieldMetadataValidationService.validateSettingsOrThrow({
@@ -766,11 +777,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     const fieldMetadataForCreate =
       this.prepareCustomFieldMetadata(fieldMetadataInput);
 
-    await this.validateFieldMetadata<CreateFieldInput>(
-      fieldMetadataForCreate.type,
-      fieldMetadataForCreate,
+    await this.validateFieldMetadata({
+      fieldMetadataType: fieldMetadataForCreate.type,
+      fieldMetadataInput: fieldMetadataForCreate,
       objectMetadata,
-    );
+    });
 
     if (fieldMetadataForCreate.isLabelSyncedWithName === true) {
       validateNameAndLabelAreSyncOrThrow(
