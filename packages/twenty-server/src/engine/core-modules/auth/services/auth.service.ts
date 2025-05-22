@@ -695,7 +695,7 @@ export class AuthService {
     {
       firstName,
       lastName,
-      email,
+      email: rawEmail,
       picture,
       workspaceInviteHash,
       workspaceId,
@@ -705,6 +705,8 @@ export class AuthService {
     }: MicrosoftRequest['user'] | GoogleRequest['user'],
     authProvider: 'google' | 'microsoft',
   ): Promise<string> {
+    const email = rawEmail.toLowerCase();
+
     const availableWorkspacesCount =
       action === 'list-available-workspaces'
         ? (

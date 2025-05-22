@@ -27,7 +27,6 @@ import {
 import { GetAuthorizationUrlForSSOInput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.input';
 import { GetAuthorizationUrlForSSOOutput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.output';
 import { GetLoginTokenFromEmailVerificationTokenInput } from 'src/engine/core-modules/auth/dto/get-login-token-from-email-verification-token.input';
-import { GetLoginTokenFromEmailVerificationTokenOutput } from 'src/engine/core-modules/auth/dto/get-login-token-from-email-verification-token.output';
 import { SignUpOutput } from 'src/engine/core-modules/auth/dto/sign-up.output';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
@@ -56,6 +55,7 @@ import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/c
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { GetLoginTokenFromEmailVerificationTokenOutput } from 'src/engine/core-modules/auth/dto/get-login-token-from-email-verification-token.output';
 import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { CreateUserAndWorkspaceInput } from 'src/engine/core-modules/auth/dto/create-user-and-workspace.input';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { GetLoginTokenFromCredentialsInput } from './dto/get-login-token-from-credentials.input';
@@ -67,7 +67,6 @@ import { EmailAndCaptchaInput } from './dto/user-exists.input';
 import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.entity';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
-import { CreateUserAndWorkspaceInput } from 'src/engine/core-modules/auth/dto/create-user-and-workspace.input';
 
 @Resolver()
 @UseFilters(
