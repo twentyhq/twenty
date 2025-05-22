@@ -84,7 +84,7 @@ describe('removeEmptyLinks', () => {
       expect.objectContaining({
         constructor: RecordTransformerException,
         code: RecordTransformerExceptionCode.INVALID_URL,
-        message: 'Invalid URL',
+        message: 'The URL of the link is not valid',
       }),
     );
   });
@@ -105,7 +105,7 @@ describe('removeEmptyLinks', () => {
       expect.objectContaining({
         constructor: RecordTransformerException,
         code: RecordTransformerExceptionCode.INVALID_URL,
-        message: 'Invalid URL',
+        message: 'The URL of the link is not valid',
       }),
     );
   });
@@ -126,7 +126,7 @@ describe('removeEmptyLinks', () => {
       expect.objectContaining({
         constructor: RecordTransformerException,
         code: RecordTransformerExceptionCode.INVALID_URL,
-        message: 'Invalid URL',
+        message: 'The URL of the link is not valid',
       }),
     );
   });
