@@ -22,8 +22,10 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 
 import { AuthService } from './auth.service';
+import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 
 jest.mock('bcrypt');
 
@@ -69,6 +71,14 @@ describe('AuthService', () => {
               getOne: jest.fn().mockImplementation(() => null),
             }),
           },
+        },
+        {
+          provide: LoginTokenService,
+          useValue: {},
+        },
+        {
+          provide: GuardRedirectService,
+          useValue: {},
         },
         {
           provide: SignInUpService,
