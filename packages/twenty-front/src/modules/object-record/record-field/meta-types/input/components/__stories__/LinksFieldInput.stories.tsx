@@ -432,8 +432,8 @@ export const InvalidUrls: Story = {
     const canvas = within(canvasElement);
 
     const input = await canvas.findByPlaceholderText('URL');
-    await expect(input).toBeVisible();
-    await expect(input).toHaveValue('');
+    expect(input).toBeVisible();
+    expect(input).toHaveValue('');
 
     await waitFor(() => {
       expect(canvas.queryByRole('link')).toBeNull();

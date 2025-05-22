@@ -147,7 +147,7 @@ export class RecordInputTransformerService {
       try {
         secondaryLinksArray = JSON.parse(secondaryLinksRaw);
       } catch {
-        secondaryLinksArray = null;
+        /* empty */
       }
     }
 
