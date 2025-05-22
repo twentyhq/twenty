@@ -169,9 +169,13 @@ export default defineConfig(({ command, mode }) => {
       rollupOptions: {
         output: {
           manualChunks: (id) => {
-            if (id.includes('/modules/settings/')) return 'settings';
+            if (id.includes('commonjsHelpers')) return 'commonjsHelpers'
 
             if (!id.includes('node_modules')) {
+              // Admin health components with Nivo dependencies should go in a settings chunk
+              if (id.includes('admin-panel/health-status') || id.includes('NivoLineChart')) {
+                return 'settings-admin';
+              }
               return null;
             }
 
@@ -201,26 +205,25 @@ export default defineConfig(({ command, mode }) => {
               return 'monaco-core';
             }
 
-              // React and React DOM should be in the same chunk to avoid initialization issues
-              if (id.includes('react') || id.includes('react-dom') || id.includes('@nivo')) {
-                return 'react-vendor';
-              }
-              
-              // Other vendor chunks
-              if (id.includes('@scalar')) return 'scalar';
-              if (id.includes('twenty-ui')) return 'twenty-ui';
-              if (id.includes('react-router')) return 'react-router';
-              if (id.includes('@apollo')) return 'apollo';
-              if (id.includes('@lingui')) return 'lingui';
-              // if (id.includes('@nivo')) return 'nivo';
-              if (id.includes('recoil')) return 'recoil';
-              if (id.includes('@tiptap')) return 'tiptap';
-              if (id.includes('@blocknote')) return 'blocknote';
-              if (id.includes('@react-pdf')) return 'react-pdf';
-              if (id.includes('xlsx-ugnis')) return 'xlsx-ugnis';
-              if (id.includes('@sentry')) return 'sentry';
-              
-              return null;
+            if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router')) {
+              return 'react-vendor';
+            }
+            
+            // Other vendor chunks
+            if (id.includes('@scalar')) return 'scalar';
+            if (id.includes('twenty-ui')) return 'twenty-ui';
+            if (id.includes('@apollo')) return 'apollo';
+            if (id.includes('@lingui')) return 'lingui';
+            // Make sure ANY Nivo module is aggressively chunked
+            if (id.includes('@nivo') || id.includes('d3-')) return 'nivo';
+            if (id.includes('recoil')) return 'recoil';
+            if (id.includes('@tiptap')) return 'tiptap';
+            if (id.includes('@blocknote')) return 'blocknote';
+            if (id.includes('@react-pdf')) return 'react-pdf';
+            if (id.includes('xlsx-ugnis')) return 'xlsx-ugnis';
+            if (id.includes('@sentry')) return 'sentry';
+            
+            return null;
           },
         },
       },
@@ -234,7 +237,7 @@ export default defineConfig(({ command, mode }) => {
               !dep.includes('react-pdf') &&
               !dep.includes('blocknote') &&
               !dep.includes('monaco') &&
-              // !dep.includes('nivo') &&
+              !dep.includes('nivo') &&
               !dep.includes('settings') &&
               !dep.includes('shiki') &&
               !dep.includes('monaco-core') &&
