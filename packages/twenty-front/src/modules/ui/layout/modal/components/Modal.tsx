@@ -4,7 +4,8 @@ import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkey
 import { ModalComponentInstanceContext } from '@/ui/layout/modal/contexts/ModalComponentInstanceContext';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 
-import { MODAL_CLICK_OUTSIDE_LISTENER_EXCLUDED_CLASS_NAME } from '@/ui/layout/modal/constants/ModalClickOutsideListenerExcludedClassName';
+import { MODAL_BACKDROP_CLICK_OUTSIDE_ID } from '@/ui/layout/modal/constants/ModalBackdropClickOutsideId';
+import { MODAL_CLICK_OUTSIDE_LISTENER_EXCLUDED_ID } from '@/ui/layout/modal/constants/ModalClickOutsideListenerExcludedClassName';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -229,8 +230,7 @@ export const Modal = ({
         >
           <ClickOutsideListenerContext.Provider
             value={{
-              excludeClassName:
-                MODAL_CLICK_OUTSIDE_LISTENER_EXCLUDED_CLASS_NAME,
+              excludedClickOutsideId: MODAL_CLICK_OUTSIDE_LISTENER_EXCLUDED_ID,
             }}
           >
             <ModalHotkeysAndClickOutsideEffect
@@ -242,7 +242,7 @@ export const Modal = ({
             />
             <StyledBackDrop
               data-testid="modal-backdrop"
-              className="modal-backdrop"
+              data-click-outside-id={MODAL_BACKDROP_CLICK_OUTSIDE_ID}
               onMouseDown={stopEventPropagation}
               modalVariant={modalVariant}
             >

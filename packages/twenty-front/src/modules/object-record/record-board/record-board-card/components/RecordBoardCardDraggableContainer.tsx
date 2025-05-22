@@ -50,7 +50,6 @@ export const RecordBoardCardDraggableContainer = ({
             {...draggableProvided?.dragHandleProps}
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided?.draggableProps}
-            className="record-board-card"
             data-selectable-id={recordId}
             data-select-disable
           >
