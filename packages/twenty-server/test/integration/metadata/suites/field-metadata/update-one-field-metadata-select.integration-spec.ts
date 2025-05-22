@@ -12,9 +12,9 @@ import {
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 const { failingTestCases, successfulTestCases } =
   UPDATE_CREATE_ONE_FIELD_METADATA_SELECT_TEST_CASES;
@@ -113,7 +113,7 @@ describe('Field metadata select update tests group', () => {
 
     expect(errors).toBeUndefined();
     expect(secondUpdate.updateOneField.defaultValue).toBeNull();
-    expect(secondUpdate.updateOneField.options).toMatchObject(updatedOptions)
+    expect(secondUpdate.updateOneField.options).toMatchObject(updatedOptions);
   });
 
   const updateSpecificSuccessfulTestCases: UpdateCreateFieldMetadataSelectTestCase[] =
