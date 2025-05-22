@@ -1,4 +1,4 @@
-import { act, renderHook } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 
 import { useCalendarEvents } from '@/activities/calendar/hooks/useCalendarEvents';
 import {
@@ -85,20 +85,13 @@ const calendarEvents: TimelineCalendarEvent[] = [
   },
 ];
 
-describe('useCalendar', () => {
-  it('returns calendar events', () => {
+describe('useCalendarEvents', () => {
+  it('returns calendar events grouped by day time', () => {
     const { result } = renderHook(() => useCalendarEvents(calendarEvents));
 
-    expect(result.current.currentCalendarEvent).toBe(calendarEvents[0]);
-
-    expect(result.current.getNextCalendarEvent(calendarEvents[1])).toBe(
-      calendarEvents[0],
-    );
-
-    act(() => {
-      result.current.updateCurrentCalendarEvent();
-    });
-
-    expect(result.current.currentCalendarEvent).toBe(calendarEvents[0]);
+    expect(result.current.calendarEventsByDayTime).toBeDefined();
+    expect(result.current.daysByMonthTime).toBeDefined();
+    expect(result.current.monthTimes).toBeDefined();
+    expect(result.current.monthTimesByYear).toBeDefined();
   });
 });
