@@ -12,6 +12,7 @@ import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
 type UseAggregateRecordsProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -34,6 +35,8 @@ export const useAggregateRecordsForHeader = ({
   const recordIndexKanbanAggregateOperation = useRecoilValue(
     recordIndexKanbanAggregateOperationState,
   );
+
+  const dateLocale = useRecoilValue(dateLocaleState);
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
@@ -65,6 +68,7 @@ export const useAggregateRecordsForHeader = ({
     dateFormat,
     timeFormat,
     timeZone,
+    localeCatalog: dateLocale.localeCatalog,
   });
 
   return {

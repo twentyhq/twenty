@@ -31,29 +31,24 @@ const StyledBaseContainer = styled.div<{
   }
 
   &:hover {
-    ${({
-      isReadOnly,
-      fontColorMedium,
-      backgroundColorSecondary,
-      fontColorSecondary,
-    }) =>
-      isReadOnly
-        ? `
-      outline: 1px solid ${fontColorMedium};
-      border-radius: 0px;
-      background-color: ${backgroundColorSecondary};
-      
-      color: ${fontColorSecondary};
-      
-      svg {
-        color: ${fontColorSecondary};
-      }
-      
-      img {
-        opacity: 0.64;
-      }
-    `
-        : ''}
+    ${(props) => {
+      if (!props.isReadOnly) return '';
+
+      return `
+        outline: 1px solid ${props.fontColorMedium};
+        border-radius: 0px;
+        background-color: ${props.backgroundColorSecondary};
+        color: ${props.fontColorSecondary};
+        
+        svg {
+          color: ${props.fontColorSecondary};
+        }
+        
+        img {
+          opacity: 0.64;
+        }
+      `;
+    }}
   }
 `;
 

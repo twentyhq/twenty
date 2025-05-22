@@ -7,6 +7,7 @@ import {
   FieldDateDisplayFormat,
   FieldDateMetadataSettings,
 } from '@/object-record/record-field/types/FieldMetadata';
+import { Locale } from 'date-fns';
 
 export const formatDateTimeString = ({
   value,
@@ -14,12 +15,14 @@ export const formatDateTimeString = ({
   dateFormat,
   timeFormat,
   dateFieldSettings,
+  localeCatalog,
 }: {
   timeZone: string;
   dateFormat: DateFormat;
   timeFormat: TimeFormat;
   value?: string | null;
   dateFieldSettings?: FieldDateMetadataSettings;
+  localeCatalog: Locale;
 }) => {
   if (!value) {
     return '';
@@ -27,26 +30,32 @@ export const formatDateTimeString = ({
 
   switch (dateFieldSettings?.displayFormat) {
     case FieldDateDisplayFormat.RELATIVE:
-      return formatDateISOStringToRelativeDate(value);
+      return formatDateISOStringToRelativeDate({
+        isoDate: value,
+        localeCatalog: localeCatalog,
+      });
     case FieldDateDisplayFormat.USER_SETTINGS:
-      return formatDateISOStringToDateTime(
-        value,
+      return formatDateISOStringToDateTime({
+        date: value,
         timeZone,
         dateFormat,
         timeFormat,
-      );
+        localeCatalog,
+      });
     case FieldDateDisplayFormat.CUSTOM:
-      return formatDateISOStringToCustomUnicodeFormat(
-        value,
+      return formatDateISOStringToCustomUnicodeFormat({
+        date: value,
         timeZone,
-        dateFieldSettings.customUnicodeDateFormat,
-      );
+        dateFormat: dateFieldSettings.customUnicodeDateFormat,
+        localeCatalog,
+      });
     default:
-      return formatDateISOStringToDateTime(
-        value,
+      return formatDateISOStringToDateTime({
+        date: value,
         timeZone,
         dateFormat,
         timeFormat,
-      );
+        localeCatalog,
+      });
   }
 };
