@@ -30,12 +30,12 @@ const StyledContainer = styled.div`
 `;
 
 const ApiReferenceReact = lazy(() =>
-  Promise.all([
-    import('@scalar/api-reference-react'),
-    import('@scalar/api-reference-react/style.css'),
-  ]).then(([module]) => ({
-    default: module.ApiReferenceReact,
-  })),
+  import('@scalar/api-reference-react').then((module) => {
+    import('@scalar/api-reference-react/style.css?inline');
+    return {
+      default: module.ApiReferenceReact,
+    };
+  }),
 );
 
 type RestPlaygroundProps = {
