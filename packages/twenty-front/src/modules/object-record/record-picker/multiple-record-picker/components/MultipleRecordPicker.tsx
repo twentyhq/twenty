@@ -91,8 +91,8 @@ export const MultipleRecordPicker = ({
     [multipleRecordPickerSearchFilterState, onCreate],
   );
 
-  const createNewButtonSection = isDefined(onCreate) &&
-    !hasObjectReadOnlyPermission && (
+  const createNewButtonSection =
+    isDefined(onCreate) && !hasObjectReadOnlyPermission ? (
       <DropdownMenuItemsContainer scrollable={false}>
         <CreateNewButton
           onClick={handleCreateNewButtonClick}
@@ -100,7 +100,7 @@ export const MultipleRecordPicker = ({
           text="Add New"
         />
       </DropdownMenuItemsContainer>
-    );
+    ) : null;
 
   return (
     <MultipleRecordPickerComponentInstanceContext.Provider
