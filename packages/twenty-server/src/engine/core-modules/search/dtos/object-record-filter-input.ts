@@ -1,10 +1,13 @@
-import { Field, ID, InputType, registerEnumType } from '@nestjs/graphql';
+import { Field, InputType, registerEnumType } from '@nestjs/graphql';
 
 import { IsArray, IsOptional } from 'class-validator';
 
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { DateScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import {
+  DateScalarType,
+  UUIDScalarType,
+} from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType()
 export class ObjectRecordFilterInput implements Partial<ObjectRecordFilter> {
@@ -22,9 +25,9 @@ export class ObjectRecordFilterInput implements Partial<ObjectRecordFilter> {
   @IsArray()
   or?: ObjectRecordFilterInput[];
 
-  @Field(() => IDFilterType, { nullable: true })
+  @Field(() => UUIDFilterType, { nullable: true })
   @IsOptional()
-  id?: IDFilterType | null;
+  id?: UUIDFilterType | null;
 
   @Field(() => DateFilterType, { nullable: true })
   createdAt?: DateFilterType | null;
@@ -36,33 +39,33 @@ export class ObjectRecordFilterInput implements Partial<ObjectRecordFilter> {
   deletedAt?: DateFilterType | null;
 }
 
-@InputType('IDFilter')
-class IDFilterType {
-  @Field(() => ID, { nullable: true })
+@InputType('UUIDFilter')
+class UUIDFilterType {
+  @Field(() => UUIDScalarType, { nullable: true })
   @IsOptional()
   eq?: string;
 
-  @Field(() => ID, { nullable: true })
+  @Field(() => UUIDScalarType, { nullable: true })
   @IsOptional()
   gt?: string;
 
-  @Field(() => ID, { nullable: true })
+  @Field(() => UUIDScalarType, { nullable: true })
   @IsOptional()
   gte?: string;
 
-  @Field(() => [ID], { nullable: true })
+  @Field(() => [UUIDScalarType], { nullable: true })
   @IsOptional()
   in?: string[];
 
-  @Field(() => ID, { nullable: true })
+  @Field(() => UUIDScalarType, { nullable: true })
   @IsOptional()
   lt?: string;
 
-  @Field(() => ID, { nullable: true })
+  @Field(() => UUIDScalarType, { nullable: true })
   @IsOptional()
   lte?: string;
 
-  @Field(() => ID, { nullable: true })
+  @Field(() => UUIDScalarType, { nullable: true })
   @IsOptional()
   neq?: string;
 
