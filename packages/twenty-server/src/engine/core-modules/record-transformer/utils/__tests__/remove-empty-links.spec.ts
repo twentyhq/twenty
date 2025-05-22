@@ -1,3 +1,7 @@
+import {
+  RecordTransformerException,
+  RecordTransformerExceptionCode,
+} from 'src/engine/core-modules/record-transformer/record-transformer.exception';
 import { removeEmptyLinks } from 'src/engine/core-modules/record-transformer/utils/remove-empty-links';
 
 describe('removeEmptyLinks', () => {
@@ -69,17 +73,23 @@ describe('removeEmptyLinks', () => {
     });
   });
 
-  it('should throw an error when primary link URL is invalid', () => {
+  it('should throw RecordTransformerException when primary link URL is invalid', () => {
     expect(() =>
       removeEmptyLinks({
         primaryLinkUrl: 'lydia,com',
         primaryLinkLabel: 'Invalid URL',
         secondaryLinks: [],
       }),
-    ).toThrow('Invalid URL');
+    ).toThrow(
+      expect.objectContaining({
+        constructor: RecordTransformerException,
+        code: RecordTransformerExceptionCode.INVALID_URL,
+        message: 'Invalid URL',
+      }),
+    );
   });
 
-  it('should throw an error when any secondary link URL is invalid', () => {
+  it('should throw RecordTransformerException when any secondary link URL is invalid', () => {
     expect(() =>
       removeEmptyLinks({
         primaryLinkUrl: 'https://www.twenty.com',
@@ -91,10 +101,16 @@ describe('removeEmptyLinks', () => {
           },
         ],
       }),
-    ).toThrow('Invalid URL');
+    ).toThrow(
+      expect.objectContaining({
+        constructor: RecordTransformerException,
+        code: RecordTransformerExceptionCode.INVALID_URL,
+        message: 'Invalid URL',
+      }),
+    );
   });
 
-  it('should throw an error when both primary and secondary URLs are invalid', () => {
+  it('should throw RecordTransformerException when both primary and secondary URLs are invalid', () => {
     expect(() =>
       removeEmptyLinks({
         primaryLinkUrl: 'lydia,com',
@@ -106,7 +122,13 @@ describe('removeEmptyLinks', () => {
           },
         ],
       }),
-    ).toThrow('Invalid URL');
+    ).toThrow(
+      expect.objectContaining({
+        constructor: RecordTransformerException,
+        code: RecordTransformerExceptionCode.INVALID_URL,
+        message: 'Invalid URL',
+      }),
+    );
   });
 
   it('should handle empty or null secondary links', () => {

@@ -7,6 +7,8 @@ import { graphqlQueryRunnerExceptionHandler } from 'src/engine/api/graphql/works
 import { handleDuplicateKeyError } from 'src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util';
 import { workspaceExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-exception-handler.util';
 import { WorkspaceQueryRunnerException } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
+import { RecordTransformerException } from 'src/engine/core-modules/record-transformer/record-transformer.exception';
+import { recordTransformerGraphqlApiExceptionHandler } from 'src/engine/core-modules/record-transformer/utils/record-transformer-graphql-api-exception-handler.util';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { permissionGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util';
 
@@ -23,6 +25,8 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
       }
       throw error;
     }
+    case error instanceof RecordTransformerException:
+      return recordTransformerGraphqlApiExceptionHandler(error);
     case error instanceof PermissionsException:
       return permissionGraphqlApiExceptionHandler(error);
     case error instanceof WorkspaceQueryRunnerException:

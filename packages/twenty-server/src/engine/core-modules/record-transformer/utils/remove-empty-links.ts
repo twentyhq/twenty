@@ -1,6 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isValidUrl } from 'twenty-shared/utils';
 
+import {
+  RecordTransformerException,
+  RecordTransformerExceptionCode,
+} from 'src/engine/core-modules/record-transformer/record-transformer.exception';
 import { LinkMetadataNullable } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 
 export const removeEmptyLinks = ({
@@ -36,7 +40,10 @@ export const removeEmptyLinks = ({
 
   for (const link of filteredLinks) {
     if (!isValidUrl(link.url)) {
-      throw new Error('Invalid URL');
+      throw new RecordTransformerException(
+        'The URL of the link is not valid',
+        RecordTransformerExceptionCode.INVALID_URL,
+      );
     }
   }
 
