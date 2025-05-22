@@ -6,6 +6,7 @@ import {
 } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
+import { t } from '@lingui/core/macro';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getAppPath } from '~/utils/navigation/getAppPath';
 
@@ -56,7 +57,7 @@ export const OverrideWorkflowDraftConfirmationModal = ({
               closeModal(OVERRIDE_WORKFLOW_DRAFT_CONFIRMATION_MODAL_ID);
             }}
             variant="secondary"
-            title="Go to Draft"
+            title={t`Go to Draft`}
             fullWidth
           />
         }

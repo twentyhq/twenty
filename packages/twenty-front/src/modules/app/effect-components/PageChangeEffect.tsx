@@ -15,6 +15,7 @@ import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksO
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
@@ -36,15 +37,14 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
 import { AnalyticsType } from '~/generated/graphql';
-import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
 import { useInitializeQueryParamState } from '~/modules/app/hooks/useInitializeQueryParamState';
+import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 // TODO: break down into smaller functions and / or hooks
 //  - moved usePageChangeEffectNavigateLocation into dedicated hook
 export const PageChangeEffect = () => {
   const navigate = useNavigate();
-  const { isMatchingLocation } = useIsMatchingLocation();
 
   const [previousLocation, setPreviousLocation] = useState('');
 
@@ -90,6 +90,12 @@ export const PageChangeEffect = () => {
   const { executeTasksOnAnyLocationChange } =
     useExecuteTasksOnAnyLocationChange();
 
+  const { closeCommandMenu } = useCommandMenu();
+
+  useEffect(() => {
+    closeCommandMenu();
+  }, [location.pathname, closeCommandMenu]);
+
   useEffect(() => {
     if (!previousLocation || previousLocation !== location.pathname) {
       setPreviousLocation(location.pathname);
@@ -126,7 +132,6 @@ export const PageChangeEffect = () => {
       }
     }
   }, [
-    isMatchingLocation,
     previousLocation,
     resetTableSelections,
     unfocusRecordTableRow,
@@ -139,28 +144,28 @@ export const PageChangeEffect = () => {
 
   useEffect(() => {
     switch (true) {
-      case isMatchingLocation(AppPath.RecordIndexPage): {
+      case isMatchingLocation(location, AppPath.RecordIndexPage): {
         setHotkeyScope(RecordIndexHotkeyScope.RecordIndex, {
           goto: true,
           keyboardShortcutMenu: true,
         });
         break;
       }
-      case isMatchingLocation(AppPath.RecordShowPage): {
+      case isMatchingLocation(location, AppPath.RecordShowPage): {
         setHotkeyScope(PageHotkeyScope.CompanyShowPage, {
           goto: true,
           keyboardShortcutMenu: true,
         });
         break;
       }
-      case isMatchingLocation(AppPath.OpportunitiesPage): {
+      case isMatchingLocation(location, AppPath.OpportunitiesPage): {
         setHotkeyScope(PageHotkeyScope.OpportunitiesPage, {
           goto: true,
           keyboardShortcutMenu: true,
         });
         break;
       }
-      case isMatchingLocation(AppPath.TasksPage): {
+      case isMatchingLocation(location, AppPath.TasksPage): {
         setHotkeyScope(PageHotkeyScope.TaskPage, {
           goto: true,
           keyboardShortcutMenu: true,
@@ -168,42 +173,50 @@ export const PageChangeEffect = () => {
         break;
       }
 
-      case isMatchingLocation(AppPath.SignInUp): {
+      case isMatchingLocation(location, AppPath.SignInUp): {
         setHotkeyScope(PageHotkeyScope.SignInUp);
         break;
       }
-      case isMatchingLocation(AppPath.Invite): {
+      case isMatchingLocation(location, AppPath.Invite): {
         setHotkeyScope(PageHotkeyScope.SignInUp);
         break;
       }
-      case isMatchingLocation(AppPath.CreateProfile): {
+      case isMatchingLocation(location, AppPath.CreateProfile): {
         setHotkeyScope(PageHotkeyScope.CreateProfile);
         break;
       }
-      case isMatchingLocation(AppPath.CreateWorkspace): {
+      case isMatchingLocation(location, AppPath.CreateWorkspace): {
         setHotkeyScope(PageHotkeyScope.CreateWorkspace);
         break;
       }
-      case isMatchingLocation(AppPath.SyncEmails): {
+      case isMatchingLocation(location, AppPath.SyncEmails): {
         setHotkeyScope(PageHotkeyScope.SyncEmail);
         break;
       }
-      case isMatchingLocation(AppPath.InviteTeam): {
+      case isMatchingLocation(location, AppPath.InviteTeam): {
         setHotkeyScope(PageHotkeyScope.InviteTeam);
         break;
       }
-      case isMatchingLocation(AppPath.PlanRequired): {
+      case isMatchingLocation(location, AppPath.PlanRequired): {
         setHotkeyScope(PageHotkeyScope.PlanRequired);
         break;
       }
-      case isMatchingLocation(SettingsPath.ProfilePage, AppBasePath.Settings): {
+      case isMatchingLocation(
+        location,
+        SettingsPath.ProfilePage,
+        AppBasePath.Settings,
+      ): {
         setHotkeyScope(PageHotkeyScope.ProfilePage, {
           goto: true,
           keyboardShortcutMenu: true,
         });
         break;
       }
-      case isMatchingLocation(SettingsPath.Domain, AppBasePath.Settings): {
+      case isMatchingLocation(
+        location,
+        SettingsPath.Domain,
+        AppBasePath.Settings,
+      ): {
         setHotkeyScope(PageHotkeyScope.Settings, {
           goto: false,
           keyboardShortcutMenu: true,
@@ -211,6 +224,7 @@ export const PageChangeEffect = () => {
         break;
       }
       case isMatchingLocation(
+        location,
         SettingsPath.WorkspaceMembersPage,
         AppBasePath.Settings,
       ): {
@@ -221,7 +235,7 @@ export const PageChangeEffect = () => {
         break;
       }
     }
-  }, [isMatchingLocation, setHotkeyScope]);
+  }, [location, setHotkeyScope]);
 
   useEffect(() => {
     setTimeout(() => {

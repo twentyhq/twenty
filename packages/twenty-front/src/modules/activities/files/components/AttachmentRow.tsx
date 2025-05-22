@@ -1,7 +1,6 @@
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { AttachmentDropdown } from '@/activities/files/components/AttachmentDropdown';
 import { AttachmentIcon } from '@/activities/files/components/AttachmentIcon';
-import { PREVIEWABLE_EXTENSIONS } from '@/activities/files/components/DocumentViewer';
 import { Attachment } from '@/activities/files/types/Attachment';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -17,10 +16,11 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { formatToHumanReadableDate } from '~/utils/date-utils';
-import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
+import { PREVIEWABLE_EXTENSIONS } from '@/activities/files/const/previewable-extensions.const';
 import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { isModifiedEvent } from 'twenty-ui/utilities';
+import { formatToHumanReadableDate } from '~/utils/date-utils';
+import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
 
 const StyledLeftContent = styled.div`
   align-items: center;

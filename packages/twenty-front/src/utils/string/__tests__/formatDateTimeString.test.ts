@@ -1,6 +1,7 @@
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { FieldDateDisplayFormat } from '@/object-record/record-field/types/FieldMetadata';
+import { enUS } from 'date-fns/locale';
 import { DateTime } from 'luxon';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 
@@ -15,6 +16,7 @@ describe('formatDateTimeString', () => {
     const result = formatDateTimeString({
       ...defaultParams,
       value: null,
+      localeCatalog: enUS,
     });
 
     expect(result).toBe('');
@@ -24,6 +26,7 @@ describe('formatDateTimeString', () => {
     const result = formatDateTimeString({
       ...defaultParams,
       value: undefined,
+      localeCatalog: enUS,
     });
 
     expect(result).toBe('');
@@ -39,6 +42,7 @@ describe('formatDateTimeString', () => {
       dateFieldSettings: {
         displayFormat: FieldDateDisplayFormat.RELATIVE,
       },
+      localeCatalog: enUS,
     });
 
     expect(result).toBe(mockRelativeDate);
@@ -60,6 +64,7 @@ describe('formatDateTimeString', () => {
       dateFieldSettings: {
         displayFormat: FieldDateDisplayFormat.USER_SETTINGS,
       },
+      localeCatalog: enUS,
     });
 
     expect(result).toBe(mockFormattedDate);
@@ -85,6 +90,7 @@ describe('formatDateTimeString', () => {
         displayFormat: FieldDateDisplayFormat.CUSTOM,
         customUnicodeDateFormat: 'yyyy',
       },
+      localeCatalog: enUS,
     });
 
     expect(result).toBe(mockFormattedDate);
@@ -103,6 +109,7 @@ describe('formatDateTimeString', () => {
     const result = formatDateTimeString({
       ...defaultParams,
       value: mockDate,
+      localeCatalog: enUS,
     });
 
     expect(result).toBe(mockFormattedDate);

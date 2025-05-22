@@ -3,7 +3,7 @@ import { ZodHelperLiteral } from '@/object-record/record-field/types/ZodHelperLi
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { ThemeColor } from 'twenty-ui/theme';
-import * as z from 'zod';
+import { z } from 'zod';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { CurrencyCode } from './CurrencyCode';
 

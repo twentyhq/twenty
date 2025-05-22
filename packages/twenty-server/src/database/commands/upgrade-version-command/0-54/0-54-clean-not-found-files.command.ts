@@ -1,21 +1,14 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { basename, dirname } from 'path';
-
 import { isNonEmptyString } from '@sniptt/guards';
 import { Command } from 'nest-commander';
 import { Equal, Not, Repository } from 'typeorm';
 
 import {
-  FileStorageException,
-  FileStorageExceptionCode,
-} from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
-
-import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
@@ -31,7 +24,7 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly fileService: FileService,
+    private readonly fileStorageService: FileStorageService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
   }
@@ -57,27 +50,21 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
   }
 
   private async checkIfFileIsFound(path: string, workspaceId: string) {
+    this.logger.log(`Checking if file is found ${path}`);
     if (path.startsWith('https://')) return true; // seed data
 
-    try {
-      await this.fileService.getFileStream(
-        dirname(path),
-        basename(path),
-        workspaceId,
-      );
-    } catch (error) {
-      if (
-        error instanceof FileStorageException &&
-        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
-      ) {
-        return false;
-      }
-    }
+    const isFileFound = await this.fileStorageService.checkFileExists({
+      folderPath: `workspace-${workspaceId}`,
+      filename: path,
+    });
 
-    return true;
+    this.logger.log(`File found: ${isFileFound}`);
+
+    return isFileFound;
   }
 
   private async cleanWorkspaceLogo(workspaceId: string, dryRun: boolean) {
+    this.logger.log(`Cleaning workspace logo for workspace ${workspaceId}`);
     const workspace = await this.workspaceRepository.findOneOrFail({
       where: {
         id: workspaceId,
@@ -85,6 +72,8 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
     });
 
     if (!isNonEmptyString(workspace.logo)) return;
+
+    this.logger.log(`Processing workspace logo for workspace ${workspace.id}`);
 
     const isFileFound = await this.checkIfFileIsFound(
       workspace.logo,
@@ -104,6 +93,7 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
   }
 
   private async softDeleteAttachments(workspaceId: string, dryRun: boolean) {
+    this.logger.log(`Cleaning attachments for workspace ${workspaceId}`);
     const attachmentRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<AttachmentWorkspaceEntity>(
         workspaceId,
@@ -122,6 +112,7 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
 
       const attachmentIdsToSoftDeleteChunk = await Promise.all(
         attachmentsChunk.map(async (attachment) => {
+          this.logger.log(`Processing attachment ${attachment.id}`);
           const isFileFound = await this.checkIfFileIsFound(
             attachment.fullPath,
             workspaceId,
@@ -150,6 +141,9 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
     workspaceId: string,
     dryRun: boolean,
   ) {
+    this.logger.log(
+      `Cleaning workspace members avatarUrl for workspace ${workspaceId}`,
+    );
     const workspaceMemberRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspaceId,
@@ -164,6 +158,8 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
     const workspaceMemberIdsToUpdate: string[] = [];
 
     for (const workspaceMember of workspaceMembers) {
+      this.logger.log(`Processing workspaceMember ${workspaceMember.id}`);
+
       const isFileFound = await this.checkIfFileIsFound(
         workspaceMember.avatarUrl,
         workspaceId,
@@ -187,6 +183,7 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
   }
 
   private async cleanPeopleAvatarUrl(workspaceId: string, dryRun: boolean) {
+    this.logger.log(`Cleaning people avatarUrl for workspace ${workspaceId}`);
     const personRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<PersonWorkspaceEntity>(
         workspaceId,
@@ -201,6 +198,8 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
     const personIdsToUpdate: string[] = [];
 
     for (const person of people) {
+      this.logger.log('Processing person', person.id);
+
       const isFileFound = await this.checkIfFileIsFound(
         person.avatarUrl,
         workspaceId,

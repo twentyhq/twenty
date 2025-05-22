@@ -1,6 +1,6 @@
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { isNonEmptyString } from '@sniptt/guards';
-import { JSONContent } from '@tiptap/react';
+import type { JSONContent } from '@tiptap/react';
 
 export const CAPTURE_VARIABLE_TAG_REGEX = /({{[^{}]+}})/;
 

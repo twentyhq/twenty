@@ -1,11 +1,12 @@
-import {
-  ObjectMetadataItemsQuery,
-} from '~/generated-metadata/graphql';
+import { ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';
 
 // This file is not designed to be manually edited.
 // It's an extract from the dev seeded environment metadata call
 // TODO: automate the generation of this file
 // ⚠️ WARNING ⚠️: Be sure to activate the workflow feature flag (IsWorkflowEnabled) before updating that mock.
+
+/* eslint-disable */
+// prettier-ignore
 export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
 {
   objects: {
@@ -10869,8 +10870,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           __typename: "Object",
           id: "8a943c8f-aceb-48a6-ac07-a0dca6712059",
           dataSourceId: "f3e5fac0-7791-47d4-a2c2-087e584c67df",
-          nameSingular: "workflowEventListener",
-          namePlural: "workflowEventListeners",
+          nameSingular: "workflowAutomatedTrigger",
+          namePlural: "workflowAutomatedTriggers",
           icon: "IconSettingsAutomation",
           isCustom: false,
           isRemote: false,
@@ -10883,15 +10884,15 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           imageIdentifierFieldMetadataId: null,
           shortcut: null,
           isLabelSyncedWithName: false,
-          labelSingular: "WorkflowEventListener",
-          labelPlural: "WorkflowEventListeners",
-          description: "A workflow event listener",
+          labelSingular: "WorkflowAutomatedTrigger",
+          labelPlural: "WorkflowAutomatedTriggers",
+          description: "A workflow automated trigger",
           fieldsList: [
             {
               __typename: "Field",
-              id: "7a836cd1-9002-44c6-8ce4-17558bb97a34",
-              type: "TEXT",
-              name: "eventName",
+              id: "20202020-3319-4234-a34c-3f92c1ab56e7",
+              type: "SELECT",
+              name: "type",
               icon: null,
               isCustom: false,
               isActive: true,
@@ -10900,13 +10901,49 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isUnique: false,
               createdAt: "2025-02-11T09:14:32.715Z",
               updatedAt: "2025-02-11T09:14:32.715Z",
-              defaultValue: "''",
+              defaultValue: null,
+              options: [
+                {
+                  id: "133a966a-7cc2-480c-8861-e09581893a6d",
+                  color: 'green',
+                  label: 'Database Event',
+                  value: 'DATABASE_EVENT',
+                  position: 0,
+                },
+                {
+                  id: "d3ecf3ce-5064-4d8d-bccb-18a701570b02",
+                  color: 'blue',
+                  label: 'Cron',
+                  value: 'CRON',
+                  position: 1,
+                }
+              ],
+              settings: null,
+              isLabelSyncedWithName: false,
+              relationDefinition: null,
+              label: "Automated Trigger Type",
+              description: "The workflow automated trigger type"
+            },
+            {
+              __typename: "Field",
+              id: "20202020-3319-4234-a34c-bac8f903de12",
+              type: "RAW_JSON",
+              name: "settings",
+              icon: null,
+              isCustom: false,
+              isActive: true,
+              isSystem: false,
+              isNullable: true,
+              isUnique: false,
+              createdAt: "2025-02-11T09:14:32.715Z",
+              updatedAt: "2025-02-11T09:14:32.715Z",
+              defaultValue: null,
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
               relationDefinition: null,
-              label: "Name",
-              description: "The workflow event listener name"
+              label: "Settings",
+              description: "The workflow automated trigger settings"
             },
             {
               __typename: "Field",
@@ -11017,7 +11054,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               relationDefinition: null,
               label: "Workflow id (foreign key)",
-              description: "WorkflowEventListener workflow id foreign key"
+              description: "WorkflowAutomatedTrigger workflow id foreign key"
             },
             {
               __typename: "Field",
@@ -11037,7 +11074,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               settings: null,
               isLabelSyncedWithName: false,
               label: "Workflow",
-              description: "WorkflowEventListener workflow",
+              description: "WorkflowAutomatedTrigger workflow",
               relationDefinition: {
                 __typename: "RelationDefinition",
                 relationId: "eda58ebf-dc0b-4481-b9a6-dafc80afdceb",
@@ -11045,8 +11082,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 sourceObjectMetadata: {
                   __typename: "Object",
                   id: "8a943c8f-aceb-48a6-ac07-a0dca6712059",
-                  nameSingular: "workflowEventListener",
-                  namePlural: "workflowEventListeners"
+                  nameSingular: "workflowAutomatedTrigger",
+                  namePlural: "workflowAutomatedTriggers"
                 },
                 sourceFieldMetadata: {
                   __typename: "Field",
@@ -11062,7 +11099,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 targetFieldMetadata: {
                   __typename: "Field",
                   id: "a2162b17-505f-4a9d-bf93-cbc06242a14c",
-                  name: "eventListeners"
+                  name: "automatedTriggers"
                 }
               }
             }
@@ -19335,7 +19372,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               __typename: "Field",
               id: "a2162b17-505f-4a9d-bf93-cbc06242a14c",
               type: "RELATION",
-              name: "eventListeners",
+              name: "automatedTriggers",
               icon: null,
               isCustom: false,
               isActive: true,
@@ -19348,8 +19385,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              label: "Event Listeners",
-              description: "Workflow event listeners linked to the workflow.",
+              label: "Automated Triggers",
+              description: "Workflow automated triggers linked to the workflow.",
               relationDefinition: {
                 __typename: "RelationDefinition",
                 relationId: "eda58ebf-dc0b-4481-b9a6-dafc80afdceb",
@@ -19363,13 +19400,13 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 sourceFieldMetadata: {
                   __typename: "Field",
                   id: "a2162b17-505f-4a9d-bf93-cbc06242a14c",
-                  name: "eventListeners"
+                  name: "automatedTriggers"
                 },
                 targetObjectMetadata: {
                   __typename: "Object",
                   id: "8a943c8f-aceb-48a6-ac07-a0dca6712059",
-                  nameSingular: "workflowEventListener",
-                  namePlural: "workflowEventListeners"
+                  nameSingular: "workflowAutomatedTrigger",
+                  namePlural: "workflowAutomatedTriggers"
                 },
                 targetFieldMetadata: {
                   __typename: "Field",
