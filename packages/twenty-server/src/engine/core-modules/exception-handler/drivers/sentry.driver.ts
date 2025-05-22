@@ -1,7 +1,9 @@
 import * as Sentry from '@sentry/node';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ExceptionHandlerOptions } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-options.interface';
 
+import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { ExceptionHandlerDriverInterface } from 'src/engine/core-modules/exception-handler/interfaces';
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -68,6 +70,19 @@ export class ExceptionHandlerSentryDriver
                 word.charAt(0)?.toUpperCase() + word.slice(1)?.toLowerCase(),
             )
             .join(' ');
+        }
+
+        if (exception instanceof PostgresException) {
+          scope.setTag('postgresSqlErrorCode', exception.code);
+          const fingerPrint = [exception.code];
+          const genericOperationName = // truncates to first word: FindOnePerson -> Find, AggregateCompanies -> Aggregate, ...
+            options?.operation?.name?.match(/^[A-Z][a-z]*/)?.[0];
+
+          if (isDefined(genericOperationName)) {
+            fingerPrint.push(genericOperationName);
+          }
+          scope.setFingerprint(fingerPrint);
+          exception.name = exception.message;
         }
 
         const eventId = Sentry.captureException(exception, {
