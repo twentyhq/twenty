@@ -20,9 +20,7 @@ export const GotoHotkeysEffectsProvider = () => {
         () => {
           set(isNavigationDrawerExpandedState, true);
           set(navigationDrawerExpandedMemorizedState, true);
-          // set(navigationMemorizedUrlState, location.pathname + location.search);
         },
-      [location.pathname, location.search],
     ),
   });
 
