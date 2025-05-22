@@ -27,10 +27,13 @@ export const CommandMenuChatbotFlowPage = () => {
     const newNode = createNode(action.type);
 
     if (!newNode) {
+      // eslint-disable-next-line no-console
       console.error('Failed to create a new node');
       return;
     }
 
+    // @ts-expect-error 'id', '__typename' and 'workspace' don't exist in 'chatbotFlow'.
+    // TODO: Build a type using Omit<...> instead.
     const { id, __typename, workspace, ...chatbotFlowWithoutId } = chatbotFlow;
 
     const updatedChatbotFlow = {

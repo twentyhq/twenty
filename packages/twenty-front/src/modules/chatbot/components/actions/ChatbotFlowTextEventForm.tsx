@@ -150,6 +150,8 @@ export const ChatbotFlowTextEventForm = ({
       node.id === selectedNode.id ? updatedNode : node,
     );
 
+    // @ts-expect-error 'id', '__typename' and 'workspace' don't exist in 'chatbotFlow'.
+    // TODO: Build a type using Omit<...> instead.
     const { id, __typename, workspace, ...chatbotFlowWithoutId } = chatbotFlow;
 
     const updatedChatbotFlow = {

@@ -34,7 +34,7 @@ const testCases = [
   { loc: AppPath.SyncEmails, res: true },
   { loc: AppPath.InviteTeam, res: true },
   { loc: AppPath.PlanRequired, res: true },
-  { loc: AppPath.PlanRequiredSuccess, res: true },
+  { loc: AppPath.PaymentRequiredSuccess, res: true },
 
   { loc: AppPath.Index, res: false },
   { loc: AppPath.TasksPage, res: false },

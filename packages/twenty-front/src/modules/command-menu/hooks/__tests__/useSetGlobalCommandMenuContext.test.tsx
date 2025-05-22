@@ -38,13 +38,11 @@ const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
   componentInstanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
   contextStoreCurrentObjectMetadataNameSingular:
     personMockObjectMetadataItem.nameSingular,
-  contextStoreCurrentViewId: 'my-view-id',
   contextStoreTargetedRecordsRule: {
     mode: 'selection',
     selectedRecordIds: [peopleMock[0].id, peopleMock[1].id],
   },
   contextStoreNumberOfSelectedRecords: 2,
-  contextStoreCurrentViewType: ContextStoreViewType.Table,
   onInitializeRecoilSnapshot: (snapshot) => {
     snapshot.set(recordStoreFamilyState(peopleMock[0].id), peopleMock[0]);
     snapshot.set(recordStoreFamilyState(peopleMock[1].id), peopleMock[1]);

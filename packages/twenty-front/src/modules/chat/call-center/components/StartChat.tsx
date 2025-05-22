@@ -1,9 +1,11 @@
+import { START_CHAT_MODAL_ID } from '@/chat/call-center/constants/StartChatModalId';
 import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
 import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
 import { FormPhoneFieldInput } from '@/object-record/record-field/form-types/components/FormPhoneFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
 import { Modal } from '@/ui/layout/modal/components/Modal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
@@ -49,6 +51,8 @@ export const StartChat = ({
 }: StartChatProps) => {
   // const { t } = useTranslation();
 
+  const { openModal } = useModal();
+
   const { activeWhatsappIntegrations } = useContext(
     CallCenterContext,
   ) as CallCenterContextType;
@@ -64,7 +68,7 @@ export const StartChat = ({
 
   const waIntegration = useMemo(() => {
     return activeWhatsappIntegrations.map((integration) => ({
-      label: integration.label,
+      label: integration.name,
       value: integration.id,
     }));
   }, [activeWhatsappIntegrations]);
@@ -113,11 +117,17 @@ export const StartChat = ({
     setIsStartChatOpen(false);
   };
 
+  openModal(START_CHAT_MODAL_ID);
+
   return (
     <AnimatePresence mode="wait">
       <LayoutGroup>
         {isStartChatOpen && (
-          <StyledInitChatModal isClosable onClose={handleCancel}>
+          <StyledInitChatModal
+            modalId={START_CHAT_MODAL_ID}
+            isClosable
+            onClose={handleCancel}
+          >
             <StyledCenteredTitle>
               <H1Title
                 title={'Start Conversation'}

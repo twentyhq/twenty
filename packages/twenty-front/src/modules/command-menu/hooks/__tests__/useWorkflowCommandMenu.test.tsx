@@ -13,7 +13,6 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { t } from '@lingui/core/macro';
 import { act } from 'react';
@@ -48,13 +47,11 @@ const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
   componentInstanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
   contextStoreCurrentObjectMetadataNameSingular:
     workflowMockObjectMetadataItem.nameSingular,
-  contextStoreCurrentViewId: 'my-view-id',
   contextStoreTargetedRecordsRule: {
     mode: 'selection',
     selectedRecordIds: [],
   },
   contextStoreNumberOfSelectedRecords: 0,
-  contextStoreCurrentViewType: ContextStoreViewType.Table,
 });
 
 const renderHooks = () => {

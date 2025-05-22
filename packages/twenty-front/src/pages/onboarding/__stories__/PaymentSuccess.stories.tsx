@@ -18,7 +18,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Onboarding/PaymentSuccess',
   component: PaymentSuccess,
   decorators: [PageDecorator],
-  args: { routePath: AppPath.PlanRequiredSuccess },
+  args: { routePath: AppPath.PaymentRequiredSuccess },
   parameters: {
     msw: {
       handlers: [
