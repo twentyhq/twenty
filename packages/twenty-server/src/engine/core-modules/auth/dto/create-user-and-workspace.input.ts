@@ -13,7 +13,7 @@ export class CreateUserAndWorkspaceInput {
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
-  firstName: string;
+  firstName?: string;
 
   @Field(() => String, { nullable: true })
   @IsString()

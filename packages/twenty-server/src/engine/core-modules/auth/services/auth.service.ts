@@ -770,10 +770,6 @@ export class AuthService {
             })
           : undefined;
 
-      const existingUser = await this.userRepository.findOne({
-        where: { email },
-      });
-
       const { userData } = this.formatUserDataPayload(
         {
           firstName,

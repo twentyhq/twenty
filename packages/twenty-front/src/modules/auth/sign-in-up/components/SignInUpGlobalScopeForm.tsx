@@ -307,8 +307,8 @@ export const SignInUpGlobalScopeForm = () => {
                 disabled={isRequestingCaptchaToken}
                 title={
                   signInUpStep === SignInUpStep.Password
-                    ? 'Sign Up'
-                    : 'Continue'
+                    ? t`Sign Up`
+                    : t`Continue`
                 }
                 type="submit"
                 variant={

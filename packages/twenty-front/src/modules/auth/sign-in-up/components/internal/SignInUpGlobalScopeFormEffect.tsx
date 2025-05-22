@@ -3,7 +3,7 @@ import {
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { useEffect } from 'react';
-import { useSetRecoilState, useRecoilState } from 'recoil';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { signInUpCallbackState } from '@/auth/states/signInUpCallbackState';
 import { useAuth } from '@/auth/hooks/useAuth';
@@ -18,9 +18,7 @@ export const SignInUpGlobalScopeFormEffect = () => {
 
   const { getAvailableWorkspaces } = useAuth();
 
-  const [availableWorkspaces, setAvailableWorkspaces] = useRecoilState(
-    availableWorkspacesState,
-  );
+  const availableWorkspaces = useRecoilValue(availableWorkspacesState);
 
   useEffect(() => {
     if (isDefined(signInUpCallback) && availableWorkspaces.length === 0) {
@@ -33,9 +31,9 @@ export const SignInUpGlobalScopeFormEffect = () => {
     }
   }, [
     availableWorkspaces.length,
-    setAvailableWorkspaces,
     setSignInUpStep,
     setSignInUpCallbackState,
+    signInUpCallback,
     getAvailableWorkspaces,
   ]);
 
