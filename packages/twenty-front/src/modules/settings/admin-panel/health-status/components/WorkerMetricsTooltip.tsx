@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Point } from '@nivo/line';
+import type { Point } from '@nivo/line';
 import { ReactElement } from 'react';
 
 const StyledTooltipContainer = styled.div`
