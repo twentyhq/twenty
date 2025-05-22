@@ -411,6 +411,8 @@ export class S3Driver implements StorageDriver {
       if (error instanceof NotFound) {
         return false;
       }
+
+      throw error;
     }
 
     return true;
