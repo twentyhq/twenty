@@ -14,6 +14,7 @@ import { useCreateApprovedAccessDomainMutation } from '~/generated/graphql';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { TextInput } from '@/ui/input/components/TextInput';
 
 export const SettingsSecurityApprovedAccessDomain = () => {
   const navigate = useNavigateSettings();
@@ -115,7 +116,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
                 field: { onChange, value },
                 fieldState: { error },
               }) => (
-                <TextInputV2
+                <TextInput
                   autoComplete="off"
                   value={value}
                   onChange={(domain: string) => {
@@ -140,7 +141,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
                 field: { onChange, value },
                 fieldState: { error },
               }) => (
-                <TextInputV2
+                <TextInput
                   autoComplete="off"
                   value={value.split('@')[0]}
                   onChange={onChange}

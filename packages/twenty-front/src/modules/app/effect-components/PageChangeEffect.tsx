@@ -211,6 +211,16 @@ export const PageChangeEffect = () => {
         break;
       }
       case isMatchingLocation(
+        SettingsPath.RestPlayground,
+        AppBasePath.Settings,
+      ): {
+        setHotkeyScope(PageHotkeyScope.Settings, {
+          goto: false,
+          keyboardShortcutMenu: true,
+        });
+        break;
+      }
+      case isMatchingLocation(
         SettingsPath.WorkspaceMembersPage,
         AppBasePath.Settings,
       ): {
