@@ -22,7 +22,7 @@ export const opportunitiesByStageView = (
     kanbanAggregateOperation: AGGREGATE_OPERATIONS.min,
     kanbanAggregateOperationFieldMetadataId:
       objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.opportunity].fields[
-        OPPORTUNITY_STANDARD_FIELD_IDS.amount
+        OPPORTUNITY_STANDARD_FIELD_IDS.valorBruto
       ],
     filters: [],
     fields: [
@@ -33,11 +33,12 @@ export const opportunitiesByStageView = (
         position: 0,
         isVisible: true,
         size: 150,
+        aggregateOperation: undefined,
       },
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.opportunity]
-            .fields[OPPORTUNITY_STANDARD_FIELD_IDS.amount],
+            .fields[OPPORTUNITY_STANDARD_FIELD_IDS.valorBruto],
         position: 1,
         isVisible: true,
         size: 150,

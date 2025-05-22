@@ -314,22 +314,32 @@ export const NOTE_TARGET_STANDARD_FIELD_IDS = {
 
 export const OPPORTUNITY_STANDARD_FIELD_IDS = {
   name: '20202020-8609-4f65-a2d9-44009eb422b5',
-  amount: '20202020-583e-4642-8533-db761d5fa82f',
+  pointOfContact: '20202020-8dfb-42fc-92b6-01afb759ed16',
   closeDate: '20202020-527e-44d6-b1ac-c4158d307b97',
-  probabilityDeprecated: '20202020-69d4-45f3-9703-690b09fafcf0',
   stage: '20202020-6f76-477d-8551-28cd65b2b4b9',
   position: '20202020-806d-493a-bbc6-6313e62958e2',
   createdBy: '20202020-a63e-4a62-8e63-42a51828f831',
-  pointOfContact: '20202020-8dfb-42fc-92b6-01afb759ed16',
   company: '20202020-cbac-457e-b565-adece5fc815f',
   favorites: '20202020-a1c2-4500-aaae-83ba8a0e827a',
-  // TODO: check if activityTargets field can be deleted
   activityTargets: '20202020-220a-42d6-8261-b2102d6eab35',
   taskTargets: '20202020-59c0-4179-a208-4a255f04a5be',
   noteTargets: '20202020-dd3f-42d5-a382-db58aabf43d3',
   attachments: '20202020-87c7-4118-83d6-2f4031005209',
   timelineActivities: '20202020-30e2-421f-96c7-19c69d1cf631',
   searchVector: '428a0da5-4b2e-4ce3-b695-89a8b384e6e3',
+  produto: '20202020-a0c1-b2d3-e4f5-9a0b1c2d3e4f',
+  valorBruto: '20202020-b7c8-d9e0-f1a2-6b7c8d9e0f1a',
+  valorLiquido: '20202020-c4d5-e6f7-a8b9-3c4d5e6f7a8b',
+  prazo: '20202020-d1e2-f3a4-b5c6-0d1e2f3a4b5c',
+  parcela: '20202020-e8f9-a0b1-c2d3-7e8f9a0b1c2d',
+  totalEmprestimo: '20202020-f5a6-b7c8-d9e0-4f5a6b7c8d9e',
+  ade: '20202020-0c1d-2e3f-4a5b-10c1d2e3f4a5',
+  promotora: '20202020-7d8e-9f0a-1b2c-87d8e9f0a1b2',
+  percentual: '20202020-a1b2-c3d4-e5f6-01a1b2c3d4e5',
+  comissao: '20202020-b8c9-d0e1-f2a3-7b8c9d0e1f2a',
+  statusOpportunity: '20202020-c5d6-e7f8-a9b0-4c5d6e7f8a9b',
+  observacoesOpportunity: '20202020-d2e3-f4a5-b6c7-1d2e3f4a5b6c',
+  pagoComissao: '20202020-e9f0-a1b2-c3d4-7e9f0a1b2c3d',
 };
 
 export const PERSON_STANDARD_FIELD_IDS = {
@@ -357,6 +367,11 @@ export const PERSON_STANDARD_FIELD_IDS = {
   calendarEventParticipants: '20202020-52ee-45e9-a702-b64b3753e3a9',
   timelineActivities: '20202020-a43e-4873-9c23-e522de906ce5',
   searchVector: '57d1d7ad-fa10-44fc-82f3-ad0959ec2534',
+  cpf: 'e1a4d8a0-1b1a-4f1a-9c1a-1a1b1c1d1e1f',
+  senhaInss: 'a1b2c3d4-e5f6-4789-abcd-123456789012',
+  clienteSN: 'b2c3d4e5-f6a1-4890-bcde-234567890123',
+  convenio: 'c3d4e5f6-a1b2-4901-cdef-345678901234',
+  observacoes: 'd4e5f6a1-b2c3-4012-def0-456789012345',
 };
 
 export const TASK_STANDARD_FIELD_IDS = {

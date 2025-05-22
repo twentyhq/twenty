@@ -13,7 +13,6 @@ import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
-import { WorkspaceIsDeprecated } from 'src/engine/twenty-orm/decorators/workspace-is-deprecated.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -60,16 +59,6 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconTargetArrow',
   })
   name: string;
-
-  @WorkspaceField({
-    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.amount,
-    type: FieldMetadataType.CURRENCY,
-    label: msg`Amount`,
-    description: msg`Opportunity amount`,
-    icon: 'IconCurrencyDollar',
-  })
-  @WorkspaceIsNullable()
-  amount: CurrencyMetadata | null;
 
   @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.closeDate,
@@ -195,7 +184,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.attachments,
     type: RelationType.ONE_TO_MANY,
     label: msg`Attachments`,
-    description: msg`Attachments linked to the opportunity`,
+    description: msg`Attachments linked to the opportunity.`,
     icon: 'IconFileImport',
     inverseSideTarget: () => AttachmentWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
@@ -216,17 +205,6 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
   @WorkspaceField({
-    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.probabilityDeprecated,
-    type: FieldMetadataType.TEXT,
-    label: msg`Probability`,
-    description: msg`Opportunity probability`,
-    icon: 'IconProgressCheck',
-    defaultValue: "'0'",
-  })
-  @WorkspaceIsDeprecated()
-  probability: string;
-
-  @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,
@@ -241,4 +219,140 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   searchVector: any;
+
+  @WorkspaceField({
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.produto,
+    type: FieldMetadataType.TEXT,
+    label: msg`Produto`,
+    description: msg`Opportunity product`,
+    icon: 'IconPackage',
+  })
+  @WorkspaceIsNullable()
+  produto: string | null;
+
+  @WorkspaceField({
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.valorBruto,
+    type: FieldMetadataType.CURRENCY,
+    label: msg`Valor Bruto`,
+    description: msg`Opportunity gross value`,
+    icon: 'IconCurrencyDollar',
+  })
+  @WorkspaceIsNullable()
+  valorBruto: CurrencyMetadata | null;
+
+  @WorkspaceField({
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.valorLiquido,
+    type: FieldMetadataType.CURRENCY,
+    label: msg`Valor Liquido`,
+    description: msg`Opportunity net value`,
+    icon: 'IconCurrencyDollar',
+  })
+  @WorkspaceIsNullable()
+  valorLiquido: CurrencyMetadata | null;
+
+  @WorkspaceField({
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.prazo,
+    type: FieldMetadataType.TEXT,
+    label: msg`Prazo`,
+    description: msg`Opportunity term (e.g., 84 months)`,
+    icon: 'IconCalendarStats',
+  })
+  @WorkspaceIsNullable()
+  prazo: string | null;
+
+  @WorkspaceField({
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.parcela,
+    type: FieldMetadataType.CURRENCY,
+    label: msg`Parcela`,
+    description: msg`Opportunity installment amount in BRL`,
+    icon: 'IconCurrencyDollar',
+  })
+  @WorkspaceIsNullable()
+  parcela: CurrencyMetadata | null;
+
+  @WorkspaceField({
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.totalEmprestimo,
+    type: FieldMetadataType.CURRENCY,
+    label: msg`Total do empréstimo`,
+    description: msg`Opportunity total loan amount in BRL`,
+    icon: 'IconCurrencyDollar',
+  })
+  @WorkspaceIsNullable()
+  totalEmprestimo: CurrencyMetadata | null;
+
+  @WorkspaceField({
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.ade,
+    type: FieldMetadataType.TEXT,
+    label: msg`ADE`,
+    description: msg`Opportunity ADE`,
+    icon: 'IconFileText',
+  })
+  @WorkspaceIsNullable()
+  ade: string | null;
+
+  @WorkspaceField({
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.promotora,
+    type: FieldMetadataType.TEXT,
+    label: msg`Promotora`,
+    description: msg`Opportunity promoter`,
+    icon: 'IconBuildingBank',
+  })
+  @WorkspaceIsNullable()
+  promotora: string | null;
+
+  @WorkspaceField({
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.percentual,
+    type: FieldMetadataType.NUMBER,
+    label: msg`Percentual`,
+    description: msg`Opportunity percentage`,
+    icon: 'IconPercent',
+  })
+  @WorkspaceIsNullable()
+  percentual: number | null;
+
+  @WorkspaceField({
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.comissao,
+    type: FieldMetadataType.CURRENCY,
+    label: msg`Comissão`,
+    description: msg`Opportunity commission amount`,
+    icon: 'IconCurrencyDollar',
+  })
+  @WorkspaceIsNullable()
+  comissao: CurrencyMetadata | null;
+
+  @WorkspaceField({
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.statusOpportunity,
+    type: FieldMetadataType.SELECT,
+    label: msg`Status`,
+    description: msg`Opportunity status`,
+    icon: 'IconStatusChange',
+    options: [
+      { value: 'OPEN', label: 'Open', position: 0, color: 'blue' },
+      { value: 'WON', label: 'Won', position: 1, color: 'green' },
+      { value: 'LOST', label: 'Lost', position: 2, color: 'red' },
+    ],
+    defaultValue: "'OPEN'",
+  })
+  @WorkspaceIsNullable()
+  statusOpportunity: string | null;
+
+  @WorkspaceField({
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.observacoesOpportunity,
+    type: FieldMetadataType.TEXT,
+    label: msg`Observações`,
+    description: msg`Opportunity observations`,
+    icon: 'IconNotes',
+  })
+  @WorkspaceIsNullable()
+  observacoesOpportunity: string | null;
+
+  @WorkspaceField({
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.pagoComissao,
+    type: FieldMetadataType.BOOLEAN,
+    label: msg`Pago Comissão`,
+    description: msg`Indicates if the commission has been paid`,
+    icon: 'IconCurrencyReal',
+    defaultValue: false,
+  })
+  pagoComissao: boolean;
 }

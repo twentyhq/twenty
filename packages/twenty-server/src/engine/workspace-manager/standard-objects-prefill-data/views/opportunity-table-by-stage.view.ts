@@ -32,7 +32,7 @@ export const opportunitiesTableByStageView = (
       {
         fieldMetadataId:
           objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.opportunity]
-            .fields[OPPORTUNITY_STANDARD_FIELD_IDS.amount],
+            .fields[OPPORTUNITY_STANDARD_FIELD_IDS.valorBruto],
         position: 1,
         isVisible: true,
         size: 150,

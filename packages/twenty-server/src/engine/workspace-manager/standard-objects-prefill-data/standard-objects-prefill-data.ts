@@ -34,6 +34,8 @@ export const standardObjectsPrefillData = async (
     return acc;
   }, {});
 
+  console.log('Object Metadata Map before seeding views:', objectMetadataMap);
+
   mainDataSource.transaction(async (entityManager: WorkspaceEntityManager) => {
     await companyPrefillData(entityManager, schemaName);
     await personPrefillData(entityManager, schemaName);

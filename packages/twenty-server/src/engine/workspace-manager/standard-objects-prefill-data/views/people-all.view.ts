@@ -36,7 +36,7 @@ export const peopleAllView = (
             PERSON_STANDARD_FIELD_IDS.emails
           ],
         position: 1,
-        isVisible: true,
+        isVisible: false,
         size: 150,
         aggregateOperation: AGGREGATE_OPERATIONS.countUniqueValues,
       },
@@ -93,7 +93,7 @@ export const peopleAllView = (
             PERSON_STANDARD_FIELD_IDS.jobTitle
           ],
         position: 7,
-        isVisible: true,
+        isVisible: false,
         size: 150,
       },
       {
@@ -102,7 +102,7 @@ export const peopleAllView = (
             PERSON_STANDARD_FIELD_IDS.linkedinLink
           ],
         position: 8,
-        isVisible: true,
+        isVisible: false,
         size: 150,
       },
       {
@@ -111,8 +111,53 @@ export const peopleAllView = (
             PERSON_STANDARD_FIELD_IDS.xLink
           ],
         position: 9,
+        isVisible: false,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.person].fields[
+            PERSON_STANDARD_FIELD_IDS.cpf
+          ],
+        position: 10,
         isVisible: true,
         size: 150,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.person].fields[
+            PERSON_STANDARD_FIELD_IDS.senhaInss
+          ],
+        position: 11,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.person].fields[
+            PERSON_STANDARD_FIELD_IDS.clienteSN
+          ],
+        position: 12,
+        isVisible: true,
+        size: 100,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.person].fields[
+            PERSON_STANDARD_FIELD_IDS.convenio
+          ],
+        position: 13,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.person].fields[
+            PERSON_STANDARD_FIELD_IDS.observacoes
+          ],
+        position: 14,
+        isVisible: true,
+        size: 200,
       },
     ],
   };

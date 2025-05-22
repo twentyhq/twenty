@@ -1315,7 +1315,7 @@ msgstr "Linkedin"
 #. js-lingui-id: LeFv/R
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "List of opportunities for which that person is the point of contact"
-msgstr "Lista de oportunidades para as quais essa pessoa é o ponto de contato"
+msgstr "Propostas para as quais essa pessoa é o cliente."
 
 #. js-lingui-id: wJijgU
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1696,22 +1696,22 @@ msgstr "Empresa da Oportunidade"
 #. js-lingui-id: as45IN
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity point of contact"
-msgstr "Ponto de Contato da Oportunidade"
+msgstr "Cliente da Proposta"
 
 #. js-lingui-id: 5Nu7Uw
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity probability"
-msgstr "Probabilidade da Oportunidade"
+msgstr "Probabilidade da Proposta"
 
 #. js-lingui-id: Q1dzBp
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity record position"
-msgstr "Posição do Registro da Oportunidade"
+msgstr "Posição do Registro da Proposta"
 
 #. js-lingui-id: 5ugYS3
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Opportunity stage"
-msgstr "Estágio da Oportunidade"
+msgstr "Estágio da Proposta"
 
 #. js-lingui-id: eLggyd
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -1782,7 +1782,7 @@ msgstr "Telefones"
 #. js-lingui-id: P04j61
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Point of Contact"
-msgstr "Ponto de Contato"
+msgstr "Nome do Cliente
 
 #. js-lingui-id: p/78dY
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
