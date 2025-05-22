@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import * as XLSX from 'xlsx-ugnis';
+import { read, WorkBook } from 'xlsx-ugnis';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { readFileAsync } from '@/spreadsheet-import/utils/readFilesAsync';
@@ -84,7 +84,7 @@ const StyledText = styled.span`
 `;
 
 type DropZoneProps = {
-  onContinue: (data: XLSX.WorkBook, file: File) => void;
+  onContinue: (data: WorkBook, file: File) => void;
   isLoading: boolean;
 };
 
@@ -119,7 +119,7 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
     onDropAccepted: async ([file]) => {
       setLoading(true);
       const arrayBuffer = await readFileAsync(file);
-      const workbook = XLSX.read(arrayBuffer, {
+      const workbook = read(arrayBuffer, {
         cellDates: true,
         codepage: 65001, // UTF-8 codepage
         dateNF: dateFormat,

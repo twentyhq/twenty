@@ -57,6 +57,7 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
   }
 
   private async checkIfFileIsFound(path: string, workspaceId: string) {
+    this.logger.log(`Checking if file is found ${path}`);
     if (path.startsWith('https://')) return true; // seed data
 
     try {
@@ -70,14 +71,18 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
         error instanceof FileStorageException &&
         error.code === FileStorageExceptionCode.FILE_NOT_FOUND
       ) {
+        this.logger.log(`File not found`);
+
         return false;
       }
     }
+    this.logger.log(`File found`);
 
     return true;
   }
 
   private async cleanWorkspaceLogo(workspaceId: string, dryRun: boolean) {
+    this.logger.log(`Cleaning workspace logo for workspace ${workspaceId}`);
     const workspace = await this.workspaceRepository.findOneOrFail({
       where: {
         id: workspaceId,
@@ -86,7 +91,7 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
 
     if (!isNonEmptyString(workspace.logo)) return;
 
-    this.logger.log('Processing workspace logo for workspace', workspace.id);
+    this.logger.log(`Processing workspace logo for workspace ${workspace.id}`);
 
     const isFileFound = await this.checkIfFileIsFound(
       workspace.logo,
@@ -106,6 +111,7 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
   }
 
   private async softDeleteAttachments(workspaceId: string, dryRun: boolean) {
+    this.logger.log(`Cleaning attachments for workspace ${workspaceId}`);
     const attachmentRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<AttachmentWorkspaceEntity>(
         workspaceId,
@@ -124,7 +130,7 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
 
       const attachmentIdsToSoftDeleteChunk = await Promise.all(
         attachmentsChunk.map(async (attachment) => {
-          this.logger.log('Processing attachment', attachment.id);
+          this.logger.log(`Processing attachment ${attachment.id}`);
           const isFileFound = await this.checkIfFileIsFound(
             attachment.fullPath,
             workspaceId,
@@ -153,6 +159,9 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
     workspaceId: string,
     dryRun: boolean,
   ) {
+    this.logger.log(
+      `Cleaning workspace members avatarUrl for workspace ${workspaceId}`,
+    );
     const workspaceMemberRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspaceId,
@@ -167,7 +176,7 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
     const workspaceMemberIdsToUpdate: string[] = [];
 
     for (const workspaceMember of workspaceMembers) {
-      this.logger.log('Processing workspaceMember', workspaceMember.id);
+      this.logger.log(`Processing workspaceMember ${workspaceMember.id}`);
 
       const isFileFound = await this.checkIfFileIsFound(
         workspaceMember.avatarUrl,
@@ -192,6 +201,7 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
   }
 
   private async cleanPeopleAvatarUrl(workspaceId: string, dryRun: boolean) {
+    this.logger.log(`Cleaning people avatarUrl for workspace ${workspaceId}`);
     const personRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<PersonWorkspaceEntity>(
         workspaceId,
