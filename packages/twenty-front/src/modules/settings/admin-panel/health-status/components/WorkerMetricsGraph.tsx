@@ -1,21 +1,16 @@
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
+import { WorkerMetricsTooltip } from '@/settings/admin-panel/health-status/components/WorkerMetricsTooltip';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { lazy, Suspense } from 'react';
+import { ResponsiveLine } from '@nivo/line';
+import { isNumber } from '@tiptap/core';
 import {
   QueueMetricsTimeRange,
   useGetQueueMetricsQuery,
 } from '~/generated/graphql';
-
-// Dynamically import the Nivo chart to ensure it's bundled separately
-const NivoLineChartComponent = lazy(() =>
-  import('./NivoLineChart').then((module) => ({
-    default: module.NivoLineChart,
-  })),
-);
 
 const StyledGraphContainer = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
@@ -28,14 +23,6 @@ const StyledGraphContainer = styled.div`
 `;
 
 const StyledNoDataMessage = styled.div`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.light};
-  display: flex;
-  height: 100%;
-  justify-content: center;
-`;
-
-const StyledLoadingMessage = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.light};
   display: flex;
@@ -122,19 +109,92 @@ export const WorkerMetricsGraph = ({
         {loading ? (
           <StyledNoDataMessage>{t`Loading metrics data...`}</StyledNoDataMessage>
         ) : hasData ? (
-          <Suspense
-            fallback={
-              <StyledLoadingMessage>{t`Loading chart...`}</StyledLoadingMessage>
-            }
-          >
-            <NivoLineChartComponent
-              data={metricsData}
-              timeRange={timeRange}
-              maxYValue={getMaxYValue()}
-            />
-          </Suspense>
+          <ResponsiveLine
+            data={metricsData}
+            curve="monotoneX"
+            enableArea={true}
+            colors={[theme.color.blue, theme.color.red]}
+            theme={{
+              text: {
+                fill: theme.font.color.light,
+                fontSize: theme.font.size.sm,
+                fontFamily: theme.font.family,
+              },
+              axis: {
+                domain: {
+                  line: {
+                    stroke: theme.border.color.strong,
+                  },
+                },
+                ticks: {
+                  line: {
+                    stroke: theme.border.color.strong,
+                  },
+                },
+              },
+              grid: {
+                line: {
+                  stroke: theme.border.color.medium,
+                },
+              },
+              crosshair: {
+                line: {
+                  stroke: theme.font.color.primary,
+                  strokeDasharray: '2 2',
+                },
+              },
+            }}
+            margin={{ top: 40, right: 30, bottom: 40, left: 40 }}
+            xScale={{
+              type: 'linear',
+              min: 0,
+              max: 'auto',
+            }}
+            yScale={{
+              type: 'linear',
+              min: 0,
+              max: getMaxYValue(),
+              stacked: false,
+            }}
+            axisBottom={{
+              legend: getAxisLabel(),
+              legendOffset: 20,
+              legendPosition: 'middle',
+              tickSize: 5,
+              tickPadding: 5,
+              tickValues: 5,
+              format: () => '',
+            }}
+            axisLeft={{
+              tickSize: 6,
+              tickPadding: 5,
+              tickValues: 4,
+            }}
+            enableGridX={false}
+            gridYValues={4}
+            pointSize={0}
+            enableSlices="x"
+            sliceTooltip={({ slice }) => <WorkerMetricsTooltip slice={slice} />}
+            useMesh={true}
+            legends={[
+              {
+                anchor: 'top-right',
+                direction: 'row',
+                justify: false,
+                translateX: 0,
+                translateY: -40,
+                itemsSpacing: 10,
+                itemDirection: 'left-to-right',
+                itemWidth: 100,
+                itemHeight: 20,
+                itemTextColor: theme.font.color.secondary,
+                symbolSize: 4,
+                symbolShape: 'circle',
+              },
+            ]}
+          />
         ) : (
-          <StyledNoDataMessage>{t`Loading data...`}</StyledNoDataMessage>
+          <StyledNoDataMessage>{t`No metrics data available`}</StyledNoDataMessage>
         )}
       </StyledGraphContainer>
       {metricsDetails && (
@@ -144,12 +204,11 @@ export const WorkerMetricsGraph = ({
             .filter(([key]) => key !== '__typename')
             .map(([key, value]) => ({
               label: key.charAt(0).toUpperCase() + key.slice(1),
-              value:
-                typeof value === 'number'
-                  ? value
-                  : Array.isArray(value)
-                    ? value.length
-                    : String(value),
+              value: isNumber(value)
+                ? value
+                : Array.isArray(value)
+                  ? value.length
+                  : String(value),
             }))}
           gridAutoColumns="1fr 1fr"
           labelAlign="left"

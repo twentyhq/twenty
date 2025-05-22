@@ -5,8 +5,7 @@ import react from '@vitejs/plugin-react-swc';
 import wyw from '@wyw-in-js/vite';
 import fs from 'fs';
 import path from 'path';
-import { visualizer } from 'rollup-plugin-visualizer';
-import { defineConfig, loadEnv, PluginOption, searchForWorkspaceRoot } from 'vite';
+import { defineConfig, loadEnv, searchForWorkspaceRoot } from 'vite';
 import checker from 'vite-plugin-checker';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
@@ -146,12 +145,6 @@ export default defineConfig(({ command, mode }) => {
           presets: ['@babel/preset-typescript', '@babel/preset-react'],
         },
       }),
-      visualizer({
-        open: true,
-        gzipSize: true,
-        brotliSize: true,
-        filename: 'dist/stats.html'
-      }) as PluginOption // https://github.com/btd/rollup-plugin-visualizer/issues/162#issuecomment-1538265997,
     ],
 
     optimizeDeps: {
@@ -163,81 +156,23 @@ export default defineConfig(({ command, mode }) => {
     },
 
     build: {
-      minify: 'esbuild',
+      minify: false,
       outDir: 'build',
       sourcemap: VITE_BUILD_SOURCEMAP === 'true',
       rollupOptions: {
         output: {
           manualChunks: (id) => {
-            if (id.includes('commonjsHelpers')) return 'commonjsHelpers'
-
-            if (!id.includes('node_modules')) {
-              return null;
+            if (id.includes('@scalar')) {
+              return 'scalar';
             }
 
-            if (id.includes('typescript/lib/typescript.js')) {
-              return 'typescript-lib';
-            }
-            
-            if (id.includes('shiki')) {
-              if (id.includes('/langs/typescript.mjs') || id.includes('/langs/json.mjs')) {
-                return 'shiki-supported-langs';
-              }
-              if (id.includes('/langs/')) {
-                return 'not-loaded';
-              }
-              return 'shiki-core';
-            }
-
-            if (id.includes('monaco-editor')) {
-
-              if (id.includes('/basic-languages/') && id.includes('typescript')) {
-                return 'monaco-core';
-              }
-              if (id.includes('/basic-languages/')) {
-                return 'not-loaded';
-              }
-
-              return 'monaco-core';
-            }
-
-            if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router')) {
-              return 'react-vendor';
-            }
-            
-            // Other vendor chunks
-            if (id.includes('@scalar')) return 'scalar';
-            if (id.includes('twenty-ui')) return 'twenty-ui';
-            if (id.includes('@apollo')) return 'apollo';
-            if (id.includes('@lingui')) return 'lingui';
-            if (id.includes('@nivo')) return 'nivo';
-            if (id.includes('recoil')) return 'recoil';
-            if (id.includes('@tiptap')) return 'tiptap';
-            if (id.includes('@blocknote')) return 'blocknote';
-            if (id.includes('@react-pdf')) return 'react-pdf';
-            if (id.includes('xlsx-ugnis')) return 'xlsx-ugnis';
-            if (id.includes('@sentry')) return 'sentry';
-            
             return null;
           },
         },
       },
       modulePreload: {
         resolveDependencies: (filename, deps, { hostId }) => {
-            // Don't preload heavy chunks that aren't needed immediately
-            return deps.filter(dep => 
-              !dep.includes('scalar') &&
-              !dep.includes('tiptap') &&
-              !dep.includes('react-pdf') &&
-              !dep.includes('blocknote') &&
-              !dep.includes('monaco') &&
-              !dep.includes('nivo') &&
-              !dep.includes('shiki') &&
-              !dep.includes('monaco-core') &&
-              !dep.includes('typescript-lib') &&
-              !dep.includes('xlsx-ugnis') &&
-              !dep.includes('not-loaded')
-            );
+          return deps.filter(dep => !dep.includes('scalar'));
         },
       },
     },
