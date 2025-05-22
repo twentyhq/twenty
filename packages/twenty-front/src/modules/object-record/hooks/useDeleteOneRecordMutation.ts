@@ -4,8 +4,8 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { mapSoftDeleteFieldsToGraphQLQuery } from '@/object-metadata/utils/mapSoftDeleteFieldsToGraphQLQuery';
 import { EMPTY_MUTATION } from '@/object-record/constants/EmptyMutation';
 import { getDeleteOneRecordMutationResponseField } from '@/object-record/utils/getDeleteOneRecordMutationResponseField';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { capitalize } from 'twenty-shared/utils';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useDeleteOneRecordMutation = ({
   objectNameSingular,
@@ -27,7 +27,7 @@ export const useDeleteOneRecordMutation = ({
   );
 
   const deleteOneRecordMutation = gql`
-  mutation DeleteOne${capitalizedObjectName}($idToDelete: ID!) {
+  mutation DeleteOne${capitalizedObjectName}($idToDelete: UUID!) {
     ${mutationResponseField}(id: $idToDelete)
     ${mapSoftDeleteFieldsToGraphQLQuery(objectMetadataItem)}
   }

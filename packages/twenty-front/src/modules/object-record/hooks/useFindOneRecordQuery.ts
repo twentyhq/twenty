@@ -25,7 +25,7 @@ export const useFindOneRecordQuery = ({
   const findOneRecordQuery = gql`
       query FindOne${capitalize(
         objectMetadataItem.nameSingular,
-      )}($objectRecordId: ID!) {
+      )}($objectRecordId: UUID!) {
         ${objectMetadataItem.nameSingular}(filter: {
         ${
           withSoftDeleted

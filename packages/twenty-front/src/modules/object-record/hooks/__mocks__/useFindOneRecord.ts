@@ -4,7 +4,7 @@ import { PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS } from '@/object-record/hooks/
 import { responseData as person } from './useUpdateOneRecord';
 
 export const query = gql`
-  query FindOnePerson($objectRecordId: ID!) {
+  query FindOnePerson($objectRecordId: UUID!) {
     person(filter: { id: { eq: $objectRecordId } }) {
       ${PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS}
     }

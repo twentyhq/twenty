@@ -101,7 +101,7 @@ export const sortedFavorites = [
 ];
 
 const UPDATE_ONE_FAVORITE_MUTATION = gql`
-  mutation UpdateOneFavorite($idToUpdate: ID!, $input: FavoriteUpdateInput!) {
+  mutation UpdateOneFavorite($idToUpdate: UUID!, $input: FavoriteUpdateInput!) {
     updateFavorite(id: $idToUpdate, data: $input) {
       __typename
       company {
@@ -859,7 +859,7 @@ export const mocks = [
   {
     request: {
       query: gql`
-        mutation DeleteOneFavorite($idToDelete: ID!) {
+        mutation DeleteOneFavorite($idToDelete: UUID!) {
           deleteFavorite(id: $idToDelete) {
             __typename
             deletedAt

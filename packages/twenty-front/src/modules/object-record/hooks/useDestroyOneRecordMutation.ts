@@ -3,8 +3,8 @@ import gql from 'graphql-tag';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { EMPTY_MUTATION } from '@/object-record/constants/EmptyMutation';
 import { getDestroyOneRecordMutationResponseField } from '@/object-record/utils/getDestroyOneRecordMutationResponseField';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { capitalize } from 'twenty-shared/utils';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useDestroyOneRecordMutation = ({
   objectNameSingular,
@@ -26,7 +26,7 @@ export const useDestroyOneRecordMutation = ({
   );
 
   const destroyOneRecordMutation = gql`
-    mutation DestroyOne${capitalizedObjectName}($idToDestroy: ID!)  {
+    mutation DestroyOne${capitalizedObjectName}($idToDestroy: UUID!)  {
       ${mutationResponseField}(id: $idToDestroy) {
         id
       }
