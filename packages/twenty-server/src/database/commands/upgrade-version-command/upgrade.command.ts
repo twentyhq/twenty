@@ -30,8 +30,11 @@ import { CopyTypeormMigrationsCommand } from 'src/database/commands/upgrade-vers
 import { MigrateWorkflowEventListenersToAutomatedTriggersCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-migrate-workflow-event-listeners-to-automated-triggers.command';
 import { RemoveRelationForeignKeyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-remove-relation-foreign-key-field-metadata.command';
 import { UpgradeSearchVectorOnPersonEntityCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-upgrade-search-vector-on-person-entity.command';
+import { CleanNotFoundFilesCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-clean-not-found-files.command';
 import { FixCreatedByDefaultValueCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-created-by-default-value.command';
 import { FixStandardSelectFieldsPositionCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-fix-standard-select-fields-position.command';
+import { LowercaseUserAndInvitationEmailsCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-lowercase-user-and-invitation-emails.command';
+import { MigrateDefaultAvatarUrlToUserWorkspaceCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-migrate-default-avatar-url-to-user-workspace.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -66,20 +69,11 @@ export class DatabaseMigrationService {
     });
   }
 
-  async shouldRunMigrationsIfAllWorkspaceAreAboveVersion0_53(): Promise<boolean> {
-    const coreWorkspaceSchemaExists = await this.checkCoreWorkspaceExists();
+  async shouldSkipUpgradeIfFreshInstallation(): Promise<boolean> {
+    const activeWorkspaceOrSuspendedWorkspaceCount =
+      await this.loadActiveOrSuspendedWorkspace();
 
-    if (!coreWorkspaceSchemaExists) {
-      this.logger.log(
-        'core.workspace does not exist. Running migrations for fresh installation.',
-      );
-
-      return true;
-    }
-
-    this.logger.log('Not a first installation, checking workspace versions...');
-
-    return await this.areAllWorkspacesAboveVersion0_53();
+    return activeWorkspaceOrSuspendedWorkspaceCount.length === 0;
   }
 
   async runMigrations(): Promise<void> {
@@ -111,26 +105,7 @@ export class DatabaseMigrationService {
     }
   }
 
-  private async checkCoreWorkspaceExists(): Promise<boolean> {
-    try {
-      const result = await this.workspaceRepository.query(`
-        SELECT EXISTS (
-          SELECT 1 
-          FROM information_schema.tables 
-          WHERE table_schema = 'core' 
-          AND table_name = 'workspace'
-        );
-      `);
-
-      return result[0].exists;
-    } catch (error) {
-      this.logger.error('Error checking core.workspace existence:', error);
-
-      return false;
-    }
-  }
-
-  private async areAllWorkspacesAboveVersion0_53(): Promise<boolean> {
+  public async areAllWorkspacesAboveVersion0_53(): Promise<boolean> {
     try {
       const allActiveOrSuspendedWorkspaces =
         await this.loadActiveOrSuspendedWorkspace();
@@ -205,6 +180,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     // 0.54 Commands
     protected readonly fixStandardSelectFieldsPositionCommand: FixStandardSelectFieldsPositionCommand,
     protected readonly fixCreatedByDefaultValueCommand: FixCreatedByDefaultValueCommand,
+    protected readonly cleanNotFoundFilesCommand: CleanNotFoundFilesCommand,
+    protected readonly lowercaseUserAndInvitationEmailsCommand: LowercaseUserAndInvitationEmailsCommand,
+    protected readonly migrateDefaultAvatarUrlToUserWorkspaceCommand: MigrateDefaultAvatarUrlToUserWorkspaceCommand,
   ) {
     super(
       workspaceRepository,
@@ -265,7 +243,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         this.fixStandardSelectFieldsPositionCommand,
         this.fixCreatedByDefaultValueCommand,
       ],
-      afterSyncMetadata: [],
+      afterSyncMetadata: [
+        this.cleanNotFoundFilesCommand,
+        this.lowercaseUserAndInvitationEmailsCommand,
+        this.migrateDefaultAvatarUrlToUserWorkspaceCommand,
+      ],
     };
 
     this.allCommands = {
@@ -283,10 +265,21 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     passedParams: string[],
     options: ActiveOrSuspendedWorkspacesMigrationCommandOptions,
   ): Promise<void> {
-    const shouldRunMigrateAsPartOfUpgrade =
-      await this.databaseMigrationService.shouldRunMigrationsIfAllWorkspaceAreAboveVersion0_53();
+    const shouldSkipUpgradeIfFreshInstallation =
+      await this.databaseMigrationService.shouldSkipUpgradeIfFreshInstallation();
 
-    if (!shouldRunMigrateAsPartOfUpgrade) {
+    if (shouldSkipUpgradeIfFreshInstallation) {
+      this.logger.log(
+        chalk.blue('Fresh installation detected, skipping migration'),
+      );
+
+      return;
+    }
+
+    const shouldPreventFromUpgradingIfWorkspaceIsBelowVersion0_53 =
+      !(await this.databaseMigrationService.areAllWorkspacesAboveVersion0_53());
+
+    if (shouldPreventFromUpgradingIfWorkspaceIsBelowVersion0_53) {
       this.logger.log(
         chalk.red(
           'Not able to run migrate command, aborting the whole migrate-upgrade operation',
