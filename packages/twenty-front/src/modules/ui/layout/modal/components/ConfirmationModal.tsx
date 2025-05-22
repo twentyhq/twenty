@@ -119,7 +119,7 @@ export const ConfirmationModal = ({
           isClosable={true}
           padding="large"
           modalVariant={modalVariant}
-          className="confirmation-modal"
+          data-globally-prevent-click-outside
         >
           <StyledCenteredTitle>
             <H1Title title={title} fontColor={H1TitleFontColor.Primary} />
