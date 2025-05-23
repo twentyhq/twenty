@@ -150,8 +150,9 @@ export class PersistedQueryNotSupportedError extends BaseGraphQLError {
 }
 
 export class UserInputError extends BaseGraphQLError {
-  constructor(message: string) {
-    super(message, ErrorCode.BAD_USER_INPUT);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  constructor(message: string, extensions?: Record<string, any>) {
+    super(message, ErrorCode.BAD_USER_INPUT, extensions);
 
     Object.defineProperty(this, 'name', { value: 'UserInputError' });
   }

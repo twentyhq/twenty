@@ -23,7 +23,7 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const query = gql`
-  mutation UpdateOnePerson($idToUpdate: ID!, $input: PersonUpdateInput!) {
+  mutation UpdateOnePerson($idToUpdate: UUID!, $input: PersonUpdateInput!) {
     updatePerson(id: $idToUpdate, data: $input) {
       ${PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS}
     }

@@ -13,7 +13,7 @@ export const restoreOneOperationFactory = ({
   recordId,
 }: RestoreOneOperationFactoryParams) => ({
   query: gql`
-    mutation Restore${capitalize(objectMetadataSingularName)}($${objectMetadataSingularName}Id: ID!) {
+    mutation Restore${capitalize(objectMetadataSingularName)}($${objectMetadataSingularName}Id: UUID!) {
       restore${capitalize(objectMetadataSingularName)}(id: $${objectMetadataSingularName}Id) {
         ${gqlFields}
       }
