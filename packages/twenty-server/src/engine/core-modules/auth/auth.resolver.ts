@@ -53,6 +53,7 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { GetLoginTokenFromCredentialsInput } from './dto/get-login-token-from-credentials.input';
@@ -75,6 +76,8 @@ export class AuthResolver {
   constructor(
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
+    @InjectRepository(AppToken, 'core')
+    private readonly appTokenRepository: Repository<AppToken>,
     private authService: AuthService,
     private renewTokenService: RenewTokenService,
     private userService: UserService,
@@ -168,21 +171,24 @@ export class AuthResolver {
     getLoginTokenFromEmailVerificationTokenInput: GetLoginTokenFromEmailVerificationTokenInput,
     @Args('origin') origin: string,
   ) {
-    const user =
+    const appToken =
       await this.emailVerificationTokenService.validateEmailVerificationTokenOrThrow(
-        getLoginTokenFromEmailVerificationTokenInput.emailVerificationToken,
+        getLoginTokenFromEmailVerificationTokenInput,
       );
 
     const workspace =
       (await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,
       )) ??
-      (await this.userWorkspaceService.findFirstWorkspaceByUserId(user.id));
+      (await this.userWorkspaceService.findFirstWorkspaceByUserId(
+        appToken.user.id,
+      ));
 
-    await this.userService.markEmailAsVerified(user.id);
+    await this.userService.markEmailAsVerified(appToken.user.id);
+    await this.appTokenRepository.remove(appToken);
 
     const loginToken = await this.loginTokenService.generateLoginToken(
-      user.email,
+      appToken.user.email,
       workspace.id,
     );
 
