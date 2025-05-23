@@ -181,9 +181,7 @@ export const PrimaryLinkOnly: Story = {
     const addButton = await canvas.findByText('Add URL');
     expect(addButton).toBeVisible();
 
-    await waitFor(() => {
-      expect(getPrimaryLinkBookmarkIcon(canvasElement)).toBeVisible();
-    });
+    expect(getPrimaryLinkBookmarkIcon(canvasElement)).not.toBeInTheDocument();
   },
 };
 
@@ -251,9 +249,7 @@ export const CreatePrimaryLink: Story = {
     });
     expect(updateRecord).toHaveBeenCalledTimes(1);
 
-    await waitFor(() => {
-      expect(getPrimaryLinkBookmarkIcon(canvasElement)).toBeVisible();
-    });
+    expect(getPrimaryLinkBookmarkIcon(canvasElement)).not.toBeInTheDocument();
   },
 };
 
@@ -271,9 +267,7 @@ export const AddSecondaryLink: Story = {
     const primaryLink = await canvas.findByText('Twenty Website');
     expect(primaryLink).toBeVisible();
 
-    await waitFor(() => {
-      expect(getPrimaryLinkBookmarkIcon(canvasElement)).toBeVisible();
-    });
+    expect(getPrimaryLinkBookmarkIcon(canvasElement)).not.toBeInTheDocument();
 
     const addButton = await canvas.findByText('Add URL');
     await userEvent.click(addButton);
@@ -321,9 +315,7 @@ export const DeletePrimaryLink: Story = {
     const listItemToDelete = await canvas.findByText('Twenty Website');
     expect(listItemToDelete).toBeVisible();
 
-    await waitFor(() => {
-      expect(getPrimaryLinkBookmarkIcon(canvasElement)).toBeVisible();
-    });
+    expect(getPrimaryLinkBookmarkIcon(canvasElement)).not.toBeInTheDocument();
 
     const openDropdownButton = await canvas.findByRole('button', {
       expanded: false,
@@ -395,9 +387,7 @@ export const DeletePrimaryLinkAndUseSecondaryLinkAsTheNewPrimaryLink: Story = {
     const oldPrimaryLink = canvas.queryByText('Twenty Website');
     expect(oldPrimaryLink).not.toBeInTheDocument();
 
-    await waitFor(() => {
-      expect(getPrimaryLinkBookmarkIcon(canvasElement)).toBeVisible();
-    });
+    expect(getPrimaryLinkBookmarkIcon(canvasElement)).not.toBeInTheDocument();
 
     await waitFor(() => {
       expect(updateRecord).toHaveBeenCalledWith({
@@ -455,9 +445,7 @@ export const DeleteSecondaryLink: Story = {
     const secondaryLink = canvas.queryByText('Documentation');
     expect(secondaryLink).not.toBeInTheDocument();
 
-    await waitFor(() => {
-      expect(getPrimaryLinkBookmarkIcon(canvasElement)).toBeVisible();
-    });
+    expect(getPrimaryLinkBookmarkIcon(canvasElement)).not.toBeInTheDocument();
 
     await waitFor(() => {
       expect(updateRecord).toHaveBeenCalledWith({
@@ -614,9 +602,7 @@ export const CanNotSetPrimaryLinkAsPrimaryLink: Story = {
     const primaryLink = await canvas.findByText('Twenty Website');
     expect(primaryLink).toBeVisible();
 
-    await waitFor(() => {
-      expect(getPrimaryLinkBookmarkIcon(canvasElement)).toBeVisible();
-    });
+    expect(getPrimaryLinkBookmarkIcon(canvasElement)).not.toBeInTheDocument();
 
     const openDropdownButton = await canvas.findByRole('button', {
       expanded: false,
