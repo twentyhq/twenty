@@ -16,7 +16,6 @@ import { GmailHandleErrorService } from 'src/modules/messaging/message-import-ma
 import { computeGmailCategoryExcludeSearchFilter } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-category-excude-search-filter.util';
 import { computeGmailCategoryLabelId } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-category-label-id.util';
 import {
-  GetEmptyMailboxResponse,
   GetFullMessageListResponse,
   GetPartialMessageListResponse,
 } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
@@ -35,14 +34,13 @@ export class GmailGetMessageListService {
       ConnectedAccountWorkspaceEntity,
       'provider' | 'refreshToken' | 'id' | 'handle'
     >,
-  ): Promise<GetFullMessageListResponse | GetEmptyMailboxResponse> {
+  ): Promise<GetFullMessageListResponse> {
     const gmailClient =
       await this.gmailClientProvider.getGmailClient(connectedAccount);
 
     let pageToken: string | undefined;
     let hasMoreMessages = true;
-    let firstMessageExternalId: string | null | undefined;
-    let isFirstIteration = true;
+
     const messageExternalIds: string[] = [];
 
     while (hasMoreMessages) {
@@ -69,14 +67,6 @@ export class GmailGetMessageListService {
       const { messages } = messageList.data;
       const hasMessages = messages && messages.length > 0;
 
-      if (isFirstIteration) {
-        if (!hasMessages) {
-          return { isEmptyMailbox: true };
-        }
-        firstMessageExternalId = messages[0]?.id;
-        isFirstIteration = false;
-      }
-
       if (!hasMessages) {
         break;
       }
@@ -88,11 +78,13 @@ export class GmailGetMessageListService {
       messageExternalIds.push(...messages.map((message) => message.id));
     }
 
+    const firstMessageExternalId = messageExternalIds[0];
+
     if (!isDefined(firstMessageExternalId)) {
-      throw new MessageImportDriverException(
-        `No firstMessageExternalId found for connected account ${connectedAccount.id}`,
-        MessageImportDriverExceptionCode.UNKNOWN,
-      );
+      return {
+        messageExternalIds,
+        nextSyncCursor: '',
+      };
     }
 
     const firstMessageContent = await gmailClient.users.messages
@@ -116,7 +108,7 @@ export class GmailGetMessageListService {
       );
     }
 
-    return { messageExternalIds, nextSyncCursor, isEmptyMailbox: false };
+    return { messageExternalIds, nextSyncCursor };
   }
 
   public async getPartialMessageList(

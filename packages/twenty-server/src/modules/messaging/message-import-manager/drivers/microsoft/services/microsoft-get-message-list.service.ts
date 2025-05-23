@@ -105,7 +105,6 @@ export class MicrosoftGetMessageListService {
     return {
       messageExternalIds: messageExternalIds,
       nextSyncCursor: pageIterator.getDeltaLink() || '',
-      isEmptyMailbox: false,
     };
   }
 

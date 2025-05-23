@@ -13,12 +13,7 @@ import {
 } from 'src/modules/messaging/message-import-manager/exceptions/message-import.exception';
 import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
 
-export type GetEmptyMailboxResponse = {
-  isEmptyMailbox: true;
-};
-
 export type GetFullMessageListResponse = {
-  isEmptyMailbox: false;
   messageExternalIds: string[];
   nextSyncCursor: string;
 };
@@ -58,10 +53,6 @@ export class MessagingGetMessageListService {
           await this.gmailGetMessageListService.getFullMessageList(
             messageChannel.connectedAccount,
           );
-
-        if (fullMessageList.isEmptyMailbox) {
-          return [];
-        }
 
         return [
           {
