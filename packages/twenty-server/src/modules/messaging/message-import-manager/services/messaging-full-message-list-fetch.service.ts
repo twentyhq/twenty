@@ -43,7 +43,7 @@ export class MessagingFullMessageListFetchService {
           messageChannel,
         );
 
-      const isEmptyMailbox = fullMessageLists.every(
+      const isEmptyMailbox = fullMessageLists.some(
         (fullMessageList) => fullMessageList.messageExternalIds.length === 0,
       );
 

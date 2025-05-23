@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { gmail_v1 as gmailV1 } from 'googleapis';
-import { isDefined } from 'twenty-shared/utils';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
@@ -78,15 +77,14 @@ export class GmailGetMessageListService {
       messageExternalIds.push(...messages.map((message) => message.id));
     }
 
-    const firstMessageExternalId = messageExternalIds[0];
-
-    if (!isDefined(firstMessageExternalId)) {
+    if (messageExternalIds.length === 0) {
       return {
         messageExternalIds,
         nextSyncCursor: '',
       };
     }
 
+    const firstMessageExternalId = messageExternalIds[0];
     const firstMessageContent = await gmailClient.users.messages
       .get({
         userId: 'me',
