@@ -1235,6 +1235,7 @@ export type MutationGenerateApiKeyTokenArgs = {
 
 export type MutationGetAuthTokensFromLoginTokenArgs = {
   loginToken: Scalars['String']['input'];
+  origin: Scalars['String']['input'];
 };
 
 
@@ -1246,6 +1247,7 @@ export type MutationGetAuthorizationUrlForSsoArgs = {
 export type MutationGetLoginTokenFromCredentialsArgs = {
   captchaToken?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
+  origin: Scalars['String']['input'];
   password: Scalars['String']['input'];
 };
 
@@ -1253,6 +1255,7 @@ export type MutationGetLoginTokenFromCredentialsArgs = {
 export type MutationGetLoginTokenFromEmailVerificationTokenArgs = {
   captchaToken?: InputMaybe<Scalars['String']['input']>;
   emailVerificationToken: Scalars['String']['input'];
+  origin: Scalars['String']['input'];
 };
 
 
@@ -1274,6 +1277,7 @@ export type MutationRenewTokenArgs = {
 
 export type MutationResendEmailVerificationTokenArgs = {
   email: Scalars['String']['input'];
+  origin: Scalars['String']['input'];
 };
 
 
@@ -1758,6 +1762,11 @@ export type QueryGetDatabaseConfigVariableArgs = {
 
 export type QueryGetIndicatorHealthStatusArgs = {
   indicatorId: HealthIndicatorId;
+};
+
+
+export type QueryGetPublicWorkspaceDataByDomainArgs = {
+  origin: Scalars['String']['input'];
 };
 
 
