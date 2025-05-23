@@ -24,7 +24,7 @@ export const useHandleResendEmailVerificationToken = () => {
 
         try {
           const { data } = await resendEmailVerificationToken({
-            variables: { 
+            variables: {
               email,
               origin,
             },

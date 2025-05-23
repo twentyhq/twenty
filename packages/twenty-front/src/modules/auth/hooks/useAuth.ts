@@ -339,7 +339,7 @@ export const useAuth = () => {
   const handleGetAuthTokensFromLoginToken = useCallback(
     async (loginToken: string) => {
       const getAuthTokensResult = await getAuthTokensFromLoginToken({
-        variables: { 
+        variables: {
           loginToken,
           origin,
         },
