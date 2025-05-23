@@ -170,7 +170,9 @@ export const TitleInput = ({
           onClick={() => {
             if (!disabled) {
               setIsOpened(true);
-              setHotkeyScopeAndMemorizePreviousScope(hotkeyScope);
+              setHotkeyScopeAndMemorizePreviousScope({
+                scope: hotkeyScope,
+              });
             }
           }}
         >

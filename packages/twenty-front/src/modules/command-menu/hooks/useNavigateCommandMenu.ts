@@ -27,9 +27,7 @@ export type CommandMenuNavigationStackItem = {
 };
 
 export const useNavigateCommandMenu = () => {
-  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope(
-    COMMAND_MENU_COMPONENT_INSTANCE_ID,
-  );
+  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
 
   const { copyContextStoreStates } = useCopyContextStoreStates();
 
@@ -55,12 +53,13 @@ export const useNavigateCommandMenu = () => {
           return;
         }
 
-        setHotkeyScopeAndMemorizePreviousScope(
-          CommandMenuHotkeyScope.CommandMenuFocused,
-          {
+        setHotkeyScopeAndMemorizePreviousScope({
+          scope: CommandMenuHotkeyScope.CommandMenuFocused,
+          customScopes: {
             commandMenuOpen: true,
           },
-        );
+          memoizeKey: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+        });
 
         copyContextStoreStates({
           instanceIdToCopyFrom: MAIN_CONTEXT_STORE_INSTANCE_ID,

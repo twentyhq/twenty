@@ -4,10 +4,10 @@ import { useRecoilState } from 'recoil';
 
 import { pendingHotkeyState } from '../states/internal/pendingHotkeysState';
 
-import { useScopedHotkeyCallback } from './useScopedHotkeyCallback';
+import { useGlobalHotkeysCallback } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeysCallback';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useSequenceHotkeys = (
+export const useGlobalHotkeysSequence = (
   firstKey: Keys,
   secondKey: Keys,
   sequenceCallback: () => void,
@@ -21,14 +21,15 @@ export const useSequenceHotkeys = (
 ) => {
   const [pendingHotkey, setPendingHotkey] = useRecoilState(pendingHotkeyState);
 
-  const callScopedHotkeyCallback = useScopedHotkeyCallback();
+  const callGlobalHotkeysCallback = useGlobalHotkeysCallback();
 
   useHotkeys(
     firstKey,
     (keyboardEvent, hotkeysEvent) => {
-      callScopedHotkeyCallback({
+      callGlobalHotkeysCallback({
         keyboardEvent,
         hotkeysEvent,
+        containsModifier: false,
         callback: () => {
           setPendingHotkey(firstKey);
         },
@@ -46,9 +47,10 @@ export const useSequenceHotkeys = (
   useHotkeys(
     secondKey,
     (keyboardEvent, hotkeysEvent) => {
-      callScopedHotkeyCallback({
+      callGlobalHotkeysCallback({
         keyboardEvent,
         hotkeysEvent,
+        containsModifier: false,
         callback: () => {
           if (pendingHotkey !== firstKey) {
             return;

@@ -22,7 +22,8 @@ export const RecordTableCellDisplayMode = ({
     onActionMenuDropdownOpened(event, recordId);
   };
 
-  const handleClick = () => {
+  const handleClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
     if (!isFieldInputOnly && !isReadOnly) {
       openTableCell();
     }

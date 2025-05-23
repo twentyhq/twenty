@@ -1,13 +1,13 @@
 import { GoToHotkeyItemEffect } from '@/app/effect-components/GoToHotkeyItemEffect';
-import { useNonSystemActiveObjectMetadataItems } from '@/object-metadata/hooks/useNonSystemActiveObjectMetadataItems';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { useGoToHotkeys } from '@/ui/utilities/hotkey/hooks/useGoToHotkeys';
 import { useRecoilCallback } from 'recoil';
 
 export const GotoHotkeysEffectsProvider = () => {
-  const { nonSystemActiveObjectMetadataItems } =
-    useNonSystemActiveObjectMetadataItems();
+  const { activeNonSystemObjectMetadataItems } =
+    useFilteredObjectMetadataItems();
 
   useGoToHotkeys({
     key: 's',
@@ -22,7 +22,7 @@ export const GotoHotkeysEffectsProvider = () => {
     ),
   });
 
-  return nonSystemActiveObjectMetadataItems.map((objectMetadataItem) => {
+  return activeNonSystemObjectMetadataItems.map((objectMetadataItem) => {
     if (!objectMetadataItem.shortcut) {
       return null;
     }

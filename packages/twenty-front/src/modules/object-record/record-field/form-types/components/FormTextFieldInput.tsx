@@ -15,7 +15,7 @@ type FormTextFieldInputProps = {
   label?: string;
   error?: string;
   hint?: string;
-  defaultValue: string | undefined;
+  defaultValue: string | undefined | null;
   onChange: (value: string) => void;
   onBlur?: () => void;
   multiline?: boolean;

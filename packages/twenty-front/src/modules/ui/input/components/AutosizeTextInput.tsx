@@ -7,9 +7,9 @@ import { Key } from 'ts-key-enum';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
-import { InputHotkeyScope } from '../types/InputHotkeyScope';
-import { Button, RoundedIconButton } from 'twenty-ui/input';
 import { IconArrowRight } from 'twenty-ui/display';
+import { Button, RoundedIconButton } from 'twenty-ui/input';
+import { InputHotkeyScope } from '../types/InputHotkeyScope';
 
 const MAX_ROWS = 5;
 
@@ -197,7 +197,9 @@ export const AutosizeTextInput = ({
   const handleFocus = () => {
     onFocus?.();
     setIsFocused(true);
-    setHotkeyScopeAndMemorizePreviousScope(InputHotkeyScope.TextInput);
+    setHotkeyScopeAndMemorizePreviousScope({
+      scope: InputHotkeyScope.TextInput,
+    });
   };
 
   const handleBlur = () => {

@@ -7,7 +7,6 @@ import {
   AutomatedTriggerType,
   WorkflowAutomatedTriggerWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
-import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
 
 @Injectable()
 export class AutomatedTriggerWorkspaceService {
@@ -24,26 +23,6 @@ export class AutomatedTriggerWorkspaceService {
     type: AutomatedTriggerType;
     settings: AutomatedTriggerSettings;
   }) {
-    if (type === AutomatedTriggerType.DATABASE_EVENT) {
-      // Todo: remove workflowEventListenerRepository updates when data are migrated to workflowAutomatedTrigger
-      const workflowEventListenerRepository =
-        await this.twentyORMManager.getRepository<WorkflowEventListenerWorkspaceEntity>(
-          'workflowEventListener',
-        );
-
-      const workflowEventListener = workflowEventListenerRepository.create({
-        workflowId,
-        eventName: settings.eventName,
-      });
-
-      await workflowEventListenerRepository.save(
-        workflowEventListener,
-        {},
-        manager,
-      );
-      // end-Todo
-    }
-
     const workflowAutomatedTriggerRepository =
       await this.twentyORMManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
         'workflowAutomatedTrigger',
@@ -69,20 +48,6 @@ export class AutomatedTriggerWorkspaceService {
     workflowId: string;
     manager: WorkspaceEntityManager;
   }) {
-    // Todo: remove workflowEventListenerRepository updates when data are migrated to workflowAutomatedTrigger
-    const workflowEventListenerRepository =
-      await this.twentyORMManager.getRepository<WorkflowEventListenerWorkspaceEntity>(
-        'workflowEventListener',
-      );
-
-    await workflowEventListenerRepository.delete(
-      {
-        workflowId,
-      },
-      manager,
-    );
-    // end-Todo
-
     const workflowAutomatedTriggerRepository =
       await this.twentyORMManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
         'workflowAutomatedTrigger',

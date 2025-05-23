@@ -12,15 +12,17 @@ import { v4 as uuidV4, v4 } from 'uuid';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { settings } from 'src/engine/constants/settings';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
+import {
+  FieldMetadataComplexOption,
+  FieldMetadataDefaultOption,
+} from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import {
   RelationDefinitionDTO,
   RelationDefinitionType,
@@ -30,6 +32,7 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { FieldMetadataEnumValidationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service';
 import { FieldMetadataRelatedRecordsService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-related-records.service';
 import { assertDoesNotNullifyDefaultValueForNonNullableField } from 'src/engine/metadata-modules/field-metadata/utils/assert-does-not-nullify-default-value-for-non-nullable-field.util';
 import { checkCanDeactivateFieldOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/check-can-deactivate-field-or-throw';
@@ -47,7 +50,6 @@ import {
   RelationMetadataType,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
-import { exceedsDatabaseIdentifierMaximumLength } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 import { validateNameAndLabelAreSyncOrThrow } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
@@ -66,13 +68,21 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { ViewService } from 'src/modules/view/services/view.service';
+import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'src/utils/trim-and-remove-duplicated-whitespaces-from-object-string-properties';
 
 import { FieldMetadataValidationService } from './field-metadata-validation.service';
 import { FieldMetadataEntity } from './field-metadata.entity';
 
 import { generateDefaultValue } from './utils/generate-default-value';
 import { generateRatingOptions } from './utils/generate-rating-optionts.util';
-import { isEnumFieldMetadataType } from './utils/is-enum-field-metadata-type.util';
+
+type ValidateFieldMetadataArgs<T extends UpdateFieldInput | CreateFieldInput> =
+  {
+    fieldMetadataType: FieldMetadataType;
+    fieldMetadataInput: T;
+    objectMetadata: ObjectMetadataEntity;
+    existingFieldMetadata?: FieldMetadataEntity;
+  };
 
 @Injectable()
 export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntity> {
@@ -88,8 +98,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
-    private readonly dataSourceService: DataSourceService,
-    private readonly typeORMService: TypeORMService,
+    private readonly fieldMetadataEnumValidationService: FieldMetadataEnumValidationService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly fieldMetadataValidationService: FieldMetadataValidationService,
@@ -104,7 +113,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   ): Promise<FieldMetadataEntity> {
     const [createdFieldMetadata] = await this.createMany([fieldMetadataInput]);
 
-    if (!createdFieldMetadata) {
+    if (!isDefined(createdFieldMetadata)) {
       throw new FieldMetadataException(
         'Failed to create field metadata',
         FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
@@ -136,7 +145,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         },
       });
 
-      if (!existingFieldMetadata) {
+      if (!isDefined(existingFieldMetadata)) {
         throw new FieldMetadataException(
           'Field does not exist',
           FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
@@ -152,14 +161,14 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         order: {},
       });
 
-      if (!objectMetadata) {
+      if (!isDefined(objectMetadata)) {
         throw new FieldMetadataException(
           'Object metadata does not exist',
           FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
         );
       }
 
-      if (!objectMetadata.labelIdentifierFieldMetadataId) {
+      if (!isDefined(objectMetadata.labelIdentifierFieldMetadataId)) {
         throw new FieldMetadataException(
           'Label identifier field metadata id does not exist',
           FieldMetadataExceptionCode.LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND,
@@ -190,17 +199,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         });
       }
 
-      if (fieldMetadataInput.options) {
-        for (const option of fieldMetadataInput.options) {
-          if (!option.id) {
-            throw new FieldMetadataException(
-              'Option id is required',
-              FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-            );
-          }
-        }
-      }
-
       const updatableFieldInput =
         existingFieldMetadata.isCustom === false
           ? this.buildUpdatableStandardFieldInput(
@@ -209,19 +207,26 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             )
           : fieldMetadataInput;
 
+      const optionsForUpdate = isDefined(fieldMetadataInput.options)
+        ? this.prepareCustomFieldMetadataOptions(fieldMetadataInput.options)
+        : undefined;
+      const defaultValueForUpdate =
+        updatableFieldInput.defaultValue !== undefined
+          ? updatableFieldInput.defaultValue
+          : existingFieldMetadata.defaultValue;
+
       const fieldMetadataForUpdate = {
         ...updatableFieldInput,
-        defaultValue:
-          updatableFieldInput.defaultValue !== undefined
-            ? updatableFieldInput.defaultValue
-            : existingFieldMetadata.defaultValue,
+        defaultValue: defaultValueForUpdate,
+        ...optionsForUpdate,
       };
 
-      await this.validateFieldMetadata<UpdateFieldInput>(
-        existingFieldMetadata.type,
-        fieldMetadataForUpdate,
+      await this.validateFieldMetadata({
+        fieldMetadataType: existingFieldMetadata.type,
+        existingFieldMetadata,
+        fieldMetadataInput: fieldMetadataForUpdate,
         objectMetadata,
-      );
+      });
 
       const isLabelSyncedWithName =
         fieldMetadataForUpdate.isLabelSyncedWithName ??
@@ -241,7 +246,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         where: { id },
       });
 
-      if (!updatedFieldMetadata) {
+      if (!isDefined(updatedFieldMetadata)) {
         throw new FieldMetadataException(
           'Field does not exist',
           FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
@@ -605,11 +610,12 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
   private async validateFieldMetadata<
     T extends UpdateFieldInput | CreateFieldInput,
-  >(
-    fieldMetadataType: FieldMetadataType,
-    fieldMetadataInput: T,
-    objectMetadata: ObjectMetadataEntity,
-  ): Promise<T> {
+  >({
+    fieldMetadataInput,
+    fieldMetadataType,
+    objectMetadata,
+    existingFieldMetadata,
+  }: ValidateFieldMetadataArgs<T>): Promise<T> {
     if (fieldMetadataInput.name) {
       try {
         validateMetadataNameOrThrow(fieldMetadataInput.name);
@@ -650,23 +656,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       }
     }
 
-    if (fieldMetadataInput.options) {
-      for (const option of fieldMetadataInput.options) {
-        if (exceedsDatabaseIdentifierMaximumLength(option.value)) {
-          throw new FieldMetadataException(
-            `Option value "${option.value}" exceeds 63 characters`,
-            FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-          );
-        }
-      }
-      if (isDefined(fieldMetadataInput.defaultValue)) {
-        await this.fieldMetadataValidationService.validateDefaultValueOrThrow({
-          fieldType: fieldMetadataType,
-          options: fieldMetadataInput.options,
-          defaultValue: fieldMetadataInput.defaultValue ?? null,
-        });
-      }
-    }
+    await this.fieldMetadataEnumValidationService.validateEnumFieldMetadataInput(
+      {
+        fieldMetadataInput,
+        fieldMetadataType,
+        existingFieldMetadata,
+      },
+    );
 
     if (fieldMetadataInput.settings) {
       await this.fieldMetadataValidationService.validateSettingsOrThrow({
@@ -716,7 +712,28 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     return translatedMessage;
   }
 
+  private prepareCustomFieldMetadataOptions(
+    options: FieldMetadataDefaultOption[] | FieldMetadataComplexOption[],
+  ): undefined | Pick<FieldMetadataEntity, 'options'> {
+    return {
+      options: options.map((option) => ({
+        id: uuidV4(),
+        ...trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
+          option,
+          ['label', 'value', 'id'],
+        ),
+      })),
+    };
+  }
+
   private prepareCustomFieldMetadata(fieldMetadataInput: CreateFieldInput) {
+    const options = fieldMetadataInput.options
+      ? this.prepareCustomFieldMetadataOptions(fieldMetadataInput.options)
+      : undefined;
+    const defaultValue =
+      fieldMetadataInput.defaultValue ??
+      generateDefaultValue(fieldMetadataInput.type);
+
     return {
       id: v4(),
       createdAt: new Date(),
@@ -727,15 +744,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         fieldMetadataInput.isNullable,
         fieldMetadataInput.isRemoteCreation,
       ),
-      defaultValue:
-        fieldMetadataInput.defaultValue ??
-        generateDefaultValue(fieldMetadataInput.type),
-      options: fieldMetadataInput.options
-        ? fieldMetadataInput.options.map((option) => ({
-            ...option,
-            id: uuidV4(),
-          }))
-        : undefined,
+      defaultValue,
+      ...options,
       isActive: true,
       isCustom: true,
     };
@@ -766,18 +776,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       assertMutationNotOnRemoteObject(objectMetadata);
     }
 
-    if (isEnumFieldMetadataType(fieldMetadataInput.type)) {
-      if (
-        !fieldMetadataInput.options &&
-        fieldMetadataInput.type !== FieldMetadataType.RATING
-      ) {
-        throw new FieldMetadataException(
-          'Options are required for enum fields',
-          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        );
-      }
-    }
-
     if (fieldMetadataInput.type === FieldMetadataType.RATING) {
       fieldMetadataInput.options = generateRatingOptions();
     }
@@ -785,11 +783,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     const fieldMetadataForCreate =
       this.prepareCustomFieldMetadata(fieldMetadataInput);
 
-    await this.validateFieldMetadata<CreateFieldInput>(
-      fieldMetadataForCreate.type,
-      fieldMetadataForCreate,
+    await this.validateFieldMetadata({
+      fieldMetadataType: fieldMetadataForCreate.type,
+      fieldMetadataInput: fieldMetadataForCreate,
       objectMetadata,
-    );
+    });
 
     if (fieldMetadataForCreate.isLabelSyncedWithName === true) {
       validateNameAndLabelAreSyncOrThrow(
@@ -862,7 +860,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       for (const objectMetadataId of objectMetadataIds) {
         const objectMetadata = objectMetadataMap[objectMetadataId];
 
-        if (!objectMetadata) {
+        if (!isDefined(objectMetadata)) {
           throw new FieldMetadataException(
             'Object metadata does not exist',
             FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
@@ -887,7 +885,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             fieldMetadataInput.isRemoteCreation ?? false,
           );
 
-          if (migrationAction) {
+          if (isDefined(migrationAction)) {
             migrationActions.push(migrationAction);
           }
         }

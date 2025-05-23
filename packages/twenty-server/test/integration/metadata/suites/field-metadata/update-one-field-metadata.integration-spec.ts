@@ -118,7 +118,9 @@ describe('updateOne', () => {
   });
 
   describe('FieldMetadataService Enum Default Value Validation', () => {
-    it('should throw an error if the default value is not in the options', async () => {
+    let createdObjectMetadataId: string;
+
+    beforeEach(async () => {
       const { data: listingObjectMetadata } = await createOneObjectMetadata({
         input: {
           labelSingular: LISTING_NAME_SINGULAR,
@@ -130,9 +132,19 @@ describe('updateOne', () => {
         },
       });
 
+      createdObjectMetadataId = listingObjectMetadata.createOneObject.id;
+    });
+
+    afterEach(async () => {
+      await deleteOneObjectMetadata({
+        input: { idToDelete: createdObjectMetadataId },
+      });
+    });
+
+    it('should throw an error if the default value is not in the options', async () => {
       const { data: createdFieldMetadata } = await createOneFieldMetadata({
         input: {
-          objectMetadataId: listingObjectMetadata.createOneObject.id,
+          objectMetadataId: createdObjectMetadataId,
           type: FieldMetadataType.SELECT,
           name: 'testName',
           label: 'Test name',
@@ -140,7 +152,7 @@ describe('updateOne', () => {
           options: [
             {
               label: 'Option 1',
-              value: 'option1',
+              value: 'OPTION_1',
               color: 'green',
               position: 1,
             },
@@ -152,7 +164,7 @@ describe('updateOne', () => {
         input: {
           idToUpdate: createdFieldMetadata.createOneField.id,
           updatePayload: {
-            defaultValue: 'option2',
+            defaultValue: 'OPTION_2',
           },
         },
         gqlFields: `
@@ -164,11 +176,16 @@ describe('updateOne', () => {
         expectToFail: true,
       });
 
-      expect(errors[0].message).toBe('Invalid default value "option2"');
-
-      await deleteOneObjectMetadata({
-        input: { idToDelete: listingObjectMetadata.createOneObject.id },
-      });
+      expect(errors).toMatchInlineSnapshot(`
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Default value for existing options is invalid: OPTION_2",
+  },
+]
+`);
     });
   });
 });
