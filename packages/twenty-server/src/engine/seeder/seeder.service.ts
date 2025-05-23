@@ -23,41 +23,16 @@ export class SeederService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
-  public async seedCustomObjects(
-    dataSourceId: string,
+  public async seedCustomObjectRecords(
     workspaceId: string,
     objectMetadataSeed: ObjectMetadataSeed,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     objectRecordSeeds: Record<string, any>[],
-  ): Promise<void> {
-    const createdObjectMetadata = await this.objectMetadataService.createOne({
-      ...objectMetadataSeed,
-      dataSourceId,
+  ) {
+    const { fieldMetadataSeeds, objectMetadata } = await this.getSeedMetadata(
       workspaceId,
-    });
-
-    if (!createdObjectMetadata) {
-      throw new Error("Object metadata couldn't be created");
-    }
-
-    await this.fieldMetadataService.createMany(
-      objectMetadataSeed.fields.map((fieldMetadataSeed) => ({
-        ...fieldMetadataSeed,
-        objectMetadataId: createdObjectMetadata.id,
-        workspaceId,
-      })),
+      objectMetadataSeed,
     );
-
-    const objectMetadataAfterFieldCreation =
-      await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
-        where: { nameSingular: objectMetadataSeed.nameSingular },
-      });
-
-    if (!objectMetadataAfterFieldCreation) {
-      throw new Error(
-        "Object metadata couldn't be found after field creation.",
-      );
-    }
 
     const schemaName =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
@@ -67,24 +42,11 @@ export class SeederService {
 
     const entityManager: EntityManager = mainDataSource.createEntityManager();
 
-    const filteredFieldMetadataSeeds = objectMetadataSeed.fields.filter(
-      (field) =>
-        objectMetadataAfterFieldCreation.fields.some(
-          (f) => f.name === field.name || f.name === `name`,
-        ),
-    );
-
-    if (filteredFieldMetadataSeeds.length === 0) {
-      throw new Error('No fields found for seeding, check metadata file');
-    }
-
-    this.addNameFieldToFieldMetadataSeeds(filteredFieldMetadataSeeds);
-
     const objectRecordSeedsAsSQLFlattenedSeeds = objectRecordSeeds.map(
       (recordSeed) => {
         const objectRecordSeedsAsSQLFlattenedSeeds = {};
 
-        for (const field of filteredFieldMetadataSeeds) {
+        for (const field of fieldMetadataSeeds) {
           if (isCompositeFieldMetadataType(field.type)) {
             const compositeFieldTypeDefinition = compositeTypeDefinitions.get(
               field.type,
@@ -165,13 +127,44 @@ export class SeederService {
       .createQueryBuilder()
       .insert()
       .into(
-        `${schemaName}.${computeTableName(objectMetadataAfterFieldCreation.nameSingular, true)}`,
+        `${schemaName}.${computeTableName(objectMetadata.nameSingular, true)}`,
         sqlColumnNames,
       )
       .orIgnore()
       .values(sqlValues)
       .returning('*')
       .execute();
+  }
+
+  public async seedCustomObjects(
+    dataSourceId: string,
+    workspaceId: string,
+    objectMetadataSeed: ObjectMetadataSeed,
+  ): Promise<void> {
+    const createdObjectMetadata = await this.objectMetadataService.createOne({
+      ...objectMetadataSeed,
+      dataSourceId,
+      workspaceId,
+    });
+
+    if (!createdObjectMetadata) {
+      throw new Error("Object metadata couldn't be created");
+    }
+
+    await this.fieldMetadataService.createMany(
+      objectMetadataSeed.fields.map((fieldMetadataSeed) => ({
+        ...fieldMetadataSeed,
+        objectMetadataId: createdObjectMetadata.id,
+        workspaceId,
+      })),
+    );
+
+    const { fieldMetadataSeeds } = await this.getSeedMetadata(
+      workspaceId,
+      objectMetadataSeed,
+    );
+
+    this.addNameFieldToFieldMetadataSeeds(fieldMetadataSeeds);
   }
 
   private addNameFieldToFieldMetadataSeeds(
@@ -182,6 +175,34 @@ export class SeederService {
       type: FieldMetadataType.TEXT,
       label: 'Name',
     });
+  }
+
+  private async getSeedMetadata(
+    workspaceId: string,
+    objectMetadataSeed: ObjectMetadataSeed,
+  ) {
+    const objectMetadata =
+      await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
+        where: { nameSingular: objectMetadataSeed.nameSingular },
+      });
+
+    if (!objectMetadata) {
+      throw new Error(
+        "Object metadata couldn't be found after field creation.",
+      );
+    }
+
+    const fieldMetadataSeeds = objectMetadataSeed.fields.filter((field) =>
+      objectMetadata.fields.some(
+        (f) => f.name === field.name || f.name === `name`,
+      ),
+    );
+
+    if (fieldMetadataSeeds.length === 0) {
+      throw new Error('No fields found for seeding, check metadata file');
+    }
+
+    return { fieldMetadataSeeds, objectMetadata };
   }
 
   private turnCompositeSubFieldValueAsSQLValue(
