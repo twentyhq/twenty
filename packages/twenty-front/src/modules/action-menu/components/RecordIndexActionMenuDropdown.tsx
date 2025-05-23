@@ -1,6 +1,7 @@
 import { ActionComponent } from '@/action-menu/actions/display/components/ActionComponent';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
+import { ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/action-menu/constants/ActionMenuDropdownClickOutsideId';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
@@ -81,7 +82,9 @@ export const RecordIndexActionMenuDropdown = () => {
         y: actionMenuDropdownPosition.y ?? 0,
       }}
       dropdownComponents={
-        <StyledDropdownMenuContainer className="action-menu-dropdown">
+        <StyledDropdownMenuContainer
+          data-click-outside-id={ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
+        >
           <DropdownMenuItemsContainer>
             <SelectableList
               hotkeyScope={ActionMenuDropdownHotkeyScope.ActionMenuDropdown}

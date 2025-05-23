@@ -1,5 +1,6 @@
+import { DIALOG_CLICK_OUTSIDE_ID } from '@/ui/feedback/dialog-manager/constants/DialogClickOutsideId';
 import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
-import { MODAL_CLICK_OUTSIDE_LISTENER_EXCLUDED_CLASS_NAME } from '@/ui/layout/modal/constants/ModalClickOutsideListenerExcludedClassName';
+import { MODAL_CLICK_OUTSIDE_LISTENER_EXCLUDED_ID } from '@/ui/layout/modal/constants/ModalClickOutsideListenerExcludedClassName';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { Key } from 'ts-key-enum';
@@ -45,9 +46,9 @@ export const ModalHotkeysAndClickOutsideEffect = ({
 
   useListenClickOutside({
     refs: [modalRef],
-    excludeClassNames: [
-      MODAL_CLICK_OUTSIDE_LISTENER_EXCLUDED_CLASS_NAME,
-      'dialog-manager-dialog',
+    excludedClickOutsideIds: [
+      MODAL_CLICK_OUTSIDE_LISTENER_EXCLUDED_ID,
+      DIALOG_CLICK_OUTSIDE_ID,
     ],
     listenerId: `MODAL_CLICK_OUTSIDE_LISTENER_ID_${modalId}`,
     callback: () => {

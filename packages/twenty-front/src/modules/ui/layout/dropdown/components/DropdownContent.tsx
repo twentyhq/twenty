@@ -79,7 +79,6 @@ export const DropdownContent = ({
   useListenClickOutside({
     refs: [floatingUiRefs.floating, floatingUiRefs.domReference],
     listenerId: dropdownId,
-    excludeClassNames: ['confirmation-modal'],
     callback: (event) => {
       if (activeDropdownFocusId !== dropdownId) return;
 
@@ -118,7 +117,7 @@ export const DropdownContent = ({
     maxWidth: dropdownMaxWidth,
   };
 
-  const { excludeClassName } = useContext(ClickOutsideListenerContext);
+  const { excludedClickOutsideId } = useContext(ClickOutsideListenerContext);
 
   return (
     <>
@@ -127,24 +126,23 @@ export const DropdownContent = ({
       )}
 
       <FloatingPortal>
-        <div className={excludeClassName}>
-          <StyledDropdownContentContainer
-            ref={floatingUiRefs.setFloating}
-            style={dropdownMenuStyles}
-            role="listbox"
-            id={`${dropdownId}-options`}
-          >
-            <OverlayContainer>
-              <DropdownMenu
-                id={dropdownId}
-                width={dropdownWidth}
-                data-select-disable
-              >
-                {dropdownComponents}
-              </DropdownMenu>
-            </OverlayContainer>
-          </StyledDropdownContentContainer>
-        </div>
+        <StyledDropdownContentContainer
+          ref={floatingUiRefs.setFloating}
+          style={dropdownMenuStyles}
+          role="listbox"
+          id={`${dropdownId}-options`}
+          data-click-outside-id={excludedClickOutsideId}
+        >
+          <OverlayContainer>
+            <DropdownMenu
+              id={dropdownId}
+              width={dropdownWidth}
+              data-select-disable
+            >
+              {dropdownComponents}
+            </DropdownMenu>
+          </OverlayContainer>
+        </StyledDropdownContentContainer>
       </FloatingPortal>
     </>
   );
