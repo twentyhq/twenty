@@ -29,5 +29,9 @@ export const createOneFieldMetadata = async ({
     });
   }
 
+  if (response.body.errors) {
+    console.log(response.body.errors);
+  }
+
   return { data: response.body.data, errors: response.body.errors };
 };

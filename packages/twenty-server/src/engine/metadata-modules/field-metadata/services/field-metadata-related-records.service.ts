@@ -32,7 +32,7 @@ type Tmp = {
   filteredOptionsCounter: number;
 };
 
-const MAX_OPTIONS_TO_DISPLAY = 3; // TODO mutualize;
+export const MAX_OPTIONS_TO_DISPLAY = 3; // TODO mutualize;
 
 export type SelectFieldMetadataEntity =
   FieldMetadataEntity<FieldMetadataType.SELECT>;
@@ -135,7 +135,7 @@ export class FieldMetadataRelatedRecordsService {
     if (viewFilterDisplayValues.length === 0) {
       return updatedOption.map((option) => option.new.label).join(', ');
     }
-    
+
     const remainingViewFilterDisplayValue = viewFilterDisplayValues.filter(
       (viewFilterOptionLabel) => {
         !deletedOption.find((option) => option.label === viewFilterOptionLabel);
@@ -244,7 +244,7 @@ export class FieldMetadataRelatedRecordsService {
           );
         } catch (error) {
           // TODO
-          console.error(error);
+          throw error;
         }
       }
     }

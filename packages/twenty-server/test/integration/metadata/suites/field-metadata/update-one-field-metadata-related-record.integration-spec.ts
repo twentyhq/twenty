@@ -8,19 +8,17 @@ import { createOneOperation } from 'test/integration/graphql/utils/create-one-op
 import { findOneOperation } from 'test/integration/graphql/utils/find-one-operation.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
 import { getMockCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/generate-mock-create-object-metadata-input';
 import { EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
-
-// faker.seed(42);
 
 type Option = FieldMetadataDefaultOption | FieldMetadataComplexOption;
 
 const generateOption = (index: number): Option => ({
   label: `Option ${index}`,
-  value: `option${index}`,
+  value: `OPTION_${index}`,
   color: 'green',
   position: index,
 });
@@ -44,7 +42,7 @@ describe('updateOne', () => {
       const plural = singular + faker.lorem.word();
       const {
         data: { createOneObject },
-      } = await createOneObjectMetadata({
+      } = await forceCreateOneObjectMetadata({
         input: getMockCreateObjectInput({
           labelSingular: singular,
           labelPlural: plural,
@@ -52,17 +50,16 @@ describe('updateOne', () => {
           namePlural: plural.split(' ').join(''),
           isLabelSyncedWithName: false,
         }),
-        gqlFields: `
-          id
-          nameSingular
-        `,
+        // gqlFields: `
+        //   id
+        //   nameSingular
+        // `,
       });
 
       idToDelete = createOneObject.id;
 
       const {
         data: { createOneField },
-        errors,
       } = await createOneFieldMetadata({
         input: {
           objectMetadataId: createOneObject.id,
@@ -77,8 +74,6 @@ describe('updateOne', () => {
         options
         `,
       });
-
-      console.log({ errors });
 
       const {
         data: { createOneResponse: createOneView },
@@ -108,7 +103,7 @@ describe('updateOne', () => {
 
     type ViewFilterUpdate = {
       displayValue: string;
-      value: string;
+      value: string[];
     };
     const testCases: EachTestingContext<{
       fieldMetadataOptions: Option[];
@@ -118,40 +113,42 @@ describe('updateOne', () => {
       ) => Option[];
       expected?: null;
     }>[] = [
-      // {
-      //   title:
-      //     'should delete related view filter if all select field options got deleted',
-      //   context: {
-      //     initial: ALL_OPTIONS,
-      //     updateOptions: () => {
-      //       const withId = true;
-      //       return generateOptions(3, withId);
-      //     },
-      //     expected: null,
-      //   },
-      // },
-      // {
-      //   title: 'should update related view filter label',
-      //   context: {
-      //     initial: ALL_OPTIONS,
-      //     updateOptions: (options) =>
-      //       options.map((option, index) =>
-      //         isEven(option, index) ? updateOption(option) : option,
-      //       ),
-      //   },
-      // },
+      {
+        title:
+          'should delete related view filter if all select field options got deleted',
+        context: {
+          fieldMetadataOptions: ALL_OPTIONS,
+          createViewFilter: {
+            displayValue: `${ALL_OPTIONS.length} options`,
+            value: ALL_OPTIONS.map((option) => option.value),
+          },
+          updateOptions: () => generateOptions(3),
+          expected: null,
+        },
+      },
+      {
+        title: 'should update related view filter label',
+        context: {
+          fieldMetadataOptions: ALL_OPTIONS,
+          createViewFilter: {
+            displayValue: `${ALL_OPTIONS.length} options`,
+            value: ALL_OPTIONS.map((option) => option.value),
+          },
+          updateOptions: (options) =>
+            options.map((option, index) =>
+              isEven(option, index) ? updateOption(option) : option,
+            ),
+        },
+      },
       {
         title: 'should update related view filter with updated option',
         context: {
           fieldMetadataOptions: ALL_OPTIONS,
           createViewFilter: {
-            displayValue: `${ALL_OPTIONS.length} options`,
-            value: ALL_OPTIONS.map((option) => option.value).join(', '),
+            displayValue: ALL_OPTIONS[5].label,
+            value: [ALL_OPTIONS[5]].map((option) => option.value),
           },
-          updateOptions: (options) =>
-            options.map((option, index) =>
-              index === 5 ? updateOption(option) : option,
-            ),
+          updateOptions: (options) => [updateOption(options[5])],
         },
       },
     ];
@@ -184,25 +181,27 @@ describe('updateOne', () => {
             viewId: createOneView.id,
             fieldMetadataId: createOneField.id,
             operand: 'is',
-            value: createViewFilter.value,
+            value: JSON.stringify(createViewFilter.value),
             displayValue: createViewFilter.displayValue,
           },
         });
 
         const optionsWithIds = createOneField.options;
-
-        await updateOneFieldMetadata({
+        const updatePayload = {
+          options: updateOptions(optionsWithIds),
+        };
+        const { data } = await updateOneFieldMetadata({
           input: {
             idToUpdate: createOneField.id,
-            updatePayload: {
-              options: updateOptions(optionsWithIds),
-            },
+            updatePayload,
           },
           gqlFields: `
           id
           options
         `,
         });
+
+        console.log(data.updateOneField.options, updatePayload);
 
         const {
           data: { findResponse },
@@ -219,12 +218,16 @@ describe('updateOne', () => {
           },
         });
 
+        console.log(findResponse);
+
         if (expected !== undefined) {
-          expect(errors).toMatchSnapshot();
           expect(findResponse).toBe(expected);
+          expect(errors).toMatchSnapshot();
           return;
         }
 
+        const { value } = findResponse;
+        expect(() => JSON.parse(value)).not.toThrow();
         expect(findResponse).toMatchSnapshot({
           id: expect.any(String),
         });
