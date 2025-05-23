@@ -9,12 +9,15 @@ import {
   LISTING_NAME_PLURAL,
   LISTING_NAME_SINGULAR,
 } from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
-import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import {
+  FieldMetadataComplexOption,
+  FieldMetadataDefaultOption,
+} from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 
 const { failingTestCases, successfulTestCases } =
   UPDATE_CREATE_ONE_FIELD_METADATA_SELECT_TEST_CASES;
@@ -146,8 +149,9 @@ describe('Field metadata select update tests group', () => {
       });
 
       expect(data.updateOneField).toBeDefined();
-      const updatedOptions: FieldMetadataComplexOption[] =
-        data.updateOneField.options;
+      const updatedOptions:
+        | FieldMetadataComplexOption[]
+        | FieldMetadataDefaultOption[] = data.updateOneField.options;
 
       expect(errors).toBeUndefined();
       updatedOptions.forEach((option) => expect(option.id).toBeDefined());

@@ -64,6 +64,7 @@
     "zod-to-json-schema": "^3.23.1"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.8.0",
     "@lingui/cli": "^5.1.2",
     "@nestjs/cli": "10.3.0",
     "@nx/js": "18.3.3",
