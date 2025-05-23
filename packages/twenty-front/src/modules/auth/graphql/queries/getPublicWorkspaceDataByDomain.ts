@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN = gql`
-  query GetPublicWorkspaceDataByDomain {
-    getPublicWorkspaceDataByDomain {
+  query GetPublicWorkspaceDataByDomain($origin: String!) {
+    getPublicWorkspaceDataByDomain(origin: $origin) {
       id
       logo
       displayName

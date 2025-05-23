@@ -15,6 +15,7 @@ import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
 import { detectDateFormat } from '@/localization/utils/detectDateFormat';
 import { detectTimeFormat } from '@/localization/utils/detectTimeFormat';
 import { detectTimeZone } from '@/localization/utils/detectTimeZone';
+import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/getDateFormatFromWorkspaceDateFormat';
 import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTimeFormatFromWorkspaceTimeFormat';
 import { AppPath } from '@/types/AppPath';
@@ -33,6 +34,7 @@ import { isMatchingLocation } from '~/utils/isMatchingLocation';
 export const UserProviderEffect = () => {
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
+  const { origin } = useOrigin();
 
   const [isCurrentUserLoaded, setIsCurrentUserLoaded] = useRecoilState(
     isCurrentUserLoadedState,

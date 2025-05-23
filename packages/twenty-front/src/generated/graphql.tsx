@@ -1121,6 +1121,7 @@ export type MutationGenerateApiKeyTokenArgs = {
 
 export type MutationGetAuthTokensFromLoginTokenArgs = {
   loginToken: Scalars['String'];
+  origin: Scalars['String'];
 };
 
 
@@ -1132,6 +1133,7 @@ export type MutationGetAuthorizationUrlForSsoArgs = {
 export type MutationGetLoginTokenFromCredentialsArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
+  origin: Scalars['String'];
   password: Scalars['String'];
 };
 
@@ -1139,6 +1141,7 @@ export type MutationGetLoginTokenFromCredentialsArgs = {
 export type MutationGetLoginTokenFromEmailVerificationTokenArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   emailVerificationToken: Scalars['String'];
+  origin: Scalars['String'];
 };
 
 
@@ -1160,6 +1163,7 @@ export type MutationRenewTokenArgs = {
 
 export type MutationResendEmailVerificationTokenArgs = {
   email: Scalars['String'];
+  origin: Scalars['String'];
 };
 
 
@@ -1594,6 +1598,11 @@ export type QueryGetDatabaseConfigVariableArgs = {
 
 export type QueryGetIndicatorHealthStatusArgs = {
   indicatorId: HealthIndicatorId;
+};
+
+
+export type QueryGetPublicWorkspaceDataByDomainArgs = {
+  origin: Scalars['String'];
 };
 
 
@@ -2573,6 +2582,7 @@ export type GenerateTransientTokenMutation = { __typename?: 'Mutation', generate
 
 export type GetAuthTokensFromLoginTokenMutationVariables = Exact<{
   loginToken: Scalars['String'];
+  origin: Scalars['String'];
 }>;
 
 
@@ -2589,6 +2599,7 @@ export type GetLoginTokenFromCredentialsMutationVariables = Exact<{
   email: Scalars['String'];
   password: Scalars['String'];
   captchaToken?: InputMaybe<Scalars['String']>;
+  origin: Scalars['String'];
 }>;
 
 
@@ -2597,6 +2608,7 @@ export type GetLoginTokenFromCredentialsMutation = { __typename?: 'Mutation', ge
 export type GetLoginTokenFromEmailVerificationTokenMutationVariables = Exact<{
   emailVerificationToken: Scalars['String'];
   captchaToken?: InputMaybe<Scalars['String']>;
+  origin: Scalars['String'];
 }>;
 
 
@@ -2619,6 +2631,7 @@ export type RenewTokenMutation = { __typename?: 'Mutation', renewToken: { __type
 
 export type ResendEmailVerificationTokenMutationVariables = Exact<{
   email: Scalars['String'];
+  origin: Scalars['String'];
 }>;
 
 
@@ -2658,7 +2671,9 @@ export type CheckUserExistsQueryVariables = Exact<{
 
 export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __typename: 'UserExists', exists: boolean, isEmailVerified: boolean, availableWorkspaces: Array<{ __typename?: 'AvailableWorkspaceOutput', id: string, displayName?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } | { __typename: 'UserNotExists', exists: boolean } };
 
-export type GetPublicWorkspaceDataByDomainQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetPublicWorkspaceDataByDomainQueryVariables = Exact<{
+  origin: Scalars['String'];
+}>;
 
 
 export type GetPublicWorkspaceDataByDomainQuery = { __typename?: 'Query', getPublicWorkspaceDataByDomain: { __typename?: 'PublicWorkspaceDataOutput', id: string, logo?: string | null, displayName?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, authProviders: { __typename?: 'AuthProviders', google: boolean, magicLink: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> } } };
@@ -3737,8 +3752,8 @@ export type GenerateTransientTokenMutationHookResult = ReturnType<typeof useGene
 export type GenerateTransientTokenMutationResult = Apollo.MutationResult<GenerateTransientTokenMutation>;
 export type GenerateTransientTokenMutationOptions = Apollo.BaseMutationOptions<GenerateTransientTokenMutation, GenerateTransientTokenMutationVariables>;
 export const GetAuthTokensFromLoginTokenDocument = gql`
-    mutation GetAuthTokensFromLoginToken($loginToken: String!) {
-  getAuthTokensFromLoginToken(loginToken: $loginToken) {
+    mutation GetAuthTokensFromLoginToken($loginToken: String!, $origin: String!) {
+  getAuthTokensFromLoginToken(loginToken: $loginToken, origin: $origin) {
     tokens {
       ...AuthTokensFragment
     }
@@ -3761,6 +3776,7 @@ export type GetAuthTokensFromLoginTokenMutationFn = Apollo.MutationFunction<GetA
  * const [getAuthTokensFromLoginTokenMutation, { data, loading, error }] = useGetAuthTokensFromLoginTokenMutation({
  *   variables: {
  *      loginToken: // value for 'loginToken'
+ *      origin: // value for 'origin'
  *   },
  * });
  */
@@ -3807,11 +3823,12 @@ export type GetAuthorizationUrlForSsoMutationHookResult = ReturnType<typeof useG
 export type GetAuthorizationUrlForSsoMutationResult = Apollo.MutationResult<GetAuthorizationUrlForSsoMutation>;
 export type GetAuthorizationUrlForSsoMutationOptions = Apollo.BaseMutationOptions<GetAuthorizationUrlForSsoMutation, GetAuthorizationUrlForSsoMutationVariables>;
 export const GetLoginTokenFromCredentialsDocument = gql`
-    mutation GetLoginTokenFromCredentials($email: String!, $password: String!, $captchaToken: String) {
+    mutation GetLoginTokenFromCredentials($email: String!, $password: String!, $captchaToken: String, $origin: String!) {
   getLoginTokenFromCredentials(
     email: $email
     password: $password
     captchaToken: $captchaToken
+    origin: $origin
   ) {
     loginToken {
       ...AuthTokenFragment
@@ -3837,6 +3854,7 @@ export type GetLoginTokenFromCredentialsMutationFn = Apollo.MutationFunction<Get
  *      email: // value for 'email'
  *      password: // value for 'password'
  *      captchaToken: // value for 'captchaToken'
+ *      origin: // value for 'origin'
  *   },
  * });
  */
@@ -3848,10 +3866,11 @@ export type GetLoginTokenFromCredentialsMutationHookResult = ReturnType<typeof u
 export type GetLoginTokenFromCredentialsMutationResult = Apollo.MutationResult<GetLoginTokenFromCredentialsMutation>;
 export type GetLoginTokenFromCredentialsMutationOptions = Apollo.BaseMutationOptions<GetLoginTokenFromCredentialsMutation, GetLoginTokenFromCredentialsMutationVariables>;
 export const GetLoginTokenFromEmailVerificationTokenDocument = gql`
-    mutation GetLoginTokenFromEmailVerificationToken($emailVerificationToken: String!, $captchaToken: String) {
+    mutation GetLoginTokenFromEmailVerificationToken($emailVerificationToken: String!, $captchaToken: String, $origin: String!) {
   getLoginTokenFromEmailVerificationToken(
     emailVerificationToken: $emailVerificationToken
     captchaToken: $captchaToken
+    origin: $origin
   ) {
     loginToken {
       ...AuthTokenFragment
@@ -3880,6 +3899,7 @@ export type GetLoginTokenFromEmailVerificationTokenMutationFn = Apollo.MutationF
  *   variables: {
  *      emailVerificationToken: // value for 'emailVerificationToken'
  *      captchaToken: // value for 'captchaToken'
+ *      origin: // value for 'origin'
  *   },
  * });
  */
@@ -3969,8 +3989,8 @@ export type RenewTokenMutationHookResult = ReturnType<typeof useRenewTokenMutati
 export type RenewTokenMutationResult = Apollo.MutationResult<RenewTokenMutation>;
 export type RenewTokenMutationOptions = Apollo.BaseMutationOptions<RenewTokenMutation, RenewTokenMutationVariables>;
 export const ResendEmailVerificationTokenDocument = gql`
-    mutation ResendEmailVerificationToken($email: String!) {
-  resendEmailVerificationToken(email: $email) {
+    mutation ResendEmailVerificationToken($email: String!, $origin: String!) {
+  resendEmailVerificationToken(email: $email, origin: $origin) {
     success
   }
 }
@@ -3991,6 +4011,7 @@ export type ResendEmailVerificationTokenMutationFn = Apollo.MutationFunction<Res
  * const [resendEmailVerificationTokenMutation, { data, loading, error }] = useResendEmailVerificationTokenMutation({
  *   variables: {
  *      email: // value for 'email'
+ *      origin: // value for 'origin'
  *   },
  * });
  */
@@ -4195,8 +4216,8 @@ export type CheckUserExistsQueryHookResult = ReturnType<typeof useCheckUserExist
 export type CheckUserExistsLazyQueryHookResult = ReturnType<typeof useCheckUserExistsLazyQuery>;
 export type CheckUserExistsQueryResult = Apollo.QueryResult<CheckUserExistsQuery, CheckUserExistsQueryVariables>;
 export const GetPublicWorkspaceDataByDomainDocument = gql`
-    query GetPublicWorkspaceDataByDomain {
-  getPublicWorkspaceDataByDomain {
+    query GetPublicWorkspaceDataByDomain($origin: String!) {
+  getPublicWorkspaceDataByDomain(origin: $origin) {
     id
     logo
     displayName
@@ -4233,10 +4254,11 @@ export const GetPublicWorkspaceDataByDomainDocument = gql`
  * @example
  * const { data, loading, error } = useGetPublicWorkspaceDataByDomainQuery({
  *   variables: {
+ *      origin: // value for 'origin'
  *   },
  * });
  */
-export function useGetPublicWorkspaceDataByDomainQuery(baseOptions?: Apollo.QueryHookOptions<GetPublicWorkspaceDataByDomainQuery, GetPublicWorkspaceDataByDomainQueryVariables>) {
+export function useGetPublicWorkspaceDataByDomainQuery(baseOptions: Apollo.QueryHookOptions<GetPublicWorkspaceDataByDomainQuery, GetPublicWorkspaceDataByDomainQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetPublicWorkspaceDataByDomainQuery, GetPublicWorkspaceDataByDomainQueryVariables>(GetPublicWorkspaceDataByDomainDocument, options);
       }

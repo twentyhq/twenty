@@ -53,6 +53,7 @@ import { isEmailVerificationRequiredState } from '@/client-config/states/isEmail
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
+import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
@@ -74,6 +75,7 @@ export const useAuth = () => {
     currentWorkspaceMemberState,
   );
   const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
+  const { origin } = useOrigin();
 
   const setCurrentWorkspaceMembers = useSetRecoilState(
     currentWorkspaceMembersState,
@@ -179,6 +181,7 @@ export const useAuth = () => {
             email,
             password,
             captchaToken,
+            origin,
           },
         });
         if (isDefined(getLoginTokenResult.errors)) {
@@ -203,7 +206,7 @@ export const useAuth = () => {
         throw error;
       }
     },
-    [getLoginTokenFromCredentials, setSearchParams, setSignInUpStep],
+    [getLoginTokenFromCredentials, setSearchParams, setSignInUpStep, origin],
   );
 
   const handleGetLoginTokenFromEmailVerificationToken = useCallback(
@@ -212,6 +215,7 @@ export const useAuth = () => {
         variables: {
           emailVerificationToken,
           captchaToken,
+          origin,
         },
       });
 
@@ -225,7 +229,7 @@ export const useAuth = () => {
 
       return loginTokenResult.data.getLoginTokenFromEmailVerificationToken;
     },
-    [getLoginTokenFromEmailVerificationToken],
+    [getLoginTokenFromEmailVerificationToken, origin],
   );
 
   const loadCurrentUser = useCallback(async () => {
@@ -335,7 +339,10 @@ export const useAuth = () => {
   const handleGetAuthTokensFromLoginToken = useCallback(
     async (loginToken: string) => {
       const getAuthTokensResult = await getAuthTokensFromLoginToken({
-        variables: { loginToken },
+        variables: { 
+          loginToken,
+          origin,
+        },
       });
 
       if (isDefined(getAuthTokensResult.errors)) {
@@ -364,6 +371,7 @@ export const useAuth = () => {
       setTokenPair,
       refreshObjectMetadataItems,
       loadCurrentUser,
+      origin,
     ],
   );
 

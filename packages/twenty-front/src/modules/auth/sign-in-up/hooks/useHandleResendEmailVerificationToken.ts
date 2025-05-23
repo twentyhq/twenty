@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 
+import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
@@ -9,6 +10,7 @@ export const useHandleResendEmailVerificationToken = () => {
   const { enqueueSnackBar } = useSnackBar();
   const [resendEmailVerificationToken, { loading }] =
     useResendEmailVerificationTokenMutation();
+  const { origin } = useOrigin();
 
   const handleResendEmailVerificationToken = useCallback(
     (email: string | null) => {
@@ -22,7 +24,10 @@ export const useHandleResendEmailVerificationToken = () => {
 
         try {
           const { data } = await resendEmailVerificationToken({
-            variables: { email },
+            variables: { 
+              email,
+              origin,
+            },
           });
 
           if (data?.resendEmailVerificationToken?.success === true) {
@@ -41,7 +46,7 @@ export const useHandleResendEmailVerificationToken = () => {
         }
       };
     },
-    [enqueueSnackBar, resendEmailVerificationToken],
+    [enqueueSnackBar, resendEmailVerificationToken, origin],
   );
 
   return { handleResendEmailVerificationToken, loading };
