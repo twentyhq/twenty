@@ -3,14 +3,11 @@ import { useNonSystemActiveObjectMetadataItems } from '@/object-metadata/hooks/u
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { useGoToHotkeys } from '@/ui/utilities/hotkey/hooks/useGoToHotkeys';
-import { useLocation } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 
 export const GotoHotkeysEffectsProvider = () => {
   const { nonSystemActiveObjectMetadataItems } =
     useNonSystemActiveObjectMetadataItems();
-
-  const location = useLocation();
 
   useGoToHotkeys({
     key: 's',
@@ -21,6 +18,7 @@ export const GotoHotkeysEffectsProvider = () => {
           set(isNavigationDrawerExpandedState, true);
           set(navigationDrawerExpandedMemorizedState, true);
         },
+      [],
     ),
   });
 
