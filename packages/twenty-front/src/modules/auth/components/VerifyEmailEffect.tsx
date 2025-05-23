@@ -71,7 +71,8 @@ export const VerifyEmailEffect = () => {
         });
         if (
           error instanceof ApolloError &&
-          error.graphQLErrors[0].extensions?.subCode === 'EMAIL_ALREADY_VERIFIED'
+          error.graphQLErrors[0].extensions?.subCode ===
+            'EMAIL_ALREADY_VERIFIED'
         ) {
           navigate(AppPath.SignInUp);
         }
