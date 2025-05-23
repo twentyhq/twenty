@@ -13,6 +13,7 @@ import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDro
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { RecordBoardCardBody } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBody';
 import { RecordBoardCardHeader } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHeader';
+import { RECORD_BOARD_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardClickOutsideId';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { AppPath } from '@/types/AppPath';
@@ -197,7 +198,7 @@ export const RecordBoardCard = () => {
 
   return (
     <StyledBoardCardWrapper
-      className="record-board-card"
+      data-click-outside-id={RECORD_BOARD_CARD_CLICK_OUTSIDE_ID}
       onContextMenu={handleActionMenuDropdown}
     >
       <InView>
