@@ -1,1 +1,1 @@
-export const TEST_PRIMARY_LINK_URL = 'http://test/';
+export const TEST_PRIMARY_LINK_URL = 'https://test.com/';

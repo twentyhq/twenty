@@ -6,6 +6,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 
 type RecordShowEffectProps = {
   objectNameSingular: string;
@@ -25,7 +26,7 @@ export const RecordShowEffect = ({
       objectMetadataItems,
     });
 
-  const { record } = useFindOneRecord({
+  const { record, loading } = useFindOneRecord({
     objectRecordId: recordId,
     objectNameSingular,
     recordGqlFields: FIND_ONE_RECORD_FOR_SHOW_PAGE_OPERATION_SIGNATURE.fields,
@@ -47,8 +48,10 @@ export const RecordShowEffect = ({
   );
 
   useEffect(() => {
-    setRecordStore(record);
-  }, [record, setRecordStore]);
+    if (!loading && isDefined(record)) {
+      setRecordStore(record);
+    }
+  }, [record, setRecordStore, loading]);
 
   return <></>;
 };

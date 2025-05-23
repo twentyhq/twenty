@@ -2,16 +2,12 @@ import { GoToHotkeyItemEffect } from '@/app/effect-components/GoToHotkeyItemEffe
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
-import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useGoToHotkeys } from '@/ui/utilities/hotkey/hooks/useGoToHotkeys';
-import { useLocation } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 
 export const GotoHotkeysEffectsProvider = () => {
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
-
-  const location = useLocation();
 
   useGoToHotkeys({
     key: 's',
@@ -21,9 +17,8 @@ export const GotoHotkeysEffectsProvider = () => {
         () => {
           set(isNavigationDrawerExpandedState, true);
           set(navigationDrawerExpandedMemorizedState, true);
-          set(navigationMemorizedUrlState, location.pathname + location.search);
         },
-      [location.pathname, location.search],
+      [],
     ),
   });
 
