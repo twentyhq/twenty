@@ -1,6 +1,7 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
+import { PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderCommandMenuButtonClickOutsideId';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { i18n } from '@lingui/core';
@@ -124,7 +125,9 @@ export const PageHeaderToggleCommandMenuButton = () => {
           animatedSvg={
             <AnimatedIcon isCommandMenuOpened={isCommandMenuOpened} />
           }
-          className="page-header-command-menu-button"
+          data-click-outside-id={
+            PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID
+          }
           dataTestId="page-header-command-menu-button"
           size={isMobile ? 'medium' : 'small'}
           variant="secondary"

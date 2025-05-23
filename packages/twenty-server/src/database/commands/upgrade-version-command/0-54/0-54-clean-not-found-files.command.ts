@@ -1,21 +1,14 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { basename, dirname } from 'path';
-
 import { isNonEmptyString } from '@sniptt/guards';
 import { Command } from 'nest-commander';
 import { Equal, Not, Repository } from 'typeorm';
 
 import {
-  FileStorageException,
-  FileStorageExceptionCode,
-} from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
-
-import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
@@ -31,7 +24,7 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly fileService: FileService,
+    private readonly fileStorageService: FileStorageService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
   }
@@ -60,25 +53,14 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
     this.logger.log(`Checking if file is found ${path}`);
     if (path.startsWith('https://')) return true; // seed data
 
-    try {
-      await this.fileService.getFileStream(
-        dirname(path),
-        basename(path),
-        workspaceId,
-      );
-    } catch (error) {
-      if (
-        error instanceof FileStorageException &&
-        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
-      ) {
-        this.logger.log(`File not found`);
+    const isFileFound = await this.fileStorageService.checkFileExists({
+      folderPath: `workspace-${workspaceId}`,
+      filename: path,
+    });
 
-        return false;
-      }
-    }
-    this.logger.log(`File found`);
+    this.logger.log(`File found: ${isFileFound}`);
 
-    return true;
+    return isFileFound;
   }
 
   private async cleanWorkspaceLogo(workspaceId: string, dryRun: boolean) {
