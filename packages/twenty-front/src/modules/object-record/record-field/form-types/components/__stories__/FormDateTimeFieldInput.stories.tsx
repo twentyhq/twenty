@@ -40,7 +40,7 @@ export const Default: Story = {
 
     await canvas.findByText('Created At');
     await canvas.findByDisplayValue(
-      new RegExp(`12/09/${currentYear} \\d{2}:\\d{2}`),
+      new RegExp(`12/09/${currentYear} \\d{2}:20`),
     );
   },
 };
@@ -419,7 +419,7 @@ export const Disabled: Story = {
     const canvas = within(canvasElement);
 
     const input = await canvas.findByDisplayValue(
-      new RegExp(`12/09/${currentYear} \\d{2}:\\d{2}`),
+      new RegExp(`12/09/${currentYear} \\d{2}:20`),
     );
     expect(input).toBeDisabled();
   },
