@@ -107,60 +107,58 @@ export const ConfirmationModal = ({
   };
 
   return (
-    <>
-      <StyledConfirmationModal
-        modalId={modalId}
-        onClose={() => {
-          onClose?.();
-        }}
-        onEnter={handleEnter}
-        isClosable={true}
-        padding="large"
-        modalVariant={modalVariant}
-        data-globally-prevent-click-outside
+    <StyledConfirmationModal
+      modalId={modalId}
+      onClose={() => {
+        onClose?.();
+      }}
+      onEnter={handleEnter}
+      isClosable={true}
+      padding="large"
+      modalVariant={modalVariant}
+      data-globally-prevent-click-outside
+    >
+      <StyledCenteredTitle>
+        <H1Title title={title} fontColor={H1TitleFontColor.Primary} />
+      </StyledCenteredTitle>
+      <StyledSection
+        alignment={SectionAlignment.Center}
+        fontColor={SectionFontColor.Primary}
       >
-        <StyledCenteredTitle>
-          <H1Title title={title} fontColor={H1TitleFontColor.Primary} />
-        </StyledCenteredTitle>
-        <StyledSection
-          alignment={SectionAlignment.Center}
-          fontColor={SectionFontColor.Primary}
-        >
-          {subtitle}
-        </StyledSection>
-        {confirmationValue && (
-          <Section>
-            <TextInput
-              dataTestId="confirmation-modal-input"
-              value={inputConfirmationValue}
-              onChange={handleInputConfimrationValueChange}
-              placeholder={confirmationPlaceholder}
-              fullWidth
-              disableHotkeys
-              key={'input-' + confirmationValue}
-            />
-          </Section>
-        )}
-        <StyledCenteredButton
-          onClick={handleCancelClick}
-          variant="secondary"
-          title={t`Cancel`}
-          fullWidth
-          dataTestId="confirmation-modal-cancel-button"
-        />
+        {subtitle}
+      </StyledSection>
+      {confirmationValue && (
+        <Section>
+          <TextInput
+            dataTestId="confirmation-modal-input"
+            value={inputConfirmationValue}
+            onChange={handleInputConfimrationValueChange}
+            placeholder={confirmationPlaceholder}
+            fullWidth
+            disableHotkeys
+            key={'input-' + confirmationValue}
+          />
+        </Section>
+      )}
+      <StyledCenteredButton
+        onClick={handleCancelClick}
+        variant="secondary"
+        title={t`Cancel`}
+        fullWidth
+        dataTestId="confirmation-modal-cancel-button"
+      />
 
-        {AdditionalButtons}
+      {AdditionalButtons}
 
-        <StyledCenteredButton
-          onClick={handleConfirmClick}
-          variant="secondary"
-          accent={confirmButtonAccent}
-          title={confirmButtonText}
-          disabled={!isValidValue || loading}
-          fullWidth
-          dataTestId="confirmation-modal-confirm-button"
-        />
-      </StyledConfirmationModal>
-    </>
+      <StyledCenteredButton
+        onClick={handleConfirmClick}
+        variant="secondary"
+        accent={confirmButtonAccent}
+        title={confirmButtonText}
+        disabled={!isValidValue || loading}
+        fullWidth
+        dataTestId="confirmation-modal-confirm-button"
+      />
+    </StyledConfirmationModal>
   );
 };
