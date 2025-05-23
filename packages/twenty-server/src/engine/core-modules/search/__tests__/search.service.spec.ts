@@ -3,13 +3,21 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { mockObjectMetadataItemsWithFieldMaps } from 'src/engine/core-modules/search/__mocks__/mockObjectMetadataItemsWithFieldMaps';
 import { SearchService } from 'src/engine/core-modules/search/services/search.service';
+import { encodeCursorData } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 
 describe('SearchService', () => {
   let service: SearchService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [SearchService, { provide: FileService, useValue: {} }],
+      providers: [
+        SearchService,
+        { provide: TwentyORMManager, useValue: {} },
+        { provide: WorkspaceCacheStorageService, useValue: {} },
+        { provide: FileService, useValue: {} },
+      ],
     }).compile();
 
     service = module.get<SearchService>(SearchService);
@@ -204,6 +212,238 @@ describe('SearchService', () => {
         objectResults[0],
         objectResults[2],
       ]);
+    });
+  });
+
+  describe('computeEdges', () => {
+    it('should compute edges properly', () => {
+      const sortedSlicedRecords = [
+        {
+          record: {
+            objectNameSingular: 'company',
+            tsRankCD: 0.9,
+            tsRank: 0.9,
+            recordId: 'companyId1',
+            label: '',
+            imageUrl: '',
+          },
+          expectedCursor: encodeCursorData({
+            lastRanks: { tsRankCD: 0.9, tsRank: 0.9 },
+            lastRecordIdsPerObject: {
+              company: 'companyId1',
+            },
+          }),
+        },
+        {
+          record: {
+            objectNameSingular: 'company',
+            tsRankCD: 0.89,
+            tsRank: 0.89,
+            recordId: 'companyId2',
+            label: '',
+            imageUrl: '',
+          },
+          expectedCursor: encodeCursorData({
+            lastRanks: { tsRankCD: 0.89, tsRank: 0.89 },
+            lastRecordIdsPerObject: {
+              company: 'companyId2',
+            },
+          }),
+        },
+        {
+          record: {
+            objectNameSingular: 'person',
+            tsRankCD: 0.87,
+            tsRank: 0.87,
+            recordId: 'personId1',
+            label: '',
+            imageUrl: '',
+          },
+          expectedCursor: encodeCursorData({
+            lastRanks: { tsRankCD: 0.87, tsRank: 0.87 },
+            lastRecordIdsPerObject: {
+              company: 'companyId2',
+              person: 'personId1',
+            },
+          }),
+        },
+        {
+          record: {
+            objectNameSingular: 'person',
+            tsRankCD: 0.87,
+            tsRank: 0.87,
+            recordId: 'personId2',
+            label: '',
+            imageUrl: '',
+          },
+          expectedCursor: encodeCursorData({
+            lastRanks: { tsRankCD: 0.87, tsRank: 0.87 },
+            lastRecordIdsPerObject: {
+              company: 'companyId2',
+              person: 'personId2',
+            },
+          }),
+        },
+        {
+          record: {
+            objectNameSingular: 'opportunity',
+            tsRankCD: 0.87,
+            tsRank: 0.87,
+            recordId: 'opportunityId1',
+            label: '',
+            imageUrl: '',
+          },
+          expectedCursor: encodeCursorData({
+            lastRanks: { tsRankCD: 0.87, tsRank: 0.87 },
+            lastRecordIdsPerObject: {
+              company: 'companyId2',
+              person: 'personId2',
+              opportunity: 'opportunityId1',
+            },
+          }),
+        },
+        {
+          record: {
+            objectNameSingular: 'note',
+            tsRankCD: 0.2,
+            tsRank: 0.2,
+            recordId: 'noteId1',
+            label: '',
+            imageUrl: '',
+          },
+          expectedCursor: encodeCursorData({
+            lastRanks: { tsRankCD: 0.2, tsRank: 0.2 },
+            lastRecordIdsPerObject: {
+              company: 'companyId2',
+              person: 'personId2',
+              opportunity: 'opportunityId1',
+              note: 'noteId1',
+            },
+          }),
+        },
+        {
+          record: {
+            objectNameSingular: 'company',
+            tsRankCD: 0.1,
+            tsRank: 0.1,
+            recordId: 'companyId3',
+            label: '',
+            imageUrl: '',
+          },
+          expectedCursor: encodeCursorData({
+            lastRanks: { tsRankCD: 0.1, tsRank: 0.1 },
+            lastRecordIdsPerObject: {
+              company: 'companyId3',
+              person: 'personId2',
+              opportunity: 'opportunityId1',
+              note: 'noteId1',
+            },
+          }),
+        },
+      ];
+
+      const edges = service.computeEdges({
+        sortedRecords: sortedSlicedRecords.map((r) => r.record),
+      });
+
+      expect(edges.map((e) => e.cursor)).toEqual(
+        sortedSlicedRecords.map((r) => r.expectedCursor),
+      );
+    });
+
+    it('should compute pageInfo properly with an input after cursor', () => {
+      const sortedSlicedRecords = [
+        {
+          record: {
+            objectNameSingular: 'person',
+            tsRankCD: 0.87,
+            tsRank: 0.87,
+            recordId: 'personId2',
+            label: '',
+            imageUrl: '',
+          },
+          expectedCursor: encodeCursorData({
+            lastRanks: { tsRankCD: 0.87, tsRank: 0.87 },
+            lastRecordIdsPerObject: {
+              company: 'companyId2',
+              person: 'personId2',
+            },
+          }),
+        },
+        {
+          record: {
+            objectNameSingular: 'opportunity',
+            tsRankCD: 0.87,
+            tsRank: 0.87,
+            recordId: 'opportunityId1',
+            label: '',
+            imageUrl: '',
+          },
+          expectedCursor: encodeCursorData({
+            lastRanks: { tsRankCD: 0.87, tsRank: 0.87 },
+            lastRecordIdsPerObject: {
+              company: 'companyId2',
+              person: 'personId2',
+              opportunity: 'opportunityId1',
+            },
+          }),
+        },
+        {
+          record: {
+            objectNameSingular: 'note',
+            tsRankCD: 0.2,
+            tsRank: 0.2,
+            recordId: 'noteId1',
+            label: '',
+            imageUrl: '',
+          },
+          expectedCursor: encodeCursorData({
+            lastRanks: { tsRankCD: 0.2, tsRank: 0.2 },
+            lastRecordIdsPerObject: {
+              company: 'companyId2',
+              person: 'personId2',
+              opportunity: 'opportunityId1',
+              note: 'noteId1',
+            },
+          }),
+        },
+        {
+          record: {
+            objectNameSingular: 'company',
+            tsRankCD: 0.1,
+            tsRank: 0.1,
+            recordId: 'companyId3',
+            label: '',
+            imageUrl: '',
+          },
+          expectedCursor: encodeCursorData({
+            lastRanks: { tsRankCD: 0.1, tsRank: 0.1 },
+            lastRecordIdsPerObject: {
+              company: 'companyId3',
+              person: 'personId2',
+              opportunity: 'opportunityId1',
+              note: 'noteId1',
+            },
+          }),
+        },
+      ];
+
+      const afterCursor = encodeCursorData({
+        lastRanks: { tsRankCD: 0.87, tsRank: 0.87 },
+        lastRecordIdsPerObject: {
+          company: 'companyId2',
+          person: 'personId1',
+        },
+      });
+
+      const edges = service.computeEdges({
+        sortedRecords: sortedSlicedRecords.map((r) => r.record),
+        after: afterCursor,
+      });
+
+      expect(edges.map((e) => e.cursor)).toEqual(
+        sortedSlicedRecords.map((r) => r.expectedCursor),
+      );
     });
   });
 });

@@ -6,7 +6,7 @@ import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQue
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const expectedQueryTemplate = `
-query FindOnePerson($objectRecordId: ID!) {
+query FindOnePerson($objectRecordId: UUID!) {
   person(filter: { id: { eq: $objectRecordId } }) {
       ${PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS}
   }
