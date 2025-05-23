@@ -75,7 +75,6 @@ export const CreateWorkspace = () => {
             input: {
               displayName: data.name,
             },
-            origin,
           },
         });
 
