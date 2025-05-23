@@ -10,7 +10,6 @@ import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/me
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { pascalCase } from '~/utils/string/pascalCase';
 
 export const RelationFromManyFieldDisplay = () => {
   const { fieldValue, fieldDefinition, generateRecordChipData } =
@@ -51,28 +50,14 @@ export const RelationFromManyFieldDisplay = () => {
         : CoreObjectNameSingular.Task;
 
     const relationFieldName = fieldName === 'noteTargets' ? 'note' : 'task';
-    const formattedRecords = fieldValue.map((record) => {
-      if (!isDefined(record[relationFieldName])) {
-        return {
-          ...record,
-          [relationFieldName]: {
-            id: '20202020-e5f6-4789-a123-456789abcdef', // fake fallback uuid
-            title: pascalCase(relationFieldName),
-          },
-        };
-      }
-
-      return record;
-    });
 
     return (
       <ExpandableList isChipCountDisplayed={isFocused}>
-        {formattedRecords
+        {fieldValue
           .map((record) => {
-            if (!isDefined(record)) {
+            if (!isDefined(record) || !isDefined(record[relationFieldName])) {
               return undefined;
             }
-
             return (
               <RecordChip
                 key={record.id}
