@@ -98,7 +98,6 @@ export const CreateWorkspace = () => {
       refreshObjectMetadataItems,
       setNextOnboardingStatus,
       t,
-      origin,
     ],
   );
 
