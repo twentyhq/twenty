@@ -158,5 +158,33 @@ describe('getFieldLinkDefinedLinks', () => {
         }),
       ).toEqual([]);
     });
+
+    it('should filter out secondary links and primary link with invalid URLs', () => {
+      expect(
+        getFieldLinkDefinedLinks({
+          primaryLinkUrl: 'lydia,com',
+          primaryLinkLabel: 'Invalid Primary',
+          secondaryLinks: [
+            {
+              url: 'lydia,com',
+              label: 'Invalid URL',
+            },
+            {
+              url: 'wikipedia',
+              label: 'Missing Protocol',
+            },
+            {
+              url: 'https://twenty.com',
+              label: 'Valid URL',
+            },
+          ],
+        }),
+      ).toEqual([
+        {
+          url: 'https://twenty.com',
+          label: 'Valid URL',
+        },
+      ]);
+    });
   });
 });

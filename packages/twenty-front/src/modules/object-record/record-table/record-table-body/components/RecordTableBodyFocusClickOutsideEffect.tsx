@@ -1,8 +1,12 @@
+import { ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/action-menu/constants/ActionMenuDropdownClickOutsideId';
+import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandMenuClickOutsideId';
 import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useLeaveTableFocus } from '@/object-record/record-table/hooks/internal/useLeaveTableFocus';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
+import { MODAL_BACKDROP_CLICK_OUTSIDE_ID } from '@/ui/layout/modal/constants/ModalBackdropClickOutsideId';
+import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constants/PageActionContainerClickOutsideId';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -23,12 +27,11 @@ export const RecordTableBodyFocusClickOutsideEffect = ({
   const setHotkeyScope = useSetHotkeyScope();
 
   useListenClickOutside({
-    excludeClassNames: [
-      'bottom-bar',
-      'action-menu-dropdown',
-      'command-menu',
-      'modal-backdrop',
-      'page-action-container',
+    excludedClickOutsideIds: [
+      ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID,
+      COMMAND_MENU_CLICK_OUTSIDE_ID,
+      PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID,
+      MODAL_BACKDROP_CLICK_OUTSIDE_ID,
     ],
     listenerId: RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
     refs: [tableBodyRef],
