@@ -1,25 +1,51 @@
-import {
-  boxesIntersect,
-  OnSelectionChange,
-  useSelectionContainer,
-} from '@air/react-drag-to-select';
-import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import { RefObject, useCallback, useState } from 'react';
 
+import { useDragSelectWithAutoScroll } from '@/ui/utilities/drag-select/hooks/useDragSelectWithAutoScroll';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { isDefined } from 'twenty-shared/utils';
-import { RGBA } from 'twenty-ui/theme';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { useDragSelect } from '../hooks/useDragSelect';
-import { useDragSelectWithAutoScroll } from '../hooks/useDragSelectWithAutoScroll';
 
 type DragSelectProps = {
   selectableItemsContainerRef: RefObject<HTMLElement>;
   onDragSelectionChange: (id: string, selected: boolean) => void;
-  onDragSelectionStart?: (event: MouseEvent) => void;
-  onDragSelectionEnd?: (event: MouseEvent) => void;
+  onDragSelectionStart?: (event: MouseEvent | TouchEvent) => void;
+  onDragSelectionEnd?: (event: MouseEvent | TouchEvent) => void;
   scrollWrapperComponentInstanceId?: string;
   selectionBoundaryClass?: string;
 };
+
+type DragSelectionProps = {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+};
+
+type Position = {
+  x: number;
+  y: number;
+};
+
+type SelectionBox = {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+};
+
+const StyledDragSelection = styled.div<DragSelectionProps>`
+  position: absolute;
+  z-index: 99;
+  opacity: 0.2;
+  border: 1px solid ${({ theme }) => theme.color.blue10};
+  background: ${({ theme }) => theme.color.blue30};
+  top: ${({ top }) => top}px;
+  left: ${({ left }) => left}px;
+  width: ${({ width }) => width}px;
+  height: ${({ height }) => height}px;
+`;
 
 export const DragSelect = ({
   selectableItemsContainerRef,
@@ -29,67 +55,145 @@ export const DragSelect = ({
   scrollWrapperComponentInstanceId,
   selectionBoundaryClass,
 }: DragSelectProps) => {
-  const theme = useTheme();
   const { isDragSelectionStartEnabled } = useDragSelect();
 
   const [isDragging, setIsDragging] = useState(false);
+
+  const boxesIntersect = useCallback(
+    (boxA: SelectionBox, boxB: SelectionBox) =>
+      boxA.left <= boxB.left + boxB.width &&
+      boxA.left + boxA.width >= boxB.left &&
+      boxA.top <= boxB.top + boxB.height &&
+      boxA.top + boxA.height >= boxB.top,
+    [],
+  );
 
   const { handleAutoScroll } = useDragSelectWithAutoScroll({
     scrollWrapperComponentInstanceId,
   });
 
-  useTrackPointer({
-    shouldTrackPointer: isDragging,
-    onMouseMove: (x, y) => {
-      handleAutoScroll(x, y);
+  const [, setCursorPosition] = useState<Position | null>(null);
+  const [startPoint, setStartPoint] = useState<Position | null>(null);
+  const [endPoint, setEndPoint] = useState<Position | null>(null);
+  const [selectionBox, setSelectionBox] = useState<SelectionBox | null>(null);
+
+  const getPositionRelativeToContainer = useCallback(
+    (x: number, y: number) => {
+      const containerRect =
+        selectableItemsContainerRef.current?.getBoundingClientRect();
+      if (!containerRect) {
+        return { x, y };
+      }
+      return { x: x - containerRect.left, y: y - containerRect.top };
     },
-    onMouseUp: () => {
+    [selectableItemsContainerRef],
+  );
+
+  useTrackPointer({
+    onMouseDown: ({ x, y, event }) => {
+      const { x: relativeX, y: relativeY } = getPositionRelativeToContainer(
+        x,
+        y,
+      );
+
+      if (shouldStartSelecting(event.target)) {
+        setIsDragging(true);
+        setCursorPosition({ x: relativeX, y: relativeY });
+        onDragSelectionStart?.(event);
+        setStartPoint({
+          x: relativeX,
+          y: relativeY,
+        });
+        setEndPoint({
+          x: relativeX,
+          y: relativeY,
+        });
+        setSelectionBox({
+          top: relativeY,
+          left: relativeX,
+          width: 0,
+          height: 0,
+        });
+      }
+      event.preventDefault();
+    },
+    onMouseMove: ({ x, y }) => {
+      if (isDragging) {
+        const { x: relativeX, y: relativeY } = getPositionRelativeToContainer(
+          x,
+          y,
+        );
+
+        if (
+          !isDefined(startPoint) ||
+          !isDefined(endPoint) ||
+          !isDefined(selectionBox)
+        ) {
+          return;
+        }
+
+        const newEndPoint = { ...endPoint };
+
+        newEndPoint.x = relativeX;
+        newEndPoint.y = relativeY;
+
+        if (!isDeeplyEqual(newEndPoint, endPoint)) {
+          setEndPoint(newEndPoint);
+          setSelectionBox({
+            top: Math.min(startPoint.y, newEndPoint.y),
+            left: Math.min(startPoint.x, newEndPoint.x),
+            width: Math.abs(newEndPoint.x - startPoint.x),
+            height: Math.abs(newEndPoint.y - startPoint.y),
+          });
+        }
+
+        setCursorPosition({ x: relativeX, y: relativeY });
+
+        const scrollAwareBox = {
+          ...selectionBox,
+          top: selectionBox.top + window.scrollY,
+          left: selectionBox.left + window.scrollX,
+        };
+
+        Array.from(
+          selectableItemsContainerRef.current?.querySelectorAll(
+            '[data-selectable-id]',
+          ) ?? [],
+        ).forEach((item) => {
+          const id = item.getAttribute('data-selectable-id');
+          if (!isDefined(id)) {
+            return;
+          }
+          const itemBox = item.getBoundingClientRect();
+
+          const { x: boxX, y: boxY } = getPositionRelativeToContainer(
+            itemBox.left,
+            itemBox.top,
+          );
+
+          if (
+            boxesIntersect(scrollAwareBox, {
+              width: itemBox.width,
+              height: itemBox.height,
+              top: boxY,
+              left: boxX,
+            })
+          ) {
+            onDragSelectionChange(id, true);
+          } else {
+            onDragSelectionChange(id, false);
+          }
+        });
+
+        handleAutoScroll(x, y);
+      }
+    },
+    onMouseUp: ({ event }) => {
+      onDragSelectionEnd?.(event);
+      setCursorPosition(null);
       setIsDragging(false);
     },
   });
-
-  const onSelectionChangeHandler: OnSelectionChange = useCallback(
-    (box) => {
-      const scrollAwareBox = {
-        ...box,
-        top: box.top + window.scrollY,
-        left: box.left + window.scrollX,
-      };
-
-      Array.from(
-        selectableItemsContainerRef.current?.querySelectorAll(
-          '[data-selectable-id]',
-        ) ?? [],
-      ).forEach((item) => {
-        const id = item.getAttribute('data-selectable-id');
-        if (!isDefined(id)) {
-          return;
-        }
-        if (boxesIntersect(scrollAwareBox, item.getBoundingClientRect())) {
-          onDragSelectionChange(id, true);
-        } else {
-          onDragSelectionChange(id, false);
-        }
-      });
-    },
-    [selectableItemsContainerRef, onDragSelectionChange],
-  );
-
-  const handleSelectionStart = useCallback(
-    (event: MouseEvent) => {
-      setIsDragging(true);
-      onDragSelectionStart?.(event);
-    },
-    [onDragSelectionStart],
-  );
-
-  const handleSelectionEnd = useCallback(
-    (event: MouseEvent) => {
-      setIsDragging(false);
-      onDragSelectionEnd?.(event);
-    },
-    [onDragSelectionEnd],
-  );
 
   const shouldStartSelecting = useCallback(
     (target: EventTarget | null) => {
@@ -131,20 +235,12 @@ export const DragSelect = ({
     ],
   );
 
-  const { DragSelection } = useSelectionContainer({
-    shouldStartSelecting,
-    onSelectionStart: handleSelectionStart,
-    onSelectionEnd: handleSelectionEnd,
-    onSelectionChange: onSelectionChangeHandler,
-    selectionProps: {
-      style: {
-        border: `1px solid ${theme.color.blue10}`,
-        background: RGBA(theme.color.blue30, 0.4),
-        position: `absolute`,
-        zIndex: 99,
-      },
-    },
-  });
-
-  return <DragSelection />;
+  return isDragging && isDefined(selectionBox) ? (
+    <StyledDragSelection
+      top={selectionBox.top}
+      left={selectionBox.left}
+      width={selectionBox.width}
+      height={selectionBox.height}
+    />
+  ) : null;
 };
