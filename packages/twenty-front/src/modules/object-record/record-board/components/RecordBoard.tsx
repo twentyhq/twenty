@@ -26,6 +26,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
+import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -240,6 +241,10 @@ export const RecordBoard = () => {
                   onDragSelectionEnd={handleDragSelectionEnd}
                   onDragSelectionChange={setRecordAsSelected}
                   onDragSelectionStart={handleDragSelectionStart}
+                  scrollWrapperComponentInstanceId={`scroll-wrapper-record-board-${recordBoardId}`}
+                  selectionBoundaryClass={
+                    RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS
+                  }
                 />
               </StyledContainer>
             </StyledBoardContentContainer>

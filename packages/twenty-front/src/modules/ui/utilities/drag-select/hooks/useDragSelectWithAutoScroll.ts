@@ -1,153 +1,76 @@
-import { RefObject, useState } from 'react';
+import { useCallback } from 'react';
 
-import { AUTO_SCROLL_MAX_SPEED_PX } from '@/ui/utilities/drag-select/constants/AutoScrollMaxSpeedPx';
+import { useScrollToPosition } from '@/ui/utilities/scroll/hooks/useScrollToPosition';
+import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
+import { scrollWrapperScrollLeftComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollLeftComponentState';
+import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollTopComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
 import { AUTO_SCROLL_EDGE_THRESHOLD_PX } from '../constants/AutoScrollEdgeThresholdPx';
-import { clamp } from '../utils/clamp';
-import { DOMVector } from '../utils/DOMVector';
+import { AUTO_SCROLL_MAX_SPEED_PX } from '../constants/AutoScrollMaxSpeedPx';
 
 type UseDragSelectWithAutoScrollProps = {
-  selectableItemsContainerRef: RefObject<HTMLElement>;
+  scrollWrapperComponentInstanceId?: string;
 };
 
 export const useDragSelectWithAutoScroll = ({
-  selectableItemsContainerRef,
+  scrollWrapperComponentInstanceId,
 }: UseDragSelectWithAutoScrollProps) => {
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragVector, setDragVector] = useState<DOMVector | null>(null);
+  const { scrollToPosition } = useScrollToPosition();
+  const { scrollWrapperHTMLElement } = useScrollWrapperElement(
+    scrollWrapperComponentInstanceId,
+  );
+  const scrollTop = useRecoilComponentValueV2(
+    scrollWrapperScrollTopComponentState,
+  );
+  const scrollLeft = useRecoilComponentValueV2(
+    scrollWrapperScrollLeftComponentState,
+  );
 
-  const handleDragStart = (event: MouseEvent) => {
-    const initialPoint = { x: event.clientX, y: event.clientY };
+  const handleAutoScroll = useCallback(
+    (mouseX: number, mouseY: number) => {
+      if (!isDefined(scrollWrapperHTMLElement)) return;
 
-    setIsDragging(true);
+      const containerRect = scrollWrapperHTMLElement.getBoundingClientRect();
 
-    const startVector = new DOMVector(initialPoint.x, initialPoint.y, 0, 0);
-    setDragVector(startVector);
+      const nearTop =
+        mouseY - containerRect.top < AUTO_SCROLL_EDGE_THRESHOLD_PX;
+      const nearBottom =
+        containerRect.bottom - mouseY < AUTO_SCROLL_EDGE_THRESHOLD_PX;
+      const nearLeft =
+        mouseX - containerRect.left < AUTO_SCROLL_EDGE_THRESHOLD_PX;
+      const nearRight =
+        containerRect.right - mouseX < AUTO_SCROLL_EDGE_THRESHOLD_PX;
 
-    let currentVector = startVector;
-
-    let parent = selectableItemsContainerRef.current?.parentElement ?? null;
-    let scrollWrapper: HTMLElement | null = null;
-    while (parent !== null) {
-      const style = window.getComputedStyle(parent);
-      const hasScroll =
-        ['auto', 'scroll'].includes(style.overflowY) ||
-        ['auto', 'scroll'].includes(style.overflow);
-
-      if (hasScroll) {
-        scrollWrapper = parent;
-        break;
-      }
-      parent = parent.parentElement;
-    }
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const currentPoint = { x: e.clientX, y: e.clientY };
-      currentVector = new DOMVector(
-        initialPoint.x,
-        initialPoint.y,
-        currentPoint.x - initialPoint.x,
-        currentPoint.y - initialPoint.y,
-      );
-      setDragVector(currentVector);
-    };
-
-    document.addEventListener('mousemove', handleMouseMove);
-
-    let animationFrameId: number | null = null;
-    const scrollTheLad = () => {
-      if (!isDefined(scrollWrapper)) {
-        animationFrameId = requestAnimationFrame(scrollTheLad);
-        return;
+      if (nearTop) {
+        const newScrollTop = Math.max(0, scrollTop - AUTO_SCROLL_MAX_SPEED_PX);
+        scrollToPosition(newScrollTop);
+      } else if (nearBottom) {
+        const newScrollTop = scrollTop + AUTO_SCROLL_MAX_SPEED_PX;
+        scrollToPosition(newScrollTop);
       }
 
-      const currentPointer = currentVector.toTerminalPoint();
-      const containerRect = scrollWrapper.getBoundingClientRect();
-
-      const shouldScrollRight =
-        containerRect.width - (currentPointer.x - containerRect.left) <
-        AUTO_SCROLL_EDGE_THRESHOLD_PX;
-      const shouldScrollLeft =
-        currentPointer.x - containerRect.left < AUTO_SCROLL_EDGE_THRESHOLD_PX;
-      const shouldScrollDown =
-        containerRect.height - (currentPointer.y - containerRect.top) <
-        AUTO_SCROLL_EDGE_THRESHOLD_PX;
-      const shouldScrollUp =
-        currentPointer.y - containerRect.top < AUTO_SCROLL_EDGE_THRESHOLD_PX;
-
-      const left = shouldScrollRight
-        ? clamp(
-            AUTO_SCROLL_EDGE_THRESHOLD_PX -
-              containerRect.width +
-              (currentPointer.x - containerRect.left),
-            0,
-            AUTO_SCROLL_MAX_SPEED_PX,
-          )
-        : shouldScrollLeft
-          ? -1 *
-            clamp(
-              AUTO_SCROLL_EDGE_THRESHOLD_PX -
-                (currentPointer.x - containerRect.left),
-              0,
-              AUTO_SCROLL_MAX_SPEED_PX,
-            )
-          : undefined;
-
-      const top = shouldScrollDown
-        ? clamp(
-            AUTO_SCROLL_EDGE_THRESHOLD_PX -
-              containerRect.height +
-              (currentPointer.y - containerRect.top),
-            0,
-            AUTO_SCROLL_MAX_SPEED_PX,
-          )
-        : shouldScrollUp
-          ? -1 *
-            clamp(
-              AUTO_SCROLL_EDGE_THRESHOLD_PX -
-                (currentPointer.y - containerRect.top),
-              0,
-              AUTO_SCROLL_MAX_SPEED_PX,
-            )
-          : undefined;
-
-      const shouldScroll = isDefined(top) || isDefined(left);
-
-      if (shouldScroll) {
-        scrollWrapper.scrollBy({
-          left: left ?? 0,
-          top: top ?? 0,
+      if (nearLeft) {
+        const newScrollLeft = Math.max(
+          0,
+          scrollLeft - AUTO_SCROLL_MAX_SPEED_PX,
+        );
+        scrollWrapperHTMLElement.scrollTo({
+          left: newScrollLeft,
+          behavior: 'auto',
+        });
+      } else if (nearRight) {
+        const newScrollLeft = scrollLeft + AUTO_SCROLL_MAX_SPEED_PX;
+        scrollWrapperHTMLElement.scrollTo({
+          left: newScrollLeft,
           behavior: 'auto',
         });
       }
-
-      animationFrameId = requestAnimationFrame(scrollTheLad);
-    };
-
-    animationFrameId = requestAnimationFrame(scrollTheLad);
-
-    const cleanup = () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      if (isDefined(animationFrameId)) {
-        cancelAnimationFrame(animationFrameId);
-      }
-
-      setIsDragging(false);
-      setDragVector(null);
-    };
-
-    document.addEventListener('mouseup', cleanup, { once: true });
-  };
-
-  const handleDragEnd = () => {
-    setIsDragging(false);
-    setDragVector(null);
-  };
+    },
+    [scrollWrapperHTMLElement, scrollTop, scrollLeft, scrollToPosition],
+  );
 
   return {
-    isDragging,
-    dragVector,
-    handleDragStart,
-    handleDragEnd,
+    handleAutoScroll,
   };
 };

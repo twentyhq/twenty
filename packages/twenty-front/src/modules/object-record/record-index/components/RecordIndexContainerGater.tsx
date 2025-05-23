@@ -16,6 +16,7 @@ import { useHandleIndexIdentifierClick } from '@/object-record/record-index/hook
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
+import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
@@ -90,7 +91,9 @@ export const RecordIndexContainerGater = () => {
                   />
                   <RecordIndexPageHeader />
                   <PageBody>
-                    <StyledIndexContainer className="record-index-container-gater-for-drag-select">
+                    <StyledIndexContainer
+                      className={RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS}
+                    >
                       <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
                       <RecordIndexContainer />
                     </StyledIndexContainer>

@@ -1,6 +1,5 @@
 import { AppRouter } from '@/app/components/AppRouter';
 import { ApolloDevLogEffect } from '@/debug/components/ApolloDevLogEffect';
-import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppRootErrorFallback } from '@/error-handler/components/AppRootErrorFallback';
 import { ExceptionHandlerProvider } from '@/error-handler/components/ExceptionHandlerProvider';
@@ -22,7 +21,7 @@ export const App = () => {
         FallbackComponent={AppRootErrorFallback}
       >
         <I18nProvider i18n={i18n}>
-          <RecoilDebugObserverEffect />
+          {/* <RecoilDebugObserverEffect /> */}
           <ApolloDevLogEffect />
           <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
             <IconsProvider>
