@@ -120,7 +120,6 @@ export class EmailVerificationTokenService {
       );
     }
 
-    console.log('>>>>>>>>>>>>>>', appToken.context?.email, email);
     if (appToken.context?.email !== email) {
       throw new EmailVerificationException(
         'Email does not match token',

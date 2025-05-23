@@ -185,11 +185,11 @@ export class AuthResolver {
         appToken.user.id,
       ));
 
-    await this.userService.markEmailAsVerified(user.id);
+    await this.userService.markEmailAsVerified(appToken.user.id);
     await this.appTokenRepository.remove(appToken);
 
     const loginToken = await this.loginTokenService.generateLoginToken(
-      user.email,
+      appToken.user.email,
       workspace.id,
     );
 

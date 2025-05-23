@@ -148,13 +148,13 @@ describe('EmailVerificationTokenService', () => {
       };
 
       jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue(null);
-      jest.spyOn(userRepository, 'findOne').mockResolvedValue(mockUser);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(mockUser as User);
 
       await expect(
-        service.validateEmailVerificationTokenOrThrow(
-          'invalid-token',
-          'test@example.com',
-        ),
+        service.validateEmailVerificationTokenOrThrow({
+          emailVerificationToken: 'invalid-token',
+          email: 'test@example.com',
+        }),
       ).rejects.toThrow(
         new EmailVerificationException(
           'Email already verified',
@@ -179,7 +179,9 @@ describe('EmailVerificationTokenService', () => {
         },
       };
 
-      jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue(mockAppToken);
+      jest
+        .spyOn(appTokenRepository, 'findOne')
+        .mockResolvedValue(mockAppToken as AppToken);
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
       await expect(

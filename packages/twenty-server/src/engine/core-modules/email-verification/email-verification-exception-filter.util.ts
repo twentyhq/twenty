@@ -20,6 +20,7 @@ export class EmailVerificationExceptionFilter implements ExceptionFilter {
         throw new ForbiddenError(exception.message);
       case EmailVerificationExceptionCode.EMAIL_MISSING:
       case EmailVerificationExceptionCode.EMAIL_ALREADY_VERIFIED:
+      case EmailVerificationExceptionCode.INVALID_EMAIL:
       case EmailVerificationExceptionCode.EMAIL_VERIFICATION_NOT_REQUIRED:
         throw new UserInputError(exception.message);
       default: {
