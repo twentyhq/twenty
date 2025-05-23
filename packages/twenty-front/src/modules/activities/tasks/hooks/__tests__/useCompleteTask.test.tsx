@@ -27,7 +27,7 @@ const mocks: MockedResponse[] = [
   {
     request: {
       query: gql`
-        mutation UpdateOneTask($idToUpdate: ID!, $input: TaskUpdateInput!) {
+        mutation UpdateOneTask($idToUpdate: UUID!, $input: TaskUpdateInput!) {
           updateTask(id: $idToUpdate, data: $input) {
             __typename
             assignee {

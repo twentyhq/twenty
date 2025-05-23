@@ -11,7 +11,7 @@ const mocks = [
   {
     request: {
       query: gql`
-        query FindOneMessageThread($objectRecordId: ID!) {
+        query FindOneMessageThread($objectRecordId: UUID!) {
           messageThread(filter: { id: { eq: $objectRecordId } }) {
             __typename
             id

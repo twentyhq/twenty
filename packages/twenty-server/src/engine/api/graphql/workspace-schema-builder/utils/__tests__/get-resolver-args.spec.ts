@@ -1,8 +1,9 @@
-import { GraphQLBoolean, GraphQLID, GraphQLInt, GraphQLString } from 'graphql';
+import { GraphQLBoolean, GraphQLInt, GraphQLString } from 'graphql';
 
 import { WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { InputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/factories/input-type-definition.factory';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { getResolverArgs } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-resolver-args.util';
 
 describe('getResolverArgs', () => {
@@ -44,11 +45,11 @@ describe('getResolverArgs', () => {
       },
     },
     updateOne: {
-      id: { type: GraphQLID, isNullable: false },
+      id: { type: UUIDScalarType, isNullable: false },
       data: { kind: InputTypeDefinitionKind.Update, isNullable: false },
     },
     deleteOne: {
-      id: { type: GraphQLID, isNullable: false },
+      id: { type: UUIDScalarType, isNullable: false },
     },
     restoreMany: {
       filter: { kind: InputTypeDefinitionKind.Filter, isNullable: false },
