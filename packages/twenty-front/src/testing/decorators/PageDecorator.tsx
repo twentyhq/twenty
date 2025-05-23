@@ -21,6 +21,7 @@ import { UserProvider } from '~/modules/users/components/UserProvider';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
 import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
+import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
 import { ObjectMetadataItemsLoadEffect } from '@/object-metadata/components/ObjectMetadataItemsLoadEffect';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
@@ -77,7 +78,7 @@ const Providers = () => {
   return (
     <RecoilRoot>
       <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-        {/* <RecoilDebugObserverEffect /> */}
+        <RecoilDebugObserverEffect />
         <ApolloProvider client={mockedApolloClient}>
           <I18nProvider i18n={i18n}>
             <ApolloStorybookDevLogEffect />
