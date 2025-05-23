@@ -22,12 +22,12 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
-    H3Title,
-    IconCodeCircle,
-    IconListDetails,
-    IconPlus,
-    IconPoint,
-    IconSettings,
+  H3Title,
+  IconCodeCircle,
+  IconListDetails,
+  IconPlus,
+  IconPoint,
+  IconSettings,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';

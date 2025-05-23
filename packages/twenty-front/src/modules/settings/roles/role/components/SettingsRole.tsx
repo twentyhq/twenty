@@ -25,12 +25,12 @@ import { IconLockOpen, IconSettings, IconUserPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { v4 } from 'uuid';
 import {
-    FeatureFlagKey,
-    Role,
-    useCreateOneRoleMutation,
-    useUpdateOneRoleMutation,
-    useUpsertObjectPermissionsMutation,
-    useUpsertSettingPermissionsMutation,
+  FeatureFlagKey,
+  Role,
+  useCreateOneRoleMutation,
+  useUpdateOneRoleMutation,
+  useUpsertObjectPermissionsMutation,
+  useUpsertSettingPermissionsMutation,
 } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getDirtyFields } from '~/utils/getDirtyFields';
