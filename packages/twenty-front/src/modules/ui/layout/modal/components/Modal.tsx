@@ -12,7 +12,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import React, { useRef } from 'react';
 const StyledModalDiv = styled(motion.div)<{
   size?: ModalSize;
@@ -221,7 +221,7 @@ export const Modal = ({
   };
 
   return (
-    <>
+    <AnimatePresence>
       {isModalOpened && (
         <ModalComponentInstanceContext.Provider
           value={{
@@ -266,7 +266,7 @@ export const Modal = ({
           </ClickOutsideListenerContext.Provider>
         </ModalComponentInstanceContext.Provider>
       )}
-    </>
+    </AnimatePresence>
   );
 };
 
