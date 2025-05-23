@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { gmail_v1 as gmailV1 } from 'googleapis';
-import { isDefined } from 'twenty-shared/utils';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
@@ -40,7 +39,7 @@ export class GmailGetMessageListService {
 
     let pageToken: string | undefined;
     let hasMoreMessages = true;
-    let firstMessageExternalId: string | undefined;
+
     const messageExternalIds: string[] = [];
 
     while (hasMoreMessages) {
@@ -64,30 +63,28 @@ export class GmailGetMessageListService {
           };
         });
 
-      pageToken = messageList.data.nextPageToken ?? undefined;
-      hasMoreMessages = !!pageToken;
-
       const { messages } = messageList.data;
+      const hasMessages = messages && messages.length > 0;
 
-      if (!messages || messages.length === 0) {
+      if (!hasMessages) {
         break;
       }
 
-      if (!firstMessageExternalId) {
-        firstMessageExternalId = messageList.data.messages?.[0].id ?? undefined;
-      }
+      pageToken = messageList.data.nextPageToken ?? undefined;
+      hasMoreMessages = !!pageToken;
 
       // @ts-expect-error legacy noImplicitAny
       messageExternalIds.push(...messages.map((message) => message.id));
     }
 
-    if (!isDefined(firstMessageExternalId)) {
-      throw new MessageImportDriverException(
-        `No firstMessageExternalId found for connected account ${connectedAccount.id}`,
-        MessageImportDriverExceptionCode.UNKNOWN,
-      );
+    if (messageExternalIds.length === 0) {
+      return {
+        messageExternalIds,
+        nextSyncCursor: '',
+      };
     }
 
+    const firstMessageExternalId = messageExternalIds[0];
     const firstMessageContent = await gmailClient.users.messages
       .get({
         userId: 'me',
