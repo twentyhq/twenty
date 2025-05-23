@@ -96,7 +96,6 @@ export const RecordChip = ({
       to={to ?? getLinkToShowPage(objectNameSingular, record)}
       onClick={(clickEvent) => {
         // TODO refactor wrapper event listener to avoid colliding events
-        clickEvent.stopPropagation();
 
         const isModifiedEventResult = isModifiedEvent(clickEvent);
         if (isSidePanelViewOpenRecordInType && !isModifiedEventResult) {
