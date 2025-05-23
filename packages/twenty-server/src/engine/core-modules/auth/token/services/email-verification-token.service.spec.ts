@@ -103,9 +103,6 @@ describe('EmailVerificationTokenService', () => {
       jest
         .spyOn(appTokenRepository, 'findOne')
         .mockResolvedValue(mockAppToken as AppToken);
-      jest
-        .spyOn(appTokenRepository, 'remove')
-        .mockResolvedValue(mockAppToken as AppToken);
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
       const result = await service.validateEmailVerificationTokenOrThrow({
