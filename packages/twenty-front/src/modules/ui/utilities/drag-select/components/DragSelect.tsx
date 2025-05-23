@@ -31,10 +31,7 @@ export const DragSelect = ({
 }: DragSelectProps) => {
   const theme = useTheme();
   const { isDragSelectionStartEnabled } = useDragSelect();
-  const [currentMousePosition, setCurrentMousePosition] = useState<{
-    x: number;
-    y: number;
-  } | null>(null);
+
   const [isDragging, setIsDragging] = useState(false);
 
   const { handleAutoScroll } = useDragSelectWithAutoScroll({
@@ -44,20 +41,15 @@ export const DragSelect = ({
   useTrackPointer({
     shouldTrackPointer: isDragging,
     onMouseMove: (x, y) => {
-      setCurrentMousePosition({ x, y });
+      handleAutoScroll(x, y);
     },
     onMouseUp: () => {
       setIsDragging(false);
-      setCurrentMousePosition(null);
     },
   });
 
   const onSelectionChangeHandler: OnSelectionChange = useCallback(
     (box) => {
-      if (isDefined(currentMousePosition)) {
-        handleAutoScroll(currentMousePosition.x, currentMousePosition.y);
-      }
-
       const scrollAwareBox = {
         ...box,
         top: box.top + window.scrollY,
@@ -80,18 +72,12 @@ export const DragSelect = ({
         }
       });
     },
-    [
-      selectableItemsContainerRef,
-      onDragSelectionChange,
-      handleAutoScroll,
-      currentMousePosition,
-    ],
+    [selectableItemsContainerRef, onDragSelectionChange],
   );
 
   const handleSelectionStart = useCallback(
     (event: MouseEvent) => {
       setIsDragging(true);
-      setCurrentMousePosition({ x: event.clientX, y: event.clientY });
       onDragSelectionStart?.(event);
     },
     [onDragSelectionStart],
@@ -100,7 +86,6 @@ export const DragSelect = ({
   const handleSelectionEnd = useCallback(
     (event: MouseEvent) => {
       setIsDragging(false);
-      setCurrentMousePosition(null);
       onDragSelectionEnd?.(event);
     },
     [onDragSelectionEnd],
