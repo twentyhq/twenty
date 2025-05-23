@@ -2,6 +2,7 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { ApolloError } from '@apollo/client';
 
 import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
@@ -59,10 +60,22 @@ export const VerifyEmailEffect = () => {
         }
         verifyLoginToken(loginToken.token);
       } catch (error) {
-        enqueueSnackBar(t`Email verification failed.`, {
+        const message: string =
+          error instanceof ApolloError
+            ? error.message
+            : 'Email verification failed';
+
+        enqueueSnackBar(t`${message}`, {
           dedupeKey: 'email-verification-error-dedupe-key',
           variant: SnackBarVariant.Error,
         });
+        if (
+          error instanceof ApolloError &&
+          error.graphQLErrors[0].extensions?.subCode === 'EMAIL_ALREADY_VERIFIED'
+        ) {
+          navigate(AppPath.SignInUp);
+        }
+
         setIsError(true);
       }
     };
