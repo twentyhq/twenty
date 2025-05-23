@@ -27,10 +27,10 @@ import {
   RawJsonFilterType,
   StringFilterType,
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input';
-import { IDFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/id-filter.input-type';
 import { MultiSelectFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/multi-select-filter.input-type';
 import { RichTextV2FilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/rich-text.input-type';
 import { SelectFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/select-filter.input-type';
+import { UUIDFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/uuid-filter.input-type';
 import {
   BigFloatScalarType,
   UUIDScalarType,
@@ -95,14 +95,14 @@ export class TypeMapperService {
     isIdField?: boolean,
   ): GraphQLInputObjectType | GraphQLScalarType | undefined {
     if (isIdField || fieldMetadataType === FieldMetadataType.RELATION) {
-      return IDFilterType;
+      return UUIDFilterType;
     }
 
     const typeFilterMapping = new Map<
       FieldMetadataType,
       GraphQLInputObjectType | GraphQLScalarType
     >([
-      [FieldMetadataType.UUID, IDFilterType],
+      [FieldMetadataType.UUID, UUIDFilterType],
       [FieldMetadataType.TEXT, StringFilterType],
       [FieldMetadataType.DATE_TIME, DateFilterType],
       [FieldMetadataType.DATE, DateFilterType],
