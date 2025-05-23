@@ -1,5 +1,7 @@
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownOnToggleEffect } from '@/ui/layout/dropdown/components/DropdownOnToggleEffect';
+import { DROPDOWN_RESIZE_MIN_HEIGHT } from '@/ui/layout/dropdown/constants/DropdownResizeMinHeight';
+import { DROPDOWN_RESIZE_MIN_WIDTH } from '@/ui/layout/dropdown/constants/DropdownResizeMinWidth';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponeInstanceContext';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { dropdownHotkeyComponentState } from '@/ui/layout/dropdown/states/dropdownHotkeyComponentState';
@@ -100,29 +102,40 @@ export const Dropdown = ({
   const isMobile = useIsMobile();
   const bottomAutoresizePadding = isMobile ? 64 : 32;
 
+  const boundaryOptions = {
+    boundary: document.querySelector('#root') ?? undefined,
+    padding: {
+      right: 32,
+      left: 32,
+      bottom: bottomAutoresizePadding,
+    },
+  };
+
   const { refs, floatingStyles, placement } = useFloating({
     placement: dropdownPlacement,
     middleware: [
       ...offsetMiddleware,
-      flip(),
+      flip({
+        ...boundaryOptions,
+      }),
       size({
-        padding: {
-          right: 32,
-          bottom: bottomAutoresizePadding,
-        },
-        /**
-         * DO NOT TOUCH THIS apply() MIDDLEWARE PLEASE
-         *  THIS IS MANDATORY FOR KEEPING AUTORESIZING FOR ALL DROPDOWNS
-         *  IT'S THE STANDARD WAY OF WORKING RECOMMENDED BY THE LIBRARY
-         *  See https://floating-ui.com/docs/size#usage
-         */
         apply: ({ availableHeight, availableWidth }) => {
           flushSync(() => {
-            setDropdownMaxHeight(availableHeight);
-            setDropdownMaxWidth(availableWidth);
+            const maxHeightToApply =
+              availableHeight < DROPDOWN_RESIZE_MIN_HEIGHT
+                ? DROPDOWN_RESIZE_MIN_HEIGHT
+                : availableHeight;
+
+            const maxWidthToApply =
+              availableWidth < DROPDOWN_RESIZE_MIN_WIDTH
+                ? DROPDOWN_RESIZE_MIN_WIDTH
+                : availableWidth;
+
+            setDropdownMaxHeight(maxHeightToApply);
+            setDropdownMaxWidth(maxWidthToApply);
           });
         },
-        boundary: document.querySelector('#root') ?? undefined,
+        ...boundaryOptions,
       }),
     ],
     whileElementsMounted: autoUpdate,
