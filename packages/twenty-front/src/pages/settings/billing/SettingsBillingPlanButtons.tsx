@@ -1,34 +1,10 @@
-import {
-  IconApi,
-  IconApps,
-  IconAt,
-  IconCalendarEvent,
-  IconColorSwatch,
-  IconComponent,
-  IconCurrencyDollar,
-  IconDoorEnter,
-  IconFlask,
-  IconFunction,
-  IconHierarchy2,
-  IconKey,
-  IconLock,
-  IconMail,
-  IconPhone,
-  IconRocket,
-  IconServer,
-  IconSettings,
-  IconUserCircle,
-  IconUsers,
-  IconWebhook,
-} from 'twenty-ui/display';
-
-import { IconCancel, IconCreditCard, IconIdBadge2, IconMessageCircleCog, IconWallet } from '@tabler/icons-react';
+import { IconCancel, IconCreditCard } from '@tabler/icons-react';
 
 import styled from '@emotion/styled';
-import { ChangeSubscriptionPlan } from '~/pages/settings/billing/ChangeSubscriptionPlan';
-import { useState } from 'react';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { ConfirmChangeSubscriptionPlan } from '~/pages/settings/billing/ConfirmChangeSubscriptionPlan';
+import { CancelChangeSubscriptionPlan } from '~/pages/settings/billing/CancelSubscriptionPlan';
 
 const StyledSettingsBillingButton = styled.button`
     display: flex;
@@ -39,6 +15,25 @@ const StyledSettingsBillingButton = styled.button`
     background-color: #fff;
     border: 1px solid ${({ theme }) => theme.color.gray30};
     cursor: pointer;
+`;
+
+const StyledCancelSubscriptionButton = styled.button`
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: #fff;
+    border: 1px solid ${({ theme }) => theme.color.red20};
+    cursor: pointer;
+
+    span {
+        color: ${({ theme }) => theme.color.red40};
+    }
+
+    .iconCancel {
+        color: ${({ theme }) => theme.color.red40};
+    }
 `;
 
 const BillingDetailsButton = () => {
@@ -53,12 +48,12 @@ const BillingDetailsButton = () => {
 }
 
 const ChangeSubscriptionButton = () => {
-    const CHANGE_PLAN_MODAL_ID = 'change-subscription-plan-modal';
+    const CONFIRM_CHANGE_PLAN_MODAL_ID = 'confirm-change-subscription-plan-modal';
 
     const { openModal } = useModal();
 
     const handleClick = () => {
-        openModal(CHANGE_PLAN_MODAL_ID);
+        openModal(CONFIRM_CHANGE_PLAN_MODAL_ID);
     };
 
     return (
@@ -68,20 +63,32 @@ const ChangeSubscriptionButton = () => {
                     <span>Change plan</span>
                 </StyledSettingsBillingButton>
 
-                <Modal modalId={CHANGE_PLAN_MODAL_ID} isClosable>
-                    <ChangeSubscriptionPlan />
+                <Modal modalId={CONFIRM_CHANGE_PLAN_MODAL_ID} isClosable>
+                    <ConfirmChangeSubscriptionPlan />
                 </Modal>
         </div>
     );
 }
 
 const CancelSubscriptionButton = () => {
+    const  CANCEL_PLAN_MODAL_ID = 'cancel-subscription-plan-modal';
+
+    const { openModal } = useModal();
+
+    const handleClick = () => {
+        openModal(CANCEL_PLAN_MODAL_ID);
+    };
+
     return (
         <div>
-                <StyledSettingsBillingButton>
-                    <IconCancel size={15} />
+                <StyledCancelSubscriptionButton onClick={() => handleClick()}>
+                    <IconCancel size={15} className='iconCancel' />
                     <span>Cancel plan</span>
-                </StyledSettingsBillingButton>
+                </StyledCancelSubscriptionButton>
+
+                <Modal modalId={CANCEL_PLAN_MODAL_ID} isClosable>
+                    <CancelChangeSubscriptionPlan />
+                </Modal>
         </div>
     );
 }

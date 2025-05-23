@@ -19,6 +19,7 @@ import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useUpdateBillingPlan } from '~/pages/onboarding/hooks/useUpdateBillingPlan';
 import { useGetAllBillingPlan } from '~/pages/onboarding/hooks/useGetAllBillingPlan';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 
 export type plans = {
   id: string;
@@ -191,29 +192,17 @@ export const ChangeSubscriptionPlan = () => {
 
 
   const onSubmit: SubmitHandler<Form> = useCallback(
-    async (data) => {
-      try {
+    async () => {
         planSchema.parse({ selectedPlanId: selectedPlan?.id });
 
-        if (!currentWorkspaceMember?.id) {
-          throw new Error('User is not logged in');
-        }
-        const dataToPayement = selectedPlan;
-        setSelectedPlan(dataToPayement);
-        
-        updatePlan('123', data.selectedPlanId);
-      } catch (error: any) {
-        enqueueSnackBar(error?.message, {
-          variant: SnackBarVariant.Error,
+        enqueueSnackBar('Subscription changed!', {
+          variant: SnackBarVariant.Success,
         });
-      }
+
+        handleCloseModal()
     },
     [
       planSchema,
-      selectedPlan,
-      currentWorkspaceMember?.id,
-      setSelectedPlan,
-      setNextOnboardingStatus,
       enqueueSnackBar,
     ],
   );
@@ -233,6 +222,13 @@ export const ChangeSubscriptionPlan = () => {
   const formatPrice = (priceInCents: number) => {
     return `$${(priceInCents / 100).toFixed(0)}`;
   };
+
+  const { closeModal } = useModal();
+  
+    const handleCloseModal = async () => {
+        closeModal('change-subscription-plan-modal');
+        closeModal('confirm-change-subscription-plan-modal');
+    };
 
   return (
     <Modal size="large" className="custom-modal">
@@ -297,7 +293,7 @@ export const ChangeSubscriptionPlan = () => {
 
         <StyledButtonContainer>
           <MainButton
-            title={t`Continue`}
+            title={t`Save`}
             variant="primary"
             onClick={handleSubmit(onSubmit)}
             disabled={!isValid || isSubmitting}
