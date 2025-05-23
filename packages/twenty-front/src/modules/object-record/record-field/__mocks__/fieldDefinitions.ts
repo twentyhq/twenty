@@ -1,11 +1,12 @@
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import {
-    FieldActorMetadata,
-    FieldFullNameMetadata,
-    FieldRatingMetadata,
-    FieldSelectMetadata,
-    FieldTextMetadata,
+  FieldActorMetadata,
+  FieldFullNameMetadata,
+  FieldLinksMetadata,
+  FieldRatingMetadata,
+  FieldSelectMetadata,
+  FieldTextMetadata,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
@@ -109,5 +110,21 @@ export const actorFieldDefinition: FieldDefinition<FieldActorMetadata> = {
   metadata: {
     fieldName: 'actor',
     objectMetadataNameSingular: 'person',
+  },
+};
+
+export const linksFieldDefinition: FieldDefinition<FieldLinksMetadata> = {
+  fieldMetadataId,
+  label: 'Links',
+  iconName: 'IconLink',
+  type: FieldMetadataType.LINKS,
+  defaultValue: {
+    primaryLinkUrl: null,
+    primaryLinkLabel: null,
+    secondaryLinks: [],
+  },
+  metadata: {
+    fieldName: 'links',
+    objectMetadataNameSingular: 'company',
   },
 };
