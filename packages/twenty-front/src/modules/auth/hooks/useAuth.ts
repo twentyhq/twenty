@@ -207,9 +207,14 @@ export const useAuth = () => {
   );
 
   const handleGetLoginTokenFromEmailVerificationToken = useCallback(
-    async (emailVerificationToken: string, captchaToken?: string) => {
+    async (
+      emailVerificationToken: string,
+      email: string,
+      captchaToken?: string,
+    ) => {
       const loginTokenResult = await getLoginTokenFromEmailVerificationToken({
         variables: {
+          email,
           emailVerificationToken,
           captchaToken,
         },

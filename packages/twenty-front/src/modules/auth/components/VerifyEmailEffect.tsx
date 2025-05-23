@@ -41,7 +41,10 @@ export const VerifyEmailEffect = () => {
 
       try {
         const { loginToken, workspaceUrls } =
-          await getLoginTokenFromEmailVerificationToken(emailVerificationToken);
+          await getLoginTokenFromEmailVerificationToken(
+            emailVerificationToken,
+            email,
+          );
 
         enqueueSnackBar(t`Email verified.`, {
           dedupeKey: 'email-verification-dedupe-key',
