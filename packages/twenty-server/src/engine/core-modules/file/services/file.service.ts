@@ -9,7 +9,7 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-type FilePayloadToEncode = {
+export type FilePayloadToEncode = {
   workspaceId: string;
   fileId: string;
 };
