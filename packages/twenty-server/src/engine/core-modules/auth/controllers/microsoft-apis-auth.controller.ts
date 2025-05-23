@@ -133,6 +133,7 @@ export class MicrosoftAPIsAuthController {
             subdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
             customDomain: null,
           },
+          '/verify',
         ),
       );
     }

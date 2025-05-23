@@ -126,6 +126,7 @@ export class MicrosoftAuthController {
           this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
             currentWorkspace,
           ),
+          '/verify',
         ),
       );
     }

@@ -126,6 +126,7 @@ export class GoogleAPIsAuthController {
             subdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
             customDomain: null,
           },
+          '/verify',
         ),
       );
     }

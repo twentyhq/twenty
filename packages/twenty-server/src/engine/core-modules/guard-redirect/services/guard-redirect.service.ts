@@ -75,6 +75,7 @@ export class GuardRedirectService {
       customDomain: string | null;
       isCustomDomainEnabled?: boolean;
     },
+    pathname: string,
   ) {
     this.captureException(err, workspace.id);
 
@@ -85,6 +86,7 @@ export class GuardRedirectService {
         customDomain: workspace.customDomain,
         isCustomDomainEnabled: workspace.isCustomDomainEnabled ?? false,
       },
+      pathname,
     );
   }
 }

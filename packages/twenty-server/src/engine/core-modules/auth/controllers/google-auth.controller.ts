@@ -125,6 +125,7 @@ export class GoogleAuthController {
           this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
             currentWorkspace,
           ),
+          '/verify',
         ),
       );
     }
