@@ -38,7 +38,8 @@ export const LinksFieldInput = ({
     });
   };
 
-  const isPrimaryLink = (index: number) => index === 0;
+  const getShowPrimaryIcon = (index: number) => index === 0 && links.length > 1;
+  const getShowSetAsPrimaryButton = (index: number) => index > 0;
 
   const setIsFieldInError = useSetRecoilComponentStateV2(
     recordFieldInputIsFieldInErrorComponentState,
@@ -75,7 +76,8 @@ export const LinksFieldInput = ({
         <LinksFieldMenuItem
           key={index}
           dropdownId={`links-field-input-${fieldDefinition.metadata.fieldName}-${index}`}
-          isPrimary={isPrimaryLink(index)}
+          showPrimaryIcon={getShowPrimaryIcon(index)}
+          showSetAsPrimaryButton={getShowSetAsPrimaryButton(index)}
           label={link.label}
           onEdit={handleEdit}
           onSetAsPrimary={handleSetPrimary}

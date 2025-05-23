@@ -12,24 +12,24 @@ import { MenuItem } from 'twenty-ui/navigation';
 
 type MultiItemFieldMenuItemProps<T> = {
   dropdownId: string;
-  isPrimary?: boolean;
   value: T;
   onEdit?: () => void;
   onSetAsPrimary?: () => void;
   onDelete?: () => void;
   DisplayComponent: React.ComponentType<{ value: T }>;
-  hasPrimaryButton?: boolean;
+  showPrimaryIcon: boolean;
+  showSetAsPrimaryButton: boolean;
 };
 
 export const MultiItemFieldMenuItem = <T,>({
   dropdownId,
-  isPrimary,
   value,
   onEdit,
   onSetAsPrimary,
   onDelete,
   DisplayComponent,
-  hasPrimaryButton = true,
+  showPrimaryIcon,
+  showSetAsPrimaryButton,
 }: MultiItemFieldMenuItemProps<T>) => {
   const [isHovered, setIsHovered] = useState(false);
   const { isDropdownOpen, closeDropdown } = useDropdown(dropdownId);
@@ -69,12 +69,12 @@ export const MultiItemFieldMenuItem = <T,>({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       text={<DisplayComponent value={value} />}
-      isIconDisplayedOnHoverOnly={!isPrimary && !isDropdownOpen}
-      RightIcon={!isHovered && isPrimary ? IconBookmark : null}
+      isIconDisplayedOnHoverOnly={!showPrimaryIcon && !isDropdownOpen}
+      RightIcon={!isHovered && showPrimaryIcon ? IconBookmark : null}
       dropdownId={dropdownId}
       dropdownContent={
         <DropdownMenuItemsContainer>
-          {hasPrimaryButton && !isPrimary && (
+          {showSetAsPrimaryButton && (
             <MenuItem
               LeftIcon={IconBookmarkPlus}
               text="Set as Primary"
