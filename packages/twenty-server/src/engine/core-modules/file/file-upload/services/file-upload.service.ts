@@ -14,6 +14,14 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { getCropSize, getImageBufferFromUrl } from 'src/utils/image';
 
+export type SignedFile = { path: string; token: string };
+
+export type SignedFilesResult = {
+  id: string;
+  mimeType: string | undefined;
+  files: SignedFile[];
+};
+
 @Injectable()
 export class FileUploadService {
   constructor(
@@ -72,7 +80,7 @@ export class FileUploadService {
     mimeType: string | undefined;
     fileFolder: FileFolder;
     workspaceId: string;
-  }) {
+  }): Promise<SignedFilesResult> {
     const ext = filename.split('.')?.[1];
     const id = uuidV4();
     const name = `${id}${ext ? `.${ext}` : ''}`;
@@ -85,14 +93,15 @@ export class FileUploadService {
       folder,
     });
 
-    const signedPayload = await this.fileService.encodeFileToken({
+    const signedPayload = this.fileService.encodeFileToken({
+      fileId: id,
       workspaceId: workspaceId,
     });
 
     return {
       id,
       mimeType,
-      path: `${fileFolder}/${name}?token=${signedPayload}`,
+      files: [{ path: `${fileFolder}/${name}`, token: signedPayload }],
     };
   }
 
@@ -133,7 +142,7 @@ export class FileUploadService {
     mimeType: string | undefined;
     fileFolder: FileFolder;
     workspaceId: string;
-  }) {
+  }): Promise<SignedFilesResult> {
     const ext = filename.split('.')?.[1];
     const id = uuidV4();
     const name = `${id}${ext ? `.${ext}` : ''}`;
@@ -153,14 +162,22 @@ export class FileUploadService {
       ),
     );
 
-    const paths: Array<string> = [];
+    const files: Array<SignedFile> = [];
 
     await Promise.all(
       images.map(async (image, index) => {
         const buffer = await image.toBuffer();
         const folder = this.getWorkspaceFolderName(workspaceId, fileFolder);
 
-        paths.push(`${fileFolder}/${cropSizes[index]}/${name}`);
+        const token = this.fileService.encodeFileToken({
+          fileId: id,
+          workspaceId: workspaceId,
+        });
+
+        files.push({
+          path: `${fileFolder}/${cropSizes[index]}/${name}`,
+          token,
+        });
 
         return this._uploadFile({
           file: buffer,
@@ -174,7 +191,7 @@ export class FileUploadService {
     return {
       id,
       mimeType,
-      paths,
+      files,
     };
   }
 

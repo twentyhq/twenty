@@ -9,6 +9,11 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
+type FilePayloadToEncode = {
+  workspaceId: string;
+  fileId: string;
+};
+
 @Injectable()
 export class FileService {
   constructor(
@@ -30,8 +35,7 @@ export class FileService {
     });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  encodeFileToken(payloadToEncode: Record<string, any>) {
+  encodeFileToken(payloadToEncode: FilePayloadToEncode) {
     const fileTokenExpiresIn = this.twentyConfigService.get(
       'FILE_TOKEN_EXPIRES_IN',
     );

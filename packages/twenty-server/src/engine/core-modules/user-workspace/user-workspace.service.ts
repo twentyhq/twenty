@@ -371,12 +371,12 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
 
     if (!isDefined(pictureUrl)) return;
 
-    const { paths } = await this.fileUploadService.uploadImageFromUrl({
+    const { files } = await this.fileUploadService.uploadImageFromUrl({
       imageUrl: pictureUrl,
       fileFolder: FileFolder.ProfilePicture,
       workspaceId,
     });
 
-    return paths[0];
+    return files[0].path;
   }
 }
