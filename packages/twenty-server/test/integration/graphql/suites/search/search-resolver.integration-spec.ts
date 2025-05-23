@@ -1,28 +1,20 @@
 import { OBJECT_MODEL_COMMON_FIELDS } from 'test/integration/constants/object-model-common-fields';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
-import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { performCreateManyOperation } from 'test/integration/graphql/utils/perform-create-many-operation.utils';
 import { searchFactory } from 'test/integration/graphql/utils/search-factory.util';
-import {
-  LISTING_NAME_PLURAL,
-  LISTING_NAME_SINGULAR,
-} from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
-import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { EachTestingContext } from 'twenty-shared/testing';
-import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import {
   TEST_PERSON_1_ID,
   TEST_PERSON_2_ID,
   TEST_PERSON_3_ID,
 } from 'test/integration/constants/test-person-ids.constants';
 import { TEST_API_KEY_1_ID } from 'test/integration/constants/test-api-key-ids.constant';
+import { cleanTestDatabase } from 'test/integration/utils/clean-test-database';
 import {
-  TEST_LISTING_ID_1,
-  TEST_LISTING_ID_2,
-} from 'test/integration/metadata/suites/object-metadata/constants/test-object-name-record-ids.constant';
+  TEST_PET_ID_1,
+  TEST_PET_ID_2,
+} from 'test/integration/constants/test-pet-ids.constants';
 
 import { SearchResultEdgeDTO } from 'src/engine/core-modules/search/dtos/search-result-edge.dto';
 import {
@@ -33,7 +25,6 @@ import { SearchCursor } from 'src/engine/core-modules/search/services/search.ser
 import { SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
 
 describe('SearchResolver', () => {
-  let listingObjectMetadataId: { objectMetadataId: string };
   const [firstPerson, secondPerson, thirdPerson] = [
     { id: TEST_PERSON_1_ID, name: { firstName: 'searchInput1' } },
     { id: TEST_PERSON_2_ID, name: { firstName: 'searchInput2' } },
@@ -48,58 +39,20 @@ describe('SearchResolver', () => {
     },
   ];
 
-  const [firstListing, secondListing] = [
-    { id: TEST_LISTING_ID_1, name: 'searchInput1' },
-    { id: TEST_LISTING_ID_2, name: 'searchInput2' },
+  const [firstPet, secondPet] = [
+    { id: TEST_PET_ID_1, name: 'searchInput1' },
+    { id: TEST_PET_ID_2, name: 'searchInput2' },
   ];
 
   beforeAll(async () => {
-    await deleteAllRecords('person');
-    await deleteAllRecords('company');
-    await deleteAllRecords('opportunity');
-    await deleteAllRecords('workspaceMember');
-    await deleteAllRecords('_pet');
-    await deleteAllRecords('_surveyResult');
+    await cleanTestDatabase({ seed: false });
 
     try {
-      const objectsMetadata = await findManyObjectMetadata({
-        input: {
-          filter: {},
-          paging: {
-            first: 1000,
-          },
-        },
-      });
-
-      const listingObjectMetadata = objectsMetadata.objects.find(
-        (object) => object.nameSingular === LISTING_NAME_SINGULAR,
-      );
-
-      if (listingObjectMetadata) {
-        listingObjectMetadataId = {
-          objectMetadataId: listingObjectMetadata.id,
-        };
-      } else {
-        const { data } = await createOneObjectMetadata({
-          input: {
-            labelSingular: LISTING_NAME_SINGULAR,
-            labelPlural: LISTING_NAME_PLURAL,
-            nameSingular: LISTING_NAME_SINGULAR,
-            namePlural: LISTING_NAME_PLURAL,
-            icon: 'IconBuildingSkyscraper',
-          },
-        });
-
-        listingObjectMetadataId = {
-          objectMetadataId: data.createOneObject.id,
-        };
-      }
-
       await performCreateManyOperation(
-        LISTING_NAME_SINGULAR,
-        LISTING_NAME_PLURAL,
+        'pet',
+        'pets',
         OBJECT_MODEL_COMMON_FIELDS,
-        [firstListing, secondListing],
+        [firstPet, secondPet],
       );
 
       await performCreateManyOperation('person', 'people', PERSON_GQL_FIELDS, [
@@ -122,23 +75,7 @@ describe('SearchResolver', () => {
   });
 
   afterAll(async () => {
-    await deleteOneObjectMetadata({
-      input: { idToDelete: listingObjectMetadataId.objectMetadataId },
-    }).catch((error) => {
-      // eslint-disable-next-line no-console
-      console.log(error);
-    });
-
-    await makeGraphqlAPIRequest(
-      destroyOneOperationFactory({
-        objectMetadataSingularName: 'apiKey',
-        gqlFields: OBJECT_MODEL_COMMON_FIELDS,
-        recordId: apiKey.id,
-      }),
-    ).catch((error) => {
-      // eslint-disable-next-line no-console
-      console.log(error);
-    });
+    await cleanTestDatabase({ seed: true });
   });
 
   const testsUseCases: EachTestingContext<{
@@ -164,8 +101,8 @@ describe('SearchResolver', () => {
             firstPerson.id,
             secondPerson.id,
             thirdPerson.id,
-            firstListing.id,
-            secondListing.id,
+            firstPet.id,
+            secondPet.id,
           ],
           pageInfo: {
             hasNextPage: false,
@@ -173,7 +110,7 @@ describe('SearchResolver', () => {
               lastRanks: { tsRank: 0, tsRankCD: 0 },
               lastRecordIdsPerObject: {
                 person: thirdPerson.id,
-                [LISTING_NAME_SINGULAR]: secondListing.id,
+                pet: secondPet.id,
               },
             },
           },
@@ -188,14 +125,14 @@ describe('SearchResolver', () => {
           limit: 50,
         },
         eval: {
-          orderedRecordIds: [firstPerson.id, firstListing.id],
+          orderedRecordIds: [firstPerson.id, firstPet.id],
           pageInfo: {
             hasNextPage: false,
             decodedEndCursor: {
               lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
               lastRecordIdsPerObject: {
                 person: firstPerson.id,
-                [LISTING_NAME_SINGULAR]: firstListing.id,
+                pet: firstPet.id,
               },
             },
           },
@@ -207,17 +144,17 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '',
-          includedObjectNameSingulars: [LISTING_NAME_SINGULAR],
+          includedObjectNameSingulars: ['pet'],
           limit: 50,
         },
         eval: {
-          orderedRecordIds: [firstListing.id, secondListing.id],
+          orderedRecordIds: [firstPet.id, secondPet.id],
           pageInfo: {
             hasNextPage: false,
             decodedEndCursor: {
               lastRanks: { tsRank: 0, tsRankCD: 0 },
               lastRecordIdsPerObject: {
-                [LISTING_NAME_SINGULAR]: secondListing.id,
+                pet: secondPet.id,
               },
             },
           },
@@ -233,13 +170,13 @@ describe('SearchResolver', () => {
           limit: 50,
         },
         eval: {
-          orderedRecordIds: [firstListing.id, secondListing.id],
+          orderedRecordIds: [firstPet.id, secondPet.id],
           pageInfo: {
             hasNextPage: false,
             decodedEndCursor: {
               lastRanks: { tsRank: 0, tsRankCD: 0 },
               lastRecordIdsPerObject: {
-                [LISTING_NAME_SINGULAR]: secondListing.id,
+                pet: secondPet.id,
               },
             },
           },
@@ -251,17 +188,17 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '',
-          filter: { id: { eq: firstListing.id } },
+          filter: { id: { eq: firstPet.id } },
           limit: 50,
         },
         eval: {
-          orderedRecordIds: [firstListing.id],
+          orderedRecordIds: [firstPet.id],
           pageInfo: {
             hasNextPage: false,
             decodedEndCursor: {
               lastRanks: { tsRank: 0, tsRankCD: 0 },
               lastRecordIdsPerObject: {
-                [LISTING_NAME_SINGULAR]: firstListing.id,
+                pet: firstPet.id,
               },
             },
           },
@@ -280,14 +217,14 @@ describe('SearchResolver', () => {
             firstPerson.id,
             secondPerson.id,
             thirdPerson.id,
-            firstListing.id,
+            firstPet.id,
           ],
           pageInfo: {
             hasNextPage: true,
             decodedEndCursor: {
               lastRanks: { tsRank: 0, tsRankCD: 0 },
               lastRecordIdsPerObject: {
-                [LISTING_NAME_SINGULAR]: firstListing.id,
+                pet: firstPet.id,
                 person: thirdPerson.id,
               },
             },
@@ -330,13 +267,13 @@ describe('SearchResolver', () => {
           limit: 2,
         },
         eval: {
-          orderedRecordIds: [thirdPerson.id, firstListing.id],
+          orderedRecordIds: [thirdPerson.id, firstPet.id],
           pageInfo: {
             hasNextPage: true,
             decodedEndCursor: {
               lastRanks: { tsRank: 0, tsRankCD: 0 },
               lastRecordIdsPerObject: {
-                [LISTING_NAME_SINGULAR]: firstListing.id,
+                pet: firstPet.id,
                 person: thirdPerson.id,
               },
             },
@@ -356,14 +293,14 @@ describe('SearchResolver', () => {
             firstPerson.id,
             secondPerson.id,
             thirdPerson.id,
-            firstListing.id,
+            firstPet.id,
           ],
           pageInfo: {
             hasNextPage: true,
             decodedEndCursor: {
               lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
               lastRecordIdsPerObject: {
-                [LISTING_NAME_SINGULAR]: firstListing.id,
+                pet: firstPet.id,
                 person: thirdPerson.id,
               },
             },
@@ -407,13 +344,13 @@ describe('SearchResolver', () => {
           limit: 2,
         },
         eval: {
-          orderedRecordIds: [thirdPerson.id, firstListing.id],
+          orderedRecordIds: [thirdPerson.id, firstPet.id],
           pageInfo: {
             hasNextPage: true,
             decodedEndCursor: {
               lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
               lastRecordIdsPerObject: {
-                [LISTING_NAME_SINGULAR]: firstListing.id,
+                pet: firstPet.id,
                 person: thirdPerson.id,
               },
             },
@@ -434,17 +371,17 @@ describe('SearchResolver', () => {
             },
           }),
           limit: 2,
-          filter: { id: { neq: firstListing.id } },
+          filter: { id: { neq: firstPet.id } },
         },
         eval: {
-          orderedRecordIds: [thirdPerson.id, secondListing.id],
+          orderedRecordIds: [thirdPerson.id, secondPet.id],
           pageInfo: {
             hasNextPage: false,
             decodedEndCursor: {
               lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
               lastRecordIdsPerObject: {
                 person: thirdPerson.id,
-                [LISTING_NAME_SINGULAR]: secondListing.id,
+                pet: secondPet.id,
               },
             },
           },
@@ -460,13 +397,13 @@ describe('SearchResolver', () => {
           limit: 1,
         },
         eval: {
-          orderedRecordIds: [firstListing.id],
+          orderedRecordIds: [firstPet.id],
           pageInfo: {
             hasNextPage: true,
             decodedEndCursor: {
               lastRanks: { tsRank: 0, tsRankCD: 0 },
               lastRecordIdsPerObject: {
-                [LISTING_NAME_SINGULAR]: firstListing.id,
+                pet: firstPet.id,
               },
             },
           },
@@ -478,17 +415,17 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '',
-          includedObjectNameSingulars: [LISTING_NAME_SINGULAR],
+          includedObjectNameSingulars: ['pet'],
           limit: 1,
         },
         eval: {
-          orderedRecordIds: [firstListing.id],
+          orderedRecordIds: [firstPet.id],
           pageInfo: {
             hasNextPage: true,
             decodedEndCursor: {
               lastRanks: { tsRank: 0, tsRankCD: 0 },
               lastRecordIdsPerObject: {
-                [LISTING_NAME_SINGULAR]: firstListing.id,
+                pet: firstPet.id,
               },
             },
           },
@@ -618,7 +555,7 @@ describe('SearchResolver', () => {
             lastRanks: { tsRankCD: 0.1, tsRank: 0.06079271 },
             lastRecordIdsPerObject: {
               person: thirdPerson.id,
-              [LISTING_NAME_SINGULAR]: firstListing.id,
+              pet: firstPet.id,
             },
           }),
         },
@@ -629,7 +566,7 @@ describe('SearchResolver', () => {
           lastRanks: { tsRankCD: 0.1, tsRank: 0.06079271 },
           lastRecordIdsPerObject: {
             person: thirdPerson.id,
-            [LISTING_NAME_SINGULAR]: firstListing.id,
+            pet: firstPet.id,
           },
         }),
       },
