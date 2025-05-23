@@ -22,6 +22,10 @@ const StyledText = styled.div`
   padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledIntersectionObserver = styled.div`
+  height: 1px;
+`;
+
 export const MultipleRecordPickerFetchMoreLoader = () => {
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
     MultipleRecordPickerComponentInstanceContext,
@@ -77,8 +81,6 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
       },
       [fetchMore],
     ),
-    threshold: 0,
-    rootMargin: '200px',
   });
 
   if (!paginationState.hasNextPage) {
@@ -86,6 +88,9 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
   }
 
   return (
-    <div ref={ref}>{isLoading && <StyledText>Loading more...</StyledText>}</div>
+    <div>
+      <StyledIntersectionObserver ref={ref} />
+      {isLoading && <StyledText>Loading more...</StyledText>}
+    </div>
   );
 };
