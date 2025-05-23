@@ -38,7 +38,7 @@ export const LinksFieldInput = ({
     });
   };
 
-  const isPrimaryLink = (index: number) => index === 0 && links?.length > 1;
+  const isPrimaryLink = (index: number) => index === 0;
 
   const setIsFieldInError = useSetRecoilComponentStateV2(
     recordFieldInputIsFieldInErrorComponentState,
