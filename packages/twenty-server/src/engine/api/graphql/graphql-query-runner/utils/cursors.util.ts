@@ -14,7 +14,7 @@ export interface CursorData {
   [key: string]: any;
 }
 
-export const decodeCursor = (cursor: string): CursorData => {
+export const decodeCursor = <T = CursorData>(cursor: string): T => {
   try {
     return JSON.parse(Buffer.from(cursor, 'base64').toString());
   } catch (err) {
@@ -45,6 +45,10 @@ export const encodeCursor = <T extends ObjectRecord = ObjectRecord>(
     id: objectRecord.id,
   };
 
+  return encodeCursorData(cursorData);
+};
+
+export const encodeCursorData = (cursorData: CursorData) => {
   return Buffer.from(JSON.stringify(cursorData)).toString('base64');
 };
 
