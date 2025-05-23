@@ -5,5 +5,7 @@ export const buildSignedPath = ({
   path: string;
   token: string;
 }) => {
-  return `${path}?token=${token}`;
+  const directories = path.split('/');
+  const filename = directories.pop();
+  return `${directories.join('/')}/${token}/${filename}`;
 };

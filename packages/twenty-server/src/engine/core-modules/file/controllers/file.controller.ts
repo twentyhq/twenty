@@ -8,7 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 import {
   FileStorageException,
@@ -19,13 +19,10 @@ import {
   FileException,
   FileExceptionCode,
 } from 'src/engine/core-modules/file/file.exception';
-import {
-  checkFilePath,
-  checkFilename,
-} from 'src/engine/core-modules/file/file.utils';
 import { FileApiExceptionFilter } from 'src/engine/core-modules/file/filters/file-api-exception.filter';
 import { FilePathGuard } from 'src/engine/core-modules/file/guards/file-path-guard';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { extractFileInfoFromRequest } from 'src/engine/core-modules/file/file.utils';
 
 @Controller('files')
 @UseFilters(FileApiExceptionFilter)
@@ -39,12 +36,10 @@ export class FileController {
     @Res() res: Response,
     @Req() req: Request,
   ) {
-    const folderPath = checkFilePath(params[0]);
-    // @ts-expect-error legacy noImplicitAny
-    const filename = checkFilename(params['filename']);
-
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const workspaceId = (req as any)?.workspaceId;
+
+    const { filename, rawFolder } = extractFileInfoFromRequest(req);
 
     if (!workspaceId) {
       throw new FileException(
@@ -55,7 +50,7 @@ export class FileController {
 
     try {
       const fileStream = await this.fileService.getFileStream(
-        folderPath,
+        rawFolder,
         filename,
         workspaceId,
       );
