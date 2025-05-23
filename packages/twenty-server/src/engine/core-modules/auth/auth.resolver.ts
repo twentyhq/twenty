@@ -27,7 +27,6 @@ import {
 import { GetAuthorizationUrlForSSOInput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.input';
 import { GetAuthorizationUrlForSSOOutput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.output';
 import { GetLoginTokenFromEmailVerificationTokenInput } from 'src/engine/core-modules/auth/dto/get-login-token-from-email-verification-token.input';
-import { GetLoginTokenFromEmailVerificationTokenOutput } from 'src/engine/core-modules/auth/dto/get-login-token-from-email-verification-token.output';
 import { SignUpOutput } from 'src/engine/core-modules/auth/dto/sign-up.output';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
@@ -54,14 +53,17 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { GetLoginTokenFromEmailVerificationTokenOutput } from 'src/engine/core-modules/auth/dto/get-login-token-from-email-verification-token.output';
+import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { CreateUserAndWorkspaceInput } from 'src/engine/core-modules/auth/dto/create-user-and-workspace.input';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { GetLoginTokenFromCredentialsInput } from './dto/get-login-token-from-credentials.input';
 import { LoginToken } from './dto/login-token.entity';
 import { SignUpInput } from './dto/sign-up.input';
 import { ApiKeyToken, AuthTokens } from './dto/token.entity';
-import { UserExistsOutput } from './dto/user-exists.entity';
-import { CheckUserExistsInput } from './dto/user-exists.input';
+import { CheckUserExistOutput } from './dto/user-exists.entity';
+import { EmailAndCaptchaInput } from './dto/user-exists.input';
 import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.entity';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
@@ -93,12 +95,22 @@ export class AuthResolver {
   ) {}
 
   @UseGuards(CaptchaGuard)
-  @Query(() => UserExistsOutput)
+  @Query(() => CheckUserExistOutput)
   async checkUserExists(
-    @Args() checkUserExistsInput: CheckUserExistsInput,
-  ): Promise<typeof UserExistsOutput> {
+    @Args() checkUserExistsInput: EmailAndCaptchaInput,
+  ): Promise<CheckUserExistOutput> {
     return await this.authService.checkUserExists(
       checkUserExistsInput.email.toLowerCase(),
+    );
+  }
+
+  @UseGuards(CaptchaGuard)
+  @Query(() => [AvailableWorkspaceOutput])
+  async listAvailableWorkspaces(
+    @Args() listAvailableWorkspacesInput: EmailAndCaptchaInput,
+  ): Promise<Array<AvailableWorkspaceOutput>> {
+    return await this.authService.listAvailableWorkspacesForAuthentication(
+      listAvailableWorkspacesInput.email,
     );
   }
 
@@ -246,6 +258,32 @@ export class AuthResolver {
       user.email,
       workspace,
       signUpInput.locale ?? SOURCE_LOCALE,
+    );
+
+    const loginToken = await this.loginTokenService.generateLoginToken(
+      user.email,
+      workspace.id,
+    );
+
+    return {
+      loginToken,
+      workspace: {
+        id: workspace.id,
+        workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
+      },
+    };
+  }
+
+  @UseGuards(CaptchaGuard)
+  @Mutation(() => SignUpOutput)
+  async createUserAndWorkspace(
+    @Args() createUserAndWorkspaceInput: CreateUserAndWorkspaceInput,
+  ): Promise<SignUpOutput> {
+    const { user, workspace } = await this.signInUpService.signUpOnNewWorkspace(
+      {
+        type: 'newUserWithPicture',
+        newUserWithPicture: createUserAndWorkspaceInput,
+      },
     );
 
     const loginToken = await this.loginTokenService.generateLoginToken(

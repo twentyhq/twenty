@@ -14,13 +14,11 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
@@ -35,6 +33,8 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
+import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
+import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   constructor(
@@ -48,6 +48,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly domainManagerService: DomainManagerService,
+    private readonly approvedAccessDomainService: ApprovedAccessDomainService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly userRoleService: UserRoleService,
     private readonly fileUploadService: FileUploadService,
@@ -258,39 +259,27 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
         'workspaces',
         'workspaces.workspace',
         'workspaces.workspace.workspaceSSOIdentityProviders',
+        'workspaces.workspace.approvedAccessDomains',
       ],
     });
 
-    userValidator.assertIsDefinedOrThrow(
-      user,
-      new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
-    );
+    const alreadyMemberWorkspaces: Array<Workspace> = user
+      ? user.workspaces.map(({ workspace }) => workspace)
+      : [];
 
-    return user.workspaces.map<AvailableWorkspaceOutput>((userWorkspace) => ({
-      id: userWorkspace.workspaceId,
-      displayName: userWorkspace.workspace.displayName,
-      workspaceUrls: this.domainManagerService.getWorkspaceUrls(
-        userWorkspace.workspace,
-      ),
-      logo: userWorkspace.workspace.logo,
-      sso: userWorkspace.workspace.workspaceSSOIdentityProviders.reduce(
-        (acc, identityProvider) =>
-          acc.concat(
-            identityProvider.status === 'Inactive'
-              ? []
-              : [
-                  {
-                    id: identityProvider.id,
-                    name: identityProvider.name,
-                    issuer: identityProvider.issuer,
-                    type: identityProvider.type,
-                    status: identityProvider.status,
-                  },
-                ],
-          ),
-        [] as AvailableWorkspaceOutput['sso'],
-      ),
-    }));
+    const approvedAccessDomains =
+      await this.approvedAccessDomainService.findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain(
+        getDomainNameByEmail(email),
+      );
+
+    return [
+      ...alreadyMemberWorkspaces,
+      ...approvedAccessDomains
+        .filter(({ workspace }) =>
+          alreadyMemberWorkspaces.every(({ id }) => id !== workspace.id),
+        )
+        .map(({ workspace }) => workspace),
+    ];
   }
 
   async getUserWorkspaceForUserOrThrow({

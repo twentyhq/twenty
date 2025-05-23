@@ -9,9 +9,9 @@ import { Title } from '@/auth/components/Title';
 import { EmailVerificationSent } from '@/auth/sign-in-up/components/EmailVerificationSent';
 import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
 import { SignInUpGlobalScopeForm } from '@/auth/sign-in-up/components/SignInUpGlobalScopeForm';
-import { SignInUpSSOIdentityProviderSelection } from '@/auth/sign-in-up/components/SignInUpSSOIdentityProviderSelection';
+import { SignInUpSSOIdentityProviderSelection } from '@/auth/sign-in-up/components/internal/SignInUpSSOIdentityProviderSelection';
 import { SignInUpWorkspaceScopeForm } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeForm';
-import { SignInUpWorkspaceScopeFormEffect } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeFormEffect';
+import { SignInUpWorkspaceScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceScopeFormEffect';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
@@ -26,6 +26,7 @@ import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
 import { PublicWorkspaceDataOutput } from '~/generated/graphql';
+import { SignInUpGlobalScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpGlobalScopeFormEffect';
 
 const StandardContent = ({
   workspacePublicData,
@@ -71,6 +72,11 @@ export const SignInUp = () => {
     if (isDefined(workspaceInviteHash)) {
       return `Join ${workspaceFromInviteHash?.displayName ?? ''} team`;
     }
+
+    if (signInUpStep === SignInUpStep.WorkspaceSelection) {
+      return t`Choose a Workspace`;
+    }
+
     const workspaceName = !isDefined(workspacePublicData?.displayName)
       ? DEFAULT_WORKSPACE_NAME
       : workspacePublicData?.displayName === ''
@@ -79,17 +85,23 @@ export const SignInUp = () => {
 
     return t`Welcome to ${workspaceName}`;
   }, [
-    workspaceFromInviteHash?.displayName,
     workspaceInviteHash,
+    signInUpStep,
     workspacePublicData?.displayName,
     t,
+    workspaceFromInviteHash?.displayName,
   ]);
 
   const signInUpForm = useMemo(() => {
     if (loading) return null;
 
     if (isDefaultDomain && isMultiWorkspaceEnabled) {
-      return <SignInUpGlobalScopeForm />;
+      return (
+        <>
+          <SignInUpGlobalScopeFormEffect />
+          <SignInUpGlobalScopeForm />
+        </>
+      );
     }
 
     if (
@@ -112,7 +124,12 @@ export const SignInUp = () => {
       );
     }
 
-    return <SignInUpGlobalScopeForm />;
+    return (
+      <>
+        <SignInUpGlobalScopeFormEffect />
+        <SignInUpGlobalScopeForm />
+      </>
+    );
   }, [
     isDefaultDomain,
     isMultiWorkspaceEnabled,

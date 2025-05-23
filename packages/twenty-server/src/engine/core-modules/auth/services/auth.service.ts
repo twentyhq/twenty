@@ -33,10 +33,6 @@ import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-ap
 import { GetLoginTokenFromCredentialsInput } from 'src/engine/core-modules/auth/dto/get-login-token-from-credentials.input';
 import { AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
 import { UpdatePassword } from 'src/engine/core-modules/auth/dto/update-password.entity';
-import {
-  UserExists,
-  UserNotExists,
-} from 'src/engine/core-modules/auth/dto/user-exists.entity';
 import { WorkspaceInviteHashValid } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.entity';
 import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
@@ -60,6 +56,12 @@ import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-in
 import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { CheckUserExistOutput } from 'src/engine/core-modules/auth/dto/user-exists.entity';
+import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
+import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -68,6 +70,8 @@ export class AuthService {
     private readonly accessTokenService: AccessTokenService,
     private readonly domainManagerService: DomainManagerService,
     private readonly refreshTokenService: RefreshTokenService,
+    private readonly loginTokenService: LoginTokenService,
+    private readonly guardRedirectService: GuardRedirectService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly authSsoService: AuthSsoService,
@@ -285,21 +289,58 @@ export class AuthService {
     };
   }
 
-  async checkUserExists(email: string): Promise<UserExists | UserNotExists> {
+  private castWorkspaceToAvailableWorkspacesForCheckUserExistOutput(
+    workspaces: Array<Workspace>,
+  ) {
+    return workspaces.map<AvailableWorkspaceOutput>((workspace) => ({
+      id: workspace.id,
+      displayName: workspace.displayName,
+      workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
+      logo: workspace.logo,
+      sso: workspace.workspaceSSOIdentityProviders.reduce(
+        (acc, identityProvider) =>
+          acc.concat(
+            identityProvider.status === 'Inactive'
+              ? []
+              : [
+                  {
+                    id: identityProvider.id,
+                    name: identityProvider.name,
+                    issuer: identityProvider.issuer,
+                    type: identityProvider.type,
+                    status: identityProvider.status,
+                  },
+                ],
+          ),
+        [] as AvailableWorkspaceOutput['sso'],
+      ),
+    }));
+  }
+
+  async listAvailableWorkspacesForAuthentication(
+    email: string,
+  ): Promise<Array<AvailableWorkspaceOutput>> {
+    const workspaces =
+      await this.userWorkspaceService.findAvailableWorkspacesByEmail(email);
+
+    return this.castWorkspaceToAvailableWorkspacesForCheckUserExistOutput(
+      workspaces,
+    );
+  }
+
+  async checkUserExists(email: string): Promise<CheckUserExistOutput> {
     const user = await this.userRepository.findOneBy({
       email,
     });
 
-    if (userValidator.isDefined(user)) {
-      return {
-        exists: true,
-        availableWorkspaces:
-          await this.userWorkspaceService.findAvailableWorkspacesByEmail(email),
-        isEmailVerified: user.isEmailVerified,
-      };
-    }
+    const isUserExist = userValidator.isDefined(user);
 
-    return { exists: false };
+    return {
+      exists: isUserExist,
+      availableWorkspaces:
+        await this.listAvailableWorkspacesForAuthentication(email),
+      isEmailVerified: isUserExist ? user.isEmailVerified : false,
+    };
   }
 
   async checkWorkspaceInviteHashIsValid(
@@ -646,6 +687,133 @@ export class AuthService {
       throw new AuthException(
         'User does not have access to this workspace',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+  }
+
+  async signInUpWithSocialSSO(
+    {
+      firstName,
+      lastName,
+      email: rawEmail,
+      picture,
+      workspaceInviteHash,
+      workspaceId,
+      billingCheckoutSessionState,
+      action,
+      locale,
+    }: MicrosoftRequest['user'] | GoogleRequest['user'],
+    authProvider: 'google' | 'microsoft',
+  ): Promise<string> {
+    const email = rawEmail.toLowerCase();
+
+    const availableWorkspacesCount =
+      action === 'list-available-workspaces'
+        ? (
+            await this.userWorkspaceService.findAvailableWorkspacesByEmail(
+              email,
+            )
+          ).length
+        : 0;
+
+    const existingUser = await this.userRepository.findOne({
+      where: { email },
+    });
+
+    if (
+      !workspaceId &&
+      !workspaceInviteHash &&
+      action === 'list-available-workspaces' &&
+      availableWorkspacesCount !== 0
+    ) {
+      const url = this.domainManagerService.buildBaseUrl({
+        pathname: '/welcome',
+        searchParams: {
+          signInUpCallback: JSON.stringify(
+            existingUser
+              ? {
+                  authProvider,
+                  type: 'existingUser',
+                  email,
+                }
+              : {
+                  authProvider,
+                  type: 'newUser',
+                  firstName,
+                  lastName,
+                  email,
+                  picture,
+                },
+          ),
+        },
+      });
+
+      return url.toString();
+    }
+
+    const currentWorkspace =
+      action === 'create-new-workspace'
+        ? undefined
+        : await this.findWorkspaceForSignInUp({
+            workspaceId,
+            workspaceInviteHash,
+            email,
+            authProvider,
+          });
+
+    try {
+      const invitation =
+        currentWorkspace && email
+          ? await this.findInvitationForSignInUp({
+              currentWorkspace,
+              email,
+            })
+          : undefined;
+
+      const { userData } = this.formatUserDataPayload(
+        {
+          firstName,
+          lastName,
+          email,
+          picture,
+          locale,
+        },
+        existingUser,
+      );
+
+      await this.checkAccessForSignIn({
+        userData,
+        invitation,
+        workspaceInviteHash,
+        workspace: currentWorkspace,
+      });
+
+      const { user, workspace } = await this.signInUp({
+        invitation,
+        workspace: currentWorkspace,
+        userData,
+        authParams: {
+          provider: 'google',
+        },
+        billingCheckoutSessionState,
+      });
+
+      const loginToken = await this.loginTokenService.generateLoginToken(
+        user.email,
+        workspace.id,
+      );
+
+      return this.computeRedirectURI({
+        loginToken: loginToken.token,
+        workspace,
+        billingCheckoutSessionState,
+      });
+    } catch (err) {
+      return this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
+        err,
+        this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
+          currentWorkspace,
+        ),
       );
     }
   }
