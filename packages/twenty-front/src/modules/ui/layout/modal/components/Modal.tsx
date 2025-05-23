@@ -221,7 +221,7 @@ export const Modal = ({
   };
 
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {isModalOpened && (
         <ModalComponentInstanceContext.Provider
           value={{
