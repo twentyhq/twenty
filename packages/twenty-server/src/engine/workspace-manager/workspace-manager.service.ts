@@ -244,11 +244,21 @@ export class WorkspaceManagerService {
       dataSourceMetadata.id,
       workspaceId,
       PETS_METADATA_SEEDS,
+    );
+
+    await this.seederService.seedCustomObjectRecords(
+      workspaceId,
+      PETS_METADATA_SEEDS,
       PETS_DATA_SEEDS,
     );
 
     await this.seederService.seedCustomObjects(
       dataSourceMetadata.id,
+      workspaceId,
+      SURVEY_RESULTS_METADATA_SEEDS,
+    );
+
+    await this.seederService.seedCustomObjectRecords(
       workspaceId,
       SURVEY_RESULTS_METADATA_SEEDS,
       SURVEY_RESULTS_DATA_SEEDS,

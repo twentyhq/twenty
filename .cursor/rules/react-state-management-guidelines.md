@@ -84,7 +84,7 @@ Twenty uses a combination of Recoil for global state and Apollo Client for serve
   `;
 
   export const GET_USER = gql`
-    query GetUser($id: ID!) {
+    query GetUser($id: UUID!) {
       user(id: $id) {
         ...UserFields
       }

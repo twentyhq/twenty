@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { In, InsertResult, ObjectLiteral } from 'typeorm';
 
@@ -11,9 +12,9 @@ import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/int
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -21,7 +22,6 @@ import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-met
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @Injectable()
 export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResolverService<
