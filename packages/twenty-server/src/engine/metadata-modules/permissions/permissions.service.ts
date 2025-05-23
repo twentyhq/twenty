@@ -18,6 +18,11 @@ import {
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 
+export type UserWorkspacePermissions = {
+  settingsPermissions: Record<SettingPermissionType, boolean>;
+  objectRecordsPermissions: Record<PermissionsOnAllObjectRecords, boolean>;
+};
+
 @Injectable()
 export class PermissionsService {
   constructor(
@@ -26,16 +31,32 @@ export class PermissionsService {
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
+  public getDefaultUserWorkspacePermissions = () =>
+    ({
+      objectRecordsPermissions: {
+        [PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS]: false,
+        [PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS]: false,
+        [PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS]: false,
+        [PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS]: false,
+      },
+      settingsPermissions: {
+        [SettingPermissionType.API_KEYS_AND_WEBHOOKS]: false,
+        [SettingPermissionType.WORKSPACE]: false,
+        [SettingPermissionType.WORKSPACE_MEMBERS]: false,
+        [SettingPermissionType.ROLES]: false,
+        [SettingPermissionType.DATA_MODEL]: false,
+        [SettingPermissionType.ADMIN_PANEL]: false,
+        [SettingPermissionType.SECURITY]: false,
+      },
+    }) as const satisfies UserWorkspacePermissions;
+
   public async getUserWorkspacePermissions({
     userWorkspaceId,
     workspaceId,
   }: {
     userWorkspaceId: string;
     workspaceId: string;
-  }): Promise<{
-    settingsPermissions: Record<SettingPermissionType, boolean>;
-    objectRecordsPermissions: Record<PermissionsOnAllObjectRecords, boolean>;
-  }> {
+  }): Promise<UserWorkspacePermissions> {
     const [roleOfUserWorkspace] = await this.userRoleService
       .getRolesByUserWorkspaces({
         userWorkspaceIds: [userWorkspaceId],

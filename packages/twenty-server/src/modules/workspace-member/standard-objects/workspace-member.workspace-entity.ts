@@ -131,6 +131,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconFileUpload',
   })
   @WorkspaceIsSystem()
+  // NULLABLE ?
   avatarUrl: string;
 
   @WorkspaceField({

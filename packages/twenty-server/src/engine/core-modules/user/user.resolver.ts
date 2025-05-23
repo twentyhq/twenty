@@ -14,6 +14,7 @@ import crypto from 'crypto';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
@@ -34,10 +35,14 @@ import {
 } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { DeletedWorkspaceMember } from 'src/engine/core-modules/user/dtos/deleted-workspace-member.dto';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
-import { DeletedWorkspaceMemberTranspiler } from 'src/engine/core-modules/user/services/deleted-workspace-member-transpiler.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import {
+  ToWorkspaceMemberDtoArgs,
+  WorkspaceMemberTranspiler,
+} from 'src/engine/core-modules/user/services/workspace-member-transpiler.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
@@ -48,7 +53,6 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -79,7 +83,8 @@ export class UserResolver {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly userRoleService: UserRoleService,
     private readonly permissionsService: PermissionsService,
-    private readonly deletedWorkspaceMemberTranspiler: DeletedWorkspaceMemberTranspiler,
+    private readonly workspaceMemberTranspiler: WorkspaceMemberTranspiler,
+    private readonly userWorkspaceService: UserWorkspaceService,
   ) {}
 
   @Query(() => User)
@@ -103,47 +108,38 @@ export class UserResolver {
       (userWorkspace) => userWorkspace.workspace.id === workspace.id,
     );
 
-    if (!currentUserWorkspace) {
+    if (!isDefined(currentUserWorkspace)) {
       throw new Error('Current user workspace not found');
     }
-    let settingsPermissions = {};
-    let objectRecordsPermissions = {};
 
-    if (
-      ![
-        WorkspaceActivationStatus.PENDING_CREATION,
-        WorkspaceActivationStatus.ONGOING_CREATION,
-      ].includes(workspace.activationStatus)
-    ) {
-      const permissions =
-        await this.permissionsService.getUserWorkspacePermissions({
-          userWorkspaceId: currentUserWorkspace.id,
-          workspaceId: workspace.id,
-        });
+    const workspaceIsPendingOrOngoingCreation = [
+      WorkspaceActivationStatus.PENDING_CREATION,
+      WorkspaceActivationStatus.ONGOING_CREATION,
+    ].includes(workspace.activationStatus);
 
-      settingsPermissions = permissions.settingsPermissions;
-      objectRecordsPermissions = permissions.objectRecordsPermissions;
-    }
+    const { objectRecordsPermissions, settingsPermissions } =
+      !workspaceIsPendingOrOngoingCreation
+        ? await this.permissionsService.getUserWorkspacePermissions({
+            userWorkspaceId: currentUserWorkspace.id,
+            workspaceId: workspace.id,
+          })
+        : this.permissionsService.getDefaultUserWorkspacePermissions();
 
-    const grantedSettingsPermissions: SettingPermissionType[] = (
+    const grantedSettingsPermissions = (
       Object.keys(settingsPermissions) as SettingPermissionType[]
-    )
-      // @ts-expect-error legacy noImplicitAny
-      .filter((feature) => settingsPermissions[feature] === true);
+    ).filter((feature) => settingsPermissions[feature] === true);
 
     const grantedObjectRecordsPermissions = (
       Object.keys(objectRecordsPermissions) as PermissionsOnAllObjectRecords[]
-    )
-      // @ts-expect-error legacy noImplicitAny
-      .filter((permission) => objectRecordsPermissions[permission] === true);
-
-    currentUserWorkspace.settingsPermissions = grantedSettingsPermissions;
-    currentUserWorkspace.objectRecordsPermissions =
-      grantedObjectRecordsPermissions;
-    user.currentUserWorkspace = currentUserWorkspace;
+    ).filter((feature) => objectRecordsPermissions[feature] === true);
 
     return {
       ...user,
+      currentUserWorkspace: {
+        ...currentUserWorkspace,
+        objectRecordsPermissions: grantedObjectRecordsPermissions,
+        settingsPermissions: grantedSettingsPermissions,
+      },
       currentWorkspace: workspace,
     };
   }
@@ -152,18 +148,17 @@ export class UserResolver {
   async userVars(
     @Parent() user: User,
     @AuthWorkspace() workspace: Workspace,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ): Promise<Record<string, any>> {
+  ): Promise<Record<string, unknown>> {
     const userVars = await this.userVarService.getAll({
       userId: user.id,
       workspaceId: workspace.id,
     });
 
-    const userVarAllowList = [
+    const userVarAllowList: string[] = [
       OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
       AccountsToReconnectKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
       AccountsToReconnectKeys.ACCOUNTS_TO_RECONNECT_EMAIL_ALIASES,
-    ] as string[];
+    ];
 
     const filteredMap = new Map(
       [...userVars].filter(([key]) => userVarAllowList.includes(key)),
@@ -179,22 +174,40 @@ export class UserResolver {
     @Parent() user: User,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<WorkspaceMember | null> {
-    const workspaceMember = await this.userService.loadWorkspaceMember(
+    const workspaceMemberEntity = await this.userService.loadWorkspaceMember(
       user,
       workspace,
     );
 
-    if (workspaceMember && workspaceMember.avatarUrl) {
-      const avatarUrlToken = this.fileService.encodeFileToken({
-        workspaceMemberId: workspaceMember.id,
+    if (!isDefined(workspaceMemberEntity)) {
+      throw new Error('Workspace member not found');
+    }
+
+    const workspaceId = workspace.id;
+    const userWorkspace =
+      await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
+        userId: workspaceMemberEntity.userId,
         workspaceId: workspace.id,
       });
 
-      workspaceMember.avatarUrl = `${workspaceMember.avatarUrl}?token=${avatarUrlToken}`;
+    const roleOfUserWorkspace =
+      await this.userRoleService.getRolesByUserWorkspaces({
+        userWorkspaceIds: [userWorkspace.id],
+        workspaceId,
+      });
+
+    const userWorkspaceRoles = roleOfUserWorkspace.get(userWorkspace.id);
+
+    if (!isDefined(userWorkspaceRoles)) {
+      throw new Error('User workspace roles not found');
     }
 
-    // TODO Refactor to be transpiled to WorkspaceMember instead
-    return workspaceMember as WorkspaceMember | null;
+    // TODO new now computing roles here too
+    return this.workspaceMemberTranspiler.toWorkspaceMemberDto({
+      workspaceMemberEntity,
+      userWorkspace,
+      userWorkspaceRoles,
+    });
   }
 
   @ResolveField(() => [WorkspaceMember], {
@@ -209,7 +222,6 @@ export class UserResolver {
       false,
     );
 
-    const workspaceMembers: WorkspaceMember[] = [];
     const userWorkspaces = await this.userWorkspaceRepository.find({
       where: {
         userId: In(workspaceMemberEntities.map((entity) => entity.userId)),
@@ -217,14 +229,14 @@ export class UserResolver {
       },
     });
 
-    const userWorkspacesByUserId = new Map<string, UserWorkspace>(
+    const userWorkspacesByUserIdMap = new Map<string, UserWorkspace>(
       userWorkspaces.map((userWorkspace) => [
         userWorkspace.userId,
         userWorkspace,
       ]),
     );
 
-    const rolesByUserWorkspaces: Map<string, RoleDTO[]> =
+    const rolesByUserWorkspacesMap =
       await this.userRoleService.getRolesByUserWorkspaces({
         userWorkspaceIds: userWorkspaces.map(
           (userWorkspace) => userWorkspace.id,
@@ -232,56 +244,38 @@ export class UserResolver {
         workspaceId: workspace.id,
       });
 
-    for (const workspaceMemberEntity of workspaceMemberEntities) {
-      if (workspaceMemberEntity.avatarUrl) {
-        const avatarUrlToken = this.fileService.encodeFileToken({
-          workspaceMemberId: workspaceMemberEntity.id,
-          workspaceId: workspace.id,
-        });
+    const toWorkspaceMemberDtoArgs =
+      workspaceMemberEntities.map<ToWorkspaceMemberDtoArgs>(
+        (workspaceMemberEntity) => {
+          const userWorkspace = userWorkspacesByUserIdMap.get(
+            workspaceMemberEntity.userId,
+          );
 
-        workspaceMemberEntity.avatarUrl = `${workspaceMemberEntity.avatarUrl}?token=${avatarUrlToken}`;
-      }
+          // TODO Should ignore ?
+          if (!isDefined(userWorkspace)) {
+            throw new Error('User workspace not found');
+          }
 
-      // TODO Refactor to be transpiled to WorkspaceMember instead
-      const workspaceMember = workspaceMemberEntity as WorkspaceMember;
+          // TODO Should ignore ?
+          const userWorkspaceRoles = rolesByUserWorkspacesMap.get(
+            userWorkspace.id,
+          );
 
-      const userWorkspace = userWorkspacesByUserId.get(
-        workspaceMemberEntity.userId,
+          if (!isDefined(userWorkspaceRoles)) {
+            throw new Error('User workspace roles not found');
+          }
+
+          return {
+            userWorkspace,
+            userWorkspaceRoles,
+            workspaceMemberEntity,
+          };
+        },
       );
 
-      // TODO Refactor should not throw ? typed as nullable ?
-      if (!userWorkspace) {
-        throw new Error('User workspace not found');
-      }
-
-      workspaceMember.userWorkspaceId = userWorkspace.id;
-
-      const workspaceMemberRoles = (
-        rolesByUserWorkspaces.get(userWorkspace.id) ?? []
-      ).map((roleEntity) => {
-        return {
-          id: roleEntity.id,
-          label: roleEntity.label,
-          canUpdateAllSettings: roleEntity.canUpdateAllSettings,
-          description: roleEntity.description,
-          icon: roleEntity.icon,
-          isEditable: roleEntity.isEditable,
-          userWorkspaceRoles: roleEntity.userWorkspaceRoles,
-          canReadAllObjectRecords: roleEntity.canReadAllObjectRecords,
-          canUpdateAllObjectRecords: roleEntity.canUpdateAllObjectRecords,
-          canSoftDeleteAllObjectRecords:
-            roleEntity.canSoftDeleteAllObjectRecords,
-          canDestroyAllObjectRecords: roleEntity.canDestroyAllObjectRecords,
-        };
-      });
-
-      workspaceMember.roles = workspaceMemberRoles;
-
-      workspaceMembers.push(workspaceMember);
-    }
-
-    // TODO: Fix typing disrepency between Entity and DTO
-    return workspaceMembers;
+    return this.workspaceMemberTranspiler.toWorkspaceMemberDtos(
+      toWorkspaceMemberDtoArgs,
+    );
   }
 
   @ResolveField(() => [DeletedWorkspaceMember], {
@@ -294,7 +288,7 @@ export class UserResolver {
     const workspaceMemberEntities =
       await this.userService.loadDeletedWorkspaceMembersOnly(workspace);
 
-    return this.deletedWorkspaceMemberTranspiler.toDeletedWorkspaceMemberDtos(
+    return this.workspaceMemberTranspiler.toDeletedWorkspaceMemberDtos(
       workspaceMemberEntities,
       workspace.id,
     );
@@ -346,7 +340,6 @@ export class UserResolver {
 
   @Mutation(() => User)
   async deleteUser(@AuthUser() { id: userId }: User) {
-    // Proceed with user deletion
     return this.userService.deleteUser(userId);
   }
 
