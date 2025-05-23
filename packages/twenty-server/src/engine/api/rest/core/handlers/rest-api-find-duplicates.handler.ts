@@ -18,12 +18,8 @@ export class RestApiFindDuplicatesHandler extends RestApiBaseHandler {
   async handle(request: Request) {
     this.validate(request);
 
-    const {
-      objectMetadataNameSingular,
-      repository,
-      objectMetadata,
-      objectMetadataItemWithFieldsMaps,
-    } = await this.getRepositoryAndMetadataOrFail(request);
+    const { repository, objectMetadata, objectMetadataItemWithFieldsMaps } =
+      await this.getRepositoryAndMetadataOrFail(request);
 
     const existingRecordsQueryBuilder = repository.createQueryBuilder(
       objectMetadataItemWithFieldsMaps.nameSingular,
@@ -69,14 +65,14 @@ export class RestApiFindDuplicatesHandler extends RestApiBaseHandler {
         request,
         repository,
         objectMetadata,
-        objectMetadataNameSingular,
         objectMetadataItemWithFieldsMaps,
         extraFilters: duplicateCondition,
       });
 
       const paginatedResult = this.formatPaginatedDuplicatesResult({
         finalRecords: records,
-        objectMetadataNameSingular,
+        objectMetadataNameSingular:
+          objectMetadata.objectMetadataMapItem.nameSingular,
         isForwardPagination,
         hasMoreRecords,
         totalCount,

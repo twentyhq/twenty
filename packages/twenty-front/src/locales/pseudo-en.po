@@ -2340,6 +2340,11 @@ msgstr ""
 msgid "Go to Companies"
 msgstr ""
 
+#. js-lingui-id: dHvI9O
+#: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
+msgid "Go to Draft"
+msgstr ""
+
 #. js-lingui-id: BQE4ob
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Notes"
@@ -2363,7 +2368,9 @@ msgid "Go to runs"
 msgstr ""
 
 #. js-lingui-id: mT57+Q
+#: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Settings"
 msgstr ""
@@ -2530,6 +2537,11 @@ msgstr ""
 #. js-lingui-id: LPN8Ma
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Identity Provider Metadata XML"
+msgstr ""
+
+#. js-lingui-id: ZfP/Ap
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
+msgid "If this is unexpected, please verify your settings."
 msgstr ""
 
 #. js-lingui-id: j843N3
@@ -2756,6 +2768,11 @@ msgstr ""
 #. js-lingui-id: dFtidv
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Japanese"
+msgstr ""
+
+#. js-lingui-id: VIK/N0
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
+msgid "JSON keys cannot contain spaces"
 msgstr ""
 
 #. js-lingui-id: OGXtL8
@@ -3247,6 +3264,11 @@ msgstr ""
 #. js-lingui-id: 4BSfjK
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "No country"
+msgstr ""
+
+#. js-lingui-id: 7tCnBa
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
+msgid "No Data Available for Remote Table"
 msgstr ""
 
 #. js-lingui-id: pxvJ9B
@@ -3803,6 +3825,8 @@ msgid "Record image"
 msgstr ""
 
 #. js-lingui-id: K6/7kH
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
 msgid "Record label"
 msgstr ""
@@ -4863,12 +4887,18 @@ msgstr ""
 
 #. js-lingui-id: ecUA8p
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
+#: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Today"
 msgstr ""
 
 #. js-lingui-id: XArpJK
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 msgid "Toggle all object permissions"
+msgstr ""
+
+#. js-lingui-id: BRMXj0
+#: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
+msgid "Tomorrow"
 msgstr ""
 
 #. js-lingui-id: vb0Q0/
@@ -5315,6 +5345,11 @@ msgstr ""
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "yes"
+msgstr ""
+
+#. js-lingui-id: y/0uwd
+#: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
+msgid "Yesterday"
 msgstr ""
 
 #. js-lingui-id: qsAug0

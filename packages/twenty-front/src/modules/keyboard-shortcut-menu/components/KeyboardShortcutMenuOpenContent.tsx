@@ -2,11 +2,11 @@ import { Key } from 'ts-key-enum';
 
 import { KEYBOARD_SHORTCUTS_GENERAL } from '@/keyboard-shortcut-menu/constants/KeyboardShortcutsGeneral';
 import { KEYBOARD_SHORTCUTS_TABLE } from '@/keyboard-shortcut-menu/constants/KeyboardShortcutsTable';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 
 import { useKeyboardShortcutMenu } from '../hooks/useKeyboardShortcutMenu';
 
+import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { KeyboardMenuDialog } from './KeyboardShortcutMenuDialog';
 import { KeyboardMenuGroup } from './KeyboardShortcutMenuGroup';
 import { KeyboardMenuItem } from './KeyboardShortcutMenuItem';
@@ -15,11 +15,12 @@ export const KeyboardShortcutMenuOpenContent = () => {
   const { toggleKeyboardShortcutMenu, closeKeyboardShortcutMenu } =
     useKeyboardShortcutMenu();
 
-  useScopedHotkeys(
+  useGlobalHotkeys(
     [Key.Escape],
     () => {
       closeKeyboardShortcutMenu();
     },
+    false,
     AppHotkeyScope.KeyboardShortcutMenuOpen,
     [closeKeyboardShortcutMenu],
   );

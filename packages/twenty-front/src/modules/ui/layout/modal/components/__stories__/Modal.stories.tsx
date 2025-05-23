@@ -2,11 +2,14 @@ import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 
 import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
+import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { internalHotkeysEnabledScopesState } from '@/ui/utilities/hotkey/states/internal/internalHotkeysEnabledScopesState';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
+import { sleep } from '~/utils/sleep';
 import { isModalOpenedComponentState } from '../../states/isModalOpenedComponentState';
 import { Modal } from '../Modal';
 
@@ -28,6 +31,20 @@ const initializeState = ({ set }: { set: (atom: any, value: any) => void }) => {
   });
 
   set(internalHotkeysEnabledScopesState, [ModalHotkeyScope.ModalFocus]);
+
+  set(focusStackState, [
+    {
+      focusId: 'modal-id',
+      componentInstance: {
+        componentType: FocusComponentType.MODAL,
+        componentInstanceId: 'modal-id',
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysWithModifiers: true,
+        enableGlobalHotkeysConflictingWithKeyboard: true,
+      },
+    },
+  ]);
 };
 
 const meta: Meta<typeof Modal> = {
@@ -87,7 +104,9 @@ export const CloseClosableModalOnClickOutside: Story = {
 
     await canvas.findByText('Click Outside Test');
 
-    const backdrop = document.querySelector('.modal-backdrop') as HTMLElement;
+    const backdrop = await canvas.findByTestId('modal-backdrop');
+    // We need to wait for the outside click listener to be registered
+    await sleep(100);
     await userEvent.click(backdrop);
 
     await waitFor(() => {

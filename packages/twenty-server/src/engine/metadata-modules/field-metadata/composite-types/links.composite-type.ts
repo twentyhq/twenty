@@ -37,3 +37,8 @@ export type LinksMetadata = {
   primaryLinkUrl: string;
   secondaryLinks: LinkMetadata[] | null;
 };
+
+export type LinkMetadataNullable = {
+  label: string | null;
+  url: string | null;
+};

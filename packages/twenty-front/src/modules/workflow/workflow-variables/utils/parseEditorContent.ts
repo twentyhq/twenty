@@ -1,4 +1,4 @@
-import { JSONContent } from '@tiptap/react';
+import type { JSONContent } from '@tiptap/react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const parseEditorContent = (json: JSONContent): string => {

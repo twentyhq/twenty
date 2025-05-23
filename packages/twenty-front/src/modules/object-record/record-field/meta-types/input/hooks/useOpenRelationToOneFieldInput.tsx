@@ -34,9 +34,9 @@ export const useOpenRelationToOneFieldInput = () => {
           );
         }
 
-        setHotkeyScopeAndMemorizePreviousScope(
-          SingleRecordPickerHotkeyScope.SingleRecordPicker,
-        );
+        setHotkeyScopeAndMemorizePreviousScope({
+          scope: SingleRecordPickerHotkeyScope.SingleRecordPicker,
+        });
       },
     [setHotkeyScopeAndMemorizePreviousScope],
   );

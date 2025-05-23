@@ -2,11 +2,11 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { LinkType, RoundedLink, SocialLink } from 'twenty-ui/navigation';
 
 type LinkDisplayProps = {
-  value?: { url: string; label?: string };
+  value: { url: string; label?: string | null };
 };
 
 export const LinkDisplay = ({ value }: LinkDisplayProps) => {
-  const url = value?.url;
+  const url = value.url;
 
   if (!isNonEmptyString(url)) {
     return <></>;
@@ -18,8 +18,8 @@ export const LinkDisplay = ({ value }: LinkDisplayProps) => {
       : 'https://' + url
     : '';
 
-  const displayedValue = isNonEmptyString(value?.label)
-    ? value?.label
+  const displayedValue = isNonEmptyString(value.label)
+    ? value.label
     : url?.replace(/^http[s]?:\/\/(?:[w]+\.)?/gm, '').replace(/^[w]+\./gm, '');
 
   const type = displayedValue.startsWith('linkedin.')

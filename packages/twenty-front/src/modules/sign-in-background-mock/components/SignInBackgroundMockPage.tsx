@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 
-import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { SignInBackgroundMockContainer } from '@/sign-in-background-mock/components/SignInBackgroundMockContainer';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
@@ -18,11 +17,9 @@ export const SignInBackgroundMockPage = () => {
     <PageContainer>
       <PageHeader title="Companies" Icon={IconBuildingSkyscraper} />
       <PageBody>
-        <RecordFieldValueSelectorContextProvider>
-          <StyledTableContainer>
-            <SignInBackgroundMockContainer />
-          </StyledTableContainer>
-        </RecordFieldValueSelectorContextProvider>
+        <StyledTableContainer>
+          <SignInBackgroundMockContainer />
+        </StyledTableContainer>
       </PageBody>
     </PageContainer>
   );

@@ -1,9 +1,8 @@
-
 export const PETS_DATA_SEEDS = [
   {
     name: 'Toby',
-    species: 'dog',
-    traits: ['curious', 'friendly'],
+    species: 'DOG',
+    traits: ['CURIOUS', 'FRIENDLY'],
     comments: 'Needs to have people around.',
     age: 3,
     location: {

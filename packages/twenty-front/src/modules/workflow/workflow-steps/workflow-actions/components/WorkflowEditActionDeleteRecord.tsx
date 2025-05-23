@@ -39,10 +39,11 @@ export const WorkflowEditActionDeleteRecord = ({
 }: WorkflowEditActionDeleteRecordProps) => {
   const { getIcon } = useIcons();
 
-  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
+  const { activeNonSystemObjectMetadataItems } =
+    useFilteredObjectMetadataItems();
 
   const availableMetadata: Array<SelectOption<string>> =
-    activeObjectMetadataItems.map((item) => ({
+    activeNonSystemObjectMetadataItems.map((item) => ({
       Icon: getIcon(item.icon),
       label: item.labelPlural,
       value: item.nameSingular,
@@ -68,7 +69,7 @@ export const WorkflowEditActionDeleteRecord = ({
     saveAction(newFormData);
   };
 
-  const objectNameSingular = activeObjectMetadataItems.find(
+  const objectNameSingular = activeNonSystemObjectMetadataItems.find(
     (item) => item.nameSingular === formData.objectName,
   )?.nameSingular;
 

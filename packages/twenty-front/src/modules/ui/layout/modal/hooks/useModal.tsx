@@ -1,16 +1,13 @@
-import { useRecoilCallback } from 'recoil';
-
 import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { isDefined } from 'twenty-shared/utils';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusIdFromFocusStack } from '@/ui/utilities/focus/hooks/useRemoveFocusIdFromFocusStack';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useRecoilCallback } from 'recoil';
 
 export const useModal = () => {
-  const {
-    setHotkeyScopeAndMemorizePreviousScope,
-    goBackToPreviousHotkeyScope,
-  } = usePreviousHotkeyScope('modal');
+  const pushFocusItem = usePushFocusItemToFocusStack();
+  const removeFocusId = useRemoveFocusIdFromFocusStack();
 
   const closeModal = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -21,20 +18,26 @@ export const useModal = () => {
           )
           .getValue();
 
-        if (isModalOpen) {
-          goBackToPreviousHotkeyScope();
-          set(
-            isModalOpenedComponentState.atomFamily({ instanceId: modalId }),
-            false,
-          );
+        if (!isModalOpen) {
+          return;
         }
+
+        removeFocusId({
+          focusId: modalId,
+          memoizeKey: modalId,
+        });
+
+        set(
+          isModalOpenedComponentState.atomFamily({ instanceId: modalId }),
+          false,
+        );
       },
-    [goBackToPreviousHotkeyScope],
+    [removeFocusId],
   );
 
   const openModal = useRecoilCallback(
     ({ set, snapshot }) =>
-      (modalId: string, customHotkeyScope?: HotkeyScope) => {
+      (modalId: string) => {
         const isModalOpened = snapshot
           .getLoadable(
             isModalOpenedComponentState.atomFamily({ instanceId: modalId }),
@@ -50,26 +53,35 @@ export const useModal = () => {
           true,
         );
 
-        if (isDefined(customHotkeyScope)) {
-          setHotkeyScopeAndMemorizePreviousScope(
-            customHotkeyScope.scope,
-            customHotkeyScope.customScopes,
-          );
-        } else {
-          setHotkeyScopeAndMemorizePreviousScope(ModalHotkeyScope.ModalFocus, {
-            goto: false,
-            commandMenu: false,
-            commandMenuOpen: false,
-            keyboardShortcutMenu: false,
-          });
-        }
+        pushFocusItem({
+          focusId: modalId,
+          component: {
+            type: FocusComponentType.MODAL,
+            instanceId: modalId,
+          },
+          globalHotkeysConfig: {
+            enableGlobalHotkeysWithModifiers: false,
+            enableGlobalHotkeysConflictingWithKeyboard: false,
+          },
+          // TODO: Remove this once we've migrated hotkey scopes to the new api
+          hotkeyScope: {
+            scope: ModalHotkeyScope.ModalFocus,
+            customScopes: {
+              goto: false,
+              commandMenu: false,
+              commandMenuOpen: false,
+              keyboardShortcutMenu: false,
+            },
+          },
+          memoizeKey: modalId,
+        });
       },
-    [setHotkeyScopeAndMemorizePreviousScope],
+    [pushFocusItem],
   );
 
   const toggleModal = useRecoilCallback(
     ({ snapshot }) =>
-      (modalId: string, customHotkeyScope?: HotkeyScope) => {
+      (modalId: string) => {
         const isModalOpen = snapshot
           .getLoadable(
             isModalOpenedComponentState.atomFamily({ instanceId: modalId }),
@@ -79,7 +91,7 @@ export const useModal = () => {
         if (isModalOpen) {
           closeModal(modalId);
         } else {
-          openModal(modalId, customHotkeyScope);
+          openModal(modalId);
         }
       },
     [closeModal, openModal],

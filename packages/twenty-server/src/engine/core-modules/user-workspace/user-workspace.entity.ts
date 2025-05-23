@@ -60,6 +60,9 @@ export class UserWorkspace {
   @Column()
   workspaceId: string;
 
+  @Column({ nullable: true })
+  defaultAvatarUrl: string;
+
   @Field()
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

@@ -7,19 +7,19 @@ export class AddSchemaAndAvailableTablesToServer1714382420165
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "metadata"."remoteServer" ADD "schema" text`,
+      `ALTER TABLE "core"."remoteServer" ADD "schema" text`,
     );
     await queryRunner.query(
-      `ALTER TABLE "metadata"."remoteServer" ADD "availableTables" jsonb`,
+      `ALTER TABLE "core"."remoteServer" ADD "availableTables" jsonb`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "metadata"."remoteServer" DROP COLUMN "availableTables"`,
+      `ALTER TABLE "core"."remoteServer" DROP COLUMN "availableTables"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "metadata"."remoteServer" DROP COLUMN "schema"`,
+      `ALTER TABLE "core"."remoteServer" DROP COLUMN "schema"`,
     );
   }
 }

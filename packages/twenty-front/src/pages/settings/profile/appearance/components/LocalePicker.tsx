@@ -1,16 +1,19 @@
 import styled from '@emotion/styled';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
 import { Select } from '@/ui/input/components/Select';
 
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
 import { useLingui } from '@lingui/react/macro';
+import { enUS } from 'date-fns/locale';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { logError } from '~/utils/logError';
 
@@ -25,6 +28,7 @@ export const LocalePicker = () => {
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
     currentWorkspaceMemberState,
   );
+  const setDateLocale = useSetRecoilState(dateLocaleState);
   const isDebugMode = useRecoilValue(isDebugModeState);
 
   const { updateOneRecord } = useUpdateOneRecord({
@@ -57,6 +61,12 @@ export const LocalePicker = () => {
       ...{ locale: value },
     });
     await updateWorkspaceMember({ locale: value });
+
+    const dateFnsLocale = await getDateFnsLocale(value);
+    setDateLocale({
+      locale: value,
+      localeCatalog: dateFnsLocale || enUS,
+    });
 
     await dynamicActivate(value);
     try {

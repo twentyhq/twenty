@@ -3,7 +3,9 @@ import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atla
 import { useContext, useRef } from 'react';
 import { useRecoilCallback } from 'recoil';
 
+import { ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/action-menu/constants/ActionMenuDropdownClickOutsideId';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
+import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandMenuClickOutsideId';
 import { RecordBoardHeader } from '@/object-record/record-board/components/RecordBoardHeader';
 import { RecordBoardScrollToFocusedCardEffect } from '@/object-record/record-board/components/RecordBoardScrollToFocusedCardEffect';
 import { RecordBoardStickyHeaderEffect } from '@/object-record/record-board/components/RecordBoardStickyHeaderEffect';
@@ -13,6 +15,7 @@ import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/use
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { RecordBoardDeactivateBoardCardEffect } from '@/object-record/record-board/record-board-card/components/RecordBoardDeactivateBoardCardEffect';
+import { RECORD_BOARD_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardClickOutsideId';
 import { RecordBoardColumn } from '@/object-record/record-board/record-board-column/components/RecordBoardColumn';
 import { RecordBoardScope } from '@/object-record/record-board/scopes/RecordBoardScope';
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
@@ -24,7 +27,9 @@ import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
+import { MODAL_BACKDROP_CLICK_OUTSIDE_ID } from '@/ui/layout/modal/constants/ModalBackdropClickOutsideId';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constants/PageActionContainerClickOutsideId';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
@@ -110,13 +115,12 @@ export const RecordBoard = () => {
   );
 
   useListenClickOutside({
-    excludeClassNames: [
-      'bottom-bar',
-      'action-menu-dropdown',
-      'command-menu',
-      'modal-backdrop',
-      'page-action-container',
-      'record-board-card',
+    excludedClickOutsideIds: [
+      ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID,
+      COMMAND_MENU_CLICK_OUTSIDE_ID,
+      MODAL_BACKDROP_CLICK_OUTSIDE_ID,
+      PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID,
+      RECORD_BOARD_CARD_CLICK_OUTSIDE_ID,
     ],
     listenerId: RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID,
     refs: [],

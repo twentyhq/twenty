@@ -5,13 +5,13 @@ export class AddRemoteServerLabel1716890009820 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "metadata"."remoteServer" ADD "label" text`,
+      `ALTER TABLE "core"."remoteServer" ADD "label" text`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "metadata"."remoteServer" DROP COLUMN "label"`,
+      `ALTER TABLE "core"."remoteServer" DROP COLUMN "label"`,
     );
   }
 }

@@ -8,7 +8,7 @@ import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api
 @Injectable()
 export class RestApiCreateOneHandler extends RestApiBaseHandler {
   async handle(request: Request) {
-    const { objectMetadataNameSingular, objectMetadata, repository } =
+    const { objectMetadata, repository } =
       await this.getRepositoryAndMetadataOrFail(request);
 
     const overriddenBody = await this.recordInputTransformerService.process({
@@ -28,13 +28,20 @@ export class RestApiCreateOneHandler extends RestApiBaseHandler {
       throw new BadRequestException('Record already exists');
     }
 
-    const createdRecord = await repository.save(overriddenBody);
+    const [recordToCreate] =
+      await this.createdByFromAuthContextService.injectCreatedBy(
+        [overriddenBody],
+        objectMetadata.objectMetadataMapItem.nameSingular,
+        this.getAuthContextFromRequest(request),
+      );
 
-    this.apiEventEmitterService.emitCreateEvents(
-      [createdRecord],
-      this.getAuthContextFromRequest(request),
-      objectMetadata.objectMetadataMapItem,
-    );
+    const createdRecord = await repository.save(recordToCreate);
+
+    this.apiEventEmitterService.emitCreateEvents({
+      records: [createdRecord],
+      authContext: this.getAuthContextFromRequest(request),
+      objectMetadataItem: objectMetadata.objectMetadataMapItem,
+    });
 
     const records = await this.getRecord({
       recordIds: [createdRecord.id],
@@ -51,7 +58,7 @@ export class RestApiCreateOneHandler extends RestApiBaseHandler {
 
     return this.formatResult({
       operation: 'create',
-      objectNameSingular: objectMetadataNameSingular,
+      objectNameSingular: objectMetadata.objectMetadataMapItem.nameSingular,
       data: record,
     });
   }
