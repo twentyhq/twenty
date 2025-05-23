@@ -255,6 +255,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
       if (
         updatedFieldMetadata.isActive &&
+        // Shouldn't this be also applied to multi select ?
         isSelectFieldMetadata(updatedFieldMetadata) &&
         isSelectFieldMetadata(existingFieldMetadata)
       ) {

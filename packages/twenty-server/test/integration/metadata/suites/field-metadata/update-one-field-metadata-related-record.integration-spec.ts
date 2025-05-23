@@ -16,12 +16,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 // faker.seed(42);
 
-type Option = {
-  label: string;
-  value: string;
-  color: string;
-  position: number;
-};
+type Option = FieldMetadataDefaultOption | FieldMetadataComplexOption;
 
 const generateOption = (index: number): Option => ({
   label: `Option ${index}`,
@@ -29,14 +24,8 @@ const generateOption = (index: number): Option => ({
   color: 'green',
   position: index,
 });
-const generateOptionWithId = (index: number): Option & { id: string } => ({
-  ...generateOption(index),
-  id: faker.string.uuid(),
-});
-const generateOptions = (length: number, withId: boolean = false) =>
-  Array.from({ length }, (_value, index) =>
-    withId ? generateOptionWithId(index) : generateOption(index),
-  );
+const generateOptions = (length: number) =>
+  Array.from({ length }, (_value, index) => generateOption(index));
 const updateOption = ({ value, label, ...option }: Option) => ({
   ...option,
   value: `${value}_UPDATED`,
@@ -73,6 +62,7 @@ describe('updateOne', () => {
 
       const {
         data: { createOneField },
+        errors,
       } = await createOneFieldMetadata({
         input: {
           objectMetadataId: createOneObject.id,
@@ -87,6 +77,8 @@ describe('updateOne', () => {
         options
         `,
       });
+
+      console.log({ errors });
 
       const {
         data: { createOneResponse: createOneView },
