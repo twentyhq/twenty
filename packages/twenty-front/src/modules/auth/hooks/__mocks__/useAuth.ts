@@ -14,6 +14,7 @@ export const queries = {
 
 export const email = 'test@test.com';
 export const password = 'testing';
+export const origin = 'http://localhost';
 export const token =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
 
@@ -21,8 +22,9 @@ export const variables = {
   getLoginTokenFromCredentials: {
     email,
     password,
+    origin,
   },
-  getAuthTokensFromLoginToken: { loginToken: token },
+  getAuthTokensFromLoginToken: { loginToken: token, origin },
   signup: {
     email,
     password,
