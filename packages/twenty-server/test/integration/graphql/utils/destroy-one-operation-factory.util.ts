@@ -13,7 +13,7 @@ export const destroyOneOperationFactory = ({
   recordId,
 }: DestroyOneOperationFactoryParams) => ({
   query: gql`
-    mutation Destroy${capitalize(objectMetadataSingularName)}($${objectMetadataSingularName}Id: ID!) {
+    mutation Destroy${capitalize(objectMetadataSingularName)}($${objectMetadataSingularName}Id: UUID!) {
       destroy${capitalize(objectMetadataSingularName)}(id: $${objectMetadataSingularName}Id) {
         ${gqlFields}
       }
