@@ -20,7 +20,7 @@ const getExpandableContainerTitle = <T extends string>(
 
   return `Match ${fieldLabel} (${
     'matchedOptions' in column &&
-    column.matchedOptions.filter((option) => !isDefined(option.value)).length
+    column.matchedOptions?.filter((option) => !isDefined(option.value)).length
   } Unmatched)`;
 };
 
@@ -70,7 +70,7 @@ export const UnmatchColumn = <T extends string>({
         containAnimation
       >
         <StyledContentWrapper>
-          {column.matchedOptions.map((option) => (
+          {column.matchedOptions?.map((option) => (
             <SubMatchingSelectRow
               option={option}
               column={column}

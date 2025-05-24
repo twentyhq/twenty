@@ -12,7 +12,7 @@ export const findManyFieldsMetadataQueryFactory = ({
 }: PerformMetadataQueryParams<FindManyFieldsMetadataFactoryInput>) => ({
   query: gql`
       query FieldsMetadata($filter: FieldFilter!, $paging: CursorPaging!) {
-        fields(filter: $filter, paging: $paging) {
+        fields(paging: $paging, filter: $filter) {
           edges {
             node {
               ${gqlFields}

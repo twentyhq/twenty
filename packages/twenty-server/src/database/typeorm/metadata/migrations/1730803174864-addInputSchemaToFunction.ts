@@ -7,13 +7,13 @@ export class AddInputSchemaToFunction1730803174864
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "metadata"."serverlessFunction" ADD "latestVersionInputSchema" jsonb`,
+      `ALTER TABLE "core"."serverlessFunction" ADD "latestVersionInputSchema" jsonb`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "metadata"."serverlessFunction" DROP COLUMN "latestVersionInputSchema"`,
+      `ALTER TABLE "core"."serverlessFunction" DROP COLUMN "latestVersionInputSchema"`,
     );
   }
 }

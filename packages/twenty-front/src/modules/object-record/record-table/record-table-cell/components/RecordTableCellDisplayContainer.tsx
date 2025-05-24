@@ -27,7 +27,7 @@ const StyledEmptyPlaceholderField = withTheme(styled.div<{ theme: Theme }>`
 
 export type EditableCellDisplayContainerProps = {
   focus?: boolean;
-  onClick?: () => void;
+  onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   scrollRef?: Ref<HTMLDivElement>;
   isHovered?: boolean;
   onContextMenu?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;

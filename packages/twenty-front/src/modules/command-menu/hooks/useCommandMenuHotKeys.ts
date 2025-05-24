@@ -9,7 +9,7 @@ import { CommandMenuHotkeyScope } from '@/command-menu/types/CommandMenuHotkeySc
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -36,21 +36,23 @@ export const useCommandMenuHotKeys = () => {
     COMMAND_MENU_COMPONENT_INSTANCE_ID,
   );
 
-  useScopedHotkeys(
+  useGlobalHotkeys(
     'ctrl+k,meta+k',
     () => {
       closeKeyboardShortcutMenu();
       toggleCommandMenu();
     },
+    true,
     AppHotkeyScope.CommandMenu,
     [closeKeyboardShortcutMenu, toggleCommandMenu],
   );
 
-  useScopedHotkeys(
+  useGlobalHotkeys(
     ['/'],
     () => {
       openRecordsSearchPage();
     },
+    false,
     AppHotkeyScope.KeyboardShortcutMenu,
     [openRecordsSearchPage],
     {
@@ -58,16 +60,17 @@ export const useCommandMenuHotKeys = () => {
     },
   );
 
-  useScopedHotkeys(
+  useGlobalHotkeys(
     [Key.Escape],
     () => {
       goBackFromCommandMenu();
     },
+    true,
     CommandMenuHotkeyScope.CommandMenuFocused,
     [goBackFromCommandMenu],
   );
 
-  useScopedHotkeys(
+  useGlobalHotkeys(
     [Key.Backspace, Key.Delete],
     () => {
       if (isNonEmptyString(commandMenuSearch)) {
@@ -88,6 +91,7 @@ export const useCommandMenuHotKeys = () => {
         goBackFromCommandMenu();
       }
     },
+    true,
     CommandMenuHotkeyScope.CommandMenuFocused,
     [
       commandMenuPage,

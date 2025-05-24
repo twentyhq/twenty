@@ -16,7 +16,7 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
       throw new BadRequestException('Record ID not found');
     }
 
-    const { objectMetadataNameSingular, objectMetadata, repository } =
+    const { objectMetadata, repository } =
       await this.getRepositoryAndMetadataOrFail(request);
 
     const recordToUpdate = await repository.findOneOrFail({
@@ -33,13 +33,13 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
       ...overriddenBody,
     });
 
-    this.apiEventEmitterService.emitUpdateEvents(
-      [recordToUpdate],
-      [updatedRecord],
-      Object.keys(request.body),
-      this.getAuthContextFromRequest(request),
-      objectMetadata.objectMetadataMapItem,
-    );
+    this.apiEventEmitterService.emitUpdateEvents({
+      existingRecords: [recordToUpdate],
+      records: [updatedRecord],
+      updatedFields: Object.keys(request.body),
+      authContext: this.getAuthContextFromRequest(request),
+      objectMetadataItem: objectMetadata.objectMetadataMapItem,
+    });
 
     const records = await this.getRecord({
       recordIds: [updatedRecord.id],
@@ -56,7 +56,7 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
 
     return this.formatResult({
       operation: 'update',
-      objectNameSingular: objectMetadataNameSingular,
+      objectNameSingular: objectMetadata.objectMetadataMapItem.nameSingular,
       data: record,
     });
   }

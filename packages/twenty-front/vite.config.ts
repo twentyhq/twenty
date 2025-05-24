@@ -5,11 +5,11 @@ import react from '@vitejs/plugin-react-swc';
 import wyw from '@wyw-in-js/vite';
 import fs from 'fs';
 import path from 'path';
-import { defineConfig, loadEnv, searchForWorkspaceRoot } from 'vite';
+import { visualizer } from 'rollup-plugin-visualizer';
+import { defineConfig, loadEnv, PluginOption, searchForWorkspaceRoot } from 'vite';
 import checker from 'vite-plugin-checker';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
-
 type Checkers = Parameters<typeof checker>[0];
 
 export default defineConfig(({ command, mode }) => {
@@ -145,6 +145,12 @@ export default defineConfig(({ command, mode }) => {
           presets: ['@babel/preset-typescript', '@babel/preset-react'],
         },
       }),
+      visualizer({
+        open: true,
+        gzipSize: true,
+        brotliSize: true,
+        filename: 'dist/stats.html',
+      }) as PluginOption, // https://github.com/btd/rollup-plugin-visualizer/issues/162#issuecomment-1538265997,
     ],
 
     optimizeDeps: {
@@ -156,7 +162,7 @@ export default defineConfig(({ command, mode }) => {
     },
 
     build: {
-      minify: false,
+      minify: 'esbuild',
       outDir: 'build',
       sourcemap: VITE_BUILD_SOURCEMAP === 'true',
       rollupOptions: {
@@ -168,6 +174,11 @@ export default defineConfig(({ command, mode }) => {
 
             return null;
           },
+        },
+      },
+      modulePreload: {
+        resolveDependencies: (filename, deps, { hostId }) => {
+          return deps.filter(dep => !dep.includes('scalar'));
         },
       },
     },

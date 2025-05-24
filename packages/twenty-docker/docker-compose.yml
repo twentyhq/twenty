@@ -1,22 +1,10 @@
 name: twenty
 
 services:
-  change-vol-ownership:
-    image: ubuntu
-    user: root
-    volumes:
-      - server-local-data:/tmp/server-local-data
-      - docker-data:/tmp/docker-data
-    command: >
-      bash -c "
-      chown -R 1000:1000 /tmp/server-local-data
-      && chown -R 1000:1000 /tmp/docker-data"
-
   server:
     image: twentycrm/twenty:${TAG:-latest}
     volumes:
-      - server-local-data:/app/packages/twenty-server/${STORAGE_LOCAL_PATH:-.local-storage}
-      - docker-data:/app/docker-data
+      - server-local-data:/app/packages/twenty-server/.local-storage
     ports:
       - "3000:3000"
     environment:
@@ -31,7 +19,6 @@ services:
       STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
 
       APP_SECRET: ${APP_SECRET:-replace_me_with_a_random_string}
-
       # MESSAGING_PROVIDER_GMAIL_ENABLED: ${MESSAGING_PROVIDER_GMAIL_ENABLED}
       # CALENDAR_PROVIDER_GOOGLE_ENABLED: ${CALENDAR_PROVIDER_GOOGLE_ENABLED}
       # AUTH_GOOGLE_CLIENT_ID: ${AUTH_GOOGLE_CLIENT_ID}
@@ -57,15 +44,13 @@ services:
       # EMAIL_SMTP_PASSWORD: ${EMAIL_SMTP_PASSWORD:-}
 
     depends_on:
-      change-vol-ownership:
-        condition: service_completed_successfully
       db:
         condition: service_healthy
     healthcheck:
       test: curl --fail http://localhost:3000/healthz
       interval: 5s
       timeout: 5s
-      retries: 10
+      retries: 20
     restart: always
 
   worker:
@@ -85,7 +70,6 @@ services:
       STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
 
       APP_SECRET: ${APP_SECRET:-replace_me_with_a_random_string}
-
       # MESSAGING_PROVIDER_GMAIL_ENABLED: ${MESSAGING_PROVIDER_GMAIL_ENABLED}
       # CALENDAR_PROVIDER_GOOGLE_ENABLED: ${CALENDAR_PROVIDER_GOOGLE_ENABLED}
       # AUTH_GOOGLE_CLIENT_ID: ${AUTH_GOOGLE_CLIENT_ID}
@@ -109,7 +93,7 @@ services:
       # EMAIL_SMTP_PORT: ${EMAIL_SMTP_PORT:-465}
       # EMAIL_SMTP_USER: ${EMAIL_SMTP_USER:-}
       # EMAIL_SMTP_PASSWORD: ${EMAIL_SMTP_PASSWORD:-}
-      
+
     depends_on:
       db:
         condition: service_healthy
@@ -137,6 +121,5 @@ services:
     command: ["--maxmemory-policy", "noeviction"]
 
 volumes:
-  docker-data:
   db-data:
   server-local-data:

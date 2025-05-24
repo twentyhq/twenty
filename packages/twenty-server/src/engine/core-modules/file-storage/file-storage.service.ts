@@ -47,4 +47,11 @@ export class FileStorageService implements StorageDriver {
   }): Promise<void> {
     return this.driver.download(params);
   }
+
+  checkFileExists(params: {
+    folderPath: string;
+    filename: string;
+  }): Promise<boolean> {
+    return this.driver.checkFileExists(params);
+  }
 }

@@ -87,7 +87,8 @@ const StyledClickableZone = styled.div`
 
 const MotionIconChevronDown = motion.create(IconChevronDown);
 
-const DELETE_RELATION_MODAL_ID = 'delete-relation-modal';
+const getDeleteRelationModalId = (recordId: string) =>
+  `delete-relation-modal-${recordId}`;
 
 type RecordDetailRelationRecordsListItemProps = {
   isExpanded: boolean;
@@ -175,7 +176,7 @@ export const RecordDetailRelationRecordsListItem = ({
 
   const handleDelete = async () => {
     closeDropdown();
-    openModal(DELETE_RELATION_MODAL_ID);
+    openModal(getDeleteRelationModalId(relationRecord.id));
   };
 
   const handleConfirmDelete = async () => {
@@ -305,7 +306,7 @@ export const RecordDetailRelationRecordsListItem = ({
       </AnimatedEaseInOut>
       {createPortal(
         <ConfirmationModal
-          modalId={DELETE_RELATION_MODAL_ID}
+          modalId={getDeleteRelationModalId(relationRecord.id)}
           title={`Delete Related ${relationObjectTypeName}`}
           subtitle={
             <>

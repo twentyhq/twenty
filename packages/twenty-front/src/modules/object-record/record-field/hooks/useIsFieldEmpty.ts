@@ -1,10 +1,10 @@
 import { useContext } from 'react';
 
 import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldValueEmpty';
-import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 
-import { FieldContext } from '../contexts/FieldContext';
+import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { isDefined } from 'twenty-shared/utils';
+import { FieldContext } from '../contexts/FieldContext';
 
 export const useIsFieldEmpty = () => {
   const { recordId, fieldDefinition, overridenIsFieldEmpty } =

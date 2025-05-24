@@ -16,9 +16,7 @@ import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 export const useCommandMenu = () => {
   const { navigateCommandMenu } = useNavigateCommandMenu();
   const { closeAnyOpenDropdown } = useCloseAnyOpenDropdown();
-  const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope(
-    COMMAND_MENU_COMPONENT_INSTANCE_ID,
-  );
+  const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
 
   const closeCommandMenu = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -32,7 +30,7 @@ export const useCommandMenu = () => {
           set(isCommandMenuClosingState, true);
           set(isDragSelectionStartEnabledState, true);
           closeAnyOpenDropdown();
-          goBackToPreviousHotkeyScope();
+          goBackToPreviousHotkeyScope(COMMAND_MENU_COMPONENT_INSTANCE_ID);
         }
       },
     [closeAnyOpenDropdown, goBackToPreviousHotkeyScope],
