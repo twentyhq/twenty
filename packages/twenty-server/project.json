@@ -28,6 +28,12 @@
           "commands": [
             "NODE_ENV=test nx database:reset > reset-logs.log && NODE_ENV=test nx jest --config ./jest-integration.config.ts"
           ]
+        },
+        "db-reset": {
+          "cwd": "packages/twenty-server",
+          "commands": [
+            "NODE_ENV=test nx database:reset > reset-logs.log"
+          ]
         }
       }
     },

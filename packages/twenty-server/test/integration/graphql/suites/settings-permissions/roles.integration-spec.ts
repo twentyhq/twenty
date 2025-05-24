@@ -3,7 +3,7 @@ import { deleteOneRoleOperationFactory } from 'test/integration/graphql/utils/de
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
-import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { getHouseCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/get-house-create-object-input';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
 import { DEV_SEED_WORKSPACE_MEMBER_IDS } from 'src/database/typeorm-seeds/workspace/workspace-members';
@@ -447,26 +447,14 @@ describe('roles permissions', () => {
     });
 
     describe('upsertObjectPermission', () => {
-      let listingObjectId = '';
+      let houseObjectId = '';
 
       beforeAll(async () => {
         const { data } = await createOneObjectMetadata({
-          input: {
-            nameSingular: 'house',
-            namePlural: 'houses',
-            labelSingular: 'House',
-            labelPlural: 'Houses',
-            icon: 'IconBuildingSkyscraper',
-          },
+          input: getHouseCreateObjectInput(),
         });
 
-        listingObjectId = data.createOneObject.id;
-      });
-
-      afterAll(async () => {
-        await deleteOneObjectMetadata({
-          input: { idToDelete: listingObjectId },
-        });
+        houseObjectId = data.createOneObject.id;
       });
 
       const upsertObjectPermissionMutation = ({
@@ -489,7 +477,7 @@ describe('roles permissions', () => {
       it('should throw a permission error when user does not have permission to upsert object permission (member role)', async () => {
         const query = {
           query: upsertObjectPermissionMutation({
-            objectMetadataId: listingObjectId,
+            objectMetadataId: houseObjectId,
             roleId: guestRoleId,
           }),
         };
@@ -500,7 +488,7 @@ describe('roles permissions', () => {
       it('should throw an error when role is not editable', async () => {
         const query = {
           query: upsertObjectPermissionMutation({
-            objectMetadataId: listingObjectId,
+            objectMetadataId: houseObjectId,
             roleId: adminRoleId,
           }),
         };
@@ -525,7 +513,7 @@ describe('roles permissions', () => {
       it('should upsert an object permission when user has permission', async () => {
         const query = {
           query: upsertObjectPermissionMutation({
-            objectMetadataId: listingObjectId,
+            objectMetadataId: houseObjectId,
             roleId: createdEditableRoleId,
           }),
         };
@@ -542,7 +530,7 @@ describe('roles permissions', () => {
               expect.arrayContaining([
                 expect.objectContaining({
                   roleId: createdEditableRoleId,
-                  objectMetadataId: listingObjectId,
+                  objectMetadataId: houseObjectId,
                   canUpdateObjectRecords: true,
                 }),
               ]),
