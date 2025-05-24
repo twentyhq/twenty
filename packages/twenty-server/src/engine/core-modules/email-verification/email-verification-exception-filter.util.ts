@@ -17,11 +17,16 @@ export class EmailVerificationExceptionFilter implements ExceptionFilter {
       case EmailVerificationExceptionCode.INVALID_APP_TOKEN_TYPE:
       case EmailVerificationExceptionCode.TOKEN_EXPIRED:
       case EmailVerificationExceptionCode.RATE_LIMIT_EXCEEDED:
-        throw new ForbiddenError(exception.message);
+        throw new ForbiddenError(exception.message, {
+          subCode: exception.code,
+        });
       case EmailVerificationExceptionCode.EMAIL_MISSING:
       case EmailVerificationExceptionCode.EMAIL_ALREADY_VERIFIED:
+      case EmailVerificationExceptionCode.INVALID_EMAIL:
       case EmailVerificationExceptionCode.EMAIL_VERIFICATION_NOT_REQUIRED:
-        throw new UserInputError(exception.message);
+        throw new UserInputError(exception.message, {
+          subCode: exception.code,
+        });
       default: {
         const _exhaustiveCheck: never = exception.code;
 

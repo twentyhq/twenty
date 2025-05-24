@@ -1,89 +1,58 @@
-import { randomUUID } from 'crypto';
-
 import { OBJECT_MODEL_COMMON_FIELDS } from 'test/integration/constants/object-model-common-fields';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
-import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
-import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { performCreateManyOperation } from 'test/integration/graphql/utils/perform-create-many-operation.utils';
-import {
-  SearchFactoryParams,
-  searchFactory,
-} from 'test/integration/graphql/utils/search-factory.util';
-import {
-  LISTING_NAME_PLURAL,
-  LISTING_NAME_SINGULAR,
-} from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
-import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { searchFactory } from 'test/integration/graphql/utils/search-factory.util';
 import { EachTestingContext } from 'twenty-shared/testing';
+import {
+  TEST_PERSON_1_ID,
+  TEST_PERSON_2_ID,
+  TEST_PERSON_3_ID,
+} from 'test/integration/constants/test-person-ids.constants';
+import { TEST_API_KEY_1_ID } from 'test/integration/constants/test-api-key-ids.constant';
+import { cleanTestDatabase } from 'test/integration/utils/clean-test-database';
+import {
+  TEST_PET_ID_1,
+  TEST_PET_ID_2,
+} from 'test/integration/constants/test-pet-ids.constants';
 
-import { SearchRecordDTO } from 'src/engine/core-modules/search/dtos/search-record-dto';
+import { SearchResultEdgeDTO } from 'src/engine/core-modules/search/dtos/search-result-edge.dto';
+import {
+  decodeCursor,
+  encodeCursorData,
+} from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
+import { SearchCursor } from 'src/engine/core-modules/search/services/search.service';
+import { SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
 
 describe('SearchResolver', () => {
-  let listingObjectMetadataId: { objectMetadataId: string };
   const [firstPerson, secondPerson, thirdPerson] = [
-    { id: randomUUID(), name: { firstName: 'searchInput1' } },
-    { id: randomUUID(), name: { firstName: 'searchInput2' } },
-    { id: randomUUID(), name: { firstName: 'searchInput3' } },
+    { id: TEST_PERSON_1_ID, name: { firstName: 'searchInput1' } },
+    { id: TEST_PERSON_2_ID, name: { firstName: 'searchInput2' } },
+    { id: TEST_PERSON_3_ID, name: { firstName: 'searchInput3' } },
   ];
+
   const [apiKey] = [
     {
-      id: randomUUID(),
+      id: TEST_API_KEY_1_ID,
       name: 'record not searchable',
       expiresAt: new Date(Date.now()),
     },
   ];
-  const [firstListing, secondListing] = [
-    { id: randomUUID(), name: 'searchInput1' },
-    { id: randomUUID(), name: 'searchInput2' },
+
+  const [firstPet, secondPet] = [
+    { id: TEST_PET_ID_1, name: 'searchInput1' },
+    { id: TEST_PET_ID_2, name: 'searchInput2' },
   ];
 
-  const hasSearchRecord = (search: SearchRecordDTO[], recordId: string) => {
-    return search.some((item: SearchRecordDTO) => item.recordId === recordId);
-  };
-
   beforeAll(async () => {
+    await cleanTestDatabase({ seed: false });
+
     try {
-      const objectsMetadata = await findManyObjectMetadata({
-        input: {
-          filter: {},
-          paging: {
-            first: 1000,
-          },
-        },
-      });
-
-      const listingObjectMetadata = objectsMetadata.objects.find(
-        (object) => object.nameSingular === LISTING_NAME_SINGULAR,
-      );
-
-      if (listingObjectMetadata) {
-        listingObjectMetadataId = {
-          objectMetadataId: listingObjectMetadata.id,
-        };
-      } else {
-        const { data } = await createOneObjectMetadata({
-          input: {
-            labelSingular: LISTING_NAME_SINGULAR,
-            labelPlural: LISTING_NAME_PLURAL,
-            nameSingular: LISTING_NAME_SINGULAR,
-            namePlural: LISTING_NAME_PLURAL,
-            icon: 'IconBuildingSkyscraper',
-          },
-        });
-
-        listingObjectMetadataId = {
-          objectMetadataId: data.createOneObject.id,
-        };
-      }
-
       await performCreateManyOperation(
-        LISTING_NAME_SINGULAR,
-        LISTING_NAME_PLURAL,
+        'pet',
+        'pets',
         OBJECT_MODEL_COMMON_FIELDS,
-        [firstListing, secondListing],
+        [firstPet, secondPet],
       );
 
       await performCreateManyOperation('person', 'people', PERSON_GQL_FIELDS, [
@@ -106,46 +75,17 @@ describe('SearchResolver', () => {
   });
 
   afterAll(async () => {
-    await makeGraphqlAPIRequest(
-      destroyManyOperationFactory({
-        objectMetadataSingularName: 'person',
-        objectMetadataPluralName: 'people',
-        gqlFields: PERSON_GQL_FIELDS,
-        filter: {
-          id: {
-            in: [firstPerson.id, secondPerson.id, thirdPerson.id],
-          },
-        },
-      }),
-    ).catch((error) => {
-      // eslint-disable-next-line no-console
-      console.log(error);
-    });
-
-    await deleteOneObjectMetadata({
-      input: { idToDelete: listingObjectMetadataId.objectMetadataId },
-    }).catch((error) => {
-      // eslint-disable-next-line no-console
-      console.log(error);
-    });
-
-    await makeGraphqlAPIRequest(
-      destroyOneOperationFactory({
-        objectMetadataSingularName: 'apiKey',
-        gqlFields: OBJECT_MODEL_COMMON_FIELDS,
-        recordId: apiKey.id,
-      }),
-    ).catch((error) => {
-      // eslint-disable-next-line no-console
-      console.log(error);
-    });
+    await cleanTestDatabase({ seed: true });
   });
 
   const testsUseCases: EachTestingContext<{
-    input: SearchFactoryParams;
+    input: SearchArgs;
     eval: {
-      definedRecordIds: string[];
-      undefinedRecordIds: string[];
+      orderedRecordIds: string[];
+      pageInfo: {
+        hasNextPage: boolean;
+        decodedEndCursor: SearchCursor | null;
+      };
     };
   }>[] = [
     {
@@ -154,10 +94,26 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '',
+          limit: 50,
         },
         eval: {
-          definedRecordIds: [firstListing.id, secondListing.id],
-          undefinedRecordIds: [apiKey.id],
+          orderedRecordIds: [
+            firstPerson.id,
+            secondPerson.id,
+            thirdPerson.id,
+            firstPet.id,
+            secondPet.id,
+          ],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0, tsRankCD: 0 },
+              lastRecordIdsPerObject: {
+                person: thirdPerson.id,
+                pet: secondPet.id,
+              },
+            },
+          },
         },
       },
     },
@@ -166,10 +122,20 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: 'searchInput1',
+          limit: 50,
         },
         eval: {
-          definedRecordIds: [firstPerson.id, firstListing.id],
-          undefinedRecordIds: [secondPerson.id, secondListing.id],
+          orderedRecordIds: [firstPerson.id, firstPet.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: firstPerson.id,
+                pet: firstPet.id,
+              },
+            },
+          },
         },
       },
     },
@@ -178,11 +144,20 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '',
-          includedObjectNameSingulars: [LISTING_NAME_SINGULAR],
+          includedObjectNameSingulars: ['pet'],
+          limit: 50,
         },
         eval: {
-          definedRecordIds: [firstListing.id, secondListing.id],
-          undefinedRecordIds: [firstPerson.id, secondPerson.id],
+          orderedRecordIds: [firstPet.id, secondPet.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0, tsRankCD: 0 },
+              lastRecordIdsPerObject: {
+                pet: secondPet.id,
+              },
+            },
+          },
         },
       },
     },
@@ -192,10 +167,19 @@ describe('SearchResolver', () => {
         input: {
           searchInput: '',
           excludedObjectNameSingulars: ['person'],
+          limit: 50,
         },
         eval: {
-          definedRecordIds: [firstListing.id, secondListing.id],
-          undefinedRecordIds: [firstPerson.id, secondPerson.id],
+          orderedRecordIds: [firstPet.id, secondPet.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0, tsRankCD: 0 },
+              lastRecordIdsPerObject: {
+                pet: secondPet.id,
+              },
+            },
+          },
         },
       },
     },
@@ -204,13 +188,263 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '',
-          filter: {
-            id: { eq: firstListing.id },
-          },
+          filter: { id: { eq: firstPet.id } },
+          limit: 50,
         },
         eval: {
-          definedRecordIds: [firstListing.id],
-          undefinedRecordIds: [secondListing.id],
+          orderedRecordIds: [firstPet.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0, tsRankCD: 0 },
+              lastRecordIdsPerObject: {
+                pet: firstPet.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title: 'should limit records number with limit',
+      context: {
+        input: {
+          searchInput: '',
+          limit: 4,
+        },
+        eval: {
+          orderedRecordIds: [
+            firstPerson.id,
+            secondPerson.id,
+            thirdPerson.id,
+            firstPet.id,
+          ],
+          pageInfo: {
+            hasNextPage: true,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0, tsRankCD: 0 },
+              lastRecordIdsPerObject: {
+                pet: firstPet.id,
+                person: thirdPerson.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title: 'should return endCursor when paginating',
+      context: {
+        input: {
+          searchInput: '',
+          limit: 2,
+        },
+        eval: {
+          orderedRecordIds: [firstPerson.id, secondPerson.id],
+          pageInfo: {
+            hasNextPage: true,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0, tsRankCD: 0 },
+              lastRecordIdsPerObject: {
+                person: secondPerson.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title: 'should return endCursor when paginating with Cursor',
+      context: {
+        input: {
+          searchInput: '',
+          after: encodeCursorData({
+            lastRanks: { tsRank: 0, tsRankCD: 0 },
+            lastRecordIdsPerObject: {
+              person: secondPerson.id,
+            },
+          }),
+          limit: 2,
+        },
+        eval: {
+          orderedRecordIds: [thirdPerson.id, firstPet.id],
+          pageInfo: {
+            hasNextPage: true,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0, tsRankCD: 0 },
+              lastRecordIdsPerObject: {
+                pet: firstPet.id,
+                person: thirdPerson.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title: 'should limit records number with limit and searchInput',
+      context: {
+        input: {
+          searchInput: 'searchInput',
+          limit: 4,
+        },
+        eval: {
+          orderedRecordIds: [
+            firstPerson.id,
+            secondPerson.id,
+            thirdPerson.id,
+            firstPet.id,
+          ],
+          pageInfo: {
+            hasNextPage: true,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                pet: firstPet.id,
+                person: thirdPerson.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title: 'should return endCursor when paginating with searchInput',
+      context: {
+        input: {
+          searchInput: 'searchInput',
+          limit: 2,
+        },
+        eval: {
+          orderedRecordIds: [firstPerson.id, secondPerson.id],
+          pageInfo: {
+            hasNextPage: true,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: secondPerson.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title:
+        'should return endCursor when paginating with searchInput with Cursor',
+      context: {
+        input: {
+          searchInput: 'searchInput',
+          after: encodeCursorData({
+            lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+            lastRecordIdsPerObject: {
+              person: secondPerson.id,
+            },
+          }),
+          limit: 2,
+        },
+        eval: {
+          orderedRecordIds: [thirdPerson.id, firstPet.id],
+          pageInfo: {
+            hasNextPage: true,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                pet: firstPet.id,
+                person: thirdPerson.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title:
+        'should return endCursor when paginating with searchInput with Cursor and filter',
+      context: {
+        input: {
+          searchInput: 'searchInput',
+          after: encodeCursorData({
+            lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+            lastRecordIdsPerObject: {
+              person: secondPerson.id,
+            },
+          }),
+          limit: 2,
+          filter: { id: { neq: firstPet.id } },
+        },
+        eval: {
+          orderedRecordIds: [thirdPerson.id, secondPet.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: thirdPerson.id,
+                pet: secondPet.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title: 'should paginate properly with excludedObject',
+      context: {
+        input: {
+          searchInput: '',
+          excludedObjectNameSingulars: ['person'],
+          limit: 1,
+        },
+        eval: {
+          orderedRecordIds: [firstPet.id],
+          pageInfo: {
+            hasNextPage: true,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0, tsRankCD: 0 },
+              lastRecordIdsPerObject: {
+                pet: firstPet.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title: 'should paginate properly with included Objects only',
+      context: {
+        input: {
+          searchInput: '',
+          includedObjectNameSingulars: ['pet'],
+          limit: 1,
+        },
+        eval: {
+          orderedRecordIds: [firstPet.id],
+          pageInfo: {
+            hasNextPage: true,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0, tsRankCD: 0 },
+              lastRecordIdsPerObject: {
+                pet: firstPet.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title: 'should paginate properly when no records are returned',
+      context: {
+        input: {
+          searchInput: '',
+          limit: 0,
+        },
+        eval: {
+          orderedRecordIds: [],
+          pageInfo: {
+            hasNextPage: true,
+            decodedEndCursor: null,
+          },
         },
       },
     },
@@ -224,17 +458,127 @@ describe('SearchResolver', () => {
     expect(response.body.data.search).toBeDefined();
 
     const search = response.body.data.search;
+    const edges = search.edges;
+    const pageInfo = search.pageInfo;
 
-    context.eval.definedRecordIds.length > 0
-      ? expect(search).not.toHaveLength(0)
-      : expect(search).toHaveLength(0);
+    context.eval.orderedRecordIds.length > 0
+      ? expect(edges).not.toHaveLength(0)
+      : expect(edges).toHaveLength(0);
 
-    context.eval.definedRecordIds.forEach((recordId) => {
-      expect(hasSearchRecord(search, recordId)).toBeTruthy();
+    expect(
+      edges.map((edge: SearchResultEdgeDTO) => edge.node.recordId),
+    ).toEqual(context.eval.orderedRecordIds);
+
+    expect(pageInfo).toBeDefined();
+    expect(context.eval.pageInfo.hasNextPage).toEqual(pageInfo.hasNextPage);
+    expect(context.eval.pageInfo.decodedEndCursor).toEqual(
+      pageInfo.endCursor
+        ? decodeCursor(pageInfo.endCursor)
+        : pageInfo.endCursor,
+    );
+  });
+
+  it('should return cursor for each search edge', async () => {
+    const graphqlOperation = searchFactory({
+      searchInput: 'searchInput',
+      limit: 2,
     });
 
-    context.eval.undefinedRecordIds.forEach((recordId) => {
-      expect(hasSearchRecord(search, recordId)).toBeFalsy();
+    const response = await makeGraphqlAPIRequest(graphqlOperation);
+
+    const expectedResult = {
+      edges: [
+        {
+          cursor: encodeCursorData({
+            lastRanks: { tsRankCD: 0.1, tsRank: 0.06079271 },
+            lastRecordIdsPerObject: {
+              person: firstPerson.id,
+            },
+          }),
+        },
+        {
+          cursor: encodeCursorData({
+            lastRanks: { tsRankCD: 0.1, tsRank: 0.06079271 },
+            lastRecordIdsPerObject: {
+              person: secondPerson.id,
+            },
+          }),
+        },
+      ],
+      pageInfo: {
+        hasNextPage: true,
+        endCursor: encodeCursorData({
+          lastRanks: { tsRankCD: 0.1, tsRank: 0.06079271 },
+          lastRecordIdsPerObject: {
+            person: secondPerson.id,
+          },
+        }),
+      },
+    };
+
+    expect({
+      ...response.body.data.search,
+      edges: response.body.data.search.edges.map(
+        (edge: SearchResultEdgeDTO) => ({
+          cursor: edge.cursor,
+        }),
+      ),
+    }).toEqual(expectedResult);
+  });
+
+  it('should return cursor for each search edge with after cursor input', async () => {
+    const graphqlOperation = searchFactory({
+      searchInput: 'searchInput',
+      limit: 2,
+      after: encodeCursorData({
+        lastRanks: { tsRankCD: 0.1, tsRank: 0.06079271 },
+        lastRecordIdsPerObject: {
+          person: secondPerson.id,
+        },
+      }),
     });
+
+    const response = await makeGraphqlAPIRequest(graphqlOperation);
+
+    const expectedResult = {
+      edges: [
+        {
+          cursor: encodeCursorData({
+            lastRanks: { tsRankCD: 0.1, tsRank: 0.06079271 },
+            lastRecordIdsPerObject: {
+              person: thirdPerson.id,
+            },
+          }),
+        },
+        {
+          cursor: encodeCursorData({
+            lastRanks: { tsRankCD: 0.1, tsRank: 0.06079271 },
+            lastRecordIdsPerObject: {
+              person: thirdPerson.id,
+              pet: firstPet.id,
+            },
+          }),
+        },
+      ],
+      pageInfo: {
+        hasNextPage: true,
+        endCursor: encodeCursorData({
+          lastRanks: { tsRankCD: 0.1, tsRank: 0.06079271 },
+          lastRecordIdsPerObject: {
+            person: thirdPerson.id,
+            pet: firstPet.id,
+          },
+        }),
+      },
+    };
+
+    expect({
+      ...response.body.data.search,
+      edges: response.body.data.search.edges.map(
+        (edge: SearchResultEdgeDTO) => ({
+          cursor: edge.cursor,
+        }),
+      ),
+    }).toEqual(expectedResult);
   });
 });

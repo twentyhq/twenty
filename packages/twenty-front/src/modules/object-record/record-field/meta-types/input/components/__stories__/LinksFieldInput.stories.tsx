@@ -115,6 +115,10 @@ const LinksInputWithContext = ({
   );
 };
 
+const getPrimaryLinkBookmarkIcon = (canvasElement: HTMLElement) =>
+  // It would be better to use an aria-label on the icon, but we'll do this for now
+  canvasElement.querySelector('svg[class*="tabler-icon-bookmark"]');
+
 const cancelJestFn = fn();
 const clickOutsideJestFn = fn();
 
@@ -172,10 +176,12 @@ export const PrimaryLinkOnly: Story = {
     const canvas = within(canvasElement);
 
     const primaryLink = await canvas.findByText('Twenty Website');
-    await expect(primaryLink).toBeVisible();
+    expect(primaryLink).toBeVisible();
 
     const addButton = await canvas.findByText('Add URL');
-    await expect(addButton).toBeVisible();
+    expect(addButton).toBeVisible();
+
+    expect(getPrimaryLinkBookmarkIcon(canvasElement)).not.toBeInTheDocument();
   },
 };
 
@@ -200,16 +206,20 @@ export const WithSecondaryLinks: Story = {
     const canvas = within(canvasElement);
 
     const primaryLink = await canvas.findByText('Twenty Website');
-    await expect(primaryLink).toBeVisible();
+    expect(primaryLink).toBeVisible();
+
+    await waitFor(() => {
+      expect(getPrimaryLinkBookmarkIcon(canvasElement)).toBeVisible();
+    });
 
     const documentationLink = await canvas.findByText('Documentation');
-    await expect(documentationLink).toBeVisible();
+    expect(documentationLink).toBeVisible();
 
     const githubLink = await canvas.findByText('GitHub');
-    await expect(githubLink).toBeVisible();
+    expect(githubLink).toBeVisible();
 
     const addButton = await canvas.findByText('Add URL');
-    await expect(addButton).toBeVisible();
+    expect(addButton).toBeVisible();
   },
 };
 
@@ -221,7 +231,7 @@ export const CreatePrimaryLink: Story = {
     await userEvent.type(input, 'https://www.twenty.com{enter}');
 
     const linkDisplay = await canvas.findByText('twenty.com');
-    await expect(linkDisplay).toBeVisible();
+    expect(linkDisplay).toBeVisible();
 
     await waitFor(() => {
       expect(updateRecord).toHaveBeenCalledWith({
@@ -238,6 +248,8 @@ export const CreatePrimaryLink: Story = {
       });
     });
     expect(updateRecord).toHaveBeenCalledTimes(1);
+
+    expect(getPrimaryLinkBookmarkIcon(canvasElement)).not.toBeInTheDocument();
   },
 };
 
@@ -252,16 +264,19 @@ export const AddSecondaryLink: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
+    const primaryLink = await canvas.findByText('Twenty Website');
+    expect(primaryLink).toBeVisible();
+
+    expect(getPrimaryLinkBookmarkIcon(canvasElement)).not.toBeInTheDocument();
+
     const addButton = await canvas.findByText('Add URL');
     await userEvent.click(addButton);
 
     const input = await canvas.findByPlaceholderText('URL');
     await userEvent.type(input, 'https://docs.twenty.com{enter}');
 
-    const primaryLink = await canvas.findByText('Twenty Website');
     const secondaryLink = await canvas.findByText('docs.twenty.com');
-    await expect(primaryLink).toBeVisible();
-    await expect(secondaryLink).toBeVisible();
+    expect(secondaryLink).toBeVisible();
 
     await waitFor(() => {
       expect(updateRecord).toHaveBeenCalledWith({
@@ -298,7 +313,9 @@ export const DeletePrimaryLink: Story = {
     const canvas = within(canvasElement);
 
     const listItemToDelete = await canvas.findByText('Twenty Website');
-    await userEvent.hover(listItemToDelete);
+    expect(listItemToDelete).toBeVisible();
+
+    expect(getPrimaryLinkBookmarkIcon(canvasElement)).not.toBeInTheDocument();
 
     const openDropdownButton = await canvas.findByRole('button', {
       expanded: false,
@@ -311,8 +328,8 @@ export const DeletePrimaryLink: Story = {
     await userEvent.click(deleteOption);
 
     const input = await canvas.findByPlaceholderText('URL');
-    await expect(input).toBeVisible();
-    await expect(input).toHaveValue('');
+    expect(input).toBeVisible();
+    expect(input).toHaveValue('');
 
     await waitFor(() => {
       expect(updateRecord).toHaveBeenCalledWith({
@@ -322,6 +339,64 @@ export const DeletePrimaryLink: Story = {
             links: {
               primaryLinkUrl: null,
               primaryLinkLabel: null,
+              secondaryLinks: [],
+            },
+          },
+        },
+      });
+    });
+    expect(updateRecord).toHaveBeenCalledTimes(1);
+  },
+};
+
+export const DeletePrimaryLinkAndUseSecondaryLinkAsTheNewPrimaryLink: Story = {
+  args: {
+    value: {
+      primaryLinkUrl: 'https://www.twenty.com',
+      primaryLinkLabel: 'Twenty Website',
+      secondaryLinks: [
+        {
+          url: 'https://docs.twenty.com',
+          label: 'Documentation',
+        },
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const listItemToDelete = await canvas.findByText('Twenty Website');
+    expect(listItemToDelete).toBeVisible();
+
+    await waitFor(() => {
+      expect(getPrimaryLinkBookmarkIcon(canvasElement)).toBeVisible();
+    });
+
+    const openDropdownButtons = await canvas.findAllByRole('button', {
+      expanded: false,
+    });
+    await userEvent.click(openDropdownButtons[0]);
+
+    const deleteOption = await within(
+      getCanvasElementForDropdownTesting(),
+    ).findByText('Delete');
+    await userEvent.click(deleteOption);
+
+    const newPrimaryLink = await canvas.findByText('Documentation');
+    expect(newPrimaryLink).toBeVisible();
+    const oldPrimaryLink = canvas.queryByText('Twenty Website');
+    expect(oldPrimaryLink).not.toBeInTheDocument();
+
+    expect(getPrimaryLinkBookmarkIcon(canvasElement)).not.toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(updateRecord).toHaveBeenCalledWith({
+        variables: {
+          where: { id: '123' },
+          updateOneRecordInput: {
+            links: {
+              primaryLinkUrl: 'https://docs.twenty.com',
+              primaryLinkLabel: 'Documentation',
               secondaryLinks: [],
             },
           },
@@ -348,6 +423,10 @@ export const DeleteSecondaryLink: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
+    await waitFor(() => {
+      expect(getPrimaryLinkBookmarkIcon(canvasElement)).toBeVisible();
+    });
+
     const listItemToDelete = await canvas.findByText('Documentation');
     await userEvent.hover(listItemToDelete);
 
@@ -362,9 +441,11 @@ export const DeleteSecondaryLink: Story = {
     await userEvent.click(deleteOption);
 
     const primaryLink = await canvas.findByText('Twenty Website');
-    await expect(primaryLink).toBeVisible();
+    expect(primaryLink).toBeVisible();
     const secondaryLink = canvas.queryByText('Documentation');
-    await expect(secondaryLink).not.toBeInTheDocument();
+    expect(secondaryLink).not.toBeInTheDocument();
+
+    expect(getPrimaryLinkBookmarkIcon(canvasElement)).not.toBeInTheDocument();
 
     await waitFor(() => {
       expect(updateRecord).toHaveBeenCalledWith({
@@ -414,5 +495,124 @@ export const Cancel: Story = {
     await userEvent.keyboard('{escape}');
 
     expect(cancelJestFn).toHaveBeenCalledTimes(1);
+  },
+};
+
+export const InvalidUrls: Story = {
+  args: {
+    value: {
+      primaryLinkUrl: 'lydia,com',
+      primaryLinkLabel: 'Invalid URL',
+      secondaryLinks: [
+        { url: 'wikipedia', label: 'Missing Protocol' },
+        { url: '\\invalid', label: 'Invalid Characters' },
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const input = await canvas.findByPlaceholderText('URL');
+    expect(input).toBeVisible();
+    expect(input).toHaveValue('');
+
+    await waitFor(() => {
+      expect(canvas.queryByRole('link')).toBeNull();
+    });
+
+    expect(canvas.queryByText('Invalid URL')).not.toBeInTheDocument();
+    expect(canvas.queryByText('Missing Protocol')).not.toBeInTheDocument();
+    expect(canvas.queryByText('Invalid Characters')).not.toBeInTheDocument();
+  },
+};
+
+export const MakeSecondaryLinkPrimary: Story = {
+  args: {
+    value: {
+      primaryLinkUrl: 'https://www.twenty.com',
+      primaryLinkLabel: 'Twenty Website',
+      secondaryLinks: [
+        {
+          url: 'https://docs.twenty.com',
+          label: 'Documentation',
+        },
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const primaryLink = await canvas.findByText('Twenty Website');
+    expect(primaryLink).toBeVisible();
+
+    const secondaryLink = await canvas.findByText('Documentation');
+    expect(secondaryLink).toBeVisible();
+
+    await waitFor(() => {
+      expect(getPrimaryLinkBookmarkIcon(canvasElement)).toBeVisible();
+    });
+
+    await userEvent.hover(secondaryLink);
+
+    const openDropdownButtons = await canvas.findAllByRole('button', {
+      expanded: false,
+    });
+    await userEvent.click(openDropdownButtons[1]); // Click the secondary link's dropdown
+
+    const setPrimaryOption = await within(
+      getCanvasElementForDropdownTesting(),
+    ).findByText('Set as Primary');
+    await userEvent.click(setPrimaryOption);
+
+    // Documentation should now be the primary link
+    await waitFor(() => {
+      expect(updateRecord).toHaveBeenCalledWith({
+        variables: {
+          where: { id: '123' },
+          updateOneRecordInput: {
+            links: {
+              primaryLinkUrl: 'https://docs.twenty.com',
+              primaryLinkLabel: 'Documentation',
+              secondaryLinks: [
+                {
+                  url: 'https://www.twenty.com',
+                  label: 'Twenty Website',
+                },
+              ],
+            },
+          },
+        },
+      });
+    });
+    expect(updateRecord).toHaveBeenCalledTimes(1);
+  },
+};
+
+export const CanNotSetPrimaryLinkAsPrimaryLink: Story = {
+  args: {
+    value: {
+      primaryLinkUrl: 'https://www.twenty.com',
+      primaryLinkLabel: 'Twenty Website',
+      secondaryLinks: [],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const primaryLink = await canvas.findByText('Twenty Website');
+    expect(primaryLink).toBeVisible();
+
+    expect(getPrimaryLinkBookmarkIcon(canvasElement)).not.toBeInTheDocument();
+
+    const openDropdownButton = await canvas.findByRole('button', {
+      expanded: false,
+    });
+    await userEvent.click(openDropdownButton);
+
+    // Should not see "Set as Primary" option for primary link
+    const setPrimaryOption = within(
+      getCanvasElementForDropdownTesting(),
+    ).queryByText('Set as Primary');
+    expect(setPrimaryOption).not.toBeInTheDocument();
   },
 };

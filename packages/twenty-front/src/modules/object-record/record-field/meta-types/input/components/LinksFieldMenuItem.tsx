@@ -3,27 +3,30 @@ import { MultiItemFieldMenuItem } from './MultiItemFieldMenuItem';
 
 type LinksFieldMenuItemProps = {
   dropdownId: string;
-  isPrimary?: boolean;
   label: string | null;
   url: string;
   onEdit?: () => void;
   onSetAsPrimary?: () => void;
   onDelete?: () => void;
+  showPrimaryIcon: boolean;
+  showSetAsPrimaryButton: boolean;
 };
 
 export const LinksFieldMenuItem = ({
   dropdownId,
-  isPrimary,
   label,
   onEdit,
   onSetAsPrimary,
   onDelete,
   url,
+  showPrimaryIcon,
+  showSetAsPrimaryButton,
 }: LinksFieldMenuItemProps) => {
   return (
     <MultiItemFieldMenuItem
       dropdownId={dropdownId}
-      isPrimary={isPrimary}
+      showPrimaryIcon={showPrimaryIcon}
+      showSetAsPrimaryButton={showSetAsPrimaryButton}
       value={{ label, url }}
       onEdit={onEdit}
       onSetAsPrimary={onSetAsPrimary}
