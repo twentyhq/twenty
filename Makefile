@@ -4,7 +4,7 @@ postgres-on-docker:
 	-e POSTGRES_USER=postgres \
 	-e POSTGRES_PASSWORD=postgres \
 	-e ALLOW_NOSSL=true \
-	-v twenty_db_data:/home/postgres/pgdata \
+	-v twenty_db_data:/var/lib/postgresql/data \
 	-p 5432:5432 \
 	postgres:16
 	@echo "Waiting for PostgreSQL to be ready..."
