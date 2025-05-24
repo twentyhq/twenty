@@ -5,13 +5,14 @@ import { updateOneFieldMetadataQueryFactory } from 'test/integration/metadata/su
 import { createOneObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata-query-factory.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata-query-factory.util';
-import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata-query-factory.util';
 import { makeMetadataAPIRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { cleanTestDatabase } from 'test/integration/utils/clean-test-database';
+import { getListingCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/generate-listing-create-object-input';
 
-import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 describe('datamodel permissions', () => {
   describe('fieldMetadata', () => {
@@ -19,14 +20,10 @@ describe('datamodel permissions', () => {
     let testFieldId = '';
 
     beforeAll(async () => {
+      await cleanTestDatabase({ seed: true });
+
       const { data } = await createOneObjectMetadata({
-        input: {
-          nameSingular: 'listing',
-          namePlural: 'listings',
-          labelSingular: 'Listing',
-          labelPlural: 'Listings',
-          icon: 'IconBuildingSkyscraper',
-        },
+        input: getListingCreateObjectInput(),
       });
 
       listingObjectId = data.createOneObject.id;
@@ -42,11 +39,7 @@ describe('datamodel permissions', () => {
 
       testFieldId = createdFieldData.createOneField.id;
     });
-    afterAll(async () => {
-      await deleteOneObjectMetadata({
-        input: { idToDelete: listingObjectId },
-      });
-    });
+
     describe('createOne', () => {
       it('should throw a permission error when user does not have permission (member role)', async () => {
         // Arrange
@@ -171,23 +164,15 @@ describe('datamodel permissions', () => {
       let listingObjectId = '';
 
       beforeAll(async () => {
+        await cleanTestDatabase({ seed: true });
+
         const { data } = await createOneObjectMetadata({
-          input: {
-            labelPlural: 'Listings',
-            labelSingular: 'Listing',
-            namePlural: 'listings',
-            nameSingular: 'listing',
-            icon: 'IconBuildingSkyscraper',
-          },
+          input: getListingCreateObjectInput(),
         });
 
         listingObjectId = data.createOneObject.id;
       });
-      afterAll(async () => {
-        await deleteOneObjectMetadata({
-          input: { idToDelete: listingObjectId },
-        });
-      });
+
       describe('updateOne', () => {
         it('should throw a permission error when user does not have permission (member role)', async () => {
           // Arrange

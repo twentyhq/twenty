@@ -1,5 +1,8 @@
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
-import { LISTING_NAME_SINGULAR } from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
+import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { LISTING_NAME_SINGULAR } from 'test/integration/metadata/suites/object-metadata/constants/listing-object.constant';
+import { HOUSE_NAME_SINGULAR } from 'test/integration/metadata/suites/object-metadata/constants/house-object.constant';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
 
@@ -18,14 +21,37 @@ export const cleanTestDatabase = async ({ seed }: { seed: boolean }) => {
       'workspaceMember',
       'task',
       'note',
+      'apiKey',
       '_pet',
       '_surveyResult',
-      `_${LISTING_NAME_SINGULAR}`,
     ].map(
       async (objectMetadataNameSingular) =>
         await deleteAllRecords(objectMetadataNameSingular),
     ),
   ]);
+
+  const result = await findManyObjectMetadata({
+    input: {
+      filter: {
+        isCustom: { is: true },
+      },
+      paging: { first: 1000 },
+    },
+    gqlFields: `
+      id
+      nameSingular
+    `,
+  });
+
+  const objectsToDelete = (result?.objects || []).filter(({ nameSingular }) =>
+    [LISTING_NAME_SINGULAR, HOUSE_NAME_SINGULAR].includes(nameSingular),
+  );
+
+  for (const objectToDelete of objectsToDelete) {
+    await deleteOneObjectMetadata({
+      input: { idToDelete: objectToDelete.id },
+    });
+  }
 
   if (!seed) {
     return;

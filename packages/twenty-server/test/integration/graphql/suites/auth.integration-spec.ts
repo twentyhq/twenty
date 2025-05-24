@@ -1,4 +1,5 @@
 import request from 'supertest';
+import { cleanTestDatabase } from 'test/integration/utils/clean-test-database';
 
 const SERVER_URL = `http://localhost:${APP_PORT}`;
 
@@ -19,11 +20,15 @@ const auth = {
 describe('AuthResolve (integration)', () => {
   let loginToken: string;
 
+  beforeAll(async () => {
+    await cleanTestDatabase({ seed: true });
+  });
+
   it('should getLoginTokenFromCredentials with email and password', () => {
     const queryData = {
       query: `
         mutation GetLoginTokenFromCredentials {
-          getLoginTokenFromCredentials(email: "${auth.email}", password: "${auth.password}", origin: "http://localhost") {
+          getLoginTokenFromCredentials(email: "${auth.email}", password: "${auth.password}", origin: "${ORIGIN.toString()}") {
             loginToken {
               token
               expiresAt
@@ -56,7 +61,7 @@ describe('AuthResolve (integration)', () => {
     const queryData = {
       query: `
         mutation GetAuthTokensFromLoginToken {
-          getAuthTokensFromLoginToken(loginToken: "${loginToken}", origin: "http://localhost") {
+          getAuthTokensFromLoginToken(loginToken: "${loginToken}", origin: "${ORIGIN.toString()}") {
             tokens {
               accessToken {
                 token

@@ -7,10 +7,15 @@ import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { TEST_COMPANY_1_ID } from 'test/integration/constants/test-company-ids.constants';
 import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
 import { TIM_ACCOUNT_ID } from 'test/integration/graphql/integration.constants';
+import { cleanTestDatabase } from 'test/integration/utils/clean-test-database';
 
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 
 describe('Core REST API Create Many endpoint', () => {
+  beforeAll(async () => {
+    await cleanTestDatabase({ seed: true });
+  });
+
   beforeEach(async () => {
     await deleteAllRecords('person');
     await makeRestAPIRequest({

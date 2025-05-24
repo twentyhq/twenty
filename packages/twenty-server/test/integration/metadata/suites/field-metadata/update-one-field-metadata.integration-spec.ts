@@ -1,14 +1,16 @@
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
-import {
-  LISTING_NAME_PLURAL,
-  LISTING_NAME_SINGULAR,
-} from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { getListingCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/generate-listing-create-object-input';
+import { cleanTestDatabase } from 'test/integration/utils/clean-test-database';
 
 describe('updateOne', () => {
+  beforeAll(async () => {
+    await cleanTestDatabase({ seed: true });
+  });
+
   describe('FieldMetadataService name/label sync', () => {
     let listingObjectId = '';
     let testFieldId = '';
@@ -16,11 +18,7 @@ describe('updateOne', () => {
     beforeEach(async () => {
       const { data } = await createOneObjectMetadata({
         input: {
-          labelSingular: LISTING_NAME_SINGULAR,
-          labelPlural: LISTING_NAME_PLURAL,
-          nameSingular: LISTING_NAME_SINGULAR,
-          namePlural: LISTING_NAME_PLURAL,
-          icon: 'IconBuildingSkyscraper',
+          ...getListingCreateObjectInput(),
           isLabelSyncedWithName: true,
         },
       });
@@ -123,11 +121,7 @@ describe('updateOne', () => {
     beforeEach(async () => {
       const { data: listingObjectMetadata } = await createOneObjectMetadata({
         input: {
-          labelSingular: LISTING_NAME_SINGULAR,
-          labelPlural: LISTING_NAME_PLURAL,
-          nameSingular: LISTING_NAME_SINGULAR,
-          namePlural: LISTING_NAME_PLURAL,
-          icon: 'IconBuildingSkyscraper',
+          ...getListingCreateObjectInput(),
           isLabelSyncedWithName: true,
         },
       });

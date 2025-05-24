@@ -1,6 +1,11 @@
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { cleanTestDatabase } from 'test/integration/utils/clean-test-database';
 
 describe('Core REST API Authentication', () => {
+  beforeAll(async () => {
+    await cleanTestDatabase({ seed: true });
+  });
+
   it('should return an UnauthorizedException when no token is provided', async () => {
     await makeRestAPIRequest({
       method: 'post',

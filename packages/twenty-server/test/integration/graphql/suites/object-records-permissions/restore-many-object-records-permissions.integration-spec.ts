@@ -7,6 +7,7 @@ import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/graphql/uti
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { restoreManyOperationFactory } from 'test/integration/graphql/utils/restore-many-operation-factory.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
+import { cleanTestDatabase } from 'test/integration/utils/clean-test-database';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -18,6 +19,8 @@ describe('restoreManyObjectRecordsPermissions', () => {
     const personId2 = randomUUID();
 
     beforeAll(async () => {
+      await cleanTestDatabase({ seed: true });
+
       // Create people
       const createGraphqlOperation = createManyOperationFactory({
         objectMetadataSingularName: 'person',
@@ -100,7 +103,8 @@ describe('restoreManyObjectRecordsPermissions', () => {
     const personId2 = randomUUID();
 
     beforeAll(async () => {
-      // Create people
+      await cleanTestDatabase({ seed: true });
+
       const createGraphqlOperation = createManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',

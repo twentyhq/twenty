@@ -6,6 +6,7 @@ import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destr
 import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
+import { cleanTestDatabase } from 'test/integration/utils/clean-test-database';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -16,6 +17,8 @@ describe('destroyOneObjectRecordsPermissions', () => {
     const personId = randomUUID();
 
     beforeAll(async () => {
+      await cleanTestDatabase({ seed: true });
+
       const createGraphqlOperation = createOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: PERSON_GQL_FIELDS,
@@ -64,6 +67,8 @@ describe('destroyOneObjectRecordsPermissions', () => {
     const personId = randomUUID();
 
     beforeAll(async () => {
+      await cleanTestDatabase({ seed: true });
+
       const createGraphqlOperation = createOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: PERSON_GQL_FIELDS,
