@@ -24,18 +24,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@air/react-drag-to-select@npm:^5.0.8":
-  version: 5.0.8
-  resolution: "@air/react-drag-to-select@npm:5.0.8"
-  dependencies:
-    react-style-object-to-css: "npm:^1.1.2"
-  peerDependencies:
-    react: 16 - 18
-    react-dom: 16 - 18
-  checksum: 10c0/a7005e863ab0dc93ae789a8093d8284f6f4c519a8f23c54136f493e014b2a10dcab42c83521e75a83fdac5806d55a38f417b108386c684b050a4fbc4071fb419
-  languageName: node
-  linkType: hard
-
 "@algolia/autocomplete-core@npm:1.9.3":
   version: 1.9.3
   resolution: "@algolia/autocomplete-core@npm:1.9.3"
@@ -50271,13 +50259,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-style-object-to-css@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "react-style-object-to-css@npm:1.1.2"
-  checksum: 10c0/c2154dd99723dbc2c359a167401d65b8bae300b9e7ed0c7609b617340d941faa4af822d855257b6f0e36522e30665650c7263f4ed8d556217e246048fbc7bb7c
-  languageName: node
-  linkType: hard
-
 "react-style-singleton@npm:^2.2.1":
   version: 2.2.1
   resolution: "react-style-singleton@npm:2.2.1"
@@ -55783,7 +55764,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty@workspace:."
   dependencies:
-    "@air/react-drag-to-select": "npm:^5.0.8"
     "@apollo/client": "npm:^3.7.17"
     "@apollo/server": "npm:^4.7.3"
     "@aws-sdk/client-lambda": "npm:^3.614.0"

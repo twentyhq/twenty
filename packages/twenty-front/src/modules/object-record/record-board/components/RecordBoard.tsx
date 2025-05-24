@@ -31,6 +31,7 @@ import { MODAL_BACKDROP_CLICK_OUTSIDE_ID } from '@/ui/layout/modal/constants/Mod
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constants/PageActionContainerClickOutsideId';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
+import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -45,10 +46,13 @@ const StyledContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: row;
+  min-height: 100%;
+  position: relative;
 `;
 
 const StyledColumnContainer = styled.div`
   display: flex;
+
   & > *:not(:first-of-type) {
     border-left: 1px solid ${({ theme }) => theme.border.color.light};
   }
@@ -57,12 +61,14 @@ const StyledColumnContainer = styled.div`
 const StyledContainerContainer = styled.div`
   display: flex;
   flex-direction: column;
+  min-height: calc(100% - ${({ theme }) => theme.spacing(2)});
+  height: min-content;
 `;
 
 const StyledBoardContentContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: calc(100% - 48px);
+  flex: 1;
 `;
 
 export const RecordBoard = () => {
@@ -233,13 +239,18 @@ export const RecordBoard = () => {
                     ))}
                   </StyledColumnContainer>
                 </DragDropContext>
+
+                <DragSelect
+                  selectableItemsContainerRef={boardRef}
+                  onDragSelectionEnd={handleDragSelectionEnd}
+                  onDragSelectionChange={setRecordAsSelected}
+                  onDragSelectionStart={handleDragSelectionStart}
+                  scrollWrapperComponentInstanceId={`scroll-wrapper-record-board-${recordBoardId}`}
+                  selectionBoundaryClass={
+                    RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS
+                  }
+                />
               </StyledContainer>
-              <DragSelect
-                dragSelectable={boardRef}
-                onDragSelectionEnd={handleDragSelectionEnd}
-                onDragSelectionChange={setRecordAsSelected}
-                onDragSelectionStart={handleDragSelectionStart}
-              />
             </StyledBoardContentContainer>
           </StyledContainerContainer>
         </ScrollWrapper>

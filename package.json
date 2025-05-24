@@ -1,7 +1,6 @@
 {
   "private": true,
   "dependencies": {
-    "@air/react-drag-to-select": "^5.0.8",
     "@apollo/client": "^3.7.17",
     "@apollo/server": "^4.7.3",
     "@aws-sdk/client-lambda": "^3.614.0",

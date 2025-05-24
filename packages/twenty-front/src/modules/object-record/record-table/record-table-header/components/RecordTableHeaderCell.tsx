@@ -16,6 +16,7 @@ import { tableColumnsComponentState } from '@/object-record/record-table/states/
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
+import { PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
@@ -138,16 +139,19 @@ export const RecordTableHeaderCell = ({
 
   const { handleColumnsChange } = useTableColumns();
 
-  const handleResizeHandlerStart = useCallback((positionX: number) => {
-    setInitialPointerPositionX(positionX);
-  }, []);
+  const handleResizeHandlerStart = useCallback<PointerEventListener>(
+    ({ x }) => {
+      setInitialPointerPositionX(x);
+    },
+    [],
+  );
 
   const [iconVisibility, setIconVisibility] = useState(false);
 
-  const handleResizeHandlerMove = useCallback(
-    (positionX: number) => {
+  const handleResizeHandlerMove = useCallback<PointerEventListener>(
+    ({ x }) => {
       if (!initialPointerPositionX) return;
-      setResizeFieldOffset(positionX - initialPointerPositionX);
+      setResizeFieldOffset(x - initialPointerPositionX);
     },
     [setResizeFieldOffset, initialPointerPositionX],
   );

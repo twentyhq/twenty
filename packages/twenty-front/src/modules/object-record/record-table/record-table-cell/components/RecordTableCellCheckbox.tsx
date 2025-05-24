@@ -32,7 +32,7 @@ export const RecordTableCellCheckbox = () => {
 
   return (
     <StyledRecordTableTd isSelected={isSelected} hasRightBorder={false}>
-      <StyledContainer onClick={handleClick}>
+      <StyledContainer onClick={handleClick} data-select-disable>
         <Checkbox hoverable checked={isSelected} />
       </StyledContainer>
     </StyledRecordTableTd>

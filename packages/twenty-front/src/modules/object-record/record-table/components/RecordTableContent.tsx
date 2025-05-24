@@ -5,8 +5,9 @@ import { RecordTableNoRecordGroupBody } from '@/object-record/record-table/recor
 import { RecordTableRecordGroupsBody } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupsBody';
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
+import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 const StyledTableWithPointerEvents = styled(StyledTable)<{
   isDragging: boolean;
@@ -16,12 +17,20 @@ const StyledTableWithPointerEvents = styled(StyledTable)<{
   }
 `;
 
+const StyledTableContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+`;
+
 export interface RecordTableContentProps {
   tableBodyRef: React.RefObject<HTMLTableElement>;
   handleDragSelectionStart: () => void;
   handleDragSelectionEnd: () => void;
   setRowSelected: (rowId: string, selected: boolean) => void;
   hasRecordGroups: boolean;
+  recordTableId: string;
 }
 
 export const RecordTableContent = ({
@@ -30,8 +39,10 @@ export const RecordTableContent = ({
   handleDragSelectionEnd,
   setRowSelected,
   hasRecordGroups,
+  recordTableId,
 }: RecordTableContentProps) => {
   const [isDragging, setIsDragging] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const handleDragStart = () => {
     setIsDragging(true);
@@ -44,7 +55,7 @@ export const RecordTableContent = ({
   };
 
   return (
-    <>
+    <StyledTableContainer ref={containerRef}>
       <StyledTableWithPointerEvents ref={tableBodyRef} isDragging={isDragging}>
         <RecordTableHeader />
         {hasRecordGroups ? (
@@ -56,11 +67,13 @@ export const RecordTableContent = ({
         <RecordTableStickyBottomEffect />
       </StyledTableWithPointerEvents>
       <DragSelect
-        dragSelectable={tableBodyRef}
+        selectableItemsContainerRef={containerRef}
         onDragSelectionStart={handleDragStart}
         onDragSelectionChange={setRowSelected}
         onDragSelectionEnd={handleDragEnd}
+        scrollWrapperComponentInstanceId={`record-table-scroll-${recordTableId}`}
+        selectionBoundaryClass={RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS}
       />
-    </>
+    </StyledTableContainer>
   );
 };
