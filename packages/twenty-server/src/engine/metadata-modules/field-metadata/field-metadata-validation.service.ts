@@ -101,11 +101,10 @@ export class FieldMetadataValidationService<
     defaultValue: FieldMetadataDefaultValue<T>;
     options: FieldMetadataOptions<T>;
   }) {
-    if (
-      fieldType === FieldMetadataType.SELECT ||
-      fieldType === FieldMetadataType.MULTI_SELECT
-    ) {
+    if (fieldType === FieldMetadataType.SELECT) {
       this.validateEnumDefaultValue(options, defaultValue);
+    } else if (fieldType === FieldMetadataType.MULTI_SELECT) {
+      this.validateMultiSelectDefaultValue(options, defaultValue);
     }
   }
 
@@ -132,6 +131,37 @@ export class FieldMetadataValidationService<
     }
     throw new FieldMetadataException(
       `Default value for existing options is invalid: ${defaultValue}`,
+      FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+    );
+  }
+
+  private validateMultiSelectDefaultValue(
+    options: FieldMetadataOptions<T>,
+    defaultValues: FieldMetadataDefaultValue<T>,
+  ) {
+    if (Array.isArray(defaultValues)) {
+      const enumOptions = options.map((option) => option.value);
+
+      const isValid = defaultValues.every((value) => {
+        const formattedValue =
+          typeof value === 'string'
+            ? value.replace(/^['"](.*)['"]$/, '$1')
+            : value;
+
+        return (
+          enumOptions.includes(formattedValue) ||
+          // @ts-expect-error legacy noImplicitAny
+          enumOptions.some((option) => option.to === formattedValue)
+        );
+      });
+
+      if (isValid) {
+        return;
+      }
+    }
+
+    throw new FieldMetadataException(
+      `Default value for multi-select options is invalid: ${defaultValues}`,
       FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
     );
   }
