@@ -1,39 +1,32 @@
-import { DATE_PARSER_FORMAT } from '@/ui/input/components/internal/date/constants/DateParserFormat';
-import { DATE_TIME_PARSER_FORMAT } from '@/ui/input/components/internal/date/constants/DateTimeParserFormat';
+import { DateFormat } from '@/localization/constants/DateFormat';
+import { isNull } from '@sniptt/guards';
 import { DateTime } from 'luxon';
+import { getDateFormatString } from '~/utils/date-utils';
 
 type ParseDateToStringArgs = {
   date: Date;
   isDateTimeInput: boolean;
   userTimezone: string | undefined;
+  dateFormat: DateFormat;
 };
 
 export const parseDateToString = ({
   date,
   isDateTimeInput,
   userTimezone,
+  dateFormat,
 }: ParseDateToStringArgs) => {
-  const parsingFormat = isDateTimeInput
-    ? DATE_TIME_PARSER_FORMAT
-    : DATE_PARSER_FORMAT;
+  if (isNull(date)) {
+    return '';
+  }
 
-  const dateParsed = DateTime.fromJSDate(date, { zone: userTimezone });
+  const formatString = getDateFormatString(dateFormat, isDateTimeInput);
 
-  const dateWithoutTime = DateTime.fromJSDate(date)
-    .toLocal()
-    .set({
-      day: date.getUTCDate(),
-      month: date.getUTCMonth() + 1,
-      year: date.getUTCFullYear(),
-      hour: 0,
-      minute: 0,
-      second: 0,
-      millisecond: 0,
-    });
+  const dateTime = isDateTimeInput
+    ? DateTime.fromJSDate(date, { zone: userTimezone })
+    : DateTime.fromJSDate(date, { zone: 'utc' });
 
-  const formattedDate = isDateTimeInput
-    ? dateParsed.setZone(userTimezone).toFormat(parsingFormat)
-    : dateWithoutTime.toFormat(parsingFormat);
+  const formattedDate = dateTime.toFormat(formatString);
 
   return formattedDate;
 };

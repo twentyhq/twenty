@@ -2,9 +2,11 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useCallback, useEffect, useState } from 'react';
 import { useIMask } from 'react-imask';
+import { useRecoilValue } from 'recoil';
 
+import { DateFormat } from '@/localization/constants/DateFormat';
+import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
 import { DATE_BLOCKS } from '@/ui/input/components/internal/date/constants/DateBlocks';
-import { DATE_MASK } from '@/ui/input/components/internal/date/constants/DateMask';
 import { DATE_TIME_BLOCKS } from '@/ui/input/components/internal/date/constants/DateTimeBlocks';
 import { DATE_TIME_MASK } from '@/ui/input/components/internal/date/constants/DateTimeMask';
 import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
@@ -55,6 +57,7 @@ export const DateTimeInput = ({
   userTimezone,
 }: DateTimeInputProps) => {
   const [hasError, setHasError] = useState(false);
+  const { dateFormat } = useRecoilValue(dateTimeFormatState);
 
   const handleParseDateToString = useCallback(
     (date: any) => {
@@ -62,9 +65,10 @@ export const DateTimeInput = ({
         date,
         isDateTimeInput: isDateTimeInput === true,
         userTimezone,
+        dateFormat,
       });
     },
-    [isDateTimeInput, userTimezone],
+    [isDateTimeInput, userTimezone, dateFormat],
   );
 
   const handleParseStringToDate = (str: string) => {
@@ -72,6 +76,7 @@ export const DateTimeInput = ({
       dateAsString: str,
       isDateTimeInput: isDateTimeInput === true,
       userTimezone,
+      dateFormat,
     });
 
     setHasError(isNull(date) === true);
@@ -79,7 +84,21 @@ export const DateTimeInput = ({
     return date;
   };
 
-  const pattern = isDateTimeInput ? DATE_TIME_MASK : DATE_MASK;
+  const getDateMask = () => {
+    switch (dateFormat) {
+      case DateFormat.DAY_FIRST:
+        return 'd`/m`/Y`';
+      case DateFormat.YEAR_FIRST:
+        return 'Y`/m`/d`';
+      case DateFormat.MONTH_FIRST:
+      default:
+        return 'm`/d`/Y`';
+    }
+  };
+
+  const pattern = isDateTimeInput
+    ? `${getDateMask()} ${DATE_TIME_MASK.split(' ')[1]}`
+    : getDateMask();
   const blocks = isDateTimeInput ? DATE_TIME_BLOCKS : DATE_BLOCKS;
 
   const { ref, setValue, value } = useIMask(
@@ -100,6 +119,7 @@ export const DateTimeInput = ({
           dateAsString: value,
           isDateTimeInput: isDateTimeInput === true,
           userTimezone,
+          dateFormat,
         });
 
         onChange?.(parsedDate);
@@ -120,18 +140,29 @@ export const DateTimeInput = ({
         date: date,
         isDateTimeInput: isDateTimeInput === true,
         userTimezone,
+        dateFormat,
       }),
     );
-  }, [date, setValue, isDateTimeInput, userTimezone]);
+  }, [date, setValue, isDateTimeInput, userTimezone, dateFormat]);
+
+  const getPlaceholder = useCallback(() => {
+    switch (dateFormat) {
+      case DateFormat.DAY_FIRST:
+        return `Type date${isDateTimeInput ? ' and time' : ' (dd/mm/yyyy)'}`;
+      case DateFormat.YEAR_FIRST:
+        return `Type date${isDateTimeInput ? ' and time' : ' (yyyy-mm-dd)'}`;
+      case DateFormat.MONTH_FIRST:
+      default:
+        return `Type date${isDateTimeInput ? ' and time' : ' (mm/dd/yyyy)'}`;
+    }
+  }, [dateFormat, isDateTimeInput]);
 
   return (
     <StyledInputContainer>
       <StyledInput
         type="text"
         ref={ref as any}
-        placeholder={`Type date${
-          isDateTimeInput ? ' and time' : ' (mm/dd/yyyy)'
-        }`}
+        placeholder={getPlaceholder()}
         value={value}
         onChange={() => {}} // Prevent React warning
         hasError={hasError}

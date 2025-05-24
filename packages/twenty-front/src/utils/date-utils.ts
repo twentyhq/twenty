@@ -4,8 +4,10 @@ import { differenceInCalendarDays, formatDistanceToNow } from 'date-fns';
 import { DateTime } from 'luxon';
 import moize from 'moize';
 
-import { logError } from './logError';
+import { DateFormat } from '@/localization/constants/DateFormat';
 import { isDefined } from 'twenty-shared/utils';
+
+import { logError } from './logError';
 
 export const DEFAULT_DATE_LOCALE = 'en-EN';
 
@@ -211,4 +213,21 @@ export const formatToHumanReadableDateTime = (date: Date | string) => {
     hour: 'numeric',
     minute: 'numeric',
   }).format(parsedJSDate);
+};
+
+export const getDateFormatString = (
+  dateFormat: DateFormat,
+  isDateTimeInput: boolean,
+): string => {
+  const timePart = isDateTimeInput ? ' HH:mm' : '';
+
+  switch (dateFormat) {
+    case DateFormat.DAY_FIRST:
+      return `dd/MM/yyyy${timePart}`;
+    case DateFormat.YEAR_FIRST:
+      return `yyyy-MM-dd${timePart}`;
+    case DateFormat.MONTH_FIRST:
+    default:
+      return `MM/dd/yyyy${timePart}`;
+  }
 };

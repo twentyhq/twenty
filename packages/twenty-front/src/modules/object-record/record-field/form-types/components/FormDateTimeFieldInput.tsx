@@ -1,3 +1,4 @@
+import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
@@ -28,6 +29,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 import { Nullable } from 'twenty-ui/utilities';
@@ -94,6 +96,7 @@ export const FormDateTimeFieldInput = ({
   placeholder,
 }: FormDateTimeFieldInputProps) => {
   const { timeZone } = useContext(UserContext);
+  const { dateFormat } = useRecoilValue(dateTimeFormatState);
 
   const inputId = useId();
 
@@ -125,6 +128,7 @@ export const FormDateTimeFieldInput = ({
           date: draftValueAsDate,
           isDateTimeInput: !dateOnly,
           userTimezone: timeZone,
+          dateFormat,
         })
       : '',
   );
@@ -178,6 +182,7 @@ export const FormDateTimeFieldInput = ({
             date: newDate,
             isDateTimeInput: !dateOnly,
             userTimezone: timeZone,
+            dateFormat,
           })
         : '',
     );
@@ -236,6 +241,7 @@ export const FormDateTimeFieldInput = ({
             date: newDate,
             isDateTimeInput: !dateOnly,
             userTimezone: timeZone,
+            dateFormat,
           })
         : '',
     );
@@ -264,7 +270,6 @@ export const FormDateTimeFieldInput = ({
 
     if (inputDateTimeTrimmed === '') {
       handlePickerClear();
-
       return;
     }
 
@@ -272,6 +277,7 @@ export const FormDateTimeFieldInput = ({
       dateAsString: inputDateTimeTrimmed,
       isDateTimeInput: !dateOnly,
       userTimezone: timeZone,
+      dateFormat,
     });
 
     if (!isDefined(parsedInputDateTime)) {
@@ -298,6 +304,7 @@ export const FormDateTimeFieldInput = ({
         date: validatedDate,
         isDateTimeInput: !dateOnly,
         userTimezone: timeZone,
+        dateFormat,
       }),
     );
 
