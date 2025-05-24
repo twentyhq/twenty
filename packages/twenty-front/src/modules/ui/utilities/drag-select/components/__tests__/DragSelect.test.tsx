@@ -1,10 +1,10 @@
 import { render } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
+import { PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
 import { useDragSelect } from '../../hooks/useDragSelect';
 import { DragSelect } from '../DragSelect';
 
-// Mock dependencies
 jest.mock('../../hooks/useDragSelect');
 jest.mock('../../hooks/useDragSelectWithAutoScroll', () => ({
   useDragSelectWithAutoScroll: () => ({
@@ -13,11 +13,7 @@ jest.mock('../../hooks/useDragSelectWithAutoScroll', () => ({
 }));
 
 jest.mock('@/ui/utilities/pointer-event/hooks/useTrackPointer', () => ({
-  useTrackPointer: ({
-    onMouseDown,
-  }: {
-    onMouseDown: (event: MouseEvent) => void;
-  }) => {
+  useTrackPointer: ({ onMouseDown }: { onMouseDown: PointerEventListener }) => {
     (window as any).trackPointerCallbacks = {
       onMouseDown,
     };

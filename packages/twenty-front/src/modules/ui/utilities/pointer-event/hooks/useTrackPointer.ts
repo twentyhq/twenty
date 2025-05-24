@@ -1,14 +1,5 @@
+import { PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
 import { useCallback, useEffect } from 'react';
-
-type MouseListener = ({
-  x,
-  y,
-  event,
-}: {
-  x: number;
-  y: number;
-  event: MouseEvent | TouchEvent;
-}) => void;
 
 export const useTrackPointer = ({
   shouldTrackPointer = true,
@@ -17,9 +8,9 @@ export const useTrackPointer = ({
   onMouseUp,
 }: {
   shouldTrackPointer?: boolean;
-  onMouseMove?: MouseListener;
-  onMouseDown?: MouseListener;
-  onMouseUp?: MouseListener;
+  onMouseMove?: PointerEventListener;
+  onMouseDown?: PointerEventListener;
+  onMouseUp?: PointerEventListener;
 }) => {
   const extractPosition = useCallback((event: MouseEvent | TouchEvent) => {
     const clientX =
