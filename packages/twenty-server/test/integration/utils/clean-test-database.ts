@@ -1,4 +1,5 @@
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
+import { LISTING_NAME_SINGULAR } from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
 
@@ -15,8 +16,11 @@ export const cleanTestDatabase = async ({ seed }: { seed: boolean }) => {
       'company',
       'opportunity',
       'workspaceMember',
+      'task',
+      'note',
       '_pet',
       '_surveyResult',
+      `_${LISTING_NAME_SINGULAR}`,
     ].map(
       async (objectMetadataNameSingular) =>
         await deleteAllRecords(objectMetadataNameSingular),
