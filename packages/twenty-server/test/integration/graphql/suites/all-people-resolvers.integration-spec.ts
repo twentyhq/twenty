@@ -17,9 +17,11 @@ import { updateManyOperationFactory } from 'test/integration/graphql/utils/updat
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
+import { cleanTestDatabase } from 'test/integration/utils/clean-test-database';
 
 describe('people resolvers (integration)', () => {
   beforeAll(async () => {
+    await cleanTestDatabase({ seed: true });
     await deleteAllRecords('person');
   });
 

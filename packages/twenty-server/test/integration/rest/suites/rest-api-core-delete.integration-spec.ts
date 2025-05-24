@@ -3,10 +3,12 @@ import {
   TEST_PERSON_1_ID,
 } from 'test/integration/constants/test-person-ids.constants';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { cleanTestDatabase } from 'test/integration/utils/clean-test-database';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 
 describe('Core REST API Delete One endpoint', () => {
   beforeAll(async () => {
+    await cleanTestDatabase({ seed: true });
     await deleteAllRecords('person');
   });
 

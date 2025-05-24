@@ -4,13 +4,11 @@ import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graph
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
-import {
-  LISTING_NAME_PLURAL,
-  LISTING_NAME_SINGULAR,
-} from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { cleanTestDatabase } from 'test/integration/utils/clean-test-database';
+import { getListingCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/generate-listing-create-object-input';
 
 describe('deleteOne', () => {
   describe('Kanban aggregate operation', () => {
@@ -19,14 +17,10 @@ describe('deleteOne', () => {
     let viewId = '';
 
     beforeEach(async () => {
+      await cleanTestDatabase({ seed: true });
+
       const { data } = await createOneObjectMetadata({
-        input: {
-          nameSingular: LISTING_NAME_SINGULAR,
-          namePlural: LISTING_NAME_PLURAL,
-          labelSingular: 'Listing',
-          labelPlural: 'Listings',
-          icon: 'IconBuildingSkyscraper',
-        },
+        input: getListingCreateObjectInput(),
       });
 
       listingObjectId = data.createOneObject.id;

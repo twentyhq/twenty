@@ -6,6 +6,7 @@ import { destroyManyOperationFactory } from 'test/integration/graphql/utils/dest
 import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
+import { cleanTestDatabase } from 'test/integration/utils/clean-test-database';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -79,6 +80,8 @@ describe('destroyManyObjectRecordsPermissions', () => {
 
   describe('permissions V2 enabled', () => {
     beforeAll(async () => {
+      await cleanTestDatabase({ seed: true });
+
       const enablePermissionsQuery = updateFeatureFlagFactory(
         SEED_APPLE_WORKSPACE_ID,
         'IsPermissionsV2Enabled',

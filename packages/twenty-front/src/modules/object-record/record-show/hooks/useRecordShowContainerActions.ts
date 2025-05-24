@@ -42,16 +42,16 @@ export const useRecordShowContainerActions = ({
       },
     });
 
-    const avatarUrl = result?.data?.uploadImage;
+    const avatarSignedFile = result?.data?.uploadImage;
 
-    if (!avatarUrl || isUndefinedOrNull(updateOneRecord)) {
+    if (!avatarSignedFile || isUndefinedOrNull(updateOneRecord)) {
       return;
     }
 
     await updateOneRecord({
       idToUpdate: objectRecordId,
       updateOneRecordInput: {
-        avatarUrl,
+        avatarUrl: avatarSignedFile.path,
       },
     });
   };

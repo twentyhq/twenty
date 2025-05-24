@@ -4,6 +4,13 @@ import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graph
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { cleanTestDatabase } from 'test/integration/utils/clean-test-database';
+import {
+  HOUSE_LABEL_PLURAL,
+  HOUSE_LABEL_SINGULAR,
+  HOUSE_NAME_PLURAL,
+  HOUSE_NAME_SINGULAR,
+} from 'test/integration/metadata/suites/object-metadata/constants/house-object.constant';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
 import { DEV_SEED_WORKSPACE_MEMBER_IDS } from 'src/database/typeorm-seeds/workspace/workspace-members';
@@ -38,6 +45,8 @@ describe('roles permissions', () => {
   let guestRoleId: string;
 
   beforeAll(async () => {
+    await cleanTestDatabase({ seed: true });
+
     const enablePermissionsV2Query = updateFeatureFlagFactory(
       SEED_APPLE_WORKSPACE_ID,
       'IsPermissionsV2Enabled',
@@ -452,10 +461,10 @@ describe('roles permissions', () => {
       beforeAll(async () => {
         const { data } = await createOneObjectMetadata({
           input: {
-            nameSingular: 'house',
-            namePlural: 'houses',
-            labelSingular: 'House',
-            labelPlural: 'Houses',
+            nameSingular: HOUSE_NAME_SINGULAR,
+            namePlural: HOUSE_NAME_PLURAL,
+            labelSingular: HOUSE_LABEL_SINGULAR,
+            labelPlural: HOUSE_LABEL_PLURAL,
             icon: 'IconBuildingSkyscraper',
           },
         });

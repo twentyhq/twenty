@@ -7,13 +7,8 @@ import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivi
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { isNonEmptyString } from '@sniptt/guards';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
-
-// Note: This is probably not the right way to do this.
-export const computePathWithoutToken = (attachmentPath: string): string => {
-  return attachmentPath.replace(/\?token=[^&]*$/, '');
-};
+import { isDefined } from 'twenty-shared/utils';
 
 export const useUploadAttachmentFile = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
@@ -36,11 +31,13 @@ export const useUploadAttachmentFile = () => {
       },
     });
 
-    const attachmentPath = result?.data?.uploadFile;
+    const signedFile = result?.data?.uploadFile;
 
-    if (!isNonEmptyString(attachmentPath)) {
+    if (!isDefined(signedFile)) {
       throw new Error("Couldn't upload the attachment.");
     }
+
+    const { path: attachmentPath } = signedFile;
 
     const targetableObjectFieldIdName = getActivityTargetObjectFieldIdName({
       nameSingular: targetableObject.targetObjectNameSingular,
@@ -49,7 +46,7 @@ export const useUploadAttachmentFile = () => {
     const attachmentToCreate = {
       authorId: currentWorkspaceMember?.id,
       name: file.name,
-      fullPath: computePathWithoutToken(attachmentPath),
+      fullPath: attachmentPath,
       type: getFileType(file.name),
       [targetableObjectFieldIdName]: targetableObject.id,
       createdAt: new Date().toISOString(),

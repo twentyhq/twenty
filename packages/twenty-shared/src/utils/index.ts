@@ -16,6 +16,7 @@ export {
 } from './image/getLogoUrlFromDomainName';
 export { capitalize } from './strings/capitalize';
 export { absoluteUrlSchema } from './url/absoluteUrlSchema';
+export { buildSignedPath } from './url/buildSignedPath';
 export { getAbsoluteUrlOrThrow } from './url/getAbsoluteUrlOrThrow';
 export { getUrlHostnameOrThrow } from './url/getUrlHostnameOrThrow';
 export { isValidHostname } from './url/isValidHostname';

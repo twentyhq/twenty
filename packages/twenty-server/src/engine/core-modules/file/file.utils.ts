@@ -3,11 +3,15 @@ import { BadRequestException } from '@nestjs/common';
 import { basename } from 'path';
 
 import { KebabCase } from 'type-fest';
+import { Request } from 'express';
 
 import { settings } from 'src/engine/constants/settings';
 import { kebabCase } from 'src/utils/kebab-case';
 
-import { FileFolder } from './interfaces/file-folder.interface';
+import {
+  FileFolder,
+  fileFolderConfigs,
+} from './interfaces/file-folder.interface';
 
 type AllowedFolders = KebabCase<keyof typeof FileFolder>;
 
@@ -63,4 +67,27 @@ export const checkFileFolder = (filePath: string): FileFolder => {
   }
 
   return rootFolder as FileFolder;
+};
+
+export const extractFileInfoFromRequest = (request: Request) => {
+  const filename = request.params.filename;
+
+  const parts = request.params[0].split('/');
+
+  const fileSignature = parts.pop();
+
+  const rawFolder = parts.join('/');
+
+  const fileFolder = checkFileFolder(rawFolder);
+
+  const ignoreExpirationToken =
+    fileFolderConfigs[fileFolder].ignoreExpirationToken;
+
+  return {
+    filename,
+    fileSignature,
+    rawFolder,
+    fileFolder,
+    ignoreExpirationToken,
+  };
 };

@@ -6,6 +6,7 @@ import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-re
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 import { TEST_COMPANY_1_ID } from 'test/integration/constants/test-company-ids.constants';
 import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
+import { cleanTestDatabase } from 'test/integration/utils/clean-test-database';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 
 describe('Core REST API Update One endpoint', () => {
@@ -22,7 +23,10 @@ describe('Core REST API Update One endpoint', () => {
   };
 
   beforeAll(async () => {
+    await cleanTestDatabase({ seed: true });
+    await deleteAllRecords('company');
     await deleteAllRecords('person');
+
     await makeRestAPIRequest({
       method: 'post',
       path: '/companies',
@@ -33,6 +37,7 @@ describe('Core REST API Update One endpoint', () => {
         },
       },
     });
+
     await makeRestAPIRequest({
       method: 'post',
       path: `/people`,

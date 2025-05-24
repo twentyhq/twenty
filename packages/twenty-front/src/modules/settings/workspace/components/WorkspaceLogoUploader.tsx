@@ -7,6 +7,7 @@ import {
   useUploadWorkspaceLogoMutation,
 } from '~/generated/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { buildSignedPath } from 'twenty-shared/utils';
 
 export const WorkspaceLogoUploader = () => {
   const [uploadLogo] = useUploadWorkspaceLogoMutation();
@@ -29,7 +30,7 @@ export const WorkspaceLogoUploader = () => {
       onCompleted: (data) => {
         setCurrentWorkspace({
           ...currentWorkspace,
-          logo: data.uploadWorkspaceLogo,
+          logo: buildSignedPath(data.uploadWorkspaceLogo),
         });
       },
     });

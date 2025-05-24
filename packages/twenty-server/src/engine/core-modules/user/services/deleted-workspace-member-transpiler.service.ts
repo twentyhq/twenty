@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import { buildSignedPath } from 'twenty-shared/utils';
+
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { DeletedWorkspaceMember } from 'src/engine/core-modules/user/dtos/deleted-workspace-member.dto';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { extractFileIdFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
 
 @Injectable()
 export class DeletedWorkspaceMemberTranspiler {
@@ -15,12 +18,15 @@ export class DeletedWorkspaceMemberTranspiler {
     workspaceMember: Pick<WorkspaceMemberWorkspaceEntity, 'avatarUrl' | 'id'>;
     workspaceId: string;
   }): string {
-    const avatarUrlToken = this.fileService.encodeFileToken({
-      workspaceMemberId: workspaceMember.id,
-      workspaceId: workspaceId,
+    const signedPayload = this.fileService.encodeFileToken({
+      fileId: extractFileIdFromPath(workspaceMember.avatarUrl),
+      workspaceId,
     });
 
-    return `${workspaceMember.avatarUrl}?token=${avatarUrlToken}`;
+    return buildSignedPath({
+      path: workspaceMember.avatarUrl,
+      token: signedPayload,
+    });
   }
 
   toDeletedWorkspaceMemberDto(

@@ -2,6 +2,7 @@ import gql from 'graphql-tag';
 import request from 'supertest';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
+import { cleanTestDatabase } from 'test/integration/utils/clean-test-database';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
@@ -14,6 +15,8 @@ describe('workspace permissions', () => {
   let originalWorkspaceState: Record<string, unknown>;
 
   beforeAll(async () => {
+    await cleanTestDatabase({ seed: true });
+
     // Store original workspace state
     const query = gql`
       query getWorkspace {

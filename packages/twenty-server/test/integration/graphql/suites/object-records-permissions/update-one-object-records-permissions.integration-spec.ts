@@ -8,6 +8,7 @@ import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/graphql/uti
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
+import { cleanTestDatabase } from 'test/integration/utils/clean-test-database';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -18,6 +19,8 @@ describe('updateOneObjectRecordsPermissions', () => {
     const personId = randomUUID();
 
     beforeAll(async () => {
+      await cleanTestDatabase({ seed: true });
+
       const createPersonOperation = createOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: PERSON_GQL_FIELDS,
@@ -77,6 +80,8 @@ describe('updateOneObjectRecordsPermissions', () => {
     let allPetsViewId: string;
 
     beforeAll(async () => {
+      await cleanTestDatabase({ seed: true });
+
       const createPersonOperation = createOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: PERSON_GQL_FIELDS,

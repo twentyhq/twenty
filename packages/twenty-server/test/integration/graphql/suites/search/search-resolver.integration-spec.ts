@@ -74,10 +74,6 @@ describe('SearchResolver', () => {
     }
   });
 
-  afterAll(async () => {
-    await cleanTestDatabase({ seed: true });
-  });
-
   const testsUseCases: EachTestingContext<{
     input: SearchArgs;
     eval: {

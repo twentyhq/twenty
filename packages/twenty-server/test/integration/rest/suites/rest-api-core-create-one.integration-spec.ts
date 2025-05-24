@@ -5,10 +5,15 @@ import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-re
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 import { TIM_ACCOUNT_ID } from 'test/integration/graphql/integration.constants';
+import { cleanTestDatabase } from 'test/integration/utils/clean-test-database';
 
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 
 describe('Core REST API Create One endpoint', () => {
+  beforeAll(async () => {
+    await cleanTestDatabase({ seed: true });
+  });
+
   beforeEach(async () => {
     await deleteAllRecords('person');
     await makeRestAPIRequest({

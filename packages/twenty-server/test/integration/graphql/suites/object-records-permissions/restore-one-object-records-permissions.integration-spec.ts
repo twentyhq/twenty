@@ -6,6 +6,7 @@ import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete
 import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { restoreOneOperationFactory } from 'test/integration/graphql/utils/restore-one-operation-factory.util';
+import { cleanTestDatabase } from 'test/integration/utils/clean-test-database';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
@@ -14,7 +15,8 @@ describe('restoreOneObjectRecordsPermissions', () => {
   const personId = randomUUID();
 
   beforeAll(async () => {
-    // Create a person
+    await cleanTestDatabase({ seed: true });
+
     const createGraphqlOperation = createOneOperationFactory({
       objectMetadataSingularName: 'person',
       gqlFields: PERSON_GQL_FIELDS,
