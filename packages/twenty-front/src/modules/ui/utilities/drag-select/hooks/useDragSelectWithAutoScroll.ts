@@ -1,10 +1,8 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
-import { useScrollToPosition } from '@/ui/utilities/scroll/hooks/useScrollToPosition';
-import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
-import { scrollWrapperScrollLeftComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollLeftComponentState';
-import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollTopComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { ScrollWrapperComponentInstanceContext } from '@/ui/utilities/scroll/states/contexts/ScrollWrapperComponentInstanceContext';
+import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { AUTO_SCROLL_EDGE_THRESHOLD_PX } from '../constants/AutoScrollEdgeThresholdPx';
 import { AUTO_SCROLL_MAX_SPEED_PX } from '../constants/AutoScrollMaxSpeedPx';
@@ -16,20 +14,36 @@ type UseDragSelectWithAutoScrollProps = {
 export const useDragSelectWithAutoScroll = ({
   scrollWrapperComponentInstanceId,
 }: UseDragSelectWithAutoScrollProps) => {
-  const { scrollToPosition } = useScrollToPosition();
-  const { scrollWrapperHTMLElement } = useScrollWrapperElement(
-    scrollWrapperComponentInstanceId,
+  const instanceStateContext = useComponentInstanceStateContext(
+    ScrollWrapperComponentInstanceContext,
   );
-  const scrollTop = useRecoilComponentValueV2(
-    scrollWrapperScrollTopComponentState,
-  );
-  const scrollLeft = useRecoilComponentValueV2(
-    scrollWrapperScrollLeftComponentState,
-  );
+
+  const instanceIdFromContext = instanceStateContext?.instanceId;
+
+  const scrollWrapperInstanceId = useMemo(() => {
+    if (isNonEmptyString(scrollWrapperComponentInstanceId)) {
+      return scrollWrapperComponentInstanceId;
+    } else if (isNonEmptyString(instanceIdFromContext)) {
+      return instanceIdFromContext;
+    }
+    return null;
+  }, [scrollWrapperComponentInstanceId, instanceIdFromContext]);
+
+  const hasScrollWrapper = isDefined(scrollWrapperInstanceId);
 
   const handleAutoScroll = useCallback(
     (mouseX: number, mouseY: number) => {
-      if (!isDefined(scrollWrapperHTMLElement)) return;
+      if (!hasScrollWrapper || !scrollWrapperInstanceId) {
+        return;
+      }
+
+      const scrollWrapperHTMLElement = document.getElementById(
+        `scroll-wrapper-${scrollWrapperInstanceId}`,
+      );
+
+      if (!scrollWrapperHTMLElement) {
+        return;
+      }
 
       const containerRect = scrollWrapperHTMLElement.getBoundingClientRect();
 
@@ -42,32 +56,38 @@ export const useDragSelectWithAutoScroll = ({
       const nearRight =
         containerRect.right - mouseX < AUTO_SCROLL_EDGE_THRESHOLD_PX;
 
+      const currentScrollTop = scrollWrapperHTMLElement.scrollTop;
+      const currentScrollLeft = scrollWrapperHTMLElement.scrollLeft;
+
       if (nearTop) {
-        const newScrollTop = Math.max(0, scrollTop - AUTO_SCROLL_MAX_SPEED_PX);
-        scrollToPosition(newScrollTop);
+        const newScrollTop = Math.max(
+          0,
+          currentScrollTop - AUTO_SCROLL_MAX_SPEED_PX,
+        );
+        scrollWrapperHTMLElement.scrollTo({ top: newScrollTop });
       } else if (nearBottom) {
-        const newScrollTop = scrollTop + AUTO_SCROLL_MAX_SPEED_PX;
-        scrollToPosition(newScrollTop);
+        const newScrollTop = currentScrollTop + AUTO_SCROLL_MAX_SPEED_PX;
+        scrollWrapperHTMLElement.scrollTo({ top: newScrollTop });
       }
 
       if (nearLeft) {
         const newScrollLeft = Math.max(
           0,
-          scrollLeft - AUTO_SCROLL_MAX_SPEED_PX,
+          currentScrollLeft - AUTO_SCROLL_MAX_SPEED_PX,
         );
         scrollWrapperHTMLElement.scrollTo({
           left: newScrollLeft,
           behavior: 'auto',
         });
       } else if (nearRight) {
-        const newScrollLeft = scrollLeft + AUTO_SCROLL_MAX_SPEED_PX;
+        const newScrollLeft = currentScrollLeft + AUTO_SCROLL_MAX_SPEED_PX;
         scrollWrapperHTMLElement.scrollTo({
           left: newScrollLeft,
           behavior: 'auto',
         });
       }
     },
-    [scrollWrapperHTMLElement, scrollTop, scrollLeft, scrollToPosition],
+    [hasScrollWrapper, scrollWrapperInstanceId],
   );
 
   return {
