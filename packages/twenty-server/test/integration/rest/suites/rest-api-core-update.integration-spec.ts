@@ -22,7 +22,9 @@ describe('Core REST API Update One endpoint', () => {
   };
 
   beforeAll(async () => {
+    await deleteAllRecords('company');
     await deleteAllRecords('person');
+
     await makeRestAPIRequest({
       method: 'post',
       path: '/companies',
@@ -33,6 +35,7 @@ describe('Core REST API Update One endpoint', () => {
         },
       },
     });
+
     await makeRestAPIRequest({
       method: 'post',
       path: `/people`,

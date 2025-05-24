@@ -5,14 +5,11 @@ import {
 import { CreateOneFieldFactoryInput } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata-query-factory.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
-import {
-  LISTING_NAME_PLURAL,
-  LISTING_NAME_SINGULAR,
-} from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { getListingCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/get-listing-create-object-input';
 
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 
@@ -39,14 +36,7 @@ describe('Field metadata select update tests group', () => {
 
   beforeEach(async () => {
     const { data } = await createOneObjectMetadata({
-      input: {
-        labelSingular: LISTING_NAME_SINGULAR,
-        labelPlural: LISTING_NAME_PLURAL,
-        nameSingular: LISTING_NAME_SINGULAR,
-        namePlural: LISTING_NAME_PLURAL,
-        icon: 'IconBuildingSkyscraper',
-        isLabelSyncedWithName: false,
-      },
+      input: getListingCreateObjectInput(),
     });
 
     createdObjectMetadataId = data.createOneObject.id;

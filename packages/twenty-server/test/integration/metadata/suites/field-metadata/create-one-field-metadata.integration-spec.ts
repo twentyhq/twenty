@@ -2,6 +2,7 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { getListingCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/get-listing-create-object-input';
 
 describe('createOne', () => {
   describe('FieldMetadataService name/label sync', () => {
@@ -13,13 +14,7 @@ describe('createOne', () => {
           createOneObject: { id: objectMetadataId },
         },
       } = await createOneObjectMetadata({
-        input: {
-          nameSingular: 'myTestObject',
-          namePlural: 'myTestObjects',
-          labelSingular: 'My Test Object',
-          labelPlural: 'My Test Objects',
-          icon: 'Icon123',
-        },
+        input: getListingCreateObjectInput(),
       });
 
       createdObjectMetadataId = objectMetadataId;

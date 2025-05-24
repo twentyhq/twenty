@@ -1,4 +1,4 @@
-import { getMockCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/generate-mock-create-object-metadata-input';
+import { getListingCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/get-listing-create-object-input';
 import { EachTestingContext } from 'twenty-shared/testing';
 
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
@@ -50,7 +50,7 @@ describe('validateObjectMetadataInputOrThrow should fail', () => {
   it.each(validateObjectMetadataTestCases)('$title', ({ context }) => {
     expect(() =>
       validateObjectMetadataInputNamesOrThrow(
-        getMockCreateObjectInput(context),
+        getListingCreateObjectInput(context),
       ),
     ).toThrowErrorMatchingSnapshot();
   });
