@@ -6,6 +6,8 @@ import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPoin
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { useDragSelect } from '../hooks/useDragSelect';
+import { SelectionBox } from '../types/SelectionBox';
+import { isValidSelectionStart } from '../utils/selectionBoxValidation';
 
 type DragSelectProps = {
   selectableItemsContainerRef: RefObject<HTMLElement>;
@@ -16,26 +18,12 @@ type DragSelectProps = {
   selectionBoundaryClass?: string;
 };
 
-type DragSelectionProps = {
-  top: number;
-  left: number;
-  width: number;
-  height: number;
-};
-
 type Position = {
   x: number;
   y: number;
 };
 
-type SelectionBox = {
-  top: number;
-  left: number;
-  width: number;
-  height: number;
-};
-
-const StyledDragSelection = styled.div<DragSelectionProps>`
+const StyledDragSelection = styled.div<SelectionBox>`
   position: absolute;
   z-index: 99;
   opacity: 0.2;
@@ -58,6 +46,7 @@ export const DragSelect = ({
   const { isDragSelectionStartEnabled } = useDragSelect();
 
   const [isDragging, setIsDragging] = useState(false);
+  const [isSelecting, setIsSelecting] = useState(false);
 
   const boxesIntersect = useCallback(
     (boxA: SelectionBox, boxB: SelectionBox) =>
@@ -72,7 +61,6 @@ export const DragSelect = ({
     scrollWrapperComponentInstanceId,
   });
 
-  const [, setCursorPosition] = useState<Position | null>(null);
   const [startPoint, setStartPoint] = useState<Position | null>(null);
   const [endPoint, setEndPoint] = useState<Position | null>(null);
   const [selectionBox, setSelectionBox] = useState<SelectionBox | null>(null);
@@ -98,8 +86,7 @@ export const DragSelect = ({
 
       if (shouldStartSelecting(event.target)) {
         setIsDragging(true);
-        setCursorPosition({ x: relativeX, y: relativeY });
-        onDragSelectionStart?.(event);
+        setIsSelecting(false);
         setStartPoint({
           x: relativeX,
           y: relativeY,
@@ -117,7 +104,7 @@ export const DragSelect = ({
       }
       event.preventDefault();
     },
-    onMouseMove: ({ x, y }) => {
+    onMouseMove: ({ x, y, event }) => {
       if (isDragging) {
         const { x: relativeX, y: relativeY } = getPositionRelativeToContainer(
           x,
@@ -139,59 +126,72 @@ export const DragSelect = ({
 
         if (!isDeeplyEqual(newEndPoint, endPoint)) {
           setEndPoint(newEndPoint);
-          setSelectionBox({
+
+          const newSelectionBox = {
             top: Math.min(startPoint.y, newEndPoint.y),
             left: Math.min(startPoint.x, newEndPoint.x),
             width: Math.abs(newEndPoint.x - startPoint.x),
             height: Math.abs(newEndPoint.y - startPoint.y),
-          });
+          };
+
+          if (isValidSelectionStart(newSelectionBox)) {
+            if (!isSelecting) {
+              setIsSelecting(true);
+              onDragSelectionStart?.(event);
+            }
+            setSelectionBox(newSelectionBox);
+          } else if (isSelecting) {
+            setSelectionBox(newSelectionBox);
+          }
         }
 
-        setCursorPosition({ x: relativeX, y: relativeY });
+        if (isSelecting && isDefined(selectionBox)) {
+          const scrollAwareBox = {
+            ...selectionBox,
+            top: selectionBox.top + window.scrollY,
+            left: selectionBox.left + window.scrollX,
+          };
 
-        const scrollAwareBox = {
-          ...selectionBox,
-          top: selectionBox.top + window.scrollY,
-          left: selectionBox.left + window.scrollX,
-        };
+          Array.from(
+            selectableItemsContainerRef.current?.querySelectorAll(
+              '[data-selectable-id]',
+            ) ?? [],
+          ).forEach((item) => {
+            const id = item.getAttribute('data-selectable-id');
+            if (!isDefined(id)) {
+              return;
+            }
+            const itemBox = item.getBoundingClientRect();
 
-        Array.from(
-          selectableItemsContainerRef.current?.querySelectorAll(
-            '[data-selectable-id]',
-          ) ?? [],
-        ).forEach((item) => {
-          const id = item.getAttribute('data-selectable-id');
-          if (!isDefined(id)) {
-            return;
-          }
-          const itemBox = item.getBoundingClientRect();
+            const { x: boxX, y: boxY } = getPositionRelativeToContainer(
+              itemBox.left,
+              itemBox.top,
+            );
 
-          const { x: boxX, y: boxY } = getPositionRelativeToContainer(
-            itemBox.left,
-            itemBox.top,
-          );
-
-          if (
-            boxesIntersect(scrollAwareBox, {
-              width: itemBox.width,
-              height: itemBox.height,
-              top: boxY,
-              left: boxX,
-            })
-          ) {
-            onDragSelectionChange(id, true);
-          } else {
-            onDragSelectionChange(id, false);
-          }
-        });
+            if (
+              boxesIntersect(scrollAwareBox, {
+                width: itemBox.width,
+                height: itemBox.height,
+                top: boxY,
+                left: boxX,
+              })
+            ) {
+              onDragSelectionChange(id, true);
+            } else {
+              onDragSelectionChange(id, false);
+            }
+          });
+        }
 
         handleAutoScroll(x, y);
       }
     },
     onMouseUp: ({ event }) => {
-      onDragSelectionEnd?.(event);
-      setCursorPosition(null);
+      if (isSelecting) {
+        onDragSelectionEnd?.(event);
+      }
       setIsDragging(false);
+      setIsSelecting(false);
     },
   });
 
@@ -235,12 +235,16 @@ export const DragSelect = ({
     ],
   );
 
-  return isDragging && isDefined(selectionBox) ? (
-    <StyledDragSelection
-      top={selectionBox.top}
-      left={selectionBox.left}
-      width={selectionBox.width}
-      height={selectionBox.height}
-    />
-  ) : null;
+  return (
+    isDragging &&
+    isSelecting &&
+    isDefined(selectionBox) && (
+      <StyledDragSelection
+        top={selectionBox.top}
+        left={selectionBox.left}
+        width={selectionBox.width}
+        height={selectionBox.height}
+      />
+    )
+  );
 };
