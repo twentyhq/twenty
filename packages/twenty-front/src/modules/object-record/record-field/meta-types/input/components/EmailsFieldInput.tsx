@@ -45,7 +45,7 @@ export const EmailsFieldInput = ({
     [],
   );
 
-  const isPrimaryEmail = (index: number) => index === 0 && emails?.length > 1;
+  const isPrimaryEmail = (index: number) => index === 0;
 
   const setIsFieldInError = useSetRecoilComponentStateV2(
     recordFieldInputIsFieldInErrorComponentState,
