@@ -21,6 +21,7 @@ import {
   exceedsDatabaseIdentifierMaximumLength,
 } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
 import { isSnakeCaseString } from 'src/utils/is-snake-case-string';
+import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'src/utils/trim-and-remove-duplicated-whitespaces-from-object-string-properties';
 
 type Validator<T> = { validator: (str: T) => boolean; message: string };
 
@@ -177,46 +178,74 @@ export class FieldMetadataEnumValidationService {
     this.validateDuplicates(options);
   }
 
-  private isValidEnumValue(
-    value: FieldMetadataDefaultValue | string,
-    options: FieldMetadataOptions,
-  ): boolean {
-    if (typeof value !== 'string') {
-      return false;
-    }
-
-    const enumOptions = options.map((option) => option.value);
-    const formattedValue = value.replace(/^['"](.*)['"]$/, '$1');
-
-    return enumOptions.includes(formattedValue);
-  }
-
   private validateSelectDefaultValue(
     options: FieldMetadataOptions,
     defaultValue: FieldMetadataDefaultValue,
   ) {
-    if (!this.isValidEnumValue(defaultValue, options)) {
-      throw new FieldMetadataException(
-        `Default value for existing options is invalid: ${defaultValue}`,
-        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-      );
+    if (!isDefined(defaultValue)) {
+      return;
     }
+
+    const sanitizedValue =
+      trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
+        { value: defaultValue as string },
+        ['value'],
+      ).value;
+
+    const validators: Validator<string>[] = [
+      {
+        validator: (value) => options.every((option) => option.value !== value),
+        message: `Default value "${sanitizedValue}" must be one of the option values`,
+      },
+    ];
+
+    validators.forEach((validator) =>
+      this.validatorRunner(sanitizedValue, validator),
+    );
   }
 
   private validateMultiSelectDefaultValue(
     options: FieldMetadataOptions,
     defaultValues: FieldMetadataDefaultValue,
   ) {
-    const isInvalid =
-      !Array.isArray(defaultValues) ||
-      defaultValues.some((value) => !this.isValidEnumValue(value, options));
+    if (!isDefined(defaultValues)) {
+      return;
+    }
 
-    if (isInvalid) {
+    if (!Array.isArray(defaultValues)) {
       throw new FieldMetadataException(
-        `Default value for multi-select options is invalid: ${defaultValues}`,
+        'Default value for multi-select must be an array',
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
       );
     }
+
+    const sanitizedValues = defaultValues.map(
+      (value) =>
+        trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
+          { value: value as string },
+          ['value'],
+        ).value,
+    );
+
+    const validators: Validator<string[]>[] = [
+      {
+        validator: (values) => new Set(values).size !== values.length,
+        message: 'Default values must be unique',
+      },
+      {
+        validator: (values) =>
+          !values.every((value) =>
+            options.some((option) => option.value === value),
+          ),
+        message: `Default values must be one of the option values: ${sanitizedValues.join(
+          ', ',
+        )}`,
+      },
+    ];
+
+    validators.forEach((validator) =>
+      this.validatorRunner(sanitizedValues, validator),
+    );
   }
 
   private validateDefaultValueByType(
