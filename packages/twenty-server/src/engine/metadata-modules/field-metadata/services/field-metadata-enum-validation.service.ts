@@ -188,11 +188,7 @@ export class FieldMetadataEnumValidationService {
     const enumOptions = options.map((option) => option.value);
     const formattedValue = value.replace(/^['"](.*)['"]$/, '$1');
 
-    return (
-      enumOptions.includes(formattedValue) ||
-      // @ts-expect-error legacy noImplicitAny
-      enumOptions.some((option) => option.to === formattedValue)
-    );
+    return enumOptions.includes(formattedValue);
   }
 
   private validateSelectDefaultValue(
