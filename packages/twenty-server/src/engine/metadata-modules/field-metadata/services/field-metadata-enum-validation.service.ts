@@ -5,11 +5,11 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
+import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
-import { FieldMetadataValidationService } from 'src/engine/metadata-modules/field-metadata/field-metadata-validation.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataException,
@@ -34,9 +34,7 @@ type ValidateEnumFieldMetadataArgs = {
 
 @Injectable()
 export class FieldMetadataEnumValidationService {
-  constructor(
-    private readonly fieldMetadataValidationService: FieldMetadataValidationService,
-  ) {}
+  constructor() {}
 
   private validatorRunner<T>(
     elementToValidate: T,
@@ -179,6 +177,70 @@ export class FieldMetadataEnumValidationService {
     this.validateDuplicates(options);
   }
 
+  private isValidEnumValue(
+    value: FieldMetadataDefaultValue | string,
+    options: FieldMetadataOptions,
+  ): boolean {
+    if (typeof value !== 'string') {
+      return false;
+    }
+
+    const enumOptions = options.map((option) => option.value);
+    const formattedValue = value.replace(/^['"](.*)['"]$/, '$1');
+
+    return (
+      enumOptions.includes(formattedValue) ||
+      // @ts-expect-error legacy noImplicitAny
+      enumOptions.some((option) => option.to === formattedValue)
+    );
+  }
+
+  private validateSelectDefaultValue(
+    options: FieldMetadataOptions,
+    defaultValue: FieldMetadataDefaultValue,
+  ) {
+    if (!this.isValidEnumValue(defaultValue, options)) {
+      throw new FieldMetadataException(
+        `Default value for existing options is invalid: ${defaultValue}`,
+        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      );
+    }
+  }
+
+  private validateMultiSelectDefaultValue(
+    options: FieldMetadataOptions,
+    defaultValues: FieldMetadataDefaultValue,
+  ) {
+    const isInvalid =
+      !Array.isArray(defaultValues) ||
+      defaultValues.some((value) => !this.isValidEnumValue(value, options));
+
+    if (isInvalid) {
+      throw new FieldMetadataException(
+        `Default value for multi-select options is invalid: ${defaultValues}`,
+        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      );
+    }
+  }
+
+  private validateDefaultValueByType(
+    fieldType: FieldMetadataType,
+    options: FieldMetadataOptions,
+    defaultValue: FieldMetadataDefaultValue,
+  ) {
+    switch (fieldType) {
+      case FieldMetadataType.SELECT:
+        this.validateSelectDefaultValue(options, defaultValue);
+        break;
+      case FieldMetadataType.MULTI_SELECT:
+        this.validateMultiSelectDefaultValue(options, defaultValue);
+        break;
+      // TODO: Determine if RATING should be handled here
+      // case FieldMetadataType.RATING:
+      //   break;
+    }
+  }
+
   async validateEnumFieldMetadataInput({
     fieldMetadataInput,
     fieldMetadataType,
@@ -207,11 +269,11 @@ export class FieldMetadataEnumValidationService {
         );
       }
 
-      await this.fieldMetadataValidationService.validateDefaultValueOrThrow({
-        fieldType: fieldMetadataType,
+      this.validateDefaultValueByType(
+        fieldMetadataType,
         options,
-        defaultValue: fieldMetadataInput.defaultValue,
-      });
+        fieldMetadataInput.defaultValue,
+      );
     }
   }
 }

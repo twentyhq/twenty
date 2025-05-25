@@ -11,8 +11,6 @@ import {
 } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
-import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import {
@@ -90,71 +88,5 @@ export class FieldMetadataValidationService<
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
       );
     }
-  }
-
-  async validateDefaultValueOrThrow({
-    fieldType,
-    defaultValue,
-    options,
-  }: {
-    fieldType: FieldMetadataType;
-    defaultValue: FieldMetadataDefaultValue<T>;
-    options: FieldMetadataOptions<T>;
-  }) {
-    if (fieldType === FieldMetadataType.SELECT) {
-      this.validateEnumDefaultValue(options, defaultValue);
-    } else if (fieldType === FieldMetadataType.MULTI_SELECT) {
-      this.validateMultiSelectDefaultValue(options, defaultValue);
-    }
-  }
-
-  private isValidEnumValue(
-    value: FieldMetadataDefaultValue<T>,
-    options: FieldMetadataOptions<T>,
-  ): boolean {
-    if (typeof value !== 'string') {
-      return false;
-    }
-
-    const enumOptions = options.map((option) => option.value);
-    const formattedValue = value.replace(/^['"](.*)['"]$/, '$1');
-
-    return (
-      enumOptions.includes(formattedValue) ||
-      // @ts-expect-error legacy noImplicitAny
-      enumOptions.some((option) => option.to === formattedValue)
-    );
-  }
-
-  private validateEnumDefaultValue(
-    options: FieldMetadataOptions<T>,
-    defaultValue: FieldMetadataDefaultValue<T>,
-  ) {
-    if (!this.isValidEnumValue(defaultValue, options)) {
-      throw new FieldMetadataException(
-        `Default value for existing options is invalid: ${defaultValue}`,
-        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-      );
-    }
-  }
-
-  private validateMultiSelectDefaultValue(
-    options: FieldMetadataOptions<T>,
-    defaultValues: FieldMetadataDefaultValue<T>,
-  ) {
-    if (Array.isArray(defaultValues)) {
-      const isValid = defaultValues.every((value) =>
-        this.isValidEnumValue(value, options),
-      );
-
-      if (isValid) {
-        return;
-      }
-    }
-
-    throw new FieldMetadataException(
-      `Default value for multi-select options is invalid: ${defaultValues}`,
-      FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-    );
   }
 }
