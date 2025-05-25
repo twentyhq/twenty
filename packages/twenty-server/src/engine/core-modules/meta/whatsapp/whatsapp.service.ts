@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { InternalServerErrorException } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -483,8 +484,9 @@ export class WhatsappService {
 
     snapshot.forEach(async (docSnapshot) => {
       const waDoc = docSnapshot.data() as WhatsappDocument;
+      const clientName = waDoc.client.name;
 
-      if (waDoc.lastMessage.from === 'system') return;
+      if (waDoc.lastMessage.from !== clientName) return;
 
       const waCreatedAt = waDoc.lastMessage.createdAt;
 
@@ -494,7 +496,17 @@ export class WhatsappService {
         const createdAtDate = waCreatedAt.toDate().getTime();
         const timeDifference = (now.getTime() - createdAtDate) / 1000 / 60;
 
-        const integration = await this.whatsappIntegrationRepository.findOne({
+        const whatsappRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappWorkspaceEntity>(
+            waDoc.workspaceId || '',
+            'whatsapp',
+          );
+
+        if (!whatsappRepository) {
+          throw new Error('Whatsapp repository not found');
+        }
+
+        const integration = await whatsappRepository.findOne({
           where: { id: waDoc.integrationId },
         });
 
