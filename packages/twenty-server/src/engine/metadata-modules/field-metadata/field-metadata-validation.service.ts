@@ -108,31 +108,34 @@ export class FieldMetadataValidationService<
     }
   }
 
+  private isValidEnumValue(
+    value: FieldMetadataDefaultValue<T>,
+    options: FieldMetadataOptions<T>,
+  ): boolean {
+    if (typeof value !== 'string') {
+      return false;
+    }
+
+    const enumOptions = options.map((option) => option.value);
+    const formattedValue = value.replace(/^['"](.*)['"]$/, '$1');
+
+    return (
+      enumOptions.includes(formattedValue) ||
+      // @ts-expect-error legacy noImplicitAny
+      enumOptions.some((option) => option.to === formattedValue)
+    );
+  }
+
   private validateEnumDefaultValue(
     options: FieldMetadataOptions<T>,
     defaultValue: FieldMetadataDefaultValue<T>,
   ) {
-    if (typeof defaultValue === 'string') {
-      const formattedDefaultValue = defaultValue.replace(
-        /^['"](.*)['"]$/,
-        '$1',
+    if (!this.isValidEnumValue(defaultValue, options)) {
+      throw new FieldMetadataException(
+        `Default value for existing options is invalid: ${defaultValue}`,
+        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
       );
-
-      const enumOptions = options.map((option) => option.value);
-
-      if (
-        enumOptions &&
-        (enumOptions.includes(formattedDefaultValue) ||
-          // @ts-expect-error legacy noImplicitAny
-          enumOptions.some((option) => option.to === formattedDefaultValue))
-      ) {
-        return;
-      }
     }
-    throw new FieldMetadataException(
-      `Default value for existing options is invalid: ${defaultValue}`,
-      FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-    );
   }
 
   private validateMultiSelectDefaultValue(
@@ -140,20 +143,9 @@ export class FieldMetadataValidationService<
     defaultValues: FieldMetadataDefaultValue<T>,
   ) {
     if (Array.isArray(defaultValues)) {
-      const enumOptions = options.map((option) => option.value);
-
-      const isValid = defaultValues.every((value) => {
-        const formattedValue =
-          typeof value === 'string'
-            ? value.replace(/^['"](.*)['"]$/, '$1')
-            : value;
-
-        return (
-          enumOptions.includes(formattedValue) ||
-          // @ts-expect-error legacy noImplicitAny
-          enumOptions.some((option) => option.to === formattedValue)
-        );
-      });
+      const isValid = defaultValues.every((value) =>
+        this.isValidEnumValue(value, options),
+      );
 
       if (isValid) {
         return;
