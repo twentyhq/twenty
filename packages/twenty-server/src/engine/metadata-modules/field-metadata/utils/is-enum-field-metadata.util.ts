@@ -1,12 +1,17 @@
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
-  EnumFieldMetadataUnionType,
-  isEnumFieldMetadataType,
+  isEnumFieldMetadataType
 } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+import { FieldMetadataType } from 'twenty-shared/types';
 
-export const isSelectFieldMetadata = (
+export type EnumFieldMetadataEntity = FieldMetadataEntity<
+  | FieldMetadataType.SELECT
+  | FieldMetadataType.RATING
+  | FieldMetadataType.MULTI_SELECT
+>;
+export const isEnumFieldMetadata = (
   fieldMetadata: unknown,
-): fieldMetadata is FieldMetadataEntity<EnumFieldMetadataUnionType> => {
+): fieldMetadata is EnumFieldMetadataEntity => {
   if (!(fieldMetadata instanceof FieldMetadataEntity)) {
     return false;
   }

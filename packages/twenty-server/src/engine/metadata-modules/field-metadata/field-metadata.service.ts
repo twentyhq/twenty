@@ -42,7 +42,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { isSelectFieldMetadata } from 'src/engine/metadata-modules/field-metadata/utils/is-select-field-metadata.util';
+import { isEnumFieldMetadata } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import {
@@ -255,8 +255,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
       if (
         updatedFieldMetadata.isActive &&
-        isSelectFieldMetadata(updatedFieldMetadata) &&
-        isSelectFieldMetadata(existingFieldMetadata)
+        isEnumFieldMetadata(updatedFieldMetadata) &&
+        isEnumFieldMetadata(existingFieldMetadata)
       ) {
         await this.fieldMetadataRelatedRecordsService.updateRelatedViewGroups(
           existingFieldMetadata,
