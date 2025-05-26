@@ -100,7 +100,6 @@ describe('restoreManyObjectRecordsPermissions', () => {
     const personId2 = randomUUID();
 
     beforeAll(async () => {
-      // Create people
       const createGraphqlOperation = createManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',

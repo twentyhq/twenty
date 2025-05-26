@@ -1,12 +1,9 @@
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
-import {
-  LISTING_NAME_PLURAL,
-  LISTING_NAME_SINGULAR,
-} from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { getListingCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/get-listing-create-object-input';
 
 describe('updateOne', () => {
   describe('FieldMetadataService name/label sync', () => {
@@ -16,11 +13,7 @@ describe('updateOne', () => {
     beforeEach(async () => {
       const { data } = await createOneObjectMetadata({
         input: {
-          labelSingular: LISTING_NAME_SINGULAR,
-          labelPlural: LISTING_NAME_PLURAL,
-          nameSingular: LISTING_NAME_SINGULAR,
-          namePlural: LISTING_NAME_PLURAL,
-          icon: 'IconBuildingSkyscraper',
+          ...getListingCreateObjectInput(),
           isLabelSyncedWithName: true,
         },
       });
@@ -123,11 +116,7 @@ describe('updateOne', () => {
     beforeEach(async () => {
       const { data: listingObjectMetadata } = await createOneObjectMetadata({
         input: {
-          labelSingular: LISTING_NAME_SINGULAR,
-          labelPlural: LISTING_NAME_PLURAL,
-          nameSingular: LISTING_NAME_SINGULAR,
-          namePlural: LISTING_NAME_PLURAL,
-          icon: 'IconBuildingSkyscraper',
+          ...getListingCreateObjectInput(),
           isLabelSyncedWithName: true,
         },
       });
