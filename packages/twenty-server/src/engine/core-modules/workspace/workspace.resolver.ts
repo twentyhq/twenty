@@ -310,7 +310,6 @@ export class WorkspaceResolver {
 
       const systemEnabledProviders: AuthProviders = {
         google: this.twentyConfigService.get('AUTH_GOOGLE_ENABLED'),
-        magicLink: false,
         password: this.twentyConfigService.get('AUTH_PASSWORD_ENABLED'),
         microsoft: this.twentyConfigService.get('AUTH_MICROSOFT_ENABLED'),
         sso: [],

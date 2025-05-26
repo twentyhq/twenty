@@ -7,8 +7,8 @@ import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queri
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
-  getCompaniesMock,
-  getCompanyDuplicateMock,
+    getCompaniesMock,
+    getCompanyDuplicateMock,
 } from '~/testing/mock-data/companies';
 import { mockedClientConfig } from '~/testing/mock-data/config';
 import { mockedFavoritesData } from '~/testing/mock-data/favorite';
@@ -27,9 +27,9 @@ import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/gen
 import { getRolesMock } from '~/testing/mock-data/roles';
 import { mockedTasks } from '~/testing/mock-data/tasks';
 import {
-  getWorkflowMock,
-  getWorkflowVersionsMock,
-  workflowQueryResult,
+    getWorkflowMock,
+    getWorkflowVersionsMock,
+    workflowQueryResult,
 } from '~/testing/mock-data/workflow';
 import { oneSucceededWorkflowRunQueryResult } from '~/testing/mock-data/workflow-run';
 import { mockedRemoteServers } from './mock-data/remote-servers';
@@ -100,9 +100,8 @@ export const graphqlMocks = {
               },
               authProviders: {
                 google: true,
-                microsoft: false,
                 password: true,
-                magicLink: false,
+                microsoft: true,
                 sso: [],
               },
             },

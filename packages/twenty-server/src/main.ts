@@ -11,6 +11,7 @@ import { graphqlUploadExpress } from 'graphql-upload';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
+import { ClientConfigService } from 'src/engine/core-modules/client-config/client-config.service';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { getSessionStorageOptions } from 'src/engine/core-modules/session-storage/session-storage.module-factory';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -39,6 +40,7 @@ const bootstrap = async () => {
   });
   const logger = app.get(LoggerService);
   const twentyConfigService = app.get(TwentyConfigService);
+  const clientConfigService = app.get(ClientConfigService);
 
   app.use(session(getSessionStorageOptions(twentyConfigService)));
 
@@ -85,7 +87,7 @@ const bootstrap = async () => {
   );
 
   // Inject the server url in the frontend page
-  generateFrontConfig();
+  generateFrontConfig(clientConfigService);
 
   await app.listen(twentyConfigService.get('NODE_PORT'));
 };

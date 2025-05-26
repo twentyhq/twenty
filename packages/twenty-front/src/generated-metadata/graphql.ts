@@ -106,7 +106,6 @@ export type ApprovedAccessDomain = {
 export type AuthProviders = {
   __typename?: 'AuthProviders';
   google: Scalars['Boolean']['output'];
-  magicLink: Scalars['Boolean']['output'];
   microsoft: Scalars['Boolean']['output'];
   password: Scalars['Boolean']['output'];
   sso: Array<SsoIdentityProvider>;

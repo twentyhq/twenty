@@ -1,11 +1,11 @@
-import { ObjectType, Field } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
-  IdentityProviderType,
-  SSOIdentityProviderStatus,
+    IdentityProviderType,
+    SSOIdentityProviderStatus,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { WorkspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @ObjectType()
 export class SSOIdentityProvider {
@@ -32,9 +32,6 @@ export class AuthProviders {
 
   @Field(() => Boolean)
   google: boolean;
-
-  @Field(() => Boolean)
-  magicLink: boolean;
 
   @Field(() => Boolean)
   password: boolean;

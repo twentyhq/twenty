@@ -1,10 +1,10 @@
+import {
+    IdentityProviderType,
+    SSOIdentityProviderStatus,
+    WorkspaceSSOIdentityProvider,
+} from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import {
-  IdentityProviderType,
-  SSOIdentityProviderStatus,
-  WorkspaceSSOIdentityProvider,
-} from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 
 describe('getAuthProvidersByWorkspace', () => {
   const mockWorkspace = {
@@ -16,7 +16,6 @@ describe('getAuthProvidersByWorkspace', () => {
         id: 'sso1',
         name: 'SSO Provider 1',
         type: IdentityProviderType.SAML,
-
         status: SSOIdentityProviderStatus.Active,
         issuer: 'sso1.example.com',
       },
@@ -28,7 +27,6 @@ describe('getAuthProvidersByWorkspace', () => {
       workspace: mockWorkspace,
       systemEnabledProviders: {
         google: true,
-        magicLink: false,
         password: true,
         microsoft: true,
         sso: [],
@@ -37,7 +35,6 @@ describe('getAuthProvidersByWorkspace', () => {
 
     expect(result).toEqual({
       google: true,
-      magicLink: false,
       password: true,
       microsoft: false,
       sso: [
@@ -45,7 +42,6 @@ describe('getAuthProvidersByWorkspace', () => {
           id: 'sso1',
           name: 'SSO Provider 1',
           type: IdentityProviderType.SAML,
-
           status: SSOIdentityProviderStatus.Active,
           issuer: 'sso1.example.com',
         },
@@ -58,7 +54,6 @@ describe('getAuthProvidersByWorkspace', () => {
       workspace: { ...mockWorkspace, workspaceSSOIdentityProviders: [] },
       systemEnabledProviders: {
         google: true,
-        magicLink: false,
         password: true,
         microsoft: true,
         sso: [],
@@ -67,7 +62,6 @@ describe('getAuthProvidersByWorkspace', () => {
 
     expect(result).toEqual({
       google: true,
-      magicLink: false,
       password: true,
       microsoft: false,
       sso: [],
@@ -89,7 +83,6 @@ describe('getAuthProvidersByWorkspace', () => {
       },
       systemEnabledProviders: {
         google: true,
-        magicLink: false,
         password: true,
         microsoft: true,
         sso: [],
@@ -98,7 +91,6 @@ describe('getAuthProvidersByWorkspace', () => {
 
     expect(result).toEqual({
       google: true,
-      magicLink: false,
       password: true,
       microsoft: false,
       sso: [],
@@ -110,7 +102,6 @@ describe('getAuthProvidersByWorkspace', () => {
       workspace: { ...mockWorkspace, isMicrosoftAuthEnabled: false },
       systemEnabledProviders: {
         google: true,
-        magicLink: false,
         password: true,
         microsoft: true,
         sso: [],
@@ -119,7 +110,6 @@ describe('getAuthProvidersByWorkspace', () => {
 
     expect(result).toEqual({
       google: true,
-      magicLink: false,
       password: true,
       microsoft: false,
       sso: [
@@ -127,7 +117,6 @@ describe('getAuthProvidersByWorkspace', () => {
           id: 'sso1',
           name: 'SSO Provider 1',
           type: IdentityProviderType.SAML,
-
           status: SSOIdentityProviderStatus.Active,
           issuer: 'sso1.example.com',
         },

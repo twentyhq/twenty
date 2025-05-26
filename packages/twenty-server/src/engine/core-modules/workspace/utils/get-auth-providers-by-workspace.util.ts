@@ -19,7 +19,6 @@ export const getAuthProvidersByWorkspace = ({
 }) => {
   return {
     google: workspace.isGoogleAuthEnabled && systemEnabledProviders.google,
-    magicLink: false,
     password:
       workspace.isPasswordAuthEnabled && systemEnabledProviders.password,
     microsoft:

@@ -6,7 +6,6 @@ export const mockedClientConfig: ClientConfig = {
   isEmailVerificationRequired: false,
   authProviders: {
     google: true,
-    magicLink: false,
     password: true,
     microsoft: false,
     sso: [],

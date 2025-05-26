@@ -7,11 +7,18 @@ config({
   override: true,
 });
 
-export function generateFrontConfig(): void {
+import { ClientConfigService } from 'src/engine/core-modules/client-config/client-config.service';
+
+export function generateFrontConfig(
+  clientConfigService: ClientConfigService,
+): void {
+  const clientConfig = clientConfigService.generateClientConfig();
+
   const configObject = {
     window: {
       _env_: {
         REACT_APP_SERVER_BASE_URL: process.env.SERVER_URL,
+        TWENTY_CLIENT_CONFIG: JSON.stringify(clientConfig),
       },
     },
   };

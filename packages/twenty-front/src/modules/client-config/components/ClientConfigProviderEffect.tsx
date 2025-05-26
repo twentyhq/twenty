@@ -19,11 +19,13 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { supportChatState } from '@/client-config/states/supportChatState';
+import { getClientConfigFromWindow } from '@/client-config/utils/getClientConfigFromWindow';
+import { isClientConfigAvailableFromWindow } from '@/client-config/utils/isClientConfigAvailableFromWindow';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { useGetClientConfigQuery } from '~/generated/graphql';
+import { ClientConfig, useGetClientConfigQuery } from '~/generated/graphql';
 
 export const ClientConfigProviderEffect = () => {
   const setIsDebugMode = useSetRecoilState(isDebugModeState);
@@ -87,12 +89,102 @@ export const ClientConfigProviderEffect = () => {
     isConfigVariablesInDbEnabledState,
   );
 
+  // Check if client config is available from window object (for S3 deployments)
+  const isWindowConfigAvailable = isClientConfigAvailableFromWindow();
+
+  // Use GraphQL query as fallback for self-hosters or when window config is not available
   const { data, loading, error } = useGetClientConfigQuery({
-    skip: clientConfigApiStatus.isLoaded,
+    skip: clientConfigApiStatus.isLoaded || isWindowConfigAvailable,
   });
 
+  // Function to set all recoil states from client config data
+  const setClientConfigStates = useCallback(
+    (clientConfig: ClientConfig) => {
+      setAuthProviders({
+        google: clientConfig.authProviders.google,
+        microsoft: clientConfig.authProviders.microsoft,
+        password: clientConfig.authProviders.password,
+        sso: clientConfig.authProviders.sso,
+      });
+      setIsDebugMode(clientConfig.debugMode);
+      setIsAnalyticsEnabled(clientConfig.analyticsEnabled);
+      setIsDeveloperDefaultSignInPrefilled(clientConfig.signInPrefilled);
+      setIsMultiWorkspaceEnabled(clientConfig.isMultiWorkspaceEnabled);
+      setIsEmailVerificationRequired(clientConfig.isEmailVerificationRequired);
+      setBilling(clientConfig.billing);
+      setSupportChat(clientConfig.support);
+
+      setSentryConfig({
+        dsn: clientConfig?.sentry?.dsn,
+        release: clientConfig?.sentry?.release,
+        environment: clientConfig?.sentry?.environment,
+      });
+
+      setCaptcha({
+        provider: clientConfig?.captcha?.provider,
+        siteKey: clientConfig?.captcha?.siteKey,
+      });
+
+      setChromeExtensionId(clientConfig?.chromeExtensionId);
+      setApiConfig(clientConfig?.api);
+      setDomainConfiguration({
+        defaultSubdomain: clientConfig?.defaultSubdomain,
+        frontDomain: clientConfig?.frontDomain,
+      });
+      setCanManageFeatureFlags(clientConfig?.canManageFeatureFlags);
+      setLabPublicFeatureFlags(clientConfig?.publicFeatureFlags);
+      setMicrosoftMessagingEnabled(clientConfig?.isMicrosoftMessagingEnabled);
+      setMicrosoftCalendarEnabled(clientConfig?.isMicrosoftCalendarEnabled);
+      setGoogleMessagingEnabled(clientConfig?.isGoogleMessagingEnabled);
+      setGoogleCalendarEnabled(clientConfig?.isGoogleCalendarEnabled);
+      setIsAttachmentPreviewEnabled(clientConfig?.isAttachmentPreviewEnabled);
+      setIsConfigVariablesInDbEnabled(
+        clientConfig?.isConfigVariablesInDbEnabled,
+      );
+    },
+    [
+      setAuthProviders,
+      setIsDebugMode,
+      setIsAnalyticsEnabled,
+      setIsDeveloperDefaultSignInPrefilled,
+      setIsMultiWorkspaceEnabled,
+      setIsEmailVerificationRequired,
+      setBilling,
+      setSupportChat,
+      setSentryConfig,
+      setCaptcha,
+      setChromeExtensionId,
+      setApiConfig,
+      setDomainConfiguration,
+      setCanManageFeatureFlags,
+      setLabPublicFeatureFlags,
+      setMicrosoftMessagingEnabled,
+      setMicrosoftCalendarEnabled,
+      setGoogleMessagingEnabled,
+      setGoogleCalendarEnabled,
+      setIsAttachmentPreviewEnabled,
+      setIsConfigVariablesInDbEnabled,
+    ],
+  );
+
   useEffect(() => {
+    // First, try to get config from window object (primarily for S3-hosted frontends)
+    if (isWindowConfigAvailable) {
+      const windowClientConfig = getClientConfigFromWindow();
+      if (isDefined(windowClientConfig)) {
+        setClientConfigApiStatus({
+          isLoaded: true,
+          isErrored: false,
+          error: undefined,
+        });
+        setClientConfigStates(windowClientConfig);
+        return;
+      }
+    }
+
+    // Fallback to GraphQL approach (for self-hosters and when window config fails)
     if (loading) return;
+
     setClientConfigApiStatus((currentStatus) => ({
       ...currentStatus,
       isLoaded: true,
@@ -117,80 +209,14 @@ export const ClientConfigProviderEffect = () => {
       error: undefined,
     }));
 
-    setAuthProviders({
-      google: data?.clientConfig.authProviders.google,
-      microsoft: data?.clientConfig.authProviders.microsoft,
-      password: data?.clientConfig.authProviders.password,
-      magicLink: false,
-      sso: data?.clientConfig.authProviders.sso,
-    });
-    setIsDebugMode(data?.clientConfig.debugMode);
-    setIsAnalyticsEnabled(data?.clientConfig.analyticsEnabled);
-    setIsDeveloperDefaultSignInPrefilled(data?.clientConfig.signInPrefilled);
-    setIsMultiWorkspaceEnabled(data?.clientConfig.isMultiWorkspaceEnabled);
-    setIsEmailVerificationRequired(
-      data?.clientConfig.isEmailVerificationRequired,
-    );
-    setBilling(data?.clientConfig.billing);
-    setSupportChat(data?.clientConfig.support);
-
-    setSentryConfig({
-      dsn: data?.clientConfig?.sentry?.dsn,
-      release: data?.clientConfig?.sentry?.release,
-      environment: data?.clientConfig?.sentry?.environment,
-    });
-
-    setCaptcha({
-      provider: data?.clientConfig?.captcha?.provider,
-      siteKey: data?.clientConfig?.captcha?.siteKey,
-    });
-
-    setChromeExtensionId(data?.clientConfig?.chromeExtensionId);
-    setApiConfig(data?.clientConfig?.api);
-    setDomainConfiguration({
-      defaultSubdomain: data?.clientConfig?.defaultSubdomain,
-      frontDomain: data?.clientConfig?.frontDomain,
-    });
-    setCanManageFeatureFlags(data?.clientConfig?.canManageFeatureFlags);
-    setLabPublicFeatureFlags(data?.clientConfig?.publicFeatureFlags);
-    setMicrosoftMessagingEnabled(
-      data?.clientConfig?.isMicrosoftMessagingEnabled,
-    );
-    setMicrosoftCalendarEnabled(data?.clientConfig?.isMicrosoftCalendarEnabled);
-    setGoogleMessagingEnabled(data?.clientConfig?.isGoogleMessagingEnabled);
-    setGoogleCalendarEnabled(data?.clientConfig?.isGoogleCalendarEnabled);
-    setIsAttachmentPreviewEnabled(
-      data?.clientConfig?.isAttachmentPreviewEnabled,
-    );
-    setIsConfigVariablesInDbEnabled(
-      data?.clientConfig?.isConfigVariablesInDbEnabled,
-    );
+    setClientConfigStates(data.clientConfig);
   }, [
+    isWindowConfigAvailable,
     data,
-    setIsDebugMode,
-    setIsDeveloperDefaultSignInPrefilled,
-    setIsMultiWorkspaceEnabled,
-    setIsEmailVerificationRequired,
-    setSupportChat,
-    setBilling,
-    setSentryConfig,
     loading,
-    setClientConfigApiStatus,
-    setCaptcha,
-    setChromeExtensionId,
-    setApiConfig,
-    setIsAnalyticsEnabled,
     error,
-    setDomainConfiguration,
-    setAuthProviders,
-    setCanManageFeatureFlags,
-    setLabPublicFeatureFlags,
-    setMicrosoftMessagingEnabled,
-    setMicrosoftCalendarEnabled,
-    setGoogleMessagingEnabled,
-    setGoogleCalendarEnabled,
-    setIsAttachmentPreviewEnabled,
-    setIsConfigVariablesInDbEnabled,
+    setClientConfigApiStatus,
+    setClientConfigStates,
   ]);
 
   return <></>;
