@@ -6,6 +6,7 @@ import { ButtonHotkeys } from '@ui/input/button/components/Button/internal/Butto
 import { ButtonIcon } from '@ui/input/button/components/Button/internal/ButtonIcon';
 import { ButtonSoon } from '@ui/input/button/components/Button/internal/ButtonSoon';
 import { useIsMobile } from '@ui/utilities';
+import { ClickOutsideAttributes } from '@ui/utilities/types/ClickOutsideAttributes';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -34,12 +35,11 @@ export type ButtonProps = {
   to?: string;
   target?: string;
   dataTestId?: string;
-  dataClickOutsideId?: string;
-  dataGloballyPreventClickOutside?: boolean;
   hotkeys?: string[];
   ariaLabel?: string;
   isLoading?: boolean;
-} & React.ComponentProps<'button'>;
+} & React.ComponentProps<'button'> &
+  ClickOutsideAttributes;
 
 const StyledButton = styled('button', {
   shouldForwardProp: (prop) =>
