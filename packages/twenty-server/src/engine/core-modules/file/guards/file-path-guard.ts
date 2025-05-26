@@ -27,8 +27,8 @@ export class FilePathGuard implements CanActivate {
 
       if (
         !payload.workspaceId ||
-        !payload.fileId ||
-        !filename.includes(payload.fileId)
+        !payload.filename ||
+        filename !== payload.filename
       ) {
         return false;
       }

@@ -52,7 +52,7 @@ import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation-exception.filter';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { extractFileIdFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
+import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
 import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
 
 import { Workspace } from './workspace.entity';
@@ -230,7 +230,7 @@ export class WorkspaceResolver {
     if (workspace.logo) {
       try {
         const signedPayload = this.fileService.encodeFileToken({
-          fileId: extractFileIdFromPath(workspace.logo),
+          filename: extractFilenameFromPath(workspace.logo),
           workspaceId: workspace.id,
         });
 
@@ -305,7 +305,7 @@ export class WorkspaceResolver {
       if (workspace.logo) {
         try {
           const signedPayload = this.fileService.encodeFileToken({
-            fileId: extractFileIdFromPath(workspace.logo),
+            filename: extractFilenameFromPath(workspace.logo),
             workspaceId: workspace.id,
           });
 

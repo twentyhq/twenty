@@ -18,7 +18,7 @@ import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-inf
 export type SignedFile = { path: string; token: string };
 
 export type SignedFilesResult = {
-  id: string;
+  name: string;
   mimeType: string | undefined;
   files: SignedFile[];
 };
@@ -82,7 +82,7 @@ export class FileUploadService {
     fileFolder: FileFolder;
     workspaceId: string;
   }): Promise<SignedFilesResult> {
-    const { id, ext, name } = buildFileInfo(filename);
+    const { ext, name } = buildFileInfo(filename);
     const folder = this.getWorkspaceFolderName(workspaceId, fileFolder);
 
     await this._uploadFile({
@@ -93,12 +93,12 @@ export class FileUploadService {
     });
 
     const signedPayload = this.fileService.encodeFileToken({
-      fileId: id,
+      filename: name,
       workspaceId: workspaceId,
     });
 
     return {
-      id,
+      name,
       mimeType,
       files: [{ path: `${fileFolder}/${name}`, token: signedPayload }],
     };
@@ -142,7 +142,7 @@ export class FileUploadService {
     fileFolder: FileFolder;
     workspaceId: string;
   }): Promise<SignedFilesResult> {
-    const { id, name } = buildFileInfo(filename);
+    const { name } = buildFileInfo(filename);
 
     const cropSizes = settings.storage.imageCropSizes[fileFolder];
 
@@ -167,7 +167,7 @@ export class FileUploadService {
         const folder = this.getWorkspaceFolderName(workspaceId, fileFolder);
 
         const token = this.fileService.encodeFileToken({
-          fileId: id,
+          filename: name,
           workspaceId: workspaceId,
         });
 
@@ -186,7 +186,7 @@ export class FileUploadService {
     );
 
     return {
-      id,
+      name,
       mimeType,
       files,
     };

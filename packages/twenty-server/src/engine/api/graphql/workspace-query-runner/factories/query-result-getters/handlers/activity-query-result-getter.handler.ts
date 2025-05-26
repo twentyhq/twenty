@@ -6,7 +6,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
-import { extractFileIdFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
+import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type RichTextBlock = Record<string, any>;
@@ -58,7 +58,7 @@ export class ActivityQueryResultGetterHandler
         imageUrl.searchParams.delete('token');
 
         const signedPayload = this.fileService.encodeFileToken({
-          fileId: extractFileIdFromPath(imageProps.url),
+          filename: extractFilenameFromPath(imageProps.url),
           workspaceId: workspaceId,
         });
 

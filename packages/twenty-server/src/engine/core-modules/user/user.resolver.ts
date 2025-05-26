@@ -54,7 +54,7 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
-import { extractFileIdFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
+import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -189,7 +189,7 @@ export class UserResolver {
 
     if (workspaceMember && workspaceMember.avatarUrl) {
       const avatarUrlToken = this.fileService.encodeFileToken({
-        fileId: extractFileIdFromPath(workspaceMember.avatarUrl),
+        filename: extractFilenameFromPath(workspaceMember.avatarUrl),
         workspaceId: workspace.id,
       });
 
@@ -241,7 +241,7 @@ export class UserResolver {
     for (const workspaceMemberEntity of workspaceMemberEntities) {
       if (workspaceMemberEntity.avatarUrl) {
         const avatarUrlToken = this.fileService.encodeFileToken({
-          fileId: extractFileIdFromPath(workspaceMemberEntity.avatarUrl),
+          filename: extractFilenameFromPath(workspaceMemberEntity.avatarUrl),
           workspaceId: workspace.id,
         });
 

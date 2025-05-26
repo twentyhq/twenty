@@ -43,7 +43,7 @@ import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-s
 import { SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
 import { SearchResultConnectionDTO } from 'src/engine/core-modules/search/dtos/search-result-connection.dto';
 import { SearchResultEdgeDTO } from 'src/engine/core-modules/search/dtos/search-result-edge.dto';
-import { extractFileIdFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
+import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
 import { SearchRecordDTO } from 'src/engine/core-modules/search/dtos/search-record.dto';
 
 type LastRanks = { tsRankCD: number; tsRank: number };
@@ -367,7 +367,7 @@ export class SearchService {
 
   private getImageUrlWithToken(avatarUrl: string, workspaceId: string): string {
     const signedPayload = this.fileService.encodeFileToken({
-      fileId: extractFileIdFromPath(avatarUrl),
+      filename: extractFilenameFromPath(avatarUrl),
       workspaceId,
     });
 

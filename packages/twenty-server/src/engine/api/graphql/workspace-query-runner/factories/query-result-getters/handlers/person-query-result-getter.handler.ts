@@ -4,7 +4,7 @@ import { QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/worksp
 
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
-import { extractFileIdFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
+import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
 
 export class PersonQueryResultGetterHandler
   implements QueryResultGetterHandlerInterface
@@ -20,7 +20,7 @@ export class PersonQueryResultGetterHandler
     }
 
     const signedPayload = this.fileService.encodeFileToken({
-      fileId: extractFileIdFromPath(person.avatarUrl),
+      filename: extractFilenameFromPath(person.avatarUrl),
       workspaceId,
     });
 

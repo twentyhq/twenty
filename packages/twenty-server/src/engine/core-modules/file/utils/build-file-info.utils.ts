@@ -5,9 +5,7 @@ export const buildFileInfo = (filename: string) => {
 
   const ext = parts.length > 1 ? parts.pop() || '' : '';
 
-  const id = uuidV4();
+  const name = `${uuidV4()}${ext ? `.${ext}` : ''}`;
 
-  const name = `${id}${ext ? `.${ext}` : ''}`;
-
-  return { ext, name, id };
+  return { ext, name };
 };

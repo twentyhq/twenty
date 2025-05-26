@@ -41,13 +41,6 @@ export class FileController {
 
     const { filename, rawFolder } = extractFileInfoFromRequest(req);
 
-    if (!workspaceId) {
-      throw new FileException(
-        'Unauthorized: missing workspaceId',
-        FileExceptionCode.UNAUTHENTICATED,
-      );
-    }
-
     try {
       const fileStream = await this.fileService.getFileStream(
         rawFolder,

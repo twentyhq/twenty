@@ -11,7 +11,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 
 export type FilePayloadToEncode = {
   workspaceId: string;
-  fileId: string;
+  filename: string;
 };
 
 @Injectable()

@@ -18,7 +18,6 @@ describe('buildFileInfo', () => {
 
     expect(result).toEqual({
       ext: 'txt',
-      id: mockId,
       name: `${mockId}.txt`,
     });
   });
@@ -28,7 +27,6 @@ describe('buildFileInfo', () => {
 
     expect(result).toEqual({
       ext: '',
-      id: mockId,
       name: mockId,
     });
   });
@@ -38,7 +36,6 @@ describe('buildFileInfo', () => {
 
     expect(result).toEqual({
       ext: 'gz',
-      id: mockId,
       name: `${mockId}.gz`,
     });
   });
