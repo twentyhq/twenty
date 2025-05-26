@@ -42,6 +42,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { isSelectFieldMetadata } from 'src/engine/metadata-modules/field-metadata/utils/is-select-field-metadata.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import {
@@ -68,7 +69,6 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { ViewService } from 'src/modules/view/services/view.service';
 import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'src/utils/trim-and-remove-duplicated-whitespaces-from-object-string-properties';
-import { isSelectFieldMetadata } from 'src/engine/metadata-modules/field-metadata/utils/is-select-field-metadata.util';
 
 import { FieldMetadataValidationService } from './field-metadata-validation.service';
 import { FieldMetadataEntity } from './field-metadata.entity';
@@ -255,20 +255,17 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
       if (
         updatedFieldMetadata.isActive &&
-        // Shouldn't this be also applied to multi select ?
         isSelectFieldMetadata(updatedFieldMetadata) &&
         isSelectFieldMetadata(existingFieldMetadata)
       ) {
-        // TODO REFACTOR MERGE BOTH FUNCTION
-        // await this.fieldMetadataRelatedRecordsService.updateRelatedViewGroups(
-        //   existingFieldMetadata,
-        //   updatedFieldMetadata,
-        // );
+        await this.fieldMetadataRelatedRecordsService.updateRelatedViewGroups(
+          existingFieldMetadata,
+          updatedFieldMetadata,
+        );
         await this.fieldMetadataRelatedRecordsService.updateRelatedViewFilters(
           existingFieldMetadata,
           updatedFieldMetadata,
         );
-        /// END TODO
       }
 
       if (

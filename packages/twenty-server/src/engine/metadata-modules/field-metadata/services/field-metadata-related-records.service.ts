@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
+import { MAX_OPTIONS_TO_DISPLAY } from 'twenty-shared/constants';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, parseJson } from 'twenty-shared/utils';
 import { In } from 'typeorm';
-import { MAX_OPTIONS_TO_DISPLAY } from 'twenty-shared/constants';
 
 import {
   FieldMetadataComplexOption,
@@ -31,15 +31,18 @@ type GetOptionsDifferences = Differences<
   FieldMetadataDefaultOption | FieldMetadataComplexOption
 >;
 
-type Tmp = {
+type ComputeViewFilterDisplayValueArgs = {
   viewFilter: ViewFilterWorkspaceEntity;
   deletedOption: (FieldMetadataDefaultOption | FieldMetadataComplexOption)[];
   updatedOption: GetOptionsDifferences['updated'];
   filteredOptionsCounter: number;
 };
 
-export type SelectFieldMetadataEntity =
-  FieldMetadataEntity<FieldMetadataType.SELECT>;
+export type SelectFieldMetadataEntity = FieldMetadataEntity<
+  | FieldMetadataType.SELECT
+  | FieldMetadataType.RATING
+  | FieldMetadataType.MULTI_SELECT
+>;
 
 @Injectable()
 export class FieldMetadataRelatedRecordsService {
@@ -130,16 +133,15 @@ export class FieldMetadataRelatedRecordsService {
     updatedOption,
     viewFilter,
     filteredOptionsCounter,
-  }: Tmp): string {
+  }: ComputeViewFilterDisplayValueArgs): string {
     if (filteredOptionsCounter > MAX_OPTIONS_TO_DISPLAY) {
       return `${filteredOptionsCounter} options`;
     }
 
     const viewFilterDisplayValues = viewFilter.displayValue.split(',');
     const remainingViewFilterDisplayValue = viewFilterDisplayValues.filter(
-      (viewFilterOptionLabel) => {
-        !deletedOption.find((option) => option.label === viewFilterOptionLabel);
-      },
+      (viewFilterOptionLabel) =>
+        !deletedOption.find((option) => option.label === viewFilterOptionLabel),
     );
 
     if (remainingViewFilterDisplayValue.length === 0) {
@@ -291,7 +293,7 @@ export class FieldMetadataRelatedRecordsService {
     }
   }
 
-  private getOptionsDifferences(
+  public getOptionsDifferences(
     oldOptions: (FieldMetadataDefaultOption | FieldMetadataComplexOption)[],
     newOptions: (FieldMetadataDefaultOption | FieldMetadataComplexOption)[],
   ): GetOptionsDifferences {

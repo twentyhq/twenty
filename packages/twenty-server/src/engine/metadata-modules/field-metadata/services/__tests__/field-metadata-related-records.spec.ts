@@ -250,11 +250,7 @@ describe('FieldMetadataRelatedRecordsService', () => {
     test.each(testCases)(
       '$title',
       ({ context: { oldOptions, newOptions, expected } }) => {
-        // Access the private method using any type assertion
-        const result = (service as any).getOptionsDifferences(
-          oldOptions,
-          newOptions,
-        );
+        const result = service.getOptionsDifferences(oldOptions, newOptions);
 
         expect(result.created).toEqual(expected.created);
         expect(result.updated).toEqual(expected.updated);

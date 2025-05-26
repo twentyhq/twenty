@@ -1,10 +1,15 @@
-import { FieldMetadataType } from 'twenty-shared/types';
-
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { SelectFieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-related-records.service';
+import {
+  EnumFieldMetadataUnionType,
+  isEnumFieldMetadataType,
+} from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+
 export const isSelectFieldMetadata = (
-  fieldMetadata: FieldMetadataEntity,
-  // @ts-expect-error Ignore from now
-): fieldMetadata is SelectFieldMetadataEntity => {
-  return fieldMetadata.type === FieldMetadataType.SELECT;
+  fieldMetadata: unknown,
+): fieldMetadata is FieldMetadataEntity<EnumFieldMetadataUnionType> => {
+  if (!(fieldMetadata instanceof FieldMetadataEntity)) {
+    return false;
+  }
+
+  return isEnumFieldMetadataType(fieldMetadata.type);
 };
