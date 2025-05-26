@@ -79,9 +79,6 @@ describe('WorkflowStatusesUpdate', () => {
     job = await module.resolve<WorkflowStatusesUpdateJob>(
       WorkflowStatusesUpdateJob,
     );
-
-    // Reset all mocks before each test
-    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
