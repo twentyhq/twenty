@@ -1,9 +1,8 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 
-import { fileFolderConfigs } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
-
-import { checkFileFolder } from 'src/engine/core-modules/file/file.utils';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { FilePayloadToEncode } from 'src/engine/core-modules/file/services/file.service';
+import { extractFileInfoFromRequest } from 'src/engine/core-modules/file/utils/extract-file-info-from-request.utils';
 
 @Injectable()
 export class FilePathGuard implements CanActivate {
@@ -11,37 +10,37 @@ export class FilePathGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const fileFolder = checkFileFolder(request.params[0]);
-    const ignoreExpirationToken =
-      fileFolderConfigs[fileFolder].ignoreExpirationToken;
 
-    const query = request.query;
+    const { filename, fileSignature, ignoreExpirationToken } =
+      extractFileInfoFromRequest(request);
 
-    if (!query || !query['token']) {
+    if (!fileSignature) {
       return false;
     }
 
     try {
-      const payload = await this.jwtWrapperService.verifyWorkspaceToken(
-        query['token'],
+      const payload = (await this.jwtWrapperService.verifyWorkspaceToken(
+        fileSignature,
         'FILE',
         ignoreExpirationToken ? { ignoreExpiration: true } : {},
-      );
+      )) as FilePayloadToEncode;
 
-      if (!payload.workspaceId) {
+      if (
+        !payload.workspaceId ||
+        !payload.filename ||
+        filename !== payload.filename
+      ) {
         return false;
       }
     } catch (error) {
       return false;
     }
 
-    const decodedPayload = await this.jwtWrapperService.decode(query['token'], {
+    const decodedPayload = (await this.jwtWrapperService.decode(fileSignature, {
       json: true,
-    });
+    })) as FilePayloadToEncode;
 
-    const workspaceId = decodedPayload?.['workspaceId'];
-
-    request.workspaceId = workspaceId;
+    request.workspaceId = decodedPayload.workspaceId;
 
     return true;
   }

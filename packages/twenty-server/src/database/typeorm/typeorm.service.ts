@@ -2,8 +2,6 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 
 import { DataSource } from 'typeorm';
 
-import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
-
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
@@ -30,10 +28,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
     this.mainDataSource = new DataSource({
       url: twentyConfigService.get('PG_DATABASE_URL'),
       type: 'postgres',
-      logging:
-        twentyConfigService.get('NODE_ENV') === NodeEnvironment.development
-          ? ['query', 'error']
-          : ['error'],
+      logging: twentyConfigService.getLoggingConfig(),
       schema: 'core',
       entities: [
         User,

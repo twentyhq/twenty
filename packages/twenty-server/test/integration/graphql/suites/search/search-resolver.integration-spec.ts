@@ -10,11 +10,11 @@ import {
   TEST_PERSON_3_ID,
 } from 'test/integration/constants/test-person-ids.constants';
 import { TEST_API_KEY_1_ID } from 'test/integration/constants/test-api-key-ids.constant';
-import { cleanTestDatabase } from 'test/integration/utils/clean-test-database';
 import {
   TEST_PET_ID_1,
   TEST_PET_ID_2,
 } from 'test/integration/constants/test-pet-ids.constants';
+import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 
 import { SearchResultEdgeDTO } from 'src/engine/core-modules/search/dtos/search-result-edge.dto';
 import {
@@ -45,7 +45,11 @@ describe('SearchResolver', () => {
   ];
 
   beforeAll(async () => {
-    await cleanTestDatabase({ seed: false });
+    await deleteAllRecords('person');
+    await deleteAllRecords('company');
+    await deleteAllRecords('opportunity');
+    await deleteAllRecords('_pet');
+    await deleteAllRecords('_surveyResult');
 
     try {
       await performCreateManyOperation(
@@ -74,10 +78,6 @@ describe('SearchResolver', () => {
     }
   });
 
-  afterAll(async () => {
-    await cleanTestDatabase({ seed: true });
-  });
-
   const testsUseCases: EachTestingContext<{
     input: SearchArgs;
     eval: {
@@ -94,6 +94,7 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '',
+          excludedObjectNameSingulars: ['workspaceMember'],
           limit: 50,
         },
         eval: {
@@ -122,6 +123,7 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: 'searchInput1',
+          excludedObjectNameSingulars: ['workspaceMember'],
           limit: 50,
         },
         eval: {
@@ -144,6 +146,7 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '',
+          excludedObjectNameSingulars: ['workspaceMember'],
           includedObjectNameSingulars: ['pet'],
           limit: 50,
         },
@@ -166,7 +169,7 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '',
-          excludedObjectNameSingulars: ['person'],
+          excludedObjectNameSingulars: ['workspaceMember', 'person'],
           limit: 50,
         },
         eval: {
@@ -188,6 +191,7 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '',
+          excludedObjectNameSingulars: ['workspaceMember'],
           filter: { id: { eq: firstPet.id } },
           limit: 50,
         },
@@ -210,6 +214,7 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '',
+          excludedObjectNameSingulars: ['workspaceMember'],
           limit: 4,
         },
         eval: {
@@ -237,6 +242,7 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '',
+          excludedObjectNameSingulars: ['workspaceMember'],
           limit: 2,
         },
         eval: {
@@ -258,6 +264,7 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '',
+          excludedObjectNameSingulars: ['workspaceMember'],
           after: encodeCursorData({
             lastRanks: { tsRank: 0, tsRankCD: 0 },
             lastRecordIdsPerObject: {
@@ -286,6 +293,7 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: 'searchInput',
+          excludedObjectNameSingulars: ['workspaceMember'],
           limit: 4,
         },
         eval: {
@@ -313,6 +321,7 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: 'searchInput',
+          excludedObjectNameSingulars: ['workspaceMember'],
           limit: 2,
         },
         eval: {
@@ -335,6 +344,7 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: 'searchInput',
+          excludedObjectNameSingulars: ['workspaceMember'],
           after: encodeCursorData({
             lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
             lastRecordIdsPerObject: {
@@ -364,6 +374,7 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: 'searchInput',
+          excludedObjectNameSingulars: ['workspaceMember'],
           after: encodeCursorData({
             lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
             lastRecordIdsPerObject: {
@@ -393,7 +404,7 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '',
-          excludedObjectNameSingulars: ['person'],
+          excludedObjectNameSingulars: ['workspaceMember', 'person'],
           limit: 1,
         },
         eval: {
@@ -415,6 +426,7 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '',
+          excludedObjectNameSingulars: ['workspaceMember'],
           includedObjectNameSingulars: ['pet'],
           limit: 1,
         },
@@ -437,6 +449,7 @@ describe('SearchResolver', () => {
       context: {
         input: {
           searchInput: '',
+          excludedObjectNameSingulars: ['workspaceMember'],
           limit: 0,
         },
         eval: {
@@ -481,6 +494,7 @@ describe('SearchResolver', () => {
   it('should return cursor for each search edge', async () => {
     const graphqlOperation = searchFactory({
       searchInput: 'searchInput',
+      excludedObjectNameSingulars: ['workspaceMember'],
       limit: 2,
     });
 
@@ -529,6 +543,7 @@ describe('SearchResolver', () => {
   it('should return cursor for each search edge with after cursor input', async () => {
     const graphqlOperation = searchFactory({
       searchInput: 'searchInput',
+      excludedObjectNameSingulars: ['workspaceMember'],
       limit: 2,
       after: encodeCursorData({
         lastRanks: { tsRankCD: 0.1, tsRank: 0.06079271 },
