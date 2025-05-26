@@ -1,6 +1,6 @@
 import {
-  CaptchaDriverOptions,
-  CaptchaModuleOptions,
+    CaptchaDriverOptions,
+    CaptchaModuleOptions,
 } from 'src/engine/core-modules/captcha/interfaces';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 

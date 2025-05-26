@@ -1,7 +1,7 @@
 import {
-  clearClientConfigCache,
-  getClientConfig,
-  refreshClientConfig,
+    clearClientConfigCache,
+    getClientConfig,
+    refreshClientConfig,
 } from '../clientConfigUtils';
 
 // Mock fetch
