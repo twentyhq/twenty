@@ -8,8 +8,8 @@ import { createOneOperation } from 'test/integration/graphql/utils/create-one-op
 import { findOneOperation } from 'test/integration/graphql/utils/find-one-operation.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
 import { getMockCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/generate-mock-create-object-metadata-input';
 import { EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -42,7 +42,7 @@ describe('updateOne', () => {
       const plural = singular + faker.lorem.word();
       const {
         data: { createOneObject },
-      } = await forceCreateOneObjectMetadata({
+      } = await createOneObjectMetadata({
         input: getMockCreateObjectInput({
           labelSingular: singular,
           labelPlural: plural,
@@ -50,10 +50,6 @@ describe('updateOne', () => {
           namePlural: plural.split(' ').join(''),
           isLabelSyncedWithName: false,
         }),
-        // gqlFields: `
-        //   id
-        //   nameSingular
-        // `,
       });
 
       idToDelete = createOneObject.id;
@@ -105,14 +101,15 @@ describe('updateOne', () => {
       displayValue: string;
       value: string[];
     };
-    const testCases: EachTestingContext<{
+    type TestCase = EachTestingContext<{
       fieldMetadataOptions: Option[];
       createViewFilter: ViewFilterUpdate;
       updateOptions: (
         options: FieldMetadataDefaultOption[] | FieldMetadataComplexOption[],
       ) => Option[];
       expected?: null;
-    }>[] = [
+    }>;
+    const testCases: TestCase[] = [
       {
         title:
           'should delete related view filter if all select field options got deleted',
@@ -127,7 +124,7 @@ describe('updateOne', () => {
         },
       },
       {
-        title: 'should update related view filter label',
+        title: 'should update related multi selected options view filter',
         context: {
           fieldMetadataOptions: ALL_OPTIONS,
           createViewFilter: {
@@ -141,7 +138,7 @@ describe('updateOne', () => {
         },
       },
       {
-        title: 'should update related view filter with updated option',
+        title: 'should update related solo selected option view filter',
         context: {
           fieldMetadataOptions: ALL_OPTIONS,
           createViewFilter: {
@@ -149,6 +146,57 @@ describe('updateOne', () => {
             value: [ALL_OPTIONS[5]].map((option) => option.value),
           },
           updateOptions: (options) => [updateOption(options[5])],
+        },
+      },
+      {
+        title:
+          'should handle partial deletion of selected options in view filter',
+        context: {
+          fieldMetadataOptions: ALL_OPTIONS,
+          createViewFilter: {
+            displayValue: `${ALL_OPTIONS.length} options`,
+            value: ALL_OPTIONS.map((option) => option.value),
+          },
+          updateOptions: (options) => options.slice(4),
+        },
+      },
+      {
+        title:
+          'should handle reordering of options while maintaining view filter values',
+        context: {
+          fieldMetadataOptions: ALL_OPTIONS,
+          createViewFilter: {
+            displayValue: '2 options',
+            value: ALL_OPTIONS.slice(0, 2).map((option) => option.value),
+          },
+          updateOptions: (options) => [...options].reverse(),
+        },
+      },
+      {
+        title:
+          'should handle no changes update of options while maintaining existing view filter values',
+        context: {
+          fieldMetadataOptions: ALL_OPTIONS,
+          createViewFilter: {
+            displayValue: `${ALL_OPTIONS.length} options`,
+            value: ALL_OPTIONS.map((option) => option.value),
+          },
+          updateOptions: (options) => options,
+        },
+      },
+      {
+        title:
+          'should handle adding new options while maintaining existing view filter',
+        context: {
+          fieldMetadataOptions: ALL_OPTIONS.slice(0, 5),
+          createViewFilter: {
+            displayValue: '2 options',
+            value: ALL_OPTIONS.slice(0, 2).map((option) => option.value),
+          },
+          updateOptions: (options) => [
+            ...options,
+            ...generateOptions(6).slice(5),
+          ],
         },
       },
     ];

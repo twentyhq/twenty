@@ -132,15 +132,15 @@ export class FieldMetadataRelatedRecordsService {
     }
 
     const viewFilterDisplayValues = viewFilter.displayValue.split(',');
-    if (viewFilterDisplayValues.length === 0) {
-      return updatedOption.map((option) => option.new.label).join(', ');
-    }
-
     const remainingViewFilterDisplayValue = viewFilterDisplayValues.filter(
       (viewFilterOptionLabel) => {
         !deletedOption.find((option) => option.label === viewFilterOptionLabel);
       },
     );
+
+    if (remainingViewFilterDisplayValue.length === 0) {
+      return updatedOption.map((option) => option.new.label).join(', ');
+    }
 
     const updatedViewFilterDisplayValue = remainingViewFilterDisplayValue.map(
       (viewFilterOptionLabel) => {
@@ -164,6 +164,7 @@ export class FieldMetadataRelatedRecordsService {
     newFieldMetadata: SelectFieldMetadataEntity,
   ): Promise<void> {
     if (
+      // TODO Should also handle rating type ?
       !isSelectFieldMetadataType(newFieldMetadata.type) ||
       !isSelectFieldMetadataType(oldFieldMetadata.type)
     ) {
@@ -180,6 +181,13 @@ export class FieldMetadataRelatedRecordsService {
         oldFieldMetadata.options,
         newFieldMetadata.options,
       );
+
+    if (
+      updatedFieldMetadata.length === 0 &&
+      deletedFieldMetadata.length === 0
+    ) {
+      return;
+    }
 
     const viewFilterRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewFilterWorkspaceEntity>(

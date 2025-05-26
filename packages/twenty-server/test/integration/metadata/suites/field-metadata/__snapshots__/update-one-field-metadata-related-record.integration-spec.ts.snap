@@ -11,7 +11,39 @@ exports[`updateOne FieldMetadataService Enum Default Value Validation should del
 ]
 `;
 
-exports[`updateOne FieldMetadataService Enum Default Value Validation should update related view filter label 1`] = `
+exports[`updateOne FieldMetadataService Enum Default Value Validation should handle adding new options while maintaining existing view filter 1`] = `
+{
+  "displayValue": "2 options",
+  "id": Any<String>,
+  "value": "["OPTION_0","OPTION_1"]",
+}
+`;
+
+exports[`updateOne FieldMetadataService Enum Default Value Validation should handle no changes update of options while maintaining existing view filter values 1`] = `
+{
+  "displayValue": "10 options",
+  "id": Any<String>,
+  "value": "["OPTION_0","OPTION_1","OPTION_2","OPTION_3","OPTION_4","OPTION_5","OPTION_6","OPTION_7","OPTION_8","OPTION_9"]",
+}
+`;
+
+exports[`updateOne FieldMetadataService Enum Default Value Validation should handle partial deletion of selected options in view filter 1`] = `
+{
+  "displayValue": "6 options",
+  "id": Any<String>,
+  "value": "["OPTION_4","OPTION_5","OPTION_6","OPTION_7","OPTION_8","OPTION_9"]",
+}
+`;
+
+exports[`updateOne FieldMetadataService Enum Default Value Validation should handle reordering of options while maintaining view filter values 1`] = `
+{
+  "displayValue": "2 options",
+  "id": Any<String>,
+  "value": "["OPTION_0","OPTION_1"]",
+}
+`;
+
+exports[`updateOne FieldMetadataService Enum Default Value Validation should update related multi selected options view filter 1`] = `
 {
   "displayValue": "10 options",
   "id": Any<String>,
@@ -19,9 +51,9 @@ exports[`updateOne FieldMetadataService Enum Default Value Validation should upd
 }
 `;
 
-exports[`updateOne FieldMetadataService Enum Default Value Validation should update related view filter with updated option 1`] = `
+exports[`updateOne FieldMetadataService Enum Default Value Validation should update related solo selected option view filter 1`] = `
 {
-  "displayValue": "",
+  "displayValue": "Option 5 updated",
   "id": Any<String>,
   "value": "["OPTION_5_UPDATED"]",
 }
