@@ -5,12 +5,16 @@ import {
 } from 'test/integration/constants/test-person-ids.constants';
 import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
 describe('Core REST API Find One endpoint', () => {
   let personCity: string;
 
   beforeAll(async () => {
+    await deleteAllRecords('person');
+    await deleteAllRecords('company');
+
     personCity = generateRecordName(TEST_PERSON_1_ID);
 
     await makeRestAPIRequest({

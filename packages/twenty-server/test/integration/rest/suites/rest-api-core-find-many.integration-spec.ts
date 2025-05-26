@@ -7,8 +7,8 @@ import {
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 import { TEST_COMPANY_1_ID } from 'test/integration/constants/test-company-ids.constants';
-import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
+import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
 
 describe('Core REST API Find Many endpoint', () => {
   const testPersonIds = [
@@ -20,7 +20,6 @@ describe('Core REST API Find Many endpoint', () => {
   const testPersonCities: Record<string, string> = {};
 
   beforeAll(async () => {
-    await deleteAllRecords('company');
     await deleteAllRecords('person');
 
     await makeRestAPIRequest({

@@ -23,7 +23,7 @@ describe('AuthResolve (integration)', () => {
     const queryData = {
       query: `
         mutation GetLoginTokenFromCredentials {
-          getLoginTokenFromCredentials(email: "${auth.email}", password: "${auth.password}", origin: "${ORIGIN.toString()}") {
+          getLoginTokenFromCredentials(email: "${auth.email}", password: "${auth.password}", origin: "http://localhost") {
             loginToken {
               token
               expiresAt
@@ -56,7 +56,7 @@ describe('AuthResolve (integration)', () => {
     const queryData = {
       query: `
         mutation GetAuthTokensFromLoginToken {
-          getAuthTokensFromLoginToken(loginToken: "${loginToken}", origin: "${ORIGIN.toString()}") {
+          getAuthTokensFromLoginToken(loginToken: "${loginToken}", origin: "http://localhost") {
             tokens {
               accessToken {
                 token

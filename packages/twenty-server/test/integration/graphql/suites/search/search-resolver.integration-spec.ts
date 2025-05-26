@@ -10,11 +10,11 @@ import {
   TEST_PERSON_3_ID,
 } from 'test/integration/constants/test-person-ids.constants';
 import { TEST_API_KEY_1_ID } from 'test/integration/constants/test-api-key-ids.constant';
+import { cleanTestDatabase } from 'test/integration/utils/clean-test-database';
 import {
   TEST_PET_ID_1,
   TEST_PET_ID_2,
 } from 'test/integration/constants/test-pet-ids.constants';
-import { cleanTestDatabase } from 'test/integration/utils/clean-test-database';
 
 import { SearchResultEdgeDTO } from 'src/engine/core-modules/search/dtos/search-result-edge.dto';
 import {
@@ -46,6 +46,7 @@ describe('SearchResolver', () => {
 
   beforeAll(async () => {
     await cleanTestDatabase({ seed: false });
+
     try {
       await performCreateManyOperation(
         'pet',
@@ -71,6 +72,10 @@ describe('SearchResolver', () => {
       console.log(error);
       throw new Error('beforeAll failed');
     }
+  });
+
+  afterAll(async () => {
+    await cleanTestDatabase({ seed: true });
   });
 
   const testsUseCases: EachTestingContext<{

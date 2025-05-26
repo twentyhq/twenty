@@ -6,17 +6,10 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { createOneRelationMetadataFactory } from 'test/integration/metadata/suites/utils/create-one-relation-metadata-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { LISTING_NAME_SINGULAR } from 'test/integration/metadata/suites/object-metadata/constants/listing-object.constant';
-import { getListingCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/get-listing-create-object-input';
-import {
-  HOUSE_LABEL_PLURAL,
-  HOUSE_LABEL_SINGULAR,
-  HOUSE_NAME_PLURAL,
-  HOUSE_NAME_SINGULAR,
-} from 'test/integration/metadata/suites/object-metadata/constants/house-object.constant';
-import { getHouseCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/get-house-create-object-input';
 
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+
+const LISTING_NAME_SINGULAR = 'listing';
 
 describe('Custom object renaming', () => {
   let listingObjectId = '';
@@ -90,9 +83,19 @@ describe('Custom object renaming', () => {
 
     fillStandardObjectRelationsMapObjectMetadataId(standardObjects);
 
+    const LISTING_OBJECT = {
+      namePlural: 'listings',
+      nameSingular: LISTING_NAME_SINGULAR,
+      labelPlural: 'Listings',
+      labelSingular: 'Listing',
+      description: 'Listing object',
+      icon: 'IconListNumbers',
+      isLabelSyncedWithName: false,
+    };
+
     // Act
     const { data } = await createOneObjectMetadata({
-      input: getListingCreateObjectInput(),
+      input: LISTING_OBJECT,
       gqlFields: `
           id
           nameSingular
@@ -180,6 +183,13 @@ describe('Custom object renaming', () => {
   });
 
   it('3. should rename custom object', async () => {
+    // Arrange
+    const HOUSE_NAME_SINGULAR = 'house';
+    const HOUSE_NAME_PLURAL = 'houses';
+    const HOUSE_LABEL_SINGULAR = 'House';
+    const HOUSE_LABEL_PLURAL = 'Houses';
+
+    // Act
     const { data } = await updateOneObjectMetadata({
       gqlFields: `
         nameSingular
@@ -189,7 +199,12 @@ describe('Custom object renaming', () => {
         `,
       input: {
         idToUpdate: listingObjectId,
-        updatePayload: getHouseCreateObjectInput(),
+        updatePayload: {
+          nameSingular: HOUSE_NAME_SINGULAR,
+          namePlural: HOUSE_NAME_PLURAL,
+          labelSingular: HOUSE_LABEL_SINGULAR,
+          labelPlural: HOUSE_LABEL_PLURAL,
+        },
       },
     });
 

@@ -33,7 +33,7 @@ export const findManyObjectMetadata = async ({
 
   return {
     errors: response.body.errors,
-    objects: response.body.data?.objects?.edges.map(
+    objects: response.body.data.objects?.edges.map(
       ({ node }: { node: unknown }) => node,
     ),
   };
