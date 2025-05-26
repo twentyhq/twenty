@@ -1,19 +1,23 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { DataSource, IsNull, Not, Repository } from 'typeorm';
+
+import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
@@ -27,13 +31,14 @@ describe('UserWorkspaceService', () => {
   let userWorkspaceRepository: Repository<UserWorkspace>;
   let userRepository: Repository<User>;
   let objectMetadataRepository: Repository<ObjectMetadataEntity>;
-  let dataSourceService: DataSourceService;
   let typeORMService: TypeORMService;
   let workspaceInvitationService: WorkspaceInvitationService;
   let workspaceEventEmitter: WorkspaceEventEmitter;
   let domainManagerService: DomainManagerService;
   let twentyORMGlobalManager: TwentyORMGlobalManager;
   let userRoleService: UserRoleService;
+  let fileService: FileService;
+  let fileUploadService: FileUploadService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -48,6 +53,7 @@ describe('UserWorkspaceService', () => {
             countBy: jest.fn(),
             exists: jest.fn(),
             findOne: jest.fn(),
+            findOneOrFail: jest.fn(),
           },
         },
         {
@@ -71,7 +77,7 @@ describe('UserWorkspaceService', () => {
         {
           provide: TypeORMService,
           useValue: {
-            connectToDataSource: jest.fn(),
+            getMainDataSource: jest.fn(),
           },
         },
         {
@@ -105,10 +111,29 @@ describe('UserWorkspaceService', () => {
             assignRoleToUserWorkspace: jest.fn(),
           },
         },
+        {
+          provide: FileStorageService,
+          useValue: {
+            copy: jest.fn(),
+          },
+        },
+        {
+          provide: FileUploadService,
+          useValue: {
+            uploadImageFromUrl: jest.fn(),
+          },
+        },
+        {
+          provide: FileService,
+          useValue: {
+            copyFileFromWorkspaceToWorkspace: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
     service = module.get<UserWorkspaceService>(UserWorkspaceService);
+    fileService = module.get<FileService>(FileService);
     userWorkspaceRepository = module.get(
       getRepositoryToken(UserWorkspace, 'core'),
     );
@@ -116,7 +141,6 @@ describe('UserWorkspaceService', () => {
     objectMetadataRepository = module.get(
       getRepositoryToken(ObjectMetadataEntity, 'metadata'),
     );
-    dataSourceService = module.get<DataSourceService>(DataSourceService);
     typeORMService = module.get<TypeORMService>(TypeORMService);
     workspaceInvitationService = module.get<WorkspaceInvitationService>(
       WorkspaceInvitationService,
@@ -130,6 +154,7 @@ describe('UserWorkspaceService', () => {
       TwentyORMGlobalManager,
     );
     userRoleService = module.get<UserRoleService>(UserRoleService);
+    fileUploadService = module.get<FileUploadService>(FileUploadService);
   });
 
   it('should be defined', () => {
@@ -137,7 +162,139 @@ describe('UserWorkspaceService', () => {
   });
 
   describe('create', () => {
-    it('should create a user workspace and emit an event', async () => {
+    it("should create a user workspace with a default avatar url if it's an existing user with a user workspace having a default avatar url", async () => {
+      const userId = 'user-id';
+      const workspaceId = 'workspace-id';
+      const userWorkspace = { userId, workspaceId } as UserWorkspace;
+
+      jest
+        .spyOn(userWorkspaceRepository, 'create')
+        .mockReturnValue(userWorkspace);
+      jest
+        .spyOn(userWorkspaceRepository, 'save')
+        .mockResolvedValue(userWorkspace);
+      jest.spyOn(userWorkspaceRepository, 'findOne').mockResolvedValue({
+        defaultAvatarUrl: 'path/to/file',
+      } as UserWorkspace);
+      jest
+        .spyOn(fileService, 'copyFileFromWorkspaceToWorkspace')
+        .mockResolvedValue(['', 'path/to', 'copy']);
+      jest
+        .spyOn(workspaceEventEmitter, 'emitCustomBatchEvent')
+        .mockImplementation();
+
+      const result = await service.create({
+        userId,
+        workspaceId,
+        isExistingUser: true,
+      });
+
+      expect(userWorkspaceRepository.findOne).toHaveBeenCalledWith({
+        where: {
+          userId,
+          defaultAvatarUrl: Not(IsNull()),
+        },
+        order: {
+          createdAt: 'ASC',
+        },
+      });
+
+      expect(userWorkspaceRepository.create).toHaveBeenCalledWith({
+        userId,
+        workspaceId,
+        defaultAvatarUrl: 'path/to/copy',
+      });
+
+      expect(userWorkspaceRepository.save).toHaveBeenCalledWith(userWorkspace);
+      expect(workspaceEventEmitter.emitCustomBatchEvent).toHaveBeenCalledWith(
+        USER_SIGNUP_EVENT_NAME,
+        [{ userId }],
+        workspaceId,
+      );
+      expect(result).toEqual(userWorkspace);
+    });
+    it("should create a user workspace without a default avatar url if it's an existing user without any user workspace having a default avatar url", async () => {
+      const userId = 'user-id';
+      const workspaceId = 'workspace-id';
+      const userWorkspace = { userId, workspaceId } as UserWorkspace;
+
+      jest
+        .spyOn(userWorkspaceRepository, 'create')
+        .mockReturnValue(userWorkspace);
+      jest
+        .spyOn(userWorkspaceRepository, 'save')
+        .mockResolvedValue(userWorkspace);
+
+      jest.spyOn(userWorkspaceRepository, 'findOne').mockResolvedValue(null);
+
+      jest
+        .spyOn(workspaceEventEmitter, 'emitCustomBatchEvent')
+        .mockImplementation();
+
+      const result = await service.create({
+        userId,
+        workspaceId,
+        isExistingUser: true,
+      });
+
+      expect(userWorkspaceRepository.create).toHaveBeenCalledWith({
+        userId,
+        workspaceId,
+        defaultAvatarUrl: undefined,
+      });
+      expect(userWorkspaceRepository.save).toHaveBeenCalledWith(userWorkspace);
+      expect(workspaceEventEmitter.emitCustomBatchEvent).toHaveBeenCalledWith(
+        USER_SIGNUP_EVENT_NAME,
+        [{ userId }],
+        workspaceId,
+      );
+      expect(result).toEqual(userWorkspace);
+    });
+    it("should create a user workspace with a default avatar url if it's a new user with a picture url", async () => {
+      const userId = 'user-id';
+      const workspaceId = 'workspace-id';
+      const userWorkspace = { userId, workspaceId } as UserWorkspace;
+
+      jest
+        .spyOn(userWorkspaceRepository, 'create')
+        .mockReturnValue(userWorkspace);
+      jest
+        .spyOn(userWorkspaceRepository, 'save')
+        .mockResolvedValue(userWorkspace);
+
+      jest
+        .spyOn(workspaceEventEmitter, 'emitCustomBatchEvent')
+        .mockImplementation();
+      jest.spyOn(fileUploadService, 'uploadImageFromUrl').mockResolvedValue({
+        paths: ['path/to/file'],
+      } as any);
+
+      const result = await service.create({
+        userId,
+        workspaceId,
+        isExistingUser: false,
+        pictureUrl: 'picture-url',
+      });
+
+      expect(fileUploadService.uploadImageFromUrl).toHaveBeenCalledWith({
+        imageUrl: 'picture-url',
+        fileFolder: FileFolder.ProfilePicture,
+        workspaceId,
+      });
+      expect(userWorkspaceRepository.create).toHaveBeenCalledWith({
+        userId,
+        workspaceId,
+        defaultAvatarUrl: 'path/to/file',
+      });
+      expect(userWorkspaceRepository.save).toHaveBeenCalledWith(userWorkspace);
+      expect(workspaceEventEmitter.emitCustomBatchEvent).toHaveBeenCalledWith(
+        USER_SIGNUP_EVENT_NAME,
+        [{ userId }],
+        workspaceId,
+      );
+      expect(result).toEqual(userWorkspace);
+    });
+    it("should create a user workspace without a default avatar url if it's a new user without a picture url", async () => {
       const userId = 'user-id';
       const workspaceId = 'workspace-id';
       const userWorkspace = { userId, workspaceId } as UserWorkspace;
@@ -152,11 +309,17 @@ describe('UserWorkspaceService', () => {
         .spyOn(workspaceEventEmitter, 'emitCustomBatchEvent')
         .mockImplementation();
 
-      const result = await service.create(userId, workspaceId);
+      const result = await service.create({
+        userId,
+        workspaceId,
+        isExistingUser: false,
+        pictureUrl: undefined,
+      });
 
       expect(userWorkspaceRepository.create).toHaveBeenCalledWith({
         userId,
         workspaceId,
+        defaultAvatarUrl: undefined,
       });
       expect(userWorkspaceRepository.save).toHaveBeenCalledWith(userWorkspace);
       expect(workspaceEventEmitter.emitCustomBatchEvent).toHaveBeenCalledWith(
@@ -179,12 +342,9 @@ describe('UserWorkspaceService', () => {
         defaultAvatarUrl: 'avatar-url',
         locale: 'en',
       } as User;
-      const dataSourceMetadata = {
-        schema: 'public',
-      } as DataSourceEntity;
-      const workspaceDataSource = {
+      const mainDataSource = {
         query: jest.fn(),
-      };
+      } as unknown as DataSource;
       const workspaceMember = [
         {
           id: 'workspace-member-id',
@@ -197,17 +357,16 @@ describe('UserWorkspaceService', () => {
       const objectMetadata = {
         nameSingular: 'workspaceMember',
       } as ObjectMetadataEntity;
+      const workspaceMemberRepository = {
+        insert: jest.fn(),
+        find: jest.fn().mockResolvedValue(workspaceMember),
+      };
 
       jest
-        .spyOn(
-          dataSourceService,
-          'getLastDataSourceMetadataFromWorkspaceIdOrFail',
-        )
-        .mockResolvedValue(dataSourceMetadata);
+        .spyOn(typeORMService, 'getMainDataSource')
+        .mockReturnValue(mainDataSource);
       jest
-        .spyOn(typeORMService, 'connectToDataSource')
-        .mockResolvedValue(workspaceDataSource as any);
-      workspaceDataSource.query
+        .spyOn(mainDataSource, 'query')
         .mockResolvedValueOnce(undefined)
         .mockResolvedValueOnce(workspaceMember);
       jest
@@ -217,15 +376,27 @@ describe('UserWorkspaceService', () => {
         .spyOn(workspaceEventEmitter, 'emitDatabaseBatchEvent')
         .mockImplementation();
 
+      jest
+        .spyOn(twentyORMGlobalManager, 'getRepositoryForWorkspace')
+        .mockResolvedValue(workspaceMemberRepository as any);
+
+      jest.spyOn(userWorkspaceRepository, 'findOneOrFail').mockResolvedValue({
+        defaultAvatarUrl: 'userWorkspace-avatar-url',
+      } as UserWorkspace);
+
       await service.createWorkspaceMember(workspaceId, user);
 
-      expect(
-        dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail,
-      ).toHaveBeenCalledWith(workspaceId);
-      expect(typeORMService.connectToDataSource).toHaveBeenCalledWith(
-        dataSourceMetadata,
-      );
-      expect(workspaceDataSource.query).toHaveBeenCalledTimes(2);
+      expect(workspaceMemberRepository.insert).toHaveBeenCalledWith({
+        name: {
+          firstName: user.firstName,
+          lastName: user.lastName,
+        },
+        colorScheme: 'System',
+        userId: user.id,
+        userEmail: user.email,
+        locale: 'en',
+        avatarUrl: 'userWorkspace-avatar-url',
+      });
       expect(objectMetadataRepository.findOneOrFail).toHaveBeenCalledWith({
         where: {
           nameSingular: 'workspaceMember',
@@ -283,7 +454,11 @@ describe('UserWorkspaceService', () => {
         user.id,
         workspace.id,
       );
-      expect(service.create).toHaveBeenCalledWith(user.id, workspace.id);
+      expect(service.create).toHaveBeenCalledWith({
+        workspaceId: workspace.id,
+        userId: user.id,
+        isExistingUser: true,
+      });
       expect(service.createWorkspaceMember).toHaveBeenCalledWith(
         workspace.id,
         user,

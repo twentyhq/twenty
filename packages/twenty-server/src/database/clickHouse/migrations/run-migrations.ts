@@ -10,7 +10,7 @@ config({
   override: true,
 });
 
-const clickhouseUrl = () => {
+const clickHouseUrl = () => {
   const url = process.env.CLICKHOUSE_URL;
 
   if (url) return url;
@@ -21,16 +21,20 @@ const clickhouseUrl = () => {
 };
 
 async function ensureDatabaseExists() {
-  const [url, database] = clickhouseUrl().split(/\/(?=[^/]*$)/);
+  const [url, database] = clickHouseUrl().split(/\/(?=[^/]*$)/);
   const client = createClient({
     url,
   });
 
-  await client.command({
-    query: `CREATE DATABASE IF NOT EXISTS "${database}"`,
-  });
-
-  await client.close();
+  try {
+    await client.command({
+      query: `CREATE DATABASE IF NOT EXISTS "${database}"`,
+    });
+  } catch (error) {
+    // It may fail due to permissions, but the database already exists
+  } finally {
+    await client.close();
+  }
 }
 
 async function ensureMigrationTable(client: ClickHouseClient) {
@@ -74,7 +78,7 @@ async function runMigrations() {
   await ensureDatabaseExists();
 
   const client = createClient({
-    url: clickhouseUrl(),
+    url: clickHouseUrl(),
     clickhouse_settings: {
       allow_experimental_json_type: 1,
     },

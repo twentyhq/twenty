@@ -1,7 +1,12 @@
+import { PREVIEWABLE_EXTENSIONS } from '@/activities/files/const/previewable-extensions.const';
+import { fetchCsvPreview } from '@/activities/files/utils/fetchCsvPreview';
 import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
 import '@cyntler/react-doc-viewer/dist/index.css';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { Trans } from '@lingui/react/macro';
+import { useEffect, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
 
 const StyledDocumentViewerContainer = styled.div`
@@ -12,13 +17,6 @@ const StyledDocumentViewerContainer = styled.div`
   width: 100%;
   background: ${({ theme }) => theme.background.secondary};
 
-  .react-doc-viewer {
-    height: 100%;
-    width: 100%;
-    overflow: auto;
-    background: none;
-  }
-
   #react-doc-viewer #header-bar {
     display: none;
   }
@@ -26,35 +24,23 @@ const StyledDocumentViewerContainer = styled.div`
   #react-doc-viewer #pdf-controls {
     display: none !important;
   }
+
+  #react-doc-viewer,
+  #proxy-renderer,
+  #msdoc-renderer {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+    background: none;
+  }
 `;
 
 type DocumentViewerProps = {
   documentName: string;
   documentUrl: string;
 };
-
-export const PREVIEWABLE_EXTENSIONS = [
-  'bmp',
-  'csv',
-  'odt',
-  'doc',
-  'docx',
-  'gif',
-  'htm',
-  'html',
-  'jpg',
-  'jpeg',
-  'pdf',
-  'png',
-  'ppt',
-  'pptx',
-  'tiff',
-  'txt',
-  'xls',
-  'xlsx',
-  'mp4',
-  'webp',
-];
 
 const MIME_TYPE_MAPPING: Record<
   (typeof PREVIEWABLE_EXTENSIONS)[number],
@@ -87,6 +73,7 @@ export const DocumentViewer = ({
   documentUrl,
 }: DocumentViewerProps) => {
   const theme = useTheme();
+  const [csvPreview, setCsvPreview] = useState<string | undefined>(undefined);
 
   const { extension } = getFileNameAndExtension(documentName);
   const fileExtension = extension?.toLowerCase().replace('.', '') ?? '';
@@ -94,12 +81,32 @@ export const DocumentViewer = ({
     ? MIME_TYPE_MAPPING[fileExtension]
     : undefined;
 
+  useEffect(() => {
+    if (fileExtension === 'csv') {
+      fetchCsvPreview(documentUrl).then((content) => {
+        setCsvPreview(content);
+      });
+    }
+  }, [documentUrl, fileExtension]);
+
+  if (fileExtension === 'csv' && !isDefined(csvPreview))
+    return (
+      <StyledDocumentViewerContainer>
+        <Trans>Loading csv ... </Trans>
+      </StyledDocumentViewerContainer>
+    );
+
   return (
     <StyledDocumentViewerContainer>
       <DocViewer
         documents={[
           {
-            uri: documentUrl,
+            uri:
+              fileExtension === 'csv' && isDefined(csvPreview)
+                ? window.URL.createObjectURL(
+                    new Blob([csvPreview], { type: 'text/csv' }),
+                  )
+                : documentUrl,
             fileName: documentName,
             fileType: mimeType,
           },

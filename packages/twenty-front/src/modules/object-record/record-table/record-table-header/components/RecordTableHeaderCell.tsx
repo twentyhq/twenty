@@ -8,32 +8,39 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
 import { RecordTableColumnHeadWithDropdown } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHeadWithDropdown';
+import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
+import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
+import { PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
+import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 
 const COLUMN_MIN_WIDTH = 104;
 
 const StyledColumnHeaderCell = styled.th<{
   columnWidth: number;
   isResizing?: boolean;
+  isFirstRowActiveOrFocused: boolean;
 }>`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: ${({ isFirstRowActiveOrFocused, theme }) =>
+    isFirstRowActiveOrFocused
+      ? 'none'
+      : `1px solid ${theme.border.color.light}`};
   color: ${({ theme }) => theme.font.color.tertiary};
   padding: 0;
   text-align: left;
-  transition: 0.3s ease;
 
   background-color: ${({ theme }) => theme.background.primary};
   border-right: 1px solid ${({ theme }) => theme.border.color.light};
@@ -132,16 +139,19 @@ export const RecordTableHeaderCell = ({
 
   const { handleColumnsChange } = useTableColumns();
 
-  const handleResizeHandlerStart = useCallback((positionX: number) => {
-    setInitialPointerPositionX(positionX);
-  }, []);
+  const handleResizeHandlerStart = useCallback<PointerEventListener>(
+    ({ x }) => {
+      setInitialPointerPositionX(x);
+    },
+    [],
+  );
 
   const [iconVisibility, setIconVisibility] = useState(false);
 
-  const handleResizeHandlerMove = useCallback(
-    (positionX: number) => {
+  const handleResizeHandlerMove = useCallback<PointerEventListener>(
+    ({ x }) => {
       if (!initialPointerPositionX) return;
-      setResizeFieldOffset(positionX - initialPointerPositionX);
+      setResizeFieldOffset(x - initialPointerPositionX);
     },
     [setResizeFieldOffset, initialPointerPositionX],
   );
@@ -215,6 +225,18 @@ export const RecordTableHeaderCell = ({
 
   const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
 
+  const isFirstRowActive = useRecoilComponentFamilyValueV2(
+    isRecordTableRowActiveComponentFamilyState,
+    0,
+  );
+
+  const isFirstRowFocused = useRecoilComponentFamilyValueV2(
+    isRecordTableRowFocusedComponentFamilyState,
+    0,
+  );
+
+  const isFirstRowActiveOrFocused = isFirstRowActive || isFirstRowFocused;
+
   return (
     <StyledColumnHeaderCell
       key={column.fieldMetadataId}
@@ -227,6 +249,7 @@ export const RecordTableHeaderCell = ({
       )}
       onMouseEnter={() => setIconVisibility(true)}
       onMouseLeave={() => setIconVisibility(false)}
+      isFirstRowActiveOrFocused={isFirstRowActiveOrFocused}
     >
       <StyledColumnHeadContainer>
         <RecordTableColumnHeadWithDropdown column={column} />

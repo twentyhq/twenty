@@ -1,4 +1,4 @@
-import { Logger, Scope } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -31,8 +31,6 @@ export type MessagingMessageListFetchJobData = {
   scope: Scope.REQUEST,
 })
 export class MessagingMessageListFetchJob {
-  private readonly logger = new Logger(MessagingMessageListFetchJob.name);
-
   constructor(
     private readonly messagingFullMessageListFetchService: MessagingFullMessageListFetchService,
     private readonly messagingPartialMessageListFetchService: MessagingPartialMessageListFetchService,
@@ -117,10 +115,6 @@ export class MessagingMessageListFetchJob {
 
       switch (messageChannel.syncStage) {
         case MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING:
-          this.logger.log(
-            `Fetching partial message list for workspace ${workspaceId} and messageChannelId ${messageChannel.id}`,
-          );
-
           await this.messagingMonitoringService.track({
             eventName: 'partial_message_list_fetch.started',
             workspaceId,
@@ -144,10 +138,6 @@ export class MessagingMessageListFetchJob {
           break;
 
         case MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING:
-          this.logger.log(
-            `Fetching full message list for workspace ${workspaceId} and account ${messageChannel.connectedAccount.id}`,
-          );
-
           await this.messagingMonitoringService.track({
             eventName: 'full_message_list_fetch.started',
             workspaceId,

@@ -5,7 +5,7 @@ import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
 const peopleMock = getPeopleRecordConnectionMock();
 
 export const query = gql`
-  query FindDuplicatePerson($ids: [ID!]!) {
+  query FindDuplicatePerson($ids: [UUID!]!) {
     personDuplicates(ids: $ids) {
       edges {
         node {

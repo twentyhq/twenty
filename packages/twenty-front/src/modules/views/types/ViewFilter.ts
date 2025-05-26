@@ -1,3 +1,4 @@
+import { CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { ViewFilterOperand } from './ViewFilterOperand';
 
 export type ViewFilter = {
@@ -13,5 +14,5 @@ export type ViewFilter = {
   viewId?: string;
   viewFilterGroupId?: string;
   positionInViewFilterGroup?: number | null;
-  subFieldName?: string | null;
+  subFieldName?: CompositeFieldSubFieldName | null;
 };

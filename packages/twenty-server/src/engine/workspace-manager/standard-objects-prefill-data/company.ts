@@ -1,6 +1,5 @@
-import { EntityManager } from 'typeorm';
-
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 
 export const AIRBNB_ID = 'c776ee49-f608-4a77-8cc8-6fe96ae1e43f';
 export const QONTO_ID = 'f45ee421-8a3e-4aa5-a1cf-7207cc6754e1';
@@ -9,11 +8,13 @@ export const FIGMA_ID = '9d5bcf43-7d38-4e88-82cb-d6d4ce638bf0';
 export const NOTION_ID = '06290608-8bf0-4806-99ae-a715a6a93fad';
 
 export const companyPrefillData = async (
-  entityManager: EntityManager,
+  entityManager: WorkspaceEntityManager,
   schemaName: string,
 ) => {
   await entityManager
-    .createQueryBuilder()
+    .createQueryBuilder(undefined, undefined, undefined, {
+      shouldBypassPermissionChecks: true,
+    })
     .insert()
     .into(`${schemaName}.company`, [
       'id',

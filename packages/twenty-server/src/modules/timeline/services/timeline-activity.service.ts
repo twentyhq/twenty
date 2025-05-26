@@ -13,6 +13,7 @@ type TimelineActivity = Omit<ObjectRecordNonDestructiveEvent, 'properties'> & {
   linkedRecordCachedName?: string;
   linkedRecordId?: string;
   linkedObjectMetadataId?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   properties: Record<string, any>; // more relaxed conditions than for internal events
 };
 
@@ -174,34 +175,38 @@ export class TimelineActivityService {
     if (activityTargets.length === 0) return;
     if (activity.length === 0) return;
 
-    return activityTargets
-      .map((activityTarget) => {
-        const targetColumn: string[] = Object.entries(activityTarget)
-          .map(([columnName, columnValue]: [string, string]) => {
-            if (
-              columnName === activityType + 'Id' ||
-              !columnName.endsWith('Id')
-            )
-              return;
-            if (columnValue === null) return;
+    return (
+      activityTargets
+        // @ts-expect-error legacy noImplicitAny
+        .map((activityTarget) => {
+          const targetColumn: string[] = Object.entries(activityTarget)
+            .map(([columnName, columnValue]: [string, string]) => {
+              if (
+                columnName === activityType + 'Id' ||
+                !columnName.endsWith('Id')
+              )
+                return;
+              if (columnValue === null) return;
 
-            return columnName;
-          })
-          .filter((column): column is string => column !== undefined);
+              return columnName;
+            })
+            .filter((column): column is string => column !== undefined);
 
-        if (targetColumn.length === 0) return;
+          if (targetColumn.length === 0) return;
 
-        return {
-          ...event,
-          name: 'linked-' + eventName,
-          objectName: targetColumn[0].replace(/Id$/, ''),
-          recordId: activityTarget[targetColumn[0]],
-          linkedRecordCachedName: activity[0].title,
-          linkedRecordId: activity[0].id,
-          linkedObjectMetadataId: event.objectMetadata.id,
-        } satisfies TimelineActivity;
-      })
-      .filter((event): event is TimelineActivity => event !== undefined);
+          return {
+            ...event,
+            name: 'linked-' + eventName,
+            objectName: targetColumn[0].replace(/Id$/, ''),
+            recordId: activityTarget[targetColumn[0]],
+            linkedRecordCachedName: activity[0].title,
+            linkedRecordId: activity[0].id,
+            linkedObjectMetadataId: event.objectMetadata.id,
+          } satisfies TimelineActivity;
+        })
+        // @ts-expect-error legacy noImplicitAny
+        .filter((event): event is TimelineActivity => event !== undefined)
+    );
   }
 
   private async computeActivityTargets({

@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -522,6 +522,15 @@ export type DeleteWorkflowVersionStepInput = {
   workflowVersionId: Scalars['String'];
 };
 
+export type DeletedWorkspaceMember = {
+  __typename?: 'DeletedWorkspaceMember';
+  avatarUrl?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  name: FullName;
+  userEmail: Scalars['String'];
+  userWorkspaceId?: Maybe<Scalars['String']>;
+};
+
 /** Schema update on a table */
 export enum DistantTableUpdate {
   COLUMNS_ADDED = 'COLUMNS_ADDED',
@@ -578,7 +587,6 @@ export enum FeatureFlagKey {
   IsCopilotEnabled = 'IsCopilotEnabled',
   IsCustomDomainEnabled = 'IsCustomDomainEnabled',
   IsJsonFilterEnabled = 'IsJsonFilterEnabled',
-  IsNewRelationEnabled = 'IsNewRelationEnabled',
   IsPermissionsV2Enabled = 'IsPermissionsV2Enabled',
   IsPostgreSQLIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
   IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
@@ -728,17 +736,6 @@ export enum HealthIndicatorId {
   worker = 'worker'
 }
 
-export type IdFilter = {
-  eq?: InputMaybe<Scalars['ID']>;
-  gt?: InputMaybe<Scalars['ID']>;
-  gte?: InputMaybe<Scalars['ID']>;
-  in?: InputMaybe<Array<Scalars['ID']>>;
-  is?: InputMaybe<FilterIs>;
-  lt?: InputMaybe<Scalars['ID']>;
-  lte?: InputMaybe<Scalars['ID']>;
-  neq?: InputMaybe<Scalars['ID']>;
-};
-
 export enum IdentityProviderType {
   OIDC = 'OIDC',
   SAML = 'SAML'
@@ -887,6 +884,7 @@ export type Mutation = {
   createDatabaseConfigVariable: Scalars['Boolean'];
   createDraftFromWorkflowVersion: WorkflowVersion;
   createOIDCIdentityProvider: SetupSsoOutput;
+  createObjectEvent: Analytics;
   createOneAppToken: AppToken;
   createOneField: Field;
   createOneObject: Object;
@@ -930,7 +928,6 @@ export type Mutation = {
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   submitFormStep: Scalars['Boolean'];
   switchToYearlyInterval: BillingUpdateOutput;
-  track: Analytics;
   trackAnalytics: Analytics;
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateLabPublicFeatureFlag: FeatureFlagDto;
@@ -1003,6 +1000,14 @@ export type MutationCreateDraftFromWorkflowVersionArgs = {
 
 export type MutationCreateOidcIdentityProviderArgs = {
   input: SetupOidcSsoInput;
+};
+
+
+export type MutationCreateObjectEventArgs = {
+  event: Scalars['String'];
+  objectMetadataId: Scalars['String'];
+  properties?: InputMaybe<Scalars['JSON']>;
+  recordId: Scalars['String'];
 };
 
 
@@ -1105,6 +1110,7 @@ export type MutationGenerateApiKeyTokenArgs = {
 
 export type MutationGetAuthTokensFromLoginTokenArgs = {
   loginToken: Scalars['String'];
+  origin: Scalars['String'];
 };
 
 
@@ -1116,13 +1122,16 @@ export type MutationGetAuthorizationUrlForSsoArgs = {
 export type MutationGetLoginTokenFromCredentialsArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
+  origin: Scalars['String'];
   password: Scalars['String'];
 };
 
 
 export type MutationGetLoginTokenFromEmailVerificationTokenArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
   emailVerificationToken: Scalars['String'];
+  origin: Scalars['String'];
 };
 
 
@@ -1144,6 +1153,7 @@ export type MutationRenewTokenArgs = {
 
 export type MutationResendEmailVerificationTokenArgs = {
   email: Scalars['String'];
+  origin: Scalars['String'];
 };
 
 
@@ -1175,12 +1185,6 @@ export type MutationSignUpArgs = {
 
 export type MutationSubmitFormStepArgs = {
   input: SubmitFormStepInput;
-};
-
-
-export type MutationTrackArgs = {
-  action: Scalars['String'];
-  payload: Scalars['JSON'];
 };
 
 
@@ -1404,7 +1408,7 @@ export type ObjectRecordFilterInput = {
   and?: InputMaybe<Array<ObjectRecordFilterInput>>;
   createdAt?: InputMaybe<DateFilter>;
   deletedAt?: InputMaybe<DateFilter>;
-  id?: InputMaybe<IdFilter>;
+  id?: InputMaybe<UuidFilter>;
   not?: InputMaybe<ObjectRecordFilterInput>;
   or?: InputMaybe<Array<ObjectRecordFilterInput>>;
   updatedAt?: InputMaybe<DateFilter>;
@@ -1540,7 +1544,7 @@ export type Query = {
   object: Object;
   objects: ObjectConnection;
   plans: Array<BillingPlanOutput>;
-  search: Array<SearchRecord>;
+  search: SearchResultConnection;
   validatePasswordResetToken: ValidatePasswordResetToken;
   versionInfo: VersionInfo;
 };
@@ -1587,6 +1591,11 @@ export type QueryGetIndicatorHealthStatusArgs = {
 };
 
 
+export type QueryGetPublicWorkspaceDataByDomainArgs = {
+  origin: Scalars['String'];
+};
+
+
 export type QueryGetQueueMetricsArgs = {
   queueName: Scalars['String'];
   timeRange?: InputMaybe<QueueMetricsTimeRange>;
@@ -1627,6 +1636,7 @@ export type QueryGetTimelineThreadsFromPersonIdArgs = {
 
 
 export type QuerySearchArgs = {
+  after?: InputMaybe<Scalars['String']>;
   excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']>>;
   filter?: InputMaybe<ObjectRecordFilterInput>;
   includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']>>;
@@ -1829,6 +1839,24 @@ export type SearchRecord = {
   recordId: Scalars['String'];
   tsRank: Scalars['Float'];
   tsRankCD: Scalars['Float'];
+};
+
+export type SearchResultConnection = {
+  __typename?: 'SearchResultConnection';
+  edges: Array<SearchResultEdge>;
+  pageInfo: SearchResultPageInfo;
+};
+
+export type SearchResultEdge = {
+  __typename?: 'SearchResultEdge';
+  cursor: Scalars['String'];
+  node: SearchRecord;
+};
+
+export type SearchResultPageInfo = {
+  __typename?: 'SearchResultPageInfo';
+  endCursor?: Maybe<Scalars['String']>;
+  hasNextPage: Scalars['Boolean'];
 };
 
 export type SendInvitationsOutput = {
@@ -2074,6 +2102,17 @@ export type TransientToken = {
   transientToken: AuthToken;
 };
 
+export type UuidFilter = {
+  eq?: InputMaybe<Scalars['UUID']>;
+  gt?: InputMaybe<Scalars['UUID']>;
+  gte?: InputMaybe<Scalars['UUID']>;
+  in?: InputMaybe<Array<Scalars['UUID']>>;
+  is?: InputMaybe<FilterIs>;
+  lt?: InputMaybe<Scalars['UUID']>;
+  lte?: InputMaybe<Scalars['UUID']>;
+  neq?: InputMaybe<Scalars['UUID']>;
+};
+
 export type UuidFilterComparison = {
   eq?: InputMaybe<Scalars['UUID']>;
   gt?: InputMaybe<Scalars['UUID']>;
@@ -2211,6 +2250,7 @@ export type User = {
   currentWorkspace?: Maybe<Workspace>;
   defaultAvatarUrl?: Maybe<Scalars['String']>;
   deletedAt?: Maybe<Scalars['DateTime']>;
+  deletedWorkspaceMembers?: Maybe<Array<DeletedWorkspaceMember>>;
   disabled?: Maybe<Scalars['Boolean']>;
   email: Scalars['String'];
   firstName: Scalars['String'];
@@ -2508,14 +2548,6 @@ export type TrackAnalyticsMutationVariables = Exact<{
 
 export type TrackAnalyticsMutation = { __typename?: 'Mutation', trackAnalytics: { __typename?: 'Analytics', success: boolean } };
 
-export type TrackMutationVariables = Exact<{
-  action: Scalars['String'];
-  payload: Scalars['JSON'];
-}>;
-
-
-export type TrackMutation = { __typename?: 'Mutation', track: { __typename?: 'Analytics', success: boolean } };
-
 export type UploadFileMutationVariables = Exact<{
   file: Scalars['Upload'];
   fileFolder?: InputMaybe<FileFolder>;
@@ -2570,6 +2602,7 @@ export type GenerateTransientTokenMutation = { __typename?: 'Mutation', generate
 
 export type GetAuthTokensFromLoginTokenMutationVariables = Exact<{
   loginToken: Scalars['String'];
+  origin: Scalars['String'];
 }>;
 
 
@@ -2586,6 +2619,7 @@ export type GetLoginTokenFromCredentialsMutationVariables = Exact<{
   email: Scalars['String'];
   password: Scalars['String'];
   captchaToken?: InputMaybe<Scalars['String']>;
+  origin: Scalars['String'];
 }>;
 
 
@@ -2593,7 +2627,9 @@ export type GetLoginTokenFromCredentialsMutation = { __typename?: 'Mutation', ge
 
 export type GetLoginTokenFromEmailVerificationTokenMutationVariables = Exact<{
   emailVerificationToken: Scalars['String'];
+  email: Scalars['String'];
   captchaToken?: InputMaybe<Scalars['String']>;
+  origin: Scalars['String'];
 }>;
 
 
@@ -2616,6 +2652,7 @@ export type RenewTokenMutation = { __typename?: 'Mutation', renewToken: { __type
 
 export type ResendEmailVerificationTokenMutationVariables = Exact<{
   email: Scalars['String'];
+  origin: Scalars['String'];
 }>;
 
 
@@ -2655,7 +2692,9 @@ export type CheckUserExistsQueryVariables = Exact<{
 
 export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __typename: 'UserExists', exists: boolean, isEmailVerified: boolean, availableWorkspaces: Array<{ __typename?: 'AvailableWorkspaceOutput', id: string, displayName?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } | { __typename: 'UserNotExists', exists: boolean } };
 
-export type GetPublicWorkspaceDataByDomainQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetPublicWorkspaceDataByDomainQueryVariables = Exact<{
+  origin: Scalars['String'];
+}>;
 
 
 export type GetPublicWorkspaceDataByDomainQuery = { __typename?: 'Query', getPublicWorkspaceDataByDomain: { __typename?: 'PublicWorkspaceDataOutput', id: string, logo?: string | null, displayName?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, authProviders: { __typename?: 'AuthProviders', google: boolean, magicLink: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> } } };
@@ -2712,13 +2751,14 @@ export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typ
 export type SearchQueryVariables = Exact<{
   searchInput: Scalars['String'];
   limit: Scalars['Int'];
+  after?: InputMaybe<Scalars['String']>;
   excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
   includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
   filter?: InputMaybe<ObjectRecordFilterInput>;
 }>;
 
 
-export type SearchQuery = { __typename?: 'Query', search: Array<{ __typename?: 'SearchRecord', recordId: string, objectNameSingular: string, label: string, imageUrl?: string | null, tsRankCD: number, tsRank: number }> };
+export type SearchQuery = { __typename?: 'Query', search: { __typename?: 'SearchResultConnection', edges: Array<{ __typename?: 'SearchResultEdge', cursor: string, node: { __typename?: 'SearchRecord', recordId: string, objectNameSingular: string, label: string, imageUrl?: string | null, tsRankCD: number, tsRank: number } }>, pageInfo: { __typename?: 'SearchResultPageInfo', hasNextPage: boolean, endCursor?: string | null } } };
 
 export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -2921,7 +2961,7 @@ export type OnDbEventSubscriptionVariables = Exact<{
 
 export type OnDbEventSubscription = { __typename?: 'Subscription', onDbEvent: { __typename?: 'OnDbEventDTO', eventDate: string, action: DatabaseEventAction, objectNameSingular: string, updatedFields?: Array<string> | null, record: any } };
 
-export type UserQueryFragmentFragment = { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars: any, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', settingsPermissions?: Array<SettingPermissionType> | null, objectRecordsPermissions?: Array<PermissionsOnAllObjectRecords> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: any, hasReachedCurrentPeriodCap: boolean, billingProduct?: { __typename?: 'BillingProduct', name: string, description: string, metadata: { __typename?: 'BillingProductMetadata', planKey: BillingPlanKey, priceUsageBased: BillingUsageType, productKey: BillingProductKey } } | null }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean } | null } | null, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, subdomain: string, customDomain?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null } } | null }> };
+export type UserQueryFragmentFragment = { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars: any, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: any, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', settingsPermissions?: Array<SettingPermissionType> | null, objectRecordsPermissions?: Array<PermissionsOnAllObjectRecords> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: any, hasReachedCurrentPeriodCap: boolean, billingProduct?: { __typename?: 'BillingProduct', name: string, description: string, metadata: { __typename?: 'BillingProductMetadata', planKey: BillingPlanKey, priceUsageBased: BillingUsageType, productKey: BillingProductKey } } | null }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean } | null } | null, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, subdomain: string, customDomain?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null } } | null }> };
 
 export type DeleteUserAccountMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -2938,7 +2978,7 @@ export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProf
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars: any, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', settingsPermissions?: Array<SettingPermissionType> | null, objectRecordsPermissions?: Array<PermissionsOnAllObjectRecords> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: any, hasReachedCurrentPeriodCap: boolean, billingProduct?: { __typename?: 'BillingProduct', name: string, description: string, metadata: { __typename?: 'BillingProductMetadata', planKey: BillingPlanKey, priceUsageBased: BillingUsageType, productKey: BillingProductKey } } | null }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean } | null } | null, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, subdomain: string, customDomain?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null } } | null }> } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars: any, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: any, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', settingsPermissions?: Array<SettingPermissionType> | null, objectRecordsPermissions?: Array<PermissionsOnAllObjectRecords> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: any, hasReachedCurrentPeriodCap: boolean, billingProduct?: { __typename?: 'BillingProduct', name: string, description: string, metadata: { __typename?: 'BillingProductMetadata', planKey: BillingPlanKey, priceUsageBased: BillingUsageType, productKey: BillingProductKey } } | null }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean } | null } | null, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, subdomain: string, customDomain?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null } } | null }> } };
 
 export type ActivateWorkflowVersionMutationVariables = Exact<{
   workflowVersionId: Scalars['String'];
@@ -3035,6 +3075,8 @@ export type GetWorkspaceInvitationsQueryVariables = Exact<{ [key: string]: never
 
 
 export type GetWorkspaceInvitationsQuery = { __typename?: 'Query', findWorkspaceInvitations: Array<{ __typename?: 'WorkspaceInvitation', id: any, email: string, expiresAt: string }> };
+
+export type DeletedWorkspaceMemberQueryFragmentFragment = { __typename?: 'DeletedWorkspaceMember', id: any, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } };
 
 export type WorkspaceMemberQueryFragmentFragment = { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } };
 
@@ -3209,6 +3251,17 @@ export const WorkspaceMemberQueryFragmentFragmentDoc = gql`
   timeFormat
 }
     `;
+export const DeletedWorkspaceMemberQueryFragmentFragmentDoc = gql`
+    fragment DeletedWorkspaceMemberQueryFragment on DeletedWorkspaceMember {
+  id
+  name {
+    firstName
+    lastName
+  }
+  avatarUrl
+  userEmail
+}
+    `;
 export const RoleFragmentFragmentDoc = gql`
     fragment RoleFragment on Role {
   id
@@ -3238,6 +3291,9 @@ export const UserQueryFragmentFragmentDoc = gql`
   }
   workspaceMembers {
     ...WorkspaceMemberQueryFragment
+  }
+  deletedWorkspaceMembers {
+    ...DeletedWorkspaceMemberQueryFragment
   }
   currentUserWorkspace {
     settingsPermissions
@@ -3310,6 +3366,7 @@ export const UserQueryFragmentFragmentDoc = gql`
   userVars
 }
     ${WorkspaceMemberQueryFragmentFragmentDoc}
+${DeletedWorkspaceMemberQueryFragmentFragmentDoc}
 ${RoleFragmentFragmentDoc}`;
 export const GetTimelineCalendarEventsFromCompanyIdDocument = gql`
     query GetTimelineCalendarEventsFromCompanyId($companyId: UUID!, $page: Int!, $pageSize: Int!) {
@@ -3511,40 +3568,6 @@ export function useTrackAnalyticsMutation(baseOptions?: Apollo.MutationHookOptio
 export type TrackAnalyticsMutationHookResult = ReturnType<typeof useTrackAnalyticsMutation>;
 export type TrackAnalyticsMutationResult = Apollo.MutationResult<TrackAnalyticsMutation>;
 export type TrackAnalyticsMutationOptions = Apollo.BaseMutationOptions<TrackAnalyticsMutation, TrackAnalyticsMutationVariables>;
-export const TrackDocument = gql`
-    mutation Track($action: String!, $payload: JSON!) {
-  track(action: $action, payload: $payload) {
-    success
-  }
-}
-    `;
-export type TrackMutationFn = Apollo.MutationFunction<TrackMutation, TrackMutationVariables>;
-
-/**
- * __useTrackMutation__
- *
- * To run a mutation, you first call `useTrackMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useTrackMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [trackMutation, { data, loading, error }] = useTrackMutation({
- *   variables: {
- *      action: // value for 'action'
- *      payload: // value for 'payload'
- *   },
- * });
- */
-export function useTrackMutation(baseOptions?: Apollo.MutationHookOptions<TrackMutation, TrackMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<TrackMutation, TrackMutationVariables>(TrackDocument, options);
-      }
-export type TrackMutationHookResult = ReturnType<typeof useTrackMutation>;
-export type TrackMutationResult = Apollo.MutationResult<TrackMutation>;
-export type TrackMutationOptions = Apollo.BaseMutationOptions<TrackMutation, TrackMutationVariables>;
 export const UploadFileDocument = gql`
     mutation uploadFile($file: Upload!, $fileFolder: FileFolder) {
   uploadFile(file: $file, fileFolder: $fileFolder)
@@ -3751,8 +3774,8 @@ export type GenerateTransientTokenMutationHookResult = ReturnType<typeof useGene
 export type GenerateTransientTokenMutationResult = Apollo.MutationResult<GenerateTransientTokenMutation>;
 export type GenerateTransientTokenMutationOptions = Apollo.BaseMutationOptions<GenerateTransientTokenMutation, GenerateTransientTokenMutationVariables>;
 export const GetAuthTokensFromLoginTokenDocument = gql`
-    mutation GetAuthTokensFromLoginToken($loginToken: String!) {
-  getAuthTokensFromLoginToken(loginToken: $loginToken) {
+    mutation GetAuthTokensFromLoginToken($loginToken: String!, $origin: String!) {
+  getAuthTokensFromLoginToken(loginToken: $loginToken, origin: $origin) {
     tokens {
       ...AuthTokensFragment
     }
@@ -3775,6 +3798,7 @@ export type GetAuthTokensFromLoginTokenMutationFn = Apollo.MutationFunction<GetA
  * const [getAuthTokensFromLoginTokenMutation, { data, loading, error }] = useGetAuthTokensFromLoginTokenMutation({
  *   variables: {
  *      loginToken: // value for 'loginToken'
+ *      origin: // value for 'origin'
  *   },
  * });
  */
@@ -3821,11 +3845,12 @@ export type GetAuthorizationUrlForSsoMutationHookResult = ReturnType<typeof useG
 export type GetAuthorizationUrlForSsoMutationResult = Apollo.MutationResult<GetAuthorizationUrlForSsoMutation>;
 export type GetAuthorizationUrlForSsoMutationOptions = Apollo.BaseMutationOptions<GetAuthorizationUrlForSsoMutation, GetAuthorizationUrlForSsoMutationVariables>;
 export const GetLoginTokenFromCredentialsDocument = gql`
-    mutation GetLoginTokenFromCredentials($email: String!, $password: String!, $captchaToken: String) {
+    mutation GetLoginTokenFromCredentials($email: String!, $password: String!, $captchaToken: String, $origin: String!) {
   getLoginTokenFromCredentials(
     email: $email
     password: $password
     captchaToken: $captchaToken
+    origin: $origin
   ) {
     loginToken {
       ...AuthTokenFragment
@@ -3851,6 +3876,7 @@ export type GetLoginTokenFromCredentialsMutationFn = Apollo.MutationFunction<Get
  *      email: // value for 'email'
  *      password: // value for 'password'
  *      captchaToken: // value for 'captchaToken'
+ *      origin: // value for 'origin'
  *   },
  * });
  */
@@ -3862,10 +3888,12 @@ export type GetLoginTokenFromCredentialsMutationHookResult = ReturnType<typeof u
 export type GetLoginTokenFromCredentialsMutationResult = Apollo.MutationResult<GetLoginTokenFromCredentialsMutation>;
 export type GetLoginTokenFromCredentialsMutationOptions = Apollo.BaseMutationOptions<GetLoginTokenFromCredentialsMutation, GetLoginTokenFromCredentialsMutationVariables>;
 export const GetLoginTokenFromEmailVerificationTokenDocument = gql`
-    mutation GetLoginTokenFromEmailVerificationToken($emailVerificationToken: String!, $captchaToken: String) {
+    mutation GetLoginTokenFromEmailVerificationToken($emailVerificationToken: String!, $email: String!, $captchaToken: String, $origin: String!) {
   getLoginTokenFromEmailVerificationToken(
     emailVerificationToken: $emailVerificationToken
+    email: $email
     captchaToken: $captchaToken
+    origin: $origin
   ) {
     loginToken {
       ...AuthTokenFragment
@@ -3893,7 +3921,9 @@ export type GetLoginTokenFromEmailVerificationTokenMutationFn = Apollo.MutationF
  * const [getLoginTokenFromEmailVerificationTokenMutation, { data, loading, error }] = useGetLoginTokenFromEmailVerificationTokenMutation({
  *   variables: {
  *      emailVerificationToken: // value for 'emailVerificationToken'
+ *      email: // value for 'email'
  *      captchaToken: // value for 'captchaToken'
+ *      origin: // value for 'origin'
  *   },
  * });
  */
@@ -3983,8 +4013,8 @@ export type RenewTokenMutationHookResult = ReturnType<typeof useRenewTokenMutati
 export type RenewTokenMutationResult = Apollo.MutationResult<RenewTokenMutation>;
 export type RenewTokenMutationOptions = Apollo.BaseMutationOptions<RenewTokenMutation, RenewTokenMutationVariables>;
 export const ResendEmailVerificationTokenDocument = gql`
-    mutation ResendEmailVerificationToken($email: String!) {
-  resendEmailVerificationToken(email: $email) {
+    mutation ResendEmailVerificationToken($email: String!, $origin: String!) {
+  resendEmailVerificationToken(email: $email, origin: $origin) {
     success
   }
 }
@@ -4005,6 +4035,7 @@ export type ResendEmailVerificationTokenMutationFn = Apollo.MutationFunction<Res
  * const [resendEmailVerificationTokenMutation, { data, loading, error }] = useResendEmailVerificationTokenMutation({
  *   variables: {
  *      email: // value for 'email'
+ *      origin: // value for 'origin'
  *   },
  * });
  */
@@ -4209,8 +4240,8 @@ export type CheckUserExistsQueryHookResult = ReturnType<typeof useCheckUserExist
 export type CheckUserExistsLazyQueryHookResult = ReturnType<typeof useCheckUserExistsLazyQuery>;
 export type CheckUserExistsQueryResult = Apollo.QueryResult<CheckUserExistsQuery, CheckUserExistsQueryVariables>;
 export const GetPublicWorkspaceDataByDomainDocument = gql`
-    query GetPublicWorkspaceDataByDomain {
-  getPublicWorkspaceDataByDomain {
+    query GetPublicWorkspaceDataByDomain($origin: String!) {
+  getPublicWorkspaceDataByDomain(origin: $origin) {
     id
     logo
     displayName
@@ -4247,10 +4278,11 @@ export const GetPublicWorkspaceDataByDomainDocument = gql`
  * @example
  * const { data, loading, error } = useGetPublicWorkspaceDataByDomainQuery({
  *   variables: {
+ *      origin: // value for 'origin'
  *   },
  * });
  */
-export function useGetPublicWorkspaceDataByDomainQuery(baseOptions?: Apollo.QueryHookOptions<GetPublicWorkspaceDataByDomainQuery, GetPublicWorkspaceDataByDomainQueryVariables>) {
+export function useGetPublicWorkspaceDataByDomainQuery(baseOptions: Apollo.QueryHookOptions<GetPublicWorkspaceDataByDomainQuery, GetPublicWorkspaceDataByDomainQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetPublicWorkspaceDataByDomainQuery, GetPublicWorkspaceDataByDomainQueryVariables>(GetPublicWorkspaceDataByDomainDocument, options);
       }
@@ -4614,20 +4646,30 @@ export type GetClientConfigQueryHookResult = ReturnType<typeof useGetClientConfi
 export type GetClientConfigLazyQueryHookResult = ReturnType<typeof useGetClientConfigLazyQuery>;
 export type GetClientConfigQueryResult = Apollo.QueryResult<GetClientConfigQuery, GetClientConfigQueryVariables>;
 export const SearchDocument = gql`
-    query Search($searchInput: String!, $limit: Int!, $excludedObjectNameSingulars: [String!], $includedObjectNameSingulars: [String!], $filter: ObjectRecordFilterInput) {
+    query Search($searchInput: String!, $limit: Int!, $after: String, $excludedObjectNameSingulars: [String!], $includedObjectNameSingulars: [String!], $filter: ObjectRecordFilterInput) {
   search(
     searchInput: $searchInput
     limit: $limit
+    after: $after
     excludedObjectNameSingulars: $excludedObjectNameSingulars
     includedObjectNameSingulars: $includedObjectNameSingulars
     filter: $filter
   ) {
-    recordId
-    objectNameSingular
-    label
-    imageUrl
-    tsRankCD
-    tsRank
+    edges {
+      node {
+        recordId
+        objectNameSingular
+        label
+        imageUrl
+        tsRankCD
+        tsRank
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
   }
 }
     `;
@@ -4646,6 +4688,7 @@ export const SearchDocument = gql`
  *   variables: {
  *      searchInput: // value for 'searchInput'
  *      limit: // value for 'limit'
+ *      after: // value for 'after'
  *      excludedObjectNameSingulars: // value for 'excludedObjectNameSingulars'
  *      includedObjectNameSingulars: // value for 'includedObjectNameSingulars'
  *      filter: // value for 'filter'

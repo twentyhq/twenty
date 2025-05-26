@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { EntityManager } from 'typeorm';
-
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 
@@ -14,7 +12,6 @@ export class BlocklistRepository {
   public async getById(
     id: string,
     workspaceId: string,
-    transactionManager?: EntityManager,
   ): Promise<BlocklistWorkspaceEntity | null> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
@@ -24,7 +21,6 @@ export class BlocklistRepository {
         `SELECT * FROM ${dataSourceSchema}."blocklist" WHERE "id" = $1`,
         [id],
         workspaceId,
-        transactionManager,
       );
 
     if (!blocklistItems || blocklistItems.length === 0) {
@@ -37,7 +33,6 @@ export class BlocklistRepository {
   public async getByWorkspaceMemberId(
     workspaceMemberId: string,
     workspaceId: string,
-    transactionManager?: EntityManager,
   ): Promise<BlocklistWorkspaceEntity[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
@@ -46,7 +41,6 @@ export class BlocklistRepository {
       `SELECT * FROM ${dataSourceSchema}."blocklist" WHERE "workspaceMemberId" = $1`,
       [workspaceMemberId],
       workspaceId,
-      transactionManager,
     );
   }
 }

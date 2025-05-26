@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { EntityManager } from 'typeorm';
-
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
 import {
-  AutomatedTriggerType,
   AutomatedTriggerSettings,
+  AutomatedTriggerType,
   WorkflowAutomatedTriggerWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 
@@ -21,30 +19,10 @@ export class AutomatedTriggerWorkspaceService {
     settings,
   }: {
     workflowId: string;
-    manager: EntityManager;
+    manager: WorkspaceEntityManager;
     type: AutomatedTriggerType;
     settings: AutomatedTriggerSettings;
   }) {
-    if (type === AutomatedTriggerType.DATABASE_EVENT) {
-      // Todo: remove workflowEventListenerRepository updates when data are migrated to workflowAutomatedTrigger
-      const workflowEventListenerRepository =
-        await this.twentyORMManager.getRepository<WorkflowEventListenerWorkspaceEntity>(
-          'workflowEventListener',
-        );
-
-      const workflowEventListener = workflowEventListenerRepository.create({
-        workflowId,
-        eventName: settings.eventName,
-      });
-
-      await workflowEventListenerRepository.save(
-        workflowEventListener,
-        {},
-        manager,
-      );
-      // end-Todo
-    }
-
     const workflowAutomatedTriggerRepository =
       await this.twentyORMManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
         'workflowAutomatedTrigger',
@@ -68,22 +46,8 @@ export class AutomatedTriggerWorkspaceService {
     manager,
   }: {
     workflowId: string;
-    manager: EntityManager;
+    manager: WorkspaceEntityManager;
   }) {
-    // Todo: remove workflowEventListenerRepository updates when data are migrated to workflowAutomatedTrigger
-    const workflowEventListenerRepository =
-      await this.twentyORMManager.getRepository<WorkflowEventListenerWorkspaceEntity>(
-        'workflowEventListener',
-      );
-
-    await workflowEventListenerRepository.delete(
-      {
-        workflowId,
-      },
-      manager,
-    );
-    // end-Todo
-
     const workflowAutomatedTriggerRepository =
       await this.twentyORMManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
         'workflowAutomatedTrigger',

@@ -124,7 +124,7 @@ jobs:
         retention-days: 30
   ci-e2e-status-check:
       if: always() && !cancelled()
-      timeout-minutes: 1
+      timeout-minutes: 5
       runs-on: ubuntu-latest
       needs: [changed-files-check, test]
       steps:

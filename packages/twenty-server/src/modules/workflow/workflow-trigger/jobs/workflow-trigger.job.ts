@@ -8,6 +8,7 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { handleWorkflowTriggerException } from 'src/engine/core-modules/workflow/filters/workflow-trigger-graphql-api-exception.filter';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
@@ -52,14 +53,14 @@ export class WorkflowTriggerJob {
 
       if (!workflow) {
         throw new WorkflowTriggerException(
-          'Workflow not found',
+          `Workflow ${data.workflowId} not found in workspace ${data.workspaceId}`,
           WorkflowTriggerExceptionCode.NOT_FOUND,
         );
       }
 
       if (!workflow.lastPublishedVersionId) {
         throw new WorkflowTriggerException(
-          'Workflow has no published version',
+          `Workflow ${data.workflowId} has no published version in workspace ${data.workspaceId}`,
           WorkflowTriggerExceptionCode.INTERNAL_ERROR,
         );
       }
@@ -75,13 +76,13 @@ export class WorkflowTriggerJob {
 
       if (!workflowVersion) {
         throw new WorkflowTriggerException(
-          'Workflow version not found',
+          `Workflow version ${workflow.lastPublishedVersionId} not found in workspace ${data.workspaceId}`,
           WorkflowTriggerExceptionCode.NOT_FOUND,
         );
       }
       if (workflowVersion.status !== WorkflowVersionStatus.ACTIVE) {
         throw new WorkflowTriggerException(
-          'Workflow version is not active',
+          `Workflow version ${workflowVersion.id} is not active in workspace ${data.workspaceId}`,
           WorkflowTriggerExceptionCode.INTERNAL_ERROR,
         );
       }
@@ -106,7 +107,7 @@ export class WorkflowTriggerJob {
         jobName: WorkflowTriggerJob.name,
         jobId: data.workflowId,
       });
-      throw e;
+      handleWorkflowTriggerException(e);
     }
   }
 }

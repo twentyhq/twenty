@@ -22,6 +22,7 @@ export function filterOutSelfAndContactsFromCompanyOrWorkspace(
 
   const workspaceMembersMap = workspaceMembers.reduce(
     (map, workspaceMember) => {
+      // @ts-expect-error legacy noImplicitAny
       map[workspaceMember.userEmail.toLowerCase()] = true;
 
       return map;
@@ -36,6 +37,7 @@ export function filterOutSelfAndContactsFromCompanyOrWorkspace(
     (contact) =>
       (isDifferentDomain(contact, selfDomainName) ||
         !isWorkDomain(selfDomainName)) &&
+      // @ts-expect-error legacy noImplicitAny
       !workspaceMembersMap[contact.handle.toLowerCase()] &&
       !allHandles.includes(contact.handle.toLowerCase()),
   );

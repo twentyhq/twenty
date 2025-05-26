@@ -29,7 +29,7 @@ describe('getFieldPreviewValue', () => {
     });
 
     // Then
-    expect(result).toBe(false);
+    expect(result).toBe(true);
   });
 
   it('returns a placeholder defaultValue if the field metadata does not have a defaultValue', () => {

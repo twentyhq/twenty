@@ -7,7 +7,7 @@ import { seedUsers } from 'src/database/typeorm-seeds/core/users';
 import { seedWorkspaces } from 'src/database/typeorm-seeds/core/workspaces';
 
 type SeedCoreSchemaArgs = {
-  workspaceDataSource: DataSource;
+  dataSource: DataSource;
   workspaceId: string;
   appVersion: string | undefined;
   seedBilling?: boolean;
@@ -16,7 +16,7 @@ type SeedCoreSchemaArgs = {
 
 export const seedCoreSchema = async ({
   appVersion,
-  workspaceDataSource,
+  dataSource,
   workspaceId,
   seedBilling = true,
   seedFeatureFlags: shouldSeedFeatureFlags = true,
@@ -24,23 +24,19 @@ export const seedCoreSchema = async ({
   const schemaName = 'core';
 
   await seedWorkspaces({
-    workspaceDataSource,
+    dataSource,
     schemaName,
     workspaceId,
     appVersion,
   });
-  await seedUsers(workspaceDataSource, schemaName);
-  await seedUserWorkspaces(workspaceDataSource, schemaName, workspaceId);
+  await seedUsers(dataSource, schemaName);
+  await seedUserWorkspaces(dataSource, schemaName, workspaceId);
 
   if (shouldSeedFeatureFlags) {
-    await seedFeatureFlags(workspaceDataSource, schemaName, workspaceId);
+    await seedFeatureFlags(dataSource, schemaName, workspaceId);
   }
 
   if (seedBilling) {
-    await seedBillingSubscriptions(
-      workspaceDataSource,
-      schemaName,
-      workspaceId,
-    );
+    await seedBillingSubscriptions(dataSource, schemaName, workspaceId);
   }
 };

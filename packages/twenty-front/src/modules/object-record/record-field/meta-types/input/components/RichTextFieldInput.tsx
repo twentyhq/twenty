@@ -23,9 +23,12 @@ export type RichTextFieldInputProps = {
 const StyledContainer = styled.div`
   background-color: ${({ theme }) => theme.background.primary};
   width: 480px;
-  padding: ${({ theme }) => theme.spacing(2)};
-  margin: 0 0 0 ${({ theme }) => theme.spacing(-6)};
+  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(2)}
+    ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(12)};
+  margin: 0 0 0 ${({ theme }) => theme.spacing(-5)};
   display: flex;
+  box-sizing: border-box;
+  position: relative;
 `;
 
 const StyledCollapseButton = styled.div`

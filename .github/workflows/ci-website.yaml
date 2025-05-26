@@ -62,7 +62,7 @@ jobs:
           NEXT_PUBLIC_KEYSTATIC_GITHUB_APP_SLUG: xxx
   ci-website-status-check:
     if: always() && !cancelled()
-    timeout-minutes: 10
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     needs: [changed-files-check, website-build]
     steps:

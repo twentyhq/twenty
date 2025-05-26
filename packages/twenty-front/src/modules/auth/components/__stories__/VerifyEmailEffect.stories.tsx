@@ -18,7 +18,7 @@ const VerifyEmailEffectErrorState = ({ email = 'user@example.com' }) => {
 };
 
 const meta: Meta<typeof VerifyEmailEffectErrorState> = {
-  title: 'Pages/Auth/VerifyEmailEffect',
+  title: 'Modules/Auth/VerifyEmailEffect',
   component: VerifyEmailEffectErrorState,
   decorators: [
     (Story) => (

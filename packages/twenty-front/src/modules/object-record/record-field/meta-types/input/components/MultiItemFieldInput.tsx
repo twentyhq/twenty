@@ -180,7 +180,7 @@ export const MultiItemFieldInput = <T,>({
   };
 
   return (
-    <DropdownMenu ref={containerRef}>
+    <DropdownMenu ref={containerRef} width={200}>
       {!!items.length && (
         <>
           <DropdownMenuItemsContainer>

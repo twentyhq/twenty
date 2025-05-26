@@ -1,7 +1,6 @@
-import { EntityManager } from 'typeorm';
-
 import { DEV_SEED_MESSAGE_CHANNEL_IDS } from 'src/database/typeorm-seeds/workspace/message-channels';
 import { DEV_SEED_MESSAGE_IDS } from 'src/database/typeorm-seeds/workspace/messages';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 
 const tableName = 'messageChannelMessageAssociation';
@@ -13,11 +12,13 @@ export const DEV_SEED_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_IDS = {
 };
 
 export const seedMessageChannelMessageAssociation = async (
-  entityManager: EntityManager,
+  entityManager: WorkspaceEntityManager,
   schemaName: string,
 ) => {
   await entityManager
-    .createQueryBuilder()
+    .createQueryBuilder(undefined, undefined, undefined, {
+      shouldBypassPermissionChecks: true,
+    })
     .insert()
     .into(`${schemaName}.${tableName}`, [
       'id',

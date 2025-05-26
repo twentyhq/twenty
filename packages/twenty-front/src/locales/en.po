@@ -88,6 +88,11 @@ msgstr "{apiKeyName} API Key"
 msgid "{contextStoreNumberOfSelectedRecords} selected"
 msgstr "{contextStoreNumberOfSelectedRecords} selected"
 
+#. js-lingui-id: wapGcj
+#: src/modules/auth/components/VerifyEmailEffect.tsx
+msgid "{message}"
+msgstr "{message}"
+
 #. js-lingui-id: 6j5rE1
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowRecordAgnosticActions.tsx
 #: src/modules/action-menu/actions/record-actions/run-workflow-actions/hooks/useRunWorkflowRecordActions.tsx
@@ -98,6 +103,11 @@ msgstr "{name}"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
 msgstr "{workspaceMemberName} will be unassigned from the following role:"
+
+#. js-lingui-id: NNQszp
+#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
+msgid "⚠️ Please verify the auto mapping of the columns. You can also ignore or change the mapping of the columns."
+msgstr "⚠️ Please verify the auto mapping of the columns. You can also ignore or change the mapping of the columns."
 
 #. js-lingui-id: YT0WJ4
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -612,7 +622,7 @@ msgid "Are you sure you want to delete this record? It can be recovered from the
 msgstr "Are you sure you want to delete this record? It can be recovered from the Command menu."
 
 #. js-lingui-id: rnCqBK
-#: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
+#: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
 msgid "Are you sure? Your current information will not be saved."
 msgstr "Are you sure? Your current information will not be saved."
 
@@ -793,7 +803,7 @@ msgstr "Can't change API names for standard objects"
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
-#: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
+#: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 msgid "Cancel"
 msgstr "Cancel"
@@ -1242,6 +1252,11 @@ msgstr "Create your workspace"
 msgid "Created"
 msgstr "Created"
 
+#. js-lingui-id: R3PLzn
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
+msgid "currencies"
+msgstr "currencies"
+
 #. js-lingui-id: 6YzXhC
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Current value from server environment. Set a custom value to override."
@@ -1478,6 +1493,11 @@ msgstr "Delete account and all the associated data"
 msgid "Delete API key"
 msgstr "Delete API key"
 
+#. js-lingui-id: x2p4/4
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
+msgid "Delete field"
+msgstr "Delete field"
+
 #. js-lingui-id: 4dpwsE
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 #~ msgid "Delete record"
@@ -1711,6 +1731,7 @@ msgstr "Earliest date"
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
+#: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Edit"
 msgstr "Edit"
 
@@ -1793,8 +1814,8 @@ msgstr "Email verification"
 
 #. js-lingui-id: TBv/iZ
 #: src/modules/auth/components/VerifyEmailEffect.tsx
-msgid "Email verification failed."
-msgstr "Email verification failed."
+#~ msgid "Email verification failed."
+#~ msgstr "Email verification failed."
 
 #. js-lingui-id: svTijF
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
@@ -1942,6 +1963,11 @@ msgstr "Error deleting SSO Identity Provider"
 msgid "Error editing SSO Identity Provider"
 msgstr "Error editing SSO Identity Provider"
 
+#. js-lingui-id: 2GvilU
+#: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
+msgid "Error loading message"
+msgstr "Error loading message"
+
 #. js-lingui-id: bj7nh3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Error regenerating api key: {err}"
@@ -2015,7 +2041,7 @@ msgid "Existing objects"
 msgstr "Existing objects"
 
 #. js-lingui-id: ydzS9x
-#: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
+#: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
 msgid "Exit"
 msgstr "Exit"
 
@@ -2025,7 +2051,7 @@ msgstr "Exit"
 #~ msgstr "Exit Full Screen"
 
 #. js-lingui-id: XB4onr
-#: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
+#: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
 msgid "Exit import flow"
 msgstr "Exit import flow"
 
@@ -2327,6 +2353,11 @@ msgstr "Global"
 msgid "Go to Companies"
 msgstr "Go to Companies"
 
+#. js-lingui-id: dHvI9O
+#: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
+msgid "Go to Draft"
+msgstr "Go to Draft"
+
 #. js-lingui-id: BQE4ob
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Notes"
@@ -2350,7 +2381,9 @@ msgid "Go to runs"
 msgstr "Go to runs"
 
 #. js-lingui-id: mT57+Q
+#: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Settings"
 msgstr "Go to Settings"
@@ -2433,6 +2466,7 @@ msgstr "Hidden Fields"
 
 #. js-lingui-id: vLyv1R
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Hide"
 msgstr "Hide"
 
@@ -2517,6 +2551,11 @@ msgstr "Identity Provider"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Identity Provider Metadata XML"
 msgstr "Identity Provider Metadata XML"
+
+#. js-lingui-id: ZfP/Ap
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
+msgid "If this is unexpected, please verify your settings."
+msgstr "If this is unexpected, please verify your settings."
 
 #. js-lingui-id: j843N3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -2744,6 +2783,11 @@ msgstr "Italian"
 msgid "Japanese"
 msgstr "Japanese"
 
+#. js-lingui-id: VIK/N0
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
+msgid "JSON keys cannot contain spaces"
+msgstr "JSON keys cannot contain spaces"
+
 #. js-lingui-id: OGXtL8
 #: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -2813,6 +2857,16 @@ msgstr "Last 7 Days (oldest → newest)"
 msgid "Last Name"
 msgstr "Last Name"
 
+#. js-lingui-id: s0kiVA
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Last payment failed. Please contact your admin."
+msgstr "Last payment failed. Please contact your admin."
+
+#. js-lingui-id: 3u/3zO
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Last payment failed. Please update your billing details."
+msgstr "Last payment failed. Please update your billing details."
+
 #. js-lingui-id: wL3cK8
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Latest"
@@ -2865,6 +2919,11 @@ msgstr "Link copied to clipboard"
 msgid "Listings"
 msgstr "Listings"
 
+#. js-lingui-id: Nx262D
+#: src/modules/activities/files/components/DocumentViewer.tsx
+msgid "Loading csv ... "
+msgstr "Loading csv ... "
+
 #. js-lingui-id: s1MstR
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Loading metrics data..."
@@ -2872,6 +2931,7 @@ msgstr "Loading metrics data..."
 
 #. js-lingui-id: Z3FXyt
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionDisplay.tsx
+#: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Loading..."
 msgstr "Loading..."
 
@@ -2967,6 +3027,11 @@ msgstr "Max"
 msgid "Members"
 msgstr "Members"
 
+#. js-lingui-id: U15XwX
+#: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
+msgid "Message not found"
+msgstr "Message not found"
+
 #. js-lingui-id: elpx6r
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 msgid "Message Sync"
@@ -3020,11 +3085,13 @@ msgstr "More options"
 
 #. js-lingui-id: iSLA/r
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Move left"
 msgstr "Move left"
 
 #. js-lingui-id: Ubl2by
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Move right"
 msgstr "Move right"
 
@@ -3212,6 +3279,11 @@ msgstr "No connected account"
 msgid "No country"
 msgstr "No country"
 
+#. js-lingui-id: 7tCnBa
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
+msgid "No Data Available for Remote Table"
+msgstr "No Data Available for Remote Table"
+
 #. js-lingui-id: pxvJ9B
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "No data containing errors"
@@ -3226,6 +3298,11 @@ msgstr "No data found"
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "No free workflow executions left. End trial period and activate your billing to continue."
 msgstr "No free workflow executions left. End trial period and activate your billing to continue."
+
+#. js-lingui-id: pxYUeX
+#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
+msgid "No free workflow executions left. Please contact your admin."
+msgstr "No free workflow executions left. Please contact your admin."
 
 #. js-lingui-id: OcMef3
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
@@ -3305,6 +3382,7 @@ msgstr "No records found"
 
 #. js-lingui-id: Ev2r9A
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCountrySelect.tsx
 msgid "No results"
 msgstr "No results"
 
@@ -3376,6 +3454,16 @@ msgstr "Not empty"
 #: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
 msgid "Not Found"
 msgstr "Not Found"
+
+#. js-lingui-id: 51G4/+
+#: src/modules/activities/calendar/components/CalendarEventNotSharedContent.tsx
+msgid "Not shared"
+msgstr "Not shared"
+
+#. js-lingui-id: uzFo/5
+#: src/modules/activities/timeline-activities/rows/message/components/EventCardMessageBodyNotShared.tsx
+msgid "Not shared by {notSharedByFullName}"
+msgstr "Not shared by {notSharedByFullName}"
 
 #. js-lingui-id: hZWthZ
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -3751,6 +3839,8 @@ msgstr "Record image"
 
 #. js-lingui-id: K6/7kH
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
 msgid "Record label"
 msgstr "Record label"
 
@@ -3844,6 +3934,11 @@ msgstr "Remove from favorites"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Remove option"
 msgstr "Remove option"
+
+#. js-lingui-id: Ee8JBW
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
+msgid "Reorder field"
+msgstr "Reorder field"
 
 #. js-lingui-id: OfhWJH
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
@@ -4016,16 +4111,22 @@ msgstr "Search an index..."
 msgid "Search config variables"
 msgstr "Search config variables"
 
+#. js-lingui-id: WLfEv1
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCountrySelect.tsx
+msgid "Search country"
+msgstr "Search country"
+
 #. js-lingui-id: sSARNY
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 msgid "Search currency"
 msgstr "Search currency"
 
 #. js-lingui-id: 7taA9j
+#: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFieldSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput.tsx
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterDropdownFieldSelectMenu.tsx
 msgid "Search fields"
 msgstr "Search fields"
 
@@ -4175,8 +4276,8 @@ msgstr "Select Source"
 
 #. js-lingui-id: mWHn81
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
-msgid "Select the correct field for each column you'd like to import."
-msgstr "Select the correct field for each column you'd like to import."
+#~ msgid "Select the correct field for each column you'd like to import."
+#~ msgstr "Select the correct field for each column you'd like to import."
 
 #. js-lingui-id: pofGCP
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
@@ -4449,6 +4550,11 @@ msgstr "Subject and metadata"
 msgid "Subject and metadata will be shared with your team."
 msgstr "Subject and metadata will be shared with your team."
 
+#. js-lingui-id: DvSvG9
+#: src/modules/activities/timeline-activities/rows/message/components/EventCardMessageForbidden.tsx
+msgid "Subject not shared"
+msgstr "Subject not shared"
+
 #. js-lingui-id: J9ylmk
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Subject, body and attachments will be shared with your team."
@@ -4458,6 +4564,11 @@ msgstr "Subject, body and attachments will be shared with your team."
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Submit"
 msgstr "Submit"
+
+#. js-lingui-id: EDl9kS
+#: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
+msgid "Subscribe"
+msgstr "Subscribe"
 
 #. js-lingui-id: uvY7Wk
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
@@ -4789,6 +4900,7 @@ msgstr "Timestamp and participants will be shared with your team."
 
 #. js-lingui-id: ecUA8p
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
+#: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Today"
 msgstr "Today"
 
@@ -4796,6 +4908,11 @@ msgstr "Today"
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 msgid "Toggle all object permissions"
 msgstr "Toggle all object permissions"
+
+#. js-lingui-id: BRMXj0
+#: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
+msgid "Tomorrow"
+msgstr "Tomorrow"
 
 #. js-lingui-id: vb0Q0/
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -4806,6 +4923,16 @@ msgstr "Toggle all object permissions"
 #: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
 msgid "Track your monthly workflow credit consumption."
 msgstr "Track your monthly workflow credit consumption."
+
+#. js-lingui-id: wN0jHF
+#: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+msgid "Trial expired. Please contact your admin"
+msgstr "Trial expired. Please contact your admin"
+
+#. js-lingui-id: y985qL
+#: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+msgid "Trial expired. Please update your billing details."
+msgstr "Trial expired. Please update your billing details."
 
 #. js-lingui-id: PiUt3N
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
@@ -4872,6 +4999,12 @@ msgstr "Unknown error"
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Unlimited contacts"
 msgstr "Unlimited contacts"
+
+#. js-lingui-id: EkH9pt
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+#: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+msgid "Update"
+msgstr "Update"
 
 #. js-lingui-id: +b7T3G
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
@@ -5227,6 +5360,11 @@ msgstr "Write a secret"
 msgid "yes"
 msgstr "yes"
 
+#. js-lingui-id: y/0uwd
+#: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
+msgid "Yesterday"
+msgstr "Yesterday"
+
 #. js-lingui-id: qsAug0
 #: src/modules/spreadsheet-import/components/MatchColumnSelect.tsx
 #~ msgid "You are already importing this column."
@@ -5286,6 +5424,16 @@ msgstr "Your name as it will be displayed on the app"
 #: src/pages/auth/SignInUp.tsx
 msgid "Your Workspace"
 msgstr "Your Workspace"
+
+#. js-lingui-id: oC6WBs
+#: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
+msgid "Your workspace doesn't have an active subscription."
+msgstr "Your workspace doesn't have an active subscription."
+
+#. js-lingui-id: QBTEtW
+#: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
+msgid "Your workspace doesn't have an active subscription. Please contact your admin."
+msgstr "Your workspace doesn't have an active subscription. Please contact your admin."
 
 #. js-lingui-id: RhNbPE
 #: src/pages/settings/SettingsBilling.tsx

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { EntityManager } from 'typeorm';
-
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { MatchParticipantService } from 'src/modules/match-participant/match-participant.service';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
@@ -16,7 +15,7 @@ export class MessagingMessageParticipantService {
 
   public async saveMessageParticipants(
     participants: ParticipantWithMessageId[],
-    transactionManager?: EntityManager,
+    transactionManager?: WorkspaceEntityManager,
   ): Promise<void> {
     const messageParticipantRepository =
       await this.twentyORMManager.getRepository<MessageParticipantWorkspaceEntity>(

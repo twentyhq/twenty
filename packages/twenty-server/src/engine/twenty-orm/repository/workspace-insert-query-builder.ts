@@ -3,7 +3,7 @@ import { InsertQueryBuilder, ObjectLiteral } from 'typeorm';
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { validateQueryIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.util';
+import { validateQueryIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-delete-query-builder';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-soft-delete-query-builder';
@@ -39,6 +39,7 @@ export class WorkspaceInsertQueryBuilder<
     ) as this;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   override execute(): Promise<any> {
     validateQueryIsPermittedOrThrow(
       this.expressionMap,

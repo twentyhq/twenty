@@ -6,7 +6,6 @@ import { ObjectSortDropdownButton } from '@/object-record/object-sort-dropdown/c
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { TopBar } from '@/ui/layout/top-bar/components/TopBar';
 import { QueryParamsFiltersEffect } from '@/views/components/QueryParamsFiltersEffect';
-import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
 import { ViewBarPageTitle } from '@/views/components/ViewBarPageTitle';
 import { ViewBarSkeletonLoader } from '@/views/components/ViewBarSkeletonLoader';
 import { ViewPickerDropdown } from '@/views/view-picker/components/ViewPickerDropdown';
@@ -38,8 +37,6 @@ export const ViewBar = ({
 }: ViewBarProps) => {
   const { objectNamePlural } = useParams();
 
-  const filterDropdownId = 'view-filter';
-
   const loading = useIsPrefetchLoading();
 
   if (!objectNamePlural) {
@@ -53,7 +50,6 @@ export const ViewBar = ({
       <ViewBarRecordFilterGroupEffect />
       <ViewBarRecordFilterEffect />
       <ViewBarRecordSortEffect />
-      <ViewBarFilterEffect filterDropdownId={filterDropdownId} />
       <QueryParamsFiltersEffect />
       <ViewBarPageTitle />
       <TopBar

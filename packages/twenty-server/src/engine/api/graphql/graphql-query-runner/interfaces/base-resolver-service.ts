@@ -85,12 +85,13 @@ export abstract class GraphqlQueryBaseResolverService<
 
       await this.validate(args, options);
 
-      const dataSource =
-        await this.twentyORMGlobalManager.getDataSourceForWorkspace(
-          authContext.workspace.id,
-        );
+      const workspaceDataSource =
+        await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+          workspaceId: authContext.workspace.id,
+          shouldFailIfMetadataNotFound: false,
+        });
 
-      const featureFlagsMap = dataSource.featureFlagMap;
+      const featureFlagsMap = workspaceDataSource.featureFlagMap;
 
       const isPermissionsV2Enabled =
         featureFlagsMap[FeatureFlagKey.IsPermissionsV2Enabled];
@@ -116,6 +117,7 @@ export abstract class GraphqlQueryBaseResolverService<
       const computedArgs = (await this.queryRunnerArgsFactory.create(
         hookedArgs,
         options,
+        // @ts-expect-error legacy noImplicitAny
         ResolverArgsType[capitalize(operationName)],
       )) as Input;
 
@@ -127,7 +129,7 @@ export abstract class GraphqlQueryBaseResolverService<
       const executedByApiKey = isDefined(authContext.apiKey);
       const shouldBypassPermissionChecks = executedByApiKey;
 
-      const repository = dataSource.getRepository(
+      const repository = workspaceDataSource.getRepository(
         objectMetadataItemWithFieldMaps.nameSingular,
         shouldBypassPermissionChecks,
         roleId,
@@ -137,7 +139,6 @@ export abstract class GraphqlQueryBaseResolverService<
         objectMetadataItemWithFieldMaps.fieldsByName,
         objectMetadataItemWithFieldMaps.fieldsByJoinColumnName,
         options.objectMetadataMaps,
-        featureFlagsMap,
       );
 
       const selectedFields = graphqlFields(options.info);
@@ -151,7 +152,7 @@ export abstract class GraphqlQueryBaseResolverService<
       const graphqlQueryResolverExecutionArgs = {
         args: computedArgs,
         options,
-        dataSource,
+        dataSource: workspaceDataSource,
         repository,
         graphqlQueryParser,
         graphqlQuerySelectedFieldsResult,
@@ -169,23 +170,16 @@ export abstract class GraphqlQueryBaseResolverService<
         objectMetadataItemWithFieldMaps,
         authContext.workspace.id,
         options.objectMetadataMaps,
-        featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
       );
-
-      const resultWithGettersArray = Array.isArray(resultWithGetters)
-        ? resultWithGetters
-        : [resultWithGetters];
 
       await this.workspaceQueryHookService.executePostQueryHooks(
         authContext,
         objectMetadataItemWithFieldMaps.nameSingular,
         operationName,
-        resultWithGettersArray,
+        resultWithGetters,
       );
 
-      return Array.isArray(resultWithGetters)
-        ? resultWithGettersArray
-        : resultWithGettersArray[0];
+      return resultWithGetters;
     } catch (error) {
       workspaceQueryRunnerGraphqlApiExceptionHandler(error, options);
     }
@@ -202,6 +196,7 @@ export abstract class GraphqlQueryBaseResolverService<
       )
     ) {
       const permissionRequired: SettingPermissionType =
+        // @ts-expect-error legacy noImplicitAny
         SYSTEM_OBJECTS_PERMISSIONS_REQUIREMENTS[
           objectMetadataItemWithFieldMaps.nameSingular
         ];

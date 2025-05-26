@@ -18,7 +18,7 @@ async function seedEvents() {
     console.log(`⚡ Seeding ${fixtures.length} events...`);
 
     await client.insert({
-      table: 'auditEvent',
+      table: 'workspaceEvent',
       values: fixtures,
       format: 'JSONEachRow',
     });

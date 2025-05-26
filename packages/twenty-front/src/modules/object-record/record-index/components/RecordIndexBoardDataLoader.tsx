@@ -5,6 +5,7 @@ import { recordGroupIdsComponentState } from '@/object-record/record-group/state
 import { RecordIndexBoardColumnLoaderEffect } from '@/object-record/record-index/components/RecordIndexBoardColumnLoaderEffect';
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { isDefined } from 'twenty-shared/utils';
 
 type RecordIndexBoardDataLoaderProps = {
   objectNameSingular: string;
@@ -31,21 +32,25 @@ export const RecordIndexBoardDataLoader = ({
     (field) => field.id === recordIndexKanbanFieldMetadataId,
   );
 
+  if (!isDefined(recordIndexKanbanFieldMetadataItem)) {
+    return null;
+  }
+
   return (
     <>
-      {recordGroupIds.map((recordGroupId, index) => (
+      {recordGroupIds.map((recordGroupId) => (
         <RecordIndexBoardColumnLoaderEffect
           objectNameSingular={objectNameSingular}
-          boardFieldMetadataId={recordIndexKanbanFieldMetadataId}
+          kanbanFieldMetadataItem={recordIndexKanbanFieldMetadataItem}
           recordBoardId={recordBoardId}
           columnId={recordGroupId}
-          key={index}
+          key={recordGroupId}
         />
       ))}
-      {recordIndexKanbanFieldMetadataItem?.isNullable && (
+      {recordIndexKanbanFieldMetadataItem.isNullable === true && (
         <RecordIndexBoardColumnLoaderEffect
           objectNameSingular={objectNameSingular}
-          boardFieldMetadataId={recordIndexKanbanFieldMetadataId}
+          kanbanFieldMetadataItem={recordIndexKanbanFieldMetadataItem}
           recordBoardId={recordBoardId}
           columnId={'no-value'}
         />

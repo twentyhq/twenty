@@ -4,7 +4,7 @@ import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { useSetIsRecordTableFocusActive } from '@/object-record/record-table/record-table-cell/hooks/useSetIsRecordTableFocusActive';
-import { isRecordTableFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableFocusActiveComponentState';
+import { isRecordTableCellFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableCellFocusActiveComponentState';
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 
@@ -19,7 +19,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot
     initializeState={({ set }) => {
       set(
-        isRecordTableFocusActiveComponentState.atomFamily({
+        isRecordTableCellFocusActiveComponentState.atomFamily({
           instanceId: 'test-table-id',
         }),
         false,
@@ -50,7 +50,7 @@ const renderHooks = () => {
       const { setIsFocusActive, setIsFocusActiveForCurrentPosition } =
         useSetIsRecordTableFocusActive('test-table-id');
       const isRecordTableFocusActive = useRecoilValue(
-        isRecordTableFocusActiveComponentState.atomFamily({
+        isRecordTableCellFocusActiveComponentState.atomFamily({
           instanceId: 'test-table-id',
         }),
       );
@@ -99,7 +99,7 @@ describe('useSetIsRecordTableFocusActive', () => {
     expect(result.current.focusPosition).toEqual(cellPosition);
   });
 
-  it('should remove focus-active class when focus is deactivated and update isRecordTableFocusActiveComponentState', () => {
+  it('should remove focus-active class when focus is deactivated and update isRecordTableCellFocusActiveComponentState', () => {
     const { result } = renderHooks();
 
     const cellPosition: TableCellPosition = { column: 1, row: 0 };

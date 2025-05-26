@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { SubmitHandler, UseFormReturn } from 'react-hook-form';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 
 import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { signInUpModeState } from '@/auth/states/signInUpModeState';
@@ -15,7 +15,7 @@ import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilState } from 'recoil';
-import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
+import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { useAuth } from '../../hooks/useAuth';
 
 export const useSignInUp = (form: UseFormReturn<Form>) => {
@@ -24,14 +24,16 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   const [signInUpStep, setSignInUpStep] = useRecoilState(signInUpStepState);
   const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
 
-  const { isMatchingLocation } = useIsMatchingLocation();
+  const location = useLocation();
 
   const workspaceInviteHash = useParams().workspaceInviteHash;
   const [searchParams] = useSearchParams();
   const workspacePersonalInviteToken =
     searchParams.get('inviteToken') ?? undefined;
 
-  const [isInviteMode] = useState(() => isMatchingLocation(AppPath.Invite));
+  const [isInviteMode] = useState(() =>
+    isMatchingLocation(location, AppPath.Invite),
+  );
 
   const {
     signInWithCredentials,

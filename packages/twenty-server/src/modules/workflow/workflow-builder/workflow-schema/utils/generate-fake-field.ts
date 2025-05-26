@@ -33,6 +33,7 @@ export const generateFakeField = ({
       icon: icon,
       label: label,
       value: compositeType.properties.reduce((acc, property) => {
+        // @ts-expect-error legacy noImplicitAny
         acc[property.name] = {
           isLeaf: true,
           type: property.type,

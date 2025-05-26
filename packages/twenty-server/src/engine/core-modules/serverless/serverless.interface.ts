@@ -24,6 +24,7 @@ export type ServerlessModuleOptions =
 
 export type ServerlessModuleAsyncOptions = {
   useFactory: (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ...args: any[]
   ) => ServerlessModuleOptions | Promise<ServerlessModuleOptions>;
 } & Pick<ModuleMetadata, 'imports'> &

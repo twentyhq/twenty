@@ -2,12 +2,15 @@ import { isDefined } from 'class-validator';
 import { Plugin } from 'graphql-yoga';
 
 export type CacheMetadataPluginConfig = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   cacheGetter: (key: string) => any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   cacheSetter: (key: string, value: any) => void;
   operationsToCache: string[];
 };
 
 export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const computeCacheKey = (serverContext: any) => {
     const workspaceId = serverContext.req.workspace?.id ?? 'anonymous';
     const workspaceMetadataVersion =
@@ -21,6 +24,7 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
     return `graphql:operations:${operationName}:${workspaceId}:${workspaceMetadataVersion}${localeCacheKey}`;
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const getOperationName = (serverContext: any) =>
     serverContext?.req?.body?.operationName;
 

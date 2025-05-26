@@ -1,13 +1,15 @@
-import { EntityManager } from 'typeorm';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 
 const tableName = 'calendarChannelEventAssociation';
 
 export const seedCalendarChannelEventAssociations = async (
-  entityManager: EntityManager,
+  entityManager: WorkspaceEntityManager,
   schemaName: string,
 ) => {
   await entityManager
-    .createQueryBuilder()
+    .createQueryBuilder(undefined, undefined, undefined, {
+      shouldBypassPermissionChecks: true,
+    })
     .insert()
     .into(`${schemaName}.${tableName}`, [
       'id',

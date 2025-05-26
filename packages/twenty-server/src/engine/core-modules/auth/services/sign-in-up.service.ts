@@ -2,13 +2,10 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import FileType from 'file-type';
 import { TWENTY_ICONS_BASE_URL } from 'twenty-shared/constants';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
-
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
@@ -39,7 +36,6 @@ import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-in
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
-import { getImageBufferFromUrl } from 'src/utils/image';
 import { isWorkEmail } from 'src/utils/is-work-email';
 
 @Injectable()
@@ -232,14 +228,10 @@ export class SignInUpService {
         newUserWithPicture: PartialUserWithPicture;
       };
 
-      const user = await this.saveNewUser(
-        userData.newUserWithPicture,
-        params.workspace.id,
-        {
-          canAccessFullAdminPanel: false,
-          canImpersonate: false,
-        },
-      );
+      const user = await this.saveNewUser(userData.newUserWithPicture, {
+        canAccessFullAdminPanel: false,
+        canImpersonate: false,
+      });
 
       await this.activateOnboardingForUser(user, params.workspace);
 
@@ -284,7 +276,6 @@ export class SignInUpService {
 
   private async saveNewUser(
     newUserWithPicture: PartialUserWithPicture,
-    workspaceId: string,
     {
       canImpersonate,
       canAccessFullAdminPanel,
@@ -293,13 +284,8 @@ export class SignInUpService {
       canAccessFullAdminPanel: boolean;
     },
   ) {
-    const defaultAvatarUrl = await this.uploadPicture(
-      newUserWithPicture.picture,
-      workspaceId,
-    );
     const userCreated = this.userRepository.create({
       ...newUserWithPicture,
-      defaultAvatarUrl,
       canImpersonate,
       canAccessFullAdminPanel,
     });
@@ -368,15 +354,22 @@ export class SignInUpService {
 
     const workspace = await this.workspaceRepository.save(workspaceToCreate);
 
-    const user =
-      userData.type === 'existingUser'
-        ? userData.existingUser
-        : await this.saveNewUser(userData.newUserWithPicture, workspace.id, {
-            canImpersonate,
-            canAccessFullAdminPanel,
-          });
+    const isExistingUser = userData.type === 'existingUser';
+    const user = isExistingUser
+      ? userData.existingUser
+      : await this.saveNewUser(userData.newUserWithPicture, {
+          canImpersonate,
+          canAccessFullAdminPanel,
+        });
 
-    await this.userWorkspaceService.create(user.id, workspace.id);
+    await this.userWorkspaceService.create({
+      userId: user.id,
+      workspaceId: workspace.id,
+      isExistingUser,
+      pictureUrl: isExistingUser
+        ? undefined
+        : userData.newUserWithPicture.picture,
+    });
 
     await this.activateOnboardingForUser(user, workspace);
 
@@ -386,31 +379,5 @@ export class SignInUpService {
     });
 
     return { user, workspace };
-  }
-
-  async uploadPicture(
-    picture: string | null | undefined,
-    workspaceId: string,
-  ): Promise<string | undefined> {
-    if (!picture) {
-      return;
-    }
-
-    const buffer = await getImageBufferFromUrl(
-      picture,
-      this.httpService.axiosRef,
-    );
-
-    const type = await FileType.fromBuffer(buffer);
-
-    const { paths } = await this.fileUploadService.uploadImage({
-      file: buffer,
-      filename: `${v4()}.${type?.ext}`,
-      mimeType: type?.mime,
-      fileFolder: FileFolder.ProfilePicture,
-      workspaceId,
-    });
-
-    return paths[0];
   }
 }

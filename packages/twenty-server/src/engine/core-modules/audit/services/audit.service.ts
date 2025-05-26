@@ -35,16 +35,31 @@ export class AuditService {
       : {};
 
     return {
-      track: <T extends TrackEventName>(
+      insertWorkspaceEvent: <T extends TrackEventName>(
         event: T,
         properties: TrackEventProperties<T>,
       ) =>
         this.preventIfDisabled(() =>
-          this.clickHouseService.insert('auditEvent', [
+          this.clickHouseService.insert('workspaceEvent', [
             { ...userIdAndWorkspaceId, ...makeTrackEvent(event, properties) },
           ]),
         ),
-      pageview: (name: string, properties: Partial<PageviewProperties>) =>
+      createObjectEvent: <T extends TrackEventName>(
+        event: T,
+        properties: TrackEventProperties<T> & {
+          recordId: string;
+          objectMetadataId: string;
+        },
+      ) =>
+        this.preventIfDisabled(() =>
+          this.clickHouseService.insert('objectEvent', [
+            { ...userIdAndWorkspaceId, ...makeTrackEvent(event, properties) },
+          ]),
+        ),
+      createPageviewEvent: (
+        name: string,
+        properties: Partial<PageviewProperties>,
+      ) =>
         this.preventIfDisabled(() =>
           this.clickHouseService.insert('pageview', [
             { ...userIdAndWorkspaceId, ...makePageview(name, properties) },

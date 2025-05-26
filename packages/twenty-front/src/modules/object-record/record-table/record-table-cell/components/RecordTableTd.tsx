@@ -26,7 +26,7 @@ const StyledTd = styled.td<{
     hasRightBorder && !isDragging ? `1px solid ${borderColor}` : 'none'};
 
   padding: 0;
-  transition: 0.3s ease;
+  transition: transform 0.3s ease;
 
   text-align: left;
 

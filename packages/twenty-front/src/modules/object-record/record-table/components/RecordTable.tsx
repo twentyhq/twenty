@@ -6,11 +6,11 @@ import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record
 import { RecordTableBodyEffectsWrapper } from '@/object-record/record-table/components/RecordTableBodyEffectsWrapper';
 import { RecordTableContent } from '@/object-record/record-table/components/RecordTableContent';
 import { RecordTableEmpty } from '@/object-record/record-table/components/RecordTableEmpty';
-import { RecordTableScrollToFocusedElementEffect } from '@/object-record/record-table/components/RecordTableScrollToFocusedElementEffect';
+import { RecordTableScrollToFocusedCellEffect } from '@/object-record/record-table/components/RecordTableScrollToFocusedCellEffect';
+import { RecordTableScrollToFocusedRowEffect } from '@/object-record/record-table/components/RecordTableScrollToFocusedRowEffect';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { isRecordTableFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableFocusActiveComponentState';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -46,11 +46,6 @@ export const RecordTable = () => {
   const recordTableIsEmpty =
     !isRecordTableInitialLoading && allRecordIds.length === 0;
 
-  const isRecordTableFocusActive = useRecoilComponentValueV2(
-    isRecordTableFocusActiveComponentState,
-    recordTableId,
-  );
-
   if (!isNonEmptyString(objectNameSingular)) {
     return <></>;
   }
@@ -70,14 +65,10 @@ export const RecordTable = () => {
         hasRecordGroups={hasRecordGroups}
         tableBodyRef={tableBodyRef}
       />
-
-      {isRecordTableFocusActive && <RecordTableScrollToFocusedElementEffect />}
-
+      <RecordTableScrollToFocusedCellEffect />
+      <RecordTableScrollToFocusedRowEffect />
       {recordTableIsEmpty && !hasRecordGroups ? (
-        <RecordTableEmpty
-          tableBodyRef={tableBodyRef}
-          hasRecordGroups={hasRecordGroups}
-        />
+        <RecordTableEmpty tableBodyRef={tableBodyRef} />
       ) : (
         <RecordTableContent
           tableBodyRef={tableBodyRef}
@@ -85,6 +76,7 @@ export const RecordTable = () => {
           handleDragSelectionEnd={handleDragSelectionEnd}
           setRowSelected={setRowSelected}
           hasRecordGroups={hasRecordGroups}
+          recordTableId={recordTableId}
         />
       )}
     </>

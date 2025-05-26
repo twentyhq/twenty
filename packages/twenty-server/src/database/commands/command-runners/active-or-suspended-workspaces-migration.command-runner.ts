@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { Option } from 'nest-commander';
-import { In, MoreThanOrEqual, Repository } from 'typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { In, MoreThanOrEqual, Repository } from 'typeorm';
 
 import { MigrationCommandRunner } from 'src/database/commands/command-runners/migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -38,7 +38,7 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
   Options extends
     ActiveOrSuspendedWorkspacesMigrationCommandOptions = ActiveOrSuspendedWorkspacesMigrationCommandOptions,
 > extends MigrationCommandRunner {
-  private workspaceIds: string[] = [];
+  private workspaceIds: Set<string> = new Set();
   private startFromWorkspaceId: string | undefined;
   private workspaceCountLimit: number | undefined;
   public migrationReport: WorkspaceMigrationReport = {
@@ -91,8 +91,8 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
       'workspace id. Command runs on all active workspaces if not provided.',
     required: false,
   })
-  parseWorkspaceId(val: string): string[] {
-    this.workspaceIds.push(val);
+  parseWorkspaceId(val: string): Set<string> {
+    this.workspaceIds.add(val);
 
     return this.workspaceIds;
   }
@@ -123,8 +123,8 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
     options: Options,
   ) {
     const activeWorkspaceIds =
-      this.workspaceIds.length > 0
-        ? this.workspaceIds
+      this.workspaceIds.size > 0
+        ? Array.from(this.workspaceIds)
         : await this.fetchActiveWorkspaceIds();
 
     if (options.dryRun) {
@@ -138,10 +138,10 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
 
       try {
         const dataSource =
-          await this.twentyORMGlobalManager.getDataSourceForWorkspace(
+          await this.twentyORMGlobalManager.getDataSourceForWorkspace({
             workspaceId,
-            false,
-          );
+            shouldFailIfMetadataNotFound: false,
+          });
 
         await this.runOnWorkspace({
           options,

@@ -14,6 +14,7 @@ export const computeWhereConditionParts = (
   operator: string,
   objectNameSingular: string,
   key: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
 ): WhereConditionParts => {
   const uuid = Math.random().toString(36).slice(2, 7);

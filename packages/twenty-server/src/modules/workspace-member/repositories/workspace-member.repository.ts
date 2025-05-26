@@ -1,7 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { EntityManager } from 'typeorm';
-
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -50,7 +48,6 @@ export class WorkspaceMemberRepository {
 
   public async getAllByWorkspaceId(
     workspaceId: string,
-    transactionManager?: EntityManager,
   ): Promise<WorkspaceMemberWorkspaceEntity[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
@@ -60,7 +57,6 @@ export class WorkspaceMemberRepository {
         `SELECT * FROM ${dataSourceSchema}."workspaceMember"`,
         [],
         workspaceId,
-        transactionManager,
       );
 
     return workspaceMembers;

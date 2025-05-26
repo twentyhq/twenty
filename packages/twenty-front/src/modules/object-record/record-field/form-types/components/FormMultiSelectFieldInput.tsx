@@ -119,7 +119,9 @@ export const FormMultiSelectFieldInput = ({
       editingMode: 'edit',
     });
 
-    setHotkeyScopeAndMemorizePreviousScope(hotkeyScope);
+    setHotkeyScopeAndMemorizePreviousScope({
+      scope: hotkeyScope,
+    });
   };
 
   const onOptionSelected = (value: FieldMultiSelectValue) => {
@@ -181,7 +183,7 @@ export const FormMultiSelectFieldInput = ({
   const placeholderText = placeholder ?? label;
 
   return (
-    <FormFieldInputContainer testId={testId}>
+    <FormFieldInputContainer data-testid={testId}>
       {label ? <InputLabel>{label}</InputLabel> : null}
 
       <FormFieldInputRowContainer>

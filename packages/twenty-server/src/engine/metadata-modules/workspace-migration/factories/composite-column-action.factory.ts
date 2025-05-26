@@ -59,6 +59,7 @@ export class CompositeColumnActionFactory extends ColumnActionAbstractFactory<Co
       }
 
       const columnName = computeCompositeColumnName(fieldMetadata, property);
+      // @ts-expect-error legacy noImplicitAny
       const defaultValue = fieldMetadata.defaultValue?.[property.name];
       const serializedDefaultValue = serializeDefaultValue(defaultValue);
       const enumOptions = property.options
@@ -139,6 +140,7 @@ export class CompositeColumnActionFactory extends ColumnActionAbstractFactory<Co
         alteredProperty,
       );
       const defaultValue =
+        // @ts-expect-error legacy noImplicitAny
         alteredFieldMetadata.defaultValue?.[alteredProperty.name];
       const serializedDefaultValue = serializeDefaultValue(defaultValue);
       const enumOptions = alteredProperty.options
@@ -173,6 +175,7 @@ export class CompositeColumnActionFactory extends ColumnActionAbstractFactory<Co
             currentFieldMetadata.isNullable || !currentProperty.isRequired,
           isUnique: currentFieldMetadata.isUnique ?? false,
           defaultValue: serializeDefaultValue(
+            // @ts-expect-error legacy noImplicitAny
             currentFieldMetadata.defaultValue?.[currentProperty.name],
           ),
           isArray:

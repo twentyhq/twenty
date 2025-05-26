@@ -74,6 +74,7 @@ export class WorkspaceObjectComparator {
 
         const property = difference.path[0];
 
+        // @ts-expect-error legacy noImplicitAny
         objectPropertiesToUpdate[property] = standardObjectMetadata[property];
       }
     }

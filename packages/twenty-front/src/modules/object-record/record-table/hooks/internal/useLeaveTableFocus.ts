@@ -1,4 +1,6 @@
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
+import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useSetIsRecordTableFocusActive } from '@/object-record/record-table/record-table-cell/hooks/useSetIsRecordTableFocusActive';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
@@ -24,10 +26,22 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
     recordTableIdFromContext,
   );
 
+  const { unfocusRecordTableRow } = useFocusedRecordTableRow(
+    recordTableIdFromContext,
+  );
+
+  const { deactivateRecordTableRow } = useActiveRecordTableRow(
+    recordTableIdFromContext,
+  );
+
   return () => {
     resetTableRowSelection();
 
     setIsFocusActiveForCurrentPosition(false);
+
+    unfocusRecordTableRow();
+
+    deactivateRecordTableRow();
 
     setRecordTableHoverPosition(null);
   };

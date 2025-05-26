@@ -1,0 +1,18 @@
+import { CustomException } from 'src/utils/custom-exception';
+
+export class RelationException extends CustomException {
+  declare code: RelationExceptionCode;
+  constructor(message: string, code: RelationExceptionCode) {
+    super(message, code);
+  }
+}
+
+export enum RelationExceptionCode {
+  RELATION_OBJECT_METADATA_NOT_FOUND = 'RELATION_OBJECT_METADATA_NOT_FOUND',
+  RELATION_TARGET_FIELD_METADATA_ID_NOT_FOUND = 'RELATION_TARGET_FIELD_METADATA_ID_NOT_FOUND',
+  RELATION_TARGET_FIELD_METADATA_NOT_FOUND = 'RELATION_TARGET_FIELD_METADATA_NOT_FOUND',
+  INVALID_RELATION_TYPE = 'INVALID_RELATION_TYPE',
+  RELATION_JOIN_COLUMN_ON_BOTH_SIDES = 'RELATION_JOIN_COLUMN_ON_BOTH_SIDES',
+  MISSING_RELATION_JOIN_COLUMN = 'MISSING_RELATION_JOIN_COLUMN',
+  MULTIPLE_JOIN_COLUMNS_FOUND = 'MULTIPLE_JOIN_COLUMNS_FOUND',
+}

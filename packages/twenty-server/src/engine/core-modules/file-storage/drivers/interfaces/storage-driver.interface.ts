@@ -21,4 +21,8 @@ export interface StorageDriver {
     from: { folderPath: string; filename?: string };
     to: { folderPath: string; filename?: string };
   }): Promise<void>;
+  checkFileExists(params: {
+    folderPath: string;
+    filename: string;
+  }): Promise<boolean>;
 }

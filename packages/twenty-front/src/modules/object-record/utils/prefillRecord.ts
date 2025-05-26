@@ -3,9 +3,9 @@ import { isUndefined } from '@sniptt/guards';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { generateDefaultFieldValue } from '@/object-record/utils/generateDefaultFieldValue';
-import { FieldMetadataType, RelationDefinitionType } from '~/generated/graphql';
+import { generateEmptyFieldValue } from '@/object-record/utils/generateEmptyFieldValue';
 import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType, RelationDefinitionType } from '~/generated/graphql';
 
 type PrefillRecordArgs = {
   objectMetadataItem: ObjectMetadataItem;
@@ -28,7 +28,7 @@ export const prefillRecord = <T extends ObjectRecord>({
         }
 
         const fieldValue = isUndefined(inputValue)
-          ? generateDefaultFieldValue({ fieldMetadataItem })
+          ? generateEmptyFieldValue({ fieldMetadataItem })
           : inputValue;
         return [fieldMetadataItem.name, fieldValue];
       })

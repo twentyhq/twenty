@@ -14,7 +14,7 @@ import { Request, Response } from 'express';
 import { Repository } from 'typeorm';
 
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
-import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/track/custom-domain/custom-domain-activated';
+import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import {
   DomainManagerException,
@@ -24,8 +24,8 @@ import { CloudflareSecretMatchGuard } from 'src/engine/core-modules/domain-manag
 import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { handleException } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { handleException } from 'src/engine/utils/global-exception-handler.util';
 
 @Controller()
 @UseFilters(AuthRestApiExceptionFilter)
@@ -43,13 +43,13 @@ export class CloudflareController {
   @UseGuards(CloudflareSecretMatchGuard)
   async customHostnameWebhooks(@Req() req: Request, @Res() res: Response) {
     if (!req.body?.data?.data?.hostname) {
-      handleException(
-        new DomainManagerException(
+      handleException({
+        exception: new DomainManagerException(
           'Hostname missing',
           DomainManagerExceptionCode.INVALID_INPUT_DATA,
         ),
-        this.exceptionHandlerService,
-      );
+        exceptionHandlerService: this.exceptionHandlerService,
+      });
 
       return res.status(200).send();
     }
@@ -91,7 +91,7 @@ export class CloudflareController {
         ...workspaceUpdated,
       });
 
-      await analytics.track(CUSTOM_DOMAIN_ACTIVATED_EVENT, {});
+      await analytics.insertWorkspaceEvent(CUSTOM_DOMAIN_ACTIVATED_EVENT, {});
     }
 
     return res.status(200).send();

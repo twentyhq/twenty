@@ -24,6 +24,7 @@ export type FileStorageModuleOptions =
 
 export type FileStorageModuleAsyncOptions = {
   useFactory: (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ...args: any[]
   ) => FileStorageModuleOptions | Promise<FileStorageModuleOptions>;
 } & Pick<ModuleMetadata, 'imports'> &

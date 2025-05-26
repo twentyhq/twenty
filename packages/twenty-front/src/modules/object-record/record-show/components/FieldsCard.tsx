@@ -122,6 +122,7 @@ export const FieldsCard = ({
                       objectNameSingular,
                       fieldName: fieldMetadataItem.name,
                       fieldType: fieldMetadataItem.type,
+                      isCustom: fieldMetadataItem.isCustom ?? false,
                       isRecordReadOnly,
                     }),
                   }}
@@ -164,6 +165,7 @@ export const FieldsCard = ({
                     objectNameSingular,
                     fieldName: fieldMetadataItem.name,
                     fieldType: fieldMetadataItem.type,
+                    isCustom: fieldMetadataItem.isCustom ?? false,
                     isRecordReadOnly,
                   }),
                 }}

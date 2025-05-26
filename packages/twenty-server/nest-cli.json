@@ -27,7 +27,7 @@
         "outDir": "dist/assets"
       },
       {
-        "include": "**/database/clickhouse/migrations/*.sql",
+        "include": "**/database/clickHouse/migrations/*.sql",
         "outDir": "dist/src"
       }
     ],

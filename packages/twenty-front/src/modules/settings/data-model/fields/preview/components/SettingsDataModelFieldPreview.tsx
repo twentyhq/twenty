@@ -102,7 +102,7 @@ export const SettingsDataModelFieldPreview = ({
     fieldMetadataItem.name || `${fieldMetadataItem.type}-new-field`;
   const recordId =
     previewRecord?.id ??
-    `${objectMetadataItem.nameSingular}-${fieldName}-${fieldMetadataItem.relationDefinition?.direction}-preview`;
+    `${objectMetadataItem.nameSingular}-${fieldName}-${fieldMetadataItem.relationDefinition?.direction}-${relationObjectMetadataItem?.nameSingular}-preview`;
 
   return (
     <>
@@ -112,10 +112,7 @@ export const SettingsDataModelFieldPreview = ({
         }}
       >
         {isDefined(previewRecord) ? (
-          <SettingsDataModelSetPreviewRecordEffect
-            fieldName={fieldName}
-            record={previewRecord}
-          />
+          <SettingsDataModelSetPreviewRecordEffect record={previewRecord} />
         ) : (
           <SettingsDataModelSetFieldValueEffect
             recordId={recordId}

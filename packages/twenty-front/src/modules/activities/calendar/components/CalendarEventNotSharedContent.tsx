@@ -1,5 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { Trans } from '@lingui/react/macro';
 import { IconLock } from 'twenty-ui/display';
 import { Card, CardContent } from 'twenty-ui/layout';
 
@@ -29,7 +30,7 @@ export const CalendarEventNotSharedContent = () => {
     <StyledVisibilityCard>
       <StyledVisibilityCardContent>
         <IconLock size={theme.icon.size.sm} />
-        Not shared
+        <Trans>Not shared</Trans>
       </StyledVisibilityCardContent>
     </StyledVisibilityCard>
   );

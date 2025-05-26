@@ -36,7 +36,7 @@ export const useUpdateViewAggregate = () => {
       });
 
       setRecordIndexKanbanAggregateOperationState({
-        operation: convertedKanbanAggregateOperation,
+        operation: kanbanAggregateOperation,
         fieldMetadataId: kanbanAggregateOperationFieldMetadataId,
       });
     },

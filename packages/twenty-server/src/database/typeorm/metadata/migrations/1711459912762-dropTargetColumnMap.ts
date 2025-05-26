@@ -5,13 +5,13 @@ export class DropTargetColumnMap1711459912762 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "metadata"."fieldMetadata" DROP COLUMN "targetColumnMap"`,
+      `ALTER TABLE "core"."fieldMetadata" DROP COLUMN "targetColumnMap"`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "metadata"."fieldMetadata" ADD "targetColumnMap" jsonb NOT NULL`,
+      `ALTER TABLE "core"."fieldMetadata" ADD "targetColumnMap" jsonb NOT NULL`,
     );
   }
 }

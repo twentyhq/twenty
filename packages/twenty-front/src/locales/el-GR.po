@@ -93,6 +93,11 @@ msgstr "API Key {apiKeyName}"
 msgid "{contextStoreNumberOfSelectedRecords} selected"
 msgstr "{contextStoreNumberOfSelectedRecords} επιλεγμένα"
 
+#. js-lingui-id: wapGcj
+#: src/modules/auth/components/VerifyEmailEffect.tsx
+msgid "{message}"
+msgstr ""
+
 #. js-lingui-id: 6j5rE1
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowRecordAgnosticActions.tsx
 #: src/modules/action-menu/actions/record-actions/run-workflow-actions/hooks/useRunWorkflowRecordActions.tsx
@@ -103,6 +108,11 @@ msgstr "{name}"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
 msgstr "Ο χρήστης {workspaceMemberName} θα αποδεσμευτεί από τον ακόλουθο ρόλο:"
+
+#. js-lingui-id: NNQszp
+#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
+msgid "⚠️ Please verify the auto mapping of the columns. You can also ignore or change the mapping of the columns."
+msgstr ""
 
 #. js-lingui-id: YT0WJ4
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -617,7 +627,7 @@ msgid "Are you sure you want to delete this record? It can be recovered from the
 msgstr "Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτήν την εγγραφή; Μπορεί να αποκατασταθεί από το μενού Εντολών."
 
 #. js-lingui-id: rnCqBK
-#: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
+#: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
 msgid "Are you sure? Your current information will not be saved."
 msgstr ""
 
@@ -798,7 +808,7 @@ msgstr "Δεν είναι δυνατή η αλλαγή των ονομάτων A
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
-#: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
+#: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 msgid "Cancel"
 msgstr "Ακύρωση"
@@ -1247,6 +1257,11 @@ msgstr "Δημιουργήστε το χώρο εργασίας σας"
 msgid "Created"
 msgstr "Δημιουργήθηκε"
 
+#. js-lingui-id: R3PLzn
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
+msgid "currencies"
+msgstr ""
+
 #. js-lingui-id: 6YzXhC
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Current value from server environment. Set a custom value to override."
@@ -1483,6 +1498,11 @@ msgstr "Διαγραφή λογαριασμού και όλων των συσχ�
 msgid "Delete API key"
 msgstr "Διαγραφή κλειδιού API"
 
+#. js-lingui-id: x2p4/4
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
+msgid "Delete field"
+msgstr ""
+
 #. js-lingui-id: 4dpwsE
 #: src/modules/action-menu/actions/record-actions/constants/DefaultActionsConfig.ts
 #~ msgid "Delete record"
@@ -1716,6 +1736,7 @@ msgstr "Νωρίτερη ημερομηνία"
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
+#: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Edit"
 msgstr "Επεξεργασία"
 
@@ -1798,8 +1819,8 @@ msgstr "Επαλήθευση e-mail"
 
 #. js-lingui-id: TBv/iZ
 #: src/modules/auth/components/VerifyEmailEffect.tsx
-msgid "Email verification failed."
-msgstr "Απέτυχε η επαλήθευση email."
+#~ msgid "Email verification failed."
+#~ msgstr "Απέτυχε η επαλήθευση email."
 
 #. js-lingui-id: svTijF
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
@@ -1947,6 +1968,11 @@ msgstr "Σφάλμα κατά τη διαγραφή του παρόχου ταυ
 msgid "Error editing SSO Identity Provider"
 msgstr "Σφάλμα κατά την επεξεργασία του παρόχου ταυτότητας SSO"
 
+#. js-lingui-id: 2GvilU
+#: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
+msgid "Error loading message"
+msgstr ""
+
 #. js-lingui-id: bj7nh3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Error regenerating api key: {err}"
@@ -2020,7 +2046,7 @@ msgid "Existing objects"
 msgstr "Υπάρχοντα αντικείμενα"
 
 #. js-lingui-id: ydzS9x
-#: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
+#: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
 msgid "Exit"
 msgstr ""
 
@@ -2030,7 +2056,7 @@ msgstr ""
 #~ msgstr "Έξοδος από την Πλήρη Οθόνη"
 
 #. js-lingui-id: XB4onr
-#: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
+#: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
 msgid "Exit import flow"
 msgstr ""
 
@@ -2332,6 +2358,11 @@ msgstr "Παγκόσμιο"
 msgid "Go to Companies"
 msgstr ""
 
+#. js-lingui-id: dHvI9O
+#: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
+msgid "Go to Draft"
+msgstr ""
+
 #. js-lingui-id: BQE4ob
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Notes"
@@ -2355,7 +2386,9 @@ msgid "Go to runs"
 msgstr "Πήγαινε στις εκτελέσεις"
 
 #. js-lingui-id: mT57+Q
+#: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Settings"
 msgstr "Μετάβαση στις Ρυθμίσεις"
@@ -2438,6 +2471,7 @@ msgstr "Κρυφά Πεδία"
 
 #. js-lingui-id: vLyv1R
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Hide"
 msgstr "Απόκρυψη"
 
@@ -2522,6 +2556,11 @@ msgstr "Πάροχος Ταυτότητας"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Identity Provider Metadata XML"
 msgstr "Μεταδεδομένα XML Παρόχου Ταυτότητας"
+
+#. js-lingui-id: ZfP/Ap
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
+msgid "If this is unexpected, please verify your settings."
+msgstr ""
 
 #. js-lingui-id: j843N3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -2749,6 +2788,11 @@ msgstr "Ιταλικά"
 msgid "Japanese"
 msgstr "Ιαπωνικά"
 
+#. js-lingui-id: VIK/N0
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
+msgid "JSON keys cannot contain spaces"
+msgstr ""
+
 #. js-lingui-id: OGXtL8
 #: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -2818,6 +2862,16 @@ msgstr "Τελευταίες 7 Ημέρες (παλιότερα → νεότερ
 msgid "Last Name"
 msgstr "Επώνυμο"
 
+#. js-lingui-id: s0kiVA
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Last payment failed. Please contact your admin."
+msgstr ""
+
+#. js-lingui-id: 3u/3zO
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Last payment failed. Please update your billing details."
+msgstr ""
+
 #. js-lingui-id: wL3cK8
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Latest"
@@ -2870,6 +2924,11 @@ msgstr "Ο σύνδεσμος αντιγράφηκε στο πρόχειρο"
 msgid "Listings"
 msgstr "Καταχωρήσεις"
 
+#. js-lingui-id: Nx262D
+#: src/modules/activities/files/components/DocumentViewer.tsx
+msgid "Loading csv ... "
+msgstr ""
+
 #. js-lingui-id: s1MstR
 #: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
 msgid "Loading metrics data..."
@@ -2877,6 +2936,7 @@ msgstr "Φόρτωση δεδομένων μετρήσεων..."
 
 #. js-lingui-id: Z3FXyt
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionDisplay.tsx
+#: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Loading..."
 msgstr ""
 
@@ -2972,6 +3032,11 @@ msgstr "Μέγιστο"
 msgid "Members"
 msgstr "Μέλη"
 
+#. js-lingui-id: U15XwX
+#: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
+msgid "Message not found"
+msgstr ""
+
 #. js-lingui-id: elpx6r
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
 msgid "Message Sync"
@@ -3025,11 +3090,13 @@ msgstr "Περισσότερες επιλογές"
 
 #. js-lingui-id: iSLA/r
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Move left"
 msgstr "Μετακίνηση αριστερά"
 
 #. js-lingui-id: Ubl2by
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Move right"
 msgstr "Μετακίνηση δεξιά"
 
@@ -3217,6 +3284,11 @@ msgstr "Κανένας συνδεδεμένος λογαριασμός"
 msgid "No country"
 msgstr "Χωρίς χώρα"
 
+#. js-lingui-id: 7tCnBa
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
+msgid "No Data Available for Remote Table"
+msgstr ""
+
 #. js-lingui-id: pxvJ9B
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "No data containing errors"
@@ -3230,6 +3302,11 @@ msgstr ""
 #. js-lingui-id: xlUOps
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "No free workflow executions left. End trial period and activate your billing to continue."
+msgstr ""
+
+#. js-lingui-id: pxYUeX
+#: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
+msgid "No free workflow executions left. Please contact your admin."
 msgstr ""
 
 #. js-lingui-id: OcMef3
@@ -3310,6 +3387,7 @@ msgstr "Δεν βρέθηκαν εγγραφές"
 
 #. js-lingui-id: Ev2r9A
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCountrySelect.tsx
 msgid "No results"
 msgstr ""
 
@@ -3381,6 +3459,16 @@ msgstr "Όχι άδειο"
 #: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
 msgid "Not Found"
 msgstr "Δεν Βρέθηκε"
+
+#. js-lingui-id: 51G4/+
+#: src/modules/activities/calendar/components/CalendarEventNotSharedContent.tsx
+msgid "Not shared"
+msgstr ""
+
+#. js-lingui-id: uzFo/5
+#: src/modules/activities/timeline-activities/rows/message/components/EventCardMessageBodyNotShared.tsx
+msgid "Not shared by {notSharedByFullName}"
+msgstr ""
 
 #. js-lingui-id: hZWthZ
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -3756,6 +3844,8 @@ msgstr "Εγγραφή εικόνας"
 
 #. js-lingui-id: K6/7kH
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
 msgid "Record label"
 msgstr "Ετικέτα εγγραφής"
 
@@ -3849,6 +3939,11 @@ msgstr "Αφαίρεση από τα αγαπημένα"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Remove option"
 msgstr "Αφαίρεση επιλογής"
+
+#. js-lingui-id: Ee8JBW
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
+msgid "Reorder field"
+msgstr ""
 
 #. js-lingui-id: OfhWJH
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
@@ -4021,16 +4116,22 @@ msgstr "Αναζήτηση ευρετηρίου..."
 msgid "Search config variables"
 msgstr ""
 
+#. js-lingui-id: WLfEv1
+#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCountrySelect.tsx
+msgid "Search country"
+msgstr ""
+
 #. js-lingui-id: sSARNY
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 msgid "Search currency"
 msgstr ""
 
 #. js-lingui-id: 7taA9j
+#: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
-#: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownFieldSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput.tsx
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterDropdownFieldSelectMenu.tsx
 msgid "Search fields"
 msgstr "Αναζήτηση πεδίων"
 
@@ -4180,8 +4281,8 @@ msgstr ""
 
 #. js-lingui-id: mWHn81
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
-msgid "Select the correct field for each column you'd like to import."
-msgstr ""
+#~ msgid "Select the correct field for each column you'd like to import."
+#~ msgstr ""
 
 #. js-lingui-id: pofGCP
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
@@ -4454,6 +4555,11 @@ msgstr "Θέμα και μεταδεδομένα"
 msgid "Subject and metadata will be shared with your team."
 msgstr "Το θέμα και τα μεταδεδομένα θα μοιραστούν με την ομάδα σας."
 
+#. js-lingui-id: DvSvG9
+#: src/modules/activities/timeline-activities/rows/message/components/EventCardMessageForbidden.tsx
+msgid "Subject not shared"
+msgstr ""
+
 #. js-lingui-id: J9ylmk
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Subject, body and attachments will be shared with your team."
@@ -4462,6 +4568,11 @@ msgstr "Το θέμα, το σώμα και τα συνημμένα θα μοι�
 #. js-lingui-id: hQRttt
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Submit"
+msgstr ""
+
+#. js-lingui-id: EDl9kS
+#: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
+msgid "Subscribe"
 msgstr ""
 
 #. js-lingui-id: uvY7Wk
@@ -4794,12 +4905,18 @@ msgstr "Η χρονική σήμανση και οι συμμετέχοντες 
 
 #. js-lingui-id: ecUA8p
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
+#: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Today"
 msgstr "Σήμερα"
 
 #. js-lingui-id: XArpJK
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 msgid "Toggle all object permissions"
+msgstr ""
+
+#. js-lingui-id: BRMXj0
+#: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
+msgid "Tomorrow"
 msgstr ""
 
 #. js-lingui-id: vb0Q0/
@@ -4810,6 +4927,16 @@ msgstr ""
 #. js-lingui-id: dshGKq
 #: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
 msgid "Track your monthly workflow credit consumption."
+msgstr ""
+
+#. js-lingui-id: wN0jHF
+#: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+msgid "Trial expired. Please contact your admin"
+msgstr ""
+
+#. js-lingui-id: y985qL
+#: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+msgid "Trial expired. Please update your billing details."
 msgstr ""
 
 #. js-lingui-id: PiUt3N
@@ -4877,6 +5004,12 @@ msgstr "Άγνωστο σφάλμα"
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Unlimited contacts"
 msgstr "Απεριόριστες επαφές"
+
+#. js-lingui-id: EkH9pt
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+#: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+msgid "Update"
+msgstr ""
 
 #. js-lingui-id: +b7T3G
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
@@ -5232,6 +5365,11 @@ msgstr "Γράψτε ένα μυστικό"
 msgid "yes"
 msgstr "ναι"
 
+#. js-lingui-id: y/0uwd
+#: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
+msgid "Yesterday"
+msgstr ""
+
 #. js-lingui-id: qsAug0
 #: src/modules/spreadsheet-import/components/MatchColumnSelect.tsx
 #~ msgid "You are already importing this column."
@@ -5291,6 +5429,16 @@ msgstr "Το όνομά σας όπως θα εμφανίζεται στην ε�
 #: src/pages/auth/SignInUp.tsx
 msgid "Your Workspace"
 msgstr "Ο χώρος εργασίας σας"
+
+#. js-lingui-id: oC6WBs
+#: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
+msgid "Your workspace doesn't have an active subscription."
+msgstr ""
+
+#. js-lingui-id: QBTEtW
+#: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
+msgid "Your workspace doesn't have an active subscription. Please contact your admin."
+msgstr ""
 
 #. js-lingui-id: RhNbPE
 #: src/pages/settings/SettingsBilling.tsx

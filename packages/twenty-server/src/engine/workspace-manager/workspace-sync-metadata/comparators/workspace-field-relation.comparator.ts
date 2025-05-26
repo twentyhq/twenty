@@ -130,10 +130,6 @@ export class WorkspaceFieldRelationComparator {
         throw new Error(`Field ${fieldId} not found in originalObjectMetadata`);
       }
 
-      if (!standardFieldMetadata) {
-        throw new Error(`Field ${fieldId} not found in standardObjectMetadata`);
-      }
-
       for (const difference of differences) {
         const property = difference.path[difference.path.length - 1];
 
@@ -175,11 +171,11 @@ export class WorkspaceFieldRelationComparator {
           (fieldPropertiesToStringify as readonly string[]).includes(property)
         ) {
           const newValue = this.parseJSONOrString(difference.value);
+          const oldValue = this.parseJSONOrString(difference.oldValue);
 
           if (property === 'settings' && difference.oldValue) {
             const newSettings = newValue as FieldMetadataRelationSettings;
-            const oldSettings =
-              difference.oldValue as FieldMetadataRelationSettings;
+            const oldSettings = oldValue as FieldMetadataRelationSettings;
 
             // Check if the relation type has changed
             if (oldSettings.relationType !== newSettings.relationType) {
@@ -187,10 +183,16 @@ export class WorkspaceFieldRelationComparator {
             }
           }
 
+          // @ts-expect-error legacy noImplicitAny
           propertiesMap[fieldId][property] = newValue;
         } else {
+          // @ts-expect-error legacy noImplicitAny
           propertiesMap[fieldId][property] = difference.value;
         }
+      }
+
+      if (!standardFieldMetadata) {
+        throw new Error(`Field ${fieldId} not found in standardObjectMetadata`);
       }
 
       if (relationTypeChange) {

@@ -7,13 +7,13 @@ export class AddIsSearchableColumnInObjectMetadataTable1740478150675
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "metadata"."objectMetadata" ADD "isSearchable" boolean NOT NULL DEFAULT false`,
+      `ALTER TABLE "core"."objectMetadata" ADD "isSearchable" boolean NOT NULL DEFAULT false`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "metadata"."objectMetadata" DROP COLUMN "isSearchable"`,
+      `ALTER TABLE "core"."objectMetadata" DROP COLUMN "isSearchable"`,
     );
   }
 }

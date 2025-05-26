@@ -7,6 +7,5 @@ export enum FeatureFlagKey {
   IsUniqueIndexesEnabled = 'IS_UNIQUE_INDEXES_ENABLED',
   IsJsonFilterEnabled = 'IS_JSON_FILTER_ENABLED',
   IsCustomDomainEnabled = 'IS_CUSTOM_DOMAIN_ENABLED',
-  IsNewRelationEnabled = 'IS_NEW_RELATION_ENABLED',
   IsPermissionsV2Enabled = 'IS_PERMISSIONS_V2_ENABLED',
 }
