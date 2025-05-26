@@ -47,13 +47,13 @@ export class FieldMetadataRelatedRecordsService {
     oldFieldMetadata: SelectFieldMetadataEntity,
     newFieldMetadata: SelectFieldMetadataEntity,
   ): Promise<void> {
+    // TODO legacy should support multi-select and rating ?
     if (
       !isSelectFieldMetadataType(newFieldMetadata.type) ||
       !isSelectFieldMetadataType(oldFieldMetadata.type)
     ) {
       return;
     }
-
     const views = await this.getFieldMetadataViewEntity(
       newFieldMetadata,
       'viewGroups',
@@ -121,7 +121,6 @@ export class FieldMetadataRelatedRecordsService {
     }
   }
 
-  // TODO finish this prastoin
   private computeViewFilterDisplayValue(
     newViewFilterOptions: FieldMetadataDefaultOption[],
   ): string {
@@ -136,14 +135,6 @@ export class FieldMetadataRelatedRecordsService {
     oldFieldMetadata: SelectFieldMetadataEntity,
     newFieldMetadata: SelectFieldMetadataEntity,
   ): Promise<void> {
-    if (
-      // TODO Should also handle rating type ?
-      !isSelectFieldMetadataType(newFieldMetadata.type) ||
-      !isSelectFieldMetadataType(oldFieldMetadata.type)
-    ) {
-      return;
-    }
-
     const filters = await this.getFieldMetadataViewEntity(
       newFieldMetadata,
       'viewFilters',

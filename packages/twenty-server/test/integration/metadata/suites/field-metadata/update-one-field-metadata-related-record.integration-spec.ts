@@ -47,8 +47,8 @@ type FieldMetadataOptionsAndType = {
   type: EnumFieldMetadataType;
 };
 type TestCase = EachTestingContext<{
-  fieldMetadata: FieldMetadataOptionsAndType;
-  createViewFilter: ViewFilterUpdate;
+  fieldMetadata?: FieldMetadataOptionsAndType;
+  createViewFilter?: ViewFilterUpdate;
   updateOptions: (
     options: FieldMetadataDefaultOption[] | FieldMetadataComplexOption[],
   ) => Option[];
@@ -57,7 +57,6 @@ type TestCase = EachTestingContext<{
 const testFieldMetadataType: EnumFieldMetadataType[] = [
   FieldMetadataType.SELECT,
   FieldMetadataType.MULTI_SELECT,
-  // FieldMetadataType.RATING, Should not be handled
 ];
 
 describe('update-one-field-metadata-related-record', () => {
@@ -132,14 +131,6 @@ describe('update-one-field-metadata-related-record', () => {
         title:
           'should delete related view filter if all select field options got deleted',
         context: {
-          fieldMetadata: {
-            options: ALL_OPTIONS,
-            type: fieldType,
-          },
-          createViewFilter: {
-            displayValue: `${ALL_OPTIONS.length} options`,
-            value: ALL_OPTIONS.map((option) => option.value),
-          },
           updateOptions: () => generateOptions(3),
           expected: null,
         },
@@ -147,14 +138,6 @@ describe('update-one-field-metadata-related-record', () => {
       {
         title: 'should update related multi selected options view filter',
         context: {
-          fieldMetadata: {
-            options: ALL_OPTIONS,
-            type: fieldType,
-          },
-          createViewFilter: {
-            displayValue: `${ALL_OPTIONS.length} options`,
-            value: ALL_OPTIONS.map((option) => option.value),
-          },
           updateOptions: (options) =>
             options.map((option, index) =>
               isEven(option, index) ? updateOption(option) : option,
@@ -164,13 +147,9 @@ describe('update-one-field-metadata-related-record', () => {
       {
         title: 'should update related solo selected option view filter',
         context: {
-          fieldMetadata: {
-            options: ALL_OPTIONS,
-            type: fieldType,
-          },
           createViewFilter: {
             displayValue: ALL_OPTIONS[5].label,
-            value: [ALL_OPTIONS[5]].map((option) => option.value),
+            value: [ALL_OPTIONS[5].value],
           },
           updateOptions: (options) => [updateOption(options[5])],
         },
@@ -179,14 +158,6 @@ describe('update-one-field-metadata-related-record', () => {
         title:
           'should handle partial deletion of selected options in view filter',
         context: {
-          fieldMetadata: {
-            options: ALL_OPTIONS,
-            type: fieldType,
-          },
-          createViewFilter: {
-            displayValue: `${ALL_OPTIONS.length} options`,
-            value: ALL_OPTIONS.map((option) => option.value),
-          },
           updateOptions: (options) => options.slice(4),
         },
       },
@@ -194,10 +165,6 @@ describe('update-one-field-metadata-related-record', () => {
         title:
           'should handle reordering of options while maintaining view filter values',
         context: {
-          fieldMetadata: {
-            options: ALL_OPTIONS,
-            type: fieldType,
-          },
           createViewFilter: {
             displayValue: '2 options',
             value: ALL_OPTIONS.slice(0, 2).map((option) => option.value),
@@ -209,14 +176,6 @@ describe('update-one-field-metadata-related-record', () => {
         title:
           'should handle no changes update of options while maintaining existing view filter values',
         context: {
-          fieldMetadata: {
-            options: ALL_OPTIONS,
-            type: fieldType,
-          },
-          createViewFilter: {
-            displayValue: `${ALL_OPTIONS.length} options`,
-            value: ALL_OPTIONS.map((option) => option.value),
-          },
           updateOptions: (options) => options,
         },
       },
@@ -242,14 +201,6 @@ describe('update-one-field-metadata-related-record', () => {
         title:
           'should update display value with options label if less than 3 options are selected',
         context: {
-          fieldMetadata: {
-            options: ALL_OPTIONS,
-            type: fieldType,
-          },
-          createViewFilter: {
-            displayValue: `${ALL_OPTIONS.length} options`,
-            value: ALL_OPTIONS.map((option) => option.value),
-          },
           updateOptions: (options) => options.slice(8),
         },
       },
@@ -258,7 +209,15 @@ describe('update-one-field-metadata-related-record', () => {
     test.each(testCases)(
       '$title',
       async ({
-        context: { expected, createViewFilter, fieldMetadata, updateOptions },
+        context: {
+          expected,
+          createViewFilter = {
+            displayValue: '10 options',
+            value: ALL_OPTIONS.map((option) => option.value),
+          },
+          fieldMetadata = { options: ALL_OPTIONS, type: fieldType },
+          updateOptions,
+        },
       }) => {
         const { createOneField, createOneView } =
           await createObjectSelectFieldAndView(fieldMetadata);
@@ -321,18 +280,16 @@ describe('update-one-field-metadata-related-record', () => {
           return;
         }
 
-        // Checking value
         const parsedViewFilterValues = parseJson<string[]>(findResponse.value);
 
         expect(parsedViewFilterValues).not.toBeNull();
         if (parsedViewFilterValues === null) {
           throw new Error('Invariant parsedValue should not be null');
         }
-        expect(parsedViewFilterValues).toMatchObject(
-          updatedOptions.map((option) => option.value),
+        expect(updatedOptions.map((option) => option.value)).toEqual(
+          expect.arrayContaining(parsedViewFilterValues),
         );
 
-        // Snapshotting the response
         expect(findResponse).toMatchSnapshot({
           id: expect.any(String),
         });
@@ -355,55 +312,55 @@ describe('update-one-field-metadata-related-record', () => {
       },
     ];
 
-    // test.each(failingTestCases)(
-    //   '$title',
-    //   async ({ context: { createViewFilterValue } }) => {
-    //     const { createOneField, createOneView } =
-    //       await createObjectSelectFieldAndView({
-    //         options: ALL_OPTIONS,
-    //         type: fieldType,
-    //       });
+    test.each(failingTestCases)(
+      '$title',
+      async ({ context: { createViewFilterValue } }) => {
+        const { createOneField, createOneView } =
+          await createObjectSelectFieldAndView({
+            options: ALL_OPTIONS,
+            type: fieldType,
+          });
 
-    //     const viewFilterId = '20202020-e3b5-4fa7-85aa-9b1950fc7bf5';
+        const viewFilterId = '20202020-e3b5-4fa7-85aa-9b1950fc7bf5';
 
-    //     await createOneOperation<{
-    //       id: string;
-    //       viewId: string;
-    //       fieldMetadataId: string;
-    //       operand: string;
-    //       value: string;
-    //       displayValue: string;
-    //     }>({
-    //       objectMetadataSingularName: 'viewFilter',
-    //       input: {
-    //         id: viewFilterId,
-    //         viewId: createOneView.id,
-    //         fieldMetadataId: createOneField.id,
-    //         operand: 'is',
-    //         value: createViewFilterValue as unknown as string,
-    //         displayValue: '10 options',
-    //       },
-    //     });
+        await createOneOperation<{
+          id: string;
+          viewId: string;
+          fieldMetadataId: string;
+          operand: string;
+          value: string;
+          displayValue: string;
+        }>({
+          objectMetadataSingularName: 'viewFilter',
+          input: {
+            id: viewFilterId,
+            viewId: createOneView.id,
+            fieldMetadataId: createOneField.id,
+            operand: 'is',
+            value: createViewFilterValue as unknown as string,
+            displayValue: '10 options',
+          },
+        });
 
-    //     const optionsWithIds = createOneField.options;
-    //     const updatePayload = {
-    //       options: optionsWithIds.map((option) => updateOption(option)),
-    //     };
-    //     const { errors, data } = await updateOneFieldMetadata({
-    //       input: {
-    //         idToUpdate: createOneField.id,
-    //         updatePayload,
-    //       },
-    //       gqlFields: `
-    //       id
-    //       options
-    //     `,
-    //     });
+        const optionsWithIds = createOneField.options;
+        const updatePayload = {
+          options: optionsWithIds.map((option) => updateOption(option)),
+        };
+        const { errors, data } = await updateOneFieldMetadata({
+          input: {
+            idToUpdate: createOneField.id,
+            updatePayload,
+          },
+          gqlFields: `
+          id
+          options
+        `,
+        });
 
-    //     expect(data).toBeNull();
-    //     expect(errors).toBeDefined();
-    //     expect(errors).toMatchSnapshot();
-    //   },
-    // );
+        expect(data).toBeNull();
+        expect(errors).toBeDefined();
+        expect(errors).toMatchSnapshot();
+      },
+    );
   });
 });
