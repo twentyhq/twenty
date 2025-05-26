@@ -124,6 +124,9 @@ export const graphqlMocks = {
         },
       });
     }),
+    http.get(`${REACT_APP_SERVER_BASE_URL}/client-config`, () => {
+      return HttpResponse.json(mockedClientConfig);
+    }),
     metadataGraphql.query(
       getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? '',
       () => {
