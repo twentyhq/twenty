@@ -34,6 +34,7 @@ export const MultiWorkspaceDropdownThemesComponents = () => {
       <DropdownMenuItemsContainer>
         {colorSchemeList.map((theme) => (
           <MenuItem
+            key={theme.id}
             LeftIcon={theme.icon}
             /* eslint-disable-next-line lingui/no-expression-in-message */
             text={t`${theme.id}`}
