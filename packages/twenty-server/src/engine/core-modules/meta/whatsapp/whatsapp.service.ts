@@ -54,15 +54,28 @@ export class WhatsappService {
     this.firestoreDb = this.firebaseService.getFirestoreDb();
   }
 
-  async sendTemplate(sendTemplateInput: SendTemplateInput) {
+  async sendTemplate(
+    sendTemplateInput: SendTemplateInput,
+    workspaceId: string,
+  ) {
     const { integrationId, to, templateName, language } = sendTemplateInput;
 
-    const integration = await this.whatsappIntegrationRepository.findOne({
+    const whatsappRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WhatsappWorkspaceEntity>(
+        workspaceId,
+        'whatsapp',
+      );
+
+    if (!whatsappRepository) {
+      throw new Error('Whatsapp repository not found');
+    }
+
+    const integration = await whatsappRepository.findOne({
       where: { id: integrationId },
     });
 
     if (!integration) {
-      throw new InternalServerError('Whatsapp integration not found');
+      throw new Error('Whatsapp integration not found');
     }
 
     const fields: any = {

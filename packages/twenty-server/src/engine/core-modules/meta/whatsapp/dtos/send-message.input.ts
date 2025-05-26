@@ -87,6 +87,10 @@ export class SendTemplateInput {
 
   @Field()
   @IsString()
+  from: string;
+
+  @Field()
+  @IsString()
   templateName: string;
 
   @Field()
