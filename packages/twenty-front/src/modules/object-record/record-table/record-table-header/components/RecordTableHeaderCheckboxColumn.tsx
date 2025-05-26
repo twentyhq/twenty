@@ -82,7 +82,7 @@ export const RecordTableHeaderCheckboxColumn = () => {
     <StyledColumnHeaderCell
       isFirstRowActiveOrFocused={isFirstRowActiveOrFocused}
     >
-      <StyledContainer>
+      <StyledContainer data-select-disable>
         <Checkbox
           hoverable
           checked={checked}

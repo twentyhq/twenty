@@ -1,8 +1,9 @@
 import { Logger, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import isEqual from 'lodash.isequal';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -26,9 +27,6 @@ import {
   WorkflowAction,
   WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { getStatusCombinationFromArray } from 'src/modules/workflow/workflow-status/utils/get-status-combination-from-array.util';
-import { getStatusCombinationFromUpdate } from 'src/modules/workflow/workflow-status/utils/get-status-combination-from-update.util';
-import { getWorkflowStatusesFromCombination } from 'src/modules/workflow/workflow-status/utils/get-statuses-from-combination.util';
 
 export enum WorkflowVersionEventType {
   CREATE = 'CREATE',
@@ -90,9 +88,10 @@ export class WorkflowStatusesUpdateJob {
 
     switch (event.type) {
       case WorkflowVersionEventType.CREATE:
+      case WorkflowVersionEventType.DELETE:
         await Promise.all(
           event.workflowIds.map((workflowId) =>
-            this.handleWorkflowVersionCreated({
+            this.handleWorkflowVersionCreatedOrDeleted({
               workflowId,
               workflowObjectMetadata,
               workspaceId: event.workspaceId,
@@ -111,23 +110,12 @@ export class WorkflowStatusesUpdateJob {
           ),
         );
         break;
-      case WorkflowVersionEventType.DELETE:
-        await Promise.all(
-          event.workflowIds.map((workflowId) =>
-            this.handleWorkflowVersionDeleted({
-              workflowId,
-              workflowObjectMetadata,
-              workspaceId: event.workspaceId,
-            }),
-          ),
-        );
-        break;
       default:
         break;
     }
   }
 
-  private async handleWorkflowVersionCreated({
+  private async handleWorkflowVersionCreatedOrDeleted({
     workflowId,
     workflowObjectMetadata,
     workspaceId,
@@ -141,29 +129,25 @@ export class WorkflowStatusesUpdateJob {
         'workflow',
       );
 
+    const workflowVersionRepository =
+      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        'workflowVersion',
+      );
+
+    const newWorkflowStatuses = await this.getWorkflowStatuses({
+      workflowId,
+      workflowVersionRepository,
+    });
+
     const previousWorkflow = await workflowRepository.findOneOrFail({
       where: {
         id: workflowId,
       },
     });
 
-    const currentWorkflowStatusCombination = getStatusCombinationFromArray(
-      previousWorkflow.statuses || [],
-    );
-
-    const newWorkflowStatusCombination = getStatusCombinationFromUpdate(
-      currentWorkflowStatusCombination,
-      undefined,
-      WorkflowVersionStatus.DRAFT,
-    );
-
-    if (newWorkflowStatusCombination === currentWorkflowStatusCombination) {
+    if (isEqual(newWorkflowStatuses, previousWorkflow.statuses)) {
       return;
     }
-
-    const newWorkflowStatuses = getWorkflowStatusesFromCombination(
-      newWorkflowStatusCombination,
-    );
 
     await workflowRepository.update(
       {
@@ -285,82 +269,18 @@ export class WorkflowStatusesUpdateJob {
       statusUpdate,
     });
 
-    const currentWorkflowStatusCombination = getStatusCombinationFromArray(
-      workflow.statuses || [],
-    );
+    const newWorkflowStatuses = await this.getWorkflowStatuses({
+      workflowId: statusUpdate.workflowId,
+      workflowVersionRepository,
+    });
 
-    const newWorkflowStatusCombination = getStatusCombinationFromUpdate(
-      currentWorkflowStatusCombination,
-      statusUpdate.previousStatus,
-      statusUpdate.newStatus,
-    );
-
-    if (newWorkflowStatusCombination === currentWorkflowStatusCombination) {
+    if (isEqual(newWorkflowStatuses, workflow.statuses)) {
       return;
     }
-
-    const newWorkflowStatuses = getWorkflowStatusesFromCombination(
-      newWorkflowStatusCombination,
-    );
 
     await workflowRepository.update(
       {
         id: statusUpdate.workflowId,
-      },
-      {
-        statuses: newWorkflowStatuses,
-      },
-    );
-
-    this.emitWorkflowStatusUpdatedEvent({
-      currentWorkflow: workflow,
-      workflowObjectMetadata,
-      newWorkflowStatuses,
-      workspaceId,
-    });
-  }
-
-  private async handleWorkflowVersionDeleted({
-    workflowId,
-    workflowObjectMetadata,
-    workspaceId,
-  }: {
-    workflowId: string;
-    workflowObjectMetadata: ObjectMetadataEntity;
-    workspaceId: string;
-  }): Promise<void> {
-    const workflowRepository =
-      await this.twentyORMManager.getRepository<WorkflowWorkspaceEntity>(
-        'workflow',
-      );
-
-    const workflow = await workflowRepository.findOneOrFail({
-      where: {
-        id: workflowId,
-      },
-    });
-
-    const currentWorkflowStatusCombination = getStatusCombinationFromArray(
-      workflow.statuses || [],
-    );
-
-    const newWorkflowStatusCombination = getStatusCombinationFromUpdate(
-      currentWorkflowStatusCombination,
-      WorkflowVersionStatus.DRAFT,
-      undefined,
-    );
-
-    if (newWorkflowStatusCombination === currentWorkflowStatusCombination) {
-      return;
-    }
-
-    const newWorkflowStatuses = getWorkflowStatusesFromCombination(
-      newWorkflowStatusCombination,
-    );
-
-    await workflowRepository.update(
-      {
-        id: workflowId,
       },
       {
         statuses: newWorkflowStatuses,
@@ -411,5 +331,52 @@ export class WorkflowStatusesUpdateJob {
       ],
       workspaceId,
     });
+  }
+
+  private async getWorkflowStatuses({
+    workflowId,
+    workflowVersionRepository,
+  }: {
+    workflowId: string;
+    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
+  }) {
+    const statuses: WorkflowStatus[] = [];
+
+    const workflowVersions = await workflowVersionRepository.find({
+      where: {
+        workflowId,
+        status: In([
+          WorkflowVersionStatus.ACTIVE,
+          WorkflowVersionStatus.DRAFT,
+          WorkflowVersionStatus.DEACTIVATED,
+        ]),
+      },
+    });
+
+    const hasDraftVersion = workflowVersions.some(
+      (version) => version.status === WorkflowVersionStatus.DRAFT,
+    );
+
+    if (hasDraftVersion) {
+      statuses.push(WorkflowStatus.DRAFT);
+    }
+
+    const hasActiveVersion = workflowVersions.some(
+      (version) => version.status === WorkflowVersionStatus.ACTIVE,
+    );
+
+    if (hasActiveVersion) {
+      statuses.push(WorkflowStatus.ACTIVE);
+    }
+
+    const hasDeactivatedVersion = workflowVersions.some(
+      (version) => version.status === WorkflowVersionStatus.DEACTIVATED,
+    );
+
+    if (!hasActiveVersion && hasDeactivatedVersion) {
+      statuses.push(WorkflowStatus.DEACTIVATED);
+    }
+
+    return statuses;
   }
 }
