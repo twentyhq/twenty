@@ -18,7 +18,15 @@ export abstract class DynamicDriverBase<TDriver> {
       if (this.currentDriver) {
         this.cleanupDriver(this.currentDriver);
       }
-      this.currentDriver = this.createDriver();
+
+      try {
+        this.currentDriver = this.createDriver();
+      } catch (error) {
+        throw new Error(
+          `Failed to create driver for ${this.constructor.name} with config key: ${configKey}. Original error: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
+
       this.currentConfigKey = configKey;
     }
 
