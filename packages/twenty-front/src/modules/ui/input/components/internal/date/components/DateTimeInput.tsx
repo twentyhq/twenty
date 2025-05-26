@@ -7,8 +7,9 @@ import { useRecoilValue } from 'recoil';
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
 import { DATE_BLOCKS } from '@/ui/input/components/internal/date/constants/DateBlocks';
+import { getDateMask } from '@/ui/input/components/internal/date/constants/DateMask';
 import { DATE_TIME_BLOCKS } from '@/ui/input/components/internal/date/constants/DateTimeBlocks';
-import { DATE_TIME_MASK } from '@/ui/input/components/internal/date/constants/DateTimeMask';
+import { getDateTimeMask } from '@/ui/input/components/internal/date/constants/DateTimeMask';
 import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
 import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
 import { isNull } from '@sniptt/guards';
@@ -74,21 +75,9 @@ export const DateTimeInput = ({
     return date;
   };
 
-  const getDateMask = () => {
-    switch (dateFormat) {
-      case DateFormat.DAY_FIRST:
-        return 'd`/m`/Y`';
-      case DateFormat.YEAR_FIRST:
-        return 'Y`/m`/d`';
-      case DateFormat.MONTH_FIRST:
-      default:
-        return 'm`/d`/Y`';
-    }
-  };
-
   const pattern = isDateTimeInput
-    ? `${getDateMask()} ${DATE_TIME_MASK.split(' ')[1]}`
-    : getDateMask();
+    ? getDateTimeMask(dateFormat)
+    : getDateMask(dateFormat);
   const blocks = isDateTimeInput ? DATE_TIME_BLOCKS : DATE_BLOCKS;
 
   const { ref, setValue, value } = useIMask(
