@@ -41,7 +41,7 @@ export const SettingsAccounts = () => {
   });
 
   const { enqueueSnackBar } = useSnackBar();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const errorMessage = searchParams.get('errorMessage');
 
   useEffect(() => {
@@ -50,8 +50,11 @@ export const SettingsAccounts = () => {
         dedupeKey: 'google-apis-connect-error-dedupe-key',
         variant: SnackBarVariant.Error,
       });
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.delete('errorMessage');
+      setSearchParams(newSearchParams);
     }
-  }, [enqueueSnackBar, errorMessage]);
+  }, [enqueueSnackBar, errorMessage, searchParams, setSearchParams]);
 
   return (
     <SubMenuTopBarContainer

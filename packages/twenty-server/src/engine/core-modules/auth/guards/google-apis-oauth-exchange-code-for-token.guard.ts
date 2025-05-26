@@ -57,7 +57,7 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
 
       return (await super.canActivate(context)) as boolean;
     } catch (err) {
-      if (err.status == 401) {
+      if (err.status === 401) {
         const request = context.switchToHttp().getRequest();
         const state = JSON.parse(request.query.state);
 
