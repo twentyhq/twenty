@@ -1,4 +1,3 @@
-import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
@@ -12,24 +11,14 @@ import {
 } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
 import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
-import { parseDateToString } from '@/ui/input/components/internal/date/utils/parseDateToString';
-import { parseStringToDate } from '@/ui/input/components/internal/date/utils/parseStringToDate';
+import { useDateParser } from '@/ui/input/components/internal/hooks/useDateParser';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { UserContext } from '@/users/contexts/UserContext';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  ChangeEvent,
-  KeyboardEvent,
-  useContext,
-  useId,
-  useRef,
-  useState,
-} from 'react';
-import { useRecoilValue } from 'recoil';
+import { ChangeEvent, KeyboardEvent, useId, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 import { Nullable } from 'twenty-ui/utilities';
@@ -95,8 +84,9 @@ export const FormDateTimeFieldInput = ({
   readonly,
   placeholder,
 }: FormDateTimeFieldInputProps) => {
-  const { timeZone } = useContext(UserContext);
-  const { dateFormat } = useRecoilValue(dateTimeFormatState);
+  const { parseToString, parseToDate } = useDateParser({
+    isDateTimeInput: !dateOnly,
+  });
 
   const inputId = useId();
 
@@ -124,12 +114,7 @@ export const FormDateTimeFieldInput = ({
 
   const [inputDateTime, setInputDateTime] = useState(
     isDefined(draftValueAsDate) && !isStandaloneVariableString(defaultValue)
-      ? parseDateToString({
-          date: draftValueAsDate,
-          isDateTimeInput: !dateOnly,
-          userTimezone: timeZone,
-          dateFormat,
-        })
+      ? parseToString(draftValueAsDate)
       : '',
   );
 
@@ -176,16 +161,7 @@ export const FormDateTimeFieldInput = ({
       value: newDate?.toDateString() ?? null,
     });
 
-    setInputDateTime(
-      isDefined(newDate)
-        ? parseDateToString({
-            date: newDate,
-            isDateTimeInput: !dateOnly,
-            userTimezone: timeZone,
-            dateFormat,
-          })
-        : '',
-    );
+    setInputDateTime(isDefined(newDate) ? parseToString(newDate) : '');
 
     setPickerDate(newDate);
 
@@ -235,16 +211,7 @@ export const FormDateTimeFieldInput = ({
 
     setPickerDate(newDate);
 
-    setInputDateTime(
-      isDefined(newDate)
-        ? parseDateToString({
-            date: newDate,
-            isDateTimeInput: !dateOnly,
-            userTimezone: timeZone,
-            dateFormat,
-          })
-        : '',
-    );
+    setInputDateTime(isDefined(newDate) ? parseToString(newDate) : '');
 
     persistDate(newDate);
   };
@@ -273,12 +240,7 @@ export const FormDateTimeFieldInput = ({
       return;
     }
 
-    const parsedInputDateTime = parseStringToDate({
-      dateAsString: inputDateTimeTrimmed,
-      isDateTimeInput: !dateOnly,
-      userTimezone: timeZone,
-      dateFormat,
-    });
+    const parsedInputDateTime = parseToDate(inputDateTimeTrimmed);
 
     if (!isDefined(parsedInputDateTime)) {
       return;
@@ -299,14 +261,7 @@ export const FormDateTimeFieldInput = ({
 
     setPickerDate(validatedDate);
 
-    setInputDateTime(
-      parseDateToString({
-        date: validatedDate,
-        isDateTimeInput: !dateOnly,
-        userTimezone: timeZone,
-        dateFormat,
-      }),
-    );
+    setInputDateTime(parseToString(validatedDate));
 
     persistDate(validatedDate);
   };
