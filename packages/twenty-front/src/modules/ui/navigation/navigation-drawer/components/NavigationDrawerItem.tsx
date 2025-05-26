@@ -272,9 +272,6 @@ export const NavigationDrawerItem = ({
       return;
     }
 
-    // If we have a 'to' prop and this is a normal click (not cmd+click, etc.)
-    // prevent the default Link behavior since we handle navigation on mousedown
-    // for faster UX
     if (
       isDefined(to) &&
       !event.metaKey &&
