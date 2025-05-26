@@ -4,6 +4,7 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 import { ClientConfigResolver } from './client-config.resolver';
+import { ClientConfigService } from './client-config.service';
 
 describe('ClientConfigResolver', () => {
   let resolver: ClientConfigResolver;
@@ -12,6 +13,10 @@ describe('ClientConfigResolver', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ClientConfigResolver,
+        {
+          provide: ClientConfigService,
+          useValue: {},
+        },
         {
           provide: TwentyConfigService,
           useValue: {},
