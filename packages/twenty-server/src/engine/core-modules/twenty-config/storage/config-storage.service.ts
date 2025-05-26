@@ -123,7 +123,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
       }
 
       throw new ConfigVariableException(
-        `Failed to retrieve config variable ${key as string}`,
+        `Failed to retrieve config variable ${key as string}: ${error instanceof Error ? error.message : String(error)}`,
         ConfigVariableExceptionCode.INTERNAL_ERROR,
       );
     }
@@ -160,7 +160,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
       }
 
       throw new ConfigVariableException(
-        `Failed to save config variable ${key as string}`,
+        `Failed to save config variable ${key as string}: ${error instanceof Error ? error.message : String(error)}`,
         ConfigVariableExceptionCode.INTERNAL_ERROR,
       );
     }
@@ -173,7 +173,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
       );
     } catch (error) {
       throw new ConfigVariableException(
-        `Failed to delete config variable ${key as string}`,
+        `Failed to delete config variable ${key as string}: ${error instanceof Error ? error.message : String(error)}`,
         ConfigVariableExceptionCode.INTERNAL_ERROR,
       );
     }
@@ -208,7 +208,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
             }
           } catch (error) {
             this.logger.debug(
-              `Skipping invalid config value for key ${key as string}: ${error.error}`,
+              `Skipping invalid config value for key ${key as string}: ${error instanceof Error ? error.message : String(error)}`,
             );
 
             continue;
@@ -219,7 +219,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
       return result;
     } catch (error) {
       throw new ConfigVariableException(
-        'Failed to load all config variables',
+        `Failed to load all config variables: ${error instanceof Error ? error.message : String(error)}`,
         ConfigVariableExceptionCode.INTERNAL_ERROR,
       );
     }

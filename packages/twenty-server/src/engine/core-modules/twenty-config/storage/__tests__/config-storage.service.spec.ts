@@ -271,6 +271,9 @@ describe('ConfigStorageService', () => {
       jest.spyOn(keyValuePairRepository, 'findOne').mockRejectedValue(error);
 
       await expect(service.get(key)).rejects.toThrow(ConfigVariableException);
+      await expect(service.get(key)).rejects.toThrow(
+        `Failed to retrieve config variable ${key}: Database error`,
+      );
       await expect(service.get(key)).rejects.toMatchObject({
         code: ConfigVariableExceptionCode.INTERNAL_ERROR,
       });
@@ -365,6 +368,9 @@ describe('ConfigStorageService', () => {
       await expect(service.set(key, value)).rejects.toThrow(
         ConfigVariableException,
       );
+      await expect(service.set(key, value)).rejects.toThrow(
+        `Failed to save config variable ${key}: Update error`,
+      );
       await expect(service.set(key, value)).rejects.toMatchObject({
         code: ConfigVariableExceptionCode.INTERNAL_ERROR,
       });
@@ -386,6 +392,9 @@ describe('ConfigStorageService', () => {
 
       await expect(service.set(key, value)).rejects.toThrow(
         ConfigVariableException,
+      );
+      await expect(service.set(key, value)).rejects.toThrow(
+        `Failed to save config variable ${key}: Insert error`,
       );
       await expect(service.set(key, value)).rejects.toMatchObject({
         code: ConfigVariableExceptionCode.INTERNAL_ERROR,
@@ -489,6 +498,9 @@ describe('ConfigStorageService', () => {
       await expect(service.delete(key)).rejects.toThrow(
         ConfigVariableException,
       );
+      await expect(service.delete(key)).rejects.toThrow(
+        `Failed to delete config variable ${key}: Delete error`,
+      );
       await expect(service.delete(key)).rejects.toMatchObject({
         code: ConfigVariableExceptionCode.INTERNAL_ERROR,
       });
@@ -552,6 +564,9 @@ describe('ConfigStorageService', () => {
       jest.spyOn(keyValuePairRepository, 'find').mockRejectedValue(error);
 
       await expect(service.loadAll()).rejects.toThrow(ConfigVariableException);
+      await expect(service.loadAll()).rejects.toThrow(
+        'Failed to load all config variables: Find error',
+      );
       await expect(service.loadAll()).rejects.toMatchObject({
         code: ConfigVariableExceptionCode.INTERNAL_ERROR,
       });
