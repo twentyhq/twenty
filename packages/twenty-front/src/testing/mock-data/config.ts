@@ -10,7 +10,6 @@ export const mockedClientConfig: ClientConfig = {
     password: true,
     microsoft: false,
     sso: [],
-    __typename: 'AuthProviders',
   },
   frontDomain: 'localhost',
   defaultSubdomain: 'app',
@@ -20,35 +19,29 @@ export const mockedClientConfig: ClientConfig = {
   support: {
     supportDriver: 'front',
     supportFrontChatId: null,
-    __typename: 'Support',
   },
   sentry: {
     dsn: 'MOCKED_DSN',
     release: 'MOCKED_RELEASE',
     environment: 'MOCKED_ENVIRONMENT',
-    __typename: 'Sentry',
   },
   billing: {
     isBillingEnabled: true,
     billingUrl: '',
     trialPeriods: [
       {
-        __typename: 'BillingTrialPeriodDTO',
         duration: 30,
         isCreditCardRequired: true,
       },
       {
-        __typename: 'BillingTrialPeriodDTO',
         duration: 7,
         isCreditCardRequired: false,
       },
     ],
-    __typename: 'Billing',
   },
   captcha: {
     provider: CaptchaDriverType.GoogleRecaptcha,
     siteKey: 'MOCKED_SITE_KEY',
-    __typename: 'Captcha',
   },
   api: { mutationMaximumAffectedRecords: 100 },
   canManageFeatureFlags: true,
