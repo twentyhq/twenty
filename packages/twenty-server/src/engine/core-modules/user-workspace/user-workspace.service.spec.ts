@@ -11,7 +11,10 @@ import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-r
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import {
+  FileUploadService,
+  SignedFilesResult,
+} from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -266,8 +269,8 @@ describe('UserWorkspaceService', () => {
         .spyOn(workspaceEventEmitter, 'emitCustomBatchEvent')
         .mockImplementation();
       jest.spyOn(fileUploadService, 'uploadImageFromUrl').mockResolvedValue({
-        paths: ['path/to/file'],
-      } as any);
+        files: [{ path: 'path/to/file', token: 'token' }],
+      } as SignedFilesResult);
 
       const result = await service.create({
         userId,
