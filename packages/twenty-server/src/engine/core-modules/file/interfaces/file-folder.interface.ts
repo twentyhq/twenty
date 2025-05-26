@@ -1,5 +1,7 @@
 import { registerEnumType } from '@nestjs/graphql';
 
+import { KebabCase } from 'type-fest';
+
 export enum FileFolder {
   ProfilePicture = 'profile-picture',
   WorkspaceLogo = 'workspace-logo',
@@ -33,3 +35,5 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
     ignoreExpirationToken: false,
   },
 };
+
+export type AllowedFolders = KebabCase<keyof typeof FileFolder>;

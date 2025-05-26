@@ -57,6 +57,7 @@ export const cleanTestDatabase = async (options?: CleanTestDatabaseOptions) => {
     });
 
     if (errors) {
+      // eslint-disable-next-line no-console
       console.error(
         `error while deleting '${objectToDelete.nameSingular}' object`,
         errors,

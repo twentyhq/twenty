@@ -389,7 +389,8 @@ export class SearchService {
       return getLogoUrlFromDomainName(record.domainNamePrimaryLinkUrl) || '';
     }
 
-    return imageIdentifierField
+    return imageIdentifierField &&
+      isNonEmptyString(record[imageIdentifierField])
       ? this.getImageUrlWithToken(record[imageIdentifierField], workspaceId)
       : '';
   }

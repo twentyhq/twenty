@@ -5,7 +5,7 @@ import DOMPurify from 'dompurify';
 import FileType from 'file-type';
 import { JSDOM } from 'jsdom';
 import sharp from 'sharp';
-import { v4 as uuidV4, v4 } from 'uuid';
+import { v4 } from 'uuid';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
@@ -13,6 +13,7 @@ import { settings } from 'src/engine/constants/settings';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { getCropSize, getImageBufferFromUrl } from 'src/utils/image';
+import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
 
 export type SignedFile = { path: string; token: string };
 
@@ -81,7 +82,7 @@ export class FileUploadService {
     fileFolder: FileFolder;
     workspaceId: string;
   }): Promise<SignedFilesResult> {
-    const { id, ext, name } = this.buildFileInfo(filename);
+    const { id, ext, name } = buildFileInfo(filename);
     const folder = this.getWorkspaceFolderName(workspaceId, fileFolder);
 
     await this._uploadFile({
@@ -141,7 +142,7 @@ export class FileUploadService {
     fileFolder: FileFolder;
     workspaceId: string;
   }): Promise<SignedFilesResult> {
-    const { id, name } = this.buildFileInfo(filename);
+    const { id, name } = buildFileInfo(filename);
 
     const cropSizes = settings.storage.imageCropSizes[fileFolder];
 
@@ -189,14 +190,6 @@ export class FileUploadService {
       mimeType,
       files,
     };
-  }
-
-  private buildFileInfo(filename: string) {
-    const ext = filename.split('.').pop() || '';
-    const id = uuidV4();
-    const name = `${id}${ext ? `.${ext}` : ''}`;
-
-    return { ext, name, id };
   }
 
   private getWorkspaceFolderName(workspaceId: string, fileFolder: FileFolder) {

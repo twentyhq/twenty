@@ -1,8 +1,8 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 
-import { extractFileInfoFromRequest } from 'src/engine/core-modules/file/file.utils';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { FilePayloadToEncode } from 'src/engine/core-modules/file/services/file.service';
+import { extractFileInfoFromRequest } from 'src/engine/core-modules/file/utils/extract-file-info-from-request.utils';
 
 @Injectable()
 export class FilePathGuard implements CanActivate {
