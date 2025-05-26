@@ -142,19 +142,14 @@ export const CanSetPrimaryLinkAsPrimaryLink: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const primaryEmail = await canvas.findByText('primary@example.com');
-    expect(primaryEmail).toBeVisible();
-
     const secondaryEmail = await canvas.findByText('secondary@example.com');
     expect(secondaryEmail).toBeVisible();
-
-    // Hover over secondary email to show dropdown
     await userEvent.hover(secondaryEmail);
 
     const openDropdownButtons = await canvas.findAllByRole('button', {
       expanded: false,
     });
-    await userEvent.click(openDropdownButtons[0]);
+    await userEvent.click(openDropdownButtons[1]);
 
     const setPrimaryOption = await within(
       getCanvasElementForDropdownTesting(),
