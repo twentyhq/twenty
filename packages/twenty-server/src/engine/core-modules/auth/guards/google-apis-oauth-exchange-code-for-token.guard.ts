@@ -77,6 +77,8 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
           );
 
         context.switchToHttp().getResponse().redirect(redirectErrorUrl);
+
+        return false;
       }
 
       this.guardRedirectService.dispatchErrorFromGuard(
