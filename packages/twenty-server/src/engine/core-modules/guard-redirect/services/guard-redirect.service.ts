@@ -25,6 +25,7 @@ export class GuardRedirectService {
       customDomain: string | null;
       isCustomDomainEnabled?: boolean;
     },
+    pathname = '/verify',
   ) {
     if ('contextType' in context && context.contextType === 'graphql') {
       throw error;
@@ -33,7 +34,13 @@ export class GuardRedirectService {
     context
       .switchToHttp()
       .getResponse()
-      .redirect(this.getRedirectErrorUrlAndCaptureExceptions(error, workspace));
+      .redirect(
+        this.getRedirectErrorUrlAndCaptureExceptions(
+          error,
+          workspace,
+          pathname,
+        ),
+      );
   }
 
   getSubdomainAndCustomDomainFromContext(context: ExecutionContext) {
