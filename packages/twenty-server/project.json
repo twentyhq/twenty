@@ -31,9 +31,7 @@
         },
         "db-reset": {
           "cwd": "packages/twenty-server",
-          "commands": [
-            "NODE_ENV=test nx database:reset > reset-logs.log"
-          ]
+          "commands": ["NODE_ENV=test nx database:reset > reset-logs.log"]
         }
       }
     },
