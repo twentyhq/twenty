@@ -94,8 +94,9 @@ export const PhonesFieldInput = ({
     });
   };
 
-  const isPrimaryPhone = (index: number) => index === 0;
-
+  const isPrimaryPhone = (index: number) => index === 0 && phones?.length > 1;
+  
+  const getShowSetAsPrimaryButton = (index: number) => index > 0;  
   return (
     <MultiItemFieldInput
       items={phones}
@@ -130,7 +131,7 @@ export const PhonesFieldInput = ({
           key={index}
           dropdownId={`phones-field-input-${fieldDefinition.metadata.fieldName}-${index}`}
           showPrimaryIcon={isPrimaryPhone(index)}
-          showSetAsPrimaryButton={!isPrimaryPhone(index)}
+          showSetAsPrimaryButton={getShowSetAsPrimaryButton(index)}
           phone={phone}
           onEdit={handleEdit}
           onSetAsPrimary={handleSetPrimary}
