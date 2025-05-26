@@ -95,8 +95,8 @@ export const PhonesFieldInput = ({
   };
 
   const isPrimaryPhone = (index: number) => index === 0 && phones?.length > 1;
-  
-  const getShowSetAsPrimaryButton = (index: number) => index > 0;  
+
+  const getShowSetAsPrimaryButton = (index: number) => index > 0;
   return (
     <MultiItemFieldInput
       items={phones}

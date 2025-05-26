@@ -46,7 +46,7 @@ export const EmailsFieldInput = ({
   );
 
   const isPrimaryEmail = (index: number) => index === 0 && emails?.length > 1;
- 
+
   const getShowSetAsPrimaryButton = (index: number) => index > 0;
 
   const setIsFieldInError = useSetRecoilComponentStateV2(
