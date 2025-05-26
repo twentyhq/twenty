@@ -4,7 +4,7 @@ import { capitalize } from 'twenty-shared/utils';
 type FindOneOperationFactoryParams = {
   objectMetadataSingularName: string;
   gqlFields: string;
-  filter?: Object;
+  filter?: unknown;
 };
 
 export const findOneOperationFactory = ({

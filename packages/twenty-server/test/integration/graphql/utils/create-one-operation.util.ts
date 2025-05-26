@@ -19,7 +19,7 @@ export const createOneOperation = async <T = object>({
   createOneResponse: ObjectRecord;
 }> => {
   const graphqlOperation = createOneOperationFactory({
-    data: input as Object, // TODO default generic does not work
+    data: input as object, // TODO default generic does not work
     objectMetadataSingularName,
     gqlFields,
   });
@@ -31,10 +31,6 @@ export const createOneOperation = async <T = object>({
       response,
       errorMessage: 'Create one operation should have failed but did not',
     });
-  }
-
-  if (response.body.errors) {
-    console.log(response.body.errors);
   }
 
   return {

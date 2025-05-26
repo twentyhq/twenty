@@ -305,7 +305,8 @@ describe('updateOne', () => {
         const updatePayload = {
           options: updateOptions(optionsWithIds),
         };
-        const { data } = await updateOneFieldMetadata({
+
+        await updateOneFieldMetadata({
           input: {
             idToUpdate: createOneField.id,
             updatePayload,

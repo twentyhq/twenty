@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { In } from 'typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, parseJson } from 'twenty-shared/utils';
+import { In } from 'typeorm';
+import { MAX_OPTIONS_TO_DISPLAY } from 'twenty-shared/constants';
 
 import {
   FieldMetadataComplexOption,
@@ -36,8 +37,6 @@ type Tmp = {
   updatedOption: GetOptionsDifferences['updated'];
   filteredOptionsCounter: number;
 };
-
-export const MAX_OPTIONS_TO_DISPLAY = 3; // TODO mutualize;
 
 export type SelectFieldMetadataEntity =
   FieldMetadataEntity<FieldMetadataType.SELECT>;

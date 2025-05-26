@@ -1,9 +1,8 @@
 import { EachTestingContext } from 'twenty-shared/testing';
 
 import { FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import { FieldMetadataRelatedRecordsService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-related-records.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-
-import { FieldMetadataRelatedRecordsService } from '../field-metadata-related-records.service';
 
 type GetOptionsDifferencesTestContext = EachTestingContext<{
   oldOptions: FieldMetadataDefaultOption[];
