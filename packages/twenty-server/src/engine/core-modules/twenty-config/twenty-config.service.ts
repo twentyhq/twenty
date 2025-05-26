@@ -1,7 +1,9 @@
 import { Injectable, Logger, Optional } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 
 import { isString } from 'class-validator';
 
+import { ClientConfigService } from 'src/engine/core-modules/client-config/client-config.service';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { CONFIG_VARIABLES_MASKING_CONFIG } from 'src/engine/core-modules/twenty-config/constants/config-variables-masking-config';
 import { ConfigVariablesMetadataOptions } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
@@ -15,6 +17,7 @@ import {
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 import { configVariableMaskSensitiveData } from 'src/engine/core-modules/twenty-config/utils/config-variable-mask-sensitive-data.util';
 import { isEnvOnlyConfigVar } from 'src/engine/core-modules/twenty-config/utils/is-env-only-config-var.util';
+import { generateFrontConfig } from 'src/utils/generate-front-config';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 @Injectable()
@@ -25,6 +28,7 @@ export class TwentyConfigService {
   constructor(
     private readonly environmentConfigDriver: EnvironmentConfigDriver,
     @Optional() private readonly databaseConfigDriver: DatabaseConfigDriver,
+    private readonly moduleRef: ModuleRef,
   ) {
     const isConfigVariablesInDbEnabled = this.environmentConfigDriver.get(
       'IS_CONFIG_VARIABLES_IN_DB_ENABLED',
@@ -77,6 +81,7 @@ export class TwentyConfigService {
     this.validateConfigVariableExists(key as string);
 
     await this.databaseConfigDriver.set(key, value);
+    this.regenerateFrontConfig();
   }
 
   async update<T extends keyof ConfigVariables>(
@@ -88,6 +93,7 @@ export class TwentyConfigService {
     this.validateConfigVariableExists(key as string);
 
     await this.databaseConfigDriver.update(key, value);
+    this.regenerateFrontConfig();
   }
 
   getMetadata(
@@ -181,6 +187,7 @@ export class TwentyConfigService {
     this.validateDatabaseDriverActive('delete');
     this.validateConfigVariableExists(key as string);
     await this.databaseConfigDriver.delete(key);
+    this.regenerateFrontConfig();
   }
 
   private getConfigMetadata(): Record<string, ConfigVariablesMetadataOptions> {
@@ -273,5 +280,19 @@ export class TwentyConfigService {
     }
 
     return true;
+  }
+
+  private regenerateFrontConfig(): void {
+    try {
+      const clientConfigService = this.moduleRef.get(ClientConfigService, {
+        strict: false,
+      });
+
+      if (clientConfigService) {
+        generateFrontConfig(clientConfigService);
+      }
+    } catch (error) {
+      // ClientConfigService might not be available yet, which is fine
+    }
   }
 }
