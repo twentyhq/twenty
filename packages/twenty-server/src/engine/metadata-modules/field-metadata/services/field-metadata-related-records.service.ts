@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { In } from 'typeorm';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined, parseJson } from 'twenty-shared/utils';
 
 import {
   FieldMetadataComplexOption,
@@ -17,14 +19,13 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
 import { ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-group.workspace-entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined, parseJson } from 'twenty-shared/utils';
 
 type Differences<T> = {
   created: T[];
   updated: { old: T; new: T }[];
   deleted: T[];
 };
+
 type GetOptionsDifferences = Differences<
   FieldMetadataDefaultOption | FieldMetadataComplexOption
 >;
@@ -239,6 +240,7 @@ export class FieldMetadataRelatedRecordsService {
             const containsUpdatedFilter = relatedUpdatedOptions.find(
               ({ old }) => viewFilterOptionValue === old.value,
             );
+
             if (!isDefined(containsUpdatedFilter)) {
               return viewFilterOptionValue;
             }

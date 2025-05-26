@@ -1,9 +1,5 @@
 import { faker } from '@faker-js/faker';
 import { isDefined } from 'class-validator';
-import {
-  FieldMetadataComplexOption,
-  FieldMetadataDefaultOption,
-} from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
 import { findOneOperation } from 'test/integration/graphql/utils/find-one-operation.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
@@ -13,6 +9,11 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { getMockCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/generate-mock-create-object-metadata-input';
 import { EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
+
+import {
+  FieldMetadataComplexOption,
+  FieldMetadataDefaultOption,
+} from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 
 type Option = FieldMetadataDefaultOption | FieldMetadataComplexOption;
 
@@ -33,6 +34,7 @@ const updateOption = ({ value, label, ...option }: Option) => ({
 const ALL_OPTIONS = generateOptions(10);
 
 const isEven = (_value: unknown, index: number) => index % 2 === 0;
+
 describe('updateOne', () => {
   describe('FieldMetadataService Enum Default Value Validation', () => {
     let idToDelete: string;
@@ -120,6 +122,7 @@ describe('updateOne', () => {
           await createObjectSelectFieldAndView(ALL_OPTIONS);
 
         const viewFilterId = '20202020-e3b5-4fa7-85aa-9b1950fc7bf5';
+
         await createOneOperation<{
           id: string;
           viewId: string;
@@ -164,6 +167,7 @@ describe('updateOne', () => {
       displayValue: string;
       value: string[];
     };
+
     type TestCase = EachTestingContext<{
       fieldMetadataOptions: Option[];
       createViewFilter: ViewFilterUpdate;
@@ -330,10 +334,12 @@ describe('updateOne', () => {
         if (expected !== undefined) {
           expect(findResponse).toBe(expected);
           expect(errors).toMatchSnapshot();
+
           return;
         }
 
         const { value } = findResponse;
+
         expect(() => JSON.parse(value)).not.toThrow();
         expect(findResponse).toMatchSnapshot({
           id: expect.any(String),

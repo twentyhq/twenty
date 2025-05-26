@@ -1,4 +1,3 @@
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   CreateOneObjectFactoryInput,
   createOneObjectMetadataQueryFactory,
@@ -7,6 +6,8 @@ import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/m
 import { CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
+
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 export const createOneObjectMetadata = async ({
   input,
@@ -32,6 +33,6 @@ export const createOneObjectMetadata = async ({
   if (response.body.errors) {
     console.log(response.body.errors);
   }
-  
+
   return { data: response.body.data, errors: response.body.errors };
 };

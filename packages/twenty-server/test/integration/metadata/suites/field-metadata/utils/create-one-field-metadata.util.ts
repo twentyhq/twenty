@@ -1,4 +1,3 @@
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   CreateOneFieldFactoryInput,
   createOneFieldMetadataQueryFactory,
@@ -7,6 +6,8 @@ import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/m
 import { CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
+
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 export const createOneFieldMetadata = async ({
   input,
