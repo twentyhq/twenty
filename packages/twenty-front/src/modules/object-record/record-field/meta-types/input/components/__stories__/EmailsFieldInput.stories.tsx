@@ -136,7 +136,7 @@ export const CanSetPrimaryLinkAsPrimaryLink: Story = {
   args: {
     value: {
       primaryEmail: 'primary@example.com',
-      additionalEmails: [],
+      additionalEmails: ['secondary@example.com'],
     },
   },
   play: async ({ canvasElement }) => {
@@ -145,7 +145,11 @@ export const CanSetPrimaryLinkAsPrimaryLink: Story = {
     const primaryEmail = await canvas.findByText('primary@example.com');
     expect(primaryEmail).toBeVisible();
 
-    await userEvent.hover(primaryEmail);
+    const secondaryEmail = await canvas.findByText('secondary@example.com');
+    expect(secondaryEmail).toBeVisible();
+
+    // Hover over secondary email to show dropdown
+    await userEvent.hover(secondaryEmail);
 
     const openDropdownButtons = await canvas.findAllByRole('button', {
       expanded: false,
@@ -167,8 +171,8 @@ export const CanSetPrimaryLinkAsPrimaryLink: Story = {
           where: { id: 'record-id' },
           updateOneRecordInput: {
             emails: {
-              primaryEmail: 'primary@example.com',
-              additionalEmails: [],
+              primaryEmail: 'secondary@example.com',
+              additionalEmails: ['primary@example.com'],
             },
           },
         },
