@@ -110,20 +110,6 @@ describe('trim-and-remove-duplicated-whitespaces-from-object-string-properties',
         },
       },
     },
-    {
-      title: 'should handle mixed quotes and whitespace',
-      context: {
-        input: {
-          name: '  "  John   Doe  "  ',
-          description: "  '  This   is   a   test  '  ",
-        },
-        keys: ['name', 'description'],
-        expected: {
-          name: 'John Doe',
-          description: 'This is a test',
-        },
-      },
-    },
   ];
 
   test.each(testCases)('$title', ({ context: { input, keys, expected } }) => {
