@@ -13,11 +13,11 @@ export const typeORMMetadataModuleOptions: TypeOrmModuleOptions = {
   url: process.env.PG_DATABASE_URL,
   type: 'postgres',
   logging: ['error'],
-  schema: 'metadata',
+  schema: 'core',
   entities: [
     `${isJest ? '' : 'dist/'}src/engine/metadata-modules/**/*.entity{.ts,.js}`,
   ],
-  synchronize: true,
+  synchronize: false,
   migrationsRun: false,
   migrationsTableName: '_typeorm_migrations',
   migrations: [

@@ -26,6 +26,7 @@ export const computeAggregateValueAndLabel = ({
   dateFormat,
   timeFormat,
   timeZone,
+  localeCatalog,
 }: {
   data: AggregateRecordsData;
   objectMetadataItem: ObjectMetadataItem;
@@ -34,6 +35,7 @@ export const computeAggregateValueAndLabel = ({
   dateFormat: DateFormat;
   timeFormat: TimeFormat;
   timeZone: string;
+  localeCatalog: Locale;
 }) => {
   if (isEmpty(data)) {
     return {};
@@ -105,6 +107,7 @@ export const computeAggregateValueAndLabel = ({
           dateFormat,
           timeFormat,
           dateFieldSettings,
+          localeCatalog,
         });
         break;
       }
@@ -116,6 +119,7 @@ export const computeAggregateValueAndLabel = ({
           timeZone,
           dateFormat,
           dateFieldSettings,
+          localeCatalog,
         });
         break;
       }

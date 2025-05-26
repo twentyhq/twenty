@@ -5,11 +5,13 @@ export const GET_LOGIN_TOKEN_FROM_CREDENTIALS = gql`
     $email: String!
     $password: String!
     $captchaToken: String
+    $origin: String!
   ) {
     getLoginTokenFromCredentials(
       email: $email
       password: $password
       captchaToken: $captchaToken
+      origin: $origin
     ) {
       loginToken {
         ...AuthTokenFragment

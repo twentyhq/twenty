@@ -3,7 +3,6 @@ import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataIt
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsDataModelNewFieldBreadcrumbDropDown } from '@/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown';
@@ -27,6 +26,8 @@ import pick from 'lodash.pick';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams, useSearchParams } from 'react-router-dom';
+import { H2Title } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -35,8 +36,6 @@ import { DEFAULT_ICONS_BY_FIELD_TYPE } from '~/pages/settings/data-model/constan
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { H2Title } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
 
 type SettingsDataModelNewFieldFormValues = z.infer<
   ReturnType<typeof settingsFieldFormSchema>
@@ -200,87 +199,85 @@ export const SettingsObjectNewFieldConfigure = () => {
   if (!activeObjectMetadataItem) return null;
 
   return (
-    <RecordFieldValueSelectorContextProvider>
-      <FormProvider // eslint-disable-next-line react/jsx-props-no-spreading
-        {...formConfig}
-      >
-        <SubMenuTopBarContainer
-          title={t`2. Configure field`}
-          links={[
-            {
-              children: t`Workspace`,
-              href: getSettingsPath(SettingsPath.Workspace),
-            },
-            {
-              children: t`Objects`,
-              href: getSettingsPath(SettingsPath.Objects),
-            },
-            {
-              children: activeObjectMetadataItem.labelPlural,
-              href: getSettingsPath(SettingsPath.ObjectDetail, {
-                objectNamePlural,
-              }),
-            },
+    <FormProvider // eslint-disable-next-line react/jsx-props-no-spreading
+      {...formConfig}
+    >
+      <SubMenuTopBarContainer
+        title={t`2. Configure field`}
+        links={[
+          {
+            children: t`Workspace`,
+            href: getSettingsPath(SettingsPath.Workspace),
+          },
+          {
+            children: t`Objects`,
+            href: getSettingsPath(SettingsPath.Objects),
+          },
+          {
+            children: activeObjectMetadataItem.labelPlural,
+            href: getSettingsPath(SettingsPath.ObjectDetail, {
+              objectNamePlural,
+            }),
+          },
 
-            { children: <SettingsDataModelNewFieldBreadcrumbDropDown /> },
-          ]}
-          actionButton={
-            <SaveAndCancelButtons
-              isSaveDisabled={!canSave}
-              isCancelDisabled={isSubmitting}
-              onCancel={() =>
-                navigate(
-                  SettingsPath.ObjectNewFieldSelect,
-                  {
-                    objectNamePlural,
-                  },
-                  {
-                    fieldType,
-                  },
-                )
-              }
-              onSave={formConfig.handleSubmit(handleSave)}
+          { children: <SettingsDataModelNewFieldBreadcrumbDropDown /> },
+        ]}
+        actionButton={
+          <SaveAndCancelButtons
+            isSaveDisabled={!canSave}
+            isCancelDisabled={isSubmitting}
+            onCancel={() =>
+              navigate(
+                SettingsPath.ObjectNewFieldSelect,
+                {
+                  objectNamePlural,
+                },
+                {
+                  fieldType,
+                },
+              )
+            }
+            onSave={formConfig.handleSubmit(handleSave)}
+          />
+        }
+      >
+        <SettingsPageContainer>
+          <Section>
+            <H2Title
+              title={t`Icon and Name`}
+              description={t`The name and icon of this field`}
             />
-          }
-        >
-          <SettingsPageContainer>
-            <Section>
-              <H2Title
-                title={t`Icon and Name`}
-                description={t`The name and icon of this field`}
-              />
-              <SettingsDataModelFieldIconLabelForm
-                maxLength={FIELD_NAME_MAXIMUM_LENGTH}
-                canToggleSyncLabelWithName={
-                  fieldType !== FieldMetadataType.RELATION
-                }
-              />
-            </Section>
-            <Section>
-              <H2Title
-                title={t`Values`}
-                description={t`The values of this field`}
-              />
-              <SettingsDataModelFieldSettingsFormCard
-                fieldMetadataItem={{
-                  icon: formConfig.watch('icon'),
-                  label: formConfig.watch('label') || 'New Field',
-                  settings: formConfig.watch('settings') || null,
-                  type: fieldType as FieldMetadataType,
-                }}
-                objectMetadataItem={activeObjectMetadataItem}
-              />
-            </Section>
-            <Section>
-              <H2Title
-                title={t`Description`}
-                description={t`The description of this field`}
-              />
-              <SettingsDataModelFieldDescriptionForm />
-            </Section>
-          </SettingsPageContainer>
-        </SubMenuTopBarContainer>
-      </FormProvider>
-    </RecordFieldValueSelectorContextProvider>
+            <SettingsDataModelFieldIconLabelForm
+              maxLength={FIELD_NAME_MAXIMUM_LENGTH}
+              canToggleSyncLabelWithName={
+                fieldType !== FieldMetadataType.RELATION
+              }
+            />
+          </Section>
+          <Section>
+            <H2Title
+              title={t`Values`}
+              description={t`The values of this field`}
+            />
+            <SettingsDataModelFieldSettingsFormCard
+              fieldMetadataItem={{
+                icon: formConfig.watch('icon'),
+                label: formConfig.watch('label') || 'New Field',
+                settings: formConfig.watch('settings') || null,
+                type: fieldType as FieldMetadataType,
+              }}
+              objectMetadataItem={activeObjectMetadataItem}
+            />
+          </Section>
+          <Section>
+            <H2Title
+              title={t`Description`}
+              description={t`The description of this field`}
+            />
+            <SettingsDataModelFieldDescriptionForm />
+          </Section>
+        </SettingsPageContainer>
+      </SubMenuTopBarContainer>
+    </FormProvider>
   );
 };

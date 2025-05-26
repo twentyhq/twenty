@@ -8,9 +8,9 @@ import {
   StepOutputSchema,
 } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { filterOutputSchema } from '@/workflow/workflow-variables/utils/filterOutputSchema';
-import { isEmptyObject } from '@tiptap/core';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { isEmptyObject } from '~/utils/isEmptyObject';
 
 export const useAvailableVariablesInWorkflowStep = ({
   objectNameSingularToSelect,

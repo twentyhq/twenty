@@ -1,15 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MicrosoftImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/microsoft/exceptions/microsoft-import-driver.exception';
 import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
 import { MicrosoftGraphBatchResponse } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.interface';
-import { isMicrosoftClientTemporaryError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/is-temporary-error.utils';
+import { MicrosoftHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-handle-error.service';
 
 @Injectable()
 export class MicrosoftFetchByBatchService {
+  private readonly logger = new Logger(MicrosoftFetchByBatchService.name);
   constructor(
     private readonly microsoftClientProvider: MicrosoftClientProvider,
+    private readonly microsoftHandleErrorService: MicrosoftHandleErrorService,
   ) {}
 
   async fetchAllByBatches(
@@ -51,15 +52,9 @@ export class MicrosoftFetchByBatchService {
 
         batchResponses.push(batchResponse);
       } catch (error) {
-        if (
-          error.body &&
-          typeof error.body === 'string' &&
-          isMicrosoftClientTemporaryError(error.body)
-        ) {
-          throw new MicrosoftImportDriverException(error.body, error.code, 429);
-        } else {
-          throw error;
-        }
+        this.microsoftHandleErrorService.handleMicrosoftMessageFetchByBatchError(
+          error,
+        );
       }
     }
 

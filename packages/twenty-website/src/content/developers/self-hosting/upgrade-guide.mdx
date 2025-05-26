@@ -24,7 +24,15 @@ If you want to upgrade your instance by few versions, e.g. from 0.33.0 to 0.35.0
 
 
 ## Version-specific upgrade steps
- 
+
+### 0.54
+
+Since version `0.53`, no manual actions needed.
+
+#### Metadata schema deprecation
+
+We've merged the `metadata` schema into the `core` one to simplify data retrieval from `TypeORM`.
+We have merged the `migrate` command step within the `upgrade` command. We do not recommend running `migrate` manually within any of your server/worker containers.
 
 ### Since 0.53
 

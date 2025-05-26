@@ -14,12 +14,14 @@ import {
   EmailVerificationExceptionCode,
 } from 'src/engine/core-modules/email-verification/email-verification.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
 
 import { EmailVerificationTokenService } from './email-verification-token.service';
 
 describe('EmailVerificationTokenService', () => {
   let service: EmailVerificationTokenService;
   let appTokenRepository: Repository<AppToken>;
+  let userRepository: Repository<User>;
   let twentyConfigService: TwentyConfigService;
 
   beforeEach(async () => {
@@ -29,6 +31,12 @@ describe('EmailVerificationTokenService', () => {
         {
           provide: getRepositoryToken(AppToken, 'core'),
           useClass: Repository,
+        },
+        {
+          provide: getRepositoryToken(User, 'core'),
+          useValue: {
+            findOne: jest.fn(),
+          },
         },
         {
           provide: TwentyConfigService,
@@ -44,6 +52,9 @@ describe('EmailVerificationTokenService', () => {
     );
     appTokenRepository = module.get<Repository<AppToken>>(
       getRepositoryToken(AppToken, 'core'),
+    );
+    userRepository = module.get<Repository<User>>(
+      getRepositoryToken(User, 'core'),
     );
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
   });
@@ -92,14 +103,14 @@ describe('EmailVerificationTokenService', () => {
       jest
         .spyOn(appTokenRepository, 'findOne')
         .mockResolvedValue(mockAppToken as AppToken);
-      jest
-        .spyOn(appTokenRepository, 'remove')
-        .mockResolvedValue(mockAppToken as AppToken);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
-      const result =
-        await service.validateEmailVerificationTokenOrThrow(plainToken);
+      const result = await service.validateEmailVerificationTokenOrThrow({
+        emailVerificationToken: plainToken,
+        email: 'test@example.com',
+      });
 
-      expect(result).toEqual(mockUser);
+      expect(result).toEqual(mockAppToken);
       expect(appTokenRepository.findOne).toHaveBeenCalledWith({
         where: {
           value: hashedToken,
@@ -107,18 +118,78 @@ describe('EmailVerificationTokenService', () => {
         },
         relations: ['user'],
       });
-      expect(appTokenRepository.remove).toHaveBeenCalledWith(mockAppToken);
     });
 
     it('should throw exception for invalid token', async () => {
       jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
       await expect(
-        service.validateEmailVerificationTokenOrThrow('invalid-token'),
+        service.validateEmailVerificationTokenOrThrow({
+          emailVerificationToken: 'invalid-token',
+          email: 'test@twenty.com',
+        }),
       ).rejects.toThrow(
         new EmailVerificationException(
           'Invalid email verification token',
           EmailVerificationExceptionCode.INVALID_TOKEN,
+        ),
+      );
+    });
+
+    it('should throw exception for already validated token', async () => {
+      const mockUser = {
+        id: 'user-id',
+        email: 'test@example.com',
+        isEmailVerified: true,
+      };
+
+      jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(mockUser as User);
+
+      await expect(
+        service.validateEmailVerificationTokenOrThrow({
+          emailVerificationToken: 'invalid-token',
+          email: 'test@example.com',
+        }),
+      ).rejects.toThrow(
+        new EmailVerificationException(
+          'Email already verified',
+          EmailVerificationExceptionCode.EMAIL_ALREADY_VERIFIED,
+        ),
+      );
+    });
+
+    it('should throw exception when email does not match appToken email', async () => {
+      const mockUser = {
+        id: 'user-id',
+        email: 'test@example.com',
+        isEmailVerified: false,
+      };
+
+      const mockAppToken = {
+        type: AppTokenType.EmailVerificationToken,
+        expiresAt: new Date(Date.now() + 86400000), // 24h from now
+        context: { email: 'other-email@example.com' },
+        user: {
+          email: 'other-email@example.com',
+        },
+      };
+
+      jest
+        .spyOn(appTokenRepository, 'findOne')
+        .mockResolvedValue(mockAppToken as AppToken);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
+
+      await expect(
+        service.validateEmailVerificationTokenOrThrow({
+          emailVerificationToken: 'valid-token',
+          email: mockUser.email,
+        }),
+      ).rejects.toThrow(
+        new EmailVerificationException(
+          'Email does not match token',
+          EmailVerificationExceptionCode.INVALID_EMAIL,
         ),
       );
     });
@@ -132,9 +203,13 @@ describe('EmailVerificationTokenService', () => {
       jest
         .spyOn(appTokenRepository, 'findOne')
         .mockResolvedValue(mockAppToken as AppToken);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
       await expect(
-        service.validateEmailVerificationTokenOrThrow('wrong-type-token'),
+        service.validateEmailVerificationTokenOrThrow({
+          emailVerificationToken: 'wrong-type-token',
+          email: 'test@example.com',
+        }),
       ).rejects.toThrow(
         new EmailVerificationException(
           'Invalid email verification token type',
@@ -152,9 +227,13 @@ describe('EmailVerificationTokenService', () => {
       jest
         .spyOn(appTokenRepository, 'findOne')
         .mockResolvedValue(mockAppToken as AppToken);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
       await expect(
-        service.validateEmailVerificationTokenOrThrow('expired-token'),
+        service.validateEmailVerificationTokenOrThrow({
+          emailVerificationToken: 'expired-token',
+          email: 'test@example.com',
+        }),
       ).rejects.toThrow(
         new EmailVerificationException(
           'Email verification token expired',
@@ -173,9 +252,13 @@ describe('EmailVerificationTokenService', () => {
       jest
         .spyOn(appTokenRepository, 'findOne')
         .mockResolvedValue(mockAppToken as AppToken);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
       await expect(
-        service.validateEmailVerificationTokenOrThrow('valid-token'),
+        service.validateEmailVerificationTokenOrThrow({
+          emailVerificationToken: 'valid-token',
+          email: 'test@example.com',
+        }),
       ).rejects.toThrow(
         new EmailVerificationException(
           'Email missing in email verification token context',

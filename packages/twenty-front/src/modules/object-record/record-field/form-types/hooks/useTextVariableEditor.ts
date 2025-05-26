@@ -13,7 +13,7 @@ type UseTextVariableEditorProps = {
   placeholder: string | undefined;
   multiline: boolean | undefined;
   readonly: boolean | undefined;
-  defaultValue: string | undefined;
+  defaultValue: string | undefined | null;
   onUpdate: (editor: Editor) => void;
 };
 

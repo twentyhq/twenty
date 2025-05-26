@@ -68,10 +68,6 @@ export class MessagingMessagesImportService {
         messageChannelId: messageChannel.id,
       });
 
-      this.logger.log(
-        `Messaging import for workspace ${workspaceId} and account ${connectedAccount.id} starting...`,
-      );
-
       await this.messageChannelSyncStatusService.markAsMessagesImportOngoing([
         messageChannel.id,
       ]);
@@ -103,6 +99,10 @@ export class MessagingMessagesImportService {
               message: error.message,
             };
           default:
+            this.logger.error(
+              `Error (${error.code}) refreshing access token for account ${connectedAccount.id}`,
+            );
+            this.logger.log(error);
             throw error;
         }
       }
@@ -130,7 +130,6 @@ export class MessagingMessagesImportService {
       const allMessages = await this.messagingGetMessagesService.getMessages(
         messageIdsToFetch,
         connectedAccount,
-        workspaceId,
       );
 
       const blocklist = await this.blocklistRepository.getByWorkspaceMemberId(
@@ -184,6 +183,10 @@ export class MessagingMessagesImportService {
         workspaceId,
       );
     } catch (error) {
+      // TODO: remove this log once we catch better the error codes
+      this.logger.error(
+        `Error (${error.code}) importing messages for workspace ${workspaceId.slice(0, 8)} and account ${connectedAccount.id.slice(0, 8)}: ${error.message} - ${error.body}`,
+      );
       await this.cacheStorage.setAdd(
         `messages-to-import:${workspaceId}:${messageChannel.id}`,
         messageIdsToFetch,

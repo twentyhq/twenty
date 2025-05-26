@@ -15,7 +15,7 @@ export class RestApiDeleteOneHandler extends RestApiBaseHandler {
       throw new BadRequestException('Record ID not found');
     }
 
-    const { objectMetadataNameSingular, objectMetadata, repository } =
+    const { objectMetadata, repository } =
       await this.getRepositoryAndMetadataOrFail(request);
     const recordToDelete = await repository.findOneOrFail({
       where: { id: recordId },
@@ -23,15 +23,15 @@ export class RestApiDeleteOneHandler extends RestApiBaseHandler {
 
     await repository.delete(recordId);
 
-    this.apiEventEmitterService.emitDestroyEvents(
-      [recordToDelete],
-      this.getAuthContextFromRequest(request),
-      objectMetadata.objectMetadataMapItem,
-    );
+    this.apiEventEmitterService.emitDestroyEvents({
+      records: [recordToDelete],
+      authContext: this.getAuthContextFromRequest(request),
+      objectMetadataItem: objectMetadata.objectMetadataMapItem,
+    });
 
     return this.formatResult({
       operation: 'delete',
-      objectNameSingular: objectMetadataNameSingular,
+      objectNameSingular: objectMetadata.objectMetadataMapItem.nameSingular,
       data: {
         id: recordToDelete.id,
       },

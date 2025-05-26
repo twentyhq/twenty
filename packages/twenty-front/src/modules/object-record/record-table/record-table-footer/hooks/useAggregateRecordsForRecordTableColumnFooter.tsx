@@ -16,6 +16,7 @@ import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
 export const useAggregateRecordsForRecordTableColumnFooter = (
   fieldMetadataId: string,
@@ -30,6 +31,8 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );
+
+  const dateLocale = useRecoilValue(dateLocaleState);
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
@@ -99,6 +102,7 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
     dateFormat,
     timeFormat,
     timeZone,
+    localeCatalog: dateLocale.localeCatalog,
   });
 
   return {

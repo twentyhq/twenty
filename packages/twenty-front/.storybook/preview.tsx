@@ -7,6 +7,7 @@ import { useDarkMode } from 'storybook-dark-mode';
 import { RootDecorator } from '../src/testing/decorators/RootDecorator';
 import { mockedUserJWT } from '../src/testing/mock-data/jwt';
 
+import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import 'react-loading-skeleton/dist/skeleton.css';
 import 'twenty-ui/style.css';
 import { THEME_DARK, THEME_LIGHT, ThemeContextProvider } from 'twenty-ui/theme';
@@ -46,7 +47,11 @@ const preview: Preview = {
       return (
         <ThemeProvider theme={theme}>
           <ThemeContextProvider theme={theme}>
-            <Story />
+            <ClickOutsideListenerContext.Provider
+              value={{ excludedClickOutsideId: undefined }}
+            >
+              <Story />
+            </ClickOutsideListenerContext.Provider>
           </ThemeContextProvider>
         </ThemeProvider>
       );

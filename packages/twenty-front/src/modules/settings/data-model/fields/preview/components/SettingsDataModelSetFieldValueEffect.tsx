@@ -1,4 +1,3 @@
-import { useSetRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { settingsPreviewRecordIdState } from '@/settings/data-model/fields/preview/states/settingsPreviewRecordIdState';
@@ -29,7 +28,6 @@ export const SettingsDataModelSetFieldValueEffect = ({
       fieldName,
     }),
   );
-  const setRecordFieldValue = useSetRecordFieldValue();
 
   useEffect(() => {
     if (
@@ -37,23 +35,10 @@ export const SettingsDataModelSetFieldValueEffect = ({
       !!upsertedPreviewRecord[fieldName]
     ) {
       setFieldValue(upsertedPreviewRecord[fieldName]);
-      setRecordFieldValue(
-        recordId,
-        fieldName,
-        upsertedPreviewRecord[fieldName],
-      );
     } else {
       setFieldValue(value);
-      setRecordFieldValue(recordId, fieldName, value);
     }
-  }, [
-    value,
-    setFieldValue,
-    setRecordFieldValue,
-    recordId,
-    fieldName,
-    upsertedPreviewRecord,
-  ]);
+  }, [value, setFieldValue, recordId, fieldName, upsertedPreviewRecord]);
 
   return null;
 };
