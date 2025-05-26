@@ -69,19 +69,9 @@ export class EmailSenderService
           options.auth = { user, pass };
         }
 
-        // make sure this is correct
-        // TODO: recheck this
-        // doesnt look correct
         if (noTLS) {
           options.secure = false;
           options.ignoreTLS = true;
-        } else {
-          if (port === 587) {
-            options.secure = false;
-            options.requireTLS = true;
-          } else if (port === 465) {
-            options.secure = true;
-          }
         }
 
         return new SmtpDriver(options);
