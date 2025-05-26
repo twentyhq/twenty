@@ -1,8 +1,7 @@
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import {
-  isEnumFieldMetadataType
-} from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 
 export type EnumFieldMetadataEntity = FieldMetadataEntity<
   | FieldMetadataType.SELECT
