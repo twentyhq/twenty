@@ -13,13 +13,13 @@ describe('extractFileIdFromPath', () => {
     expect(result).toBe('file.txt');
   });
 
-  it('should return empty string for an empty path', () => {
+  it('should throw when empty path', () => {
     expect(() => extractFileIdFromPath('')).toThrow(
       new Error('Cannot extract id from empty path'),
     );
   });
 
-  it('should handle trailing slashes correctly', () => {
+  it('should throw when empty filename', () => {
     const folderPath = 'uploads/files/';
 
     expect(() => extractFileIdFromPath(folderPath)).toThrow(
@@ -27,7 +27,7 @@ describe('extractFileIdFromPath', () => {
     );
   });
 
-  it('should return the last non-empty segment', () => {
+  it('should throw when empty filename absolute path', () => {
     const folderPath = '/a/b/c/';
 
     expect(() => extractFileIdFromPath(folderPath)).toThrow(

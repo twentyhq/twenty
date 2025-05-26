@@ -13,12 +13,16 @@ describe('checkFilename', () => {
   it('should throw an error for invalid filename', () => {
     const filename = `invalid-filename`;
 
-    expect(() => checkFilename(filename)).toThrow(`Filename is not allowed`);
+    expect(() => checkFilename(filename)).toThrow(
+      `Filename 'invalid-filename' is not allowed`,
+    );
   });
 
   it('should throw an error for invalid filename', () => {
     const filename = `\0`;
 
-    expect(() => checkFilename(filename)).toThrow(`Filename is not allowed`);
+    expect(() => checkFilename(filename)).toThrow(
+      `Filename '\0' is not allowed`,
+    );
   });
 });

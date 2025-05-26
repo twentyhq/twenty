@@ -3,7 +3,7 @@ import { BadRequestException } from '@nestjs/common';
 import { basename } from 'path';
 
 export const checkFilename = (filename: string) => {
-  const sanitizedFilename = basename(filename.replace(/\0/g, ''));
+  const sanitizedFilename = filename.replace(/\0/g, '');
 
   if (
     !sanitizedFilename ||
@@ -11,7 +11,7 @@ export const checkFilename = (filename: string) => {
     sanitizedFilename.includes('\\') ||
     !sanitizedFilename.includes('.')
   ) {
-    throw new BadRequestException(`Filename is not allowed`);
+    throw new BadRequestException(`Filename '${filename}' is not allowed`);
   }
 
   return basename(sanitizedFilename);

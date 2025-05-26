@@ -143,6 +143,10 @@ export class WorkspaceResolver {
       workspaceId: id,
     });
 
+    if (!files.length) {
+      throw new Error('Failed to upload workspace logo');
+    }
+
     await this.workspaceService.updateOne(id, {
       logo: files[0].path,
     });

@@ -346,6 +346,10 @@ export class UserResolver {
       workspaceId,
     });
 
+    if (!files.length) {
+      throw new Error('Failed to upload profile picture');
+    }
+
     return files[0];
   }
 

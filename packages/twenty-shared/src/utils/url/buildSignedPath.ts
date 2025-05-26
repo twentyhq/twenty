@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 export const buildSignedPath = ({
   path,
   token,
@@ -12,6 +14,12 @@ export const buildSignedPath = ({
   const directories = path.split('/');
 
   const filename = directories.pop();
+
+  if (!isNonEmptyString(filename)) {
+    throw new Error(
+      `Filename empty: cannot build signed path from folderPath '${path}'`,
+    );
+  }
 
   return `${directories.join('/')}/${token}/${filename}`;
 };

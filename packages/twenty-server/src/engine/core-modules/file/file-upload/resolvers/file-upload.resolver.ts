@@ -36,6 +36,10 @@ export class FileUploadResolver {
       workspaceId,
     });
 
+    if (!files.length) {
+      throw new Error('Failed to upload file');
+    }
+
     return files[0];
   }
 
@@ -57,6 +61,10 @@ export class FileUploadResolver {
       fileFolder,
       workspaceId,
     });
+
+    if (!files.length) {
+      throw new Error('Failed to upload image');
+    }
 
     return files[0];
   }

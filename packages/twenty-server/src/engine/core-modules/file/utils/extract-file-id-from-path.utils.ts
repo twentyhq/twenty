@@ -1,11 +1,11 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 export const extractFileIdFromPath = (path: string) => {
-  if (path.includes('/') && path.slice(-1) === '/') {
+  if (path.endsWith('/')) {
     throw new Error(`Cannot extract id from folder path '${path}'`);
   }
 
-  const fileId = path.split('/').reverse()[0];
+  const fileId = path.split('/').pop();
 
   if (!isNonEmptyString(fileId)) {
     throw new Error(`Cannot extract id from empty path`);
