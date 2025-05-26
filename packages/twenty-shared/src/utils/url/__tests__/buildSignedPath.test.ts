@@ -15,4 +15,15 @@ describe('buildSignedPath', () => {
       }),
     ).toBe('folder/original/tokenValue/test.txt');
   });
+
+  it('should ignore absolute urls', () => {
+    expect(
+      buildSignedPath({
+        path: 'https://twentyhq.github.io/placeholder-images/workspaces/twenty-logo.png',
+        token: 'tokenValue',
+      }),
+    ).toBe(
+      'https://twentyhq.github.io/placeholder-images/workspaces/twenty-logo.png',
+    );
+  });
 });
