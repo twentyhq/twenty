@@ -132,8 +132,9 @@ export const MultiItemFieldInput = <T,>({
   };
 
   const handleSubmitInput = () => {
+    const sanitizedInput = inputValue.trim();
     if (validateInput !== undefined) {
-      const validationData = validateInput(inputValue) ?? { isValid: true };
+      const validationData = validateInput(sanitizedInput) ?? { isValid: true };
       if (!validationData.isValid) {
         onError?.(true, items);
         setErrorData(validationData);
@@ -141,18 +142,18 @@ export const MultiItemFieldInput = <T,>({
       }
     }
 
-    if (inputValue === '' && isAddingNewItem) {
+    if (sanitizedInput === '' && isAddingNewItem) {
       return;
     }
 
-    if (inputValue === '' && !isAddingNewItem) {
+    if (sanitizedInput === '' && !isAddingNewItem) {
       handleDeleteItem(itemToEditIndex);
       return;
     }
 
     const newItem = formatInput
-      ? formatInput(inputValue)
-      : (inputValue as unknown as T);
+      ? formatInput(sanitizedInput)
+      : (sanitizedInput as unknown as T);
 
     if (!isAddingNewItem && newItem === items[itemToEditIndex]) {
       setIsInputDisplayed(false);
