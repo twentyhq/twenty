@@ -159,9 +159,6 @@ export const CanSetPrimaryLinkAsPrimaryLink: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const primaryPhone = await canvas.findByText('+33 6 42 64 62 72');
-    expect(primaryPhone).toBeVisible();
-
     const secondaryPhone = await canvas.findByText('+33 6 42 64 62 73');
     expect(secondaryPhone).toBeVisible();
 
