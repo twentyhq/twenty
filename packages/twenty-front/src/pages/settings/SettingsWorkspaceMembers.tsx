@@ -314,7 +314,7 @@ export const SettingsWorkspaceMembers = () => {
                 <TableHeader>
                   <Trans>Email</Trans>
                 </TableHeader>
-                <TableHeader align={'right'}>
+                <TableHeader>
                   <Trans>Expires in</Trans>
                 </TableHeader>
                 <TableHeader></TableHeader>
@@ -337,7 +337,7 @@ export const SettingsWorkspaceMembers = () => {
                         {workspaceInvitation.email}
                       </StyledTextContainerWithEllipsis>
                     </TableCell>
-                    <TableCell align={'right'}>
+                    <TableCell>
                       <Status
                         color={'gray'}
                         text={getExpiresAtText(workspaceInvitation.expiresAt)}
