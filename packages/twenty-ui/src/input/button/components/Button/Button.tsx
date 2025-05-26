@@ -34,6 +34,8 @@ export type ButtonProps = {
   to?: string;
   target?: string;
   dataTestId?: string;
+  dataClickOutsideId?: string;
+  dataGloballyPreventClickOutside?: boolean;
   hotkeys?: string[];
   ariaLabel?: string;
   isLoading?: boolean;
@@ -434,6 +436,8 @@ export const Button = ({
   to,
   target,
   dataTestId,
+  dataClickOutsideId,
+  dataGloballyPreventClickOutside,
   hotkeys,
   ariaLabel,
   type,
@@ -467,6 +471,8 @@ export const Button = ({
         as={to ? Link : 'button'}
         target={target}
         data-testid={dataTestId}
+        data-click-outside-id={dataClickOutsideId}
+        data-globally-prevent-click-outside={dataGloballyPreventClickOutside}
         aria-label={ariaLabel}
         type={type}
         isLoading={isLoading}
