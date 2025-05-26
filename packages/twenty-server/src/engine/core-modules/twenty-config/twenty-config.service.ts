@@ -284,9 +284,12 @@ export class TwentyConfigService {
 
   private regenerateFrontConfig(): void {
     try {
-      const clientConfigService = this.moduleRef.get(ClientConfigService, {
-        strict: false,
-      });
+      const clientConfigService = this.moduleRef.get<ClientConfigService>(
+        'ClientConfigService',
+        {
+          strict: false,
+        },
+      );
 
       if (clientConfigService) {
         generateFrontConfig(clientConfigService);
