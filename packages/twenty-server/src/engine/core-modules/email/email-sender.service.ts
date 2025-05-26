@@ -2,19 +2,19 @@ import { Injectable } from '@nestjs/common';
 
 import { SendMailOptions } from 'nodemailer';
 
-import { EmailDriver } from 'src/engine/core-modules/email/drivers/interfaces/email-driver.interface';
-import { EmailDriver as EmailDriverEnum } from 'src/engine/core-modules/email/interfaces/email.interface';
+import { EmailDriverInterface } from 'src/engine/core-modules/email/drivers/interfaces/email-driver.interface';
 
 import { LoggerDriver } from 'src/engine/core-modules/email/drivers/logger.driver';
 import { SmtpDriver } from 'src/engine/core-modules/email/drivers/smtp.driver';
+import { EmailDriver } from 'src/engine/core-modules/email/enums/email-driver.enum';
 import { DynamicDriverBase } from 'src/engine/core-modules/twenty-config/dynamic-driver.base';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class EmailSenderService
-  extends DynamicDriverBase<EmailDriver>
-  implements EmailDriver
+  extends DynamicDriverBase<EmailDriverInterface>
+  implements EmailDriverInterface
 {
   constructor(twentyConfigService: TwentyConfigService) {
     super(twentyConfigService);
@@ -23,12 +23,11 @@ export class EmailSenderService
   protected buildConfigKey(): string {
     const driver = this.twentyConfigService.get('EMAIL_DRIVER');
 
-    if (driver === EmailDriverEnum.Logger) {
+    if (driver === EmailDriver.Logger) {
       return 'logger';
     }
 
-    if (driver === EmailDriverEnum.Smtp) {
-      // Hash all EmailSettings config variables for robust cache invalidation
+    if (driver === EmailDriver.Smtp) {
       const emailConfigHash = this.getConfigGroupHash(
         ConfigVariablesGroup.EmailSettings,
       );
@@ -39,14 +38,14 @@ export class EmailSenderService
     throw new Error(`Unsupported email driver: ${driver}`);
   }
 
-  protected createDriver(): EmailDriver {
+  protected createDriver(): EmailDriverInterface {
     const driver = this.twentyConfigService.get('EMAIL_DRIVER');
 
     switch (driver) {
-      case EmailDriverEnum.Logger:
+      case EmailDriver.Logger:
         return new LoggerDriver();
 
-      case EmailDriverEnum.Smtp: {
+      case EmailDriver.Smtp: {
         const host = this.twentyConfigService.get('EMAIL_SMTP_HOST');
         const port = this.twentyConfigService.get('EMAIL_SMTP_PORT');
         const user = this.twentyConfigService.get('EMAIL_SMTP_USER');
@@ -70,16 +69,18 @@ export class EmailSenderService
           options.auth = { user, pass };
         }
 
+        // make sure this is correct
+        // TODO: recheck this
+        // doesnt look correct
         if (noTLS) {
           options.secure = false;
           options.ignoreTLS = true;
         } else {
-          // For most SMTP servers (Gmail, etc.) on port 587
           if (port === 587) {
-            options.secure = false; // Use STARTTLS instead of direct TLS
-            options.requireTLS = true; // Require STARTTLS
+            options.secure = false;
+            options.requireTLS = true;
           } else if (port === 465) {
-            options.secure = true; // Direct TLS connection
+            options.secure = true;
           }
         }
 
