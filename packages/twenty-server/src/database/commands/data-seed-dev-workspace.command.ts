@@ -142,24 +142,57 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
         workspaceId,
       );
 
-      await this.seedStandardObjectRecords(mainDataSource, dataSourceMetadata);
+      await this.seedCustomObjects({
+        dataSourceMetadata,
+      });
 
-      await this.seederService.seedCustomObjects(
-        dataSourceMetadata.id,
-        workspaceId,
-        PETS_METADATA_SEEDS,
-        PETS_DATA_SEEDS,
-      );
-
-      await this.seederService.seedCustomObjects(
-        dataSourceMetadata.id,
-        workspaceId,
-        SURVEY_RESULTS_METADATA_SEEDS,
-        SURVEY_RESULTS_DATA_SEEDS,
-      );
+      await this.seedRecords({
+        mainDataSource,
+        dataSourceMetadata,
+      });
     } catch (error) {
       this.logger.error(error);
     }
+  }
+
+  async seedCustomObjects({
+    dataSourceMetadata,
+  }: {
+    dataSourceMetadata: DataSourceEntity;
+  }) {
+    await this.seederService.seedCustomObjects(
+      dataSourceMetadata.id,
+      dataSourceMetadata.workspaceId,
+      PETS_METADATA_SEEDS,
+    );
+
+    await this.seederService.seedCustomObjects(
+      dataSourceMetadata.id,
+      dataSourceMetadata.workspaceId,
+      SURVEY_RESULTS_METADATA_SEEDS,
+    );
+  }
+
+  async seedRecords({
+    mainDataSource,
+    dataSourceMetadata,
+  }: {
+    mainDataSource: DataSource;
+    dataSourceMetadata: DataSourceEntity;
+  }) {
+    await this.seedStandardObjectRecords(mainDataSource, dataSourceMetadata);
+
+    await this.seederService.seedCustomObjectRecords(
+      dataSourceMetadata.workspaceId,
+      PETS_METADATA_SEEDS,
+      PETS_DATA_SEEDS,
+    );
+
+    await this.seederService.seedCustomObjectRecords(
+      dataSourceMetadata.workspaceId,
+      SURVEY_RESULTS_METADATA_SEEDS,
+      SURVEY_RESULTS_DATA_SEEDS,
+    );
   }
 
   async seedStandardObjectRecords(

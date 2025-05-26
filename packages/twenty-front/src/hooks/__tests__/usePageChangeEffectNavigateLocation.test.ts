@@ -8,9 +8,9 @@ import { useRecoilValue } from 'recoil';
 
 import { OnboardingStatus } from '~/generated/graphql';
 
-import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
 import { UNTESTED_APP_PATHS } from '~/testing/constants/UntestedAppPaths';
+import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 jest.mock('@/onboarding/hooks/useOnboardingStatus');
 const setupMockOnboardingStatus = (
@@ -28,13 +28,13 @@ const setupMockIsWorkspaceActivationStatusEqualsTo = (
     .mockReturnValueOnce(isWorkspaceSuspended);
 };
 
-jest.mock('~/hooks/useIsMatchingLocation');
-const mockUseIsMatchingLocation = jest.mocked(useIsMatchingLocation);
+jest.mock('~/utils/isMatchingLocation');
+const mockIsMatchingLocation = jest.mocked(isMatchingLocation);
 
 const setupMockIsMatchingLocation = (pathname: string) => {
-  mockUseIsMatchingLocation.mockReturnValueOnce({
-    isMatchingLocation: (path: string) => path === pathname,
-  });
+  mockIsMatchingLocation.mockImplementation(
+    (_location, path) => path === pathname,
+  );
 };
 
 jest.mock('@/auth/hooks/useIsLogged');

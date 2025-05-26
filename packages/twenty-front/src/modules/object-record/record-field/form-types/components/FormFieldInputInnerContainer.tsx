@@ -60,9 +60,9 @@ export const FormFieldInputInnerContainer = forwardRef(
       onFocus?.(e);
 
       if (!preventSetHotkeyScope) {
-        setHotkeyScopeAndMemorizePreviousScope(
-          FormFieldInputHotKeyScope.FormFieldInput,
-        );
+        setHotkeyScopeAndMemorizePreviousScope({
+          scope: FormFieldInputHotKeyScope.FormFieldInput,
+        });
       }
     };
 

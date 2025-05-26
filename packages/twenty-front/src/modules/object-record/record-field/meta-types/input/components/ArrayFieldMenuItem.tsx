@@ -21,7 +21,8 @@ export const ArrayFieldMenuItem = ({
       onEdit={onEdit}
       onDelete={onDelete}
       DisplayComponent={() => <ArrayDisplay value={[value]} />}
-      hasPrimaryButton={false}
+      showPrimaryIcon={false}
+      showSetAsPrimaryButton={false}
     />
   );
 };

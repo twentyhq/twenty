@@ -19,6 +19,7 @@ import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-run
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { RestApiCreateManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-create-many.handler';
 import { RestApiFindDuplicatesHandler } from 'src/engine/api/rest/core/handlers/rest-api-find-duplicates.handler';
+import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 
 const restApiCoreResolvers = [
   RestApiDeleteOneHandler,
@@ -39,6 +40,7 @@ const restApiCoreResolvers = [
     TwentyORMModule,
     RecordTransformerModule,
     WorkspacePermissionsCacheModule,
+    ActorModule,
   ],
   controllers: [RestApiCoreController],
   providers: [

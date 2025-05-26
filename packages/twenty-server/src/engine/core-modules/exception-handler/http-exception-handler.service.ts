@@ -1,14 +1,15 @@
-import { Inject, Injectable, Scope } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 
+import { ValidationError } from 'class-validator';
 import { Response } from 'express';
+import { QueryFailedError } from 'typeorm';
 
 import { ExceptionHandlerUser } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-user.interface';
 import { ExceptionHandlerWorkspace } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-workspace.interface';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { handleException } from 'src/engine/utils/global-exception-handler.util';
-import { CustomException } from 'src/utils/custom-exception';
 
 interface RequestAndParams {
   request: Request | null;
@@ -25,7 +26,7 @@ export class HttpExceptionHandlerService {
   ) {}
 
   handleError = (
-    exception: CustomException,
+    exception: Error,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     response: Response<any, Record<string, any>>,
@@ -37,11 +38,20 @@ export class HttpExceptionHandlerService {
   ): Response<any, Record<string, any>> | undefined => {
     const params = this.request?.params;
 
-    if (params?.workspaceId)
+    if (params?.workspaceId) {
       workspace = { ...workspace, id: params.workspaceId };
-    if (params?.userId) user = { ...user, id: params.userId };
+    }
 
-    const statusCode = errorCode || 500;
+    if (params?.userId) {
+      user = { ...user, id: params.userId };
+    }
+
+    let statusCode = errorCode || 500;
+
+    if (exception instanceof QueryFailedError) {
+      exception = new BadRequestException(exception.message);
+      statusCode = 400;
+    }
 
     handleException({
       exception,
@@ -51,10 +61,17 @@ export class HttpExceptionHandlerService {
       statusCode,
     });
 
+    const isClassValidatorExeption = exception instanceof ValidationError;
+
+    const message = isClassValidatorExeption
+      ? 'Invalid input exception'
+      : exception.message;
+
     return response.status(statusCode).send({
       statusCode,
-      error: exception.name || 'Bad Request',
-      messages: [exception?.message],
+      error: exception.name || 'BadRequestException',
+      messages: [exception?.message ?? message],
+      ...(isClassValidatorExeption ? exception : {}),
     });
   };
 }

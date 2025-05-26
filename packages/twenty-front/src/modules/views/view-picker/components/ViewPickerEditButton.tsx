@@ -7,6 +7,7 @@ import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerKanbanFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerKanbanFieldMetadataIdComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
+import { t } from '@lingui/core/macro';
 import { Button } from 'twenty-ui/input';
 
 export const ViewPickerEditButton = () => {
@@ -49,7 +50,7 @@ export const ViewPickerEditButton = () => {
   ) {
     return (
       <Button
-        title="Go to Settings"
+        title={t`Go to Settings`}
         onClick={navigateToSelectSettings}
         size="small"
         accent="blue"

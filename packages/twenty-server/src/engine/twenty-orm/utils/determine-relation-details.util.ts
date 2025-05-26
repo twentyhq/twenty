@@ -4,6 +4,10 @@ import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metada
 
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import {
+  RelationException,
+  RelationExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/relation.exception';
 import { computeRelationType } from 'src/engine/twenty-orm/utils/compute-relation-type.util';
 
 interface RelationDetails {
@@ -31,7 +35,10 @@ export async function determineRelationDetails(
   }
 
   if (!fromObjectMetadata || !toObjectMetadata) {
-    throw new Error('Object metadata not found');
+    throw new RelationException(
+      'Object metadata not found',
+      RelationExceptionCode.RELATION_OBJECT_METADATA_NOT_FOUND,
+    );
   }
 
   const toFieldMetadata = Object.values(toObjectMetadata.fieldsById).find(

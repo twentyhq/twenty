@@ -7,7 +7,7 @@ export class AddIsCustomColumnToIndexMetadata1727699709905
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-          ALTER TABLE "metadata"."indexMetadata" 
+          ALTER TABLE "core"."indexMetadata" 
           ADD COLUMN "isCustom" BOOLEAN 
           NOT NULL 
           DEFAULT FALSE;
@@ -16,7 +16,7 @@ export class AddIsCustomColumnToIndexMetadata1727699709905
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-          ALTER TABLE "metadata"."indexMetadata"
+          ALTER TABLE "core"."indexMetadata"
           DROP COLUMN "isCustom"
         `);
   }

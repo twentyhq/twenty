@@ -13,7 +13,8 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { t } from '@lingui/core/macro';
-import { IconCircleOff, useIcons } from 'twenty-ui/display';
+import { useNavigate } from 'react-router-dom';
+import { IconCircleOff, IconPlus, useIcons } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
 
 export const settingsDataModelObjectIdentifiersFormSchema =
@@ -100,6 +101,9 @@ export const SettingsDataModelObjectIdentifiersForm = ({
     label: 'None',
     value: null,
   };
+
+  const navigate = useNavigate();
+
   return (
     <StyledContainer>
       {[
@@ -124,12 +128,23 @@ export const SettingsDataModelObjectIdentifiersForm = ({
           render={({ field: { onChange, value } }) => (
             <Select
               label={label}
-              disabled={!objectMetadataItem.isCustom || !options.length}
               fullWidth
               dropdownId={`${fieldName}-select`}
               emptyOption={emptyOption}
               options={options}
               value={value}
+              withSearchInput={label === t`Record label`}
+              callToActionButton={
+                label === t`Record label`
+                  ? {
+                      text: 'Create Text Field',
+                      Icon: IconPlus,
+                      onClick: () => {
+                        navigate('./new-field/select');
+                      },
+                    }
+                  : undefined
+              }
               onChange={(value) => {
                 onChange(value);
                 formConfig.handleSubmit(handleSave)();

@@ -145,8 +145,8 @@ msgstr ""
 
 #. js-lingui-id: juBVjt
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-msgid "A workflow event listener"
-msgstr ""
+#~ msgid "A workflow event listener"
+#~ msgstr ""
 
 #. js-lingui-id: 1+xDbI
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -1050,8 +1050,8 @@ msgstr ""
 
 #. js-lingui-id: 81maJp
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-msgid "Event Listeners"
-msgstr ""
+#~ msgid "Event Listeners"
+#~ msgstr ""
 
 #. js-lingui-id: PYs3rP
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1873,7 +1873,6 @@ msgstr ""
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 #: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -2809,8 +2808,8 @@ msgstr ""
 
 #. js-lingui-id: 7mPrpl
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-msgid "The workflow event listener name"
-msgstr ""
+#~ msgid "The workflow event listener name"
+#~ msgstr ""
 
 #. js-lingui-id: od0omS
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -3349,7 +3348,6 @@ msgstr ""
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -3365,8 +3363,8 @@ msgstr ""
 
 #. js-lingui-id: E03XpH
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-msgid "Workflow event listeners linked to the workflow."
-msgstr ""
+#~ msgid "Workflow event listeners linked to the workflow."
+#~ msgstr ""
 
 #. js-lingui-id: vwSkSW
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -3469,18 +3467,18 @@ msgstr ""
 
 #. js-lingui-id: ENOy6I
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-msgid "WorkflowEventListener"
-msgstr ""
+#~ msgid "WorkflowEventListener"
+#~ msgstr ""
 
 #. js-lingui-id: HN90FO
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-msgid "WorkflowEventListener workflow"
-msgstr ""
+#~ msgid "WorkflowEventListener workflow"
+#~ msgstr ""
 
 #. js-lingui-id: 3JA9se
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-msgid "WorkflowEventListeners"
-msgstr ""
+#~ msgid "WorkflowEventListeners"
+#~ msgstr ""
 
 #. js-lingui-id: woYYQq
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts

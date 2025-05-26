@@ -48,18 +48,18 @@ describe('useKeyboardShortcutMenu', () => {
       result.current.toggleKeyboardShortcutMenu();
     });
 
-    expect(mockSetHotkeyScopeAndMemorizePreviousScope).toHaveBeenCalledWith(
-      AppHotkeyScope.KeyboardShortcutMenu,
-    );
+    expect(mockSetHotkeyScopeAndMemorizePreviousScope).toHaveBeenCalledWith({
+      scope: AppHotkeyScope.KeyboardShortcutMenu,
+    });
     expect(result.current.isKeyboardShortcutMenuOpened).toBe(true);
 
     act(() => {
       result.current.toggleKeyboardShortcutMenu();
     });
 
-    expect(mockSetHotkeyScopeAndMemorizePreviousScope).toHaveBeenCalledWith(
-      AppHotkeyScope.KeyboardShortcutMenu,
-    );
+    expect(mockSetHotkeyScopeAndMemorizePreviousScope).toHaveBeenCalledWith({
+      scope: AppHotkeyScope.KeyboardShortcutMenu,
+    });
     expect(result.current.isKeyboardShortcutMenuOpened).toBe(false);
   });
 
@@ -69,9 +69,9 @@ describe('useKeyboardShortcutMenu', () => {
       result.current.openKeyboardShortcutMenu();
     });
 
-    expect(mockSetHotkeyScopeAndMemorizePreviousScope).toHaveBeenCalledWith(
-      AppHotkeyScope.KeyboardShortcutMenu,
-    );
+    expect(mockSetHotkeyScopeAndMemorizePreviousScope).toHaveBeenCalledWith({
+      scope: AppHotkeyScope.KeyboardShortcutMenu,
+    });
     expect(result.current.isKeyboardShortcutMenuOpened).toBe(true);
 
     act(() => {

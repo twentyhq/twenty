@@ -11,9 +11,9 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { z } from 'zod';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useCreateApprovedAccessDomainMutation } from '~/generated/graphql';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { TextInput } from '@/ui/input/components/TextInput';
 
 export const SettingsSecurityApprovedAccessDomain = () => {
   const navigate = useNavigateSettings();
@@ -115,12 +115,11 @@ export const SettingsSecurityApprovedAccessDomain = () => {
                 field: { onChange, value },
                 fieldState: { error },
               }) => (
-                <TextInputV2
+                <TextInput
+                  autoFocus
                   autoComplete="off"
                   value={value}
-                  onChange={(domain: string) => {
-                    onChange(domain);
-                  }}
+                  onChange={onChange}
                   fullWidth
                   placeholder="yourdomain.com"
                   error={error?.message}
@@ -140,7 +139,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
                 field: { onChange, value },
                 fieldState: { error },
               }) => (
-                <TextInputV2
+                <TextInput
                   autoComplete="off"
                   value={value.split('@')[0]}
                   onChange={onChange}

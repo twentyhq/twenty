@@ -27,6 +27,7 @@ import {
 import { GetAuthorizationUrlForSSOInput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.input';
 import { GetAuthorizationUrlForSSOOutput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.output';
 import { GetLoginTokenFromEmailVerificationTokenInput } from 'src/engine/core-modules/auth/dto/get-login-token-from-email-verification-token.input';
+import { GetLoginTokenFromEmailVerificationTokenOutput } from 'src/engine/core-modules/auth/dto/get-login-token-from-email-verification-token.output';
 import { SignUpOutput } from 'src/engine/core-modules/auth/dto/sign-up.output';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
@@ -36,6 +37,7 @@ import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/r
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { EmailVerificationExceptionFilter } from 'src/engine/core-modules/email-verification/email-verification-exception-filter.util';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
@@ -46,13 +48,12 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { GetLoginTokenFromEmailVerificationTokenOutput } from 'src/engine/core-modules/auth/dto/get-login-token-from-email-verification-token.output';
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { GetLoginTokenFromCredentialsInput } from './dto/get-login-token-from-credentials.input';
@@ -66,11 +67,17 @@ import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input
 import { AuthService } from './services/auth.service';
 
 @Resolver()
-@UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
+@UseFilters(
+  AuthGraphqlApiExceptionFilter,
+  PermissionsGraphqlApiExceptionFilter,
+  EmailVerificationExceptionFilter,
+)
 export class AuthResolver {
   constructor(
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
+    @InjectRepository(AppToken, 'core')
+    private readonly appTokenRepository: Repository<AppToken>,
     private authService: AuthService,
     private renewTokenService: RenewTokenService,
     private userService: UserService,
@@ -92,7 +99,9 @@ export class AuthResolver {
   async checkUserExists(
     @Args() checkUserExistsInput: CheckUserExistsInput,
   ): Promise<typeof UserExistsOutput> {
-    return await this.authService.checkUserExists(checkUserExistsInput.email);
+    return await this.authService.checkUserExists(
+      checkUserExistsInput.email.toLowerCase(),
+    );
   }
 
   @Mutation(() => GetAuthorizationUrlForSSOOutput)
@@ -128,7 +137,7 @@ export class AuthResolver {
   async getLoginTokenFromCredentials(
     @Args()
     getLoginTokenFromCredentialsInput: GetLoginTokenFromCredentialsInput,
-    @OriginHeader() origin: string,
+    @Args('origin') origin: string,
   ): Promise<LoginToken> {
     const workspace =
       await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
@@ -160,23 +169,26 @@ export class AuthResolver {
   async getLoginTokenFromEmailVerificationToken(
     @Args()
     getLoginTokenFromEmailVerificationTokenInput: GetLoginTokenFromEmailVerificationTokenInput,
-    @OriginHeader() origin: string,
+    @Args('origin') origin: string,
   ) {
-    const user =
+    const appToken =
       await this.emailVerificationTokenService.validateEmailVerificationTokenOrThrow(
-        getLoginTokenFromEmailVerificationTokenInput.emailVerificationToken,
+        getLoginTokenFromEmailVerificationTokenInput,
       );
 
     const workspace =
       (await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,
       )) ??
-      (await this.userWorkspaceService.findFirstWorkspaceByUserId(user.id));
+      (await this.userWorkspaceService.findFirstWorkspaceByUserId(
+        appToken.user.id,
+      ));
 
-    await this.userService.markEmailAsVerified(user.id);
+    await this.userService.markEmailAsVerified(appToken.user.id);
+    await this.appTokenRepository.remove(appToken);
 
     const loginToken = await this.loginTokenService.generateLoginToken(
-      user.email,
+      appToken.user.email,
       workspace.id,
     );
 
@@ -313,7 +325,7 @@ export class AuthResolver {
   @Mutation(() => AuthTokens)
   async getAuthTokensFromLoginToken(
     @Args() getAuthTokensFromLoginTokenInput: GetAuthTokensFromLoginTokenInput,
-    @OriginHeader() origin: string,
+    @Args('origin') origin: string,
   ): Promise<AuthTokens> {
     const workspace =
       await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(

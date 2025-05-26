@@ -57,11 +57,10 @@ export class ServerlessFunctionResolver {
     try {
       await this.checkFeatureFlag(workspaceId);
 
-      return (
-        await this.serverlessFunctionService.findManyServerlessFunctions({
-          id,
-        })
-      )?.[0];
+      return await this.serverlessFunctionService.findOneOrFail({
+        id,
+        workspaceId,
+      });
     } catch (error) {
       serverlessFunctionGraphQLApiExceptionHandler(error);
     }

@@ -18,7 +18,7 @@ export const useRecordTitleCell = () => {
   const {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
-  } = usePreviousHotkeyScope(INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY);
+  } = usePreviousHotkeyScope();
 
   const closeRecordTitleCell = useRecoilCallback(
     ({ set }) =>
@@ -38,7 +38,7 @@ export const useRecordTitleCell = () => {
           false,
         );
 
-        goBackToPreviousHotkeyScope();
+        goBackToPreviousHotkeyScope(INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY);
 
         goBackToPreviousDropdownFocusId();
       },
@@ -61,14 +61,16 @@ export const useRecordTitleCell = () => {
         customEditHotkeyScopeForField?: HotkeyScope;
       }) => {
         if (isDefined(customEditHotkeyScopeForField)) {
-          setHotkeyScopeAndMemorizePreviousScope(
-            customEditHotkeyScopeForField.scope,
-            customEditHotkeyScopeForField.customScopes,
-          );
+          setHotkeyScopeAndMemorizePreviousScope({
+            scope: customEditHotkeyScopeForField.scope,
+            customScopes: customEditHotkeyScopeForField.customScopes,
+            memoizeKey: INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY,
+          });
         } else {
-          setHotkeyScopeAndMemorizePreviousScope(
-            TitleInputHotkeyScope.TitleInput,
-          );
+          setHotkeyScopeAndMemorizePreviousScope({
+            scope: TitleInputHotkeyScope.TitleInput,
+            memoizeKey: INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY,
+          });
         }
 
         const recordTitleCellId = getRecordTitleCellId(
