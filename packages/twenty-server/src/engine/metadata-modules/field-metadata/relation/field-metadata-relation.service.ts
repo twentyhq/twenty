@@ -88,9 +88,9 @@ export class FieldMetadataRelationService {
       const sourceObjectMetadata = objectMetadataMaps.byId[objectMetadataId];
       const targetObjectMetadata =
         objectMetadataMaps.byId[relationTargetObjectMetadataId];
-      const sourceFieldMetadata = sourceObjectMetadata.fieldsById[id];
+      const sourceFieldMetadata = sourceObjectMetadata?.fieldsById[id];
       const targetFieldMetadata =
-        targetObjectMetadata.fieldsById[relationTargetFieldMetadataId];
+        targetObjectMetadata?.fieldsById[relationTargetFieldMetadataId];
 
       if (
         !sourceObjectMetadata ||
