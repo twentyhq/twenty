@@ -262,7 +262,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           existingFieldMetadata,
           updatedFieldMetadata,
         );
-        
+
         await this.fieldMetadataRelatedRecordsService.updateRelatedViewFilters(
           existingFieldMetadata,
           updatedFieldMetadata,

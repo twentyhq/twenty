@@ -46,6 +46,7 @@ type FieldMetadataOptionsAndType = {
   options: Option[];
   type: EnumFieldMetadataType;
 };
+
 type TestCase = EachTestingContext<{
   fieldMetadata?: FieldMetadataOptionsAndType;
   createViewFilter?: ViewFilterUpdate;

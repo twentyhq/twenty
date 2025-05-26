@@ -5,7 +5,6 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 export type SelectOrMultiSelectFieldMetadataEntity = FieldMetadataEntity<
   FieldMetadataType.SELECT | FieldMetadataType.MULTI_SELECT
 >;
-// Would love this to handle 
 export const isSelectOrMultiSelectFieldMetadata = (
   fieldMetadata: unknown,
 ): fieldMetadata is SelectOrMultiSelectFieldMetadataEntity => {
