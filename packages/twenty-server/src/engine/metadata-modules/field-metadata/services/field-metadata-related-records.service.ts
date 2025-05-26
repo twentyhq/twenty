@@ -31,13 +31,6 @@ type GetOptionsDifferences = Differences<
   FieldMetadataDefaultOption | FieldMetadataComplexOption
 >;
 
-type ComputeViewFilterDisplayValueArgs = {
-  viewFilter: ViewFilterWorkspaceEntity;
-  deletedOption: (FieldMetadataDefaultOption | FieldMetadataComplexOption)[];
-  updatedOption: GetOptionsDifferences['updated'];
-  filteredOptionsCounter: number;
-};
-
 export type SelectFieldMetadataEntity = FieldMetadataEntity<
   | FieldMetadataType.SELECT
   | FieldMetadataType.RATING
@@ -128,41 +121,15 @@ export class FieldMetadataRelatedRecordsService {
     }
   }
 
-  private computeViewFilterDisplayValue({
-    deletedOption,
-    updatedOption,
-    viewFilter,
-    filteredOptionsCounter,
-  }: ComputeViewFilterDisplayValueArgs): string {
-    if (filteredOptionsCounter > MAX_OPTIONS_TO_DISPLAY) {
-      return `${filteredOptionsCounter} options`;
+  // TODO finish this prastoin
+  private computeViewFilterDisplayValue(
+    newViewFilterOptions: FieldMetadataDefaultOption[],
+  ): string {
+    if (newViewFilterOptions.length > MAX_OPTIONS_TO_DISPLAY) {
+      return `${newViewFilterOptions.length} options`;
     }
 
-    const viewFilterDisplayValues = viewFilter.displayValue.split(',');
-    const remainingViewFilterDisplayValue = viewFilterDisplayValues.filter(
-      (viewFilterOptionLabel) =>
-        !deletedOption.find((option) => option.label === viewFilterOptionLabel),
-    );
-
-    if (remainingViewFilterDisplayValue.length === 0) {
-      return updatedOption.map((option) => option.new.label).join(', ');
-    }
-
-    const updatedViewFilterDisplayValue = remainingViewFilterDisplayValue.map(
-      (viewFilterOptionLabel) => {
-        const matchingUpdatedOption = updatedOption.find(
-          (option) => option.old.label === viewFilterOptionLabel,
-        );
-
-        if (!isDefined(matchingUpdatedOption)) {
-          return viewFilterOptionLabel;
-        }
-
-        return matchingUpdatedOption.new.label;
-      },
-    );
-
-    return updatedViewFilterDisplayValue.join(', ');
+    return newViewFilterOptions.map((option) => option.label).join(', ');
   }
 
   public async updateRelatedViewFilters(
@@ -216,51 +183,46 @@ export class FieldMetadataRelatedRecordsService {
           );
         }
 
-        const relatedDeletedOptions = deletedFieldMetadata.filter((deleted) =>
-          viewFilterValue.includes(deleted.value),
+        const viewFilterOptions = viewFilterValue
+          .map((value) =>
+            oldFieldMetadata.options.find((option) => option.value === value),
+          )
+          .filter(isDefined);
+
+        const afterDeleteViewFilterOptions = viewFilterOptions.filter(
+          (viewFilterOption) =>
+            !deletedFieldMetadata.some(
+              (option) => option.value === viewFilterOption.value,
+            ),
         );
 
-        if (relatedDeletedOptions.length === viewFilterValue.length) {
+        if (afterDeleteViewFilterOptions.length === 0) {
           await viewFilterRepository.delete({ id: viewFilter.id });
           continue;
         }
 
-        const remainingViewFilterValues = viewFilterValue.filter(
-          (viewFilterOptionValue) =>
-            !relatedDeletedOptions.find(
-              (option) => option.value === viewFilterOptionValue,
-            ),
-        );
-
-        const relatedUpdatedOptions = updatedFieldMetadata.filter((updated) =>
-          remainingViewFilterValues.includes(updated.old.value),
-        );
-
-        const updatedViewFilterValues = remainingViewFilterValues.map(
-          (viewFilterOptionValue) => {
-            const containsUpdatedFilter = relatedUpdatedOptions.find(
-              ({ old }) => viewFilterOptionValue === old.value,
+        const afterUpdateAndDeleteViewFilterOptions =
+          afterDeleteViewFilterOptions.map((viewFilterOption) => {
+            const updatedOption = updatedFieldMetadata.find(
+              ({ old }) => viewFilterOption.value === old.value,
             );
 
-            if (!isDefined(containsUpdatedFilter)) {
-              return viewFilterOptionValue;
-            }
+            return isDefined(updatedOption)
+              ? updatedOption.new
+              : viewFilterOption;
+          });
 
-            return containsUpdatedFilter.new.value;
-          },
+        const displayValue = this.computeViewFilterDisplayValue(
+          afterUpdateAndDeleteViewFilterOptions,
         );
-
-        const displayValue = this.computeViewFilterDisplayValue({
-          deletedOption: relatedDeletedOptions,
-          updatedOption: relatedUpdatedOptions,
-          viewFilter,
-          filteredOptionsCounter: updatedViewFilterValues.length,
-        });
+        const value = JSON.stringify(
+          afterUpdateAndDeleteViewFilterOptions.map((option) => option.value),
+        );
 
         await viewFilterRepository.update(
           { id: viewFilter.id },
           {
-            value: JSON.stringify(updatedViewFilterValues),
+            value,
             displayValue,
           },
         );

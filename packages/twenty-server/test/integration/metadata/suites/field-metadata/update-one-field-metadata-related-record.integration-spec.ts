@@ -4,7 +4,6 @@ import { createOneOperation } from 'test/integration/graphql/utils/create-one-op
 import { findOneOperation } from 'test/integration/graphql/utils/find-one-operation.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { getMockCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/generate-mock-create-object-metadata-input';
 import { EachTestingContext } from 'twenty-shared/testing';
@@ -14,6 +13,7 @@ import {
   FieldMetadataComplexOption,
   FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 type Option = FieldMetadataDefaultOption | FieldMetadataComplexOption;
 
@@ -264,6 +264,18 @@ describe('updateOne', () => {
             ...options,
             ...generateOptions(6).slice(5),
           ],
+        },
+      },
+      {
+        title:
+          'should update display value with options label if less than 3 options are selected',
+        context: {
+          fieldMetadataOptions: ALL_OPTIONS,
+          createViewFilter: {
+            displayValue: `${ALL_OPTIONS.length} options`,
+            value: ALL_OPTIONS.map((option) => option.value),
+          },
+          updateOptions: (options) => options.slice(8),
         },
       },
     ];
