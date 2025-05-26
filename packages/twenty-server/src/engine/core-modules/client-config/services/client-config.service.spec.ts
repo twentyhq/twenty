@@ -120,7 +120,7 @@ describe('ClientConfigService', () => {
         frontDomain: 'app.twenty.com',
         debugMode: true,
         support: {
-          supportDriver: SupportDriver.Front,
+          supportDriver: 'Front',
           supportFrontChatId: 'chat-123',
         },
         sentry: {
@@ -129,7 +129,7 @@ describe('ClientConfigService', () => {
           dsn: 'https://sentry.example.com',
         },
         captcha: {
-          provider: CaptchaDriverType.GoogleRecaptcha,
+          provider: 'GoogleRecaptcha',
           siteKey: 'site-key-123',
         },
         chromeExtensionId: 'extension-123',
