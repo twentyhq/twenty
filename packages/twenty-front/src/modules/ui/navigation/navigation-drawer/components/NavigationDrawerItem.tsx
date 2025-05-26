@@ -9,12 +9,12 @@ import isPropValid from '@emotion/is-prop-valid';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
+import { Pill } from 'twenty-ui/components';
 import { IconComponent, Label, TablerIconsProps } from 'twenty-ui/display';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
-import { Pill } from 'twenty-ui/components';
 
 const DEFAULT_INDENTATION_LEVEL = 1;
 
@@ -37,6 +37,7 @@ export type NavigationDrawerItemProps = {
   rightOptions?: ReactNode;
   isDragging?: boolean;
   isRightOptionsDropdownOpen?: boolean;
+  disableMouseDownNavigation?: boolean;
 };
 
 type StyledItemProps = Pick<
@@ -250,16 +251,18 @@ export const NavigationDrawerItem = ({
   rightOptions,
   isDragging,
   isRightOptionsDropdownOpen,
+  disableMouseDownNavigation,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
   const isSettingsPage = useIsSettingsPage();
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useRecoilState(isNavigationDrawerExpandedState);
   const showBreadcrumb = indentationLevel === 2;
   const showStyledSpacer = !!soon || !!count || !!keyboard || !!rightOptions;
 
-  const handleItemClick = () => {
+  const handleItemClick = (event: React.MouseEvent) => {
     if (isMobile) {
       setIsNavigationDrawerExpanded(false);
     }
@@ -268,6 +271,32 @@ export const NavigationDrawerItem = ({
       onClick();
       return;
     }
+
+    // If we have a 'to' prop and this is a normal click (not cmd+click, etc.)
+    // prevent the default Link behavior since we handle navigation on mousedown
+    // for faster UX
+    if (
+      isDefined(to) &&
+      !event.metaKey &&
+      !event.ctrlKey &&
+      !event.shiftKey &&
+      event.button === 0
+    ) {
+      event.preventDefault();
+    }
+  };
+
+  const handleMouseDown = (event: React.MouseEvent) => {
+    if (
+      event.button === 0 &&
+      !event.metaKey &&
+      !event.ctrlKey &&
+      !event.shiftKey
+    ) {
+      if (isDefined(to) && !isDefined(onClick)) {
+        navigate(to);
+      }
+    }
   };
 
   return (
@@ -275,6 +304,7 @@ export const NavigationDrawerItem = ({
       <StyledItem
         className={`navigation-drawer-item ${className || ''}`}
         onClick={handleItemClick}
+        onMouseDown={disableMouseDownNavigation ? undefined : handleMouseDown}
         active={active}
         aria-selected={active}
         danger={danger}

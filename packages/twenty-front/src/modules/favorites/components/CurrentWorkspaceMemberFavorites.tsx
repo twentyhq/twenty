@@ -160,6 +160,7 @@ export const CurrentWorkspaceMemberFavorites = ({
               rightOptions={rightOptions}
               className="navigation-drawer-item"
               isRightOptionsDropdownOpen={isFavoriteFolderEditDropdownOpen}
+              disableMouseDownNavigation={true}
             />
           </FavoritesDroppable>
         )}
@@ -205,6 +206,7 @@ export const CurrentWorkspaceMemberFavorites = ({
                           />
                         }
                         isDragging={isDragging}
+                        disableMouseDownNavigation={true}
                       />
                     }
                   />

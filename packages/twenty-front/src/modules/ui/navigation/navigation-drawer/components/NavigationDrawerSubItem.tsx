@@ -20,6 +20,7 @@ export const NavigationDrawerSubItem = ({
   subItemState,
   rightOptions,
   isDragging,
+  disableMouseDownNavigation,
 }: NavigationDrawerSubItemProps) => {
   return (
     <NavigationDrawerItem
@@ -38,6 +39,7 @@ export const NavigationDrawerSubItem = ({
       keyboard={keyboard}
       rightOptions={rightOptions}
       isDragging={isDragging}
+      disableMouseDownNavigation={disableMouseDownNavigation}
     />
   );
 };
