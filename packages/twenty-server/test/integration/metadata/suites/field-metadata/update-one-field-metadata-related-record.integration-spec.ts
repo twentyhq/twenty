@@ -97,6 +97,69 @@ describe('updateOne', () => {
       }
     });
 
+    // Note these test exists only because we do not validate the view filter value on creation/update
+    // Should be removed after https://github.com/twentyhq/core-team-issues/issues/1009 completion
+    const failingTestCases: EachTestingContext<{
+      createViewFilterValue: unknown;
+    }>[] = [
+      {
+        title:
+          'should throw error if view filter value is not a stringified JSON array',
+        context: {
+          createViewFilterValue: JSON.stringify(
+            'not an array stringified json',
+          ),
+        },
+      },
+    ];
+
+    test.each(failingTestCases)(
+      '$title',
+      async ({ context: { createViewFilterValue } }) => {
+        const { createOneField, createOneView } =
+          await createObjectSelectFieldAndView(ALL_OPTIONS);
+
+        const viewFilterId = '20202020-e3b5-4fa7-85aa-9b1950fc7bf5';
+        await createOneOperation<{
+          id: string;
+          viewId: string;
+          fieldMetadataId: string;
+          operand: string;
+          value: string;
+          displayValue: string;
+        }>({
+          objectMetadataSingularName: 'viewFilter',
+          input: {
+            id: viewFilterId,
+            viewId: createOneView.id,
+            fieldMetadataId: createOneField.id,
+            operand: 'is',
+            value: createViewFilterValue as unknown as string,
+            displayValue: '10 options',
+          },
+        });
+
+        const optionsWithIds = createOneField.options;
+        const updatePayload = {
+          options: optionsWithIds.map((option) => updateOption(option)),
+        };
+        const { errors, data } = await updateOneFieldMetadata({
+          input: {
+            idToUpdate: createOneField.id,
+            updatePayload,
+          },
+          gqlFields: `
+          id
+          options
+        `,
+        });
+
+        expect(data).toBeNull();
+        expect(errors).toBeDefined();
+        expect(errors).toMatchSnapshot();
+      },
+    );
+
     type ViewFilterUpdate = {
       displayValue: string;
       value: string[];
@@ -249,8 +312,6 @@ describe('updateOne', () => {
         `,
         });
 
-        console.log(data.updateOneField.options, updatePayload);
-
         const {
           data: { findResponse },
           errors,
@@ -265,8 +326,6 @@ describe('updateOne', () => {
             id: { eq: createOneViewFilter.id },
           },
         });
-
-        console.log(findResponse);
 
         if (expected !== undefined) {
           expect(findResponse).toBe(expected);

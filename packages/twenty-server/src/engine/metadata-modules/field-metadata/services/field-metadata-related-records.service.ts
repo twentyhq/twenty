@@ -7,6 +7,10 @@ import {
   FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import {
+  FieldMetadataException,
+  FieldMetadataExceptionCode,
+} from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { isSelectFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-select-field-metadata-type.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -14,7 +18,7 @@ import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/vie
 import { ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-group.workspace-entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, parseJson } from 'twenty-shared/utils';
 
 type Differences<T> = {
   created: T[];
@@ -201,59 +205,62 @@ export class FieldMetadataRelatedRecordsService {
       }
 
       for (const viewFilter of filter.viewFilters) {
-        try {
-          const viewFilterValue: string[] = JSON.parse(viewFilter.value);
-          const relatedDeletedOptions = deletedFieldMetadata.filter((deleted) =>
-            viewFilterValue.includes(deleted.value),
+        const viewFilterValue = parseJson<string[]>(viewFilter.value);
+
+        if (!isDefined(viewFilterValue) || !Array.isArray(viewFilterValue)) {
+          throw new FieldMetadataException(
+            `Invalid view filter value for view filter ${viewFilter.id}`,
+            FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
           );
-
-          if (relatedDeletedOptions.length === viewFilterValue.length) {
-            await viewFilterRepository.delete({ id: viewFilter.id });
-            continue;
-          }
-
-          const remainingViewFilterValues = viewFilterValue.filter(
-            (viewFilterOptionValue) =>
-              !relatedDeletedOptions.find(
-                (option) => option.value === viewFilterOptionValue,
-              ),
-          );
-
-          const relatedUpdatedOptions = updatedFieldMetadata.filter((updated) =>
-            remainingViewFilterValues.includes(updated.old.value),
-          );
-
-          const updatedViewFilterValues = remainingViewFilterValues.map(
-            (viewFilterOptionValue) => {
-              const containsUpdatedFilter = relatedUpdatedOptions.find(
-                ({ old }) => viewFilterOptionValue === old.value,
-              );
-              if (!isDefined(containsUpdatedFilter)) {
-                return viewFilterOptionValue;
-              }
-
-              return containsUpdatedFilter.new.value;
-            },
-          );
-
-          const displayValue = this.computeViewFilterDisplayValue({
-            deletedOption: relatedDeletedOptions,
-            updatedOption: relatedUpdatedOptions,
-            viewFilter,
-            filteredOptionsCounter: updatedViewFilterValues.length,
-          });
-
-          await viewFilterRepository.update(
-            { id: viewFilter.id },
-            {
-              value: JSON.stringify(updatedViewFilterValues),
-              displayValue,
-            },
-          );
-        } catch (error) {
-          // TODO
-          throw error;
         }
+
+        const relatedDeletedOptions = deletedFieldMetadata.filter((deleted) =>
+          viewFilterValue.includes(deleted.value),
+        );
+
+        if (relatedDeletedOptions.length === viewFilterValue.length) {
+          await viewFilterRepository.delete({ id: viewFilter.id });
+          continue;
+        }
+
+        const remainingViewFilterValues = viewFilterValue.filter(
+          (viewFilterOptionValue) =>
+            !relatedDeletedOptions.find(
+              (option) => option.value === viewFilterOptionValue,
+            ),
+        );
+
+        const relatedUpdatedOptions = updatedFieldMetadata.filter((updated) =>
+          remainingViewFilterValues.includes(updated.old.value),
+        );
+
+        const updatedViewFilterValues = remainingViewFilterValues.map(
+          (viewFilterOptionValue) => {
+            const containsUpdatedFilter = relatedUpdatedOptions.find(
+              ({ old }) => viewFilterOptionValue === old.value,
+            );
+            if (!isDefined(containsUpdatedFilter)) {
+              return viewFilterOptionValue;
+            }
+
+            return containsUpdatedFilter.new.value;
+          },
+        );
+
+        const displayValue = this.computeViewFilterDisplayValue({
+          deletedOption: relatedDeletedOptions,
+          updatedOption: relatedUpdatedOptions,
+          viewFilter,
+          filteredOptionsCounter: updatedViewFilterValues.length,
+        });
+
+        await viewFilterRepository.update(
+          { id: viewFilter.id },
+          {
+            value: JSON.stringify(updatedViewFilterValues),
+            displayValue,
+          },
+        );
       }
     }
   }

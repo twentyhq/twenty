@@ -14,6 +14,7 @@ export {
   sanitizeURL,
   getLogoUrlFromDomainName,
 } from './image/getLogoUrlFromDomainName';
+export { parseJson } from './parseJson';
 export { capitalize } from './strings/capitalize';
 export { absoluteUrlSchema } from './url/absoluteUrlSchema';
 export { getAbsoluteUrlOrThrow } from './url/getAbsoluteUrlOrThrow';
