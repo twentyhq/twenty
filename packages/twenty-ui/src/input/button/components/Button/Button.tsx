@@ -38,7 +38,7 @@ export type ButtonProps = {
   hotkeys?: string[];
   ariaLabel?: string;
   isLoading?: boolean;
-} & React.ComponentProps<'button'> &
+} & Pick<React.ComponentProps<'button'>, 'type'> &
   ClickOutsideAttributes;
 
 const StyledButton = styled('button', {
