@@ -147,7 +147,13 @@ export const CanSetPrimaryLinkAsPrimaryLink: Story = {
       primaryPhoneCountryCode: 'FR',
       primaryPhoneNumber: '642646272',
       primaryPhoneCallingCode: '+33',
-      additionalPhones: [],
+      additionalPhones: [
+        {
+          countryCode: 'FR',
+          number: '642646273',
+          callingCode: '+33',
+        },
+      ],
     },
   },
   play: async ({ canvasElement }) => {
@@ -156,7 +162,11 @@ export const CanSetPrimaryLinkAsPrimaryLink: Story = {
     const primaryPhone = await canvas.findByText('+33 6 42 64 62 72');
     expect(primaryPhone).toBeVisible();
 
-    await userEvent.hover(primaryPhone);
+    const secondaryPhone = await canvas.findByText('+33 6 42 64 62 73');
+    expect(secondaryPhone).toBeVisible();
+
+    // Hover over secondary phone to show dropdown
+    await userEvent.hover(secondaryPhone);
 
     const openDropdownButtons = await canvas.findAllByRole('button', {
       expanded: false,
@@ -180,8 +190,14 @@ export const CanSetPrimaryLinkAsPrimaryLink: Story = {
             phones: {
               primaryPhoneCallingCode: '+33',
               primaryPhoneCountryCode: 'FR',
-              primaryPhoneNumber: '642646272',
-              additionalPhones: [],
+              primaryPhoneNumber: '642646273',
+              additionalPhones: [
+                {
+                  countryCode: 'FR',
+                  number: '642646272',
+                  callingCode: '+33',
+                },
+              ],
             },
           },
         },
