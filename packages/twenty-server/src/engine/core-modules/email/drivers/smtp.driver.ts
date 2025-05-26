@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 
-import { createTransport, Transporter, SendMailOptions } from 'nodemailer';
+import { createTransport, SendMailOptions, Transporter } from 'nodemailer';
 import SMTPConnection from 'nodemailer/lib/smtp-connection';
 
 import { EmailDriver } from 'src/engine/core-modules/email/drivers/interfaces/email-driver.interface';

@@ -300,7 +300,6 @@ export class ConfigVariables {
     description: 'Email driver to use for sending emails',
     type: ConfigVariableType.ENUM,
     options: Object.values(EmailDriver),
-    isEnvOnly: true,
   })
   EMAIL_DRIVER: EmailDriver = EmailDriver.Logger;
 
@@ -348,7 +347,6 @@ export class ConfigVariables {
     description: 'Type of storage to use (local or S3)',
     type: ConfigVariableType.ENUM,
     options: Object.values(StorageDriverType),
-    isEnvOnly: true,
   })
   @IsOptional()
   STORAGE_TYPE: StorageDriverType = StorageDriverType.Local;
