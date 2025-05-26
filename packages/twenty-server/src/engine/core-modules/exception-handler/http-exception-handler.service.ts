@@ -1,6 +1,7 @@
 import { BadRequestException, Inject, Injectable, Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 
+import { ValidationError } from 'class-validator';
 import { Response } from 'express';
 import { QueryFailedError } from 'typeorm';
 
@@ -60,10 +61,17 @@ export class HttpExceptionHandlerService {
       statusCode,
     });
 
+    const isClassValidatorExeption = exception instanceof ValidationError;
+
+    const message = isClassValidatorExeption
+      ? 'Invalid input exception'
+      : exception.message;
+
     return response.status(statusCode).send({
       statusCode,
       error: exception.name || 'BadRequestException',
-      messages: [exception?.message],
+      messages: [exception?.message ?? message],
+      ...(isClassValidatorExeption ? exception : {}),
     });
   };
 }
