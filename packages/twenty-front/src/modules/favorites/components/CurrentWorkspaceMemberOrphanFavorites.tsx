@@ -60,7 +60,7 @@ export const CurrentWorkspaceMemberOrphanFavorites = () => {
                   }
                   objectName={favorite.objectNameSingular}
                   isDragging={isDragging}
-                  disableMouseDownNavigation={true}
+                  triggerEvent="CLICK"
                 />
               </StyledOrphanFavoritesContainer>
             }

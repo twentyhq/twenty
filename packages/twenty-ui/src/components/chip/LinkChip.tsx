@@ -14,7 +14,8 @@ export type LinkChipProps = Omit<
   'onClick' | 'disabled' | 'clickable'
 > & {
   to: string;
-  onClick?: (event: MouseEvent<HTMLAnchorElement>) => void;
+  onClick?: (event: MouseEvent<HTMLElement>) => void;
+  onMouseDown?: (event: MouseEvent<HTMLElement>) => void;
 };
 
 const StyledLink = styled(Link)`
@@ -34,9 +35,10 @@ export const LinkChip = ({
   className,
   maxWidth,
   onClick,
+  onMouseDown,
 }: LinkChipProps) => {
   return (
-    <StyledLink to={to} onClick={onClick}>
+    <StyledLink to={to} onClick={onClick} onMouseDown={onMouseDown}>
       <Chip
         size={size}
         label={label}

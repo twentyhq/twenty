@@ -1,6 +1,6 @@
 import {
-    NavigationDrawerItem,
-    NavigationDrawerItemProps,
+  NavigationDrawerItem,
+  NavigationDrawerItemProps,
 } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 
 type NavigationDrawerSubItemProps = NavigationDrawerItemProps;
@@ -20,7 +20,7 @@ export const NavigationDrawerSubItem = ({
   subItemState,
   rightOptions,
   isDragging,
-  disableMouseDownNavigation,
+  triggerEvent,
 }: NavigationDrawerSubItemProps) => {
   return (
     <NavigationDrawerItem
@@ -39,7 +39,7 @@ export const NavigationDrawerSubItem = ({
       keyboard={keyboard}
       rightOptions={rightOptions}
       isDragging={isDragging}
-      disableMouseDownNavigation={disableMouseDownNavigation}
+      triggerEvent={triggerEvent}
     />
   );
 };

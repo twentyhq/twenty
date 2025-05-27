@@ -13,7 +13,7 @@ import {
   ChipVariant,
   LinkAvatarChip,
 } from 'twenty-ui/components';
-import { isModifiedEvent } from 'twenty-ui/utilities';
+import { useMouseDownNavigation } from 'twenty-ui/utilities';
 
 export type RecordChipProps = {
   objectNameSingular: string;
@@ -47,6 +47,28 @@ export const RecordChip = ({
 
   const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
 
+  const isSidePanelViewOpenRecordInType =
+    recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL;
+
+  const handleCustomClick = isSidePanelViewOpenRecordInType
+    ? () =>
+        openRecordInCommandMenu({
+          recordId: record.id,
+          objectNameSingular,
+        })
+    : undefined;
+
+  const { onClick, onMouseDown } = useMouseDownNavigation({
+    to: to ?? getLinkToShowPage(objectNameSingular, record),
+    onClick: handleCustomClick,
+    disabled: forceDisableClick,
+    stopPropagation: true,
+    onBeforeNavigation: () => {
+      // TODO refactor wrapper event listener to avoid colliding events
+      // This will be called before navigation/click action
+    },
+  });
+
   // TODO temporary until we create a record show page for Workspaces members
   if (
     forceDisableClick ||
@@ -66,17 +88,6 @@ export const RecordChip = ({
     );
   }
 
-  const isSidePanelViewOpenRecordInType =
-    recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL;
-
-  const onClick = isSidePanelViewOpenRecordInType
-    ? () =>
-        openRecordInCommandMenu({
-          recordId: record.id,
-          objectNameSingular,
-        })
-    : undefined;
-
   return (
     <LinkAvatarChip
       size={size}
@@ -94,16 +105,8 @@ export const RecordChip = ({
           : AvatarChipVariant.Transparent)
       }
       to={to ?? getLinkToShowPage(objectNameSingular, record)}
-      onClick={(clickEvent) => {
-        // TODO refactor wrapper event listener to avoid colliding events
-        clickEvent.stopPropagation();
-
-        const isModifiedEventResult = isModifiedEvent(clickEvent);
-        if (isSidePanelViewOpenRecordInType && !isModifiedEventResult) {
-          clickEvent.preventDefault();
-          onClick?.();
-        }
-      }}
+      onClick={onClick}
+      onMouseDown={onMouseDown}
     />
   );
 };

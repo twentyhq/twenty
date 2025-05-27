@@ -10,6 +10,7 @@ export type LinkAvatarChipProps = Omit<
 > & {
   to: string;
   onClick?: LinkChipProps['onClick'];
+  onMouseDown?: LinkChipProps['onMouseDown'];
   variant?: AvatarChipVariant;
   isLabelHidden?: boolean;
 };
@@ -17,6 +18,7 @@ export type LinkAvatarChipProps = Omit<
 export const LinkAvatarChip = ({
   to,
   onClick,
+  onMouseDown,
   name,
   LeftIcon,
   LeftIconColor,
@@ -32,6 +34,7 @@ export const LinkAvatarChip = ({
 }: LinkAvatarChipProps) => (
   <LinkChip
     to={to}
+    onMouseDown={onMouseDown}
     onClick={onClick}
     label={name}
     isLabelHidden={isLabelHidden}

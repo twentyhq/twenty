@@ -1,5 +1,4 @@
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
-import { useMouseDownNavigation } from '@/ui/utilities/pointer-event/hooks/useMouseDownNavigation';
 import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -7,6 +6,7 @@ import { ReactElement } from 'react';
 import { Link } from 'react-router-dom';
 import { Pill } from 'twenty-ui/components';
 import { Avatar, IconComponent } from 'twenty-ui/display';
+import { useMouseDownNavigation } from 'twenty-ui/utilities';
 
 type TabProps = {
   id: string;

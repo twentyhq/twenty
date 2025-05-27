@@ -4,7 +4,6 @@ import { NavigationDrawerItemBreadcrumb } from '@/ui/navigation/navigation-drawe
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 import { NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { useMouseDownNavigation } from '@/ui/utilities/pointer-event/hooks/useMouseDownNavigation';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import isPropValid from '@emotion/is-prop-valid';
 import { css, useTheme } from '@emotion/react';
@@ -16,6 +15,7 @@ import { capitalize } from 'twenty-shared/utils';
 import { Pill } from 'twenty-ui/components';
 import { IconComponent, Label, TablerIconsProps } from 'twenty-ui/display';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { useMouseDownNavigation } from 'twenty-ui/utilities';
 
 const DEFAULT_INDENTATION_LEVEL = 1;
 
@@ -38,7 +38,7 @@ export type NavigationDrawerItemProps = {
   rightOptions?: ReactNode;
   isDragging?: boolean;
   isRightOptionsDropdownOpen?: boolean;
-  disableMouseDownNavigation?: boolean;
+  triggerEvent?: 'MOUSE_DOWN' | 'CLICK';
 };
 
 type StyledItemProps = Pick<
@@ -252,7 +252,7 @@ export const NavigationDrawerItem = ({
   rightOptions,
   isDragging,
   isRightOptionsDropdownOpen,
-  disableMouseDownNavigation,
+  triggerEvent,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -273,7 +273,7 @@ export const NavigationDrawerItem = ({
       to,
       onClick,
       onBeforeNavigation: handleMobileNavigation,
-      disableMouseDownNavigation,
+      triggerEvent,
     });
 
   return (
