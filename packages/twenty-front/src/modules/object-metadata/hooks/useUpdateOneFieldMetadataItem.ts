@@ -17,8 +17,8 @@ import { useSetRecoilState } from 'recoil';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
-import { useApolloMetadataClient } from './useApolloMetadataClient';
 import { isDefined } from 'twenty-shared/utils';
+import { useApolloMetadataClient } from './useApolloMetadataClient';
 
 export const useUpdateOneFieldMetadataItem = () => {
   const apolloMetadataClient = useApolloMetadataClient();
@@ -27,6 +27,7 @@ export const useUpdateOneFieldMetadataItem = () => {
     useRefreshObjectMetadataItems('network-only');
 
   const { setRecordGroupsFromViewGroups } = useSetRecordGroups();
+  const cache = useApolloClient().cache;
 
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
 
@@ -115,6 +116,7 @@ export const useUpdateOneFieldMetadataItem = () => {
       }
     }
 
+    cache.evict({ id: 'ROOT_QUERY', fieldName: `views` });
     return result;
   };
 
