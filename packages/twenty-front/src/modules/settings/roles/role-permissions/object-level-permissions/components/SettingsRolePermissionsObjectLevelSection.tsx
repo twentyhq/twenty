@@ -132,6 +132,7 @@ export const SettingsRolePermissionsObjectLevelSection = ({
               disabled={!isEditable}
             />
           }
+          dropdownOffset={{ x: 0, y: 4 }}
           dropdownComponents={
             <SettingsRolePermissionsObjectLevelObjectPickerDropdownContent
               excludedObjectMetadataIds={

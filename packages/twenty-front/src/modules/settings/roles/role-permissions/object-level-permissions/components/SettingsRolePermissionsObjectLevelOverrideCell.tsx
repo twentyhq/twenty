@@ -1,33 +1,11 @@
+import { PermissionIcon } from '@/settings/roles/role-permissions/objects-permissions/components/PermissionIcon';
 import { SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING } from '@/settings/roles/role-permissions/objects-permissions/constants/settingsRoleObjectLevelPermissionToRoleObjectPermissionMapping';
-import { SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG } from '@/settings/roles/role-permissions/objects-permissions/constants/settingsRoleObjectPermissionIconConfig';
+import { SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/settingsRoleObjectPermissionIconConfig';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { ObjectPermission } from '~/generated/graphql';
-
-const StyledIconWrapper = styled.div<{ isForbidden?: boolean }>`
-  align-items: center;
-  background: ${({ theme, isForbidden }) =>
-    isForbidden ? theme.adaptiveColors.orange1 : theme.adaptiveColors.blue1};
-  border: 1px solid
-    ${({ theme, isForbidden }) =>
-      isForbidden ? theme.adaptiveColors.orange3 : theme.adaptiveColors.blue3};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  display: flex;
-  height: ${({ theme }) => theme.spacing(4)};
-  justify-content: center;
-  width: ${({ theme }) => theme.spacing(4)};
-`;
-
-const StyledIcon = styled.div<{ isForbidden?: boolean }>`
-  align-items: center;
-  display: flex;
-  color: ${({ theme, isForbidden }) =>
-    isForbidden ? theme.color.orange : theme.color.blue};
-  justify-content: center;
-`;
 
 const StyledSettingsRolePermissionsObjectLevelOverrideCell = styled.div`
   display: flex;
@@ -41,8 +19,6 @@ type SettingsRolePermissionsObjectLevelOverrideCellProps = {
 export const SettingsRolePermissionsObjectLevelOverrideCell = ({
   objectPermission,
 }: SettingsRolePermissionsObjectLevelOverrideCellProps) => {
-  const theme = useTheme();
-
   const settingsDraftRole = useRecoilValue(
     settingsDraftRoleFamilyState(objectPermission.roleId),
   );
@@ -50,9 +26,7 @@ export const SettingsRolePermissionsObjectLevelOverrideCell = ({
   const permissionMappings =
     SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING;
 
-  type ObjectPermissionKey = keyof typeof permissionMappings;
-
-  const isOverridden = (permission: ObjectPermissionKey) => {
+  const isOverridden = (permission: SettingsRoleObjectPermissionKey) => {
     const rolePermission = permissionMappings[permission];
     return (
       isDefined(objectPermission[permission]) &&
@@ -63,31 +37,23 @@ export const SettingsRolePermissionsObjectLevelOverrideCell = ({
 
   return (
     <StyledSettingsRolePermissionsObjectLevelOverrideCell>
-      {(Object.keys(permissionMappings) as ObjectPermissionKey[]).map(
-        (permission) => {
-          const { Icon, IconForbidden: IconOverride } =
-            SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[permission];
-          const permissionValue = objectPermission[permission];
+      {(
+        Object.keys(permissionMappings) as SettingsRoleObjectPermissionKey[]
+      ).map((permission) => {
+        const permissionValue = objectPermission[permission];
 
-          if (!isOverridden(permission)) {
-            return null;
-          }
+        if (!isOverridden(permission)) {
+          return null;
+        }
 
-          return (
-            <StyledIconWrapper
-              key={permission}
-              isForbidden={permissionValue === false}
-            >
-              <StyledIcon isForbidden={permissionValue === false}>
-                {permissionValue === false && (
-                  <IconOverride size={theme.icon.size.sm} />
-                )}
-                {permissionValue === true && <Icon size={theme.icon.size.sm} />}
-              </StyledIcon>
-            </StyledIconWrapper>
-          );
-        },
-      )}
+        return (
+          <PermissionIcon
+            key={permission}
+            permission={permission}
+            state={permissionValue === false ? 'revoked' : 'granted'}
+          />
+        );
+      })}
     </StyledSettingsRolePermissionsObjectLevelOverrideCell>
   );
 };
