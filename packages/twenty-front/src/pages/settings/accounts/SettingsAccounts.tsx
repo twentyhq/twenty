@@ -10,14 +10,9 @@ import { SettingsAccountsConnectedAccountsListCard } from '@/settings/accounts/c
 import { SettingsAccountsSettingsSection } from '@/settings/accounts/components/SettingsAccountsSettingsSection';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useLingui } from '@lingui/react/macro';
-import { useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -39,22 +34,6 @@ export const SettingsAccounts = () => {
     },
     recordGqlFields: generateDepthOneRecordGqlFields({ objectMetadataItem }),
   });
-
-  const { enqueueSnackBar } = useSnackBar();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const errorMessage = searchParams.get('errorMessage');
-
-  useEffect(() => {
-    if (isDefined(errorMessage)) {
-      enqueueSnackBar(errorMessage, {
-        dedupeKey: 'google-apis-connect-error-dedupe-key',
-        variant: SnackBarVariant.Error,
-      });
-      const newSearchParams = new URLSearchParams(searchParams);
-      newSearchParams.delete('errorMessage');
-      setSearchParams(newSearchParams);
-    }
-  }, [enqueueSnackBar, errorMessage, searchParams, setSearchParams]);
 
   return (
     <SubMenuTopBarContainer
