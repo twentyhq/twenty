@@ -19,6 +19,7 @@ import {
   REACT_APP_STRIPE_PUBLISHABLE_KEY,
 } from '~/config';
 import { Plan, selectedPlanState } from '~/pages/onboarding/Plans';
+import { Plans } from '~/pages/settings/billing/ChangeSubscriptionPlan';
 
 const paymentOptions = [
   {
@@ -130,7 +131,7 @@ export const PaymentOptions = () => {
         body: JSON.stringify({
           amount: (selectedPlanId as Plan).price,
           currency: 'brl',
-          success_url: `${window.location.origin}/payment-required/payment-success?planId=${selectedPlanId.id}`,
+          success_url: `${window.location.origin}/payment-required/payment-success?planId=${(selectedPlanId as Plans).id}`,
           cancel_url: `${window.location.origin}/plan-required`,
         }),
       },
