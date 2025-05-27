@@ -45,8 +45,8 @@ export const EmailsFieldInput = ({
     [],
   );
 
-  const isPrimaryEmail = (index: number) => index === 0 && emails?.length > 1;
-
+  const getShowPrimaryIcon = (index: number) =>
+    index === 0 && emails.length > 1;
   const getShowSetAsPrimaryButton = (index: number) => index > 0;
 
   const setIsFieldInError = useSetRecoilComponentStateV2(
@@ -79,7 +79,7 @@ export const EmailsFieldInput = ({
         <EmailsFieldMenuItem
           key={index}
           dropdownId={`emails-${index}`}
-          showPrimaryIcon={isPrimaryEmail(index)}
+          showPrimaryIcon={getShowPrimaryIcon(index)}
           showSetAsPrimaryButton={getShowSetAsPrimaryButton(index)}
           email={email}
           onEdit={handleEdit}

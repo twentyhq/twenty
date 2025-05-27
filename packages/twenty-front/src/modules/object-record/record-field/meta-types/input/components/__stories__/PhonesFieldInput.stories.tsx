@@ -1,6 +1,6 @@
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
-import { fn, userEvent, waitFor, within } from '@storybook/test';
+import { fn, userEvent, within } from '@storybook/test';
 import { useEffect } from 'react';
 import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
 
@@ -141,65 +141,38 @@ export const Default: Story = {
 };
 
 // FIXME: We will have to fix that behavior, we should only be able to set an additional phone as the primary phone
-export const CanSetPrimaryLinkAsPrimaryLink: Story = {
+export const CanNotSetPrimaryLinkAsPrimaryLink: Story = {
   args: {
     value: {
       primaryPhoneCountryCode: 'FR',
       primaryPhoneNumber: '642646272',
       primaryPhoneCallingCode: '+33',
-      additionalPhones: [
-        {
-          countryCode: 'FR',
-          number: '642646273',
-          callingCode: '+33',
-        },
-      ],
+      additionalPhones: [],
     },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const secondaryPhone = await canvas.findByText('+33 6 42 64 62 73');
-    expect(secondaryPhone).toBeVisible();
+    const primaryPhone = await canvas.findByText('+33 6 42 64 62 72');
+    expect(primaryPhone).toBeVisible();
 
-    // Hover over secondary phone to show dropdown
-    await userEvent.hover(secondaryPhone);
+    await userEvent.hover(primaryPhone);
 
     const openDropdownButtons = await canvas.findAllByRole('button', {
       expanded: false,
     });
-    await userEvent.click(openDropdownButtons[1]);
+    await userEvent.click(openDropdownButtons[0]);
 
-    const setPrimaryOption = await within(
+    const editOption = await within(
       getCanvasElementForDropdownTesting(),
-    ).findByText('Set as Primary');
+    ).findByText('Edit');
 
-    expect(setPrimaryOption).toBeVisible();
+    expect(editOption).toBeVisible();
 
-    await userEvent.click(setPrimaryOption);
+    const setPrimaryOption = within(
+      getCanvasElementForDropdownTesting(),
+    ).queryByText('Set as Primary');
 
-    // Verify the update was called with swapped phones
-    await waitFor(() => {
-      expect(updateRecord).toHaveBeenCalledWith({
-        variables: {
-          where: { id: 'record-id' },
-          updateOneRecordInput: {
-            phones: {
-              primaryPhoneCallingCode: '+33',
-              primaryPhoneCountryCode: 'FR',
-              primaryPhoneNumber: '642646273',
-              additionalPhones: [
-                {
-                  countryCode: 'FR',
-                  number: '642646272',
-                  callingCode: '+33',
-                },
-              ],
-            },
-          },
-        },
-      });
-    });
-    expect(updateRecord).toHaveBeenCalledTimes(1);
+    expect(setPrimaryOption).not.toBeInTheDocument();
   },
 };

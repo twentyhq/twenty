@@ -1,6 +1,6 @@
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
-import { fn, userEvent, waitFor, within } from '@storybook/test';
+import { fn, userEvent, within } from '@storybook/test';
 import { useEffect } from 'react';
 import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
 
@@ -132,47 +132,36 @@ export const Default: Story = {
 };
 
 // FIXME: We will have to fix that behavior, we should only be able to set a secondary email as the primary email
-export const CanSetPrimaryLinkAsPrimaryLink: Story = {
+export const CanNotSetPrimaryLinkAsPrimaryLink: Story = {
   args: {
     value: {
       primaryEmail: 'primary@example.com',
-      additionalEmails: ['secondary@example.com'],
+      additionalEmails: [],
     },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const secondaryEmail = await canvas.findByText('secondary@example.com');
-    expect(secondaryEmail).toBeVisible();
-    await userEvent.hover(secondaryEmail);
+    const primaryEmail = await canvas.findByText('primary@example.com');
+    expect(primaryEmail).toBeVisible();
+
+    await userEvent.hover(primaryEmail);
 
     const openDropdownButtons = await canvas.findAllByRole('button', {
       expanded: false,
     });
-    await userEvent.click(openDropdownButtons[1]);
+    await userEvent.click(openDropdownButtons[0]);
 
-    const setPrimaryOption = await within(
+    const editOption = await within(
       getCanvasElementForDropdownTesting(),
-    ).findByText('Set as Primary');
+    ).findByText('Edit');
 
-    expect(setPrimaryOption).toBeVisible();
+    expect(editOption).toBeVisible();
 
-    await userEvent.click(setPrimaryOption);
+    const setPrimaryOption = within(
+      getCanvasElementForDropdownTesting(),
+    ).queryByText('Set as Primary');
 
-    // Verify the update was called with swapped emails
-    await waitFor(() => {
-      expect(updateRecord).toHaveBeenCalledWith({
-        variables: {
-          where: { id: 'record-id' },
-          updateOneRecordInput: {
-            emails: {
-              primaryEmail: 'secondary@example.com',
-              additionalEmails: ['primary@example.com'],
-            },
-          },
-        },
-      });
-    });
-    expect(updateRecord).toHaveBeenCalledTimes(1);
+    expect(setPrimaryOption).not.toBeInTheDocument();
   },
 };
