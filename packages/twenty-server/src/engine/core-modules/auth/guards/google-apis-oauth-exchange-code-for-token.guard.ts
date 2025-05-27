@@ -96,26 +96,20 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
   private async getWorkspaceFromTransientToken(
     transientToken: string,
   ): Promise<Workspace> {
-    try {
-      const { workspaceId } =
-        await this.transientTokenService.verifyTransientToken(transientToken);
+    const { workspaceId } =
+      await this.transientTokenService.verifyTransientToken(transientToken);
 
-      const workspace = await this.workspaceRepository.findOneBy({
-        id: workspaceId,
-      });
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: workspaceId,
+    });
 
-      if (!workspace) {
-        throw new Error(
-          `Error extracting workspace from transientToken for Google APIs connect for ${workspaceId}`,
-        );
-      }
-
-      return workspace;
-    } catch (tokenError) {
+    if (!workspace) {
       throw new AuthException(
-        'Error extracting workspace from transientToken for Google APIs connect',
-        AuthExceptionCode.INTERNAL_SERVER_ERROR,
+        `Error extracting workspace from transientToken for Google APIs connect for ${workspaceId}`,
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
       );
     }
+
+    return workspace;
   }
 }
