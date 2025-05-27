@@ -5169,8 +5169,8 @@ msgstr "Προβολή λεπτομερειών χρέωσης"
 
 #. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "View execution details"
-msgstr "Προβολή λεπτομερειών εκτέλεσης"
+#~ msgid "View execution details"
+#~ msgstr "Προβολή λεπτομερειών εκτέλεσης"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
@@ -5273,13 +5273,13 @@ msgstr "Όταν το κλειδί θα απενεργοποιηθεί"
 
 #. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow is running..."
-msgstr "Η διεργασία εργασίας εκτελείται..."
+#~ msgid "Workflow is running..."
+#~ msgstr "Η διεργασία εργασίας εκτελείται..."
 
 #. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow run failed"
-msgstr "Απέτυχε η εκτέλεση της διεργασίας εργασίας"
+#~ msgid "Workflow run failed"
+#~ msgstr "Απέτυχε η εκτέλεση της διεργασίας εργασίας"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
