@@ -1,5 +1,7 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 export const getDomainNameByEmail = (email: string) => {
-  if (!email || email === '') {
+  if (!email || !isNonEmptyString(email)) {
     throw new Error('Email is required');
   }
 
