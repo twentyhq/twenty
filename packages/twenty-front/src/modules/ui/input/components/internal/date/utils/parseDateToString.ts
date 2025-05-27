@@ -7,14 +7,14 @@ type ParseDateToStringArgs = {
   date: Date;
   isDateTimeInput: boolean;
   userTimezone: string | undefined;
-  dateFormat: DateFormat;
+  dateFormat?: DateFormat;
 };
 
 export const parseDateToString = ({
   date,
   isDateTimeInput,
   userTimezone,
-  dateFormat,
+  dateFormat = DateFormat.MONTH_FIRST,
 }: ParseDateToStringArgs) => {
   if (isNull(date)) {
     return '';

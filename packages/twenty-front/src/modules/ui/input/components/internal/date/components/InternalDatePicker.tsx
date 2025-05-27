@@ -464,7 +464,6 @@ export const DateTimePicker = ({
               date={internalDate}
               isDateTimeInput={isDateTimeInput}
               onChange={onChange}
-              userTimezone={timeZone}
             />
           }
           renderCustomHeader={({
