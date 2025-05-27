@@ -1,5 +1,5 @@
 export const getDomainNameByEmail = (email: string) => {
-  if (!email) {
+  if (!email || email === '') {
     throw new Error('Email is required');
   }
 

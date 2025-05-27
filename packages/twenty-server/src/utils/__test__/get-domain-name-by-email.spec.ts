@@ -41,9 +41,7 @@ describe('getDomainNameByEmail', () => {
   });
 
   it('should handle email with numeric domain', () => {
-    expect(getDomainNameByEmail('user@123.456.789.012')).toBe(
-      '123.456.789.012',
-    );
+    expect(getDomainNameByEmail('user@123.456.1.2')).toBe('123.456.1.2');
   });
 
   it('should handle email with hyphenated domain', () => {
@@ -57,7 +55,7 @@ describe('getDomainNameByEmail', () => {
   });
 
   it('should handle email with very long domain', () => {
-    const longDomain = 'a'.repeat(60) + '.com';
+    const longDomain = 'a'.repeat(160) + '.com';
 
     expect(getDomainNameByEmail(`user@${longDomain}`)).toBe(longDomain);
   });
