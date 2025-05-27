@@ -54,7 +54,8 @@ export const SettingsRolePermissionsObjectsTableRow = ({
   isEditable,
 }: SettingsRolePermissionsObjectsTableRowProps) => {
   const revokedBy = permission.revokedBy;
-  const isRevoked = revokedBy && revokedBy > 0;
+  const isRevoked =
+    revokedBy !== undefined && revokedBy !== null && revokedBy > 0;
   const label = permission.label;
   const pluralizedObject = pluralize('object', revokedBy);
 

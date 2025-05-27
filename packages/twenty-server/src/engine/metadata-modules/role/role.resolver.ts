@@ -191,19 +191,21 @@ export class RoleResolver {
         workspace.id,
       );
 
-    workspaceMembers.forEach((workspaceMember) => {
-      if (workspaceMember && workspaceMember.avatarUrl) {
-        const avatarUrlToken = this.fileService.encodeFileToken({
-          filename: extractFilenameFromPath(workspaceMember.avatarUrl),
-          workspaceId: workspace.id,
-        });
+    await Promise.all(
+      workspaceMembers.map(async (workspaceMember) => {
+        if (workspaceMember && workspaceMember.avatarUrl) {
+          const avatarUrlToken = this.fileService.encodeFileToken({
+            filename: extractFilenameFromPath(workspaceMember.avatarUrl),
+            workspaceId: workspace.id,
+          });
 
-        workspaceMember.avatarUrl = buildSignedPath({
-          path: workspaceMember.avatarUrl,
-          token: avatarUrlToken,
-        });
-      }
-    });
+          workspaceMember.avatarUrl = buildSignedPath({
+            path: workspaceMember.avatarUrl,
+            token: avatarUrlToken,
+          });
+        }
+      }),
+    );
 
     return workspaceMembers;
   }
