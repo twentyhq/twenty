@@ -24,7 +24,6 @@ const { failingTestCases, successfulTestCases } =
 
 describe('Field metadata select update tests group', () => {
   let createdObjectMetadataId: string;
-  let createdFieldMetadata: string;
   const initialOptions: CreateOneFieldFactoryInput['options'] = [
     {
       label: 'Option 1',
@@ -53,7 +52,15 @@ describe('Field metadata select update tests group', () => {
     });
 
     createdObjectMetadataId = data.createOneObject.id;
+  });
 
+  afterEach(async () => {
+    await deleteOneObjectMetadata({
+      input: { idToDelete: createdObjectMetadataId },
+    });
+  });
+
+  it('Should update default value to null even if it was set before', async () => {
     const {
       data: { createOneField },
     } = await createOneFieldMetadata({
@@ -67,21 +74,14 @@ describe('Field metadata select update tests group', () => {
       },
       gqlFields: `
         id
+        type
         `,
     });
 
-    createdFieldMetadata = createOneField.id;
-  });
-
-  afterEach(async () => {
-    await deleteOneObjectMetadata({
-      input: { idToDelete: createdObjectMetadataId },
-    });
-  });
-
-  it('Should update default value to null even if it was set before', async () => {
+    const createdFieldMetadata = createOneField.id;
     const expectedDefaultValue = `'${initialOptions[0].value}'`;
-    const { data: firstUdpate } = await updateOneFieldMetadata({
+
+    const { data: firstUpdate } = await updateOneFieldMetadata({
       input: {
         idToUpdate: createdFieldMetadata,
         updatePayload: {
@@ -94,7 +94,7 @@ describe('Field metadata select update tests group', () => {
         `,
     });
 
-    expect(firstUdpate.updateOneField.defaultValue).toEqual(
+    expect(firstUpdate.updateOneField.defaultValue).toEqual(
       expectedDefaultValue,
     );
 
@@ -136,10 +136,31 @@ describe('Field metadata select update tests group', () => {
   test.each([...successfulTestCases, ...updateSpecificSuccessfulTestCases])(
     'Update $title',
     async ({ context: { input, expectedOptions } }) => {
+      const {
+        data: { createOneField },
+      } = await createOneFieldMetadata({
+        input: {
+          objectMetadataId: createdObjectMetadataId,
+          type: input.type ?? FieldMetadataType.SELECT,
+          name: 'testField',
+          label: 'Test Field',
+          isLabelSyncedWithName: false,
+          options: initialOptions,
+        },
+        gqlFields: `
+          id
+          type
+          `,
+      });
+
+      const createdFieldMetadata = createOneField.id;
+
+      const { type, ...updatePayload } = input;
+
       const { data, errors } = await updateOneFieldMetadata({
         input: {
           idToUpdate: createdFieldMetadata,
-          updatePayload: input,
+          updatePayload,
         },
         gqlFields: `
         id
@@ -183,10 +204,33 @@ describe('Field metadata select update tests group', () => {
   test.each([...updateSpecificFailingTestCases, ...failingTestCases])(
     'Update $title',
     async ({ context: { input } }) => {
+      // Create the field with the correct type based on the test case
+      const {
+        data: { createOneField },
+      } = await createOneFieldMetadata({
+        input: {
+          objectMetadataId: createdObjectMetadataId,
+          type: input.type ?? FieldMetadataType.SELECT,
+          name: 'testField',
+          label: 'Test Field',
+          isLabelSyncedWithName: false,
+          options: initialOptions,
+        },
+        gqlFields: `
+          id
+          type
+          `,
+      });
+
+      const createdFieldMetadata = createOneField.id;
+
+      // Remove type from update payload since we can't change it
+      const { type, ...updatePayload } = input;
+
       const { data, errors } = await updateOneFieldMetadata({
         input: {
           idToUpdate: createdFieldMetadata,
-          updatePayload: input,
+          updatePayload,
         },
         gqlFields: `
         id
