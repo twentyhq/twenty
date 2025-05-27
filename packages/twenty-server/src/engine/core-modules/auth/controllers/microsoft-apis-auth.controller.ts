@@ -125,15 +125,16 @@ export class MicrosoftAPIsAuthController {
           })
           .toString(),
       );
-    } catch (err) {
+    } catch (error) {
       return res.redirect(
-        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
-          err,
-          workspace ?? {
+        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
+          error,
+          workspace: workspace ?? {
             subdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
             customDomain: null,
           },
-        ),
+          pathname: '/verify',
+        }),
       );
     }
   }
