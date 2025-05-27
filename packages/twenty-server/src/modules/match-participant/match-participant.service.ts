@@ -61,14 +61,31 @@ export class MatchParticipantService<
         'person',
       );
 
-    const people = await personRepository.find(
-      {
-        where: {
-          emails: Any(uniqueParticipantsHandles),
+    let queryBuilder = personRepository
+      .createQueryBuilder('person')
+      .select([
+        'person.id',
+        'person.emailsPrimaryEmail',
+        'person.emailsAdditionalEmails',
+      ])
+      .where('person.emailsPrimaryEmail IN (:...uniqueParticipantsHandles)', {
+        uniqueParticipantsHandles,
+      });
+
+    for (const [index, handle] of uniqueParticipantsHandles.entries()) {
+      queryBuilder = queryBuilder.orWhere(
+        `person.emailsAdditionalEmails @> :handle${index}::jsonb`,
+        {
+          [`handle${index}`]: JSON.stringify([handle]),
         },
-      },
-      transactionManager,
-    );
+      );
+    }
+
+    const rawPeople = await queryBuilder
+      .orderBy('person.createdAt', 'DESC')
+      .getMany();
+
+    const people = await personRepository.formatResult(rawPeople);
 
     const workspaceMemberRepository =
       await this.twentyORMManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -85,9 +102,13 @@ export class MatchParticipantService<
     );
 
     for (const handle of uniqueParticipantsHandles) {
-      const person = people.find(
-        (person) => person.emails?.primaryEmail === handle,
-      );
+      const person =
+        people.find((person) => person.emails?.primaryEmail === handle) ||
+        people.find(
+          (person) =>
+            Array.isArray(person.emails?.additionalEmails) &&
+            person.emails.additionalEmails.includes(handle),
+        );
 
       const workspaceMember = workspaceMembers.find(
         (workspaceMember) => workspaceMember.userEmail === handle,
