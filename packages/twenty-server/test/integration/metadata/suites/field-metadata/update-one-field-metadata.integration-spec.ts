@@ -182,7 +182,7 @@ describe('updateOne', () => {
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Default value for existing options is invalid: OPTION_2",
+    "message": "Default value "OPTION_2" must be one of the option values",
   },
 ]
 `);
