@@ -8,6 +8,7 @@ type UseClientConfigResult = {
   loading: boolean;
   error: Error | undefined;
   fetchClientConfig: () => Promise<void>;
+  refetch: () => Promise<void>;
 };
 
 export const useClientConfig = (): UseClientConfigResult => {
@@ -52,5 +53,6 @@ export const useClientConfig = (): UseClientConfigResult => {
     loading: clientConfigApiStatus.isLoading || false,
     error: clientConfigApiStatus.error,
     fetchClientConfig,
+    refetch: fetchClientConfig,
   };
 };
