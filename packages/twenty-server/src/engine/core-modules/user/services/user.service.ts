@@ -304,10 +304,10 @@ export class UserService extends TypeOrmQueryService<User> {
     currentUserWorkspace: UserWorkspace,
     workspace: Workspace,
   ): Promise<void> {
-    let settingsPermissions: Record<SettingPermissionType, boolean> = {};
-    let objectRecordsPermissions: Record<
-      PermissionsOnAllObjectRecords,
-      boolean
+    let settingsPermissions: Partial<Record<SettingPermissionType, boolean>> =
+      {};
+    let objectRecordsPermissions: Partial<
+      Record<PermissionsOnAllObjectRecords, boolean>
     > = {};
 
     if (
