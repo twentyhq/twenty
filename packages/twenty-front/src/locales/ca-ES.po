@@ -5169,8 +5169,8 @@ msgstr "Veure els detalls de facturació"
 
 #. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "View execution details"
-msgstr "Veure detall d'execució"
+#~ msgid "View execution details"
+#~ msgstr "Veure detall d'execució"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
@@ -5273,13 +5273,13 @@ msgstr "Quan serà desactivada la clau"
 
 #. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow is running..."
-msgstr "Execució de flux de treball en marxa..."
+#~ msgid "Workflow is running..."
+#~ msgstr "Execució de flux de treball en marxa..."
 
 #. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow run failed"
-msgstr "Error en l'execució del flux de treball"
+#~ msgid "Workflow run failed"
+#~ msgstr "Error en l'execució del flux de treball"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx

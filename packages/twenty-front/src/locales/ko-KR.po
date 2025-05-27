@@ -5169,8 +5169,8 @@ msgstr "청구 세부 정보 보기"
 
 #. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "View execution details"
-msgstr "실행 세부 사항 보기"
+#~ msgid "View execution details"
+#~ msgstr "실행 세부 사항 보기"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
@@ -5273,13 +5273,13 @@ msgstr "키 비활성화 시기"
 
 #. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow is running..."
-msgstr "워크플로우가 실행 중입니다..."
+#~ msgid "Workflow is running..."
+#~ msgstr "워크플로우가 실행 중입니다..."
 
 #. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow run failed"
-msgstr "워크플로우 실행 실패"
+#~ msgid "Workflow run failed"
+#~ msgstr "워크플로우 실행 실패"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx

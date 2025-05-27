@@ -5169,8 +5169,8 @@ msgstr "Visualizza dettagli fatturazione"
 
 #. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "View execution details"
-msgstr "Visualizza i dettagli dell'esecuzione"
+#~ msgid "View execution details"
+#~ msgstr "Visualizza i dettagli dell'esecuzione"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
@@ -5273,13 +5273,13 @@ msgstr "Quando la chiave sarà disabilitata"
 
 #. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow is running..."
-msgstr "Il workflow è in esecuzione..."
+#~ msgid "Workflow is running..."
+#~ msgstr "Il workflow è in esecuzione..."
 
 #. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow run failed"
-msgstr "Esecuzione del workflow fallita"
+#~ msgid "Workflow run failed"
+#~ msgstr "Esecuzione del workflow fallita"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx

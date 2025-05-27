@@ -5169,8 +5169,8 @@ msgstr "Voir les détails de facturation"
 
 #. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "View execution details"
-msgstr "Voir les détails d'exécution"
+#~ msgid "View execution details"
+#~ msgstr "Voir les détails d'exécution"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
@@ -5273,13 +5273,13 @@ msgstr "Quand la clé sera désactivée"
 
 #. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow is running..."
-msgstr "Le Workflows est en cours d'exécution..."
+#~ msgid "Workflow is running..."
+#~ msgstr "Le Workflows est en cours d'exécution..."
 
 #. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow run failed"
-msgstr "Échec de l'exécution du Workflow"
+#~ msgid "Workflow run failed"
+#~ msgstr "Échec de l'exécution du Workflow"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx

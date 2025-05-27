@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { EntitySchema } from 'typeorm';
 
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
-import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -213,11 +212,7 @@ export class WorkspaceDatasourceFactory {
                 dataSourceMetadata.url ??
                 this.twentyConfigService.get('PG_DATABASE_URL'),
               type: 'postgres',
-              logging:
-                this.twentyConfigService.get('NODE_ENV') ===
-                NodeEnvironment.development
-                  ? ['query', 'error']
-                  : ['error'],
+              logging: this.twentyConfigService.getLoggingConfig(),
               schema: dataSourceMetadata.schema,
               entities: cachedEntitySchemas,
               ssl: this.twentyConfigService.get('PG_SSL_ALLOW_SELF_SIGNED')
