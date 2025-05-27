@@ -81,7 +81,7 @@ describe('generateFakeFormResponse', () => {
             isLeaf: true,
             label: 'Company',
             fieldIdName: 'id',
-            icon: undefined,
+            icon: 'test-company-icon',
             nameSingular: 'company',
             value: 'A company',
           },
