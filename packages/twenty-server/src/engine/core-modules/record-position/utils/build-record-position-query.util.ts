@@ -8,6 +8,7 @@ import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 type RecordPositionQuery = string;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type RecordPositionQueryParams = any[];
 
 export const buildRecordPositionQuery = (

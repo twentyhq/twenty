@@ -2,7 +2,6 @@ import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useSetRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { generateEmptyFieldValue } from '@/object-record/utils/generateEmptyFieldValue';
 
@@ -16,8 +15,6 @@ export const useClearField = () => {
   } = useContext(FieldContext);
 
   const [updateRecord] = useUpdateRecord();
-
-  const setRecordFieldValue = useSetRecordFieldValue();
 
   const clearField = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -51,8 +48,6 @@ export const useClearField = () => {
           emptyFieldValue,
         );
 
-        setRecordFieldValue(recordId, fieldName, emptyFieldValue);
-
         updateRecord?.({
           variables: {
             where: { id: recordId },
@@ -62,7 +57,7 @@ export const useClearField = () => {
           },
         });
       },
-    [recordId, fieldDefinition, updateRecord, setRecordFieldValue],
+    [recordId, fieldDefinition, updateRecord],
   );
 
   return clearField;

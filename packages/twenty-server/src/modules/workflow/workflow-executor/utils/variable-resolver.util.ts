@@ -49,6 +49,7 @@ const resolveObject = (
   const entries = Object.entries(resolvedObject);
 
   for (const [key, value] of entries) {
+    // @ts-expect-error legacy noImplicitAny
     resolvedObject[key] = resolveInput(value, context);
   }
 

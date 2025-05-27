@@ -120,8 +120,8 @@ msgstr ""
 
 #. js-lingui-id: juBVjt
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-msgid "A workflow event listener"
-msgstr "Ένα ακροατήριο γεγονότων ροής εργασιών"
+#~ msgid "A workflow event listener"
+#~ msgstr "Ένα ακροατήριο γεγονότων ροής εργασιών"
 
 #. js-lingui-id: 1+xDbI
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -806,8 +806,8 @@ msgstr "ID Συμβάντος"
 
 #. js-lingui-id: 81maJp
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-msgid "Event Listeners"
-msgstr "Ακροατήριο Συμβάντων"
+#~ msgid "Event Listeners"
+#~ msgstr "Ακροατήριο Συμβάντων"
 
 #. js-lingui-id: PYs3rP
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1491,7 +1491,6 @@ msgstr "Διακριτικό ανανέωσης παρόχου ανταλλαγ�
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -2194,8 +2193,8 @@ msgstr ""
 
 #. js-lingui-id: 7mPrpl
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-msgid "The workflow event listener name"
-msgstr "Το όνομα του ακροατή του γεγονότος εργασίας"
+#~ msgid "The workflow event listener name"
+#~ msgstr "Το όνομα του ακροατή του γεγονότος εργασίας"
 
 #. js-lingui-id: od0omS
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -2621,7 +2620,6 @@ msgstr "Καλώς ήρθατε στο Twenty: Παρακαλώ επιβεβαι
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -2637,8 +2635,8 @@ msgstr ""
 
 #. js-lingui-id: E03XpH
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-msgid "Workflow event listeners linked to the workflow."
-msgstr "Ακροατές γεγονότων ροής εργασίας συνδεδεμένοι με τη ροή εργασίας."
+#~ msgid "Workflow event listeners linked to the workflow."
+#~ msgstr "Ακροατές γεγονότων ροής εργασίας συνδεδεμένοι με τη ροή εργασίας."
 
 #. js-lingui-id: vwSkSW
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2741,18 +2739,18 @@ msgstr ""
 
 #. js-lingui-id: ENOy6I
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-msgid "WorkflowEventListener"
-msgstr "ΑκροατήςΓεγονότωνΡοήςΕργασίας"
+#~ msgid "WorkflowEventListener"
+#~ msgstr "ΑκροατήςΓεγονότωνΡοήςΕργασίας"
 
 #. js-lingui-id: HN90FO
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-msgid "WorkflowEventListener workflow"
-msgstr "ΑκροατήςΓεγονότωνΡοήςΕργασίας ροή εργασίας"
+#~ msgid "WorkflowEventListener workflow"
+#~ msgstr "ΑκροατήςΓεγονότωνΡοήςΕργασίας ροή εργασίας"
 
 #. js-lingui-id: 3JA9se
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-msgid "WorkflowEventListeners"
-msgstr "ΑκροατέςΓεγονότωνΡοήςΕργασίας"
+#~ msgid "WorkflowEventListeners"
+#~ msgstr "ΑκροατέςΓεγονότωνΡοήςΕργασίας"
 
 #. js-lingui-id: woYYQq
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts

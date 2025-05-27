@@ -145,11 +145,15 @@ export const useHandleRecordGroupField = () => {
         }
 
         await deleteViewGroupRecords(view.viewGroups);
+
+        setRecordGroupsFromViewGroups(view.id, [], objectMetadataItem);
       },
     [
       deleteViewGroupRecords,
       currentViewIdCallbackState,
       getViewFromPrefetchState,
+      setRecordGroupsFromViewGroups,
+      objectMetadataItem,
     ],
   );
 

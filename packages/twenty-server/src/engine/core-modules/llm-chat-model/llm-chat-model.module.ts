@@ -14,6 +14,7 @@ export class LLMChatModelModule {
   static forRoot(options: LLMChatModelModuleAsyncOptions): DynamicModule {
     const provider = {
       provide: LLM_CHAT_MODEL_DRIVER,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       useFactory: (...args: any[]) => {
         const config = options.useFactory(...args);
 

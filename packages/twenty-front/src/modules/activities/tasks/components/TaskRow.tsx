@@ -9,10 +9,11 @@ import { ActivityRow } from '@/activities/components/ActivityRow';
 import { Task } from '@/activities/types/Task';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
 import { FieldContextProvider } from '@/object-record/record-field/components/FieldContextProvider';
-import { useCompleteTask } from '../hooks/useCompleteTask';
-import { Checkbox, CheckboxShape } from 'twenty-ui/input';
 import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { Checkbox, CheckboxShape } from 'twenty-ui/input';
+import { useCompleteTask } from '../hooks/useCompleteTask';
 
 const StyledTaskBody = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -124,13 +125,15 @@ export const TaskRow = ({ task }: { task: Task }) => {
             fieldMetadataName={'taskTargets'}
             fieldPosition={0}
           >
-            <ActivityTargetsInlineCell
-              activityObjectNameSingular={CoreObjectNameSingular.Task}
-              activityRecordId={task.id}
-              showLabel={false}
-              maxWidth={200}
-              componentInstanceId={`task-row-targets-${task.id}`}
-            />
+            <StopPropagationContainer>
+              <ActivityTargetsInlineCell
+                activityObjectNameSingular={CoreObjectNameSingular.Task}
+                activityRecordId={task.id}
+                showLabel={false}
+                maxWidth={200}
+                componentInstanceId={`task-row-targets-${task.id}`}
+              />
+            </StopPropagationContainer>
           </FieldContextProvider>
         }
       </StyledRightSideContainer>

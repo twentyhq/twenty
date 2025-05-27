@@ -133,7 +133,7 @@ export class CustomDomainService {
                     ? 'error'
                     : 'success',
               key: response.result[0].hostname,
-              value: this.domainManagerService.getFrontUrl().hostname,
+              value: this.domainManagerService.getBaseUrl().hostname,
             },
           ]),
       };

@@ -5,6 +5,7 @@ import { useRecoilValue } from 'recoil';
 
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 
+import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constants/PageActionContainerClickOutsideId';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import {
@@ -144,7 +145,9 @@ export const PageHeader = ({
         </StyledTopBarIconStyledTitleContainer>
       </StyledLeftContainer>
 
-      <StyledPageActionContainer className="page-action-container">
+      <StyledPageActionContainer
+        data-click-outside-id={PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID}
+      >
         {children}
       </StyledPageActionContainer>
     </StyledTopBarContainer>

@@ -3,11 +3,11 @@ import * as fs from 'fs/promises';
 import { dirname, join } from 'path';
 import { Readable } from 'stream';
 
+import { StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
-import { StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 
 export interface LocalDriverOptions {
   storagePath: string;
@@ -161,5 +161,18 @@ export class LocalDriver implements StorageDriver {
     to: { folderPath: string; filename?: string };
   }): Promise<void> {
     await this.copy(params, true);
+  }
+
+  async checkFileExists(params: {
+    folderPath: string;
+    filename: string;
+  }): Promise<boolean> {
+    const filePath = join(
+      this.options.storagePath,
+      params.folderPath,
+      params.filename,
+    );
+
+    return existsSync(filePath);
   }
 }

@@ -30,15 +30,8 @@ describe('getTsVectorColumnExpressionFromFields', () => {
     const result = getTsVectorColumnExpressionFromFields(fields);
     const expected = `
     to_tsvector('simple', COALESCE("nameFirstName", '') || ' ' || COALESCE("nameLastName", '') || ' ' || COALESCE("jobTitle", '') || ' ' || 
-      COALESCE(
-        replace(
-          "emailsPrimaryEmail",
-          '@',
-          ' '
-        ),
-        ''
-      )
-    )
+      COALESCE("emailsPrimaryEmail", '') || ' ' ||
+      COALESCE(SPLIT_PART("emailsPrimaryEmail", '@', 2), ''))
   `.trim();
 
     expect(result.trim()).toBe(expected);

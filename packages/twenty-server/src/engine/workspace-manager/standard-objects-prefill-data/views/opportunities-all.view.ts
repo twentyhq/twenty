@@ -8,7 +8,7 @@ export const opportunitiesAllView = (
   objectMetadataStandardIdToIdMap: ObjectMetadataStandardIdToIdMap,
 ) => {
   return {
-    name: 'All',
+    name: 'All Opportunities',
     objectMetadataId:
       objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.opportunity].id,
     type: 'table',

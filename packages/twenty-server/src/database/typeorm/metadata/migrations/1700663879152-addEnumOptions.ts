@@ -5,25 +5,25 @@ export class AddEnumOptions1700663879152 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "metadata"."fieldMetadata" RENAME COLUMN "enums" TO "options"`,
+      `ALTER TABLE "core"."fieldMetadata" RENAME COLUMN "enums" TO "options"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "metadata"."fieldMetadata" DROP COLUMN "options"`,
+      `ALTER TABLE "core"."fieldMetadata" DROP COLUMN "options"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "metadata"."fieldMetadata" ADD "options" jsonb`,
+      `ALTER TABLE "core"."fieldMetadata" ADD "options" jsonb`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "metadata"."fieldMetadata" DROP COLUMN "options"`,
+      `ALTER TABLE "core"."fieldMetadata" DROP COLUMN "options"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "metadata"."fieldMetadata" ADD "options" text array`,
+      `ALTER TABLE "core"."fieldMetadata" ADD "options" text array`,
     );
     await queryRunner.query(
-      `ALTER TABLE "metadata"."fieldMetadata" RENAME COLUMN "options" TO "enums"`,
+      `ALTER TABLE "core"."fieldMetadata" RENAME COLUMN "options" TO "enums"`,
     );
   }
 }

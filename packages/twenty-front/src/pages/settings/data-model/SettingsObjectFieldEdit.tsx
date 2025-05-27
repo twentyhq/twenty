@@ -10,9 +10,9 @@ import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataIt
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdateOneFieldMetadataItem';
+import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { formatFieldMetadataItemInput } from '@/object-metadata/utils/formatFieldMetadataItemInput';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
-import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
@@ -161,7 +161,7 @@ export const SettingsObjectFieldEdit = () => {
   };
 
   return (
-    <RecordFieldValueSelectorContextProvider>
+    <>
       {/* eslint-disable-next-line react/jsx-props-no-spreading */}
       <FormProvider {...formConfig}>
         <SubMenuTopBarContainer
@@ -213,23 +213,31 @@ export const SettingsObjectFieldEdit = () => {
                 }
               />
             </Section>
-            <Section>
-              {fieldMetadataItem.isUnique ? (
-                <H2Title
-                  title={t`Values`}
-                  description={t`The values of this field must be unique`}
-                />
-              ) : (
-                <H2Title
-                  title={t`Values`}
-                  description={t`The values of this field`}
-                />
-              )}
-              <SettingsDataModelFieldSettingsFormCard
-                fieldMetadataItem={fieldMetadataItem}
-                objectMetadataItem={objectMetadataItem}
-              />
-            </Section>
+            {
+              //patch - awaiting refacto on many to many relations - https://github.com/twentyhq/core-team-issues/issues/186
+              fieldMetadataItem.name !== CoreObjectNamePlural.NoteTarget &&
+                fieldMetadataItem.name !== CoreObjectNamePlural.TaskTarget && (
+                  <>
+                    <Section>
+                      {fieldMetadataItem.isUnique ? (
+                        <H2Title
+                          title={t`Values`}
+                          description={t`The values of this field must be unique`}
+                        />
+                      ) : (
+                        <H2Title
+                          title={t`Values`}
+                          description={t`The values of this field`}
+                        />
+                      )}
+                      <SettingsDataModelFieldSettingsFormCard
+                        fieldMetadataItem={fieldMetadataItem}
+                        objectMetadataItem={objectMetadataItem}
+                      />
+                    </Section>
+                  </>
+                )
+            }
             <Section>
               <H2Title
                 title={t`Description`}
@@ -239,6 +247,7 @@ export const SettingsObjectFieldEdit = () => {
                 fieldMetadataItem={fieldMetadataItem}
               />
             </Section>
+
             {!isLabelIdentifier && (
               <Section>
                 <H2Title
@@ -265,6 +274,6 @@ export const SettingsObjectFieldEdit = () => {
           </SettingsPageContainer>
         </SubMenuTopBarContainer>
       </FormProvider>
-    </RecordFieldValueSelectorContextProvider>
+    </>
   );
 };

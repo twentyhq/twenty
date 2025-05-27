@@ -73,6 +73,12 @@ const StyledSelectedSortDirectionContainer = styled.div`
   z-index: 1000;
 `;
 
+const StyledDropdownMenuHeaderEndComponent = styled.div`
+  padding: ${({ theme }) => theme.spacing(1)};
+  display: flex;
+  align-items: center;
+`;
+
 export type ObjectSortDropdownButtonProps = {
   hotkeyScope: HotkeyScope;
 };
@@ -253,12 +259,17 @@ export const ObjectSortDropdownButton = ({
                 !isRecordSortDirectionMenuUnfolded,
               )
             }
-            EndComponent={<IconChevronDown size={theme.icon.size.md} />}
+            EndComponent={
+              <StyledDropdownMenuHeaderEndComponent>
+                <IconChevronDown size={theme.icon.size.md} />
+              </StyledDropdownMenuHeaderEndComponent>
+            }
           >
             {selectedRecordSortDirection === 'asc'
               ? t`Ascending`
               : t`Descending`}
           </DropdownMenuHeader>
+          <DropdownMenuSeparator />
           <StyledInput
             autoFocus
             value={objectSortDropdownSearchInput}

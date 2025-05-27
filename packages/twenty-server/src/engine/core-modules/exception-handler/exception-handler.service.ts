@@ -13,6 +13,7 @@ export class ExceptionHandlerService {
   ) {}
 
   captureExceptions(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     exceptions: ReadonlyArray<any>,
     options?: ExceptionHandlerOptions,
   ): string[] {

@@ -56,7 +56,7 @@ export const ObjectFilterDropdownBooleanSelect = () => {
       selectableItemIdArray={options.map((option) => option.toString())}
       hotkeyScope={SingleRecordPickerHotkeyScope.SingleRecordPicker}
     >
-      <DropdownMenuItemsContainer hasMaxHeight>
+      <DropdownMenuItemsContainer hasMaxHeight width="auto">
         {options.map((option) => (
           <StyledBooleanSelectContainer
             key={String(option)}

@@ -9,7 +9,6 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { searchRecordStoreComponentFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { isNull } from '@sniptt/guards';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -171,7 +170,7 @@ export const useUpdateActivityTargetFromCell = ({
         }
 
         setActivityFromStore((currentActivity) => {
-          if (isNull(currentActivity)) {
+          if (!isDefined(currentActivity)) {
             return null;
           }
 

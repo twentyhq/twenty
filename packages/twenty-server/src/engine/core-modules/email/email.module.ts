@@ -16,6 +16,7 @@ export class EmailModule {
   static forRoot(options: EmailModuleAsyncOptions): DynamicModule {
     const provider = {
       provide: EMAIL_DRIVER,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       useFactory: (...args: any[]) => {
         const config = options.useFactory(...args);
 

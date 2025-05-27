@@ -74,6 +74,7 @@ export class ConvertRecordPositionsToIntegers extends CommandRunner {
   private async convertRecordPositionsToIntegers(
     customObjectTableNames: string[],
     workspaceId: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     transactionManager: any,
   ): Promise<void> {
     const dataSourceSchema =
@@ -102,6 +103,7 @@ export class ConvertRecordPositionsToIntegers extends CommandRunner {
     tableName: string,
     dataSourceSchema: string,
     workspaceId: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     transactionManager: any,
   ): Promise<void> {
     await this.workspaceDataSourceService.executeRawQuery(

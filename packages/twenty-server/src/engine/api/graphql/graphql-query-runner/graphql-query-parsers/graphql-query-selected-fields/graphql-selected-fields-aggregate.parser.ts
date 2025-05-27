@@ -8,6 +8,7 @@ import {
 
 export class GraphqlQuerySelectedFieldsAggregateParser {
   parse(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     graphqlSelectedFields: Partial<Record<string, any>>,
     fieldMetadataMapByName: Record<string, FieldMetadataInterface>,
     accumulator: GraphqlQuerySelectedFieldsResult,

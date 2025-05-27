@@ -2,8 +2,10 @@ import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/adv
 import { getAdvancedFilterObjectFilterDropdownComponentInstanceId } from '@/object-record/advanced-filter/utils/getAdvancedFilterObjectFilterDropdownComponentInstanceId';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
+import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useRecoilCallback } from 'recoil';
 
@@ -28,26 +30,42 @@ export const useSetAdvancedFilterDropdownStates = () => {
             recordFilter.recordFilterGroupId === rootLevelRecordFilterGroup?.id,
         );
 
-        for (const rootLevelRecordFilter of rootLevelRecordFilters) {
+        const setAdvancedFilterStatesForRecordFilter = (
+          recordFilter: RecordFilter,
+        ) => {
           set(
             objectFilterDropdownCurrentRecordFilterComponentState.atomFamily({
               instanceId:
                 getAdvancedFilterObjectFilterDropdownComponentInstanceId(
-                  rootLevelRecordFilter.id,
+                  recordFilter.id,
                 ),
             }),
-            rootLevelRecordFilter,
+            recordFilter,
           );
 
           set(
             fieldMetadataItemIdUsedInDropdownComponentState.atomFamily({
               instanceId:
                 getAdvancedFilterObjectFilterDropdownComponentInstanceId(
-                  rootLevelRecordFilter.id,
+                  recordFilter.id,
                 ),
             }),
-            rootLevelRecordFilter.fieldMetadataId,
+            recordFilter.fieldMetadataId,
           );
+
+          set(
+            subFieldNameUsedInDropdownComponentState.atomFamily({
+              instanceId:
+                getAdvancedFilterObjectFilterDropdownComponentInstanceId(
+                  recordFilter.id,
+                ),
+            }),
+            recordFilter.subFieldName,
+          );
+        };
+
+        for (const rootLevelRecordFilter of rootLevelRecordFilters) {
+          setAdvancedFilterStatesForRecordFilter(rootLevelRecordFilter);
         }
 
         const childRecordFilterGroups = currentRecordFilterGroups.filter(
@@ -63,25 +81,7 @@ export const useSetAdvancedFilterDropdownStates = () => {
           );
 
           for (const recordFilterInThisGroup of recordFiltersInThisGroup) {
-            set(
-              objectFilterDropdownCurrentRecordFilterComponentState.atomFamily({
-                instanceId:
-                  getAdvancedFilterObjectFilterDropdownComponentInstanceId(
-                    recordFilterInThisGroup.id,
-                  ),
-              }),
-              recordFilterInThisGroup,
-            );
-
-            set(
-              fieldMetadataItemIdUsedInDropdownComponentState.atomFamily({
-                instanceId:
-                  getAdvancedFilterObjectFilterDropdownComponentInstanceId(
-                    recordFilterInThisGroup.id,
-                  ),
-              }),
-              recordFilterInThisGroup.fieldMetadataId,
-            );
+            setAdvancedFilterStatesForRecordFilter(recordFilterInThisGroup);
           }
         }
       },

@@ -14,6 +14,7 @@ export class ProcessAggregateHelper {
     queryBuilder,
   }: {
     selectedAggregatedFields: Record<string, AggregationField>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     queryBuilder: SelectQueryBuilder<any>;
   }) => {
     queryBuilder.select([]);

@@ -1,4 +1,5 @@
 import { gmail_v1 as gmailV1 } from 'googleapis';
+// @ts-expect-error legacy noImplicitAny
 import planer from 'planer';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';

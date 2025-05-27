@@ -24,8 +24,10 @@ type TypeFactory<T extends InputTypeDefinitionKind | ObjectTypeDefinitionKind> =
       options: WorkspaceBuildSchemaOptions,
       additionalOptions: {
         nullable?: boolean;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         defaultValue?: any;
         isArray: boolean;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         settings: any;
         isIdField: boolean;
       },
@@ -41,10 +43,11 @@ export const generateFields = <
   kind: T,
   options: WorkspaceBuildSchemaOptions,
   typeFactory: TypeFactory<T>,
-  isNewRelationEnabled = false,
 ): T extends InputTypeDefinitionKind
   ? GraphQLInputFieldConfigMap
-  : GraphQLFieldConfigMap<any, any> => {
+  : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    GraphQLFieldConfigMap<any, any> => {
   const fields = {};
 
   for (const fieldMetadata of objectMetadata.fields) {
@@ -53,8 +56,7 @@ export const generateFields = <
         fieldMetadata,
         FieldMetadataType.RELATION,
       ) &&
-      (fieldMetadata.settings?.relationType !== RelationType.MANY_TO_ONE ||
-        !isNewRelationEnabled)
+      fieldMetadata.settings?.relationType !== RelationType.MANY_TO_ONE
     ) {
       continue;
     }
@@ -102,12 +104,14 @@ export const generateFields = <
         throw new Error('Join column name is not defined');
       }
 
+      // @ts-expect-error legacy noImplicitAny
       fields[joinColumnName] = {
         type,
         description: fieldMetadata.description,
       };
     }
 
+    // @ts-expect-error legacy noImplicitAny
     fields[fieldMetadata.name] = {
       type,
       description: fieldMetadata.description,

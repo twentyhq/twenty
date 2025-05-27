@@ -5,14 +5,24 @@ import { isDefined } from 'twenty-shared/utils';
 import { EntitySchema } from 'typeorm';
 
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
-import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
+import {
+  WorkspaceMetadataCacheException,
+  WorkspaceMetadataCacheExceptionCode,
+} from 'src/engine/metadata-modules/workspace-metadata-cache/exceptions/workspace-metadata-cache.exception';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
+import {
+  WorkspaceMetadataVersionException,
+  WorkspaceMetadataVersionExceptionCode,
+} from 'src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception';
 import { WorkspacePermissionsCacheStorageService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache-storage.service';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import {
+  ROLES_PERMISSIONS,
+  WorkspacePermissionsCacheService,
+} from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import {
   TwentyORMException,
@@ -29,6 +39,8 @@ type CacheResult<T, U> = {
   data: U;
 };
 
+const TWENTY_MINUTES_IN_MS = 120_000;
+
 @Injectable()
 export class WorkspaceDatasourceFactory {
   private readonly logger = new Logger(WorkspaceDatasourceFactory.name);
@@ -44,6 +56,52 @@ export class WorkspaceDatasourceFactory {
     private readonly workspacePermissionsCacheStorageService: WorkspacePermissionsCacheStorageService,
     private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
   ) {}
+
+  private async conditionalDestroyDataSource(
+    dataSource: WorkspaceDataSource,
+  ): Promise<void> {
+    const isPoolSharingEnabled = this.twentyConfigService.get(
+      'PG_ENABLE_POOL_SHARING',
+    );
+
+    if (isPoolSharingEnabled) {
+      this.logger.debug(
+        `PromiseMemoizer Event: A WorkspaceDataSource (using shared pool) is being cleared. Actual pool closure managed by PgPoolSharedService. Not calling dataSource.destroy().`,
+      );
+      // We should NOT call dataSource.destroy() here, because that would end
+      // the shared pool, potentially affecting other active users of that pool.
+      // The PgPoolSharedService is responsible for the lifecycle of shared pools.
+    } else {
+      this.logger.debug(
+        `PromiseMemoizer Event: A WorkspaceDataSource (using dedicated pool) is being cleared. Calling safelyDestroyDataSource.`,
+      );
+      await this.safelyDestroyDataSource(dataSource);
+    }
+  }
+
+  private async safelyDestroyDataSource(
+    dataSource: WorkspaceDataSource,
+  ): Promise<void> {
+    try {
+      await dataSource.destroy();
+    } catch (error) {
+      // Ignore known race-condition errors to prevent noise during shutdown
+      if (
+        error.message === 'Called end on pool more than once' ||
+        error.message?.includes(
+          'pool is draining and cannot accommodate new clients',
+        )
+      ) {
+        this.logger.debug(
+          `Ignoring pool error during cleanup: ${error.message}`,
+        );
+
+        return;
+      }
+
+      throw error;
+    }
+  }
 
   public async create(
     workspaceId: string,
@@ -111,9 +169,9 @@ export class WorkspaceDatasourceFactory {
             );
 
           if (!cachedObjectMetadataMaps) {
-            throw new TwentyORMException(
+            throw new WorkspaceMetadataCacheException(
               `Object metadata collection not found for workspace ${workspaceId}`,
-              TwentyORMExceptionCode.METADATA_COLLECTION_NOT_FOUND,
+              WorkspaceMetadataCacheExceptionCode.OBJECT_METADATA_COLLECTION_NOT_FOUND,
             );
           }
 
@@ -154,11 +212,7 @@ export class WorkspaceDatasourceFactory {
                 dataSourceMetadata.url ??
                 this.twentyConfigService.get('PG_DATABASE_URL'),
               type: 'postgres',
-              logging:
-                this.twentyConfigService.get('NODE_ENV') ===
-                NodeEnvironment.development
-                  ? ['query', 'error']
-                  : ['error'],
+              logging: this.twentyConfigService.getLoggingConfig(),
               schema: dataSourceMetadata.schema,
               entities: cachedEntitySchemas,
               ssl: this.twentyConfigService.get('PG_SSL_ALLOW_SELF_SIGNED')
@@ -166,6 +220,16 @@ export class WorkspaceDatasourceFactory {
                     rejectUnauthorized: false,
                   }
                 : undefined,
+              extra: {
+                query_timeout: 10000,
+                // https://node-postgres.com/apis/pool
+                // TypeORM doesn't allow sharing connection pools between data sources
+                // So we keep a small pool open for longer if connection pooling patch isn't enabled
+                // TODO: Probably not needed anymore when connection pooling patch is enabled
+                idleTimeoutMillis: TWENTY_MINUTES_IN_MS,
+                max: 4,
+                allowExitOnIdle: true,
+              },
             },
             cachedFeatureFlagMapVersion,
             cachedFeatureFlagMap,
@@ -177,17 +241,7 @@ export class WorkspaceDatasourceFactory {
 
           return workspaceDataSource;
         },
-        async (dataSource) => {
-          try {
-            await dataSource.destroy();
-          } catch (error) {
-            // Ignore error if pool has already been destroyed which is a common race condition case
-            if (error.message === 'Called end on pool more than once') {
-              return;
-            }
-            throw error;
-          }
-        },
+        this.conditionalDestroyDataSource.bind(this),
       );
 
     if (!workspaceDataSource) {
@@ -227,10 +281,10 @@ export class WorkspaceDatasourceFactory {
       recomputeCache: () =>
         this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
           workspaceId,
-          ignoreLock: true,
         }),
-      cachedEntityName: 'Roles permissions',
+      cachedEntityName: ROLES_PERMISSIONS,
       exceptionCode: TwentyORMExceptionCode.ROLES_PERMISSIONS_VERSION_NOT_FOUND,
+      logger: this.logger,
     });
   }
 
@@ -309,9 +363,9 @@ export class WorkspaceDatasourceFactory {
 
     if (!isDefined(latestWorkspaceMetadataVersion)) {
       if (shouldFailIfMetadataNotFound) {
-        throw new TwentyORMException(
-          `Metadata version not found for workspace ${workspaceId}`,
-          TwentyORMExceptionCode.METADATA_VERSION_NOT_FOUND,
+        throw new WorkspaceMetadataVersionException(
+          `Metadata version not found while fetching datasource for workspace ${workspaceId}`,
+          WorkspaceMetadataVersionExceptionCode.METADATA_VERSION_NOT_FOUND,
         );
       } else {
         await this.workspaceMetadataCacheService.recomputeMetadataCache({
@@ -326,9 +380,9 @@ export class WorkspaceDatasourceFactory {
     }
 
     if (!isDefined(latestWorkspaceMetadataVersion)) {
-      throw new TwentyORMException(
-        `Metadata version not found after recompute for workspace ${workspaceId}`,
-        TwentyORMExceptionCode.METADATA_VERSION_NOT_FOUND,
+      throw new WorkspaceMetadataVersionException(
+        `Metadata version not found after recompute`,
+        WorkspaceMetadataVersionExceptionCode.METADATA_VERSION_NOT_FOUND,
       );
     }
 
@@ -336,8 +390,16 @@ export class WorkspaceDatasourceFactory {
   }
 
   public async destroy(workspaceId: string) {
-    await this.promiseMemoizer.clearKeys(`${workspaceId}-`, (dataSource) => {
-      dataSource.destroy();
-    });
+    try {
+      await this.promiseMemoizer.clearKeys(
+        `${workspaceId}-`,
+        this.conditionalDestroyDataSource.bind(this),
+      );
+    } catch (error) {
+      // Log and swallow any errors during cleanup to prevent crashes
+      this.logger.warn(
+        `Error cleaning up datasources for workspace ${workspaceId}: ${error.message}`,
+      );
+    }
   }
 }

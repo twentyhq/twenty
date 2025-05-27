@@ -30,7 +30,6 @@ export class ObjectTypeDefinitionFactory {
     objectMetadata: ObjectMetadataInterface,
     kind: ObjectTypeDefinitionKind,
     options: WorkspaceBuildSchemaOptions,
-    isNewRelationEnabled = false,
   ): ObjectTypeDefinition {
     return {
       target: objectMetadata.id,
@@ -43,7 +42,6 @@ export class ObjectTypeDefinitionFactory {
           kind,
           options,
           this.outputTypeFactory,
-          isNewRelationEnabled,
         ),
       }),
     };

@@ -4,8 +4,8 @@ import { Edge, Node } from '@xyflow/react';
 import { useEffect } from 'react';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { isDefined } from 'twenty-shared/utils';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type SettingsDataModelOverviewEffectProps = {
   setEdges: (edges: Edge[]) => void;
@@ -17,7 +17,8 @@ export const SettingsDataModelOverviewEffect = ({
   setNodes,
 }: SettingsDataModelOverviewEffectProps) => {
   const theme = useTheme();
-  const { activeObjectMetadataItems: items } = useFilteredObjectMetadataItems();
+  const { activeNonSystemObjectMetadataItems: items } =
+    useFilteredObjectMetadataItems();
 
   useEffect(() => {
     const g = new dagre.graphlib.Graph();

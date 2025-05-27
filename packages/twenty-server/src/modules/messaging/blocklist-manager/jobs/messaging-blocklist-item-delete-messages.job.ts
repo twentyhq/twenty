@@ -1,4 +1,4 @@
-import { Logger, Scope } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
 
 import { And, Any, ILike, In, Not, Or } from 'typeorm';
 
@@ -22,8 +22,6 @@ export type BlocklistItemDeleteMessagesJobData = WorkspaceEventBatch<
   scope: Scope.REQUEST,
 })
 export class BlocklistItemDeleteMessagesJob {
-  private readonly logger = new Logger(BlocklistItemDeleteMessagesJob.name);
-
   constructor(
     private readonly threadCleanerService: MessagingMessageCleanerService,
     private readonly twentyORMManager: TwentyORMManager,
@@ -80,12 +78,6 @@ export class BlocklistItemDeleteMessagesJob {
       if (!handles) {
         continue;
       }
-
-      this.logger.log(
-        `Deleting messages from ${handles.join(
-          ', ',
-        )} in workspace ${workspaceId} for workspace member ${workspaceMemberId}`,
-      );
 
       const rolesToDelete: ('from' | 'to')[] = ['from', 'to'];
 
@@ -146,12 +138,6 @@ export class BlocklistItemDeleteMessagesJob {
           messageChannelMessageAssociationsToDelete.map(({ id }) => id),
         );
       }
-
-      this.logger.log(
-        `Deleted messages from handle ${handles.join(
-          ', ',
-        )} in workspace ${workspaceId} for workspace member ${workspaceMemberId}`,
-      );
     }
 
     await this.threadCleanerService.cleanWorkspaceThreads(workspaceId);

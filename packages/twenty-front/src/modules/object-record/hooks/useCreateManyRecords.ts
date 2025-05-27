@@ -27,6 +27,10 @@ type PartialObjectRecordWithId = Partial<ObjectRecord> & {
   id: string;
 };
 
+type PartialObjectRecordWithOptionalId = Partial<ObjectRecord> & {
+  id?: string;
+};
+
 type useCreateManyRecordsProps = {
   objectNameSingular: string;
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
@@ -75,16 +79,20 @@ export const useCreateManyRecords = <
     recordsToCreate: Partial<CreatedObjectRecord>[],
     upsert?: boolean,
   ) => {
-    const sanitizedCreateManyRecordsInput: PartialObjectRecordWithId[] = [];
+    const sanitizedCreateManyRecordsInput: PartialObjectRecordWithOptionalId[] =
+      [];
     const recordOptimisticRecordsInput: PartialObjectRecordWithId[] = [];
     recordsToCreate.forEach((recordToCreate) => {
-      const idForCreation = recordToCreate?.id ?? v4();
+      const shouldDoOptimisticEffect = upsert !== true;
+      const idForCreation = shouldDoOptimisticEffect
+        ? (recordToCreate?.id ?? v4())
+        : undefined;
       const sanitizedRecord = {
         ...sanitizeRecordInput({
           objectMetadataItem,
           recordInput: recordToCreate,
         }),
-        id: idForCreation,
+        ...(isDefined(idForCreation) ? { id: idForCreation } : {}),
       };
       const baseOptimisticRecordInputCreatedBy:
         | { createdBy: FieldActorForInputValue }
@@ -96,22 +104,25 @@ export const useCreateManyRecords = <
             },
           }
         : undefined;
-      const optimisticRecordInput = {
-        ...computeOptimisticRecordFromInput({
-          cache: apolloClient.cache,
-          objectMetadataItem,
-          objectMetadataItems,
-          currentWorkspaceMember: currentWorkspaceMember,
-          recordInput: {
-            ...baseOptimisticRecordInputCreatedBy,
-            ...recordToCreate,
-          },
-        }),
-        id: idForCreation,
-      };
 
       sanitizedCreateManyRecordsInput.push(sanitizedRecord);
-      recordOptimisticRecordsInput.push(optimisticRecordInput);
+
+      if (shouldDoOptimisticEffect) {
+        const optimisticRecordInput = {
+          ...computeOptimisticRecordFromInput({
+            cache: apolloClient.cache,
+            objectMetadataItem,
+            objectMetadataItems,
+            currentWorkspaceMember: currentWorkspaceMember,
+            recordInput: {
+              ...baseOptimisticRecordInputCreatedBy,
+              ...recordToCreate,
+            },
+          }),
+          id: idForCreation as string,
+        };
+        recordOptimisticRecordsInput.push(optimisticRecordInput);
+      }
     });
 
     const recordsCreatedInCache = recordOptimisticRecordsInput

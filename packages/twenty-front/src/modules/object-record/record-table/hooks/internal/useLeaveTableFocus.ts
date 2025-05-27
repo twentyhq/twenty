@@ -4,8 +4,6 @@ import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/use
 import { useSetIsRecordTableFocusActive } from '@/object-record/record-table/record-table-cell/hooks/useSetIsRecordTableFocusActive';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
-import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
@@ -36,8 +34,6 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
     recordTableIdFromContext,
   );
 
-  const setHotkeyScope = useSetHotkeyScope();
-
   return () => {
     resetTableRowSelection();
 
@@ -48,7 +44,5 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
     deactivateRecordTableRow();
 
     setRecordTableHoverPosition(null);
-
-    setHotkeyScope(TableHotkeyScope.Table);
   };
 };

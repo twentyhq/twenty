@@ -214,7 +214,6 @@ describe('MessagingMessagesImportService', () => {
     expect(messagingGetMessagesService.getMessages).toHaveBeenCalledWith(
       ['message-id-1', 'message-id-2'],
       mockConnectedAccount,
-      workspaceId,
     );
     expect(
       saveMessagesService.saveMessagesAndEnqueueContactCreation,

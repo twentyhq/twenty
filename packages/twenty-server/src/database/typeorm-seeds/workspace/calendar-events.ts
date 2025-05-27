@@ -2,6 +2,10 @@ import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/wor
 
 const tableName = 'calendarEvent';
 
+export const DEV_SEED_CALENDAR_EVENT_IDS = {
+  CALENDAR_EVENT_1: '86083141-1c0e-494c-a1b6-85b1c6fefaa5',
+};
+
 export const seedCalendarEvents = async (
   entityManager: WorkspaceEntityManager,
   schemaName: string,
@@ -30,7 +34,7 @@ export const seedCalendarEvents = async (
     .orIgnore()
     .values([
       {
-        id: '86083141-1c0e-494c-a1b6-85b1c6fefaa5',
+        id: DEV_SEED_CALENDAR_EVENT_IDS.CALENDAR_EVENT_1,
         title: 'Meeting with Christoph',
         isCanceled: false,
         isFullDay: false,

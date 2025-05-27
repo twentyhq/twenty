@@ -23,7 +23,6 @@ export const LightCopyIconButton = ({ copyText }: LightCopyIconButtonProps) => {
   return (
     <StyledButtonContainer>
       <LightIconButton
-        className="copy-button"
         Icon={IconCopy}
         onClick={() => {
           enqueueSnackBar(t`Text copied to clipboard`, {

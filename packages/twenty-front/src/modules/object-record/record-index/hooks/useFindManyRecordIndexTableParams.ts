@@ -3,7 +3,8 @@ import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
+import { combineFilters } from '@/object-record/record-filter/utils/combineFilters';
+import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeRecordGqlOperationFilter';
 import { useCurrentRecordGroupDefinition } from '@/object-record/record-group/hooks/useCurrentRecordGroupDefinition';
 import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
@@ -47,10 +48,7 @@ export const useFindManyRecordIndexTableParams = (
 
   return {
     objectNameSingular,
-    filter: {
-      ...stateFilter,
-      ...recordGroupFilter,
-    },
+    filter: combineFilters([stateFilter, recordGroupFilter]),
     orderBy,
     // If we have a current record group definition, we only want to fetch 8 records by page
     ...(currentRecordGroupDefinition ? { limit: 8 } : {}),

@@ -96,6 +96,7 @@ export class DistantTableService {
           await entityManager.query(`DROP SCHEMA "${tmpSchemaName}" CASCADE`);
 
           return createdForeignTableNames.reduce(
+            // @ts-expect-error legacy noImplicitAny
             (acc, { table_name, column_name, data_type, udt_name }) => {
               if (!acc[table_name]) {
                 acc[table_name] = [];

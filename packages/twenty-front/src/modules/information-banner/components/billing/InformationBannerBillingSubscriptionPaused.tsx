@@ -1,9 +1,14 @@
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
+import { useSettingsPermissionMap } from '@/settings/roles/hooks/useSettingsPermissionMap';
 import { SettingsPath } from '@/types/SettingsPath';
-import { useBillingPortalSessionQuery } from '~/generated/graphql';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  SettingPermissionType,
+  useBillingPortalSessionQuery,
+} from '~/generated/graphql';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const InformationBannerBillingSubscriptionPaused = () => {
   const { redirect } = useRedirect();
@@ -14,6 +19,10 @@ export const InformationBannerBillingSubscriptionPaused = () => {
     },
   });
 
+  const {
+    [SettingPermissionType.WORKSPACE]: hasPermissionToUpdateBillingDetails,
+  } = useSettingsPermissionMap();
+
   const openBillingPortal = () => {
     if (isDefined(data) && isDefined(data.billingPortalSession.url)) {
       redirect(data.billingPortalSession.url);
@@ -23,8 +32,12 @@ export const InformationBannerBillingSubscriptionPaused = () => {
   return (
     <InformationBanner
       variant="danger"
-      message={'Trial expired. Please update your billing details'}
-      buttonTitle="Update"
+      message={
+        hasPermissionToUpdateBillingDetails
+          ? t`Trial expired. Please update your billing details.`
+          : t`Trial expired. Please contact your admin`
+      }
+      buttonTitle={hasPermissionToUpdateBillingDetails ? t`Update` : undefined}
       buttonOnClick={() => openBillingPortal()}
       isButtonDisabled={loading || !isDefined(data)}
     />

@@ -17,7 +17,6 @@ import { PartialFieldMetadata } from 'src/engine/workspace-manager/workspace-syn
 import { PartialIndexMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-index-metadata.interface';
 import { UpdaterOptions } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/updater-options.interface';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
@@ -221,8 +220,6 @@ export class WorkspaceMetadataUpdaterService {
       [];
     let updatedFieldRelationMetadataCollection: FieldMetadataUpdate<FieldMetadataType.RELATION>[] =
       [];
-    let deletedFieldRelationMetadataCollection: FieldMetadataUpdate<FieldMetadataType.RELATION>[] =
-      [];
 
     /**
      * Create field relation metadata
@@ -253,20 +250,26 @@ export class WorkspaceMetadataUpdaterService {
     }
 
     if (!options || options.actions.includes('delete')) {
-      deletedFieldRelationMetadataCollection = await this.updateEntities<
-        FieldMetadataEntity<FieldMetadataType.RELATION>
-      >(
-        manager,
-        FieldMetadataEntity,
-        storage.fieldRelationMetadataDeleteCollection,
-        ['objectMetadataId', 'workspaceId'],
-      );
+      const fieldMetadataRepository =
+        manager.getRepository(FieldMetadataEntity);
+
+      if (storage.fieldRelationMetadataDeleteCollection.length > 0) {
+        await fieldMetadataRepository.delete(
+          storage.fieldRelationMetadataDeleteCollection.map(
+            (field) => field.id,
+          ),
+        );
+      }
     }
 
     return {
       createdFieldRelationMetadataCollection,
       updatedFieldRelationMetadataCollection,
-      deletedFieldRelationMetadataCollection,
+      deletedFieldRelationMetadataCollection:
+        storage.fieldRelationMetadataDeleteCollection.map((field) => ({
+          current: field,
+          altered: field,
+        })),
     };
   }
 
@@ -365,15 +368,6 @@ export class WorkspaceMetadataUpdaterService {
     createdIndexMetadataCollection: IndexMetadataEntity[];
   }> {
     const indexMetadataRepository = manager.getRepository(IndexMetadataEntity);
-    const workspaceId = originalObjectMetadataCollection?.[0]?.workspaceId;
-    let isNewRelationEnabled = false;
-
-    if (workspaceId) {
-      isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsNewRelationEnabled,
-        workspaceId,
-      );
-    }
 
     const convertIndexMetadataForSaving = (
       indexMetadata: PartialIndexMetadata,
@@ -387,7 +381,6 @@ export class WorkspaceMetadataUpdaterService {
           .find((object) => object.id === indexMetadata.objectMetadataId)
           ?.fields.find((field) => {
             if (
-              isNewRelationEnabled &&
               isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION)
             ) {
               if (field.settings?.joinColumnName === column) {

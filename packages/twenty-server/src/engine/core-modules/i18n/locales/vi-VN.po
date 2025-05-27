@@ -120,8 +120,8 @@ msgstr ""
 
 #. js-lingui-id: juBVjt
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-msgid "A workflow event listener"
-msgstr "Một trình nghe sự kiện quy trình làm việc"
+#~ msgid "A workflow event listener"
+#~ msgstr "Một trình nghe sự kiện quy trình làm việc"
 
 #. js-lingui-id: 1+xDbI
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -806,8 +806,8 @@ msgstr "ID sự kiện"
 
 #. js-lingui-id: 81maJp
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-msgid "Event Listeners"
-msgstr "Người lắng nghe sự kiện"
+#~ msgid "Event Listeners"
+#~ msgstr "Người lắng nghe sự kiện"
 
 #. js-lingui-id: PYs3rP
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1491,7 +1491,6 @@ msgstr "Token làm mới của nhà cung cấp dịch vụ nhắn tin"
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -2194,8 +2193,8 @@ msgstr ""
 
 #. js-lingui-id: 7mPrpl
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-msgid "The workflow event listener name"
-msgstr "Tên trình nghe sự kiện quy trình làm việc"
+#~ msgid "The workflow event listener name"
+#~ msgstr "Tên trình nghe sự kiện quy trình làm việc"
 
 #. js-lingui-id: od0omS
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -2621,7 +2620,6 @@ msgstr "Chào mừng đến với Twenty: Vui lòng xác nhận email của bạ
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -2637,8 +2635,8 @@ msgstr ""
 
 #. js-lingui-id: E03XpH
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-msgid "Workflow event listeners linked to the workflow."
-msgstr "Các bộ nghe sự kiện quy trình làm việc đã được liên kết với quy trình."
+#~ msgid "Workflow event listeners linked to the workflow."
+#~ msgstr "Các bộ nghe sự kiện quy trình làm việc đã được liên kết với quy trình."
 
 #. js-lingui-id: vwSkSW
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2741,18 +2739,18 @@ msgstr ""
 
 #. js-lingui-id: ENOy6I
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-msgid "WorkflowEventListener"
-msgstr "Bộ Nghe Sự Kiện Quy Trình"
+#~ msgid "WorkflowEventListener"
+#~ msgstr "Bộ Nghe Sự Kiện Quy Trình"
 
 #. js-lingui-id: HN90FO
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-msgid "WorkflowEventListener workflow"
-msgstr "Quy trình của Bộ Nghe Sự Kiện Quy Trình"
+#~ msgid "WorkflowEventListener workflow"
+#~ msgstr "Quy trình của Bộ Nghe Sự Kiện Quy Trình"
 
 #. js-lingui-id: 3JA9se
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-msgid "WorkflowEventListeners"
-msgstr "Các Bộ Nghe Sự Kiện Quy Trình"
+#~ msgid "WorkflowEventListeners"
+#~ msgstr "Các Bộ Nghe Sự Kiện Quy Trình"
 
 #. js-lingui-id: woYYQq
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts

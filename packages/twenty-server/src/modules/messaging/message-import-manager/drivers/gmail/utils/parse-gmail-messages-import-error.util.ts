@@ -75,9 +75,19 @@ export const parseGmailMessagesImportError = (
       );
 
     case 500:
+    case 502:
+    case 503:
+    case 504:
       if (reason === 'backendError') {
         return new MessageImportDriverException(
           message,
+          MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+        );
+      }
+
+      if (errors?.[0]?.message.includes(`Authentication backend unavailable`)) {
+        return new MessageImportDriverException(
+          `${code} - ${reason} - ${message}`,
           MessageImportDriverExceptionCode.TEMPORARY_ERROR,
         );
       }

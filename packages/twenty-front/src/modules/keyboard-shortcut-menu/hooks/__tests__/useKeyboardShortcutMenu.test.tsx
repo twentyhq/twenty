@@ -1,5 +1,6 @@
 import { expect } from '@storybook/test';
-import { act, renderHook } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
+import { act } from 'react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { isKeyboardShortcutMenuOpenedState } from '@/keyboard-shortcut-menu/states/isKeyboardShortcutMenuOpenedState';
@@ -47,18 +48,18 @@ describe('useKeyboardShortcutMenu', () => {
       result.current.toggleKeyboardShortcutMenu();
     });
 
-    expect(mockSetHotkeyScopeAndMemorizePreviousScope).toHaveBeenCalledWith(
-      AppHotkeyScope.KeyboardShortcutMenu,
-    );
+    expect(mockSetHotkeyScopeAndMemorizePreviousScope).toHaveBeenCalledWith({
+      scope: AppHotkeyScope.KeyboardShortcutMenu,
+    });
     expect(result.current.isKeyboardShortcutMenuOpened).toBe(true);
 
     act(() => {
       result.current.toggleKeyboardShortcutMenu();
     });
 
-    expect(mockSetHotkeyScopeAndMemorizePreviousScope).toHaveBeenCalledWith(
-      AppHotkeyScope.KeyboardShortcutMenu,
-    );
+    expect(mockSetHotkeyScopeAndMemorizePreviousScope).toHaveBeenCalledWith({
+      scope: AppHotkeyScope.KeyboardShortcutMenu,
+    });
     expect(result.current.isKeyboardShortcutMenuOpened).toBe(false);
   });
 
@@ -68,9 +69,9 @@ describe('useKeyboardShortcutMenu', () => {
       result.current.openKeyboardShortcutMenu();
     });
 
-    expect(mockSetHotkeyScopeAndMemorizePreviousScope).toHaveBeenCalledWith(
-      AppHotkeyScope.KeyboardShortcutMenu,
-    );
+    expect(mockSetHotkeyScopeAndMemorizePreviousScope).toHaveBeenCalledWith({
+      scope: AppHotkeyScope.KeyboardShortcutMenu,
+    });
     expect(result.current.isKeyboardShortcutMenuOpened).toBe(true);
 
     act(() => {

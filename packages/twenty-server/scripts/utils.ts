@@ -2,17 +2,17 @@ import console from 'console';
 
 import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
 
-export const camelToSnakeCase = (str) =>
+export const camelToSnakeCase = (str: string) =>
   str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
 
-export const performQuery = async (
+export const performQuery = async <T = unknown>(
   query: string,
   consoleDescription: string,
   withLog = true,
   ignoreAlreadyExistsError = false,
 ) => {
   try {
-    const result = await rawDataSource.query(query);
+    const result = await rawDataSource.query<T>(query);
 
     withLog && console.log(`Performed '${consoleDescription}' successfully`);
 

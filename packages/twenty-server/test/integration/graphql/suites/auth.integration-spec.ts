@@ -8,7 +8,7 @@ const ORIGIN = new URL(SERVER_URL);
 
 ORIGIN.hostname =
   process.env.IS_MULTIWORKSPACE_ENABLED === 'true'
-    ? `acme.${ORIGIN.hostname}`
+    ? `apple.${ORIGIN.hostname}`
     : ORIGIN.hostname;
 
 const auth = {
@@ -23,7 +23,7 @@ describe('AuthResolve (integration)', () => {
     const queryData = {
       query: `
         mutation GetLoginTokenFromCredentials {
-          getLoginTokenFromCredentials(email: "${auth.email}", password: "${auth.password}") {
+          getLoginTokenFromCredentials(email: "${auth.email}", password: "${auth.password}", origin: "${ORIGIN.toString()}") {
             loginToken {
               token
               expiresAt
@@ -56,7 +56,7 @@ describe('AuthResolve (integration)', () => {
     const queryData = {
       query: `
         mutation GetAuthTokensFromLoginToken {
-          getAuthTokensFromLoginToken(loginToken: "${loginToken}") {
+          getAuthTokensFromLoginToken(loginToken: "${loginToken}", origin: "${ORIGIN.toString()}") {
             tokens {
               accessToken {
                 token

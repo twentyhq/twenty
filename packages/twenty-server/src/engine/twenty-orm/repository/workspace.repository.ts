@@ -889,7 +889,7 @@ export class WorkspaceRepository<
   /**
    * DEPRECATED AND RESTRICTED METHODS
    */
-  override async query(): Promise<any> {
+  override async query(): Promise<unknown> {
     throw new Error('Method not allowed.');
   }
 
@@ -976,14 +976,7 @@ export class WorkspaceRepository<
     objectMetadata ??= await this.getObjectMetadataFromTarget();
 
     const objectMetadataMaps = this.internalContext.objectMetadataMaps;
-    const isNewRelationEnabled =
-      this.internalContext.featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled];
 
-    return formatResult(
-      data,
-      objectMetadata,
-      objectMetadataMaps,
-      isNewRelationEnabled,
-    ) as T;
+    return formatResult(data, objectMetadata, objectMetadataMaps) as T;
   }
 }

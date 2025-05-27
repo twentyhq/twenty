@@ -46,7 +46,11 @@ export class ConnectionTypeDefinitionFactory {
   private generateFields(
     objectMetadata: ObjectMetadataInterface,
     options: WorkspaceBuildSchemaOptions,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): GraphQLFieldConfigMap<any, any> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const fields: GraphQLFieldConfigMap<any, any> = {};
 
     const aggregatedFields = this.aggregationTypeFactory.create(objectMetadata);

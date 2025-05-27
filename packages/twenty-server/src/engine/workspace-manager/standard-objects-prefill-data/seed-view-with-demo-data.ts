@@ -2,7 +2,7 @@ import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/obj
 
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { createWorkspaceViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/create-workspace-views';
-import { seedCompaniesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
+import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
 import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
 import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view';
 import { opportunitiesByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view';
@@ -20,7 +20,7 @@ export const seedViewWithDemoData = async (
   objectMetadataStandardIdToIdMap: ObjectMetadataStandardIdToIdMap,
 ) => {
   const viewDefinitions = [
-    seedCompaniesAllView(objectMetadataStandardIdToIdMap),
+    companiesAllView(objectMetadataStandardIdToIdMap),
     peopleAllView(objectMetadataStandardIdToIdMap),
     opportunitiesAllView(objectMetadataStandardIdToIdMap),
     opportunitiesByStageView(objectMetadataStandardIdToIdMap),

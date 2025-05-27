@@ -64,12 +64,14 @@ describe('applyBasicValidators', () => {
       const mockTransformParams = { value: 'true' };
 
       (configTransformers.boolean as jest.Mock).mockReturnValueOnce(true);
+      // @ts-expect-error legacy noImplicitAny
       const result1 = transformFn(mockTransformParams);
 
       expect(configTransformers.boolean).toHaveBeenCalledWith('true');
       expect(result1).toBe(true);
 
       (configTransformers.boolean as jest.Mock).mockReturnValueOnce(undefined);
+      // @ts-expect-error legacy noImplicitAny
       const result2 = transformFn(mockTransformParams);
 
       expect(result2).toBe('true');
@@ -99,12 +101,14 @@ describe('applyBasicValidators', () => {
       const mockTransformParams = { value: '42' };
 
       (configTransformers.number as jest.Mock).mockReturnValueOnce(42);
+      // @ts-expect-error legacy noImplicitAny
       const result1 = transformFn(mockTransformParams);
 
       expect(configTransformers.number).toHaveBeenCalledWith('42');
       expect(result1).toBe(42);
 
       (configTransformers.number as jest.Mock).mockReturnValueOnce(undefined);
+      // @ts-expect-error legacy noImplicitAny
       const result2 = transformFn(mockTransformParams);
 
       expect(result2).toBe('42');
@@ -120,7 +124,7 @@ describe('applyBasicValidators', () => {
       );
 
       expect(IsString).toHaveBeenCalled();
-      expect(Transform).not.toHaveBeenCalled(); // String doesn't need a transform
+      expect(Transform).not.toHaveBeenCalled();
     });
   });
 
@@ -136,7 +140,7 @@ describe('applyBasicValidators', () => {
       );
 
       expect(IsEnum).toHaveBeenCalledWith(enumOptions);
-      expect(Transform).not.toHaveBeenCalled(); // Enum doesn't need a transform
+      expect(Transform).not.toHaveBeenCalled();
     });
 
     it('should apply enum validator with enum object options', () => {
@@ -146,6 +150,25 @@ describe('applyBasicValidators', () => {
         Option3 = 'value3',
       }
 
+      jest.mock(
+        'src/engine/core-modules/twenty-config/utils/type-transformers.registry',
+        () => ({
+          typeTransformers: {
+            enum: {
+              getValidators: jest.fn().mockImplementation((options) => {
+                if (options && Object.keys(options).length > 0) {
+                  return [IsEnum(options)];
+                }
+
+                return [];
+              }),
+              getTransformers: jest.fn().mockReturnValue([]),
+            },
+          },
+        }),
+        { virtual: true },
+      );
+
       applyBasicValidators(
         ConfigVariableType.ENUM,
         mockTarget,
@@ -154,7 +177,7 @@ describe('applyBasicValidators', () => {
       );
 
       expect(IsEnum).toHaveBeenCalledWith(TestEnum);
-      expect(Transform).not.toHaveBeenCalled(); // Enum doesn't need a transform
+      expect(Transform).not.toHaveBeenCalled();
     });
 
     it('should not apply enum validator without options', () => {
@@ -178,7 +201,7 @@ describe('applyBasicValidators', () => {
       );
 
       expect(IsArray).toHaveBeenCalled();
-      expect(Transform).not.toHaveBeenCalled(); // Array doesn't need a transform
+      expect(Transform).not.toHaveBeenCalled();
     });
   });
 

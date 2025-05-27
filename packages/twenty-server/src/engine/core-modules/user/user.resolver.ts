@@ -14,6 +14,7 @@ import crypto from 'crypto';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
+import { buildSignedPath } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
@@ -34,16 +35,16 @@ import {
 } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { DeletedWorkspaceMember } from 'src/engine/core-modules/user/dtos/deleted-workspace-member.dto';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
+import { DeletedWorkspaceMemberTranspiler } from 'src/engine/core-modules/user/services/deleted-workspace-member-transpiler.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
@@ -52,6 +53,8 @@ import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
+import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -79,6 +82,7 @@ export class UserResolver {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly userRoleService: UserRoleService,
     private readonly permissionsService: PermissionsService,
+    private readonly deletedWorkspaceMemberTranspiler: DeletedWorkspaceMemberTranspiler,
   ) {}
 
   @Query(() => User)
@@ -126,11 +130,15 @@ export class UserResolver {
 
     const grantedSettingsPermissions: SettingPermissionType[] = (
       Object.keys(settingsPermissions) as SettingPermissionType[]
-    ).filter((feature) => settingsPermissions[feature] === true);
+    )
+      // @ts-expect-error legacy noImplicitAny
+      .filter((feature) => settingsPermissions[feature] === true);
 
     const grantedObjectRecordsPermissions = (
       Object.keys(objectRecordsPermissions) as PermissionsOnAllObjectRecords[]
-    ).filter((permission) => objectRecordsPermissions[permission] === true);
+    )
+      // @ts-expect-error legacy noImplicitAny
+      .filter((permission) => objectRecordsPermissions[permission] === true);
 
     currentUserWorkspace.settingsPermissions = grantedSettingsPermissions;
     currentUserWorkspace.objectRecordsPermissions =
@@ -147,6 +155,7 @@ export class UserResolver {
   async userVars(
     @Parent() user: User,
     @AuthWorkspace() workspace: Workspace,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<Record<string, any>> {
     const userVars = await this.userVarService.getAll({
       userId: user.id,
@@ -180,14 +189,17 @@ export class UserResolver {
 
     if (workspaceMember && workspaceMember.avatarUrl) {
       const avatarUrlToken = this.fileService.encodeFileToken({
-        workspaceMemberId: workspaceMember.id,
+        filename: extractFilenameFromPath(workspaceMember.avatarUrl),
         workspaceId: workspace.id,
       });
 
-      workspaceMember.avatarUrl = `${workspaceMember.avatarUrl}?token=${avatarUrlToken}`;
+      workspaceMember.avatarUrl = buildSignedPath({
+        path: workspaceMember.avatarUrl,
+        token: avatarUrlToken,
+      });
     }
 
-    // TODO: Fix typing disrepency between Entity and DTO
+    // TODO Refactor to be transpiled to WorkspaceMember instead
     return workspaceMember as WorkspaceMember | null;
   }
 
@@ -195,17 +207,15 @@ export class UserResolver {
     nullable: true,
   })
   async workspaceMembers(
-    @Parent() user: User,
+    @Parent() _user: User,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<WorkspaceMember[]> {
-    const workspaceMemberEntities =
-      await this.userService.loadWorkspaceMembers(workspace);
+    const workspaceMemberEntities = await this.userService.loadWorkspaceMembers(
+      workspace,
+      false,
+    );
 
     const workspaceMembers: WorkspaceMember[] = [];
-
-    let userWorkspacesByUserId = new Map<string, UserWorkspace>();
-    let rolesByUserWorkspaces = new Map<string, RoleDTO[]>();
-
     const userWorkspaces = await this.userWorkspaceRepository.find({
       where: {
         userId: In(workspaceMemberEntities.map((entity) => entity.userId)),
@@ -213,38 +223,42 @@ export class UserResolver {
       },
     });
 
-    userWorkspacesByUserId = new Map(
+    const userWorkspacesByUserId = new Map<string, UserWorkspace>(
       userWorkspaces.map((userWorkspace) => [
         userWorkspace.userId,
         userWorkspace,
       ]),
     );
 
-    rolesByUserWorkspaces = await this.userRoleService.getRolesByUserWorkspaces(
-      {
+    const rolesByUserWorkspaces: Map<string, RoleDTO[]> =
+      await this.userRoleService.getRolesByUserWorkspaces({
         userWorkspaceIds: userWorkspaces.map(
           (userWorkspace) => userWorkspace.id,
         ),
         workspaceId: workspace.id,
-      },
-    );
+      });
 
     for (const workspaceMemberEntity of workspaceMemberEntities) {
       if (workspaceMemberEntity.avatarUrl) {
         const avatarUrlToken = this.fileService.encodeFileToken({
-          workspaceMemberId: workspaceMemberEntity.id,
+          filename: extractFilenameFromPath(workspaceMemberEntity.avatarUrl),
           workspaceId: workspace.id,
         });
 
-        workspaceMemberEntity.avatarUrl = `${workspaceMemberEntity.avatarUrl}?token=${avatarUrlToken}`;
+        workspaceMemberEntity.avatarUrl = buildSignedPath({
+          path: workspaceMemberEntity.avatarUrl,
+          token: avatarUrlToken,
+        });
       }
 
+      // TODO Refactor to be transpiled to WorkspaceMember instead
       const workspaceMember = workspaceMemberEntity as WorkspaceMember;
 
       const userWorkspace = userWorkspacesByUserId.get(
         workspaceMemberEntity.userId,
       );
 
+      // TODO Refactor should not throw ? typed as nullable ?
       if (!userWorkspace) {
         throw new Error('User workspace not found');
       }
@@ -279,6 +293,22 @@ export class UserResolver {
     return workspaceMembers;
   }
 
+  @ResolveField(() => [DeletedWorkspaceMember], {
+    nullable: true,
+  })
+  async deletedWorkspaceMembers(
+    @Parent() _user: User,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<DeletedWorkspaceMember[]> {
+    const workspaceMemberEntities =
+      await this.userService.loadDeletedWorkspaceMembersOnly(workspace);
+
+    return this.deletedWorkspaceMemberTranspiler.toDeletedWorkspaceMemberDtos(
+      workspaceMemberEntities,
+      workspace.id,
+    );
+  }
+
   @ResolveField(() => String, {
     nullable: true,
   })
@@ -293,13 +323,13 @@ export class UserResolver {
     return getHMACKey(parent.email, key);
   }
 
-  @Mutation(() => String)
+  @Mutation(() => SignedFileDTO)
   async uploadProfilePicture(
     @AuthUser() { id }: User,
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename, mimetype }: FileUpload,
-  ): Promise<string> {
+  ): Promise<SignedFileDTO> {
     if (!id) {
       throw new Error('User not found');
     }
@@ -308,7 +338,7 @@ export class UserResolver {
     const buffer = await streamToBuffer(stream);
     const fileFolder = FileFolder.ProfilePicture;
 
-    const { paths } = await this.fileUploadService.uploadImage({
+    const { files } = await this.fileUploadService.uploadImage({
       file: buffer,
       filename,
       mimeType: mimetype,
@@ -316,11 +346,11 @@ export class UserResolver {
       workspaceId,
     });
 
-    const fileToken = this.fileService.encodeFileToken({
-      workspaceId: workspaceId,
-    });
+    if (!files.length) {
+      throw new Error('Failed to upload profile picture');
+    }
 
-    return `${paths[0]}?token=${fileToken}`;
+    return files[0];
   }
 
   @Mutation(() => User)
@@ -332,15 +362,8 @@ export class UserResolver {
   @ResolveField(() => OnboardingStatus)
   async onboardingStatus(
     @Parent() user: User,
-    @OriginHeader() origin: string,
+    @AuthWorkspace() workspace: Workspace,
   ): Promise<OnboardingStatus> {
-    const workspace =
-      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
-        origin,
-      );
-
-    workspaceValidator.assertIsDefinedOrThrow(workspace);
-
     return this.onboardingService.getOnboardingStatus(user, workspace);
   }
 

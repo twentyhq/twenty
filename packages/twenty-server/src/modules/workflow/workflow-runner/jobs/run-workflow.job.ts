@@ -171,6 +171,7 @@ export class RunWorkflowJob {
     workflowRunId: string;
     currentStepId: string;
     steps: WorkflowAction[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     context: Record<string, any>;
   }) {
     const { error, pendingEvent } =

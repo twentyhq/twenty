@@ -2,9 +2,7 @@ import { useEffect } from 'react';
 
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
-import { RecordGroupReorderConfirmationModal } from '@/object-record/record-group/components/RecordGroupReorderConfirmationModal';
 import { RecordGroupsVisibilityDropdownSection } from '@/object-record/record-group/components/RecordGroupsVisibilityDropdownSection';
-import { useRecordGroupReorderConfirmationModal } from '@/object-record/record-group/hooks/useRecordGroupReorderConfirmationModal';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
@@ -41,9 +39,9 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
   const {
     viewType,
     currentContentId,
-    recordIndexId,
     onContentChange,
     resetContent,
+    handleRecordGroupOrderChangeWithModal,
   } = useOptionsDropdown();
 
   const { currentView } = useGetCurrentViewOnly();
@@ -76,15 +74,6 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
   } = useRecordGroupVisibility({
     viewType,
   });
-
-  const {
-    handleRecordGroupOrderChangeWithModal,
-    handleRecordGroupReorderConfirmClick,
-  } = useRecordGroupReorderConfirmationModal({
-    recordIndexId,
-    viewType,
-  });
-
   useEffect(() => {
     if (
       currentContentId === 'hiddenRecordGroups' &&
@@ -203,9 +192,6 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
           </DropdownMenuItemsContainer>
         </>
       )}
-      <RecordGroupReorderConfirmationModal
-        onConfirmClick={handleRecordGroupReorderConfirmClick}
-      />
     </>
   );
 };

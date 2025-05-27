@@ -37,7 +37,10 @@ describe('OrderByInputFactory', () => {
     it('should return default if order by missing', () => {
       const request: any = { query: {} };
 
-      expect(service.create(request, objectMetadata)).toEqual([{}]);
+      expect(service.create(request, objectMetadata)).toEqual([
+        {},
+        { id: OrderByDirection.AscNullsFirst },
+      ]);
     });
 
     it('should create order by parser properly', () => {
@@ -50,6 +53,7 @@ describe('OrderByInputFactory', () => {
       expect(service.create(request, objectMetadata)).toEqual([
         { fieldNumber: OrderByDirection.AscNullsFirst },
         { fieldText: OrderByDirection.DescNullsLast },
+        { id: OrderByDirection.AscNullsFirst },
       ]);
     });
 
@@ -62,6 +66,7 @@ describe('OrderByInputFactory', () => {
 
       expect(service.create(request, objectMetadata)).toEqual([
         { fieldNumber: OrderByDirection.AscNullsFirst },
+        { id: OrderByDirection.AscNullsFirst },
       ]);
     });
 
@@ -74,6 +79,7 @@ describe('OrderByInputFactory', () => {
 
       expect(service.create(request, objectMetadata)).toEqual([
         { fieldCurrency: { amountMicros: OrderByDirection.AscNullsFirst } },
+        { id: OrderByDirection.AscNullsFirst },
       ]);
     });
 
@@ -86,6 +92,7 @@ describe('OrderByInputFactory', () => {
 
       expect(service.create(request, objectMetadata)).toEqual([
         { fieldCurrency: { amountMicros: OrderByDirection.DescNullsLast } },
+        { id: OrderByDirection.AscNullsFirst },
       ]);
     });
 
@@ -100,6 +107,7 @@ describe('OrderByInputFactory', () => {
       expect(service.create(request, objectMetadata)).toEqual([
         { fieldCurrency: { amountMicros: OrderByDirection.DescNullsLast } },
         { fieldText: { label: OrderByDirection.AscNullsLast } },
+        { id: OrderByDirection.AscNullsFirst },
       ]);
     });
 

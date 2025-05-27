@@ -14,9 +14,6 @@ import { AuditService } from 'src/engine/core-modules/audit/services/audit.servi
 import { SERVERLESS_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/serverless-function/serverless-function-executed';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { ENV_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/env-file-name';
 import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
 import { LAST_LAYER_VERSION } from 'src/engine/core-modules/serverless/drivers/layers/last-layer-version';
@@ -47,10 +44,9 @@ export class ServerlessFunctionService {
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly auditService: AuditService,
-    @InjectMessageQueue(MessageQueue.serverlessFunctionQueue)
-    private readonly messageQueueService: MessageQueueService,
   ) {}
 
+  // @ts-expect-error legacy noImplicitAny
   async findManyServerlessFunctions(where) {
     return this.serverlessFunctionRepository.findBy(where);
   }
@@ -276,6 +272,7 @@ export class ServerlessFunctionService {
 
     for (const key of Object.keys(serverlessFunctionInput.code)) {
       await this.fileStorageService.write({
+        // @ts-expect-error legacy noImplicitAny
         file: serverlessFunctionInput.code[key],
         name: basename(key),
         mimeType: undefined,
@@ -306,6 +303,7 @@ export class ServerlessFunctionService {
       const packageName = match[1].split('@', 1)[0];
       const version = match[2];
 
+      // @ts-expect-error legacy noImplicitAny
       if (packageJson.dependencies[packageName]) {
         versions[packageName] = version;
       }
