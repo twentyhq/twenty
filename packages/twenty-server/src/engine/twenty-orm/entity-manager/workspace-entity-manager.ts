@@ -151,6 +151,16 @@ export class WorkspaceEntityManager extends EntityManager {
     }
   }
 
+  override insert<Entity extends ObjectLiteral>(
+    target: EntityTarget<Entity>,
+    entity: QueryDeepPartialEntity<Entity> | QueryDeepPartialEntity<Entity>[],
+    permissionOptions?: PermissionOptions,
+  ): Promise<InsertResult> {
+    this.validatePermissions(target, 'insert', permissionOptions);
+
+    return super.insert(target, entity);
+  }
+
   override upsert<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
     entityOrEntities:
@@ -290,6 +300,18 @@ export class WorkspaceEntityManager extends EntityManager {
     }
   }
 
+  override increment<Entity extends ObjectLiteral>(
+    target: EntityTarget<Entity>,
+    criteria: any,
+    propertyPath: string,
+    value: number | string,
+    permissionOptions?: PermissionOptions,
+  ): Promise<UpdateResult> {
+    this.validatePermissions(target, 'update', permissionOptions);
+
+    return super.increment(target, criteria, propertyPath, value);
+  }
+
   private getRepositoryKey({
     target,
     dataSource,
@@ -360,7 +382,7 @@ export class WorkspaceEntityManager extends EntityManager {
     return this.connection.getMetadata(entity.constructor).name;
   }
 
-  // Not in use - forbidden or duplicated from EntityManager
+  // Not in use methods - forbidden or duplicated from EntityManager
   override query<T = any>(_query: string, _parameters?: any[]): Promise<T> {
     throw new Error('Method not allowed.');
   }
@@ -1035,5 +1057,17 @@ export class WorkspaceEntityManager extends EntityManager {
     this.validatePermissions(entityClass, 'select', permissionOptions);
 
     return super.preload(entityClass, entityLike);
+  }
+
+  override decrement<Entity extends ObjectLiteral>(
+    target: EntityTarget<Entity>,
+    criteria: any,
+    propertyPath: string,
+    value: number | string,
+    permissionOptions?: PermissionOptions,
+  ): Promise<UpdateResult> {
+    this.validatePermissions(target, 'update', permissionOptions);
+
+    return super.decrement(target, criteria, propertyPath, value);
   }
 }
