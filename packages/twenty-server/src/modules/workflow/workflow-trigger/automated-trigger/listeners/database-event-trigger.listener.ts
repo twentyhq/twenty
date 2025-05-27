@@ -165,7 +165,14 @@ export class DatabaseEventTriggerListener {
     record: Record<string, any>;
     workspaceId: string;
   }) {
-    const fieldsByJoinColumnName = event.objectMetadata.fieldsByJoinColumnName;
+    const { objectMetadataMaps, objectMetadataItemWithFieldsMaps } =
+      await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+        event.objectMetadata.nameSingular,
+        workspaceId,
+      );
+
+    const fieldsByJoinColumnName =
+      objectMetadataItemWithFieldsMaps.fieldsByJoinColumnName;
 
     for (const [joinColumn, joinField] of Object.entries(
       fieldsByJoinColumnName,
@@ -176,12 +183,6 @@ export class DatabaseEventTriggerListener {
       if (!isDefined(relatedObjectMetadataId)) {
         continue;
       }
-
-      const { objectMetadataMaps } =
-        await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
-          event.objectMetadata.nameSingular,
-          workspaceId,
-        );
 
       const relatedObjectMetadataNameSingular =
         objectMetadataMaps.byId[relatedObjectMetadataId].nameSingular;

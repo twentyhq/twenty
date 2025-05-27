@@ -1,27 +1,34 @@
 import { v4 } from 'uuid';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { BaseOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-object-record';
 import { camelToTitleCase } from 'src/utils/camel-to-title-case';
+import { removeFieldMapsFromObjectMetadata } from 'src/engine/metadata-modules/utils/remove-field-maps-from-object-metadata.util';
+import { ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 
 export const generateFakeObjectRecordEvent = (
-  objectMetadataEntity: ObjectMetadataEntity,
+  objectMetadataInfo: ObjectMetadataInfo,
   action: DatabaseEventAction,
 ): BaseOutputSchema => {
   const recordId = v4();
   const userId = v4();
   const workspaceMemberId = v4();
 
-  const after = generateFakeObjectRecord(objectMetadataEntity);
-  const formattedObjectMetadataEntity = Object.entries(
-    objectMetadataEntity,
-  ).reduce((acc: BaseOutputSchema, [key, value]) => {
-    acc[key] = { isLeaf: true, value, label: camelToTitleCase(key) };
+  const objectMetadata = removeFieldMapsFromObjectMetadata(
+    objectMetadataInfo.objectMetadataItemWithFieldsMaps,
+  );
 
-    return acc;
-  }, {});
+  const after = generateFakeObjectRecord(objectMetadataInfo);
+
+  const formattedObjectMetadataEntity = Object.entries(objectMetadata).reduce(
+    (acc: BaseOutputSchema, [key, value]) => {
+      acc[key] = { isLeaf: true, value, label: camelToTitleCase(key) };
+
+      return acc;
+    },
+    {},
+  );
 
   const baseResult: BaseOutputSchema = {
     recordId: {
@@ -55,7 +62,7 @@ export const generateFakeObjectRecordEvent = (
     };
   }
 
-  const before = generateFakeObjectRecord(objectMetadataEntity);
+  const before = generateFakeObjectRecord(objectMetadataInfo);
 
   if (action === DatabaseEventAction.UPDATED) {
     return {

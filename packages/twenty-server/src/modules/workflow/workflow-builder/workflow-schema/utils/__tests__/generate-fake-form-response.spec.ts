@@ -9,15 +9,6 @@ const companyMockObjectMetadataItem = mockObjectMetadataItemsWithFieldMaps.find(
 )!;
 
 describe('generateFakeFormResponse', () => {
-  // @ts-expect-error legacy noImplicitAny
-  let objectMetadataRepository;
-
-  beforeEach(() => {
-    objectMetadataRepository = {
-      findOneOrFail: jest.fn().mockResolvedValue(companyMockObjectMetadataItem),
-    };
-  });
-
   it('should generate fake responses for a form schema', async () => {
     const schema: FormFieldMetadata[] = [
       {
@@ -50,11 +41,19 @@ describe('generateFakeFormResponse', () => {
       },
     ];
 
+    const mockObjectMetadataMaps = {
+      byId: {
+        [companyMockObjectMetadataItem.id]: companyMockObjectMetadataItem,
+      },
+      idByNameSingular: {
+        [companyMockObjectMetadataItem.nameSingular]:
+          companyMockObjectMetadataItem.id,
+      },
+    };
+
     const result = await generateFakeFormResponse({
       formMetadata: schema,
-      workspaceId: '1',
-      // @ts-expect-error legacy noImplicitAny
-      objectMetadataRepository,
+      objectMetadataMaps: mockObjectMetadataMaps,
     });
 
     expect(result).toEqual({
