@@ -135,20 +135,20 @@ export class FieldMetadataRelatedRecordsService {
     oldFieldMetadata: SelectFieldMetadataEntity,
     newFieldMetadata: SelectFieldMetadataEntity,
   ): Promise<void> {
-    const filters = await this.getFieldMetadataViewEntity(
+    const views = await this.getFieldMetadataViewEntity(
       newFieldMetadata,
       'viewFilters',
     );
 
-    const { updated: updatedFieldMetadata, deleted: deletedFieldMetadata } =
+    const { updated: updatedFieldMetadataOptions, deleted: deletedFieldMetadataOptions } =
       this.getOptionsDifferences(
         oldFieldMetadata.options,
         newFieldMetadata.options,
       );
 
     if (
-      updatedFieldMetadata.length === 0 &&
-      deletedFieldMetadata.length === 0
+      updatedFieldMetadataOptions.length === 0 &&
+      deletedFieldMetadataOptions.length === 0
     ) {
       return;
     }
@@ -159,7 +159,7 @@ export class FieldMetadataRelatedRecordsService {
         'viewFilter',
       );
 
-    for (const filter of filters) {
+    for (const filter of views) {
       if (filter.viewFilters.length === 0) {
         continue;
       }
@@ -182,7 +182,7 @@ export class FieldMetadataRelatedRecordsService {
 
         const afterDeleteViewFilterOptions = viewFilterOptions.filter(
           (viewFilterOption) =>
-            !deletedFieldMetadata.some(
+            !deletedFieldMetadataOptions.some(
               (option) => option.value === viewFilterOption.value,
             ),
         );
@@ -194,7 +194,7 @@ export class FieldMetadataRelatedRecordsService {
 
         const afterUpdateAndDeleteViewFilterOptions =
           afterDeleteViewFilterOptions.map((viewFilterOption) => {
-            const updatedOption = updatedFieldMetadata.find(
+            const updatedOption = updatedFieldMetadataOptions.find(
               ({ old }) => viewFilterOption.value === old.value,
             );
 
