@@ -638,7 +638,7 @@ export class WorkspaceEntityManager extends EntityManager {
     ) {
       return Promise.reject(
         new TypeORMError(
-          `Empty criteria(s) are not allowed for the delete method.`,
+          `Empty criteria(s) are not allowed for the softDelete method.`,
         ),
       );
     }
@@ -850,7 +850,7 @@ export class WorkspaceEntityManager extends EntityManager {
     ) {
       return Promise.reject(
         new TypeORMError(
-          `Empty criteria(s) are not allowed for the delete method.`,
+          `Empty criteria(s) are not allowed for the restore method.`,
         ),
       );
     }
