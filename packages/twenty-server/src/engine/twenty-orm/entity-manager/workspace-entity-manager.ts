@@ -88,10 +88,9 @@ export class WorkspaceEntityManager extends EntityManager {
             PermissionsExceptionMessage.NO_PERMISSIONS_FOUND_IN_DATASOURCE,
             PermissionsExceptionCode.NO_PERMISSIONS_FOUND_IN_DATASOURCE,
           );
-        } else {
-          objectPermissions =
-            objectPermissionsByRoleId[permissionOptions.roleId];
         }
+      } else {
+        objectPermissions = objectPermissionsByRoleId[permissionOptions.roleId];
       }
     }
 
