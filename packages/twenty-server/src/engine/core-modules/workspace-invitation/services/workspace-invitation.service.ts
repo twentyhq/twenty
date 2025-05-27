@@ -109,6 +109,7 @@ export class WorkspaceInvitationService {
       .andWhere('"appToken".type = :type', {
         type: AppTokenType.InvitationToken,
       })
+      .andWhere('appToken.deletedAt IS NULL')
       .leftJoinAndSelect('appToken.workspace', 'workspace')
       .getMany();
   }

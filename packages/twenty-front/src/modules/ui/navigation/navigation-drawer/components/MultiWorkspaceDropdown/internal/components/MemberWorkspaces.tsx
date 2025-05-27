@@ -7,7 +7,6 @@ import { WorkspaceItem } from './WorkspaceItem';
 import { useFilteredWorkspaces } from '@/ui/navigation/navigation-drawer/hooks/useFilteredWorkspaces';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { useRecoilValue } from 'recoil';
 
 export const MemberWorkspaces = ({ searchValue }: { searchValue: string }) => {
@@ -18,7 +17,6 @@ export const MemberWorkspaces = ({ searchValue }: { searchValue: string }) => {
 
   const { searchWorkspace } = useFilteredWorkspaces();
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
-  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
   const filterWorkspace: Workspaces = searchWorkspace(searchValue, workspaces);
 

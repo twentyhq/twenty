@@ -3,7 +3,6 @@ import { StyledDropdownMenuSubheader } from '@/ui/layout/dropdown/components/Sty
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useFilteredWorkspaces } from '@/ui/navigation/navigation-drawer/hooks/useFilteredWorkspaces';
 import { WorkspaceItem } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspaceItem';
-import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { currentUserAvailableWorkspacesState } from '@/auth/states/currentUserAvailableWorkspaces';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRecoilValue } from 'recoil';

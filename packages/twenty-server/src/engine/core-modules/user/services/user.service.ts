@@ -304,8 +304,11 @@ export class UserService extends TypeOrmQueryService<User> {
     currentUserWorkspace: UserWorkspace,
     workspace: Workspace,
   ): Promise<void> {
-    let settingsPermissions = {};
-    let objectRecordsPermissions = {};
+    let settingsPermissions: Record<SettingPermissionType, boolean> = {};
+    let objectRecordsPermissions: Record<
+      PermissionsOnAllObjectRecords,
+      boolean
+    > = {};
 
     if (
       ![
@@ -325,15 +328,11 @@ export class UserService extends TypeOrmQueryService<User> {
 
     const grantedSettingsPermissions: SettingPermissionType[] = (
       Object.keys(settingsPermissions) as SettingPermissionType[]
-    )
-      // @ts-expect-error legacy noImplicitAny
-      .filter((feature) => settingsPermissions[feature] === true);
+    ).filter((feature) => settingsPermissions[feature] === true);
 
     const grantedObjectRecordsPermissions = (
       Object.keys(objectRecordsPermissions) as PermissionsOnAllObjectRecords[]
-    )
-      // @ts-expect-error legacy noImplicitAny
-      .filter((permission) => objectRecordsPermissions[permission] === true);
+    ).filter((permission) => objectRecordsPermissions[permission] === true);
 
     currentUserWorkspace.settingsPermissions = grantedSettingsPermissions;
     currentUserWorkspace.objectRecordsPermissions =
