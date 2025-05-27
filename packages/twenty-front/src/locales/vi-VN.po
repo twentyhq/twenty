@@ -5169,8 +5169,8 @@ msgstr "Xem chi tiết hóa đơn"
 
 #. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "View execution details"
-msgstr "Xem chi tiết thực thi"
+#~ msgid "View execution details"
+#~ msgstr "Xem chi tiết thực thi"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
@@ -5273,13 +5273,13 @@ msgstr "Khi nào khóa sẽ bị vô hiệu hóa"
 
 #. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow is running..."
-msgstr "Quy trình đang chạy..."
+#~ msgid "Workflow is running..."
+#~ msgstr "Quy trình đang chạy..."
 
 #. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow run failed"
-msgstr "Lần chạy quy trình thất bại"
+#~ msgid "Workflow run failed"
+#~ msgstr "Lần chạy quy trình thất bại"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx

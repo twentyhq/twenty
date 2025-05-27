@@ -5169,8 +5169,8 @@ msgstr "Sien faktuurbesonderhede"
 
 #. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "View execution details"
-msgstr "Sien uitvoeringsbesonderhede"
+#~ msgid "View execution details"
+#~ msgstr "Sien uitvoeringsbesonderhede"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
@@ -5273,13 +5273,13 @@ msgstr "Wanneer die sleutel gedeaktiveer sal word"
 
 #. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow is running..."
-msgstr "Werksvloei loop..."
+#~ msgid "Workflow is running..."
+#~ msgstr "Werksvloei loop..."
 
 #. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow run failed"
-msgstr "Werksvloeilopie het misluk"
+#~ msgid "Workflow run failed"
+#~ msgstr "Werksvloeilopie het misluk"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
