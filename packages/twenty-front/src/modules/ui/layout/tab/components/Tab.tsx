@@ -1,10 +1,10 @@
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
+import { useMouseDownNavigation } from '@/ui/utilities/pointer-event/hooks/useMouseDownNavigation';
 import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ReactElement } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { isDefined } from 'twenty-shared/utils';
+import { Link } from 'react-router-dom';
 import { Pill } from 'twenty-ui/components';
 import { Avatar, IconComponent } from 'twenty-ui/display';
 
@@ -88,45 +88,18 @@ export const Tab = ({
   logo,
 }: TabProps) => {
   const theme = useTheme();
-  const navigate = useNavigate();
+  const { onClick: handleClick, onMouseDown: handleMouseDown } =
+    useMouseDownNavigation({
+      to,
+      onClick,
+      disabled,
+    });
+
   const iconColor = active
     ? theme.font.color.primary
     : disabled
       ? theme.font.color.light
       : theme.font.color.secondary;
-
-  const handleClick = (event: React.MouseEvent) => {
-    if (
-      event.metaKey ||
-      event.ctrlKey ||
-      event.shiftKey ||
-      event.button !== 0
-    ) {
-      if (isDefined(onClick)) {
-        onClick();
-      } else if (isDefined(to)) {
-        return;
-      }
-    }
-
-    event.preventDefault();
-    event.stopPropagation();
-  };
-
-  const handleMouseDown = (event: React.MouseEvent) => {
-    if (
-      event.button === 0 &&
-      !event.metaKey &&
-      !event.ctrlKey &&
-      !event.shiftKey
-    ) {
-      if (isDefined(onClick)) {
-        onClick();
-      } else if (isDefined(to)) {
-        navigate(to);
-      }
-    }
-  };
 
   return (
     <StyledTab

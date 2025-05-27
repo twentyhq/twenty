@@ -1,6 +1,6 @@
 import {
-  NavigationDrawerItem,
-  NavigationDrawerItemProps,
+    NavigationDrawerItem,
+    NavigationDrawerItemProps,
 } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 
 type NavigationDrawerSubItemProps = NavigationDrawerItemProps;
