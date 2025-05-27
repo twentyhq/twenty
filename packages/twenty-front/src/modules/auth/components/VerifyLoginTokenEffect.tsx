@@ -12,6 +12,7 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 export const VerifyLoginTokenEffect = () => {
   const [searchParams] = useSearchParams();
   const loginToken = searchParams.get('loginToken');
+
   const isLogged = useIsLogged();
   const navigate = useNavigateApp();
   const { verifyLoginToken } = useVerifyLogin();
