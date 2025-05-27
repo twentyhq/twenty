@@ -1,5 +1,6 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 
+import { err } from 'cron-validate/lib/result';
 import { Request } from 'express';
 
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
@@ -31,16 +32,13 @@ export class GuardRedirectService {
       throw error;
     }
 
-    context
-      .switchToHttp()
-      .getResponse()
-      .redirect(
-        this.getRedirectErrorUrlAndCaptureExceptions(
-          error,
-          workspace,
-          pathname,
-        ),
-      );
+    context.switchToHttp().getResponse().redirect(
+      this.getRedirectErrorUrlAndCaptureExceptions({
+        error,
+        workspace,
+        pathname,
+      }),
+    );
   }
 
   getSubdomainAndCustomDomainFromContext(context: ExecutionContext) {
@@ -74,17 +72,21 @@ export class GuardRedirectService {
     });
   }
 
-  getRedirectErrorUrlAndCaptureExceptions(
-    err: Error | CustomException,
+  getRedirectErrorUrlAndCaptureExceptions({
+    error,
+    workspace,
+    pathname,
+  }: {
+    error: Error | CustomException;
     workspace: {
       id?: string;
       subdomain: string;
       customDomain: string | null;
       isCustomDomainEnabled?: boolean;
-    },
-    pathname: string,
-  ) {
-    this.captureException(err, workspace.id);
+    };
+    pathname: string;
+  }) {
+    this.captureException(error, workspace.id);
 
     return this.domainManagerService.computeRedirectErrorUrl(
       err instanceof AuthException ? err.message : 'Unknown error',
