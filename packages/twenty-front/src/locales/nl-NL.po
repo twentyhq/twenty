@@ -5169,8 +5169,8 @@ msgstr "Factuurdetails bekijken"
 
 #. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "View execution details"
-msgstr "Uitvoeringsdetails bekijken"
+#~ msgid "View execution details"
+#~ msgstr "Uitvoeringsdetails bekijken"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
@@ -5273,13 +5273,13 @@ msgstr "Wanneer de sleutel wordt uitgeschakeld"
 
 #. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow is running..."
-msgstr "Workflows zijn aan het draaien..."
+#~ msgid "Workflow is running..."
+#~ msgstr "Workflows zijn aan het draaien..."
 
 #. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow run failed"
-msgstr "Workflow-run mislukt"
+#~ msgid "Workflow run failed"
+#~ msgstr "Workflow-run mislukt"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx

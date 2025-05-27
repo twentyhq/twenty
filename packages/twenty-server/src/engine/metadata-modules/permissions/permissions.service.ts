@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
+import { ObjectRecordsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -25,6 +26,64 @@ export class PermissionsService {
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
+
+  public async getUserWorkspacePermissionsV2({
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<{
+    settingsPermissions: Record<SettingPermissionType, boolean>;
+    objectRecordsPermissions: ObjectRecordsPermissions;
+  }> {
+    const [roleOfUserWorkspace] = await this.userRoleService
+      .getRolesByUserWorkspaces({
+        userWorkspaceIds: [userWorkspaceId],
+        workspaceId,
+      })
+      .then((roles) => roles?.get(userWorkspaceId) ?? []);
+
+    let hasPermissionOnSettingFeature = false;
+
+    if (!isDefined(roleOfUserWorkspace)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+        PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
+      );
+    }
+
+    if (roleOfUserWorkspace.canUpdateAllSettings === true) {
+      hasPermissionOnSettingFeature = true;
+    }
+
+    const settingPermissions = roleOfUserWorkspace.settingPermissions ?? [];
+
+    const settingsPermissionsMap = Object.keys(SettingPermissionType).reduce(
+      (acc, feature) => ({
+        ...acc,
+        [feature]:
+          hasPermissionOnSettingFeature ||
+          settingPermissions.some(
+            (settingPermission) => settingPermission.setting === feature,
+          ),
+      }),
+      {} as Record<SettingPermissionType, boolean>,
+    );
+
+    const { data: rolesPermissions } =
+      await this.workspacePermissionsCacheService.getRolesPermissionsFromCache({
+        workspaceId,
+      });
+
+    const objectRecordsPermissions =
+      rolesPermissions[roleOfUserWorkspace.id] ?? {};
+
+    return {
+      settingsPermissions: settingsPermissionsMap,
+      objectRecordsPermissions: objectRecordsPermissions,
+    };
+  }
 
   public async getUserWorkspacePermissions({
     userWorkspaceId,

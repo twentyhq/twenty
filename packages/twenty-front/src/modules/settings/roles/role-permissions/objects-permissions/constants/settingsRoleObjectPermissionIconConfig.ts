@@ -14,8 +14,14 @@ type SettingsRoleObjectPermissionIconConfig = {
   IconForbidden: IconComponent;
 };
 
+export type SettingsRoleObjectPermissionKey =
+  | 'canReadObjectRecords'
+  | 'canUpdateObjectRecords'
+  | 'canSoftDeleteObjectRecords'
+  | 'canDestroyObjectRecords';
+
 export const SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG: Record<
-  string,
+  SettingsRoleObjectPermissionKey,
   SettingsRoleObjectPermissionIconConfig
 > = {
   canReadObjectRecords: {
