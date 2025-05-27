@@ -1,4 +1,5 @@
 import { ObjectRecordsPermissions } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import {
   EntityManager,
   EntityTarget,
@@ -16,6 +17,10 @@ import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import {
   OperationType,
@@ -68,11 +73,28 @@ export class WorkspaceEntityManager extends EntityManager {
 
     let objectPermissions = {};
 
+    const featureFlagMap = this.getFeatureFlagMap();
+
+    const isPermissionsV2Enabled =
+      featureFlagMap[FeatureFlagKey.IsPermissionsV2Enabled];
+
     if (permissionOptions?.roleId) {
       const objectPermissionsByRoleId = dataSource.permissionsPerRoleId;
 
-      objectPermissions =
-        objectPermissionsByRoleId?.[permissionOptions?.roleId] ?? {};
+      if (!isDefined(objectPermissionsByRoleId?.[permissionOptions.roleId])) {
+        if (isPermissionsV2Enabled) {
+          throw new PermissionsException(
+            `No permissions found for role in datasource (missing ${
+              !isDefined(objectPermissionsByRoleId)
+                ? 'objectPermissionsByRoleId object'
+                : `roleId in objectPermissionsByRoleId object (${permissionOptions.roleId})`
+            })`,
+            PermissionsExceptionCode.NO_PERMISSIONS_FOUND_IN_DATASOURCE,
+          );
+        }
+      } else {
+        objectPermissions = objectPermissionsByRoleId[permissionOptions.roleId];
+      }
     }
 
     const newRepository = new WorkspaceRepository<Entity>(
