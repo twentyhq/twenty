@@ -25,6 +25,7 @@ type MockedUser = Pick<
   | 'supportUserHash'
   | 'onboardingStatus'
   | 'userVars'
+  | 'availableWorkspaces'
 > & {
   workspaceMember: WorkspaceMember | null;
   locale: string;
