@@ -24,7 +24,7 @@ const userMetadataLoaderMocks = {
     handlers: [
       http.get(`${REACT_APP_SERVER_BASE_URL}/client-config`, () => {
         return HttpResponse.json(mockedClientConfig);
-      }), 
+      }),
       graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
         return HttpResponse.json({
           data: {
