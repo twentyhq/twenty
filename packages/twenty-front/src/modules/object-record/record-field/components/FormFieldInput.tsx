@@ -14,6 +14,7 @@ import { FormRichTextV2FieldInput } from '@/object-record/record-field/form-type
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { FormUuidFieldInput } from '@/object-record/record-field/form-types/components/FormUuidFieldInput';
+import { FormRelationToOneFieldInput } from '@/object-record/record-field/form-types/components/FormRelationToOneFieldInput';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import {
@@ -24,6 +25,8 @@ import {
   FieldMetadata,
   FieldMultiSelectValue,
   FieldPhonesValue,
+  FieldRelationToOneValue,
+  FieldRelationValue,
   FieldRichTextV2Value,
   FormFieldCurrencyValue,
 } from '@/object-record/record-field/types/FieldMetadata';
@@ -43,6 +46,7 @@ import { isFieldRichTextV2 } from '@/object-record/record-field/types/guards/isF
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
+import { isFieldRelationToOneObject } from '@/object-record/record-field/types/guards/isFieldRelationToOneObject';
 import { JsonValue } from 'type-fest';
 
 type FormFieldInputProps = {
@@ -200,6 +204,16 @@ export const FormFieldInput = ({
     <FormRichTextV2FieldInput
       label={field.label}
       defaultValue={defaultValue as FieldRichTextV2Value | undefined}
+      onChange={onChange}
+      VariablePicker={VariablePicker}
+      readonly={readonly}
+      placeholder={placeholder}
+    />
+  ) : isFieldRelationToOneObject(field) ? (
+    <FormRelationToOneFieldInput
+      label={field.label}
+      objectNameSingular={field.metadata.relationObjectMetadataNameSingular}
+      defaultValue={defaultValue as FieldRelationValue<FieldRelationToOneValue>}
       onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}

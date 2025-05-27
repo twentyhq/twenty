@@ -1,7 +1,7 @@
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { generateFakeObjectRecordEvent } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-object-record-event';
 import { generateObjectRecordFields } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-object-record-fields';
+import { mockObjectMetadataItemsWithFieldMaps } from 'src/engine/core-modules/__mocks__/mockObjectMetadataItemsWithFieldMaps';
 
 jest.mock(
   'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-object-record-fields',
@@ -12,16 +12,29 @@ describe('generateFakeObjectRecordEvent', () => {
     jest.clearAllMocks();
   });
 
-  const mockObjectMetadata = {
-    icon: 'test-icon',
-    labelSingular: 'Test Object',
-    description: 'Test Description',
-    nameSingular: 'testObject',
-  } as ObjectMetadataEntity;
-
   const mockFields = {
     field1: { type: 'TEXT', value: 'test' },
     field2: { type: 'NUMBER', value: 123 },
+  };
+
+  const companyMockObjectMetadataItem =
+    mockObjectMetadataItemsWithFieldMaps.find(
+      (item) => item.nameSingular === 'company',
+    )!;
+
+  const mockObjectMetadataMaps = {
+    byId: {
+      [companyMockObjectMetadataItem.id]: companyMockObjectMetadataItem,
+    },
+    idByNameSingular: {
+      [companyMockObjectMetadataItem.nameSingular]:
+        companyMockObjectMetadataItem.id,
+    },
+  };
+
+  const objectMetadataInfo = {
+    objectMetadataMaps: mockObjectMetadataMaps,
+    objectMetadataItemWithFieldsMaps: companyMockObjectMetadataItem,
   };
 
   beforeEach(() => {
@@ -30,17 +43,17 @@ describe('generateFakeObjectRecordEvent', () => {
 
   it('should generate record with "after" prefix for CREATED action', () => {
     const result = generateFakeObjectRecordEvent(
-      mockObjectMetadata,
+      objectMetadataInfo,
       DatabaseEventAction.CREATED,
     );
 
     expect(result).toEqual({
       object: {
         isLeaf: true,
-        icon: 'test-icon',
-        label: 'Test Object',
-        value: 'Test Description',
-        nameSingular: 'testObject',
+        icon: 'test-company-icon',
+        label: 'Company',
+        value: 'A company',
+        nameSingular: 'company',
         fieldIdName: 'properties.after.id',
       },
       fields: {
@@ -53,17 +66,17 @@ describe('generateFakeObjectRecordEvent', () => {
 
   it('should generate record with "after" prefix for UPDATED action', () => {
     const result = generateFakeObjectRecordEvent(
-      mockObjectMetadata,
+      objectMetadataInfo,
       DatabaseEventAction.UPDATED,
     );
 
     expect(result).toEqual({
       object: {
         isLeaf: true,
-        icon: 'test-icon',
-        label: 'Test Object',
-        value: 'Test Description',
-        nameSingular: 'testObject',
+        icon: 'test-company-icon',
+        label: 'Company',
+        value: 'A company',
+        nameSingular: 'company',
         fieldIdName: 'properties.after.id',
       },
       fields: {
@@ -76,17 +89,17 @@ describe('generateFakeObjectRecordEvent', () => {
 
   it('should generate record with "before" prefix for DELETED action', () => {
     const result = generateFakeObjectRecordEvent(
-      mockObjectMetadata,
+      objectMetadataInfo,
       DatabaseEventAction.DELETED,
     );
 
     expect(result).toEqual({
       object: {
         isLeaf: true,
-        icon: 'test-icon',
-        label: 'Test Object',
-        value: 'Test Description',
-        nameSingular: 'testObject',
+        icon: 'test-company-icon',
+        label: 'Company',
+        value: 'A company',
+        nameSingular: 'company',
         fieldIdName: 'properties.before.id',
       },
       fields: {
@@ -99,17 +112,17 @@ describe('generateFakeObjectRecordEvent', () => {
 
   it('should generate record with "before" prefix for DESTROYED action', () => {
     const result = generateFakeObjectRecordEvent(
-      mockObjectMetadata,
+      objectMetadataInfo,
       DatabaseEventAction.DESTROYED,
     );
 
     expect(result).toEqual({
       object: {
         isLeaf: true,
-        icon: 'test-icon',
-        label: 'Test Object',
-        value: 'Test Description',
-        nameSingular: 'testObject',
+        icon: 'test-company-icon',
+        label: 'Company',
+        value: 'A company',
+        nameSingular: 'company',
         fieldIdName: 'properties.before.id',
       },
       fields: {
@@ -123,7 +136,7 @@ describe('generateFakeObjectRecordEvent', () => {
   it('should throw error for unknown action', () => {
     expect(() => {
       generateFakeObjectRecordEvent(
-        mockObjectMetadata,
+        objectMetadataInfo,
         'UNKNOWN' as DatabaseEventAction,
       );
     }).toThrow("Unknown action 'UNKNOWN'");

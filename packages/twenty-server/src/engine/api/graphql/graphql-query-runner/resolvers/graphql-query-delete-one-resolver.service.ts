@@ -48,12 +48,6 @@ export class GraphqlQueryDeleteOneResolverService extends GraphqlQueryBaseResolv
       objectMetadataMaps,
     );
 
-    this.apiEventEmitterService.emitDeletedEvents({
-      records: formattedDeletedRecords,
-      authContext,
-      objectMetadataItem: objectMetadataItemWithFieldMaps,
-    });
-
     if (formattedDeletedRecords.length === 0) {
       throw new GraphqlQueryRunnerException(
         'Record not found',
@@ -62,6 +56,12 @@ export class GraphqlQueryDeleteOneResolverService extends GraphqlQueryBaseResolv
     }
 
     const deletedRecord = formattedDeletedRecords[0];
+
+    this.apiEventEmitterService.emitDeletedEvents({
+      records: structuredClone(formattedDeletedRecords),
+      authContext,
+      objectMetadataItem: objectMetadataItemWithFieldMaps,
+    });
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
