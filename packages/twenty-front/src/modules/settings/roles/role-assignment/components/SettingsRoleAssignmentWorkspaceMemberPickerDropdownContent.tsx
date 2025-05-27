@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
-import { SearchRecord } from '~/generated-metadata/graphql';
 import { MenuItem, MenuItemAvatar } from 'twenty-ui/navigation';
+import { SearchRecord } from '~/generated-metadata/graphql';
 
 type SettingsRoleAssignmentWorkspaceMemberPickerDropdownContentProps = {
   loading: boolean;
@@ -34,6 +34,7 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent = ({
             size: 'md',
             placeholder: workspaceMember.label ?? '',
             placeholderColorSeed: workspaceMember.recordId,
+            avatarUrl: workspaceMember.imageUrl,
           }}
           text={workspaceMember.label}
         />

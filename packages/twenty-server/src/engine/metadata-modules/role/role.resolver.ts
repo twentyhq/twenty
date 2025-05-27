@@ -8,8 +8,12 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
+import { buildSignedPath } from 'twenty-shared/utils';
+
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -47,6 +51,7 @@ export class RoleResolver {
     private readonly featureFlagService: FeatureFlagService,
     private readonly objectPermissionService: ObjectPermissionService,
     private readonly settingPermissionService: SettingPermissionService,
+    private readonly fileService: FileService,
   ) {}
 
   @Query(() => [RoleDTO])
@@ -180,10 +185,29 @@ export class RoleResolver {
     @Parent() role: RoleDTO,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<WorkspaceMemberWorkspaceEntity[]> {
-    return this.userRoleService.getWorkspaceMembersAssignedToRole(
-      role.id,
-      workspace.id,
+    const workspaceMembers =
+      await this.userRoleService.getWorkspaceMembersAssignedToRole(
+        role.id,
+        workspace.id,
+      );
+
+    await Promise.all(
+      workspaceMembers.map(async (workspaceMember) => {
+        if (workspaceMember && workspaceMember.avatarUrl) {
+          const avatarUrlToken = this.fileService.encodeFileToken({
+            filename: extractFilenameFromPath(workspaceMember.avatarUrl),
+            workspaceId: workspace.id,
+          });
+
+          workspaceMember.avatarUrl = buildSignedPath({
+            path: workspaceMember.avatarUrl,
+            token: avatarUrlToken,
+          });
+        }
+      }),
     );
+
+    return workspaceMembers;
   }
 
   private async validatePermissionsV2EnabledOrThrow(workspace: Workspace) {

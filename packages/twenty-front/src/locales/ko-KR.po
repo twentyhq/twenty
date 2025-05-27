@@ -3357,8 +3357,8 @@ msgstr "사용 가능한 메트릭스 데이터 없음"
 
 #. js-lingui-id: DL8pzn
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
-msgid "No more members to assign"
-msgstr "지정할 멤버가 더 이상 없습니다"
+#~ msgid "No more members to assign"
+#~ msgstr "지정할 멤버가 더 이상 없습니다"
 
 #. js-lingui-id: tTItk7
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -4781,6 +4781,11 @@ msgstr "이 필드의 값은 고유해야 합니다"
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "The whole event details will be shared with your team."
 msgstr "전체 이벤트 세부정보가 팀과 공유됩니다."
+
+#. js-lingui-id: MssRHl
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
+msgid "The workspace needs at least one Admin"
+msgstr ""
 
 #. js-lingui-id: FEr96N
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx

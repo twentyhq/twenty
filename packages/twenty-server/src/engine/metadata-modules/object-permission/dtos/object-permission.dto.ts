@@ -3,12 +3,6 @@ import { Field, ObjectType } from '@nestjs/graphql';
 @ObjectType('ObjectPermission')
 export class ObjectPermissionDTO {
   @Field({ nullable: false })
-  id: string;
-
-  @Field({ nullable: false })
-  roleId: string;
-
-  @Field({ nullable: false })
   objectMetadataId: string;
 
   @Field({ nullable: true })
