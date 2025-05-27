@@ -1,4 +1,3 @@
-import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
@@ -24,6 +23,7 @@ import { domainConfigurationState } from '@/domain-manager/states/domainConfigur
 import { useEffect } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { useGetClientConfigQuery } from '~/generated/graphql';
 
 export const ClientConfigProviderEffect = () => {
   const setIsDebugMode = useSetRecoilState(isDebugModeState);
@@ -87,13 +87,9 @@ export const ClientConfigProviderEffect = () => {
     isConfigVariablesInDbEnabledState,
   );
 
-  const { data, loading, error, fetchClientConfig } = useClientConfig();
-
-  useEffect(() => {
-    if (!clientConfigApiStatus.isLoaded) {
-      fetchClientConfig();
-    }
-  }, [clientConfigApiStatus.isLoaded, fetchClientConfig]);
+  const { data, loading, error } = useGetClientConfigQuery({
+    skip: clientConfigApiStatus.isLoaded,
+  });
 
   useEffect(() => {
     if (loading) return;
