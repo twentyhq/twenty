@@ -62,7 +62,7 @@ const Playground = ({
             workspace based on their unique metadata. <br /> Generate your token
             under{' '}
             <a className="link" href="https://app.twenty.com/settings/apis">
-              Settings &gt; Developers
+              Settings &gt; APIs
             </a>
           </div>
           {isLoading && (
