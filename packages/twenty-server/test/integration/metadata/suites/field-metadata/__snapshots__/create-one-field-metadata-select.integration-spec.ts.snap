@@ -6,7 +6,7 @@ exports[`Field metadata select creation tests group Create should fail with an i
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Default value for existing options is invalid: invalid",
+    "message": "Default value "invalid" must be one of the option values",
   },
 ]
 `;
@@ -17,7 +17,7 @@ exports[`Field metadata select creation tests group Create should fail with an u
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Default value for existing options is invalid: 'OPTION_424242'",
+    "message": "Default value "OPTION_424242" must be one of the option values",
   },
 ]
 `;
@@ -29,6 +29,17 @@ exports[`Field metadata select creation tests group Create should fail with comm
       "code": "BAD_USER_INPUT",
     },
     "message": "Label must not contain a comma",
+  },
+]
+`;
+
+exports[`Field metadata select creation tests group Create should fail with duplicate multi-select default values 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Default values must be unique",
   },
 ]
 `;
@@ -121,6 +132,17 @@ exports[`Field metadata select creation tests group Create should fail with empt
 ]
 `;
 
+exports[`Field metadata select creation tests group Create should fail with invalid multi-select default value format 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Default values must be one of the option values: invalid, format",
+  },
+]
+`;
+
 exports[`Field metadata select creation tests group Create should fail with invalid option id 1`] = `
 [
   {
@@ -139,6 +161,17 @@ exports[`Field metadata select creation tests group Create should fail with inva
       "code": "BAD_USER_INPUT",
     },
     "message": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
+  },
+]
+`;
+
+exports[`Field metadata select creation tests group Create should fail with non-array multi-select default value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Default value for multi-select must be an array",
   },
 ]
 `;
@@ -316,6 +349,17 @@ exports[`Field metadata select creation tests group Create should fail with unde
       "code": "BAD_USER_INPUT",
     },
     "message": "Options are required for enum fields",
+  },
+]
+`;
+
+exports[`Field metadata select creation tests group Create should fail with unknown multi-select default values 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Default values must be one of the option values: OPTION_1, UNKNOWN_OPTION",
   },
 ]
 `;

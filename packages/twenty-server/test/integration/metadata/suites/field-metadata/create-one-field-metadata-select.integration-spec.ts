@@ -50,7 +50,7 @@ describe('Field metadata select creation tests group', () => {
       const { data, errors } = await createOneFieldMetadata({
         input: {
           objectMetadataId: createdObjectMetadataId,
-          type: FieldMetadataType.SELECT,
+          type: input.type ?? FieldMetadataType.SELECT,
           name: 'testField',
           label: 'Test Field',
           isLabelSyncedWithName: false,
@@ -108,7 +108,7 @@ describe('Field metadata select creation tests group', () => {
       const { data, errors } = await createOneFieldMetadata({
         input: {
           objectMetadataId: createdObjectMetadataId,
-          type: FieldMetadataType.SELECT,
+          type: input.type ?? FieldMetadataType.SELECT,
           name: 'testField',
           label: 'Test Field',
           isLabelSyncedWithName: false,
@@ -117,6 +117,7 @@ describe('Field metadata select creation tests group', () => {
         gqlFields: `
         id
         options
+        defaultValue
         `,
       });
 
