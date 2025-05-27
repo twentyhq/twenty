@@ -28,6 +28,8 @@ import { SettingsServiceCenterSectors } from '~/pages/settings/service-center/Se
 import { SettingsServiceCenterServiceLevel } from '~/pages/settings/service-center/SettingsServiceCenterServiceLevel';
 import { SettingsServiceCenterTelephony } from '~/pages/settings/service-center/SettingsServiceCenterTelephony';
 import { SettingsTelephonyEdit } from '~/pages/settings/service-center/SettingsServiceCenterTelephonyEdit';
+import Settings from '../../../../../twenty-server/src/engine/constants/settings/interfaces/settings.interface';
+import { SettingsBillingPlan } from '~/pages/settings/billing/SettingsBilling';
 
 const SettingsApiKeys = lazy(() =>
   import('~/pages/settings/developers/api-keys/SettingsApiKeys').then(
@@ -388,6 +390,11 @@ export const SettingsRoutes = ({
           element={<SettingsWorkspaceMembers />}
         />
       </Route>
+
+      <Route 
+        path={SettingsPath.BillingPlan}
+        element={<SettingsBillingPlan />}
+      />
       <Route
         path={SettingsPath.ServiceCenter}
         element={<SettingsServiceCenter />}
