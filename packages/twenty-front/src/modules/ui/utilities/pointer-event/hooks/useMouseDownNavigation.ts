@@ -39,7 +39,9 @@ export const useMouseDownNavigation = ({
 
     // For modifier keys, let the default browser behavior handle it
     if (isModifierKeyPressed(event)) {
-      executeAction();
+      if (isDefined(onClick)) {
+        onClick();
+      }
       // Don't prevent default for modifier keys to allow browser navigation
       return;
     }
