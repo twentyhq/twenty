@@ -76,6 +76,28 @@ describe('DragSelect', () => {
       event: mockEvent,
     });
 
+    expect(mockEvent.preventDefault).not.toHaveBeenCalled();
+  });
+
+  it('should start selection and call preventDefault on regular elements', () => {
+    renderDragSelect();
+
+    const callbacks = (window as any).trackPointerCallbacks;
+    const mockTarget = document.createElement('div');
+    mockSelectableContainer.appendChild(mockTarget);
+    mockSelectableContainer.contains = jest.fn().mockReturnValue(true);
+
+    const mockEvent = {
+      target: mockTarget,
+      preventDefault: jest.fn(),
+    };
+
+    callbacks.onMouseDown({
+      x: 150,
+      y: 150,
+      event: mockEvent,
+    });
+
     expect(mockEvent.preventDefault).toHaveBeenCalled();
   });
 

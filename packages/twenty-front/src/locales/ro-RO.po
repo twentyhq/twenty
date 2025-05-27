@@ -5169,8 +5169,8 @@ msgstr "Vizualizează detalii despre facturare"
 
 #. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "View execution details"
-msgstr "Vizualizați detaliile execuției"
+#~ msgid "View execution details"
+#~ msgstr "Vizualizați detaliile execuției"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
@@ -5273,13 +5273,13 @@ msgstr "Când va fi dezactivată cheia"
 
 #. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow is running..."
-msgstr "Workflow-ul rulează..."
+#~ msgid "Workflow is running..."
+#~ msgstr "Workflow-ul rulează..."
 
 #. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow run failed"
-msgstr "Execuția workflow-ului a eșuat"
+#~ msgid "Workflow run failed"
+#~ msgstr "Execuția workflow-ului a eșuat"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
