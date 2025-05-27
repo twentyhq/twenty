@@ -27,11 +27,13 @@ const StyledNameLabel = styled.div`
 type SettingsRolePermissionsObjectLevelTableRowProps = {
   objectPermission: ObjectPermission;
   objectMetadataItem: ObjectMetadataItem;
+  roleId: string;
 };
 
 export const SettingsRolePermissionsObjectLevelTableRow = ({
   objectPermission,
   objectMetadataItem,
+  roleId,
 }: SettingsRolePermissionsObjectLevelTableRowProps) => {
   const { getIcon } = useIcons();
   const theme = useTheme();
@@ -45,7 +47,7 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
   return (
     <TableRow
       to={getSettingsPath(SettingsPath.RoleObjectLevel, {
-        roleId: objectPermission.roleId,
+        roleId: roleId,
         objectMetadataId: objectPermission.objectMetadataId,
       })}
       gridAutoColumns="180px 1fr 1fr"
@@ -65,6 +67,7 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
       <TableCell>
         <SettingsRolePermissionsObjectLevelOverrideCell
           objectPermission={objectPermission}
+          roleId={roleId}
         />
       </TableCell>
       <TableCell align={'right'}>

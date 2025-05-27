@@ -36,15 +36,17 @@ const StyledSettingsRolePermissionsObjectLevelOverrideCell = styled.div`
 
 type SettingsRolePermissionsObjectLevelOverrideCellProps = {
   objectPermission: ObjectPermission;
+  roleId: string;
 };
 
 export const SettingsRolePermissionsObjectLevelOverrideCell = ({
   objectPermission,
+  roleId,
 }: SettingsRolePermissionsObjectLevelOverrideCellProps) => {
   const theme = useTheme();
 
   const settingsDraftRole = useRecoilValue(
-    settingsDraftRoleFamilyState(objectPermission.roleId),
+    settingsDraftRoleFamilyState(roleId),
   );
 
   const permissionMappings =
