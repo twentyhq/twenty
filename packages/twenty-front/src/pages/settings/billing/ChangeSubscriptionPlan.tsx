@@ -1,27 +1,28 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Title } from '@/auth/components/Title';
-import { Modal } from '@/ui/layout/modal/components/Modal';
-import styled from '@emotion/styled';
-import { Trans, useLingui } from '@lingui/react/macro';
-import { MainButton } from 'twenty-ui/input';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { useRecoilState, atom } from 'recoil';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { z } from 'zod';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { Key } from 'ts-key-enum';
+import { CHANGE_SUBSCRIPTION_MODAL_ID } from '@/settings/billing/constants/ChangeSubscriptionModalId';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { useUpdateBillingPlan } from '~/pages/onboarding/hooks/useUpdateBillingPlan';
-import { useGetAllBillingPlan } from '~/pages/onboarding/hooks/useGetAllBillingPlan';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import styled from '@emotion/styled';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { atom, useRecoilState } from 'recoil';
+import { Key } from 'ts-key-enum';
+import { MainButton } from 'twenty-ui/input';
+import { z } from 'zod';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { useGetAllBillingPlan } from '~/pages/onboarding/hooks/useGetAllBillingPlan';
+import { useUpdateBillingPlan } from '~/pages/onboarding/hooks/useUpdateBillingPlan';
 
-export type plans = {
+export type Plans = {
   id: string;
   title: string;
   price: number;
@@ -116,7 +117,7 @@ const StyledFooterContainer = styled.div`
   }
 `;
 
-export const selectedPlanState = atom<plans | string>({
+export const selectedPlanState = atom<Plans | string>({
   key: 'selectedPlanState',
   default: '',
 });
@@ -130,7 +131,7 @@ export const ChangeSubscriptionPlan = () => {
   );
 
   const [selectedPlan, setSelectedPlan] = useRecoilState(selectedPlanState);
-  const [onboardingPlans, setOnboardingPlans] = useState<plans[]>([]);
+  const [onboardingPlans, setOnboardingPlans] = useState<Plans[]>([]);
 
   useEffect(() => {
     const fetchOnboardingPlans = async () => {
@@ -162,7 +163,7 @@ export const ChangeSubscriptionPlan = () => {
     }
   }, [onboardingPlans]);
 
-  const onboardingId = selectedPlan?.id;
+  const onboardingId = (selectedPlan as Plans)?.id;
 
   const planSchema = z.object({
     selectedPlanId: z.string().min(1, 'select a valid plan'),
@@ -189,23 +190,15 @@ export const ChangeSubscriptionPlan = () => {
 
   console.log('plan', billinPlan);
 
+  const onSubmit: SubmitHandler<Form> = useCallback(async () => {
+    planSchema.parse({ selectedPlanId: (selectedPlan as Plans)?.id });
 
+    enqueueSnackBar('Subscription changed!', {
+      variant: SnackBarVariant.Success,
+    });
 
-  const onSubmit: SubmitHandler<Form> = useCallback(
-    async () => {
-        planSchema.parse({ selectedPlanId: selectedPlan?.id });
-
-        enqueueSnackBar('Subscription changed!', {
-          variant: SnackBarVariant.Success,
-        });
-
-        handleCloseModal()
-    },
-    [
-      planSchema,
-      enqueueSnackBar,
-    ],
-  );
+    handleCloseModal();
+  }, [planSchema, enqueueSnackBar]);
 
   const [isEditingMode, setIsEditingMode] = useState(false);
 
@@ -223,15 +216,21 @@ export const ChangeSubscriptionPlan = () => {
     return `$${(priceInCents / 100).toFixed(0)}`;
   };
 
-  const { closeModal } = useModal();
-  
-    const handleCloseModal = async () => {
-        closeModal('change-subscription-plan-modal');
-        closeModal('confirm-change-subscription-plan-modal');
-    };
+  const { closeModal, openModal } = useModal();
+
+  const handleCloseModal = async () => {
+    closeModal('change-subscription-plan-modal');
+    closeModal('confirm-change-subscription-plan-modal');
+  };
+
+  openModal(CHANGE_SUBSCRIPTION_MODAL_ID);
 
   return (
-    <Modal size="large" className="custom-modal">
+    <Modal
+      modalId={CHANGE_SUBSCRIPTION_MODAL_ID}
+      size="large"
+      className="custom-modal"
+    >
       <style>{`
         .custom-modal {
           width: 70% !important;
@@ -287,7 +286,7 @@ export const ChangeSubscriptionPlan = () => {
 
         <StyledFeaturesList>
           {onboardingPlans
-            .find((p) => p.id === selectedPlan?.id)
+            .find((p) => p.id === (selectedPlan as Plans)?.id)
             ?.features.map((feat, i) => <li key={i}>✔ {feat}</li>)}
         </StyledFeaturesList>
 
