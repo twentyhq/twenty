@@ -97,10 +97,6 @@ export const ClientConfigProviderEffect = () => {
 
   useEffect(() => {
     if (loading) return;
-    setClientConfigApiStatus((currentStatus) => ({
-      ...currentStatus,
-      isLoaded: true,
-    }));
 
     if (error instanceof Error) {
       setClientConfigApiStatus((currentStatus) => ({
@@ -169,6 +165,10 @@ export const ClientConfigProviderEffect = () => {
     setIsConfigVariablesInDbEnabled(
       data?.clientConfig?.isConfigVariablesInDbEnabled,
     );
+    setClientConfigApiStatus((currentStatus) => ({
+      ...currentStatus,
+      isLoaded: true,
+    }));
   }, [
     data,
     setIsDebugMode,
