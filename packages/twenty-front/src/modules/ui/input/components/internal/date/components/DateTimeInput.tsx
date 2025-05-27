@@ -106,15 +106,15 @@ export const DateTimeInput = ({
   }, [date, setValue, parseToString]);
 
   const getPlaceholder = () => {
-    switch (dateFormat) {
-      case DateFormat.DAY_FIRST:
-        return `Type date${isDateTimeInput ? ' and time' : ' (dd/mm/yyyy)'}`;
-      case DateFormat.YEAR_FIRST:
-        return `Type date${isDateTimeInput ? ' and time' : ' (yyyy-mm-dd)'}`;
-      case DateFormat.MONTH_FIRST:
-      default:
-        return `Type date${isDateTimeInput ? ' and time' : ' (mm/dd/yyyy)'}`;
-    }
+    const formatMap: Record<DateFormat, string> = {
+      [DateFormat.SYSTEM]: 'mm/dd/yyyy',
+      [DateFormat.MONTH_FIRST]: 'mm/dd/yyyy',
+      [DateFormat.DAY_FIRST]: 'dd/mm/yyyy',
+      [DateFormat.YEAR_FIRST]: 'yyyy-mm-dd',
+    };
+
+    const dateFormatStr = formatMap[dateFormat];
+    return `Type date${isDateTimeInput ? ' and time' : ` (${dateFormatStr})`}`;
   };
 
   return (
