@@ -76,7 +76,6 @@ export class UserResolver {
     return this.userService.getCurrentUser(userId, workspace);
   }
 
-
   @ResolveField(() => GraphQLJSONObject)
   async userVars(
     @Parent() user: User,
