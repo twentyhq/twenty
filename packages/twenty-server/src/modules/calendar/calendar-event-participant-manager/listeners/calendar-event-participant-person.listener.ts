@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 import { objectRecordChangedProperties as objectRecordUpdateEventChangedProperties } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-properties.util';
@@ -15,9 +17,9 @@ import {
   CalendarEventParticipantUnmatchParticipantJob,
   CalendarEventParticipantUnmatchParticipantJobData,
 } from 'src/modules/calendar/calendar-event-participant-manager/jobs/calendar-event-participant-unmatch-participant.job';
+import { computeChangedAdditionalEmails } from 'src/modules/calendar/calendar-event-participant-manager/utils/compute-changed-emails';
+import { hasPrimaryEmailChanged } from 'src/modules/calendar/calendar-event-participant-manager/utils/has-primary-email-changed';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
-import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
 export class CalendarEventParticipantPersonListener {
@@ -62,24 +64,58 @@ export class CalendarEventParticipantPersonListener {
           eventPayload.properties.after,
         ).includes('emails')
       ) {
-        // TODO: modify this job to take an array of participants to match
-        await this.messageQueueService.add<CalendarEventParticipantUnmatchParticipantJobData>(
-          CalendarEventParticipantUnmatchParticipantJob.name,
-          {
-            workspaceId: payload.workspaceId,
-            email: eventPayload.properties.before.emails?.primaryEmail,
-            personId: eventPayload.recordId,
-          },
-        );
+        if (!eventPayload.properties.diff) {
+          continue;
+        }
 
-        await this.messageQueueService.add<CalendarEventParticipantMatchParticipantJobData>(
-          CalendarEventParticipantMatchParticipantJob.name,
-          {
-            workspaceId: payload.workspaceId,
-            email: eventPayload.properties.after.emails?.primaryEmail,
-            personId: eventPayload.recordId,
-          },
-        );
+        if (hasPrimaryEmailChanged(eventPayload.properties.diff)) {
+          if (eventPayload.properties.before.emails?.primaryEmail) {
+            await this.messageQueueService.add<CalendarEventParticipantUnmatchParticipantJobData>(
+              CalendarEventParticipantUnmatchParticipantJob.name,
+              {
+                workspaceId: payload.workspaceId,
+                email: eventPayload.properties.before.emails?.primaryEmail,
+                personId: eventPayload.recordId,
+              },
+            );
+          }
+
+          if (eventPayload.properties.after.emails?.primaryEmail) {
+            await this.messageQueueService.add<CalendarEventParticipantMatchParticipantJobData>(
+              CalendarEventParticipantMatchParticipantJob.name,
+              {
+                workspaceId: payload.workspaceId,
+                email: eventPayload.properties.after.emails?.primaryEmail,
+                personId: eventPayload.recordId,
+              },
+            );
+          }
+        }
+
+        const { addedAdditionalEmails, removedAdditionalEmails } =
+          computeChangedAdditionalEmails(eventPayload.properties.diff);
+
+        for (const email of removedAdditionalEmails) {
+          await this.messageQueueService.add<CalendarEventParticipantUnmatchParticipantJobData>(
+            CalendarEventParticipantUnmatchParticipantJob.name,
+            {
+              workspaceId: payload.workspaceId,
+              email: email,
+              personId: eventPayload.recordId,
+            },
+          );
+        }
+
+        for (const email of addedAdditionalEmails) {
+          await this.messageQueueService.add<CalendarEventParticipantMatchParticipantJobData>(
+            CalendarEventParticipantMatchParticipantJob.name,
+            {
+              workspaceId: payload.workspaceId,
+              email: email,
+              personId: eventPayload.recordId,
+            },
+          );
+        }
       }
     }
   }
