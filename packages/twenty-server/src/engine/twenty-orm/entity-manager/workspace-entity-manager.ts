@@ -385,12 +385,14 @@ export class WorkspaceEntityManager extends EntityManager {
     return this.connection.getMetadata(entity.constructor).name;
   }
 
-  // Not in use methods - forbidden or duplicated from EntityManager
+  // Forbidden methods
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   override query<T = any>(_query: string, _parameters?: any[]): Promise<T> {
     throw new Error('Method not allowed.');
   }
+
+  // Not in use methods - duplicated from TypeORM's EntityManager to use our createQueryBuilder
 
   override find<Entity extends ObjectLiteral>(
     entityClass: EntityTarget<Entity>,
@@ -796,7 +798,7 @@ export class WorkspaceEntityManager extends EntityManager {
 
     this.validatePermissions(
       targetOrEntityOrEntities,
-      'update',
+      'restore',
       permissionOptionsFromArgs,
     );
 
