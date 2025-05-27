@@ -277,6 +277,28 @@ describe('WorkspaceRepository', () => {
         },
       );
     });
+
+    it('should delegate to workspaceEntityManager upsert', async () => {
+      const entity: DeepPartial<ObjectLiteral> = { id: 'test-id' };
+
+      mockEntityManager.upsert.mockResolvedValue({
+        identifiers: [{ id: 'test-id' }],
+        generatedMaps: [{ id: 'test-id' }],
+        raw: [],
+      });
+
+      await repository.upsert(entity, ['id']);
+
+      expect(mockEntityManager.upsert).toHaveBeenCalledWith(
+        'test-entity',
+        { id: 'test-id' },
+        ['id'],
+        {
+          shouldBypassPermissionChecks: false,
+          objectRecordsPermissions: mockObjectRecordsPermissions,
+        },
+      );
+    });
   });
 
   describe('Update Methods', () => {
