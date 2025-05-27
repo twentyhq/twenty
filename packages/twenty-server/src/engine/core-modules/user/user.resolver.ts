@@ -139,8 +139,8 @@ export class UserResolver {
         settingsPermissions = permissions.settingsPermissions;
         objectPermissions = Object.entries(
           permissions.objectRecordsPermissions,
-        ).map(([objectName, permissions]) => ({
-          objectMetadataId: objectName,
+        ).map(([objectMetadataId, permissions]) => ({
+          objectMetadataId,
           canReadObjectRecords: permissions.canRead,
           canUpdateObjectRecords: permissions.canUpdate,
           canSoftDeleteObjectRecords: permissions.canSoftDelete,
