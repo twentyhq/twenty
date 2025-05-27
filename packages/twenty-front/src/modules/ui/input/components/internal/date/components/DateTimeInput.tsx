@@ -60,13 +60,6 @@ export const DateTimeInput = ({
     isDateTimeInput: isDateTimeInput === true,
   });
 
-  const handleParseDateToString = useCallback(
-    (date: any) => {
-      return parseToString(date);
-    },
-    [parseToString],
-  );
-
   const handleParseStringToDate = (str: string) => {
     const date = parseToDate(str);
 
@@ -87,7 +80,7 @@ export const DateTimeInput = ({
       blocks,
       min: MIN_DATE,
       max: MAX_DATE,
-      format: handleParseDateToString,
+      format: (date: any) => parseToString(date),
       parse: handleParseStringToDate,
       lazy: false,
       autofix: true,
