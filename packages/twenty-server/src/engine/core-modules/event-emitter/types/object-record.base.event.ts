@@ -1,5 +1,6 @@
+import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+
 import { ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 type Properties<T> = {
   updatedFields?: string[];
@@ -12,6 +13,6 @@ export class ObjectRecordBaseEvent<T = object> {
   recordId: string;
   userId?: string;
   workspaceMemberId?: string;
-  objectMetadata: ObjectMetadataItemWithFieldMaps;
+  objectMetadata: ObjectMetadataInterface;
   properties: Properties<T>;
 }
