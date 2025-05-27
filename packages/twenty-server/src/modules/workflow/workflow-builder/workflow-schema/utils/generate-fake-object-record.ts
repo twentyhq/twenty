@@ -1,31 +1,6 @@
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import {
-  Leaf,
-  Node,
-  RecordOutputSchema,
-} from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
-import { generateFakeField } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-field';
-import { shouldGenerateFieldFakeValue } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/should-generate-field-fake-value';
-
-const generateObjectRecordFields = (
-  objectMetadataEntity: ObjectMetadataEntity,
-) =>
-  objectMetadataEntity.fields.reduce(
-    (acc: Record<string, Leaf | Node>, field) => {
-      if (!shouldGenerateFieldFakeValue(field)) {
-        return acc;
-      }
-
-      acc[field.name] = generateFakeField({
-        type: field.type,
-        label: field.label,
-        icon: field.icon,
-      });
-
-      return acc;
-    },
-    {},
-  );
+import { RecordOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
+import { generateObjectRecordFields } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-object-record-fields';
 
 export const generateFakeObjectRecord = (
   objectMetadataEntity: ObjectMetadataEntity,

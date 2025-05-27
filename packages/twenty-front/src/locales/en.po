@@ -5164,8 +5164,8 @@ msgstr "View billing details"
 
 #. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "View execution details"
-msgstr "View execution details"
+#~ msgid "View execution details"
+#~ msgstr "View execution details"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
@@ -5268,13 +5268,13 @@ msgstr "When the key will be disabled"
 
 #. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow is running..."
-msgstr "Workflow is running..."
+#~ msgid "Workflow is running..."
+#~ msgstr "Workflow is running..."
 
 #. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow run failed"
-msgstr "Workflow run failed"
+#~ msgid "Workflow run failed"
+#~ msgstr "Workflow run failed"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx

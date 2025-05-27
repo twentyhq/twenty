@@ -5169,8 +5169,8 @@ msgstr "查看账单详情"
 
 #. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "View execution details"
-msgstr "查看执行详情"
+#~ msgid "View execution details"
+#~ msgstr "查看执行详情"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
@@ -5273,13 +5273,13 @@ msgstr "密钥何时会被禁用"
 
 #. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow is running..."
-msgstr "工作流正在运行……"
+#~ msgid "Workflow is running..."
+#~ msgstr "工作流正在运行……"
 
 #. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow run failed"
-msgstr "工作流运行失败"
+#~ msgid "Workflow run failed"
+#~ msgstr "工作流运行失败"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx

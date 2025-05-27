@@ -12,7 +12,6 @@ const StyledHeader = styled.li`
   border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
   border-top-right-radius: ${({ theme }) => theme.border.radius.sm};
   padding: ${({ theme }) => theme.spacing(1)};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 
   user-select: none;
 
@@ -32,7 +31,6 @@ const StyledChildrenWrapper = styled.span`
 const StyledEndComponent = styled.div`
   display: inline-flex;
   color: ${({ theme }) => theme.font.color.tertiary};
-  padding: ${({ theme }) => theme.spacing(1)};
   margin-left: auto;
   margin-right: 0;
 

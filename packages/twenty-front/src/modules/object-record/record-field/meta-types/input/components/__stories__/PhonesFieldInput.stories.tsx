@@ -1,6 +1,6 @@
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
-import { fn, userEvent, waitFor, within } from '@storybook/test';
+import { fn, userEvent, within } from '@storybook/test';
 import { useEffect } from 'react';
 import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
 
@@ -198,7 +198,7 @@ export const TrimInput: Story = {
   },
 };
 
-export const CanSetPrimaryLinkAsPrimaryLink: Story = {
+export const CanNotSetPrimaryLinkAsPrimaryLink: Story = {
   args: {
     value: {
       primaryPhoneCountryCode: 'FR',
@@ -220,30 +220,16 @@ export const CanSetPrimaryLinkAsPrimaryLink: Story = {
     });
     await userEvent.click(openDropdownButtons[0]);
 
-    const setPrimaryOption = await within(
+    const editOption = await within(
       getCanvasElementForDropdownTesting(),
-    ).findByText('Set as Primary');
+    ).findByText('Edit');
 
-    expect(setPrimaryOption).toBeVisible();
+    expect(editOption).toBeVisible();
 
-    await userEvent.click(setPrimaryOption);
+    const setPrimaryOption = within(
+      getCanvasElementForDropdownTesting(),
+    ).queryByText('Set as Primary');
 
-    // Verify the update was called with swapped phones
-    await waitFor(() => {
-      expect(updateRecord).toHaveBeenCalledWith({
-        variables: {
-          where: { id: 'record-id' },
-          updateOneRecordInput: {
-            phones: {
-              primaryPhoneCallingCode: '+33',
-              primaryPhoneCountryCode: 'FR',
-              primaryPhoneNumber: '642646272',
-              additionalPhones: [],
-            },
-          },
-        },
-      });
-    });
-    expect(updateRecord).toHaveBeenCalledTimes(1);
+    expect(setPrimaryOption).not.toBeInTheDocument();
   },
 };
