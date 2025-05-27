@@ -5169,8 +5169,8 @@ msgstr "Rechnungsdetails anzeigen"
 
 #. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "View execution details"
-msgstr "Ausführungsdetails anzeigen"
+#~ msgid "View execution details"
+#~ msgstr "Ausführungsdetails anzeigen"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
@@ -5273,13 +5273,13 @@ msgstr "Wann der Schlüssel deaktiviert wird"
 
 #. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow is running..."
-msgstr "Workflow läuft..."
+#~ msgid "Workflow is running..."
+#~ msgstr "Workflow läuft..."
 
 #. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow run failed"
-msgstr "Workflowausführung fehlgeschlagen"
+#~ msgid "Workflow run failed"
+#~ msgstr "Workflowausführung fehlgeschlagen"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx

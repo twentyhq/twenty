@@ -1025,10 +1025,10 @@ export type Mutation = {
   updateWorkspace: Workspace;
   updateWorkspaceFeatureFlag: Scalars['Boolean']['output'];
   updateWorkspaceMemberRole: WorkspaceMember;
-  uploadFile: Scalars['String']['output'];
-  uploadImage: Scalars['String']['output'];
-  uploadProfilePicture: Scalars['String']['output'];
-  uploadWorkspaceLogo: Scalars['String']['output'];
+  uploadFile: SignedFileDto;
+  uploadImage: SignedFileDto;
+  uploadProfilePicture: SignedFileDto;
+  uploadWorkspaceLogo: SignedFileDto;
   upsertObjectPermissions: Array<ObjectPermission>;
   upsertSettingPermissions: Array<SettingPermission>;
   userLookupAdminPanel: UserLookup;
@@ -2173,6 +2173,12 @@ export type SignUpOutput = {
   __typename?: 'SignUpOutput';
   loginToken: AuthToken;
   workspace: WorkspaceUrlsAndId;
+};
+
+export type SignedFileDto = {
+  __typename?: 'SignedFileDTO';
+  path: Scalars['String']['output'];
+  token: Scalars['String']['output'];
 };
 
 export type StandardOverrides = {

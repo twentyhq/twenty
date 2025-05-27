@@ -5169,8 +5169,8 @@ msgstr "Számlázási részletek megtekintése"
 
 #. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "View execution details"
-msgstr "Végrehajtási részletek megtekintése"
+#~ msgid "View execution details"
+#~ msgstr "Végrehajtási részletek megtekintése"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
@@ -5273,13 +5273,13 @@ msgstr "Mikor kerül kikapcsolásra a kulcs"
 
 #. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow is running..."
-msgstr "Munkafolyamat fut..."
+#~ msgid "Workflow is running..."
+#~ msgstr "Munkafolyamat fut..."
 
 #. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow run failed"
-msgstr "Munkafolyamat futása sikertelen"
+#~ msgid "Workflow run failed"
+#~ msgstr "Munkafolyamat futása sikertelen"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx

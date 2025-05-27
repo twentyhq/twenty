@@ -5169,8 +5169,8 @@ msgstr "צפייה בפרטי החשבונית"
 
 #. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "View execution details"
-msgstr "הצג פרטי ביצוע"
+#~ msgid "View execution details"
+#~ msgstr "הצג פרטי ביצוע"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
@@ -5273,13 +5273,13 @@ msgstr "מתי ייעולם המפתח"
 
 #. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow is running..."
-msgstr "הרצת זרימת עבודה..."
+#~ msgid "Workflow is running..."
+#~ msgstr "הרצת זרימת עבודה..."
 
 #. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow run failed"
-msgstr "הרצת זרימת עבודה נכשלה"
+#~ msgid "Workflow run failed"
+#~ msgstr "הרצת זרימת עבודה נכשלה"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
