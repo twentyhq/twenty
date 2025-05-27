@@ -15,6 +15,10 @@ export const parseDateToString = ({
   userTimezone,
   dateFormat = DateFormat.MONTH_FIRST,
 }: ParseDateToStringArgs) => {
+  if (!date) {
+    return '';
+  }
+
   const parsingFormat = getDateFormatString(dateFormat, isDateTimeInput);
 
   const dateParsed = DateTime.fromJSDate(date, { zone: userTimezone });
