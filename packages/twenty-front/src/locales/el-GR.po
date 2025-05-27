@@ -3357,8 +3357,8 @@ msgstr "Δεν υπάρχουν διαθέσιμα δεδομένα μετρήσ
 
 #. js-lingui-id: DL8pzn
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
-msgid "No more members to assign"
-msgstr "Δεν υπάρχουν άλλοι μέλη για ανάθεση"
+#~ msgid "No more members to assign"
+#~ msgstr "Δεν υπάρχουν άλλοι μέλη για ανάθεση"
 
 #. js-lingui-id: tTItk7
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -4781,6 +4781,11 @@ msgstr "Οι τιμές αυτού του πεδίου πρέπει να είν�
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "The whole event details will be shared with your team."
 msgstr "Όλες οι λεπτομέρειες του γεγονότος θα μοιραστούν με την ομάδα σας."
+
+#. js-lingui-id: MssRHl
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
+msgid "The workspace needs at least one Admin"
+msgstr ""
 
 #. js-lingui-id: FEr96N
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
