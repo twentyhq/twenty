@@ -129,6 +129,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
       >
         {currentWorkspace?.displayName}
       </DropdownMenuHeader>
+      <DropdownMenuSeparator />
       {workspaces.length > 1 && (
         <>
           <StyledDropdownMenuItemsContainer>

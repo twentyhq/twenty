@@ -7,6 +7,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useSetRecoilState } from 'recoil';
 import { IconCheck, IconChevronLeft } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
 export const MultiWorkspaceDropdownThemesComponents = () => {
   const { t } = useLingui();
@@ -18,7 +19,7 @@ export const MultiWorkspaceDropdownThemesComponents = () => {
   );
 
   return (
-    <DropdownMenuItemsContainer>
+    <>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -29,15 +30,19 @@ export const MultiWorkspaceDropdownThemesComponents = () => {
       >
         {t`Theme`}
       </DropdownMenuHeader>
-      {colorSchemeList.map((theme) => (
-        <MenuItem
-          LeftIcon={theme.icon}
-          /* eslint-disable-next-line lingui/no-expression-in-message */
-          text={t`${theme.id}`}
-          onClick={() => setColorScheme(theme.id)}
-          RightIcon={theme.id === colorScheme ? IconCheck : undefined}
-        />
-      ))}
-    </DropdownMenuItemsContainer>
+      <DropdownMenuSeparator />
+      <DropdownMenuItemsContainer>
+        {colorSchemeList.map((theme) => (
+          <MenuItem
+            key={theme.id}
+            LeftIcon={theme.icon}
+            /* eslint-disable-next-line lingui/no-expression-in-message */
+            text={t`${theme.id}`}
+            onClick={() => setColorScheme(theme.id)}
+            RightIcon={theme.id === colorScheme ? IconCheck : undefined}
+          />
+        ))}
+      </DropdownMenuItemsContainer>
+    </>
   );
 };
