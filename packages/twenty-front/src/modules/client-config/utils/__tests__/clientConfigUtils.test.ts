@@ -1,8 +1,6 @@
-import {
-  clearClientConfigCache,
-  getClientConfig,
-  refreshClientConfig,
-} from '../clientConfigUtils';
+import { clearClientConfigCache } from '../clientConfigCache';
+import { getClientConfig } from '../getClientConfig';
+import { refreshClientConfig } from '../refreshClientConfig';
 
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 

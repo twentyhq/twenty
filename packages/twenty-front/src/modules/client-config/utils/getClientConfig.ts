@@ -1,12 +1,14 @@
-import { ClientConfig } from '~/generated/graphql';
-
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-
-let cachedClientConfig: ClientConfig | null = null;
+import { ClientConfig } from '~/generated/graphql';
+import {
+  getClientConfigCache,
+  setClientConfigCache,
+} from './clientConfigCache';
 
 export const getClientConfig = async (): Promise<ClientConfig> => {
-  if (cachedClientConfig !== null) {
-    return cachedClientConfig;
+  const cached = getClientConfigCache();
+  if (cached !== null) {
+    return cached;
   }
 
   const response = await fetch(`${REACT_APP_SERVER_BASE_URL}/client-config`, {
@@ -23,16 +25,7 @@ export const getClientConfig = async (): Promise<ClientConfig> => {
   }
 
   const clientConfig: ClientConfig = await response.json();
-  cachedClientConfig = clientConfig;
+  setClientConfigCache(clientConfig);
 
   return clientConfig;
-};
-
-export const refreshClientConfig = async (): Promise<ClientConfig> => {
-  cachedClientConfig = null;
-  return getClientConfig();
-};
-
-export const clearClientConfigCache = (): void => {
-  cachedClientConfig = null;
 };

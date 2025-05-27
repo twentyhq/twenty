@@ -1,14 +1,15 @@
 import { useCallback, useState } from 'react';
 import { ClientConfig } from '~/generated/graphql';
-import { getClientConfig } from '../utils/clientConfigUtils';
+import { getClientConfig } from '../utils/getClientConfig';
+import { refreshClientConfig } from '../utils/refreshClientConfig';
 
-interface UseClientConfigResult {
+type UseClientConfigResult = {
   data: { clientConfig: ClientConfig } | undefined;
   loading: boolean;
   error: Error | undefined;
   fetchClientConfig: () => Promise<void>;
   refetchClientConfig: () => Promise<void>;
-}
+};
 
 export const useClientConfig = (): UseClientConfigResult => {
   const [data, setData] = useState<{ clientConfig: ClientConfig } | undefined>(
@@ -33,11 +34,27 @@ export const useClientConfig = (): UseClientConfigResult => {
     }
   }, []);
 
+  const refetchClientConfig = useCallback(async () => {
+    setLoading(true);
+    setError(undefined);
+
+    try {
+      const clientConfig = await refreshClientConfig();
+      setData({ clientConfig });
+    } catch (err) {
+      setError(
+        err instanceof Error ? err : new Error('Failed to fetch client config'),
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return {
     data,
     loading,
     error,
     fetchClientConfig,
-    refetchClientConfig: fetchClientConfig,
+    refetchClientConfig,
   };
 };
