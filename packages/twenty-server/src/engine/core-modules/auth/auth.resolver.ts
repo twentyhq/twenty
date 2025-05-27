@@ -20,6 +20,7 @@ import { ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dt
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ApiKeyService } from 'src/engine/core-modules/auth/services/api-key.service';
 // import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
   AuthException,
   AuthExceptionCode,
@@ -53,7 +54,6 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { GetLoginTokenFromCredentialsInput } from './dto/get-login-token-from-credentials.input';
