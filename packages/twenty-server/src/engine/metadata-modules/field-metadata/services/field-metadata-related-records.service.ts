@@ -133,11 +133,13 @@ export class FieldMetadataRelatedRecordsService {
       'viewFilters',
     );
 
-    const { updated: updatedFieldMetadataOptions, deleted: deletedFieldMetadataOptions } =
-      this.getOptionsDifferences(
-        oldFieldMetadata.options,
-        newFieldMetadata.options,
-      );
+    const {
+      updated: updatedFieldMetadataOptions,
+      deleted: deletedFieldMetadataOptions,
+    } = this.getOptionsDifferences(
+      oldFieldMetadata.options,
+      newFieldMetadata.options,
+    );
 
     if (
       updatedFieldMetadataOptions.length === 0 &&
