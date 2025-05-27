@@ -21,5 +21,7 @@ export const buildSignedPath = ({
     );
   }
 
-  return `${directories.join('/')}/${token}/${filename}`;
+  const sanitizedFileName = filename.replace(/\?token=[^&]*/, '');
+
+  return `${directories.join('/')}/${token}/${sanitizedFileName}`;
 };

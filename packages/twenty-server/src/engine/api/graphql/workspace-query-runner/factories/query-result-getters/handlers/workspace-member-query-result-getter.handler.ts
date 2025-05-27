@@ -4,7 +4,7 @@ import { QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/worksp
 
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
+import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-filename-from-path.utils';
 
 export class WorkspaceMemberQueryResultGetterHandler
   implements QueryResultGetterHandlerInterface

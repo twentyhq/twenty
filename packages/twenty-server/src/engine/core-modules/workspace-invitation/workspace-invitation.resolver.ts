@@ -16,7 +16,7 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
+import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-filename-from-path.utils';
 
 import { SendInvitationsInput } from './dtos/send-invitations.input';
 

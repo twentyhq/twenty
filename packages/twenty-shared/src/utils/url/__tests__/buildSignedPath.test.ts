@@ -66,4 +66,13 @@ describe('buildSignedPath', () => {
       'http://twentyhq.github.io/placeholder-images/workspaces/twenty-logo.png',
     );
   });
+
+  it('should support file path saved with token parameter', () => {
+    expect(
+      buildSignedPath({
+        path: 'folder/original/test.txt?token=aToken',
+        token: 'tokenValue',
+      }),
+    ).toBe('folder/original/tokenValue/test.txt');
+  });
 });

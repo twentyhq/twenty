@@ -4,7 +4,7 @@ import { QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/worksp
 
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
-import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
+import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-filename-from-path.utils';
 
 export class AttachmentQueryResultGetterHandler
   implements QueryResultGetterHandlerInterface
