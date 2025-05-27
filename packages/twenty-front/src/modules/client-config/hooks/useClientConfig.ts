@@ -1,5 +1,6 @@
-import { useCallback, useState } from 'react';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { ClientConfig } from '~/generated/graphql';
+import { clientConfigApiStatusState } from '../states/clientConfigApiStatusState';
 import { getClientConfig } from '../utils/getClientConfig';
 
 type UseClientConfigResult = {
@@ -10,32 +11,46 @@ type UseClientConfigResult = {
 };
 
 export const useClientConfig = (): UseClientConfigResult => {
-  const [data, setData] = useState<{ clientConfig: ClientConfig } | undefined>(
-    undefined,
+  const clientConfigApiStatus = useRecoilValue(clientConfigApiStatusState);
+
+  const fetchClientConfig = useRecoilCallback(
+    ({ set }) =>
+      async () => {
+        set(clientConfigApiStatusState, (prev) => ({
+          ...prev,
+          isLoading: true,
+          isErrored: false,
+          error: undefined,
+        }));
+
+        try {
+          const clientConfig = await getClientConfig();
+          set(clientConfigApiStatusState, (prev) => ({
+            ...prev,
+            isLoading: false,
+            isLoaded: true,
+            data: { clientConfig },
+          }));
+        } catch (err) {
+          const error =
+            err instanceof Error
+              ? err
+              : new Error('Failed to fetch client config');
+          set(clientConfigApiStatusState, (prev) => ({
+            ...prev,
+            isLoading: false,
+            isErrored: true,
+            error,
+          }));
+        }
+      },
+    [],
   );
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<Error | undefined>(undefined);
-
-  const fetchClientConfig = useCallback(async () => {
-    setLoading(true);
-    setError(undefined);
-
-    try {
-      const clientConfig = await getClientConfig();
-      setData({ clientConfig });
-    } catch (err) {
-      setError(
-        err instanceof Error ? err : new Error('Failed to fetch client config'),
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, []);
 
   return {
-    data,
-    loading,
-    error,
+    data: clientConfigApiStatus.data,
+    loading: clientConfigApiStatus.isLoading || false,
+    error: clientConfigApiStatus.error,
     fetchClientConfig,
   };
 };
