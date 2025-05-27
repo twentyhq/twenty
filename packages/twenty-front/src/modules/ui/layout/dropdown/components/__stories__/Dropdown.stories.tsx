@@ -32,7 +32,6 @@ const meta: Meta<typeof Dropdown> = {
     dropdownHotkeyScope: { scope: 'testDropdownMenu' },
     dropdownOffset: { x: 0, y: 8 },
     dropdownId: 'test-dropdown-id',
-    dropdownWidth: '200px',
   },
   argTypes: {
     clickableComponent: { control: false },
