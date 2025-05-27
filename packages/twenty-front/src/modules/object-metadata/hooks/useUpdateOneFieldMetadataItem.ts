@@ -114,9 +114,9 @@ export const useUpdateOneFieldMetadataItem = () => {
           correspondingObjectMetadataItemRefreshed,
         );
       }
+      cache.evict({ id: `Views:${view.id}` });
     }
 
-    cache.evict({ id: 'ROOT_QUERY', fieldName: `views` });
     return result;
   };
 
