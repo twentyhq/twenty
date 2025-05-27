@@ -157,15 +157,16 @@ export class SSOAuthController {
           workspace: currentWorkspace,
         }),
       );
-    } catch (err) {
+    } catch (error) {
       return res.redirect(
-        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
-          err,
-          this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
-            workspaceIdentityProvider?.workspace,
-          ),
-          '/verify',
-        ),
+        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
+          error,
+          workspace:
+            this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
+              workspaceIdentityProvider?.workspace,
+            ),
+          pathname: '/verify',
+        }),
       );
     }
   }

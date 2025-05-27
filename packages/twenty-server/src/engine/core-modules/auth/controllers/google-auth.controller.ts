@@ -118,15 +118,16 @@ export class GoogleAuthController {
           billingCheckoutSessionState,
         }),
       );
-    } catch (err) {
+    } catch (error) {
       return res.redirect(
-        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
-          err,
-          this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
-            currentWorkspace,
-          ),
-          '/verify',
-        ),
+        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
+          error,
+          workspace:
+            this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
+              currentWorkspace,
+            ),
+          pathname: '/verify',
+        }),
       );
     }
   }
