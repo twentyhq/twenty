@@ -20,7 +20,6 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import {
   PermissionsException,
   PermissionsExceptionCode,
-  PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import {
@@ -85,7 +84,11 @@ export class WorkspaceEntityManager extends EntityManager {
       if (!isDefined(objectPermissionsByRoleId?.[permissionOptions.roleId])) {
         if (isPermissionsV2Enabled) {
           throw new PermissionsException(
-            PermissionsExceptionMessage.NO_PERMISSIONS_FOUND_IN_DATASOURCE,
+            `No permissions found for role in datasource (missing ${
+              !isDefined(objectPermissionsByRoleId)
+                ? 'objectPermissionsByRoleId object'
+                : `roleId in objectPermissionsByRoleId object (${permissionOptions.roleId})`
+            })`,
             PermissionsExceptionCode.NO_PERMISSIONS_FOUND_IN_DATASOURCE,
           );
         }
