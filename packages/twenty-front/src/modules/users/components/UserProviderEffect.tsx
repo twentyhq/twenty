@@ -29,6 +29,7 @@ import { useGetCurrentUserQuery } from '~/generated/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
+import { currentUserAvailableWorkspacesState } from '@/auth/states/currentUserAvailableWorkspaces';
 
 export const UserProviderEffect = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -67,6 +68,9 @@ export const UserProviderEffect = () => {
   const setCurrentWorkspaceMembersWithDeleted = useSetRecoilState(
     currentWorkspaceDeletedMembersState,
   );
+  const setCurrentUserAvailableWorkspaces = useSetRecoilState(
+    currentUserAvailableWorkspacesState,
+  );
 
   const { loading: queryLoading, data: queryData } = useGetCurrentUserQuery({
     skip:
@@ -94,6 +98,12 @@ export const UserProviderEffect = () => {
 
     if (isDefined(queryData.currentUser.currentUserWorkspace)) {
       setCurrentUserWorkspace(queryData.currentUser.currentUserWorkspace);
+    }
+
+    if (isDefined(queryData.currentUser.availableWorkspaces)) {
+      setCurrentUserAvailableWorkspaces(
+        queryData.currentUser.availableWorkspaces,
+      );
     }
 
     const {
@@ -162,6 +172,7 @@ export const UserProviderEffect = () => {
     setCurrentUser,
     setCurrentUserWorkspace,
     setCurrentWorkspaceMembers,
+    setCurrentUserAvailableWorkspaces,
     isLoading,
     queryLoading,
     setCurrentWorkspace,

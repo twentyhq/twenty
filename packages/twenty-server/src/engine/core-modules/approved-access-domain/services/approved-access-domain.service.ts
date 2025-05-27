@@ -203,4 +203,14 @@ export class ApprovedAccessDomainService {
       },
     });
   }
+
+  async findValidatedApprovedAccessDomainWithWorkspaceByDomain(domain: string) {
+    return await this.approvedAccessDomainRepository.find({
+      relations: ['workspace'],
+      where: {
+        domain,
+        isValidated: true,
+      },
+    });
+  }
 }

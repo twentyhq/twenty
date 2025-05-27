@@ -7,6 +7,7 @@ import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { StyledDropdownMenuSubheader } from '@/ui/layout/dropdown/components/StyledDropdownMenuSubheader';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
 import { useLingui } from '@lingui/react/macro';
@@ -15,12 +16,18 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { Avatar, IconChevronLeft } from 'twenty-ui/display';
 import { MenuItemSelectAvatar, UndecoratedLink } from 'twenty-ui/navigation';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
+import { currentUserAvailableWorkspacesState } from '@/auth/states/currentUserAvailableWorkspaces';
+import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 
 export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const workspaces = useRecoilValue(workspacesState);
+  const currentUserAvailableWorkspaces = useRecoilValue(
+    currentUserAvailableWorkspacesState,
+  );
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
+  const { redirect } = useRedirect();
   const { t } = useLingui();
 
   const handleChange = async (workspace: Workspaces[0]) => {
@@ -52,6 +59,9 @@ export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
         }}
       />
       <DropdownMenuSeparator />
+      {currentUserAvailableWorkspaces.length > 0 && (
+        <StyledDropdownMenuSubheader>{t`Member of`}</StyledDropdownMenuSubheader>
+      )}
       <DropdownMenuItemsContainer>
         {workspaces
           .filter(
@@ -83,6 +93,42 @@ export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
             </UndecoratedLink>
           ))}
       </DropdownMenuItemsContainer>
+      {currentUserAvailableWorkspaces.length > 0 && (
+        <>
+          <StyledDropdownMenuSubheader>{t`Invitations`}</StyledDropdownMenuSubheader>
+          <DropdownMenuItemsContainer scrollable={false}>
+            {currentUserAvailableWorkspaces
+              .filter(
+                (workspace) =>
+                  workspace.id !== currentWorkspace?.id &&
+                  workspace.displayName
+                    ?.toLowerCase()
+                    .includes(searchValue.toLowerCase()),
+              )
+              .map((workspace) => (
+                <UndecoratedLink
+                  key={workspace.id}
+                  to={workspace.workspaceUrl}
+                  onClick={(event) => {
+                    event?.preventDefault();
+                    redirect(workspace.workspaceUrl);
+                  }}
+                >
+                  <MenuItemSelectAvatar
+                    text={workspace.displayName ?? '(No name)'}
+                    avatar={
+                      <Avatar
+                        placeholder={workspace.displayName || ''}
+                        avatarUrl={workspace.logo ?? DEFAULT_WORKSPACE_LOGO}
+                      />
+                    }
+                    selected={currentWorkspace?.id === workspace.id}
+                  />
+                </UndecoratedLink>
+              ))}
+          </DropdownMenuItemsContainer>
+        </>
+      )}
     </>
   );
 };

@@ -29,6 +29,8 @@ import { DeletedWorkspaceMemberTranspiler } from 'src/engine/core-modules/user/s
 import { userAutoResolverOpts } from './user.auto-resolver-opts';
 
 import { UserService } from './services/user.service';
+import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
+import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
 
 @Module({
   imports: [
@@ -53,6 +55,8 @@ import { UserService } from './services/user.service';
     FeatureFlagModule,
     PermissionsModule,
     UserWorkspaceModule,
+    WorkspaceInvitationModule,
+    ApprovedAccessDomainModule,
   ],
   exports: [UserService, DeletedWorkspaceMemberTranspiler],
   providers: [

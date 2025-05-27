@@ -10,8 +10,7 @@ export const CHECK_USER_EXISTS = gql`
           id
           displayName
           workspaceUrls {
-            subdomainUrl
-            customUrl
+            ...WorkspaceUrlsFragment
           }
           logo
           sso {

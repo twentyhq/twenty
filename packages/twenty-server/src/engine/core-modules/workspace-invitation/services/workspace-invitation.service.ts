@@ -102,6 +102,17 @@ export class WorkspaceInvitationService {
     return await this.getOneWorkspaceInvitation(workspace.id, email);
   }
 
+  async findInvitationsByEmail(email: string) {
+    return await this.appTokenRepository
+      .createQueryBuilder('appToken')
+      .where('"appToken".context->>\'email\' = :email', { email })
+      .andWhere('"appToken".type = :type', {
+        type: AppTokenType.InvitationToken,
+      })
+      .leftJoinAndSelect('appToken.workspace', 'workspace')
+      .getMany();
+  }
+
   async getOneWorkspaceInvitation(workspaceId: string, email: string) {
     return await this.appTokenRepository
       .createQueryBuilder('appToken')

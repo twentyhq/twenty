@@ -7,8 +7,7 @@ export const GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN = gql`
       logo
       displayName
       workspaceUrls {
-        subdomainUrl
-        customUrl
+        ...WorkspaceUrlsFragment
       }
       authProviders {
         sso {

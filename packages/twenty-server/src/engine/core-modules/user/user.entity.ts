@@ -22,6 +22,7 @@ import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboa
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AvailableWorkspacesToJoin } from 'src/engine/core-modules/user/dtos/available-workspaces-to-join';
 
 registerEnumType(OnboardingStatus, {
   name: 'OnboardingStatus',
@@ -122,4 +123,7 @@ export class User {
 
   @Field(() => UserWorkspace, { nullable: true })
   currentUserWorkspace?: Relation<UserWorkspace>;
+
+  @Field(() => [AvailableWorkspacesToJoin], { nullable: true })
+  availableWorkspaces: Array<AvailableWorkspacesToJoin>;
 }
