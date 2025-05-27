@@ -247,7 +247,7 @@ export class FieldMetadataRelatedRecordsService {
   public getOptionsDifferences(
     oldOptions: (FieldMetadataDefaultOption | FieldMetadataComplexOption)[],
     newOptions: (FieldMetadataDefaultOption | FieldMetadataComplexOption)[],
-    compareLabel: boolean = false,
+    compareLabel = false,
   ): GetOptionsDifferences {
     const differences: Differences<
       FieldMetadataDefaultOption | FieldMetadataComplexOption
@@ -258,6 +258,7 @@ export class FieldMetadataRelatedRecordsService {
     };
 
     const oldOptionsMap = new Map(oldOptions.map((opt) => [opt.id, opt]));
+
     for (const newOption of newOptions) {
       const oldOption = oldOptionsMap.get(newOption.id);
 
@@ -276,6 +277,7 @@ export class FieldMetadataRelatedRecordsService {
     }
 
     const newOptionsMap = new Map(newOptions.map((opt) => [opt.id, opt]));
+
     for (const oldOption of oldOptions) {
       if (!newOptionsMap.has(oldOption.id)) {
         differences.deleted.push(oldOption);
