@@ -1,6 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
 
-import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { GET_DATABASE_CONFIG_VARIABLE } from '@/settings/admin-panel/config-variables/graphql/queries/getDatabaseConfigVariable';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -22,8 +21,6 @@ export const useConfigVariableActions = (variableName: string) => {
     useCreateDatabaseConfigVariableMutation();
   const [deleteDatabaseConfigVariable] =
     useDeleteDatabaseConfigVariableMutation();
-
-  const { refetchClientConfig } = useClientConfig();
 
   const handleUpdateVariable = async (
     value: ConfigVariableValue,
@@ -67,11 +64,12 @@ export const useConfigVariableActions = (variableName: string) => {
         });
       }
 
-      await refetchClientConfig();
-
-      enqueueSnackBar(t`Variable updated successfully`, {
-        variant: SnackBarVariant.Success,
-      });
+      enqueueSnackBar(
+        t`Variable updated successfully. Please refresh the page to see the changes.`,
+        {
+          variant: SnackBarVariant.Success,
+        },
+      );
     } catch (error) {
       enqueueSnackBar(t`Failed to update variable`, {
         variant: SnackBarVariant.Error,
@@ -97,9 +95,14 @@ export const useConfigVariableActions = (variableName: string) => {
         ],
       });
 
-      await refetchClientConfig();
+      enqueueSnackBar(
+        t`Variable deleted successfully. Please refresh the page to see the changes.`,
+        {
+          variant: SnackBarVariant.Success,
+        },
+      );
     } catch (error) {
-      enqueueSnackBar(t`Failed to remove  override`, {
+      enqueueSnackBar(t`Failed to remove override`, {
         variant: SnackBarVariant.Error,
       });
     }
