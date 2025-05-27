@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { MAX_OPTIONS_TO_DISPLAY } from 'twenty-shared/constants';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, parseJson } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
@@ -9,12 +8,12 @@ import {
   FieldMetadataComplexOption,
   FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { isSelectFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-select-field-metadata-type.util';
+import { SelectOrMultiSelectFieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/utils/is-select-or-multi-select-field-metadata.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
@@ -31,12 +30,6 @@ type GetOptionsDifferences = Differences<
   FieldMetadataDefaultOption | FieldMetadataComplexOption
 >;
 
-export type SelectFieldMetadataEntity = FieldMetadataEntity<
-  | FieldMetadataType.SELECT
-  | FieldMetadataType.RATING
-  | FieldMetadataType.MULTI_SELECT
->;
-
 @Injectable()
 export class FieldMetadataRelatedRecordsService {
   constructor(
@@ -44,8 +37,8 @@ export class FieldMetadataRelatedRecordsService {
   ) {}
 
   public async updateRelatedViewGroups(
-    oldFieldMetadata: SelectFieldMetadataEntity,
-    newFieldMetadata: SelectFieldMetadataEntity,
+    oldFieldMetadata: SelectOrMultiSelectFieldMetadataEntity,
+    newFieldMetadata: SelectOrMultiSelectFieldMetadataEntity,
   ): Promise<void> {
     // TODO legacy should support multi-select and rating ?
     if (
@@ -54,7 +47,7 @@ export class FieldMetadataRelatedRecordsService {
     ) {
       return;
     }
-    const views = await this.getFieldMetadataViewEntity(
+    const views = await this.getFieldMetadataViewWithRelation(
       newFieldMetadata,
       'viewGroups',
     );
@@ -132,10 +125,10 @@ export class FieldMetadataRelatedRecordsService {
   }
 
   public async updateRelatedViewFilters(
-    oldFieldMetadata: SelectFieldMetadataEntity,
-    newFieldMetadata: SelectFieldMetadataEntity,
+    oldFieldMetadata: SelectOrMultiSelectFieldMetadataEntity,
+    newFieldMetadata: SelectOrMultiSelectFieldMetadataEntity,
   ): Promise<void> {
-    const views = await this.getFieldMetadataViewEntity(
+    const views = await this.getFieldMetadataViewWithRelation(
       newFieldMetadata,
       'viewFilters',
     );
@@ -167,10 +160,11 @@ export class FieldMetadataRelatedRecordsService {
       for (const viewFilter of filter.viewFilters) {
         const viewFilterValue = parseJson<string[]>(viewFilter.value);
 
+        // Note below assertion could be removed after https://github.com/twentyhq/core-team-issues/issues/1009 completion
         if (!isDefined(viewFilterValue) || !Array.isArray(viewFilterValue)) {
           throw new FieldMetadataException(
-            `Invalid view filter value for view filter ${viewFilter.id}`,
-            FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+            `Unexpected invalid view filter value for filter ${viewFilter.id}`,
+            FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
           );
         }
 
@@ -222,7 +216,7 @@ export class FieldMetadataRelatedRecordsService {
   }
 
   async syncNoValueViewGroup(
-    fieldMetadata: SelectFieldMetadataEntity,
+    fieldMetadata: SelectOrMultiSelectFieldMetadataEntity,
     view: ViewWorkspaceEntity,
     viewGroupRepository: WorkspaceRepository<ViewGroupWorkspaceEntity>,
   ): Promise<void> {
@@ -280,9 +274,9 @@ export class FieldMetadataRelatedRecordsService {
     return differences;
   }
 
-  private async getFieldMetadataViewEntity(
-    fieldMetadata: SelectFieldMetadataEntity,
-    entity: 'viewGroups' | 'viewFilters',
+  private async getFieldMetadataViewWithRelation(
+    fieldMetadata: SelectOrMultiSelectFieldMetadataEntity,
+    relation: keyof Pick<ViewWorkspaceEntity, 'viewGroups' | 'viewFilters'>,
   ): Promise<ViewWorkspaceEntity[]> {
     const viewRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewWorkspaceEntity>(
@@ -292,11 +286,11 @@ export class FieldMetadataRelatedRecordsService {
 
     return viewRepository.find({
       where: {
-        [entity]: {
+        [relation]: {
           fieldMetadataId: fieldMetadata.id,
         },
       },
-      relations: [entity],
+      relations: [relation],
     });
   }
 
