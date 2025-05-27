@@ -5,11 +5,11 @@ export class AddIconToRole1741859116265 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "metadata"."role" ADD "icon" character varying`,
+      `ALTER TABLE "core"."role" ADD "icon" character varying`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`ALTER TABLE "metadata"."role" DROP COLUMN "icon"`);
+    await queryRunner.query(`ALTER TABLE "core"."role" DROP COLUMN "icon"`);
   }
 }

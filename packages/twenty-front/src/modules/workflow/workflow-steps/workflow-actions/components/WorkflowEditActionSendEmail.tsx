@@ -174,9 +174,9 @@ export const WorkflowEditActionSendEmail = ({
     recordGqlFields: {
       id: true,
       handle: true,
-      accountOwnerId: true,
-      scopes: true,
       provider: true,
+      scopes: true,
+      accountOwnerId: true,
     },
   });
 

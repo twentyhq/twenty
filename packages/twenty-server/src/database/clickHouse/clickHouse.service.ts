@@ -133,6 +133,7 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async insert<T extends Record<string, any>>(
     table: string,
     values: T[],
@@ -164,6 +165,7 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
   // Method to execute a select query
   public async select<T>(
     query: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     params?: Record<string, any>,
     clientId?: string,
   ): Promise<T[]> {

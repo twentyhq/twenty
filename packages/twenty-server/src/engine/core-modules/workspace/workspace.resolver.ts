@@ -12,7 +12,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import assert from 'assert';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { isDefined } from 'twenty-shared/utils';
+import { buildSignedPath, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
@@ -43,7 +43,6 @@ import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -53,6 +52,8 @@ import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation-exception.filter';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
+import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
 
 import { Workspace } from './workspace.entity';
 
@@ -89,19 +90,12 @@ export class WorkspaceResolver {
   }
 
   @Mutation(() => Workspace)
-  @UseGuards(UserAuthGuard)
+  @UseGuards(UserAuthGuard, WorkspaceAuthGuard)
   async activateWorkspace(
     @Args('data') data: ActivateWorkspaceInput,
     @AuthUser() user: User,
-    @OriginHeader() origin: string,
+    @AuthWorkspace() workspace: Workspace,
   ) {
-    const workspace =
-      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
-        origin,
-      );
-
-    workspaceValidator.assertIsDefinedOrThrow(workspace);
-
     return await this.workspaceService.activateWorkspace(user, workspace, data);
   }
 
@@ -127,7 +121,7 @@ export class WorkspaceResolver {
     }
   }
 
-  @Mutation(() => String)
+  @Mutation(() => SignedFileDTO)
   @UseGuards(
     WorkspaceAuthGuard,
     SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
@@ -136,12 +130,12 @@ export class WorkspaceResolver {
     @AuthWorkspace() { id }: Workspace,
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename, mimetype }: FileUpload,
-  ): Promise<string> {
+  ): Promise<SignedFileDTO> {
     const stream = createReadStream();
     const buffer = await streamToBuffer(stream);
     const fileFolder = FileFolder.WorkspaceLogo;
 
-    const { paths } = await this.fileUploadService.uploadImage({
+    const { files } = await this.fileUploadService.uploadImage({
       file: buffer,
       filename,
       mimeType: mimetype,
@@ -149,15 +143,15 @@ export class WorkspaceResolver {
       workspaceId: id,
     });
 
+    if (!files.length) {
+      throw new Error('Failed to upload workspace logo');
+    }
+
     await this.workspaceService.updateOne(id, {
-      logo: paths[0],
+      logo: files[0].path,
     });
 
-    const workspaceLogoToken = this.fileService.encodeFileToken({
-      workspaceId: id,
-    });
-
-    return `${paths[0]}?token=${workspaceLogoToken}`;
+    return files[0];
   }
 
   @ResolveField(() => [FeatureFlagDTO], { nullable: true })
@@ -235,11 +229,15 @@ export class WorkspaceResolver {
   async logo(@Parent() workspace: Workspace): Promise<string> {
     if (workspace.logo) {
       try {
-        const workspaceLogoToken = this.fileService.encodeFileToken({
+        const signedPayload = this.fileService.encodeFileToken({
+          filename: extractFilenameFromPath(workspace.logo),
           workspaceId: workspace.id,
         });
 
-        return `${workspace.logo}?token=${workspaceLogoToken}`;
+        return buildSignedPath({
+          path: workspace.logo,
+          token: signedPayload,
+        });
       } catch (e) {
         return workspace.logo;
       }
@@ -292,7 +290,7 @@ export class WorkspaceResolver {
 
   @Query(() => PublicWorkspaceDataOutput)
   async getPublicWorkspaceDataByDomain(
-    @OriginHeader() origin: string,
+    @Args('origin') origin: string,
   ): Promise<PublicWorkspaceDataOutput | undefined> {
     try {
       const workspace =
@@ -306,11 +304,15 @@ export class WorkspaceResolver {
 
       if (workspace.logo) {
         try {
-          const workspaceLogoToken = this.fileService.encodeFileToken({
+          const signedPayload = this.fileService.encodeFileToken({
+            filename: extractFilenameFromPath(workspace.logo),
             workspaceId: workspace.id,
           });
 
-          workspaceLogoWithToken = `${workspace.logo}?token=${workspaceLogoToken}`;
+          workspaceLogoWithToken = buildSignedPath({
+            path: workspace.logo,
+            token: signedPayload,
+          });
         } catch (e) {
           workspaceLogoWithToken = workspace.logo;
         }

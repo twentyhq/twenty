@@ -4,7 +4,8 @@ import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { useCallback } from 'react';
+import { useRecoilCallback } from 'recoil';
+import { useDebouncedCallback } from 'use-debounce';
 
 export const MultipleRecordPickerSearchInput = () => {
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
@@ -16,16 +17,32 @@ export const MultipleRecordPickerSearchInput = () => {
 
   const { performSearch } = useMultipleRecordPickerPerformSearch();
 
-  const handleFilterChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setRecordPickerSearchFilter(event.currentTarget.value);
-      performSearch({
-        multipleRecordPickerInstanceId: componentInstanceId,
-        forceSearchFilter: event.currentTarget.value,
-      });
-    },
-    [componentInstanceId, performSearch, setRecordPickerSearchFilter],
+  const debouncedSearch = useDebouncedCallback(
+    useRecoilCallback(
+      ({ set }) =>
+        (searchFilter: string) => {
+          set(
+            multipleRecordPickerSearchFilterComponentState.atomFamily({
+              instanceId: componentInstanceId,
+            }),
+            searchFilter,
+          );
+
+          performSearch({
+            multipleRecordPickerInstanceId: componentInstanceId,
+            forceSearchFilter: searchFilter,
+          });
+        },
+      [componentInstanceId, performSearch],
+    ),
+    500,
   );
+
+  const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newSearchFilter = event.currentTarget.value;
+    setRecordPickerSearchFilter(newSearchFilter);
+    debouncedSearch(newSearchFilter);
+  };
 
   return (
     <DropdownMenuSearchInput

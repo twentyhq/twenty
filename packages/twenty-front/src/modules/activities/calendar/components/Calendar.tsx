@@ -12,7 +12,7 @@ import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { TimelineCalendarEventsWithTotal } from '~/generated/graphql';
+import { H3Title } from 'twenty-ui/display';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -22,7 +22,7 @@ import {
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
   Section,
 } from 'twenty-ui/layout';
-import { H3Title } from 'twenty-ui/display';
+import { TimelineCalendarEventsWithTotal } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -82,12 +82,9 @@ export const Calendar = ({
 
   const {
     calendarEventsByDayTime,
-    currentCalendarEvent,
     daysByMonthTime,
-    getNextCalendarEvent,
     monthTimes,
     monthTimesByYear,
-    updateCurrentCalendarEvent,
   } = useCalendarEvents(timelineCalendarEvents || []);
 
   if (firstQueryLoading) {
@@ -119,10 +116,6 @@ export const Calendar = ({
     <CalendarContext.Provider
       value={{
         calendarEventsByDayTime,
-        currentCalendarEvent,
-        displayCurrentEventCursor: true,
-        getNextCalendarEvent,
-        updateCurrentCalendarEvent,
       }}
     >
       <StyledContainer>

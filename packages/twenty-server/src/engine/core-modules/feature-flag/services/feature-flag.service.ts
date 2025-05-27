@@ -74,6 +74,7 @@ export class FeatureFlagService {
       await this.workspaceFeatureFlagsMapCacheService.recomputeFeatureFlagsMapCache(
         {
           workspaceId: workspaceId,
+          ignoreLock: true,
         },
       );
     }
@@ -98,6 +99,7 @@ export class FeatureFlagService {
       ),
     );
 
+    // @ts-expect-error legacy noImplicitAny
     const featureFlagKey = FeatureFlagKey[featureFlag];
 
     if (shouldBePublic) {
@@ -132,7 +134,8 @@ export class FeatureFlagService {
 
     await this.workspaceFeatureFlagsMapCacheService.recomputeFeatureFlagsMapCache(
       {
-        workspaceId: workspaceId,
+        workspaceId,
+        ignoreLock: true,
       },
     );
 

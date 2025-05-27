@@ -112,10 +112,7 @@ export const SettingsDataModelFieldPreview = ({
         }}
       >
         {isDefined(previewRecord) ? (
-          <SettingsDataModelSetPreviewRecordEffect
-            fieldName={fieldName}
-            record={previewRecord}
-          />
+          <SettingsDataModelSetPreviewRecordEffect record={previewRecord} />
         ) : (
           <SettingsDataModelSetFieldValueEffect
             recordId={recordId}

@@ -3,9 +3,9 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { buildFindOneRecordForShowPageOperationSignature } from '@/object-record/record-show/graphql/operations/factories/findOneRecordForShowPageOperationSignatureFactory';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useEffect } from 'react';
-import { useRecoilState } from 'recoil';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 type RecordShowEffectProps = {
@@ -26,22 +26,32 @@ export const RecordShowEffect = ({
       objectMetadataItems,
     });
 
-  const { record } = useFindOneRecord({
+  const { record, loading } = useFindOneRecord({
     objectRecordId: recordId,
     objectNameSingular,
     recordGqlFields: FIND_ONE_RECORD_FOR_SHOW_PAGE_OPERATION_SIGNATURE.fields,
     withSoftDeleted: true,
   });
 
-  const [recordFromStore, setRecordFromStore] = useRecoilState(
-    recordStoreFamilyState(recordId),
+  const setRecordStore = useRecoilCallback(
+    ({ snapshot, set }) =>
+      async (newRecord: ObjectRecord | null | undefined) => {
+        const previousRecordValue = snapshot
+          .getLoadable(recordStoreFamilyState(recordId))
+          .getValue();
+
+        if (JSON.stringify(previousRecordValue) !== JSON.stringify(newRecord)) {
+          set(recordStoreFamilyState(recordId), newRecord);
+        }
+      },
+    [recordId],
   );
 
   useEffect(() => {
-    if (isDefined(record) && !isDeeplyEqual(record, recordFromStore)) {
-      setRecordFromStore(record);
+    if (!loading && isDefined(record)) {
+      setRecordStore(record);
     }
-  }, [record, recordFromStore, setRecordFromStore]);
+  }, [record, setRecordStore, loading]);
 
   return <></>;
 };

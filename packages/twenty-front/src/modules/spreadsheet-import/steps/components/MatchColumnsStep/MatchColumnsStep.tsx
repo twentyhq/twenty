@@ -6,7 +6,6 @@ import { StepNavigationButton } from '@/spreadsheet-import/components/StepNaviga
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { ImportedRow, ImportedStructuredRow } from '@/spreadsheet-import/types';
 import { findUnmatchedRequiredFields } from '@/spreadsheet-import/utils/findUnmatchedRequiredFields';
-import { getMatchedColumns } from '@/spreadsheet-import/utils/getMatchedColumns';
 import { normalizeTableData } from '@/spreadsheet-import/utils/normalizeTableData';
 import { setColumn } from '@/spreadsheet-import/utils/setColumn';
 import { setIgnoreColumn } from '@/spreadsheet-import/utils/setIgnoreColumn';
@@ -26,6 +25,7 @@ import { SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn'
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { SpreadsheetImportField } from '@/spreadsheet-import/types/SpreadsheetImportField';
+import { getMatchedColumnsWithFuse } from '@/spreadsheet-import/utils/getMatchedColumnsWithFuse';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
@@ -82,8 +82,7 @@ export const MatchColumnsStep = <T extends string>({
   const { enqueueDialog } = useDialogManager();
   const { enqueueSnackBar } = useSnackBar();
   const dataExample = data.slice(0, 2);
-  const { fields, autoMapHeaders, autoMapDistance } =
-    useSpreadsheetImportInternal<T>();
+  const { fields, autoMapHeaders } = useSpreadsheetImportInternal<T>();
   const [isLoading, setIsLoading] = useState(false);
   const [columns, setColumns] = useRecoilState(
     initialComputedColumnsSelector(headerValues),
@@ -264,7 +263,13 @@ export const MatchColumnsStep = <T extends string>({
       (column) => column.type === SpreadsheetColumnType.empty,
     );
     if (autoMapHeaders && isInitialColumnsState) {
-      setColumns(getMatchedColumns(columns, fields, data, autoMapDistance));
+      const { matchedColumns } = getMatchedColumnsWithFuse(
+        columns,
+        fields,
+        data,
+      );
+
+      setColumns(matchedColumns);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -275,7 +280,7 @@ export const MatchColumnsStep = <T extends string>({
         <StyledContent>
           <Heading
             title={t`Match Columns`}
-            description={t`Select the correct field for each column you'd like to import.`}
+            description={t`⚠️ Please verify the auto mapping of the columns. You can also ignore or change the mapping of the columns.`}
           />
           <ColumnGrid
             columns={columns}

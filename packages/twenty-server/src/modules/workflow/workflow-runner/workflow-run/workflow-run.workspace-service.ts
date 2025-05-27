@@ -115,6 +115,7 @@ export class WorkflowRunWorkspaceService {
     output,
   }: {
     workflowRunId: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     context: Record<string, any>;
     output: WorkflowRunOutput;
   }) {
@@ -205,6 +206,7 @@ export class WorkflowRunWorkspaceService {
   }: {
     workflowRunId: string;
     stepOutput: StepOutput;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     context: Record<string, any>;
   }) {
     const workflowRunRepository =

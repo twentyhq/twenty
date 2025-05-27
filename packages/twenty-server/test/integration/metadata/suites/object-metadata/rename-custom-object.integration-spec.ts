@@ -63,10 +63,13 @@ describe('Custom object renaming', () => {
     },
   });
 
+  // @ts-expect-error legacy noImplicitAny
   const fillStandardObjectRelationsMapObjectMetadataId = (standardObjects) => {
     STANDARD_OBJECT_RELATIONS.forEach((relation) => {
+      // @ts-expect-error legacy noImplicitAny
       standardObjectRelationsMap[relation].objectMetadataId =
         standardObjects.body.data.objects.edges.find(
+          // @ts-expect-error legacy noImplicitAny
           (object) => object.node.nameSingular === relation,
         ).node.id;
     });
@@ -108,22 +111,27 @@ describe('Custom object renaming', () => {
 
     const relationFieldsMetadataForListing = fields.body.data.fields.edges
       .filter(
+        // @ts-expect-error legacy noImplicitAny
         (field) =>
           field.node.name === `${LISTING_NAME_SINGULAR}` &&
           field.node.type === FieldMetadataType.RELATION,
       )
+      // @ts-expect-error legacy noImplicitAny
       .map((field) => field.node);
 
     STANDARD_OBJECT_RELATIONS.forEach((relation) => {
       // relation field
       const relationFieldMetadataId = relationFieldsMetadataForListing.find(
+        // @ts-expect-error legacy noImplicitAny
         (field) =>
           field.object.id ===
+          // @ts-expect-error legacy noImplicitAny
           standardObjectRelationsMap[relation].objectMetadataId,
       ).id;
 
       expect(relationFieldMetadataId).not.toBeUndefined();
 
+      // @ts-expect-error legacy noImplicitAny
       standardObjectRelationsMap[relation].relationFieldMetadataId =
         relationFieldMetadataId;
     });
@@ -138,6 +146,7 @@ describe('Custom object renaming', () => {
       standardObjectsGraphqlOperation,
     );
     const personObjectId = standardObjects.body.data.objects.edges.find(
+      // @ts-expect-error legacy noImplicitAny
       (object) => object.node.nameSingular === 'person',
     ).node.id;
 
@@ -208,6 +217,7 @@ describe('Custom object renaming', () => {
     const fieldsResponse = await makeMetadataAPIRequest(fieldsGraphqlOperation);
 
     const fieldsMetadata = fieldsResponse.body.data.fields.edges.map(
+      // @ts-expect-error legacy noImplicitAny
       (field) => field.node,
     );
 
@@ -215,9 +225,11 @@ describe('Custom object renaming', () => {
     STANDARD_OBJECT_RELATIONS.forEach((relation) => {
       // relation field
       const relationFieldMetadataId =
+        // @ts-expect-error legacy noImplicitAny
         standardObjectRelationsMap[relation].relationFieldMetadataId;
 
       const updatedRelationFieldMetadataId = fieldsMetadata.find(
+        // @ts-expect-error legacy noImplicitAny
         (field) => field.id === relationFieldMetadataId,
       );
 
@@ -227,6 +239,7 @@ describe('Custom object renaming', () => {
 
     // custom relation are unchanged
     const updatedRelationFieldMetadata = fieldsMetadata.find(
+      // @ts-expect-error legacy noImplicitAny
       (field) => field.id === relationFieldMetadataOnPersonId,
     );
 

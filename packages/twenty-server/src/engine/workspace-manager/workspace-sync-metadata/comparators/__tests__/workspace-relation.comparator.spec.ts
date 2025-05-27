@@ -18,9 +18,11 @@ describe('WorkspaceRelationComparator', () => {
   }
 
   it('should generate CREATE action for new relations', () => {
+    // @ts-expect-error legacy noImplicitAny
     const original = [];
     const standard = [createMockRelationMetadata({})];
 
+    // @ts-expect-error legacy noImplicitAny
     const result = comparator.compare(original, standard);
 
     expect(result).toEqual([
@@ -36,8 +38,10 @@ describe('WorkspaceRelationComparator', () => {
 
   it('should generate DELETE action for removed relations', () => {
     const original = [createMockRelationMetadata({ id: '1' })];
+    // @ts-expect-error legacy noImplicitAny
     const standard = [];
 
+    // @ts-expect-error legacy noImplicitAny
     const result = comparator.compare(original, standard);
 
     expect(result).toEqual([

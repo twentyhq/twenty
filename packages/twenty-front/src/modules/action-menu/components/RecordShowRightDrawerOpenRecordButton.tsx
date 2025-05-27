@@ -38,7 +38,7 @@ export const RecordShowRightDrawerOpenRecordButton = ({
   objectNameSingular,
   recordId,
 }: RecordShowRightDrawerOpenRecordButtonProps) => {
-  const record = useRecoilValue<ObjectRecord | null>(
+  const record = useRecoilValue<ObjectRecord | null | undefined>(
     recordStoreFamilyState(recordId),
   );
   const { closeCommandMenu } = useCommandMenu();

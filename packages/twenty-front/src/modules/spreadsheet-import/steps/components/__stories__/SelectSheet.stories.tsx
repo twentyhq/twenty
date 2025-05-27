@@ -1,11 +1,13 @@
 import { Meta } from '@storybook/react';
 
 import { mockRsiValues } from '@/spreadsheet-import/__mocks__/mockRsiValues';
-import { ModalWrapper } from '@/spreadsheet-import/components/ModalWrapper';
 import { ReactSpreadsheetImportContextProvider } from '@/spreadsheet-import/components/ReactSpreadsheetImportContextProvider';
+import { SpreadSheetImportModalWrapper } from '@/spreadsheet-import/components/SpreadSheetImportModalWrapper';
 import { SelectSheetStep } from '@/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
+import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
+import { RecoilRoot } from 'recoil';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const meta: Meta<typeof SelectSheetStep> = {
@@ -14,7 +16,23 @@ const meta: Meta<typeof SelectSheetStep> = {
   parameters: {
     layout: 'fullscreen',
   },
-  decorators: [I18nFrontDecorator],
+  decorators: [
+    (Story) => (
+      <RecoilRoot
+        initializeState={({ set }) => {
+          set(
+            isModalOpenedComponentState.atomFamily({
+              instanceId: 'select-sheet-step',
+            }),
+            true,
+          );
+        }}
+      >
+        <Story />
+      </RecoilRoot>
+    ),
+    I18nFrontDecorator,
+  ],
 };
 
 export default meta;
@@ -24,7 +42,10 @@ const sheetNames = ['Sheet1', 'Sheet2', 'Sheet3'];
 export const Default = () => (
   <DialogManagerScope dialogManagerScopeId="dialog-manager">
     <ReactSpreadsheetImportContextProvider values={mockRsiValues}>
-      <ModalWrapper isOpen={true} onClose={() => null}>
+      <SpreadSheetImportModalWrapper
+        modalId="select-sheet-step"
+        onClose={() => null}
+      >
         <SelectSheetStep
           sheetNames={sheetNames}
           setCurrentStepState={() => {}}
@@ -55,7 +76,7 @@ export const Default = () => (
           onError={() => null}
           onBack={() => Promise.resolve()}
         />
-      </ModalWrapper>
+      </SpreadSheetImportModalWrapper>
     </ReactSpreadsheetImportContextProvider>
   </DialogManagerScope>
 );

@@ -15,6 +15,7 @@ export class LLMTracingModule {
   static forRoot(options: LLMTracingModuleAsyncOptions): DynamicModule {
     const provider = {
       provide: LLM_TRACING_DRIVER,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       useFactory: (...args: any[]) => {
         const config = options.useFactory(...args);
 

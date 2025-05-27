@@ -22,6 +22,7 @@ export class BeforeDeleteOneRelation implements BeforeDeleteOneHook {
 
   async run(
     instance: DeleteOneInputType,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     context: any,
   ): Promise<DeleteOneInputType> {
     const workspaceId = context?.req?.workspace?.id;

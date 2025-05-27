@@ -226,7 +226,7 @@ export class WorkspaceRepository<
     const formattedEntityOrEntities = await this.formatData(entityOrEntities);
     let result: U | U[];
 
-    // Needed becasuse save method has multiple signature, otherwise we will need to do a type assertion
+    // Needed because save method has multiple signature, otherwise we will need to do a type assertion
     if (Array.isArray(formattedEntityOrEntities)) {
       result = await manager.save(
         this.target,
@@ -729,14 +729,7 @@ export class WorkspaceRepository<
     objectMetadata ??= await this.getObjectMetadataFromTarget();
 
     const objectMetadataMaps = this.internalContext.objectMetadataMaps;
-    const isNewRelationEnabled =
-      this.internalContext.featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled];
 
-    return formatResult(
-      data,
-      objectMetadata,
-      objectMetadataMaps,
-      isNewRelationEnabled,
-    ) as T;
+    return formatResult(data, objectMetadata, objectMetadataMaps) as T;
   }
 }

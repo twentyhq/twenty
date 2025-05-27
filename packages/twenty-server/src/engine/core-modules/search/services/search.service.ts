@@ -1,18 +1,20 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { getLogoUrlFromDomainName } from 'twenty-shared/utils';
+import { buildSignedPath, getLogoUrlFromDomainName } from 'twenty-shared/utils';
 import { Brackets, ObjectLiteral } from 'typeorm';
+import chunk from 'lodash.chunk';
 
-import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
+import {
+  ObjectRecord,
+  ObjectRecordFilter,
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { RESULTS_LIMIT_BY_OBJECT_WITHOUT_SEARCH_TERMS } from 'src/engine/core-modules/search/constants/results-limit-by-object-without-search-terms';
 import { STANDARD_OBJECTS_BY_PRIORITY_RANK } from 'src/engine/core-modules/search/constants/standard-objects-by-priority-rank';
 import { ObjectRecordFilterInput } from 'src/engine/core-modules/search/dtos/object-record-filter-input';
-import { SearchRecordDTO } from 'src/engine/core-modules/search/dtos/search-record-dto';
 import {
   SearchException,
   SearchExceptionCode,
@@ -22,10 +24,125 @@ import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/searc
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { generateObjectMetadataMaps } from 'src/engine/metadata-modules/utils/generate-object-metadata-maps.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import {
+  decodeCursor,
+  encodeCursorData,
+} from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
+import {
+  WorkspaceMetadataVersionException,
+  WorkspaceMetadataVersionExceptionCode,
+} from 'src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception';
+import {
+  WorkspaceMetadataCacheException,
+  WorkspaceMetadataCacheExceptionCode,
+} from 'src/engine/metadata-modules/workspace-metadata-cache/exceptions/workspace-metadata-cache.exception';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
+import { SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
+import { SearchResultConnectionDTO } from 'src/engine/core-modules/search/dtos/search-result-connection.dto';
+import { SearchResultEdgeDTO } from 'src/engine/core-modules/search/dtos/search-result-edge.dto';
+import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
+import { SearchRecordDTO } from 'src/engine/core-modules/search/dtos/search-record.dto';
+
+type LastRanks = { tsRankCD: number; tsRank: number };
+
+export type SearchCursor = {
+  lastRanks: LastRanks;
+  lastRecordIdsPerObject: Record<string, string | undefined>;
+};
+
+const OBJECT_METADATA_ITEMS_CHUNK_SIZE = 5;
 
 @Injectable()
 export class SearchService {
-  constructor(private readonly fileService: FileService) {}
+  constructor(
+    private readonly twentyORMManager: TwentyORMManager,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly fileService: FileService,
+  ) {}
+
+  async getObjectMetadataItemWithFieldMaps(workspace: Workspace) {
+    const currentCacheVersion =
+      await this.workspaceCacheStorageService.getMetadataVersion(workspace.id);
+
+    if (currentCacheVersion === undefined) {
+      throw new WorkspaceMetadataVersionException(
+        `Metadata version not found for workspace ${workspace.id}`,
+        WorkspaceMetadataVersionExceptionCode.METADATA_VERSION_NOT_FOUND,
+      );
+    }
+
+    const objectMetadataMaps =
+      await this.workspaceCacheStorageService.getObjectMetadataMaps(
+        workspace.id,
+        currentCacheVersion,
+      );
+
+    if (!objectMetadataMaps) {
+      throw new WorkspaceMetadataCacheException(
+        `Object metadata map not found for workspace ${workspace.id} and metadata version ${currentCacheVersion}`,
+        WorkspaceMetadataCacheExceptionCode.OBJECT_METADATA_MAP_NOT_FOUND,
+      );
+    }
+
+    return Object.values(objectMetadataMaps.byId);
+  }
+
+  async getAllRecordsWithObjectMetadataItems({
+    objectMetadataItemWithFieldMaps,
+    includedObjectNameSingulars,
+    excludedObjectNameSingulars,
+    searchInput,
+    limit,
+    filter,
+    after,
+  }: {
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps[];
+  } & SearchArgs) {
+    const filteredObjectMetadataItems = this.filterObjectMetadataItems({
+      objectMetadataItemWithFieldMaps,
+      includedObjectNameSingulars: includedObjectNameSingulars ?? [],
+      excludedObjectNameSingulars: excludedObjectNameSingulars ?? [],
+    });
+
+    const allRecordsWithObjectMetadataItems: RecordsWithObjectMetadataItem[] =
+      [];
+
+    const filteredObjectMetadataItemsChunks = chunk(
+      filteredObjectMetadataItems,
+      OBJECT_METADATA_ITEMS_CHUNK_SIZE,
+    );
+
+    for (const objectMetadataItemChunk of filteredObjectMetadataItemsChunks) {
+      const recordsWithObjectMetadataItems = await Promise.all(
+        objectMetadataItemChunk.map(async (objectMetadataItem) => {
+          const repository =
+            await this.twentyORMManager.getRepository<ObjectRecord>(
+              objectMetadataItem.nameSingular,
+            );
+
+          return {
+            objectMetadataItem,
+            records: await this.buildSearchQueryAndGetRecords({
+              entityManager: repository,
+              objectMetadataItem,
+              searchTerms: formatSearchTerms(searchInput, 'and'),
+              searchTermsOr: formatSearchTerms(searchInput, 'or'),
+              limit: limit as number,
+              filter: filter ?? ({} as ObjectRecordFilter),
+              after,
+            }),
+          };
+        }),
+      );
+
+      allRecordsWithObjectMetadataItems.push(...recordsWithObjectMetadataItems);
+    }
+
+    return allRecordsWithObjectMetadataItems;
+  }
 
   filterObjectMetadataItems({
     objectMetadataItemWithFieldMaps,
@@ -56,19 +173,19 @@ export class SearchService {
   async buildSearchQueryAndGetRecords<Entity extends ObjectLiteral>({
     entityManager,
     objectMetadataItem,
-    featureFlagMap,
     searchTerms,
     searchTermsOr,
     limit,
     filter,
+    after,
   }: {
     entityManager: WorkspaceRepository<Entity>;
     objectMetadataItem: ObjectMetadataItemWithFieldMaps;
-    featureFlagMap: FeatureFlagMap;
     searchTerms: string;
     searchTermsOr: string;
     limit: number;
     filter: ObjectRecordFilterInput;
+    after?: string;
   }) {
     const queryBuilder = entityManager.createQueryBuilder();
 
@@ -76,7 +193,6 @@ export class SearchService {
       objectMetadataItem.fieldsByName,
       objectMetadataItem.fieldsByJoinColumnName,
       generateObjectMetadataMaps([objectMetadataItem]),
-      featureFlagMap,
     );
 
     queryParser.applyFilterToBuilder(
@@ -96,51 +212,102 @@ export class SearchService {
       ...(imageIdentifierField ? [imageIdentifierField] : []),
     ].map((field) => `"${field}"`);
 
-    const searchQuery = searchTerms
-      ? queryBuilder
-          .select(fieldsToSelect)
-          .addSelect(
-            `ts_rank_cd("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTerms))`,
-            'tsRankCD',
-          )
-          .addSelect(
-            `ts_rank("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTerms))`,
-            'tsRank',
-          )
-          .andWhere(
-            new Brackets((qb) => {
-              qb.where(
-                `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery('simple', :searchTerms)`,
-                { searchTerms },
-              ).orWhere(
-                `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery('simple', :searchTermsOr)`,
-                { searchTermsOr },
-              );
-            }),
-          )
-          .orderBy(
-            `ts_rank_cd("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTerms))`,
-            'DESC',
-          )
-          .addOrderBy(
-            `ts_rank("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTermsOr))`,
-            'DESC',
-          )
-          .setParameter('searchTerms', searchTerms)
-          .setParameter('searchTermsOr', searchTermsOr)
-          .take(limit)
-      : queryBuilder
-          .select(fieldsToSelect)
-          .addSelect('0', 'tsRankCD')
-          .addSelect('0', 'tsRank')
-          .andWhere(
-            new Brackets((qb) => {
-              qb.where(`"${SEARCH_VECTOR_FIELD.name}" IS NOT NULL`);
-            }),
-          )
-          .take(RESULTS_LIMIT_BY_OBJECT_WITHOUT_SEARCH_TERMS);
+    const tsRankCDExpr = `ts_rank_cd("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTerms))`;
 
-    return await searchQuery.getRawMany();
+    const tsRankExpr = `ts_rank("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTermsOr))`;
+
+    const cursorWhereCondition = this.computeCursorWhereCondition({
+      after,
+      objectMetadataNameSingular: objectMetadataItem.nameSingular,
+      tsRankExpr,
+      tsRankCDExpr,
+    });
+
+    queryBuilder
+      .select(fieldsToSelect)
+      .addSelect(tsRankCDExpr, 'tsRankCD')
+      .addSelect(tsRankExpr, 'tsRank');
+
+    if (isNonEmptyString(searchTerms)) {
+      queryBuilder.andWhere(
+        new Brackets((qb) => {
+          qb.where(
+            `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery('simple', :searchTerms)`,
+            { searchTerms },
+          ).orWhere(
+            `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery('simple', :searchTermsOr)`,
+            { searchTermsOr },
+          );
+        }),
+      );
+    } else {
+      queryBuilder.andWhere(
+        new Brackets((qb) => {
+          qb.where(`"${SEARCH_VECTOR_FIELD.name}" IS NOT NULL`);
+        }),
+      );
+    }
+
+    if (cursorWhereCondition) {
+      queryBuilder.andWhere(cursorWhereCondition);
+    }
+
+    return await queryBuilder
+      .orderBy(tsRankCDExpr, 'DESC')
+      .addOrderBy(tsRankExpr, 'DESC')
+      .addOrderBy('id', 'ASC', 'NULLS FIRST')
+      .setParameter('searchTerms', searchTerms)
+      .setParameter('searchTermsOr', searchTermsOr)
+      .take(limit + 1) // We take one more to check if hasNextPage is true
+      .getRawMany();
+  }
+
+  computeCursorWhereCondition({
+    after,
+    objectMetadataNameSingular,
+    tsRankExpr,
+    tsRankCDExpr,
+  }: {
+    after?: string;
+    objectMetadataNameSingular: string;
+    tsRankExpr: string;
+    tsRankCDExpr: string;
+  }) {
+    if (after) {
+      const { lastRanks, lastRecordIdsPerObject } =
+        decodeCursor<SearchCursor>(after);
+
+      const lastRecordId = lastRecordIdsPerObject[objectMetadataNameSingular];
+
+      return new Brackets((qb) => {
+        qb.where(`${tsRankCDExpr} < :tsRankCDLt`, {
+          tsRankCDLt: lastRanks.tsRankCD,
+        })
+          .orWhere(
+            new Brackets((inner) => {
+              inner.andWhere(`${tsRankCDExpr} = :tsRankCDEq`, {
+                tsRankCDEq: lastRanks.tsRankCD,
+              });
+              inner.andWhere(`${tsRankExpr} < :tsRankLt`, {
+                tsRankLt: lastRanks.tsRank,
+              });
+            }),
+          )
+          .orWhere(
+            new Brackets((inner) => {
+              inner.andWhere(`${tsRankCDExpr} = :tsRankCDEq`, {
+                tsRankCDEq: lastRanks.tsRankCD,
+              });
+              inner.andWhere(`${tsRankExpr} = :tsRankEq`, {
+                tsRankEq: lastRanks.tsRank,
+              });
+              if (lastRecordId !== undefined) {
+                inner.andWhere('id > :lastRecordId', { lastRecordId });
+              }
+            }),
+          );
+      });
+    }
   }
 
   getLabelIdentifierColumns(
@@ -199,11 +366,15 @@ export class SearchService {
   }
 
   private getImageUrlWithToken(avatarUrl: string, workspaceId: string): string {
-    const avatarUrlToken = this.fileService.encodeFileToken({
+    const signedPayload = this.fileService.encodeFileToken({
+      filename: extractFilenameFromPath(avatarUrl),
       workspaceId,
     });
 
-    return `${avatarUrl}?token=${avatarUrlToken}`;
+    return buildSignedPath({
+      path: avatarUrl,
+      token: signedPayload,
+    });
   }
 
   getImageIdentifierValue(
@@ -218,16 +389,60 @@ export class SearchService {
       return getLogoUrlFromDomainName(record.domainNamePrimaryLinkUrl) || '';
     }
 
-    return imageIdentifierField
+    return imageIdentifierField &&
+      isNonEmptyString(record[imageIdentifierField])
       ? this.getImageUrlWithToken(record[imageIdentifierField], workspaceId)
       : '';
   }
 
-  computeSearchObjectResults(
-    recordsWithObjectMetadataItems: RecordsWithObjectMetadataItem[],
-    limit: number,
-    workspaceId: string,
-  ) {
+  computeEdges({
+    sortedRecords,
+    after,
+  }: {
+    sortedRecords: SearchRecordDTO[];
+    after?: string;
+  }): SearchResultEdgeDTO[] {
+    const recordEdges = [];
+
+    const lastRecordIdsPerObject = after
+      ? {
+          ...decodeCursor<SearchCursor>(after).lastRecordIdsPerObject,
+        }
+      : {};
+
+    for (const record of sortedRecords) {
+      const { objectNameSingular, tsRankCD, tsRank, recordId } = record;
+
+      lastRecordIdsPerObject[objectNameSingular] = recordId;
+
+      const lastRecordIdsPerObjectSnapshot = { ...lastRecordIdsPerObject };
+
+      recordEdges.push({
+        node: record,
+        cursor: encodeCursorData({
+          lastRanks: {
+            tsRankCD,
+            tsRank,
+          },
+          lastRecordIdsPerObject: lastRecordIdsPerObjectSnapshot,
+        }),
+      });
+    }
+
+    return recordEdges;
+  }
+
+  computeSearchObjectResults({
+    recordsWithObjectMetadataItems,
+    workspaceId,
+    limit,
+    after,
+  }: {
+    recordsWithObjectMetadataItems: RecordsWithObjectMetadataItem[];
+    workspaceId: string;
+    limit: number;
+    after?: string;
+  }): SearchResultConnectionDTO {
     const searchRecords = recordsWithObjectMetadataItems.flatMap(
       ({ objectMetadataItem, records }) => {
         return records.map((record) => {
@@ -247,7 +462,25 @@ export class SearchService {
       },
     );
 
-    return this.sortSearchObjectResults(searchRecords).slice(0, limit);
+    const sortedRecords = this.sortSearchObjectResults(searchRecords).slice(
+      0,
+      limit,
+    );
+
+    const hasNextPage = searchRecords.length > limit;
+
+    const recordEdges = this.computeEdges({ sortedRecords, after });
+
+    if (recordEdges.length === 0) {
+      return { edges: [], pageInfo: { endCursor: null, hasNextPage } };
+    }
+
+    const lastRecordEdge = recordEdges[recordEdges.length - 1];
+
+    return {
+      edges: recordEdges,
+      pageInfo: { endCursor: lastRecordEdge.cursor, hasNextPage },
+    };
   }
 
   sortSearchObjectResults(searchObjectResultsWithRank: SearchRecordDTO[]) {
@@ -261,7 +494,9 @@ export class SearchService {
       }
 
       return (
+        // @ts-expect-error legacy noImplicitAny
         (STANDARD_OBJECTS_BY_PRIORITY_RANK[b.objectNameSingular] || 0) -
+        // @ts-expect-error legacy noImplicitAny
         (STANDARD_OBJECTS_BY_PRIORITY_RANK[a.objectNameSingular] || 0)
       );
     });

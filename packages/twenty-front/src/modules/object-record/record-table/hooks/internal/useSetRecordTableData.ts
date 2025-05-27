@@ -2,6 +2,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useSetIsRecordTableFocusActive } from '@/object-record/record-table/record-table-cell/hooks/useSetIsRecordTableFocusActive';
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
@@ -73,10 +74,12 @@ export const useSetRecordTableData = ({
             .getValue();
 
           if (JSON.stringify(currentRecord) !== JSON.stringify(record)) {
-            set(recordStoreFamilyState(record.id), {
+            const newRecord = {
               ...currentRecord,
               ...record,
-            });
+            };
+
+            set(recordStoreFamilyState(record.id), newRecord);
           }
         }
 

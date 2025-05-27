@@ -98,11 +98,18 @@ export type CatalogOptions = {
 
 export const CatalogDecorator: Decorator = (Story, context) => {
   const {
-    catalog: { dimensions, options },
-  } = context.parameters;
+    catalog: { dimensions = [], options = {} } = {
+      dimensions: [],
+      options: {},
+    },
+  } = context.parameters || {};
+
+  if (!dimensions || !Array.isArray(dimensions)) {
+    return <Story />;
+  }
 
   const [
-    dimension1,
+    dimension1 = emptyDimension,
     dimension2 = emptyDimension,
     dimension3 = emptyDimension,
     dimension4 = emptyDimension,

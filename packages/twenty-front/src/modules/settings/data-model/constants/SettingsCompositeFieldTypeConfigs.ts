@@ -56,7 +56,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     label: 'Emails',
     Icon: IllustrationIconMail,
     subFields: ['primaryEmail', 'additionalEmails'],
-    filterableSubFields: ['primaryEmail'],
+    filterableSubFields: ['primaryEmail', 'additionalEmails'],
     labelBySubField: {
       primaryEmail: 'Primary Email',
       additionalEmails: 'Additional Emails',
@@ -81,7 +81,11 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     },
     category: 'Basic',
     subFields: ['primaryLinkUrl', 'primaryLinkLabel', 'secondaryLinks'],
-    filterableSubFields: ['primaryLinkUrl', 'primaryLinkLabel'],
+    filterableSubFields: [
+      'primaryLinkUrl',
+      'primaryLinkLabel',
+      'secondaryLinks',
+    ],
     labelBySubField: {
       primaryLinkUrl: 'Link URL',
       primaryLinkLabel: 'Link Label',

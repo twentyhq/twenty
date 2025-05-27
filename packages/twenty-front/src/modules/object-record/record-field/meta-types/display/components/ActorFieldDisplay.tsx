@@ -1,27 +1,22 @@
 import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
 import { useActorFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useActorFieldDisplay';
 import { ActorDisplay } from '@/ui/field/display/components/ActorDisplay';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 export const ActorFieldDisplay = () => {
-  const { fieldValue } = useActorFieldDisplay();
-
-  const name = !fieldValue.workspaceMemberId
-    ? fieldValue.name
-    : [
-        fieldValue.workspaceMember?.name.firstName,
-        fieldValue.workspaceMember?.name.lastName,
-      ]
-        .filter(isNonEmptyString)
-        .join(' ');
+  const actorFieldDisplay = useActorFieldDisplay();
 
   const displayActorField = !useIsFieldEmpty();
+  if (!isDefined(actorFieldDisplay)) {
+    return null;
+  }
 
+  const { fieldValue, name, avatarUrl } = actorFieldDisplay;
   return displayActorField ? (
     <ActorDisplay
       name={name}
       source={fieldValue.source}
-      avatarUrl={fieldValue.workspaceMember?.avatarUrl}
+      avatarUrl={avatarUrl}
       workspaceMemberId={fieldValue.workspaceMemberId}
       context={fieldValue.context}
     />

@@ -13,6 +13,7 @@ export const camelCaseDeep = <T>(value: T): CamelCasedPropertiesDeep<T> => {
 
   // Check if it's an object
   if (isObject(value)) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result: Record<string, any> = {};
 
     for (const key in value) {

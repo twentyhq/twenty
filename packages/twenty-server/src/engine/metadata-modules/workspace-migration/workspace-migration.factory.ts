@@ -26,6 +26,7 @@ export class WorkspaceMigrationFactory {
   private factoriesMap: Map<
     FieldMetadataType,
     {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       factory: WorkspaceColumnActionFactory<any>;
       options?: WorkspaceColumnActionOptions;
     }
@@ -41,6 +42,7 @@ export class WorkspaceMigrationFactory {
     this.factoriesMap = new Map<
       FieldMetadataType,
       {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         factory: WorkspaceColumnActionFactory<any>;
         options?: WorkspaceColumnActionOptions;
       }

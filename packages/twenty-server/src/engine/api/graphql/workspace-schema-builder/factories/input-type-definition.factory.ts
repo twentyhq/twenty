@@ -36,8 +36,8 @@ export class InputTypeDefinitionFactory {
     objectMetadata: ObjectMetadataInterface,
     kind: InputTypeDefinitionKind,
     options: WorkspaceBuildSchemaOptions,
-    isNewRelationEnabled = false,
   ): InputTypeDefinition {
+    // @ts-expect-error legacy noImplicitAny
     const inputType = new GraphQLInputObjectType({
       name: `${pascalCase(objectMetadata.nameSingular)}${kind.toString()}Input`,
       description: objectMetadata.description,
@@ -47,6 +47,7 @@ export class InputTypeDefinitionFactory {
            * Filter input type has additional fields for filtering and is self referencing
            */
           case InputTypeDefinitionKind.Filter: {
+            // @ts-expect-error legacy noImplicitAny
             const andOrType = this.typeMapperService.mapToGqlType(inputType, {
               isArray: true,
               arrayDepth: 1,
@@ -59,7 +60,6 @@ export class InputTypeDefinitionFactory {
                 kind,
                 options,
                 this.inputTypeFactory,
-                isNewRelationEnabled,
               ),
               and: {
                 type: andOrType,
@@ -83,7 +83,6 @@ export class InputTypeDefinitionFactory {
               kind,
               options,
               this.inputTypeFactory,
-              isNewRelationEnabled,
             );
         }
       },

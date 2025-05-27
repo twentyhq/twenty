@@ -7,13 +7,13 @@ export class AddIndexOnRoleLabelAndWorkspaceId1742316060157
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "metadata"."role" ADD CONSTRAINT "IndexOnRoleUnique" UNIQUE ("label", "workspaceId")`,
+      `ALTER TABLE "core"."role" ADD CONSTRAINT "IndexOnRoleUnique" UNIQUE ("label", "workspaceId")`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "metadata"."role" DROP CONSTRAINT "IndexOnRoleUnique"`,
+      `ALTER TABLE "core"."role" DROP CONSTRAINT "IndexOnRoleUnique"`,
     );
   }
 }

@@ -18,6 +18,7 @@ import {
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { StepOutput } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-step/utils/insert-step';
 import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-step/utils/remove-step';
@@ -91,6 +92,8 @@ export class WorkflowVersionStepWorkspaceService {
       );
     }
 
+    assertWorkflowVersionIsDraft(workflowVersion);
+
     const existingSteps = workflowVersion.steps || [];
     const updatedSteps = insertStep({
       existingSteps,
@@ -132,6 +135,8 @@ export class WorkflowVersionStepWorkspaceService {
         WorkflowVersionStepExceptionCode.NOT_FOUND,
       );
     }
+
+    assertWorkflowVersionIsDraft(workflowVersion);
 
     if (!isDefined(workflowVersion.steps)) {
       throw new WorkflowVersionStepException(
@@ -186,6 +191,8 @@ export class WorkflowVersionStepWorkspaceService {
         WorkflowVersionStepExceptionCode.NOT_FOUND,
       );
     }
+
+    assertWorkflowVersionIsDraft(workflowVersion);
 
     if (!isDefined(workflowVersion.steps)) {
       throw new WorkflowVersionStepException(
@@ -572,7 +579,9 @@ export class WorkflowVersionStepWorkspaceService {
 
     const enrichedResponses = await Promise.all(
       responseKeys.map(async (key) => {
+        // @ts-expect-error legacy noImplicitAny
         if (!isDefined(response[key])) {
+          // @ts-expect-error legacy noImplicitAny
           return { key, value: response[key] };
         }
 
@@ -581,7 +590,9 @@ export class WorkflowVersionStepWorkspaceService {
         if (
           field?.type === 'RECORD' &&
           field?.settings?.objectName &&
+          // @ts-expect-error legacy noImplicitAny
           isDefined(response[key].id) &&
+          // @ts-expect-error legacy noImplicitAny
           isValidUuid(response[key].id)
         ) {
           const repository = await this.twentyORMManager.getRepository(
@@ -589,17 +600,20 @@ export class WorkflowVersionStepWorkspaceService {
           );
 
           const record = await repository.findOne({
+            // @ts-expect-error legacy noImplicitAny
             where: { id: response[key].id },
           });
 
           return { key, value: record };
         } else {
+          // @ts-expect-error legacy noImplicitAny
           return { key, value: response[key] };
         }
       }),
     );
 
     return enrichedResponses.reduce((acc, { key, value }) => {
+      // @ts-expect-error legacy noImplicitAny
       acc[key] = value;
 
       return acc;

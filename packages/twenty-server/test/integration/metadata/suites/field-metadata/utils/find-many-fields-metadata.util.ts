@@ -25,5 +25,8 @@ export const findManyFieldsMetadata = async ({
     });
   }
 
-  return response.body.data.fields.edges.map((edge) => edge.node);
+  return {
+    errors: response.body.errors,
+    fields: response.body.data.fields?.edges,
+  };
 };

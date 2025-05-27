@@ -105,6 +105,7 @@ export const createWorkspaceViews = async (
           'viewId',
         ])
         .values(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           viewDefinition.filters.map((filter: any) => ({
             fieldMetadataId: filter.fieldMetadataId,
             displayValue: filter.displayValue,
@@ -134,6 +135,7 @@ export const createWorkspaceViews = async (
           'viewId',
         ])
         .values(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           viewDefinition.groups.map((group: any) => ({
             fieldMetadataId: group.fieldMetadataId,
             isVisible: group.isVisible,

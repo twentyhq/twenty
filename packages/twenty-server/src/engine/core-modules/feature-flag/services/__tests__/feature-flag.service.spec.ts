@@ -212,6 +212,7 @@ describe('FeatureFlagService', () => {
       // Assert
       expect(result).toEqual(mockFeatureFlag);
       expect(mockFeatureFlagRepository.save).toHaveBeenCalledWith({
+        // @ts-expect-error legacy noImplicitAny
         key: FeatureFlagKey[featureFlag],
         value,
         workspaceId,

@@ -757,12 +757,50 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
+    description: 'Enable pg connection pool sharing across tenants',
+    isEnvOnly: true,
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  PG_ENABLE_POOL_SHARING = true;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ServerConfig,
+    description: 'Maximum number of clients in pg connection pool',
+    isEnvOnly: true,
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  PG_POOL_MAX_CONNECTIONS = 10;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ServerConfig,
+    description: 'Idle timeout in milliseconds for pg connection pool clients',
+    isEnvOnly: true,
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  PG_POOL_IDLE_TIMEOUT_MS = 600000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ServerConfig,
+    description: 'Allow idle pg connection pool clients to exit',
+    isEnvOnly: true,
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  PG_POOL_ALLOW_EXIT_ON_IDLE = true;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ServerConfig,
     description: 'Enable configuration variables to be stored in the database',
     isEnvOnly: true,
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
-  IS_CONFIG_VARIABLES_IN_DB_ENABLED = false;
+  IS_CONFIG_VARIABLES_IN_DB_ENABLED = true;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TokensDuration,
@@ -987,7 +1025,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  WORKFLOW_EXEC_THROTTLE_LIMIT = 500;
+  WORKFLOW_EXEC_THROTTLE_LIMIT = 100;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RateLimiting,

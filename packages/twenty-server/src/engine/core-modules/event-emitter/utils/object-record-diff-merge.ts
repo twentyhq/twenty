@@ -1,7 +1,11 @@
 export function objectRecordDiffMerge(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   oldRecord: Record<string, any>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   newRecord: Record<string, any>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Record<string, any> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const result: Record<string, any> = { diff: {} };
 
   // Iterate over the keys in the oldRecord diff

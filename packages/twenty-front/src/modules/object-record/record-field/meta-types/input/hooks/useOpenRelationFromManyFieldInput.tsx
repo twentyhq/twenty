@@ -88,9 +88,9 @@ export const useOpenRelationFromManyFieldInput = () => {
           forcePickableMorphItems: pickableMorphItems,
         });
 
-        setHotkeyScopeAndMemorizePreviousScope(
-          MultipleRecordPickerHotkeyScope.MultipleRecordPicker,
-        );
+        setHotkeyScopeAndMemorizePreviousScope({
+          scope: MultipleRecordPickerHotkeyScope.MultipleRecordPicker,
+        });
       },
     [performSearch, setHotkeyScopeAndMemorizePreviousScope],
   );

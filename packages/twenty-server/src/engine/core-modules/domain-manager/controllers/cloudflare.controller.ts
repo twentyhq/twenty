@@ -24,8 +24,8 @@ import { CloudflareSecretMatchGuard } from 'src/engine/core-modules/domain-manag
 import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { handleException } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { handleException } from 'src/engine/utils/global-exception-handler.util';
 
 @Controller()
 @UseFilters(AuthRestApiExceptionFilter)
@@ -43,13 +43,13 @@ export class CloudflareController {
   @UseGuards(CloudflareSecretMatchGuard)
   async customHostnameWebhooks(@Req() req: Request, @Res() res: Response) {
     if (!req.body?.data?.data?.hostname) {
-      handleException(
-        new DomainManagerException(
+      handleException({
+        exception: new DomainManagerException(
           'Hostname missing',
           DomainManagerExceptionCode.INVALID_INPUT_DATA,
         ),
-        this.exceptionHandlerService,
-      );
+        exceptionHandlerService: this.exceptionHandlerService,
+      });
 
       return res.status(200).send();
     }

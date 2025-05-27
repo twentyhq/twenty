@@ -12,7 +12,7 @@ export const RecordBoardColumnCardsMemo = React.memo(
       <RecordBoardCardDraggableContainer
         key={recordId}
         recordId={recordId}
-        index={index}
+        rowIndex={index}
       />
     ));
   },

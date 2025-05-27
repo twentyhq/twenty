@@ -41,11 +41,15 @@ export class ForeignTableService {
       await this.workspaceDataSourceService.connectToMainDataSource();
 
     return (
-      await mainDataSource.query(
-        `SELECT foreign_table_name, foreign_server_name FROM information_schema.foreign_tables WHERE foreign_server_name = $1`,
-        [foreignDataWrapperId],
+      (
+        await mainDataSource.query(
+          `SELECT foreign_table_name, foreign_server_name FROM information_schema.foreign_tables WHERE foreign_server_name = $1`,
+          [foreignDataWrapperId],
+        )
       )
-    ).map((foreignTable) => foreignTable.foreign_table_name);
+        // @ts-expect-error legacy noImplicitAny
+        .map((foreignTable) => foreignTable.foreign_table_name)
+    );
   }
 
   public async createForeignTable(

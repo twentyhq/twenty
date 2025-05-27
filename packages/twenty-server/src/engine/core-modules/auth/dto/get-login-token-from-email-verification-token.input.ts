@@ -9,6 +9,11 @@ export class GetLoginTokenFromEmailVerificationTokenInput {
   @IsString()
   emailVerificationToken: string;
 
+  @Field(() => String)
+  @IsNotEmpty()
+  @IsString()
+  email: string;
+
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()

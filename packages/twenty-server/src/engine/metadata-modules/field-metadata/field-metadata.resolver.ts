@@ -10,8 +10,6 @@ import {
 
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
   ForbiddenError,
   ValidationError,
@@ -53,7 +51,6 @@ import { createDeterministicUuid } from 'src/engine/workspace-manager/workspace-
 export class FieldMetadataResolver {
   constructor(
     private readonly fieldMetadataService: FieldMetadataService,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly beforeUpdateOneField: BeforeUpdateOneField<UpdateFieldInput>,
   ) {}
 
@@ -178,51 +175,28 @@ export class FieldMetadataResolver {
       return null;
     }
 
-    const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsNewRelationEnabled,
-      workspace.id,
+    const relation = await this.relation(
+      workspace,
+      fieldMetadata as FieldMetadataEntity<FieldMetadataType.RELATION>,
+      context,
     );
 
-    // TODO: Remove this once we drop old relations or update the front-end to use the new relation
-    if (isNewRelationEnabled) {
-      const relation = await this.relation(
-        workspace,
-        fieldMetadata as FieldMetadataEntity<FieldMetadataType.RELATION>,
-        context,
-      );
-
-      if (!relation) {
-        return null;
-      }
-
-      return {
-        // Temporary fix as we don't have relationId in the new relation
-        relationId: createDeterministicUuid([
-          relation.sourceFieldMetadata.id,
-          relation.targetFieldMetadata.id,
-        ]),
-        direction: relation.type as unknown as RelationDefinitionType,
-        sourceObjectMetadata: relation.sourceObjectMetadata,
-        targetObjectMetadata: relation.targetObjectMetadata,
-        sourceFieldMetadata: relation.sourceFieldMetadata,
-        targetFieldMetadata: relation.targetFieldMetadata,
-      };
+    if (!relation) {
+      return null;
     }
 
-    try {
-      const relationMetadataItem =
-        await context.loaders.relationMetadataLoader.load({
-          fieldMetadata,
-          workspaceId: workspace.id,
-        });
-
-      return await this.fieldMetadataService.getRelationDefinitionFromRelationMetadata(
-        fieldMetadata,
-        relationMetadataItem,
-      );
-    } catch (error) {
-      fieldMetadataGraphqlApiExceptionHandler(error);
-    }
+    return {
+      // Temporary fix as we don't have relationId in the new relation
+      relationId: createDeterministicUuid([
+        relation.sourceFieldMetadata.id,
+        relation.targetFieldMetadata.id,
+      ]),
+      direction: relation.type as unknown as RelationDefinitionType,
+      sourceObjectMetadata: relation.sourceObjectMetadata,
+      targetObjectMetadata: relation.targetObjectMetadata,
+      sourceFieldMetadata: relation.sourceFieldMetadata,
+      targetFieldMetadata: relation.targetFieldMetadata,
+    };
   }
 
   @ResolveField(() => RelationDTO, { nullable: true })
@@ -236,18 +210,6 @@ export class FieldMetadataResolver {
     }
 
     try {
-      const isNewRelationEnabled =
-        await this.featureFlagService.isFeatureEnabled(
-          FeatureFlagKey.IsNewRelationEnabled,
-          workspace.id,
-        );
-
-      if (!isNewRelationEnabled) {
-        throw new FieldMetadataException(
-          'New relation feature is not enabled for this workspace',
-          FieldMetadataExceptionCode.FIELD_METADATA_RELATION_NOT_ENABLED,
-        );
-      }
       const {
         sourceObjectMetadata,
         targetObjectMetadata,

@@ -2,7 +2,6 @@ import { capitalize } from 'twenty-shared/utils';
 import { WhereExpressionBuilder } from 'typeorm';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
 import {
   GraphqlQueryRunnerException,
@@ -19,22 +18,20 @@ const ARRAY_OPERATORS = ['in', 'contains', 'notContains'];
 export class GraphqlQueryFilterFieldParser {
   private fieldMetadataMapByName: FieldMetadataMap;
   private fieldMetadataMapByJoinColumnName: FieldMetadataMap;
-  private featureFlagsMap: FeatureFlagMap;
 
   constructor(
     fieldMetadataMapByName: FieldMetadataMap,
     fieldMetadataMapByJoinColumnName: FieldMetadataMap,
-    featureFlagsMap: FeatureFlagMap,
   ) {
     this.fieldMetadataMapByName = fieldMetadataMapByName;
     this.fieldMetadataMapByJoinColumnName = fieldMetadataMapByJoinColumnName;
-    this.featureFlagsMap = featureFlagsMap;
   }
 
   public parse(
     queryBuilder: WhereExpressionBuilder,
     objectNameSingular: string,
     key: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     filterValue: any,
     isFirst = false,
   ): void {
@@ -85,6 +82,7 @@ export class GraphqlQueryFilterFieldParser {
     queryBuilder: WhereExpressionBuilder,
     fieldMetadata: FieldMetadataInterface,
     objectNameSingular: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fieldValue: any,
     isFirst = false,
   ): void {
@@ -112,6 +110,7 @@ export class GraphqlQueryFilterFieldParser {
       const fullFieldName = `${fieldMetadata.name}${capitalize(subFieldKey)}`;
 
       const [[operator, value]] = Object.entries(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         subFieldFilter as Record<string, any>,
       );
 

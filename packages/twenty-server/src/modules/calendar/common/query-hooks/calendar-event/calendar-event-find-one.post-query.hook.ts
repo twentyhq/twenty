@@ -1,9 +1,11 @@
-import { WorkspaceQueryPostHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
+import { isDefined } from 'twenty-shared/utils';
+
+import { WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ApplyCalendarEventsVisibilityRestrictionsService } from 'src/modules/calendar/common/query-hooks/calendar-event/services/apply-calendar-events-visibility-restrictions.service';
 import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 
@@ -12,7 +14,7 @@ import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standa
   type: WorkspaceQueryHookType.PostHook,
 })
 export class CalendarEventFindOnePostQueryHook
-  implements WorkspaceQueryPostHookInstance
+  implements WorkspacePostQueryHookInstance
 {
   constructor(
     private readonly applyCalendarEventsVisibilityRestrictionsService: ApplyCalendarEventsVisibilityRestrictionsService,
@@ -23,13 +25,15 @@ export class CalendarEventFindOnePostQueryHook
     _objectName: string,
     payload: CalendarEventWorkspaceEntity[],
   ): Promise<void> {
-    if (!authContext.workspaceMemberId) {
-      throw new UserInputError('Workspace member id is required');
+    const { user, apiKey } = authContext;
+
+    if (!isDefined(user) && !isDefined(apiKey)) {
+      throw new ForbiddenError('User is required');
     }
 
     await this.applyCalendarEventsVisibilityRestrictionsService.applyCalendarEventsVisibilityRestrictions(
-      authContext.workspaceMemberId,
       payload,
+      user?.id,
     );
   }
 }

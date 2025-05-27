@@ -1,10 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
+import { basename, dirname, extname } from 'path';
 import { Stream } from 'stream';
+
+import { v4 as uuidV4 } from 'uuid';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+
+export type FilePayloadToEncode = {
+  workspaceId: string;
+  filename: string;
+};
 
 @Injectable()
 export class FileService {
@@ -27,7 +35,7 @@ export class FileService {
     });
   }
 
-  encodeFileToken(payloadToEncode: Record<string, any>) {
+  encodeFileToken(payloadToEncode: FilePayloadToEncode) {
     const fileTokenExpiresIn = this.twentyConfigService.get(
       'FILE_TOKEN_EXPIRES_IN',
     );
@@ -72,5 +80,31 @@ export class FileService {
     return await this.fileStorageService.delete({
       folderPath: workspaceFolderPath,
     });
+  }
+
+  async copyFileFromWorkspaceToWorkspace(
+    fromWorkspaceId: string,
+    fromPath: string,
+    toWorkspaceId: string,
+  ) {
+    const subFolder = dirname(fromPath);
+    const fromWorkspaceFolderPath = `workspace-${fromWorkspaceId}`;
+    const toWorkspaceFolderPath = `workspace-${toWorkspaceId}`;
+    const fromFilename = basename(fromPath);
+
+    const toFilename = uuidV4() + extname(fromFilename);
+
+    await this.fileStorageService.copy({
+      from: {
+        folderPath: `${fromWorkspaceFolderPath}/${subFolder}`,
+        filename: fromFilename,
+      },
+      to: {
+        folderPath: `${toWorkspaceFolderPath}/${subFolder}`,
+        filename: toFilename,
+      },
+    });
+
+    return [toWorkspaceFolderPath, subFolder, toFilename];
   }
 }

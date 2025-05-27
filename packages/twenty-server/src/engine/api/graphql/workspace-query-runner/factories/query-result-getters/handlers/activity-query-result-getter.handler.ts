@@ -1,10 +1,14 @@
+import { buildSignedPath } from 'twenty-shared/utils';
+
 import { QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-getter-handler.interface';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
+import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type RichTextBlock = Record<string, any>;
 
 type RichTextBody = RichTextBlock[];
@@ -54,7 +58,7 @@ export class ActivityQueryResultGetterHandler
         imageUrl.searchParams.delete('token');
 
         const signedPayload = this.fileService.encodeFileToken({
-          noteBlockId: block.id,
+          filename: extractFilenameFromPath(imageProps.url),
           workspaceId: workspaceId,
         });
 
@@ -62,7 +66,10 @@ export class ActivityQueryResultGetterHandler
           ...block,
           props: {
             ...imageProps,
-            url: `${imageUrl.toString()}?token=${signedPayload}`,
+            url: buildSignedPath({
+              path: imageUrl.toString(),
+              token: signedPayload,
+            }),
           },
         };
       }),

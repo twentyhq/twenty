@@ -50,12 +50,14 @@ export class WorkspaceSelectQueryBuilder<
     return super.getMany();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   override getRawOne<U = any>(): Promise<U | undefined> {
     this.validatePermissions();
 
     return super.getRawOne();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   override getRawMany<U = any>(): Promise<U[]> {
     this.validatePermissions();
 

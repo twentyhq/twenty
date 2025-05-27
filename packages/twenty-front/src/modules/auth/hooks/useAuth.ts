@@ -53,6 +53,7 @@ import { isEmailVerificationRequiredState } from '@/client-config/states/isEmail
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
+import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
@@ -74,6 +75,7 @@ export const useAuth = () => {
     currentWorkspaceMemberState,
   );
   const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
+  const { origin } = useOrigin();
 
   const setCurrentWorkspaceMembers = useSetRecoilState(
     currentWorkspaceMembersState,
@@ -179,6 +181,7 @@ export const useAuth = () => {
             email,
             password,
             captchaToken,
+            origin,
           },
         });
         if (isDefined(getLoginTokenResult.errors)) {
@@ -194,7 +197,7 @@ export const useAuth = () => {
         // TODO: Get intellisense for graphql error extensions code (codegen?)
         if (
           error instanceof ApolloError &&
-          error.graphQLErrors[0]?.extensions?.code === 'EMAIL_NOT_VERIFIED'
+          error.graphQLErrors[0]?.extensions?.subCode === 'EMAIL_NOT_VERIFIED'
         ) {
           setSearchParams({ email });
           setSignInUpStep(SignInUpStep.EmailVerification);
@@ -203,15 +206,21 @@ export const useAuth = () => {
         throw error;
       }
     },
-    [getLoginTokenFromCredentials, setSearchParams, setSignInUpStep],
+    [getLoginTokenFromCredentials, setSearchParams, setSignInUpStep, origin],
   );
 
   const handleGetLoginTokenFromEmailVerificationToken = useCallback(
-    async (emailVerificationToken: string, captchaToken?: string) => {
+    async (
+      emailVerificationToken: string,
+      email: string,
+      captchaToken?: string,
+    ) => {
       const loginTokenResult = await getLoginTokenFromEmailVerificationToken({
         variables: {
+          email,
           emailVerificationToken,
           captchaToken,
+          origin,
         },
       });
 
@@ -225,7 +234,7 @@ export const useAuth = () => {
 
       return loginTokenResult.data.getLoginTokenFromEmailVerificationToken;
     },
-    [getLoginTokenFromEmailVerificationToken],
+    [getLoginTokenFromEmailVerificationToken, origin],
   );
 
   const loadCurrentUser = useCallback(async () => {
@@ -335,7 +344,10 @@ export const useAuth = () => {
   const handleGetAuthTokensFromLoginToken = useCallback(
     async (loginToken: string) => {
       const getAuthTokensResult = await getAuthTokensFromLoginToken({
-        variables: { loginToken },
+        variables: {
+          loginToken,
+          origin,
+        },
       });
 
       if (isDefined(getAuthTokensResult.errors)) {
@@ -364,6 +376,7 @@ export const useAuth = () => {
       setTokenPair,
       refreshObjectMetadataItems,
       loadCurrentUser,
+      origin,
     ],
   );
 

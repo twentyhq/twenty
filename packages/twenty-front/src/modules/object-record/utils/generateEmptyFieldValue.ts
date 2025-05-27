@@ -113,7 +113,7 @@ export const generateEmptyFieldValue = ({
       };
     }
     case FieldMetadataType.TS_VECTOR: {
-      throw new Error('TS_VECTOR not implemented yet');
+      return null;
     }
     default: {
       return assertUnreachable(
