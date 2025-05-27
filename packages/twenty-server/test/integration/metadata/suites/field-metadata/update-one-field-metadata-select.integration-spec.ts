@@ -155,7 +155,7 @@ describe('Field metadata select update tests group', () => {
 
       const createdFieldMetadata = createOneField.id;
 
-      const { type, ...updatePayload } = input;
+      const { type: _type, ...updatePayload } = input;
 
       const { data, errors } = await updateOneFieldMetadata({
         input: {
@@ -204,7 +204,6 @@ describe('Field metadata select update tests group', () => {
   test.each([...updateSpecificFailingTestCases, ...failingTestCases])(
     'Update $title',
     async ({ context: { input } }) => {
-      // Create the field with the correct type based on the test case
       const {
         data: { createOneField },
       } = await createOneFieldMetadata({
@@ -224,8 +223,7 @@ describe('Field metadata select update tests group', () => {
 
       const createdFieldMetadata = createOneField.id;
 
-      // Remove type from update payload since we can't change it
-      const { type, ...updatePayload } = input;
+      const { type: _type, ...updatePayload } = input;
 
       const { data, errors } = await updateOneFieldMetadata({
         input: {
