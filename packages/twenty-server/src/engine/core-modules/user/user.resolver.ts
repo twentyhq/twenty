@@ -26,8 +26,12 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import {
   OnboardingService,
@@ -46,6 +50,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
@@ -53,8 +58,6 @@ import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
-import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -83,6 +86,7 @@ export class UserResolver {
     private readonly userRoleService: UserRoleService,
     private readonly permissionsService: PermissionsService,
     private readonly deletedWorkspaceMemberTranspiler: DeletedWorkspaceMemberTranspiler,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @Query(() => User)
@@ -111,6 +115,7 @@ export class UserResolver {
     }
     let settingsPermissions = {};
     let objectRecordsPermissions = {};
+    let objectPermissions: ObjectPermissionDTO[] = [];
 
     if (
       ![
@@ -118,14 +123,40 @@ export class UserResolver {
         WorkspaceActivationStatus.ONGOING_CREATION,
       ].includes(workspace.activationStatus)
     ) {
-      const permissions =
-        await this.permissionsService.getUserWorkspacePermissions({
-          userWorkspaceId: currentUserWorkspace.id,
-          workspaceId: workspace.id,
-        });
+      const isPermissionsV2Enabled =
+        await this.featureFlagService.isFeatureEnabled(
+          FeatureFlagKey.IsPermissionsV2Enabled,
+          workspace.id,
+        );
 
-      settingsPermissions = permissions.settingsPermissions;
-      objectRecordsPermissions = permissions.objectRecordsPermissions;
+      if (isPermissionsV2Enabled) {
+        const permissions =
+          await this.permissionsService.getUserWorkspacePermissionsV2({
+            userWorkspaceId: currentUserWorkspace.id,
+            workspaceId: workspace.id,
+          });
+
+        settingsPermissions = permissions.settingsPermissions;
+        objectPermissions = Object.entries(
+          permissions.objectRecordsPermissions,
+        ).map(([objectMetadataId, permissions]) => ({
+          objectMetadataId,
+          canReadObjectRecords: permissions.canRead,
+          canUpdateObjectRecords: permissions.canUpdate,
+          canSoftDeleteObjectRecords: permissions.canSoftDelete,
+          canDestroyObjectRecords: permissions.canDestroy,
+        }));
+        objectRecordsPermissions = permissions.objectRecordsPermissions;
+      } else {
+        const permissions =
+          await this.permissionsService.getUserWorkspacePermissions({
+            userWorkspaceId: currentUserWorkspace.id,
+            workspaceId: workspace.id,
+          });
+
+        settingsPermissions = permissions.settingsPermissions;
+        objectRecordsPermissions = permissions.objectRecordsPermissions;
+      }
     }
 
     const grantedSettingsPermissions: SettingPermissionType[] = (
@@ -143,6 +174,7 @@ export class UserResolver {
     currentUserWorkspace.settingsPermissions = grantedSettingsPermissions;
     currentUserWorkspace.objectRecordsPermissions =
       grantedObjectRecordsPermissions;
+    currentUserWorkspace.objectPermissions = objectPermissions;
     user.currentUserWorkspace = currentUserWorkspace;
 
     return {
