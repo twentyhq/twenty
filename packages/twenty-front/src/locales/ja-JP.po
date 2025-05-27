@@ -5169,8 +5169,8 @@ msgstr "請求の詳細を表示"
 
 #. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "View execution details"
-msgstr "実行の詳細を表示"
+#~ msgid "View execution details"
+#~ msgstr "実行の詳細を表示"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
@@ -5273,13 +5273,13 @@ msgstr "キーが無効になる時期"
 
 #. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow is running..."
-msgstr "ワークフローが実行中です…"
+#~ msgid "Workflow is running..."
+#~ msgstr "ワークフローが実行中です…"
 
 #. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow run failed"
-msgstr "ワークフローの実行に失敗しました"
+#~ msgid "Workflow run failed"
+#~ msgstr "ワークフローの実行に失敗しました"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx

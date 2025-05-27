@@ -46,7 +46,7 @@ export class BillingController {
     private readonly billingWebhookCustomerService: BillingWebhookCustomerService,
   ) {}
 
-  @Post(['billing/webhooks', 'webhooks/stripe'])
+  @Post(['webhooks/stripe'])
   async handleWebhooks(
     @Headers('stripe-signature') signature: string,
     @Req() req: RawBodyRequest<Request>,
