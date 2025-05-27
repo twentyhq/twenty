@@ -23,10 +23,6 @@ export abstract class DriverFactoryBase<TDriver> {
     }
 
     if (this.currentConfigKey !== configKey) {
-      if (this.currentDriver) {
-        this.cleanupDriver(this.currentDriver);
-      }
-
       try {
         this.currentDriver = this.createDriver();
       } catch (error) {
@@ -74,8 +70,4 @@ export abstract class DriverFactoryBase<TDriver> {
 
   protected abstract buildConfigKey(): string;
   protected abstract createDriver(): TDriver;
-  protected cleanupDriver(_driver: TDriver): void {
-    // Override if driver needs cleanup (e.g., closing connections)
-    // ai suggested this, but I don't think it's needed as of now
-  }
 }

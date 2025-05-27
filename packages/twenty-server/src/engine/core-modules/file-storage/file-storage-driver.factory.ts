@@ -7,7 +7,7 @@ import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfac
 
 import { LocalDriver } from 'src/engine/core-modules/file-storage/drivers/local.driver';
 import { S3Driver } from 'src/engine/core-modules/file-storage/drivers/s3.driver';
-import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic-driver.base';
+import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic-factory.base';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { resolveAbsolutePath } from 'src/utils/resolve-absolute-path';

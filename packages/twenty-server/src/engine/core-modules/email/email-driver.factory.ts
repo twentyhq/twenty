@@ -5,7 +5,7 @@ import { EmailDriverInterface } from 'src/engine/core-modules/email/drivers/inte
 import { LoggerDriver } from 'src/engine/core-modules/email/drivers/logger.driver';
 import { SmtpDriver } from 'src/engine/core-modules/email/drivers/smtp.driver';
 import { EmailDriver } from 'src/engine/core-modules/email/enums/email-driver.enum';
-import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic-driver.base';
+import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic-factory.base';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
