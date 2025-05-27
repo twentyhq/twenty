@@ -1,5 +1,4 @@
 import { DateFormat } from '@/localization/constants/DateFormat';
-import { isNull } from '@sniptt/guards';
 import { DateTime } from 'luxon';
 import { getDateFormatString } from '~/utils/date-utils';
 
@@ -16,17 +15,25 @@ export const parseDateToString = ({
   userTimezone,
   dateFormat = DateFormat.MONTH_FIRST,
 }: ParseDateToStringArgs) => {
-  if (isNull(date)) {
-    return '';
-  }
+  const parsingFormat = getDateFormatString(dateFormat, isDateTimeInput);
 
-  const formatString = getDateFormatString(dateFormat, isDateTimeInput);
+  const dateParsed = DateTime.fromJSDate(date, { zone: userTimezone });
 
-  const dateTime = isDateTimeInput
-    ? DateTime.fromJSDate(date, { zone: userTimezone })
-    : DateTime.fromJSDate(date, { zone: 'utc' });
+  const dateWithoutTime = DateTime.fromJSDate(date)
+    .toLocal()
+    .set({
+      day: date.getUTCDate(),
+      month: date.getUTCMonth() + 1,
+      year: date.getUTCFullYear(),
+      hour: 0,
+      minute: 0,
+      second: 0,
+      millisecond: 0,
+    });
 
-  const formattedDate = dateTime.toFormat(formatString);
+  const formattedDate = isDateTimeInput
+    ? dateParsed.setZone(userTimezone).toFormat(parsingFormat)
+    : dateWithoutTime.toFormat(parsingFormat);
 
   return formattedDate;
 };
