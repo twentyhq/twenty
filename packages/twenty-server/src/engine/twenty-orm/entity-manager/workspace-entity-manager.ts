@@ -189,7 +189,7 @@ export class WorkspaceEntityManager extends EntityManager {
       | Date[]
       | ObjectId
       | ObjectId[]
-      | any,
+      | unknown,
     partialEntity: QueryDeepPartialEntity<Entity>,
     permissionOptions?: PermissionOptions,
   ): Promise<UpdateResult> {
@@ -303,7 +303,7 @@ export class WorkspaceEntityManager extends EntityManager {
 
   override increment<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
-    criteria: any,
+    criteria: unknown,
     propertyPath: string,
     value: number | string,
     permissionOptions?: PermissionOptions,
@@ -320,7 +320,7 @@ export class WorkspaceEntityManager extends EntityManager {
     shouldBypassPermissionChecks,
   }: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    target: EntityTarget<any>;
+    target: EntityTarget<unknown>;
     dataSource: WorkspaceDataSource;
     shouldBypassPermissionChecks: boolean;
     roleId?: string;
@@ -375,17 +375,19 @@ export class WorkspaceEntityManager extends EntityManager {
   }
 
   private extractTargetNameSingularFromEntityTarget(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    target: EntityTarget<any>,
+    target: EntityTarget<unknown>,
   ): string {
     return this.connection.getMetadata(target).name;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private extractTargetNameSingularFromEntity(entity: any): string {
     return this.connection.getMetadata(entity.constructor).name;
   }
 
   // Not in use methods - forbidden or duplicated from EntityManager
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   override query<T = any>(_query: string, _parameters?: any[]): Promise<T> {
     throw new Error('Method not allowed.');
   }
@@ -545,7 +547,7 @@ export class WorkspaceEntityManager extends EntityManager {
 
   override delete<Entity extends ObjectLiteral>(
     targetOrEntity: EntityTarget<Entity>,
-    criteria: any,
+    criteria: unknown,
     permissionOptions?: PermissionOptions,
   ): Promise<DeleteResult> {
     this.validatePermissions(targetOrEntity, 'delete', permissionOptions);
@@ -624,7 +626,7 @@ export class WorkspaceEntityManager extends EntityManager {
 
   override softDelete<Entity extends ObjectLiteral>(
     targetOrEntity: EntityTarget<Entity>,
-    criteria: any,
+    criteria: unknown,
     permissionOptions?: PermissionOptions,
   ): Promise<UpdateResult> {
     // if user passed empty criteria or empty list of criterias, then throw an error
@@ -836,7 +838,7 @@ export class WorkspaceEntityManager extends EntityManager {
 
   override restore<Entity extends ObjectLiteral>(
     targetOrEntity: EntityTarget<Entity>,
-    criteria: any,
+    criteria: unknown,
     permissionOptions?: PermissionOptions,
   ): Promise<UpdateResult> {
     // if user passed empty criteria or empty list of criterias, then throw an error
@@ -1064,7 +1066,7 @@ export class WorkspaceEntityManager extends EntityManager {
 
   override decrement<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
-    criteria: any,
+    criteria: unknown,
     propertyPath: string,
     value: number | string,
     permissionOptions?: PermissionOptions,

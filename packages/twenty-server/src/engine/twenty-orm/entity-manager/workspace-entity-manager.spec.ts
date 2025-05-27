@@ -43,14 +43,12 @@ describe('WorkspaceEntityManager', () => {
       },
       featureFlagsMap: {
         [FeatureFlagKey.IsPermissionsV2Enabled]: true,
-        [FeatureFlagKey.IsNewRelationEnabled]: true,
       },
     } as WorkspaceInternalContext;
 
     mockDataSource = {
       featureFlagMap: {
         [FeatureFlagKey.IsPermissionsV2Enabled]: true,
-        [FeatureFlagKey.IsNewRelationEnabled]: true,
       },
       permissionsPerRoleId: {},
     } as WorkspaceDataSource;
@@ -121,7 +119,6 @@ describe('WorkspaceEntityManager', () => {
     // Mock getFeatureFlagMap
     jest.spyOn(entityManager as any, 'getFeatureFlagMap').mockReturnValue({
       [FeatureFlagKey.IsPermissionsV2Enabled]: true,
-      [FeatureFlagKey.IsNewRelationEnabled]: true,
     });
 
     // Mock typeORM's EntityManager methods
