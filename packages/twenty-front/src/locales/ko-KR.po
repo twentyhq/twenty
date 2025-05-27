@@ -3357,8 +3357,8 @@ msgstr "사용 가능한 메트릭스 데이터 없음"
 
 #. js-lingui-id: DL8pzn
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
-msgid "No more members to assign"
-msgstr "지정할 멤버가 더 이상 없습니다"
+#~ msgid "No more members to assign"
+#~ msgstr "지정할 멤버가 더 이상 없습니다"
 
 #. js-lingui-id: tTItk7
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -4782,6 +4782,11 @@ msgstr "이 필드의 값은 고유해야 합니다"
 msgid "The whole event details will be shared with your team."
 msgstr "전체 이벤트 세부정보가 팀과 공유됩니다."
 
+#. js-lingui-id: MssRHl
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
+msgid "The workspace needs at least one Admin"
+msgstr ""
+
 #. js-lingui-id: FEr96N
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Theme"
@@ -5169,8 +5174,8 @@ msgstr "청구 세부 정보 보기"
 
 #. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "View execution details"
-msgstr "실행 세부 사항 보기"
+#~ msgid "View execution details"
+#~ msgstr "실행 세부 사항 보기"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
@@ -5273,13 +5278,13 @@ msgstr "키 비활성화 시기"
 
 #. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow is running..."
-msgstr "워크플로우가 실행 중입니다..."
+#~ msgid "Workflow is running..."
+#~ msgstr "워크플로우가 실행 중입니다..."
 
 #. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow run failed"
-msgstr "워크플로우 실행 실패"
+#~ msgid "Workflow run failed"
+#~ msgstr "워크플로우 실행 실패"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx

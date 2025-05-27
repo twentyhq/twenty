@@ -133,7 +133,6 @@ export const AdvancedFilterValueInput = ({
           dropdownHotkeyScope={{ scope: dropdownId }}
           dropdownOffset={dropdownContentOffset}
           dropdownPlacement="bottom-start"
-          dropdownWidth={280}
           onClose={handleFilterValueDropdownClose}
           onOpen={handleFilterValueDropdownOpen}
         />

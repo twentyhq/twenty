@@ -1,3 +1,4 @@
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -18,7 +19,7 @@ export const MultiWorkspaceDropdownThemesComponents = () => {
   );
 
   return (
-    <DropdownMenuItemsContainer>
+    <DropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -29,15 +30,18 @@ export const MultiWorkspaceDropdownThemesComponents = () => {
       >
         {t`Theme`}
       </DropdownMenuHeader>
-      {colorSchemeList.map((theme) => (
-        <MenuItem
-          LeftIcon={theme.icon}
-          /* eslint-disable-next-line lingui/no-expression-in-message */
-          text={t`${theme.id}`}
-          onClick={() => setColorScheme(theme.id)}
-          RightIcon={theme.id === colorScheme ? IconCheck : undefined}
-        />
-      ))}
-    </DropdownMenuItemsContainer>
+      <DropdownMenuItemsContainer>
+        {colorSchemeList.map((theme) => (
+          <MenuItem
+            key={theme.id}
+            LeftIcon={theme.icon}
+            /* eslint-disable-next-line lingui/no-expression-in-message */
+            text={t`${theme.id}`}
+            onClick={() => setColorScheme(theme.id)}
+            RightIcon={theme.id === colorScheme ? IconCheck : undefined}
+          />
+        ))}
+      </DropdownMenuItemsContainer>
+    </DropdownContent>
   );
 };

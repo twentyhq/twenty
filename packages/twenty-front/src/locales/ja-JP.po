@@ -3357,8 +3357,8 @@ msgstr "利用可能なメトリックスデータがありません"
 
 #. js-lingui-id: DL8pzn
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
-msgid "No more members to assign"
-msgstr "これ以上のメンバーを割り当てることはできません"
+#~ msgid "No more members to assign"
+#~ msgstr "これ以上のメンバーを割り当てることはできません"
 
 #. js-lingui-id: tTItk7
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -4782,6 +4782,11 @@ msgstr "このフィールドの値は一意でなければなりません"
 msgid "The whole event details will be shared with your team."
 msgstr "イベント詳細がすべてチームと共有されます。"
 
+#. js-lingui-id: MssRHl
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
+msgid "The workspace needs at least one Admin"
+msgstr ""
+
 #. js-lingui-id: FEr96N
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Theme"
@@ -5169,8 +5174,8 @@ msgstr "請求の詳細を表示"
 
 #. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "View execution details"
-msgstr "実行の詳細を表示"
+#~ msgid "View execution details"
+#~ msgstr "実行の詳細を表示"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
@@ -5273,13 +5278,13 @@ msgstr "キーが無効になる時期"
 
 #. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow is running..."
-msgstr "ワークフローが実行中です…"
+#~ msgid "Workflow is running..."
+#~ msgstr "ワークフローが実行中です…"
 
 #. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow run failed"
-msgstr "ワークフローの実行に失敗しました"
+#~ msgid "Workflow run failed"
+#~ msgstr "ワークフローの実行に失敗しました"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx

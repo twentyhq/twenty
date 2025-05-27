@@ -3357,8 +3357,8 @@ msgstr "Aucune donnée de métriques disponible"
 
 #. js-lingui-id: DL8pzn
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
-msgid "No more members to assign"
-msgstr "Plus de membres à assigner"
+#~ msgid "No more members to assign"
+#~ msgstr "Plus de membres à assigner"
 
 #. js-lingui-id: tTItk7
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -4782,6 +4782,11 @@ msgstr "Les valeurs de ce champ doivent être uniques"
 msgid "The whole event details will be shared with your team."
 msgstr "Les détails complets de l'événement seront partagés avec votre équipe."
 
+#. js-lingui-id: MssRHl
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
+msgid "The workspace needs at least one Admin"
+msgstr ""
+
 #. js-lingui-id: FEr96N
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Theme"
@@ -5169,8 +5174,8 @@ msgstr "Voir les détails de facturation"
 
 #. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "View execution details"
-msgstr "Voir les détails d'exécution"
+#~ msgid "View execution details"
+#~ msgstr "Voir les détails d'exécution"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
@@ -5273,13 +5278,13 @@ msgstr "Quand la clé sera désactivée"
 
 #. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow is running..."
-msgstr "Le Workflows est en cours d'exécution..."
+#~ msgid "Workflow is running..."
+#~ msgstr "Le Workflows est en cours d'exécution..."
 
 #. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow run failed"
-msgstr "Échec de l'exécution du Workflow"
+#~ msgid "Workflow run failed"
+#~ msgstr "Échec de l'exécution du Workflow"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx

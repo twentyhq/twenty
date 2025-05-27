@@ -3,6 +3,7 @@ import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hook
 import { useUpdateObjectViewOptions } from '@/object-record/object-options-dropdown/hooks/useUpdateObjectViewOptions';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -38,7 +39,7 @@ export const ObjectOptionsDropdownLayoutOpenInContent = () => {
   ];
 
   return (
-    <>
+    <DropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -105,6 +106,6 @@ export const ObjectOptionsDropdownLayoutOpenInContent = () => {
           </SelectableListItem>
         </SelectableList>
       </DropdownMenuItemsContainer>
-    </>
+    </DropdownContent>
   );
 };

@@ -131,8 +131,43 @@ export const Default: Story = {
   },
 };
 
-// FIXME: We will have to fix that behavior, we should only be able to set a secondary email as the primary email
-export const CanSetPrimaryLinkAsPrimaryLink: Story = {
+export const TrimInput: Story = {
+  args: {
+    value: {
+      primaryEmail: 'john@example.com',
+      additionalEmails: [],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const addButton = await canvas.findByText('Add Email');
+    await userEvent.click(addButton);
+
+    const input = await canvas.findByPlaceholderText('Email');
+    await userEvent.type(input, '  new.email@example.com  {enter}');
+
+    const newEmailElement = await canvas.findByText('new.email@example.com');
+    expect(newEmailElement).toBeVisible();
+
+    await waitFor(() => {
+      expect(updateRecord).toHaveBeenCalledWith({
+        variables: {
+          where: { id: 'record-id' },
+          updateOneRecordInput: {
+            emails: {
+              primaryEmail: 'john@example.com',
+              additionalEmails: ['new.email@example.com'],
+            },
+          },
+        },
+      });
+    });
+    expect(updateRecord).toHaveBeenCalledTimes(1);
+  },
+};
+
+export const CanNotSetPrimaryLinkAsPrimaryLink: Story = {
   args: {
     value: {
       primaryEmail: 'primary@example.com',
@@ -152,28 +187,16 @@ export const CanSetPrimaryLinkAsPrimaryLink: Story = {
     });
     await userEvent.click(openDropdownButtons[0]);
 
-    const setPrimaryOption = await within(
+    const editOption = await within(
       getCanvasElementForDropdownTesting(),
-    ).findByText('Set as Primary');
+    ).findByText('Edit');
 
-    expect(setPrimaryOption).toBeVisible();
+    expect(editOption).toBeVisible();
 
-    await userEvent.click(setPrimaryOption);
+    const setPrimaryOption = within(
+      getCanvasElementForDropdownTesting(),
+    ).queryByText('Set as Primary');
 
-    // Verify the update was called with swapped emails
-    await waitFor(() => {
-      expect(updateRecord).toHaveBeenCalledWith({
-        variables: {
-          where: { id: 'record-id' },
-          updateOneRecordInput: {
-            emails: {
-              primaryEmail: 'primary@example.com',
-              additionalEmails: [],
-            },
-          },
-        },
-      });
-    });
-    expect(updateRecord).toHaveBeenCalledTimes(1);
+    expect(setPrimaryOption).not.toBeInTheDocument();
   },
 };

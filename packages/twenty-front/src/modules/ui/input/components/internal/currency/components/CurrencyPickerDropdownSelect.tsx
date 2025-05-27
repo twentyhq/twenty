@@ -1,12 +1,12 @@
 import { useMemo, useState } from 'react';
 
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { Currency } from '@/ui/input/components/internal/types/Currency';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { MenuItem, MenuItemSelectAvatar } from 'twenty-ui/navigation';
 
 export const CurrencyPickerDropdownSelect = ({
@@ -31,7 +31,7 @@ export const CurrencyPickerDropdownSelect = ({
   );
 
   return (
-    <DropdownMenu>
+    <DropdownContent>
       <DropdownMenuSearchInput
         value={searchFilter}
         onChange={(event) => setSearchFilter(event.target.value)}
@@ -65,6 +65,6 @@ export const CurrencyPickerDropdownSelect = ({
           </>
         )}
       </DropdownMenuItemsContainer>
-    </DropdownMenu>
+    </DropdownContent>
   );
 };

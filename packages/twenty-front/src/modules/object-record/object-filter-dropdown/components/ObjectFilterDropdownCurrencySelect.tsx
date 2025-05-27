@@ -5,9 +5,11 @@ import { turnCurrencyIntoSelectableItem } from '@/object-record/object-filter-dr
 import { StyledMultipleSelectDropdownAvatarChip } from '@/object-record/select/components/StyledMultipleSelectDropdownAvatarChip';
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -95,7 +97,7 @@ export const ObjectFilterDropdownCurrencySelect = () => {
     searchText !== '';
 
   return (
-    <>
+    <DropdownContent widthInPixels={GenericDropdownContentWidth.Large}>
       <DropdownMenuSearchInput
         autoFocus
         type="text"
@@ -153,6 +155,6 @@ export const ObjectFilterDropdownCurrencySelect = () => {
         })}
         {showNoResult && <MenuItem text={t`No results`} />}
       </DropdownMenuItemsContainer>
-    </>
+    </DropdownContent>
   );
 };

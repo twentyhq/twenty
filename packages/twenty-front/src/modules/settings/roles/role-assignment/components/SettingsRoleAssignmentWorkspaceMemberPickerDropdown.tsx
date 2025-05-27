@@ -1,7 +1,7 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
 import { SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -38,7 +38,7 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdown = ({
   const { t } = useLingui();
 
   return (
-    <DropdownMenu>
+    <DropdownContent>
       <DropdownMenuSearchInput
         value={searchFilter}
         onChange={handleSearchFilterChange}
@@ -53,6 +53,6 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdown = ({
           onSelect={onSelect}
         />
       </DropdownMenuItemsContainer>
-    </DropdownMenu>
+    </DropdownContent>
   );
 };

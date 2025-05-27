@@ -137,6 +137,9 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                 case 'FORBIDDEN': {
                   return;
                 }
+                case 'INTERNAL_SERVER_ERROR': {
+                  return; // already caught in BE
+                }
                 default:
                   if (isDebugMode === true) {
                     logDebug(

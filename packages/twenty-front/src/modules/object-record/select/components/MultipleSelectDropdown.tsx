@@ -3,6 +3,7 @@ import { Key } from 'ts-key-enum';
 import { StyledMultipleSelectDropdownAvatarChip } from '@/object-record/select/components/StyledMultipleSelectDropdownAvatarChip';
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -80,47 +81,49 @@ export const MultipleSelectDropdown = ({
   const selectableItemIds = itemsInDropdown.map((item) => item.id);
 
   return (
-    <SelectableList
-      selectableListInstanceId={selectableListId}
-      selectableItemIdArray={selectableItemIds}
-      hotkeyScope={hotkeyScope}
-    >
-      <DropdownMenuItemsContainer hasMaxHeight width="auto">
-        {itemsInDropdown?.map((item) => {
-          return (
-            <SelectableListItem
-              itemId={item.id}
-              onEnter={() => {
-                resetSelectedItem();
-                handleItemSelectChange(item, !item.isSelected);
-              }}
-            >
-              <MenuItemMultiSelectAvatar
-                key={item.id}
-                selected={item.isSelected}
-                isKeySelected={item.id === selectedItemId}
-                onSelectChange={(newCheckedValue) => {
+    <DropdownContent>
+      <SelectableList
+        selectableListInstanceId={selectableListId}
+        selectableItemIdArray={selectableItemIds}
+        hotkeyScope={hotkeyScope}
+      >
+        <DropdownMenuItemsContainer hasMaxHeight width="auto">
+          {itemsInDropdown?.map((item) => {
+            return (
+              <SelectableListItem
+                itemId={item.id}
+                onEnter={() => {
                   resetSelectedItem();
-                  handleItemSelectChange(item, newCheckedValue);
+                  handleItemSelectChange(item, !item.isSelected);
                 }}
-                avatar={
-                  <StyledMultipleSelectDropdownAvatarChip
-                    className="avatar-icon-container"
-                    name={item.name}
-                    avatarUrl={item.avatarUrl}
-                    LeftIcon={item.AvatarIcon}
-                    avatarType={item.avatarType}
-                    isIconInverted={item.isIconInverted}
-                    placeholderColorSeed={item.id}
-                  />
-                }
-              />
-            </SelectableListItem>
-          );
-        })}
-        {showNoResult && <MenuItem text="No results" />}
-        {loadingItems && <DropdownMenuSkeletonItem />}
-      </DropdownMenuItemsContainer>
-    </SelectableList>
+              >
+                <MenuItemMultiSelectAvatar
+                  key={item.id}
+                  selected={item.isSelected}
+                  isKeySelected={item.id === selectedItemId}
+                  onSelectChange={(newCheckedValue) => {
+                    resetSelectedItem();
+                    handleItemSelectChange(item, newCheckedValue);
+                  }}
+                  avatar={
+                    <StyledMultipleSelectDropdownAvatarChip
+                      className="avatar-icon-container"
+                      name={item.name}
+                      avatarUrl={item.avatarUrl}
+                      LeftIcon={item.AvatarIcon}
+                      avatarType={item.avatarType}
+                      isIconInverted={item.isIconInverted}
+                      placeholderColorSeed={item.id}
+                    />
+                  }
+                />
+              </SelectableListItem>
+            );
+          })}
+          {showNoResult && <MenuItem text="No results" />}
+          {loadingItems && <DropdownMenuSkeletonItem />}
+        </DropdownMenuItemsContainer>
+      </SelectableList>
+    </DropdownContent>
   );
 };

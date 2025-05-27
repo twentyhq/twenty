@@ -2,9 +2,11 @@ import { AdvancedFilterAddFilterRuleSelect } from '@/object-record/advanced-filt
 
 import { AdvancedFilterRecordFilterGroupRow } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupRow';
 import { AdvancedFilterRecordFilterRow } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterRow';
+import { ADVANCED_FILTER_DROPDOWN_CONTENT_WIDTH } from '@/object-record/advanced-filter/constants/AdvancedFilterDropdownContentWidth';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
 import { isRecordFilterGroupChildARecordFilterGroup } from '@/object-record/advanced-filter/utils/isRecordFilterGroupChildARecordFilterGroup';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
@@ -18,7 +20,6 @@ const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2)};
-  min-width: 650px;
 `;
 
 export const AdvancedFilterRootRecordFilterGroup = () => {
@@ -37,31 +38,33 @@ export const AdvancedFilterRootRecordFilterGroup = () => {
 
   return (
     <ScrollWrapper componentInstanceId={`scroll-wrapper-dropdown-menu-${id}`}>
-      <StyledContainer>
-        {childRecordFiltersAndRecordFilterGroups.map(
-          (recordFilterGroupChild, recordFilterGroupChildIndex) =>
-            isRecordFilterGroupChildARecordFilterGroup(
-              recordFilterGroupChild,
-            ) ? (
-              <AdvancedFilterRecordFilterGroupRow
-                key={recordFilterGroupChild.id}
-                parentRecordFilterGroup={rootRecordFilterGroup}
-                recordFilterGroup={recordFilterGroupChild}
-                recordFilterGroupIndex={recordFilterGroupChildIndex}
-              />
-            ) : (
-              <AdvancedFilterRecordFilterRow
-                key={recordFilterGroupChild.id}
-                recordFilterGroup={rootRecordFilterGroup}
-                recordFilter={recordFilterGroupChild}
-                recordFilterIndex={recordFilterGroupChildIndex}
-              />
-            ),
-        )}
-        <AdvancedFilterAddFilterRuleSelect
-          recordFilterGroup={rootRecordFilterGroup}
-        />
-      </StyledContainer>
+      <DropdownContent widthInPixels={ADVANCED_FILTER_DROPDOWN_CONTENT_WIDTH}>
+        <StyledContainer>
+          {childRecordFiltersAndRecordFilterGroups.map(
+            (recordFilterGroupChild, recordFilterGroupChildIndex) =>
+              isRecordFilterGroupChildARecordFilterGroup(
+                recordFilterGroupChild,
+              ) ? (
+                <AdvancedFilterRecordFilterGroupRow
+                  key={recordFilterGroupChild.id}
+                  parentRecordFilterGroup={rootRecordFilterGroup}
+                  recordFilterGroup={recordFilterGroupChild}
+                  recordFilterGroupIndex={recordFilterGroupChildIndex}
+                />
+              ) : (
+                <AdvancedFilterRecordFilterRow
+                  key={recordFilterGroupChild.id}
+                  recordFilterGroup={rootRecordFilterGroup}
+                  recordFilter={recordFilterGroupChild}
+                  recordFilterIndex={recordFilterGroupChildIndex}
+                />
+              ),
+          )}
+          <AdvancedFilterAddFilterRuleSelect
+            recordFilterGroup={rootRecordFilterGroup}
+          />
+        </StyledContainer>
+      </DropdownContent>
     </ScrollWrapper>
   );
 };

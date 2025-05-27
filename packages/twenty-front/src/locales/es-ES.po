@@ -3357,8 +3357,8 @@ msgstr "No hay datos de métricas disponibles"
 
 #. js-lingui-id: DL8pzn
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
-msgid "No more members to assign"
-msgstr "No hay más miembros para asignar"
+#~ msgid "No more members to assign"
+#~ msgstr "No hay más miembros para asignar"
 
 #. js-lingui-id: tTItk7
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -4782,6 +4782,11 @@ msgstr "Los valores de este campo deben ser únicos"
 msgid "The whole event details will be shared with your team."
 msgstr "Los detalles completos del evento se compartirán con tu equipo."
 
+#. js-lingui-id: MssRHl
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
+msgid "The workspace needs at least one Admin"
+msgstr ""
+
 #. js-lingui-id: FEr96N
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Theme"
@@ -5169,8 +5174,8 @@ msgstr "Ver detalles de facturación"
 
 #. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "View execution details"
-msgstr "Ver detalles de ejecución"
+#~ msgid "View execution details"
+#~ msgstr "Ver detalles de ejecución"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
@@ -5273,13 +5278,13 @@ msgstr "Cuándo se desactivará la clave"
 
 #. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow is running..."
-msgstr "El Workflow está ejecutándose..."
+#~ msgid "Workflow is running..."
+#~ msgstr "El Workflow está ejecutándose..."
 
 #. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow run failed"
-msgstr "Fallo en la ejecución del Workflow"
+#~ msgid "Workflow run failed"
+#~ msgstr "Fallo en la ejecución del Workflow"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx

@@ -2,6 +2,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -176,7 +177,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
             dropdownComponents={
               <>
                 {isSystemObjectsOpen ? (
-                  <>
+                  <DropdownContent>
                     <DropdownMenuHeader
                       StartComponent={
                         <DropdownMenuHeaderLeftComponent
@@ -203,9 +204,9 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
                         />
                       ))}
                     </DropdownMenuItemsContainer>
-                  </>
+                  </DropdownContent>
                 ) : (
-                  <>
+                  <DropdownContent>
                     <DropdownMenuSearchInput
                       autoFocus
                       value={searchInputValue}
@@ -233,7 +234,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
                         />
                       )}
                     </DropdownMenuItemsContainer>
-                  </>
+                  </DropdownContent>
                 )}
               </>
             }

@@ -9,7 +9,7 @@ import { RecordPickerLayoutDirection } from '@/object-record/record-picker/types
 import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -110,7 +110,7 @@ export const MultipleRecordPicker = ({
         containerRef={containerRef}
         onClickOutside={onClickOutside}
       />
-      <DropdownMenu ref={containerRef} data-select-disable width={200}>
+      <DropdownContent ref={containerRef}>
         {layoutDirection === 'search-bar-on-bottom' && (
           <>
             {createNewButtonSection}
@@ -124,7 +124,7 @@ export const MultipleRecordPicker = ({
             {createNewButtonSection}
           </>
         )}
-      </DropdownMenu>
+      </DropdownContent>
     </MultipleRecordPickerComponentInstanceContext.Provider>
   );
 };

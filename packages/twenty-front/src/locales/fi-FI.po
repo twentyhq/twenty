@@ -3357,8 +3357,8 @@ msgstr "Ei metriikkatietoja saatavilla"
 
 #. js-lingui-id: DL8pzn
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
-msgid "No more members to assign"
-msgstr "Ei enää jäseniä osoitettavana"
+#~ msgid "No more members to assign"
+#~ msgstr "Ei enää jäseniä osoitettavana"
 
 #. js-lingui-id: tTItk7
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -4782,6 +4782,11 @@ msgstr "Tämän kentän arvojen tulee olla yksilöllisiä"
 msgid "The whole event details will be shared with your team."
 msgstr "Koko tapahtuman tiedot jaetaan tiimisi kanssa."
 
+#. js-lingui-id: MssRHl
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
+msgid "The workspace needs at least one Admin"
+msgstr ""
+
 #. js-lingui-id: FEr96N
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Theme"
@@ -5169,8 +5174,8 @@ msgstr "Näytä laskutustiedot"
 
 #. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "View execution details"
-msgstr "Näytä suoritustiedot"
+#~ msgid "View execution details"
+#~ msgstr "Näytä suoritustiedot"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
@@ -5273,13 +5278,13 @@ msgstr "Milloin avain poistetaan käytöstä"
 
 #. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow is running..."
-msgstr "Työnkulku on käynnissä..."
+#~ msgid "Workflow is running..."
+#~ msgstr "Työnkulku on käynnissä..."
 
 #. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow run failed"
-msgstr "Työnkulun suoritus epäonnistui"
+#~ msgid "Workflow run failed"
+#~ msgstr "Työnkulun suoritus epäonnistui"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx

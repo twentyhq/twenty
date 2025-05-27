@@ -140,8 +140,65 @@ export const Default: Story = {
   },
 };
 
-// FIXME: We will have to fix that behavior, we should only be able to set an additional phone as the primary phone
-export const CanSetPrimaryLinkAsPrimaryLink: Story = {
+export const TrimInput: Story = {
+  args: {
+    value: {
+      primaryPhoneCountryCode: 'FR',
+      primaryPhoneNumber: '642646272',
+      primaryPhoneCallingCode: '+33',
+      additionalPhones: [
+        {
+          countryCode: 'FR',
+          number: '642646273',
+          callingCode: '+33',
+        },
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const addButton = await canvas.findByText('Add Phone');
+    await userEvent.click(addButton);
+
+    const input = await canvas.findByPlaceholderText('Phone');
+    await userEvent.type(input, '+33642646274  {enter}');
+
+    const newPhoneElement = await canvas.findByText('+33 6 42 64 62 74');
+    expect(newPhoneElement).toBeVisible();
+
+    // Verify the update was called with swapped phones
+    await waitFor(() => {
+      expect(updateRecord).toHaveBeenCalledWith({
+        variables: {
+          where: { id: 'record-id' },
+          updateOneRecordInput: {
+            phones: {
+              primaryPhoneCallingCode: '+33',
+              primaryPhoneCountryCode: 'FR',
+              primaryPhoneNumber: '642646272',
+              additionalPhones: [
+                {
+                  countryCode: 'FR',
+                  number: '642646273',
+                  callingCode: '+33',
+                },
+                {
+                  countryCode: 'FR',
+                  number: '642646274',
+                  callingCode: '+33',
+                },
+              ],
+            },
+          },
+        },
+      });
+    });
+    expect(updateRecord).toHaveBeenCalledTimes(1);
+  },
+};
+
+export const CanNotSetPrimaryLinkAsPrimaryLink: Story = {
   args: {
     value: {
       primaryPhoneCountryCode: 'FR',
@@ -163,30 +220,16 @@ export const CanSetPrimaryLinkAsPrimaryLink: Story = {
     });
     await userEvent.click(openDropdownButtons[0]);
 
-    const setPrimaryOption = await within(
+    const editOption = await within(
       getCanvasElementForDropdownTesting(),
-    ).findByText('Set as Primary');
+    ).findByText('Edit');
 
-    expect(setPrimaryOption).toBeVisible();
+    expect(editOption).toBeVisible();
 
-    await userEvent.click(setPrimaryOption);
+    const setPrimaryOption = within(
+      getCanvasElementForDropdownTesting(),
+    ).queryByText('Set as Primary');
 
-    // Verify the update was called with swapped phones
-    await waitFor(() => {
-      expect(updateRecord).toHaveBeenCalledWith({
-        variables: {
-          where: { id: 'record-id' },
-          updateOneRecordInput: {
-            phones: {
-              primaryPhoneCallingCode: '+33',
-              primaryPhoneCountryCode: 'FR',
-              primaryPhoneNumber: '642646272',
-              additionalPhones: [],
-            },
-          },
-        },
-      });
-    });
-    expect(updateRecord).toHaveBeenCalledTimes(1);
+    expect(setPrimaryOption).not.toBeInTheDocument();
   },
 };

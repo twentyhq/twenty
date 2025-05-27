@@ -3357,8 +3357,8 @@ msgstr "لا توجد بيانات قياسات متاحة"
 
 #. js-lingui-id: DL8pzn
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
-msgid "No more members to assign"
-msgstr "لا يوجد المزيد من الأعضاء لتعيينهم"
+#~ msgid "No more members to assign"
+#~ msgstr "لا يوجد المزيد من الأعضاء لتعيينهم"
 
 #. js-lingui-id: tTItk7
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -4782,6 +4782,11 @@ msgstr "يجب أن تكون قيم هذا الحقل فريدة"
 msgid "The whole event details will be shared with your team."
 msgstr "سيتم مشاركة تفاصيل الحدث بالكامل مع فريقك."
 
+#. js-lingui-id: MssRHl
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
+msgid "The workspace needs at least one Admin"
+msgstr ""
+
 #. js-lingui-id: FEr96N
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Theme"
@@ -5169,8 +5174,8 @@ msgstr "عرض تفاصيل الفوترة"
 
 #. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "View execution details"
-msgstr "عرض تفاصيل التنفيذ"
+#~ msgid "View execution details"
+#~ msgstr "عرض تفاصيل التنفيذ"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
@@ -5273,13 +5278,13 @@ msgstr "حين سيتم تعطيل المفتاح"
 
 #. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow is running..."
-msgstr "سير العمل قيد التشغيل..."
+#~ msgid "Workflow is running..."
+#~ msgstr "سير العمل قيد التشغيل..."
 
 #. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow run failed"
-msgstr "فشل تشغيل سير العمل"
+#~ msgid "Workflow run failed"
+#~ msgstr "فشل تشغيل سير العمل"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx

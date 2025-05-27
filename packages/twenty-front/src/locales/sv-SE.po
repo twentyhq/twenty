@@ -3357,8 +3357,8 @@ msgstr "Ingen metrikdata tillgänglig"
 
 #. js-lingui-id: DL8pzn
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
-msgid "No more members to assign"
-msgstr "Inga fler medlemmar att tilldela"
+#~ msgid "No more members to assign"
+#~ msgstr "Inga fler medlemmar att tilldela"
 
 #. js-lingui-id: tTItk7
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -4782,6 +4782,11 @@ msgstr "Värdena för detta fält måste vara unika"
 msgid "The whole event details will be shared with your team."
 msgstr "Hela händelsedetaljerna kommer att delas med ditt team."
 
+#. js-lingui-id: MssRHl
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
+msgid "The workspace needs at least one Admin"
+msgstr ""
+
 #. js-lingui-id: FEr96N
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Theme"
@@ -5169,8 +5174,8 @@ msgstr "Visa fakturadetaljer"
 
 #. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "View execution details"
-msgstr "Visa exekveringsdetaljer"
+#~ msgid "View execution details"
+#~ msgstr "Visa exekveringsdetaljer"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
@@ -5273,13 +5278,13 @@ msgstr "När nyckeln kommer att inaktiveras"
 
 #. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow is running..."
-msgstr "Arbetsflöde körs..."
+#~ msgid "Workflow is running..."
+#~ msgstr "Arbetsflöde körs..."
 
 #. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow run failed"
-msgstr "Arbetsflödeskörning misslyckades"
+#~ msgid "Workflow run failed"
+#~ msgstr "Arbetsflödeskörning misslyckades"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx

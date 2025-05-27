@@ -1,3 +1,4 @@
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
@@ -73,26 +74,28 @@ export const MultiItemFieldMenuItem = <T,>({
       RightIcon={!isHovered && showPrimaryIcon ? IconBookmark : null}
       dropdownId={dropdownId}
       dropdownContent={
-        <DropdownMenuItemsContainer>
-          {showSetAsPrimaryButton && (
+        <DropdownContent>
+          <DropdownMenuItemsContainer>
+            {showSetAsPrimaryButton && (
+              <MenuItem
+                LeftIcon={IconBookmarkPlus}
+                text="Set as Primary"
+                onClick={handleSetAsPrimaryClick}
+              />
+            )}
             <MenuItem
-              LeftIcon={IconBookmarkPlus}
-              text="Set as Primary"
-              onClick={handleSetAsPrimaryClick}
+              LeftIcon={IconPencil}
+              text="Edit"
+              onClick={handleEditClick}
             />
-          )}
-          <MenuItem
-            LeftIcon={IconPencil}
-            text="Edit"
-            onClick={handleEditClick}
-          />
-          <MenuItem
-            accent="danger"
-            LeftIcon={IconTrash}
-            text="Delete"
-            onClick={handleDeleteClick}
-          />
-        </DropdownMenuItemsContainer>
+            <MenuItem
+              accent="danger"
+              LeftIcon={IconTrash}
+              text="Delete"
+              onClick={handleDeleteClick}
+            />
+          </DropdownMenuItemsContainer>
+        </DropdownContent>
       }
     />
   );
