@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useIMask } from 'react-imask';
 import { useRecoilValue } from 'recoil';
 
@@ -105,7 +105,7 @@ export const DateTimeInput = ({
     setValue(parseToString(date));
   }, [date, setValue, parseToString]);
 
-  const getPlaceholder = useCallback(() => {
+  const getPlaceholder = () => {
     switch (dateFormat) {
       case DateFormat.DAY_FIRST:
         return `Type date${isDateTimeInput ? ' and time' : ' (dd/mm/yyyy)'}`;
@@ -115,7 +115,7 @@ export const DateTimeInput = ({
       default:
         return `Type date${isDateTimeInput ? ' and time' : ' (mm/dd/yyyy)'}`;
     }
-  }, [dateFormat, isDateTimeInput]);
+  };
 
   return (
     <StyledInputContainer>
