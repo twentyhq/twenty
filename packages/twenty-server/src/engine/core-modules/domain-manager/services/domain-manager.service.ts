@@ -132,7 +132,7 @@ export class DomainManagerService {
   ) {
     const url = this.buildWorkspaceURL({
       workspace,
-      pathname: pathname,
+      pathname,
       searchParams: { errorMessage },
     });
 
