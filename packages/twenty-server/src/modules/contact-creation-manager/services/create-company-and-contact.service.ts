@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import chunk from 'lodash.chunk';
 import compact from 'lodash.compact';
-import { Any, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -77,16 +77,45 @@ export class CreateCompanyAndContactService {
       return [];
     }
 
-    const alreadyCreatedContacts = await personRepository.find({
-      withDeleted: true,
-      where: {
-        emails: { primaryEmail: Any(uniqueHandles) },
-      },
-    });
+    let queryBuilder = personRepository
+      .createQueryBuilder('person')
+      .select(['person.emailsPrimaryEmail', 'person.emailsAdditionalEmails'])
+      .where('person.emailsPrimaryEmail IN (:...uniqueHandles)', {
+        uniqueHandles,
+      });
 
-    const alreadyCreatedContactEmails: string[] = alreadyCreatedContacts?.map(
-      ({ emails }) => emails?.primaryEmail?.toLowerCase(),
+    for (const [index, handle] of uniqueHandles.entries()) {
+      queryBuilder = queryBuilder.orWhere(
+        `person.emailsAdditionalEmails @> :handle${index}::jsonb`,
+        {
+          [`handle${index}`]: JSON.stringify([handle]),
+        },
+      );
+    }
+
+    const rawAlreadyCreatedContacts = await queryBuilder
+      .orderBy('person.createdAt', 'DESC')
+      .getMany();
+
+    const alreadyCreatedContacts = await personRepository.formatResult(
+      rawAlreadyCreatedContacts,
     );
+
+    const alreadyCreatedContactEmails: string[] =
+      alreadyCreatedContacts?.reduce((acc: string[], { emails }) => {
+        if (emails?.primaryEmail !== '') {
+          acc.push(emails.primaryEmail.toLowerCase());
+        }
+        if (Array.isArray(emails?.additionalEmails)) {
+          acc.push(
+            ...emails.additionalEmails
+              .filter((email) => email !== '')
+              .map((email) => email.toLowerCase()),
+          );
+        }
+
+        return acc;
+      }, []);
 
     const filteredContactsToCreate = uniqueContacts.filter(
       (participant) =>
