@@ -39,7 +39,6 @@ export const WorkspaceProviderEffect = () => {
   const { initializeQueryParamState } = useInitializeQueryParamState();
 
   useEffect(() => {
-    console.log('>>>>>>>>>>>>>>', getPublicWorkspaceData);
     const hostnames = getPublicWorkspaceData
       ? getHostnamesFromWorkspaceUrls(getPublicWorkspaceData?.workspaceUrls)
       : null;
