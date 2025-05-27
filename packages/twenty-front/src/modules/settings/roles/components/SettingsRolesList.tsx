@@ -14,6 +14,7 @@ import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { sortByAscString } from '~/utils/array/sortByAscString';
 
 const StyledCreateRoleSection = styled(Section)`
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
@@ -41,7 +42,7 @@ export const SettingsRolesList = () => {
   const settingsAllRoles = useRecoilValue(settingsAllRolesSelector);
 
   const sortedSettingsAllRoles = [...settingsAllRoles].sort((a, b) =>
-    a.label.localeCompare(b.label),
+    sortByAscString(a.label, b.label),
   );
 
   return (
