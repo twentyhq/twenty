@@ -96,7 +96,7 @@ export const graphqlMocks = {
               displayName: 'displayName',
               workspaceUrls: {
                 customUrl: undefined,
-                subdomainUrl: 'https://twenty.com',
+                subdomainUrl: 'https://crm.twenty.com',
               },
               authProviders: {
                 google: true,

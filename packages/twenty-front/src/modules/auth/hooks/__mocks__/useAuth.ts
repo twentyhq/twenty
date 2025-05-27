@@ -67,6 +67,7 @@ export const results = {
         avatarUrl: 'avatarUrl',
         locale: 'locale',
       },
+      availableWorkspaces: [],
       currentWorkspace: {
         id: 'id',
         displayName: 'displayName',
@@ -74,6 +75,11 @@ export const results = {
         inviteHash: 'inviteHash',
         allowImpersonation: true,
         subscriptionStatus: 'subscriptionStatus',
+        customDomain: null,
+        workspaceUrls: {
+          customUrl: undefined,
+          subdomainUrl: 'https://twenty.com',
+        },
         featureFlags: {
           id: 'id',
           key: 'key',
