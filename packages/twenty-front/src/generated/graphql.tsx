@@ -949,10 +949,10 @@ export type Mutation = {
   updateWorkspace: Workspace;
   updateWorkspaceFeatureFlag: Scalars['Boolean'];
   updateWorkspaceMemberRole: WorkspaceMember;
-  uploadFile: Scalars['String'];
-  uploadImage: Scalars['String'];
-  uploadProfilePicture: Scalars['String'];
-  uploadWorkspaceLogo: Scalars['String'];
+  uploadFile: SignedFileDto;
+  uploadImage: SignedFileDto;
+  uploadProfilePicture: SignedFileDto;
+  uploadWorkspaceLogo: SignedFileDto;
   upsertObjectPermissions: Array<ObjectPermission>;
   upsertSettingPermissions: Array<SettingPermission>;
   userLookupAdminPanel: UserLookup;
@@ -1978,6 +1978,12 @@ export type SignUpOutput = {
   workspace: WorkspaceUrlsAndId;
 };
 
+export type SignedFileDto = {
+  __typename?: 'SignedFileDTO';
+  path: Scalars['String'];
+  token: Scalars['String'];
+};
+
 export type StandardOverrides = {
   __typename?: 'StandardOverrides';
   description?: Maybe<Scalars['String']>;
@@ -2563,7 +2569,7 @@ export type UploadFileMutationVariables = Exact<{
 }>;
 
 
-export type UploadFileMutation = { __typename?: 'Mutation', uploadFile: string };
+export type UploadFileMutation = { __typename?: 'Mutation', uploadFile: { __typename?: 'SignedFileDTO', path: string, token: string } };
 
 export type UploadImageMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -2571,7 +2577,7 @@ export type UploadImageMutationVariables = Exact<{
 }>;
 
 
-export type UploadImageMutation = { __typename?: 'Mutation', uploadImage: string };
+export type UploadImageMutation = { __typename?: 'Mutation', uploadImage: { __typename?: 'SignedFileDTO', path: string, token: string } };
 
 export type AuthTokenFragmentFragment = { __typename?: 'AuthToken', token: string, expiresAt: string };
 
@@ -2984,7 +2990,7 @@ export type UploadProfilePictureMutationVariables = Exact<{
 }>;
 
 
-export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProfilePicture: string };
+export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProfilePicture: { __typename?: 'SignedFileDTO', path: string, token: string } };
 
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3115,7 +3121,7 @@ export type UploadWorkspaceLogoMutationVariables = Exact<{
 }>;
 
 
-export type UploadWorkspaceLogoMutation = { __typename?: 'Mutation', uploadWorkspaceLogo: string };
+export type UploadWorkspaceLogoMutation = { __typename?: 'Mutation', uploadWorkspaceLogo: { __typename?: 'SignedFileDTO', path: string, token: string } };
 
 export type CheckCustomDomainValidRecordsMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -3592,7 +3598,10 @@ export type TrackAnalyticsMutationResult = Apollo.MutationResult<TrackAnalyticsM
 export type TrackAnalyticsMutationOptions = Apollo.BaseMutationOptions<TrackAnalyticsMutation, TrackAnalyticsMutationVariables>;
 export const UploadFileDocument = gql`
     mutation uploadFile($file: Upload!, $fileFolder: FileFolder) {
-  uploadFile(file: $file, fileFolder: $fileFolder)
+  uploadFile(file: $file, fileFolder: $fileFolder) {
+    path
+    token
+  }
 }
     `;
 export type UploadFileMutationFn = Apollo.MutationFunction<UploadFileMutation, UploadFileMutationVariables>;
@@ -3624,7 +3633,10 @@ export type UploadFileMutationResult = Apollo.MutationResult<UploadFileMutation>
 export type UploadFileMutationOptions = Apollo.BaseMutationOptions<UploadFileMutation, UploadFileMutationVariables>;
 export const UploadImageDocument = gql`
     mutation uploadImage($file: Upload!, $fileFolder: FileFolder) {
-  uploadImage(file: $file, fileFolder: $fileFolder)
+  uploadImage(file: $file, fileFolder: $fileFolder) {
+    path
+    token
+  }
 }
     `;
 export type UploadImageMutationFn = Apollo.MutationFunction<UploadImageMutation, UploadImageMutationVariables>;
@@ -5853,7 +5865,10 @@ export type DeleteUserAccountMutationResult = Apollo.MutationResult<DeleteUserAc
 export type DeleteUserAccountMutationOptions = Apollo.BaseMutationOptions<DeleteUserAccountMutation, DeleteUserAccountMutationVariables>;
 export const UploadProfilePictureDocument = gql`
     mutation UploadProfilePicture($file: Upload!) {
-  uploadProfilePicture(file: $file)
+  uploadProfilePicture(file: $file) {
+    path
+    token
+  }
 }
     `;
 export type UploadProfilePictureMutationFn = Apollo.MutationFunction<UploadProfilePictureMutation, UploadProfilePictureMutationVariables>;
@@ -6519,7 +6534,10 @@ export type UpdateWorkspaceMutationResult = Apollo.MutationResult<UpdateWorkspac
 export type UpdateWorkspaceMutationOptions = Apollo.BaseMutationOptions<UpdateWorkspaceMutation, UpdateWorkspaceMutationVariables>;
 export const UploadWorkspaceLogoDocument = gql`
     mutation UploadWorkspaceLogo($file: Upload!) {
-  uploadWorkspaceLogo(file: $file)
+  uploadWorkspaceLogo(file: $file) {
+    path
+    token
+  }
 }
     `;
 export type UploadWorkspaceLogoMutationFn = Apollo.MutationFunction<UploadWorkspaceLogoMutation, UploadWorkspaceLogoMutationVariables>;

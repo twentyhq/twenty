@@ -13,6 +13,7 @@ import crypto from 'crypto';
 
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
+import { buildSignedPath } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
@@ -42,6 +43,8 @@ import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
+import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -114,11 +117,14 @@ export class UserResolver {
 
     if (workspaceMember && workspaceMember.avatarUrl) {
       const avatarUrlToken = this.fileService.encodeFileToken({
-        workspaceMemberId: workspaceMember.id,
+        filename: extractFilenameFromPath(workspaceMember.avatarUrl),
         workspaceId: workspace.id,
       });
 
-      workspaceMember.avatarUrl = `${workspaceMember.avatarUrl}?token=${avatarUrlToken}`;
+      workspaceMember.avatarUrl = buildSignedPath({
+        path: workspaceMember.avatarUrl,
+        token: avatarUrlToken,
+      });
     }
 
     // TODO Refactor to be transpiled to WorkspaceMember instead
@@ -163,11 +169,14 @@ export class UserResolver {
     for (const workspaceMemberEntity of workspaceMemberEntities) {
       if (workspaceMemberEntity.avatarUrl) {
         const avatarUrlToken = this.fileService.encodeFileToken({
-          workspaceMemberId: workspaceMemberEntity.id,
+          filename: extractFilenameFromPath(workspaceMemberEntity.avatarUrl),
           workspaceId: workspace.id,
         });
 
-        workspaceMemberEntity.avatarUrl = `${workspaceMemberEntity.avatarUrl}?token=${avatarUrlToken}`;
+        workspaceMemberEntity.avatarUrl = buildSignedPath({
+          path: workspaceMemberEntity.avatarUrl,
+          token: avatarUrlToken,
+        });
       }
 
       // TODO Refactor to be transpiled to WorkspaceMember instead
@@ -242,13 +251,13 @@ export class UserResolver {
     return getHMACKey(parent.email, key);
   }
 
-  @Mutation(() => String)
+  @Mutation(() => SignedFileDTO)
   async uploadProfilePicture(
     @AuthUser() { id }: User,
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename, mimetype }: FileUpload,
-  ): Promise<string> {
+  ): Promise<SignedFileDTO> {
     if (!id) {
       throw new Error('User not found');
     }
@@ -257,7 +266,7 @@ export class UserResolver {
     const buffer = await streamToBuffer(stream);
     const fileFolder = FileFolder.ProfilePicture;
 
-    const { paths } = await this.fileUploadService.uploadImage({
+    const { files } = await this.fileUploadService.uploadImage({
       file: buffer,
       filename,
       mimeType: mimetype,
@@ -265,11 +274,11 @@ export class UserResolver {
       workspaceId,
     });
 
-    const fileToken = this.fileService.encodeFileToken({
-      workspaceId: workspaceId,
-    });
+    if (!files.length) {
+      throw new Error('Failed to upload profile picture');
+    }
 
-    return `${paths[0]}?token=${fileToken}`;
+    return files[0];
   }
 
   @Mutation(() => User)

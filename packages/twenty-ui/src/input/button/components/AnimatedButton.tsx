@@ -31,6 +31,8 @@ const StyledButton = styled.button<
     | 'justify'
     | 'to'
     | 'target'
+    | 'dataClickOutsideId'
+    | 'dataGloballyPreventClickOutside'
   >
 >`
   align-items: center;
@@ -404,6 +406,8 @@ export const AnimatedButton = ({
   ariaLabel,
   animate,
   transition,
+  dataClickOutsideId,
+  dataGloballyPreventClickOutside,
 }: AnimatedButtonProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -428,6 +432,8 @@ export const AnimatedButton = ({
       target={target}
       data-testid={dataTestId}
       aria-label={ariaLabel}
+      data-click-outside-id={dataClickOutsideId}
+      data-globally-prevent-click-outside={dataGloballyPreventClickOutside}
     >
       {Icon && (
         <StyledIconContainer animate={animate} transition={transition}>
