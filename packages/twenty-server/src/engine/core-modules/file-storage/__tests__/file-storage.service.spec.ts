@@ -2,17 +2,15 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { Readable } from 'stream';
 
-import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces/file-storage.interface';
-
+import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 describe('FileStorageService', () => {
   let service: FileStorageService;
-  let twentyConfigService: TwentyConfigService;
+  let fileStorageDriverFactory: FileStorageDriverFactory;
 
-  const mockTwentyConfigService = {
-    get: jest.fn(),
+  const mockFileStorageDriverFactory = {
+    getCurrentDriver: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -20,159 +18,22 @@ describe('FileStorageService', () => {
       providers: [
         FileStorageService,
         {
-          provide: TwentyConfigService,
-          useValue: mockTwentyConfigService,
+          provide: FileStorageDriverFactory,
+          useValue: mockFileStorageDriverFactory,
         },
       ],
     }).compile();
 
     service = module.get<FileStorageService>(FileStorageService);
-    twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
-  });
+    fileStorageDriverFactory = module.get<FileStorageDriverFactory>(
+      FileStorageDriverFactory,
+    );
 
-  afterEach(() => {
     jest.clearAllMocks();
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
-  });
-
-  describe('buildConfigKey', () => {
-    it('should build config key for local storage', () => {
-      const storagePath = '/tmp/storage';
-
-      jest
-        .spyOn(twentyConfigService, 'get')
-        .mockImplementation((key: string) => {
-          if (key === 'STORAGE_TYPE') return StorageDriverType.Local;
-          if (key === 'STORAGE_LOCAL_PATH') return storagePath;
-
-          return undefined;
-        });
-
-      const configKey = service['buildConfigKey']();
-
-      expect(configKey).toBe(`local|${storagePath}`);
-      expect(twentyConfigService.get).toHaveBeenCalledWith('STORAGE_TYPE');
-      expect(twentyConfigService.get).toHaveBeenCalledWith(
-        'STORAGE_LOCAL_PATH',
-      );
-    });
-
-    it('should build config key for S3 storage', () => {
-      jest
-        .spyOn(twentyConfigService, 'get')
-        .mockImplementation((key: string) => {
-          if (key === 'STORAGE_TYPE') return StorageDriverType.S3;
-
-          return 'mock-value';
-        });
-
-      // Mock the getConfigGroupHash method
-      jest
-        .spyOn(service as any, 'getConfigGroupHash')
-        .mockReturnValue('abc123');
-
-      const configKey = service['buildConfigKey']();
-
-      expect(configKey).toBe('s3|abc123');
-      expect(twentyConfigService.get).toHaveBeenCalledWith('STORAGE_TYPE');
-    });
-
-    it('should throw error for unsupported storage type', () => {
-      jest
-        .spyOn(twentyConfigService, 'get')
-        .mockReturnValue('unsupported-type');
-
-      expect(() => service['buildConfigKey']()).toThrow(
-        'Unsupported storage type: unsupported-type',
-      );
-    });
-  });
-
-  describe('createDriver', () => {
-    it('should create LocalDriver for local storage', () => {
-      const storagePath = '/tmp/storage';
-
-      jest
-        .spyOn(twentyConfigService, 'get')
-        .mockImplementation((key: string) => {
-          if (key === 'STORAGE_TYPE') return StorageDriverType.Local;
-          if (key === 'STORAGE_LOCAL_PATH') return storagePath;
-
-          return undefined;
-        });
-
-      const driver = service['createDriver']();
-
-      expect(driver).toBeDefined();
-      expect(driver.constructor.name).toBe('LocalDriver');
-    });
-
-    it('should create S3Driver for S3 storage with access keys', () => {
-      jest
-        .spyOn(twentyConfigService, 'get')
-        .mockImplementation((key: string) => {
-          switch (key) {
-            case 'STORAGE_TYPE':
-              return StorageDriverType.S3;
-            case 'STORAGE_S3_NAME':
-              return 'test-bucket';
-            case 'STORAGE_S3_ENDPOINT':
-              return 'https://s3.amazonaws.com';
-            case 'STORAGE_S3_REGION':
-              return 'us-east-1';
-            case 'STORAGE_S3_ACCESS_KEY_ID':
-              return 'test-access-key';
-            case 'STORAGE_S3_SECRET_ACCESS_KEY':
-              return 'test-secret-key';
-            default:
-              return undefined;
-          }
-        });
-
-      const driver = service['createDriver']();
-
-      expect(driver).toBeDefined();
-      expect(driver.constructor.name).toBe('S3Driver');
-    });
-
-    it('should create S3Driver for S3 storage without access keys (using provider chain)', () => {
-      jest
-        .spyOn(twentyConfigService, 'get')
-        .mockImplementation((key: string) => {
-          switch (key) {
-            case 'STORAGE_TYPE':
-              return StorageDriverType.S3;
-            case 'STORAGE_S3_NAME':
-              return 'test-bucket';
-            case 'STORAGE_S3_ENDPOINT':
-              return 'https://s3.amazonaws.com';
-            case 'STORAGE_S3_REGION':
-              return 'us-east-1';
-            case 'STORAGE_S3_ACCESS_KEY_ID':
-              return undefined;
-            case 'STORAGE_S3_SECRET_ACCESS_KEY':
-              return undefined;
-            default:
-              return undefined;
-          }
-        });
-
-      const driver = service['createDriver']();
-
-      expect(driver).toBeDefined();
-      expect(driver.constructor.name).toBe('S3Driver');
-    });
-
-    it('should throw error for invalid storage driver type', () => {
-      jest.spyOn(twentyConfigService, 'get').mockReturnValue('invalid-type');
-
-      expect(() => service['createDriver']()).toThrow(
-        'Invalid storage driver type: invalid-type',
-      );
-    });
   });
 
   describe('storage operations', () => {
@@ -189,14 +50,11 @@ describe('FileStorageService', () => {
         checkFileExists: jest.fn(),
       };
 
-      // Mock getCurrentDriver to return our mock driver
-      jest
-        .spyOn(service as any, 'getCurrentDriver')
-        .mockReturnValue(mockDriver);
+      mockFileStorageDriverFactory.getCurrentDriver.mockReturnValue(mockDriver);
     });
 
     describe('write', () => {
-      it('should call driver write method with correct parameters', async () => {
+      it('should delegate to the current driver', async () => {
         const writeParams = {
           file: Buffer.from('test content'),
           name: 'test.txt',
@@ -208,6 +66,7 @@ describe('FileStorageService', () => {
 
         await service.write(writeParams);
 
+        expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
         expect(mockDriver.write).toHaveBeenCalledWith(writeParams);
       });
 
@@ -226,11 +85,13 @@ describe('FileStorageService', () => {
         await expect(service.write(writeParams)).rejects.toThrow(
           'Write failed',
         );
+        expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
+        expect(mockDriver.write).toHaveBeenCalledWith(writeParams);
       });
     });
 
     describe('read', () => {
-      it('should call driver read method with correct parameters', async () => {
+      it('should delegate to the current driver', async () => {
         const readParams = {
           folderPath: 'documents',
           filename: 'test.txt',
@@ -242,6 +103,7 @@ describe('FileStorageService', () => {
 
         const result = await service.read(readParams);
 
+        expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
         expect(mockDriver.read).toHaveBeenCalledWith(readParams);
         expect(result).toBe(mockStream);
       });
@@ -257,11 +119,13 @@ describe('FileStorageService', () => {
         mockDriver.read.mockRejectedValue(error);
 
         await expect(service.read(readParams)).rejects.toThrow('Read failed');
+        expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
+        expect(mockDriver.read).toHaveBeenCalledWith(readParams);
       });
     });
 
     describe('delete', () => {
-      it('should call driver delete method with filename', async () => {
+      it('should delegate to the current driver with filename', async () => {
         const deleteParams = {
           folderPath: 'documents',
           filename: 'test.txt',
@@ -271,10 +135,11 @@ describe('FileStorageService', () => {
 
         await service.delete(deleteParams);
 
+        expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
         expect(mockDriver.delete).toHaveBeenCalledWith(deleteParams);
       });
 
-      it('should call driver delete method without filename (delete folder)', async () => {
+      it('should delegate to the current driver without filename (delete folder)', async () => {
         const deleteParams = {
           folderPath: 'documents',
         };
@@ -283,6 +148,7 @@ describe('FileStorageService', () => {
 
         await service.delete(deleteParams);
 
+        expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
         expect(mockDriver.delete).toHaveBeenCalledWith(deleteParams);
       });
 
@@ -299,11 +165,13 @@ describe('FileStorageService', () => {
         await expect(service.delete(deleteParams)).rejects.toThrow(
           'Delete failed',
         );
+        expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
+        expect(mockDriver.delete).toHaveBeenCalledWith(deleteParams);
       });
     });
 
     describe('move', () => {
-      it('should call driver move method with correct parameters', async () => {
+      it('should delegate to the current driver', async () => {
         const moveParams = {
           from: { folderPath: 'documents', filename: 'test.txt' },
           to: { folderPath: 'archive', filename: 'archived-test.txt' },
@@ -313,6 +181,7 @@ describe('FileStorageService', () => {
 
         await service.move(moveParams);
 
+        expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
         expect(mockDriver.move).toHaveBeenCalledWith(moveParams);
       });
 
@@ -327,11 +196,13 @@ describe('FileStorageService', () => {
         mockDriver.move.mockRejectedValue(error);
 
         await expect(service.move(moveParams)).rejects.toThrow('Move failed');
+        expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
+        expect(mockDriver.move).toHaveBeenCalledWith(moveParams);
       });
     });
 
     describe('copy', () => {
-      it('should call driver copy method with correct parameters', async () => {
+      it('should delegate to the current driver', async () => {
         const copyParams = {
           from: { folderPath: 'documents', filename: 'test.txt' },
           to: { folderPath: 'backup', filename: 'test-backup.txt' },
@@ -341,6 +212,7 @@ describe('FileStorageService', () => {
 
         await service.copy(copyParams);
 
+        expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
         expect(mockDriver.copy).toHaveBeenCalledWith(copyParams);
       });
 
@@ -355,11 +227,13 @@ describe('FileStorageService', () => {
         mockDriver.copy.mockRejectedValue(error);
 
         await expect(service.copy(copyParams)).rejects.toThrow('Copy failed');
+        expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
+        expect(mockDriver.copy).toHaveBeenCalledWith(copyParams);
       });
     });
 
     describe('download', () => {
-      it('should call driver download method with correct parameters', async () => {
+      it('should delegate to the current driver', async () => {
         const downloadParams = {
           from: { folderPath: 'documents', filename: 'test.txt' },
           to: { folderPath: '/tmp', filename: 'downloaded-test.txt' },
@@ -369,6 +243,7 @@ describe('FileStorageService', () => {
 
         await service.download(downloadParams);
 
+        expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
         expect(mockDriver.download).toHaveBeenCalledWith(downloadParams);
       });
 
@@ -385,11 +260,13 @@ describe('FileStorageService', () => {
         await expect(service.download(downloadParams)).rejects.toThrow(
           'Download failed',
         );
+        expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
+        expect(mockDriver.download).toHaveBeenCalledWith(downloadParams);
       });
     });
 
     describe('checkFileExists', () => {
-      it('should call driver checkFileExists method and return true', async () => {
+      it('should delegate to the current driver and return true', async () => {
         const checkParams = {
           folderPath: 'documents',
           filename: 'test.txt',
@@ -399,11 +276,12 @@ describe('FileStorageService', () => {
 
         const result = await service.checkFileExists(checkParams);
 
+        expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
         expect(mockDriver.checkFileExists).toHaveBeenCalledWith(checkParams);
         expect(result).toBe(true);
       });
 
-      it('should call driver checkFileExists method and return false', async () => {
+      it('should delegate to the current driver and return false', async () => {
         const checkParams = {
           folderPath: 'documents',
           filename: 'nonexistent.txt',
@@ -413,6 +291,7 @@ describe('FileStorageService', () => {
 
         const result = await service.checkFileExists(checkParams);
 
+        expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
         expect(mockDriver.checkFileExists).toHaveBeenCalledWith(checkParams);
         expect(result).toBe(false);
       });
@@ -430,94 +309,9 @@ describe('FileStorageService', () => {
         await expect(service.checkFileExists(checkParams)).rejects.toThrow(
           'Check failed',
         );
+        expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
+        expect(mockDriver.checkFileExists).toHaveBeenCalledWith(checkParams);
       });
-    });
-  });
-
-  describe('driver caching and switching', () => {
-    it('should cache driver and reuse when config key is the same', () => {
-      jest
-        .spyOn(twentyConfigService, 'get')
-        .mockImplementation((key: string) => {
-          if (key === 'STORAGE_TYPE') return StorageDriverType.Local;
-          if (key === 'STORAGE_LOCAL_PATH') return '/tmp/storage';
-
-          return undefined;
-        });
-
-      const createDriverSpy = jest.spyOn(service as any, 'createDriver');
-
-      // First call should create driver
-      const driver1 = service['getCurrentDriver']();
-
-      expect(createDriverSpy).toHaveBeenCalledTimes(1);
-
-      // Second call should reuse cached driver
-      const driver2 = service['getCurrentDriver']();
-
-      expect(createDriverSpy).toHaveBeenCalledTimes(1);
-      expect(driver1).toBe(driver2);
-    });
-
-    it('should create new driver when config key changes', () => {
-      let storagePath = '/tmp/storage1';
-
-      jest
-        .spyOn(twentyConfigService, 'get')
-        .mockImplementation((key: string) => {
-          if (key === 'STORAGE_TYPE') return StorageDriverType.Local;
-          if (key === 'STORAGE_LOCAL_PATH') return storagePath;
-
-          return undefined;
-        });
-
-      const createDriverSpy = jest.spyOn(service as any, 'createDriver');
-      const cleanupDriverSpy = jest.spyOn(service as any, 'cleanupDriver');
-
-      // First call
-      const driver1 = service['getCurrentDriver']();
-
-      expect(createDriverSpy).toHaveBeenCalledTimes(1);
-
-      // Change config
-      storagePath = '/tmp/storage2';
-
-      // Second call should create new driver and cleanup old one
-      const driver2 = service['getCurrentDriver']();
-
-      expect(createDriverSpy).toHaveBeenCalledTimes(2);
-      expect(cleanupDriverSpy).toHaveBeenCalledTimes(1);
-      expect(cleanupDriverSpy).toHaveBeenCalledWith(driver1);
-      expect(driver1).not.toBe(driver2);
-    });
-
-    it('should throw error if driver creation fails', () => {
-      jest
-        .spyOn(twentyConfigService, 'get')
-        .mockReturnValue('invalid-storage-type');
-
-      expect(() => service['getCurrentDriver']()).toThrow(
-        'Unsupported storage type: invalid-storage-type',
-      );
-    });
-
-    it('should throw error if createDriver fails after valid config', () => {
-      jest
-        .spyOn(twentyConfigService, 'get')
-        .mockImplementation((key: string) => {
-          if (key === 'STORAGE_TYPE') return StorageDriverType.Local;
-          if (key === 'STORAGE_LOCAL_PATH') return '/tmp/storage';
-
-          return undefined;
-        });
-
-      jest.spyOn(service as any, 'createDriver').mockImplementation(() => {
-        throw new Error('Driver creation failed');
-      });
-
-      expect(() => service['getCurrentDriver']()).toThrow(
-        'Failed to create driver for FileStorageService with config key: local|/tmp/storage. Original error: Driver creation failed',
-      );
     });
   });
 });

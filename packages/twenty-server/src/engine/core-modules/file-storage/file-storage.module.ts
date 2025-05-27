@@ -1,5 +1,6 @@
 import { DynamicModule, Global } from '@nestjs/common';
 
+import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 
@@ -9,7 +10,7 @@ export class FileStorageModule {
     return {
       module: FileStorageModule,
       imports: [TwentyConfigModule],
-      providers: [FileStorageService],
+      providers: [FileStorageDriverFactory, FileStorageService],
       exports: [FileStorageService],
     };
   }

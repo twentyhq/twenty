@@ -5,14 +5,22 @@ import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enum
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
-export abstract class DynamicDriverBase<TDriver> {
+export abstract class DriverFactoryBase<TDriver> {
   private currentDriver: TDriver | null = null;
   private currentConfigKey: string | null = null;
 
   constructor(protected readonly twentyConfigService: TwentyConfigService) {}
 
-  protected getCurrentDriver(): TDriver {
-    const configKey = this.buildConfigKey();
+  getCurrentDriver(): TDriver {
+    let configKey: string;
+
+    try {
+      configKey = this.buildConfigKey();
+    } catch (error) {
+      throw new Error(
+        `Failed to build config key for ${this.constructor.name}. Original error: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
 
     if (this.currentConfigKey !== configKey) {
       if (this.currentDriver) {
