@@ -225,7 +225,7 @@ export const getDateFormatString = (
     case DateFormat.DAY_FIRST:
       return `dd/MM/yyyy${timePart}`;
     case DateFormat.YEAR_FIRST:
-      return `yyyy/MM/dd${timePart}`;
+      return `yyyy-MM-dd${timePart}`;
     case DateFormat.MONTH_FIRST:
     default:
       return `MM/dd/yyyy${timePart}`;
