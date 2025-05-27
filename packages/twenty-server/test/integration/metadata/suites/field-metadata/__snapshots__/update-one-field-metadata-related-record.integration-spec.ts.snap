@@ -47,9 +47,10 @@ exports[`update-one-field-metadata-related-record MULTI_SELECT should throw erro
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
     },
-    "message": "Invalid view filter value for view filter 20202020-e3b5-4fa7-85aa-9b1950fc7bf5",
+    "message": "Unexpected invalid view filter value for filter 20202020-e3b5-4fa7-85aa-9b1950fc7bf5",
   },
 ]
 `;
@@ -75,6 +76,14 @@ exports[`update-one-field-metadata-related-record MULTI_SELECT should update rel
   "displayValue": "Option 5 updated",
   "id": Any<String>,
   "value": "["OPTION_5_UPDATED"]",
+}
+`;
+
+exports[`update-one-field-metadata-related-record MULTI_SELECT should update the display value on an option label change only 1`] = `
+{
+  "displayValue": "Option 0 updated, Option 1 updated, Option 2 updated",
+  "id": Any<String>,
+  "value": "["OPTION_0","OPTION_1","OPTION_2"]",
 }
 `;
 
@@ -125,9 +134,10 @@ exports[`update-one-field-metadata-related-record SELECT should throw error if v
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": "mocked-exception-id",
     },
-    "message": "Invalid view filter value for view filter 20202020-e3b5-4fa7-85aa-9b1950fc7bf5",
+    "message": "Unexpected invalid view filter value for filter 20202020-e3b5-4fa7-85aa-9b1950fc7bf5",
   },
 ]
 `;
@@ -153,5 +163,13 @@ exports[`update-one-field-metadata-related-record SELECT should update related s
   "displayValue": "Option 5 updated",
   "id": Any<String>,
   "value": "["OPTION_5_UPDATED"]",
+}
+`;
+
+exports[`update-one-field-metadata-related-record SELECT should update the display value on an option label change only 1`] = `
+{
+  "displayValue": "Option 0 updated, Option 1 updated, Option 2 updated",
+  "id": Any<String>,
+  "value": "["OPTION_0","OPTION_1","OPTION_2"]",
 }
 `;

@@ -133,12 +133,14 @@ export class FieldMetadataRelatedRecordsService {
       'viewFilters',
     );
 
+    const alsoCompareLabel = true;
     const {
       updated: updatedFieldMetadataOptions,
       deleted: deletedFieldMetadataOptions,
     } = this.getOptionsDifferences(
       oldFieldMetadata.options,
       newFieldMetadata.options,
+      alsoCompareLabel,
     );
 
     if (
@@ -245,6 +247,7 @@ export class FieldMetadataRelatedRecordsService {
   public getOptionsDifferences(
     oldOptions: (FieldMetadataDefaultOption | FieldMetadataComplexOption)[],
     newOptions: (FieldMetadataDefaultOption | FieldMetadataComplexOption)[],
+    compareLabel: boolean = false,
   ): GetOptionsDifferences {
     const differences: Differences<
       FieldMetadataDefaultOption | FieldMetadataComplexOption
@@ -255,18 +258,24 @@ export class FieldMetadataRelatedRecordsService {
     };
 
     const oldOptionsMap = new Map(oldOptions.map((opt) => [opt.id, opt]));
-    const newOptionsMap = new Map(newOptions.map((opt) => [opt.id, opt]));
-
     for (const newOption of newOptions) {
       const oldOption = oldOptionsMap.get(newOption.id);
 
-      if (!oldOption) {
+      if (!isDefined(oldOption)) {
         differences.created.push(newOption);
-      } else if (oldOption.value !== newOption.value) {
+        continue;
+      }
+
+      if (
+        oldOption.value !== newOption.value ||
+        (compareLabel && oldOption.label !== newOption.label)
+      ) {
         differences.updated.push({ old: oldOption, new: newOption });
+        continue;
       }
     }
 
+    const newOptionsMap = new Map(newOptions.map((opt) => [opt.id, opt]));
     for (const oldOption of oldOptions) {
       if (!newOptionsMap.has(oldOption.id)) {
         differences.deleted.push(oldOption);

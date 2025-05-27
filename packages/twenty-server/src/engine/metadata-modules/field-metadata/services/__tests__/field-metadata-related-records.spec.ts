@@ -7,6 +7,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 type GetOptionsDifferencesTestContext = EachTestingContext<{
   oldOptions: FieldMetadataDefaultOption[];
   newOptions: FieldMetadataDefaultOption[];
+  compareLabel?: boolean;
   expected: {
     created: FieldMetadataDefaultOption[];
     updated: {
@@ -245,12 +246,97 @@ describe('FieldMetadataRelatedRecordsService', () => {
           },
         },
       },
+      {
+        title:
+          'should consider changes to label as updates when value remains the same if compareLabel is true',
+        context: {
+          oldOptions: [
+            {
+              id: 'f86eaffd-b773-4c9a-957b-86dca4a62731',
+              label: 'Option 0',
+              value: 'option0',
+              position: 1,
+            },
+            {
+              id: '28d80b3c-79bd-4a1b-a868-9616534de0fa',
+              label: 'Option 1',
+              value: 'option1',
+              position: 2,
+            },
+            {
+              id: '25a05cd8-256f-4652-9e4a-6d9ca0b96f4d',
+              label: 'Option 2',
+              value: 'option2',
+              position: 3,
+            },
+          ],
+          newOptions: [
+            {
+              id: 'f86eaffd-b773-4c9a-957b-86dca4a62731',
+              label: 'Option 0_UPDATED', // Label changed but value remains the same
+              value: 'option0',
+              position: 1,
+            },
+            {
+              id: '28d80b3c-79bd-4a1b-a868-9616534de0fa',
+              label: 'Option 1', // No change
+              value: 'option1',
+              position: 2,
+            },
+            {
+              id: '25a05cd8-256f-4652-9e4a-6d9ca0b96f4d',
+              label: 'Option 2_UPDATED', // Label changed but value remains the same
+              value: 'option2',
+              position: 3,
+            },
+          ],
+          expected: {
+            created: [],
+            updated: [
+              {
+                new: {
+                  id: 'f86eaffd-b773-4c9a-957b-86dca4a62731',
+                  label: 'Option 0_UPDATED',
+                  position: 1,
+                  value: 'option0',
+                },
+                old: {
+                  id: 'f86eaffd-b773-4c9a-957b-86dca4a62731',
+                  label: 'Option 0',
+                  position: 1,
+                  value: 'option0',
+                },
+              },
+              {
+                new: {
+                  id: '25a05cd8-256f-4652-9e4a-6d9ca0b96f4d',
+                  label: 'Option 2_UPDATED',
+                  position: 3,
+                  value: 'option2',
+                },
+                old: {
+                  id: '25a05cd8-256f-4652-9e4a-6d9ca0b96f4d',
+                  label: 'Option 2',
+                  position: 3,
+                  value: 'option2',
+                },
+              },
+            ],
+            deleted: [],
+          },
+          compareLabel: true,
+        },
+      },
     ];
 
     test.each(testCases)(
       '$title',
-      ({ context: { oldOptions, newOptions, expected } }) => {
-        const result = service.getOptionsDifferences(oldOptions, newOptions);
+      ({ context: { oldOptions, newOptions, expected, compareLabel } }) => {
+        const result = service.getOptionsDifferences(
+          oldOptions,
+          newOptions,
+          compareLabel,
+        );
 
         expect(result.created).toEqual(expected.created);
         expect(result.updated).toEqual(expected.updated);

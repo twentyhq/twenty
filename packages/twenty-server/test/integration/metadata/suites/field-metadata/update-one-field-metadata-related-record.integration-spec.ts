@@ -52,7 +52,7 @@ type TestCase = EachTestingContext<{
   createViewFilter?: ViewFilterUpdate;
   updateOptions: (
     options: FieldMetadataDefaultOption[] | FieldMetadataComplexOption[],
-  ) => Option[];
+  ) => FieldMetadataDefaultOption[] | FieldMetadataComplexOption[];
   expected?: null;
 }>;
 const testFieldMetadataType: EnumFieldMetadataType[] = [
@@ -203,6 +203,20 @@ describe('update-one-field-metadata-related-record', () => {
           'should update display value with options label if less than 3 options are selected',
         context: {
           updateOptions: (options) => options.slice(8),
+        },
+      },
+      {
+        title: 'should update the display value on an option label change only',
+        context: {
+          createViewFilter: {
+            displayValue: 'Option 3',
+            value: ALL_OPTIONS.slice(0, 3).map((option) => option.value),
+          },
+          updateOptions: (options) =>
+            options.map((option) => ({
+              ...option,
+              label: `${option.label} updated`,
+            })),
         },
       },
     ];
