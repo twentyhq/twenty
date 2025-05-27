@@ -76,7 +76,8 @@ export class PermissionsService {
         workspaceId,
       });
 
-    const objectRecordsPermissions = rolesPermissions[roleOfUserWorkspace.id];
+    const objectRecordsPermissions =
+      rolesPermissions[roleOfUserWorkspace.id] ?? {};
 
     return {
       settingsPermissions: settingsPermissionsMap,
