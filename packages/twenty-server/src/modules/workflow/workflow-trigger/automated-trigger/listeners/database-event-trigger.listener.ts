@@ -7,6 +7,7 @@ import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
 import { ObjectRecordDestroyEvent } from 'src/engine/core-modules/event-emitter/types/object-record-destroy.event';
+import { ObjectRecordNonDestructiveEvent } from 'src/engine/core-modules/event-emitter/types/object-record-non-destructive-event';
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -16,15 +17,15 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import {
+  AutomatedTriggerType,
+  DatabaseEventTriggerSettings,
+  WorkflowAutomatedTriggerWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import {
   WorkflowTriggerJob,
   WorkflowTriggerJobData,
 } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
-import { ObjectRecordNonDestructiveEvent } from 'src/engine/core-modules/event-emitter/types/object-record-non-destructive-event';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
-import {
-  AutomatedTriggerType,
-  WorkflowAutomatedTriggerWorkspaceEntity,
-} from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 
 @Injectable()
 export class DatabaseEventTriggerListener {
@@ -63,7 +64,51 @@ export class DatabaseEventTriggerListener {
     const clonedPayload = structuredClone(payload);
 
     await this.enrichUpdatedEvent(clonedPayload);
-    await this.handleEvent(clonedPayload);
+
+    const workspaceId = payload.workspaceId;
+    const databaseEventName = payload.name;
+
+    const workflowAutomatedTriggerRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowAutomatedTriggerWorkspaceEntity>(
+        workspaceId,
+        'workflowAutomatedTrigger',
+      );
+
+    const eventListeners = await workflowAutomatedTriggerRepository.find({
+      where: {
+        type: AutomatedTriggerType.DATABASE_EVENT,
+      },
+    });
+
+    const filteredEventListeners = eventListeners.filter((eventListener) => {
+      const settings = eventListener.settings as DatabaseEventTriggerSettings;
+
+      return settings.eventName === databaseEventName;
+    });
+
+    for (const eventListener of filteredEventListeners) {
+      for (const eventPayload of clonedPayload.events) {
+        const settings = eventListener.settings as DatabaseEventTriggerSettings;
+
+        if (
+          !settings.fields ||
+          settings.fields.length === 0 ||
+          settings.fields.some((field) =>
+            eventPayload?.properties?.updatedFields?.includes(field),
+          )
+        ) {
+          this.messageQueueService.add<WorkflowTriggerJobData>(
+            WorkflowTriggerJob.name,
+            {
+              workspaceId,
+              workflowId: eventListener.workflowId,
+              payload: eventPayload,
+            },
+            { retryLimit: 3 },
+          );
+        }
+      }
+    }
   }
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.DELETED)
@@ -239,7 +284,9 @@ export class DatabaseEventTriggerListener {
     const eventListeners = await workflowAutomatedTriggerRepository.find({
       where: {
         type: AutomatedTriggerType.DATABASE_EVENT,
-        settings: { eventName: databaseEventName },
+        settings: {
+          eventName: databaseEventName,
+        },
       },
     });
 

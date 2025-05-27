@@ -1,26 +1,27 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
-import { isDefined } from 'twenty-shared/utils';
 
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
-import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   AutomatedTriggerType,
+  CronTriggerSettings,
   WorkflowAutomatedTriggerWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { shouldRunNow } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/utils/should-run-now.utils';
 import {
   WorkflowTriggerJob,
   WorkflowTriggerJobData,
 } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
-import { shouldRunNow } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/utils/should-run-now.utils';
 
 export const CRON_TRIGGER_CRON_PATTERN = '* * * * *';
 
@@ -58,11 +59,14 @@ export class CronTriggerCronJob {
         });
 
       for (const workflowAutomatedCronTrigger of workflowAutomatedCronTriggers) {
-        if (!isDefined(workflowAutomatedCronTrigger.settings.pattern)) {
+        const settings =
+          workflowAutomatedCronTrigger.settings as CronTriggerSettings;
+
+        if (!isDefined(settings.pattern)) {
           continue;
         }
 
-        if (!shouldRunNow(workflowAutomatedCronTrigger.settings.pattern, now)) {
+        if (!shouldRunNow(settings.pattern, now)) {
           continue;
         }
 

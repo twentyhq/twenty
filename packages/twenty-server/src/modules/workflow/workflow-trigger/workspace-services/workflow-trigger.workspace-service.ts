@@ -11,7 +11,10 @@ import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/s
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
+import {
+  AutomatedTriggerType,
+  DatabaseEventTriggerSettings,
+} from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import {
   WorkflowVersionStatus,
   WorkflowVersionWorkspaceEntity,
@@ -329,12 +332,13 @@ export class WorkflowTriggerWorkspaceService {
       case WorkflowTriggerType.WEBHOOK:
         return;
       case WorkflowTriggerType.DATABASE_EVENT: {
-        const eventName = workflowVersion.trigger.settings.eventName;
+        const settings = workflowVersion.trigger
+          .settings as DatabaseEventTriggerSettings;
 
         await this.automatedTriggerWorkspaceService.addAutomatedTrigger({
           workflowId: workflowVersion.workflowId,
           type: AutomatedTriggerType.DATABASE_EVENT,
-          settings: { eventName },
+          settings,
           manager,
         });
 
