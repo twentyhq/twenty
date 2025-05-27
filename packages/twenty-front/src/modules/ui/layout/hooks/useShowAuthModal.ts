@@ -19,7 +19,7 @@ export const useShowAuthModal = () => {
       isMatchingLocation(location, AppPath.SignInUp) ||
       isMatchingLocation(location, AppPath.CreateWorkspace) ||
       isMatchingLocation(location, AppPath.PlanRequired) ||
-      isMatchingLocation(location, AppPath.PaymentRequiredSuccess)
+      isMatchingLocation(location, AppPath.PlanRequiredSuccess)
     ) {
       return true;
     }
