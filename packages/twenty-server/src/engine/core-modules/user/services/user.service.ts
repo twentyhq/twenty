@@ -379,7 +379,7 @@ export class UserService extends TypeOrmQueryService<User> {
       workspaceUrl: this.domainManagerService
         .buildWorkspaceURL({
           workspace,
-          pathname: appToken ? `invite/${workspace.inviteHash}` : 'welcome',
+          pathname: appToken ? `invite/${workspace.inviteHash}` : '',
           searchParams: isDefined(appToken?.context?.email)
             ? {
                 inviteToken: appToken.value,
