@@ -130,6 +130,7 @@ export const mockedUserData: MockedUser = {
   workspaces: [{ workspace: mockCurrentWorkspace }],
   workspaceMembers: [mockedWorkspaceMemberData],
   onboardingStatus: OnboardingStatus.COMPLETED,
+  availableWorkspaces: [],
   userVars: {},
 };
 
