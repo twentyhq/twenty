@@ -11,6 +11,7 @@ import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-record/record-filter/utils/getDefaultSubFieldNameForCompositeFilterableFieldType';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
@@ -151,20 +152,22 @@ export const AdvancedFilterAddFilterRuleSelect = ({
         <LightButton Icon={IconPlus} title="Add filter rule" />
       }
       dropdownComponents={
-        <DropdownMenuItemsContainer>
-          <MenuItem
-            LeftIcon={IconPlus}
-            text="Add rule"
-            onClick={handleAddFilter}
-          />
-          {isFilterRuleGroupOptionVisible && (
+        <DropdownContent>
+          <DropdownMenuItemsContainer>
             <MenuItem
-              LeftIcon={IconLibraryPlus}
-              text="Add rule group"
-              onClick={handleAddFilterGroup}
+              LeftIcon={IconPlus}
+              text="Add rule"
+              onClick={handleAddFilter}
             />
-          )}
-        </DropdownMenuItemsContainer>
+            {isFilterRuleGroupOptionVisible && (
+              <MenuItem
+                LeftIcon={IconLibraryPlus}
+                text="Add rule group"
+                onClick={handleAddFilterGroup}
+              />
+            )}
+          </DropdownMenuItemsContainer>
+        </DropdownContent>
       }
       dropdownHotkeyScope={{ scope: dropdownId }}
       dropdownOffset={{ y: 8, x: 0 }}

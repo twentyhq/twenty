@@ -8,6 +8,7 @@ import { ChromeExtensionSidecarProvider } from '@/chrome-extension-sidecar/compo
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
 import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
+import { ErrorMessageEffect } from '@/error-handler/components/ErrorMessageEffect';
 import { PromiseRejectionEffect } from '@/error-handler/components/PromiseRejectionEffect';
 import { ApolloMetadataClientProvider } from '@/object-metadata/components/ApolloMetadataClientProvider';
 import { ObjectMetadataItemsLoadEffect } from '@/object-metadata/components/ObjectMetadataItemsLoadEffect';
@@ -49,6 +50,7 @@ export const AppRouterProviders = () => {
                       <PrefetchDataProvider>
                         <UserThemeProviderEffect />
                         <SnackBarProvider>
+                          <ErrorMessageEffect />
                           <DialogManagerScope dialogManagerScopeId="dialog-manager">
                             <DialogManager>
                               <StrictMode>

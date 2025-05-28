@@ -3,6 +3,7 @@ import { ConfigVariableSourceOptions } from '@/settings/admin-panel/config-varia
 import { ConfigVariableFilterCategory } from '@/settings/admin-panel/config-variables/types/ConfigVariableFilterCategory';
 import { ConfigVariableGroupFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableGroupFilter';
 import { ConfigVariableSourceFilter } from '@/settings/admin-panel/config-variables/types/ConfigVariableSourceFilter';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -48,7 +49,7 @@ export const ConfigVariableOptionsDropdownContent = ({
 
   if (!selectedCategory) {
     return (
-      <>
+      <DropdownContent>
         <DropdownMenuItemsContainer>
           <MenuItemSelectTag
             text={t`Source`}
@@ -85,12 +86,12 @@ export const ConfigVariableOptionsDropdownContent = ({
             onClick={() => onShowHiddenChange(!showHiddenGroupVariables)}
           />
         </DropdownMenuItemsContainer>
-      </>
+      </DropdownContent>
     );
   }
 
   return (
-    <>
+    <DropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -136,6 +137,6 @@ export const ConfigVariableOptionsDropdownContent = ({
           </>
         )}
       </DropdownMenuItemsContainer>
-    </>
+    </DropdownContent>
   );
 };

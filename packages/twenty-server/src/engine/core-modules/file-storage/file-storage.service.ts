@@ -1,18 +1,16 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { Readable } from 'stream';
 
 import { StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 
-import { STORAGE_DRIVER } from 'src/engine/core-modules/file-storage/file-storage.constants';
+import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 
 @Injectable()
 export class FileStorageService implements StorageDriver {
-  constructor(@Inject(STORAGE_DRIVER) private driver: StorageDriver) {}
-
-  delete(params: { folderPath: string; filename?: string }): Promise<void> {
-    return this.driver.delete(params);
-  }
+  constructor(
+    private readonly fileStorageDriverFactory: FileStorageDriverFactory,
+  ) {}
 
   write(params: {
     file: string | Buffer | Uint8Array;
@@ -20,38 +18,56 @@ export class FileStorageService implements StorageDriver {
     folder: string;
     mimeType: string | undefined;
   }): Promise<void> {
-    return this.driver.write(params);
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    return driver.write(params);
   }
 
   read(params: { folderPath: string; filename: string }): Promise<Readable> {
-    return this.driver.read(params);
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    return driver.read(params);
+  }
+
+  delete(params: { folderPath: string; filename?: string }): Promise<void> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    return driver.delete(params);
   }
 
   move(params: {
     from: { folderPath: string; filename: string };
     to: { folderPath: string; filename: string };
   }): Promise<void> {
-    return this.driver.move(params);
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    return driver.move(params);
   }
 
   copy(params: {
     from: { folderPath: string; filename?: string };
     to: { folderPath: string; filename?: string };
   }): Promise<void> {
-    return this.driver.copy(params);
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    return driver.copy(params);
   }
 
   download(params: {
     from: { folderPath: string; filename?: string };
     to: { folderPath: string; filename?: string };
   }): Promise<void> {
-    return this.driver.download(params);
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    return driver.download(params);
   }
 
   checkFileExists(params: {
     folderPath: string;
     filename: string;
   }): Promise<boolean> {
-    return this.driver.checkFileExists(params);
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    return driver.checkFileExists(params);
   }
 }

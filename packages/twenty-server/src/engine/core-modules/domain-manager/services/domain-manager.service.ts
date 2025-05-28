@@ -128,10 +128,11 @@ export class DomainManagerService {
   computeRedirectErrorUrl(
     errorMessage: string,
     workspace: WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType,
+    pathname: string,
   ) {
     const url = this.buildWorkspaceURL({
       workspace,
-      pathname: '/verify',
+      pathname,
       searchParams: { errorMessage },
     });
 

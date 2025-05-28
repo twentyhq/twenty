@@ -1,5 +1,5 @@
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownOnToggleEffect } from '@/ui/layout/dropdown/components/DropdownOnToggleEffect';
+import { DropdownInternalContainer } from '@/ui/layout/dropdown/components/internal/DropdownInternalContainer';
 import { DROPDOWN_RESIZE_MIN_HEIGHT } from '@/ui/layout/dropdown/constants/DropdownResizeMinHeight';
 import { DROPDOWN_RESIZE_MIN_WIDTH } from '@/ui/layout/dropdown/constants/DropdownResizeMinWidth';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponeInstanceContext';
@@ -52,18 +52,17 @@ export type DropdownProps = {
   dropdownHotkeyScope: HotkeyScope;
   dropdownId: string;
   dropdownPlacement?: Placement;
-  dropdownWidth?: Width;
   dropdownOffset?: DropdownOffset;
   dropdownStrategy?: 'fixed' | 'absolute';
   onClickOutside?: () => void;
   onClose?: () => void;
   onOpen?: () => void;
+  excludedClickOutsideIds?: string[];
 };
 
 export const Dropdown = ({
   clickableComponent,
   dropdownComponents,
-  dropdownWidth,
   hotkey,
   dropdownId,
   dropdownHotkeyScope,
@@ -74,6 +73,7 @@ export const Dropdown = ({
   onClose,
   onOpen,
   clickableComponentWidth = 'auto',
+  excludedClickOutsideIds,
 }: DropdownProps) => {
   const { isDropdownOpen, toggleDropdown } = useDropdown(dropdownId);
 
@@ -182,9 +182,8 @@ export const Dropdown = ({
             <StyledDropdownFallbackAnchor ref={refs.setReference} />
           )}
           {isDropdownOpen && (
-            <DropdownContent
+            <DropdownInternalContainer
               floatingStyles={floatingStyles}
-              dropdownWidth={dropdownWidth}
               dropdownComponents={dropdownComponents}
               dropdownId={dropdownId}
               dropdownPlacement={placement}
@@ -193,6 +192,7 @@ export const Dropdown = ({
               hotkey={hotkey}
               onClickOutside={onClickOutside}
               onHotkeyTriggered={toggleDropdown}
+              excludedClickOutsideIds={excludedClickOutsideIds}
             />
           )}
           <DropdownOnToggleEffect

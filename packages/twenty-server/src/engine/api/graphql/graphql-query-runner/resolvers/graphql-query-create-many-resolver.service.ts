@@ -321,8 +321,8 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       );
 
       this.apiEventEmitterService.emitUpdateEvents({
-        existingRecords: [existingRecord],
-        records: [record],
+        existingRecords: structuredClone([existingRecord]),
+        records: structuredClone([record]),
         updatedFields: Object.keys(formattedPartialRecordToUpdate),
         authContext,
         objectMetadataItem: objectMetadataItemWithFieldMaps,
@@ -366,7 +366,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     }
 
     this.apiEventEmitterService.emitCreateEvents({
-      records: formattedInsertedRecords,
+      records: structuredClone(formattedInsertedRecords),
       authContext,
       objectMetadataItem: objectMetadataItemWithFieldMaps,
     });

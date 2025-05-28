@@ -1,3 +1,4 @@
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -22,11 +23,10 @@ export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
   const setMultiWorkspaceDropdownState = useSetRecoilState(
     multiWorkspaceDropdownState,
   );
-
   const [searchValue, setSearchValue] = useState('');
 
   return (
-    <>
+    <DropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -37,7 +37,6 @@ export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
       >
         {t`Other workspaces`}
       </DropdownMenuHeader>
-      <DropdownMenuSeparator />
       <DropdownMenuSearchInput
         placeholder={t`Search`}
         autoFocus
@@ -50,6 +49,6 @@ export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
       {currentUserAvailableWorkspaces.length > 0 && (
         <InvitationWorkspaces searchValue={searchValue} />
       )}
-    </>
+    </DropdownContent>
   );
 };

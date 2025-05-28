@@ -2182,7 +2182,12 @@ msgstr ""
 
 #. js-lingui-id: bVax4d
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
-msgid "Failed to remove  override"
+#~ msgid "Failed to remove  override"
+#~ msgstr ""
+
+#. js-lingui-id: A/P7PX
+#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
+msgid "Failed to remove override"
 msgstr ""
 
 #. js-lingui-id: Dzh4a2
@@ -3357,8 +3362,8 @@ msgstr "Нема доступних података о метрикама"
 
 #. js-lingui-id: DL8pzn
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
-msgid "No more members to assign"
-msgstr "Нема више чланова за доделу"
+#~ msgid "No more members to assign"
+#~ msgstr "Нема више чланова за доделу"
 
 #. js-lingui-id: tTItk7
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -4782,6 +4787,11 @@ msgstr "Вредности овог поља морају бити јединс�
 msgid "The whole event details will be shared with your team."
 msgstr "Цели детаљи догађаја ће бити подељени са вашим тимом."
 
+#. js-lingui-id: MssRHl
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
+msgid "The workspace needs at least one Admin"
+msgstr ""
+
 #. js-lingui-id: FEr96N
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Theme"
@@ -5137,6 +5147,11 @@ msgstr ""
 msgid "Values"
 msgstr "Вредности"
 
+#. js-lingui-id: rawKOG
+#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
+msgid "Variable deleted successfully."
+msgstr ""
+
 #. js-lingui-id: dY/1ir
 #: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
 msgid "Variable not found"
@@ -5144,7 +5159,12 @@ msgstr "Променљива није пронађена"
 
 #. js-lingui-id: N/89ho
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
-msgid "Variable updated successfully"
+#~ msgid "Variable updated successfully"
+#~ msgstr ""
+
+#. js-lingui-id: 2ushgC
+#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
+msgid "Variable updated successfully."
 msgstr ""
 
 #. js-lingui-id: IHIWR4
