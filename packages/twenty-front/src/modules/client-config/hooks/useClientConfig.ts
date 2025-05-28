@@ -29,7 +29,7 @@ export const useClientConfig = (): UseClientConfigResult => {
           set(clientConfigApiStatusState, (prev) => ({
             ...prev,
             isLoading: false,
-            isLoaded: true,
+            isLoaded: false,
             data: { clientConfig },
           }));
         } catch (err) {
