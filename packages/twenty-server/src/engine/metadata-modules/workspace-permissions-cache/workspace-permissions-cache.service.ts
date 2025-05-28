@@ -247,17 +247,15 @@ export class WorkspacePermissionsCacheService {
       relations: ['objectPermissions'],
     });
 
-    const workspaceObjectMetadataNameIdMap =
-      await this.getWorkspaceObjectMetadataNameIdMap(workspaceId);
+    const workspaceObjectMetadataIds =
+      await this.getWorkspaceObjectMetadataIds(workspaceId);
 
     const permissionsByRoleId: ObjectRecordsPermissionsByRoleId = {};
 
     for (const role of roles) {
       const objectRecordsPermissions: ObjectRecordsPermissions = {};
 
-      for (const objectMetadataNameSingular of Object.keys(
-        workspaceObjectMetadataNameIdMap,
-      )) {
+      for (const objectMetadataId of workspaceObjectMetadataIds) {
         let canRead = role.canReadAllObjectRecords;
         let canUpdate = role.canUpdateAllObjectRecords;
         let canSoftDelete = role.canSoftDeleteAllObjectRecords;
@@ -266,8 +264,7 @@ export class WorkspacePermissionsCacheService {
         if (isPermissionsV2Enabled) {
           const objectRecordPermissionsOverride = role.objectPermissions.find(
             (objectPermission) =>
-              objectPermission.objectMetadataId ===
-              workspaceObjectMetadataNameIdMap[objectMetadataNameSingular],
+              objectPermission.objectMetadataId === objectMetadataId,
           );
 
           canRead =
@@ -283,7 +280,7 @@ export class WorkspacePermissionsCacheService {
             canDestroy;
         }
 
-        objectRecordsPermissions[objectMetadataNameSingular] = {
+        objectRecordsPermissions[objectMetadataId] = {
           canRead,
           canUpdate,
           canSoftDelete,
@@ -297,53 +294,17 @@ export class WorkspacePermissionsCacheService {
     return permissionsByRoleId;
   }
 
-  private async getWorkspaceObjectMetadataNameIdMap(
+  private async getWorkspaceObjectMetadataIds(
     workspaceId: string,
-  ): Promise<Record<string, string>> {
-    let workspaceObjectMetadataMap: Record<string, string> = {};
-    const metadataVersion =
-      await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
+  ): Promise<string[]> {
+    const workspaceObjectMetadata = await this.objectMetadataRepository.find({
+      where: {
+        workspaceId,
+      },
+      select: ['id'],
+    });
 
-    if (metadataVersion) {
-      const objectMetadataMaps =
-        await this.workspaceCacheStorageService.getObjectMetadataMaps(
-          workspaceId,
-          metadataVersion,
-        );
-
-      workspaceObjectMetadataMap = Object.values(
-        objectMetadataMaps?.byId ?? {},
-      ).reduce(
-        (acc, objectMetadata) => {
-          acc[objectMetadata.nameSingular] = objectMetadata.id;
-
-          return acc;
-        },
-        {} as Record<string, string>,
-      );
-    }
-
-    if (
-      !metadataVersion ||
-      Object.keys(workspaceObjectMetadataMap).length === 0
-    ) {
-      const workspaceObjectMetadata = await this.objectMetadataRepository.find({
-        where: {
-          workspaceId,
-        },
-      });
-
-      workspaceObjectMetadataMap = workspaceObjectMetadata.reduce(
-        (acc, objectMetadata) => {
-          acc[objectMetadata.nameSingular] = objectMetadata.id;
-
-          return acc;
-        },
-        {} as Record<string, string>,
-      );
-    }
-
-    return workspaceObjectMetadataMap;
+    return workspaceObjectMetadata.map((objectMetadata) => objectMetadata.id);
   }
 
   private async getUserWorkspaceRoleMapFromDatabase({

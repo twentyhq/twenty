@@ -37,6 +37,7 @@ export const permissionGraphqlApiExceptionHandler = (
     case PermissionsExceptionCode.UNKNOWN_OPERATION_NAME:
     case PermissionsExceptionCode.UNKNOWN_REQUIRED_PERMISSION:
     case PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE:
+    case PermissionsExceptionCode.NO_PERMISSIONS_FOUND_IN_DATASOURCE:
       throw error;
     default: {
       const _exhaustiveCheck: never = error.code;

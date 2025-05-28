@@ -1,6 +1,8 @@
 import { FavoriteFolderHotkeyScope } from '@/favorites/constants/FavoriteFolderRightIconDropdownHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { IconDotsVertical, IconPencil, IconTrash } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -40,20 +42,22 @@ export const FavoriteFolderNavigationDrawerItemDropdown = ({
       }
       dropdownPlacement="bottom-start"
       dropdownComponents={
-        <DropdownMenuItemsContainer>
-          <MenuItem
-            LeftIcon={IconPencil}
-            onClick={handleRename}
-            accent="default"
-            text="Rename"
-          />
-          <MenuItem
-            LeftIcon={IconTrash}
-            onClick={handleDelete}
-            accent="danger"
-            text="Delete"
-          />
-        </DropdownMenuItemsContainer>
+        <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
+          <DropdownMenuItemsContainer>
+            <MenuItem
+              LeftIcon={IconPencil}
+              onClick={handleRename}
+              accent="default"
+              text="Rename"
+            />
+            <MenuItem
+              LeftIcon={IconTrash}
+              onClick={handleDelete}
+              accent="danger"
+              text="Delete"
+            />
+          </DropdownMenuItemsContainer>
+        </DropdownContent>
       }
     />
   );

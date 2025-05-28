@@ -1,4 +1,4 @@
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -96,7 +96,7 @@ export const SelectInput = ({
   );
 
   return (
-    <DropdownMenu ref={containerRef} data-select-disable>
+    <DropdownContent ref={containerRef} selectDisabled>
       <DropdownMenuSearchInput
         value={searchFilter}
         onChange={(e) => setSearchFilter(e.target.value)}
@@ -129,6 +129,6 @@ export const SelectInput = ({
           );
         })}
       </DropdownMenuItemsContainer>
-    </DropdownMenu>
+    </DropdownContent>
   );
 };

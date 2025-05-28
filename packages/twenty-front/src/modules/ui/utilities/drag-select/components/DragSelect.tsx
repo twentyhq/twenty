@@ -101,8 +101,8 @@ export const DragSelect = ({
           width: 0,
           height: 0,
         });
+        event.preventDefault();
       }
-      event.preventDefault();
     },
     onMouseMove: ({ x, y, event }) => {
       if (isDragging) {

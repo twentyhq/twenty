@@ -79,6 +79,7 @@ export const RecordChip = ({
   });
 
   // TODO temporary until we create a record show page for Workspaces members
+
   if (
     forceDisableClick ||
     objectNameSingular === CoreObjectNameSingular.WorkspaceMember
@@ -92,7 +93,7 @@ export const RecordChip = ({
         avatarType={recordChipData.avatarType}
         avatarUrl={recordChipData.avatarUrl ?? ''}
         className={className}
-        variant={ChipVariant.Static}
+        variant={ChipVariant.Transparent}
       />
     );
   }

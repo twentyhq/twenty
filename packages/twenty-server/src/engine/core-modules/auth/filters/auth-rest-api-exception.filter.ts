@@ -14,9 +14,17 @@ export class AuthRestApiExceptionFilter implements ExceptionFilter {
     private readonly httpExceptionHandlerService: HttpExceptionHandlerService,
   ) {}
 
-  catch(exception: AuthException, host: ArgumentsHost) {
+  catch(exception: AuthException | Error, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
+
+    if (!(exception instanceof AuthException)) {
+      return this.httpExceptionHandlerService.handleError(
+        exception,
+        response,
+        500,
+      );
+    }
 
     switch (exception.code) {
       case AuthExceptionCode.USER_NOT_FOUND:
@@ -43,6 +51,7 @@ export class AuthRestApiExceptionFilter implements ExceptionFilter {
       case AuthExceptionCode.GOOGLE_API_AUTH_DISABLED:
       case AuthExceptionCode.MICROSOFT_API_AUTH_DISABLED:
       case AuthExceptionCode.SIGNUP_DISABLED:
+      case AuthExceptionCode.WORKSPACE_NOT_FOUND:
         return this.httpExceptionHandlerService.handleError(
           exception,
           response,

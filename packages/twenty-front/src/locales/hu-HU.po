@@ -3357,8 +3357,8 @@ msgstr "Nincs elérhető metrikai adat"
 
 #. js-lingui-id: DL8pzn
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
-msgid "No more members to assign"
-msgstr "Nincs több hozzárendelhető tag"
+#~ msgid "No more members to assign"
+#~ msgstr "Nincs több hozzárendelhető tag"
 
 #. js-lingui-id: tTItk7
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -4782,6 +4782,11 @@ msgstr "Ennek a mezőnek az értékeinek egyedinek kell lenniük"
 msgid "The whole event details will be shared with your team."
 msgstr "Az esemény teljes részleteit megosztják a csapatával."
 
+#. js-lingui-id: MssRHl
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
+msgid "The workspace needs at least one Admin"
+msgstr ""
+
 #. js-lingui-id: FEr96N
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Theme"
@@ -5169,8 +5174,8 @@ msgstr "Számlázási részletek megtekintése"
 
 #. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "View execution details"
-msgstr "Végrehajtási részletek megtekintése"
+#~ msgid "View execution details"
+#~ msgstr "Végrehajtási részletek megtekintése"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
@@ -5273,13 +5278,13 @@ msgstr "Mikor kerül kikapcsolásra a kulcs"
 
 #. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow is running..."
-msgstr "Munkafolyamat fut..."
+#~ msgid "Workflow is running..."
+#~ msgstr "Munkafolyamat fut..."
 
 #. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow run failed"
-msgstr "Munkafolyamat futása sikertelen"
+#~ msgid "Workflow run failed"
+#~ msgstr "Munkafolyamat futása sikertelen"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx

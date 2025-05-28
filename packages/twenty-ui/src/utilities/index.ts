@@ -26,5 +26,6 @@ export { isNavigationModifierPressed } from './navigation/isNavigationModifierPr
 export { useIsMobile } from './responsive/hooks/useIsMobile';
 export { useScreenSize } from './screen-size/hooks/useScreenSize';
 export { createState } from './state/utils/createState';
+export type { ClickOutsideAttributes } from './types/ClickOutsideAttributes';
 export type { Nullable } from './types/Nullable';
 export { getDisplayValueByUrlType } from './utils/getDisplayValueByUrlType';

@@ -5,7 +5,7 @@ import {
   SingleRecordPickerMenuItemsWithSearchProps,
 } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPickerMenuItemsWithSearch';
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -49,7 +49,7 @@ export const SingleRecordPicker = ({
     <SingleRecordPickerComponentInstanceContext.Provider
       value={{ instanceId: componentInstanceId }}
     >
-      <DropdownMenu ref={containerRef} data-select-disable>
+      <DropdownContent ref={containerRef}>
         <SingleRecordPickerMenuItemsWithSearch
           {...{
             EmptyIcon,
@@ -62,7 +62,7 @@ export const SingleRecordPicker = ({
             layoutDirection,
           }}
         />
-      </DropdownMenu>
+      </DropdownContent>
     </SingleRecordPickerComponentInstanceContext.Provider>
   );
 };
