@@ -208,7 +208,7 @@ export const SettingsWorkspaceMembers = () => {
         <Section>
           <H2Title
             title={t`Manage Members`}
-            description={t`Manage the members of your space here`}
+            description={t`Manage the members of your workspace here`}
           />
           <StyledSearchContainer>
             <StyledSearchInput
