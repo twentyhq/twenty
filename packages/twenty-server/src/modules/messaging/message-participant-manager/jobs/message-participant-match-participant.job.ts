@@ -8,6 +8,7 @@ import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/
 
 export type MessageParticipantMatchParticipantJobData = {
   workspaceId: string;
+  isPrimaryEmail: boolean;
   email: string;
   personId?: string;
   workspaceMemberId?: string;
@@ -24,12 +25,12 @@ export class MessageParticipantMatchParticipantJob {
 
   @Process(MessageParticipantMatchParticipantJob.name)
   async handle(data: MessageParticipantMatchParticipantJobData): Promise<void> {
-    const { email, personId, workspaceMemberId } = data;
+    const { isPrimaryEmail, email, personId, workspaceMemberId } = data;
 
     await this.matchParticipantService.matchParticipantsAfterPersonOrWorkspaceMemberCreation(
       {
         handle: email,
-        isPrimaryEmail: true,
+        isPrimaryEmail,
         objectMetadataName: 'messageParticipant',
         personId,
         workspaceMemberId,
