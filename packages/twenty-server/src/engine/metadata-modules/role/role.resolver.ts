@@ -188,17 +188,6 @@ export class RoleResolver {
         workspace.id,
       );
 
-    await Promise.all(
-      workspaceMembers.map(async (workspaceMember) => {
-        if (workspaceMember && workspaceMember.avatarUrl) {
-          workspaceMember.avatarUrl = this.fileService.signFileUrl({
-            url: workspaceMember.avatarUrl,
-            workspaceId: workspace.id,
-          });
-        }
-      }),
-    );
-
     return workspaceMembers;
   }
 
