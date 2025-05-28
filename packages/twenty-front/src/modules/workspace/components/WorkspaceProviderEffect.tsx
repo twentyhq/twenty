@@ -28,7 +28,6 @@ export const WorkspaceProviderEffect = () => {
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
 
   const getHostnamesFromWorkspaceUrls = (workspaceUrls: WorkspaceUrls) => {
-    console.log('>>>>>>>>>>>>>> workspaceUrls', workspaceUrls);
     return {
       customUrlHostname: workspaceUrls.customUrl
         ? new URL(workspaceUrls.customUrl).hostname
@@ -40,7 +39,6 @@ export const WorkspaceProviderEffect = () => {
   const { initializeQueryParamState } = useInitializeQueryParamState();
 
   useEffect(() => {
-    console.log('>>>>>>>>>>>>>> getPublicWorkspaceData', getPublicWorkspaceData);
     const hostnames = getPublicWorkspaceData
       ? getHostnamesFromWorkspaceUrls(getPublicWorkspaceData?.workspaceUrls)
       : null;
