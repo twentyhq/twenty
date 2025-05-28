@@ -365,11 +365,10 @@ export class SearchService {
   }
 
   private getImageUrlWithToken(avatarUrl: string, workspaceId: string): string {
-    const avatarUrlToken = this.fileService.encodeFileToken({
+    return this.fileService.signFileUrl({
+      url: avatarUrl,
       workspaceId,
     });
-
-    return `${avatarUrl}?token=${avatarUrlToken}`;
   }
 
   getImageIdentifierValue(
@@ -384,7 +383,8 @@ export class SearchService {
       return getLogoUrlFromDomainName(record.domainNamePrimaryLinkUrl) || '';
     }
 
-    return imageIdentifierField
+    return imageIdentifierField &&
+      isNonEmptyString(record[imageIdentifierField])
       ? this.getImageUrlWithToken(record[imageIdentifierField], workspaceId)
       : '';
   }

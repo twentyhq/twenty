@@ -17,13 +17,14 @@ import { AuthTokenPair } from '~/generated/graphql';
 import { logDebug } from '~/utils/logDebug';
 
 import { i18n } from '@lingui/core';
+import { captureException } from '@sentry/react';
 import { GraphQLFormattedError } from 'graphql';
 import { isDefined } from 'twenty-shared/utils';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { ApolloManager } from '../types/apolloManager.interface';
-import { loggerLink } from '../utils/loggerLink';
 import { getTokenPair } from '../utils/getTokenPair';
+import { loggerLink } from '../utils/loggerLink';
 
 const logger = loggerLink(() => 'Twenty');
 
@@ -133,6 +134,12 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                       }),
                   ).flatMap(() => forward(operation));
                 }
+                case 'FORBIDDEN': {
+                  return;
+                }
+                case 'INTERNAL_SERVER_ERROR': {
+                  return; // already caught in BE
+                }
                 default:
                   if (isDebugMode === true) {
                     logDebug(
@@ -145,6 +152,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                       }, Path: ${graphQLError.path}`,
                     );
                   }
+                  captureException(graphQLError);
               }
             }
           }

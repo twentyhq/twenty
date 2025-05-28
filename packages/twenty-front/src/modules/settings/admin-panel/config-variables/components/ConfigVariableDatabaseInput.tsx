@@ -4,6 +4,7 @@ import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { ConfigVariableValue } from 'twenty-shared/types';
 import { MenuItemMultiSelect } from 'twenty-ui/navigation';
@@ -115,19 +116,21 @@ export const ConfigVariableDatabaseInput = ({
                 />
               }
               dropdownComponents={
-                <DropdownMenuItemsContainer>
-                  {selectOptions.map((option) => (
-                    <MenuItemMultiSelect
-                      key={option.value}
-                      text={option.label}
-                      selected={isValueSelected(option.value)}
-                      className="config-variable-array-menu-item-multi-select"
-                      onSelectChange={() =>
-                        handleMultiSelectChange(option.value)
-                      }
-                    />
-                  ))}
-                </DropdownMenuItemsContainer>
+                <DropdownContent>
+                  <DropdownMenuItemsContainer>
+                    {selectOptions.map((option) => (
+                      <MenuItemMultiSelect
+                        key={option.value}
+                        text={option.label}
+                        selected={isValueSelected(option.value)}
+                        className="config-variable-array-menu-item-multi-select"
+                        onSelectChange={() =>
+                          handleMultiSelectChange(option.value)
+                        }
+                      />
+                    ))}
+                  </DropdownMenuItemsContainer>
+                </DropdownContent>
               }
             />
           ) : (

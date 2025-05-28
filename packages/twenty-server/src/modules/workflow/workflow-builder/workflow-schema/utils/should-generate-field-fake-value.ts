@@ -1,11 +1,18 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
-export const shouldGenerateFieldFakeValue = (field: FieldMetadataEntity) => {
+const isManyToOneRelationField = (field: FieldMetadataInterface) =>
+  (field as FieldMetadataEntity<FieldMetadataType.RELATION>).settings
+    ?.relationType === 'MANY_TO_ONE';
+
+export const shouldGenerateFieldFakeValue = (field: FieldMetadataInterface) => {
   return (
-    (!field.isSystem || field.name === 'id') &&
     field.isActive &&
-    field.type !== FieldMetadataType.RELATION
+    (!field.isSystem || field.name === 'id' || field.name === 'userEmail') &&
+    (field.type !== FieldMetadataType.RELATION ||
+      isManyToOneRelationField(field))
   );
 };

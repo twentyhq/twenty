@@ -29,10 +29,6 @@ const StyledElementsCount = styled.span`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
-const StyledEmptyState = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-`;
-
 const StyledJsonList = styled(JsonList)``.withComponent(motion.ul);
 
 export const JsonNestedNode = ({

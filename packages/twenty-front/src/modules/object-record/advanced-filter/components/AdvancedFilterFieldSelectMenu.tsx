@@ -21,6 +21,7 @@ import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/o
 import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
@@ -132,7 +133,7 @@ export const AdvancedFilterFieldSelectMenu = ({
   ];
 
   return (
-    <>
+    <DropdownContent>
       <AdvancedFilterFieldSelectSearchInput />
       <SelectableList
         hotkeyScope={advancedFilterFieldSelectDropdownId}
@@ -175,6 +176,6 @@ export const AdvancedFilterFieldSelectMenu = ({
           )}
         </DropdownMenuItemsContainer>
       </SelectableList>
-    </>
+    </DropdownContent>
   );
 };

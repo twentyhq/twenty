@@ -6,7 +6,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { EditableFilterChip } from '@/views/components/EditableFilterChip';
 
-import { ObjectFilterOperandSelectAndInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterOperandSelectAndInput';
+import { ObjectFilterDropdownFilterInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterInput';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
 import { useSetEditableFilterChipDropdownStates } from '@/views/hooks/useSetEditableFilterChipDropdownStates';
@@ -57,15 +57,12 @@ export const EditableFilterDropdownButton = ({
           />
         }
         dropdownComponents={
-          <ObjectFilterOperandSelectAndInput
-            filterDropdownId={recordFilter.id}
-          />
+          <ObjectFilterDropdownFilterInput filterDropdownId={recordFilter.id} />
         }
         dropdownHotkeyScope={hotkeyScope}
         dropdownOffset={{ y: 8, x: 0 }}
         dropdownPlacement="bottom-start"
         onClickOutside={handleDropdownClickOutside}
-        dropdownWidth={280}
       />
     </>
   );

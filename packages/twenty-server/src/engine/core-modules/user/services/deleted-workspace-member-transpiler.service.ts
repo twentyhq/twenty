@@ -15,12 +15,10 @@ export class DeletedWorkspaceMemberTranspiler {
     workspaceMember: Pick<WorkspaceMemberWorkspaceEntity, 'avatarUrl' | 'id'>;
     workspaceId: string;
   }): string {
-    const avatarUrlToken = this.fileService.encodeFileToken({
-      workspaceMemberId: workspaceMember.id,
-      workspaceId: workspaceId,
+    return this.fileService.signFileUrl({
+      url: workspaceMember.avatarUrl,
+      workspaceId,
     });
-
-    return `${workspaceMember.avatarUrl}?token=${avatarUrlToken}`;
   }
 
   toDeletedWorkspaceMemberDto(
@@ -34,15 +32,16 @@ export class DeletedWorkspaceMemberTranspiler {
       userEmail,
     } = workspaceMember;
 
-    const avatarUrl = userWorkspaceId
-      ? this.generateSignedAvatarUrl({
-          workspaceId: userWorkspaceId,
-          workspaceMember: {
-            avatarUrl: avatarUrlFromEntity,
-            id,
-          },
-        })
-      : null;
+    const avatarUrl =
+      userWorkspaceId && avatarUrlFromEntity
+        ? this.generateSignedAvatarUrl({
+            workspaceId: userWorkspaceId,
+            workspaceMember: {
+              avatarUrl: avatarUrlFromEntity,
+              id,
+            },
+          })
+        : null;
 
     return {
       id,

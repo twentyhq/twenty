@@ -243,6 +243,7 @@ export const SettingsRoleAssignment = ({
           <Dropdown
             dropdownId="role-member-select"
             dropdownHotkeyScope={{ scope: 'roleAssignment' }}
+            dropdownOffset={{ x: 0, y: 4 }}
             clickableComponent={
               <>
                 <div id="assign-member">
@@ -256,7 +257,7 @@ export const SettingsRoleAssignment = ({
                 </div>
                 <AppTooltip
                   anchorSelect="#assign-member"
-                  content={t`No more members to assign`}
+                  content={t`The workspace needs at least one Admin`}
                   delay={TooltipDelay.noDelay}
                   hidden={!allWorkspaceMembersHaveThisRole}
                 />

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -26,6 +27,7 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
     ObjectPermissionModule,
     SettingPermissionModule,
     WorkspacePermissionsCacheModule,
+    FileModule,
   ],
   providers: [RoleService, RoleResolver],
   exports: [RoleService],

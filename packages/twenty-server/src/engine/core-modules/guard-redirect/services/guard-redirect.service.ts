@@ -2,7 +2,10 @@ import { ExecutionContext, Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
 
-import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -25,15 +28,19 @@ export class GuardRedirectService {
       customDomain: string | null;
       isCustomDomainEnabled?: boolean;
     },
+    pathname = '/verify',
   ) {
     if ('contextType' in context && context.contextType === 'graphql') {
       throw error;
     }
 
-    context
-      .switchToHttp()
-      .getResponse()
-      .redirect(this.getRedirectErrorUrlAndCaptureExceptions(error, workspace));
+    context.switchToHttp().getResponse().redirect(
+      this.getRedirectErrorUrlAndCaptureExceptions({
+        error,
+        workspace,
+        pathname,
+      }),
+    );
   }
 
   getSubdomainAndCustomDomainFromContext(context: ExecutionContext) {
@@ -58,7 +65,11 @@ export class GuardRedirectService {
   }
 
   private captureException(err: Error | CustomException, workspaceId?: string) {
-    if (err instanceof AuthException) return;
+    if (
+      err instanceof AuthException &&
+      err.code !== AuthExceptionCode.INTERNAL_SERVER_ERROR
+    )
+      return;
 
     this.exceptionHandlerService.captureExceptions([err], {
       workspace: {
@@ -67,24 +78,30 @@ export class GuardRedirectService {
     });
   }
 
-  getRedirectErrorUrlAndCaptureExceptions(
-    err: Error | CustomException,
+  getRedirectErrorUrlAndCaptureExceptions({
+    error,
+    workspace,
+    pathname,
+  }: {
+    error: Error | AuthException;
     workspace: {
       id?: string;
       subdomain: string;
       customDomain: string | null;
       isCustomDomainEnabled?: boolean;
-    },
-  ) {
-    this.captureException(err, workspace.id);
+    };
+    pathname: string;
+  }) {
+    this.captureException(error, workspace.id);
 
     return this.domainManagerService.computeRedirectErrorUrl(
-      err instanceof AuthException ? err.message : 'Unknown error',
+      error instanceof AuthException ? error.message : 'Unknown error',
       {
         subdomain: workspace.subdomain,
         customDomain: workspace.customDomain,
         isCustomDomainEnabled: workspace.isCustomDomainEnabled ?? false,
       },
+      pathname,
     );
   }
 }

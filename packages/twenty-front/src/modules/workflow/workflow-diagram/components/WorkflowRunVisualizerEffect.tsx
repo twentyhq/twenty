@@ -1,4 +1,5 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -11,23 +12,32 @@ import { workflowVisualizerWorkflowRunIdComponentState } from '@/workflow/states
 import { WorkflowRunOutput } from '@/workflow/types/Workflow';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowDiagramStatusComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusComponentState';
+import { workflowRunDiagramAutomaticallyOpenedStepsComponentState } from '@/workflow/workflow-diagram/states/workflowRunDiagramAutomaticallyOpenedStepsComponentState';
 import { workflowRunStepToOpenByDefaultComponentState } from '@/workflow/workflow-diagram/states/workflowRunStepToOpenByDefaultComponentState';
+import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
+import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { selectWorkflowDiagramNode } from '@/workflow/workflow-diagram/utils/selectWorkflowDiagramNode';
 import { useContext, useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { useIcons } from 'twenty-ui/display';
 
 export const WorkflowRunVisualizerEffect = ({
   workflowRunId,
 }: {
   workflowRunId: string;
 }) => {
+  const { getIcon } = useIcons();
+
   const workflowRun = useWorkflowRun({ workflowRunId });
   const workflowVersion = useWorkflowVersion(workflowRun?.workflowVersionId);
 
   const setWorkflowRunId = useSetRecoilComponentStateV2(
     workflowVisualizerWorkflowRunIdComponentState,
+  );
+  const workflowVisualizerWorkflowIdState = useRecoilComponentCallbackStateV2(
+    workflowVisualizerWorkflowIdComponentState,
   );
   const setWorkflowVisualizerWorkflowId = useSetRecoilComponentStateV2(
     workflowVisualizerWorkflowIdComponentState,
@@ -43,6 +53,15 @@ export const WorkflowRunVisualizerEffect = ({
   const workflowRunStepToOpenByDefaultState = useRecoilComponentCallbackStateV2(
     workflowRunStepToOpenByDefaultComponentState,
   );
+  const workflowSelectedNodeState = useRecoilComponentCallbackStateV2(
+    workflowSelectedNodeComponentState,
+  );
+  const workflowRunDiagramAutomaticallyOpenedStepsState =
+    useRecoilComponentCallbackStateV2(
+      workflowRunDiagramAutomaticallyOpenedStepsComponentState,
+    );
+
+  const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
 
   const { populateStepsOutputSchema } = useStepsOutputSchema();
 
@@ -65,11 +84,11 @@ export const WorkflowRunVisualizerEffect = ({
       ({
         workflowRunOutput,
         workflowVersionId,
-        skipNodeSelection,
+        isInRightDrawer,
       }: {
         workflowRunOutput: WorkflowRunOutput | undefined;
         workflowVersionId: string | undefined;
-        skipNodeSelection: boolean;
+        isInRightDrawer: boolean;
       }) => {
         if (!(isDefined(workflowRunOutput) && isDefined(workflowVersionId))) {
           set(flowState, undefined);
@@ -100,17 +119,60 @@ export const WorkflowRunVisualizerEffect = ({
             stepsOutput: workflowRunOutput.stepsOutput,
           });
 
-        if (isDefined(stepToOpenByDefault) && !skipNodeSelection) {
-          const workflowRunDiagram = selectWorkflowDiagramNode({
-            diagram: baseWorkflowRunDiagram,
-            nodeIdToSelect: stepToOpenByDefault.id,
-          });
+        if (isDefined(stepToOpenByDefault)) {
+          if (isInRightDrawer) {
+            set(workflowDiagramState, baseWorkflowRunDiagram);
 
-          set(workflowDiagramState, workflowRunDiagram);
-          set(workflowRunStepToOpenByDefaultState, {
-            id: stepToOpenByDefault.id,
-            data: stepToOpenByDefault.data,
-          });
+            const workflowRunDiagramAutomaticallyOpenedSteps = getSnapshotValue(
+              snapshot,
+              workflowRunDiagramAutomaticallyOpenedStepsState,
+            );
+            const hasStepAlreadyBeenOpenedAutomatically =
+              workflowRunDiagramAutomaticallyOpenedSteps.includes(
+                stepToOpenByDefault.id,
+              );
+
+            if (
+              workflowDiagramStatus === 'done' &&
+              !hasStepAlreadyBeenOpenedAutomatically
+            ) {
+              set(workflowSelectedNodeState, stepToOpenByDefault.id);
+
+              const workflowVisualizerWorkflowId = getSnapshotValue(
+                snapshot,
+                workflowVisualizerWorkflowIdState,
+              );
+              if (!isDefined(workflowVisualizerWorkflowId)) {
+                throw new Error(
+                  'The workflow id must be set; ensure the workflow id is always set before rendering the workflow diagram.',
+                );
+              }
+
+              set(workflowRunDiagramAutomaticallyOpenedStepsState, [
+                ...workflowRunDiagramAutomaticallyOpenedSteps,
+                stepToOpenByDefault.id,
+              ]);
+              openWorkflowRunViewStepInCommandMenu({
+                workflowId: workflowVisualizerWorkflowId,
+                workflowRunId,
+                title: stepToOpenByDefault.data.name,
+                icon: getIcon(getWorkflowNodeIconKey(stepToOpenByDefault.data)),
+                workflowSelectedNode: stepToOpenByDefault.id,
+                stepExecutionStatus: stepToOpenByDefault.data.runStatus,
+              });
+            }
+          } else {
+            const workflowRunDiagram = selectWorkflowDiagramNode({
+              diagram: baseWorkflowRunDiagram,
+              nodeIdToSelect: stepToOpenByDefault.id,
+            });
+
+            set(workflowDiagramState, workflowRunDiagram);
+            set(workflowRunStepToOpenByDefaultState, {
+              id: stepToOpenByDefault.id,
+              data: stepToOpenByDefault.data,
+            });
+          }
         } else {
           set(workflowDiagramState, baseWorkflowRunDiagram);
         }
@@ -121,9 +183,15 @@ export const WorkflowRunVisualizerEffect = ({
       },
     [
       flowState,
+      getIcon,
+      openWorkflowRunViewStepInCommandMenu,
       workflowDiagramState,
       workflowDiagramStatusState,
+      workflowRunDiagramAutomaticallyOpenedStepsState,
+      workflowRunId,
       workflowRunStepToOpenByDefaultState,
+      workflowSelectedNodeState,
+      workflowVisualizerWorkflowIdState,
     ],
   );
 
@@ -131,7 +199,7 @@ export const WorkflowRunVisualizerEffect = ({
     handleWorkflowRunDiagramGeneration({
       workflowRunOutput: workflowRun?.output ?? undefined,
       workflowVersionId: workflowRun?.workflowVersionId,
-      skipNodeSelection: isInRightDrawer,
+      isInRightDrawer,
     });
   }, [
     handleWorkflowRunDiagramGeneration,

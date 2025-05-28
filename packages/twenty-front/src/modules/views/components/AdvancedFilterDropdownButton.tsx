@@ -32,7 +32,6 @@ export const AdvancedFilterDropdownButton = () => {
       dropdownHotkeyScope={{ scope: ADVANCED_FILTER_DROPDOWN_ID }}
       dropdownOffset={{ y: 8, x: 0 }}
       dropdownPlacement="bottom-start"
-      dropdownWidth="100%"
       onOpen={handleOpenAdvancedFilterDropdown}
     />
   );

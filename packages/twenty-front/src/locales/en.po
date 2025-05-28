@@ -2177,8 +2177,13 @@ msgstr "Extra Credits Used"
 
 #. js-lingui-id: bVax4d
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
-msgid "Failed to remove  override"
-msgstr "Failed to remove  override"
+#~ msgid "Failed to remove  override"
+#~ msgstr "Failed to remove  override"
+
+#. js-lingui-id: A/P7PX
+#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
+msgid "Failed to remove override"
+msgstr "Failed to remove override"
 
 #. js-lingui-id: Dzh4a2
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
@@ -3352,8 +3357,8 @@ msgstr "No metrics data available"
 
 #. js-lingui-id: DL8pzn
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
-msgid "No more members to assign"
-msgstr "No more members to assign"
+#~ msgid "No more members to assign"
+#~ msgstr "No more members to assign"
 
 #. js-lingui-id: tTItk7
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -4777,6 +4782,11 @@ msgstr "The values of this field must be unique"
 msgid "The whole event details will be shared with your team."
 msgstr "The whole event details will be shared with your team."
 
+#. js-lingui-id: MssRHl
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
+msgid "The workspace needs at least one Admin"
+msgstr "The workspace needs at least one Admin"
+
 #. js-lingui-id: FEr96N
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Theme"
@@ -5132,6 +5142,11 @@ msgstr "Value is set in the server environment, it may be a different value on t
 msgid "Values"
 msgstr "Values"
 
+#. js-lingui-id: rawKOG
+#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
+msgid "Variable deleted successfully."
+msgstr "Variable deleted successfully."
+
 #. js-lingui-id: dY/1ir
 #: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
 msgid "Variable not found"
@@ -5139,8 +5154,13 @@ msgstr "Variable not found"
 
 #. js-lingui-id: N/89ho
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
-msgid "Variable updated successfully"
-msgstr "Variable updated successfully"
+#~ msgid "Variable updated successfully"
+#~ msgstr "Variable updated successfully"
+
+#. js-lingui-id: 2ushgC
+#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
+msgid "Variable updated successfully."
+msgstr "Variable updated successfully."
 
 #. js-lingui-id: IHIWR4
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -5164,8 +5184,8 @@ msgstr "View billing details"
 
 #. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "View execution details"
-msgstr "View execution details"
+#~ msgid "View execution details"
+#~ msgstr "View execution details"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
@@ -5268,13 +5288,13 @@ msgstr "When the key will be disabled"
 
 #. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow is running..."
-msgstr "Workflow is running..."
+#~ msgid "Workflow is running..."
+#~ msgstr "Workflow is running..."
 
 #. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow run failed"
-msgstr "Workflow run failed"
+#~ msgid "Workflow run failed"
+#~ msgstr "Workflow run failed"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx

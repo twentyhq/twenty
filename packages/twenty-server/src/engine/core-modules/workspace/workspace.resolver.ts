@@ -52,6 +52,7 @@ import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation-exception.filter';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
 
 import { Workspace } from './workspace.entity';
 
@@ -119,7 +120,7 @@ export class WorkspaceResolver {
     }
   }
 
-  @Mutation(() => String)
+  @Mutation(() => SignedFileDTO)
   @UseGuards(
     WorkspaceAuthGuard,
     SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
@@ -128,12 +129,12 @@ export class WorkspaceResolver {
     @AuthWorkspace() { id }: Workspace,
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename, mimetype }: FileUpload,
-  ): Promise<string> {
+  ): Promise<SignedFileDTO> {
     const stream = createReadStream();
     const buffer = await streamToBuffer(stream);
     const fileFolder = FileFolder.WorkspaceLogo;
 
-    const { paths } = await this.fileUploadService.uploadImage({
+    const { files } = await this.fileUploadService.uploadImage({
       file: buffer,
       filename,
       mimeType: mimetype,
@@ -141,15 +142,15 @@ export class WorkspaceResolver {
       workspaceId: id,
     });
 
+    if (!files.length) {
+      throw new Error('Failed to upload workspace logo');
+    }
+
     await this.workspaceService.updateOne(id, {
-      logo: paths[0],
+      logo: files[0].path,
     });
 
-    const workspaceLogoToken = this.fileService.encodeFileToken({
-      workspaceId: id,
-    });
-
-    return `${paths[0]}?token=${workspaceLogoToken}`;
+    return files[0];
   }
 
   @ResolveField(() => [FeatureFlagDTO], { nullable: true })
@@ -227,11 +228,10 @@ export class WorkspaceResolver {
   async logo(@Parent() workspace: Workspace): Promise<string> {
     if (workspace.logo) {
       try {
-        const workspaceLogoToken = this.fileService.encodeFileToken({
+        return this.fileService.signFileUrl({
+          url: workspace.logo,
           workspaceId: workspace.id,
         });
-
-        return `${workspace.logo}?token=${workspaceLogoToken}`;
       } catch (e) {
         return workspace.logo;
       }
@@ -298,11 +298,10 @@ export class WorkspaceResolver {
 
       if (workspace.logo) {
         try {
-          const workspaceLogoToken = this.fileService.encodeFileToken({
+          workspaceLogoWithToken = this.fileService.signFileUrl({
+            url: workspace.logo,
             workspaceId: workspace.id,
           });
-
-          workspaceLogoWithToken = `${workspace.logo}?token=${workspaceLogoToken}`;
         } catch (e) {
           workspaceLogoWithToken = workspace.logo;
         }

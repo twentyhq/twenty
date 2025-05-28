@@ -2182,7 +2182,12 @@ msgstr ""
 
 #. js-lingui-id: bVax4d
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
-msgid "Failed to remove  override"
+#~ msgid "Failed to remove  override"
+#~ msgstr ""
+
+#. js-lingui-id: A/P7PX
+#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
+msgid "Failed to remove override"
 msgstr ""
 
 #. js-lingui-id: Dzh4a2
@@ -3357,8 +3362,8 @@ msgstr "Δεν υπάρχουν διαθέσιμα δεδομένα μετρήσ
 
 #. js-lingui-id: DL8pzn
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
-msgid "No more members to assign"
-msgstr "Δεν υπάρχουν άλλοι μέλη για ανάθεση"
+#~ msgid "No more members to assign"
+#~ msgstr "Δεν υπάρχουν άλλοι μέλη για ανάθεση"
 
 #. js-lingui-id: tTItk7
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -4782,6 +4787,11 @@ msgstr "Οι τιμές αυτού του πεδίου πρέπει να είν�
 msgid "The whole event details will be shared with your team."
 msgstr "Όλες οι λεπτομέρειες του γεγονότος θα μοιραστούν με την ομάδα σας."
 
+#. js-lingui-id: MssRHl
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
+msgid "The workspace needs at least one Admin"
+msgstr ""
+
 #. js-lingui-id: FEr96N
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Theme"
@@ -5137,6 +5147,11 @@ msgstr ""
 msgid "Values"
 msgstr "Τιμές"
 
+#. js-lingui-id: rawKOG
+#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
+msgid "Variable deleted successfully."
+msgstr ""
+
 #. js-lingui-id: dY/1ir
 #: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
 msgid "Variable not found"
@@ -5144,7 +5159,12 @@ msgstr "Η μεταβλητή δεν βρέθηκε"
 
 #. js-lingui-id: N/89ho
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
-msgid "Variable updated successfully"
+#~ msgid "Variable updated successfully"
+#~ msgstr ""
+
+#. js-lingui-id: 2ushgC
+#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
+msgid "Variable updated successfully."
 msgstr ""
 
 #. js-lingui-id: IHIWR4
@@ -5169,8 +5189,8 @@ msgstr "Προβολή λεπτομερειών χρέωσης"
 
 #. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "View execution details"
-msgstr "Προβολή λεπτομερειών εκτέλεσης"
+#~ msgid "View execution details"
+#~ msgstr "Προβολή λεπτομερειών εκτέλεσης"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
@@ -5273,13 +5293,13 @@ msgstr "Όταν το κλειδί θα απενεργοποιηθεί"
 
 #. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow is running..."
-msgstr "Η διεργασία εργασίας εκτελείται..."
+#~ msgid "Workflow is running..."
+#~ msgstr "Η διεργασία εργασίας εκτελείται..."
 
 #. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow run failed"
-msgstr "Απέτυχε η εκτέλεση της διεργασίας εργασίας"
+#~ msgid "Workflow run failed"
+#~ msgstr "Απέτυχε η εκτέλεση της διεργασίας εργασίας"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
