@@ -12,7 +12,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import assert from 'assert';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { buildSignedPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
@@ -52,7 +52,6 @@ import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation-exception.filter';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
 import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
 
 import { Workspace } from './workspace.entity';
@@ -229,14 +228,9 @@ export class WorkspaceResolver {
   async logo(@Parent() workspace: Workspace): Promise<string> {
     if (workspace.logo) {
       try {
-        const signedPayload = this.fileService.encodeFileToken({
-          filename: extractFilenameFromPath(workspace.logo),
+        return this.fileService.signFileUrl({
+          url: workspace.logo,
           workspaceId: workspace.id,
-        });
-
-        return buildSignedPath({
-          path: workspace.logo,
-          token: signedPayload,
         });
       } catch (e) {
         return workspace.logo;
@@ -304,14 +298,9 @@ export class WorkspaceResolver {
 
       if (workspace.logo) {
         try {
-          const signedPayload = this.fileService.encodeFileToken({
-            filename: extractFilenameFromPath(workspace.logo),
+          workspaceLogoWithToken = this.fileService.signFileUrl({
+            url: workspace.logo,
             workspaceId: workspace.id,
-          });
-
-          workspaceLogoWithToken = buildSignedPath({
-            path: workspace.logo,
-            token: signedPayload,
           });
         } catch (e) {
           workspaceLogoWithToken = workspace.logo;
