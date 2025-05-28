@@ -1,5 +1,5 @@
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
-import { DATE_AggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
+import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { t } from '@lingui/core/macro';
 
@@ -7,33 +7,33 @@ export const getAggregateOperationLabel = (
   operation: ExtendedAggregateOperations,
 ) => {
   switch (operation) {
-    case AggregateOperations.min:
+    case AggregateOperations.MIN:
       return t`Min`;
-    case AggregateOperations.max:
+    case AggregateOperations.MAX:
       return t`Max`;
-    case AggregateOperations.avg:
+    case AggregateOperations.AVG:
       return t`Average`;
-    case AggregateOperations.sum:
+    case AggregateOperations.SUM:
       return t`Sum`;
-    case AggregateOperations.count:
+    case AggregateOperations.COUNT:
       return t`Count all`;
-    case AggregateOperations.countEmpty:
+    case AggregateOperations.COUNT_EMPTY:
       return t`Count empty`;
-    case AggregateOperations.countNotEmpty:
+    case AggregateOperations.COUNT_NOT_EMPTY:
       return t`Count not empty`;
-    case AggregateOperations.countUniqueValues:
+    case AggregateOperations.COUNT_UNIQUE_VALUES:
       return t`Count unique values`;
-    case AggregateOperations.percentageEmpty:
+    case AggregateOperations.PERCENTAGE_EMPTY:
       return t`Percent empty`;
-    case AggregateOperations.percentageNotEmpty:
+    case AggregateOperations.PERCENTAGE_NOT_EMPTY:
       return t`Percent not empty`;
-    case DATE_AggregateOperations.earliest:
+    case DateAggregateOperations.EARLIEST:
       return t`Earliest date`;
-    case DATE_AggregateOperations.latest:
+    case DateAggregateOperations.LATEST:
       return t`Latest date`;
-    case AggregateOperations.countTrue:
+    case AggregateOperations.COUNT_TRUE:
       return t`Count true`;
-    case AggregateOperations.countFalse:
+    case AggregateOperations.COUNT_FALSE:
       return t`Count false`;
     default:
       throw new Error(`Unknown aggregate operation: ${operation}`);

@@ -37,7 +37,7 @@ export const useDeleteOneFieldMetadataItem = () => {
   ) => {
     if (recordIndexKanbanAggregateOperation?.fieldMetadataId === idToDelete) {
       setRecordIndexKanbanAggregateOperation({
-        operation: AggregateOperations.count,
+        operation: AggregateOperations.COUNT,
         fieldMetadataId: null,
       });
     }

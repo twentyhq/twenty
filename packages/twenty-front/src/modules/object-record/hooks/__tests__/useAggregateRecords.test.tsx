@@ -20,9 +20,9 @@ const mockObjectMetadataItem = {
 };
 
 const mockGqlFieldToFieldMap = {
-  sumAmount: ['amount', AggregateOperations.sum],
-  avgAmount: ['amount', AggregateOperations.avg],
-  totalCount: ['name', AggregateOperations.count],
+  sumAmount: ['amount', AggregateOperations.SUM],
+  avgAmount: ['amount', AggregateOperations.AVG],
+  totalCount: ['name', AggregateOperations.COUNT],
 };
 
 describe('useAggregateRecords', () => {
@@ -48,19 +48,19 @@ describe('useAggregateRecords', () => {
       useAggregateRecords({
         objectNameSingular: 'opportunity',
         recordGqlFieldsAggregate: {
-          amount: [AggregateOperations.sum, AggregateOperations.avg],
-          name: [AggregateOperations.count],
+          amount: [AggregateOperations.SUM, AggregateOperations.AVG],
+          name: [AggregateOperations.COUNT],
         },
       }),
     );
 
     expect(result.current.data).toEqual({
       amount: {
-        [AggregateOperations.sum]: 1000000,
-        [AggregateOperations.avg]: 23800,
+        [AggregateOperations.SUM]: 1000000,
+        [AggregateOperations.AVG]: 23800,
       },
       name: {
-        [AggregateOperations.count]: 42,
+        [AggregateOperations.COUNT]: 42,
       },
     });
     expect(result.current.loading).toBe(false);
@@ -78,7 +78,7 @@ describe('useAggregateRecords', () => {
       useAggregateRecords({
         objectNameSingular: 'opportunity',
         recordGqlFieldsAggregate: {
-          amount: [AggregateOperations.sum],
+          amount: [AggregateOperations.SUM],
         },
       }),
     );
@@ -99,7 +99,7 @@ describe('useAggregateRecords', () => {
       useAggregateRecords({
         objectNameSingular: 'opportunity',
         recordGqlFieldsAggregate: {
-          amount: [AggregateOperations.sum],
+          amount: [AggregateOperations.SUM],
         },
       }),
     );
@@ -113,7 +113,7 @@ describe('useAggregateRecords', () => {
       useAggregateRecords({
         objectNameSingular: 'opportunity',
         recordGqlFieldsAggregate: {
-          amount: [AggregateOperations.sum],
+          amount: [AggregateOperations.SUM],
         },
         skip: true,
       }),

@@ -1,6 +1,6 @@
 import { useDropdown } from '@/dropdown/hooks/useDropdown';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
-import { DATE_AggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
+import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { RecordTableColumnAggregateFooterDropdownSubmenuContent } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateDropdownSubmenuContent';
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
 import { RecordTableColumnAggregateFooterMenuContent } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent';
@@ -71,7 +71,7 @@ export const RecordTableColumnAggregateFooterDropdownContent = () => {
       const aggregateOperations = availableAggregateOperations.filter(
         (aggregateOperation) =>
           DATE_AGGREGATE_OPERATION_OPTIONS.includes(
-            aggregateOperation as DATE_AggregateOperations,
+            aggregateOperation as DateAggregateOperations,
           ),
       );
       return (

@@ -1,5 +1,5 @@
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
-import { DATE_AggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
+import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useUpdateView } from '@/views/hooks/useUpdateView';
 import { renderHook } from '@testing-library/react';
@@ -34,21 +34,21 @@ describe('useUpdateViewAggregate', () => {
 
       result.current.updateViewAggregate({
         kanbanAggregateOperationFieldMetadataId: 'test-field-id',
-        kanbanAggregateOperation: DATE_AggregateOperations.earliest,
+        kanbanAggregateOperation: DateAggregateOperations.EARLIEST,
       });
 
       // updateView is called with 'EARLIEST' converted to 'MIN'
       expect(mockUpdateView).toHaveBeenCalledWith({
         id: mockCurrentViewId,
         kanbanAggregateOperationFieldMetadataId: 'test-field-id',
-        kanbanAggregateOperation: AggregateOperations.min,
+        kanbanAggregateOperation: AggregateOperations.MIN,
       });
 
       // setAggregateOperation is called with 'EARLIEST'
       expect(
         mockSetRecordIndexKanbanAggregateOperationState,
       ).toHaveBeenCalledWith({
-        operation: DATE_AggregateOperations.earliest,
+        operation: DateAggregateOperations.EARLIEST,
         fieldMetadataId: 'test-field-id',
       });
     });

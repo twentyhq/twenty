@@ -8,14 +8,14 @@ describe('isFieldTypeValidForAggregateOperation', () => {
     expect(
       isFieldTypeValidForAggregateOperation(
         FieldMetadataType.NUMBER,
-        AggregateOperations.sum,
+        AggregateOperations.SUM,
       ),
     ).toBe(true);
 
     expect(
       isFieldTypeValidForAggregateOperation(
         FieldMetadataType.CURRENCY,
-        AggregateOperations.min,
+        AggregateOperations.MIN,
       ),
     ).toBe(true);
   });
@@ -24,14 +24,14 @@ describe('isFieldTypeValidForAggregateOperation', () => {
     expect(
       isFieldTypeValidForAggregateOperation(
         FieldMetadataType.TEXT,
-        AggregateOperations.avg,
+        AggregateOperations.AVG,
       ),
     ).toBe(false);
 
     expect(
       isFieldTypeValidForAggregateOperation(
         FieldMetadataType.BOOLEAN,
-        AggregateOperations.max,
+        AggregateOperations.MAX,
       ),
     ).toBe(false);
   });
@@ -39,10 +39,10 @@ describe('isFieldTypeValidForAggregateOperation', () => {
   it('should handle all aggregate operations', () => {
     const numericField = FieldMetadataType.NUMBER;
     const operations = [
-      AggregateOperations.min,
-      AggregateOperations.max,
-      AggregateOperations.avg,
-      AggregateOperations.sum,
+      AggregateOperations.MIN,
+      AggregateOperations.MAX,
+      AggregateOperations.AVG,
+      AggregateOperations.SUM,
     ];
 
     operations.forEach((operation) => {

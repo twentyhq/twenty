@@ -29,7 +29,7 @@ describe('initializeAvailableFieldsForAggregateOperationMap', () => {
     );
     expect(
       result[
-        AggregateOperations.count as AggregateOperationsOmittingStandardOperations
+        AggregateOperations.COUNT as AggregateOperationsOmittingStandardOperations
       ],
     ).toBeUndefined();
   });
@@ -38,21 +38,21 @@ describe('initializeAvailableFieldsForAggregateOperationMap', () => {
     const result = initializeAvailableFieldsForAggregateOperationMap(
       COUNT_AGGREGATE_OPERATION_OPTIONS,
     );
-    expect(result[AggregateOperations.count]).toEqual([]);
-    expect(result[AggregateOperations.countEmpty]).toEqual([]);
-    expect(result[AggregateOperations.countNotEmpty]).toEqual([]);
-    expect(result[AggregateOperations.countUniqueValues]).toEqual([]);
-    expect(result[AggregateOperations.min]).toBeUndefined();
-    expect(result[AggregateOperations.percentageEmpty]).toBeUndefined();
+    expect(result[AggregateOperations.COUNT]).toEqual([]);
+    expect(result[AggregateOperations.COUNT_EMPTY]).toEqual([]);
+    expect(result[AggregateOperations.COUNT_NOT_EMPTY]).toEqual([]);
+    expect(result[AggregateOperations.COUNT_UNIQUE_VALUES]).toEqual([]);
+    expect(result[AggregateOperations.MIN]).toBeUndefined();
+    expect(result[AggregateOperations.PERCENTAGE_EMPTY]).toBeUndefined();
   });
 
   it('should include percent operation when called with count aggregate operations', () => {
     const result = initializeAvailableFieldsForAggregateOperationMap(
       PERCENT_AGGREGATE_OPERATION_OPTIONS,
     );
-    expect(result[AggregateOperations.percentageEmpty]).toEqual([]);
-    expect(result[AggregateOperations.percentageNotEmpty]).toEqual([]);
-    expect(result[AggregateOperations.count]).toBeUndefined();
-    expect(result[AggregateOperations.min]).toBeUndefined();
+    expect(result[AggregateOperations.PERCENTAGE_EMPTY]).toEqual([]);
+    expect(result[AggregateOperations.PERCENTAGE_NOT_EMPTY]).toEqual([]);
+    expect(result[AggregateOperations.COUNT]).toBeUndefined();
+    expect(result[AggregateOperations.MIN]).toBeUndefined();
   });
 });

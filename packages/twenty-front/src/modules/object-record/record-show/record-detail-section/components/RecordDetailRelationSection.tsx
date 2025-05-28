@@ -109,7 +109,7 @@ export const RecordDetailRelationSection = ({
     filter: filtersForAggregate,
     skip: !isToManyObjects,
     recordGqlFieldsAggregate: {
-      id: [AggregateOperations.count],
+      id: [AggregateOperations.COUNT],
     },
   });
 

@@ -48,11 +48,11 @@ export const computeAggregateValueAndLabel = ({
     return {
       value:
         data?.[FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION]?.[
-          AggregateOperations.count
+          AggregateOperations.COUNT
         ],
-      label: getAggregateOperationLabel(AggregateOperations.count),
+      label: getAggregateOperationLabel(AggregateOperations.COUNT),
       labelWithFieldName: getAggregateOperationLabel(
-        AggregateOperations.count,
+        AggregateOperations.COUNT,
       ),
     };
   }
@@ -128,8 +128,8 @@ export const computeAggregateValueAndLabel = ({
   const aggregateLabel = t(getAggregateOperationShortLabel(aggregateOperation));
   const fieldLabel = field.label;
   const labelWithFieldName =
-    aggregateOperation === AggregateOperations.count
-      ? `${getAggregateOperationLabel(AggregateOperations.count)}`
+    aggregateOperation === AggregateOperations.COUNT
+      ? `${getAggregateOperationLabel(AggregateOperations.COUNT)}`
       : t`${aggregateLabel} of ${fieldLabel}`;
 
   return {

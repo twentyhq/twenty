@@ -36,7 +36,7 @@ export const useGetRecordIndexTotalCount = () => {
     objectNameSingular: objectMetadataItem.nameSingular,
     filter,
     recordGqlFieldsAggregate: {
-      id: [AggregateOperations.count],
+      id: [AggregateOperations.COUNT],
     },
   });
 

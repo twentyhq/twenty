@@ -12,16 +12,16 @@ export const getAvailableAggregateOperationsForFieldMetadataType = ({
   fieldMetadataType?: FieldMetadataType;
 }) => {
   if (fieldMetadataType === FieldMetadataType.RELATION) {
-    return [AggregateOperations.count];
+    return [AggregateOperations.COUNT];
   }
 
   const availableAggregateOperations = new Set<ExtendedAggregateOperations>([
-    AggregateOperations.count,
-    AggregateOperations.countEmpty,
-    AggregateOperations.countNotEmpty,
-    AggregateOperations.countUniqueValues,
-    AggregateOperations.percentageEmpty,
-    AggregateOperations.percentageNotEmpty,
+    AggregateOperations.COUNT,
+    AggregateOperations.COUNT_EMPTY,
+    AggregateOperations.COUNT_NOT_EMPTY,
+    AggregateOperations.COUNT_UNIQUE_VALUES,
+    AggregateOperations.PERCENTAGE_EMPTY,
+    AggregateOperations.PERCENTAGE_NOT_EMPTY,
   ]);
 
   if (!isDefined(fieldMetadataType)) {

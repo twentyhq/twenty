@@ -2,10 +2,10 @@ import { AggregateOperations } from '@/object-record/record-table/constants/Aggr
 
 export type AggregateOperationsOmittingStandardOperations = Exclude<
   AggregateOperations,
-  | AggregateOperations.count
-  | AggregateOperations.countEmpty
-  | AggregateOperations.countNotEmpty
-  | AggregateOperations.countUniqueValues
-  | AggregateOperations.percentageEmpty
-  | AggregateOperations.percentageNotEmpty
+  | AggregateOperations.COUNT
+  | AggregateOperations.COUNT_EMPTY
+  | AggregateOperations.COUNT_NOT_EMPTY
+  | AggregateOperations.COUNT_UNIQUE_VALUES
+  | AggregateOperations.PERCENTAGE_EMPTY
+  | AggregateOperations.PERCENTAGE_NOT_EMPTY
 >;

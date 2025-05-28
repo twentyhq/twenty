@@ -9,6 +9,6 @@ export const buildRecordGqlFieldsAggregateForRecordTable = ({
   aggregateOperation?: AggregateOperations | null;
 }): RecordGqlFieldsAggregate => {
   return {
-    [fieldName]: [aggregateOperation ?? AggregateOperations.count],
+    [fieldName]: [aggregateOperation ?? AggregateOperations.COUNT],
   };
 };

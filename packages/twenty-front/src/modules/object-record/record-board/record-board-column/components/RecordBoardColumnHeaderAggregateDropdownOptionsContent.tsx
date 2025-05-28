@@ -82,7 +82,7 @@ export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
                 key={`aggregate-dropdown-menu-content-${availableAggregationOperation}`}
                 onContentChange={() => {
                   if (
-                    availableAggregationOperation !== AggregateOperations.count
+                    availableAggregationOperation !== AggregateOperations.COUNT
                   ) {
                     setAggregateOperation(
                       availableAggregationOperation as ExtendedAggregateOperations,
@@ -106,15 +106,15 @@ export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
                   availableAggregationOperation as ExtendedAggregateOperations,
                 )}
                 hasSubMenu={
-                  availableAggregationOperation === AggregateOperations.count
+                  availableAggregationOperation === AggregateOperations.COUNT
                     ? false
                     : true
                 }
                 RightIcon={
                   availableAggregationOperation ===
-                    AggregateOperations.count &&
+                    AggregateOperations.COUNT &&
                   recordIndexKanbanAggregateOperation?.operation ===
-                    AggregateOperations.count
+                    AggregateOperations.COUNT
                     ? IconCheck
                     : undefined
                 }

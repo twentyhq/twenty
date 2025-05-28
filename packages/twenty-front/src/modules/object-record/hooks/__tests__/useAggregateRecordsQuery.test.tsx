@@ -71,7 +71,7 @@ describe('useAggregateRecordsQuery', () => {
       useAggregateRecordsQuery({
         objectNameSingular: 'company',
         recordGqlFieldsAggregate: {
-          name: [AggregateOperations.count],
+          name: [AggregateOperations.COUNT],
         },
       }),
     );
@@ -92,7 +92,7 @@ describe('useAggregateRecordsQuery', () => {
       useAggregateRecordsQuery({
         objectNameSingular: 'company',
         recordGqlFieldsAggregate: {
-          amount: [AggregateOperations.sum],
+          amount: [AggregateOperations.SUM],
         },
       }),
     );
@@ -115,7 +115,7 @@ describe('useAggregateRecordsQuery', () => {
         useAggregateRecordsQuery({
           objectNameSingular: 'company',
           recordGqlFieldsAggregate: {
-            name: [AggregateOperations.sum],
+            name: [AggregateOperations.SUM],
           },
         }),
       ),
@@ -127,8 +127,8 @@ describe('useAggregateRecordsQuery', () => {
       useAggregateRecordsQuery({
         objectNameSingular: 'company',
         recordGqlFieldsAggregate: {
-          amount: [AggregateOperations.sum],
-          name: [AggregateOperations.count],
+          amount: [AggregateOperations.SUM],
+          name: [AggregateOperations.COUNT],
         },
       }),
     );

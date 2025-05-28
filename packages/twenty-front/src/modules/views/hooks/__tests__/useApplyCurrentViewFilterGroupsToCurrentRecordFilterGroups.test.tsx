@@ -54,7 +54,7 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
     viewGroups: [],
     viewSorts: [],
     kanbanFieldMetadataId: '',
-    kanbanAggregateOperation: AggregateOperations.count,
+    kanbanAggregateOperation: AggregateOperations.COUNT,
     icon: '',
     kanbanAggregateOperationFieldMetadataId: '',
     position: 0,

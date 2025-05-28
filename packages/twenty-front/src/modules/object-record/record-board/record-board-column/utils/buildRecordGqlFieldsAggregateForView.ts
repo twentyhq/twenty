@@ -23,7 +23,7 @@ export const buildRecordGqlFieldsAggregateForView = ({
     if (
       isDefined(recordIndexKanbanAggregateOperation?.operation) &&
       recordIndexKanbanAggregateOperation.operation !==
-        AggregateOperations.count
+        AggregateOperations.COUNT
     ) {
       throw new Error(
         `No field found to compute aggregate operation ${recordIndexKanbanAggregateOperation.operation} on object ${objectMetadataItem.nameSingular}`,
@@ -31,7 +31,7 @@ export const buildRecordGqlFieldsAggregateForView = ({
     } else {
       recordGqlFieldsAggregate = {
         [FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION]: [
-          AggregateOperations.count,
+          AggregateOperations.COUNT,
         ],
       };
     }
@@ -39,7 +39,7 @@ export const buildRecordGqlFieldsAggregateForView = ({
     recordGqlFieldsAggregate = {
       [kanbanAggregateOperationFieldName]: [
         recordIndexKanbanAggregateOperation?.operation ??
-          AggregateOperations.count,
+          AggregateOperations.COUNT,
       ],
     };
   }

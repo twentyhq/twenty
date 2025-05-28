@@ -62,9 +62,9 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
     isFieldMetadataDateKind(fieldMetadataItem.type) &&
     isDefined(aggregateOperationForViewFieldWithProbableImpossibleValues) &&
     (aggregateOperationForViewFieldWithProbableImpossibleValues ===
-      AggregateOperations.min ||
+      AggregateOperations.MIN ||
       aggregateOperationForViewFieldWithProbableImpossibleValues ===
-        AggregateOperations.max);
+        AggregateOperations.MAX);
 
   const aggregateOperationForViewField:
     | ExtendedAggregateOperations
