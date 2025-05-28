@@ -54,6 +54,8 @@ export class WhatsappController {
   async handleIncomingMessage(
     @Param('workspaceId') workspaceId: string,
     @Param('id') id: string,
+    // TO DO
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     @Body() body: any,
   ) {
     this.logger.log(`${id} - Received incoming message`);
@@ -108,6 +110,7 @@ export class WhatsappController {
         'timeline' | 'unreadMessages' | 'isVisible'
       > = {
         integrationId: id,
+        workspaceId: workspaceId,
         client: {
           phone: body.entry[0].changes[0].value.messages[0].from,
           name: body.entry[0].changes[0].value.contacts[0].profile.name,
