@@ -23,7 +23,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:52:46.814Z',
+          createdAt: '2025-01-02T09:52:46.814Z',
           city: 'ASd',
           phones: {
             primaryPhoneNumber: '781234562',
@@ -71,10 +71,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 1,
             id: '20202020-3ec3-4fe3-8997-b76aa0bfa408',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Linkedin',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: 'Eutaw Street',
@@ -155,7 +155,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-01T09:50:00.000Z',
+          createdAt: '2025-01-01T09:50:00.000Z',
           city: 'Seattle',
           phones: {
             primaryPhoneNumber: '781234562',
@@ -203,10 +203,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 1,
             id: '20202020-3ec3-4fe3-8997-b76aa0bfa408',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Linkedin',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: 'Eutaw Street',
@@ -287,7 +287,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:48:36.193Z',
+          createdAt: '2025-01-02T09:48:36.193Z',
           city: 'Los Angeles',
           phones: {
             primaryPhoneNumber: '781234576',
@@ -335,10 +335,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 1,
             id: '20202020-3ec3-4fe3-8997-b76aa0bfa408',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Linkedin',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: 'Eutaw Street',
@@ -388,7 +388,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:48:36.193Z',
+          createdAt: '2025-01-02T09:48:36.193Z',
           city: 'Seattle',
           phones: {
             primaryPhoneNumber: '781234545',
@@ -436,10 +436,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 3,
             id: '20202020-0713-40a5-8216-82802401d33e',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Anthropic',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: '548 Market Street',
@@ -489,7 +489,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:48:36.193Z',
+          createdAt: '2025-01-02T09:48:36.193Z',
           city: 'Los Angeles',
           phones: {
             primaryPhoneNumber: '781234587',
@@ -537,10 +537,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 3,
             id: '20202020-0713-40a5-8216-82802401d33e',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Anthropic',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: '548 Market Street',
@@ -590,7 +590,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:48:36.193Z',
+          createdAt: '2025-01-02T09:48:36.193Z',
           city: 'Seattle',
           phones: {
             primaryPhoneNumber: '781234599',
@@ -638,10 +638,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 4,
             id: '20202020-ed89-413a-b31a-962986e67bb4',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Microsoft',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: null,
@@ -691,7 +691,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:48:36.193Z',
+          createdAt: '2025-01-02T09:48:36.193Z',
           city: 'New York',
           phones: {
             primaryPhoneNumber: '781234572',
@@ -739,10 +739,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 4,
             id: '20202020-ed89-413a-b31a-962986e67bb4',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Microsoft',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: null,
@@ -792,7 +792,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:48:36.193Z',
+          createdAt: '2025-01-02T09:48:36.193Z',
           city: 'Seattle',
           phones: {
             primaryPhoneNumber: '781234582',
@@ -840,10 +840,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 4,
             id: '20202020-ed89-413a-b31a-962986e67bb4',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Microsoft',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: null,
@@ -893,7 +893,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:48:36.193Z',
+          createdAt: '2025-01-02T09:48:36.193Z',
           city: 'New York',
           phones: {
             primaryPhoneNumber: '781234569',
@@ -941,10 +941,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 5,
             id: '20202020-171e-4bcc-9cf7-43448d6fb278',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Airbnb',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: '888 Brannan St',
@@ -994,7 +994,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:48:36.193Z',
+          createdAt: '2025-01-02T09:48:36.193Z',
           city: 'San Francisco',
           phones: {
             primaryPhoneNumber: '781234962',
@@ -1042,10 +1042,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 5,
             id: '20202020-171e-4bcc-9cf7-43448d6fb278',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Airbnb',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: '888 Brannan St',
@@ -1095,7 +1095,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:48:36.193Z',
+          createdAt: '2025-01-02T09:48:36.193Z',
           city: 'New York',
           phones: {
             primaryPhoneNumber: '781234502',
@@ -1143,10 +1143,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 5,
             id: '20202020-171e-4bcc-9cf7-43448d6fb278',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Airbnb',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: '888 Brannan St',
@@ -1196,7 +1196,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:48:36.193Z',
+          createdAt: '2025-01-02T09:48:36.193Z',
           city: 'Los Angeles',
           phones: {
             primaryPhoneNumber: '781234563',
@@ -1244,10 +1244,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 6,
             id: '20202020-c21e-4ec2-873b-de4264d89025',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Google',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: '760 Market St',
@@ -1297,7 +1297,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:48:36.193Z',
+          createdAt: '2025-01-02T09:48:36.193Z',
           city: 'Seattle',
           phones: {
             primaryPhoneNumber: '781234542',
@@ -1345,10 +1345,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 6,
             id: '20202020-c21e-4ec2-873b-de4264d89025',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Google',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: '760 Market St',
@@ -1398,7 +1398,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:48:36.193Z',
+          createdAt: '2025-01-02T09:48:36.193Z',
           city: 'Seattle',
           phones: {
             primaryPhoneNumber: '782234562',
@@ -1446,10 +1446,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 6,
             id: '20202020-c21e-4ec2-873b-de4264d89025',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Google',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: '760 Market St',
@@ -1499,7 +1499,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:48:36.193Z',
+          createdAt: '2025-01-02T09:48:36.193Z',
           city: 'Seattle',
           phones: {
             primaryPhoneNumber: '781274562',
@@ -1547,10 +1547,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 6,
             id: '20202020-c21e-4ec2-873b-de4264d89025',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Google',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: '760 Market St',
@@ -1600,7 +1600,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:48:36.193Z',
+          createdAt: '2025-01-02T09:48:36.193Z',
           city: 'Seattle',
           phones: {
             primaryPhoneNumber: '781239562',
@@ -1648,10 +1648,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 6,
             id: '20202020-c21e-4ec2-873b-de4264d89025',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Google',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: '760 Market St',
