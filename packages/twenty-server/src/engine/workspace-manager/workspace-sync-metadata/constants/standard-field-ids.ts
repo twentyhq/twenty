@@ -144,6 +144,12 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   timelineActivities: '20202020-0414-4daf-9c0d-64fe7b27f89f',
   searchVector: '85c71601-72f9-4b7b-b343-d46100b2c74d',
   charge: '20202020-e674-48e5-a542-72570eee7216',
+  CPF_CNPJ: 'c1581b5a-6ad0-4b68-b316-1ab24c2c47ba',
+  INSCRICAO_ESTADUAL: '00edc84c-4d61-460f-8ea8-807b18cc5815',
+  PERCENT_NFE: '993c99ca-4e7b-4224-a498-f1dc482fe18a',
+  PERCENT_NFSE: '168d02f8-38a5-4d0c-8c1e-e1b9fe6ba8bc',
+  PERCENT_NFCE: '09d39ebb-b11a-4dc9-bfb2-4eb847d110f7',
+  PERCENT_NFCOM: '67c3796a-ac1f-4376-9e3c-5c401c62d2b8',
 };
 
 export const CHARGE_STANDARD_FIELD_IDS = {
