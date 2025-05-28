@@ -87,6 +87,8 @@ export const useHandleWorkflowRunDiagramCanvasInit = () => {
             );
 
           // FIXME: This is a workaround to avoid opening a workflow run step twice when going from the side panel to the fullscreen show page.
+          // The step is opened in the `handleSelectionChange` function of `WorkflowRunDiagramCanvasEffect`. I think it shouldn't be opened there but
+          // we should keep opening the step here, in `handleWorkflowRunDiagramCanvasInit`.
           if (!hasStepAlreadyBeenOpenedAutomatically) {
             openWorkflowRunViewStepInCommandMenu({
               workflowId: workflowVisualizerWorkflowId,
