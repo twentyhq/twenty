@@ -2177,8 +2177,13 @@ msgstr "Extra Credits Used"
 
 #. js-lingui-id: bVax4d
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
-msgid "Failed to remove  override"
-msgstr "Failed to remove  override"
+#~ msgid "Failed to remove  override"
+#~ msgstr "Failed to remove  override"
+
+#. js-lingui-id: A/P7PX
+#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
+msgid "Failed to remove override"
+msgstr "Failed to remove override"
 
 #. js-lingui-id: Dzh4a2
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
@@ -5137,6 +5142,11 @@ msgstr "Value is set in the server environment, it may be a different value on t
 msgid "Values"
 msgstr "Values"
 
+#. js-lingui-id: rawKOG
+#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
+msgid "Variable deleted successfully."
+msgstr "Variable deleted successfully."
+
 #. js-lingui-id: dY/1ir
 #: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
 msgid "Variable not found"
@@ -5144,8 +5154,13 @@ msgstr "Variable not found"
 
 #. js-lingui-id: N/89ho
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
-msgid "Variable updated successfully"
-msgstr "Variable updated successfully"
+#~ msgid "Variable updated successfully"
+#~ msgstr "Variable updated successfully"
+
+#. js-lingui-id: 2ushgC
+#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
+msgid "Variable updated successfully."
+msgstr "Variable updated successfully."
 
 #. js-lingui-id: IHIWR4
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
