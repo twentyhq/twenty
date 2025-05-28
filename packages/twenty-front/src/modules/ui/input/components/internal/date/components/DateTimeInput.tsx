@@ -102,8 +102,7 @@ export const DateTimeInput = ({
     }
 
     setValue(parseToString(date));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [date, setValue]);
+  }, [date, setValue, parseToString]);
 
   const getPlaceholder = () => {
     const formatMap: Record<DateFormat, string> = {

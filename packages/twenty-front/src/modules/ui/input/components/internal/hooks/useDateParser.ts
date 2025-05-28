@@ -1,6 +1,6 @@
 import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
 import { UserContext } from '@/users/contexts/UserContext';
-import { useContext } from 'react';
+import { useCallback, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { parseDateToString } from '../date/utils/parseDateToString';
 import { parseStringToDate } from '../date/utils/parseStringToDate';
@@ -13,23 +13,29 @@ export const useDateParser = ({ isDateTimeInput }: UseDateParserProps) => {
   const { dateFormat } = useRecoilValue(dateTimeFormatState);
   const { timeZone } = useContext(UserContext);
 
-  const parseToString = (date: Date) => {
-    return parseDateToString({
-      date,
-      isDateTimeInput,
-      userTimezone: timeZone,
-      dateFormat,
-    });
-  };
+  const parseToString = useCallback(
+    (date: Date) => {
+      return parseDateToString({
+        date,
+        isDateTimeInput,
+        userTimezone: timeZone,
+        dateFormat,
+      });
+    },
+    [dateFormat, isDateTimeInput, timeZone],
+  );
 
-  const parseToDate = (dateAsString: string) => {
-    return parseStringToDate({
-      dateAsString,
-      isDateTimeInput,
-      userTimezone: timeZone,
-      dateFormat,
-    });
-  };
+  const parseToDate = useCallback(
+    (dateAsString: string) => {
+      return parseStringToDate({
+        dateAsString,
+        isDateTimeInput,
+        userTimezone: timeZone,
+        dateFormat,
+      });
+    },
+    [dateFormat, isDateTimeInput, timeZone],
+  );
 
   return {
     parseToString,
