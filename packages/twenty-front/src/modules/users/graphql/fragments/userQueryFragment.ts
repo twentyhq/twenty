@@ -43,8 +43,7 @@ export const USER_QUERY_FRAGMENT = gql`
       customDomain
       isCustomDomainEnabled
       workspaceUrls {
-        subdomainUrl
-        customUrl
+        ...WorkspaceUrlsFragment
       }
       featureFlags {
         key
@@ -86,10 +85,15 @@ export const USER_QUERY_FRAGMENT = gql`
         subdomain
         customDomain
         workspaceUrls {
-          subdomainUrl
-          customUrl
+          ...WorkspaceUrlsFragment
         }
       }
+    }
+    availableWorkspaces {
+      id
+      logo
+      displayName
+      workspaceUrl
     }
     userVars
   }

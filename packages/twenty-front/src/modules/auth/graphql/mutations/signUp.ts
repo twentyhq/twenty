@@ -27,8 +27,7 @@ export const SIGN_UP = gql`
       workspace {
         id
         workspaceUrls {
-          subdomainUrl
-          customUrl
+          ...WorkspaceUrlsFragment
         }
       }
     }

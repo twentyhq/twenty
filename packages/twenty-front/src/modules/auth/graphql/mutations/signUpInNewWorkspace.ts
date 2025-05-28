@@ -9,8 +9,7 @@ export const SIGN_UP_IN_NEW_WORKSPACE = gql`
       workspace {
         id
         workspaceUrls {
-          subdomainUrl
-          customUrl
+          ...WorkspaceUrlsFragment
         }
       }
     }

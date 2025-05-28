@@ -25,6 +25,7 @@ type MockedUser = Pick<
   | 'supportUserHash'
   | 'onboardingStatus'
   | 'userVars'
+  | 'availableWorkspaces'
 > & {
   workspaceMember: WorkspaceMember | null;
   locale: string;
@@ -130,6 +131,7 @@ export const mockedUserData: MockedUser = {
   workspaces: [{ workspace: mockCurrentWorkspace }],
   workspaceMembers: [mockedWorkspaceMemberData],
   onboardingStatus: OnboardingStatus.COMPLETED,
+  availableWorkspaces: [],
   userVars: {},
 };
 
