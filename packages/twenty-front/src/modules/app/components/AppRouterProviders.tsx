@@ -38,14 +38,14 @@ export const AppRouterProviders = () => {
         <ApolloMetadataClientProvider>
           <BaseThemeProvider>
             <ClientConfigProviderEffect />
+            <UserProviderEffect />
+            <WorkspaceProviderEffect />
+            <ObjectMetadataItemsLoadEffect />
             <ClientConfigProvider>
-              <UserProviderEffect />
-              <WorkspaceProviderEffect />
               <ChromeExtensionSidecarEffect />
               <ChromeExtensionSidecarProvider>
                 <UserProvider>
                   <AuthProvider>
-                    <ObjectMetadataItemsLoadEffect />
                     <ObjectMetadataItemsProvider>
                       <PrefetchDataProvider>
                         <UserThemeProviderEffect />

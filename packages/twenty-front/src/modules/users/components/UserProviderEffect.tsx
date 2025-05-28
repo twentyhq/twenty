@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -31,12 +31,18 @@ import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 export const UserProviderEffect = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  console.log('[UserProviderEffect] Component rendered');
+
   const location = useLocation();
+
+  console.log('[UserProviderEffect] Location:', location.pathname);
 
   const [isCurrentUserLoaded, setIsCurrentUserLoaded] = useRecoilState(
     isCurrentUserLoadedState,
   );
+
+  console.log('[UserProviderEffect] isCurrentUserLoaded:', isCurrentUserLoaded);
+
   const setCurrentUser = useSetRecoilState(currentUserState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
@@ -68,24 +74,55 @@ export const UserProviderEffect = () => {
     currentWorkspaceDeletedMembersState,
   );
 
+  const skipQuery =
+    isCurrentUserLoaded ||
+    isMatchingLocation(location, AppPath.Verify) ||
+    isMatchingLocation(location, AppPath.VerifyEmail);
+
+  console.log('[UserProviderEffect] Query skip conditions:', {
+    isCurrentUserLoaded,
+    isVerifyPath: isMatchingLocation(location, AppPath.Verify),
+    isVerifyEmailPath: isMatchingLocation(location, AppPath.VerifyEmail),
+    skipQuery,
+  });
+
   const { loading: queryLoading, data: queryData } = useGetCurrentUserQuery({
-    skip:
-      isCurrentUserLoaded ||
-      isMatchingLocation(location, AppPath.Verify) ||
-      isMatchingLocation(location, AppPath.VerifyEmail),
+    skip: skipQuery,
+  });
+
+  console.log('[UserProviderEffect] Query state:', {
+    queryLoading,
+    hasData: !!queryData,
+    hasCurrentUser: !!queryData?.currentUser,
   });
 
   useEffect(() => {
+    console.log('[UserProviderEffect] useEffect triggered with:', {
+      queryLoading,
+      hasQueryData: !!queryData,
+      hasCurrentUser: !!queryData?.currentUser,
+      isCurrentUserLoaded,
+    });
+
     if (!queryLoading) {
-      setIsLoading(false);
+      console.log(
+        '[UserProviderEffect] Query finished loading, setting states',
+      );
       setIsCurrentUserLoaded(true);
     }
 
-    if (!isDefined(queryData?.currentUser)) return;
+    if (!isDefined(queryData?.currentUser) || skipQuery) {
+      console.log(
+        '[UserProviderEffect] No current user data or query skipped, returning early',
+      );
+      return;
+    }
 
+    console.log('[UserProviderEffect] Processing current user data');
     setCurrentUser(queryData.currentUser);
 
     if (isDefined(queryData.currentUser.currentWorkspace)) {
+      console.log('[UserProviderEffect] Setting current workspace');
       setCurrentWorkspace({
         ...queryData.currentUser.currentWorkspace,
         defaultRole: queryData.currentUser.currentWorkspace.defaultRole ?? null,
@@ -93,6 +130,7 @@ export const UserProviderEffect = () => {
     }
 
     if (isDefined(queryData.currentUser.currentUserWorkspace)) {
+      console.log('[UserProviderEffect] Setting current user workspace');
       setCurrentUserWorkspace(queryData.currentUser.currentUserWorkspace);
     }
 
@@ -115,6 +153,7 @@ export const UserProviderEffect = () => {
     };
 
     if (isDefined(workspaceMember)) {
+      console.log('[UserProviderEffect] Processing workspace member');
       const updatedWorkspaceMember =
         affectDefaultValuesOnEmptyWorkspaceMemberFields(workspaceMember);
       setCurrentWorkspaceMember(updatedWorkspaceMember);
@@ -141,6 +180,10 @@ export const UserProviderEffect = () => {
     }
 
     if (isDefined(workspaceMembers)) {
+      console.log(
+        '[UserProviderEffect] Setting workspace members, count:',
+        workspaceMembers.length,
+      );
       setCurrentWorkspaceMembers(
         workspaceMembers.map(affectDefaultValuesOnEmptyWorkspaceMemberFields) ??
           [],
@@ -148,6 +191,10 @@ export const UserProviderEffect = () => {
     }
 
     if (isDefined(deletedWorkspaceMembers)) {
+      console.log(
+        '[UserProviderEffect] Setting deleted workspace members, count:',
+        deletedWorkspaceMembers.length,
+      );
       setCurrentWorkspaceMembersWithDeleted(deletedWorkspaceMembers);
     }
 
@@ -156,13 +203,16 @@ export const UserProviderEffect = () => {
         .map(({ workspace }) => workspace)
         .filter(isDefined);
 
+      console.log(
+        '[UserProviderEffect] Setting workspaces, count:',
+        workspaces.length,
+      );
       setWorkspaces(workspaces);
     }
   }, [
     setCurrentUser,
     setCurrentUserWorkspace,
     setCurrentWorkspaceMembers,
-    isLoading,
     queryLoading,
     setCurrentWorkspace,
     setCurrentWorkspaceMember,
@@ -172,6 +222,7 @@ export const UserProviderEffect = () => {
     setDateTimeFormat,
     setCurrentWorkspaceMembersWithDeleted,
     updateLocaleCatalog,
+    skipQuery,
   ]);
 
   return <></>;
