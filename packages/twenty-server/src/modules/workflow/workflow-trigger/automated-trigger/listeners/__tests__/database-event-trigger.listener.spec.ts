@@ -195,28 +195,173 @@ describe('DatabaseEventTriggerListener', () => {
       expect(messageQueueService.add).not.toHaveBeenCalled();
     });
 
-    it('should filter event listeners by event name', async () => {
+    it('should handle create events correctly', async () => {
+      const createPayload = {
+        ...mockPayload,
+        name: 'createEvent',
+        events: [
+          {
+            ...mockPayload.events[0],
+            properties: {
+              after: { field1: 'new', field2: 'new' },
+            },
+          },
+        ],
+      };
+
       mockRepository.find.mockResolvedValue([
-        ...mockEventListeners,
         {
           type: AutomatedTriggerType.DATABASE_EVENT,
-          workflowId: 'other-workflow',
+          workflowId,
           settings: {
-            eventName: 'otherEvent',
-            fields: ['field1'],
+            eventName: 'createEvent',
           },
         },
       ]);
 
-      await listener.handleObjectRecordUpdateEvent(mockPayload);
+      await listener.handleObjectRecordCreateEvent(createPayload);
 
-      expect(messageQueueService.add).toHaveBeenCalledTimes(1);
       expect(messageQueueService.add).toHaveBeenCalledWith(
         WorkflowTriggerJob.name,
         {
           workspaceId,
           workflowId,
-          payload: mockPayload.events[0],
+          payload: createPayload.events[0],
+        },
+        { retryLimit: 3 },
+      );
+    });
+
+    it('should handle delete events correctly', async () => {
+      const deletePayload = {
+        ...mockPayload,
+        name: 'deleteEvent',
+        events: [
+          {
+            ...mockPayload.events[0],
+            properties: {
+              before: { field1: 'old', field2: 'old' },
+            },
+          },
+        ],
+      };
+
+      mockRepository.find.mockResolvedValue([
+        {
+          type: AutomatedTriggerType.DATABASE_EVENT,
+          workflowId,
+          settings: {
+            eventName: 'deleteEvent',
+          },
+        },
+      ]);
+
+      await listener.handleObjectRecordDeleteEvent(deletePayload);
+
+      expect(messageQueueService.add).toHaveBeenCalledWith(
+        WorkflowTriggerJob.name,
+        {
+          workspaceId,
+          workflowId,
+          payload: deletePayload.events[0],
+        },
+        { retryLimit: 3 },
+      );
+    });
+
+    it('should handle destroy events correctly', async () => {
+      const destroyPayload = {
+        ...mockPayload,
+        name: 'destroyEvent',
+        events: [
+          {
+            ...mockPayload.events[0],
+            properties: {
+              before: { field1: 'old', field2: 'old' },
+            },
+          },
+        ],
+      };
+
+      mockRepository.find.mockResolvedValue([
+        {
+          type: AutomatedTriggerType.DATABASE_EVENT,
+          workflowId,
+          settings: {
+            eventName: 'destroyEvent',
+          },
+        },
+      ]);
+
+      await listener.handleObjectRecordDestroyEvent(destroyPayload);
+
+      expect(messageQueueService.add).toHaveBeenCalledWith(
+        WorkflowTriggerJob.name,
+        {
+          workspaceId,
+          workflowId,
+          payload: destroyPayload.events[0],
+        },
+        { retryLimit: 3 },
+      );
+    });
+
+    it('should ignore events when feature flag is disabled', async () => {
+      featureFlagService.isFeatureEnabled.mockResolvedValueOnce(false);
+
+      await listener.handleObjectRecordUpdateEvent(mockPayload);
+
+      expect(messageQueueService.add).not.toHaveBeenCalled();
+    });
+
+    it('should handle multiple events in a batch', async () => {
+      const batchPayload = {
+        ...mockPayload,
+        events: [
+          mockPayload.events[0],
+          {
+            ...mockPayload.events[0],
+            recordId: 'test-record-2',
+            properties: {
+              updatedFields: ['field1'],
+              before: { field1: 'old' },
+              after: { field1: 'new' },
+            },
+          },
+        ],
+      };
+
+      mockRepository.find.mockResolvedValue([
+        {
+          type: AutomatedTriggerType.DATABASE_EVENT,
+          workflowId,
+          settings: {
+            eventName: databaseEventName,
+            fields: ['field1'],
+          },
+        },
+      ]);
+
+      await listener.handleObjectRecordUpdateEvent(batchPayload);
+
+      expect(messageQueueService.add).toHaveBeenCalledTimes(2);
+      expect(messageQueueService.add).toHaveBeenNthCalledWith(
+        1,
+        WorkflowTriggerJob.name,
+        {
+          workspaceId,
+          workflowId,
+          payload: batchPayload.events[0],
+        },
+        { retryLimit: 3 },
+      );
+      expect(messageQueueService.add).toHaveBeenNthCalledWith(
+        2,
+        WorkflowTriggerJob.name,
+        {
+          workspaceId,
+          workflowId,
+          payload: batchPayload.events[1],
         },
         { retryLimit: 3 },
       );

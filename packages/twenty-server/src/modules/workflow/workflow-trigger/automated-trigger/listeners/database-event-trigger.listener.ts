@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { Raw } from 'typeorm';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -21,10 +22,7 @@ import {
   WorkflowAutomatedTriggerWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
-import {
-  DatabaseEventTriggerSettings,
-  UpdateEventTriggerSettings,
-} from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
+import { UpdateEventTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 import {
   WorkflowTriggerJob,
   WorkflowTriggerJobData,
@@ -53,7 +51,10 @@ export class DatabaseEventTriggerListener {
     const clonedPayload = structuredClone(payload);
 
     await this.enrichCreatedEvent(clonedPayload);
-    await this.handleEvent(clonedPayload);
+    await this.handleEvent({
+      payload: clonedPayload,
+      action: DatabaseEventAction.CREATED,
+    });
   }
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.UPDATED)
@@ -68,50 +69,10 @@ export class DatabaseEventTriggerListener {
 
     await this.enrichUpdatedEvent(clonedPayload);
 
-    const workspaceId = payload.workspaceId;
-    const databaseEventName = payload.name;
-
-    const workflowAutomatedTriggerRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowAutomatedTriggerWorkspaceEntity>(
-        workspaceId,
-        'workflowAutomatedTrigger',
-      );
-
-    const eventListeners = await workflowAutomatedTriggerRepository.find({
-      where: {
-        type: AutomatedTriggerType.DATABASE_EVENT,
-      },
+    await this.handleEvent({
+      payload: clonedPayload,
+      action: DatabaseEventAction.UPDATED,
     });
-
-    const filteredEventListeners = eventListeners.filter((eventListener) => {
-      const settings = eventListener.settings as DatabaseEventTriggerSettings;
-
-      return settings.eventName === databaseEventName;
-    });
-
-    for (const eventListener of filteredEventListeners) {
-      for (const eventPayload of clonedPayload.events) {
-        const settings = eventListener.settings as UpdateEventTriggerSettings;
-
-        if (
-          !settings.fields ||
-          settings.fields.length === 0 ||
-          settings.fields.some((field) =>
-            eventPayload?.properties?.updatedFields?.includes(field),
-          )
-        ) {
-          this.messageQueueService.add<WorkflowTriggerJobData>(
-            WorkflowTriggerJob.name,
-            {
-              workspaceId,
-              workflowId: eventListener.workflowId,
-              payload: eventPayload,
-            },
-            { retryLimit: 3 },
-          );
-        }
-      }
-    }
   }
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.DELETED)
@@ -125,7 +86,10 @@ export class DatabaseEventTriggerListener {
     const clonedPayload = structuredClone(payload);
 
     await this.enrichDeletedEvent(clonedPayload);
-    await this.handleEvent(clonedPayload);
+    await this.handleEvent({
+      payload: clonedPayload,
+      action: DatabaseEventAction.DELETED,
+    });
   }
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.DESTROYED)
@@ -139,7 +103,10 @@ export class DatabaseEventTriggerListener {
     const clonedPayload = structuredClone(payload);
 
     await this.enrichDestroyedEvent(clonedPayload);
-    await this.handleEvent(clonedPayload);
+    await this.handleEvent({
+      payload: clonedPayload,
+      action: DatabaseEventAction.DESTROYED,
+    });
   }
 
   private async enrichCreatedEvent(
@@ -272,39 +239,79 @@ export class DatabaseEventTriggerListener {
     return !isWorkflowEnabled;
   }
 
-  private async handleEvent(
-    payload: WorkspaceEventBatch<ObjectRecordNonDestructiveEvent>,
-  ) {
+  private async handleEvent({
+    payload,
+    action,
+  }: {
+    payload: WorkspaceEventBatch<ObjectRecordNonDestructiveEvent>;
+    action: DatabaseEventAction;
+  }) {
     const workspaceId = payload.workspaceId;
     const databaseEventName = payload.name;
+    const automatedTriggerTableName = 'workflowAutomatedTrigger';
 
     const workflowAutomatedTriggerRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowAutomatedTriggerWorkspaceEntity>(
         workspaceId,
-        'workflowAutomatedTrigger',
+        automatedTriggerTableName,
       );
 
     const eventListeners = await workflowAutomatedTriggerRepository.find({
       where: {
         type: AutomatedTriggerType.DATABASE_EVENT,
-        settings: {
-          eventName: databaseEventName,
-        },
+        settings: Raw(
+          () =>
+            `${automatedTriggerTableName}."settings"->>'eventName' = :eventName`,
+          { eventName: databaseEventName },
+        ),
       },
     });
 
     for (const eventListener of eventListeners) {
       for (const eventPayload of payload.events) {
-        await this.messageQueueService.add<WorkflowTriggerJobData>(
-          WorkflowTriggerJob.name,
-          {
-            workspaceId,
-            workflowId: eventListener.workflowId,
-            payload: eventPayload,
-          },
-          { retryLimit: 3 },
-        );
+        const shouldTriggerJob = this.shouldTriggerJob({
+          eventPayload,
+          eventListener,
+          action,
+        });
+
+        if (shouldTriggerJob) {
+          await this.messageQueueService.add<WorkflowTriggerJobData>(
+            WorkflowTriggerJob.name,
+            {
+              workspaceId,
+              workflowId: eventListener.workflowId,
+              payload: eventPayload,
+            },
+            { retryLimit: 3 },
+          );
+        }
       }
     }
+  }
+
+  private shouldTriggerJob({
+    eventPayload,
+    eventListener,
+    action,
+  }: {
+    eventPayload: ObjectRecordNonDestructiveEvent;
+    eventListener: WorkflowAutomatedTriggerWorkspaceEntity;
+    action: DatabaseEventAction;
+  }) {
+    if (action === DatabaseEventAction.UPDATED) {
+      const settings = eventListener.settings as UpdateEventTriggerSettings;
+      const updateEventPayload = eventPayload as ObjectRecordUpdateEvent;
+
+      return (
+        !settings.fields ||
+        settings.fields.length === 0 ||
+        settings.fields.some((field) =>
+          updateEventPayload?.properties?.updatedFields?.includes(field),
+        )
+      );
+    }
+
+    return true;
   }
 }
