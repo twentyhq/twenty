@@ -93,11 +93,13 @@ export const TabList = ({
                 disabled={tab.disabled ?? loading}
                 pill={tab.pill}
                 to={behaveAsLinks ? `#${tab.id}` : undefined}
-                onClick={() => {
-                  if (!behaveAsLinks) {
-                    setActiveTabId(tab.id);
-                  }
-                }}
+                onClick={
+                  behaveAsLinks
+                    ? undefined
+                    : () => {
+                        setActiveTabId(tab.id);
+                      }
+                }
               />
             ))}
           </StyledContainer>

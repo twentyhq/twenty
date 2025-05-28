@@ -44,21 +44,19 @@ export const ViewBarRecordFilterEffect = () => {
   );
 
   useEffect(() => {
-    if (isDefined(currentView) && !hasInitializedCurrentRecordFilters) {
+    if (!hasInitializedCurrentRecordFilters && isDefined(currentView)) {
       if (currentView.objectMetadataId !== objectMetadataItem.id) {
         return;
       }
 
-      if (isDefined(currentView)) {
-        setCurrentRecordFilters(
-          mapViewFiltersToFilters(
-            currentView.viewFilters,
-            filterableFieldMetadataItems,
-          ),
-        );
+      setCurrentRecordFilters(
+        mapViewFiltersToFilters(
+          currentView.viewFilters,
+          filterableFieldMetadataItems,
+        ),
+      );
 
-        setHasInitializedCurrentRecordFilters(true);
-      }
+      setHasInitializedCurrentRecordFilters(true);
     }
   }, [
     currentViewId,

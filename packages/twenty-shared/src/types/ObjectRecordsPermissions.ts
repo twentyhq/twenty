@@ -1,5 +1,5 @@
 export type ObjectRecordsPermissions = {
-  [objectName: string]: {
+  [objectMetadataId: string]: {
     canRead: boolean;
     canUpdate: boolean;
     canSoftDelete: boolean;

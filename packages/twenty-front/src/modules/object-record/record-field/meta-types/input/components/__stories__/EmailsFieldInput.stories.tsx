@@ -1,6 +1,6 @@
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
-import { fn, userEvent, within } from '@storybook/test';
+import { fn, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect } from 'react';
 import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
 
@@ -131,7 +131,42 @@ export const Default: Story = {
   },
 };
 
-// FIXME: We will have to fix that behavior, we should only be able to set a secondary email as the primary email
+export const TrimInput: Story = {
+  args: {
+    value: {
+      primaryEmail: 'john@example.com',
+      additionalEmails: [],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const addButton = await canvas.findByText('Add Email');
+    await userEvent.click(addButton);
+
+    const input = await canvas.findByPlaceholderText('Email');
+    await userEvent.type(input, '  new.email@example.com  {enter}');
+
+    const newEmailElement = await canvas.findByText('new.email@example.com');
+    expect(newEmailElement).toBeVisible();
+
+    await waitFor(() => {
+      expect(updateRecord).toHaveBeenCalledWith({
+        variables: {
+          where: { id: 'record-id' },
+          updateOneRecordInput: {
+            emails: {
+              primaryEmail: 'john@example.com',
+              additionalEmails: ['new.email@example.com'],
+            },
+          },
+        },
+      });
+    });
+    expect(updateRecord).toHaveBeenCalledTimes(1);
+  },
+};
+
 export const CanNotSetPrimaryLinkAsPrimaryLink: Story = {
   args: {
     value: {

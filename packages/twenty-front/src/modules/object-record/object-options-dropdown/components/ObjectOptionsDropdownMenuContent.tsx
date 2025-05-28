@@ -8,6 +8,7 @@ import { recordGroupFieldMetadataComponentState } from '@/object-record/record-g
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -93,7 +94,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
   );
 
   return (
-    <>
+    <DropdownContent>
       {currentView && (
         <ObjectOptionsDropdownMenuViewName currentView={currentView} />
       )}
@@ -121,7 +122,6 @@ export const ObjectOptionsDropdownMenuContent = () => {
           </SelectableListItem>
         </DropdownMenuItemsContainer>
         <DropdownMenuSeparator />
-
         <DropdownMenuItemsContainer scrollable={false}>
           <SelectableListItem
             itemId="Fields"
@@ -136,7 +136,6 @@ export const ObjectOptionsDropdownMenuContent = () => {
               hasSubMenu
             />
           </SelectableListItem>
-
           <div id="group-by-menu-item">
             <SelectableListItem
               itemId="Group"
@@ -175,7 +174,6 @@ export const ObjectOptionsDropdownMenuContent = () => {
             />
           )}
           <DropdownMenuSeparator />
-
           <SelectableListItem
             itemId="Copy link to view"
             onEnter={() => {
@@ -228,6 +226,6 @@ export const ObjectOptionsDropdownMenuContent = () => {
           )}
         </DropdownMenuItemsContainer>
       </SelectableList>
-    </>
+    </DropdownContent>
   );
 };

@@ -15,6 +15,10 @@ import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-va
 import { ConfigValueConverterService } from 'src/engine/core-modules/twenty-config/conversion/config-value-converter.service';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
 import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
+import {
+  ConfigVariableException,
+  ConfigVariableExceptionCode,
+} from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 import { ConfigStorageInterface } from './interfaces/config-storage.interface';
@@ -51,12 +55,6 @@ export class ConfigStorageService implements ConfigStorageInterface {
     ];
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private logAndRethrow(message: string, error: any): never {
-    this.logger.error(message, error);
-    throw error;
-  }
-
   private async convertAndSecureValue<T extends keyof ConfigVariables>(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
@@ -86,21 +84,18 @@ export class ConfigStorageService implements ConfigStorageInterface {
           ? decryptText(convertedValue, appSecret)
           : encryptText(convertedValue, appSecret);
       } catch (error) {
-        this.logger.error(
-          `Failed to ${isDecrypt ? 'decrypt' : 'encrypt'} value for key ${
+        this.logger.debug(
+          `${isDecrypt ? 'Decryption' : 'Encryption'} failed for key ${
             key as string
-          }`,
-          error,
+          }: ${error.message}. Using original value.`,
         );
 
         return convertedValue;
       }
     } catch (error) {
-      this.logAndRethrow(
-        `Failed to convert value ${
-          isDecrypt ? 'from DB' : 'to DB'
-        } for key ${key as string}`,
-        error,
+      throw new ConfigVariableException(
+        `Failed to convert value for key ${key as string}: ${error.message}`,
+        ConfigVariableExceptionCode.VALIDATION_FAILED,
       );
     }
   }
@@ -123,7 +118,14 @@ export class ConfigStorageService implements ConfigStorageInterface {
 
       return await this.convertAndSecureValue(result.value, key, true);
     } catch (error) {
-      this.logAndRethrow(`Failed to get config for ${key as string}`, error);
+      if (error instanceof ConfigVariableException) {
+        throw error;
+      }
+
+      throw new ConfigVariableException(
+        `Failed to retrieve config variable ${key as string}: ${error instanceof Error ? error.message : String(error)}`,
+        ConfigVariableExceptionCode.INTERNAL_ERROR,
+      );
     }
   }
 
@@ -153,7 +155,14 @@ export class ConfigStorageService implements ConfigStorageInterface {
         });
       }
     } catch (error) {
-      this.logAndRethrow(`Failed to set config for ${key as string}`, error);
+      if (error instanceof ConfigVariableException) {
+        throw error;
+      }
+
+      throw new ConfigVariableException(
+        `Failed to save config variable ${key as string}: ${error instanceof Error ? error.message : String(error)}`,
+        ConfigVariableExceptionCode.INTERNAL_ERROR,
+      );
     }
   }
 
@@ -163,7 +172,10 @@ export class ConfigStorageService implements ConfigStorageInterface {
         this.getConfigVariableWhereClause(key as string),
       );
     } catch (error) {
-      this.logAndRethrow(`Failed to delete config for ${key as string}`, error);
+      throw new ConfigVariableException(
+        `Failed to delete config variable ${key as string}: ${error instanceof Error ? error.message : String(error)}`,
+        ConfigVariableExceptionCode.INTERNAL_ERROR,
+      );
     }
   }
 
@@ -195,10 +207,10 @@ export class ConfigStorageService implements ConfigStorageInterface {
               result.set(key, value);
             }
           } catch (error) {
-            this.logger.error(
-              `Failed to process config value for key ${key as string}`,
-              error,
+            this.logger.debug(
+              `Skipping invalid config value for key ${key as string}: ${error instanceof Error ? error.message : String(error)}`,
             );
+
             continue;
           }
         }
@@ -206,7 +218,10 @@ export class ConfigStorageService implements ConfigStorageInterface {
 
       return result;
     } catch (error) {
-      this.logAndRethrow('Failed to load all config variables', error);
+      throw new ConfigVariableException(
+        `Failed to load all config variables: ${error instanceof Error ? error.message : String(error)}`,
+        ConfigVariableExceptionCode.INTERNAL_ERROR,
+      );
     }
   }
 }

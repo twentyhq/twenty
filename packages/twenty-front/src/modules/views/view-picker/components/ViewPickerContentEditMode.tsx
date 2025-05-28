@@ -2,6 +2,7 @@ import { Key } from 'ts-key-enum';
 
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -66,7 +67,7 @@ export const ViewPickerContentEditMode = () => {
   };
 
   return (
-    <>
+    <DropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -77,7 +78,6 @@ export const ViewPickerContentEditMode = () => {
       >
         Edit view
       </DropdownMenuHeader>
-      <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
         <ViewPickerIconAndNameContainer>
           <IconPicker
@@ -101,6 +101,6 @@ export const ViewPickerContentEditMode = () => {
           <ViewPickerEditButton />
         </ViewPickerSaveButtonContainer>
       </DropdownMenuItemsContainer>
-    </>
+    </DropdownContent>
   );
 };

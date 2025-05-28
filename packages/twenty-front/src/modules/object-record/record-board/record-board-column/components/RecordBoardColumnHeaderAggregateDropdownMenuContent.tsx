@@ -7,6 +7,7 @@ import {
 } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContext';
 
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useLingui } from '@lingui/react/macro';
@@ -29,7 +30,7 @@ export const RecordBoardColumnHeaderAggregateDropdownMenuContent = () => {
   );
 
   return (
-    <>
+    <DropdownContent>
       <DropdownMenuItemsContainer>
         <MenuItem
           onClick={() => {
@@ -60,6 +61,6 @@ export const RecordBoardColumnHeaderAggregateDropdownMenuContent = () => {
           hasSubMenu
         />
       </DropdownMenuItemsContainer>
-    </>
+    </DropdownContent>
   );
 };
