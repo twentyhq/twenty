@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'class-validator';
+
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
@@ -35,20 +37,35 @@ export class CalendarEventParticipantPersonListener {
     >,
   ) {
     for (const eventPayload of payload.events) {
-      if (eventPayload.properties.after.emails?.primaryEmail === null) {
-        continue;
+      if (isDefined(eventPayload.properties.after.emails?.primaryEmail)) {
+        // TODO: modify this job to take an array of participants to match
+        await this.messageQueueService.add<CalendarEventParticipantMatchParticipantJobData>(
+          CalendarEventParticipantMatchParticipantJob.name,
+          {
+            workspaceId: payload.workspaceId,
+            email: eventPayload.properties.after.emails?.primaryEmail,
+            isPrimaryEmail: true,
+            personId: eventPayload.recordId,
+          },
+        );
       }
 
-      // TODO: modify this job to take an array of participants to match
-      await this.messageQueueService.add<CalendarEventParticipantMatchParticipantJobData>(
-        CalendarEventParticipantMatchParticipantJob.name,
-        {
-          workspaceId: payload.workspaceId,
-          email: eventPayload.properties.after.emails?.primaryEmail,
-          isPrimaryEmail: true,
-          personId: eventPayload.recordId,
-        },
-      );
+      const additionalEmails =
+        eventPayload.properties.after.emails?.additionalEmails;
+
+      if (Array.isArray(additionalEmails)) {
+        for (const email of additionalEmails) {
+          await this.messageQueueService.add<CalendarEventParticipantMatchParticipantJobData>(
+            CalendarEventParticipantMatchParticipantJob.name,
+            {
+              workspaceId: payload.workspaceId,
+              email: email,
+              isPrimaryEmail: false,
+              personId: eventPayload.recordId,
+            },
+          );
+        }
+      }
     }
   }
 
