@@ -3,7 +3,7 @@ type LimitedMouseEvent = Pick<
   'button' | 'metaKey' | 'altKey' | 'ctrlKey' | 'shiftKey'
 >;
 
-export const isModifiedEvent = ({
+export const isNavigationModifierPressed = ({
   altKey,
   ctrlKey,
   shiftKey,

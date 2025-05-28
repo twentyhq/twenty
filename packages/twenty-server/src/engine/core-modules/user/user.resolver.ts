@@ -116,14 +116,9 @@ export class UserResolver {
     );
 
     if (workspaceMember && workspaceMember.avatarUrl) {
-      const avatarUrlToken = this.fileService.encodeFileToken({
-        filename: extractFilenameFromPath(workspaceMember.avatarUrl),
+      workspaceMember.avatarUrl = this.fileService.signFileUrl({
+        url: workspaceMember.avatarUrl,
         workspaceId: workspace.id,
-      });
-
-      workspaceMember.avatarUrl = buildSignedPath({
-        path: workspaceMember.avatarUrl,
-        token: avatarUrlToken,
       });
     }
 
@@ -168,14 +163,9 @@ export class UserResolver {
 
     for (const workspaceMemberEntity of workspaceMemberEntities) {
       if (workspaceMemberEntity.avatarUrl) {
-        const avatarUrlToken = this.fileService.encodeFileToken({
-          filename: extractFilenameFromPath(workspaceMemberEntity.avatarUrl),
+        workspaceMemberEntity.avatarUrl = this.fileService.signFileUrl({
+          url: workspaceMemberEntity.avatarUrl,
           workspaceId: workspace.id,
-        });
-
-        workspaceMemberEntity.avatarUrl = buildSignedPath({
-          path: workspaceMemberEntity.avatarUrl,
-          token: avatarUrlToken,
         });
       }
 

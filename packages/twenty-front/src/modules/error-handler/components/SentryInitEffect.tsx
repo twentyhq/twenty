@@ -23,9 +23,15 @@ export const SentryInitEffect = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const [isSentryInitialized, setIsSentryInitialized] = useState(false);
+  const [isSentryInitializing, setIsSentryInitializing] = useState(false);
 
   useEffect(() => {
-    if (isNonEmptyString(sentryConfig?.dsn) && !isSentryInitialized) {
+    if (
+      !isSentryInitializing &&
+      isNonEmptyString(sentryConfig?.dsn) &&
+      !isSentryInitialized
+    ) {
+      setIsSentryInitializing(true);
       init({
         environment: sentryConfig?.environment ?? undefined,
         release: sentryConfig?.release ?? undefined,
@@ -38,6 +44,7 @@ export const SentryInitEffect = () => {
       });
 
       setIsSentryInitialized(true);
+      setIsSentryInitializing(false);
     }
 
     if (isDefined(currentUser)) {
@@ -53,6 +60,7 @@ export const SentryInitEffect = () => {
   }, [
     sentryConfig,
     isSentryInitialized,
+    isSentryInitializing,
     currentUser,
     currentWorkspace,
     currentWorkspaceMember,
