@@ -308,7 +308,7 @@ export const SettingsWorkspaceMembers = () => {
           {isNonEmptyArray(workspaceInvitations) && (
             <StyledTable>
               <TableRow
-                gridAutoColumns="300px 1fr 1fr"
+                gridAutoColumns="250px 1fr 1fr"
                 mobileGridAutoColumns="100px 1fr 1fr"
               >
                 <TableHeader>
@@ -322,7 +322,7 @@ export const SettingsWorkspaceMembers = () => {
               <StyledTableRows>
                 {workspaceInvitations?.map((workspaceInvitation) => (
                   <TableRow
-                    gridAutoColumns="300px 1fr 1fr"
+                    gridAutoColumns="250px 1fr 1fr"
                     mobileGridAutoColumns="100px 1fr 1fr"
                     key={workspaceInvitation.id}
                   >
