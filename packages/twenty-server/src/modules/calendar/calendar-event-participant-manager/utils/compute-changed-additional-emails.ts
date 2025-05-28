@@ -4,8 +4,8 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
 export const computeChangedAdditionalEmails = (
   diff: Partial<ObjectRecordDiff<PersonWorkspaceEntity>>,
 ) => {
-  const before = diff.emails?.before.additionalEmails as string[];
-  const after = diff.emails?.after.additionalEmails as string[];
+  const before = diff.emails?.before?.additionalEmails as string[];
+  const after = diff.emails?.after?.additionalEmails as string[];
 
   if (!Array.isArray(before) || !Array.isArray(after)) {
     return {
@@ -14,11 +14,14 @@ export const computeChangedAdditionalEmails = (
     };
   }
 
-  const addedAdditionalEmails = after.filter(
-    (email) => !before.includes(email),
+  const lowerCaseBefore = before.map((email) => email.toLowerCase());
+  const lowerCaseAfter = after.map((email) => email.toLowerCase());
+
+  const addedAdditionalEmails = lowerCaseAfter.filter(
+    (email) => !lowerCaseBefore.includes(email),
   );
-  const removedAdditionalEmails = before.filter(
-    (email) => !after.includes(email),
+  const removedAdditionalEmails = lowerCaseBefore.filter(
+    (email) => !lowerCaseAfter.includes(email),
   );
 
   return {

@@ -4,8 +4,8 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
 export const hasPrimaryEmailChanged = (
   diff: Partial<ObjectRecordDiff<PersonWorkspaceEntity>>,
 ) => {
-  const before = diff.emails?.before.primaryEmail;
-  const after = diff.emails?.after.primaryEmail;
+  const before = diff.emails?.before?.primaryEmail?.toLowerCase();
+  const after = diff.emails?.after?.primaryEmail?.toLowerCase();
 
   return before !== after;
 };

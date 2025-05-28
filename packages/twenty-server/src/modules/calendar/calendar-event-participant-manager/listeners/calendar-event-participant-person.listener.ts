@@ -17,7 +17,7 @@ import {
   CalendarEventParticipantUnmatchParticipantJob,
   CalendarEventParticipantUnmatchParticipantJobData,
 } from 'src/modules/calendar/calendar-event-participant-manager/jobs/calendar-event-participant-unmatch-participant.job';
-import { computeChangedAdditionalEmails } from 'src/modules/calendar/calendar-event-participant-manager/utils/compute-changed-emails';
+import { computeChangedAdditionalEmails } from 'src/modules/calendar/calendar-event-participant-manager/utils/compute-changed-additional-emails';
 import { hasPrimaryEmailChanged } from 'src/modules/calendar/calendar-event-participant-manager/utils/has-primary-email-changed';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
