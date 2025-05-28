@@ -9,6 +9,7 @@ import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-met
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { FieldMetadataDefaultValueString } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
@@ -32,6 +33,8 @@ type ValidateEnumFieldMetadataArgs = {
   fieldMetadataInput: FieldMetadataUpdateCreateInput;
   fieldMetadataType: FieldMetadataType;
 };
+
+const QUOTED_STRING_REGEX = /^['"](.*)['"]$/;
 
 @Injectable()
 export class FieldMetadataEnumValidationService {
@@ -206,52 +209,48 @@ export class FieldMetadataEnumValidationService {
 
   private validateMultiSelectDefaultValue(
     options: FieldMetadataOptions,
-    defaultValues: FieldMetadataDefaultValue,
+    defaulValue: FieldMetadataDefaultValueString['value'],
   ) {
-    if (!isDefined(defaultValues)) {
-      return;
-    }
+    // TMP force cast should be fixed
+    const parsedDefaultValues: string[] = JSON.parse(defaulValue as string);
 
-    if (!Array.isArray(defaultValues)) {
+    if (!Array.isArray(parsedDefaultValues)) {
       throw new FieldMetadataException(
         'Default value for multi-select must be an array',
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
       );
     }
 
-    const sanitizedValues = defaultValues.map(
-      (value) =>
-        trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
-          { value: value as string },
-          ['value'],
-        ).value,
-    );
-
     const validators: Validator<string[]>[] = [
       {
+        // praise: nice
         validator: (values) => new Set(values).size !== values.length,
         message: 'Default values must be unique',
       },
       {
-        validator: (values) =>
-          !values.every((value) =>
+        validator: (values) => {
+          const unQuotedValues = values.map((value) =>
+            value.replace(QUOTED_STRING_REGEX, '$1'),
+          );
+          return !unQuotedValues.every((value) =>
             options.some((option) => option.value === value),
-          ),
-        message: `Default values must be one of the option values: ${sanitizedValues.join(
+          );
+        },
+        message: `Default values must be one of the option values: ${parsedDefaultValues.join(
           ', ',
         )}`,
       },
     ];
 
     validators.forEach((validator) =>
-      this.validatorRunner(sanitizedValues, validator),
+      this.validatorRunner(parsedDefaultValues, validator),
     );
   }
 
   private validateDefaultValueByType(
     fieldType: FieldMetadataType,
     options: FieldMetadataOptions,
-    defaultValue: FieldMetadataDefaultValue,
+    defaultValue: FieldMetadataDefaultValueString['value'],
   ) {
     switch (fieldType) {
       case FieldMetadataType.SELECT:
@@ -297,6 +296,7 @@ export class FieldMetadataEnumValidationService {
       this.validateDefaultValueByType(
         fieldMetadataType,
         options,
+        // @ts-expect-error temporary fix, we gonna have to type the input default value
         fieldMetadataInput.defaultValue,
       );
     }

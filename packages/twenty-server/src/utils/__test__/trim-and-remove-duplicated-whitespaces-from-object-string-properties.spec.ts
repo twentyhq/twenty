@@ -94,22 +94,6 @@ describe('trim-and-remove-duplicated-whitespaces-from-object-string-properties',
         expected: { name: '  John   Doe  ', description: 'this is a test' },
       },
     },
-    {
-      title: 'should strip quotes from string properties',
-      context: {
-        input: {
-          name: '"John Doe"',
-          description: "'This is a test'",
-          value: 'OPTION_1', // no quotes
-        },
-        keys: ['name', 'description', 'value'],
-        expected: {
-          name: 'John Doe',
-          description: 'This is a test',
-          value: 'OPTION_1',
-        },
-      },
-    },
   ];
 
   test.each(testCases)('$title', ({ context: { input, keys, expected } }) => {

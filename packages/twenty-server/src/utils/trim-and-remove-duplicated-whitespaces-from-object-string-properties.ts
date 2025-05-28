@@ -11,9 +11,6 @@ type StringPropertyKeys<T> = {
 const sanitizeString = (str: string | null) =>
   isDefined(str) ? str.trim().replace(/\s+/g, ' ') : str;
 
-const stripQuotes = (str: string | null) =>
-  isDefined(str) ? str.replace(/^['"](.*)['"]$/, '$1') : str;
-
 export const trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties = <T>(
   obj: T,
   keys: StringPropertyKeys<T>[],
@@ -27,7 +24,7 @@ export const trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties = <T>(
 
     return {
       ...acc,
-      [key]: stripQuotes(sanitizeString(acc[key] as string | null)),
+      [key]: sanitizeString(acc[key] as string | null),
     };
   }, obj);
 };
