@@ -261,7 +261,7 @@ export class DatabaseEventTriggerListener {
         type: AutomatedTriggerType.DATABASE_EVENT,
         settings: Raw(
           () =>
-            `${automatedTriggerTableName}."settings"->>'eventName' = :eventName`,
+            `"${automatedTriggerTableName}"."settings"->>'eventName' = :eventName`,
           { eventName: databaseEventName },
         ),
       },
