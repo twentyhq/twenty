@@ -19,6 +19,7 @@ import { mockedRemoteTables } from '~/testing/mock-data/remote-tables';
 import { mockedUserData } from '~/testing/mock-data/users';
 import { mockedViewsData } from '~/testing/mock-data/views';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
+import { mockedPublicWorkspaceDataBySubdomain } from '~/testing/mock-data/publicWorkspaceDataBySubdomain';
 
 import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataByDomain';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
@@ -90,22 +91,7 @@ export const graphqlMocks = {
       () => {
         return HttpResponse.json({
           data: {
-            getPublicWorkspaceDataByDomain: {
-              id: 'id',
-              logo: 'logo',
-              displayName: 'displayName',
-              workspaceUrls: {
-                customUrl: undefined,
-                subdomainUrl: 'https://crm.twenty.com',
-              },
-              authProviders: {
-                google: true,
-                microsoft: false,
-                password: true,
-                magicLink: false,
-                sso: [],
-              },
-            },
+            getPublicWorkspaceDataByDomain: mockedPublicWorkspaceDataBySubdomain
           },
         });
       },

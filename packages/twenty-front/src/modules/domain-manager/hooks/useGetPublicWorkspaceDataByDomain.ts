@@ -29,6 +29,7 @@ export const useGetPublicWorkspaceDataByDomain = () => {
       (isMultiWorkspaceEnabled && isDefaultDomain) ||
       isDefined(workspacePublicData),
     onCompleted: (data) => {
+      console.log('>>>>>>>>>>>>>> data', data);
       setWorkspaceAuthProviders(
         data.getPublicWorkspaceDataByDomain.authProviders,
       );

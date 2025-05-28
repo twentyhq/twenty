@@ -1,4 +1,5 @@
 import { gql } from '@apollo/client';
+import { WORKSPACE_URLS_FRAGMENT } from '@/users/graphql/fragments/workspaceUrlsFragment';
 
 export const CHECK_USER_EXISTS = gql`
   query CheckUserExists($email: String!, $captchaToken: String) {
@@ -28,4 +29,5 @@ export const CHECK_USER_EXISTS = gql`
       }
     }
   }
+  ${WORKSPACE_URLS_FRAGMENT}
 `;
