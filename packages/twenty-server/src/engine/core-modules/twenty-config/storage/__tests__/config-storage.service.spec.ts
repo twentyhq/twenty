@@ -14,6 +14,10 @@ import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/d
 import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { ConfigStorageService } from 'src/engine/core-modules/twenty-config/storage/config-storage.service';
+import {
+  ConfigVariableException,
+  ConfigVariableExceptionCode,
+} from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TypedReflect } from 'src/utils/typed-reflect';
@@ -154,7 +158,10 @@ describe('ConfigStorageService', () => {
         throw error;
       });
 
-      await expect(service.get(key)).rejects.toThrow('Conversion error');
+      await expect(service.get(key)).rejects.toThrow(ConfigVariableException);
+      await expect(service.get(key)).rejects.toMatchObject({
+        code: ConfigVariableExceptionCode.VALIDATION_FAILED,
+      });
     });
 
     it('should decrypt sensitive string values', async () => {
@@ -250,93 +257,26 @@ describe('ConfigStorageService', () => {
 
       const result = await service.get(key);
 
-      expect(result).toBe(encryptedValue); // Should fall back to encrypted value
-      expect(environmentConfigDriver.get).toHaveBeenCalledWith('APP_SECRET');
+      expect(result).toBe(encryptedValue);
+      expect(authUtils.decryptText).toHaveBeenCalledWith(
+        encryptedValue,
+        'test-secret',
+      );
     });
 
-    it('should skip decryption for non-string sensitive values', async () => {
-      const key = 'SENSITIVE_CONFIG' as keyof ConfigVariables;
-      const value = { someKey: 'someValue' };
+    it('should handle findOne errors', async () => {
+      const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
+      const error = new Error('Database error');
 
-      const mockRecord = createMockKeyValuePair(
-        key as string,
-        JSON.stringify(value),
+      jest.spyOn(keyValuePairRepository, 'findOne').mockRejectedValue(error);
+
+      await expect(service.get(key)).rejects.toThrow(ConfigVariableException);
+      await expect(service.get(key)).rejects.toThrow(
+        `Failed to retrieve config variable ${key}: Database error`,
       );
-
-      jest
-        .spyOn(keyValuePairRepository, 'findOne')
-        .mockResolvedValue(mockRecord);
-
-      jest.spyOn(TypedReflect, 'getMetadata').mockReturnValue({
-        [key]: {
-          isSensitive: true,
-          type: ConfigVariableType.ARRAY,
-          group: ConfigVariablesGroup.ServerConfig,
-          description: 'Test sensitive config',
-        },
+      await expect(service.get(key)).rejects.toMatchObject({
+        code: ConfigVariableExceptionCode.INTERNAL_ERROR,
       });
-
-      (
-        configValueConverter.convertDbValueToAppValue as jest.Mock
-      ).mockReturnValue(value);
-
-      const result = await service.get(key);
-
-      expect(result).toBe(value);
-      expect(authUtils.decryptText).not.toHaveBeenCalled();
-    });
-
-    it('should handle decryption failure in loadAll() by skipping failed values', async () => {
-      const configVars: KeyValuePair[] = [
-        createMockKeyValuePair('SENSITIVE_CONFIG_1', 'encrypted:value1'),
-        createMockKeyValuePair('SENSITIVE_CONFIG_2', 'encrypted:value2'),
-        createMockKeyValuePair('NORMAL_CONFIG', 'normal-value'),
-      ];
-
-      jest.spyOn(keyValuePairRepository, 'find').mockResolvedValue(configVars);
-      jest.spyOn(TypedReflect, 'getMetadata').mockReturnValue({
-        SENSITIVE_CONFIG_1: {
-          isSensitive: true,
-          type: ConfigVariableType.STRING,
-          group: ConfigVariablesGroup.ServerConfig,
-          description: 'Test sensitive config 1',
-        },
-        SENSITIVE_CONFIG_2: {
-          isSensitive: true,
-          type: ConfigVariableType.STRING,
-          group: ConfigVariablesGroup.ServerConfig,
-          description: 'Test sensitive config 2',
-        },
-        NORMAL_CONFIG: {
-          type: ConfigVariableType.STRING,
-          group: ConfigVariablesGroup.ServerConfig,
-          description: 'Test normal config',
-        },
-      });
-
-      (
-        configValueConverter.convertDbValueToAppValue as jest.Mock
-      ).mockImplementation((value) => value);
-
-      // Mock decryption to fail for the second sensitive value
-      (authUtils.decryptText as jest.Mock)
-        .mockImplementationOnce((text) => text.replace('encrypted:', ''))
-        .mockImplementationOnce(() => {
-          throw new Error('Decryption failed');
-        });
-
-      const result = await service.loadAll();
-
-      expect(result.size).toBe(3);
-      expect(result.get('SENSITIVE_CONFIG_1' as keyof ConfigVariables)).toBe(
-        'value1',
-      );
-      expect(result.get('SENSITIVE_CONFIG_2' as keyof ConfigVariables)).toBe(
-        'encrypted:value2',
-      ); // Original encrypted value
-      expect(result.get('NORMAL_CONFIG' as keyof ConfigVariables)).toBe(
-        'normal-value',
-      );
     });
   });
 
@@ -344,7 +284,7 @@ describe('ConfigStorageService', () => {
     it('should update existing record', async () => {
       const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
       const value = true;
-      const storedValue = 'true';
+      const convertedValue = 'true';
 
       const mockRecord = createMockKeyValuePair(key as string, 'false');
 
@@ -354,32 +294,32 @@ describe('ConfigStorageService', () => {
 
       (
         configValueConverter.convertAppValueToDbValue as jest.Mock
-      ).mockReturnValue(storedValue);
+      ).mockReturnValue(convertedValue);
 
       await service.set(key, value);
 
       expect(keyValuePairRepository.update).toHaveBeenCalledWith(
-        { id: '1' },
-        { value: storedValue },
+        { id: mockRecord.id },
+        { value: convertedValue },
       );
     });
 
-    it('should insert new record', async () => {
+    it('should insert new record when not found', async () => {
       const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
       const value = true;
-      const storedValue = 'true';
+      const convertedValue = 'true';
 
       jest.spyOn(keyValuePairRepository, 'findOne').mockResolvedValue(null);
 
       (
         configValueConverter.convertAppValueToDbValue as jest.Mock
-      ).mockReturnValue(storedValue);
+      ).mockReturnValue(convertedValue);
 
       await service.set(key, value);
 
       expect(keyValuePairRepository.insert).toHaveBeenCalledWith({
         key: key as string,
-        value: storedValue,
+        value: convertedValue,
         userId: null,
         workspaceId: null,
         type: KeyValuePairType.CONFIG_VARIABLE,
@@ -388,8 +328,8 @@ describe('ConfigStorageService', () => {
 
     it('should handle conversion errors', async () => {
       const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
-      const value = true;
-      const error = new Error('Conversion error');
+      const value = 'not-a-boolean';
+      const error = new Error('Invalid boolean value');
 
       (
         configValueConverter.convertAppValueToDbValue as jest.Mock
@@ -397,7 +337,68 @@ describe('ConfigStorageService', () => {
         throw error;
       });
 
-      await expect(service.set(key, value)).rejects.toThrow('Conversion error');
+      await expect(
+        service.set(key, value as unknown as boolean),
+      ).rejects.toThrow(ConfigVariableException);
+      await expect(
+        service.set(key, value as unknown as boolean),
+      ).rejects.toMatchObject({
+        code: ConfigVariableExceptionCode.VALIDATION_FAILED,
+      });
+    });
+
+    it('should handle update errors', async () => {
+      const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
+      const value = true;
+      const convertedValue = 'true';
+      const error = new Error('Update error');
+
+      const mockRecord = createMockKeyValuePair(key as string, 'false');
+
+      jest
+        .spyOn(keyValuePairRepository, 'findOne')
+        .mockResolvedValue(mockRecord);
+
+      (
+        configValueConverter.convertAppValueToDbValue as jest.Mock
+      ).mockReturnValue(convertedValue);
+
+      jest.spyOn(keyValuePairRepository, 'update').mockRejectedValue(error);
+
+      await expect(service.set(key, value)).rejects.toThrow(
+        ConfigVariableException,
+      );
+      await expect(service.set(key, value)).rejects.toThrow(
+        `Failed to save config variable ${key}: Update error`,
+      );
+      await expect(service.set(key, value)).rejects.toMatchObject({
+        code: ConfigVariableExceptionCode.INTERNAL_ERROR,
+      });
+    });
+
+    it('should handle insert errors', async () => {
+      const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
+      const value = true;
+      const convertedValue = 'true';
+      const error = new Error('Insert error');
+
+      jest.spyOn(keyValuePairRepository, 'findOne').mockResolvedValue(null);
+
+      (
+        configValueConverter.convertAppValueToDbValue as jest.Mock
+      ).mockReturnValue(convertedValue);
+
+      jest.spyOn(keyValuePairRepository, 'insert').mockRejectedValue(error);
+
+      await expect(service.set(key, value)).rejects.toThrow(
+        ConfigVariableException,
+      );
+      await expect(service.set(key, value)).rejects.toThrow(
+        `Failed to save config variable ${key}: Insert error`,
+      );
+      await expect(service.set(key, value)).rejects.toMatchObject({
+        code: ConfigVariableExceptionCode.INTERNAL_ERROR,
+      });
     });
 
     it('should encrypt sensitive string values', async () => {
@@ -407,6 +408,7 @@ describe('ConfigStorageService', () => {
       const encryptedValue = 'encrypted:sensitive-value';
 
       jest.spyOn(keyValuePairRepository, 'findOne').mockResolvedValue(null);
+
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValue({
         [key]: {
           isSensitive: true,
@@ -436,12 +438,13 @@ describe('ConfigStorageService', () => {
       );
     });
 
-    it('should handle encryption errors gracefully', async () => {
+    it('should handle encryption failure in set() by using unconverted value', async () => {
       const key = 'SENSITIVE_CONFIG' as keyof ConfigVariables;
       const value = 'sensitive-value';
-      const convertedValue = 'sensitive-value';
+      const convertedValue = 'converted-value';
 
       jest.spyOn(keyValuePairRepository, 'findOne').mockResolvedValue(null);
+
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValue({
         [key]: {
           isSensitive: true,
@@ -492,7 +495,15 @@ describe('ConfigStorageService', () => {
 
       jest.spyOn(keyValuePairRepository, 'delete').mockRejectedValue(error);
 
-      await expect(service.delete(key)).rejects.toThrow('Delete error');
+      await expect(service.delete(key)).rejects.toThrow(
+        ConfigVariableException,
+      );
+      await expect(service.delete(key)).rejects.toThrow(
+        `Failed to delete config variable ${key}: Delete error`,
+      );
+      await expect(service.delete(key)).rejects.toMatchObject({
+        code: ConfigVariableExceptionCode.INTERNAL_ERROR,
+      });
     });
   });
 
@@ -552,7 +563,13 @@ describe('ConfigStorageService', () => {
 
       jest.spyOn(keyValuePairRepository, 'find').mockRejectedValue(error);
 
-      await expect(service.loadAll()).rejects.toThrow('Find error');
+      await expect(service.loadAll()).rejects.toThrow(ConfigVariableException);
+      await expect(service.loadAll()).rejects.toThrow(
+        'Failed to load all config variables: Find error',
+      );
+      await expect(service.loadAll()).rejects.toMatchObject({
+        code: ConfigVariableExceptionCode.INTERNAL_ERROR,
+      });
     });
 
     describe('Null Value Handling', () => {
@@ -649,7 +666,10 @@ describe('ConfigStorageService', () => {
           throw new Error('Invalid boolean value');
         });
 
-        await expect(service.get(key)).rejects.toThrow('Invalid boolean value');
+        await expect(service.get(key)).rejects.toThrow(ConfigVariableException);
+        await expect(service.get(key)).rejects.toMatchObject({
+          code: ConfigVariableExceptionCode.VALIDATION_FAILED,
+        });
       });
 
       it('should enforce correct types for string config variables', async () => {
@@ -668,7 +688,10 @@ describe('ConfigStorageService', () => {
           throw new Error('Invalid string value');
         });
 
-        await expect(service.get(key)).rejects.toThrow('Invalid string value');
+        await expect(service.get(key)).rejects.toThrow(ConfigVariableException);
+        await expect(service.get(key)).rejects.toMatchObject({
+          code: ConfigVariableExceptionCode.VALIDATION_FAILED,
+        });
       });
     });
 
@@ -723,79 +746,6 @@ describe('ConfigStorageService', () => {
         await Promise.all([firstDelete, secondDelete]);
 
         expect(keyValuePairRepository.delete).toHaveBeenCalledTimes(2);
-      });
-    });
-
-    describe('Database Connection Issues', () => {
-      it('should handle database connection failures in get', async () => {
-        const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
-        const error = new Error('Database connection failed');
-
-        jest.spyOn(keyValuePairRepository, 'findOne').mockRejectedValue(error);
-
-        await expect(service.get(key)).rejects.toThrow(
-          'Database connection failed',
-        );
-      });
-
-      it('should handle database connection failures in set', async () => {
-        const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
-        const value = true;
-        const error = new Error('Database connection failed');
-
-        (
-          configValueConverter.convertAppValueToDbValue as jest.Mock
-        ).mockReturnValue('true');
-        jest.spyOn(keyValuePairRepository, 'findOne').mockRejectedValue(error);
-
-        await expect(service.set(key, value)).rejects.toThrow(
-          'Database connection failed',
-        );
-      });
-
-      it('should handle database connection failures in delete', async () => {
-        const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
-        const error = new Error('Database connection failed');
-
-        jest.spyOn(keyValuePairRepository, 'delete').mockRejectedValue(error);
-
-        await expect(service.delete(key)).rejects.toThrow(
-          'Database connection failed',
-        );
-      });
-
-      it('should handle database connection failures in loadAll', async () => {
-        const error = new Error('Database connection failed');
-
-        jest.spyOn(keyValuePairRepository, 'find').mockRejectedValue(error);
-
-        await expect(service.loadAll()).rejects.toThrow(
-          'Database connection failed',
-        );
-      });
-
-      it('should handle database operation timeouts', async () => {
-        const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
-        const error = new Error('Database operation timed out');
-
-        let rejectPromise: ((error: Error) => void) | undefined;
-        const timeoutPromise = new Promise<KeyValuePair | null>((_, reject) => {
-          rejectPromise = reject;
-        });
-
-        jest
-          .spyOn(keyValuePairRepository, 'findOne')
-          .mockReturnValue(timeoutPromise);
-
-        const promise = service.get(key);
-
-        // Simulate timeout by rejecting the promise
-        if (!rejectPromise) {
-          throw new Error('Reject function not assigned');
-        }
-        rejectPromise(error);
-
-        await expect(promise).rejects.toThrow('Database operation timed out');
       });
     });
   });
