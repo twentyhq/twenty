@@ -41,9 +41,6 @@ export const useMouseDownNavigation = ({
     }
 
     if (triggerEvent === 'CLICK') {
-      console.log('CLICK');
-      console.log('to', to);
-      console.log('onClick', onClick);
       onBeforeNavigation?.();
       if (isDefined(onClick)) {
         executeClickAction(event, onClick);

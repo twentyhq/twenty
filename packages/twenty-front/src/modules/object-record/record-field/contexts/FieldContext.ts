@@ -36,6 +36,7 @@ export type GenericFieldContextType = {
   disableChipClick?: boolean;
   onOpenEditMode?: () => void;
   onCloseEditMode?: () => void;
+  triggerEvent?: 'MOUSE_DOWN' | 'CLICK';
 };
 
 export const FieldContext = createContext<GenericFieldContextType>(
