@@ -1,6 +1,6 @@
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { isDefined } from 'twenty-shared/utils';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 export const companiesQueryResult = {
   companies: {
@@ -187,13 +187,13 @@ export const companiesQueryResult = {
           employees: null,
           createdAt: '2024-06-05T09:00:20.412Z',
           updatedAt: '2024-06-05T09:00:20.412Z',
-          name: 'Qonto',
+          name: 'Anthropic',
           idealCustomerProfile: false,
           accountOwner: null,
           accountOwnerId: null,
           domainName: {
             __typename: 'Links',
-            primaryLinkUrl: 'https://qonto.com',
+            primaryLinkUrl: 'https://anthropic.com',
             primaryLinkLabel: '',
             secondaryLinks: [],
           },

@@ -1,8 +1,8 @@
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 export const peopleQueryResult = {
   people: {
@@ -398,7 +398,7 @@ export const peopleQueryResult = {
           id: '20202020-f517-42fd-80ae-14173b3b70ae',
           jobTitle: '',
           position: 3,
-          email: 'christopher.gonzalez@qonto.com',
+          email: 'christopher.gonzalez@anthropic.com',
           name: {
             __typename: 'FullName',
             firstName: 'Christopher',
@@ -438,16 +438,16 @@ export const peopleQueryResult = {
             id: '20202020-0713-40a5-8216-82802401d33e',
             updatedAt: '2024-08-02T09:48:36.193Z',
             accountOwnerId: null,
-            name: 'Qonto',
+            name: 'Anthropic',
             createdAt: '2024-08-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
-              addressStreet1: '18 rue de navarrin',
+              addressStreet1: '548 Market Street',
               addressStreet2: null,
-              addressCity: 'Paris',
+              addressCity: 'San Francisco',
               addressState: null,
-              addressCountry: 'France',
-              addressPostcode: '75009',
+              addressCountry: 'United States',
+              addressPostcode: '94104',
               addressLat: null,
               addressLng: null,
             },
@@ -458,7 +458,7 @@ export const peopleQueryResult = {
             },
             domainName: {
               __typename: 'Links',
-              primaryLinkUrl: 'https://qonto.com',
+              primaryLinkUrl: 'https://anthropic.com',
               primaryLinkLabel: '',
               secondaryLinks: [],
             },
@@ -499,7 +499,7 @@ export const peopleQueryResult = {
           id: '20202020-eee1-4690-ad2c-8619e5b56a2e',
           jobTitle: '',
           position: 4,
-          email: 'ashley.parker@qonto.com',
+          email: 'ashley.parker@anthropic.com',
           name: {
             __typename: 'FullName',
             firstName: 'Ashley',
@@ -539,7 +539,7 @@ export const peopleQueryResult = {
             id: '20202020-0713-40a5-8216-82802401d33e',
             updatedAt: '2024-08-02T09:48:36.193Z',
             accountOwnerId: null,
-            name: 'Qonto',
+            name: 'Anthropic',
             createdAt: '2024-08-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
@@ -559,7 +559,7 @@ export const peopleQueryResult = {
             },
             domainName: {
               __typename: 'Links',
-              primaryLinkUrl: 'https://qonto.com',
+              primaryLinkUrl: 'https://anthropic.com',
               primaryLinkLabel: '',
               secondaryLinks: [],
             },
