@@ -27,26 +27,23 @@ export const WorkspaceProviderEffect = () => {
 
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
 
-  const getHostnamesFromWorkspaceUrls = (workspaceUrls: WorkspaceUrls) => {
-    return {
-      customUrlHostname: workspaceUrls.customUrl
-        ? new URL(workspaceUrls.customUrl).hostname
-        : undefined,
-      subdomainUrlHostname: new URL(workspaceUrls.subdomainUrl).hostname,
-    };
-  };
-
   const { initializeQueryParamState } = useInitializeQueryParamState();
 
   useEffect(() => {
-    const hostnames = getPublicWorkspaceData
-      ? getHostnamesFromWorkspaceUrls(getPublicWorkspaceData?.workspaceUrls)
-      : null;
+    const isWorkspaceHostnameMatchCurrentLocationHostname = (
+      workspaceUrls: WorkspaceUrls,
+    ) => {
+      const { hostname } = new URL(getWorkspaceUrl(workspaceUrls));
+      console.log('>>>>>>>>>>>>>>', hostname, currentLocationHostname);
+      return hostname === currentLocationHostname;
+    };
+
     if (
       isMultiWorkspaceEnabled &&
       isDefined(getPublicWorkspaceData) &&
-      currentLocationHostname !== hostnames?.customUrlHostname &&
-      currentLocationHostname !== hostnames?.subdomainUrlHostname
+      !isWorkspaceHostnameMatchCurrentLocationHostname(
+        getPublicWorkspaceData.workspaceUrls,
+      )
     ) {
       redirectToWorkspaceDomain(
         getWorkspaceUrl(getPublicWorkspaceData.workspaceUrls),
