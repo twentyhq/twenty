@@ -1,3 +1,5 @@
+import { Entity } from '@microsoft/microsoft-graph-types';
+import { isDefined } from 'class-validator';
 import { ObjectRecordsPermissionsByRoleId } from 'twenty-shared/types';
 import {
   DataSource,
@@ -6,6 +8,7 @@ import {
   ObjectLiteral,
   QueryRunner,
   ReplicationMode,
+  SelectQueryBuilder,
 } from 'typeorm';
 
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
@@ -77,6 +80,76 @@ export class WorkspaceDataSource extends DataSource {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return queryRunner as any as WorkspaceQueryRunner;
+  }
+
+  override createQueryBuilder<Entity extends ObjectLiteral>(
+    entityClass: EntityTarget<Entity>,
+    alias: string,
+    queryRunner?: QueryRunner,
+    options?: {
+      shouldBypassPermissionChecks?: boolean;
+    },
+  ): SelectQueryBuilder<Entity>;
+
+  override createQueryBuilder(
+    queryRunner?: QueryRunner,
+    options?: {
+      shouldBypassPermissionChecks?: boolean;
+    }, // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): SelectQueryBuilder<any>;
+
+  override createQueryBuilder(
+    queryRunnerOrEntityClass?: QueryRunner | EntityTarget<Entity>,
+    aliasOrOptions?: string | { shouldBypassPermissionChecks?: boolean },
+    queryRunner?: QueryRunner,
+    options?: {
+      shouldBypassPermissionChecks?: boolean;
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): SelectQueryBuilder<any> {
+    const isEntityQueryBuilder =
+      isDefined(aliasOrOptions) && typeof aliasOrOptions === 'string';
+
+    const optionsFromProps = (
+      isEntityQueryBuilder ? options : aliasOrOptions
+    ) as { shouldBypassPermissionChecks?: boolean };
+
+    if (!optionsFromProps?.shouldBypassPermissionChecks) {
+      throw new Error(
+        'Method not allowed because permissions are not implemented at datasource level.',
+      );
+    }
+
+    if (isEntityQueryBuilder) {
+      const entityClass = queryRunnerOrEntityClass as EntityTarget<Entity>;
+
+      return super.createQueryBuilder(
+        entityClass,
+        aliasOrOptions as string,
+        queryRunner,
+      );
+    }
+
+    return super.createQueryBuilder(queryRunner);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  override query<T = any>(
+    query: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    parameters?: any[],
+    queryRunner?: QueryRunner,
+    options?: {
+      shouldBypassPermissionChecks?: boolean;
+    },
+  ): Promise<T> {
+    if (!options?.shouldBypassPermissionChecks) {
+      throw new Error(
+        'Method not allowed because permissions are not implemented at datasource level.',
+      );
+    }
+
+    return super.query(query, parameters, queryRunner);
   }
 
   setRolesPermissionsVersion(rolesPermissionsVersion: string) {
