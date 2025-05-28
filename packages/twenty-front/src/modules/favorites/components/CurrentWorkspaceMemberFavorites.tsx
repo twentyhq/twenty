@@ -191,7 +191,7 @@ export const CurrentWorkspaceMemberFavorites = ({
                         label={favorite.labelIdentifier}
                         objectName={favorite.objectNameSingular}
                         Icon={() => <FavoriteIcon favorite={favorite} />}
-                        to={favorite.link}
+                        to={isDragging ? undefined : favorite.link}
                         active={index === selectedFavoriteIndex}
                         subItemState={getNavigationSubItemLeftAdornment({
                           index,

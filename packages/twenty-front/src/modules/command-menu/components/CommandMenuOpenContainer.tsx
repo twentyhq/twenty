@@ -3,7 +3,6 @@ import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandM
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
 import { CommandMenuHotkeyScope } from '@/command-menu/types/CommandMenuHotkeyScope';
-import { RECORD_CHIP_CLICK_OUTSIDE_ID } from '@/object-record/constants/RecordChipClickOutsideId';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderCommandMenuButtonClickOutsideId';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
@@ -14,6 +13,7 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRef } from 'react';
 import { useRecoilCallback } from 'recoil';
+import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/components';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledCommandMenu = styled(motion.div)`
@@ -67,7 +67,7 @@ export const CommandMenuOpenContainer = ({
     listenerId: 'COMMAND_MENU_LISTENER_ID',
     excludedClickOutsideIds: [
       PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID,
-      RECORD_CHIP_CLICK_OUTSIDE_ID,
+      LINK_CHIP_CLICK_OUTSIDE_ID,
     ],
   });
 

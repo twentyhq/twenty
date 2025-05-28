@@ -1,11 +1,11 @@
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
-import { RECORD_CHIP_CLICK_OUTSIDE_ID } from '@/object-record/constants/RecordChipClickOutsideId';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
+import { MouseEvent } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
   AvatarChip,
@@ -14,7 +14,7 @@ import {
   ChipVariant,
   LinkAvatarChip,
 } from 'twenty-ui/components';
-import { TriggerEventType, useMouseDownNavigation } from 'twenty-ui/utilities';
+import { TriggerEventType } from 'twenty-ui/utilities';
 
 export type RecordChipProps = {
   objectNameSingular: string;
@@ -54,20 +54,13 @@ export const RecordChip = ({
     recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL;
 
   const handleCustomClick = isSidePanelViewOpenRecordInType
-    ? () =>
+    ? (_event: MouseEvent<HTMLElement>) => {
         openRecordInCommandMenu({
           recordId: record.id,
           objectNameSingular,
-        })
+        });
+      }
     : undefined;
-
-  const { onClick, onMouseDown } = useMouseDownNavigation({
-    to: to ?? getLinkToShowPage(objectNameSingular, record),
-    onClick: handleCustomClick,
-    disabled: forceDisableClick,
-    stopPropagation: true,
-    triggerEvent,
-  });
 
   // TODO temporary until we create a record show page for Workspaces members
 
@@ -106,13 +99,8 @@ export const RecordChip = ({
           : AvatarChipVariant.Transparent)
       }
       to={to ?? getLinkToShowPage(objectNameSingular, record)}
-      onClick={onClick}
-      onMouseDown={onMouseDown}
-      data-click-outside-id={
-        isSidePanelViewOpenRecordInType
-          ? RECORD_CHIP_CLICK_OUTSIDE_ID
-          : undefined
-      }
+      onClick={handleCustomClick}
+      triggerEvent={triggerEvent}
     />
   );
 };

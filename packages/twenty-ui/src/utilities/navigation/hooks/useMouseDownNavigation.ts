@@ -20,15 +20,10 @@ export const useMouseDownNavigation = ({
   disabled = false,
   onBeforeNavigation,
   triggerEvent = 'MOUSE_DOWN',
-  stopPropagation = false,
 }: UseMouseDownNavigationProps) => {
   const navigate = useNavigate();
 
   const handleClick = (event: MouseEvent<HTMLElement>) => {
-    if (stopPropagation) {
-      event.stopPropagation();
-    }
-
     if (disabled) return;
 
     // For modifier keys, let the default browser behavior handle it
@@ -55,10 +50,6 @@ export const useMouseDownNavigation = ({
   };
 
   const handleMouseDown = (event: MouseEvent<HTMLElement>) => {
-    if (stopPropagation) {
-      event.stopPropagation();
-    }
-
     if (disabled || triggerEvent === 'CLICK') return;
 
     if (isNavigationModifierPressed(event)) {

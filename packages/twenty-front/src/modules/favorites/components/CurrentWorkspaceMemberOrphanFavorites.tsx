@@ -50,7 +50,7 @@ export const CurrentWorkspaceMemberOrphanFavorites = () => {
                     currentViewPath,
                     favorite,
                   )}
-                  to={favorite.link}
+                  to={isDragging ? undefined : favorite.link}
                   rightOptions={
                     <LightIconButton
                       Icon={IconHeartOff}
