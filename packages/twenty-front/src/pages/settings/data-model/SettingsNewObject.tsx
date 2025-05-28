@@ -19,12 +19,13 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { useState } from 'react';
 
 export const SettingsNewObject = () => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
   const { enqueueSnackBar } = useSnackBar();
-
+  const [isLoading, setIsLoading] = useState(false);
   const { createOneObjectMetadataItem } = useCreateOneObjectMetadataItem();
 
   const formConfig = useForm<SettingsDataModelObjectAboutFormValues>({
@@ -43,6 +44,7 @@ export const SettingsNewObject = () => {
     formValues: SettingsDataModelObjectAboutFormValues,
   ) => {
     try {
+      setIsLoading(true);
       const { data: response } = await createOneObjectMetadataItem(formValues);
 
       navigate(
@@ -57,6 +59,8 @@ export const SettingsNewObject = () => {
       enqueueSnackBar((error as Error).message, {
         variant: SnackBarVariant.Error,
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -79,6 +83,7 @@ export const SettingsNewObject = () => {
         actionButton={
           <SaveAndCancelButtons
             isSaveDisabled={!canSave}
+            isLoading={isLoading}
             isCancelDisabled={isSubmitting}
             onCancel={() => navigate(SettingsPath.Objects)}
             onSave={formConfig.handleSubmit(handleSave)}

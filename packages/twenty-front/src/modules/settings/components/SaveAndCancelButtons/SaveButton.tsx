@@ -5,9 +5,14 @@ import { IconDeviceFloppy } from 'twenty-ui/display';
 type SaveButtonProps = {
   onSave?: () => void;
   disabled?: boolean;
+  isLoading?: boolean;
 };
 
-export const SaveButton = ({ onSave, disabled }: SaveButtonProps) => {
+export const SaveButton = ({
+  onSave,
+  disabled,
+  isLoading,
+}: SaveButtonProps) => {
   return (
     <Button
       title={t`Save`}
@@ -18,6 +23,7 @@ export const SaveButton = ({ onSave, disabled }: SaveButtonProps) => {
       onClick={onSave}
       type="submit"
       Icon={IconDeviceFloppy}
+      isLoading={isLoading}
     />
   );
 };
