@@ -27,10 +27,13 @@ export class MessageParticipantMatchParticipantJob {
     const { email, personId, workspaceMemberId } = data;
 
     await this.matchParticipantService.matchParticipantsAfterPersonOrWorkspaceMemberCreation(
-      email,
-      'messageParticipant',
-      personId,
-      workspaceMemberId,
+      {
+        handle: email,
+        isPrimaryEmail: true,
+        objectMetadataName: 'messageParticipant',
+        personId,
+        workspaceMemberId,
+      },
     );
   }
 }

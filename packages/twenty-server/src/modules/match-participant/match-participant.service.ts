@@ -37,11 +37,15 @@ export class MatchParticipantService<
     );
   }
 
-  public async matchParticipants(
-    participants: ParticipantWorkspaceEntity[],
-    objectMetadataName: 'messageParticipant' | 'calendarEventParticipant',
-    transactionManager?: WorkspaceEntityManager,
-  ) {
+  public async matchParticipants({
+    participants,
+    objectMetadataName,
+    transactionManager,
+  }: {
+    participants: ParticipantWorkspaceEntity[];
+    objectMetadataName: 'messageParticipant' | 'calendarEventParticipant';
+    transactionManager?: WorkspaceEntityManager;
+  }) {
     const participantRepository =
       await this.getParticipantRepository(objectMetadataName);
 
@@ -149,12 +153,19 @@ export class MatchParticipantService<
     );
   }
 
-  public async matchParticipantsAfterPersonOrWorkspaceMemberCreation(
-    handle: string,
-    objectMetadataName: 'messageParticipant' | 'calendarEventParticipant',
-    personId?: string,
-    workspaceMemberId?: string,
-  ) {
+  public async matchParticipantsAfterPersonOrWorkspaceMemberCreation({
+    handle,
+    isPrimaryEmail,
+    objectMetadataName,
+    personId,
+    workspaceMemberId,
+  }: {
+    handle: string;
+    isPrimaryEmail: boolean;
+    objectMetadataName: 'messageParticipant' | 'calendarEventParticipant';
+    personId?: string;
+    workspaceMemberId?: string;
+  }) {
     const participantRepository =
       await this.getParticipantRepository(objectMetadataName);
 
@@ -220,12 +231,17 @@ export class MatchParticipantService<
     }
   }
 
-  public async unmatchParticipants(
-    handle: string,
-    objectMetadataName: 'messageParticipant' | 'calendarEventParticipant',
-    personId?: string,
-    workspaceMemberId?: string,
-  ) {
+  public async unmatchParticipants({
+    handle,
+    objectMetadataName,
+    personId,
+    workspaceMemberId,
+  }: {
+    handle: string;
+    objectMetadataName: 'messageParticipant' | 'calendarEventParticipant';
+    personId?: string;
+    workspaceMemberId?: string;
+  }) {
     const participantRepository =
       await this.getParticipantRepository(objectMetadataName);
 

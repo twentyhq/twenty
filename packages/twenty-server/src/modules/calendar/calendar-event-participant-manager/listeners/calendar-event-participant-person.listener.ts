@@ -45,6 +45,7 @@ export class CalendarEventParticipantPersonListener {
         {
           workspaceId: payload.workspaceId,
           email: eventPayload.properties.after.emails?.primaryEmail,
+          isPrimaryEmail: true,
           personId: eventPayload.recordId,
         },
       );
@@ -86,6 +87,7 @@ export class CalendarEventParticipantPersonListener {
               {
                 workspaceId: payload.workspaceId,
                 email: eventPayload.properties.after.emails?.primaryEmail,
+                isPrimaryEmail: true,
                 personId: eventPayload.recordId,
               },
             );
@@ -112,6 +114,7 @@ export class CalendarEventParticipantPersonListener {
             {
               workspaceId: payload.workspaceId,
               email: email,
+              isPrimaryEmail: false,
               personId: eventPayload.recordId,
             },
           );
