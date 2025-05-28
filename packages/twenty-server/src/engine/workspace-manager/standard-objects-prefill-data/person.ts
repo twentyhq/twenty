@@ -14,101 +14,102 @@ export const personPrefillData = async (
   schemaName: string,
 ) => {
   await entityManager
-  .createQueryBuilder(undefined, undefined, undefined, {
-    shouldBypassPermissionChecks: true,
-  })
-  .insert()
-  .into(`${schemaName}.person`, [
-    'nameFirstName',
-    'nameLastName',
-    'city',
-    'emailsPrimaryEmail',
-    'avatarUrl',
-    'position',
-    'createdBySource',
-    'createdByWorkspaceMemberId',
-    'createdByName',
-    'phonesPrimaryPhoneNumber',
-    'phonesPrimaryPhoneCountryCode',
-    'companyId',
-  ])
-  .orIgnore()
-  .values([
-    {
-      nameFirstName: 'Brian',
-      nameLastName: 'Chesky',
-      city: 'San Francisco',
-      emailsPrimaryEmail: 'chesky@airbnb.com',
-      avatarUrl:
-      'https://twentyhq.github.io/placeholder-images/people/image-3.png',
-      position: 1,
-      createdBySource: FieldActorSource.SYSTEM,
-      createdByWorkspaceMemberId: null,
-      createdByName: 'System',
-      phonesPrimaryPhoneNumber: '1234567890',
-      phonesPrimaryPhoneCountryCode: '+1',
-      companyId: AIRBNB_ID,
-    },
-    {
-      "nameFirstName": "Dario",
-      "nameLastName": "Amodei",
-      "city": "San Francisco",
-      "emailsPrimaryEmail": "amodei@anthropic.com",
-      "avatarUrl": "https://twentyhq.github.io/placeholder-images/people/image-89.png",
-      "position": 2,
-      "createdBySource": FieldActorSource.SYSTEM,
-      "createdByWorkspaceMemberId": null,
-      "createdByName": "System",
-      "phonesPrimaryPhoneNumber": "5551234567",
-      "phonesPrimaryPhoneCountryCode": "+1",
-      "companyId": ANTHROPIC_ID
-    },
-    {
-      nameFirstName: 'Patrick',
-      nameLastName: 'Collison',
-      city: 'San Francisco',
-      emailsPrimaryEmail: 'collison@stripe.com',
-      avatarUrl:
-      'https://twentyhq.github.io/placeholder-images/people/image-47.png',
-      position: 3,
-      createdBySource: FieldActorSource.SYSTEM,
-      createdByWorkspaceMemberId: null,
-      createdByName: 'System',
-      phonesPrimaryPhoneNumber: '987625341',
-      phonesPrimaryPhoneCountryCode: '+1',
-      companyId: STRIPE_ID,
-    },
-    {
-      nameFirstName: 'Dylan',
-      nameLastName: 'Field',
-      city: 'San Francisco',
-      emailsPrimaryEmail: 'field@figma.com',
-      avatarUrl:
-      'https://twentyhq.github.io/placeholder-images/people/image-40.png',
-      position: 4,
-      createdBySource: FieldActorSource.SYSTEM,
-      createdByWorkspaceMemberId: null,
-      createdByName: 'System',
-      phonesPrimaryPhoneNumber: '09882261',
-      phonesPrimaryPhoneCountryCode: '+1',
-      companyId: FIGMA_ID,
-    },
-    {
-      nameFirstName: 'Ivan',
-      nameLastName: 'Zhao',
-      city: 'San Francisco',
-      emailsPrimaryEmail: 'zhao@notion.com',
-      avatarUrl:
-      'https://twentyhq.github.io/placeholder-images/people/image-68.png',
-      position: 5,
-      createdBySource: FieldActorSource.SYSTEM,
-      createdByWorkspaceMemberId: null,
-      createdByName: 'System',
-      phonesPrimaryPhoneNumber: '88226173',
-      phonesPrimaryPhoneCountryCode: '+1',
-      companyId: NOTION_ID,
-    },
-  ])
-  .returning('*')
-  .execute();
+    .createQueryBuilder(undefined, undefined, undefined, {
+      shouldBypassPermissionChecks: true,
+    })
+    .insert()
+    .into(`${schemaName}.person`, [
+      'nameFirstName',
+      'nameLastName',
+      'city',
+      'emailsPrimaryEmail',
+      'avatarUrl',
+      'position',
+      'createdBySource',
+      'createdByWorkspaceMemberId',
+      'createdByName',
+      'phonesPrimaryPhoneNumber',
+      'phonesPrimaryPhoneCountryCode',
+      'companyId',
+    ])
+    .orIgnore()
+    .values([
+      {
+        nameFirstName: 'Brian',
+        nameLastName: 'Chesky',
+        city: 'San Francisco',
+        emailsPrimaryEmail: 'chesky@airbnb.com',
+        avatarUrl:
+          'https://twentyhq.github.io/placeholder-images/people/image-3.png',
+        position: 1,
+        createdBySource: FieldActorSource.SYSTEM,
+        createdByWorkspaceMemberId: null,
+        createdByName: 'System',
+        phonesPrimaryPhoneNumber: '1234567890',
+        phonesPrimaryPhoneCountryCode: '+1',
+        companyId: AIRBNB_ID,
+      },
+      {
+        nameFirstName: 'Dario',
+        nameLastName: 'Amodei',
+        city: 'San Francisco',
+        emailsPrimaryEmail: 'amodei@anthropic.com',
+        avatarUrl:
+          'https://twentyhq.github.io/placeholder-images/people/image-89.png',
+        position: 2,
+        createdBySource: FieldActorSource.SYSTEM,
+        createdByWorkspaceMemberId: null,
+        createdByName: 'System',
+        phonesPrimaryPhoneNumber: '5551234567',
+        phonesPrimaryPhoneCountryCode: '+1',
+        companyId: ANTHROPIC_ID,
+      },
+      {
+        nameFirstName: 'Patrick',
+        nameLastName: 'Collison',
+        city: 'San Francisco',
+        emailsPrimaryEmail: 'collison@stripe.com',
+        avatarUrl:
+          'https://twentyhq.github.io/placeholder-images/people/image-47.png',
+        position: 3,
+        createdBySource: FieldActorSource.SYSTEM,
+        createdByWorkspaceMemberId: null,
+        createdByName: 'System',
+        phonesPrimaryPhoneNumber: '987625341',
+        phonesPrimaryPhoneCountryCode: '+1',
+        companyId: STRIPE_ID,
+      },
+      {
+        nameFirstName: 'Dylan',
+        nameLastName: 'Field',
+        city: 'San Francisco',
+        emailsPrimaryEmail: 'field@figma.com',
+        avatarUrl:
+          'https://twentyhq.github.io/placeholder-images/people/image-40.png',
+        position: 4,
+        createdBySource: FieldActorSource.SYSTEM,
+        createdByWorkspaceMemberId: null,
+        createdByName: 'System',
+        phonesPrimaryPhoneNumber: '09882261',
+        phonesPrimaryPhoneCountryCode: '+1',
+        companyId: FIGMA_ID,
+      },
+      {
+        nameFirstName: 'Ivan',
+        nameLastName: 'Zhao',
+        city: 'San Francisco',
+        emailsPrimaryEmail: 'zhao@notion.com',
+        avatarUrl:
+          'https://twentyhq.github.io/placeholder-images/people/image-68.png',
+        position: 5,
+        createdBySource: FieldActorSource.SYSTEM,
+        createdByWorkspaceMemberId: null,
+        createdByName: 'System',
+        phonesPrimaryPhoneNumber: '88226173',
+        phonesPrimaryPhoneCountryCode: '+1',
+        companyId: NOTION_ID,
+      },
+    ])
+    .returning('*')
+    .execute();
 };
