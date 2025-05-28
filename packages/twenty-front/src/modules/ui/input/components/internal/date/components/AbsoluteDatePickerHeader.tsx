@@ -38,7 +38,6 @@ type AbsoluteDatePickerHeaderProps = {
   prevMonthButtonDisabled: boolean;
   nextMonthButtonDisabled: boolean;
   isDateTimeInput?: boolean;
-  timeZone: string;
   hideInput?: boolean;
 };
 
@@ -52,7 +51,6 @@ export const AbsoluteDatePickerHeader = ({
   prevMonthButtonDisabled,
   nextMonthButtonDisabled,
   isDateTimeInput,
-  timeZone,
   hideInput = false,
 }: AbsoluteDatePickerHeaderProps) => {
   const endOfDayDateTimeInLocalTimezone = DateTime.now().set({
