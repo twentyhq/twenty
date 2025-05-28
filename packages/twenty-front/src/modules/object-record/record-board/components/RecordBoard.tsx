@@ -6,6 +6,7 @@ import { useRecoilCallback } from 'recoil';
 import { ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/action-menu/constants/ActionMenuDropdownClickOutsideId';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandMenuClickOutsideId';
+import { RECORD_CHIP_CLICK_OUTSIDE_ID } from '@/object-record/constants/RecordChipClickOutsideId';
 import { RecordBoardHeader } from '@/object-record/record-board/components/RecordBoardHeader';
 import { RecordBoardScrollToFocusedCardEffect } from '@/object-record/record-board/components/RecordBoardScrollToFocusedCardEffect';
 import { RecordBoardStickyHeaderEffect } from '@/object-record/record-board/components/RecordBoardStickyHeaderEffect';
@@ -121,6 +122,7 @@ export const RecordBoard = () => {
       MODAL_BACKDROP_CLICK_OUTSIDE_ID,
       PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID,
       RECORD_BOARD_CARD_CLICK_OUTSIDE_ID,
+      RECORD_CHIP_CLICK_OUTSIDE_ID,
     ],
     listenerId: RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID,
     refs: [],

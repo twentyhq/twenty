@@ -1,10 +1,12 @@
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
+import { RECORD_CHIP_CLICK_OUTSIDE_ID } from '@/object-record/constants/RecordChipClickOutsideId';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
+import { ReactNode } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
   AvatarChip,
@@ -14,6 +16,14 @@ import {
   LinkAvatarChip,
 } from 'twenty-ui/components';
 import { useMouseDownNavigation } from 'twenty-ui/utilities';
+
+const RecordChipContainer = ({
+  children,
+  dataClickOutsideId,
+}: {
+  children: ReactNode;
+  dataClickOutsideId?: string;
+}) => <div data-click-outside-id={dataClickOutsideId}>{children}</div>;
 
 export type RecordChipProps = {
   objectNameSingular: string;
@@ -25,6 +35,7 @@ export type RecordChipProps = {
   to?: string | undefined;
   size?: ChipSize;
   isLabelHidden?: boolean;
+  triggerEvent?: 'MOUSE_DOWN' | 'CLICK';
 };
 
 export const RecordChip = ({
@@ -37,6 +48,7 @@ export const RecordChip = ({
   size,
   forceDisableClick = false,
   isLabelHidden = false,
+  triggerEvent = 'MOUSE_DOWN',
 }: RecordChipProps) => {
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
@@ -63,10 +75,7 @@ export const RecordChip = ({
     onClick: handleCustomClick,
     disabled: forceDisableClick,
     stopPropagation: true,
-    onBeforeNavigation: () => {
-      // TODO refactor wrapper event listener to avoid colliding events
-      // This will be called before navigation/click action
-    },
+    triggerEvent,
   });
 
   // TODO temporary until we create a record show page for Workspaces members
@@ -89,24 +98,32 @@ export const RecordChip = ({
   }
 
   return (
-    <LinkAvatarChip
-      size={size}
-      maxWidth={maxWidth}
-      placeholderColorSeed={record.id}
-      name={recordChipData.name}
-      isLabelHidden={isLabelHidden}
-      avatarType={recordChipData.avatarType}
-      avatarUrl={recordChipData.avatarUrl ?? ''}
-      className={className}
-      variant={
-        variant ??
-        (!forceDisableClick
-          ? AvatarChipVariant.Regular
-          : AvatarChipVariant.Transparent)
+    <RecordChipContainer
+      dataClickOutsideId={
+        isSidePanelViewOpenRecordInType
+          ? RECORD_CHIP_CLICK_OUTSIDE_ID
+          : undefined
       }
-      to={to ?? getLinkToShowPage(objectNameSingular, record)}
-      onClick={onClick}
-      onMouseDown={onMouseDown}
-    />
+    >
+      <LinkAvatarChip
+        size={size}
+        maxWidth={maxWidth}
+        placeholderColorSeed={record.id}
+        name={recordChipData.name}
+        isLabelHidden={isLabelHidden}
+        avatarType={recordChipData.avatarType}
+        avatarUrl={recordChipData.avatarUrl ?? ''}
+        className={className}
+        variant={
+          variant ??
+          (!forceDisableClick
+            ? AvatarChipVariant.Regular
+            : AvatarChipVariant.Transparent)
+        }
+        to={to ?? getLinkToShowPage(objectNameSingular, record)}
+        onClick={onClick}
+        onMouseDown={onMouseDown}
+      />
+    </RecordChipContainer>
   );
 };
