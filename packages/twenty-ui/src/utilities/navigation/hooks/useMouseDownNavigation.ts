@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 type UseMouseDownNavigationProps = {
   to?: string;
-  onClick?: (event?: MouseEvent<HTMLElement>) => void;
+  onClick?: (event: MouseEvent<HTMLElement>) => void;
   disabled?: boolean;
   onBeforeNavigation?: () => void;
   triggerEvent?: TriggerEventType;
