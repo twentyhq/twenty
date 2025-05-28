@@ -2,6 +2,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Workspaces, workspacesState } from '@/auth/states/workspaces';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -32,7 +33,7 @@ export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
   const [searchValue, setSearchValue] = useState('');
 
   return (
-    <>
+    <DropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -43,7 +44,6 @@ export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
       >
         {t`Other workspaces`}
       </DropdownMenuHeader>
-      <DropdownMenuSeparator />
       <DropdownMenuSearchInput
         placeholder={t`Search`}
         autoFocus
@@ -83,6 +83,6 @@ export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
             </UndecoratedLink>
           ))}
       </DropdownMenuItemsContainer>
-    </>
+    </DropdownContent>
   );
 };

@@ -47,7 +47,8 @@ export const validateOperationIsPermittedOrThrow = ({
     return;
   }
 
-  const permissionsForEntity = objectRecordsPermissions[entityName];
+  const permissionsForEntity =
+    objectRecordsPermissions[objectMetadataIdForEntity];
 
   switch (operationType) {
     case 'select':

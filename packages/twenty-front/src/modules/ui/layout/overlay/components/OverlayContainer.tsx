@@ -9,7 +9,6 @@ export const OverlayContainer = styled.div<{
   display: flex;
 
   backdrop-filter: ${({ theme }) => theme.blur.medium};
-  width: fit-content;
 
   border-radius: ${({ theme, borderRadius }) =>
     theme.border.radius[borderRadius ?? 'md']};

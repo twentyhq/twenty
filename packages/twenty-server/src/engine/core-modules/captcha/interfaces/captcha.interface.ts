@@ -36,5 +36,4 @@ export type CaptchaModuleAsyncOptions = {
   ) => CaptchaModuleOptions | Promise<CaptchaModuleOptions> | undefined;
 } & Pick<ModuleMetadata, 'imports'> &
   Pick<FactoryProvider, 'inject'>;
-
 export type CaptchaValidateResult = { success: boolean; error?: string };

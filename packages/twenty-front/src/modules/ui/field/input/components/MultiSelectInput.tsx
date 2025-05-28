@@ -2,12 +2,12 @@ import { useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -102,7 +102,7 @@ export const MultiSelectInput = ({
       selectableItemIdArray={optionIds}
       hotkeyScope={hotkeyScope}
     >
-      <DropdownMenu data-select-disable ref={containerRef}>
+      <DropdownContent ref={containerRef} selectDisabled>
         <DropdownMenuSearchInput
           value={searchFilter}
           onChange={(event) =>
@@ -130,7 +130,7 @@ export const MultiSelectInput = ({
             );
           })}
         </DropdownMenuItemsContainer>
-      </DropdownMenu>
+      </DropdownContent>
     </SelectableList>
   );
 };

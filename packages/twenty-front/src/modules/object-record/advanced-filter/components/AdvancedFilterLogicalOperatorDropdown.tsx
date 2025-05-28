@@ -4,6 +4,7 @@ import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/
 import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
 import { Select } from '@/ui/input/components/Select';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 type AdvancedFilterLogicalOperatorDropdownProps = {
   recordFilterGroup: RecordFilterGroup;
@@ -27,6 +28,7 @@ export const AdvancedFilterLogicalOperatorDropdown = ({
   return (
     <Select
       fullWidth
+      dropdownWidth={GenericDropdownContentWidth.Narrow}
       dropdownId={`advanced-filter-logical-operator-${recordFilterGroup.id}`}
       value={recordFilterGroup.logicalOperator}
       onChange={handleChange}

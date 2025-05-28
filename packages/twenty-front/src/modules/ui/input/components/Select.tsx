@@ -8,6 +8,8 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 import { SelectControl } from '@/ui/input/components/SelectControl';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -67,7 +69,7 @@ export const Select = <Value extends SelectValue>({
   disabled: disabledFromProps,
   selectSizeVariant,
   dropdownId,
-  dropdownWidth = 176,
+  dropdownWidth = GenericDropdownContentWidth.Medium,
   dropdownWidthAuto = false,
   emptyOption,
   fullWidth,
@@ -139,7 +141,6 @@ export const Select = <Value extends SelectValue>({
       ) : (
         <Dropdown
           dropdownId={dropdownId}
-          dropdownWidth={dropDownMenuWidth}
           dropdownPlacement="bottom-start"
           dropdownOffset={dropdownOffset}
           clickableComponent={
@@ -151,7 +152,7 @@ export const Select = <Value extends SelectValue>({
             />
           }
           dropdownComponents={
-            <>
+            <DropdownContent widthInPixels={dropDownMenuWidth}>
               {!!withSearchInput && (
                 <DropdownMenuSearchInput
                   autoFocus
@@ -163,7 +164,7 @@ export const Select = <Value extends SelectValue>({
                 <DropdownMenuSeparator />
               )}
               {!!filteredOptions.length && (
-                <DropdownMenuItemsContainer hasMaxHeight width={'auto'}>
+                <DropdownMenuItemsContainer hasMaxHeight>
                   <SelectableList
                     hotkeyScope={SelectHotkeyScope.Select}
                     selectableListInstanceId={dropdownId}
@@ -208,7 +209,7 @@ export const Select = <Value extends SelectValue>({
                   />
                 </DropdownMenuItemsContainer>
               )}
-            </>
+            </DropdownContent>
           }
           dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
         />

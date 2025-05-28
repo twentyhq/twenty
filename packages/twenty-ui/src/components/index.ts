@@ -17,6 +17,7 @@ export type { AvatarChipsCommonProps } from './avatar-chip/types/AvatarChipsComm
 export { AvatarChipVariant } from './avatar-chip/types/AvatarChipsVariant.type';
 export type { ChipProps } from './chip/Chip';
 export { ChipSize, ChipAccent, ChipVariant, Chip } from './chip/Chip';
+export { LINK_CHIP_CLICK_OUTSIDE_ID } from './chip/constants/LinkChipClickOutsideId';
 export type { LinkChipProps } from './chip/LinkChip';
 export { LinkChip } from './chip/LinkChip';
 export { Pill } from './Pill/Pill';

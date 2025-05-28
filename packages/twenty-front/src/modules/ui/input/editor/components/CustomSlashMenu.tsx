@@ -1,7 +1,7 @@
 import { SuggestionMenuProps } from '@blocknote/react';
 import styled from '@emotion/styled';
 
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { autoUpdate, useFloating } from '@floating-ui/react';
@@ -46,7 +46,7 @@ export const CustomSlashMenu = (props: CustomSlashMenuProps) => {
         >
           <OverlayContainer ref={refs.setFloating} style={floatingStyles}>
             <StyledInnerContainer>
-              <DropdownMenu style={{ zIndex: 2001 }}>
+              <DropdownContent>
                 <DropdownMenuItemsContainer>
                   {props.items.map((item, index) => (
                     <MenuItemSuggestion
@@ -58,7 +58,7 @@ export const CustomSlashMenu = (props: CustomSlashMenuProps) => {
                     />
                   ))}
                 </DropdownMenuItemsContainer>
-              </DropdownMenu>
+              </DropdownContent>
             </StyledInnerContainer>
           </OverlayContainer>
         </motion.div>,
