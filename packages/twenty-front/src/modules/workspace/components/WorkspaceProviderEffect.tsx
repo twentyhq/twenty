@@ -4,7 +4,7 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { useReadWorkspaceUrlFromCurrentLocation } from '@/domain-manager/hooks/useReadWorkspaceUrlFromCurrentLocation';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { lastAuthenticatedWorkspaceDomainState } from '@/domain-manager/states/lastAuthenticatedWorkspaceDomainState';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 
 import { useInitializeQueryParamState } from '@/app/hooks/useInitializeQueryParamState';
 import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
@@ -29,12 +29,13 @@ export const WorkspaceProviderEffect = () => {
 
   const { initializeQueryParamState } = useInitializeQueryParamState();
 
-  const isWorkspaceHostnameMatchCurrentLocationHostname = (
-    workspaceUrls: WorkspaceUrls,
-  ) => {
-    const { hostname } = new URL(getWorkspaceUrl(workspaceUrls));
-    return hostname === currentLocationHostname;
-  };
+  const isWorkspaceHostnameMatchCurrentLocationHostname = useCallback(
+    (workspaceUrls: WorkspaceUrls) => {
+      const { hostname } = new URL(getWorkspaceUrl(workspaceUrls));
+      return hostname === currentLocationHostname;
+    },
+    [currentLocationHostname],
+  );
 
   useEffect(() => {
     if (
