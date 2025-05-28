@@ -397,13 +397,21 @@ export const useAuth = () => {
   }, [clearSession]);
 
   const handleCredentialsSignUp = useCallback(
-    async (
-      email: string,
-      password: string,
-      workspaceInviteHash?: string,
-      workspacePersonalInviteToken?: string,
-      captchaToken?: string,
-    ) => {
+    async ({
+      email,
+      password,
+      workspaceInviteHash,
+      workspacePersonalInviteToken,
+      captchaToken,
+      verifyEmailNextPath,
+    }: {
+      email: string;
+      password: string;
+      workspaceInviteHash?: string;
+      workspacePersonalInviteToken?: string;
+      captchaToken?: string;
+      verifyEmailNextPath?: string;
+    }) => {
       const signUpResult = await signUp({
         variables: {
           email,
@@ -415,6 +423,7 @@ export const useAuth = () => {
           ...(workspacePublicData?.id
             ? { workspaceId: workspacePublicData.id }
             : {}),
+          verifyEmailNextPath,
         },
       });
 
