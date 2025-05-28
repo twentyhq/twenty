@@ -5,6 +5,7 @@ import { Stream } from 'stream';
 
 import { v4 as uuidV4 } from 'uuid';
 import { buildSignedPath } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
@@ -38,6 +39,10 @@ export class FileService {
   }
 
   signFileUrl({ url, workspaceId }: { url: string; workspaceId: string }) {
+    if (!isNonEmptyString(url)) {
+      return url;
+    }
+
     return buildSignedPath({
       path: url,
       token: this.encodeFileToken({
