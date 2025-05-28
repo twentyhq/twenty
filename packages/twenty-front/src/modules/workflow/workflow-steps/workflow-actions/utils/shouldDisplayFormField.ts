@@ -32,19 +32,20 @@ export const shouldDisplayFormField = ({
   switch (actionType) {
     case 'CREATE_RECORD':
       isTypeAllowedForAction =
-        fieldMetadataItem.type !== FieldMetadataType.RELATION;
+        fieldMetadataItem.type !== FieldMetadataType.RELATION ||
+        fieldMetadataItem.settings?.['relationType'] === 'MANY_TO_ONE';
       break;
     case 'UPDATE_RECORD':
-      isTypeAllowedForAction = DISPLAYABLE_FIELD_TYPES_FOR_UPDATE.includes(
-        fieldMetadataItem.type,
-      );
+      isTypeAllowedForAction =
+        DISPLAYABLE_FIELD_TYPES_FOR_UPDATE.includes(fieldMetadataItem.type) ||
+        fieldMetadataItem.settings?.['relationType'] === 'MANY_TO_ONE';
       break;
     default:
       throw new Error(`Action "${actionType}" is not supported`);
   }
+
   return (
-    (isTypeAllowedForAction ||
-      fieldMetadataItem.settings?.['relationType'] === 'MANY_TO_ONE') &&
+    isTypeAllowedForAction &&
     !fieldMetadataItem.isSystem &&
     fieldMetadataItem.isActive
   );
