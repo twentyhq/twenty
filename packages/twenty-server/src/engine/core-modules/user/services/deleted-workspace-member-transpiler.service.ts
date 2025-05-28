@@ -40,15 +40,16 @@ export class DeletedWorkspaceMemberTranspiler {
       userEmail,
     } = workspaceMember;
 
-    const avatarUrl = userWorkspaceId
-      ? this.generateSignedAvatarUrl({
-          workspaceId: userWorkspaceId,
-          workspaceMember: {
-            avatarUrl: avatarUrlFromEntity,
-            id,
-          },
-        })
-      : null;
+    const avatarUrl =
+      userWorkspaceId && avatarUrlFromEntity
+        ? this.generateSignedAvatarUrl({
+            workspaceId: userWorkspaceId,
+            workspaceMember: {
+              avatarUrl: avatarUrlFromEntity,
+              id,
+            },
+          })
+        : null;
 
     return {
       id,
