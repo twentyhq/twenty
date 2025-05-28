@@ -13,7 +13,6 @@ export const parseGmailMessageListFetchError = (error: {
   const { code, errors } = error;
 
   const reason = errors?.[0]?.reason;
-  const originalMessage = errors?.[0]?.message;
   const message = errors?.[0]?.message;
 
   switch (code) {
@@ -25,7 +24,7 @@ export const parseGmailMessageListFetchError = (error: {
         );
       }
       if (reason === 'failedPrecondition') {
-        if (originalMessage.includes('Mail service not enabled')) {
+        if (message.includes('Mail service not enabled')) {
           return new MessageImportDriverException(
             message,
             MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
