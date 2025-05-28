@@ -18,7 +18,7 @@ describe('RecordPositionService', () => {
 
     twentyORMGlobalManager = {
       getRepositoryForWorkspace: jest.fn().mockResolvedValue(mockRepository),
-    } as any;
+    } as unknown as jest.Mocked<TwentyORMGlobalManager>;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [

@@ -4,6 +4,10 @@ import { DataSource, EntityManager } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 
 @Injectable()
 export class WorkspaceDataSourceService {
@@ -106,6 +110,9 @@ export class WorkspaceDataSourceService {
     _transactionManager?: EntityManager,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
-    throw new Error('Method not allowed.');
+    throw new PermissionsException(
+      'Method not allowed as permissions are not handled at datasource level.',
+      PermissionsExceptionCode.METHOD_NOT_ALLOWED,
+    );
   }
 }

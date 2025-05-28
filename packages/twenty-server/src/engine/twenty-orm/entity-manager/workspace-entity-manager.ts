@@ -1094,6 +1094,9 @@ export class WorkspaceEntityManager extends EntityManager {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   override query<T = any>(_query: string, _parameters?: any[]): Promise<T> {
-    throw new Error('Method not allowed.');
+    throw new PermissionsException(
+      'Method not allowed.',
+      PermissionsExceptionCode.RAW_SQL_NOT_ALLOWED,
+    );
   }
 }

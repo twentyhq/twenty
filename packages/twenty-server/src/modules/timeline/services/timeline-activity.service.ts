@@ -6,7 +6,6 @@ import { ObjectRecordNonDestructiveEvent } from 'src/engine/core-modules/event-e
 import { ObjectRecordBaseEvent } from 'src/engine/core-modules/event-emitter/types/object-record.base.event';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositiories/timeline-activity.repository';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
@@ -25,7 +24,6 @@ export class TimelineActivityService {
   constructor(
     @InjectObjectMetadataRepository(TimelineActivityWorkspaceEntity)
     private readonly timelineActivityRepository: TimelineActivityRepository,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
@@ -114,14 +112,10 @@ export class TimelineActivityService {
     workspaceId: string;
     eventName: string;
   }): Promise<TimelineActivity[] | undefined> {
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
     switch (event.objectMetadata.nameSingular) {
       case 'noteTarget':
         return this.computeActivityTargets({
           event,
-          dataSourceSchema,
           activityType: 'note',
           eventName,
           workspaceId,
@@ -129,7 +123,6 @@ export class TimelineActivityService {
       case 'taskTarget':
         return this.computeActivityTargets({
           event,
-          dataSourceSchema,
           activityType: 'task',
           eventName,
           workspaceId,
@@ -211,8 +204,8 @@ export class TimelineActivityService {
           name: 'linked-' + eventName,
           objectName: targetColumn[0].replace(/Id$/, ''),
           recordId: activityTarget[targetColumn[0]],
-          linkedRecordCachedName: activity[0].title,
-          linkedRecordId: activity[0].id,
+          linkedRecordCachedName: activity.title,
+          linkedRecordId: activity.id,
           linkedObjectMetadataId: event.objectMetadata.id,
         } satisfies TimelineActivity;
       })
@@ -229,7 +222,6 @@ export class TimelineActivityService {
     workspaceId,
   }: {
     event: ObjectRecordBaseEvent;
-    dataSourceSchema: string;
     activityType: 'task' | 'note';
     eventName: string;
     workspaceId: string;
