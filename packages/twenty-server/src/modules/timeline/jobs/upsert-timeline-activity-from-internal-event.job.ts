@@ -2,7 +2,6 @@ import { ObjectRecordNonDestructiveEvent } from 'src/engine/core-modules/event-e
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { TimelineActivityService } from 'src/modules/timeline/services/timeline-activity.service';
@@ -11,7 +10,6 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 @Processor(MessageQueue.entityEventsToDbQueue)
 export class UpsertTimelineActivityFromInternalEvent {
   constructor(
-    @InjectObjectMetadataRepository(WorkspaceMemberWorkspaceEntity)
     private readonly timelineActivityService: TimelineActivityService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
