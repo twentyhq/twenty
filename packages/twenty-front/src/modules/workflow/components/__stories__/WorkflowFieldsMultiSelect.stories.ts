@@ -1,5 +1,7 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { expect } from '@storybook/jest';
 import type { Meta, StoryObj } from '@storybook/react';
+import { within } from '@storybook/testing-library';
 import { FieldMetadataType } from '~/generated/graphql';
 import { WorkflowFieldsMultiSelect } from '../WorkflowEditUpdateEventFieldsMultiSelect';
 
@@ -84,12 +86,23 @@ export const Default: Story = {
     readonly: false,
     defaultFields: [],
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    expect(
+      await canvas.findByTestId('workflow-fields-multi-select'),
+    ).toBeVisible();
+  },
 };
 
 export const WithDefaultValues: Story = {
   args: {
     ...Default.args,
     defaultFields: ['name', 'domainName'],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    expect(await canvas.findByText('Name')).toBeVisible();
+    expect(await canvas.findByText('Domain Name')).toBeVisible();
   },
 };
 
@@ -98,5 +111,10 @@ export const ReadOnly: Story = {
     ...Default.args,
     readonly: true,
     defaultFields: ['name', 'domainName'],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    expect(await canvas.findByText('Name')).toBeVisible();
+    expect(await canvas.findByText('Domain Name')).toBeVisible();
   },
 };
