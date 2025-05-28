@@ -7,6 +7,7 @@ import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObje
 import { EMPTY_MUTATION } from '@/object-record/constants/EmptyMutation';
 import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
 import { capitalize } from 'twenty-shared/utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -25,6 +26,8 @@ export const useUpdateOneRecordMutation = ({
   });
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   if (isUndefinedOrNull(objectMetadataItem)) {
     return { updateOneRecordMutation: EMPTY_MUTATION };
@@ -50,6 +53,7 @@ export const useUpdateOneRecordMutation = ({
            objectMetadataItem,
            computeReferences,
            recordGqlFields: appliedRecordGqlFields,
+           objectPermissionsByObjectMetadataId,
          },
        )}
     }

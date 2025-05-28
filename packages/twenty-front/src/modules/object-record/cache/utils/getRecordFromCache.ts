@@ -6,9 +6,10 @@ import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFr
 import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { capitalize } from 'twenty-shared/utils';
+import { ObjectPermission } from '~/generated-metadata/graphql';
 import { isEmptyObject } from '~/utils/isEmptyObject';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { capitalize } from 'twenty-shared/utils';
 
 export type GetRecordFromCacheArgs = {
   cache: ApolloCache<object>;
@@ -16,22 +17,28 @@ export type GetRecordFromCacheArgs = {
   objectMetadataItems: ObjectMetadataItem[];
   objectMetadataItem: ObjectMetadataItem;
   recordGqlFields?: RecordGqlFields;
+  objectPermissionsByObjectMetadataId?: Record<string, ObjectPermission>;
 };
-export const getRecordFromCache = <T extends ObjectRecord = ObjectRecord>({
-  objectMetadataItem,
-  objectMetadataItems,
+
+export const getRecordFromCache = <T extends ObjectRecord>({
   cache,
   recordId,
+  objectMetadataItems,
+  objectMetadataItem,
   recordGqlFields,
-}: GetRecordFromCacheArgs) => {
-  if (isUndefinedOrNull(objectMetadataItem)) {
-    return null;
-  }
+  objectPermissionsByObjectMetadataId,
+}: GetRecordFromCacheArgs): T | null => {
+  const capitalizedObjectName = capitalize(objectMetadataItem.nameSingular);
 
   const appliedRecordGqlFields =
-    recordGqlFields ?? generateDepthOneRecordGqlFields({ objectMetadataItem });
+    recordGqlFields ??
+    generateDepthOneRecordGqlFields({
+      objectMetadataItem,
+    });
 
-  const capitalizedObjectName = capitalize(objectMetadataItem.nameSingular);
+  if (isEmptyObject(appliedRecordGqlFields)) {
+    return null;
+  }
 
   const cacheReadFragment = gql`
       fragment ${capitalizedObjectName}Fragment on ${capitalizedObjectName} ${mapObjectMetadataToGraphQLQuery(
@@ -39,26 +46,26 @@ export const getRecordFromCache = <T extends ObjectRecord = ObjectRecord>({
           objectMetadataItems,
           objectMetadataItem,
           recordGqlFields: appliedRecordGqlFields,
+          objectPermissionsByObjectMetadataId,
         },
       )}
     `;
 
   const cachedRecordId = cache.identify({
-    __typename: capitalize(objectMetadataItem.nameSingular),
+    __typename: capitalizedObjectName,
     id: recordId,
   });
 
-  const record = cache.readFragment<T & { __typename: string }>({
+  const cachedRecord = cache.readFragment({
     id: cachedRecordId,
     fragment: cacheReadFragment,
-    returnPartialData: true,
   });
 
-  if (isUndefinedOrNull(record) || isEmptyObject(record)) {
+  if (isUndefinedOrNull(cachedRecord)) {
     return null;
   }
 
   return getRecordFromRecordNode<T>({
-    recordNode: record,
+    recordNode: cachedRecord as any,
   });
 };
