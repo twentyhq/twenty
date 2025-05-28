@@ -53,6 +53,7 @@ export const WorkspaceProviderEffect = () => {
     redirectToWorkspaceDomain,
     getPublicWorkspaceData,
     currentLocationHostname,
+    isWorkspaceHostnameMatchCurrentLocationHostname
   ]);
 
   useEffect(() => {
