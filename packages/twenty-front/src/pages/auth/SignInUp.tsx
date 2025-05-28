@@ -13,7 +13,6 @@ import { SignInUpSSOIdentityProviderSelection } from '@/auth/sign-in-up/componen
 import { SignInUpWorkspaceScopeForm } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeForm';
 import { SignInUpWorkspaceScopeFormEffect } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeFormEffect';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
@@ -61,7 +60,6 @@ export const SignInUp = () => {
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
-  const { loading } = useGetPublicWorkspaceDataByDomain();
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
   const { workspaceInviteHash, workspace: workspaceFromInviteHash } =
     useWorkspaceFromInviteHash();
@@ -86,8 +84,6 @@ export const SignInUp = () => {
   ]);
 
   const signInUpForm = useMemo(() => {
-    if (loading) return null;
-
     if (isDefaultDomain && isMultiWorkspaceEnabled) {
       return <SignInUpGlobalScopeForm />;
     }
@@ -117,7 +113,6 @@ export const SignInUp = () => {
     isDefaultDomain,
     isMultiWorkspaceEnabled,
     isOnAWorkspace,
-    loading,
     signInUpStep,
     workspacePublicData,
   ]);

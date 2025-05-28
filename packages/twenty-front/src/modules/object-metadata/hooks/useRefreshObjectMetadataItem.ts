@@ -1,3 +1,4 @@
+import { hasTokenPair } from '@/apollo/utils/hasTokenPair';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
@@ -16,6 +17,10 @@ export const useRefreshObjectMetadataItems = (
   const client = useApolloMetadataClient();
 
   const refreshObjectMetadataItems = async () => {
+    if (!hasTokenPair()) {
+      return [];
+    }
+
     const result = await client.query<ObjectMetadataItemsQuery>({
       query: FIND_MANY_OBJECT_METADATA_ITEMS,
       variables: {},

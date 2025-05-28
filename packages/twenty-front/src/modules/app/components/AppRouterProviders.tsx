@@ -35,16 +35,16 @@ export const AppRouterProviders = () => {
   return (
     <CaptchaProvider>
       <ApolloProvider>
-        <BaseThemeProvider>
-          <ClientConfigProviderEffect />
-          <ClientConfigProvider>
-            <ChromeExtensionSidecarEffect />
-            <ChromeExtensionSidecarProvider>
+        <ApolloMetadataClientProvider>
+          <BaseThemeProvider>
+            <ClientConfigProviderEffect />
+            <ClientConfigProvider>
               <UserProviderEffect />
               <WorkspaceProviderEffect />
-              <UserProvider>
-                <AuthProvider>
-                  <ApolloMetadataClientProvider>
+              <ChromeExtensionSidecarEffect />
+              <ChromeExtensionSidecarProvider>
+                <UserProvider>
+                  <AuthProvider>
                     <ObjectMetadataItemsLoadEffect />
                     <ObjectMetadataItemsProvider>
                       <PrefetchDataProvider>
@@ -67,12 +67,12 @@ export const AppRouterProviders = () => {
                       </PrefetchDataProvider>
                       <PageChangeEffect />
                     </ObjectMetadataItemsProvider>
-                  </ApolloMetadataClientProvider>
-                </AuthProvider>
-              </UserProvider>
-            </ChromeExtensionSidecarProvider>
-          </ClientConfigProvider>
-        </BaseThemeProvider>
+                  </AuthProvider>
+                </UserProvider>
+              </ChromeExtensionSidecarProvider>
+            </ClientConfigProvider>
+          </BaseThemeProvider>
+        </ApolloMetadataClientProvider>
       </ApolloProvider>
     </CaptchaProvider>
   );
