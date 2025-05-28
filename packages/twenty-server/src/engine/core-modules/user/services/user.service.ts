@@ -41,6 +41,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
+import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
 
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class UserService extends TypeOrmQueryService<User> {
@@ -285,9 +286,10 @@ export class UserService extends TypeOrmQueryService<User> {
       throw new Error('Current user workspace not found');
     }
 
-    await this.processUserWorkspacePermissions(currentUserWorkspace, workspace);
-
-    user.currentUserWorkspace = currentUserWorkspace;
+    user.currentUserWorkspace = await this.processUserWorkspacePermissions(
+      currentUserWorkspace,
+      workspace,
+    );
 
     const availableWorkspaces = await this.getUserAvailableWorkspaces(user);
 
@@ -309,6 +311,7 @@ export class UserService extends TypeOrmQueryService<User> {
     let objectRecordsPermissions: Partial<
       Record<PermissionsOnAllObjectRecords, boolean>
     > = {};
+    let objectPermissions: ObjectPermissionDTO[] = [];
 
     if (
       ![
@@ -316,14 +319,40 @@ export class UserService extends TypeOrmQueryService<User> {
         WorkspaceActivationStatus.ONGOING_CREATION,
       ].includes(workspace.activationStatus)
     ) {
-      const permissions =
-        await this.permissionsService.getUserWorkspacePermissions({
-          userWorkspaceId: currentUserWorkspace.id,
-          workspaceId: workspace.id,
-        });
+      const isPermissionsV2Enabled =
+        await this.featureFlagService.isFeatureEnabled(
+          FeatureFlagKey.IsPermissionsV2Enabled,
+          workspace.id,
+        );
 
-      settingsPermissions = permissions.settingsPermissions;
-      objectRecordsPermissions = permissions.objectRecordsPermissions;
+      if (isPermissionsV2Enabled) {
+        const permissions =
+          await this.permissionsService.getUserWorkspacePermissionsV2({
+            userWorkspaceId: currentUserWorkspace.id,
+            workspaceId: workspace.id,
+          });
+
+        settingsPermissions = permissions.settingsPermissions;
+        objectPermissions = Object.entries(
+          permissions.objectRecordsPermissions,
+        ).map(([objectMetadataId, permissions]) => ({
+          objectMetadataId,
+          canReadObjectRecords: permissions.canRead,
+          canUpdateObjectRecords: permissions.canUpdate,
+          canSoftDeleteObjectRecords: permissions.canSoftDelete,
+          canDestroyObjectRecords: permissions.canDestroy,
+        }));
+        objectRecordsPermissions = permissions.objectRecordsPermissions;
+      } else {
+        const permissions =
+          await this.permissionsService.getUserWorkspacePermissions({
+            userWorkspaceId: currentUserWorkspace.id,
+            workspaceId: workspace.id,
+          });
+
+        settingsPermissions = permissions.settingsPermissions;
+        objectRecordsPermissions = permissions.objectRecordsPermissions;
+      }
     }
 
     const grantedSettingsPermissions: SettingPermissionType[] = (
@@ -337,6 +366,9 @@ export class UserService extends TypeOrmQueryService<User> {
     currentUserWorkspace.settingsPermissions = grantedSettingsPermissions;
     currentUserWorkspace.objectRecordsPermissions =
       grantedObjectRecordsPermissions;
+    currentUserWorkspace.objectPermissions = objectPermissions;
+
+    return currentUserWorkspace;
   }
 
   private async getUserAvailableWorkspaces(
