@@ -135,15 +135,15 @@ export class UserResolver {
           });
 
         settingsPermissions = permissions.settingsPermissions;
-        objectPermissions = Object.entries(
-          permissions.objectRecordsPermissions,
-        ).map(([objectMetadataId, permissions]) => ({
-          objectMetadataId,
-          canReadObjectRecords: permissions.canRead,
-          canUpdateObjectRecords: permissions.canUpdate,
-          canSoftDeleteObjectRecords: permissions.canSoftDelete,
-          canDestroyObjectRecords: permissions.canDestroy,
-        }));
+        objectPermissions = Object.entries(permissions.objectPermissions).map(
+          ([objectMetadataId, permissions]) => ({
+            objectMetadataId,
+            canReadObjectRecords: permissions.canRead,
+            canUpdateObjectRecords: permissions.canUpdate,
+            canSoftDeleteObjectRecords: permissions.canSoftDelete,
+            canDestroyObjectRecords: permissions.canDestroy,
+          }),
+        );
         objectRecordsPermissions = permissions.objectRecordsPermissions;
       } else {
         const permissions =
