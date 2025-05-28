@@ -1,6 +1,6 @@
 import {
-    CompositeFieldMetadataType,
-    FieldMetadataType,
+  CompositeFieldMetadataType,
+  FieldMetadataType,
 } from 'twenty-shared/types';
 
 export const COMPOSITE_FIELD_SUB_FIELD_LABELS: {
