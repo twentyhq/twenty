@@ -91,7 +91,8 @@ export const graphqlMocks = {
       () => {
         return HttpResponse.json({
           data: {
-            getPublicWorkspaceDataByDomain: mockedPublicWorkspaceDataBySubdomain
+            getPublicWorkspaceDataByDomain:
+              mockedPublicWorkspaceDataBySubdomain,
           },
         });
       },

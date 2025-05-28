@@ -44,6 +44,7 @@ import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/sig
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
