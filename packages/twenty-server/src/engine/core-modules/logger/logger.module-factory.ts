@@ -1,6 +1,6 @@
 import {
-  LoggerDriverType,
-  LoggerModuleOptions,
+    LoggerDriverType,
+    LoggerModuleOptions,
 } from 'src/engine/core-modules/logger/interfaces';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -16,9 +16,9 @@ export const loggerModuleFactory = async (
   const logLevels = twentyConfigService.get('LOG_LEVELS');
 
   switch (driverType) {
-    case LoggerDriverType.Console: {
+    case LoggerDriverType.CONSOLE: {
       return {
-        type: LoggerDriverType.Console,
+        type: LoggerDriverType.CONSOLE,
         logLevels: logLevels,
       };
     }

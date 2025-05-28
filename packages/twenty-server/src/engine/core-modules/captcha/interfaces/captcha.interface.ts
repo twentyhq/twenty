@@ -2,8 +2,8 @@ import { FactoryProvider, ModuleMetadata } from '@nestjs/common';
 import { registerEnumType } from '@nestjs/graphql';
 
 export enum CaptchaDriverType {
-  GoogleRecaptcha = 'google-recaptcha',
-  Turnstile = 'turnstile',
+  GOOGLE_RECAPTCHA = 'GOOGLE_RECAPTCHA',
+  TURNSTILE = 'TURNSTILE',
 }
 
 registerEnumType(CaptchaDriverType, {
@@ -16,12 +16,12 @@ export type CaptchaDriverOptions = {
 };
 
 export interface GoogleRecaptchaDriverFactoryOptions {
-  type: CaptchaDriverType.GoogleRecaptcha;
+  type: CaptchaDriverType.GOOGLE_RECAPTCHA;
   options: CaptchaDriverOptions;
 }
 
 export interface TurnstileDriverFactoryOptions {
-  type: CaptchaDriverType.Turnstile;
+  type: CaptchaDriverType.TURNSTILE;
   options: CaptchaDriverOptions;
 }
 

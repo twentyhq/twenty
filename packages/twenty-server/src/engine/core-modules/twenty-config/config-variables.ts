@@ -301,7 +301,7 @@ export class ConfigVariables {
     type: ConfigVariableType.ENUM,
     options: Object.values(EmailDriver),
   })
-  EMAIL_DRIVER: EmailDriver = EmailDriver.Logger;
+  EMAIL_DRIVER: EmailDriver = EmailDriver.LOGGER;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.EmailSettings,
@@ -349,14 +349,14 @@ export class ConfigVariables {
     options: Object.values(StorageDriverType),
   })
   @IsOptional()
-  STORAGE_TYPE: StorageDriverType = StorageDriverType.Local;
+  STORAGE_TYPE: StorageDriverType = StorageDriverType.LOCAL;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.StorageConfig,
     description: 'Local path for storage when using local storage type',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.Local)
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.LOCAL)
   STORAGE_LOCAL_PATH = '.local-storage';
 
   @ConfigVariablesMetadata({
@@ -415,7 +415,7 @@ export class ConfigVariables {
     isEnvOnly: true,
   })
   @IsOptional()
-  SERVERLESS_TYPE: ServerlessDriverType = ServerlessDriverType.Local;
+  SERVERLESS_TYPE: ServerlessDriverType = ServerlessDriverType.LOCAL;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerlessConfig,
@@ -439,7 +439,7 @@ export class ConfigVariables {
     description: 'Region for AWS Lambda functions',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
+  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.LAMBDA)
   @IsAWSRegion()
   SERVERLESS_LAMBDA_REGION: AwsRegion;
 
@@ -448,7 +448,7 @@ export class ConfigVariables {
     description: 'IAM role for AWS Lambda functions',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
+  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.LAMBDA)
   SERVERLESS_LAMBDA_ROLE: string;
 
   @ConfigVariablesMetadata({
@@ -456,7 +456,7 @@ export class ConfigVariables {
     description: 'Role to assume when hosting lambdas in dedicated AWS account',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
+  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.LAMBDA)
   @IsOptional()
   SERVERLESS_LAMBDA_SUBHOSTING_ROLE?: string;
 
@@ -466,7 +466,7 @@ export class ConfigVariables {
     description: 'Access key ID for AWS Lambda functions',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
+  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.LAMBDA)
   @IsOptional()
   SERVERLESS_LAMBDA_ACCESS_KEY_ID: string;
 
@@ -476,7 +476,7 @@ export class ConfigVariables {
     description: 'Secret access key for AWS Lambda functions',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
+  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.LAMBDA)
   @IsOptional()
   SERVERLESS_LAMBDA_SECRET_ACCESS_KEY: string;
 
@@ -635,7 +635,7 @@ export class ConfigVariables {
   })
   @IsOptional()
   EXCEPTION_HANDLER_DRIVER: ExceptionHandlerDriver =
-    ExceptionHandlerDriver.Console;
+    ExceptionHandlerDriver.CONSOLE;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.Logging,
@@ -676,7 +676,7 @@ export class ConfigVariables {
     isEnvOnly: true,
   })
   @IsOptional()
-  LOGGER_DRIVER: LoggerDriverType = LoggerDriverType.Console;
+  LOGGER_DRIVER: LoggerDriverType = LoggerDriverType.CONSOLE;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ExceptionHandler,
@@ -685,7 +685,7 @@ export class ConfigVariables {
     isSensitive: true,
   })
   @ValidateIf(
-    (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
+    (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY,
   )
   SENTRY_DSN: string;
 
@@ -696,7 +696,7 @@ export class ConfigVariables {
     isSensitive: true,
   })
   @ValidateIf(
-    (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
+    (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY,
   )
   SENTRY_FRONT_DSN: string;
   @ConfigVariablesMetadata({
@@ -705,7 +705,7 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
   })
   @ValidateIf(
-    (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
+    (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY,
   )
   @IsOptional()
   SENTRY_ENVIRONMENT: string;
@@ -717,7 +717,7 @@ export class ConfigVariables {
     options: Object.values(SupportDriver),
   })
   @IsOptional()
-  SUPPORT_DRIVER: SupportDriver = SupportDriver.None;
+  SUPPORT_DRIVER: SupportDriver = SupportDriver.NONE;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SupportChatConfig,
@@ -725,7 +725,7 @@ export class ConfigVariables {
     description: 'Chat ID for the support front integration',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.SUPPORT_DRIVER === SupportDriver.Front)
+  @ValidateIf((env) => env.SUPPORT_DRIVER === SupportDriver.FRONT)
   SUPPORT_FRONT_CHAT_ID: string;
 
   @ConfigVariablesMetadata({
@@ -734,7 +734,7 @@ export class ConfigVariables {
     description: 'HMAC key for the support front integration',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.SUPPORT_DRIVER === SupportDriver.Front)
+  @ValidateIf((env) => env.SUPPORT_DRIVER === SupportDriver.FRONT)
   SUPPORT_FRONT_HMAC_KEY: string;
 
   @ConfigVariablesMetadata({
@@ -840,7 +840,7 @@ export class ConfigVariables {
     options: Object.values(NodeEnvironment),
     isEnvOnly: true,
   })
-  NODE_ENV: NodeEnvironment = NodeEnvironment.production;
+  NODE_ENV: NodeEnvironment = NodeEnvironment.PRODUCTION;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
@@ -981,7 +981,7 @@ export class ConfigVariables {
     options: Object.values(LLMTracingDriver),
     isEnvOnly: true,
   })
-  LLM_TRACING_DRIVER: LLMTracingDriver = LLMTracingDriver.Console;
+  LLM_TRACING_DRIVER: LLMTracingDriver = LLMTracingDriver.CONSOLE;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,

@@ -4,9 +4,9 @@ import { ExceptionHandlerConsoleDriver } from 'src/engine/core-modules/exception
 import { ExceptionHandlerSentryDriver } from 'src/engine/core-modules/exception-handler/drivers/sentry.driver';
 import { EXCEPTION_HANDLER_DRIVER } from 'src/engine/core-modules/exception-handler/exception-handler.constants';
 import {
-  ASYNC_OPTIONS_TYPE,
-  ConfigurableModuleClass,
-  OPTIONS_TYPE,
+    ASYNC_OPTIONS_TYPE,
+    ConfigurableModuleClass,
+    OPTIONS_TYPE,
 } from 'src/engine/core-modules/exception-handler/exception-handler.module-definition';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
@@ -22,7 +22,7 @@ export class ExceptionHandlerModule extends ConfigurableModuleClass {
     const provider = {
       provide: EXCEPTION_HANDLER_DRIVER,
       useValue:
-        options.type === ExceptionHandlerDriver.Console
+        options.type === ExceptionHandlerDriver.CONSOLE
           ? new ExceptionHandlerConsoleDriver()
           : new ExceptionHandlerSentryDriver(),
     };
@@ -45,7 +45,7 @@ export class ExceptionHandlerModule extends ConfigurableModuleClass {
           return null;
         }
 
-        return config.type === ExceptionHandlerDriver.Console
+        return config.type === ExceptionHandlerDriver.CONSOLE
           ? new ExceptionHandlerConsoleDriver()
           : new ExceptionHandlerSentryDriver();
       },

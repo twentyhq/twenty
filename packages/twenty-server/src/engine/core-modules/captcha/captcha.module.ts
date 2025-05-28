@@ -1,12 +1,12 @@
 import { DynamicModule, Global } from '@nestjs/common';
 
-import { CAPTCHA_DRIVER } from 'src/engine/core-modules/captcha/constants/captcha-driver.constants';
 import { CaptchaService } from 'src/engine/core-modules/captcha/captcha.service';
+import { CAPTCHA_DRIVER } from 'src/engine/core-modules/captcha/constants/captcha-driver.constants';
 import { GoogleRecaptchaDriver } from 'src/engine/core-modules/captcha/drivers/google-recaptcha.driver';
 import { TurnstileDriver } from 'src/engine/core-modules/captcha/drivers/turnstile.driver';
 import {
-  CaptchaDriverType,
-  CaptchaModuleAsyncOptions,
+    CaptchaDriverType,
+    CaptchaModuleAsyncOptions,
 } from 'src/engine/core-modules/captcha/interfaces';
 
 @Global()
@@ -23,9 +23,9 @@ export class CaptchaModule {
         }
 
         switch (config.type) {
-          case CaptchaDriverType.GoogleRecaptcha:
+          case CaptchaDriverType.GOOGLE_RECAPTCHA:
             return new GoogleRecaptchaDriver(config.options);
-          case CaptchaDriverType.Turnstile:
+          case CaptchaDriverType.TURNSTILE:
             return new TurnstileDriver(config.options);
           default:
             return;

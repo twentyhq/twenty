@@ -37,7 +37,7 @@ describe('FileStorageDriverFactory', () => {
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
-          if (key === 'STORAGE_TYPE') return StorageDriverType.Local;
+          if (key === 'STORAGE_TYPE') return StorageDriverType.LOCAL;
           if (key === 'STORAGE_LOCAL_PATH') return storagePath;
 
           return undefined;
@@ -84,7 +84,7 @@ describe('FileStorageDriverFactory', () => {
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
-          if (key === 'STORAGE_TYPE') return StorageDriverType.Local;
+          if (key === 'STORAGE_TYPE') return StorageDriverType.LOCAL;
           if (key === 'STORAGE_LOCAL_PATH') return storagePath;
 
           return undefined;
@@ -168,7 +168,7 @@ describe('FileStorageDriverFactory', () => {
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
-          if (key === 'STORAGE_TYPE') return StorageDriverType.Local;
+          if (key === 'STORAGE_TYPE') return StorageDriverType.LOCAL;
           if (key === 'STORAGE_LOCAL_PATH') return storagePath;
 
           return undefined;
@@ -186,7 +186,7 @@ describe('FileStorageDriverFactory', () => {
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
-          if (key === 'STORAGE_TYPE') return StorageDriverType.Local;
+          if (key === 'STORAGE_TYPE') return StorageDriverType.LOCAL;
           if (key === 'STORAGE_LOCAL_PATH') return storagePath;
 
           return undefined;
@@ -203,7 +203,7 @@ describe('FileStorageDriverFactory', () => {
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
-          if (key === 'STORAGE_TYPE') return StorageDriverType.Local;
+          if (key === 'STORAGE_TYPE') return StorageDriverType.LOCAL;
           if (key === 'STORAGE_LOCAL_PATH') return '/tmp/storage1';
 
           return undefined;
@@ -215,7 +215,7 @@ describe('FileStorageDriverFactory', () => {
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
-          if (key === 'STORAGE_TYPE') return StorageDriverType.Local;
+          if (key === 'STORAGE_TYPE') return StorageDriverType.LOCAL;
           if (key === 'STORAGE_LOCAL_PATH') return '/tmp/storage2';
 
           return undefined;
@@ -233,7 +233,7 @@ describe('FileStorageDriverFactory', () => {
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
-          if (key === 'STORAGE_TYPE') return StorageDriverType.Local;
+          if (key === 'STORAGE_TYPE') return StorageDriverType.LOCAL;
           if (key === 'STORAGE_LOCAL_PATH') return '/tmp/storage';
 
           return undefined;
@@ -285,7 +285,7 @@ describe('FileStorageDriverFactory', () => {
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
-          if (key === 'STORAGE_TYPE') return StorageDriverType.Local;
+          if (key === 'STORAGE_TYPE') return StorageDriverType.LOCAL;
           if (key === 'STORAGE_LOCAL_PATH') return storagePath;
 
           return undefined;

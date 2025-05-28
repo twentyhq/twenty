@@ -1,4 +1,4 @@
 export enum StorageDriverType {
-  S3 = 's3',
-  Local = 'local',
+  S3 = 'S3',
+  LOCAL = 'LOCAL',
 }

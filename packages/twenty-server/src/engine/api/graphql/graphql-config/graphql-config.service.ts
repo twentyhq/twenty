@@ -3,8 +3,8 @@ import { ContextIdFactory, ModuleRef } from '@nestjs/core';
 import { GqlOptionsFactory } from '@nestjs/graphql';
 
 import {
-  YogaDriverConfig,
-  YogaDriverServerContext,
+    YogaDriverConfig,
+    YogaDriverServerContext,
 } from '@graphql-yoga/nestjs';
 import * as Sentry from '@sentry/node';
 import { GraphQLError, GraphQLSchema } from 'graphql';
@@ -44,7 +44,7 @@ export class GraphQLConfigService
 
   createGqlOptions(): YogaDriverConfig {
     const isDebugMode =
-      this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.development;
+      this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.DEVELOPMENT;
     const plugins = [
       useThrottler({
         ttl: this.twentyConfigService.get('API_RATE_LIMITING_TTL'),

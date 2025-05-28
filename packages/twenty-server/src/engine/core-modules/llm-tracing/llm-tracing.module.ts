@@ -1,14 +1,14 @@
-import { Global, DynamicModule } from '@nestjs/common';
+import { DynamicModule, Global } from '@nestjs/common';
 
 import {
-  LLMTracingModuleAsyncOptions,
-  LLMTracingDriver,
+    LLMTracingDriver,
+    LLMTracingModuleAsyncOptions,
 } from 'src/engine/core-modules/llm-tracing/interfaces/llm-tracing.interface';
 
-import { LangfuseDriver } from 'src/engine/core-modules/llm-tracing/drivers/langfuse.driver';
 import { ConsoleDriver } from 'src/engine/core-modules/llm-tracing/drivers/console.driver';
-import { LLMTracingService } from 'src/engine/core-modules/llm-tracing/llm-tracing.service';
+import { LangfuseDriver } from 'src/engine/core-modules/llm-tracing/drivers/langfuse.driver';
 import { LLM_TRACING_DRIVER } from 'src/engine/core-modules/llm-tracing/llm-tracing.constants';
+import { LLMTracingService } from 'src/engine/core-modules/llm-tracing/llm-tracing.service';
 
 @Global()
 export class LLMTracingModule {
@@ -20,10 +20,10 @@ export class LLMTracingModule {
         const config = options.useFactory(...args);
 
         switch (config.type) {
-          case LLMTracingDriver.Langfuse: {
+          case LLMTracingDriver.LANGFUSE: {
             return new LangfuseDriver(config.options);
           }
-          case LLMTracingDriver.Console: {
+          case LLMTracingDriver.CONSOLE: {
             return new ConsoleDriver();
           }
         }

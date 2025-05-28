@@ -57,11 +57,11 @@ export class ClientConfigService {
       frontDomain: this.domainManagerService.getFrontUrl().hostname,
       debugMode:
         this.twentyConfigService.get('NODE_ENV') ===
-        NodeEnvironment.development,
+        NodeEnvironment.DEVELOPMENT,
       support: {
         supportDriver: supportDriver
           ? this.transformEnum(supportDriver, SupportDriver)
-          : SupportDriver.None,
+          : SupportDriver.NONE,
         supportFrontChatId: this.twentyConfigService.get(
           'SUPPORT_FRONT_CHAT_ID',
         ),
@@ -89,7 +89,7 @@ export class ClientConfigService {
       analyticsEnabled: this.twentyConfigService.get('ANALYTICS_ENABLED'),
       canManageFeatureFlags:
         this.twentyConfigService.get('NODE_ENV') ===
-          NodeEnvironment.development ||
+          NodeEnvironment.DEVELOPMENT ||
         this.twentyConfigService.get('IS_BILLING_ENABLED'),
       publicFeatureFlags: PUBLIC_FEATURE_FLAGS,
       isMicrosoftMessagingEnabled: this.twentyConfigService.get(
