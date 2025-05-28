@@ -15,7 +15,7 @@ import { capitalize } from 'twenty-shared/utils';
 import { Pill } from 'twenty-ui/components';
 import { IconComponent, Label, TablerIconsProps } from 'twenty-ui/display';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
-import { useMouseDownNavigation } from 'twenty-ui/utilities';
+import { TriggerEventType, useMouseDownNavigation } from 'twenty-ui/utilities';
 
 const DEFAULT_INDENTATION_LEVEL = 1;
 
@@ -38,7 +38,7 @@ export type NavigationDrawerItemProps = {
   rightOptions?: ReactNode;
   isDragging?: boolean;
   isRightOptionsDropdownOpen?: boolean;
-  triggerEvent?: 'MOUSE_DOWN' | 'CLICK';
+  triggerEvent?: TriggerEventType;
 };
 
 type StyledItemProps = Pick<

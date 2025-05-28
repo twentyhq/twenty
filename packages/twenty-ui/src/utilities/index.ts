@@ -23,9 +23,11 @@ export { AutogrowWrapper } from './dimensions/components/AutogrowWrapper';
 export { executeClickAction } from './navigation/hooks/executeClickAction';
 export { useMouseDownNavigation } from './navigation/hooks/useMouseDownNavigation';
 export { isNavigationModifierPressed } from './navigation/isNavigationModifierPressed';
+export type { TriggerEventType } from './navigation/types/trigger-event.type';
 export { useIsMobile } from './responsive/hooks/useIsMobile';
 export { useScreenSize } from './screen-size/hooks/useScreenSize';
 export { createState } from './state/utils/createState';
 export type { ClickOutsideAttributes } from './types/ClickOutsideAttributes';
 export type { Nullable } from './types/Nullable';
 export { getDisplayValueByUrlType } from './utils/getDisplayValueByUrlType';
+

@@ -6,7 +6,6 @@ import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { ReactNode } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
   AvatarChip,
@@ -15,15 +14,7 @@ import {
   ChipVariant,
   LinkAvatarChip,
 } from 'twenty-ui/components';
-import { useMouseDownNavigation } from 'twenty-ui/utilities';
-
-const RecordChipContainer = ({
-  children,
-  dataClickOutsideId,
-}: {
-  children: ReactNode;
-  dataClickOutsideId?: string;
-}) => <div data-click-outside-id={dataClickOutsideId}>{children}</div>;
+import { TriggerEventType, useMouseDownNavigation } from 'twenty-ui/utilities';
 
 export type RecordChipProps = {
   objectNameSingular: string;
@@ -35,7 +26,7 @@ export type RecordChipProps = {
   to?: string | undefined;
   size?: ChipSize;
   isLabelHidden?: boolean;
-  triggerEvent?: 'MOUSE_DOWN' | 'CLICK';
+  triggerEvent?: TriggerEventType;
 };
 
 export const RecordChip = ({
@@ -99,32 +90,29 @@ export const RecordChip = ({
   }
 
   return (
-    <RecordChipContainer
-      dataClickOutsideId={
+    <LinkAvatarChip
+      size={size}
+      maxWidth={maxWidth}
+      placeholderColorSeed={record.id}
+      name={recordChipData.name}
+      isLabelHidden={isLabelHidden}
+      avatarType={recordChipData.avatarType}
+      avatarUrl={recordChipData.avatarUrl ?? ''}
+      className={className}
+      variant={
+        variant ??
+        (!forceDisableClick
+          ? AvatarChipVariant.Regular
+          : AvatarChipVariant.Transparent)
+      }
+      to={to ?? getLinkToShowPage(objectNameSingular, record)}
+      onClick={onClick}
+      onMouseDown={onMouseDown}
+      data-click-outside-id={
         isSidePanelViewOpenRecordInType
           ? RECORD_CHIP_CLICK_OUTSIDE_ID
           : undefined
       }
-    >
-      <LinkAvatarChip
-        size={size}
-        maxWidth={maxWidth}
-        placeholderColorSeed={record.id}
-        name={recordChipData.name}
-        isLabelHidden={isLabelHidden}
-        avatarType={recordChipData.avatarType}
-        avatarUrl={recordChipData.avatarUrl ?? ''}
-        className={className}
-        variant={
-          variant ??
-          (!forceDisableClick
-            ? AvatarChipVariant.Regular
-            : AvatarChipVariant.Transparent)
-        }
-        to={to ?? getLinkToShowPage(objectNameSingular, record)}
-        onClick={onClick}
-        onMouseDown={onMouseDown}
-      />
-    </RecordChipContainer>
+    />
   );
 };

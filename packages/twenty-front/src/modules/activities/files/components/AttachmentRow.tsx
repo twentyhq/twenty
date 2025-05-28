@@ -141,10 +141,7 @@ export const AttachmentRow = ({
 
   const handleOpenDocument = (e: React.MouseEvent) => {
     // Cmd/Ctrl+click opens new tab, right click opens context menu
-    const isModifierPressed = isNavigationModifierPressed(e);
-    const isRightClick = e.button === 2;
-
-    if (isModifierPressed || isRightClick) {
+    if (isNavigationModifierPressed(e) === true) {
       return;
     }
 

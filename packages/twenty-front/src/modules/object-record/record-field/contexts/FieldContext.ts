@@ -1,5 +1,6 @@
 import { createContext } from 'react';
 
+import { TriggerEventType } from 'twenty-ui/utilities';
 import { FieldDefinition } from '../types/FieldDefinition';
 import { FieldMetadata } from '../types/FieldMetadata';
 
@@ -36,7 +37,7 @@ export type GenericFieldContextType = {
   disableChipClick?: boolean;
   onOpenEditMode?: () => void;
   onCloseEditMode?: () => void;
-  triggerEvent?: 'MOUSE_DOWN' | 'CLICK';
+  triggerEvent?: TriggerEventType;
 };
 
 export const FieldContext = createContext<GenericFieldContextType>(

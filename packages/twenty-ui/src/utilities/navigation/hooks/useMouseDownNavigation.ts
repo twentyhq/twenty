@@ -1,5 +1,6 @@
 import { executeClickAction } from '@ui/utilities/navigation/hooks/executeClickAction';
 import { isNavigationModifierPressed } from '@ui/utilities/navigation/isNavigationModifierPressed';
+import { TriggerEventType } from '@ui/utilities/navigation/types/trigger-event.type';
 import { MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -9,7 +10,7 @@ type UseMouseDownNavigationProps = {
   onClick?: (() => void) | ((event: MouseEvent<HTMLElement>) => void);
   disabled?: boolean;
   onBeforeNavigation?: () => void;
-  triggerEvent?: 'MOUSE_DOWN' | 'CLICK';
+  triggerEvent?: TriggerEventType;
   stopPropagation?: boolean;
 };
 
