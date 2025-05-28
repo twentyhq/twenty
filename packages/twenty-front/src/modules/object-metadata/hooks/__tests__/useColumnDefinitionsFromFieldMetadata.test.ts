@@ -29,7 +29,6 @@ const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
       isMicrosoftAuthEnabled: false,
       isPasswordAuthEnabled: true,
       customDomain: 'my-custom-domain.com',
-      isCustomDomainEnabled: true,
       workspaceUrls: {
         subdomainUrl: 'https://twenty.twenty.com',
         customUrl: 'https://my-custom-domain.com',

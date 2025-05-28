@@ -41,7 +41,6 @@ export const USER_QUERY_FRAGMENT = gql`
       subdomain
       hasValidEnterpriseKey
       customDomain
-      isCustomDomainEnabled
       workspaceUrls {
         subdomainUrl
         customUrl

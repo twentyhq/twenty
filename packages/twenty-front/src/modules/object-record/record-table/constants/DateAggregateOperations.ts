@@ -1,4 +1,4 @@
-export enum DATE_AGGREGATE_OPERATIONS {
+export enum DATE_AggregateOperations {
   earliest = 'EARLIEST',
   latest = 'LATEST',
 }

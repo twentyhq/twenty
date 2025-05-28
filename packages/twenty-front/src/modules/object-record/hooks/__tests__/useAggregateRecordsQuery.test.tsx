@@ -2,7 +2,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useAggregateRecordsQuery } from '@/object-record/hooks/useAggregateRecordsQuery';
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { generateAggregateQuery } from '@/object-record/utils/generateAggregateQuery';
 import { renderHook } from '@testing-library/react';
 import { FieldMetadataType } from '~/generated/graphql';
@@ -71,7 +71,7 @@ describe('useAggregateRecordsQuery', () => {
       useAggregateRecordsQuery({
         objectNameSingular: 'company',
         recordGqlFieldsAggregate: {
-          name: [AGGREGATE_OPERATIONS.count],
+          name: [AggregateOperations.count],
         },
       }),
     );
@@ -92,7 +92,7 @@ describe('useAggregateRecordsQuery', () => {
       useAggregateRecordsQuery({
         objectNameSingular: 'company',
         recordGqlFieldsAggregate: {
-          amount: [AGGREGATE_OPERATIONS.sum],
+          amount: [AggregateOperations.sum],
         },
       }),
     );
@@ -115,7 +115,7 @@ describe('useAggregateRecordsQuery', () => {
         useAggregateRecordsQuery({
           objectNameSingular: 'company',
           recordGqlFieldsAggregate: {
-            name: [AGGREGATE_OPERATIONS.sum],
+            name: [AggregateOperations.sum],
           },
         }),
       ),
@@ -127,8 +127,8 @@ describe('useAggregateRecordsQuery', () => {
       useAggregateRecordsQuery({
         objectNameSingular: 'company',
         recordGqlFieldsAggregate: {
-          amount: [AGGREGATE_OPERATIONS.sum],
-          name: [AGGREGATE_OPERATIONS.count],
+          amount: [AggregateOperations.sum],
+          name: [AggregateOperations.count],
         },
       }),
     );

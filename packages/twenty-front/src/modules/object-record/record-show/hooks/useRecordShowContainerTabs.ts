@@ -10,15 +10,15 @@ import { RecordLayoutTab } from '@/ui/layout/tab/types/RecordLayoutTab';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
+import {
+    IconCalendarEvent,
+    IconHome,
+    IconMail,
+    IconNotes,
+    IconSettings,
+} from 'twenty-ui/display';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { FeatureFlagKey } from '~/generated/graphql';
-import {
-  IconCalendarEvent,
-  IconHome,
-  IconMail,
-  IconNotes,
-  IconSettings,
-} from 'twenty-ui/display';
 
 export const useRecordShowContainerTabs = (
   loading: boolean,
@@ -152,7 +152,7 @@ export const useRecordShowContainerTabs = (
               ifMobile: false,
               ifDesktop: false,
               ifInRightDrawer: false,
-              ifFeaturesDisabled: [FeatureFlagKey.IsWorkflowEnabled],
+              ifFeaturesDisabled: [FeatureFlagKey.IS_WORKFLOW_ENABLED],
               ifRequiredObjectsInactive: [],
               ifRelationsMissing: [],
             },
@@ -175,7 +175,7 @@ export const useRecordShowContainerTabs = (
               ifMobile: false,
               ifDesktop: false,
               ifInRightDrawer: false,
-              ifFeaturesDisabled: [FeatureFlagKey.IsWorkflowEnabled],
+              ifFeaturesDisabled: [FeatureFlagKey.IS_WORKFLOW_ENABLED],
               ifRequiredObjectsInactive: [],
               ifRelationsMissing: [],
             },
@@ -197,7 +197,7 @@ export const useRecordShowContainerTabs = (
               ifMobile: false,
               ifDesktop: false,
               ifInRightDrawer: false,
-              ifFeaturesDisabled: [FeatureFlagKey.IsWorkflowEnabled],
+              ifFeaturesDisabled: [FeatureFlagKey.IS_WORKFLOW_ENABLED],
               ifRequiredObjectsInactive: [],
               ifRelationsMissing: [],
             },

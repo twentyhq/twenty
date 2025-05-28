@@ -25,7 +25,6 @@ describe('workspace permissions', () => {
           logo
           isPublicInviteLinkEnabled
           subdomain
-          isCustomDomainEnabled
         }
       }
     `;

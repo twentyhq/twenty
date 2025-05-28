@@ -1,5 +1,5 @@
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
-import { DATE_AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/DateAggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { DATE_AggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { msg } from '@lingui/core/macro';
 
@@ -7,31 +7,31 @@ export const getAggregateOperationShortLabel = (
   operation: ExtendedAggregateOperations,
 ) => {
   switch (operation) {
-    case AGGREGATE_OPERATIONS.min:
+    case AggregateOperations.min:
       return msg`Min`;
-    case AGGREGATE_OPERATIONS.max:
+    case AggregateOperations.max:
       return msg`Max`;
-    case AGGREGATE_OPERATIONS.avg:
+    case AggregateOperations.avg:
       return msg`Average`;
-    case AGGREGATE_OPERATIONS.sum:
+    case AggregateOperations.sum:
       return msg`Sum`;
-    case AGGREGATE_OPERATIONS.count:
+    case AggregateOperations.count:
       return msg`All`;
-    case AGGREGATE_OPERATIONS.countEmpty:
-    case AGGREGATE_OPERATIONS.percentageEmpty:
+    case AggregateOperations.countEmpty:
+    case AggregateOperations.percentageEmpty:
       return msg`Empty`;
-    case AGGREGATE_OPERATIONS.countNotEmpty:
-    case AGGREGATE_OPERATIONS.percentageNotEmpty:
+    case AggregateOperations.countNotEmpty:
+    case AggregateOperations.percentageNotEmpty:
       return msg`Not empty`;
-    case AGGREGATE_OPERATIONS.countUniqueValues:
+    case AggregateOperations.countUniqueValues:
       return msg`Unique`;
-    case DATE_AGGREGATE_OPERATIONS.earliest:
+    case DATE_AggregateOperations.earliest:
       return msg`Earliest`;
-    case DATE_AGGREGATE_OPERATIONS.latest:
+    case DATE_AggregateOperations.latest:
       return msg`Latest`;
-    case AGGREGATE_OPERATIONS.countTrue:
+    case AggregateOperations.countTrue:
       return msg`True`;
-    case AGGREGATE_OPERATIONS.countFalse:
+    case AggregateOperations.countFalse:
       return msg`False`;
     default:
       throw new Error(`Unknown aggregate operation: ${operation}`);

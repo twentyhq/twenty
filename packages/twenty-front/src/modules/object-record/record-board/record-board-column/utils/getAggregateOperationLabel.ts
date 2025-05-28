@@ -1,5 +1,5 @@
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
-import { DATE_AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/DateAggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { DATE_AggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { t } from '@lingui/core/macro';
 
@@ -7,33 +7,33 @@ export const getAggregateOperationLabel = (
   operation: ExtendedAggregateOperations,
 ) => {
   switch (operation) {
-    case AGGREGATE_OPERATIONS.min:
+    case AggregateOperations.min:
       return t`Min`;
-    case AGGREGATE_OPERATIONS.max:
+    case AggregateOperations.max:
       return t`Max`;
-    case AGGREGATE_OPERATIONS.avg:
+    case AggregateOperations.avg:
       return t`Average`;
-    case AGGREGATE_OPERATIONS.sum:
+    case AggregateOperations.sum:
       return t`Sum`;
-    case AGGREGATE_OPERATIONS.count:
+    case AggregateOperations.count:
       return t`Count all`;
-    case AGGREGATE_OPERATIONS.countEmpty:
+    case AggregateOperations.countEmpty:
       return t`Count empty`;
-    case AGGREGATE_OPERATIONS.countNotEmpty:
+    case AggregateOperations.countNotEmpty:
       return t`Count not empty`;
-    case AGGREGATE_OPERATIONS.countUniqueValues:
+    case AggregateOperations.countUniqueValues:
       return t`Count unique values`;
-    case AGGREGATE_OPERATIONS.percentageEmpty:
+    case AggregateOperations.percentageEmpty:
       return t`Percent empty`;
-    case AGGREGATE_OPERATIONS.percentageNotEmpty:
+    case AggregateOperations.percentageNotEmpty:
       return t`Percent not empty`;
-    case DATE_AGGREGATE_OPERATIONS.earliest:
+    case DATE_AggregateOperations.earliest:
       return t`Earliest date`;
-    case DATE_AGGREGATE_OPERATIONS.latest:
+    case DATE_AggregateOperations.latest:
       return t`Latest date`;
-    case AGGREGATE_OPERATIONS.countTrue:
+    case AggregateOperations.countTrue:
       return t`Count true`;
-    case AGGREGATE_OPERATIONS.countFalse:
+    case AggregateOperations.countFalse:
       return t`Count false`;
     default:
       throw new Error(`Unknown aggregate operation: ${operation}`);

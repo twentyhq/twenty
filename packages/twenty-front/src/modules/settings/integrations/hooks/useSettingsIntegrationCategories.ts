@@ -10,21 +10,21 @@ import { FeatureFlagKey } from '~/generated/graphql';
 export const useSettingsIntegrationCategories =
   (): SettingsIntegrationCategory[] => {
     const isAirtableIntegrationEnabled = useIsFeatureEnabled(
-      FeatureFlagKey.IsAirtableIntegrationEnabled,
+      FeatureFlagKey.IS_AIRTABLE_INTEGRATION_ENABLED,
     );
     const isAirtableIntegrationActive = !!MOCK_REMOTE_DATABASES.find(
       ({ name }) => name === 'airtable',
     )?.isActive;
 
     const isPostgresqlIntegrationEnabled = useIsFeatureEnabled(
-      FeatureFlagKey.IsPostgreSQLIntegrationEnabled,
+      FeatureFlagKey.IS_POSTGRESQL_INTEGRATION_ENABLED,
     );
     const isPostgresqlIntegrationActive = !!MOCK_REMOTE_DATABASES.find(
       ({ name }) => name === 'postgresql',
     )?.isActive;
 
     const isStripeIntegrationEnabled = useIsFeatureEnabled(
-      FeatureFlagKey.IsStripeIntegrationEnabled,
+      FeatureFlagKey.IS_STRIPE_INTEGRATION_ENABLED,
     );
     const isStripeIntegrationActive = !!MOCK_REMOTE_DATABASES.find(
       ({ name }) => name === 'stripe',

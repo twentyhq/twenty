@@ -1,10 +1,10 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
-import { DATE_AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/DateAggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { DATE_AggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { capitalize, isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
+import { capitalize, isFieldMetadataDateKind } from 'twenty-shared/utils';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type NameForAggregation = {
   [T in ExtendedAggregateOperations]?: string;
@@ -25,53 +25,53 @@ export const getAvailableAggregationsFromObjectFields = (
 
       if (field.type === FieldMetadataType.RELATION) {
         acc[field.name] = {
-          [AGGREGATE_OPERATIONS.count]: 'totalCount',
+          [AggregateOperations.count]: 'totalCount',
         };
         return acc;
       }
 
       acc[field.name] = {
-        [AGGREGATE_OPERATIONS.countUniqueValues]: `countUniqueValues${capitalize(field.name)}`,
-        [AGGREGATE_OPERATIONS.countEmpty]: `countEmpty${capitalize(field.name)}`,
-        [AGGREGATE_OPERATIONS.countNotEmpty]: `countNotEmpty${capitalize(field.name)}`,
-        [AGGREGATE_OPERATIONS.percentageEmpty]: `percentageEmpty${capitalize(field.name)}`,
-        [AGGREGATE_OPERATIONS.percentageNotEmpty]: `percentageNotEmpty${capitalize(field.name)}`,
-        [AGGREGATE_OPERATIONS.count]: 'totalCount',
+        [AggregateOperations.countUniqueValues]: `countUniqueValues${capitalize(field.name)}`,
+        [AggregateOperations.countEmpty]: `countEmpty${capitalize(field.name)}`,
+        [AggregateOperations.countNotEmpty]: `countNotEmpty${capitalize(field.name)}`,
+        [AggregateOperations.percentageEmpty]: `percentageEmpty${capitalize(field.name)}`,
+        [AggregateOperations.percentageNotEmpty]: `percentageNotEmpty${capitalize(field.name)}`,
+        [AggregateOperations.count]: 'totalCount',
       };
 
       if (field.type === FieldMetadataType.NUMBER) {
         acc[field.name] = {
           ...acc[field.name],
-          [AGGREGATE_OPERATIONS.min]: `min${capitalize(field.name)}`,
-          [AGGREGATE_OPERATIONS.max]: `max${capitalize(field.name)}`,
-          [AGGREGATE_OPERATIONS.avg]: `avg${capitalize(field.name)}`,
-          [AGGREGATE_OPERATIONS.sum]: `sum${capitalize(field.name)}`,
+          [AggregateOperations.min]: `min${capitalize(field.name)}`,
+          [AggregateOperations.max]: `max${capitalize(field.name)}`,
+          [AggregateOperations.avg]: `avg${capitalize(field.name)}`,
+          [AggregateOperations.sum]: `sum${capitalize(field.name)}`,
         };
       }
 
       if (field.type === FieldMetadataType.CURRENCY) {
         acc[field.name] = {
           ...acc[field.name],
-          [AGGREGATE_OPERATIONS.min]: `min${capitalize(field.name)}AmountMicros`,
-          [AGGREGATE_OPERATIONS.max]: `max${capitalize(field.name)}AmountMicros`,
-          [AGGREGATE_OPERATIONS.avg]: `avg${capitalize(field.name)}AmountMicros`,
-          [AGGREGATE_OPERATIONS.sum]: `sum${capitalize(field.name)}AmountMicros`,
+          [AggregateOperations.min]: `min${capitalize(field.name)}AmountMicros`,
+          [AggregateOperations.max]: `max${capitalize(field.name)}AmountMicros`,
+          [AggregateOperations.avg]: `avg${capitalize(field.name)}AmountMicros`,
+          [AggregateOperations.sum]: `sum${capitalize(field.name)}AmountMicros`,
         };
       }
 
       if (field.type === FieldMetadataType.BOOLEAN) {
         acc[field.name] = {
           ...acc[field.name],
-          [AGGREGATE_OPERATIONS.countTrue]: `countTrue${capitalize(field.name)}`,
-          [AGGREGATE_OPERATIONS.countFalse]: `countFalse${capitalize(field.name)}`,
+          [AggregateOperations.countTrue]: `countTrue${capitalize(field.name)}`,
+          [AggregateOperations.countFalse]: `countFalse${capitalize(field.name)}`,
         };
       }
 
       if (isFieldMetadataDateKind(field.type) === true) {
         acc[field.name] = {
           ...acc[field.name],
-          [DATE_AGGREGATE_OPERATIONS.earliest]: `min${capitalize(field.name)}`,
-          [DATE_AGGREGATE_OPERATIONS.latest]: `max${capitalize(field.name)}`,
+          [DATE_AggregateOperations.earliest]: `min${capitalize(field.name)}`,
+          [DATE_AggregateOperations.latest]: `max${capitalize(field.name)}`,
         };
       }
 
@@ -83,7 +83,7 @@ export const getAvailableAggregationsFromObjectFields = (
     },
     {
       [FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION]: {
-        [AGGREGATE_OPERATIONS.count]: 'totalCount',
+        [AggregateOperations.count]: 'totalCount',
       },
     },
   );

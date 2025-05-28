@@ -1,4 +1,4 @@
-export enum AGGREGATE_OPERATIONS {
+export enum AggregateOperations {
   min = 'MIN',
   max = 'MAX',
   avg = 'AVG',

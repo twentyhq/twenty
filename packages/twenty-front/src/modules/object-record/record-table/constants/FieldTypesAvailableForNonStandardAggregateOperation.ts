@@ -1,31 +1,31 @@
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
-import { DATE_AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/DateAggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { DATE_AggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const FIELD_TYPES_AVAILABLE_FOR_NON_STANDARD_AGGREGATE_OPERATION = {
-  [AGGREGATE_OPERATIONS.min]: [
+  [AggregateOperations.min]: [
     FieldMetadataType.NUMBER,
     FieldMetadataType.CURRENCY,
   ],
-  [AGGREGATE_OPERATIONS.max]: [
+  [AggregateOperations.max]: [
     FieldMetadataType.NUMBER,
     FieldMetadataType.CURRENCY,
   ],
-  [AGGREGATE_OPERATIONS.avg]: [
+  [AggregateOperations.avg]: [
     FieldMetadataType.NUMBER,
     FieldMetadataType.CURRENCY,
   ],
-  [AGGREGATE_OPERATIONS.sum]: [
+  [AggregateOperations.sum]: [
     FieldMetadataType.NUMBER,
     FieldMetadataType.CURRENCY,
   ],
-  [AGGREGATE_OPERATIONS.countFalse]: [FieldMetadataType.BOOLEAN],
-  [AGGREGATE_OPERATIONS.countTrue]: [FieldMetadataType.BOOLEAN],
-  [DATE_AGGREGATE_OPERATIONS.earliest]: [
+  [AggregateOperations.countFalse]: [FieldMetadataType.BOOLEAN],
+  [AggregateOperations.countTrue]: [FieldMetadataType.BOOLEAN],
+  [DATE_AggregateOperations.earliest]: [
     FieldMetadataType.DATE_TIME,
     FieldMetadataType.DATE,
   ],
-  [DATE_AGGREGATE_OPERATIONS.latest]: [
+  [DATE_AggregateOperations.latest]: [
     FieldMetadataType.DATE_TIME,
     FieldMetadataType.DATE,
   ],

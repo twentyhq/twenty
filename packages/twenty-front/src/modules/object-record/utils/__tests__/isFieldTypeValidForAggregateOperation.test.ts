@@ -1,4 +1,4 @@
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { AggregateOperationsOmittingStandardOperations } from '@/object-record/types/AggregateOperationsOmittingStandardOperations';
 import { isFieldTypeValidForAggregateOperation } from '@/object-record/utils/isFieldTypeValidForAggregateOperation';
 import { FieldMetadataType } from '~/generated/graphql';
@@ -8,14 +8,14 @@ describe('isFieldTypeValidForAggregateOperation', () => {
     expect(
       isFieldTypeValidForAggregateOperation(
         FieldMetadataType.NUMBER,
-        AGGREGATE_OPERATIONS.sum,
+        AggregateOperations.sum,
       ),
     ).toBe(true);
 
     expect(
       isFieldTypeValidForAggregateOperation(
         FieldMetadataType.CURRENCY,
-        AGGREGATE_OPERATIONS.min,
+        AggregateOperations.min,
       ),
     ).toBe(true);
   });
@@ -24,14 +24,14 @@ describe('isFieldTypeValidForAggregateOperation', () => {
     expect(
       isFieldTypeValidForAggregateOperation(
         FieldMetadataType.TEXT,
-        AGGREGATE_OPERATIONS.avg,
+        AggregateOperations.avg,
       ),
     ).toBe(false);
 
     expect(
       isFieldTypeValidForAggregateOperation(
         FieldMetadataType.BOOLEAN,
-        AGGREGATE_OPERATIONS.max,
+        AggregateOperations.max,
       ),
     ).toBe(false);
   });
@@ -39,10 +39,10 @@ describe('isFieldTypeValidForAggregateOperation', () => {
   it('should handle all aggregate operations', () => {
     const numericField = FieldMetadataType.NUMBER;
     const operations = [
-      AGGREGATE_OPERATIONS.min,
-      AGGREGATE_OPERATIONS.max,
-      AGGREGATE_OPERATIONS.avg,
-      AGGREGATE_OPERATIONS.sum,
+      AggregateOperations.min,
+      AggregateOperations.max,
+      AggregateOperations.avg,
+      AggregateOperations.sum,
     ];
 
     operations.forEach((operation) => {

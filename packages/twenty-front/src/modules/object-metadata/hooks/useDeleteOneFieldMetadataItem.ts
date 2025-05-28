@@ -1,13 +1,13 @@
 import { useApolloClient, useMutation } from '@apollo/client';
 
 import {
-  DeleteOneFieldMetadataItemMutation,
-  DeleteOneFieldMetadataItemMutationVariables,
+    DeleteOneFieldMetadataItemMutation,
+    DeleteOneFieldMetadataItemMutationVariables,
 } from '~/generated-metadata/graphql';
 
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
 import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useRecoilState } from 'recoil';
 import { DELETE_ONE_FIELD_METADATA_ITEM } from '../graphql/mutations';
 import { useApolloMetadataClient } from './useApolloMetadataClient';
@@ -37,7 +37,7 @@ export const useDeleteOneFieldMetadataItem = () => {
   ) => {
     if (recordIndexKanbanAggregateOperation?.fieldMetadataId === idToDelete) {
       setRecordIndexKanbanAggregateOperation({
-        operation: AGGREGATE_OPERATIONS.count,
+        operation: AggregateOperations.count,
         fieldMetadataId: null,
       });
     }

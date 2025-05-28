@@ -13,7 +13,7 @@ import { RecordDetailRelationSectionDropdown } from '@/object-record/record-show
 import { RecordDetailSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailSection';
 import { RecordDetailSectionHeader } from '@/object-record/record-show/record-detail-section/components/RecordDetailSectionHeader';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { prefetchIndexViewIdFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchIndexViewIdFromObjectMetadataItemFamilySelector';
 import { AppPath } from '@/types/AppPath';
@@ -109,7 +109,7 @@ export const RecordDetailRelationSection = ({
     filter: filtersForAggregate,
     skip: !isToManyObjects,
     recordGqlFieldsAggregate: {
-      id: [AGGREGATE_OPERATIONS.count],
+      id: [AggregateOperations.count],
     },
   });
 

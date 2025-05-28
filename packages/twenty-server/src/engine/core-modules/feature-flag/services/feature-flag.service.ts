@@ -99,12 +99,9 @@ export class FeatureFlagService {
       ),
     );
 
-    // @ts-expect-error legacy noImplicitAny
-    const featureFlagKey = FeatureFlagKey[featureFlag];
-
     if (shouldBePublic) {
       publicFeatureFlagValidator.assertIsPublicFeatureFlag(
-        featureFlagKey,
+        featureFlag,
         new FeatureFlagException(
           'Invalid feature flag key, flag is not public',
           FeatureFlagExceptionCode.INVALID_FEATURE_FLAG_KEY,
@@ -114,7 +111,7 @@ export class FeatureFlagService {
 
     const existingFeatureFlag = await this.featureFlagRepository.findOne({
       where: {
-        key: featureFlagKey,
+        key: featureFlag,
         workspaceId: workspaceId,
       },
     });
@@ -125,7 +122,7 @@ export class FeatureFlagService {
           value,
         }
       : {
-          key: featureFlagKey,
+          key: featureFlag,
           value,
           workspaceId: workspaceId,
         };

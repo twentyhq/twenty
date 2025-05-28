@@ -1,10 +1,10 @@
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { FIELD_TYPES_AVAILABLE_FOR_NON_STANDARD_AGGREGATE_OPERATION } from '@/object-record/record-table/constants/FieldTypesAvailableForNonStandardAggregateOperation';
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { AggregateOperationsOmittingStandardOperations } from '@/object-record/types/AggregateOperationsOmittingStandardOperations';
 import { isFieldTypeValidForAggregateOperation } from '@/object-record/utils/isFieldTypeValidForAggregateOperation';
-import { FieldMetadataType } from '~/generated/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType } from '~/generated/graphql';
 
 export const getAvailableAggregateOperationsForFieldMetadataType = ({
   fieldMetadataType,
@@ -12,16 +12,16 @@ export const getAvailableAggregateOperationsForFieldMetadataType = ({
   fieldMetadataType?: FieldMetadataType;
 }) => {
   if (fieldMetadataType === FieldMetadataType.RELATION) {
-    return [AGGREGATE_OPERATIONS.count];
+    return [AggregateOperations.count];
   }
 
   const availableAggregateOperations = new Set<ExtendedAggregateOperations>([
-    AGGREGATE_OPERATIONS.count,
-    AGGREGATE_OPERATIONS.countEmpty,
-    AGGREGATE_OPERATIONS.countNotEmpty,
-    AGGREGATE_OPERATIONS.countUniqueValues,
-    AGGREGATE_OPERATIONS.percentageEmpty,
-    AGGREGATE_OPERATIONS.percentageNotEmpty,
+    AggregateOperations.count,
+    AggregateOperations.countEmpty,
+    AggregateOperations.countNotEmpty,
+    AggregateOperations.countUniqueValues,
+    AggregateOperations.percentageEmpty,
+    AggregateOperations.percentageNotEmpty,
   ]);
 
   if (!isDefined(fieldMetadataType)) {
