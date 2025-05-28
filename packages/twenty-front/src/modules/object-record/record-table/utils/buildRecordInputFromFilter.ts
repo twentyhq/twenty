@@ -8,9 +8,8 @@ import {
 } from '@/object-record/record-filter/types/RecordFilter';
 import { FILTER_OPERANDS_MAP } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, parseJson } from 'twenty-shared/utils';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
-import { parseJson } from '~/utils/parseJson';
 
 export const buildValueFromFilter = ({
   filter,
