@@ -16,7 +16,7 @@ export type LinkChipProps = Omit<
   'onClick' | 'disabled' | 'clickable'
 > & {
   to: string;
-  onClick?: (event: MouseEvent<HTMLElement>) => void;
+  onClick?: (event?: MouseEvent<HTMLElement>) => void;
   onMouseDown?: (event: MouseEvent<HTMLElement>) => void;
   triggerEvent?: TriggerEventType;
 };

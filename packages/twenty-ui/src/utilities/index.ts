@@ -20,7 +20,6 @@ export { getOsControlSymbol } from './device/getOsControlSymbol';
 export { getOsShortcutSeparator } from './device/getOsShortcutSeparator';
 export { getUserDevice } from './device/getUserDevice';
 export { AutogrowWrapper } from './dimensions/components/AutogrowWrapper';
-export { executeClickAction } from './navigation/hooks/executeClickAction';
 export { useMouseDownNavigation } from './navigation/hooks/useMouseDownNavigation';
 export { isNavigationModifierPressed } from './navigation/isNavigationModifierPressed';
 export type { TriggerEventType } from './navigation/types/trigger-event.type';
