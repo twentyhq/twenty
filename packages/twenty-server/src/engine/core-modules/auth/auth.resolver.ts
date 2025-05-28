@@ -251,6 +251,7 @@ export class AuthResolver {
       user.email,
       workspace,
       signUpInput.locale ?? SOURCE_LOCALE,
+      signUpInput.verifyEmailNextPath,
     );
 
     const loginToken = await this.loginTokenService.generateLoginToken(

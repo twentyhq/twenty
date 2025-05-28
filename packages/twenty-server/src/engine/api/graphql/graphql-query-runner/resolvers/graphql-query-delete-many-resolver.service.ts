@@ -56,7 +56,7 @@ export class GraphqlQueryDeleteManyResolverService extends GraphqlQueryBaseResol
     );
 
     this.apiEventEmitterService.emitDeletedEvents({
-      records: formattedDeletedRecords,
+      records: structuredClone(formattedDeletedRecords),
       authContext,
       objectMetadataItem: objectMetadataItemWithFieldMaps,
     });

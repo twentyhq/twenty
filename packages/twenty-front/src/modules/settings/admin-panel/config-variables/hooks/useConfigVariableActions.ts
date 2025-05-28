@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 
-import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConfig';
+import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { GET_DATABASE_CONFIG_VARIABLE } from '@/settings/admin-panel/config-variables/graphql/queries/getDatabaseConfigVariable';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -15,6 +15,7 @@ import {
 export const useConfigVariableActions = (variableName: string) => {
   const { t } = useLingui();
   const { enqueueSnackBar } = useSnackBar();
+  const { refetch: refetchClientConfig } = useClientConfig();
 
   const [updateDatabaseConfigVariable] =
     useUpdateDatabaseConfigVariableMutation();
@@ -48,9 +49,6 @@ export const useConfigVariableActions = (variableName: string) => {
               query: GET_DATABASE_CONFIG_VARIABLE,
               variables: { key: variableName },
             },
-            {
-              query: GET_CLIENT_CONFIG,
-            },
           ],
         });
       } else {
@@ -64,14 +62,13 @@ export const useConfigVariableActions = (variableName: string) => {
               query: GET_DATABASE_CONFIG_VARIABLE,
               variables: { key: variableName },
             },
-            {
-              query: GET_CLIENT_CONFIG,
-            },
           ],
         });
       }
 
-      enqueueSnackBar(t`Variable updated successfully`, {
+      await refetchClientConfig();
+
+      enqueueSnackBar(t`Variable updated successfully.`, {
         variant: SnackBarVariant.Success,
       });
     } catch (error) {
@@ -96,13 +93,16 @@ export const useConfigVariableActions = (variableName: string) => {
             query: GET_DATABASE_CONFIG_VARIABLE,
             variables: { key: variableName },
           },
-          {
-            query: GET_CLIENT_CONFIG,
-          },
         ],
       });
+
+      await refetchClientConfig();
+
+      enqueueSnackBar(t`Variable deleted successfully.`, {
+        variant: SnackBarVariant.Success,
+      });
     } catch (error) {
-      enqueueSnackBar(t`Failed to remove  override`, {
+      enqueueSnackBar(t`Failed to remove override`, {
         variant: SnackBarVariant.Error,
       });
     }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { assertUnreachable } from 'twenty-shared/utils';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
@@ -74,11 +74,11 @@ export class ConnectedAccountRefreshTokensService {
     try {
       switch (connectedAccount.provider) {
         case ConnectedAccountProvider.GOOGLE:
-          return this.googleAPIRefreshAccessTokenService.refreshAccessToken(
+          return await this.googleAPIRefreshAccessTokenService.refreshAccessToken(
             refreshToken,
           );
         case ConnectedAccountProvider.MICROSOFT:
-          return this.microsoftAPIRefreshAccessTokenService.refreshTokens(
+          return await this.microsoftAPIRefreshAccessTokenService.refreshTokens(
             refreshToken,
           );
         default:

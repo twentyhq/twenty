@@ -14,12 +14,10 @@ import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/ti
 import { CaptchaModule } from 'src/engine/core-modules/captcha/captcha.module';
 import { captchaModuleFactory } from 'src/engine/core-modules/captcha/captcha.module-factory';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
-import { emailModuleFactory } from 'src/engine/core-modules/email/email.module-factory';
 import { ExceptionHandlerModule } from 'src/engine/core-modules/exception-handler/exception-handler.module';
 import { exceptionHandlerModuleFactory } from 'src/engine/core-modules/exception-handler/exception-handler.module-factory';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
-import { fileStorageModuleFactory } from 'src/engine/core-modules/file-storage/file-storage.module-factory';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
 import { LabModule } from 'src/engine/core-modules/lab/lab.module';
@@ -85,10 +83,7 @@ import { FileModule } from './file/file.module';
     RedisClientModule,
     WorkspaceQueryRunnerModule,
     SubscriptionsModule,
-    FileStorageModule.forRootAsync({
-      useFactory: fileStorageModuleFactory,
-      inject: [TwentyConfigService],
-    }),
+    FileStorageModule.forRoot(),
     LoggerModule.forRootAsync({
       useFactory: loggerModuleFactory,
       inject: [TwentyConfigService],
@@ -101,10 +96,7 @@ import { FileModule } from './file/file.module';
       useFactory: exceptionHandlerModuleFactory,
       inject: [TwentyConfigService, HttpAdapterHost],
     }),
-    EmailModule.forRoot({
-      useFactory: emailModuleFactory,
-      inject: [TwentyConfigService],
-    }),
+    EmailModule.forRoot(),
     CaptchaModule.forRoot({
       useFactory: captchaModuleFactory,
       inject: [TwentyConfigService],

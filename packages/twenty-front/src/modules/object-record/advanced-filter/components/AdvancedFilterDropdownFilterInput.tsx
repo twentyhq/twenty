@@ -16,6 +16,7 @@ import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object
 import { isExpectedSubFieldName } from '@/object-record/object-filter-dropdown/utils/isExpectedSubFieldName';
 import { isFilterOnActorSourceSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorSourceSubField';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -52,28 +53,24 @@ export const AdvancedFilterDropdownFilterInput = ({
         <ObjectFilterDropdownDateInput />
       )}
       {filterType === 'RELATION' && (
-        <>
+        <DropdownContent>
           <ObjectFilterDropdownSearchInput />
           <DropdownMenuSeparator />
           <ObjectFilterDropdownRecordSelect recordFilterId={recordFilter.id} />
-        </>
+        </DropdownContent>
       )}
       {filterType === 'ACTOR' &&
         (isActorSourceCompositeFilter ? (
-          <>
-            <ObjectFilterDropdownSourceSelect />
-          </>
+          <ObjectFilterDropdownSourceSelect />
         ) : (
-          <>
-            <ObjectFilterDropdownTextInput />
-          </>
+          <ObjectFilterDropdownTextInput />
         ))}
       {['SELECT', 'MULTI_SELECT'].includes(filterType) && (
-        <>
+        <DropdownContent>
           <ObjectFilterDropdownSearchInput />
           <DropdownMenuSeparator />
           <ObjectFilterDropdownOptionSelect />
-        </>
+        </DropdownContent>
       )}
       {filterType === 'BOOLEAN' && <ObjectFilterDropdownBooleanSelect />}
       {filterType === 'CURRENCY' &&
@@ -82,9 +79,7 @@ export const AdvancedFilterDropdownFilterInput = ({
           'currencyCode',
           recordFilter.subFieldName,
         ) ? (
-          <>
-            <ObjectFilterDropdownCurrencySelect />
-          </>
+          <ObjectFilterDropdownCurrencySelect />
         ) : (
           <></>
         ))}

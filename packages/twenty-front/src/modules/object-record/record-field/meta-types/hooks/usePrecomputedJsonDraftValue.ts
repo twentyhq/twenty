@@ -2,9 +2,8 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { orderWorkflowRunOutput } from '@/object-record/record-field/meta-types/utils/orderWorkflowRunOutput';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, parseJson } from 'twenty-shared/utils';
 import { JsonObject, JsonValue } from 'type-fest';
-import { parseJson } from '~/utils/parseJson';
 
 export const usePrecomputedJsonDraftValue = ({
   draftValue,
@@ -13,7 +12,9 @@ export const usePrecomputedJsonDraftValue = ({
 }): JsonValue => {
   const { fieldDefinition } = useContext(FieldContext);
 
-  const parsedJsonValue = parseJson<JsonValue>(draftValue);
+  const parsedJsonValue = isDefined(draftValue)
+    ? parseJson<JsonValue>(draftValue)
+    : null;
 
   if (
     fieldDefinition.metadata.objectMetadataNameSingular ===

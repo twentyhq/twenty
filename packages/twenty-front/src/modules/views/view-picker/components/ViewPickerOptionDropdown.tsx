@@ -1,5 +1,6 @@
 import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
@@ -81,38 +82,40 @@ export const ViewPickerOptionDropdown = ({
         dropdownPlacement="bottom-start"
         dropdownId={`view-picker-options-${view.id}`}
         dropdownContent={
-          <DropdownMenuItemsContainer>
-            {isIndexView ? (
-              <MenuItem
-                LeftIcon={IconHeart}
-                text={isFavorite ? t`Manage favorite` : t`Add to Favorite`}
-                onClick={handleAddToFavorites}
-              />
-            ) : (
-              <>
+          <DropdownContent>
+            <DropdownMenuItemsContainer>
+              {isIndexView ? (
                 <MenuItem
                   LeftIcon={IconHeart}
                   text={isFavorite ? t`Manage favorite` : t`Add to Favorite`}
                   onClick={handleAddToFavorites}
                 />
+              ) : (
+                <>
+                  <MenuItem
+                    LeftIcon={IconHeart}
+                    text={isFavorite ? t`Manage favorite` : t`Add to Favorite`}
+                    onClick={handleAddToFavorites}
+                  />
 
-                <MenuItem
-                  LeftIcon={IconPencil}
-                  text={t`Edit`}
-                  onClick={(event) => {
-                    onEdit(event, view.id);
-                    closeDropdown();
-                  }}
-                />
-                <MenuItem
-                  LeftIcon={IconTrash}
-                  text={t`Delete`}
-                  onClick={handleDelete}
-                  accent="danger"
-                />
-              </>
-            )}
-          </DropdownMenuItemsContainer>
+                  <MenuItem
+                    LeftIcon={IconPencil}
+                    text={t`Edit`}
+                    onClick={(event) => {
+                      onEdit(event, view.id);
+                      closeDropdown();
+                    }}
+                  />
+                  <MenuItem
+                    LeftIcon={IconTrash}
+                    text={t`Delete`}
+                    onClick={handleDelete}
+                    accent="danger"
+                  />
+                </>
+              )}
+            </DropdownMenuItemsContainer>
+          </DropdownContent>
         }
       />
     </>

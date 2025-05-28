@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useCallback, useRef } from 'react';
 
 import { useRecordGroupActions } from '@/object-record/record-group/hooks/useRecordGroupActions';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -22,7 +22,6 @@ type RecordBoardColumnDropdownMenuProps = {
   stageId: string;
 };
 
-// TODO: unify and use Dropdown component
 export const RecordBoardColumnDropdownMenu = ({
   onClose,
 }: RecordBoardColumnDropdownMenuProps) => {
@@ -45,7 +44,7 @@ export const RecordBoardColumnDropdownMenu = ({
   return (
     <StyledMenuContainer ref={boardColumnMenuRef}>
       <OverlayContainer>
-        <DropdownMenu data-select-disable>
+        <DropdownContent selectDisabled>
           <DropdownMenuItemsContainer>
             {recordGroupActions.map((action) => (
               <MenuItem
@@ -59,7 +58,7 @@ export const RecordBoardColumnDropdownMenu = ({
               />
             ))}
           </DropdownMenuItemsContainer>
-        </DropdownMenu>
+        </DropdownContent>
       </OverlayContainer>
     </StyledMenuContainer>
   );

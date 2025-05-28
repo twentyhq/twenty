@@ -3,10 +3,8 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
-
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+import { RelationMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-metadata.interface';
 
 export interface FieldMetadataInterface<
   T extends FieldMetadataType = FieldMetadataType,
@@ -21,14 +19,15 @@ export interface FieldMetadataInterface<
   objectMetadataId: string;
   workspaceId?: string;
   description?: string;
+  icon?: string;
   isNullable?: boolean;
   isUnique?: boolean;
-  fromRelationMetadata?: RelationMetadataEntity;
-  toRelationMetadata?: RelationMetadataEntity;
+  fromRelationMetadata?: RelationMetadataInterface;
+  toRelationMetadata?: RelationMetadataInterface;
   relationTargetFieldMetadataId?: string;
-  relationTargetFieldMetadata?: FieldMetadataEntity;
+  relationTargetFieldMetadata?: FieldMetadataInterface;
   relationTargetObjectMetadataId?: string;
-  relationTargetObjectMetadata?: ObjectMetadataEntity;
+  relationTargetObjectMetadata?: ObjectMetadataInterface;
   isCustom?: boolean;
   isSystem?: boolean;
   isActive?: boolean;
