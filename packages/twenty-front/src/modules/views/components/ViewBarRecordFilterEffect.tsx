@@ -62,7 +62,6 @@ export const ViewBarRecordFilterEffect = () => {
     }
   }, [
     currentViewId,
-    currentRecordFilters,
     setCurrentRecordFilters,
     filterableFieldMetadataItems,
     hasInitializedCurrentRecordFilters,
