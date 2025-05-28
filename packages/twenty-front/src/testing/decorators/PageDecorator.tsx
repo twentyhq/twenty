@@ -74,26 +74,26 @@ const ApolloStorybookDevLogEffect = () => {
 
 await dynamicActivate(SOURCE_LOCALE);
 
-const Providers = () => {
+const StorybookRouterProviders = () => {
   return (
     <RecoilRoot>
-      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-        <RecoilDebugObserverEffect />
-        <ApolloProvider client={mockedApolloClient}>
-          <I18nProvider i18n={i18n}>
-            <ApolloStorybookDevLogEffect />
-            <ClientConfigProviderEffect />
-            <ClientConfigProvider>
+      <ApolloProvider client={mockedApolloClient}>
+        <ApolloMetadataClientMockedProvider>
+          <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+            <RecoilDebugObserverEffect />
+            <I18nProvider i18n={i18n}>
+              <ApolloStorybookDevLogEffect />
+              <ClientConfigProviderEffect />
               <UserProviderEffect />
               <WorkspaceProviderEffect />
-              <UserProvider>
-                <ApolloMetadataClientMockedProvider>
-                  <ObjectMetadataItemsLoadEffect />
+              <ObjectMetadataItemsLoadEffect />
+              <ClientConfigProvider>
+                <UserProvider>
                   <ObjectMetadataItemsProvider>
-                    <FullHeightStorybookLayout>
-                      <HelmetProvider>
-                        <IconsProvider>
-                          <PrefetchDataProvider>
+                    <PrefetchDataProvider>
+                      <FullHeightStorybookLayout>
+                        <HelmetProvider>
+                          <IconsProvider>
                             <RecordFilterGroupsComponentInstanceContext.Provider
                               value={{
                                 instanceId:
@@ -114,18 +114,18 @@ const Providers = () => {
                                 </RecordSortsComponentInstanceContext.Provider>
                               </RecordFiltersComponentInstanceContext.Provider>
                             </RecordFilterGroupsComponentInstanceContext.Provider>
-                          </PrefetchDataProvider>
-                        </IconsProvider>
-                      </HelmetProvider>
-                    </FullHeightStorybookLayout>
+                          </IconsProvider>
+                        </HelmetProvider>
+                      </FullHeightStorybookLayout>
+                      <MainContextStoreProvider />
+                    </PrefetchDataProvider>
                   </ObjectMetadataItemsProvider>
-                  <MainContextStoreProvider />
-                </ApolloMetadataClientMockedProvider>
-              </UserProvider>
-            </ClientConfigProvider>
-          </I18nProvider>
-        </ApolloProvider>
-      </SnackBarProviderScope>
+                </UserProvider>
+              </ClientConfigProvider>
+            </I18nProvider>
+          </SnackBarProviderScope>
+        </ApolloMetadataClientMockedProvider>
+      </ApolloProvider>
     </RecoilRoot>
   );
 };
@@ -149,7 +149,10 @@ const createRouter = ({
 }) =>
   createMemoryRouter(
     createRoutesFromElements(
-      <Route element={<Providers />}>
+      <Route
+        element={<StorybookRouterProviders />}
+        loader={async () => Promise.resolve(null)}
+      >
         <Route element={<DefaultLayout />}>
           <Route path={args.routePath} element={<Story />} />
           {args.additionalRoutes?.map((route) => (
