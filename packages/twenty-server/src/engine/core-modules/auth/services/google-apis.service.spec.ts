@@ -118,8 +118,8 @@ describe('GoogleAPIsService', () => {
         {
           provide: GoogleAPIScopesService,
           useValue: {
-            getGoogleScopes: jest.fn(),
-            includesExpectedScopes: jest.fn().mockReturnValue(true),
+            getScopesFromGoogleAccessTokenAndCheckIfExpectedScopesArePresent:
+              jest.fn(),
           },
         },
         {

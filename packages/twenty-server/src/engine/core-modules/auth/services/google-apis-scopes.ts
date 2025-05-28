@@ -5,6 +5,8 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { includesExpectedScopes } from 'src/engine/core-modules/auth/services/google-apis-scopes.service.util';
+import { getGoogleApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes';
 
 interface TokenInfoResponse {
   scope: string;
@@ -24,29 +26,27 @@ interface TokenInfoResponse {
 export class GoogleAPIScopesService {
   constructor(private httpService: HttpService) {}
 
-  public async getGoogleScopes(accessToken: string): Promise<string[]> {
+  public async getScopesFromGoogleAccessTokenAndCheckIfExpectedScopesArePresent(
+    accessToken: string,
+  ): Promise<{ scopes: string[]; isValid: boolean }> {
     try {
       const response = await this.httpService.axiosRef.get<TokenInfoResponse>(
         `https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${accessToken}`,
         { timeout: 600 },
       );
 
-      return response.data.scope.split(' ');
+      const scopes = response.data.scope.split(' ');
+      const expectedScopes = getGoogleApisOauthScopes();
+
+      return {
+        scopes,
+        isValid: includesExpectedScopes(scopes, expectedScopes),
+      };
     } catch (error) {
       throw new AuthException(
         'Google account connect error: cannot read scopes from token',
         AuthExceptionCode.INSUFFICIENT_SCOPES,
       );
     }
-  }
-
-  public includesExpectedScopes(scopes: string[], expectedScopes: string[]) {
-    return expectedScopes.every(
-      (expectedScope) =>
-        scopes.includes(expectedScope) ||
-        scopes.includes(
-          `https://www.googleapis.com/auth/userinfo.${expectedScope}`,
-        ),
-    );
   }
 }

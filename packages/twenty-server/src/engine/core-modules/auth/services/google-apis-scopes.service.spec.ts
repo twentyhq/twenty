@@ -1,31 +1,8 @@
-import { HttpService } from '@nestjs/axios';
-import { Test, TestingModule } from '@nestjs/testing';
-
 import { getGoogleApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes';
 
-import { GoogleAPIScopesService } from './google-apis-scopes';
+import { includesExpectedScopes } from './google-apis-scopes.service.util';
 
 describe('GoogleAPIScopesService', () => {
-  let service: GoogleAPIScopesService;
-
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        GoogleAPIScopesService,
-        {
-          provide: HttpService,
-          useValue: {
-            axiosRef: {
-              get: jest.fn(),
-            },
-          },
-        },
-      ],
-    }).compile();
-
-    service = module.get<GoogleAPIScopesService>(GoogleAPIScopesService);
-  });
-
   describe('includesExpectedScopes', () => {
     it('should return true when all expected scopes are present', () => {
       const scopes = [
@@ -36,7 +13,7 @@ describe('GoogleAPIScopesService', () => {
       ];
       const expectedScopes = ['email', 'profile'];
 
-      const result = service.includesExpectedScopes(scopes, expectedScopes);
+      const result = includesExpectedScopes(scopes, expectedScopes);
 
       expect(result).toBe(true);
     });
@@ -49,7 +26,7 @@ describe('GoogleAPIScopesService', () => {
         'https://www.googleapis.com/auth/gmail.readonly',
       ];
 
-      const result = service.includesExpectedScopes(scopes, expectedScopes);
+      const result = includesExpectedScopes(scopes, expectedScopes);
 
       expect(result).toBe(false);
     });
@@ -61,7 +38,7 @@ describe('GoogleAPIScopesService', () => {
       ];
       const expectedScopes = ['email', 'profile'];
 
-      const result = service.includesExpectedScopes(scopes, expectedScopes);
+      const result = includesExpectedScopes(scopes, expectedScopes);
 
       expect(result).toBe(true);
     });
@@ -74,7 +51,7 @@ describe('GoogleAPIScopesService', () => {
       ];
       const expectedScopes = ['email', 'profile'];
 
-      const result = service.includesExpectedScopes(scopes, expectedScopes);
+      const result = includesExpectedScopes(scopes, expectedScopes);
 
       expect(result).toBe(true);
     });
@@ -83,7 +60,7 @@ describe('GoogleAPIScopesService', () => {
       const scopes = ['email', 'profile'];
       const expectedScopes: string[] = [];
 
-      const result = service.includesExpectedScopes(scopes, expectedScopes);
+      const result = includesExpectedScopes(scopes, expectedScopes);
 
       expect(result).toBe(true);
     });
@@ -92,7 +69,7 @@ describe('GoogleAPIScopesService', () => {
       const scopes: string[] = [];
       const expectedScopes = ['email', 'profile'];
 
-      const result = service.includesExpectedScopes(scopes, expectedScopes);
+      const result = includesExpectedScopes(scopes, expectedScopes);
 
       expect(result).toBe(false);
     });
@@ -101,7 +78,7 @@ describe('GoogleAPIScopesService', () => {
       const scopes: string[] = [];
       const expectedScopes: string[] = [];
 
-      const result = service.includesExpectedScopes(scopes, expectedScopes);
+      const result = includesExpectedScopes(scopes, expectedScopes);
 
       expect(result).toBe(true);
     });
@@ -110,7 +87,7 @@ describe('GoogleAPIScopesService', () => {
       const scopes = ['EMAIL', 'PROFILE'];
       const expectedScopes = ['email', 'profile'];
 
-      const result = service.includesExpectedScopes(scopes, expectedScopes);
+      const result = includesExpectedScopes(scopes, expectedScopes);
 
       expect(result).toBe(false);
     });
@@ -128,10 +105,7 @@ describe('GoogleAPIScopesService', () => {
       ];
       const expectedScopes = getGoogleApisOauthScopes();
 
-      const result = service.includesExpectedScopes(
-        actualGoogleScopes,
-        expectedScopes,
-      );
+      const result = includesExpectedScopes(actualGoogleScopes, expectedScopes);
 
       expect(result).toBe(true);
     });

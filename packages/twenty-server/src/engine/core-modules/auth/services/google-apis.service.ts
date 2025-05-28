@@ -16,7 +16,6 @@ import { GoogleAPIScopesService } from 'src/engine/core-modules/auth/services/go
 import { ResetCalendarChannelService } from 'src/engine/core-modules/auth/services/reset-calendar-channel.service';
 import { ResetMessageChannelService } from 'src/engine/core-modules/auth/services/reset-message-channel.service';
 import { UpdateConnectedAccountOnReconnectService } from 'src/engine/core-modules/auth/services/update-connected-account-on-reconnect.service';
-import { getGoogleApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -118,20 +117,14 @@ export class GoogleAPIsService {
         workspaceId,
       });
 
-    const scopes = await this.googleAPIScopesService.getGoogleScopes(
-      input.accessToken,
-    );
+    const { scopes, isValid } =
+      await this.googleAPIScopesService.getScopesFromGoogleAccessTokenAndCheckIfExpectedScopesArePresent(
+        input.accessToken,
+      );
 
-    const expectedScopes = getGoogleApisOauthScopes();
-
-    if (
-      !this.googleAPIScopesService.includesExpectedScopes(
-        scopes,
-        expectedScopes,
-      )
-    ) {
+    if (!isValid) {
       throw new AuthException(
-        'Google account connect error: missing scopes',
+        'Unable to connect: Please ensure all permissions are granted',
         AuthExceptionCode.INSUFFICIENT_SCOPES,
       );
     }
