@@ -18,10 +18,13 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import {
   AutomatedTriggerType,
-  DatabaseEventTriggerSettings,
   WorkflowAutomatedTriggerWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import {
+  DatabaseEventTriggerSettings,
+  UpdateEventTriggerSettings,
+} from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 import {
   WorkflowTriggerJob,
   WorkflowTriggerJobData,
@@ -88,7 +91,7 @@ export class DatabaseEventTriggerListener {
 
     for (const eventListener of filteredEventListeners) {
       for (const eventPayload of clonedPayload.events) {
-        const settings = eventListener.settings as DatabaseEventTriggerSettings;
+        const settings = eventListener.settings as UpdateEventTriggerSettings;
 
         if (
           !settings.fields ||

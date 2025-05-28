@@ -5,9 +5,8 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { DatabaseEventTriggerListener } from 'src/modules/workflow/workflow-trigger/automated-trigger/listeners/database-event-trigger.listener';
 import { WorkflowTriggerJob } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
-
-import { DatabaseEventTriggerListener } from './database-event-trigger.listener';
 
 describe('DatabaseEventTriggerListener', () => {
   let listener: DatabaseEventTriggerListener;

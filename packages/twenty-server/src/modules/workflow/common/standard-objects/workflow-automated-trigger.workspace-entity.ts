@@ -14,6 +14,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { AutomatedTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 
 import { WorkflowWorkspaceEntity } from './workflow.workspace-entity';
 
@@ -21,19 +22,6 @@ export enum AutomatedTriggerType {
   DATABASE_EVENT = 'DATABASE_EVENT',
   CRON = 'CRON',
 }
-
-export type AutomatedTriggerSettings =
-  | DatabaseEventTriggerSettings
-  | CronTriggerSettings;
-
-export type DatabaseEventTriggerSettings = {
-  eventName: string;
-  fields?: string[];
-};
-
-export type CronTriggerSettings = {
-  pattern: string;
-};
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workflowAutomatedTrigger,
