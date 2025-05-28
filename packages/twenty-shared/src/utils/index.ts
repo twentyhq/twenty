@@ -8,6 +8,7 @@
  */
 
 export { assertUnreachable } from './assertUnreachable';
+export { isCompositeFieldMetadataType } from './fieldMetadata/isCompositeFieldMetadataType';
 export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind';
 export { getImageAbsoluteURI } from './image/getImageAbsoluteURI';
 export {
