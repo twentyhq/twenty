@@ -1,10 +1,7 @@
-import { buildSignedPath } from 'twenty-shared/utils';
-
 import { QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-getter-handler.interface';
 
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
-import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
 
 export class AttachmentQueryResultGetterHandler
   implements QueryResultGetterHandlerInterface
@@ -19,14 +16,9 @@ export class AttachmentQueryResultGetterHandler
       return attachment;
     }
 
-    const signedPayload = this.fileService.encodeFileToken({
-      filename: extractFilenameFromPath(attachment.fullPath),
-      workspaceId: workspaceId,
-    });
-
-    const signedPath = buildSignedPath({
-      path: attachment.fullPath,
-      token: signedPayload,
+    const signedPath = this.fileService.signFileUrl({
+      url: attachment.fullPath,
+      workspaceId,
     });
 
     const fullPath = `${process.env.SERVER_URL}/files/${signedPath}`;

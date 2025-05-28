@@ -14,7 +14,6 @@ import crypto from 'crypto';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
-import { buildSignedPath } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
@@ -31,7 +30,6 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import {
   OnboardingService,
@@ -220,14 +218,9 @@ export class UserResolver {
     );
 
     if (workspaceMember && workspaceMember.avatarUrl) {
-      const avatarUrlToken = this.fileService.encodeFileToken({
-        filename: extractFilenameFromPath(workspaceMember.avatarUrl),
+      workspaceMember.avatarUrl = this.fileService.signFileUrl({
+        url: workspaceMember.avatarUrl,
         workspaceId: workspace.id,
-      });
-
-      workspaceMember.avatarUrl = buildSignedPath({
-        path: workspaceMember.avatarUrl,
-        token: avatarUrlToken,
       });
     }
 
@@ -272,14 +265,9 @@ export class UserResolver {
 
     for (const workspaceMemberEntity of workspaceMemberEntities) {
       if (workspaceMemberEntity.avatarUrl) {
-        const avatarUrlToken = this.fileService.encodeFileToken({
-          filename: extractFilenameFromPath(workspaceMemberEntity.avatarUrl),
+        workspaceMemberEntity.avatarUrl = this.fileService.signFileUrl({
+          url: workspaceMemberEntity.avatarUrl,
           workspaceId: workspace.id,
-        });
-
-        workspaceMemberEntity.avatarUrl = buildSignedPath({
-          path: workspaceMemberEntity.avatarUrl,
-          token: avatarUrlToken,
         });
       }
 
