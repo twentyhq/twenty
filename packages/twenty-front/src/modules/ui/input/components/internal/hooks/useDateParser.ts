@@ -34,6 +34,5 @@ export const useDateParser = ({ isDateTimeInput }: UseDateParserProps) => {
   return {
     parseToString,
     parseToDate,
-    dateFormat,
   };
 };
