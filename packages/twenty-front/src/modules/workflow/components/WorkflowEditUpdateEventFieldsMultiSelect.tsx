@@ -35,7 +35,7 @@ export const WorkflowFieldsMultiSelect = ({
     );
 
   const inlineFieldDefinitions = isDefined(objectMetadataItem)
-    ? inlineFieldMetadataItems?.map((fieldMetadataItem) =>
+    ? inlineFieldMetadataItems.map((fieldMetadataItem) =>
         formatFieldMetadataItemAsFieldDefinition({
           field: fieldMetadataItem,
           objectMetadataItem: objectMetadataItem,

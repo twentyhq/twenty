@@ -80,7 +80,7 @@ export const Default: Story = {
     label: 'Fields to update',
     placeholder: 'Select fields to update',
     objectMetadataItem: mockObjectMetadataItem,
-    handleFieldsChange: (fields) => console.log('Selected fields:', fields),
+    handleFieldsChange: () => {},
     readonly: false,
     defaultFields: [],
   },
