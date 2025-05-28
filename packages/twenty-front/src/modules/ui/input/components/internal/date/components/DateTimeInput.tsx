@@ -46,7 +46,6 @@ type DateTimeInputProps = {
   onChange?: (date: Date | null) => void;
   date: Date | null;
   isDateTimeInput?: boolean;
-  onError?: (error: Error) => void;
 };
 
 export const DateTimeInput = ({
