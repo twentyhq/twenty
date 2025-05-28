@@ -1,5 +1,5 @@
 import { ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
-import { computeChangedAdditionalEmails } from 'src/modules/calendar/calendar-event-participant-manager/utils/compute-changed-additional-emails';
+import { computeChangedAdditionalEmails } from 'src/modules/contact-creation-manager/utils/compute-changed-additional-emails';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 describe('computeChangedAdditionalEmails', () => {

@@ -1,5 +1,5 @@
 import { ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
-import { hasPrimaryEmailChanged } from 'src/modules/calendar/calendar-event-participant-manager/utils/has-primary-email-changed';
+import { hasPrimaryEmailChanged } from 'src/modules/contact-creation-manager/utils/has-primary-email-changed';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 describe('hasPrimaryEmailChanged', () => {
