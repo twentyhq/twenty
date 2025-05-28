@@ -33,7 +33,6 @@ export const AppRouterProviders = () => {
   const pageTitle = getPageTitleFromPath(pathname);
 
   return (
-    <CaptchaProvider>
       <ApolloProvider>
         <ApolloMetadataClientProvider>
           <BaseThemeProvider>
@@ -43,6 +42,7 @@ export const AppRouterProviders = () => {
             <ObjectMetadataItemsLoadEffect />
             <ClientConfigProvider>
               <ChromeExtensionSidecarEffect />
+              <CaptchaProvider>
               <ChromeExtensionSidecarProvider>
                 <UserProvider>
                   <AuthProvider>
@@ -70,6 +70,7 @@ export const AppRouterProviders = () => {
                   </AuthProvider>
                 </UserProvider>
               </ChromeExtensionSidecarProvider>
+              </CaptchaProvider>
             </ClientConfigProvider>
           </BaseThemeProvider>
         </ApolloMetadataClientProvider>
