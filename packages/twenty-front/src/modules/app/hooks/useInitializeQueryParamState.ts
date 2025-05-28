@@ -13,9 +13,9 @@ export const useInitializeQueryParamState = () => {
       () => {
         const handlers = {
           billingCheckoutSession: (value: string) => {
-            const billingCheckoutSession = snapshot.getLoadable(
-              billingCheckoutSessionState,
-            ).getValue();
+            const billingCheckoutSession = snapshot
+              .getLoadable(billingCheckoutSessionState)
+              .getValue();
 
             try {
               const parsedValue = JSON.parse(decodeURIComponent(value));
