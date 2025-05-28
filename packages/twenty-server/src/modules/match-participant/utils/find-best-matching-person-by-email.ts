@@ -5,7 +5,8 @@ export const findBestMatchingPersonByEmail = (
   email: string,
 ): PersonWorkspaceEntity | undefined => {
   const personWithPrimaryEmail = people.find(
-    (person) => person.emails?.primaryEmail === email,
+    (person) =>
+      person.emails?.primaryEmail?.toLowerCase() === email.toLowerCase(),
   );
 
   if (personWithPrimaryEmail) {
@@ -15,6 +16,9 @@ export const findBestMatchingPersonByEmail = (
   return people.find(
     (person) =>
       Array.isArray(person.emails?.additionalEmails) &&
-      person.emails.additionalEmails.includes(email),
+      person.emails.additionalEmails.some(
+        (additionalEmail) =>
+          additionalEmail.toLowerCase() === email.toLowerCase(),
+      ),
   );
 };
