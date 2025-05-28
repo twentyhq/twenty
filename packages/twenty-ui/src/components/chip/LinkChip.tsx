@@ -6,6 +6,8 @@ import {
   ChipSize,
   ChipVariant,
 } from '@ui/components/chip/Chip';
+import { LINK_CHIP_CLICK_OUTSIDE_ID } from '@ui/components/chip/constants/LinkChipClickOutsideId';
+import { TriggerEventType, useMouseDownNavigation } from '@ui/utilities';
 import { MouseEvent } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -14,7 +16,9 @@ export type LinkChipProps = Omit<
   'onClick' | 'disabled' | 'clickable'
 > & {
   to: string;
-  onClick?: (event: MouseEvent<HTMLAnchorElement>) => void;
+  onClick?: (event: MouseEvent<HTMLElement>) => void;
+  onMouseDown?: (event: MouseEvent<HTMLElement>) => void;
+  triggerEvent?: TriggerEventType;
 };
 
 const StyledLink = styled(Link)`
@@ -34,9 +38,25 @@ export const LinkChip = ({
   className,
   maxWidth,
   onClick,
+  triggerEvent,
 }: LinkChipProps) => {
+  const { onClick: onClickHandler, onMouseDown: onMouseDownHandler } =
+    useMouseDownNavigation({
+      to: to,
+      onClick: onClick,
+      triggerEvent,
+    });
+
   return (
-    <StyledLink to={to} onClick={onClick}>
+    <StyledLink
+      to={to}
+      onClick={(event) => {
+        event.stopPropagation();
+        onClickHandler(event);
+      }}
+      onMouseDown={onMouseDownHandler}
+      data-click-outside-id={LINK_CHIP_CLICK_OUTSIDE_ID}
+    >
       <Chip
         size={size}
         label={label}
