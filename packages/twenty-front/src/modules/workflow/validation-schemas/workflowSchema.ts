@@ -164,6 +164,7 @@ export const workflowDatabaseEventTriggerSchema = baseTriggerSchema.extend({
     input: z.object({}).passthrough().optional(),
     outputSchema: z.object({}).passthrough(),
     objectType: z.string().optional(),
+    fields: z.array(z.string()).optional().nullable(),
   }),
 });
 
