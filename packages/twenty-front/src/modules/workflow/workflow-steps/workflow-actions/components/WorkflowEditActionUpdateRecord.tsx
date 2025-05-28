@@ -7,7 +7,6 @@ import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/util
 import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/form-types/components/FormSingleRecordPicker';
 import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
-import { SUPPORTED_FIELD_METADATA_TYPES } from '@/workflow/constants/SupportedFieldMetadataTypes';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
@@ -19,6 +18,7 @@ import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
+import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 
 type WorkflowEditActionUpdateRecordProps = {
   action: WorkflowUpdateRecordAction;
@@ -84,11 +84,8 @@ export const WorkflowEditActionUpdateRecord = ({
   const objectNameSingular = selectedObjectMetadataItem?.nameSingular;
 
   const inlineFieldMetadataItems = selectedObjectMetadataItem?.fields
-    .filter(
-      (fieldMetadataItem) =>
-        !fieldMetadataItem.isSystem &&
-        fieldMetadataItem.isActive &&
-        SUPPORTED_FIELD_METADATA_TYPES.includes(fieldMetadataItem.type),
+    .filter((fieldMetadataItem) =>
+      shouldDisplayFormField({ fieldMetadataItem, actionType: action.type }),
     )
     .sort((fieldMetadataItemA, fieldMetadataItemB) =>
       fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
