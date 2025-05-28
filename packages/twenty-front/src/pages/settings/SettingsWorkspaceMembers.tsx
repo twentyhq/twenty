@@ -308,13 +308,13 @@ export const SettingsWorkspaceMembers = () => {
           {isNonEmptyArray(workspaceInvitations) && (
             <StyledTable>
               <TableRow
-                gridAutoColumns="3fr 1fr 1fr"
+                gridAutoColumns="300px 1fr 1fr"
                 mobileGridAutoColumns="100px 1fr 1fr"
               >
                 <TableHeader>
                   <Trans>Email</Trans>
                 </TableHeader>
-                <TableHeader>
+                <TableHeader align={'center'}>
                   <Trans>Expires in</Trans>
                 </TableHeader>
                 <TableHeader></TableHeader>
@@ -322,7 +322,7 @@ export const SettingsWorkspaceMembers = () => {
               <StyledTableRows>
                 {workspaceInvitations?.map((workspaceInvitation) => (
                   <TableRow
-                    gridAutoColumns="3fr 1fr 1fr"
+                    gridAutoColumns="300px 1fr 1fr"
                     mobileGridAutoColumns="100px 1fr 1fr"
                     key={workspaceInvitation.id}
                   >
@@ -337,7 +337,7 @@ export const SettingsWorkspaceMembers = () => {
                         {workspaceInvitation.email}
                       </StyledTextContainerWithEllipsis>
                     </TableCell>
-                    <TableCell>
+                    <TableCell align={'center'}>
                       <Status
                         color={'gray'}
                         text={getExpiresAtText(workspaceInvitation.expiresAt)}
