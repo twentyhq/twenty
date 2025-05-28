@@ -21,6 +21,7 @@ import { Contact } from 'src/modules/contact-creation-manager/types/contact.type
 import { filterOutSelfAndContactsFromCompanyOrWorkspace } from 'src/modules/contact-creation-manager/utils/filter-out-contacts-from-company-or-workspace.util';
 import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util';
 import { getUniqueContactsAndHandles } from 'src/modules/contact-creation-manager/utils/get-unique-contacts-and-handles.util';
+import { buildPersonEmailQueryBuilder } from 'src/modules/match-participant/utils/build-person-email-query-builder.util';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -77,24 +78,13 @@ export class CreateCompanyAndContactService {
       return [];
     }
 
-    let queryBuilder = personRepository
-      .createQueryBuilder('person')
-      .select(['person.emailsPrimaryEmail', 'person.emailsAdditionalEmails'])
-      .where('person.emailsPrimaryEmail IN (:...uniqueHandles)', {
-        uniqueHandles,
-      });
-
-    for (const [index, handle] of uniqueHandles.entries()) {
-      queryBuilder = queryBuilder.orWhere(
-        `person.emailsAdditionalEmails @> :handle${index}::jsonb`,
-        {
-          [`handle${index}`]: JSON.stringify([handle]),
-        },
-      );
-    }
+    const queryBuilder = buildPersonEmailQueryBuilder(
+      personRepository.createQueryBuilder('person'),
+      uniqueHandles,
+    );
 
     const rawAlreadyCreatedContacts = await queryBuilder
-      .orderBy('person.createdAt', 'DESC')
+      .orderBy('person.createdAt', 'ASC')
       .getMany();
 
     const alreadyCreatedContacts = await personRepository.formatResult(

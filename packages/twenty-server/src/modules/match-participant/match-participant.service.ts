@@ -7,6 +7,8 @@ import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/s
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
+import { buildPersonEmailQueryBuilder } from 'src/modules/match-participant/utils/build-person-email-query-builder.util';
+import { findBestMatchingPersonByEmail } from 'src/modules/match-participant/utils/find-best-matching-person-by-email';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -65,28 +67,13 @@ export class MatchParticipantService<
         'person',
       );
 
-    let queryBuilder = personRepository
-      .createQueryBuilder('person')
-      .select([
-        'person.id',
-        'person.emailsPrimaryEmail',
-        'person.emailsAdditionalEmails',
-      ])
-      .where('person.emailsPrimaryEmail IN (:...uniqueParticipantsHandles)', {
-        uniqueParticipantsHandles,
-      });
-
-    for (const [index, handle] of uniqueParticipantsHandles.entries()) {
-      queryBuilder = queryBuilder.orWhere(
-        `person.emailsAdditionalEmails @> :handle${index}::jsonb`,
-        {
-          [`handle${index}`]: JSON.stringify([handle]),
-        },
-      );
-    }
+    const queryBuilder = buildPersonEmailQueryBuilder(
+      personRepository.createQueryBuilder('person'),
+      uniqueParticipantsHandles,
+    );
 
     const rawPeople = await queryBuilder
-      .orderBy('person.createdAt', 'DESC')
+      .orderBy('person.createdAt', 'ASC')
       .getMany();
 
     const people = await personRepository.formatResult(rawPeople);
@@ -106,13 +93,7 @@ export class MatchParticipantService<
     );
 
     for (const handle of uniqueParticipantsHandles) {
-      const person =
-        people.find((person) => person.emails?.primaryEmail === handle) ||
-        people.find(
-          (person) =>
-            Array.isArray(person.emails?.additionalEmails) &&
-            person.emails.additionalEmails.includes(handle),
-        );
+      const person = findBestMatchingPersonByEmail(people, handle);
 
       const workspaceMember = workspaceMembers.find(
         (workspaceMember) => workspaceMember.userEmail === handle,
@@ -277,6 +258,12 @@ export class MatchParticipantService<
     const participantRepository =
       await this.getParticipantRepository(objectMetadataName);
 
+    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
+
+    if (!workspaceId) {
+      throw new Error('Workspace ID is required');
+    }
+
     if (personId) {
       await participantRepository.update(
         {
@@ -286,7 +273,57 @@ export class MatchParticipantService<
           person: null,
         },
       );
+
+      const personRepository =
+        await this.twentyORMManager.getRepository<PersonWorkspaceEntity>(
+          'person',
+        );
+
+      const queryBuilder = buildPersonEmailQueryBuilder(
+        personRepository.createQueryBuilder('person'),
+        [handle],
+        [personId],
+      );
+
+      const rawPeople = await queryBuilder
+        .orderBy('person.createdAt', 'ASC')
+        .getMany();
+
+      const peopleToMatch = await personRepository.formatResult(rawPeople);
+
+      if (peopleToMatch.length > 0) {
+        const bestMatch = findBestMatchingPersonByEmail(peopleToMatch, handle);
+
+        if (bestMatch) {
+          await participantRepository.update(
+            {
+              handle: Equal(handle),
+            },
+            {
+              personId: bestMatch.id,
+            },
+          );
+
+          const rematchedParticipants = await participantRepository.find({
+            where: {
+              handle: Equal(handle),
+            },
+          });
+
+          this.workspaceEventEmitter.emitCustomBatchEvent(
+            `${objectMetadataName}_matched`,
+            [
+              {
+                workspaceMemberId: null,
+                participants: rematchedParticipants,
+              },
+            ],
+            workspaceId,
+          );
+        }
+      }
     }
+
     if (workspaceMemberId) {
       await participantRepository.update(
         {
