@@ -34,7 +34,6 @@ export const WorkspaceProviderEffect = () => {
       workspaceUrls: WorkspaceUrls,
     ) => {
       const { hostname } = new URL(getWorkspaceUrl(workspaceUrls));
-      console.log('>>>>>>>>>>>>>>', hostname, currentLocationHostname);
       return hostname === currentLocationHostname;
     };
 
