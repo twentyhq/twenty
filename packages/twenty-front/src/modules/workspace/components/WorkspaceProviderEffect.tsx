@@ -29,14 +29,14 @@ export const WorkspaceProviderEffect = () => {
 
   const { initializeQueryParamState } = useInitializeQueryParamState();
 
-  useEffect(() => {
-    const isWorkspaceHostnameMatchCurrentLocationHostname = (
-      workspaceUrls: WorkspaceUrls,
-    ) => {
-      const { hostname } = new URL(getWorkspaceUrl(workspaceUrls));
-      return hostname === currentLocationHostname;
-    };
+  const isWorkspaceHostnameMatchCurrentLocationHostname = (
+    workspaceUrls: WorkspaceUrls,
+  ) => {
+    const { hostname } = new URL(getWorkspaceUrl(workspaceUrls));
+    return hostname === currentLocationHostname;
+  };
 
+  useEffect(() => {
     if (
       isMultiWorkspaceEnabled &&
       isDefined(getPublicWorkspaceData) &&
