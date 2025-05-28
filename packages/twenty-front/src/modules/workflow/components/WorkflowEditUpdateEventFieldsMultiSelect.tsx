@@ -2,9 +2,9 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput';
 import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
-import { SUPPORTED_FIELD_METADATA_TYPES } from '@/workflow/constants/SupportedFieldMetadataTypes';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
+import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 
 export const WorkflowFieldsMultiSelect = ({
   label,
@@ -24,11 +24,11 @@ export const WorkflowFieldsMultiSelect = ({
   const { getIcon } = useIcons();
 
   const inlineFieldMetadataItems = objectMetadataItem?.fields
-    .filter(
-      (fieldMetadataItem) =>
-        !fieldMetadataItem.isSystem &&
-        fieldMetadataItem.isActive &&
-        SUPPORTED_FIELD_METADATA_TYPES.includes(fieldMetadataItem.type),
+    .filter((fieldMetadataItem) =>
+      shouldDisplayFormField({
+        fieldMetadataItem,
+        actionType: 'UPDATE_RECORD',
+      }),
     )
     .sort((fieldMetadataItemA, fieldMetadataItemB) =>
       fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
