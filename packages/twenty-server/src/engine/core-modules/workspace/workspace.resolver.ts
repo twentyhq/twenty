@@ -43,7 +43,6 @@ import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -89,11 +88,11 @@ export class WorkspaceResolver {
   }
 
   @Mutation(() => Workspace)
-  @UseGuards(UserAuthGuard)
+  @UseGuards(UserAuthGuard, WorkspaceAuthGuard)
   async activateWorkspace(
     @Args('data') data: ActivateWorkspaceInput,
     @AuthUser() user: User,
-    @OriginHeader() origin: string,
+    @AuthWorkspace() workspace: Workspace,
   ) {
     const workspace =
       await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
@@ -101,8 +100,6 @@ export class WorkspaceResolver {
       );
 
     workspaceValidator.assertIsDefinedOrThrow(workspace);
-
-    console.log('entering in activateWorkspace');
 
     return await this.workspaceService.activateWorkspace(user, workspace, data);
   }
@@ -294,7 +291,7 @@ export class WorkspaceResolver {
 
   @Query(() => PublicWorkspaceDataOutput)
   async getPublicWorkspaceDataByDomain(
-    @OriginHeader() origin: string,
+    @Args('origin') origin: string,
   ): Promise<PublicWorkspaceDataOutput | undefined> {
     try {
       const workspace =

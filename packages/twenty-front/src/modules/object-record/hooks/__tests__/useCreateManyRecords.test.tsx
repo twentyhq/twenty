@@ -40,6 +40,20 @@ const mocks = [
       },
     })),
   },
+  {
+    request: {
+      query,
+      variables: {
+        data: input,
+        upsert: true,
+      },
+    },
+    result: jest.fn(() => ({
+      data: {
+        createPeople: response,
+      },
+    })),
+  },
 ];
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
@@ -67,6 +81,30 @@ describe('useCreateManyRecords', () => {
     });
 
     expect(mocks[0].result).toHaveBeenCalled();
+    expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not indicate id in request variables when upsert is true because we cant know if it will be an insert or an update', async () => {
+    const { result } = renderHook(
+      () =>
+        useCreateManyRecords({
+          objectNameSingular: CoreObjectNameSingular.Person,
+        }),
+      {
+        wrapper: Wrapper,
+      },
+    );
+
+    await act(async () => {
+      const res = await result.current.createManyRecords(input, true);
+      expect(res).toEqual(response);
+    });
+
+    // Verify that the mutation was called with data without IDs
+    expect(mocks[1].request.variables.data).toEqual(input);
+    mocks[1].request.variables.data.forEach((record: any) => {
+      expect(record).not.toHaveProperty('id');
+    });
     expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
   });
 });

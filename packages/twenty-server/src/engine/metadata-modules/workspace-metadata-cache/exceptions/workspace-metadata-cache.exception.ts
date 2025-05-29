@@ -7,5 +7,6 @@ export class WorkspaceMetadataCacheException extends CustomException {
 }
 
 export enum WorkspaceMetadataCacheExceptionCode {
-  METADATA_VERSION_NOT_FOUND = 'METADATA_VERSION_NOT_FOUND',
+  OBJECT_METADATA_MAP_NOT_FOUND = 'Object Metadata map not found',
+  OBJECT_METADATA_COLLECTION_NOT_FOUND = 'Object Metadata collection not found',
 }

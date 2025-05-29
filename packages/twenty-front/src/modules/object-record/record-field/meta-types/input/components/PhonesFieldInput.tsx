@@ -129,7 +129,8 @@ export const PhonesFieldInput = ({
         <PhonesFieldMenuItem
           key={index}
           dropdownId={`phones-field-input-${fieldDefinition.metadata.fieldName}-${index}`}
-          isPrimary={isPrimaryPhone(index)}
+          showPrimaryIcon={isPrimaryPhone(index)}
+          showSetAsPrimaryButton={!isPrimaryPhone(index)}
           phone={phone}
           onEdit={handleEdit}
           onSetAsPrimary={handleSetPrimary}

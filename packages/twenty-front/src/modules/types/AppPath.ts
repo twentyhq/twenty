@@ -12,8 +12,7 @@ export enum AppPath {
   SyncEmails = '/sync/emails',
   InviteTeam = '/invite-team',
   PlanRequired = '/plan-required',
-  PaymentRequired = '/payment-required',
-  PaymentRequiredSuccess = '/payment-required/payment-success',
+  PlanRequiredSuccess = '/plan-required/payment-success',
 
   // Onboarded
   Index = '/',
@@ -36,7 +35,7 @@ export enum AppPath {
   InternalChat = '/chat/internal',
   ExternalChat = '/chat/call-center',
 
-  Chatbot = '/chatbot',
+  Chatbot = 'objects/chatbot',
   DashboardLinks = '/dashboard-links',
 
   Authorize = '/authorize',

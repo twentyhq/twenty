@@ -64,5 +64,14 @@ export const getSettingsIntegrationAll = ({
       text: 'Banco Inter',
       link: '/settings/integrations/inter',
     },
+    {
+      from: {
+        key: 'focusnfe',
+        image: '/images/integrations/focus-nfe-logo.png',
+      },
+      type: 'Add',
+      text: 'Focus NFe',
+      link: '/settings/integrations/focus-nfe',
+    },
   ].filter(Boolean) as SettingsIntegration[],
 });

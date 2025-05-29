@@ -5,13 +5,13 @@ export class AddConstraintOnIndex1728999374151 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "metadata"."indexMetadata" ADD CONSTRAINT "IndexOnNameAndWorkspaceIdAndObjectMetadataUnique" UNIQUE ("name", "workspaceId", "objectMetadataId")`,
+      `ALTER TABLE "core"."indexMetadata" ADD CONSTRAINT "IndexOnNameAndWorkspaceIdAndObjectMetadataUnique" UNIQUE ("name", "workspaceId", "objectMetadataId")`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "metadata"."indexMetadata" DROP CONSTRAINT "IndexOnNameAndWorkspaceIdAndObjectMetadataUnique"`,
+      `ALTER TABLE "core"."indexMetadata" DROP CONSTRAINT "IndexOnNameAndWorkspaceIdAndObjectMetadataUnique"`,
     );
   }
 }

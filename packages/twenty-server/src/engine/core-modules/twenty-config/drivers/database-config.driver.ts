@@ -40,7 +40,7 @@ export class DatabaseConfigDriver
       const loadedCount = await this.loadAllConfigVarsFromDb();
 
       this.logger.log(
-        `[INIT] Config variables loaded: ${loadedCount} values found, ${this.allPossibleConfigKeys.length - loadedCount} missing`,
+        `[INIT] Config variables loaded: ${loadedCount} values found in DB, ${this.allPossibleConfigKeys.length - loadedCount} falling to env vars/defaults`,
       );
     } catch (error) {
       this.logger.error(

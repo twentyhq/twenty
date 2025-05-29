@@ -124,7 +124,7 @@ export const DocumentField = ({
       <FormSelectFieldInput
         label="Person type"
         defaultValue={personType}
-        onPersist={(value) => setPersonType(value ?? 'CPF')}
+        onChange={(value) => setPersonType(value ?? 'CPF')}
         options={PERSON_TYPE_OPTIONS}
         readonly={disabled}
       />

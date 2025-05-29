@@ -3,30 +3,33 @@ import { MultiItemFieldMenuItem } from './MultiItemFieldMenuItem';
 
 type EmailsFieldMenuItemProps = {
   dropdownId: string;
-  isPrimary?: boolean;
   onEdit?: () => void;
   onSetAsPrimary?: () => void;
   onDelete?: () => void;
   email: string;
+  showPrimaryIcon: boolean;
+  showSetAsPrimaryButton: boolean;
 };
 
 export const EmailsFieldMenuItem = ({
   dropdownId,
-  isPrimary,
   onEdit,
   onSetAsPrimary,
   onDelete,
   email,
+  showPrimaryIcon,
+  showSetAsPrimaryButton,
 }: EmailsFieldMenuItemProps) => {
   return (
     <MultiItemFieldMenuItem
       dropdownId={dropdownId}
-      isPrimary={isPrimary}
       value={email}
       onEdit={onEdit}
       onSetAsPrimary={onSetAsPrimary}
       onDelete={onDelete}
       DisplayComponent={EmailDisplay}
+      showPrimaryIcon={showPrimaryIcon}
+      showSetAsPrimaryButton={showSetAsPrimaryButton}
     />
   );
 };

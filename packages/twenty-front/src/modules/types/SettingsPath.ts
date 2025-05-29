@@ -6,6 +6,7 @@ export enum SettingsPath {
   AccountsCalendars = 'accounts/calendars',
   AccountsEmails = 'accounts/emails',
   Billing = 'billing',
+  BillingPlan = 'billing-plan',
   Objects = 'objects',
   ObjectOverview = 'objects/overview',
   ObjectDetail = 'objects/:objectNamePlural',
@@ -48,6 +49,13 @@ export enum SettingsPath {
   IntegrationInterDatabase = 'integrations/inter',
   IntegrationInterNewDatabaseConnection = 'integrations/inter/new',
   IntegrationInterEditDatabaseConnection = 'integrations/inter/:connectionId/edit',
+
+  IntegrationFocusNfe = 'integrations/focus-nfe',
+  IntegrationFocusNfeNewDatabaseConnection = 'integrations/focus-nfe/new',
+  IntegrationFocusNfeEditDatabaseConnection = 'integrations/focus-nfe/:connectionId/edit',
+
+  IntegrationFocusNfeNewIssuer = 'integrations/focus-nfe/new-issuer',
+  IntegrationFocusNfeEditIssuer = 'integrations/focus-nfe/:issuerId/edit-issuer',
 
   Security = 'security',
   NewSSOIdentityProvider = 'security/sso/new',

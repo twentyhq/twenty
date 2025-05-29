@@ -11,8 +11,7 @@ const StyledContainer = styled.div<{ isCompact?: boolean }>`
   height: 20px;
   margin-left: auto;
   width: ${({ isCompact }) => (isCompact ? 'auto' : '100%')};
-  min-width: ${({ theme }) =>
-    `calc(${theme.icon.size.md} + ${theme.spacing(2)})`};
+  min-width: ${({ theme }) => `${theme.spacing(21)}`};
   padding: ${({ theme }) => theme.spacing(0, 1)};
 
   border-radius: 4px;
@@ -21,6 +20,8 @@ const StyledContainer = styled.div<{ isCompact?: boolean }>`
 
   color: ${({ theme }) => theme.font.color.tertiary};
   font-weight: ${({ theme }) => theme.font.weight.regular};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  flex: 1;
 `;
 
 type EmailThreadNotSharedProps = {
@@ -37,8 +38,8 @@ export const EmailThreadNotShared = ({
   return (
     <>
       <StyledContainer id={containerId} isCompact={isCompact}>
-        <IconLock size={theme.icon.size.md} />
-        {visibility === MessageChannelVisibility.METADATA && 'Not shared'}
+        <IconLock size={theme.icon.size.sm} />
+        {'Not shared'}
       </StyledContainer>
       {visibility === MessageChannelVisibility.SUBJECT && (
         <AppTooltip

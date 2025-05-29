@@ -3,7 +3,7 @@ import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useState } from 'react';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import {
   IconArchive,
   IconDotsVertical,
@@ -12,6 +12,7 @@ import {
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
+import { SERVCE_CENTER_ACTION_MODAL_ID } from '../constants/ServiceCenterActionModalId';
 
 type ServiceCenterFieldActionDropdownProps = {
   modalMessage: {
@@ -37,12 +38,10 @@ export const ServiceCenterFieldActionDropdown = ({
   scopeKey,
   isActive,
 }: ServiceCenterFieldActionDropdownProps) => {
-  // const { t } = useTranslation();
-
+  const { closeModal, openModal } = useModal();
   const dropdownId = `${scopeKey}-settings-field-active-action-dropdown`;
 
   const { closeDropdown } = useDropdown(dropdownId);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleEdit = (action: ActionType) => {
     onEdit(action);
@@ -51,13 +50,13 @@ export const ServiceCenterFieldActionDropdown = ({
 
   const handleDelete = () => {
     onDelete?.();
-    setIsModalOpen(false);
+    closeModal(SERVCE_CENTER_ACTION_MODAL_ID);
     closeDropdown();
   };
 
   const handleDeactivate = () => {
     onDeactivate?.();
-    setIsModalOpen(false);
+    closeModal(SERVCE_CENTER_ACTION_MODAL_ID);
     closeDropdown();
   };
 
@@ -96,14 +95,14 @@ export const ServiceCenterFieldActionDropdown = ({
                 <MenuItem
                   text={'Delete'}
                   LeftIcon={IconArchive}
-                  onClick={() => setIsModalOpen(true)}
+                  onClick={() => openModal(SERVCE_CENTER_ACTION_MODAL_ID)}
                 />
               )}
               {!!onDeactivate && (
                 <MenuItem
                   text={isActive ? 'deactivate' : 'reactivate'}
                   LeftIcon={IconArchive}
-                  onClick={() => setIsModalOpen(true)}
+                  onClick={() => openModal(SERVCE_CENTER_ACTION_MODAL_ID)}
                 />
               )}
             </DropdownMenuItemsContainer>
@@ -114,8 +113,7 @@ export const ServiceCenterFieldActionDropdown = ({
         }}
       />
       <ConfirmationModal
-        isOpen={isModalOpen}
-        setIsOpen={setIsModalOpen}
+        modalId={SERVCE_CENTER_ACTION_MODAL_ID}
         title={modalMessage.title}
         subtitle={modalMessage.subtitle}
         onConfirmClick={onDelete ? handleDelete : handleDeactivate}

@@ -5,13 +5,14 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
+import { H2Title, IconReload, IconTrash } from 'twenty-ui/display';
+import { Button, ButtonGroup } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { CheckCustomDomainValidRecordsEffect } from '~/pages/settings/workspace/CheckCustomDomainValidRecordsEffect';
 import { SettingsCustomDomainRecords } from '~/pages/settings/workspace/SettingsCustomDomainRecords';
 import { SettingsCustomDomainRecordsStatus } from '~/pages/settings/workspace/SettingsCustomDomainRecordsStatus';
 import { useCheckCustomDomainValidRecords } from '~/pages/settings/workspace/hooks/useCheckCustomDomainValidRecords';
-import { Button, ButtonGroup } from 'twenty-ui/input';
-import { H2Title, IconReload, IconTrash } from 'twenty-ui/display';
-import { CheckCustomDomainValidRecordsEffect } from '~/pages/settings/workspace/CheckCustomDomainValidRecordsEffect';
+import { customDomainRecordsState } from '~/pages/settings/workspace/states/customDomainRecordsState';
 
 const StyledDomainFormWrapper = styled.div`
   display: flex;
@@ -91,18 +92,20 @@ export const SettingsCustomDomain = () => {
             Icon={IconTrash}
             variant="primary"
             onClick={deleteCustomDomain}
-            type="button"
           />
         </StyledButtonGroup>
       </StyledDomainFormWrapper>
       {currentWorkspace?.customDomain && (
         <StyledRecordsWrapper>
           <SettingsCustomDomainRecordsStatus />
-          {customDomainRecords && (
-            <SettingsCustomDomainRecords
-              records={customDomainRecords.records}
-            />
-          )}
+          {customDomainRecords &&
+            customDomainRecords.records.some(
+              (record) => record.status !== 'success',
+            ) && (
+              <SettingsCustomDomainRecords
+                records={customDomainRecords.records}
+              />
+            )}
         </StyledRecordsWrapper>
       )}
     </Section>

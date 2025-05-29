@@ -89,10 +89,8 @@ export class WorkspacePermissionsCacheStorageService {
   async setUserWorkspaceRoleMap(
     workspaceId: string,
     userWorkspaceRoleMap: UserWorkspaceRoleMap,
-  ): Promise<{
-    newUserWorkspaceRoleMapVersion: string;
-  }> {
-    const [, newUserWorkspaceRoleMapVersion] = await Promise.all([
+  ): Promise<void> {
+    await Promise.all([
       this.cacheStorageService.set<UserWorkspaceRoleMap>(
         `${WorkspaceCacheKeys.MetadataPermissionsUserWorkspaceRoleMap}:${workspaceId}`,
         userWorkspaceRoleMap,
@@ -100,8 +98,6 @@ export class WorkspacePermissionsCacheStorageService {
       ),
       this.setUserWorkspaceRoleMapVersion(workspaceId),
     ]);
-
-    return { newUserWorkspaceRoleMapVersion };
   }
 
   async setUserWorkspaceRoleMapVersion(workspaceId: string) {
@@ -143,6 +139,12 @@ export class WorkspacePermissionsCacheStorageService {
   removeUserWorkspaceRoleMapOngoingCachingLock(workspaceId: string) {
     return this.cacheStorageService.del(
       `${WorkspaceCacheKeys.MetadataPermissionsUserWorkspaceRoleMapOngoingCachingLock}:${workspaceId}`,
+    );
+  }
+
+  removeUserWorkspaceRoleMap(workspaceId: string) {
+    return this.cacheStorageService.del(
+      `${WorkspaceCacheKeys.MetadataPermissionsUserWorkspaceRoleMap}:${workspaceId}`,
     );
   }
 

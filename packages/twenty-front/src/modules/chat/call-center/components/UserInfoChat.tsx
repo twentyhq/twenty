@@ -6,8 +6,8 @@ import { Avatar } from 'twenty-ui/display';
 
 interface WhatsappProps {
   message: IMessage;
-  selectedChat: WhatsappDocument;
-  currentWorkspaceMember: CurrentWorkspaceMember | null;
+  selectedChat?: WhatsappDocument;
+  currentWorkspaceMember?: CurrentWorkspaceMember | null;
 }
 
 const StyledUserName = styled.p`
@@ -26,38 +26,27 @@ export const AvatarComponent: React.FC<WhatsappProps> = ({
   return (
     <Avatar
       avatarUrl={
-        message.from !== 'system' ? '' : currentWorkspaceMember?.avatarUrl
+        message.from ===
+        `${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`
+          ? currentWorkspaceMember?.avatarUrl
+          : message.from
       }
-      placeholder={
-        message.from !== 'system'
-          ? selectedChat.client.name
-          : currentWorkspaceMember?.name.firstName
-      }
-      placeholderColorSeed={
-        message.from !== 'system'
-          ? selectedChat.client.name
-          : currentWorkspaceMember?.name.firstName
-      }
+      placeholder={message.from}
+      placeholderColorSeed={message.from}
       type={'rounded'}
       size="xl"
     />
   );
 };
 
-export const UsernameComponent: React.FC<WhatsappProps> = ({
-  message,
-  selectedChat,
-  currentWorkspaceMember,
-}) => {
+export const UsernameComponent: React.FC<WhatsappProps> = ({ message }) => {
   return (
     <StyledUserName
       style={{
         margin: 0,
       }}
     >
-      {message.from !== 'system'
-        ? selectedChat.client.name
-        : `${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`}
+      {message.from}
     </StyledUserName>
   );
 };

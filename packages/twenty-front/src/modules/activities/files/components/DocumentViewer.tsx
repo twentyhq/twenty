@@ -1,3 +1,4 @@
+import { PREVIEWABLE_EXTENSIONS } from '@/activities/files/const/previewable-extensions.const';
 import { fetchCsvPreview } from '@/activities/files/utils/fetchCsvPreview';
 import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
 import '@cyntler/react-doc-viewer/dist/index.css';
@@ -40,29 +41,6 @@ type DocumentViewerProps = {
   documentName: string;
   documentUrl: string;
 };
-
-export const PREVIEWABLE_EXTENSIONS = [
-  'bmp',
-  'csv',
-  'odt',
-  'doc',
-  'docx',
-  'gif',
-  'htm',
-  'html',
-  'jpg',
-  'jpeg',
-  'pdf',
-  'png',
-  'ppt',
-  'pptx',
-  'tiff',
-  'txt',
-  'xls',
-  'xlsx',
-  'mp4',
-  'webp',
-];
 
 const MIME_TYPE_MAPPING: Record<
   (typeof PREVIEWABLE_EXTENSIONS)[number],

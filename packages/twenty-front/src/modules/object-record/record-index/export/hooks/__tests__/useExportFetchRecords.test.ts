@@ -223,6 +223,7 @@ describe('useRecordData', () => {
               labelWidth: undefined,
               metadata: {
                 fieldName: 'updatedAt',
+                isCustom: false,
                 isNullable: false,
                 objectMetadataNameSingular: 'person',
                 options: null,

@@ -1,9 +1,8 @@
-
 export const PETS_DATA_SEEDS = [
   {
     name: 'Toby',
-    species: 'dog',
-    traits: ['curious', 'friendly'],
+    species: 'DOG',
+    traits: ['CURIOUS', 'FRIENDLY'],
     comments: 'Needs to have people around.',
     age: 3,
     location: {
@@ -11,7 +10,7 @@ export const PETS_DATA_SEEDS = [
       addressStreet2: '7344 Haley Loop',
       addressCity: 'Jacksonstad',
       addressCountry: 'United States',
-      addressPostCode: '32048-5208',
+      addressPostcode: '32048-5208',
       addressState: 'North Dakota',
     },
     vetPhone: {

@@ -65,10 +65,10 @@ export const useDropdown = (dropdownId?: string) => {
             dropdownHotkeyScopeFromProps ?? dropdownHotkeyScope;
 
           if (isDefined(dropdownHotkeyScopeForOpening)) {
-            setHotkeyScopeAndMemorizePreviousScope(
-              dropdownHotkeyScopeForOpening.scope,
-              dropdownHotkeyScopeForOpening.customScopes,
-            );
+            setHotkeyScopeAndMemorizePreviousScope({
+              scope: dropdownHotkeyScopeForOpening.scope,
+              customScopes: dropdownHotkeyScopeForOpening.customScopes,
+            });
           }
         }
       },

@@ -5,7 +5,6 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -95,13 +94,6 @@ export class WorkspaceMigrationFieldFactory {
       return [];
     }
 
-    const workspaceId = fieldMetadataCollection[0]?.workspaceId;
-
-    const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsNewRelationEnabled,
-      workspaceId,
-    );
-
     const fieldMetadataCollectionGroupByObjectMetadataId =
       fieldMetadataCollection.reduce(
         (result, currentFieldMetadata) => {
@@ -125,14 +117,6 @@ export class WorkspaceMigrationFieldFactory {
         originalObjectMetadataMap[fieldMetadataCollection[0]?.objectMetadataId];
 
       for (const fieldMetadata of fieldMetadataCollection) {
-        // Relations are handled in workspace-migration-relation.factory.ts
-        if (
-          !isNewRelationEnabled &&
-          fieldMetadata.type === FieldMetadataType.RELATION
-        ) {
-          continue;
-        }
-
         columns.push(
           ...this.workspaceMigrationFactory.createColumnActions(
             WorkspaceMigrationColumnActionType.CREATE,
@@ -172,22 +156,7 @@ export class WorkspaceMigrationFieldFactory {
       return [];
     }
 
-    const workspaceId = fieldMetadataUpdateCollection[0]?.current.workspaceId;
-
-    const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsNewRelationEnabled,
-      workspaceId,
-    );
-
     for (const fieldMetadataUpdate of fieldMetadataUpdateCollection) {
-      // Skip relations, because they're just representation and not real columns
-      if (
-        !isNewRelationEnabled &&
-        fieldMetadataUpdate.altered.type === FieldMetadataType.RELATION
-      ) {
-        continue;
-      }
-
       const columnActions = this.workspaceMigrationFactory.createColumnActions(
         WorkspaceMigrationColumnActionType.ALTER,
         fieldMetadataUpdate.current,

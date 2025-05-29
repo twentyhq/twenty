@@ -164,18 +164,8 @@ export const getRecordFilterOperands = ({
         )
       ) {
         return COMPOSITE_FIELD_FILTER_OPERANDS_MAP.CURRENCY.currencyCode;
-      } else if (
-        isExpectedSubFieldName(
-          FieldMetadataType.CURRENCY,
-          'amountMicros',
-          subFieldName,
-        )
-      ) {
-        return COMPOSITE_FIELD_FILTER_OPERANDS_MAP.CURRENCY.amountMicros;
       } else {
-        throw new Error(
-          `Unknown subfield name ${subFieldName} for ${filterType} filter`,
-        );
+        return COMPOSITE_FIELD_FILTER_OPERANDS_MAP.CURRENCY.amountMicros;
       }
     }
     case 'NUMBER':

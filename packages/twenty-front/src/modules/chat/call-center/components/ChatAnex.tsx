@@ -12,6 +12,7 @@ import { useIcons } from 'twenty-ui/display';
 
 interface ChatAnexProps {
   setIsAnexOpen: Dispatch<SetStateAction<boolean>>;
+  from: string;
 }
 
 interface LabelProps {
@@ -53,7 +54,7 @@ const StyledInput = styled.input`
   display: none;
 `;
 
-export const ChatAnex = ({ setIsAnexOpen }: ChatAnexProps) => {
+export const ChatAnex = ({ setIsAnexOpen, from }: ChatAnexProps) => {
   const { selectedChat } = useContext(
     CallCenterContext,
   ) as CallCenterContextType;
@@ -75,7 +76,7 @@ export const ChatAnex = ({ setIsAnexOpen }: ChatAnexProps) => {
     //   ? `+${selectedChat.client.phone}`
     //   : selectedChat.client.id;
 
-    const identifier = `+${selectedChat.client.phone}`;
+    const identifier = `${selectedChat.client.phone}`;
 
     if (!identifier) return;
 
@@ -85,6 +86,7 @@ export const ChatAnex = ({ setIsAnexOpen }: ChatAnexProps) => {
       integrationId: selectedChat.integrationId,
       to: identifier,
       type,
+      from,
     };
 
     if (isWhatsappDocument(selectedChat)) {

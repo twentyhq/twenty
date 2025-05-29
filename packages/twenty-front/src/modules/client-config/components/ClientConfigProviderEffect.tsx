@@ -7,6 +7,7 @@ import { chromeExtensionIdState } from '@/client-config/states/chromeExtensionId
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
+import { isChatbotEnabledState } from '@/client-config/states/isChatbotEnabledState';
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
@@ -87,6 +88,8 @@ export const ClientConfigProviderEffect = () => {
     isConfigVariablesInDbEnabledState,
   );
 
+  const setIsChatbotEnabled = useSetRecoilState(isChatbotEnabledState);
+
   const { data, loading, error } = useGetClientConfigQuery({
     skip: clientConfigApiStatus.isLoaded,
   });
@@ -165,6 +168,7 @@ export const ClientConfigProviderEffect = () => {
     setIsConfigVariablesInDbEnabled(
       data?.clientConfig?.isConfigVariablesInDbEnabled,
     );
+    setIsChatbotEnabled(data?.clientConfig?.isChatbotEnabled);
   }, [
     data,
     setIsDebugMode,
@@ -191,6 +195,7 @@ export const ClientConfigProviderEffect = () => {
     setGoogleCalendarEnabled,
     setIsAttachmentPreviewEnabled,
     setIsConfigVariablesInDbEnabled,
+    setIsChatbotEnabled,
   ]);
 
   return <></>;

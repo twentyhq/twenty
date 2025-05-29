@@ -5,12 +5,17 @@ import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsPro
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SettingPermissionType } from '~/generated/graphql';
+import { SettingsIntegrationFocusNfeEditDatabaseConnection } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeEditConnection';
+import { SettingsIntegrationFocusNfeEditIssuer } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeEditIssuer';
+import { SettingsIntegrationFocusNfeNewDatabaseConnection } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeNewConnection';
+import { SettingsIntegrationFocusNfeNewIssuer } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationFocusNfeNewIssuer';
+import { SettingsIntegrationFocusNfeDatabase } from '~/pages/settings/integrations/focus-nfe/SettingsIntegrationsFocusNfe';
 import { SettingsIntegrationInterDatabase } from '~/pages/settings/integrations/inter/SettingsIntegrationInterDatabase';
 import { SettingsIntegrationInterEditDatabaseConnection } from '~/pages/settings/integrations/inter/SettingsIntegrationInterEditDatabaseConnection';
 import { SettingsIntegrationInterNewDatabaseConnection } from '~/pages/settings/integrations/inter/SettingsIntegrationInterNewDatabaseConnection';
-import { SettingsIntegrationWhatsappDatabase } from '~/pages/settings/integrations/SettingsIntegrationWhatsappDatabase';
-import { SettingsIntegrationWhatsappEditDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationWhatsappEditDatabaseConnection';
-import { SettingsIntegrationWhatsappNewDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationWhatsappNewDatabaseConnection';
+import { SettingsIntegrationWhatsappDatabase } from '~/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappDatabase';
+import { SettingsIntegrationWhatsappEditDatabaseConnection } from '~/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappEditDatabaseConnection';
+import { SettingsIntegrationWhatsappNewDatabaseConnection } from '~/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappNewDatabaseConnection';
 import { SettingsServiceCenter } from '~/pages/settings/service-center/SettingsServiceCenter';
 import { SettingsServiceCenterAgents } from '~/pages/settings/service-center/SettingsServiceCenterAgents';
 import { SettingsServiceCenterEditAgent } from '~/pages/settings/service-center/SettingsServiceCenterEditAgent';
@@ -23,6 +28,8 @@ import { SettingsServiceCenterSectors } from '~/pages/settings/service-center/Se
 import { SettingsServiceCenterServiceLevel } from '~/pages/settings/service-center/SettingsServiceCenterServiceLevel';
 import { SettingsServiceCenterTelephony } from '~/pages/settings/service-center/SettingsServiceCenterTelephony';
 import { SettingsTelephonyEdit } from '~/pages/settings/service-center/SettingsServiceCenterTelephonyEdit';
+
+import { SettingsBillingPlan } from '~/pages/settings/billing/SettingsBilling';
 
 const SettingsApiKeys = lazy(() =>
   import('~/pages/settings/developers/api-keys/SettingsApiKeys').then(
@@ -383,6 +390,11 @@ export const SettingsRoutes = ({
           element={<SettingsWorkspaceMembers />}
         />
       </Route>
+
+      <Route
+        path={SettingsPath.BillingPlan}
+        element={<SettingsBillingPlan />}
+      />
       <Route
         path={SettingsPath.ServiceCenter}
         element={<SettingsServiceCenter />}
@@ -597,9 +609,30 @@ export const SettingsRoutes = ({
         path={SettingsPath.IntegrationInterEditDatabaseConnection}
         element={<SettingsIntegrationInterEditDatabaseConnection />}
       />
+
+      <Route
+        path={SettingsPath.IntegrationFocusNfe}
+        element={<SettingsIntegrationFocusNfeDatabase />}
+      />
+      <Route
+        path={SettingsPath.IntegrationFocusNfeNewDatabaseConnection}
+        element={<SettingsIntegrationFocusNfeNewDatabaseConnection />}
+      />
+      <Route
+        path={SettingsPath.IntegrationFocusNfeEditDatabaseConnection}
+        element={<SettingsIntegrationFocusNfeEditDatabaseConnection />}
+      />
       <Route
         path={SettingsPath.IntegrationWhatsappEditDatabaseConnection}
         element={<SettingsIntegrationWhatsappEditDatabaseConnection />}
+      />
+      <Route
+        path={SettingsPath.IntegrationFocusNfeNewIssuer}
+        element={<SettingsIntegrationFocusNfeNewIssuer />}
+      />
+      <Route
+        path={SettingsPath.IntegrationFocusNfeEditIssuer}
+        element={<SettingsIntegrationFocusNfeEditIssuer />}
       />
       <Route
         path={SettingsPath.ObjectNewFieldSelect}

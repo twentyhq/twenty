@@ -112,7 +112,7 @@ export const ServiceCenterServiceLevelAgreement = () => {
             <StyledContainer key={wa.id}>
               <StyledInbox>
                 <img src={WhatsappIcon} alt="Whatsapp" />
-                {wa.label}
+                {wa.name}
               </StyledInbox>
               <StyledContent>
                 <StyledPill>{wa.sla} min</StyledPill>

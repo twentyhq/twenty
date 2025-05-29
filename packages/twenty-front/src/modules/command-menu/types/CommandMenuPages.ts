@@ -13,5 +13,7 @@ export enum CommandMenuPages {
   WorkflowStepEdit = 'workflow-step-edit',
   WorkflowRunStepView = 'workflow-run-step-view',
   SearchRecords = 'search-records',
+  ChatbotFlow = 'chatbot-flow',
+  ChatbotFlowStepEdit = 'chatbot-flow-step-edit',
   Traceable = CoreObjectNameSingular.Traceable,
 }

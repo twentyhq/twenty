@@ -8,7 +8,6 @@ import { useSettingsPermissionMap } from '@/settings/roles/hooks/useSettingsPerm
 import { NavigationDrawerItemIndentationLevel } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
-import { SettingPermissionType } from '~/generated/graphql';
 import {
   IconApi,
   IconApps,
@@ -31,7 +30,9 @@ import {
   IconUserCircle,
   IconUsers,
   IconWebhook,
+  IconCreditCard,
 } from 'twenty-ui/display';
+import { SettingPermissionType } from '~/generated/graphql';
 
 // eslint-disable-next-line no-restricted-imports
 import { IconIdBadge2, IconMessageCircleCog } from '@tabler/icons-react';
@@ -155,7 +156,14 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           path: SettingsPath.Billing,
           Icon: IconCurrencyDollar,
           isHidden:
-            !isBillingEnabled || !permissionMap[SettingsPermissions.WORKSPACE],
+            !isBillingEnabled ||
+            !permissionMap[SettingPermissionType.WORKSPACE],
+        },
+        {
+          label: 'Billing',
+          path: SettingsPath.BillingPlan,
+          Icon: IconCreditCard,
+          isHidden: !isBillingEnabled,
         },
         {
           label: t`Roles`,
@@ -163,14 +171,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           Icon: IconLock,
           isHidden: !permissionMap[SettingPermissionType.ROLES],
         },
-        {
-          label: t`Billing`,
-          path: SettingsPath.Billing,
-          Icon: IconCurrencyDollar,
-          isHidden:
-            !isBillingEnabled ||
-            !permissionMap[SettingPermissionType.WORKSPACE],
-        },
+
         {
           label: t`Data model`,
           path: SettingsPath.Objects,

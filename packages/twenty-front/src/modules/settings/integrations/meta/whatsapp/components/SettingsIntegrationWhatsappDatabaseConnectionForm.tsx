@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
-import { SettingsIntegrationWhatsappConnectionFormValues } from '~/pages/settings/integrations/SettingsIntegrationWhatsappNewDatabaseConnection';
+import { SettingsIntegrationWhatsappConnectionFormValues } from '~/pages/settings/integrations/whatsapp/SettingsIntegrationWhatsappNewDatabaseConnection';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -22,7 +22,7 @@ const getFormFields = (): {
 }[] => {
   return [
     {
-      name: 'label',
+      name: 'name',
       label: 'Inbox name',
       placeholder: 'Integration name',
       type: 'text',

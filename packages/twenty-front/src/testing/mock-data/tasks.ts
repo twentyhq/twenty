@@ -1,10 +1,10 @@
 import { Task } from '@/activities/types/Task';
 import { TaskTarget } from '@/activities/types/TaskTarget';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { MockWorkspaceMember } from '~/testing/mock-data/workspace-members';
 
 type MockedTask = Task & { __typename?: string };
 
-const workspaceMember: WorkspaceMember = {
+const workspaceMember: MockWorkspaceMember = {
   __typename: 'WorkspaceMember',
   id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
   name: {

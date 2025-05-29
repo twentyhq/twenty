@@ -11,8 +11,8 @@ import { tokenPairState } from '@/auth/states/tokenPairState';
 import { workspacesState } from '@/auth/states/workspaces';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
+import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { AppPath } from '@/types/AppPath';
@@ -25,7 +25,6 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   const [isDebugMode] = useRecoilState(isDebugModeState);
 
   const navigate = useNavigate();
-  const { isMatchingLocation } = useIsMatchingLocation();
   const setTokenPair = useSetRecoilState(tokenPairState);
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
@@ -74,10 +73,10 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
         setCurrentUserWorkspace(null);
         setWorkspaces([]);
         if (
-          !isMatchingLocation(AppPath.Verify) &&
-          !isMatchingLocation(AppPath.SignInUp) &&
-          !isMatchingLocation(AppPath.Invite) &&
-          !isMatchingLocation(AppPath.ResetPassword)
+          !isMatchingLocation(location, AppPath.Verify) &&
+          !isMatchingLocation(location, AppPath.SignInUp) &&
+          !isMatchingLocation(location, AppPath.Invite) &&
+          !isMatchingLocation(location, AppPath.ResetPassword)
         ) {
           setPreviousUrl(`${location.pathname}${location.search}`);
           navigate(AppPath.SignInUp);

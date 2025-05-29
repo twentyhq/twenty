@@ -10,6 +10,7 @@ export class ScalarsExplorerService {
 
   constructor() {
     this.scalarImplementations = scalars.reduce((acc, scalar) => {
+      // @ts-expect-error legacy noImplicitAny
       acc[scalar.name] = scalar;
 
       return acc;

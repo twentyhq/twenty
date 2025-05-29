@@ -22,6 +22,7 @@ export class FlushCacheCommand extends CommandRunner {
 
   async run(
     passedParams: string[],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     options?: Record<string, any>,
   ): Promise<void> {
     const pattern = options?.pattern || '*';

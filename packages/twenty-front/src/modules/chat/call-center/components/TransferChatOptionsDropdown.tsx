@@ -41,7 +41,7 @@ export const TransferChatOptionsDropdown = () => {
           )}
         />
       }
-      dropdownMenuWidth={'200px'}
+      dropdownWidth={'200px'}
       dropdownHotkeyScope={{ scope: TransferOptionsHotkeyScope.Dropdown }}
       dropdownPlacement="bottom-start"
       dropdownComponents={<TransferChatOptionsDropdownContent />}

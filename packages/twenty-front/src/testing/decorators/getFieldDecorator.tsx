@@ -6,10 +6,6 @@ import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/uti
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import {
-  RecordFieldValueSelectorContextProvider,
-  useSetRecordValue,
-} from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,15 +23,12 @@ const RecordMockSetterEffect = ({
   people: ObjectRecord[];
   tasks: ObjectRecord[];
 }) => {
-  const setRecordValue = useSetRecordValue();
-
   const setRecordInStores = useRecoilCallback(
     ({ set }) =>
       (record: ObjectRecord) => {
         set(recordStoreFamilyState(record.id), record);
-        setRecordValue(record.id, record);
       },
-    [setRecordValue],
+    [],
   );
 
   useEffect(() => {
@@ -130,27 +123,25 @@ export const getFieldDecorator =
           instanceId: 'record-field-component-instance-id',
         }}
       >
-        <RecordFieldValueSelectorContextProvider>
-          <FieldContext.Provider
-            value={{
-              recordId: record.id,
-              isLabelIdentifier,
-              fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
-                field: fieldMetadataItem,
-                position: 0,
-                objectMetadataItem,
-              }),
-              isReadOnly: false,
-            }}
-          >
-            <RecordMockSetterEffect
-              companies={companies}
-              people={people}
-              tasks={tasks}
-            />
-            <Story />
-          </FieldContext.Provider>
-        </RecordFieldValueSelectorContextProvider>
+        <FieldContext.Provider
+          value={{
+            recordId: record.id,
+            isLabelIdentifier,
+            fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
+              field: fieldMetadataItem,
+              position: 0,
+              objectMetadataItem,
+            }),
+            isReadOnly: false,
+          }}
+        >
+          <RecordMockSetterEffect
+            companies={companies}
+            people={people}
+            tasks={tasks}
+          />
+          <Story />
+        </FieldContext.Provider>
       </RecordFieldComponentInstanceContext.Provider>
     );
   };

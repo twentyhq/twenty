@@ -2,7 +2,6 @@
 /* eslint-disable unused-imports/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
-/* eslint-disable project-structure/folder-structure */
 import {
   CurrentWorkspaceMember,
   currentWorkspaceMemberState,
@@ -70,7 +69,7 @@ const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const [chatId, setChatId] = useState<string>('');
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
-  const {firestoreDb} = useFirestoreDb()
+  const { firestoreDb } = useFirestoreDb();
 
   const usersRef = collection(firestoreDb, 'users');
   const chatsRef = collection(firestoreDb, 'chats');
@@ -78,6 +77,8 @@ const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
+  // @ts-expect-error refetch is undefined here
+  // TODO: Check if refetch method is actually being used for something
   const { records: workspaceMembers, refetch: refetchMembers } =
     useFindManyRecords<WorkspaceMember>({
       objectNameSingular: CoreObjectNameSingular.WorkspaceMember,

@@ -3,5 +3,4 @@ export enum TableHotkeyScope {
   CellEditMode = 'cell-edit-mode',
   CellDateEditMode = 'cell-date-edit-mode',
   TableFocus = 'table-focus',
-  Table = 'table',
 }

@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+
 import {
   GraphqlQueryBaseResolverService,
   GraphqlQueryResolverExecutionArgs,
@@ -8,14 +10,12 @@ import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/int
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { DeleteOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
@@ -26,7 +26,6 @@ export class GraphqlQueryDeleteOneResolverService extends GraphqlQueryBaseResolv
 > {
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<DeleteOneResolverArgs>,
-    featureFlagsMap: Record<FeatureFlagKey, boolean>,
   ): Promise<ObjectRecord> {
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
@@ -47,14 +46,13 @@ export class GraphqlQueryDeleteOneResolverService extends GraphqlQueryBaseResolv
       nonFormattedDeletedObjectRecords.raw,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
-      featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
     );
 
-    this.apiEventEmitterService.emitDeletedEvents(
-      formattedDeletedRecords,
+    this.apiEventEmitterService.emitDeletedEvents({
+      records: formattedDeletedRecords,
       authContext,
-      objectMetadataItemWithFieldMaps,
-    );
+      objectMetadataItem: objectMetadataItemWithFieldMaps,
+    });
 
     if (formattedDeletedRecords.length === 0) {
       throw new GraphqlQueryRunnerException(
@@ -74,18 +72,13 @@ export class GraphqlQueryDeleteOneResolverService extends GraphqlQueryBaseResolv
         limit: QUERY_MAX_RECORDS,
         authContext,
         dataSource: executionArgs.dataSource,
-        isNewRelationEnabled:
-          featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
         roleId,
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });
     }
 
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionHelper(
-        objectMetadataMaps,
-        featureFlagsMap,
-      );
+      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
     return typeORMObjectRecordsParser.processRecord({
       objectRecord: deletedRecord,

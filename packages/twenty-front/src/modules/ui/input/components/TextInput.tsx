@@ -55,7 +55,9 @@ export const TextInput = ({
     setIsFocused(true);
 
     if (!disableHotkeys) {
-      setHotkeyScopeAndMemorizePreviousScope(InputHotkeyScope.TextInput);
+      setHotkeyScopeAndMemorizePreviousScope({
+        scope: InputHotkeyScope.TextInput,
+      });
     }
   };
 

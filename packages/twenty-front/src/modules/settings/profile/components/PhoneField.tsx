@@ -108,7 +108,7 @@ export const PhoneField = ({
       <FormPhoneFieldInput
         label="Phone"
         defaultValue={phone}
-        onPersist={setPhone}
+        onChange={setPhone}
       />
     </StyledComboInputContainer>
   );

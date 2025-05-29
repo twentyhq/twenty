@@ -145,4 +145,7 @@ export class ClientConfig {
 
   @Field(() => Boolean)
   isConfigVariablesInDbEnabled: boolean;
+
+  @Field(() => Boolean)
+  isChatbotEnabled: boolean;
 }

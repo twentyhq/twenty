@@ -139,13 +139,9 @@ export const RecordTableTr = forwardRef<
         data-virtualized-id={recordId}
         isDragging={isDragging}
         ref={ref}
-        data-active={isActive ? 'true' : 'false'}
-        data-focused={
-          isRowFocusActive && isFocused && !isActive ? 'true' : 'false'
-        }
-        data-next-row-active-or-focused={
-          isNextRowActiveOrFocused ? 'true' : 'false'
-        }
+        data-active={isActive}
+        data-focused={isRowFocusActive && isFocused && !isActive}
+        data-next-row-active-or-focused={isNextRowActiveOrFocused}
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...props}
       >

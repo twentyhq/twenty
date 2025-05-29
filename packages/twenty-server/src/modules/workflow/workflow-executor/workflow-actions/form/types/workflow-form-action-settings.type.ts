@@ -6,8 +6,10 @@ export type FormFieldMetadata = {
   name: string;
   label: string;
   type: WorkflowFormFieldType;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value?: any;
   placeholder?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   settings?: Record<string, any>;
 };
 

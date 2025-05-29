@@ -100,7 +100,9 @@ const StyledButton = styled('button', {
           case 'blue':
             return css`
               background: ${!inverted
-                ? theme.color.blue
+                ? disabled
+                  ? theme.accent.accent4060
+                  : theme.color.blue
                 : theme.background.primary};
               border-color: ${!inverted
                 ? focus

@@ -18,6 +18,7 @@ import { BeforeDeleteOneObject } from 'src/engine/metadata-modules/object-metada
 
 @ObjectType('Object')
 @Authorize({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   authorize: (context: any) => ({
     workspaceId: { eq: context?.req?.workspace?.id },
   }),

@@ -11,6 +11,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
+import { CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -20,7 +21,7 @@ import { isDefined } from 'twenty-shared/utils';
 type SelectFilterParams = {
   fieldMetadataItemId: string;
   recordFilterId: string;
-  subFieldName?: string | null | undefined;
+  subFieldName?: CompositeFieldSubFieldName | null | undefined;
 };
 
 export const useSelectFieldUsedInAdvancedFilterDropdown = () => {

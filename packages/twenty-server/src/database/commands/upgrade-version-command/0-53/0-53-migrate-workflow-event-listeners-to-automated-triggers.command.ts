@@ -13,7 +13,6 @@ import {
   AutomatedTriggerType,
   WorkflowAutomatedTriggerWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
-import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
 
 @Command({
   name: 'upgrade:0-53:migrate-workflow-event-listeners-to-automated-triggers',
@@ -38,7 +37,7 @@ export class MigrateWorkflowEventListenersToAutomatedTriggersCommand extends Act
     );
 
     const workflowEventListenerRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowEventListenerWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         'workflowEventListener',
       );

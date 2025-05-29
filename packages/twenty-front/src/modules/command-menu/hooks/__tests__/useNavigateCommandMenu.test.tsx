@@ -8,10 +8,9 @@ import { commandMenuNavigationStackState } from '@/command-menu/states/commandMe
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
+import { Icon123, useIcons } from 'twenty-ui/display';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-import { Icon123, useIcons } from 'twenty-ui/display';
 
 jest.mock('uuid', () => ({
   v4: jest.fn().mockReturnValue('mocked-uuid'),
@@ -26,13 +25,11 @@ const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
   componentInstanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
   contextStoreCurrentObjectMetadataNameSingular:
     personMockObjectMetadataItem.nameSingular,
-  contextStoreCurrentViewId: 'my-view-id',
   contextStoreTargetedRecordsRule: {
     mode: 'selection',
     selectedRecordIds: [],
   },
   contextStoreNumberOfSelectedRecords: 0,
-  contextStoreCurrentViewType: ContextStoreViewType.Table,
 });
 
 const renderHooks = () => {

@@ -10,7 +10,7 @@ import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permiss
 const client = request(`http://localhost:${APP_PORT}`);
 
 describe('Security permissions', () => {
-  let originalWorkspaceState;
+  let originalWorkspaceState: Record<string, unknown>;
 
   beforeAll(async () => {
     // Store original workspace state

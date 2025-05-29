@@ -3,6 +3,7 @@ import { Transform } from 'class-transformer';
 export const CastToLogLevelArray = () =>
   Transform(({ value }: { value: string }) => toLogLevelArray(value));
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const toLogLevelArray = (value: any) => {
   if (typeof value === 'string') {
     const rawLogLevels = value.split(',').map((level) => level.trim());

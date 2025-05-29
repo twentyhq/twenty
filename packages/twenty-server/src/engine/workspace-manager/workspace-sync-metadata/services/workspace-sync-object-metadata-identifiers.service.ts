@@ -52,6 +52,7 @@ export class WorkspaceSyncObjectMetadataIdentifiersService {
 
   private createStandardObjectMetadataMap(
     context: WorkspaceSyncContext,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Record<string, any> {
     const standardObjectMetadataCollection = this.standardObjectFactory.create(
       standardObjectMetadataDefinitions,
@@ -65,6 +66,7 @@ export class WorkspaceSyncObjectMetadataIdentifiersService {
 
   private async processObjectMetadataCollection(
     originalObjectMetadataCollection: ObjectMetadataEntity[],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     standardObjectMetadataMap: Record<string, any>,
     objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ): Promise<void> {
@@ -111,6 +113,7 @@ export class WorkspaceSyncObjectMetadataIdentifiersService {
   private findIdentifierFieldMetadata(
     objectMetadata: ObjectMetadataEntity,
     objectStandardId: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     standardObjectMetadataMap: Record<string, any>,
     standardIdFieldName: string,
   ): FieldMetadataEntity | undefined {

@@ -1,4 +1,4 @@
-import { Field, ID, InputType } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 
 import { IsString } from 'class-validator';
 
@@ -6,7 +6,7 @@ import { IsString } from 'class-validator';
 export class CreateWhatsappIntegrationInput {
   @Field()
   @IsString()
-  label: string;
+  name: string;
 
   @Field()
   @IsString()
@@ -27,8 +27,4 @@ export class CreateWhatsappIntegrationInput {
   @Field()
   @IsString()
   accessToken: string;
-
-  @Field(() => ID)
-  @IsString()
-  workspaceId: string;
 }

@@ -19,6 +19,6 @@
     "src/**/*.test.tsx",
     "tsup.config.ts",
     "tsup.ui.index.tsx",
-    "vite.config.ts"
+    "vite.config.ts",  
   ]
 }

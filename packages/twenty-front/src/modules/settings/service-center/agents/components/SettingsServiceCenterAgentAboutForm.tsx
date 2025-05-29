@@ -1,6 +1,7 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput';
+import { useFindAllWhatsappIntegrations } from '@/settings/integrations/meta/whatsapp/hooks/useFindAllWhatsappIntegrations';
 import { Agent } from '@/settings/service-center/agents/types/Agent';
 import { useFindAllInboxes } from '@/settings/service-center/inboxes/hooks/useFindAllInboxes';
 import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
@@ -64,6 +65,7 @@ export const SettingsServiceCenterAgentAboutForm = ({
 
   const { sectors, refetch: refetchSectors } = useFindAllSectors();
   const { inboxes, refetch: refecthInboxes } = useFindAllInboxes();
+  const { whatsappIntegrations = [] } = useFindAllWhatsappIntegrations();
 
   const Icon = getIcon('IconIdBadge2');
 
@@ -94,17 +96,16 @@ export const SettingsServiceCenterAgentAboutForm = ({
 
   const inboxesOptions =
     inboxes?.map((inbox) => {
-      const inboxIcon =
-        inbox.integrationType.toLowerCase() === IntegrationType.WHATSAPP
-          ? 'IconBrandWhatsapp'
-          : null; // 'IconBrandMessenger'
-      const inboxIntegration =
-        inbox.integrationType.toLowerCase() === IntegrationType.WHATSAPP
-          ? inbox.whatsappIntegration
-          : null; // inbox.messengerIntegration
+      const isWhatsapp =
+        inbox.integrationType.toLowerCase() === IntegrationType.WHATSAPP;
+      const IconName = isWhatsapp ? 'IconBrandWhatsapp' : 'IconBrandMessenger';
+      const integration = isWhatsapp
+        ? whatsappIntegrations.find((w) => w.id === inbox.whatsappIntegrationId)
+        : null;
+
       return {
-        Icon: getIcon(inboxIcon),
-        label: inboxIntegration?.label ?? '',
+        Icon: getIcon(IconName),
+        label: integration?.name ?? `${inbox.integrationType} (${inbox.id})`,
         value: inbox.id,
       };
     }) ?? [];

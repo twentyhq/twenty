@@ -17,6 +17,7 @@ export const mockedClientConfig: ClientConfig = {
   chromeExtensionId: 'MOCKED_EXTENSION_ID',
   debugMode: false,
   analyticsEnabled: true,
+  isChatbotEnabled: false,
   support: {
     supportDriver: 'front',
     supportFrontChatId: null,

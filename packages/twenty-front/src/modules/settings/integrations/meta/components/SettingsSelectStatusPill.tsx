@@ -115,7 +115,7 @@ export const SettingsSelectStatusPill = ({
       ) : (
         <Dropdown
           dropdownId={dropdownId}
-          dropdownMenuWidth={dropdownWidth}
+          dropdownWidth={dropdownWidth}
           dropdownPlacement="bottom-start"
           clickableComponent={selectControl}
           dropdownComponents={

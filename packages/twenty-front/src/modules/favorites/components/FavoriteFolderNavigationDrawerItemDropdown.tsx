@@ -19,13 +19,13 @@ export const FavoriteFolderNavigationDrawerItemDropdown = ({
   closeDropdown,
 }: FavoriteFolderNavigationDrawerItemDropdownProps) => {
   const handleRename = () => {
-    onRename();
     closeDropdown();
+    onRename();
   };
 
   const handleDelete = () => {
-    onDelete();
     closeDropdown();
+    onDelete();
   };
 
   return (

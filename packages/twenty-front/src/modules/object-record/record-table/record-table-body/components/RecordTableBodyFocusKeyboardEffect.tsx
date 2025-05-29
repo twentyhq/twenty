@@ -1,6 +1,7 @@
+import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { useMapKeyboardToFocus } from '@/object-record/record-table/hooks/useMapKeyboardToFocus';
 import { useSetIsRecordTableFocusActive } from '@/object-record/record-table/record-table-cell/hooks/useSetIsRecordTableFocusActive';
 import { isRecordTableCellFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableCellFocusActiveComponentState';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
@@ -11,10 +12,6 @@ import { Key } from 'ts-key-enum';
 
 export const RecordTableBodyFocusKeyboardEffect = () => {
   const { recordTableId } = useRecordTableContextOrThrow();
-
-  const { useMapKeyboardToFocus } = useRecordTable({
-    recordTableId,
-  });
 
   const setHotkeyScope = useSetHotkeyScope();
 
@@ -28,7 +25,7 @@ export const RecordTableBodyFocusKeyboardEffect = () => {
     isRecordTableCellFocusActiveComponentState,
   );
 
-  useMapKeyboardToFocus();
+  useMapKeyboardToFocus(recordTableId);
 
   useScopedHotkeys(
     [Key.Escape],
@@ -37,7 +34,7 @@ export const RecordTableBodyFocusKeyboardEffect = () => {
         restoreRecordTableRowFocusFromCellPosition();
         setIsFocusActiveForCurrentPosition(false);
       } else {
-        setHotkeyScope(TableHotkeyScope.Table, {
+        setHotkeyScope(RecordIndexHotkeyScope.RecordIndex, {
           goto: true,
           keyboardShortcutMenu: true,
         });

@@ -1,7 +1,7 @@
 import { defaultSpreadsheetImportProps } from '@/spreadsheet-import/provider/components/SpreadsheetImport';
 import {
-  SpreadsheetImportDialogOptions,
-  SpreadsheetImportFields
+    SpreadsheetImportDialogOptions,
+    SpreadsheetImportFields
 } from '@/spreadsheet-import/types';
 import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -131,7 +131,6 @@ export const mockRsiValues = mockComponentBehaviourForTypes({
   onSubmit: async () => {
     return;
   },
-  isOpen: true,
   onClose: () => {
     return;
   },

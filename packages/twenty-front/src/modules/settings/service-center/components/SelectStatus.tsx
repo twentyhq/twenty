@@ -100,7 +100,7 @@ export const SelectStatus = <Value extends string | number | null>({
       ) : (
         <Dropdown
           dropdownId={dropdownId}
-          dropdownMenuWidth={dropdownWidth}
+          dropdownWidth={dropdownWidth}
           dropdownPlacement="bottom-start"
           clickableComponent={selectControl}
           dropdownComponents={

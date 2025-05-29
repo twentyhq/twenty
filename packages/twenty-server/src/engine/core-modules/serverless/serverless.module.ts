@@ -15,6 +15,7 @@ export class ServerlessModule {
   static forRootAsync(options: ServerlessModuleAsyncOptions): DynamicModule {
     const provider = {
       provide: SERVERLESS_DRIVER,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       useFactory: async (...args: any[]) => {
         const config = await options.useFactory(...args);
 

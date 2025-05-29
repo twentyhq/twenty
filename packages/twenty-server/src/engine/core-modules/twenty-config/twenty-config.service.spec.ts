@@ -382,6 +382,7 @@ describe('TwentyConfigService', () => {
             SENSITIVE_VAR: 'sensitive_data_123',
           };
 
+          // @ts-expect-error legacy noImplicitAny
           return values[keyStr] || undefined;
         });
 
@@ -390,6 +391,7 @@ describe('TwentyConfigService', () => {
         .mockImplementation((key: keyof ConfigVariables) => {
           const keyStr = String(key);
 
+          // @ts-expect-error legacy noImplicitAny
           if (mockConfigVarMetadata[keyStr]?.isEnvOnly) {
             return environmentConfigDriver.get(key);
           }
@@ -398,6 +400,7 @@ describe('TwentyConfigService', () => {
             SENSITIVE_VAR: 'sensitive_data_123',
           };
 
+          // @ts-expect-error legacy noImplicitAny
           return values[keyStr] || undefined;
         });
     };

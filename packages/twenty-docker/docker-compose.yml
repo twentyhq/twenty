@@ -20,9 +20,7 @@ services:
       dockerfile: ./packages/twenty-docker/twenty/Dockerfile
     image: kvoipcrm/v2:${TAG:-latest}
     volumes:
-      - server-local-data:/app/packages/twenty-server/${STORAGE_LOCAL_PATH:-.local-storage}
-      - docker-data:/app/docker-data
-      - ./packages/twenty-server/secrets:/app/twenty-server/secrets
+      - server-local-data:/app/packages/twenty-server/.local-storage
     env_file:
       - .env
       - server.env
@@ -40,7 +38,6 @@ services:
       STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
 
       APP_SECRET: ${APP_SECRET:-replace_me_with_a_random_string}
-
       # MESSAGING_PROVIDER_GMAIL_ENABLED: ${MESSAGING_PROVIDER_GMAIL_ENABLED}
       # CALENDAR_PROVIDER_GOOGLE_ENABLED: ${CALENDAR_PROVIDER_GOOGLE_ENABLED}
       # AUTH_GOOGLE_CLIENT_ID: ${AUTH_GOOGLE_CLIENT_ID}
@@ -66,8 +63,6 @@ services:
       # EMAIL_SMTP_PASSWORD: ${EMAIL_SMTP_PASSWORD:-}
 
     depends_on:
-      change-vol-ownership:
-        condition: service_completed_successfully
       db:
         condition: service_healthy
     healthcheck:
@@ -94,7 +89,6 @@ services:
       STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
 
       APP_SECRET: ${APP_SECRET:-replace_me_with_a_random_string}
-
       # MESSAGING_PROVIDER_GMAIL_ENABLED: ${MESSAGING_PROVIDER_GMAIL_ENABLED}
       # CALENDAR_PROVIDER_GOOGLE_ENABLED: ${CALENDAR_PROVIDER_GOOGLE_ENABLED}
       # AUTH_GOOGLE_CLIENT_ID: ${AUTH_GOOGLE_CLIENT_ID}
@@ -153,7 +147,7 @@ services:
     container_name: kvoipv2-redis
     image: redis
     restart: always
-    command: ["--maxmemory-policy", "noeviction"]
+    command: ['--maxmemory-policy', 'noeviction']
 
 volumes:
   docker-data:

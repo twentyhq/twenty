@@ -70,33 +70,35 @@ export const SettingsCustomDomainRecords = ({
         <TableHeader>Value</TableHeader>
       </TableRow>
       <TableBody>
-        {records.map((record) => (
-          <TableRow gridAutoColumns="30% 16% auto" key={record.key}>
-            <StyledTableCell>
-              <StyledButton
-                title={record.key}
-                onClick={() => copyToClipboardDebounced(record.key)}
-                type="button"
-              />
-            </StyledTableCell>
-            <StyledTableCell>
-              <StyledButton
-                title={record.type.toUpperCase()}
-                onClick={() =>
-                  copyToClipboardDebounced(record.type.toUpperCase())
-                }
-                type="button"
-              />
-            </StyledTableCell>
-            <StyledTableCell>
-              <StyledButton
-                title={record.value}
-                onClick={() => copyToClipboardDebounced(record.value)}
-                type="button"
-              />
-            </StyledTableCell>
-          </TableRow>
-        ))}
+        {records
+          .filter((record) => record.status !== 'success')
+          .map((record) => (
+            <TableRow gridAutoColumns="30% 16% auto" key={record.key}>
+              <StyledTableCell>
+                <StyledButton
+                  title={record.key}
+                  onClick={() => copyToClipboardDebounced(record.key)}
+                  type="button"
+                />
+              </StyledTableCell>
+              <StyledTableCell>
+                <StyledButton
+                  title={record.type.toUpperCase()}
+                  onClick={() =>
+                    copyToClipboardDebounced(record.type.toUpperCase())
+                  }
+                  type="button"
+                />
+              </StyledTableCell>
+              <StyledTableCell>
+                <StyledButton
+                  title={record.value}
+                  onClick={() => copyToClipboardDebounced(record.value)}
+                  type="button"
+                />
+              </StyledTableCell>
+            </TableRow>
+          ))}
       </TableBody>
     </StyledTable>
   );
