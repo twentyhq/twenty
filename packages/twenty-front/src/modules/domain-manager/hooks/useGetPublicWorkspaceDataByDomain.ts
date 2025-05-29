@@ -28,7 +28,7 @@ export const useGetPublicWorkspaceDataByDomain = () => {
       origin,
     },
     skip:
-      !clientConfigApiStatus.isLoaded ||
+      !clientConfigApiStatus.isSaved ||
       (isMultiWorkspaceEnabled && isDefaultDomain) ||
       isDefined(workspacePublicData),
     onCompleted: (data) => {

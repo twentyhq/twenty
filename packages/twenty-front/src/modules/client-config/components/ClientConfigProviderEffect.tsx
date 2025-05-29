@@ -90,10 +90,17 @@ export const ClientConfigProviderEffect = () => {
   const { data, loading, error, fetchClientConfig } = useClientConfig();
 
   useEffect(() => {
-    if (!clientConfigApiStatus.isLoaded) {
+    if (
+      !clientConfigApiStatus.isLoadedOnce &&
+      !clientConfigApiStatus.isLoading
+    ) {
       fetchClientConfig();
     }
-  }, [clientConfigApiStatus.isLoaded, fetchClientConfig]);
+  }, [
+    clientConfigApiStatus.isLoadedOnce,
+    clientConfigApiStatus.isLoading,
+    fetchClientConfig,
+  ]);
 
   useEffect(() => {
     if (loading) return;
@@ -115,6 +122,7 @@ export const ClientConfigProviderEffect = () => {
       ...currentStatus,
       isErrored: false,
       error: undefined,
+      isSaved: true,
     }));
 
     setAuthProviders({
@@ -171,6 +179,8 @@ export const ClientConfigProviderEffect = () => {
     }));
   }, [
     data,
+    loading,
+    error,
     setIsDebugMode,
     setIsDeveloperDefaultSignInPrefilled,
     setIsMultiWorkspaceEnabled,
@@ -178,13 +188,11 @@ export const ClientConfigProviderEffect = () => {
     setSupportChat,
     setBilling,
     setSentryConfig,
-    loading,
     setClientConfigApiStatus,
     setCaptcha,
     setChromeExtensionId,
     setApiConfig,
     setIsAnalyticsEnabled,
-    error,
     setDomainConfiguration,
     setAuthProviders,
     setCanManageFeatureFlags,
