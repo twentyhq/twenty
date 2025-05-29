@@ -4,6 +4,7 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
 
 type WhereConditionParts = {
   sql: string;
@@ -86,6 +87,15 @@ export const computeWhereConditionParts = (
         params: { [`${key}${uuid}`]: `${value}` },
       };
     case 'contains':
+      if (key === 'searchVector') {
+        const searchTerms = formatSearchTerms(value, 'and');
+
+        return {
+          sql: `"${objectNameSingular}"."${key}" @@ to_tsquery('simple', :${key}${uuid})`,
+          params: { [`${key}${uuid}`]: searchTerms },
+        };
+      }
+
       return {
         sql: `"${objectNameSingular}"."${key}" @> ARRAY[:...${key}${uuid}]`,
         params: { [`${key}${uuid}`]: value },
@@ -96,16 +106,61 @@ export const computeWhereConditionParts = (
         params: { [`${key}${uuid}`]: value },
       };
     case 'containsAny':
+      if (key === 'searchVector') {
+        const searchTerms = formatSearchTerms(value.join(' '), 'or');
+
+        return {
+          sql: `"${objectNameSingular}"."${key}" @@ to_tsquery('simple', :${key}${uuid})`,
+          params: { [`${key}${uuid}`]: searchTerms },
+        };
+      }
+
       return {
         sql: `"${objectNameSingular}"."${key}"::text[] && ARRAY[:...${key}${uuid}]::text[]`,
         params: { [`${key}${uuid}`]: value },
       };
+    case 'containsAll':
+      if (key === 'searchVector') {
+        const searchTerms = value
+          .map((term: string) => formatSearchTerms(term, 'and'))
+          .join(' & ');
+
+        return {
+          sql: `"${objectNameSingular}"."${key}" @@ to_tsquery('simple', :${key}${uuid})`,
+          params: { [`${key}${uuid}`]: searchTerms },
+        };
+      }
+      throw new GraphqlQueryRunnerException(
+        `Operator "containsAll" is only supported for searchVector fields`,
+        GraphqlQueryRunnerExceptionCode.UNSUPPORTED_OPERATOR,
+      );
     case 'containsIlike':
       return {
         sql: `EXISTS (SELECT 1 FROM unnest("${objectNameSingular}"."${key}") AS elem WHERE elem ILIKE :${key}${uuid})`,
         params: { [`${key}${uuid}`]: value },
       };
-
+    case 'matches':
+      if (key === 'searchVector') {
+        return {
+          sql: `"${objectNameSingular}"."${key}" @@ plainto_tsquery('simple', :${key}${uuid})`,
+          params: { [`${key}${uuid}`]: value },
+        };
+      }
+      throw new GraphqlQueryRunnerException(
+        `Operator "matches" is only supported for searchVector fields`,
+        GraphqlQueryRunnerExceptionCode.UNSUPPORTED_OPERATOR,
+      );
+    case 'fuzzy':
+      if (key === 'searchVector') {
+        return {
+          sql: `similarity("${objectNameSingular}"."${key}"::text, :${key}${uuid}) > 0.3`,
+          params: { [`${key}${uuid}`]: value },
+        };
+      }
+      throw new GraphqlQueryRunnerException(
+        `Operator "fuzzy" is only supported for searchVector fields`,
+        GraphqlQueryRunnerExceptionCode.UNSUPPORTED_OPERATOR,
+      );
     default:
       throw new GraphqlQueryRunnerException(
         `Operator "${operator}" is not supported`,
