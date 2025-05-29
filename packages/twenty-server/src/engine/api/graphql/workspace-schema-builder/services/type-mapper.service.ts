@@ -34,6 +34,7 @@ import { TSVectorFilterType } from 'src/engine/api/graphql/workspace-schema-buil
 import { UUIDFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/uuid-filter.input-type';
 import {
   BigFloatScalarType,
+  TSVectorScalarType,
   UUIDScalarType,
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { PositionScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars/position.scalar';
@@ -84,10 +85,7 @@ export class TypeMapperService {
         StringArrayScalarType as unknown as GraphQLScalarType,
       ],
       [FieldMetadataType.RICH_TEXT, GraphQLString],
-      [
-        FieldMetadataType.TS_VECTOR,
-        TSVectorFilterType as unknown as GraphQLScalarType,
-      ],
+      [FieldMetadataType.TS_VECTOR, TSVectorScalarType],
     ]);
 
     return typeScalarMapping.get(fieldMetadataType);
