@@ -2,6 +2,7 @@ import { Details } from '@/chat/call-center/components/Details';
 import { TransferChatOptionsDropdown } from '@/chat/call-center/components/TransferChatOptionsDropdown';
 import { PANEL_CHAT_HEADER_MODAL_ID } from '@/chat/call-center/constants/PanelChatHeaderModalId';
 import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
+import { useCommandMenuTicket } from '@/chat/call-center/hooks/useCommandMenuTicket';
 import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
 import { TicketDataType } from '@/chat/types/TicketDataType';
 import { isWhatsappDocument } from '@/chat/utils/isWhatsappDocument';
@@ -53,6 +54,7 @@ const StyledIconButton = styled(IconButton)`
 export const PaneChatHeader = () => {
   const theme = useTheme();
   const { getIcon } = useIcons();
+  const { openCommandMenuTicket } = useCommandMenuTicket();
 
   const { selectedChat, finalizeService } = useContext(
     CallCenterContext,
@@ -100,7 +102,9 @@ export const PaneChatHeader = () => {
           />
           <TransferChatOptionsDropdown />
           <StyledIconButton
-            onClick={() => setIsDetailsOpen(!isDetailsOpen)}
+            onClick={() => {
+              openCommandMenuTicket(selectedChat);
+            }}
             variant="primary"
             accent="blue"
             size="medium"
