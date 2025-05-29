@@ -66,12 +66,13 @@ export class GraphqlQueryFilterFieldParser {
       );
     }
 
-    const { sql, params } = computeWhereConditionParts(
+    const { sql, params } = computeWhereConditionParts({
       operator,
       objectNameSingular,
       key,
       value,
-    );
+      fieldMetadataType: fieldMetadata.type,
+    });
 
     if (isFirst) {
       queryBuilder.where(sql, params);
@@ -118,6 +119,7 @@ export class GraphqlQueryFilterFieldParser {
 
       if (
         ARRAY_OPERATORS.includes(operator) &&
+        fieldMetadata.type !== FieldMetadataType.TS_VECTOR &&
         (!Array.isArray(value) || value.length === 0)
       ) {
         throw new GraphqlQueryRunnerException(
@@ -126,12 +128,13 @@ export class GraphqlQueryFilterFieldParser {
         );
       }
 
-      const { sql, params } = computeWhereConditionParts(
+      const { sql, params } = computeWhereConditionParts({
         operator,
         objectNameSingular,
-        fullFieldName,
+        key: fullFieldName,
+        fieldMetadataType: fieldMetadata.type,
         value,
-      );
+      });
 
       if (isFirst && index === 0) {
         queryBuilder.where(sql, params);
