@@ -5,8 +5,8 @@ import { LambdaDriver } from 'src/engine/core-modules/serverless/drivers/lambda.
 import { LocalDriver } from 'src/engine/core-modules/serverless/drivers/local.driver';
 import { SERVERLESS_DRIVER } from 'src/engine/core-modules/serverless/serverless.constants';
 import {
-    ServerlessDriverType,
-    ServerlessModuleAsyncOptions,
+  ServerlessDriverType,
+  ServerlessModuleAsyncOptions,
 } from 'src/engine/core-modules/serverless/serverless.interface';
 import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
 

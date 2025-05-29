@@ -27,6 +27,7 @@ import { ServerlessDriverType } from 'src/engine/core-modules/serverless/serverl
 import { CastToLogLevelArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-log-level-array.decorator';
 import { CastToMeterDriverArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-meter-driver.decorator';
 import { CastToPositiveNumber } from 'src/engine/core-modules/twenty-config/decorators/cast-to-positive-number.decorator';
+import { CastToUpperSnakeCase } from 'src/engine/core-modules/twenty-config/decorators/cast-to-upper-snake-case.decorator';
 import { ConfigVariablesMetadata } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 import { IsAWSRegion } from 'src/engine/core-modules/twenty-config/decorators/is-aws-region.decorator';
 import { IsDuration } from 'src/engine/core-modules/twenty-config/decorators/is-duration.decorator';
@@ -301,6 +302,7 @@ export class ConfigVariables {
     type: ConfigVariableType.ENUM,
     options: Object.values(EmailDriver),
   })
+  @CastToUpperSnakeCase()
   EMAIL_DRIVER: EmailDriver = EmailDriver.LOGGER;
 
   @ConfigVariablesMetadata({
@@ -349,6 +351,7 @@ export class ConfigVariables {
     options: Object.values(StorageDriverType),
   })
   @IsOptional()
+  @CastToUpperSnakeCase()
   STORAGE_TYPE: StorageDriverType = StorageDriverType.LOCAL;
 
   @ConfigVariablesMetadata({
@@ -364,7 +367,7 @@ export class ConfigVariables {
     description: 'S3 region for storage when using S3 storage type',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S_3)
   @IsAWSRegion()
   STORAGE_S3_REGION: AwsRegion;
 
@@ -373,7 +376,7 @@ export class ConfigVariables {
     description: 'S3 bucket name for storage when using S3 storage type',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S_3)
   STORAGE_S3_NAME: string;
 
   @ConfigVariablesMetadata({
@@ -381,7 +384,7 @@ export class ConfigVariables {
     description: 'S3 endpoint for storage when using S3 storage type',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S_3)
   @IsOptional()
   STORAGE_S3_ENDPOINT: string;
 
@@ -392,7 +395,7 @@ export class ConfigVariables {
       'S3 access key ID for authentication when using S3 storage type',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S_3)
   @IsOptional()
   STORAGE_S3_ACCESS_KEY_ID: string;
 
@@ -403,7 +406,7 @@ export class ConfigVariables {
       'S3 secret access key for authentication when using S3 storage type',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S_3)
   @IsOptional()
   STORAGE_S3_SECRET_ACCESS_KEY: string;
 
@@ -415,6 +418,7 @@ export class ConfigVariables {
     isEnvOnly: true,
   })
   @IsOptional()
+  @CastToUpperSnakeCase()
   SERVERLESS_TYPE: ServerlessDriverType = ServerlessDriverType.LOCAL;
 
   @ConfigVariablesMetadata({
@@ -634,6 +638,7 @@ export class ConfigVariables {
     isEnvOnly: true,
   })
   @IsOptional()
+  @CastToUpperSnakeCase()
   EXCEPTION_HANDLER_DRIVER: ExceptionHandlerDriver =
     ExceptionHandlerDriver.CONSOLE;
 
@@ -676,6 +681,7 @@ export class ConfigVariables {
     isEnvOnly: true,
   })
   @IsOptional()
+  @CastToUpperSnakeCase()
   LOGGER_DRIVER: LoggerDriverType = LoggerDriverType.CONSOLE;
 
   @ConfigVariablesMetadata({
@@ -717,6 +723,7 @@ export class ConfigVariables {
     options: Object.values(SupportDriver),
   })
   @IsOptional()
+  @CastToUpperSnakeCase()
   SUPPORT_DRIVER: SupportDriver = SupportDriver.NONE;
 
   @ConfigVariablesMetadata({
@@ -840,6 +847,7 @@ export class ConfigVariables {
     options: Object.values(NodeEnvironment),
     isEnvOnly: true,
   })
+  // @CastToUpperSnakeCase()
   NODE_ENV: NodeEnvironment = NodeEnvironment.PRODUCTION;
 
   @ConfigVariablesMetadata({
@@ -949,6 +957,7 @@ export class ConfigVariables {
     options: Object.values(LLMChatModelDriver),
     isEnvOnly: true,
   })
+  @CastToUpperSnakeCase()
   LLM_CHAT_MODEL_DRIVER: LLMChatModelDriver;
 
   @ConfigVariablesMetadata({
@@ -981,6 +990,7 @@ export class ConfigVariables {
     options: Object.values(LLMTracingDriver),
     isEnvOnly: true,
   })
+  @CastToUpperSnakeCase()
   LLM_TRACING_DRIVER: LLMTracingDriver = LLMTracingDriver.CONSOLE;
 
   @ConfigVariablesMetadata({
@@ -1059,6 +1069,7 @@ export class ConfigVariables {
     isEnvOnly: true,
   })
   @IsOptional()
+  @CastToUpperSnakeCase()
   CAPTCHA_DRIVER?: CaptchaDriverType;
 
   @ConfigVariablesMetadata({

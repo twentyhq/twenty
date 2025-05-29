@@ -1,7 +1,7 @@
 import { useDropdown } from '@/dropdown/hooks/useDropdown';
 import {
-    RecordBoardColumnHeaderAggregateDropdownContext,
-    RecordBoardColumnHeaderAggregateDropdownContextValue,
+  RecordBoardColumnHeaderAggregateDropdownContext,
+  RecordBoardColumnHeaderAggregateDropdownContextValue,
 } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContext';
 import { RecordBoardColumnHeaderAggregateDropdownMenuItem } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuItem';
 import { aggregateOperationComponentState } from '@/object-record/record-board/record-board-column/states/aggregateOperationComponentState';
@@ -111,8 +111,7 @@ export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
                     : true
                 }
                 RightIcon={
-                  availableAggregationOperation ===
-                    AggregateOperations.COUNT &&
+                  availableAggregationOperation === AggregateOperations.COUNT &&
                   recordIndexKanbanAggregateOperation?.operation ===
                     AggregateOperations.COUNT
                     ? IconCheck

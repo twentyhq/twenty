@@ -5,8 +5,8 @@ import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
 
 import {
-    ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-    RunOnWorkspaceArgs,
+  ActiveOrSuspendedWorkspacesMigrationCommandRunner,
+  RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -15,9 +15,9 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
-    WorkspaceMigrationColumnActionType,
-    WorkspaceMigrationTableAction,
-    WorkspaceMigrationTableActionType,
+  WorkspaceMigrationColumnActionType,
+  WorkspaceMigrationTableAction,
+  WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.factory';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';

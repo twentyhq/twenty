@@ -51,9 +51,7 @@ export const computeAggregateValueAndLabel = ({
           AggregateOperations.COUNT
         ],
       label: getAggregateOperationLabel(AggregateOperations.COUNT),
-      labelWithFieldName: getAggregateOperationLabel(
-        AggregateOperations.COUNT,
-      ),
+      labelWithFieldName: getAggregateOperationLabel(AggregateOperations.COUNT),
     };
   }
 

@@ -3,8 +3,8 @@ import { ContextIdFactory, ModuleRef } from '@nestjs/core';
 import { GqlOptionsFactory } from '@nestjs/graphql';
 
 import {
-    YogaDriverConfig,
-    YogaDriverServerContext,
+  YogaDriverConfig,
+  YogaDriverServerContext,
 } from '@graphql-yoga/nestjs';
 import * as Sentry from '@sentry/node';
 import { GraphQLError, GraphQLSchema } from 'graphql';

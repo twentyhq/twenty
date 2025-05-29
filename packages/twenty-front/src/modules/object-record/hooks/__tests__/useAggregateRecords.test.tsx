@@ -1,7 +1,7 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import {
-    AGGREGATE_QUERY,
-    mockResponse,
+  AGGREGATE_QUERY,
+  mockResponse,
 } from '@/object-record/hooks/__mocks__/useAggregateRecords';
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { useAggregateRecordsQuery } from '@/object-record/hooks/useAggregateRecordsQuery';

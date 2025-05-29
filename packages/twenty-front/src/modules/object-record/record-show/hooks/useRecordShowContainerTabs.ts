@@ -11,11 +11,11 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
-    IconCalendarEvent,
-    IconHome,
-    IconMail,
-    IconNotes,
-    IconSettings,
+  IconCalendarEvent,
+  IconHome,
+  IconMail,
+  IconNotes,
+  IconSettings,
 } from 'twenty-ui/display';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { FeatureFlagKey } from '~/generated/graphql';

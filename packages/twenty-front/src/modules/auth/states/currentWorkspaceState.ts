@@ -17,6 +17,7 @@ export type CurrentWorkspace = Pick<
   | 'isGoogleAuthEnabled'
   | 'isMicrosoftAuthEnabled'
   | 'isPasswordAuthEnabled'
+  | 'isCustomDomainEnabled'
   | 'hasValidEnterpriseKey'
   | 'subdomain'
   | 'customDomain'

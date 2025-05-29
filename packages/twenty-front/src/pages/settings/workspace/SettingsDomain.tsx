@@ -18,9 +18,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
-import {
-  useUpdateWorkspaceMutation
-} from '~/generated/graphql';
+import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsCustomDomain } from '~/pages/settings/workspace/SettingsCustomDomain';
 import { SettingsSubdomain } from '~/pages/settings/workspace/SettingsSubdomain';

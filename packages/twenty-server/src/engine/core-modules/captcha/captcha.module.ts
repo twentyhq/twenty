@@ -5,8 +5,8 @@ import { CAPTCHA_DRIVER } from 'src/engine/core-modules/captcha/constants/captch
 import { GoogleRecaptchaDriver } from 'src/engine/core-modules/captcha/drivers/google-recaptcha.driver';
 import { TurnstileDriver } from 'src/engine/core-modules/captcha/drivers/turnstile.driver';
 import {
-    CaptchaDriverType,
-    CaptchaModuleAsyncOptions,
+  CaptchaDriverType,
+  CaptchaModuleAsyncOptions,
 } from 'src/engine/core-modules/captcha/interfaces';
 
 @Global()

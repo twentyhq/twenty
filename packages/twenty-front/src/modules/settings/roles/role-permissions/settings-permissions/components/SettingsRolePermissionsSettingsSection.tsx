@@ -8,18 +8,18 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
 import {
-    H2Title,
-    IconCode,
-    IconHierarchy,
-    IconKey,
-    IconLockOpen,
-    IconSettings,
-    IconUsers,
+  H2Title,
+  IconCode,
+  IconHierarchy,
+  IconKey,
+  IconLockOpen,
+  IconSettings,
+  IconUsers,
 } from 'twenty-ui/display';
 import { Card, Section } from 'twenty-ui/layout';
 import {
-    FeatureFlagKey,
-    SettingPermissionType,
+  FeatureFlagKey,
+  SettingPermissionType,
 } from '~/generated-metadata/graphql';
 
 const StyledTable = styled.div`

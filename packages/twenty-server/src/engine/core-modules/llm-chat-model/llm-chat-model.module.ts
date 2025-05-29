@@ -1,8 +1,8 @@
 import { DynamicModule, Global } from '@nestjs/common';
 
 import {
-    LLMChatModelDriver,
-    LLMChatModelModuleAsyncOptions,
+  LLMChatModelDriver,
+  LLMChatModelModuleAsyncOptions,
 } from 'src/engine/core-modules/llm-chat-model/interfaces/llm-chat-model.interface';
 
 import { OpenAIDriver } from 'src/engine/core-modules/llm-chat-model/drivers/openai.driver';

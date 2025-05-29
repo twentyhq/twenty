@@ -284,8 +284,8 @@ export type Captcha = {
 };
 
 export enum CaptchaDriverType {
-  GoogleRecaptcha = 'GoogleRecaptcha',
-  Turnstile = 'Turnstile'
+  GOOGLE_RECAPTCHA = 'GOOGLE_RECAPTCHA',
+  TURNSTILE = 'TURNSTILE'
 }
 
 export type ClientConfig = {

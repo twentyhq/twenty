@@ -13,8 +13,8 @@ import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/d
 import { ConfigSource } from 'src/engine/core-modules/twenty-config/enums/config-source.enum';
 import { ConfigVariablesMaskingStrategies } from 'src/engine/core-modules/twenty-config/enums/config-variables-masking-strategies.enum';
 import {
-    ConfigVariableException,
-    ConfigVariableExceptionCode,
+  ConfigVariableException,
+  ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 import { configVariableMaskSensitiveData } from 'src/engine/core-modules/twenty-config/utils/config-variable-mask-sensitive-data.util';
 import { isEnvOnlyConfigVar } from 'src/engine/core-modules/twenty-config/utils/is-env-only-config-var.util';

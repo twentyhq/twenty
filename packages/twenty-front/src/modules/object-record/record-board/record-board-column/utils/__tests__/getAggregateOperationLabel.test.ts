@@ -7,9 +7,7 @@ describe('getAggregateOperationLabel', () => {
   it('should return correct labels for each operation', () => {
     expect(getAggregateOperationLabel(AggregateOperations.MIN)).toBe('Min');
     expect(getAggregateOperationLabel(AggregateOperations.MAX)).toBe('Max');
-    expect(getAggregateOperationLabel(AggregateOperations.AVG)).toBe(
-      'Average',
-    );
+    expect(getAggregateOperationLabel(AggregateOperations.AVG)).toBe('Average');
     expect(getAggregateOperationLabel(DateAggregateOperations.EARLIEST)).toBe(
       'Earliest date',
     );
@@ -23,9 +21,9 @@ describe('getAggregateOperationLabel', () => {
     expect(getAggregateOperationLabel(AggregateOperations.COUNT_EMPTY)).toBe(
       'Count empty',
     );
-    expect(getAggregateOperationLabel(AggregateOperations.COUNT_NOT_EMPTY)).toBe(
-      'Count not empty',
-    );
+    expect(
+      getAggregateOperationLabel(AggregateOperations.COUNT_NOT_EMPTY),
+    ).toBe('Count not empty');
     expect(
       getAggregateOperationLabel(AggregateOperations.COUNT_UNIQUE_VALUES),
     ).toBe('Count unique values');

@@ -1,8 +1,8 @@
 import { useApolloClient, useMutation } from '@apollo/client';
 
 import {
-    DeleteOneFieldMetadataItemMutation,
-    DeleteOneFieldMetadataItemMutationVariables,
+  DeleteOneFieldMetadataItemMutation,
+  DeleteOneFieldMetadataItemMutationVariables,
 } from '~/generated-metadata/graphql';
 
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';

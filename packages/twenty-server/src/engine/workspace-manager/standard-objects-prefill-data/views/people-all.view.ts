@@ -2,8 +2,8 @@ import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/obj
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import {
-    BASE_OBJECT_STANDARD_FIELD_IDS,
-    PERSON_STANDARD_FIELD_IDS,
+  BASE_OBJECT_STANDARD_FIELD_IDS,
+  PERSON_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 

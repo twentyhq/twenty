@@ -8,15 +8,15 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import {
-    AuthenticationError,
-    BaseGraphQLError,
-    ConflictError,
-    ErrorCode,
-    ForbiddenError,
-    MethodNotAllowedError,
-    NotFoundError,
-    TimeoutError,
-    ValidationError,
+  AuthenticationError,
+  BaseGraphQLError,
+  ConflictError,
+  ErrorCode,
+  ForbiddenError,
+  MethodNotAllowedError,
+  NotFoundError,
+  TimeoutError,
+  ValidationError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { CustomException } from 'src/utils/custom-exception';
 

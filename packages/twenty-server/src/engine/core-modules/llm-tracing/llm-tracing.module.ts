@@ -1,8 +1,8 @@
 import { DynamicModule, Global } from '@nestjs/common';
 
 import {
-    LLMTracingDriver,
-    LLMTracingModuleAsyncOptions,
+  LLMTracingDriver,
+  LLMTracingModuleAsyncOptions,
 } from 'src/engine/core-modules/llm-tracing/interfaces/llm-tracing.interface';
 
 import { ConsoleDriver } from 'src/engine/core-modules/llm-tracing/drivers/console.driver';

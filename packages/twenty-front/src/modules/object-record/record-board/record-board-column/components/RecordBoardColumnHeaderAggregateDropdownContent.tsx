@@ -47,10 +47,7 @@ export const AggregateDropdownContent = () => {
       const datesAvailableAggregations: AvailableFieldsForAggregateOperation =
         getAvailableFieldsIdsForAggregationFromObjectFields(
           objectMetadataItem.fields,
-          [
-            DateAggregateOperations.EARLIEST,
-            DateAggregateOperations.LATEST,
-          ],
+          [DateAggregateOperations.EARLIEST, DateAggregateOperations.LATEST],
         );
       return (
         <RecordBoardColumnHeaderAggregateDropdownOptionsContent

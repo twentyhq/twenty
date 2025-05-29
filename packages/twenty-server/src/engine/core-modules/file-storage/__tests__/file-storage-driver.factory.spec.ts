@@ -55,7 +55,7 @@ describe('FileStorageDriverFactory', () => {
     it('should build config key for S3 storage', () => {
       jest
         .spyOn(twentyConfigService, 'get')
-        .mockReturnValue(StorageDriverType.S3);
+        .mockReturnValue(StorageDriverType.S_3);
       jest
         .spyOn(factory as any, 'getConfigGroupHash')
         .mockReturnValue('s3-hash-123');
@@ -102,7 +102,7 @@ describe('FileStorageDriverFactory', () => {
         .mockImplementation((key: string) => {
           switch (key) {
             case 'STORAGE_TYPE':
-              return StorageDriverType.S3;
+              return StorageDriverType.S_3;
             case 'STORAGE_S3_NAME':
               return 'test-bucket';
             case 'STORAGE_S3_ENDPOINT':
@@ -130,7 +130,7 @@ describe('FileStorageDriverFactory', () => {
         .mockImplementation((key: string) => {
           switch (key) {
             case 'STORAGE_TYPE':
-              return StorageDriverType.S3;
+              return StorageDriverType.S_3;
             case 'STORAGE_S3_NAME':
               return 'test-bucket';
             case 'STORAGE_S3_ENDPOINT':
@@ -247,7 +247,7 @@ describe('FileStorageDriverFactory', () => {
         .mockImplementation((key: string) => {
           switch (key) {
             case 'STORAGE_TYPE':
-              return StorageDriverType.S3;
+              return StorageDriverType.S_3;
             case 'STORAGE_S3_NAME':
               return 'test-bucket';
             case 'STORAGE_S3_ENDPOINT':

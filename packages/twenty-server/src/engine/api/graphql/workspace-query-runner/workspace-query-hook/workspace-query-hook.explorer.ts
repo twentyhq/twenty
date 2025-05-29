@@ -6,13 +6,13 @@ import { Module } from '@nestjs/core/injector/module';
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
 import {
-    WorkspacePostQueryHookInstance,
-    WorkspacePreQueryHookInstance,
+  WorkspacePostQueryHookInstance,
+  WorkspacePreQueryHookInstance,
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 
 import {
-    GraphqlQueryRunnerException,
-    GraphqlQueryRunnerExceptionCode,
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { isQueryResultFieldValueAConnection } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/guards/is-query-result-field-value-a-connection.guard';
 import { isQueryResultFieldValueANestedRecordArray } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/guards/is-query-result-field-value-a-nested-record-array.guard';
