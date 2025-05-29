@@ -94,13 +94,6 @@ export class WorkspaceResolver {
     @AuthUser() user: User,
     @AuthWorkspace() workspace: Workspace,
   ) {
-    const workspace =
-      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
-        origin,
-      );
-
-    workspaceValidator.assertIsDefinedOrThrow(workspace);
-
     return await this.workspaceService.activateWorkspace(user, workspace, data);
   }
 

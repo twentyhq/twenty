@@ -32181,6 +32181,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"debug@npm:^4.4.0":
+  version: 4.4.1
+  resolution: "debug@npm:4.4.1"
+  dependencies:
+    ms: "npm:^2.1.3"
+  peerDependenciesMeta:
+    supports-color:
+      optional: true
+  checksum: 10c0/d2b44bc1afd912b49bb7ebb0d50a860dc93a4dd7d946e8de94abc957bb63726b7dd5aa48c18c2386c379ec024c46692e15ed3ed97d481729f929201e671fcd55
+  languageName: node
+  linkType: hard
+
 "debug@npm:~4.3.1, debug@npm:~4.3.2, debug@npm:~4.3.4":
   version: 4.3.7
   resolution: "debug@npm:4.3.7"
@@ -54050,6 +54062,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"soap@npm:^1.1.10":
+  version: 1.1.10
+  resolution: "soap@npm:1.1.10"
+  dependencies:
+    axios: "npm:^1.8.3"
+    axios-ntlm: "npm:^1.4.3"
+    debug: "npm:^4.4.0"
+    formidable: "npm:^3.5.2"
+    get-stream: "npm:^6.0.1"
+    lodash: "npm:^4.17.21"
+    sax: "npm:^1.4.1"
+    strip-bom: "npm:^3.0.0"
+    whatwg-mimetype: "npm:4.0.0"
+    xml-crypto: "npm:^6.0.1"
+  checksum: 10c0/f1120ff3fe675bed2e4b334b7af2eacee692665736cc4e45eaba5931fef5ab326909e65b30c8f44aa39d03d2a01a8f35583193395814c4975813f537f7c77197
+  languageName: node
+  linkType: hard
+
 "socket.io-adapter@npm:~2.5.2":
   version: 2.5.5
   resolution: "socket.io-adapter@npm:2.5.5"
@@ -54082,24 +54112,6 @@ __metadata:
     socket.io-adapter: "npm:~2.5.2"
     socket.io-parser: "npm:~4.2.4"
   checksum: 10c0/acf931a2bb235be96433b71da3d8addc63eeeaa8acabd33dc8d64e12287390a45f1e9f389a73cf7dc336961cd491679741b7a016048325c596835abbcc017ca9
-  languageName: node
-  linkType: hard
-
-"soap@npm:^1.1.10":
-  version: 1.1.10
-  resolution: "soap@npm:1.1.10"
-  dependencies:
-    axios: "npm:^1.8.3"
-    axios-ntlm: "npm:^1.4.3"
-    debug: "npm:^4.4.0"
-    formidable: "npm:^3.5.2"
-    get-stream: "npm:^6.0.1"
-    lodash: "npm:^4.17.21"
-    sax: "npm:^1.4.1"
-    strip-bom: "npm:^3.0.0"
-    whatwg-mimetype: "npm:4.0.0"
-    xml-crypto: "npm:^6.0.1"
-  checksum: 10c0/f1120ff3fe675bed2e4b334b7af2eacee692665736cc4e45eaba5931fef5ab326909e65b30c8f44aa39d03d2a01a8f35583193395814c4975813f537f7c77197
   languageName: node
   linkType: hard
 
