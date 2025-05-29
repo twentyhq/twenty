@@ -6,6 +6,8 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
 
+const FUZZY_SEARCH_SIMILARITY_THRESHOLD = 0.2;
+
 type WhereConditionParts = {
   sql: string;
   params: ObjectLiteral;
@@ -119,48 +121,31 @@ export const computeWhereConditionParts = (
         sql: `"${objectNameSingular}"."${key}"::text[] && ARRAY[:...${key}${uuid}]::text[]`,
         params: { [`${key}${uuid}`]: value },
       };
-    case 'containsAll':
-      if (key === 'searchVector') {
-        const searchTerms = value
-          .map((term: string) => formatSearchTerms(term, 'and'))
-          .join(' & ');
+    case 'containsAll': {
+      const searchTerms = value
+        .map((term: string) => formatSearchTerms(term, 'and'))
+        .join(' & ');
 
-        return {
-          sql: `"${objectNameSingular}"."${key}" @@ to_tsquery('simple', :${key}${uuid})`,
-          params: { [`${key}${uuid}`]: searchTerms },
-        };
-      }
-      throw new GraphqlQueryRunnerException(
-        `Operator "containsAll" is only supported for searchVector fields`,
-        GraphqlQueryRunnerExceptionCode.UNSUPPORTED_OPERATOR,
-      );
+      return {
+        sql: `"${objectNameSingular}"."${key}" @@ to_tsquery('simple', :${key}${uuid})`,
+        params: { [`${key}${uuid}`]: searchTerms },
+      };
+    }
     case 'containsIlike':
       return {
         sql: `EXISTS (SELECT 1 FROM unnest("${objectNameSingular}"."${key}") AS elem WHERE elem ILIKE :${key}${uuid})`,
         params: { [`${key}${uuid}`]: value },
       };
     case 'matches':
-      if (key === 'searchVector') {
-        return {
-          sql: `"${objectNameSingular}"."${key}" @@ plainto_tsquery('simple', :${key}${uuid})`,
-          params: { [`${key}${uuid}`]: value },
-        };
-      }
-      throw new GraphqlQueryRunnerException(
-        `Operator "matches" is only supported for searchVector fields`,
-        GraphqlQueryRunnerExceptionCode.UNSUPPORTED_OPERATOR,
-      );
+      return {
+        sql: `"${objectNameSingular}"."${key}" @@ plainto_tsquery('simple', :${key}${uuid})`,
+        params: { [`${key}${uuid}`]: value },
+      };
     case 'fuzzy':
-      if (key === 'searchVector') {
-        return {
-          sql: `similarity("${objectNameSingular}"."${key}"::text, :${key}${uuid}) > 0.3`,
-          params: { [`${key}${uuid}`]: value },
-        };
-      }
-      throw new GraphqlQueryRunnerException(
-        `Operator "fuzzy" is only supported for searchVector fields`,
-        GraphqlQueryRunnerExceptionCode.UNSUPPORTED_OPERATOR,
-      );
+      return {
+        sql: `similarity("${objectNameSingular}"."${key}"::text, :${key}${uuid}) > ${FUZZY_SEARCH_SIMILARITY_THRESHOLD}`,
+        params: { [`${key}${uuid}`]: value },
+      };
     default:
       throw new GraphqlQueryRunnerException(
         `Operator "${operator}" is not supported`,
