@@ -1,3 +1,4 @@
+import { FieldMetadataType } from 'twenty-shared/types';
 import { ObjectLiteral } from 'typeorm';
 
 import {
@@ -13,14 +14,23 @@ type WhereConditionParts = {
   params: ObjectLiteral;
 };
 
-export const computeWhereConditionParts = (
-  operator: string,
-  objectNameSingular: string,
-  key: string,
+export const computeWhereConditionParts = ({
+  operator,
+  objectNameSingular,
+  key,
+  value,
+  fieldMetadataType,
+}: {
+  operator: string;
+  objectNameSingular: string;
+  key: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  value: any,
-): WhereConditionParts => {
+  value: any;
+  fieldMetadataType?: FieldMetadataType;
+}): WhereConditionParts => {
   const uuid = Math.random().toString(36).slice(2, 7);
+
+  const isTSVectorField = fieldMetadataType === FieldMetadataType.TS_VECTOR;
 
   switch (operator) {
     case 'isEmptyArray':
@@ -89,7 +99,7 @@ export const computeWhereConditionParts = (
         params: { [`${key}${uuid}`]: `${value}` },
       };
     case 'contains':
-      if (key === 'searchVector') {
+      if (isTSVectorField) {
         const searchTerms = formatSearchTerms(value, 'and');
 
         return {
@@ -108,7 +118,7 @@ export const computeWhereConditionParts = (
         params: { [`${key}${uuid}`]: value },
       };
     case 'containsAny':
-      if (key === 'searchVector') {
+      if (isTSVectorField) {
         const searchTerms = formatSearchTerms(value.join(' '), 'or');
 
         return {
@@ -121,31 +131,48 @@ export const computeWhereConditionParts = (
         sql: `"${objectNameSingular}"."${key}"::text[] && ARRAY[:...${key}${uuid}]::text[]`,
         params: { [`${key}${uuid}`]: value },
       };
-    case 'containsAll': {
-      const searchTerms = value
-        .map((term: string) => formatSearchTerms(term, 'and'))
-        .join(' & ');
+    case 'containsAll':
+      if (isTSVectorField) {
+        const searchTerms = value
+          .map((term: string) => formatSearchTerms(term, 'and'))
+          .join(' & ');
 
-      return {
-        sql: `"${objectNameSingular}"."${key}" @@ to_tsquery('simple', :${key}${uuid})`,
-        params: { [`${key}${uuid}`]: searchTerms },
-      };
-    }
+        return {
+          sql: `"${objectNameSingular}"."${key}" @@ to_tsquery('simple', :${key}${uuid})`,
+          params: { [`${key}${uuid}`]: searchTerms },
+        };
+      }
+      throw new GraphqlQueryRunnerException(
+        `Operator "containsAll" is only supported for TS_VECTOR fields`,
+        GraphqlQueryRunnerExceptionCode.UNSUPPORTED_OPERATOR,
+      );
     case 'containsIlike':
       return {
         sql: `EXISTS (SELECT 1 FROM unnest("${objectNameSingular}"."${key}") AS elem WHERE elem ILIKE :${key}${uuid})`,
         params: { [`${key}${uuid}`]: value },
       };
     case 'matches':
-      return {
-        sql: `"${objectNameSingular}"."${key}" @@ plainto_tsquery('simple', :${key}${uuid})`,
-        params: { [`${key}${uuid}`]: value },
-      };
+      if (isTSVectorField) {
+        return {
+          sql: `"${objectNameSingular}"."${key}" @@ plainto_tsquery('simple', :${key}${uuid})`,
+          params: { [`${key}${uuid}`]: value },
+        };
+      }
+      throw new GraphqlQueryRunnerException(
+        `Operator "matches" is only supported for TS_VECTOR fields`,
+        GraphqlQueryRunnerExceptionCode.UNSUPPORTED_OPERATOR,
+      );
     case 'fuzzy':
-      return {
-        sql: `similarity("${objectNameSingular}"."${key}"::text, :${key}${uuid}) > ${FUZZY_SEARCH_SIMILARITY_THRESHOLD}`,
-        params: { [`${key}${uuid}`]: value },
-      };
+      if (isTSVectorField) {
+        return {
+          sql: `similarity("${objectNameSingular}"."${key}"::text, :${key}${uuid}) > ${FUZZY_SEARCH_SIMILARITY_THRESHOLD}`,
+          params: { [`${key}${uuid}`]: value },
+        };
+      }
+      throw new GraphqlQueryRunnerException(
+        `Operator "fuzzy" is only supported for TS_VECTOR fields`,
+        GraphqlQueryRunnerExceptionCode.UNSUPPORTED_OPERATOR,
+      );
     default:
       throw new GraphqlQueryRunnerException(
         `Operator "${operator}" is not supported`,
