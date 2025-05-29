@@ -1,6 +1,7 @@
 export enum OnboardingStatus {
   PLAN_REQUIRED = 'PLAN_REQUIRED',
-  PAYMENT_REQUIRED = 'PAYMENT_REQUIRED',
+  // TODO: May use this to show user a page for pix/boleto payment is pending
+  // PAYMENT_REQUIRED = 'PAYMENT_REQUIRED',
   WORKSPACE_ACTIVATION = 'WORKSPACE_ACTIVATION',
   PROFILE_CREATION = 'PROFILE_CREATION',
   SYNC_EMAIL = 'SYNC_EMAIL',

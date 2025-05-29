@@ -2,9 +2,15 @@ import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Exact<T extends { [key: string]: unknown }> = {
+  [K in keyof T]: T[K];
+};
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]?: Maybe<T[SubKey]>;
+};
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]: Maybe<T[SubKey]>;
+};
 const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -65,7 +71,6 @@ export type Activity = {
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
-
 /** An activity */
 export type ActivityActivityTargetsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -77,7 +82,6 @@ export type ActivityActivityTargetsArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<ActivityTargetOrderByInput>>>;
 };
 
-
 /** An activity */
 export type ActivityAttachmentsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -88,7 +92,6 @@ export type ActivityAttachmentsArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<InputMaybe<AttachmentOrderByInput>>>;
 };
-
 
 /** An activity */
 export type ActivityCommentsArgs = {
@@ -874,7 +877,7 @@ export type BillingSubscriptionSort = {
 };
 
 export enum BillingSubscriptionSortFields {
-  Id = 'id'
+  Id = 'id',
 }
 
 /** Blocklist */
@@ -1012,7 +1015,6 @@ export type CalendarChannel = {
   visibility?: Maybe<CalendarChannelVisibilityEnum>;
 };
 
-
 /** Calendar Channels */
 export type CalendarChannelCalendarChannelEventAssociationsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -1021,7 +1023,9 @@ export type CalendarChannelCalendarChannelEventAssociationsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<Array<InputMaybe<CalendarChannelEventAssociationOrderByInput>>>;
+  orderBy?: InputMaybe<
+    Array<InputMaybe<CalendarChannelEventAssociationOrderByInput>>
+  >;
 };
 
 /** Calendar Channels */
@@ -1041,12 +1045,14 @@ export enum CalendarChannelContactAutoCreationPolicyEnum {
   /** As Participant and Organizer */
   AsParticipantAndOrganizer = 'AS_PARTICIPANT_AND_ORGANIZER',
   /** None */
-  None = 'NONE'
+  None = 'NONE',
 }
 
 export type CalendarChannelContactAutoCreationPolicyEnumFilter = {
   eq?: InputMaybe<CalendarChannelContactAutoCreationPolicyEnum>;
-  in?: InputMaybe<Array<InputMaybe<CalendarChannelContactAutoCreationPolicyEnum>>>;
+  in?: InputMaybe<
+    Array<InputMaybe<CalendarChannelContactAutoCreationPolicyEnum>>
+  >;
   is?: InputMaybe<FilterIs>;
   neq?: InputMaybe<CalendarChannelContactAutoCreationPolicyEnum>;
 };
@@ -1141,7 +1147,9 @@ export type CalendarChannelEventAssociationEdge = {
 
 /** Calendar Channel Event Associations */
 export type CalendarChannelEventAssociationFilterInput = {
-  and?: InputMaybe<Array<InputMaybe<CalendarChannelEventAssociationFilterInput>>>;
+  and?: InputMaybe<
+    Array<InputMaybe<CalendarChannelEventAssociationFilterInput>>
+  >;
   /** Channel ID id foreign key */
   calendarChannelId?: InputMaybe<IdFilter>;
   /** Event ID id foreign key */
@@ -1153,7 +1161,9 @@ export type CalendarChannelEventAssociationFilterInput = {
   /** Id */
   id?: InputMaybe<IdFilter>;
   not?: InputMaybe<CalendarChannelEventAssociationFilterInput>;
-  or?: InputMaybe<Array<InputMaybe<CalendarChannelEventAssociationFilterInput>>>;
+  or?: InputMaybe<
+    Array<InputMaybe<CalendarChannelEventAssociationFilterInput>>
+  >;
   /** Update date */
   updatedAt?: InputMaybe<DateFilter>;
 };
@@ -1270,7 +1280,7 @@ export enum CalendarChannelSyncStageEnum {
   /** Full calendar event list fetch pending */
   FullCalendarEventListFetchPending = 'FULL_CALENDAR_EVENT_LIST_FETCH_PENDING',
   /** Partial calendar event list fetch pending */
-  PartialCalendarEventListFetchPending = 'PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING'
+  PartialCalendarEventListFetchPending = 'PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING',
 }
 
 export type CalendarChannelSyncStageEnumFilter = {
@@ -1291,7 +1301,7 @@ export enum CalendarChannelSyncStatusEnum {
   /** Not Synced */
   NotSynced = 'NOT_SYNCED',
   /** Ongoing */
-  Ongoing = 'ONGOING'
+  Ongoing = 'ONGOING',
 }
 
 export type CalendarChannelSyncStatusEnumFilter = {
@@ -1336,7 +1346,7 @@ export type CalendarChannelUpdateInput = {
 /** Visibility of the calendar channel */
 export enum CalendarChannelVisibility {
   Metadata = 'METADATA',
-  ShareEverything = 'SHARE_EVERYTHING'
+  ShareEverything = 'SHARE_EVERYTHING',
 }
 
 /** Visibility */
@@ -1344,7 +1354,7 @@ export enum CalendarChannelVisibilityEnum {
   /** Metadata */
   Metadata = 'METADATA',
   /** Share Everything */
-  ShareEverything = 'SHARE_EVERYTHING'
+  ShareEverything = 'SHARE_EVERYTHING',
 }
 
 export type CalendarChannelVisibilityEnumFilter = {
@@ -1394,7 +1404,6 @@ export type CalendarEvent = {
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
-
 /** Calendar events */
 export type CalendarEventCalendarChannelEventAssociationsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -1403,9 +1412,10 @@ export type CalendarEventCalendarChannelEventAssociationsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<Array<InputMaybe<CalendarChannelEventAssociationOrderByInput>>>;
+  orderBy?: InputMaybe<
+    Array<InputMaybe<CalendarChannelEventAssociationOrderByInput>>
+  >;
 };
-
 
 /** Calendar events */
 export type CalendarEventCalendarEventParticipantsArgs = {
@@ -1671,12 +1681,14 @@ export enum CalendarEventParticipantResponseStatusEnum {
   /** Needs Action */
   NeedsAction = 'NEEDS_ACTION',
   /** Tentative */
-  Tentative = 'TENTATIVE'
+  Tentative = 'TENTATIVE',
 }
 
 export type CalendarEventParticipantResponseStatusEnumFilter = {
   eq?: InputMaybe<CalendarEventParticipantResponseStatusEnum>;
-  in?: InputMaybe<Array<InputMaybe<CalendarEventParticipantResponseStatusEnum>>>;
+  in?: InputMaybe<
+    Array<InputMaybe<CalendarEventParticipantResponseStatusEnum>>
+  >;
   is?: InputMaybe<FilterIs>;
   neq?: InputMaybe<CalendarEventParticipantResponseStatusEnum>;
 };
@@ -1748,7 +1760,7 @@ export type Captcha = {
 
 export enum CaptchaDriverType {
   GoogleRecaptcha = 'GoogleRecaptcha',
-  Turnstile = 'Turnstile'
+  Turnstile = 'Turnstile',
 }
 
 export type ClientConfig = {
@@ -1910,7 +1922,6 @@ export type Company = {
   xLink?: Maybe<Link>;
 };
 
-
 /** A company */
 export type CompanyActivityTargetsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -1921,7 +1932,6 @@ export type CompanyActivityTargetsArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<InputMaybe<ActivityTargetOrderByInput>>>;
 };
-
 
 /** A company */
 export type CompanyAttachmentsArgs = {
@@ -1934,7 +1944,6 @@ export type CompanyAttachmentsArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<AttachmentOrderByInput>>>;
 };
 
-
 /** A company */
 export type CompanyFavoritesArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -1945,7 +1954,6 @@ export type CompanyFavoritesArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<InputMaybe<FavoriteOrderByInput>>>;
 };
-
 
 /** A company */
 export type CompanyOpportunitiesArgs = {
@@ -1958,7 +1966,6 @@ export type CompanyOpportunitiesArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<OpportunityOrderByInput>>>;
 };
 
-
 /** A company */
 export type CompanyPeopleArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -1969,7 +1976,6 @@ export type CompanyPeopleArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<InputMaybe<PersonOrderByInput>>>;
 };
-
 
 /** A company */
 export type CompanyTimelineActivitiesArgs = {
@@ -2149,7 +2155,6 @@ export type ConnectedAccount = {
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
-
 /** A connected account */
 export type ConnectedAccountCalendarChannelsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -2160,7 +2165,6 @@ export type ConnectedAccountCalendarChannelsArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<InputMaybe<CalendarChannelOrderByInput>>>;
 };
-
 
 /** A connected account */
 export type ConnectedAccountMessageChannelsArgs = {
@@ -2343,7 +2347,7 @@ export enum DistantTableUpdate {
   ColumnsAdded = 'COLUMNS_ADDED',
   ColumnsDeleted = 'COLUMNS_DELETED',
   ColumnsTypeChanged = 'COLUMNS_TYPE_CHANGED',
-  TableDeleted = 'TABLE_DELETED'
+  TableDeleted = 'TABLE_DELETED',
 }
 
 export type EmailPasswordResetLink = {
@@ -2502,7 +2506,7 @@ export type FeatureFlagSort = {
 };
 
 export enum FeatureFlagSortFields {
-  Id = 'id'
+  Id = 'id',
 }
 
 export type FieldConnection = {
@@ -2534,14 +2538,14 @@ export enum FieldMetadataType {
   Relation = 'RELATION',
   Select = 'SELECT',
   Text = 'TEXT',
-  Uuid = 'UUID'
+  Uuid = 'UUID',
 }
 
 export enum FileFolder {
   Attachment = 'Attachment',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
-  WorkspaceLogo = 'WorkspaceLogo'
+  WorkspaceLogo = 'WorkspaceLogo',
 }
 
 /** This enum to filter by nullability */
@@ -2549,7 +2553,7 @@ export enum FilterIs {
   /** Non-nulish values */
   NotNull = 'NOT_NULL',
   /** Nulish values */
-  Null = 'NULL'
+  Null = 'NULL',
 }
 
 export type FloatFilter = {
@@ -2696,7 +2700,6 @@ export type Message = {
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
-
 /** Message */
 export type MessageMessageChannelMessageAssociationsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -2705,9 +2708,10 @@ export type MessageMessageChannelMessageAssociationsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<Array<InputMaybe<MessageChannelMessageAssociationOrderByInput>>>;
+  orderBy?: InputMaybe<
+    Array<InputMaybe<MessageChannelMessageAssociationOrderByInput>>
+  >;
 };
-
 
 /** Message */
 export type MessageMessageParticipantsArgs = {
@@ -2764,7 +2768,6 @@ export type MessageChannel = {
   visibility?: Maybe<MessageChannelVisibilityEnum>;
 };
 
-
 /** Message Channels */
 export type MessageChannelMessageChannelMessageAssociationsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -2773,7 +2776,9 @@ export type MessageChannelMessageChannelMessageAssociationsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<Array<InputMaybe<MessageChannelMessageAssociationOrderByInput>>>;
+  orderBy?: InputMaybe<
+    Array<InputMaybe<MessageChannelMessageAssociationOrderByInput>>
+  >;
 };
 
 /** Message Channels */
@@ -2791,12 +2796,14 @@ export enum MessageChannelContactAutoCreationPolicyEnum {
   /** Sent */
   Sent = 'SENT',
   /** Sent and Received */
-  SentAndReceived = 'SENT_AND_RECEIVED'
+  SentAndReceived = 'SENT_AND_RECEIVED',
 }
 
 export type MessageChannelContactAutoCreationPolicyEnumFilter = {
   eq?: InputMaybe<MessageChannelContactAutoCreationPolicyEnum>;
-  in?: InputMaybe<Array<InputMaybe<MessageChannelContactAutoCreationPolicyEnum>>>;
+  in?: InputMaybe<
+    Array<InputMaybe<MessageChannelContactAutoCreationPolicyEnum>>
+  >;
   is?: InputMaybe<FilterIs>;
   neq?: InputMaybe<MessageChannelContactAutoCreationPolicyEnum>;
 };
@@ -2952,7 +2959,9 @@ export type MessageChannelMessageAssociationEdge = {
 
 /** Message Synced with a Message Channel */
 export type MessageChannelMessageAssociationFilterInput = {
-  and?: InputMaybe<Array<InputMaybe<MessageChannelMessageAssociationFilterInput>>>;
+  and?: InputMaybe<
+    Array<InputMaybe<MessageChannelMessageAssociationFilterInput>>
+  >;
   /** Creation date */
   createdAt?: InputMaybe<DateFilter>;
   /** Id */
@@ -2968,7 +2977,9 @@ export type MessageChannelMessageAssociationFilterInput = {
   /** Message Thread Id id foreign key */
   messageThreadId?: InputMaybe<IdFilter>;
   not?: InputMaybe<MessageChannelMessageAssociationFilterInput>;
-  or?: InputMaybe<Array<InputMaybe<MessageChannelMessageAssociationFilterInput>>>;
+  or?: InputMaybe<
+    Array<InputMaybe<MessageChannelMessageAssociationFilterInput>>
+  >;
   /** Update date */
   updatedAt?: InputMaybe<DateFilter>;
 };
@@ -3066,7 +3077,7 @@ export enum MessageChannelSyncStageEnum {
   /** Messages list fetch ongoing */
   MessageListFetchOngoing = 'MESSAGE_LIST_FETCH_ONGOING',
   /** Partial messages list fetch pending */
-  PartialMessageListFetchPending = 'PARTIAL_MESSAGE_LIST_FETCH_PENDING'
+  PartialMessageListFetchPending = 'PARTIAL_MESSAGE_LIST_FETCH_PENDING',
 }
 
 export type MessageChannelSyncStageEnumFilter = {
@@ -3093,7 +3104,7 @@ export enum MessageChannelSyncStatusEnum {
   /** Pending */
   Pending = 'PENDING',
   /** Succeeded */
-  Succeeded = 'SUCCEEDED'
+  Succeeded = 'SUCCEEDED',
 }
 
 export type MessageChannelSyncStatusEnumFilter = {
@@ -3108,7 +3119,7 @@ export enum MessageChannelTypeEnum {
   /** Email */
   Email = 'email',
   /** SMS */
-  Sms = 'sms'
+  Sms = 'sms',
 }
 
 export type MessageChannelTypeEnumFilter = {
@@ -3162,7 +3173,7 @@ export type MessageChannelUpdateInput = {
 export enum MessageChannelVisibility {
   Metadata = 'METADATA',
   ShareEverything = 'SHARE_EVERYTHING',
-  Subject = 'SUBJECT'
+  Subject = 'SUBJECT',
 }
 
 /** Visibility */
@@ -3172,7 +3183,7 @@ export enum MessageChannelVisibilityEnum {
   /** Share Everything */
   ShareEverything = 'SHARE_EVERYTHING',
   /** Subject */
-  Subject = 'SUBJECT'
+  Subject = 'SUBJECT',
 }
 
 export type MessageChannelVisibilityEnumFilter = {
@@ -3217,7 +3228,7 @@ export enum MessageDirectionEnum {
   /** Incoming */
   Incoming = 'incoming',
   /** Outgoing */
-  Outgoing = 'outgoing'
+  Outgoing = 'outgoing',
 }
 
 export type MessageDirectionEnumFilter = {
@@ -3400,7 +3411,7 @@ export enum MessageParticipantRoleEnum {
   /** From */
   From = 'from',
   /** To */
-  To = 'to'
+  To = 'to',
 }
 
 export type MessageParticipantRoleEnumFilter = {
@@ -3446,7 +3457,6 @@ export type MessageThread = {
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
-
 /** Message Thread */
 export type MessageThreadMessageChannelMessageAssociationsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -3455,9 +3465,10 @@ export type MessageThreadMessageChannelMessageAssociationsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<Array<InputMaybe<MessageChannelMessageAssociationOrderByInput>>>;
+  orderBy?: InputMaybe<
+    Array<InputMaybe<MessageChannelMessageAssociationOrderByInput>>
+  >;
 };
-
 
 /** Message Thread */
 export type MessageThreadMessagesArgs = {
@@ -3569,7 +3580,9 @@ export type Mutation = {
   createBlocklists?: Maybe<Array<Blocklist>>;
   createCalendarChannel?: Maybe<CalendarChannel>;
   createCalendarChannelEventAssociation?: Maybe<CalendarChannelEventAssociation>;
-  createCalendarChannelEventAssociations?: Maybe<Array<CalendarChannelEventAssociation>>;
+  createCalendarChannelEventAssociations?: Maybe<
+    Array<CalendarChannelEventAssociation>
+  >;
   createCalendarChannels?: Maybe<Array<CalendarChannel>>;
   createCalendarEvent?: Maybe<CalendarEvent>;
   createCalendarEventParticipant?: Maybe<CalendarEventParticipant>;
@@ -3586,7 +3599,9 @@ export type Mutation = {
   createMessage?: Maybe<Message>;
   createMessageChannel?: Maybe<MessageChannel>;
   createMessageChannelMessageAssociation?: Maybe<MessageChannelMessageAssociation>;
-  createMessageChannelMessageAssociations?: Maybe<Array<MessageChannelMessageAssociation>>;
+  createMessageChannelMessageAssociations?: Maybe<
+    Array<MessageChannelMessageAssociation>
+  >;
   createMessageChannels?: Maybe<Array<MessageChannel>>;
   createMessageParticipant?: Maybe<MessageParticipant>;
   createMessageParticipants?: Maybe<Array<MessageParticipant>>;
@@ -3627,7 +3642,9 @@ export type Mutation = {
   deleteBlocklists?: Maybe<Array<Blocklist>>;
   deleteCalendarChannel?: Maybe<CalendarChannel>;
   deleteCalendarChannelEventAssociation?: Maybe<CalendarChannelEventAssociation>;
-  deleteCalendarChannelEventAssociations?: Maybe<Array<CalendarChannelEventAssociation>>;
+  deleteCalendarChannelEventAssociations?: Maybe<
+    Array<CalendarChannelEventAssociation>
+  >;
   deleteCalendarChannels?: Maybe<Array<CalendarChannel>>;
   deleteCalendarEvent?: Maybe<CalendarEvent>;
   deleteCalendarEventParticipant?: Maybe<CalendarEventParticipant>;
@@ -3645,7 +3662,9 @@ export type Mutation = {
   deleteMessage?: Maybe<Message>;
   deleteMessageChannel?: Maybe<MessageChannel>;
   deleteMessageChannelMessageAssociation?: Maybe<MessageChannelMessageAssociation>;
-  deleteMessageChannelMessageAssociations?: Maybe<Array<MessageChannelMessageAssociation>>;
+  deleteMessageChannelMessageAssociations?: Maybe<
+    Array<MessageChannelMessageAssociation>
+  >;
   deleteMessageChannels?: Maybe<Array<MessageChannel>>;
   deleteMessageParticipant?: Maybe<MessageParticipant>;
   deleteMessageParticipants?: Maybe<Array<MessageParticipant>>;
@@ -3728,7 +3747,9 @@ export type Mutation = {
   updateBlocklists?: Maybe<Array<Blocklist>>;
   updateCalendarChannel?: Maybe<CalendarChannel>;
   updateCalendarChannelEventAssociation?: Maybe<CalendarChannelEventAssociation>;
-  updateCalendarChannelEventAssociations?: Maybe<Array<CalendarChannelEventAssociation>>;
+  updateCalendarChannelEventAssociations?: Maybe<
+    Array<CalendarChannelEventAssociation>
+  >;
   updateCalendarChannels?: Maybe<Array<CalendarChannel>>;
   updateCalendarEvent?: Maybe<CalendarEvent>;
   updateCalendarEventParticipant?: Maybe<CalendarEventParticipant>;
@@ -3745,7 +3766,9 @@ export type Mutation = {
   updateMessage?: Maybe<Message>;
   updateMessageChannel?: Maybe<MessageChannel>;
   updateMessageChannelMessageAssociation?: Maybe<MessageChannelMessageAssociation>;
-  updateMessageChannelMessageAssociations?: Maybe<Array<MessageChannelMessageAssociation>>;
+  updateMessageChannelMessageAssociations?: Maybe<
+    Array<MessageChannelMessageAssociation>
+  >;
   updateMessageChannels?: Maybe<Array<MessageChannel>>;
   updateMessageParticipant?: Maybe<MessageParticipant>;
   updateMessageParticipants?: Maybe<Array<MessageParticipant>>;
@@ -3780,16 +3803,13 @@ export type Mutation = {
   verify: Verify;
 };
 
-
 export type MutationActivateWorkspaceArgs = {
   data: ActivateWorkspaceInput;
 };
 
-
 export type MutationAddUserToWorkspaceArgs = {
   inviteHash: Scalars['String'];
 };
-
 
 export type MutationAuthorizeAppArgs = {
   clientId: Scalars['String'];
@@ -3797,645 +3817,528 @@ export type MutationAuthorizeAppArgs = {
   redirectUrl: Scalars['String'];
 };
 
-
 export type MutationChallengeArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
   password: Scalars['String'];
 };
 
-
 export type MutationCheckoutSessionArgs = {
   recurringInterval: SubscriptionInterval;
   successUrlPath?: InputMaybe<Scalars['String']>;
 };
-
 
 export type MutationCreateActivitiesArgs = {
   data?: InputMaybe<Array<ActivityCreateInput>>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationCreateActivityArgs = {
   data?: InputMaybe<ActivityCreateInput>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationCreateActivityTargetArgs = {
   data?: InputMaybe<ActivityTargetCreateInput>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationCreateActivityTargetsArgs = {
   data?: InputMaybe<Array<ActivityTargetCreateInput>>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationCreateApiKeyArgs = {
   data?: InputMaybe<ApiKeyCreateInput>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationCreateApiKeysArgs = {
   data?: InputMaybe<Array<ApiKeyCreateInput>>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationCreateAttachmentArgs = {
   data?: InputMaybe<AttachmentCreateInput>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationCreateAttachmentsArgs = {
   data?: InputMaybe<Array<AttachmentCreateInput>>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationCreateAuditLogArgs = {
   data?: InputMaybe<AuditLogCreateInput>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationCreateAuditLogsArgs = {
   data?: InputMaybe<Array<AuditLogCreateInput>>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationCreateBlocklistArgs = {
   data?: InputMaybe<BlocklistCreateInput>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationCreateBlocklistsArgs = {
   data?: InputMaybe<Array<BlocklistCreateInput>>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationCreateCalendarChannelArgs = {
   data?: InputMaybe<CalendarChannelCreateInput>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationCreateCalendarChannelEventAssociationArgs = {
   data?: InputMaybe<CalendarChannelEventAssociationCreateInput>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationCreateCalendarChannelEventAssociationsArgs = {
   data?: InputMaybe<Array<CalendarChannelEventAssociationCreateInput>>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationCreateCalendarChannelsArgs = {
   data?: InputMaybe<Array<CalendarChannelCreateInput>>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationCreateCalendarEventArgs = {
   data?: InputMaybe<CalendarEventCreateInput>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationCreateCalendarEventParticipantArgs = {
   data?: InputMaybe<CalendarEventParticipantCreateInput>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationCreateCalendarEventParticipantsArgs = {
   data?: InputMaybe<Array<CalendarEventParticipantCreateInput>>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationCreateCalendarEventsArgs = {
   data?: InputMaybe<Array<CalendarEventCreateInput>>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationCreateCommentArgs = {
   data?: InputMaybe<CommentCreateInput>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationCreateCommentsArgs = {
   data?: InputMaybe<Array<CommentCreateInput>>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationCreateCompaniesArgs = {
   data?: InputMaybe<Array<CompanyCreateInput>>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationCreateCompanyArgs = {
   data?: InputMaybe<CompanyCreateInput>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationCreateConnectedAccountArgs = {
   data?: InputMaybe<ConnectedAccountCreateInput>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationCreateConnectedAccountsArgs = {
   data?: InputMaybe<Array<ConnectedAccountCreateInput>>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationCreateFavoriteArgs = {
   data?: InputMaybe<FavoriteCreateInput>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationCreateFavoritesArgs = {
   data?: InputMaybe<Array<FavoriteCreateInput>>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationCreateMessageArgs = {
   data?: InputMaybe<MessageCreateInput>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationCreateMessageChannelArgs = {
   data?: InputMaybe<MessageChannelCreateInput>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationCreateMessageChannelMessageAssociationArgs = {
   data?: InputMaybe<MessageChannelMessageAssociationCreateInput>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationCreateMessageChannelMessageAssociationsArgs = {
   data?: InputMaybe<Array<MessageChannelMessageAssociationCreateInput>>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationCreateMessageChannelsArgs = {
   data?: InputMaybe<Array<MessageChannelCreateInput>>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationCreateMessageParticipantArgs = {
   data?: InputMaybe<MessageParticipantCreateInput>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationCreateMessageParticipantsArgs = {
   data?: InputMaybe<Array<MessageParticipantCreateInput>>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationCreateMessageThreadArgs = {
   data?: InputMaybe<MessageThreadCreateInput>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationCreateMessageThreadsArgs = {
   data?: InputMaybe<Array<MessageThreadCreateInput>>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationCreateMessagesArgs = {
   data?: InputMaybe<Array<MessageCreateInput>>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationCreateOpportunitiesArgs = {
   data?: InputMaybe<Array<OpportunityCreateInput>>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationCreateOpportunityArgs = {
   data?: InputMaybe<OpportunityCreateInput>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationCreatePeopleArgs = {
   data?: InputMaybe<Array<PersonCreateInput>>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationCreatePersonArgs = {
   data?: InputMaybe<PersonCreateInput>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationCreateTimelineActivitiesArgs = {
   data?: InputMaybe<Array<TimelineActivityCreateInput>>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationCreateTimelineActivityArgs = {
   data?: InputMaybe<TimelineActivityCreateInput>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationCreateViewArgs = {
   data?: InputMaybe<ViewCreateInput>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationCreateViewFieldArgs = {
   data?: InputMaybe<ViewFieldCreateInput>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationCreateViewFieldsArgs = {
   data?: InputMaybe<Array<ViewFieldCreateInput>>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationCreateViewFilterArgs = {
   data?: InputMaybe<ViewFilterCreateInput>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationCreateViewFiltersArgs = {
   data?: InputMaybe<Array<ViewFilterCreateInput>>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationCreateViewSortArgs = {
   data?: InputMaybe<ViewSortCreateInput>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationCreateViewSortsArgs = {
   data?: InputMaybe<Array<ViewSortCreateInput>>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationCreateViewsArgs = {
   data?: InputMaybe<Array<ViewCreateInput>>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationCreateWebhookArgs = {
   data?: InputMaybe<WebhookCreateInput>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationCreateWebhooksArgs = {
   data?: InputMaybe<Array<WebhookCreateInput>>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
-
 
 export type MutationCreateWorkspaceMemberArgs = {
   data?: InputMaybe<WorkspaceMemberCreateInput>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationCreateWorkspaceMembersArgs = {
   data?: InputMaybe<Array<WorkspaceMemberCreateInput>>;
   upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
-
 export type MutationDeleteActivitiesArgs = {
   filter?: InputMaybe<ActivityFilterInput>;
 };
-
 
 export type MutationDeleteActivityArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationDeleteActivityTargetArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationDeleteActivityTargetsArgs = {
   filter?: InputMaybe<ActivityTargetFilterInput>;
 };
 
-
 export type MutationDeleteApiKeyArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationDeleteApiKeysArgs = {
   filter?: InputMaybe<ApiKeyFilterInput>;
 };
 
-
 export type MutationDeleteAttachmentArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationDeleteAttachmentsArgs = {
   filter?: InputMaybe<AttachmentFilterInput>;
 };
 
-
 export type MutationDeleteAuditLogArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationDeleteAuditLogsArgs = {
   filter?: InputMaybe<AuditLogFilterInput>;
 };
 
-
 export type MutationDeleteBlocklistArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationDeleteBlocklistsArgs = {
   filter?: InputMaybe<BlocklistFilterInput>;
 };
 
-
 export type MutationDeleteCalendarChannelArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationDeleteCalendarChannelEventAssociationArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationDeleteCalendarChannelEventAssociationsArgs = {
   filter?: InputMaybe<CalendarChannelEventAssociationFilterInput>;
 };
-
 
 export type MutationDeleteCalendarChannelsArgs = {
   filter?: InputMaybe<CalendarChannelFilterInput>;
 };
 
-
 export type MutationDeleteCalendarEventArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationDeleteCalendarEventParticipantArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationDeleteCalendarEventParticipantsArgs = {
   filter?: InputMaybe<CalendarEventParticipantFilterInput>;
 };
-
 
 export type MutationDeleteCalendarEventsArgs = {
   filter?: InputMaybe<CalendarEventFilterInput>;
 };
 
-
 export type MutationDeleteCommentArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationDeleteCommentsArgs = {
   filter?: InputMaybe<CommentFilterInput>;
 };
 
-
 export type MutationDeleteCompaniesArgs = {
   filter?: InputMaybe<CompanyFilterInput>;
 };
-
 
 export type MutationDeleteCompanyArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationDeleteConnectedAccountArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationDeleteConnectedAccountsArgs = {
   filter?: InputMaybe<ConnectedAccountFilterInput>;
 };
 
-
 export type MutationDeleteFavoriteArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationDeleteFavoritesArgs = {
   filter?: InputMaybe<FavoriteFilterInput>;
 };
 
-
 export type MutationDeleteMessageArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationDeleteMessageChannelArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationDeleteMessageChannelMessageAssociationArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationDeleteMessageChannelMessageAssociationsArgs = {
   filter?: InputMaybe<MessageChannelMessageAssociationFilterInput>;
 };
 
-
 export type MutationDeleteMessageChannelsArgs = {
   filter?: InputMaybe<MessageChannelFilterInput>;
 };
-
 
 export type MutationDeleteMessageParticipantArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationDeleteMessageParticipantsArgs = {
   filter?: InputMaybe<MessageParticipantFilterInput>;
 };
-
 
 export type MutationDeleteMessageThreadArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationDeleteMessageThreadsArgs = {
   filter?: InputMaybe<MessageThreadFilterInput>;
 };
-
 
 export type MutationDeleteMessagesArgs = {
   filter?: InputMaybe<MessageFilterInput>;
 };
 
-
 export type MutationDeleteOneObjectArgs = {
   input: DeleteOneObjectInput;
 };
-
 
 export type MutationDeleteOpportunitiesArgs = {
   filter?: InputMaybe<OpportunityFilterInput>;
 };
 
-
 export type MutationDeleteOpportunityArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationDeletePeopleArgs = {
   filter?: InputMaybe<PersonFilterInput>;
 };
 
-
 export type MutationDeletePersonArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationDeleteTimelineActivitiesArgs = {
   filter?: InputMaybe<TimelineActivityFilterInput>;
 };
 
-
 export type MutationDeleteTimelineActivityArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationDeleteViewArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationDeleteViewFieldArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationDeleteViewFieldsArgs = {
   filter?: InputMaybe<ViewFieldFilterInput>;
 };
 
-
 export type MutationDeleteViewFilterArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationDeleteViewFiltersArgs = {
   filter?: InputMaybe<ViewFilterFilterInput>;
 };
 
-
 export type MutationDeleteViewSortArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationDeleteViewSortsArgs = {
   filter?: InputMaybe<ViewSortFilterInput>;
 };
 
-
 export type MutationDeleteViewsArgs = {
   filter?: InputMaybe<ViewFilterInput>;
 };
-
 
 export type MutationDeleteWebhookArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationDeleteWebhooksArgs = {
   filter?: InputMaybe<WebhookFilterInput>;
 };
-
 
 export type MutationDeleteWorkspaceMemberArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationDeleteWorkspaceMembersArgs = {
   filter?: InputMaybe<WorkspaceMemberFilterInput>;
 };
 
-
 export type MutationEmailPasswordResetLinkArgs = {
   email: Scalars['String'];
 };
-
 
 export type MutationExchangeAuthorizationCodeArgs = {
   authorizationCode: Scalars['String'];
@@ -4443,172 +4346,138 @@ export type MutationExchangeAuthorizationCodeArgs = {
   codeVerifier?: InputMaybe<Scalars['String']>;
 };
 
-
 export type MutationExecuteQuickActionOnActivityArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationExecuteQuickActionOnActivityTargetArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationExecuteQuickActionOnApiKeyArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationExecuteQuickActionOnAttachmentArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationExecuteQuickActionOnAuditLogArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationExecuteQuickActionOnBlocklistArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationExecuteQuickActionOnCalendarChannelArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationExecuteQuickActionOnCalendarChannelEventAssociationArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationExecuteQuickActionOnCalendarEventArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationExecuteQuickActionOnCalendarEventParticipantArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationExecuteQuickActionOnCommentArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationExecuteQuickActionOnCompanyArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationExecuteQuickActionOnConnectedAccountArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationExecuteQuickActionOnFavoriteArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationExecuteQuickActionOnMessageArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationExecuteQuickActionOnMessageChannelArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationExecuteQuickActionOnMessageChannelMessageAssociationArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationExecuteQuickActionOnMessageParticipantArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationExecuteQuickActionOnMessageThreadArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationExecuteQuickActionOnOpportunityArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationExecuteQuickActionOnPersonArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationExecuteQuickActionOnTimelineActivityArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationExecuteQuickActionOnViewArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationExecuteQuickActionOnViewFieldArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationExecuteQuickActionOnViewFilterArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationExecuteQuickActionOnViewSortArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationExecuteQuickActionOnWebhookArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationExecuteQuickActionOnWorkspaceMemberArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationGenerateApiKeyTokenArgs = {
   apiKeyId: Scalars['String'];
   expiresAt: Scalars['String'];
 };
 
-
 export type MutationGenerateJwtArgs = {
   workspaceId: Scalars['String'];
 };
-
 
 export type MutationImpersonateArgs = {
   userId: Scalars['String'];
 };
 
-
 export type MutationRenewTokenArgs = {
   appToken: Scalars['String'];
 };
 
-
 export type MutationSendInviteLinkArgs = {
   emails: Array<Scalars['String']>;
 };
-
 
 export type MutationSignUpArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
@@ -4617,386 +4486,321 @@ export type MutationSignUpArgs = {
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
 };
 
-
 export type MutationTrackArgs = {
   data: Scalars['JSON'];
   type: Scalars['String'];
 };
-
 
 export type MutationUpdateActivitiesArgs = {
   data?: InputMaybe<ActivityUpdateInput>;
   filter?: InputMaybe<ActivityFilterInput>;
 };
 
-
 export type MutationUpdateActivityArgs = {
   data?: InputMaybe<ActivityUpdateInput>;
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationUpdateActivityTargetArgs = {
   data?: InputMaybe<ActivityTargetUpdateInput>;
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationUpdateActivityTargetsArgs = {
   data?: InputMaybe<ActivityTargetUpdateInput>;
   filter?: InputMaybe<ActivityTargetFilterInput>;
 };
-
 
 export type MutationUpdateApiKeyArgs = {
   data?: InputMaybe<ApiKeyUpdateInput>;
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationUpdateApiKeysArgs = {
   data?: InputMaybe<ApiKeyUpdateInput>;
   filter?: InputMaybe<ApiKeyFilterInput>;
 };
-
 
 export type MutationUpdateAttachmentArgs = {
   data?: InputMaybe<AttachmentUpdateInput>;
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationUpdateAttachmentsArgs = {
   data?: InputMaybe<AttachmentUpdateInput>;
   filter?: InputMaybe<AttachmentFilterInput>;
 };
-
 
 export type MutationUpdateAuditLogArgs = {
   data?: InputMaybe<AuditLogUpdateInput>;
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationUpdateAuditLogsArgs = {
   data?: InputMaybe<AuditLogUpdateInput>;
   filter?: InputMaybe<AuditLogFilterInput>;
 };
-
 
 export type MutationUpdateBlocklistArgs = {
   data?: InputMaybe<BlocklistUpdateInput>;
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationUpdateBlocklistsArgs = {
   data?: InputMaybe<BlocklistUpdateInput>;
   filter?: InputMaybe<BlocklistFilterInput>;
 };
-
 
 export type MutationUpdateCalendarChannelArgs = {
   data?: InputMaybe<CalendarChannelUpdateInput>;
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationUpdateCalendarChannelEventAssociationArgs = {
   data?: InputMaybe<CalendarChannelEventAssociationUpdateInput>;
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationUpdateCalendarChannelEventAssociationsArgs = {
   data?: InputMaybe<CalendarChannelEventAssociationUpdateInput>;
   filter?: InputMaybe<CalendarChannelEventAssociationFilterInput>;
 };
 
-
 export type MutationUpdateCalendarChannelsArgs = {
   data?: InputMaybe<CalendarChannelUpdateInput>;
   filter?: InputMaybe<CalendarChannelFilterInput>;
 };
-
 
 export type MutationUpdateCalendarEventArgs = {
   data?: InputMaybe<CalendarEventUpdateInput>;
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationUpdateCalendarEventParticipantArgs = {
   data?: InputMaybe<CalendarEventParticipantUpdateInput>;
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationUpdateCalendarEventParticipantsArgs = {
   data?: InputMaybe<CalendarEventParticipantUpdateInput>;
   filter?: InputMaybe<CalendarEventParticipantFilterInput>;
 };
 
-
 export type MutationUpdateCalendarEventsArgs = {
   data?: InputMaybe<CalendarEventUpdateInput>;
   filter?: InputMaybe<CalendarEventFilterInput>;
 };
-
 
 export type MutationUpdateCommentArgs = {
   data?: InputMaybe<CommentUpdateInput>;
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationUpdateCommentsArgs = {
   data?: InputMaybe<CommentUpdateInput>;
   filter?: InputMaybe<CommentFilterInput>;
 };
-
 
 export type MutationUpdateCompaniesArgs = {
   data?: InputMaybe<CompanyUpdateInput>;
   filter?: InputMaybe<CompanyFilterInput>;
 };
 
-
 export type MutationUpdateCompanyArgs = {
   data?: InputMaybe<CompanyUpdateInput>;
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationUpdateConnectedAccountArgs = {
   data?: InputMaybe<ConnectedAccountUpdateInput>;
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationUpdateConnectedAccountsArgs = {
   data?: InputMaybe<ConnectedAccountUpdateInput>;
   filter?: InputMaybe<ConnectedAccountFilterInput>;
 };
-
 
 export type MutationUpdateFavoriteArgs = {
   data?: InputMaybe<FavoriteUpdateInput>;
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationUpdateFavoritesArgs = {
   data?: InputMaybe<FavoriteUpdateInput>;
   filter?: InputMaybe<FavoriteFilterInput>;
 };
-
 
 export type MutationUpdateMessageArgs = {
   data?: InputMaybe<MessageUpdateInput>;
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationUpdateMessageChannelArgs = {
   data?: InputMaybe<MessageChannelUpdateInput>;
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationUpdateMessageChannelMessageAssociationArgs = {
   data?: InputMaybe<MessageChannelMessageAssociationUpdateInput>;
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationUpdateMessageChannelMessageAssociationsArgs = {
   data?: InputMaybe<MessageChannelMessageAssociationUpdateInput>;
   filter?: InputMaybe<MessageChannelMessageAssociationFilterInput>;
 };
-
 
 export type MutationUpdateMessageChannelsArgs = {
   data?: InputMaybe<MessageChannelUpdateInput>;
   filter?: InputMaybe<MessageChannelFilterInput>;
 };
 
-
 export type MutationUpdateMessageParticipantArgs = {
   data?: InputMaybe<MessageParticipantUpdateInput>;
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationUpdateMessageParticipantsArgs = {
   data?: InputMaybe<MessageParticipantUpdateInput>;
   filter?: InputMaybe<MessageParticipantFilterInput>;
 };
 
-
 export type MutationUpdateMessageThreadArgs = {
   data?: InputMaybe<MessageThreadUpdateInput>;
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationUpdateMessageThreadsArgs = {
   data?: InputMaybe<MessageThreadUpdateInput>;
   filter?: InputMaybe<MessageThreadFilterInput>;
 };
 
-
 export type MutationUpdateMessagesArgs = {
   data?: InputMaybe<MessageUpdateInput>;
   filter?: InputMaybe<MessageFilterInput>;
 };
 
-
 export type MutationUpdateOneObjectArgs = {
   input: UpdateOneObjectInput;
 };
-
 
 export type MutationUpdateOpportunitiesArgs = {
   data?: InputMaybe<OpportunityUpdateInput>;
   filter?: InputMaybe<OpportunityFilterInput>;
 };
 
-
 export type MutationUpdateOpportunityArgs = {
   data?: InputMaybe<OpportunityUpdateInput>;
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationUpdatePasswordViaResetTokenArgs = {
   newPassword: Scalars['String'];
   passwordResetToken: Scalars['String'];
 };
 
-
 export type MutationUpdatePeopleArgs = {
   data?: InputMaybe<PersonUpdateInput>;
   filter?: InputMaybe<PersonFilterInput>;
 };
-
 
 export type MutationUpdatePersonArgs = {
   data?: InputMaybe<PersonUpdateInput>;
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationUpdateTimelineActivitiesArgs = {
   data?: InputMaybe<TimelineActivityUpdateInput>;
   filter?: InputMaybe<TimelineActivityFilterInput>;
 };
-
 
 export type MutationUpdateTimelineActivityArgs = {
   data?: InputMaybe<TimelineActivityUpdateInput>;
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationUpdateViewArgs = {
   data?: InputMaybe<ViewUpdateInput>;
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationUpdateViewFieldArgs = {
   data?: InputMaybe<ViewFieldUpdateInput>;
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationUpdateViewFieldsArgs = {
   data?: InputMaybe<ViewFieldUpdateInput>;
   filter?: InputMaybe<ViewFieldFilterInput>;
 };
-
 
 export type MutationUpdateViewFilterArgs = {
   data?: InputMaybe<ViewFilterUpdateInput>;
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationUpdateViewFiltersArgs = {
   data?: InputMaybe<ViewFilterUpdateInput>;
   filter?: InputMaybe<ViewFilterFilterInput>;
 };
-
 
 export type MutationUpdateViewSortArgs = {
   data?: InputMaybe<ViewSortUpdateInput>;
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationUpdateViewSortsArgs = {
   data?: InputMaybe<ViewSortUpdateInput>;
   filter?: InputMaybe<ViewSortFilterInput>;
 };
-
 
 export type MutationUpdateViewsArgs = {
   data?: InputMaybe<ViewUpdateInput>;
   filter?: InputMaybe<ViewFilterInput>;
 };
 
-
 export type MutationUpdateWebhookArgs = {
   data?: InputMaybe<WebhookUpdateInput>;
   id?: InputMaybe<Scalars['ID']>;
 };
-
 
 export type MutationUpdateWebhooksArgs = {
   data?: InputMaybe<WebhookUpdateInput>;
   filter?: InputMaybe<WebhookFilterInput>;
 };
 
-
 export type MutationUpdateWorkspaceArgs = {
   data: UpdateWorkspaceInput;
 };
-
 
 export type MutationUpdateWorkspaceMemberArgs = {
   data?: InputMaybe<WorkspaceMemberUpdateInput>;
   id?: InputMaybe<Scalars['ID']>;
 };
 
-
 export type MutationUpdateWorkspaceMembersArgs = {
   data?: InputMaybe<WorkspaceMemberUpdateInput>;
   filter?: InputMaybe<WorkspaceMemberFilterInput>;
 };
-
 
 export type MutationUploadFileArgs = {
   file: Scalars['Upload'];
   fileFolder?: InputMaybe<FileFolder>;
 };
 
-
 export type MutationUploadImageArgs = {
   file: Scalars['Upload'];
   fileFolder?: InputMaybe<FileFolder>;
 };
 
-
 export type MutationUploadProfilePictureArgs = {
   file: Scalars['Upload'];
 };
 
-
 export type MutationUploadWorkspaceLogoArgs = {
   file: Scalars['Upload'];
 };
-
 
 export type MutationVerifyArgs = {
   loginToken: Scalars['String'];
@@ -5021,10 +4825,9 @@ export enum OnboardingStatus {
   Completed = 'COMPLETED',
   InviteTeam = 'INVITE_TEAM',
   PlanRequired = 'PLAN_REQUIRED',
-  PaymentRequired = 'PAYMENT_REQUIRED',
   ProfileCreation = 'PROFILE_CREATION',
   SyncEmail = 'SYNC_EMAIL',
-  WorkspaceActivation = 'WORKSPACE_ACTIVATION'
+  WorkspaceActivation = 'WORKSPACE_ACTIVATION',
 }
 
 export type OnboardingStepSuccess = {
@@ -5070,7 +4873,6 @@ export type Opportunity = {
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
-
 /** An opportunity */
 export type OpportunityActivityTargetsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -5081,7 +4883,6 @@ export type OpportunityActivityTargetsArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<InputMaybe<ActivityTargetOrderByInput>>>;
 };
-
 
 /** An opportunity */
 export type OpportunityAttachmentsArgs = {
@@ -5094,7 +4895,6 @@ export type OpportunityAttachmentsArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<AttachmentOrderByInput>>>;
 };
 
-
 /** An opportunity */
 export type OpportunityFavoritesArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -5105,7 +4905,6 @@ export type OpportunityFavoritesArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<InputMaybe<FavoriteOrderByInput>>>;
 };
-
 
 /** An opportunity */
 export type OpportunityTimelineActivitiesArgs = {
@@ -5224,7 +5023,7 @@ export enum OpportunityStageEnum {
   /** Proposal */
   Proposal = 'PROPOSAL',
   /** Screening */
-  Screening = 'SCREENING'
+  Screening = 'SCREENING',
 }
 
 export type OpportunityStageEnumFilter = {
@@ -5269,7 +5068,7 @@ export enum OrderByDirection {
   /** Descending order, nulls first */
   DescNullsFirst = 'DescNullsFirst',
   /** Descending order, nulls last */
-  DescNullsLast = 'DescNullsLast'
+  DescNullsLast = 'DescNullsLast',
 }
 
 export type PageInfo = {
@@ -5329,7 +5128,6 @@ export type Person = {
   xLink?: Maybe<Link>;
 };
 
-
 /** A person */
 export type PersonActivityTargetsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -5340,7 +5138,6 @@ export type PersonActivityTargetsArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<InputMaybe<ActivityTargetOrderByInput>>>;
 };
-
 
 /** A person */
 export type PersonAttachmentsArgs = {
@@ -5353,7 +5150,6 @@ export type PersonAttachmentsArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<AttachmentOrderByInput>>>;
 };
 
-
 /** A person */
 export type PersonCalendarEventParticipantsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -5364,7 +5160,6 @@ export type PersonCalendarEventParticipantsArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<InputMaybe<CalendarEventParticipantOrderByInput>>>;
 };
-
 
 /** A person */
 export type PersonFavoritesArgs = {
@@ -5377,7 +5172,6 @@ export type PersonFavoritesArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<FavoriteOrderByInput>>>;
 };
 
-
 /** A person */
 export type PersonMessageParticipantsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -5389,7 +5183,6 @@ export type PersonMessageParticipantsArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<MessageParticipantOrderByInput>>>;
 };
 
-
 /** A person */
 export type PersonPointOfContactForOpportunitiesArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -5400,7 +5193,6 @@ export type PersonPointOfContactForOpportunitiesArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<InputMaybe<OpportunityOrderByInput>>>;
 };
-
 
 /** A person */
 export type PersonTimelineActivitiesArgs = {
@@ -5592,13 +5384,17 @@ export type Query = {
   calendarChannel?: Maybe<CalendarChannel>;
   calendarChannelDuplicates?: Maybe<Array<CalendarChannelConnection>>;
   calendarChannelEventAssociation?: Maybe<CalendarChannelEventAssociation>;
-  calendarChannelEventAssociationDuplicates?: Maybe<Array<CalendarChannelEventAssociationConnection>>;
+  calendarChannelEventAssociationDuplicates?: Maybe<
+    Array<CalendarChannelEventAssociationConnection>
+  >;
   calendarChannelEventAssociations?: Maybe<CalendarChannelEventAssociationConnection>;
   calendarChannels?: Maybe<CalendarChannelConnection>;
   calendarEvent?: Maybe<CalendarEvent>;
   calendarEventDuplicates?: Maybe<Array<CalendarEventConnection>>;
   calendarEventParticipant?: Maybe<CalendarEventParticipant>;
-  calendarEventParticipantDuplicates?: Maybe<Array<CalendarEventParticipantConnection>>;
+  calendarEventParticipantDuplicates?: Maybe<
+    Array<CalendarEventParticipantConnection>
+  >;
   calendarEventParticipants?: Maybe<CalendarEventParticipantConnection>;
   calendarEvents?: Maybe<CalendarEventConnection>;
   checkUserExists: UserExists;
@@ -5629,7 +5425,9 @@ export type Query = {
   messageChannel?: Maybe<MessageChannel>;
   messageChannelDuplicates?: Maybe<Array<MessageChannelConnection>>;
   messageChannelMessageAssociation?: Maybe<MessageChannelMessageAssociation>;
-  messageChannelMessageAssociationDuplicates?: Maybe<Array<MessageChannelMessageAssociationConnection>>;
+  messageChannelMessageAssociationDuplicates?: Maybe<
+    Array<MessageChannelMessageAssociationConnection>
+  >;
   messageChannelMessageAssociations?: Maybe<MessageChannelMessageAssociationConnection>;
   messageChannels?: Maybe<MessageChannelConnection>;
   messageDuplicates?: Maybe<Array<MessageConnection>>;
@@ -5672,7 +5470,6 @@ export type Query = {
   workspaceMembers?: Maybe<WorkspaceMemberConnection>;
 };
 
-
 export type QueryActivitiesArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
@@ -5683,28 +5480,23 @@ export type QueryActivitiesArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<ActivityOrderByInput>>>;
 };
 
-
 export type QueryActivityArgs = {
   filter?: InputMaybe<ActivityFilterInput>;
 };
-
 
 export type QueryActivityDuplicatesArgs = {
   data?: InputMaybe<Array<InputMaybe<ActivityCreateInput>>>;
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
-
 export type QueryActivityTargetArgs = {
   filter?: InputMaybe<ActivityTargetFilterInput>;
 };
-
 
 export type QueryActivityTargetDuplicatesArgs = {
   data?: InputMaybe<Array<InputMaybe<ActivityTargetCreateInput>>>;
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
-
 
 export type QueryActivityTargetsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -5716,17 +5508,14 @@ export type QueryActivityTargetsArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<ActivityTargetOrderByInput>>>;
 };
 
-
 export type QueryApiKeyArgs = {
   filter?: InputMaybe<ApiKeyFilterInput>;
 };
-
 
 export type QueryApiKeyDuplicatesArgs = {
   data?: InputMaybe<Array<InputMaybe<ApiKeyCreateInput>>>;
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
-
 
 export type QueryApiKeysArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -5738,17 +5527,14 @@ export type QueryApiKeysArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<ApiKeyOrderByInput>>>;
 };
 
-
 export type QueryAttachmentArgs = {
   filter?: InputMaybe<AttachmentFilterInput>;
 };
-
 
 export type QueryAttachmentDuplicatesArgs = {
   data?: InputMaybe<Array<InputMaybe<AttachmentCreateInput>>>;
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
-
 
 export type QueryAttachmentsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -5760,17 +5546,14 @@ export type QueryAttachmentsArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<AttachmentOrderByInput>>>;
 };
 
-
 export type QueryAuditLogArgs = {
   filter?: InputMaybe<AuditLogFilterInput>;
 };
-
 
 export type QueryAuditLogDuplicatesArgs = {
   data?: InputMaybe<Array<InputMaybe<AuditLogCreateInput>>>;
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
-
 
 export type QueryAuditLogsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -5782,22 +5565,18 @@ export type QueryAuditLogsArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<AuditLogOrderByInput>>>;
 };
 
-
 export type QueryBillingPortalSessionArgs = {
   returnUrlPath?: InputMaybe<Scalars['String']>;
 };
-
 
 export type QueryBlocklistArgs = {
   filter?: InputMaybe<BlocklistFilterInput>;
 };
 
-
 export type QueryBlocklistDuplicatesArgs = {
   data?: InputMaybe<Array<InputMaybe<BlocklistCreateInput>>>;
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
-
 
 export type QueryBlocklistsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -5809,28 +5588,25 @@ export type QueryBlocklistsArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<BlocklistOrderByInput>>>;
 };
 
-
 export type QueryCalendarChannelArgs = {
   filter?: InputMaybe<CalendarChannelFilterInput>;
 };
-
 
 export type QueryCalendarChannelDuplicatesArgs = {
   data?: InputMaybe<Array<InputMaybe<CalendarChannelCreateInput>>>;
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
-
 export type QueryCalendarChannelEventAssociationArgs = {
   filter?: InputMaybe<CalendarChannelEventAssociationFilterInput>;
 };
 
-
 export type QueryCalendarChannelEventAssociationDuplicatesArgs = {
-  data?: InputMaybe<Array<InputMaybe<CalendarChannelEventAssociationCreateInput>>>;
+  data?: InputMaybe<
+    Array<InputMaybe<CalendarChannelEventAssociationCreateInput>>
+  >;
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
-
 
 export type QueryCalendarChannelEventAssociationsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -5839,9 +5615,10 @@ export type QueryCalendarChannelEventAssociationsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<Array<InputMaybe<CalendarChannelEventAssociationOrderByInput>>>;
+  orderBy?: InputMaybe<
+    Array<InputMaybe<CalendarChannelEventAssociationOrderByInput>>
+  >;
 };
-
 
 export type QueryCalendarChannelsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -5853,28 +5630,23 @@ export type QueryCalendarChannelsArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<CalendarChannelOrderByInput>>>;
 };
 
-
 export type QueryCalendarEventArgs = {
   filter?: InputMaybe<CalendarEventFilterInput>;
 };
-
 
 export type QueryCalendarEventDuplicatesArgs = {
   data?: InputMaybe<Array<InputMaybe<CalendarEventCreateInput>>>;
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
-
 export type QueryCalendarEventParticipantArgs = {
   filter?: InputMaybe<CalendarEventParticipantFilterInput>;
 };
-
 
 export type QueryCalendarEventParticipantDuplicatesArgs = {
   data?: InputMaybe<Array<InputMaybe<CalendarEventParticipantCreateInput>>>;
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
-
 
 export type QueryCalendarEventParticipantsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -5886,7 +5658,6 @@ export type QueryCalendarEventParticipantsArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<CalendarEventParticipantOrderByInput>>>;
 };
 
-
 export type QueryCalendarEventsArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
@@ -5897,28 +5668,23 @@ export type QueryCalendarEventsArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<CalendarEventOrderByInput>>>;
 };
 
-
 export type QueryCheckUserExistsArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
 };
 
-
 export type QueryCheckWorkspaceInviteHashIsValidArgs = {
   inviteHash: Scalars['String'];
 };
-
 
 export type QueryCommentArgs = {
   filter?: InputMaybe<CommentFilterInput>;
 };
 
-
 export type QueryCommentDuplicatesArgs = {
   data?: InputMaybe<Array<InputMaybe<CommentCreateInput>>>;
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
-
 
 export type QueryCommentsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -5930,7 +5696,6 @@ export type QueryCommentsArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<CommentOrderByInput>>>;
 };
 
-
 export type QueryCompaniesArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
@@ -5941,28 +5706,23 @@ export type QueryCompaniesArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<CompanyOrderByInput>>>;
 };
 
-
 export type QueryCompanyArgs = {
   filter?: InputMaybe<CompanyFilterInput>;
 };
-
 
 export type QueryCompanyDuplicatesArgs = {
   data?: InputMaybe<Array<InputMaybe<CompanyCreateInput>>>;
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
-
 export type QueryConnectedAccountArgs = {
   filter?: InputMaybe<ConnectedAccountFilterInput>;
 };
-
 
 export type QueryConnectedAccountDuplicatesArgs = {
   data?: InputMaybe<Array<InputMaybe<ConnectedAccountCreateInput>>>;
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
-
 
 export type QueryConnectedAccountsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -5974,17 +5734,14 @@ export type QueryConnectedAccountsArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<ConnectedAccountOrderByInput>>>;
 };
 
-
 export type QueryFavoriteArgs = {
   filter?: InputMaybe<FavoriteFilterInput>;
 };
-
 
 export type QueryFavoriteDuplicatesArgs = {
   data?: InputMaybe<Array<InputMaybe<FavoriteCreateInput>>>;
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
-
 
 export type QueryFavoritesArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -5996,16 +5753,13 @@ export type QueryFavoritesArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<FavoriteOrderByInput>>>;
 };
 
-
 export type QueryFindWorkspaceFromInviteHashArgs = {
   inviteHash: Scalars['String'];
 };
 
-
 export type QueryGetProductPricesArgs = {
   product: Scalars['String'];
 };
-
 
 export type QueryGetTimelineCalendarEventsFromCompanyIdArgs = {
   companyId: Scalars['UUID'];
@@ -6013,13 +5767,11 @@ export type QueryGetTimelineCalendarEventsFromCompanyIdArgs = {
   pageSize: Scalars['Int'];
 };
 
-
 export type QueryGetTimelineCalendarEventsFromPersonIdArgs = {
   page: Scalars['Int'];
   pageSize: Scalars['Int'];
   personId: Scalars['UUID'];
 };
-
 
 export type QueryGetTimelineThreadsFromCompanyIdArgs = {
   companyId: Scalars['UUID'];
@@ -6027,40 +5779,35 @@ export type QueryGetTimelineThreadsFromCompanyIdArgs = {
   pageSize: Scalars['Int'];
 };
 
-
 export type QueryGetTimelineThreadsFromPersonIdArgs = {
   page: Scalars['Int'];
   pageSize: Scalars['Int'];
   personId: Scalars['UUID'];
 };
 
-
 export type QueryMessageArgs = {
   filter?: InputMaybe<MessageFilterInput>;
 };
 
-
 export type QueryMessageChannelArgs = {
   filter?: InputMaybe<MessageChannelFilterInput>;
 };
-
 
 export type QueryMessageChannelDuplicatesArgs = {
   data?: InputMaybe<Array<InputMaybe<MessageChannelCreateInput>>>;
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
-
 export type QueryMessageChannelMessageAssociationArgs = {
   filter?: InputMaybe<MessageChannelMessageAssociationFilterInput>;
 };
 
-
 export type QueryMessageChannelMessageAssociationDuplicatesArgs = {
-  data?: InputMaybe<Array<InputMaybe<MessageChannelMessageAssociationCreateInput>>>;
+  data?: InputMaybe<
+    Array<InputMaybe<MessageChannelMessageAssociationCreateInput>>
+  >;
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
-
 
 export type QueryMessageChannelMessageAssociationsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -6069,9 +5816,10 @@ export type QueryMessageChannelMessageAssociationsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<Array<InputMaybe<MessageChannelMessageAssociationOrderByInput>>>;
+  orderBy?: InputMaybe<
+    Array<InputMaybe<MessageChannelMessageAssociationOrderByInput>>
+  >;
 };
-
 
 export type QueryMessageChannelsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -6083,23 +5831,19 @@ export type QueryMessageChannelsArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<MessageChannelOrderByInput>>>;
 };
 
-
 export type QueryMessageDuplicatesArgs = {
   data?: InputMaybe<Array<InputMaybe<MessageCreateInput>>>;
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
-
 export type QueryMessageParticipantArgs = {
   filter?: InputMaybe<MessageParticipantFilterInput>;
 };
-
 
 export type QueryMessageParticipantDuplicatesArgs = {
   data?: InputMaybe<Array<InputMaybe<MessageParticipantCreateInput>>>;
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
-
 
 export type QueryMessageParticipantsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -6111,17 +5855,14 @@ export type QueryMessageParticipantsArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<MessageParticipantOrderByInput>>>;
 };
 
-
 export type QueryMessageThreadArgs = {
   filter?: InputMaybe<MessageThreadFilterInput>;
 };
-
 
 export type QueryMessageThreadDuplicatesArgs = {
   data?: InputMaybe<Array<InputMaybe<MessageThreadCreateInput>>>;
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
-
 
 export type QueryMessageThreadsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -6133,7 +5874,6 @@ export type QueryMessageThreadsArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<MessageThreadOrderByInput>>>;
 };
 
-
 export type QueryMessagesArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
@@ -6143,7 +5883,6 @@ export type QueryMessagesArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<InputMaybe<MessageOrderByInput>>>;
 };
-
 
 export type QueryOpportunitiesArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -6155,17 +5894,14 @@ export type QueryOpportunitiesArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<OpportunityOrderByInput>>>;
 };
 
-
 export type QueryOpportunityArgs = {
   filter?: InputMaybe<OpportunityFilterInput>;
 };
-
 
 export type QueryOpportunityDuplicatesArgs = {
   data?: InputMaybe<Array<InputMaybe<OpportunityCreateInput>>>;
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
-
 
 export type QueryPeopleArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -6177,17 +5913,14 @@ export type QueryPeopleArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<PersonOrderByInput>>>;
 };
 
-
 export type QueryPersonArgs = {
   filter?: InputMaybe<PersonFilterInput>;
 };
-
 
 export type QueryPersonDuplicatesArgs = {
   data?: InputMaybe<Array<InputMaybe<PersonCreateInput>>>;
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
-
 
 export type QueryTimelineActivitiesArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -6199,44 +5932,36 @@ export type QueryTimelineActivitiesArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<TimelineActivityOrderByInput>>>;
 };
 
-
 export type QueryTimelineActivityArgs = {
   filter?: InputMaybe<TimelineActivityFilterInput>;
 };
-
 
 export type QueryTimelineActivityDuplicatesArgs = {
   data?: InputMaybe<Array<InputMaybe<TimelineActivityCreateInput>>>;
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
-
 export type QueryValidatePasswordResetTokenArgs = {
   passwordResetToken: Scalars['String'];
 };
 
-
 export type QueryViewArgs = {
   filter?: InputMaybe<ViewFilterInput>;
 };
-
 
 export type QueryViewDuplicatesArgs = {
   data?: InputMaybe<Array<InputMaybe<ViewCreateInput>>>;
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
-
 export type QueryViewFieldArgs = {
   filter?: InputMaybe<ViewFieldFilterInput>;
 };
-
 
 export type QueryViewFieldDuplicatesArgs = {
   data?: InputMaybe<Array<InputMaybe<ViewFieldCreateInput>>>;
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
-
 
 export type QueryViewFieldsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -6248,17 +5973,14 @@ export type QueryViewFieldsArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<ViewFieldOrderByInput>>>;
 };
 
-
 export type QueryViewFilterArgs = {
   filter?: InputMaybe<ViewFilterFilterInput>;
 };
-
 
 export type QueryViewFilterDuplicatesArgs = {
   data?: InputMaybe<Array<InputMaybe<ViewFilterCreateInput>>>;
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
-
 
 export type QueryViewFiltersArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -6270,17 +5992,14 @@ export type QueryViewFiltersArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<ViewFilterOrderByInput>>>;
 };
 
-
 export type QueryViewSortArgs = {
   filter?: InputMaybe<ViewSortFilterInput>;
 };
-
 
 export type QueryViewSortDuplicatesArgs = {
   data?: InputMaybe<Array<InputMaybe<ViewSortCreateInput>>>;
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
-
 
 export type QueryViewSortsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -6292,7 +6011,6 @@ export type QueryViewSortsArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<ViewSortOrderByInput>>>;
 };
 
-
 export type QueryViewsArgs = {
   after?: InputMaybe<Scalars['String']>;
   before?: InputMaybe<Scalars['String']>;
@@ -6303,17 +6021,14 @@ export type QueryViewsArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<ViewOrderByInput>>>;
 };
 
-
 export type QueryWebhookArgs = {
   filter?: InputMaybe<WebhookFilterInput>;
 };
-
 
 export type QueryWebhookDuplicatesArgs = {
   data?: InputMaybe<Array<InputMaybe<WebhookCreateInput>>>;
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
-
 
 export type QueryWebhooksArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -6325,17 +6040,14 @@ export type QueryWebhooksArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<WebhookOrderByInput>>>;
 };
 
-
 export type QueryWorkspaceMemberArgs = {
   filter?: InputMaybe<WorkspaceMemberFilterInput>;
 };
-
 
 export type QueryWorkspaceMemberDuplicatesArgs = {
   data?: InputMaybe<Array<InputMaybe<WorkspaceMemberCreateInput>>>;
   ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
-
 
 export type QueryWorkspaceMembersArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -6372,7 +6084,7 @@ export enum RelationDefinitionType {
   ManyToMany = 'MANY_TO_MANY',
   ManyToOne = 'MANY_TO_ONE',
   OneToMany = 'ONE_TO_MANY',
-  OneToOne = 'ONE_TO_ONE'
+  OneToOne = 'ONE_TO_ONE',
 }
 
 /** Type of the relation */
@@ -6380,7 +6092,7 @@ export enum RelationMetadataType {
   ManyToMany = 'MANY_TO_MANY',
   ManyToOne = 'MANY_TO_ONE',
   OneToMany = 'ONE_TO_MANY',
-  OneToOne = 'ONE_TO_ONE'
+  OneToOne = 'ONE_TO_ONE',
 }
 
 export type RemoteServer = {
@@ -6406,7 +6118,7 @@ export type RemoteTable = {
 /** Status of the table */
 export enum RemoteTableStatus {
   NotSynced = 'NOT_SYNCED',
-  Synced = 'SYNCED'
+  Synced = 'SYNCED',
 }
 
 export type SendInviteLink = {
@@ -6427,13 +6139,13 @@ export type SessionEntity = {
 /** Sort Directions */
 export enum SortDirection {
   Asc = 'ASC',
-  Desc = 'DESC'
+  Desc = 'DESC',
 }
 
 /** Sort Nulls Options */
 export enum SortNulls {
   NullsFirst = 'NULLS_FIRST',
-  NullsLast = 'NULLS_LAST'
+  NullsLast = 'NULLS_LAST',
 }
 
 export type StringFilter = {
@@ -6456,7 +6168,7 @@ export enum SubscriptionInterval {
   Day = 'Day',
   Month = 'Month',
   Week = 'Week',
-  Year = 'Year'
+  Year = 'Year',
 }
 
 export enum SubscriptionStatus {
@@ -6467,7 +6179,7 @@ export enum SubscriptionStatus {
   PastDue = 'PastDue',
   Paused = 'Paused',
   Trialing = 'Trialing',
-  Unpaid = 'Unpaid'
+  Unpaid = 'Unpaid',
 }
 
 export type Support = {
@@ -6857,7 +6569,6 @@ export type View = {
   viewSorts?: Maybe<ViewSortConnection>;
 };
 
-
 /** (System) Views */
 export type ViewViewFieldsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -6869,7 +6580,6 @@ export type ViewViewFieldsArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<ViewFieldOrderByInput>>>;
 };
 
-
 /** (System) Views */
 export type ViewViewFiltersArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -6880,7 +6590,6 @@ export type ViewViewFiltersArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<InputMaybe<ViewFilterOrderByInput>>>;
 };
-
 
 /** (System) Views */
 export type ViewViewSortsArgs = {
@@ -7203,7 +6912,7 @@ export type ViewFilterUpdateInput = {
 /** View key */
 export enum ViewKeyEnum {
   /** Index */
-  Index = 'INDEX'
+  Index = 'INDEX',
 }
 
 export type ViewKeyEnumFilter = {
@@ -7469,12 +7178,10 @@ export type Workspace = {
   workspaceMembersCount?: Maybe<Scalars['Float']>;
 };
 
-
 export type WorkspaceBillingSubscriptionsArgs = {
   filter?: BillingSubscriptionFilter;
   sorting?: Array<BillingSubscriptionSort>;
 };
-
 
 export type WorkspaceFeatureFlagsArgs = {
   filter?: FeatureFlagFilter;
@@ -7538,7 +7245,6 @@ export type WorkspaceMember = {
   userId?: Maybe<Scalars['UUID']>;
 };
 
-
 /** A workspace member */
 export type WorkspaceMemberAccountOwnerForCompaniesArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -7549,7 +7255,6 @@ export type WorkspaceMemberAccountOwnerForCompaniesArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<InputMaybe<CompanyOrderByInput>>>;
 };
-
 
 /** A workspace member */
 export type WorkspaceMemberAssignedActivitiesArgs = {
@@ -7562,7 +7267,6 @@ export type WorkspaceMemberAssignedActivitiesArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<ActivityOrderByInput>>>;
 };
 
-
 /** A workspace member */
 export type WorkspaceMemberAuditLogsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -7573,7 +7277,6 @@ export type WorkspaceMemberAuditLogsArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<InputMaybe<AuditLogOrderByInput>>>;
 };
-
 
 /** A workspace member */
 export type WorkspaceMemberAuthoredActivitiesArgs = {
@@ -7586,7 +7289,6 @@ export type WorkspaceMemberAuthoredActivitiesArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<ActivityOrderByInput>>>;
 };
 
-
 /** A workspace member */
 export type WorkspaceMemberAuthoredAttachmentsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -7597,7 +7299,6 @@ export type WorkspaceMemberAuthoredAttachmentsArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<InputMaybe<AttachmentOrderByInput>>>;
 };
-
 
 /** A workspace member */
 export type WorkspaceMemberAuthoredCommentsArgs = {
@@ -7610,7 +7311,6 @@ export type WorkspaceMemberAuthoredCommentsArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<CommentOrderByInput>>>;
 };
 
-
 /** A workspace member */
 export type WorkspaceMemberBlocklistArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -7621,7 +7321,6 @@ export type WorkspaceMemberBlocklistArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<InputMaybe<BlocklistOrderByInput>>>;
 };
-
 
 /** A workspace member */
 export type WorkspaceMemberCalendarEventParticipantsArgs = {
@@ -7634,7 +7333,6 @@ export type WorkspaceMemberCalendarEventParticipantsArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<CalendarEventParticipantOrderByInput>>>;
 };
 
-
 /** A workspace member */
 export type WorkspaceMemberConnectedAccountsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -7645,7 +7343,6 @@ export type WorkspaceMemberConnectedAccountsArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<InputMaybe<ConnectedAccountOrderByInput>>>;
 };
-
 
 /** A workspace member */
 export type WorkspaceMemberFavoritesArgs = {
@@ -7658,7 +7355,6 @@ export type WorkspaceMemberFavoritesArgs = {
   orderBy?: InputMaybe<Array<InputMaybe<FavoriteOrderByInput>>>;
 };
 
-
 /** A workspace member */
 export type WorkspaceMemberMessageParticipantsArgs = {
   after?: InputMaybe<Scalars['String']>;
@@ -7669,7 +7365,6 @@ export type WorkspaceMemberMessageParticipantsArgs = {
   limit?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<InputMaybe<MessageParticipantOrderByInput>>>;
 };
-
 
 /** A workspace member */
 export type WorkspaceMemberTimelineActivitiesArgs = {
@@ -7844,7 +7539,6 @@ export type Object = {
   updatedAt: Scalars['DateTime'];
 };
 
-
 export type ObjectFieldsArgs = {
   filter?: FieldFilter;
   paging?: CursorPaging;
@@ -7883,68 +7577,105 @@ export type ExchangeAuthorizationCodeMutationVariables = Exact<{
   clientSecret?: InputMaybe<Scalars['String']>;
 }>;
 
-
-export type ExchangeAuthorizationCodeMutation = { exchangeAuthorizationCode: { loginToken: { token: string, expiresAt: any }, accessToken: { token: string, expiresAt: any }, refreshToken: { token: string, expiresAt: any } } };
+export type ExchangeAuthorizationCodeMutation = {
+  exchangeAuthorizationCode: {
+    loginToken: { token: string; expiresAt: any };
+    accessToken: { token: string; expiresAt: any };
+    refreshToken: { token: string; expiresAt: any };
+  };
+};
 
 export type RenewTokenMutationVariables = Exact<{
   appToken: Scalars['String'];
 }>;
 
-
-export type RenewTokenMutation = { renewToken: { tokens: { accessToken: { token: string, expiresAt: any }, refreshToken: { token: string, expiresAt: any } } } };
+export type RenewTokenMutation = {
+  renewToken: {
+    tokens: {
+      accessToken: { token: string; expiresAt: any };
+      refreshToken: { token: string; expiresAt: any };
+    };
+  };
+};
 
 export type CreateOneCompanyMutationVariables = Exact<{
   input: CompanyCreateInput;
 }>;
 
-
-export type CreateOneCompanyMutation = { createCompany?: { id?: any | null } | null };
+export type CreateOneCompanyMutation = {
+  createCompany?: { id?: any | null } | null;
+};
 
 export type FindCompanyQueryVariables = Exact<{
   filter: CompanyFilterInput;
 }>;
 
-
-export type FindCompanyQuery = { companies?: { edges?: Array<{ node?: { id?: any | null, name?: string | null, linkedinLink?: { url?: string | null, label?: string | null } | null } | null }> | null } | null };
+export type FindCompanyQuery = {
+  companies?: {
+    edges?: Array<{
+      node?: {
+        id?: any | null;
+        name?: string | null;
+        linkedinLink?: { url?: string | null; label?: string | null } | null;
+      } | null;
+    }> | null;
+  } | null;
+};
 
 export type CreateOnePersonMutationVariables = Exact<{
   input: PersonCreateInput;
 }>;
 
-
-export type CreateOnePersonMutation = { createPerson?: { id?: any | null } | null };
+export type CreateOnePersonMutation = {
+  createPerson?: { id?: any | null } | null;
+};
 
 export type FindPersonQueryVariables = Exact<{
   filter: PersonFilterInput;
 }>;
 
-
-export type FindPersonQuery = { people?: { edges?: Array<{ node?: { id?: any | null, name?: { firstName: string, lastName: string } | null, linkedinLink?: { url?: string | null, label?: string | null } | null } | null }> | null } | null };
-
+export type FindPersonQuery = {
+  people?: {
+    edges?: Array<{
+      node?: {
+        id?: any | null;
+        name?: { firstName: string; lastName: string } | null;
+        linkedinLink?: { url?: string | null; label?: string | null } | null;
+      } | null;
+    }> | null;
+  } | null;
+};
 
 export const ExchangeAuthorizationCodeDocument = gql`
-    mutation ExchangeAuthorizationCode($authorizationCode: String!, $codeVerifier: String, $clientSecret: String) {
-  exchangeAuthorizationCode(
-    authorizationCode: $authorizationCode
-    codeVerifier: $codeVerifier
-    clientSecret: $clientSecret
+  mutation ExchangeAuthorizationCode(
+    $authorizationCode: String!
+    $codeVerifier: String
+    $clientSecret: String
   ) {
-    loginToken {
-      token
-      expiresAt
-    }
-    accessToken {
-      token
-      expiresAt
-    }
-    refreshToken {
-      token
-      expiresAt
+    exchangeAuthorizationCode(
+      authorizationCode: $authorizationCode
+      codeVerifier: $codeVerifier
+      clientSecret: $clientSecret
+    ) {
+      loginToken {
+        token
+        expiresAt
+      }
+      accessToken {
+        token
+        expiresAt
+      }
+      refreshToken {
+        token
+        expiresAt
+      }
     }
   }
-}
-    `;
-export type ExchangeAuthorizationCodeMutationFn = Apollo.MutationFunction<ExchangeAuthorizationCodeMutation, ExchangeAuthorizationCodeMutationVariables>;
+`;
+export type ExchangeAuthorizationCodeMutationFn = Apollo.MutationFunction<
+  ExchangeAuthorizationCodeMutation,
+  ExchangeAuthorizationCodeMutationVariables
+>;
 
 /**
  * __useExchangeAuthorizationCodeMutation__
@@ -7965,30 +7696,48 @@ export type ExchangeAuthorizationCodeMutationFn = Apollo.MutationFunction<Exchan
  *   },
  * });
  */
-export function useExchangeAuthorizationCodeMutation(baseOptions?: Apollo.MutationHookOptions<ExchangeAuthorizationCodeMutation, ExchangeAuthorizationCodeMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ExchangeAuthorizationCodeMutation, ExchangeAuthorizationCodeMutationVariables>(ExchangeAuthorizationCodeDocument, options);
-      }
-export type ExchangeAuthorizationCodeMutationHookResult = ReturnType<typeof useExchangeAuthorizationCodeMutation>;
-export type ExchangeAuthorizationCodeMutationResult = Apollo.MutationResult<ExchangeAuthorizationCodeMutation>;
-export type ExchangeAuthorizationCodeMutationOptions = Apollo.BaseMutationOptions<ExchangeAuthorizationCodeMutation, ExchangeAuthorizationCodeMutationVariables>;
+export function useExchangeAuthorizationCodeMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ExchangeAuthorizationCodeMutation,
+    ExchangeAuthorizationCodeMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    ExchangeAuthorizationCodeMutation,
+    ExchangeAuthorizationCodeMutationVariables
+  >(ExchangeAuthorizationCodeDocument, options);
+}
+export type ExchangeAuthorizationCodeMutationHookResult = ReturnType<
+  typeof useExchangeAuthorizationCodeMutation
+>;
+export type ExchangeAuthorizationCodeMutationResult =
+  Apollo.MutationResult<ExchangeAuthorizationCodeMutation>;
+export type ExchangeAuthorizationCodeMutationOptions =
+  Apollo.BaseMutationOptions<
+    ExchangeAuthorizationCodeMutation,
+    ExchangeAuthorizationCodeMutationVariables
+  >;
 export const RenewTokenDocument = gql`
-    mutation RenewToken($appToken: String!) {
-  renewToken(appToken: $appToken) {
-    tokens {
-      accessToken {
-        token
-        expiresAt
-      }
-      refreshToken {
-        token
-        expiresAt
+  mutation RenewToken($appToken: String!) {
+    renewToken(appToken: $appToken) {
+      tokens {
+        accessToken {
+          token
+          expiresAt
+        }
+        refreshToken {
+          token
+          expiresAt
+        }
       }
     }
   }
-}
-    `;
-export type RenewTokenMutationFn = Apollo.MutationFunction<RenewTokenMutation, RenewTokenMutationVariables>;
+`;
+export type RenewTokenMutationFn = Apollo.MutationFunction<
+  RenewTokenMutation,
+  RenewTokenMutationVariables
+>;
 
 /**
  * __useRenewTokenMutation__
@@ -8007,21 +7756,38 @@ export type RenewTokenMutationFn = Apollo.MutationFunction<RenewTokenMutation, R
  *   },
  * });
  */
-export function useRenewTokenMutation(baseOptions?: Apollo.MutationHookOptions<RenewTokenMutation, RenewTokenMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<RenewTokenMutation, RenewTokenMutationVariables>(RenewTokenDocument, options);
-      }
-export type RenewTokenMutationHookResult = ReturnType<typeof useRenewTokenMutation>;
-export type RenewTokenMutationResult = Apollo.MutationResult<RenewTokenMutation>;
-export type RenewTokenMutationOptions = Apollo.BaseMutationOptions<RenewTokenMutation, RenewTokenMutationVariables>;
-export const CreateOneCompanyDocument = gql`
-    mutation CreateOneCompany($input: CompanyCreateInput!) {
-  createCompany(data: $input) {
-    id
-  }
+export function useRenewTokenMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    RenewTokenMutation,
+    RenewTokenMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<RenewTokenMutation, RenewTokenMutationVariables>(
+    RenewTokenDocument,
+    options,
+  );
 }
-    `;
-export type CreateOneCompanyMutationFn = Apollo.MutationFunction<CreateOneCompanyMutation, CreateOneCompanyMutationVariables>;
+export type RenewTokenMutationHookResult = ReturnType<
+  typeof useRenewTokenMutation
+>;
+export type RenewTokenMutationResult =
+  Apollo.MutationResult<RenewTokenMutation>;
+export type RenewTokenMutationOptions = Apollo.BaseMutationOptions<
+  RenewTokenMutation,
+  RenewTokenMutationVariables
+>;
+export const CreateOneCompanyDocument = gql`
+  mutation CreateOneCompany($input: CompanyCreateInput!) {
+    createCompany(data: $input) {
+      id
+    }
+  }
+`;
+export type CreateOneCompanyMutationFn = Apollo.MutationFunction<
+  CreateOneCompanyMutation,
+  CreateOneCompanyMutationVariables
+>;
 
 /**
  * __useCreateOneCompanyMutation__
@@ -8040,29 +7806,43 @@ export type CreateOneCompanyMutationFn = Apollo.MutationFunction<CreateOneCompan
  *   },
  * });
  */
-export function useCreateOneCompanyMutation(baseOptions?: Apollo.MutationHookOptions<CreateOneCompanyMutation, CreateOneCompanyMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateOneCompanyMutation, CreateOneCompanyMutationVariables>(CreateOneCompanyDocument, options);
-      }
-export type CreateOneCompanyMutationHookResult = ReturnType<typeof useCreateOneCompanyMutation>;
-export type CreateOneCompanyMutationResult = Apollo.MutationResult<CreateOneCompanyMutation>;
-export type CreateOneCompanyMutationOptions = Apollo.BaseMutationOptions<CreateOneCompanyMutation, CreateOneCompanyMutationVariables>;
+export function useCreateOneCompanyMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateOneCompanyMutation,
+    CreateOneCompanyMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    CreateOneCompanyMutation,
+    CreateOneCompanyMutationVariables
+  >(CreateOneCompanyDocument, options);
+}
+export type CreateOneCompanyMutationHookResult = ReturnType<
+  typeof useCreateOneCompanyMutation
+>;
+export type CreateOneCompanyMutationResult =
+  Apollo.MutationResult<CreateOneCompanyMutation>;
+export type CreateOneCompanyMutationOptions = Apollo.BaseMutationOptions<
+  CreateOneCompanyMutation,
+  CreateOneCompanyMutationVariables
+>;
 export const FindCompanyDocument = gql`
-    query FindCompany($filter: CompanyFilterInput!) {
-  companies(filter: $filter) {
-    edges {
-      node {
-        id
-        name
-        linkedinLink {
-          url
-          label
+  query FindCompany($filter: CompanyFilterInput!) {
+    companies(filter: $filter) {
+      edges {
+        node {
+          id
+          name
+          linkedinLink {
+            url
+            label
+          }
         }
       }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useFindCompanyQuery__
@@ -8080,25 +7860,49 @@ export const FindCompanyDocument = gql`
  *   },
  * });
  */
-export function useFindCompanyQuery(baseOptions: Apollo.QueryHookOptions<FindCompanyQuery, FindCompanyQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindCompanyQuery, FindCompanyQueryVariables>(FindCompanyDocument, options);
-      }
-export function useFindCompanyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindCompanyQuery, FindCompanyQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindCompanyQuery, FindCompanyQueryVariables>(FindCompanyDocument, options);
-        }
-export type FindCompanyQueryHookResult = ReturnType<typeof useFindCompanyQuery>;
-export type FindCompanyLazyQueryHookResult = ReturnType<typeof useFindCompanyLazyQuery>;
-export type FindCompanyQueryResult = Apollo.QueryResult<FindCompanyQuery, FindCompanyQueryVariables>;
-export const CreateOnePersonDocument = gql`
-    mutation CreateOnePerson($input: PersonCreateInput!) {
-  createPerson(data: $input) {
-    id
-  }
+export function useFindCompanyQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    FindCompanyQuery,
+    FindCompanyQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<FindCompanyQuery, FindCompanyQueryVariables>(
+    FindCompanyDocument,
+    options,
+  );
 }
-    `;
-export type CreateOnePersonMutationFn = Apollo.MutationFunction<CreateOnePersonMutation, CreateOnePersonMutationVariables>;
+export function useFindCompanyLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    FindCompanyQuery,
+    FindCompanyQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<FindCompanyQuery, FindCompanyQueryVariables>(
+    FindCompanyDocument,
+    options,
+  );
+}
+export type FindCompanyQueryHookResult = ReturnType<typeof useFindCompanyQuery>;
+export type FindCompanyLazyQueryHookResult = ReturnType<
+  typeof useFindCompanyLazyQuery
+>;
+export type FindCompanyQueryResult = Apollo.QueryResult<
+  FindCompanyQuery,
+  FindCompanyQueryVariables
+>;
+export const CreateOnePersonDocument = gql`
+  mutation CreateOnePerson($input: PersonCreateInput!) {
+    createPerson(data: $input) {
+      id
+    }
+  }
+`;
+export type CreateOnePersonMutationFn = Apollo.MutationFunction<
+  CreateOnePersonMutation,
+  CreateOnePersonMutationVariables
+>;
 
 /**
  * __useCreateOnePersonMutation__
@@ -8117,32 +7921,46 @@ export type CreateOnePersonMutationFn = Apollo.MutationFunction<CreateOnePersonM
  *   },
  * });
  */
-export function useCreateOnePersonMutation(baseOptions?: Apollo.MutationHookOptions<CreateOnePersonMutation, CreateOnePersonMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateOnePersonMutation, CreateOnePersonMutationVariables>(CreateOnePersonDocument, options);
-      }
-export type CreateOnePersonMutationHookResult = ReturnType<typeof useCreateOnePersonMutation>;
-export type CreateOnePersonMutationResult = Apollo.MutationResult<CreateOnePersonMutation>;
-export type CreateOnePersonMutationOptions = Apollo.BaseMutationOptions<CreateOnePersonMutation, CreateOnePersonMutationVariables>;
+export function useCreateOnePersonMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateOnePersonMutation,
+    CreateOnePersonMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    CreateOnePersonMutation,
+    CreateOnePersonMutationVariables
+  >(CreateOnePersonDocument, options);
+}
+export type CreateOnePersonMutationHookResult = ReturnType<
+  typeof useCreateOnePersonMutation
+>;
+export type CreateOnePersonMutationResult =
+  Apollo.MutationResult<CreateOnePersonMutation>;
+export type CreateOnePersonMutationOptions = Apollo.BaseMutationOptions<
+  CreateOnePersonMutation,
+  CreateOnePersonMutationVariables
+>;
 export const FindPersonDocument = gql`
-    query FindPerson($filter: PersonFilterInput!) {
-  people(filter: $filter) {
-    edges {
-      node {
-        id
-        name {
-          firstName
-          lastName
-        }
-        linkedinLink {
-          url
-          label
+  query FindPerson($filter: PersonFilterInput!) {
+    people(filter: $filter) {
+      edges {
+        node {
+          id
+          name {
+            firstName
+            lastName
+          }
+          linkedinLink {
+            url
+            label
+          }
         }
       }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useFindPersonQuery__
@@ -8160,14 +7978,35 @@ export const FindPersonDocument = gql`
  *   },
  * });
  */
-export function useFindPersonQuery(baseOptions: Apollo.QueryHookOptions<FindPersonQuery, FindPersonQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindPersonQuery, FindPersonQueryVariables>(FindPersonDocument, options);
-      }
-export function useFindPersonLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindPersonQuery, FindPersonQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindPersonQuery, FindPersonQueryVariables>(FindPersonDocument, options);
-        }
+export function useFindPersonQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    FindPersonQuery,
+    FindPersonQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<FindPersonQuery, FindPersonQueryVariables>(
+    FindPersonDocument,
+    options,
+  );
+}
+export function useFindPersonLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    FindPersonQuery,
+    FindPersonQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<FindPersonQuery, FindPersonQueryVariables>(
+    FindPersonDocument,
+    options,
+  );
+}
 export type FindPersonQueryHookResult = ReturnType<typeof useFindPersonQuery>;
-export type FindPersonLazyQueryHookResult = ReturnType<typeof useFindPersonLazyQuery>;
-export type FindPersonQueryResult = Apollo.QueryResult<FindPersonQuery, FindPersonQueryVariables>;
+export type FindPersonLazyQueryHookResult = ReturnType<
+  typeof useFindPersonLazyQuery
+>;
+export type FindPersonQueryResult = Apollo.QueryResult<
+  FindPersonQuery,
+  FindPersonQueryVariables
+>;
