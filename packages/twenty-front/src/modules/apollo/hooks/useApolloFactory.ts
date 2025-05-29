@@ -9,7 +9,6 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { previousUrlState } from '@/auth/states/previousUrlState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { workspacesState } from '@/auth/states/workspaces';
-import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
@@ -22,7 +21,6 @@ import { ApolloFactory, Options } from '../services/apollo.factory';
 export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   // eslint-disable-next-line @nx/workspace-no-state-useref
   const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
-  const [isDebugMode] = useRecoilState(isDebugModeState);
 
   const navigate = useNavigate();
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -60,7 +58,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
           fetchPolicy: 'cache-and-network',
         },
       },
-      connectToDevTools: isDebugMode,
+      connectToDevTools: process.env.IS_DEBUG_MODE === 'true',
       currentWorkspaceMember: currentWorkspaceMember,
       onTokenPairChange: (tokenPair) => {
         setTokenPair(tokenPair);
@@ -83,7 +81,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
         }
       },
       extraLinks: [],
-      isDebugMode,
+      isDebugMode: process.env.IS_DEBUG_MODE === 'true',
       // Override options
       ...options,
     });
@@ -96,7 +94,6 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
     setCurrentWorkspaceMember,
     setCurrentWorkspace,
     setWorkspaces,
-    isDebugMode,
     currentWorkspace?.metadataVersion,
     setPreviousUrl,
   ]);

@@ -9,7 +9,6 @@ import { clientConfigApiStatusState } from '@/client-config/states/clientConfigA
 import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
-import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
@@ -26,7 +25,6 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ClientConfigProviderEffect = () => {
-  const setIsDebugMode = useSetRecoilState(isDebugModeState);
   const setIsAnalyticsEnabled = useSetRecoilState(isAnalyticsEnabledState);
   const setDomainConfiguration = useSetRecoilState(domainConfigurationState);
   const setAuthProviders = useSetRecoilState(authProvidersState);
@@ -122,7 +120,7 @@ export const ClientConfigProviderEffect = () => {
       ...currentStatus,
       isErrored: false,
       error: undefined,
-      isSaved: true,
+      isLoadedOnce: true,
     }));
 
     setAuthProviders({
@@ -132,7 +130,6 @@ export const ClientConfigProviderEffect = () => {
       magicLink: false,
       sso: data?.clientConfig.authProviders.sso,
     });
-    setIsDebugMode(data?.clientConfig.debugMode);
     setIsAnalyticsEnabled(data?.clientConfig.analyticsEnabled);
     setIsDeveloperDefaultSignInPrefilled(data?.clientConfig.signInPrefilled);
     setIsMultiWorkspaceEnabled(data?.clientConfig.isMultiWorkspaceEnabled);
@@ -175,13 +172,12 @@ export const ClientConfigProviderEffect = () => {
     );
     setClientConfigApiStatus((currentStatus) => ({
       ...currentStatus,
-      isLoaded: true,
+      isSaved: true,
     }));
   }, [
     data,
     loading,
     error,
-    setIsDebugMode,
     setIsDeveloperDefaultSignInPrefilled,
     setIsMultiWorkspaceEnabled,
     setIsEmailVerificationRequired,

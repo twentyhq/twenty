@@ -15,7 +15,6 @@ import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingStat
 import { workspacesState } from '@/auth/states/workspaces';
 import { billingState } from '@/client-config/states/billingState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
-import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -132,7 +131,6 @@ export const useAuth = () => {
           .getLoadable(isDeveloperDefaultSignInPrefilledState)
           .getValue();
         const supportChat = snapshot.getLoadable(supportChatState).getValue();
-        const isDebugMode = snapshot.getLoadable(isDebugModeState).getValue();
         const captcha = snapshot.getLoadable(captchaState).getValue();
         const clientConfigApiStatus = snapshot
           .getLoadable(clientConfigApiStatusState)
@@ -155,7 +153,6 @@ export const useAuth = () => {
             isDeveloperDefaultSignInPrefilled,
           );
           set(supportChatState, supportChat);
-          set(isDebugModeState, isDebugMode);
           set(captchaState, captcha);
           set(clientConfigApiStatusState, clientConfigApiStatus);
           set(isCurrentUserLoadedState, isCurrentUserLoaded);

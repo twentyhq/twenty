@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -21,6 +20,7 @@ import { AppPath } from '@/types/AppPath';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { enUS } from 'date-fns/locale';
+import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
@@ -31,7 +31,6 @@ import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 export const UserProviderEffect = () => {
-  const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
 
   const [isCurrentUserLoaded, setIsCurrentUserLoaded] = useRecoilState(
@@ -68,7 +67,7 @@ export const UserProviderEffect = () => {
     currentWorkspaceDeletedMembersState,
   );
 
-  const { loading: queryLoading, data: queryData } = useGetCurrentUserQuery({
+  const { data: queryData } = useGetCurrentUserQuery({
     skip:
       isCurrentUserLoaded ||
       isMatchingLocation(location, AppPath.Verify) ||
@@ -76,11 +75,6 @@ export const UserProviderEffect = () => {
   });
 
   useEffect(() => {
-    if (!queryLoading) {
-      setIsLoading(false);
-      setIsCurrentUserLoaded(true);
-    }
-
     if (!isDefined(queryData?.currentUser)) return;
 
     setCurrentUser(queryData.currentUser);
@@ -158,12 +152,11 @@ export const UserProviderEffect = () => {
 
       setWorkspaces(workspaces);
     }
+    setIsCurrentUserLoaded(true);
   }, [
     setCurrentUser,
     setCurrentUserWorkspace,
     setCurrentWorkspaceMembers,
-    isLoading,
-    queryLoading,
     setCurrentWorkspace,
     setCurrentWorkspaceMember,
     setWorkspaces,
