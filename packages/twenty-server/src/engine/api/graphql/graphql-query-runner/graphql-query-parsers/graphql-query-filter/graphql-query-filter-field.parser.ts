@@ -132,7 +132,7 @@ export class GraphqlQueryFilterFieldParser {
         operator,
         objectNameSingular,
         key: fullFieldName,
-        fieldMetadataType: fieldMetadata.type,
+        fieldMetadataType: subFieldMetadata.type,
         value,
       });
 
