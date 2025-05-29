@@ -17,6 +17,8 @@ export class SoapClientService {
 
   constructor(private readonly configService: ConfigService) {}
 
+  // TODO: Create correct type for this method.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async callMethod(methodName: string, params: any): Promise<any> {
     try {
       const client = await soap.createClientAsync(this.wsdlUrl);
@@ -129,7 +131,7 @@ export class SoapClientService {
       }
 
       // Extract client ID from result
-      const clienteId = clienteResult['id'] as number;
+      const clienteId = clienteResult.id as number;
 
       this.logger.log(`Client created with ID: ${clienteId}`);
 
