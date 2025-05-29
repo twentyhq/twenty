@@ -1,5 +1,5 @@
 export enum NodeEnvironment {
-  test = 'test',
-  development = 'development',
-  production = 'production',
+  TEST = 'test',
+  DEVELOPMENT = 'development',
+  PRODUCTION = 'production',
 }

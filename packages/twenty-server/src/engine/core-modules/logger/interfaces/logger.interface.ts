@@ -1,11 +1,11 @@
 import { LogLevel } from '@nestjs/common';
 
 export enum LoggerDriverType {
-  Console = 'console',
+  CONSOLE = 'CONSOLE',
 }
 
 export interface ConsoleDriverFactoryOptions {
-  type: LoggerDriverType.Console;
+  type: LoggerDriverType.CONSOLE;
   logLevels?: LogLevel[];
 }
 

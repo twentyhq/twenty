@@ -4,7 +4,7 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { View } from '@/views/types/View';
@@ -13,10 +13,10 @@ import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType } from '@/views/types/ViewType';
 import { act } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { useApplyCurrentViewFiltersToCurrentRecordFilters } from '../useApplyCurrentViewFiltersToCurrentRecordFilters';
-import { isDefined } from 'twenty-shared/utils';
 
 const mockObjectMetadataItemNameSingular = 'company';
 
@@ -57,7 +57,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
     viewGroups: [],
     viewSorts: [],
     kanbanFieldMetadataId: '',
-    kanbanAggregateOperation: AGGREGATE_OPERATIONS.count,
+    kanbanAggregateOperation: AggregateOperations.COUNT,
     icon: '',
     kanbanAggregateOperationFieldMetadataId: '',
     position: 0,

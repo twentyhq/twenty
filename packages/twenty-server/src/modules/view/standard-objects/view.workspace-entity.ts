@@ -7,7 +7,7 @@ import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metada
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -221,82 +221,82 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCalculator',
     options: [
       {
-        value: AGGREGATE_OPERATIONS.avg,
+        value: AggregateOperations.AVG,
         label: 'Average',
         position: 0,
         color: 'red',
       },
       {
-        value: AGGREGATE_OPERATIONS.count,
+        value: AggregateOperations.COUNT,
         label: 'Count',
         position: 1,
         color: 'purple',
       },
       {
-        value: AGGREGATE_OPERATIONS.max,
+        value: AggregateOperations.MAX,
         label: 'Maximum',
         position: 2,
         color: 'sky',
       },
       {
-        value: AGGREGATE_OPERATIONS.min,
+        value: AggregateOperations.MIN,
         label: 'Minimum',
         position: 3,
         color: 'turquoise',
       },
       {
-        value: AGGREGATE_OPERATIONS.sum,
+        value: AggregateOperations.SUM,
         label: 'Sum',
         position: 4,
         color: 'yellow',
       },
       {
-        value: AGGREGATE_OPERATIONS.countEmpty,
+        value: AggregateOperations.COUNT_EMPTY,
         label: 'Count empty',
         position: 5,
         color: 'red',
       },
       {
-        value: AGGREGATE_OPERATIONS.countNotEmpty,
+        value: AggregateOperations.COUNT_NOT_EMPTY,
         label: 'Count not empty',
         position: 6,
         color: 'purple',
       },
       {
-        value: AGGREGATE_OPERATIONS.countUniqueValues,
+        value: AggregateOperations.COUNT_UNIQUE_VALUES,
         label: 'Count unique values',
         position: 7,
         color: 'sky',
       },
       {
-        value: AGGREGATE_OPERATIONS.percentageEmpty,
+        value: AggregateOperations.PERCENTAGE_EMPTY,
         label: 'Percent empty',
         position: 8,
         color: 'turquoise',
       },
       {
-        value: AGGREGATE_OPERATIONS.percentageNotEmpty,
+        value: AggregateOperations.PERCENTAGE_NOT_EMPTY,
         label: 'Percent not empty',
         position: 9,
         color: 'yellow',
       },
       {
-        value: AGGREGATE_OPERATIONS.countTrue,
+        value: AggregateOperations.COUNT_TRUE,
         label: 'Count true',
         position: 10,
         color: 'red',
       },
       {
-        value: AGGREGATE_OPERATIONS.countFalse,
+        value: AggregateOperations.COUNT_FALSE,
         label: 'Count false',
         position: 11,
         color: 'purple',
       },
     ],
-    defaultValue: `'${AGGREGATE_OPERATIONS.count}'`,
+    defaultValue: `'${AggregateOperations.COUNT}'`,
   })
   @WorkspaceIsNullable()
-  kanbanAggregateOperation?: AGGREGATE_OPERATIONS | null;
+  kanbanAggregateOperation?: AggregateOperations | null;
 
   @WorkspaceField({
     standardId: VIEW_STANDARD_FIELD_IDS.kanbanAggregateOperationFieldMetadataId,

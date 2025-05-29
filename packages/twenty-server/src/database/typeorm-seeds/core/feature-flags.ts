@@ -16,32 +16,27 @@ export const seedFeatureFlags = async (
     .orIgnore()
     .values([
       {
-        key: FeatureFlagKey.IsAirtableIntegrationEnabled,
+        key: FeatureFlagKey.IS_AIRTABLE_INTEGRATION_ENABLED,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: FeatureFlagKey.IsPostgreSQLIntegrationEnabled,
+        key: FeatureFlagKey.IS_POSTGRESQL_INTEGRATION_ENABLED,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: FeatureFlagKey.IsStripeIntegrationEnabled,
+        key: FeatureFlagKey.IS_STRIPE_INTEGRATION_ENABLED,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: FeatureFlagKey.IsWorkflowEnabled,
+        key: FeatureFlagKey.IS_WORKFLOW_ENABLED,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: FeatureFlagKey.IsCustomDomainEnabled,
-        workspaceId: workspaceId,
-        value: false,
-      },
-      {
-        key: FeatureFlagKey.IsUniqueIndexesEnabled,
+        key: FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED,
         workspaceId: workspaceId,
         value: false,
       },

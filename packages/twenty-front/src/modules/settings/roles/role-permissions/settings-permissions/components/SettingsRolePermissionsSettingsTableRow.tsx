@@ -54,7 +54,7 @@ export const SettingsRolePermissionsSettingsTableRow = ({
     settingsDraftRoleFamilyState(roleId),
   );
   const isPermissionsV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsPermissionsV2Enabled,
+    FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
   );
   const canUpdateAllSettings = settingsDraftRole.canUpdateAllSettings;
 

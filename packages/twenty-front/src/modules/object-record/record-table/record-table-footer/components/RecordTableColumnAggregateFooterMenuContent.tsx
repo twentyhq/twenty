@@ -1,4 +1,4 @@
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
 import { NON_STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/nonStandardAggregateOperationsOptions';
@@ -51,7 +51,7 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
   const nonStandardAvailableAggregateOperation =
     availableAggregateOperation.filter((aggregateOperation) =>
       NON_STANDARD_AGGREGATE_OPERATION_OPTIONS.includes(
-        aggregateOperation as AGGREGATE_OPERATIONS,
+        aggregateOperation as AggregateOperations,
       ),
     );
 
