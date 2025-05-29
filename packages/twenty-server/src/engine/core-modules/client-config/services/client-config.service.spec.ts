@@ -120,7 +120,7 @@ describe('ClientConfigService', () => {
         frontDomain: 'app.twenty.com',
         debugMode: true,
         support: {
-          supportDriver: 'Front',
+          supportDriver: 'FRONT',
           supportFrontChatId: 'chat-123',
         },
         sentry: {
@@ -129,7 +129,7 @@ describe('ClientConfigService', () => {
           dsn: 'https://sentry.example.com',
         },
         captcha: {
-          provider: 'GoogleRecaptcha',
+          provider: 'GOOGLE_RECAPTCHA',
           siteKey: 'site-key-123',
         },
         chromeExtensionId: 'extension-123',
@@ -207,46 +207,6 @@ describe('ClientConfigService', () => {
       const result = await service.getClientConfig();
 
       expect(result.canManageFeatureFlags).toBe(true);
-    });
-  });
-
-  describe('transformEnum', () => {
-    it('should transform enum by direct key match', () => {
-      const result = (service as any).transformEnum(
-        'GoogleRecaptcha',
-        CaptchaDriverType,
-      );
-
-      expect(result).toBe(CaptchaDriverType.GOOGLE_RECAPTCHA);
-    });
-
-    it('should transform enum by value match', () => {
-      const result = (service as any).transformEnum(
-        'google-recaptcha',
-        CaptchaDriverType,
-      );
-
-      expect(result).toBe('GoogleRecaptcha');
-    });
-
-    it('should transform SupportDriver enum correctly', () => {
-      const result = (service as any).transformEnum('front', SupportDriver);
-
-      expect(result).toBe('Front');
-    });
-
-    it('should throw error for unknown enum value', () => {
-      expect(() => {
-        (service as any).transformEnum('unknown-value', CaptchaDriverType);
-      }).toThrow(
-        'Unknown enum value: unknown-value. Available keys: GoogleRecaptcha, Turnstile. Available values: google-recaptcha, turnstile',
-      );
-    });
-
-    it('should handle direct key match for SupportDriver', () => {
-      const result = (service as any).transformEnum('Front', SupportDriver);
-
-      expect(result).toBe(SupportDriver.FRONT);
     });
   });
 });
