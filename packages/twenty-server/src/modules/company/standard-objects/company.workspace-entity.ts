@@ -42,10 +42,14 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 const NAME_FIELD_NAME = 'name';
 const DOMAIN_NAME_FIELD_NAME = 'domainName';
+const CPF_CNPJ_FIELD_NAME = 'cpfCnpj';
+const INSCRICAO_ESTADUAL_FIELD_NAME = 'inscricaoEstadual';
 
 export const SEARCH_FIELDS_FOR_COMPANY: FieldTypeAndNameMetadata[] = [
   { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
   { name: DOMAIN_NAME_FIELD_NAME, type: FieldMetadataType.LINKS },
+  { name: CPF_CNPJ_FIELD_NAME, type: FieldMetadataType.TEXT },
+  { name: INSCRICAO_ESTADUAL_FIELD_NAME, type: FieldMetadataType.TEXT },
 ];
 
 @WorkspaceEntity({
@@ -150,6 +154,66 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsSystem()
   position: number;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.CPF_CNPJ,
+    type: FieldMetadataType.TEXT,
+    label: msg`CPF/CNPJ`,
+    description: msg`Brazilian individual (CPF) or corporate (CNPJ) taxpayer registry ID`,
+    icon: 'IconFileText',
+  })
+  @WorkspaceIsNullable()
+  cpfCnpj: string | null;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.INSCRICAO_ESTADUAL,
+    type: FieldMetadataType.TEXT,
+    label: msg`Inscrição Estadual`,
+    description: msg`State Registration number for tax purposes in Brazil`,
+    icon: 'IconFileText',
+  })
+  @WorkspaceIsNullable()
+  inscricaoEstadual: string | null;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.PERCENT_NFE,
+    type: FieldMetadataType.NUMBER,
+    label: msg`% NF-e`,
+    description: msg`Percentage for Nota Fiscal Eletrônica (Electronic Invoice for Products)`,
+    icon: 'IconPercentage',
+  })
+  @WorkspaceIsNullable()
+  percentNfe: number | null;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.PERCENT_NFSE,
+    type: FieldMetadataType.NUMBER,
+    label: msg`% NFS-e`,
+    description: msg`Percentage for Nota Fiscal de Serviços Eletrônica (Electronic Service Invoice)`,
+    icon: 'IconPercentage',
+  })
+  @WorkspaceIsNullable()
+  percentNfse: number | null;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.PERCENT_NFCE,
+    type: FieldMetadataType.NUMBER,
+    label: msg`% NFC-e`,
+    description: msg`Percentage for Nota Fiscal ao Consumidor Eletrônica (Electronic Consumer Invoice)`,
+    icon: 'IconPercentage',
+  })
+  @WorkspaceIsNullable()
+  percentNfce: number | null;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.PERCENT_NFCOM,
+    type: FieldMetadataType.NUMBER,
+    label: msg`% NF-Com`,
+    description: msg`Percentage for Nota Fiscal de Comunicação (Communication Invoice)`,
+    icon: 'IconPercentage',
+  })
+  @WorkspaceIsNullable()
+  percentNfcom: number | null;
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.createdBy,
