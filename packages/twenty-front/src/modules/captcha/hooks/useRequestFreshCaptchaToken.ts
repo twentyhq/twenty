@@ -41,7 +41,7 @@ export const useRequestFreshCaptchaToken = () => {
         let captchaWidget: any;
 
         switch (captcha.provider) {
-          case CaptchaDriverType.GoogleRecaptcha:
+          case CaptchaDriverType.GOOGLE_RECAPTCHA:
             window.grecaptcha
               .execute(captcha.siteKey, {
                 action: 'submit',
@@ -51,7 +51,7 @@ export const useRequestFreshCaptchaToken = () => {
                 setIsRequestingCaptchaToken(false);
               });
             break;
-          case CaptchaDriverType.Turnstile:
+          case CaptchaDriverType.TURNSTILE:
             captchaWidget = window.turnstile.render('#captcha-widget', {
               sitekey: captcha.siteKey,
             });

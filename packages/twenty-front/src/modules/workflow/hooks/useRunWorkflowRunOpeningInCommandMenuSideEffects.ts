@@ -8,6 +8,7 @@ import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/wo
 import { workflowVisualizerWorkflowRunIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowRunIdComponentState';
 import { WorkflowRun } from '@/workflow/types/Workflow';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
+import { workflowRunDiagramAutomaticallyOpenedStepsComponentState } from '@/workflow/workflow-diagram/states/workflowRunDiagramAutomaticallyOpenedStepsComponentState';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
@@ -96,6 +97,14 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
           stepToOpenByDefault.id,
         );
 
+        set(
+          workflowRunDiagramAutomaticallyOpenedStepsComponentState.atomFamily({
+            instanceId: getWorkflowVisualizerComponentInstanceId({
+              recordId,
+            }),
+          }),
+          (steps) => [...steps, stepToOpenByDefault.id],
+        );
         openWorkflowRunViewStepInCommandMenu({
           workflowId: workflowRunRecord.workflowId,
           workflowRunId: workflowRunRecord.id,

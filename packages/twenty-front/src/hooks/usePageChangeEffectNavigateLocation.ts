@@ -1,3 +1,4 @@
+import { verifyEmailNextPathState } from '@/app/states/verifyEmailNextPathState';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -43,6 +44,7 @@ export const usePageChangeEffectNavigateLocation = () => {
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) => objectMetadataItem.namePlural === objectNamePlural,
   );
+  const verifyEmailNextPath = useRecoilValue(verifyEmailNextPathState);
 
   if (
     !isLoggedIn &&
@@ -58,6 +60,12 @@ export const usePageChangeEffectNavigateLocation = () => {
     onboardingStatus === OnboardingStatus.PLAN_REQUIRED &&
     !someMatchingLocationOf([AppPath.PlanRequired, AppPath.PlanRequiredSuccess])
   ) {
+    if (
+      isMatchingLocation(location, AppPath.VerifyEmail) &&
+      isDefined(verifyEmailNextPath)
+    ) {
+      return verifyEmailNextPath;
+    }
     return AppPath.PlanRequired;
   }
 

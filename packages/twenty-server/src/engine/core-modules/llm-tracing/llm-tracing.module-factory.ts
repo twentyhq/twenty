@@ -8,10 +8,10 @@ export const llmTracingModuleFactory = (
   const driver = twentyConfigService.get('LLM_TRACING_DRIVER');
 
   switch (driver) {
-    case LLMTracingDriver.Console: {
-      return { type: LLMTracingDriver.Console as const };
+    case LLMTracingDriver.CONSOLE: {
+      return { type: LLMTracingDriver.CONSOLE as const };
     }
-    case LLMTracingDriver.Langfuse: {
+    case LLMTracingDriver.LANGFUSE: {
       const secretKey = twentyConfigService.get('LANGFUSE_SECRET_KEY');
       const publicKey = twentyConfigService.get('LANGFUSE_PUBLIC_KEY');
 
@@ -22,7 +22,7 @@ export const llmTracingModuleFactory = (
       }
 
       return {
-        type: LLMTracingDriver.Langfuse as const,
+        type: LLMTracingDriver.LANGFUSE as const,
         options: { secretKey, publicKey },
       };
     }

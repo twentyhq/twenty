@@ -11,7 +11,7 @@ import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standa
 
 @WorkspaceQueryHook({
   key: `calendarEvent.findMany`,
-  type: WorkspaceQueryHookType.PostHook,
+  type: WorkspaceQueryHookType.POST_HOOK,
 })
 export class CalendarEventFindManyPostQueryHook
   implements WorkspacePostQueryHookInstance

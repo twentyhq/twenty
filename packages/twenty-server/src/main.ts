@@ -27,7 +27,7 @@ const bootstrap = async () => {
     cors: true,
     bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
     rawBody: true,
-    snapshot: process.env.NODE_ENV === NodeEnvironment.development,
+    snapshot: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
     ...(process.env.SSL_KEY_PATH && process.env.SSL_CERT_PATH
       ? {
           httpsOptions: {

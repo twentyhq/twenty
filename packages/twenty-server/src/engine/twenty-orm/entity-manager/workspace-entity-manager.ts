@@ -94,7 +94,7 @@ export class WorkspaceEntityManager extends EntityManager {
     const featureFlagMap = this.getFeatureFlagMap();
 
     const isPermissionsV2Enabled =
-      featureFlagMap[FeatureFlagKey.IsPermissionsV2Enabled];
+      featureFlagMap[FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED];
 
     if (permissionOptions?.roleId) {
       const objectPermissionsByRoleId = dataSource.permissionsPerRoleId;
@@ -159,7 +159,7 @@ export class WorkspaceEntityManager extends EntityManager {
     const featureFlagMap = this.getFeatureFlagMap();
 
     const isPermissionsV2Enabled =
-      featureFlagMap[FeatureFlagKey.IsPermissionsV2Enabled];
+      featureFlagMap[FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED];
 
     if (!isPermissionsV2Enabled) {
       return queryBuilder;
@@ -371,7 +371,7 @@ export class WorkspaceEntityManager extends EntityManager {
     const featureFlagMap = this.getFeatureFlagMap();
 
     const isPermissionsV2Enabled =
-      featureFlagMap[FeatureFlagKey.IsPermissionsV2Enabled];
+      featureFlagMap[FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED];
 
     if (!isPermissionsV2Enabled) {
       return;

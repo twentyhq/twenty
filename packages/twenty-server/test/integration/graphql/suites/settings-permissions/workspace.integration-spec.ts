@@ -25,7 +25,6 @@ describe('workspace permissions', () => {
           logo
           isPublicInviteLinkEnabled
           subdomain
-          isCustomDomainEnabled
         }
       }
     `;
@@ -38,7 +37,7 @@ describe('workspace permissions', () => {
   afterAll(async () => {
     const disablePermissionsQuery = updateFeatureFlagFactory(
       SEED_APPLE_WORKSPACE_ID,
-      'IsPermissionsEnabled',
+      'IS_PERMISSIONS_ENABLED',
       false,
     );
 
@@ -463,7 +462,7 @@ describe('workspace permissions', () => {
               `,
           variables: {
             input: {
-              publicFeatureFlag: 'IsStripeIntegrationEnabled',
+              publicFeatureFlag: 'IS_STRIPE_INTEGRATION_ENABLED',
               value: true,
             },
           },

@@ -36,7 +36,7 @@ const StyledNoRoles = styled(TableCell)`
 export const SettingsRolesList = () => {
   const navigateSettings = useNavigateSettings();
   const isPermissionsV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsPermissionsV2Enabled,
+    FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
   );
 
   const settingsAllRoles = useRecoilValue(settingsAllRolesSelector);
