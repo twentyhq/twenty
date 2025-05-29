@@ -201,10 +201,6 @@ export const PageChangeEffect = () => {
         setHotkeyScope(PageHotkeyScope.PlanRequired);
         break;
       }
-      case isMatchingLocation(location, AppPath.PaymentRequired): {
-        setHotkeyScope(PageHotkeyScope.PaymentRequired);
-        break;
-      }
       case isMatchingLocation(
         location,
         SettingsPath.ProfilePage,

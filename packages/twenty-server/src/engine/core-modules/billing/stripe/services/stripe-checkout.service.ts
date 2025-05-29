@@ -82,7 +82,8 @@ export class StripeCheckoutService {
             }
           : {}),
       },
-      automatic_tax: { enabled: !!requirePaymentMethod },
+      // TODO: This causes a error when enabled due to tax not being suported in Brazil, check if this is needed. See more on https://docs.stripe.com/tax/supported-countries
+      automatic_tax: { enabled: false },
       tax_id_collection: { enabled: !!requirePaymentMethod },
       customer: stripeCustomerId,
       customer_update: { name: 'auto', address: 'auto' },
