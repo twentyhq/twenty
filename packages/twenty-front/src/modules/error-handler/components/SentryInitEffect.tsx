@@ -24,7 +24,7 @@ export const SentryInitEffect = () => {
 
   const [isSentryInitialized, setIsSentryInitialized] = useState(false);
   const [isSentryInitializing, setIsSentryInitializing] = useState(false);
-  const [isSentryUserDefined, setIsSentryUserDefinedSet] = useState(false);
+  const [isSentryUserDefined, setIsSentryUserDefined] = useState(false);
 
   useEffect(() => {
     if (
@@ -55,7 +55,7 @@ export const SentryInitEffect = () => {
         workspaceId: currentWorkspace?.id,
         workspaceMemberId: currentWorkspaceMember?.id,
       });
-      setIsSentryUserDefinedSet(true);
+      setIsSentryUserDefined(true);
     } else {
       setUser(null);
     }
