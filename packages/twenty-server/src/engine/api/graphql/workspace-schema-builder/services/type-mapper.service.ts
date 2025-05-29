@@ -30,6 +30,7 @@ import {
 import { MultiSelectFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/multi-select-filter.input-type';
 import { RichTextV2FilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/rich-text.input-type';
 import { SelectFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/select-filter.input-type';
+import { TSVectorFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/ts-vector-filter.input-type';
 import { UUIDFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/uuid-filter.input-type';
 import {
   BigFloatScalarType,
@@ -83,7 +84,10 @@ export class TypeMapperService {
         StringArrayScalarType as unknown as GraphQLScalarType,
       ],
       [FieldMetadataType.RICH_TEXT, GraphQLString],
-      [FieldMetadataType.TS_VECTOR, GraphQLString],
+      [
+        FieldMetadataType.TS_VECTOR,
+        TSVectorFilterType as unknown as GraphQLScalarType,
+      ],
     ]);
 
     return typeScalarMapping.get(fieldMetadataType);
@@ -122,7 +126,7 @@ export class TypeMapperService {
       [FieldMetadataType.ARRAY, ArrayFilterType],
       [FieldMetadataType.MULTI_SELECT, MultiSelectFilterType],
       [FieldMetadataType.SELECT, SelectFilterType],
-      [FieldMetadataType.TS_VECTOR, StringFilterType], // TODO: Add TSVectorFilterType
+      [FieldMetadataType.TS_VECTOR, TSVectorFilterType],
     ]);
 
     return typeFilterMapping.get(fieldMetadataType);
