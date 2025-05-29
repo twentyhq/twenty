@@ -25,7 +25,7 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
     DataSourceModule,
     forwardRef(() => WorkspaceModule),
   ],
-  exports: [TelephonyService],
+  exports: [TelephonyService, PabxService],
   providers: [TelephonyService, TelephonyResolver, TypeORMService, PabxService],
 })
 export class TelephonyModule {}
