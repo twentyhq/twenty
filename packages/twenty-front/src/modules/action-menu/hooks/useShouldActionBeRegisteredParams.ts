@@ -59,7 +59,7 @@ export const useShouldActionBeRegisteredParams = ({
     ContextStoreViewType.ShowPage;
 
   const isWorkflowEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsWorkflowEnabled,
+    FeatureFlagKey.IS_WORKFLOW_ENABLED,
   );
 
   const numberOfSelectedRecords = useRecoilComponentValueV2(

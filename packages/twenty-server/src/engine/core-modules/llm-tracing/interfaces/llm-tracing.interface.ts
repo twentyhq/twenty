@@ -1,19 +1,19 @@
-import { ModuleMetadata, FactoryProvider } from '@nestjs/common';
+import { FactoryProvider, ModuleMetadata } from '@nestjs/common';
 
 import { LangfuseDriverOptions } from 'src/engine/core-modules/llm-tracing/drivers/langfuse.driver';
 
 export enum LLMTracingDriver {
-  Langfuse = 'langfuse',
-  Console = 'console',
+  LANGFUSE = 'LANGFUSE',
+  CONSOLE = 'CONSOLE',
 }
 
 export interface LangfuseDriverFactoryOptions {
-  type: LLMTracingDriver.Langfuse;
+  type: LLMTracingDriver.LANGFUSE;
   options: LangfuseDriverOptions;
 }
 
 export interface ConsoleDriverFactoryOptions {
-  type: LLMTracingDriver.Console;
+  type: LLMTracingDriver.CONSOLE;
 }
 
 export type LLMTracingModuleOptions =

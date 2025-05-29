@@ -167,7 +167,7 @@ describe('useAuth', () => {
     const { result } = renderHooks();
 
     await act(async () => {
-      await result.current.signUpWithCredentials(email, password);
+      await result.current.signUpWithCredentials({ email, password });
     });
 
     expect(mocks[2].result).toHaveBeenCalled();

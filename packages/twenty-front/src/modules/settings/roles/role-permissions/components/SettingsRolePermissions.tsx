@@ -23,7 +23,7 @@ export const SettingsRolePermissions = ({
   isCreateMode,
 }: SettingsRolePermissionsProps) => {
   const isPermissionsV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsPermissionsV2Enabled,
+    FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
   );
 
   return (

@@ -5,7 +5,7 @@ import {
 } from '@/object-record/hooks/__mocks__/useAggregateRecords';
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { useAggregateRecordsQuery } from '@/object-record/hooks/useAggregateRecordsQuery';
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useQuery } from '@apollo/client';
 import { renderHook } from '@testing-library/react';
 
@@ -20,9 +20,9 @@ const mockObjectMetadataItem = {
 };
 
 const mockGqlFieldToFieldMap = {
-  sumAmount: ['amount', AGGREGATE_OPERATIONS.sum],
-  avgAmount: ['amount', AGGREGATE_OPERATIONS.avg],
-  totalCount: ['name', AGGREGATE_OPERATIONS.count],
+  sumAmount: ['amount', AggregateOperations.SUM],
+  avgAmount: ['amount', AggregateOperations.AVG],
+  totalCount: ['name', AggregateOperations.COUNT],
 };
 
 describe('useAggregateRecords', () => {
@@ -48,19 +48,19 @@ describe('useAggregateRecords', () => {
       useAggregateRecords({
         objectNameSingular: 'opportunity',
         recordGqlFieldsAggregate: {
-          amount: [AGGREGATE_OPERATIONS.sum, AGGREGATE_OPERATIONS.avg],
-          name: [AGGREGATE_OPERATIONS.count],
+          amount: [AggregateOperations.SUM, AggregateOperations.AVG],
+          name: [AggregateOperations.COUNT],
         },
       }),
     );
 
     expect(result.current.data).toEqual({
       amount: {
-        [AGGREGATE_OPERATIONS.sum]: 1000000,
-        [AGGREGATE_OPERATIONS.avg]: 23800,
+        [AggregateOperations.SUM]: 1000000,
+        [AggregateOperations.AVG]: 23800,
       },
       name: {
-        [AGGREGATE_OPERATIONS.count]: 42,
+        [AggregateOperations.COUNT]: 42,
       },
     });
     expect(result.current.loading).toBe(false);
@@ -78,7 +78,7 @@ describe('useAggregateRecords', () => {
       useAggregateRecords({
         objectNameSingular: 'opportunity',
         recordGqlFieldsAggregate: {
-          amount: [AGGREGATE_OPERATIONS.sum],
+          amount: [AggregateOperations.SUM],
         },
       }),
     );
@@ -99,7 +99,7 @@ describe('useAggregateRecords', () => {
       useAggregateRecords({
         objectNameSingular: 'opportunity',
         recordGqlFieldsAggregate: {
-          amount: [AGGREGATE_OPERATIONS.sum],
+          amount: [AggregateOperations.SUM],
         },
       }),
     );
@@ -113,7 +113,7 @@ describe('useAggregateRecords', () => {
       useAggregateRecords({
         objectNameSingular: 'opportunity',
         recordGqlFieldsAggregate: {
-          amount: [AGGREGATE_OPERATIONS.sum],
+          amount: [AggregateOperations.SUM],
         },
         skip: true,
       }),

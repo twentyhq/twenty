@@ -201,9 +201,9 @@ export class TwentyConfigService {
 
   getLoggingConfig(): LoggerOptions {
     switch (this.get('NODE_ENV')) {
-      case NodeEnvironment.development:
+      case NodeEnvironment.DEVELOPMENT:
         return ['query', 'error'];
-      case NodeEnvironment.test:
+      case NodeEnvironment.TEST:
         return [];
       default:
         return ['error'];

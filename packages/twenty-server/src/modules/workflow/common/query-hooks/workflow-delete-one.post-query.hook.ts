@@ -8,7 +8,7 @@ import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/work
 
 @WorkspaceQueryHook({
   key: `workflow.deleteOne`,
-  type: WorkspaceQueryHookType.PostHook,
+  type: WorkspaceQueryHookType.POST_HOOK,
 })
 export class WorkflowDeleteOnePostQueryHook
   implements WorkspacePostQueryHookInstance
