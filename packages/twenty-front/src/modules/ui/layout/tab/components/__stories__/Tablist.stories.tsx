@@ -1,9 +1,17 @@
+import styled from '@emotion/styled';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
-
-import { TabList } from '../TabList';
+import {
+  IconCalendar,
+  IconCheckbox,
+  IconHeart,
+  IconHome,
+  IconMail,
+  IconPhone,
+  IconUser,
+} from 'twenty-ui/display';
 import { ComponentWithRouterDecorator } from 'twenty-ui/testing';
-import { IconCheckbox } from 'twenty-ui/display';
+import { TabList } from '../TabList';
 
 const tabs = [
   {
@@ -34,6 +42,35 @@ const tabs = [
   },
 ];
 
+const manyTabs = [
+  { id: 'general', title: 'General', logo: 'https://picsum.photos/200' },
+  { id: 'contacts', title: 'Contacts', Icon: IconUser },
+  { id: 'messages', title: 'Messages', Icon: IconMail },
+  { id: 'calls', title: 'Calls', Icon: IconPhone },
+  { id: 'calendar', title: 'Calendar', Icon: IconCalendar },
+  { id: 'sales', title: 'Sales', Icon: IconHome, disabled: true },
+  {
+    id: 'time',
+    title: 'Time Tracking',
+    logo: 'https://picsum.photos/192/192',
+  },
+  {
+    id: 'activity',
+    title: 'Activity',
+    logo: 'https://twenty-front-screenshots.s3.eu-west-3.amazonaws.com/server-icon.png',
+    disabled: true,
+  },
+  { id: 'favorites', title: 'Favorites', Icon: IconHeart },
+  { id: 'reports', title: 'Reports', Icon: IconCheckbox },
+];
+
+const StyledConstrainedContainer = styled.div<{ width?: string }>`
+  width: ${({ width }) => width || '400px'};
+  border: 1px dashed ${({ theme }) => theme.border.color.medium};
+  padding: ${({ theme }) => theme.spacing(4)};
+  margin: ${({ theme }) => theme.spacing(4)} 0;
+`;
+
 const meta: Meta<typeof TabList> = {
   title: 'UI/Layout/Tab/TabList',
   component: TabList,
@@ -48,7 +85,7 @@ export default meta;
 
 type Story = StoryObj<typeof TabList>;
 
-export const TabListDisplay: Story = {
+export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const submitButton = canvas.queryByText('Tab1');
@@ -57,4 +94,50 @@ export const TabListDisplay: Story = {
     expect(await canvas.findByText('Tab3')).toBeInTheDocument();
     expect(await canvas.findByText('Tab4')).toBeInTheDocument();
   },
+};
+
+export const CompleteDemo: Story = {
+  args: {
+    tabs: manyTabs,
+    componentInstanceId: 'responsive-tabs',
+  },
+
+  render: (args) => (
+    <div>
+      <h3>Responsive Tab Overflow Demo</h3>
+      <StyledConstrainedContainer width="300px">
+        <strong>Narrow - Shows overflow</strong>
+        <TabList
+          tabs={args.tabs}
+          componentInstanceId="responsive-tabs-narrow"
+          loading={args.loading}
+          behaveAsLinks={args.behaveAsLinks}
+          isInRightDrawer={args.isInRightDrawer}
+          className={args.className}
+        />
+      </StyledConstrainedContainer>
+      <StyledConstrainedContainer width="800px">
+        <strong>Wide - Shows most/all tabs</strong>
+        <TabList
+          tabs={args.tabs}
+          componentInstanceId="responsive-tabs-wide"
+          loading={args.loading}
+          behaveAsLinks={args.behaveAsLinks}
+          isInRightDrawer={args.isInRightDrawer}
+          className={args.className}
+        />
+      </StyledConstrainedContainer>
+      <StyledConstrainedContainer width="1200px">
+        <strong>Extra Wide - No overflow</strong>
+        <TabList
+          tabs={args.tabs}
+          componentInstanceId="responsive-tabs-full"
+          loading={args.loading}
+          behaveAsLinks={args.behaveAsLinks}
+          isInRightDrawer={args.isInRightDrawer}
+          className={args.className}
+        />
+      </StyledConstrainedContainer>
+    </div>
+  ),
 };

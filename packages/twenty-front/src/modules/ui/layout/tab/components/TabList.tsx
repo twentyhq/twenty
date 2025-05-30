@@ -1,11 +1,14 @@
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { TabListDropdown } from '@/ui/layout/tab/components/TabListDropdown';
 import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab/components/TabListFromUrlOptionalEffect';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab/states/contexts/TabListComponentInstanceContext';
 import { LayoutCard } from '@/ui/layout/tab/types/LayoutCard';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { isFirstOverflowingTab } from '@/ui/layout/tab/utils/isFirstOverflowingTab';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import styled from '@emotion/styled';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { IconComponent } from 'twenty-ui/display';
 import { Tab } from './Tab';
 
@@ -30,17 +33,31 @@ type TabListProps = {
 };
 
 const StyledContainer = styled.div`
-  border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-  box-sizing: border-box;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   height: 40px;
   user-select: none;
   width: 100%;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: ${({ theme }) => theme.border.color.light};
+  }
 `;
 
-const StyledOuterContainer = styled.div`
-  width: 100%;
+const StyledTabContainer = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  position: relative;
+  overflow: hidden;
+  max-width: 100%;
+  flex: 1;
 `;
 
 export const TabList = ({
@@ -52,17 +69,78 @@ export const TabList = ({
   componentInstanceId,
 }: TabListProps) => {
   const visibleTabs = tabs.filter((tab) => !tab.hide);
-
+  const navigate = useNavigate();
   const [activeTabId, setActiveTabId] = useRecoilComponentStateV2(
     activeTabIdComponentState,
     componentInstanceId,
   );
 
+  const [tabContainerElement, setTabContainerElement] =
+    useState<HTMLDivElement | null>(null);
+  const [previousContainerWidth, setPreviousContainerWidth] = useState(
+    tabContainerElement?.clientWidth ?? 0,
+  );
+  const [firstHiddenTabIndex, setFirstHiddenTabIndex] = useState(
+    visibleTabs.length,
+  );
+
   const initialActiveTabId = activeTabId || visibleTabs[0]?.id || '';
+  const hiddenTabsCount = visibleTabs.length - firstHiddenTabIndex;
+  const hasHiddenTabs = hiddenTabsCount > 0;
+  const dropdownId = `tab-overflow-${componentInstanceId}`;
+
+  const isActiveTabHidden = useMemo(() => {
+    if (!hasHiddenTabs) return false;
+
+    const hiddenTabs = visibleTabs.slice(firstHiddenTabIndex);
+    const result = hiddenTabs.some((tab) => tab.id === activeTabId);
+
+    return result;
+  }, [visibleTabs, firstHiddenTabIndex, activeTabId, hasHiddenTabs]);
+
+  const { closeDropdown } = useDropdown(dropdownId);
+
+  const resetFirstHiddenTabIndex = useCallback(() => {
+    setFirstHiddenTabIndex(visibleTabs.length);
+  }, [visibleTabs.length]);
 
   useEffect(() => {
     setActiveTabId(initialActiveTabId);
   }, [initialActiveTabId, setActiveTabId]);
+
+  useEffect(() => {
+    resetFirstHiddenTabIndex();
+  }, [visibleTabs.length, resetFirstHiddenTabIndex]);
+
+  const handleTabSelect = useCallback(
+    (tabId: string) => {
+      setActiveTabId(tabId);
+    },
+    [setActiveTabId],
+  );
+
+  const handleDropdownClose = useCallback(() => {
+    if (tabContainerElement?.clientWidth !== previousContainerWidth) {
+      resetFirstHiddenTabIndex();
+      setPreviousContainerWidth(tabContainerElement?.clientWidth ?? 0);
+    }
+  }, [
+    tabContainerElement?.clientWidth,
+    previousContainerWidth,
+    resetFirstHiddenTabIndex,
+  ]);
+
+  const handleTabSelectFromDropdown = useCallback(
+    (tabId: string) => {
+      if (behaveAsLinks) {
+        navigate(`#${tabId}`);
+      } else {
+        handleTabSelect(tabId);
+      }
+      closeDropdown();
+    },
+    [behaveAsLinks, handleTabSelect, closeDropdown, navigate],
+  );
 
   if (visibleTabs.length <= 1) {
     return null;
@@ -72,20 +150,17 @@ export const TabList = ({
     <TabListComponentInstanceContext.Provider
       value={{ instanceId: componentInstanceId }}
     >
-      <StyledOuterContainer>
+      <>
         <TabListFromUrlOptionalEffect
           isInRightDrawer={!!isInRightDrawer}
           tabListIds={tabs.map((tab) => tab.id)}
         />
-        <ScrollWrapper
-          defaultEnableYScroll={false}
-          componentInstanceId={`scroll-wrapper-tab-list-${componentInstanceId}`}
-        >
-          <StyledContainer className={className}>
-            {visibleTabs.map((tab) => (
+        <StyledContainer className={className}>
+          <StyledTabContainer ref={setTabContainerElement}>
+            {visibleTabs.slice(0, firstHiddenTabIndex).map((tab, index) => (
               <Tab
-                id={tab.id}
                 key={tab.id}
+                id={tab.id}
                 title={tab.title}
                 Icon={tab.Icon}
                 logo={tab.logo}
@@ -94,17 +169,42 @@ export const TabList = ({
                 pill={tab.pill}
                 to={behaveAsLinks ? `#${tab.id}` : undefined}
                 onClick={
-                  behaveAsLinks
-                    ? undefined
-                    : () => {
-                        setActiveTabId(tab.id);
-                      }
+                  behaveAsLinks ? undefined : () => handleTabSelect(tab.id)
                 }
+                ref={(tabElement: HTMLButtonElement | null) => {
+                  if (
+                    index > 0 &&
+                    isFirstOverflowingTab({
+                      containerElement: tabContainerElement,
+                      tabElement,
+                    })
+                  ) {
+                    setFirstHiddenTabIndex(index);
+                  }
+                }}
               />
             ))}
-          </StyledContainer>
-        </ScrollWrapper>
-      </StyledOuterContainer>
+          </StyledTabContainer>
+
+          {hasHiddenTabs && (
+            <TabListDropdown
+              dropdownId={dropdownId}
+              onClose={handleDropdownClose}
+              overflow={{
+                hiddenTabsCount,
+                isActiveTabHidden,
+                firstHiddenTabIndex,
+              }}
+              tabs={{
+                visible: visibleTabs,
+                activeId: activeTabId,
+              }}
+              onTabSelect={handleTabSelectFromDropdown}
+              loading={loading}
+            />
+          )}
+        </StyledContainer>
+      </>
     </TabListComponentInstanceContext.Provider>
   );
 };
