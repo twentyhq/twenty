@@ -89,7 +89,7 @@ export class MessageParticipantPersonListener {
           eventPayload.properties.after,
         ).includes('emails')
       ) {
-        if (!eventPayload.properties.diff) {
+        if (!isDefined(eventPayload.properties.diff)) {
           continue;
         }
 
