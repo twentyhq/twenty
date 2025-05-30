@@ -4,21 +4,27 @@ export const findPersonByPrimaryOrAdditionalEmail = (
   people: PersonWorkspaceEntity[],
   email: string,
 ): PersonWorkspaceEntity | undefined => {
+  const lowercaseEmail = email.toLowerCase();
+
   const personWithPrimaryEmail = people.find(
-    (person) =>
-      person.emails?.primaryEmail?.toLowerCase() === email.toLowerCase(),
+    (person) => person.emails?.primaryEmail?.toLowerCase() === lowercaseEmail,
   );
 
   if (personWithPrimaryEmail) {
     return personWithPrimaryEmail;
   }
 
-  return people.find(
-    (person) =>
-      Array.isArray(person.emails?.additionalEmails) &&
-      person.emails.additionalEmails.some(
-        (additionalEmail) =>
-          additionalEmail.toLowerCase() === email.toLowerCase(),
-      ),
-  );
+  const personWithAdditionalEmail = people.find((person) => {
+    const additionalEmails = person.emails?.additionalEmails;
+
+    if (!Array.isArray(additionalEmails)) {
+      return false;
+    }
+
+    return additionalEmails.some(
+      (additionalEmail) => additionalEmail.toLowerCase() === lowercaseEmail,
+    );
+  });
+
+  return personWithAdditionalEmail;
 };
