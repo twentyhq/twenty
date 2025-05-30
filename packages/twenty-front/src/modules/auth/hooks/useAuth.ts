@@ -382,16 +382,9 @@ export const useAuth = () => {
         ),
       );
 
-      await refreshObjectMetadataItems();
       await loadCurrentUser();
     },
-    [
-      getAuthTokensFromLoginToken,
-      setTokenPair,
-      refreshObjectMetadataItems,
-      loadCurrentUser,
-      origin,
-    ],
+    [getAuthTokensFromLoginToken, setTokenPair, loadCurrentUser, origin],
   );
 
   const handleCredentialsSignIn = useCallback(
