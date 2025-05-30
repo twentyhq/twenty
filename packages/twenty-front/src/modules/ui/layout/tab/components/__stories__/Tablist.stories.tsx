@@ -123,6 +123,12 @@ export const ResponsiveDemo: Story = {
     tabs: manyTabs,
     componentInstanceId: 'responsive-tabs',
   },
+  parameters: {
+    layout: 'centered',
+    viewport: {
+      defaultViewport: 'responsive',
+    },
+  },
   render: (args) => (
     <div>
       <h3>Responsive Tab Overflow Demo</h3>
@@ -148,8 +154,8 @@ export const ResponsiveDemo: Story = {
           className={args.className}
         />
       </StyledConstrainedContainer>
-      <StyledConstrainedContainer width="100%">
-        <strong>Full Width - No overflow</strong>
+      <StyledConstrainedContainer width="1200px">
+        <strong>Extra Wide (1200px) - No overflow</strong>
         <TabList
           tabs={args.tabs}
           componentInstanceId="responsive-tabs-full"
