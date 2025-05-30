@@ -464,7 +464,6 @@ export const DateTimePicker = ({
               date={internalDate}
               isDateTimeInput={isDateTimeInput}
               onChange={onChange}
-              userTimezone={timeZone}
             />
           }
           renderCustomHeader={({
@@ -489,7 +488,6 @@ export const DateTimePicker = ({
                 prevMonthButtonDisabled={prevMonthButtonDisabled}
                 nextMonthButtonDisabled={nextMonthButtonDisabled}
                 isDateTimeInput={isDateTimeInput}
-                timeZone={timeZone}
                 hideInput={hideHeaderInput}
               />
             )
