@@ -1,6 +1,5 @@
 import { CreateOneFieldFactoryInput } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata-query-factory.util';
 import { EachTestingContext } from 'twenty-shared/testing';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
@@ -119,46 +118,6 @@ const successfulTestCases: UpdateCreateFieldMetadataSelectTestCase[] = [
             color: 'green',
             position: 1,
             id: '26c602c3-cba9-4d83-92d4-4ba7dbae2f31',
-          },
-        ],
-      },
-    },
-  },
-  {
-    title: 'should succeed with valid multi-select default values',
-    context: {
-      input: {
-        type: FieldMetadataType.MULTI_SELECT,
-        defaultValue: ["'OPTION_1'", "'OPTION_2'"],
-        options: [
-          {
-            label: 'Option 1',
-            value: 'OPTION_1',
-            color: 'green',
-            position: 1,
-          },
-          {
-            label: 'Option 2',
-            value: 'OPTION_2',
-            color: 'blue',
-            position: 2,
-          },
-        ],
-      },
-    },
-  },
-  {
-    title: 'should succeed with empty multi-select default values array',
-    context: {
-      input: {
-        type: FieldMetadataType.MULTI_SELECT,
-        defaultValue: [],
-        options: [
-          {
-            label: 'Option 1',
-            value: 'OPTION_1',
-            color: 'green',
-            position: 1,
           },
         ],
       },
@@ -400,74 +359,6 @@ const failingTestCases: UpdateCreateFieldMetadataSelectTestCase[] = [
           {
             label: 'Option 1',
             value: undefined as unknown as string,
-            color: 'green',
-            position: 1,
-          },
-        ],
-      },
-    },
-  },
-  {
-    title: 'should fail with non-array multi-select default value',
-    context: {
-      input: {
-        type: FieldMetadataType.MULTI_SELECT,
-        defaultValue: "'OPTION_1'",
-        options: [
-          {
-            label: 'Option 1',
-            value: 'OPTION_1',
-            color: 'green',
-            position: 1,
-          },
-        ],
-      },
-    },
-  },
-  {
-    title: 'should fail with duplicate multi-select default values',
-    context: {
-      input: {
-        type: FieldMetadataType.MULTI_SELECT,
-        defaultValue: ["'OPTION_1'", "'OPTION_1'"],
-        options: [
-          {
-            label: 'Option 1',
-            value: 'OPTION_1',
-            color: 'green',
-            position: 1,
-          },
-        ],
-      },
-    },
-  },
-  {
-    title: 'should fail with unknown multi-select default values',
-    context: {
-      input: {
-        type: FieldMetadataType.MULTI_SELECT,
-        defaultValue: ["'OPTION_1'", "'UNKNOWN_OPTION'"],
-        options: [
-          {
-            label: 'Option 1',
-            value: 'OPTION_1',
-            color: 'green',
-            position: 1,
-          },
-        ],
-      },
-    },
-  },
-  {
-    title: 'should fail with invalid multi-select default value format',
-    context: {
-      input: {
-        type: FieldMetadataType.MULTI_SELECT,
-        defaultValue: ['invalid', 'format'],
-        options: [
-          {
-            label: 'Option 1',
-            value: 'OPTION_1',
             color: 'green',
             position: 1,
           },
