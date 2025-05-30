@@ -1,5 +1,6 @@
 import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceDeletedMembersState } from '@/auth/states/currentWorkspaceDeletedMembersStates';
@@ -41,6 +42,8 @@ export const UserProviderEffect = () => {
   const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
   const setWorkspaces = useSetRecoilState(workspacesState);
   const setDateTimeFormat = useSetRecoilState(dateTimeFormatState);
+  const isLoggedIn = useIsLogged();
+
   const updateLocaleCatalog = useRecoilCallback(
     ({ snapshot, set }) =>
       async (newLocale: keyof typeof APP_LOCALES) => {
@@ -69,6 +72,7 @@ export const UserProviderEffect = () => {
 
   const { data: queryData } = useGetCurrentUserQuery({
     skip:
+      !isLoggedIn ||
       isCurrentUserLoaded ||
       isMatchingLocation(location, AppPath.Verify) ||
       isMatchingLocation(location, AppPath.VerifyEmail),
@@ -78,6 +82,7 @@ export const UserProviderEffect = () => {
     if (!isDefined(queryData?.currentUser)) return;
 
     setCurrentUser(queryData.currentUser);
+    setIsCurrentUserLoaded(true);
 
     if (isDefined(queryData.currentUser.currentWorkspace)) {
       setCurrentWorkspace({
@@ -152,15 +157,14 @@ export const UserProviderEffect = () => {
 
       setWorkspaces(workspaces);
     }
-    setIsCurrentUserLoaded(true);
   }, [
+    queryData?.currentUser,
     setCurrentUser,
     setCurrentUserWorkspace,
     setCurrentWorkspaceMembers,
     setCurrentWorkspace,
     setCurrentWorkspaceMember,
     setWorkspaces,
-    queryData?.currentUser,
     setIsCurrentUserLoaded,
     setDateTimeFormat,
     setCurrentWorkspaceMembersWithDeleted,
