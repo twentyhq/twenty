@@ -1,10 +1,9 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { TabAvatar } from '@/ui/layout/tab/components/TabAvatar';
 import { SingleTabProps } from '@/ui/layout/tab/components/TabList';
 import { TabMoreButton } from '@/ui/layout/tab/components/TabMoreButton';
-import { useTheme } from '@emotion/react';
-import { Avatar } from 'twenty-ui/display';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
 
 type TabListDropdownProps = {
@@ -32,7 +31,6 @@ export const TabListDropdown = ({
   loading,
 }: TabListDropdownProps) => {
   const hiddenTabs = tabs.visible.slice(overflow.firstHiddenTabIndex);
-  const theme = useTheme();
 
   return (
     <Dropdown
@@ -51,29 +49,12 @@ export const TabListDropdown = ({
           <DropdownMenuItemsContainer>
             {hiddenTabs.map((tab) => {
               const isDisabled = tab.disabled ?? loading;
-              const avatar = tab.logo ? (
-                <Avatar
-                  avatarUrl={tab.logo}
-                  size="md"
-                  placeholder={tab.title}
-                />
-              ) : tab.Icon ? (
-                <Avatar
-                  Icon={tab.Icon}
-                  size="md"
-                  placeholder={tab.title}
-                  iconColor={
-                    tab.disabled
-                      ? theme.font.color.tertiary
-                      : theme.font.color.secondary
-                  }
-                />
-              ) : null;
+
               return (
                 <MenuItemSelectAvatar
                   key={tab.id}
                   text={tab.title}
-                  avatar={avatar}
+                  avatar={<TabAvatar tab={tab} />}
                   selected={tab.id === tabs.activeId}
                   onClick={isDisabled ? undefined : () => onTabSelect(tab.id)}
                   disabled={isDisabled}
