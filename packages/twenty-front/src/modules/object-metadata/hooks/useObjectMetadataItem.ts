@@ -6,9 +6,9 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 
 import { isWorkflowRelatedObjectMetadata } from '@/object-metadata/utils/isWorkflowRelatedObjectMetadata';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
-import { isDefined } from 'twenty-shared/utils';
 
 export const useObjectMetadataItem = ({
   objectNameSingular,
@@ -21,7 +21,7 @@ export const useObjectMetadataItem = ({
   );
 
   const isWorkflowEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsWorkflowEnabled,
+    FeatureFlagKey.IS_WORKFLOW_ENABLED,
   );
 
   const isWorkflowToBeFiltered =

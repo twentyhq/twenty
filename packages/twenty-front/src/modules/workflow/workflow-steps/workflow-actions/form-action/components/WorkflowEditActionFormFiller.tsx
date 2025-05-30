@@ -1,5 +1,5 @@
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
 import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/form-types/components/FormSingleRecordPicker';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
@@ -37,7 +37,7 @@ export const WorkflowEditActionFormFiller = ({
   const { submitFormStep } = useSubmitFormStep();
   const [formData, setFormData] = useState<FormData>(action.settings.input);
   const { workflowRunId } = useWorkflowStepContextOrThrow();
-  const { closeCommandMenu } = useCommandMenu();
+  const { goBackFromCommandMenu } = useCommandMenuHistory();
   const { updateWorkflowRunStep } = useUpdateWorkflowRunStep();
   const [error, setError] = useState<string | undefined>(undefined);
   const canSubmit = !actionOptions.readonly && !isDefined(error);
@@ -98,7 +98,7 @@ export const WorkflowEditActionFormFiller = ({
       response,
     });
 
-    closeCommandMenu();
+    goBackFromCommandMenu();
   };
 
   useEffect(() => {

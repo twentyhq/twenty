@@ -1,3 +1,4 @@
+import { verifyEmailNextPathState } from '@/app/states/verifyEmailNextPathState';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
@@ -96,6 +97,12 @@ export const ChooseYourPlan = () => {
     billingCheckoutSessionState,
   );
 
+  const [verifyEmailNextPath, setVerifyEmailNextPath] = useRecoilState(
+    verifyEmailNextPathState,
+  );
+  if (isDefined(verifyEmailNextPath)) {
+    setVerifyEmailNextPath(undefined);
+  }
   const { data: plans } = useBillingBaseProductPricesQuery();
 
   const currentPlan = billingCheckoutSession.plan;

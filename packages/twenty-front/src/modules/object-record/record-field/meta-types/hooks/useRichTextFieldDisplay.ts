@@ -6,8 +6,8 @@ import { FieldRichTextValue } from '@/object-record/record-field/types/FieldMeta
 import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
 import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
 import { PartialBlock } from '@blocknote/core';
+import { isDefined, parseJson } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { parseJson } from '~/utils/parseJson';
 import { FieldContext } from '../../contexts/FieldContext';
 
 export const useRichTextFieldDisplay = () => {
@@ -26,7 +26,9 @@ export const useRichTextFieldDisplay = () => {
     fieldName,
   );
 
-  const fieldValueParsed = parseJson<PartialBlock[]>(fieldValue);
+  const fieldValueParsed = isDefined(fieldValue)
+    ? parseJson<PartialBlock[]>(fieldValue)
+    : null;
 
   return {
     fieldDefinition,

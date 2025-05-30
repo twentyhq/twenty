@@ -208,7 +208,7 @@ export const SettingsWorkspaceMembers = () => {
         <Section>
           <H2Title
             title={t`Manage Members`}
-            description={t`Manage the members of your space here`}
+            description={t`Manage the members of your workspace here`}
           />
           <StyledSearchContainer>
             <StyledSearchInput
@@ -308,13 +308,13 @@ export const SettingsWorkspaceMembers = () => {
           {isNonEmptyArray(workspaceInvitations) && (
             <StyledTable>
               <TableRow
-                gridAutoColumns="150px 1fr 1fr"
+                gridAutoColumns="250px 1fr 1fr"
                 mobileGridAutoColumns="100px 1fr 1fr"
               >
                 <TableHeader>
                   <Trans>Email</Trans>
                 </TableHeader>
-                <TableHeader align={'right'}>
+                <TableHeader align={'center'}>
                   <Trans>Expires in</Trans>
                 </TableHeader>
                 <TableHeader></TableHeader>
@@ -322,7 +322,7 @@ export const SettingsWorkspaceMembers = () => {
               <StyledTableRows>
                 {workspaceInvitations?.map((workspaceInvitation) => (
                   <TableRow
-                    gridAutoColumns="150px 1fr 1fr"
+                    gridAutoColumns="250px 1fr 1fr"
                     mobileGridAutoColumns="100px 1fr 1fr"
                     key={workspaceInvitation.id}
                   >
@@ -337,7 +337,7 @@ export const SettingsWorkspaceMembers = () => {
                         {workspaceInvitation.email}
                       </StyledTextContainerWithEllipsis>
                     </TableCell>
-                    <TableCell align={'right'}>
+                    <TableCell align={'center'}>
                       <Status
                         color={'gray'}
                         text={getExpiresAtText(workspaceInvitation.expiresAt)}

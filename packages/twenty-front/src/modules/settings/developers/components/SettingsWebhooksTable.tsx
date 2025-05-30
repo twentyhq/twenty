@@ -4,10 +4,12 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsDevelopersWebhookTableRow } from '@/settings/developers/components/SettingsDevelopersWebhookTableRow';
 import { Webhook } from '@/settings/developers/types/webhook/Webhook';
+import { SettingsPath } from '@/types/SettingsPath';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledTableBody = styled(TableBody)`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -36,7 +38,9 @@ export const SettingsWebhooksTable = () => {
             <SettingsDevelopersWebhookTableRow
               key={webhookFieldItem.id}
               fieldItem={webhookFieldItem}
-              to={`/settings/developers/webhooks/${webhookFieldItem.id}`}
+              to={getSettingsPath(SettingsPath.WebhookDetail, {
+                webhookId: webhookFieldItem.id,
+              })}
             />
           ))}
         </StyledTableBody>

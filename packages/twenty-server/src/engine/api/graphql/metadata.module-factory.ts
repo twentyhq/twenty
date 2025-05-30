@@ -49,7 +49,7 @@ export const metadataModuleFactory = async (
     }),
   };
 
-  if (twentyConfigService.get('NODE_ENV') === NodeEnvironment.development) {
+  if (twentyConfigService.get('NODE_ENV') === NodeEnvironment.DEVELOPMENT) {
     config.renderGraphiQL = () => {
       return renderApolloPlayground({ path: 'metadata' });
     };

@@ -23,9 +23,16 @@ export const SentryInitEffect = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const [isSentryInitialized, setIsSentryInitialized] = useState(false);
+  const [isSentryInitializing, setIsSentryInitializing] = useState(false);
+  const [isSentryUserDefined, setIsSentryUserDefined] = useState(false);
 
   useEffect(() => {
-    if (isNonEmptyString(sentryConfig?.dsn) && !isSentryInitialized) {
+    if (
+      !isSentryInitializing &&
+      isNonEmptyString(sentryConfig?.dsn) &&
+      !isSentryInitialized
+    ) {
+      setIsSentryInitializing(true);
       init({
         environment: sentryConfig?.environment ?? undefined,
         release: sentryConfig?.release ?? undefined,
@@ -38,24 +45,28 @@ export const SentryInitEffect = () => {
       });
 
       setIsSentryInitialized(true);
+      setIsSentryInitializing(false);
     }
 
-    if (isDefined(currentUser)) {
+    if (isDefined(currentUser) && !isSentryUserDefined) {
       setUser({
         email: currentUser?.email,
         id: currentUser?.id,
         workspaceId: currentWorkspace?.id,
         workspaceMemberId: currentWorkspaceMember?.id,
       });
+      setIsSentryUserDefined(true);
     } else {
       setUser(null);
     }
   }, [
     sentryConfig,
     isSentryInitialized,
+    isSentryInitializing,
     currentUser,
     currentWorkspace,
     currentWorkspaceMember,
+    isSentryUserDefined,
   ]);
   return <></>;
 };

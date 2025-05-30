@@ -1,8 +1,6 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { buildSignedPath } from 'twenty-shared/utils';
-
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { SendInvitationsOutput } from 'src/engine/core-modules/workspace-invitation/dtos/send-invitations.output';
@@ -16,7 +14,6 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
 
 import { SendInvitationsInput } from './dtos/send-invitations.input';
 
@@ -72,14 +69,9 @@ export class WorkspaceInvitationResolver {
     let workspaceLogoWithToken = '';
 
     if (workspace.logo) {
-      const signedPayload = this.fileService.encodeFileToken({
-        filename: extractFilenameFromPath(workspace.logo),
+      workspaceLogoWithToken = this.fileService.signFileUrl({
+        url: workspace.logo,
         workspaceId: workspace.id,
-      });
-
-      workspaceLogoWithToken = buildSignedPath({
-        path: workspace.logo,
-        token: signedPayload,
       });
     }
 
