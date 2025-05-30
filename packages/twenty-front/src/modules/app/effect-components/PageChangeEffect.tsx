@@ -32,7 +32,6 @@ import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/u
 import { AppBasePath } from '@/types/AppBasePath';
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
@@ -152,27 +151,12 @@ export const PageChangeEffect = () => {
         break;
       }
       case isMatchingLocation(location, AppPath.RecordShowPage): {
-        setHotkeyScope(PageHotkeyScope.CompanyShowPage, {
+        setHotkeyScope(PageHotkeyScope.RecordShowPage, {
           goto: true,
           keyboardShortcutMenu: true,
         });
         break;
       }
-      case isMatchingLocation(location, AppPath.OpportunitiesPage): {
-        setHotkeyScope(PageHotkeyScope.OpportunitiesPage, {
-          goto: true,
-          keyboardShortcutMenu: true,
-        });
-        break;
-      }
-      case isMatchingLocation(location, AppPath.TasksPage): {
-        setHotkeyScope(PageHotkeyScope.TaskPage, {
-          goto: true,
-          keyboardShortcutMenu: true,
-        });
-        break;
-      }
-
       case isMatchingLocation(location, AppPath.SignInUp): {
         setHotkeyScope(PageHotkeyScope.SignInUp);
         break;
@@ -201,47 +185,12 @@ export const PageChangeEffect = () => {
         setHotkeyScope(PageHotkeyScope.PlanRequired);
         break;
       }
-      case isMatchingLocation(
-        location,
-        SettingsPath.ProfilePage,
-        AppBasePath.Settings,
-      ): {
-        setHotkeyScope(PageHotkeyScope.ProfilePage, {
-          goto: true,
-          keyboardShortcutMenu: true,
-        });
-        break;
-      }
-      case isMatchingLocation(
-        location,
-        SettingsPath.Domain,
-        AppBasePath.Settings,
-      ): {
+      case location.pathname.startsWith(AppBasePath.Settings): {
         setHotkeyScope(PageHotkeyScope.Settings, {
           goto: false,
-          keyboardShortcutMenu: true,
-        });
-        break;
-      }
-      case isMatchingLocation(
-        location,
-        SettingsPath.RestPlayground,
-        AppBasePath.Settings,
-      ): {
-        setHotkeyScope(PageHotkeyScope.Settings, {
-          goto: false,
-          keyboardShortcutMenu: true,
-        });
-        break;
-      }
-      case isMatchingLocation(
-        location,
-        SettingsPath.WorkspaceMembersPage,
-        AppBasePath.Settings,
-      ): {
-        setHotkeyScope(PageHotkeyScope.WorkspaceMemberPage, {
-          goto: true,
-          keyboardShortcutMenu: true,
+          keyboardShortcutMenu: false,
+          commandMenu: false,
+          commandMenuOpen: false,
         });
         break;
       }
