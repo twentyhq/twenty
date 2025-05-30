@@ -431,15 +431,15 @@ export const SettingsRoutes = ({
           element={<SettingsRestPlayground />}
         />
         <Route
-          path={SettingsPath.DevelopersNewApiKey}
+          path={SettingsPath.NewApiKey}
           element={<SettingsDevelopersApiKeysNew />}
         />
         <Route
-          path={SettingsPath.DevelopersApiKeyDetail}
+          path={SettingsPath.ApiKeyDetail}
           element={<SettingsDevelopersApiKeyDetail />}
         />
         <Route
-          path={SettingsPath.DevelopersNewWebhookDetail}
+          path={SettingsPath.WebhookDetail}
           element={<SettingsDevelopersWebhooksDetail />}
         />
         <Route
