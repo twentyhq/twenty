@@ -119,7 +119,10 @@ describe('GoogleAPIsService', () => {
           provide: GoogleAPIScopesService,
           useValue: {
             getScopesFromGoogleAccessTokenAndCheckIfExpectedScopesArePresent:
-              jest.fn(),
+              jest.fn().mockResolvedValue({
+                scopes: [], 
+                isValid: true,
+              }),
           },
         },
         {
