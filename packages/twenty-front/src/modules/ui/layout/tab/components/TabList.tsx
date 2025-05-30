@@ -9,7 +9,8 @@ import { LayoutCard } from '@/ui/layout/tab/types/LayoutCard';
 import { isFirstOverflowingTab } from '@/ui/layout/tab/utils/isFirstOverflowingTab';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import styled from '@emotion/styled';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { IconComponent } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { MenuItemSelect } from 'twenty-ui/navigation';
@@ -36,13 +37,22 @@ type TabListProps = {
 };
 
 const StyledContainer = styled.div`
-  border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-  box-sizing: border-box;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   height: 40px;
   user-select: none;
   width: 100%;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: ${({ theme }) => theme.border.color.light};
+  }
 `;
 
 const StyledTabContainer = styled.div`
@@ -54,10 +64,28 @@ const StyledTabContainer = styled.div`
   position: relative;
 `;
 
+const StyledOverflowButtonContainer = styled.div<{ isActive?: boolean }>`
+  align-items: center;
+  display: flex;
+  height: 40px;
+  justify-content: center;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: ${({ theme, isActive }) =>
+      isActive ? theme.border.color.inverted : 'transparent'};
+    z-index: 1;
+  }
+`;
+
 const StyledOverflowButton = styled(Button)`
   height: 28px;
-  padding-top: ${({ theme }) => theme.spacing(2)};
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledOuterContainer = styled.div`
@@ -73,7 +101,7 @@ export const TabList = ({
   componentInstanceId,
 }: TabListProps) => {
   const visibleTabs = tabs.filter((tab) => !tab.hide);
-
+  const navigate = useNavigate();
   const [activeTabId, setActiveTabId] = useRecoilComponentStateV2(
     activeTabIdComponentState,
     componentInstanceId,
@@ -92,6 +120,15 @@ export const TabList = ({
   const hiddenTabsCount = visibleTabs.length - firstHiddenTabIndex;
   const hasHiddenTabs = hiddenTabsCount > 0;
   const dropdownId = `tab-overflow-${componentInstanceId}`;
+
+  const isActiveTabHidden = useMemo(() => {
+    if (!hasHiddenTabs) return false;
+
+    const hiddenTabs = visibleTabs.slice(firstHiddenTabIndex);
+    const result = hiddenTabs.some((tab) => tab.id === activeTabId);
+
+    return result;
+  }, [visibleTabs, firstHiddenTabIndex, activeTabId, hasHiddenTabs]);
 
   const { closeDropdown } = useDropdown(dropdownId);
 
@@ -128,13 +165,13 @@ export const TabList = ({
   const handleTabSelectFromDropdown = useCallback(
     (tabId: string) => {
       if (behaveAsLinks) {
-        window.location.hash = tabId;
+        navigate(`#${tabId}`);
       } else {
         handleTabSelect(tabId);
       }
       closeDropdown();
     },
-    [behaveAsLinks, handleTabSelect, closeDropdown],
+    [behaveAsLinks, handleTabSelect, closeDropdown, navigate],
   );
 
   if (visibleTabs.length <= 1) {
@@ -188,11 +225,13 @@ export const TabList = ({
               onClickOutside={handleDropdownClose}
               dropdownOffset={{ x: 0, y: 8 }}
               clickableComponent={
-                <StyledOverflowButton
-                  variant="tertiary"
-                  size="medium"
-                  title={`+${hiddenTabsCount} more`}
-                />
+                <StyledOverflowButtonContainer isActive={isActiveTabHidden}>
+                  <StyledOverflowButton
+                    variant="tertiary"
+                    title={`+${hiddenTabsCount} more`}
+                    data-testid="tab-overflow-button"
+                  />
+                </StyledOverflowButtonContainer>
               }
               dropdownComponents={
                 <DropdownContent>

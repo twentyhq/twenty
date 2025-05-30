@@ -26,9 +26,6 @@ const StyledTab = styled('button', {
 })<{ active?: boolean; disabled?: boolean; to?: string }>`
   all: unset;
   align-items: center;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  border-color: ${({ theme, active }) =>
-    active ? theme.border.color.inverted : 'transparent'};
   color: ${({ theme, active, disabled }) =>
     active
       ? theme.font.color.primary
@@ -37,18 +34,27 @@ const StyledTab = styled('button', {
         : theme.font.color.secondary};
   cursor: pointer;
   background-color: transparent;
-  border-left: none;
-  border-right: none;
-  border-top: none;
+  border: none;
   font-family: inherit;
-
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   justify-content: center;
-  margin-bottom: -1px;
   padding: ${({ theme }) => theme.spacing(2) + ' 0'};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : '')};
   text-decoration: none;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: ${({ theme, active }) =>
+      active ? theme.border.color.inverted : 'transparent'};
+    z-index: 1;
+  }
 `;
 
 const StyledHover = styled.span`
