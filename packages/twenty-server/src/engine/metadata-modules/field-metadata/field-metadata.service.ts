@@ -72,10 +72,8 @@ import { ViewService } from 'src/modules/view/services/view.service';
 import { FieldMetadataValidationService } from './field-metadata-validation.service';
 import { FieldMetadataEntity } from './field-metadata.entity';
 
-import { FieldMetadataDefaultValueForAnyType } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'src/utils/trim-and-remove-duplicated-whitespaces-from-object-string-properties';
-import { trimAndRemoveDuplicatedWhitespacesFromString } from 'src/utils/trim-and-remove-duplicated-whitespaces-from-string';
 import { generateDefaultValue } from './utils/generate-default-value';
 import { generateRatingOptions } from './utils/generate-rating-optionts.util';
 
@@ -215,9 +213,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         : undefined;
       const defaultValueForUpdate =
         updatableFieldInput.defaultValue !== undefined
-          ? this.prepareCustomFieldMetadataDefaultValue(
-              updatableFieldInput.defaultValue,
-            )
+          ? updatableFieldInput.defaultValue
           : existingFieldMetadata.defaultValue;
 
       const fieldMetadataForUpdate = {
@@ -739,28 +735,15 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     };
   }
 
-  private prepareCustomFieldMetadataDefaultValue(
-    defaultValue: FieldMetadataDefaultValueForAnyType,
-  ) {
-    switch (typeof defaultValue) {
-      case 'string':
-        return trimAndRemoveDuplicatedWhitespacesFromString(defaultValue);
-      default:
-        return defaultValue;
-    }
-  }
-
   private prepareCustomFieldMetadataForCreation(
     fieldMetadataInput: CreateFieldInput,
   ) {
     const options = fieldMetadataInput.options
       ? this.prepareCustomFieldMetadataOptions(fieldMetadataInput.options)
       : undefined;
-    const defaultValue = isDefined(fieldMetadataInput.defaultValue)
-      ? this.prepareCustomFieldMetadataDefaultValue(
-          fieldMetadataInput.defaultValue,
-        )
-      : generateDefaultValue(fieldMetadataInput.type);
+    const defaultValue =
+      fieldMetadataInput.defaultValue ??
+      generateDefaultValue(fieldMetadataInput.type);
 
     return {
       id: v4(),

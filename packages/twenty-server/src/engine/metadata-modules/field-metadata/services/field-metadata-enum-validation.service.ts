@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined, parseJson } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
@@ -213,28 +213,18 @@ export class FieldMetadataEnumValidationService {
     options: FieldMetadataOptions,
     defaultValue: unknown,
   ) {
-    if (typeof defaultValue !== 'string') {
+    if (!Array.isArray(defaultValue)) {
       throw new FieldMetadataException(
-        'Default value for multi-select must be a stringified array',
-        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-      );
-    }
-
-    const parsedDefaultValues = defaultValue
-      ? parseJson<string[]>(defaultValue)
-      : null;
-
-    if (
-      !isDefined(parsedDefaultValues) ||
-      !Array.isArray(parsedDefaultValues)
-    ) {
-      throw new FieldMetadataException(
-        'Default value for multi-select must be an stringified array',
+        'Default value for multi-select must be an array',
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
       );
     }
 
     const validators: Validator<string[]>[] = [
+      {
+        validator: (values) => values.length === 0,
+        message: 'If defined default value must contain at least one value',
+      },
       {
         validator: (values) => new Set(values).size !== values.length,
         message: 'Default values must be unique',
@@ -242,10 +232,10 @@ export class FieldMetadataEnumValidationService {
     ];
 
     validators.forEach((validator) =>
-      this.validatorRunner(parsedDefaultValues, validator),
+      this.validatorRunner(defaultValue, validator),
     );
 
-    parsedDefaultValues.forEach((value) => {
+    defaultValue.forEach((value) => {
       this.validateSelectDefaultValue(options, value);
     });
   }
