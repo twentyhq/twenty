@@ -3,9 +3,12 @@ import { ReactNode, useContext } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
+import { isFieldIdentifierDisplay } from '@/object-record/record-field/meta-types/display/utils/isFieldIdentifierDisplay';
+import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { BORDER_COMMON, ThemeContext } from 'twenty-ui/theme';
 
 const StyledBaseContainer = styled.div<{
@@ -57,12 +60,22 @@ export const RecordTableCellBaseContainer = ({
 }: {
   children: ReactNode;
 }) => {
-  const { isReadOnly } = useContext(FieldContext);
+  const { isReadOnly, recordId, fieldDefinition, isLabelIdentifier } =
+    useContext(FieldContext);
   const { setIsFocused } = useFieldFocus();
   const { openTableCell } = useOpenRecordTableCellFromCell();
   const { theme } = useContext(ThemeContext);
 
   const { cellPosition } = useContext(RecordTableCellContext);
+  const fieldName = fieldDefinition.metadata.fieldName;
+
+  const isChipDisplay = isFieldIdentifierDisplay(
+    fieldDefinition,
+    isLabelIdentifier,
+  );
+  const currentRecordId = isChipDisplay
+    ? recordId
+    : useRecordFieldValue<ObjectRecord | undefined>(recordId, fieldName)?.id;
 
   const { onMoveHoverToCurrentCell, onCellMouseEnter } =
     useRecordTableBodyContextOrThrow();
@@ -98,6 +111,9 @@ export const RecordTableCellBaseContainer = ({
       borderColorBlue={theme.adaptiveColors.blue4}
       isReadOnly={isReadOnly ?? false}
       id={`record-table-cell-${cellPosition.column}-${cellPosition.row}`}
+      {...(!isReadOnly && {
+        ['data-record-id']: currentRecordId,
+      })}
     >
       {children}
     </StyledBaseContainer>

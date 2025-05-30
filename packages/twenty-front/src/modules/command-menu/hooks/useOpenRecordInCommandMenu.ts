@@ -41,6 +41,13 @@ export const useOpenRecordInCommandMenu = () => {
         objectNameSingular: string;
         isNewRecord?: boolean;
       }) => {
+        const lastRecordId = snapshot
+          .getLoadable(viewableRecordIdState)
+          .getValue();
+        if (lastRecordId === recordId) {
+          return;
+        }
+
         const pageComponentInstanceId = v4();
 
         set(
