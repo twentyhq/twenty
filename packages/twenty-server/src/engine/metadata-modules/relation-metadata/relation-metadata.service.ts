@@ -15,6 +15,7 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
+import { ObjectMetadataMapsService } from 'src/engine/metadata-modules/object-metadata/object-metadata-maps.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { CreateRelationInput } from 'src/engine/metadata-modules/relation-metadata/dtos/create-relation.input';
@@ -25,14 +26,6 @@ import {
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
-import {
-  WorkspaceMetadataCacheException,
-  WorkspaceMetadataCacheExceptionCode,
-} from 'src/engine/metadata-modules/workspace-metadata-cache/exceptions/workspace-metadata-cache.exception';
-import {
-  WorkspaceMetadataVersionException,
-  WorkspaceMetadataVersionExceptionCode,
-} from 'src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
@@ -42,7 +35,6 @@ import {
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { BASE_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
@@ -65,7 +57,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly indexMetadataService: IndexMetadataService,
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly objectMetadataMapsService: ObjectMetadataMapsService,
   ) {
     super(relationMetadataRepository);
   }
@@ -501,28 +493,10 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     >,
     workspaceId: string,
   ): Promise<(RelationMetadataEntity | NotFoundException)[]> {
-    const metadataVersion =
-      await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
-
-    if (!isDefined(metadataVersion)) {
-      throw new WorkspaceMetadataVersionException(
-        `Metadata version not found for workspace ${workspaceId}`,
-        WorkspaceMetadataVersionExceptionCode.METADATA_VERSION_NOT_FOUND,
-      );
-    }
-
     const objectMetadataMaps =
-      await this.workspaceCacheStorageService.getObjectMetadataMaps(
+      await this.objectMetadataMapsService.getObjectMetadataMapsOrThrow(
         workspaceId,
-        metadataVersion,
       );
-
-    if (!objectMetadataMaps) {
-      throw new WorkspaceMetadataCacheException(
-        `Object metadata map not found for workspace ${workspaceId} and metadata version ${metadataVersion}`,
-        WorkspaceMetadataCacheExceptionCode.OBJECT_METADATA_MAP_NOT_FOUND,
-      );
-    }
 
     const mappedResult = fieldMetadataItems.map((fieldMetadataItem) => {
       const objectMetadata =

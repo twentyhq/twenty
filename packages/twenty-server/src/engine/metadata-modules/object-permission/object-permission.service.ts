@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
+import { ObjectMetadataMapsService } from 'src/engine/metadata-modules/object-metadata/object-metadata-maps.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { UpsertObjectPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-object-permissions.input';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
@@ -23,6 +24,7 @@ export class ObjectPermissionService {
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly objectMetadataMapsService: ObjectMetadataMapsService,
   ) {}
 
   public async upsertObjectPermissions({
@@ -36,6 +38,30 @@ export class ObjectPermissionService {
       await this.validateRoleIsEditableOrThrow({
         roleId: input.roleId,
         workspaceId,
+      });
+
+      const { byId: objectMetadataMapsById } =
+        await this.objectMetadataMapsService.getObjectMetadataMapsOrThrow(
+          workspaceId,
+        );
+
+      input.objectPermissions.forEach((objectPermission) => {
+        const objectMetadataForObjectPermission =
+          objectMetadataMapsById[objectPermission.objectMetadataId];
+
+        if (!isDefined(objectMetadataForObjectPermission)) {
+          throw new PermissionsException(
+            'Object metadata id not found',
+            PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND,
+          );
+        }
+
+        if (objectMetadataForObjectPermission.isSystem === true) {
+          throw new PermissionsException(
+            PermissionsExceptionMessage.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT,
+            PermissionsExceptionCode.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT,
+          );
+        }
       });
 
       const objectPermissions = input.objectPermissions.map(

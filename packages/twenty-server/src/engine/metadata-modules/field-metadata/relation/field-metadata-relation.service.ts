@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -9,22 +7,14 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { ObjectMetadataMapsService } from 'src/engine/metadata-modules/object-metadata/object-metadata-maps.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { removeFieldMapsFromObjectMetadata } from 'src/engine/metadata-modules/utils/remove-field-maps-from-object-metadata.util';
-import {
-  WorkspaceMetadataCacheException,
-  WorkspaceMetadataCacheExceptionCode,
-} from 'src/engine/metadata-modules/workspace-metadata-cache/exceptions/workspace-metadata-cache.exception';
-import {
-  WorkspaceMetadataVersionException,
-  WorkspaceMetadataVersionExceptionCode,
-} from 'src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
 export class FieldMetadataRelationService {
   constructor(
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly objectMetadataMapsService: ObjectMetadataMapsService,
   ) {}
 
   async findCachedFieldMetadataRelation(
@@ -47,28 +37,10 @@ export class FieldMetadataRelationService {
       targetFieldMetadata: FieldMetadataEntity;
     }>
   > {
-    const metadataVersion =
-      await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
-
-    if (!isDefined(metadataVersion)) {
-      throw new WorkspaceMetadataVersionException(
-        `Metadata version not found for workspace ${workspaceId}`,
-        WorkspaceMetadataVersionExceptionCode.METADATA_VERSION_NOT_FOUND,
-      );
-    }
-
     const objectMetadataMaps =
-      await this.workspaceCacheStorageService.getObjectMetadataMaps(
+      await this.objectMetadataMapsService.getObjectMetadataMapsOrThrow(
         workspaceId,
-        metadataVersion,
       );
-
-    if (!objectMetadataMaps) {
-      throw new WorkspaceMetadataCacheException(
-        `Object metadata map not found for workspace ${workspaceId} and metadata version ${metadataVersion}`,
-        WorkspaceMetadataCacheExceptionCode.OBJECT_METADATA_MAP_NOT_FOUND,
-      );
-    }
 
     return fieldMetadataItems.map((fieldMetadataItem) => {
       const {
