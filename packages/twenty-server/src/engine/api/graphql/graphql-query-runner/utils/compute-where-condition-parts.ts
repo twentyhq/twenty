@@ -1,4 +1,3 @@
-import { FieldMetadataType } from 'twenty-shared/types';
 import { ObjectLiteral } from 'typeorm';
 
 import {
@@ -16,17 +15,14 @@ export const computeWhereConditionParts = ({
   objectNameSingular,
   key,
   value,
-  fieldMetadataType,
 }: {
   operator: string;
   objectNameSingular: string;
   key: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any;
-  fieldMetadataType?: FieldMetadataType;
 }): WhereConditionParts => {
   const uuid = Math.random().toString(36).slice(2, 7);
-  const isTSVectorField = fieldMetadataType === FieldMetadataType.TS_VECTOR;
 
   switch (operator) {
     case 'isEmptyArray':
@@ -100,13 +96,6 @@ export const computeWhereConditionParts = ({
         params: { [`${key}${uuid}`]: value },
       };
     case 'search': {
-      if (!isTSVectorField) {
-        throw new GraphqlQueryRunnerException(
-          `Search operator is only supported for TS_VECTOR fields`,
-          GraphqlQueryRunnerExceptionCode.UNSUPPORTED_OPERATOR,
-        );
-      }
-
       const tsQuery = value
         .split(/\s+/)
         .map((term: string) => `${term}:*`)
