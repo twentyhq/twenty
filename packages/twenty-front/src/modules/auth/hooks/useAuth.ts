@@ -11,7 +11,6 @@ import {
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { workspacesState } from '@/auth/states/workspaces';
 import { billingState } from '@/client-config/states/billingState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
@@ -41,15 +40,18 @@ import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
+import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { captchaState } from '@/client-config/states/captchaState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
@@ -59,7 +61,7 @@ import { domainConfigurationState } from '@/domain-manager/states/domainConfigur
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { i18n } from '@lingui/core';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { iconsState } from 'twenty-ui/display';
@@ -118,10 +120,13 @@ export const useAuth = () => {
 
   const [, setSearchParams] = useSearchParams();
 
+  const navigate = useNavigate();
+
   const clearSession = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
         const emptySnapshot = snapshot_UNSTABLE();
+
         const iconsValue = snapshot.getLoadable(iconsState).getValue();
         const authProvidersValue = snapshot
           .getLoadable(workspaceAuthProvidersState)
@@ -144,6 +149,12 @@ export const useAuth = () => {
         const domainConfiguration = snapshot
           .getLoadable(domainConfigurationState)
           .getValue();
+        const apiConfig = snapshot.getLoadable(apiConfigState).getValue();
+        const sentryConfig = snapshot.getLoadable(sentryConfigState).getValue();
+        const workspacePublicData = snapshot
+          .getLoadable(workspacePublicDataState)
+          .getValue();
+
         const initialSnapshot = emptySnapshot.map(({ set }) => {
           set(iconsState, iconsValue);
           set(workspaceAuthProvidersState, authProvidersValue);
@@ -154,20 +165,26 @@ export const useAuth = () => {
           );
           set(supportChatState, supportChat);
           set(captchaState, captcha);
+          set(apiConfigState, apiConfig);
+          set(sentryConfigState, sentryConfig);
+          set(workspacePublicDataState, workspacePublicData);
           set(clientConfigApiStatusState, clientConfigApiStatus);
           set(isCurrentUserLoadedState, isCurrentUserLoaded);
           set(isMultiWorkspaceEnabledState, isMultiWorkspaceEnabled);
           set(domainConfigurationState, domainConfiguration);
           return undefined;
         });
+
         goToRecoilSnapshot(initialSnapshot);
-        await client.clearStore();
+
         sessionStorage.clear();
         localStorage.clear();
+        await client.clearStore();
         // We need to explicitly clear the state to trigger the cookie deletion which include the parent domain
         setLastAuthenticateWorkspaceDomain(null);
+        navigate(AppPath.SignInUp);
       },
-    [client, goToRecoilSnapshot, setLastAuthenticateWorkspaceDomain],
+    [navigate, client, goToRecoilSnapshot, setLastAuthenticateWorkspaceDomain],
   );
 
   const handleGetLoginTokenFromCredentials = useCallback(

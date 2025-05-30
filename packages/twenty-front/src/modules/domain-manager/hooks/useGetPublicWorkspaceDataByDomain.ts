@@ -38,9 +38,17 @@ export const useGetPublicWorkspaceDataByDomain = () => {
       setWorkspacePublicDataState(data.getPublicWorkspaceDataByDomain);
     },
     onError: (error) => {
-      // eslint-disable-next-line no-console
-      console.error(error);
-      redirectToDefaultDomain();
+      // Only redirect to default domain if it's a workspace not found error
+      const isWorkspaceNotFoundError = error.graphQLErrors?.some(
+        (graphQLError) => graphQLError.extensions?.code === 'NOT_FOUND',
+      );
+
+      if (isWorkspaceNotFoundError) {
+        redirectToDefaultDomain();
+      } else {
+        // eslint-disable-next-line no-console
+        console.error(error);
+      }
     },
   });
 
