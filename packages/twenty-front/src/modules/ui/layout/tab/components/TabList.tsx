@@ -3,6 +3,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab/components/TabListFromUrlOptionalEffect';
+import { TabMoreButton } from '@/ui/layout/tab/components/TabMoreButton';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab/states/contexts/TabListComponentInstanceContext';
 import { LayoutCard } from '@/ui/layout/tab/types/LayoutCard';
@@ -12,7 +13,6 @@ import styled from '@emotion/styled';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IconComponent } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { Tab } from './Tab';
 
@@ -58,38 +58,10 @@ const StyledContainer = styled.div`
 const StyledTabContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
+  position: relative;
   overflow: hidden;
   max-width: 100%;
   flex: 1;
-  position: relative;
-`;
-
-const StyledOverflowButtonContainer = styled.div<{ isActive?: boolean }>`
-  align-items: center;
-  display: flex;
-  height: 40px;
-  justify-content: center;
-  position: relative;
-
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background-color: ${({ theme, isActive }) =>
-      isActive ? theme.border.color.inverted : 'transparent'};
-    z-index: 1;
-  }
-`;
-
-const StyledOverflowButton = styled(Button)`
-  height: 28px;
-`;
-
-const StyledOuterContainer = styled.div`
-  width: 100%;
 `;
 
 export const TabList = ({
@@ -182,7 +154,7 @@ export const TabList = ({
     <TabListComponentInstanceContext.Provider
       value={{ instanceId: componentInstanceId }}
     >
-      <StyledOuterContainer>
+      <>
         <TabListFromUrlOptionalEffect
           isInRightDrawer={!!isInRightDrawer}
           tabListIds={tabs.map((tab) => tab.id)}
@@ -225,13 +197,10 @@ export const TabList = ({
               onClickOutside={handleDropdownClose}
               dropdownOffset={{ x: 0, y: 8 }}
               clickableComponent={
-                <StyledOverflowButtonContainer isActive={isActiveTabHidden}>
-                  <StyledOverflowButton
-                    variant="tertiary"
-                    title={`+${hiddenTabsCount} more`}
-                    data-testid="tab-overflow-button"
-                  />
-                </StyledOverflowButtonContainer>
+                <TabMoreButton
+                  hiddenTabsCount={hiddenTabsCount}
+                  active={isActiveTabHidden}
+                />
               }
               dropdownComponents={
                 <DropdownContent>
@@ -253,7 +222,7 @@ export const TabList = ({
             />
           )}
         </StyledContainer>
-      </StyledOuterContainer>
+      </>
     </TabListComponentInstanceContext.Provider>
   );
 };

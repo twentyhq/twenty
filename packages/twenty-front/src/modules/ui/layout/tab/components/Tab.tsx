@@ -1,4 +1,3 @@
-import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -39,7 +38,6 @@ const StyledTab = styled('button', {
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(2) + ' 0'};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : '')};
   text-decoration: none;
   position: relative;
@@ -142,7 +140,7 @@ export const Tab = forwardRef<HTMLButtonElement, TabProps>(
               />
             )}
           </StyledIconContainer>
-          <EllipsisDisplay>{title}</EllipsisDisplay>
+          {title}
           {pill && typeof pill === 'string' ? <Pill label={pill} /> : pill}
         </StyledHover>
       </StyledTab>
