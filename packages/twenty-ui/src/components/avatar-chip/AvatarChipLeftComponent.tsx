@@ -56,8 +56,8 @@ export const AvatarChipsLeftComponent: React.FC<
         backgroundColor={theme.background.invertedSecondary}
       >
         <LeftIcon
-          color="white"
-          size={theme.icon.size.md}
+          color={theme.font.color.inverted}
+          size={theme.icon.size.sm}
           stroke={theme.icon.stroke.sm}
         />
       </StyledInvertedIconContainer>
@@ -66,7 +66,7 @@ export const AvatarChipsLeftComponent: React.FC<
 
   return (
     <LeftIcon
-      size={theme.icon.size.md}
+      size={theme.icon.size.sm}
       stroke={theme.icon.stroke.sm}
       color={LeftIconColor || 'currentColor'}
     />
