@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Field metadata select creation tests group Create should fail with empty multi-select default values array 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "If defined default value must contain at least one value",
+  },
+]
+`;
+
+exports[`Field metadata select creation tests group Create should fail with invalid multi-select default value format 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Default value should be as quoted string",
+  },
+]
+`;
+
+exports[`Field metadata select creation tests group Create should fail with non stringified array default value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Default value for multi-select must be an array",
+  },
+]
+`;
+
+exports[`Field metadata select creation tests group Create should fail with unknown multi-select default values 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Default value "'UNKNOWN_OPTION'" must be one of the option values",
+  },
+]
+`;
