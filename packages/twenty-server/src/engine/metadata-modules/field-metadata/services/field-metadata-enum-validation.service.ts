@@ -14,9 +14,7 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import {
-  EnumFieldMetadataUnionType
-} from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+import { EnumFieldMetadataUnionType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import {
   beneathDatabaseIdentifierMinimumLength,
   exceedsDatabaseIdentifierMaximumLength,
@@ -184,14 +182,24 @@ export class FieldMetadataEnumValidationService {
     options: FieldMetadataOptions,
     defaultValue: unknown,
   ) {
-    const validators: Validator<unknown>[] = [
+    if (typeof defaultValue !== 'string') {
+      throw new FieldMetadataException(
+        'Default value for multi-select must be a stringified array',
+        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      );
+    }
+
+    const validators: Validator<string>[] = [
       {
-        validator: (value) => typeof value !== 'string',
-        message: 'Default value for select must be a string',
+        validator: (value: string) => !QUOTED_STRING_REGEX.test(value),
+        message: 'Default value should be as quoted string',
       },
       {
-        // TODO centralize this
-        validator: (value : string) => options.every((option) => option.value !== value.replace(QUOTED_STRING_REGEX, '$1')),
+        validator: (value: string) =>
+          !options.some(
+            (option) =>
+              option.value === value.replace(QUOTED_STRING_REGEX, '$1'),
+          ),
         message: `Default value "${defaultValue}" must be one of the option values`,
       },
     ];
@@ -231,24 +239,15 @@ export class FieldMetadataEnumValidationService {
         validator: (values) => new Set(values).size !== values.length,
         message: 'Default values must be unique',
       },
-      {
-        validator: (values) => {
-          const unQuotedValues = values.map((value) =>
-            value.replace(QUOTED_STRING_REGEX, '$1'),
-          );
-          return !unQuotedValues.every((value) =>
-            options.some((option) => option.value === value),
-          );
-        },
-        message: `Default values must be one of the option values: ${parsedDefaultValues.join(
-          ', ',
-        )}`,
-      },
     ];
 
     validators.forEach((validator) =>
       this.validatorRunner(parsedDefaultValues, validator),
     );
+
+    parsedDefaultValues.forEach((value) => {
+      this.validateSelectDefaultValue(options, value);
+    });
   }
 
   private validateFieldMetadataDefaultValue(
