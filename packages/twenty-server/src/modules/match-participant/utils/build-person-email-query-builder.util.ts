@@ -2,11 +2,17 @@ import { SelectQueryBuilder } from 'typeorm';
 
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
-export function buildPersonEmailQueryBuilder(
-  queryBuilder: SelectQueryBuilder<PersonWorkspaceEntity>,
-  emails: string[],
-  excludePersonIds: string[] = [],
-): SelectQueryBuilder<PersonWorkspaceEntity> {
+export interface BuildPersonEmailQueryBuilderOptions {
+  queryBuilder: SelectQueryBuilder<PersonWorkspaceEntity>;
+  emails: string[];
+  excludePersonIds?: string[];
+}
+
+export function buildPersonEmailQueryBuilder({
+  queryBuilder,
+  emails,
+  excludePersonIds = [],
+}: BuildPersonEmailQueryBuilderOptions): SelectQueryBuilder<PersonWorkspaceEntity> {
   const normalizedEmails = emails.map((email) => email.toLowerCase());
 
   queryBuilder = queryBuilder
@@ -30,12 +36,12 @@ export function buildPersonEmailQueryBuilder(
 
   for (const [index, email] of normalizedEmails.entries()) {
     const emailParamName = `email${index}`;
-    const orCondition =
+    const orWhereIsInAdditionalEmail =
       excludePersonIds.length > 0
         ? `person.id NOT IN (:...excludePersonIds) AND person.emailsAdditionalEmails @> :${emailParamName}::jsonb`
         : `person.emailsAdditionalEmails @> :${emailParamName}::jsonb`;
 
-    queryBuilder = queryBuilder.orWhere(orCondition, {
+    queryBuilder = queryBuilder.orWhere(orWhereIsInAdditionalEmail, {
       ...(excludePersonIds.length > 0 && { excludePersonIds }),
       [emailParamName]: JSON.stringify([email]),
     });

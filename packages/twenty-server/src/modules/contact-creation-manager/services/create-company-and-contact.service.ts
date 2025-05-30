@@ -78,10 +78,10 @@ export class CreateCompanyAndContactService {
       return [];
     }
 
-    const queryBuilder = buildPersonEmailQueryBuilder(
-      personRepository.createQueryBuilder('person'),
-      uniqueHandles,
-    );
+    const queryBuilder = buildPersonEmailQueryBuilder({
+      queryBuilder: personRepository.createQueryBuilder('person'),
+      emails: uniqueHandles,
+    });
 
     const rawAlreadyCreatedContacts = await queryBuilder
       .orderBy('person.createdAt', 'ASC')

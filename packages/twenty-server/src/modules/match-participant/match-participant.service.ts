@@ -67,10 +67,10 @@ export class MatchParticipantService<
         'person',
       );
 
-    const queryBuilder = buildPersonEmailQueryBuilder(
-      personRepository.createQueryBuilder('person'),
-      uniqueParticipantsHandles,
-    );
+    const queryBuilder = buildPersonEmailQueryBuilder({
+      queryBuilder: personRepository.createQueryBuilder('person'),
+      emails: uniqueParticipantsHandles,
+    });
 
     const rawPeople = await queryBuilder
       .orderBy('person.createdAt', 'ASC')
@@ -279,11 +279,11 @@ export class MatchParticipantService<
           'person',
         );
 
-      const queryBuilder = buildPersonEmailQueryBuilder(
-        personRepository.createQueryBuilder('person'),
-        [handle],
-        [personId],
-      );
+      const queryBuilder = buildPersonEmailQueryBuilder({
+        queryBuilder: personRepository.createQueryBuilder('person'),
+        emails: [handle],
+        excludePersonIds: [personId],
+      });
 
       const rawPeople = await queryBuilder
         .orderBy('person.createdAt', 'ASC')
