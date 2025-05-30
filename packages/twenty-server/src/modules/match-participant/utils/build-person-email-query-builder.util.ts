@@ -7,13 +7,17 @@ export function buildPersonEmailQueryBuilder(
   emails: string[],
   excludePersonIds: string[] = [],
 ): SelectQueryBuilder<PersonWorkspaceEntity> {
+  const normalizedEmails = emails.map((email) => email.toLowerCase());
+
   queryBuilder = queryBuilder
     .select([
       'person.id',
       'person.emailsPrimaryEmail',
       'person.emailsAdditionalEmails',
     ])
-    .where('person.emailsPrimaryEmail IN (:...emails)', { emails });
+    .where('LOWER(person.emailsPrimaryEmail) IN (:...emails)', {
+      emails: normalizedEmails,
+    });
 
   if (excludePersonIds.length > 0) {
     queryBuilder = queryBuilder.andWhere(
@@ -24,17 +28,16 @@ export function buildPersonEmailQueryBuilder(
     );
   }
 
-  for (const [index, email] of emails.entries()) {
+  for (const [index, email] of normalizedEmails.entries()) {
+    const emailParamName = `email${index}`;
     const orCondition =
       excludePersonIds.length > 0
-        ? 'person.id NOT IN (:...excludePersonIds) AND person.emailsAdditionalEmails @> :email' +
-          index +
-          '::jsonb'
-        : 'person.emailsAdditionalEmails @> :email' + index + '::jsonb';
+        ? `person.id NOT IN (:...excludePersonIds) AND person.emailsAdditionalEmails @> :${emailParamName}::jsonb`
+        : `person.emailsAdditionalEmails @> :${emailParamName}::jsonb`;
 
     queryBuilder = queryBuilder.orWhere(orCondition, {
       ...(excludePersonIds.length > 0 && { excludePersonIds }),
-      [`email${index}`]: JSON.stringify([email]),
+      [emailParamName]: JSON.stringify([email]),
     });
   }
 

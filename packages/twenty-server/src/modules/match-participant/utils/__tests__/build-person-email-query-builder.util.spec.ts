@@ -33,8 +33,8 @@ describe('buildPersonEmailQueryBuilder', () => {
     ]);
 
     expect(mockQueryBuilder.where).toHaveBeenCalledWith(
-      'person.emailsPrimaryEmail IN (:...emails)',
-      { emails },
+      'LOWER(person.emailsPrimaryEmail) IN (:...emails)',
+      { emails: ['test@example.com'] },
     );
 
     expect(mockQueryBuilder.orWhere).toHaveBeenCalledWith(
@@ -51,8 +51,8 @@ describe('buildPersonEmailQueryBuilder', () => {
     buildPersonEmailQueryBuilder(mockQueryBuilder, emails);
 
     expect(mockQueryBuilder.where).toHaveBeenCalledWith(
-      'person.emailsPrimaryEmail IN (:...emails)',
-      { emails },
+      'LOWER(person.emailsPrimaryEmail) IN (:...emails)',
+      { emails: ['test@example.com', 'contact@company.com'] },
     );
 
     expect(mockQueryBuilder.orWhere).toHaveBeenCalledWith(
@@ -120,7 +120,7 @@ describe('buildPersonEmailQueryBuilder', () => {
     buildPersonEmailQueryBuilder(mockQueryBuilder, emails);
 
     expect(mockQueryBuilder.where).toHaveBeenCalledWith(
-      'person.emailsPrimaryEmail IN (:...emails)',
+      'LOWER(person.emailsPrimaryEmail) IN (:...emails)',
       { emails: [] },
     );
 
@@ -176,5 +176,29 @@ describe('buildPersonEmailQueryBuilder', () => {
       'person.emailsAdditionalEmails @> :email2::jsonb',
       { email2: JSON.stringify(['email3@example.com']) },
     );
+  });
+
+  describe('case-insensitive email matching', () => {
+    it('should normalize emails to lowercase for primary email matching', () => {
+      const emails = ['Test@Example.COM', 'CONTACT@Company.com'];
+
+      buildPersonEmailQueryBuilder(mockQueryBuilder, emails);
+
+      expect(mockQueryBuilder.where).toHaveBeenCalledWith(
+        'LOWER(person.emailsPrimaryEmail) IN (:...emails)',
+        { emails: ['test@example.com', 'contact@company.com'] },
+      );
+    });
+
+    it('should normalize emails to lowercase for additional email matching', () => {
+      const emails = ['Test@Example.COM'];
+
+      buildPersonEmailQueryBuilder(mockQueryBuilder, emails);
+
+      expect(mockQueryBuilder.orWhere).toHaveBeenCalledWith(
+        'person.emailsAdditionalEmails @> :email0::jsonb',
+        { email0: JSON.stringify(['test@example.com']) },
+      );
+    });
   });
 });
