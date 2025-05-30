@@ -3,11 +3,11 @@ import { Logger } from '@nestjs/common';
 import * as fs from 'fs/promises';
 import { resolve } from 'path';
 import { promisify } from 'util';
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 
 import { Command, CommandRunner, Option } from 'nest-commander';
 
-const execPromise = promisify(exec);
+const execFilePromise = promisify(execFile);
 
 @Command({
   name: 'serverless:add-packages',
@@ -76,7 +76,7 @@ export class AddPackagesCommand extends CommandRunner {
   }
 
   private async addToGit(folderPath: string) {
-    await execPromise(`git add ${folderPath}`);
+    await execFilePromise('git', ['add', folderPath]);
   }
 
   private async cleanPackageInstallation(folderPath: string) {
