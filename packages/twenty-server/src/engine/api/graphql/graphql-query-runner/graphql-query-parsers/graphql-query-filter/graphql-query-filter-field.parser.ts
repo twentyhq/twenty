@@ -69,7 +69,6 @@ export class GraphqlQueryFilterFieldParser {
       objectNameSingular,
       key,
       value,
-      fieldMetadataType: fieldMetadata.type,
     });
 
     if (isFirst) {
@@ -129,7 +128,6 @@ export class GraphqlQueryFilterFieldParser {
         operator,
         objectNameSingular,
         key: fullFieldName,
-        fieldMetadataType: subFieldMetadata.type,
         value,
       });
 
