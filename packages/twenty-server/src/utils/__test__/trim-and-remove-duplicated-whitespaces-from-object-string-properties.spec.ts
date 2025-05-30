@@ -1,6 +1,6 @@
+import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'src/utils/trim-and-remove-duplicated-whitespaces-from-object-string-properties copy';
 import { EachTestingContext } from 'twenty-shared/testing';
 
-import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'src/utils/trim-and-remove-duplicated-whitespaces-from-object-string-properties';
 
 type SanitizeObjectStringPropertiesTestCase = EachTestingContext<{
   input: Record<string, any>;
