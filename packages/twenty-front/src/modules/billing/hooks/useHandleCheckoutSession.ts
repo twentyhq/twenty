@@ -6,7 +6,10 @@ import {
   BillingPlanKey,
   SubscriptionInterval,
 } from '~/generated-metadata/graphql';
-import { useCheckoutSessionMutation } from '~/generated/graphql';
+import {
+  BillingPaymentProviders,
+  useCheckoutSessionMutation,
+} from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 
@@ -14,10 +17,12 @@ export const useHandleCheckoutSession = ({
   recurringInterval,
   plan,
   requirePaymentMethod,
+  paymentProvider,
 }: {
   recurringInterval: SubscriptionInterval;
   plan: BillingPlanKey;
   requirePaymentMethod: boolean;
+  paymentProvider?: BillingPaymentProviders;
 }) => {
   const { redirect } = useRedirect();
 
@@ -35,6 +40,7 @@ export const useHandleCheckoutSession = ({
         successUrlPath: getSettingsPath(SettingsPath.Billing),
         plan,
         requirePaymentMethod,
+        paymentProvider,
       },
     });
     setIsSubmitting(false);

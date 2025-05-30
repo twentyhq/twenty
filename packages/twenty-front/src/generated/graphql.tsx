@@ -176,6 +176,12 @@ export type BillingMeteredProductUsageOutput = {
   usageQuantity: Scalars['Float'];
 };
 
+/** The different billing payment providers available */
+export enum BillingPaymentProviders {
+  Inter = 'Inter',
+  Stripe = 'Stripe'
+}
+
 /** The different billing plans available */
 export enum BillingPlanKey {
   ENTERPRISE = 'ENTERPRISE',
@@ -1272,6 +1278,7 @@ export type MutationAuthorizeAppArgs = {
 
 
 export type MutationCheckoutSessionArgs = {
+  paymentProvider?: BillingPaymentProviders;
   plan?: BillingPlanKey;
   recurringInterval: SubscriptionInterval;
   requirePaymentMethod?: Scalars['Boolean'];
@@ -1947,7 +1954,6 @@ export type OnDbEventInput = {
 export enum OnboardingStatus {
   COMPLETED = 'COMPLETED',
   INVITE_TEAM = 'INVITE_TEAM',
-  PAYMENT_REQUIRED = 'PAYMENT_REQUIRED',
   PLAN_REQUIRED = 'PLAN_REQUIRED',
   PROFILE_CREATION = 'PROFILE_CREATION',
   SYNC_EMAIL = 'SYNC_EMAIL',

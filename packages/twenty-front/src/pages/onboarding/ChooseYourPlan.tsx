@@ -6,6 +6,7 @@ import { SubscriptionBenefit } from '@/billing/components/SubscriptionBenefit';
 import { SubscriptionPrice } from '@/billing/components/SubscriptionPrice';
 import { TrialCard } from '@/billing/components/TrialCard';
 import { useHandleCheckoutSession } from '@/billing/hooks/useHandleCheckoutSession';
+import { billingPaymentProvidersMap } from '@/billing/utils/billingPaymentProvidersMap';
 import { isBillingPriceLicensed } from '@/billing/utils/isBillingPriceLicensed';
 import { billingState } from '@/client-config/states/billingState';
 import { Modal } from '@/ui/layout/modal/components/Modal';
@@ -20,7 +21,9 @@ import {
   ClickToActionLink,
   TWENTY_PRICING_LINK,
 } from 'twenty-ui/navigation';
+import { Entries } from 'type-fest';
 import {
+  BillingPaymentProviders,
   BillingPlanKey,
   BillingPriceLicensedDto,
   useBillingBaseProductPricesQuery,
@@ -66,6 +69,22 @@ const StyledChooseTrialContainer = styled.div`
   width: 100%;
   margin-bottom: ${({ theme }) => theme.spacing(8)};
   gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledChooseProviderContainer = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin-bottom: ${({ theme }) => theme.spacing(8)};
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledPaymentProviderCardContainer = styled.div`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  display: flex;
+  width: 100%;
 `;
 
 const StyledLinkGroup = styled.div`
@@ -135,10 +154,13 @@ export const ChooseYourPlan = () => {
       price.recurringInterval === billingCheckoutSession.interval,
   );
 
-  const hasWithoutCreditCardTrialPeriod = billing?.trialPeriods.some(
+  const hasWithoutCreditCardTrialPeriod = false;
+  /*
+    TODO: Disabling trial period selection for now. When enabled, the provider selection doesnt work properly.
+    billing?.trialPeriods.some(
     (trialPeriod) =>
       !trialPeriod.isCreditCardRequired && trialPeriod.duration !== 0,
-  );
+  );*/
   const withCreditCardTrialPeriod = billing?.trialPeriods.find(
     (trialPeriod) => trialPeriod.isCreditCardRequired,
   );
@@ -156,11 +178,24 @@ export const ChooseYourPlan = () => {
         billingCheckoutSession.requirePaymentMethod !== withCreditCard
       ) {
         setBillingCheckoutSession({
+          ...billingCheckoutSession,
           plan: currentPlan,
           interval: baseProductPrice.recurringInterval,
           requirePaymentMethod: withCreditCard,
         });
       }
+    };
+  };
+
+  const handleChangePaymentProviderChange = (
+    paymentProvider: BillingPaymentProviders,
+  ) => {
+    return () => {
+      if (isDefined(baseProductPrice))
+        setBillingCheckoutSession({
+          ...billingCheckoutSession,
+          paymentProvider,
+        });
     };
   };
 
@@ -217,7 +252,6 @@ export const ChooseYourPlan = () => {
                   handleChange={handleTrialPeriodChange(
                     trialPeriod.isCreditCardRequired,
                   )}
-                  key={trialPeriod.duration}
                 >
                   <TrialCard
                     duration={trialPeriod.duration}
@@ -227,6 +261,24 @@ export const ChooseYourPlan = () => {
               ))}
             </StyledChooseTrialContainer>
           )}
+          <Title noMarginTop>{t`Choose your payment method`}</Title>
+          <StyledChooseProviderContainer>
+            {(
+              Object.entries(billingPaymentProvidersMap) as Entries<
+                typeof billingPaymentProvidersMap
+              >
+            ).map(([provider, label]) => (
+              <CardPicker
+                checked={billingCheckoutSession.paymentProvider === provider}
+                handleChange={handleChangePaymentProviderChange(provider)}
+                key={`payment-provider-${provider}`}
+              >
+                <StyledPaymentProviderCardContainer>
+                  {label}
+                </StyledPaymentProviderCardContainer>
+              </CardPicker>
+            ))}
+          </StyledChooseProviderContainer>
           <MainButton
             title={t`Continue`}
             onClick={handleCheckoutSession}
