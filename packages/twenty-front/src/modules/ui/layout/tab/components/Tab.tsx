@@ -57,6 +57,7 @@ const StyledTab = styled('button', {
 
 const StyledHover = styled.span`
   display: flex;
+  white-space: nowrap;
   gap: ${({ theme }) => theme.spacing(1)};
   padding: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(2)};

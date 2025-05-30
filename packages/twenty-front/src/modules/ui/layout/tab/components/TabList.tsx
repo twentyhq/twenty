@@ -1,9 +1,6 @@
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { TabListDropdown } from '@/ui/layout/tab/components/TabListDropdown';
 import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab/components/TabListFromUrlOptionalEffect';
-import { TabMoreButton } from '@/ui/layout/tab/components/TabMoreButton';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab/states/contexts/TabListComponentInstanceContext';
 import { LayoutCard } from '@/ui/layout/tab/types/LayoutCard';
@@ -13,7 +10,6 @@ import styled from '@emotion/styled';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IconComponent } from 'twenty-ui/display';
-import { MenuItemSelect } from 'twenty-ui/navigation';
 import { Tab } from './Tab';
 
 export type SingleTabProps<T extends string = string> = {
@@ -191,34 +187,16 @@ export const TabList = ({
           </StyledTabContainer>
 
           {hasHiddenTabs && (
-            <Dropdown
+            <TabListDropdown
               dropdownId={dropdownId}
-              dropdownPlacement="bottom-end"
-              onClickOutside={handleDropdownClose}
-              dropdownOffset={{ x: 0, y: 8 }}
-              clickableComponent={
-                <TabMoreButton
-                  hiddenTabsCount={hiddenTabsCount}
-                  active={isActiveTabHidden}
-                />
-              }
-              dropdownComponents={
-                <DropdownContent>
-                  <DropdownMenuItemsContainer>
-                    {visibleTabs.slice(firstHiddenTabIndex).map((tab) => (
-                      <MenuItemSelect
-                        key={tab.id}
-                        text={tab.title}
-                        LeftIcon={tab.Icon}
-                        selected={tab.id === activeTabId}
-                        onClick={() => handleTabSelectFromDropdown(tab.id)}
-                        disabled={tab.disabled ?? loading}
-                      />
-                    ))}
-                  </DropdownMenuItemsContainer>
-                </DropdownContent>
-              }
-              dropdownHotkeyScope={{ scope: dropdownId }}
+              handleDropdownClose={handleDropdownClose}
+              hiddenTabsCount={hiddenTabsCount}
+              isActiveTabHidden={isActiveTabHidden}
+              visibleTabs={visibleTabs}
+              firstHiddenTabIndex={firstHiddenTabIndex}
+              activeTabId={activeTabId}
+              handleTabSelectFromDropdown={handleTabSelectFromDropdown}
+              loading={loading}
             />
           )}
         </StyledContainer>
