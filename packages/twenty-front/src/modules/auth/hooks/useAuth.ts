@@ -11,7 +11,7 @@ import {
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
+import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { workspacesState } from '@/auth/states/workspaces';
 import { billingState } from '@/client-config/states/billingState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';

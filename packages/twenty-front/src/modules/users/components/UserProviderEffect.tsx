@@ -7,7 +7,7 @@ import { currentWorkspaceDeletedMembersState } from '@/auth/states/currentWorksp
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
+import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { workspacesState } from '@/auth/states/workspaces';
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
@@ -70,7 +70,7 @@ export const UserProviderEffect = () => {
     currentWorkspaceDeletedMembersState,
   );
 
-  const { data: queryData } = useGetCurrentUserQuery({
+  const { data: queryData, loading: queryLoading } = useGetCurrentUserQuery({
     skip:
       !isLoggedIn ||
       isCurrentUserLoaded ||
@@ -79,10 +79,13 @@ export const UserProviderEffect = () => {
   });
 
   useEffect(() => {
+    if (!queryLoading) {
+      setIsCurrentUserLoaded(true);
+    }
+
     if (!isDefined(queryData?.currentUser)) return;
 
     setCurrentUser(queryData.currentUser);
-    setIsCurrentUserLoaded(true);
 
     if (isDefined(queryData.currentUser.currentWorkspace)) {
       setCurrentWorkspace({
@@ -158,6 +161,7 @@ export const UserProviderEffect = () => {
       setWorkspaces(workspaces);
     }
   }, [
+    queryLoading,
     queryData?.currentUser,
     setCurrentUser,
     setCurrentUserWorkspace,
