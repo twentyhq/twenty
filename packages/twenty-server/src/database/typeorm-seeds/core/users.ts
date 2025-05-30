@@ -8,11 +8,8 @@ export const DEV_SEED_USER_IDS = {
   PHIL: '20202020-7169-42cf-bc47-1cfef15264b8',
 };
 
-export const seedUsers = async (
-  workspaceDataSource: DataSource,
-  schemaName: string,
-) => {
-  await workspaceDataSource
+export const seedUsers = async (dataSource: DataSource, schemaName: string) => {
+  await dataSource
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${tableName}`, [

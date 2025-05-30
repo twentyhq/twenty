@@ -3,11 +3,11 @@ import { DataSource } from 'typeorm';
 const tableName = 'billingSubscription';
 
 export const seedBillingSubscriptions = async (
-  workspaceDataSource: DataSource,
+  dataSource: DataSource,
   schemaName: string,
   workspaceId: string,
 ) => {
-  await workspaceDataSource
+  await dataSource
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${tableName}`, [

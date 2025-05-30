@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 
-import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
+import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 
 import { RecordPositionService } from './services/record-position.service';
 
 @Module({
-  imports: [WorkspaceDataSourceModule],
+  imports: [TwentyORMModule],
   providers: [RecordPositionService],
   exports: [RecordPositionService],
 })

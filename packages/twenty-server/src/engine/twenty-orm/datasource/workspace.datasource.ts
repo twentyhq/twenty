@@ -11,6 +11,10 @@ import {
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { WorkspaceQueryRunner } from 'src/engine/twenty-orm/query-runner/workspace-query-runner';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -77,6 +81,26 @@ export class WorkspaceDataSource extends DataSource {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return queryRunner as any as WorkspaceQueryRunner;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  override query<T = any>(
+    query: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    parameters?: any[],
+    queryRunner?: QueryRunner,
+    options?: {
+      shouldBypassPermissionChecks?: boolean;
+    },
+  ): Promise<T> {
+    if (!options?.shouldBypassPermissionChecks) {
+      throw new PermissionsException(
+        'Method not allowed because permissions are not implemented at datasource level.',
+        PermissionsExceptionCode.METHOD_NOT_ALLOWED,
+      );
+    }
+
+    return super.query(query, parameters, queryRunner);
   }
 
   setRolesPermissionsVersion(rolesPermissionsVersion: string) {

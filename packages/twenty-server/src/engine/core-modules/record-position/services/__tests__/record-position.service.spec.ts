@@ -1,24 +1,31 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 describe('RecordPositionService', () => {
-  let workspaceDataSourceService;
-
+  let twentyORMGlobalManager: jest.Mocked<TwentyORMGlobalManager>;
+  let mockRepository: any;
   let service: RecordPositionService;
 
   beforeEach(async () => {
-    workspaceDataSourceService = {
-      getSchemaName: jest.fn().mockReturnValue('schemaName'),
-      executeRawQuery: jest.fn().mockResolvedValue([{ position: 1 }]),
+    mockRepository = {
+      findOneBy: jest.fn(),
+      update: jest.fn(),
+      minimum: jest.fn().mockResolvedValue(1),
+      maximum: jest.fn().mockResolvedValue(1),
     };
+
+    twentyORMGlobalManager = {
+      getRepositoryForWorkspace: jest.fn().mockResolvedValue(mockRepository),
+    } as unknown as jest.Mocked<TwentyORMGlobalManager>;
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RecordPositionService,
         {
-          provide: WorkspaceDataSourceService,
-          useValue: workspaceDataSourceService,
+          provide: TwentyORMGlobalManager,
+          useValue: twentyORMGlobalManager,
         },
       ],
     }).compile();
@@ -30,7 +37,7 @@ describe('RecordPositionService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('create', () => {
+  describe('buildRecordPosition', () => {
     const objectMetadata = { isCustom: false, nameSingular: 'company' };
     const workspaceId = 'workspaceId';
 

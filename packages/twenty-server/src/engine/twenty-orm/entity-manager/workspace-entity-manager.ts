@@ -406,15 +406,6 @@ export class WorkspaceEntityManager extends EntityManager {
     return this.connection.getMetadata(entity.constructor).name;
   }
 
-  // Forbidden methods
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  override query<T = any>(_query: string, _parameters?: any[]): Promise<T> {
-    throw new Error('Method not allowed.');
-  }
-
-  // Not in use methods - duplicated from TypeORM's EntityManager to use our createQueryBuilder
-
   override find<Entity extends ObjectLiteral>(
     entityClass: EntityTarget<Entity>,
     options?: FindManyOptions<Entity>,
@@ -1097,5 +1088,15 @@ export class WorkspaceEntityManager extends EntityManager {
     this.validatePermissions(target, 'update', permissionOptions);
 
     return super.decrement(target, criteria, propertyPath, value);
+  }
+
+  // Forbidden methods
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  override query<T = any>(_query: string, _parameters?: any[]): Promise<T> {
+    throw new PermissionsException(
+      'Method not allowed.',
+      PermissionsExceptionCode.RAW_SQL_NOT_ALLOWED,
+    );
   }
 }

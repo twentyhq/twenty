@@ -8,6 +8,7 @@ export const fetchTableColumns = async (
 ): Promise<PostgresTableSchemaColumn[]> => {
   const schemaName = workspaceDataSourceService.getSchemaName(workspaceId);
 
+  // TODO: executeRawQuery is deprecated and will throw
   const res = await workspaceDataSourceService.executeRawQuery(
     `SELECT column_name, data_type, udt_name
         FROM information_schema.columns

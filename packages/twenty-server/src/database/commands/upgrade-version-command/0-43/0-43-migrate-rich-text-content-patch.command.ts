@@ -235,6 +235,11 @@ export class MigrateRichTextContentPatchCommand extends ActiveOrSuspendedWorkspa
 
       const rows = await workspaceDataSource.query(
         `SELECT id, "${richTextField.name}" FROM "${schemaName}"."${computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom)}" WHERE "${richTextField.name}" IS NOT NULL`,
+        undefined, // parameters
+        undefined, // queryRunner
+        {
+          shouldBypassPermissionChecks: true,
+        },
       );
 
       this.logger.log(`Generating markdown for ${rows.length} records`);
@@ -251,6 +256,10 @@ export class MigrateRichTextContentPatchCommand extends ActiveOrSuspendedWorkspa
             await workspaceDataSource.query(
               `UPDATE "${schemaName}"."${computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom)}" SET "${richTextField.name}V2Blocknote" = $1, "${richTextField.name}V2Markdown" = $2 WHERE id = $3`,
               [blocknoteFieldValue, markdownFieldValue, row.id],
+              undefined, // queryRunner
+              {
+                shouldBypassPermissionChecks: true,
+              },
             );
           } catch (error) {
             this.logger.log(

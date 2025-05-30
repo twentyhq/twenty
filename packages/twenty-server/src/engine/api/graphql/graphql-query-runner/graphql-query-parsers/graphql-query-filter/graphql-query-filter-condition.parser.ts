@@ -1,13 +1,9 @@
-import {
-  Brackets,
-  NotBrackets,
-  SelectQueryBuilder,
-  WhereExpressionBuilder,
-} from 'typeorm';
+import { Brackets, NotBrackets, WhereExpressionBuilder } from 'typeorm';
 
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
+import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 
 import { GraphqlQueryFilterFieldParser } from './graphql-query-filter-field.parser';
 
@@ -30,11 +26,11 @@ export class GraphqlQueryFilterConditionParser {
 
   public parse(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    queryBuilder: SelectQueryBuilder<any>,
+    queryBuilder: WorkspaceSelectQueryBuilder<any>,
     objectNameSingular: string,
     filter: Partial<ObjectRecordFilter>,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ): SelectQueryBuilder<any> {
+  ): WorkspaceSelectQueryBuilder<any> {
     if (!filter || Object.keys(filter).length === 0) {
       return queryBuilder;
     }

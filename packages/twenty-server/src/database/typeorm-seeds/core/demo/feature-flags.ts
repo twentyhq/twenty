@@ -3,11 +3,11 @@ import { DataSource } from 'typeorm';
 const tableName = 'featureFlag';
 
 export const deleteFeatureFlags = async (
-  workspaceDataSource: DataSource,
+  dataSource: DataSource,
   schemaName: string,
   workspaceId: string,
 ) => {
-  await workspaceDataSource
+  await dataSource
     .createQueryBuilder()
     .delete()
     .from(`${schemaName}.${tableName}`)

@@ -271,6 +271,7 @@ export class RemoteServerService<T extends RemoteServerType> {
     const [parameters, rawQuery] =
       buildUpdateRemoteServerRawQuery(remoteServerToUpdate);
 
+    // TO DO: executeRawQuery is deprecated and will throw
     const updateResult = await this.workspaceDataSourceService.executeRawQuery(
       rawQuery,
       parameters,

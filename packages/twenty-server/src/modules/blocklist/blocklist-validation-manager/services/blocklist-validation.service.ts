@@ -8,10 +8,10 @@ import {
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { isDomain } from 'src/engine/utils/is-domain';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
-import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export type BlocklistItem = Omit<
@@ -28,8 +28,7 @@ export class BlocklistValidationService {
   constructor(
     @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
-    @InjectObjectMetadataRepository(WorkspaceMemberWorkspaceEntity)
-    private readonly workspaceMemberRepository: WorkspaceMemberRepository,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   public async validateBlocklistForCreateMany(
@@ -84,8 +83,15 @@ export class BlocklistValidationService {
     userId: string,
     workspaceId: string,
   ) {
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        WorkspaceMemberWorkspaceEntity,
+      );
     const currentWorkspaceMember =
-      await this.workspaceMemberRepository.getByIdOrFail(userId, workspaceId);
+      await workspaceMemberRepository.findOneByOrFail({
+        userId,
+      });
 
     const currentBlocklist =
       await this.blocklistRepository.getByWorkspaceMemberId(
@@ -126,8 +132,16 @@ export class BlocklistValidationService {
       return;
     }
 
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        WorkspaceMemberWorkspaceEntity,
+      );
+
     const currentWorkspaceMember =
-      await this.workspaceMemberRepository.getByIdOrFail(userId, workspaceId);
+      await workspaceMemberRepository.findOneByOrFail({
+        userId,
+      });
 
     const currentBlocklist =
       await this.blocklistRepository.getByWorkspaceMemberId(

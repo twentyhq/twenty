@@ -4,6 +4,10 @@ import { DataSource, EntityManager } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 
 @Injectable()
 export class WorkspaceDataSourceService {
@@ -99,24 +103,16 @@ export class WorkspaceDataSourceService {
   }
 
   public async executeRawQuery(
-    query: string,
+    _query: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    parameters: any[] = [],
-    workspaceId: string,
-    transactionManager?: EntityManager,
+    _parameters: any[] = [],
+    _workspaceId: string,
+    _transactionManager?: EntityManager,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
-    try {
-      if (transactionManager) {
-        return await transactionManager.query(query, parameters);
-      }
-      const dataSource = await this.connectToMainDataSource();
-
-      return await dataSource.query(query, parameters);
-    } catch (error) {
-      throw new Error(
-        `Error executing raw query for workspace ${workspaceId}: ${error.message}`,
-      );
-    }
+    throw new PermissionsException(
+      'Method not allowed as permissions are not handled at datasource level.',
+      PermissionsExceptionCode.METHOD_NOT_ALLOWED,
+    );
   }
 }
