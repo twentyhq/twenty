@@ -6,12 +6,14 @@ export const CHECKOUT_SESSION = gql`
     $successUrlPath: String
     $plan: BillingPlanKey!
     $requirePaymentMethod: Boolean!
+    $paymentProvider: BillingPaymentProviders
   ) {
     checkoutSession(
       recurringInterval: $recurringInterval
       successUrlPath: $successUrlPath
       plan: $plan
       requirePaymentMethod: $requirePaymentMethod
+      paymentProvider: $paymentProvider
     ) {
       url
     }
