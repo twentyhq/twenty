@@ -46,16 +46,19 @@ export const TabListDropdown = ({
       dropdownComponents={
         <DropdownContent>
           <DropdownMenuItemsContainer>
-            {hiddenTabs.map((tab) => (
-              <MenuItemSelect
-                key={tab.id}
-                text={tab.title}
-                LeftIcon={tab.Icon}
-                selected={tab.id === tabs.activeId}
-                onClick={() => onTabSelect(tab.id)}
-                disabled={tab.disabled ?? loading}
-              />
-            ))}
+            {hiddenTabs.map((tab) => {
+              const isDisabled = tab.disabled ?? loading;
+              return (
+                <MenuItemSelect
+                  key={tab.id}
+                  text={tab.title}
+                  LeftIcon={tab.Icon}
+                  selected={tab.id === tabs.activeId}
+                  onClick={isDisabled ? undefined : () => onTabSelect(tab.id)}
+                  disabled={isDisabled}
+                />
+              );
+            })}
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }
