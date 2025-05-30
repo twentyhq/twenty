@@ -19,6 +19,22 @@ export const SettingsAdminTabContent = () => {
       return <SettingsAdminConfigVariables />;
     case SETTINGS_ADMIN_TABS.HEALTH_STATUS:
       return <SettingsAdminHealthStatus />;
+    case SETTINGS_ADMIN_TABS.CHECK_1:
+      return <div>Check 1</div>;
+    case SETTINGS_ADMIN_TABS.CHECK_2:
+      return <div>Check 2</div>;
+    case SETTINGS_ADMIN_TABS.CHECK_3:
+      return <div>Check 3</div>;
+    case SETTINGS_ADMIN_TABS.CHECK_4:
+      return <div>Check 4</div>;
+    case SETTINGS_ADMIN_TABS.CHECK_5:
+      return <div>Check 5</div>;
+    case SETTINGS_ADMIN_TABS.CHECK_6:
+      return <div>Check 6</div>;
+    case SETTINGS_ADMIN_TABS.CHECK_7:
+      return <div>Check 7</div>;
+    case SETTINGS_ADMIN_TABS.CHECK_8:
+      return <div>Check 8</div>;
     default:
       return null;
   }

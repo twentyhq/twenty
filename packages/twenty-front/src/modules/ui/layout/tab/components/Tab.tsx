@@ -2,7 +2,7 @@ import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ReactElement } from 'react';
+import { ReactElement, forwardRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Pill } from 'twenty-ui/components';
 import { Avatar, IconComponent } from 'twenty-ui/display';
@@ -75,65 +75,73 @@ const StyledIconContainer = styled.div`
   justify-content: center;
 `;
 
-export const Tab = ({
-  id,
-  title,
-  Icon,
-  active = false,
-  onClick,
-  className,
-  disabled,
-  pill,
-  to,
-  logo,
-}: TabProps) => {
-  const theme = useTheme();
-  const { onClick: handleClick, onMouseDown: handleMouseDown } =
-    useMouseDownNavigation({
-      to,
+export const Tab = forwardRef<HTMLButtonElement, TabProps>(
+  (
+    {
+      id,
+      title,
+      Icon,
+      active = false,
       onClick,
+      className,
       disabled,
-    });
+      pill,
+      to,
+      logo,
+    },
+    ref,
+  ) => {
+    const theme = useTheme();
+    const { onClick: handleClick, onMouseDown: handleMouseDown } =
+      useMouseDownNavigation({
+        to,
+        onClick,
+        disabled,
+      });
 
-  const iconColor = active
-    ? theme.font.color.primary
-    : disabled
-      ? theme.font.color.light
-      : theme.font.color.secondary;
+    const iconColor = active
+      ? theme.font.color.primary
+      : disabled
+        ? theme.font.color.light
+        : theme.font.color.secondary;
 
-  return (
-    <StyledTab
-      onClick={handleClick}
-      onMouseDown={handleMouseDown}
-      active={active}
-      className={className}
-      disabled={disabled}
-      data-testid={'tab-' + id}
-      as={to ? Link : 'button'}
-      to={to}
-    >
-      <StyledHover>
-        <StyledIconContainer>
-          {logo && (
-            <Avatar
-              avatarUrl={logo}
-              size="md"
-              placeholder={title}
-              iconColor={iconColor}
-            />
-          )}
-          {Icon && (
-            <Avatar
-              Icon={Icon}
-              size="md"
-              placeholder={title}
-              iconColor={iconColor}
-            />
-          )}
-        </StyledIconContainer>
-        <EllipsisDisplay>{title}</EllipsisDisplay>
-        {pill && typeof pill === 'string' ? <Pill label={pill} /> : pill}
-      </StyledHover>
-    </StyledTab>
-  );
-};
+    return (
+      <StyledTab
+        ref={ref}
+        onClick={handleClick}
+        onMouseDown={handleMouseDown}
+        active={active}
+        className={className}
+        disabled={disabled}
+        data-testid={'tab-' + id}
+        as={to ? Link : 'button'}
+        to={to}
+      >
+        <StyledHover>
+          <StyledIconContainer>
+            {logo && (
+              <Avatar
+                avatarUrl={logo}
+                size="md"
+                placeholder={title}
+                iconColor={iconColor}
+              />
+            )}
+            {Icon && (
+              <Avatar
+                Icon={Icon}
+                size="md"
+                placeholder={title}
+                iconColor={iconColor}
+              />
+            )}
+          </StyledIconContainer>
+          <EllipsisDisplay>{title}</EllipsisDisplay>
+          {pill && typeof pill === 'string' ? <Pill label={pill} /> : pill}
+        </StyledHover>
+      </StyledTab>
+    );
+  },
+);
+
+Tab.displayName = 'Tab';

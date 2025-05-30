@@ -1,12 +1,18 @@
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab/components/TabListFromUrlOptionalEffect';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab/states/contexts/TabListComponentInstanceContext';
 import { LayoutCard } from '@/ui/layout/tab/types/LayoutCard';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { isFirstOverflowingTab } from '@/ui/layout/tab/utils/isFirstOverflowingTab';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import styled from '@emotion/styled';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { IconComponent } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { MenuItemSelect } from 'twenty-ui/navigation';
 import { Tab } from './Tab';
 
 export type SingleTabProps<T extends string = string> = {
@@ -39,6 +45,21 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
+const StyledTabContainer = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  overflow: hidden;
+  max-width: 100%;
+  flex: 1;
+  position: relative;
+`;
+
+const StyledOverflowButton = styled(Button)`
+  height: 28px;
+  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
+`;
+
 const StyledOuterContainer = styled.div`
   width: 100%;
 `;
@@ -58,11 +79,63 @@ export const TabList = ({
     componentInstanceId,
   );
 
+  const [tabContainerElement, setTabContainerElement] =
+    useState<HTMLDivElement | null>(null);
+  const [previousContainerWidth, setPreviousContainerWidth] = useState(
+    tabContainerElement?.clientWidth ?? 0,
+  );
+  const [firstHiddenTabIndex, setFirstHiddenTabIndex] = useState(
+    visibleTabs.length,
+  );
+
   const initialActiveTabId = activeTabId || visibleTabs[0]?.id || '';
+  const hiddenTabsCount = visibleTabs.length - firstHiddenTabIndex;
+  const hasHiddenTabs = hiddenTabsCount > 0;
+  const dropdownId = `tab-overflow-${componentInstanceId}`;
+
+  const { closeDropdown } = useDropdown(dropdownId);
+
+  const resetFirstHiddenTabIndex = useCallback(() => {
+    setFirstHiddenTabIndex(visibleTabs.length);
+  }, [visibleTabs.length]);
 
   useEffect(() => {
     setActiveTabId(initialActiveTabId);
   }, [initialActiveTabId, setActiveTabId]);
+
+  useEffect(() => {
+    resetFirstHiddenTabIndex();
+  }, [visibleTabs.length, resetFirstHiddenTabIndex]);
+
+  const handleTabSelect = useCallback(
+    (tabId: string) => {
+      setActiveTabId(tabId);
+    },
+    [setActiveTabId],
+  );
+
+  const handleDropdownClose = useCallback(() => {
+    if (tabContainerElement?.clientWidth !== previousContainerWidth) {
+      resetFirstHiddenTabIndex();
+      setPreviousContainerWidth(tabContainerElement?.clientWidth ?? 0);
+    }
+  }, [
+    tabContainerElement?.clientWidth,
+    previousContainerWidth,
+    resetFirstHiddenTabIndex,
+  ]);
+
+  const handleTabSelectFromDropdown = useCallback(
+    (tabId: string) => {
+      if (behaveAsLinks) {
+        window.location.hash = tabId;
+      } else {
+        handleTabSelect(tabId);
+      }
+      closeDropdown();
+    },
+    [behaveAsLinks, handleTabSelect, closeDropdown],
+  );
 
   if (visibleTabs.length <= 1) {
     return null;
@@ -77,15 +150,12 @@ export const TabList = ({
           isInRightDrawer={!!isInRightDrawer}
           tabListIds={tabs.map((tab) => tab.id)}
         />
-        <ScrollWrapper
-          defaultEnableYScroll={false}
-          componentInstanceId={`scroll-wrapper-tab-list-${componentInstanceId}`}
-        >
-          <StyledContainer className={className}>
-            {visibleTabs.map((tab) => (
+        <StyledContainer className={className}>
+          <StyledTabContainer ref={setTabContainerElement}>
+            {visibleTabs.slice(0, firstHiddenTabIndex).map((tab, index) => (
               <Tab
-                id={tab.id}
                 key={tab.id}
+                id={tab.id}
                 title={tab.title}
                 Icon={tab.Icon}
                 logo={tab.logo}
@@ -94,16 +164,56 @@ export const TabList = ({
                 pill={tab.pill}
                 to={behaveAsLinks ? `#${tab.id}` : undefined}
                 onClick={
-                  behaveAsLinks
-                    ? undefined
-                    : () => {
-                        setActiveTabId(tab.id);
-                      }
+                  behaveAsLinks ? undefined : () => handleTabSelect(tab.id)
                 }
+                ref={(tabElement: HTMLButtonElement | null) => {
+                  if (
+                    index > 0 &&
+                    isFirstOverflowingTab({
+                      containerElement: tabContainerElement,
+                      tabElement,
+                    })
+                  ) {
+                    setFirstHiddenTabIndex(index);
+                  }
+                }}
               />
             ))}
-          </StyledContainer>
-        </ScrollWrapper>
+          </StyledTabContainer>
+
+          {hasHiddenTabs && (
+            <Dropdown
+              dropdownId={dropdownId}
+              dropdownPlacement="bottom-end"
+              onClickOutside={handleDropdownClose}
+              dropdownOffset={{ x: 0, y: 8 }}
+              clickableComponent={
+                <StyledOverflowButton
+                  variant="tertiary"
+                  size="medium"
+                  title={`+${hiddenTabsCount} more`}
+                />
+              }
+              dropdownComponents={
+                <DropdownContent>
+                  <DropdownMenuItemsContainer>
+                    {visibleTabs.slice(firstHiddenTabIndex).map((tab) => (
+                      <MenuItemSelect
+                        key={tab.id}
+                        text={tab.title}
+                        LeftIcon={tab.Icon}
+                        selected={tab.id === activeTabId}
+                        onClick={() => handleTabSelectFromDropdown(tab.id)}
+                        disabled={tab.disabled ?? loading}
+                      />
+                    ))}
+                  </DropdownMenuItemsContainer>
+                </DropdownContent>
+              }
+              dropdownHotkeyScope={{ scope: dropdownId }}
+            />
+          )}
+        </StyledContainer>
       </StyledOuterContainer>
     </TabListComponentInstanceContext.Provider>
   );
