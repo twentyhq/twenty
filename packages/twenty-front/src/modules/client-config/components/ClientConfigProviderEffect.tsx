@@ -120,7 +120,6 @@ export const ClientConfigProviderEffect = () => {
       ...currentStatus,
       isErrored: false,
       error: undefined,
-      isLoadedOnce: true,
     }));
 
     setAuthProviders({
