@@ -73,10 +73,11 @@ export const RecordTableCellBaseContainer = ({
     fieldDefinition,
     isLabelIdentifier,
   );
-  const currentRecordId = isChipDisplay
-    ? recordId
-    : useRecordFieldValue<ObjectRecord | undefined>(recordId, fieldName)?.id;
-
+  const recordFieldValue = useRecordFieldValue<ObjectRecord | undefined>(
+    recordId,
+    fieldName,
+  );
+  const currentRecordId = isChipDisplay ? recordId : recordFieldValue?.id;
   const { onMoveHoverToCurrentCell, onCellMouseEnter } =
     useRecordTableBodyContextOrThrow();
 
@@ -111,9 +112,7 @@ export const RecordTableCellBaseContainer = ({
       borderColorBlue={theme.adaptiveColors.blue4}
       isReadOnly={isReadOnly ?? false}
       id={`record-table-cell-${cellPosition.column}-${cellPosition.row}`}
-      {...(!isReadOnly && {
-        ['data-record-id']: currentRecordId,
-      })}
+      data-record-id={!isReadOnly ? currentRecordId : undefined}
     >
       {children}
     </StyledBaseContainer>
