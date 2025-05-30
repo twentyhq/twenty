@@ -189,13 +189,17 @@ export const TabList = ({
           {hasHiddenTabs && (
             <TabListDropdown
               dropdownId={dropdownId}
-              handleDropdownClose={handleDropdownClose}
-              hiddenTabsCount={hiddenTabsCount}
-              isActiveTabHidden={isActiveTabHidden}
-              visibleTabs={visibleTabs}
-              firstHiddenTabIndex={firstHiddenTabIndex}
-              activeTabId={activeTabId}
-              handleTabSelectFromDropdown={handleTabSelectFromDropdown}
+              onClose={handleDropdownClose}
+              overflow={{
+                hiddenTabsCount,
+                isActiveTabHidden,
+                firstHiddenTabIndex,
+              }}
+              tabs={{
+                visible: visibleTabs,
+                activeId: activeTabId,
+              }}
+              onTabSelect={handleTabSelectFromDropdown}
               loading={loading}
             />
           )}
