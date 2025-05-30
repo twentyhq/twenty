@@ -2,9 +2,9 @@ import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { Avatar, IconChevronDown } from 'twenty-ui/display';
 import {
-    StyledTabHover,
-    StyledTabIconContainer,
-    StyledTabMoreButton,
+  StyledTabHover,
+  StyledTabIconContainer,
+  StyledTabMoreButton,
 } from './TabSharedStyles';
 
 export const TabMoreButton = ({

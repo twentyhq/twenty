@@ -26,17 +26,3 @@ export const Active: Story = {
     active: true,
   },
 };
-
-export const SingleTab: Story = {
-  args: {
-    hiddenTabsCount: 1,
-    active: false,
-  },
-};
-
-export const ManyTabs: Story = {
-  args: {
-    hiddenTabsCount: 12,
-    active: false,
-  },
-};

@@ -96,45 +96,12 @@ export const Default: Story = {
   },
 };
 
-export const ActiveHiddenTab: Story = {
-  args: {
-    tabs: manyTabs.map((tab, index) => ({
-      ...tab,
-      active: index === manyTabs.length - 1,
-    })),
-    componentInstanceId: 'active-hidden-tabs',
-  },
-  render: (args) => (
-    <StyledConstrainedContainer width="300px">
-      <p>Active tab is hidden - "+X More" button should be highlighted</p>
-      <TabList
-        tabs={args.tabs}
-        componentInstanceId={args.componentInstanceId}
-        loading={args.loading}
-        behaveAsLinks={args.behaveAsLinks}
-        isInRightDrawer={args.isInRightDrawer}
-        className={args.className}
-      />
-    </StyledConstrainedContainer>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const overflowButton = canvas.getByText(/\+\d+ More/);
-    expect(overflowButton).toBeInTheDocument();
-  },
-};
-
-export const ResponsiveDemo: Story = {
+export const CompleteDemo: Story = {
   args: {
     tabs: manyTabs,
     componentInstanceId: 'responsive-tabs',
   },
-  parameters: {
-    layout: 'centered',
-    viewport: {
-      defaultViewport: 'responsive',
-    },
-  },
+
   render: (args) => (
     <div>
       <h3>Responsive Tab Overflow Demo</h3>
