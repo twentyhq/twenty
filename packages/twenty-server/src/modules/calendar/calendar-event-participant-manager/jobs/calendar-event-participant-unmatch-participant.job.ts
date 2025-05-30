@@ -28,11 +28,11 @@ export class CalendarEventParticipantUnmatchParticipantJob {
   ): Promise<void> {
     const { email, personId, workspaceMemberId } = data;
 
-    await this.matchParticipantService.unmatchParticipants(
-      email,
-      'calendarEventParticipant',
+    await this.matchParticipantService.unmatchParticipants({
+      handle: email,
+      objectMetadataName: 'calendarEventParticipant',
       personId,
       workspaceMemberId,
-    );
+    });
   }
 }
