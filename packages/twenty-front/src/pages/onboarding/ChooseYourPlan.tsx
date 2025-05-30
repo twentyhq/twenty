@@ -169,6 +169,7 @@ export const ChooseYourPlan = () => {
     recurringInterval: billingCheckoutSession.interval,
     plan: billingCheckoutSession.plan,
     requirePaymentMethod: billingCheckoutSession.requirePaymentMethod,
+    paymentProvider: billingCheckoutSession.paymentProvider,
   });
 
   const handleTrialPeriodChange = (withCreditCard: boolean) => {
