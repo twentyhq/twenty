@@ -1,3 +1,4 @@
+import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState';
 import { clickOutsideListenerIsMouseDownInsideComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsMouseDownInsideComponentState';
 import { clickOutsideListenerMouseDownHappenedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerMouseDownHappenedComponentState';
@@ -90,8 +91,16 @@ export const useListenClickOutside = <T extends Element>({
         let isClickedOnExcluded = false;
         let currentElement: HTMLElement | null = clickedElement;
 
+        const lastRecordId = snapshot
+          .getLoadable(viewableRecordIdState)
+          .getValue();
+
         while (currentElement) {
           const currentDataAttributes = currentElement.dataset;
+
+          if (currentDataAttributes?.recordId === lastRecordId) {
+            return;
+          }
 
           const isGloballyExcluded =
             currentDataAttributes?.globallyPreventClickOutside === 'true';
