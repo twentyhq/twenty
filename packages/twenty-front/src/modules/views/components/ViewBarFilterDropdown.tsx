@@ -5,9 +5,11 @@ import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDrop
 
 import { OPERAND_DROPDOWN_CLICK_OUTSIDE_ID } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownOperandDropdown';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
+import { objectFilterDropdownSearchInputIsVisibleComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputIsVisibleComponentState';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewBarFilterDropdownContent } from '@/views/components/ViewBarFilterDropdownContent';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewBarFilterButton } from './ViewBarFilterButton';
@@ -20,6 +22,10 @@ export const ViewBarFilterDropdown = ({
   hotkeyScope,
 }: ViewBarFilterDropdownProps) => {
   const { resetFilterDropdown } = useResetFilterDropdown();
+  const setShowSearchInput = useSetRecoilComponentStateV2(
+    objectFilterDropdownSearchInputIsVisibleComponentState,
+    VIEW_BAR_FILTER_DROPDOWN_ID,
+  );
 
   const { removeRecordFilter } = useRemoveRecordFilter();
 
@@ -41,6 +47,7 @@ export const ViewBarFilterDropdown = ({
 
   const handleDropdownClose = () => {
     resetFilterDropdown();
+    setShowSearchInput(false);
   };
 
   return (
