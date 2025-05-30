@@ -37,15 +37,19 @@ export class MessageParticipantPersonListener {
     >,
   ) {
     for (const eventPayload of payload.events) {
+      const jobPromises: Promise<void>[] = [];
+
       if (isDefined(eventPayload.properties.after.emails?.primaryEmail)) {
-        await this.messageQueueService.add<MessageParticipantMatchParticipantJobData>(
-          MessageParticipantMatchParticipantJob.name,
-          {
-            workspaceId: payload.workspaceId,
-            email: eventPayload.properties.after.emails?.primaryEmail,
-            isPrimaryEmail: true,
-            personId: eventPayload.recordId,
-          },
+        jobPromises.push(
+          this.messageQueueService.add<MessageParticipantMatchParticipantJobData>(
+            MessageParticipantMatchParticipantJob.name,
+            {
+              workspaceId: payload.workspaceId,
+              email: eventPayload.properties.after.emails?.primaryEmail,
+              isPrimaryEmail: true,
+              personId: eventPayload.recordId,
+            },
+          ),
         );
       }
 
@@ -53,8 +57,8 @@ export class MessageParticipantPersonListener {
         eventPayload.properties.after.emails?.additionalEmails;
 
       if (Array.isArray(additionalEmails)) {
-        for (const email of additionalEmails) {
-          await this.messageQueueService.add<MessageParticipantMatchParticipantJobData>(
+        const additionalEmailPromises = additionalEmails.map((email) =>
+          this.messageQueueService.add<MessageParticipantMatchParticipantJobData>(
             MessageParticipantMatchParticipantJob.name,
             {
               workspaceId: payload.workspaceId,
@@ -62,9 +66,13 @@ export class MessageParticipantPersonListener {
               isPrimaryEmail: false,
               personId: eventPayload.recordId,
             },
-          );
-        }
+          ),
+        );
+
+        jobPromises.push(...additionalEmailPromises);
       }
+
+      await Promise.all(jobPromises);
     }
   }
 
@@ -85,27 +93,33 @@ export class MessageParticipantPersonListener {
           continue;
         }
 
+        const jobPromises: Promise<void>[] = [];
+
         if (hasPrimaryEmailChanged(eventPayload.properties.diff)) {
           if (eventPayload.properties.before.emails?.primaryEmail) {
-            await this.messageQueueService.add<MessageParticipantUnmatchParticipantJobData>(
-              MessageParticipantUnmatchParticipantJob.name,
-              {
-                workspaceId: payload.workspaceId,
-                email: eventPayload.properties.before.emails?.primaryEmail,
-                personId: eventPayload.recordId,
-              },
+            jobPromises.push(
+              this.messageQueueService.add<MessageParticipantUnmatchParticipantJobData>(
+                MessageParticipantUnmatchParticipantJob.name,
+                {
+                  workspaceId: payload.workspaceId,
+                  email: eventPayload.properties.before.emails?.primaryEmail,
+                  personId: eventPayload.recordId,
+                },
+              ),
             );
           }
 
           if (eventPayload.properties.after.emails?.primaryEmail) {
-            await this.messageQueueService.add<MessageParticipantMatchParticipantJobData>(
-              MessageParticipantMatchParticipantJob.name,
-              {
-                workspaceId: payload.workspaceId,
-                email: eventPayload.properties.after.emails?.primaryEmail,
-                isPrimaryEmail: true,
-                personId: eventPayload.recordId,
-              },
+            jobPromises.push(
+              this.messageQueueService.add<MessageParticipantMatchParticipantJobData>(
+                MessageParticipantMatchParticipantJob.name,
+                {
+                  workspaceId: payload.workspaceId,
+                  email: eventPayload.properties.after.emails?.primaryEmail,
+                  isPrimaryEmail: true,
+                  personId: eventPayload.recordId,
+                },
+              ),
             );
           }
         }
@@ -113,19 +127,19 @@ export class MessageParticipantPersonListener {
         const { addedAdditionalEmails, removedAdditionalEmails } =
           computeChangedAdditionalEmails(eventPayload.properties.diff);
 
-        for (const email of removedAdditionalEmails) {
-          await this.messageQueueService.add<MessageParticipantUnmatchParticipantJobData>(
+        const removedEmailPromises = removedAdditionalEmails.map((email) =>
+          this.messageQueueService.add<MessageParticipantUnmatchParticipantJobData>(
             MessageParticipantUnmatchParticipantJob.name,
             {
               workspaceId: payload.workspaceId,
               email: email,
               personId: eventPayload.recordId,
             },
-          );
-        }
+          ),
+        );
 
-        for (const email of addedAdditionalEmails) {
-          await this.messageQueueService.add<MessageParticipantMatchParticipantJobData>(
+        const addedEmailPromises = addedAdditionalEmails.map((email) =>
+          this.messageQueueService.add<MessageParticipantMatchParticipantJobData>(
             MessageParticipantMatchParticipantJob.name,
             {
               workspaceId: payload.workspaceId,
@@ -133,8 +147,12 @@ export class MessageParticipantPersonListener {
               isPrimaryEmail: false,
               personId: eventPayload.recordId,
             },
-          );
-        }
+          ),
+        );
+
+        jobPromises.push(...removedEmailPromises, ...addedEmailPromises);
+
+        await Promise.all(jobPromises);
       }
     }
   }
