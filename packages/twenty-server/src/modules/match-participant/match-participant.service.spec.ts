@@ -16,10 +16,26 @@ describe('MatchParticipantService', () => {
   let workspaceEventEmitter: WorkspaceEventEmitter;
   let scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory;
 
-  let mockMessageParticipantRepository: any;
-  let mockCalendarEventParticipantRepository: any;
-  let mockPersonRepository: any;
-  let mockWorkspaceMemberRepository: any;
+  let mockMessageParticipantRepository: {
+    find: jest.Mock;
+    update: jest.Mock;
+    createQueryBuilder: jest.Mock;
+    formatResult: jest.Mock;
+  };
+  let mockCalendarEventParticipantRepository: {
+    find: jest.Mock;
+    update: jest.Mock;
+    createQueryBuilder: jest.Mock;
+    formatResult: jest.Mock;
+  };
+  let mockPersonRepository: {
+    find: jest.Mock;
+    createQueryBuilder: jest.Mock;
+    formatResult: jest.Mock;
+  };
+  let mockWorkspaceMemberRepository: {
+    find: jest.Mock;
+  };
   let mockTransactionManager: WorkspaceEntityManager;
 
   const mockWorkspaceId = 'test-workspace-id';
