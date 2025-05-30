@@ -1,6 +1,6 @@
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
-export const findBestMatchingPersonByEmail = (
+export const findPersonByPrimaryOrAdditionalEmail = (
   people: PersonWorkspaceEntity[],
   email: string,
 ): PersonWorkspaceEntity | undefined => {

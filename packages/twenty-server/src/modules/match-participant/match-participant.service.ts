@@ -8,7 +8,7 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { buildPersonEmailQueryBuilder } from 'src/modules/match-participant/utils/build-person-email-query-builder.util';
-import { findBestMatchingPersonByEmail } from 'src/modules/match-participant/utils/find-best-matching-person-by-email';
+import { findPersonByPrimaryOrAdditionalEmail } from 'src/modules/match-participant/utils/find-person-by-primary-or-additional-email';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -93,7 +93,7 @@ export class MatchParticipantService<
     );
 
     for (const handle of uniqueParticipantsHandles) {
-      const person = findBestMatchingPersonByEmail(people, handle);
+      const person = findPersonByPrimaryOrAdditionalEmail(people, handle);
 
       const workspaceMember = workspaceMembers.find(
         (workspaceMember) => workspaceMember.userEmail === handle,
@@ -292,7 +292,10 @@ export class MatchParticipantService<
       const peopleToMatch = await personRepository.formatResult(rawPeople);
 
       if (peopleToMatch.length > 0) {
-        const bestMatch = findBestMatchingPersonByEmail(peopleToMatch, handle);
+        const bestMatch = findPersonByPrimaryOrAdditionalEmail(
+          peopleToMatch,
+          handle,
+        );
 
         if (bestMatch) {
           await participantRepository.update(

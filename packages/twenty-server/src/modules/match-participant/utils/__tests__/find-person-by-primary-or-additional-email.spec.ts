@@ -1,7 +1,7 @@
-import { findBestMatchingPersonByEmail } from 'src/modules/match-participant/utils/find-best-matching-person-by-email';
+import { findPersonByPrimaryOrAdditionalEmail } from 'src/modules/match-participant/utils/find-person-by-primary-or-additional-email';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
-describe('findBestMatchingPersonByEmail', () => {
+describe('findPersonByPrimaryOrAdditionalEmail', () => {
   const mockPeople = [
     {
       id: 'person-1',
@@ -30,7 +30,7 @@ describe('findBestMatchingPersonByEmail', () => {
   ] as PersonWorkspaceEntity[];
 
   it('should return person with matching primary email', () => {
-    const result = findBestMatchingPersonByEmail(
+    const result = findPersonByPrimaryOrAdditionalEmail(
       mockPeople,
       'test@example.com',
     );
@@ -39,7 +39,7 @@ describe('findBestMatchingPersonByEmail', () => {
   });
 
   it('should return person with matching additional email when no primary match exists', () => {
-    const result = findBestMatchingPersonByEmail(
+    const result = findPersonByPrimaryOrAdditionalEmail(
       mockPeople,
       'additional1@example.com',
     );
@@ -65,7 +65,7 @@ describe('findBestMatchingPersonByEmail', () => {
       },
     ] as PersonWorkspaceEntity[];
 
-    const result = findBestMatchingPersonByEmail(
+    const result = findPersonByPrimaryOrAdditionalEmail(
       peopleWithConflict,
       'conflict@example.com',
     );
@@ -74,7 +74,7 @@ describe('findBestMatchingPersonByEmail', () => {
   });
 
   it('should return undefined when no match is found', () => {
-    const result = findBestMatchingPersonByEmail(
+    const result = findPersonByPrimaryOrAdditionalEmail(
       mockPeople,
       'nonexistent@example.com',
     );
@@ -83,7 +83,7 @@ describe('findBestMatchingPersonByEmail', () => {
   });
 
   it('should return undefined when people array is empty', () => {
-    const result = findBestMatchingPersonByEmail([], 'test@example.com');
+    const result = findPersonByPrimaryOrAdditionalEmail([], 'test@example.com');
 
     expect(result).toBeUndefined();
   });
@@ -110,7 +110,7 @@ describe('findBestMatchingPersonByEmail', () => {
       },
     ] as PersonWorkspaceEntity[];
 
-    const result = findBestMatchingPersonByEmail(
+    const result = findPersonByPrimaryOrAdditionalEmail(
       peopleWithNullEmails,
       'test@example.com',
     );
@@ -136,7 +136,7 @@ describe('findBestMatchingPersonByEmail', () => {
       },
     ] as PersonWorkspaceEntity[];
 
-    const result = findBestMatchingPersonByEmail(
+    const result = findPersonByPrimaryOrAdditionalEmail(
       peopleWithEmptyAdditional,
       'test@example.com',
     );
@@ -145,7 +145,7 @@ describe('findBestMatchingPersonByEmail', () => {
   });
 
   it('should handle case sensitivity correctly', () => {
-    const result = findBestMatchingPersonByEmail(
+    const result = findPersonByPrimaryOrAdditionalEmail(
       mockPeople,
       'TEST@EXAMPLE.COM',
     );
@@ -171,7 +171,7 @@ describe('findBestMatchingPersonByEmail', () => {
       },
     ] as PersonWorkspaceEntity[];
 
-    const result = findBestMatchingPersonByEmail(
+    const result = findPersonByPrimaryOrAdditionalEmail(
       peopleWithInvalidAdditionalEmail,
       'test@example.com',
     );

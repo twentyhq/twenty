@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import compact from 'lodash.compact';
 import { Repository } from 'typeorm';
@@ -92,19 +93,21 @@ export class CreateCompanyAndContactService {
     );
 
     const alreadyCreatedContactEmails: string[] =
-      alreadyCreatedContacts?.reduce((acc: string[], { emails }) => {
-        if (emails?.primaryEmail !== '') {
-          acc.push(emails.primaryEmail.toLowerCase());
+      alreadyCreatedContacts?.reduce<string[]>((acc, { emails }) => {
+        const currentContactEmails: string[] = [];
+
+        if (isNonEmptyString(emails?.primaryEmail)) {
+          currentContactEmails.push(emails.primaryEmail.toLowerCase());
         }
         if (Array.isArray(emails?.additionalEmails)) {
-          acc.push(
+          currentContactEmails.push(
             ...emails.additionalEmails
-              .filter((email) => email !== '')
+              .filter(isNonEmptyString)
               .map((email) => email.toLowerCase()),
           );
         }
 
-        return acc;
+        return [...acc, ...currentContactEmails];
       }, []);
 
     const filteredContactsToCreate = uniqueContacts.filter(
