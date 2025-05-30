@@ -93,7 +93,10 @@ export class MatchParticipantService<
     );
 
     for (const handle of uniqueParticipantsHandles) {
-      const person = findPersonByPrimaryOrAdditionalEmail(people, handle);
+      const person = findPersonByPrimaryOrAdditionalEmail({
+        people,
+        email: handle,
+      });
 
       const workspaceMember = workspaceMembers.find(
         (workspaceMember) => workspaceMember.userEmail === handle,
@@ -292,10 +295,10 @@ export class MatchParticipantService<
       const peopleToMatch = await personRepository.formatResult(rawPeople);
 
       if (peopleToMatch.length > 0) {
-        const bestMatch = findPersonByPrimaryOrAdditionalEmail(
-          peopleToMatch,
-          handle,
-        );
+        const bestMatch = findPersonByPrimaryOrAdditionalEmail({
+          people: peopleToMatch,
+          email: handle,
+        });
 
         if (bestMatch) {
           await participantRepository.update(

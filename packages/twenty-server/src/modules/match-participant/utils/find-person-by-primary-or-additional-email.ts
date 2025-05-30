@@ -1,9 +1,12 @@
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
-export const findPersonByPrimaryOrAdditionalEmail = (
-  people: PersonWorkspaceEntity[],
-  email: string,
-): PersonWorkspaceEntity | undefined => {
+export const findPersonByPrimaryOrAdditionalEmail = ({
+  people,
+  email,
+}: {
+  people: PersonWorkspaceEntity[];
+  email: string;
+}): PersonWorkspaceEntity | undefined => {
   const lowercaseEmail = email.toLowerCase();
 
   const personWithPrimaryEmail = people.find(

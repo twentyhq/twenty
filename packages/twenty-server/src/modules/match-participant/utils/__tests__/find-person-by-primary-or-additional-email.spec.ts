@@ -30,19 +30,19 @@ describe('findPersonByPrimaryOrAdditionalEmail', () => {
   ] as PersonWorkspaceEntity[];
 
   it('should return person with matching primary email', () => {
-    const result = findPersonByPrimaryOrAdditionalEmail(
-      mockPeople,
-      'test@example.com',
-    );
+    const result = findPersonByPrimaryOrAdditionalEmail({
+      people: mockPeople,
+      email: 'test@example.com',
+    });
 
     expect(result).toEqual(mockPeople[2]);
   });
 
   it('should return person with matching additional email when no primary match exists', () => {
-    const result = findPersonByPrimaryOrAdditionalEmail(
-      mockPeople,
-      'additional1@example.com',
-    );
+    const result = findPersonByPrimaryOrAdditionalEmail({
+      people: mockPeople,
+      email: 'additional1@example.com',
+    });
 
     expect(result).toEqual(mockPeople[0]);
   });
@@ -65,25 +65,28 @@ describe('findPersonByPrimaryOrAdditionalEmail', () => {
       },
     ] as PersonWorkspaceEntity[];
 
-    const result = findPersonByPrimaryOrAdditionalEmail(
-      peopleWithConflict,
-      'conflict@example.com',
-    );
+    const result = findPersonByPrimaryOrAdditionalEmail({
+      people: peopleWithConflict,
+      email: 'conflict@example.com',
+    });
 
     expect(result).toEqual(peopleWithConflict[1]);
   });
 
   it('should return undefined when no match is found', () => {
-    const result = findPersonByPrimaryOrAdditionalEmail(
-      mockPeople,
-      'nonexistent@example.com',
-    );
+    const result = findPersonByPrimaryOrAdditionalEmail({
+      people: mockPeople,
+      email: 'nonexistent@example.com',
+    });
 
     expect(result).toBeUndefined();
   });
 
   it('should return undefined when people array is empty', () => {
-    const result = findPersonByPrimaryOrAdditionalEmail([], 'test@example.com');
+    const result = findPersonByPrimaryOrAdditionalEmail({
+      people: [],
+      email: 'test@example.com',
+    });
 
     expect(result).toBeUndefined();
   });
@@ -110,10 +113,10 @@ describe('findPersonByPrimaryOrAdditionalEmail', () => {
       },
     ] as PersonWorkspaceEntity[];
 
-    const result = findPersonByPrimaryOrAdditionalEmail(
-      peopleWithNullEmails,
-      'test@example.com',
-    );
+    const result = findPersonByPrimaryOrAdditionalEmail({
+      people: peopleWithNullEmails,
+      email: 'test@example.com',
+    });
 
     expect(result).toEqual(peopleWithNullEmails[1]);
   });
@@ -136,19 +139,19 @@ describe('findPersonByPrimaryOrAdditionalEmail', () => {
       },
     ] as PersonWorkspaceEntity[];
 
-    const result = findPersonByPrimaryOrAdditionalEmail(
-      peopleWithEmptyAdditional,
-      'test@example.com',
-    );
+    const result = findPersonByPrimaryOrAdditionalEmail({
+      people: peopleWithEmptyAdditional,
+      email: 'test@example.com',
+    });
 
     expect(result).toEqual(peopleWithEmptyAdditional[1]);
   });
 
   it('should handle case sensitivity correctly', () => {
-    const result = findPersonByPrimaryOrAdditionalEmail(
-      mockPeople,
-      'TEST@EXAMPLE.COM',
-    );
+    const result = findPersonByPrimaryOrAdditionalEmail({
+      people: mockPeople,
+      email: 'TEST@EXAMPLE.COM',
+    });
 
     expect(result).toEqual(mockPeople[2]);
   });
@@ -171,10 +174,10 @@ describe('findPersonByPrimaryOrAdditionalEmail', () => {
       },
     ] as PersonWorkspaceEntity[];
 
-    const result = findPersonByPrimaryOrAdditionalEmail(
-      peopleWithInvalidAdditionalEmail,
-      'test@example.com',
-    );
+    const result = findPersonByPrimaryOrAdditionalEmail({
+      people: peopleWithInvalidAdditionalEmail,
+      email: 'test@example.com',
+    });
 
     expect(result).toEqual(peopleWithInvalidAdditionalEmail[1]);
   });
