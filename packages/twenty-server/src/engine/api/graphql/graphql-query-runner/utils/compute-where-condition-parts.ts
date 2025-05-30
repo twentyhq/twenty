@@ -1,4 +1,3 @@
-import { FieldMetadataType } from 'twenty-shared/types';
 import { ObjectLiteral } from 'typeorm';
 
 import {
@@ -16,18 +15,14 @@ export const computeWhereConditionParts = ({
   objectNameSingular,
   key,
   value,
-  fieldMetadataType,
 }: {
   operator: string;
   objectNameSingular: string;
   key: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any;
-  fieldMetadataType?: FieldMetadataType;
 }): WhereConditionParts => {
   const uuid = Math.random().toString(36).slice(2, 7);
-
-  const isTSVectorField = fieldMetadataType === FieldMetadataType.TS_VECTOR;
 
   switch (operator) {
     case 'isEmptyArray':
@@ -96,28 +91,27 @@ export const computeWhereConditionParts = ({
         params: { [`${key}${uuid}`]: `${value}` },
       };
     case 'contains':
-      if (isTSVectorField) {
-        const tsQuery = value
-          .split(/\s+/)
-          .map((term: string) => `${term}:*`)
-          .join(' & ');
-
-        return {
-          sql: `(
-            "${objectNameSingular}"."${key}" @@ to_tsquery('simple', :${key}${uuid}Ts) OR
-            "${objectNameSingular}"."${key}"::text ILIKE :${key}${uuid}Like
-          )`,
-          params: {
-            [`${key}${uuid}Ts`]: tsQuery,
-            [`${key}${uuid}Like`]: `%${value}%`,
-          },
-        };
-      }
-
       return {
         sql: `"${objectNameSingular}"."${key}" @> ARRAY[:...${key}${uuid}]`,
         params: { [`${key}${uuid}`]: value },
       };
+    case 'search': {
+      const tsQuery = value
+        .split(/\s+/)
+        .map((term: string) => `${term}:*`)
+        .join(' & ');
+
+      return {
+        sql: `(
+          "${objectNameSingular}"."${key}" @@ to_tsquery('simple', :${key}${uuid}Ts) OR
+          "${objectNameSingular}"."${key}"::text ILIKE :${key}${uuid}Like
+        )`,
+        params: {
+          [`${key}${uuid}Ts`]: tsQuery,
+          [`${key}${uuid}Like`]: `%${value}%`,
+        },
+      };
+    }
     case 'notContains':
       return {
         sql: `NOT ("${objectNameSingular}"."${key}"::text[] && ARRAY[:...${key}${uuid}]::text[])`,

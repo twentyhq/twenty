@@ -1,4 +1,3 @@
-import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 import { WhereExpressionBuilder } from 'typeorm';
 
@@ -57,7 +56,6 @@ export class GraphqlQueryFilterFieldParser {
 
     if (
       ARRAY_OPERATORS.includes(operator) &&
-      fieldMetadata.type !== FieldMetadataType.TS_VECTOR &&
       (!Array.isArray(value) || value.length === 0)
     ) {
       throw new GraphqlQueryRunnerException(
@@ -71,7 +69,6 @@ export class GraphqlQueryFilterFieldParser {
       objectNameSingular,
       key,
       value,
-      fieldMetadataType: fieldMetadata.type,
     });
 
     if (isFirst) {
@@ -119,7 +116,6 @@ export class GraphqlQueryFilterFieldParser {
 
       if (
         ARRAY_OPERATORS.includes(operator) &&
-        fieldMetadata.type !== FieldMetadataType.TS_VECTOR &&
         (!Array.isArray(value) || value.length === 0)
       ) {
         throw new GraphqlQueryRunnerException(
@@ -132,7 +128,6 @@ export class GraphqlQueryFilterFieldParser {
         operator,
         objectNameSingular,
         key: fullFieldName,
-        fieldMetadataType: subFieldMetadata.type,
         value,
       });
 
