@@ -17,7 +17,7 @@ export const VerifyLoginTokenEffect = () => {
   const navigate = useNavigateApp();
   const { verifyLoginToken } = useVerifyLogin();
 
-  const { isLoaded: clientConfigLoaded } = useRecoilValue(
+  const { isSaved: clientConfigLoaded } = useRecoilValue(
     clientConfigApiStatusState,
   );
 
