@@ -1,7 +1,7 @@
 import {
   UPDATE_CREATE_ONE_FIELD_METADATA_SELECT_TEST_CASES,
   UpdateCreateFieldMetadataSelectTestCase,
-} from 'test/integration/metadata/suites/field-metadata/enum/field-metadata-select-and-multi-select-common-tests-cases';
+} from 'test/integration/metadata/suites/field-metadata/enum/common/field-metadata-select-and-multi-select-common-tests-cases';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import {
   LISTING_NAME_PLURAL,
