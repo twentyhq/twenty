@@ -1,16 +1,13 @@
-import { Details } from '@/chat/call-center/components/Details';
 import { TransferChatOptionsDropdown } from '@/chat/call-center/components/TransferChatOptionsDropdown';
 import { PANEL_CHAT_HEADER_MODAL_ID } from '@/chat/call-center/constants/PanelChatHeaderModalId';
 import { CallCenterContext } from '@/chat/call-center/context/CallCenterContext';
 import { useCommandMenuTicket } from '@/chat/call-center/hooks/useCommandMenuTicket';
 import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
-import { TicketDataType } from '@/chat/types/TicketDataType';
-import { isWhatsappDocument } from '@/chat/utils/isWhatsappDocument';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { Avatar, useIcons } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 
@@ -59,20 +56,10 @@ export const PaneChatHeader = () => {
   const { selectedChat, finalizeService } = useContext(
     CallCenterContext,
   ) as CallCenterContextType;
-  const [isDetailsOpen, setIsDetailsOpen] = useState<boolean>(false);
 
   const { toggleModal } = useModal();
 
   if (!selectedChat) return;
-
-  const userData: TicketDataType = {
-    name: selectedChat.client.name ? selectedChat.client.name : '',
-    phone: isWhatsappDocument(selectedChat) ? selectedChat.client.phone : '...',
-    email: 'email@example.com',
-    status: selectedChat.status,
-    sector: selectedChat.sector,
-    timeline: selectedChat.timeline,
-  };
 
   const IconX = getIcon('IconX');
   const IconDotsVertical = getIcon('IconDotsVertical');
@@ -113,12 +100,6 @@ export const PaneChatHeader = () => {
               <IconDotsVertical {...props} color={theme.font.color.inverted} />
             )}
           />
-          {isDetailsOpen && (
-            <Details
-              ticketData={userData}
-              setIsDetailsOpen={setIsDetailsOpen}
-            />
-          )}
         </StyledActionsContainer>
       </StyledChatHeader>
       <ConfirmationModal
