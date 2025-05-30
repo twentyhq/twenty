@@ -13,6 +13,7 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingPaymentProviders } from 'src/engine/core-modules/billing/enums/billing-payment-providers.enum';
 import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
 import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/services/stripe-checkout.service';
 import { BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
@@ -44,10 +45,17 @@ export class BillingPortalWorkspaceService {
     successUrlPath,
     plan,
     requirePaymentMethod,
+    paymentProvider,
   }: BillingPortalCheckoutSessionParameters): Promise<string> {
     const frontBaseUrl = this.domainManagerService.buildWorkspaceURL({
       workspace,
     });
+
+    if (paymentProvider === BillingPaymentProviders.Inter) {
+      //TODO: Call inter method to generate bolepix and sent through email
+      return `${frontBaseUrl.toString()}/plan-required/payment-success`;
+    }
+
     const cancelUrl = frontBaseUrl.toString();
 
     if (successUrlPath) {

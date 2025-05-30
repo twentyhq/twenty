@@ -10,6 +10,7 @@ import {
   IsString,
 } from 'class-validator';
 
+import { BillingPaymentProviders } from 'src/engine/core-modules/billing/enums/billing-payment-providers.enum';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 
@@ -34,4 +35,11 @@ export class BillingCheckoutSessionInput {
   @IsString()
   @IsOptional()
   successUrlPath?: string;
+
+  @Field(() => BillingPaymentProviders, {
+    defaultValue: BillingPaymentProviders.Stripe,
+  })
+  @IsEnum(BillingPaymentProviders)
+  @IsOptional()
+  paymentProvider: BillingPaymentProviders;
 }

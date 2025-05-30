@@ -79,6 +79,7 @@ export class BillingResolver {
       successUrlPath,
       plan,
       requirePaymentMethod,
+      paymentProvider,
     }: BillingCheckoutSessionInput,
     @AuthApiKey() apiKey?: string,
   ) {
@@ -106,6 +107,7 @@ export class BillingResolver {
       await this.billingPortalWorkspaceService.computeCheckoutSessionURL({
         ...checkoutSessionParams,
         billingPricesPerPlan,
+        paymentProvider,
       });
 
     return {
