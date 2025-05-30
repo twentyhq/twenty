@@ -18,11 +18,11 @@ export class EmailDriverFactory extends DriverFactoryBase<EmailDriverInterface> 
   protected buildConfigKey(): string {
     const driver = this.twentyConfigService.get('EMAIL_DRIVER');
 
-    if (driver === EmailDriver.Logger) {
+    if (driver === EmailDriver.LOGGER) {
       return 'logger';
     }
 
-    if (driver === EmailDriver.Smtp) {
+    if (driver === EmailDriver.SMTP) {
       const emailConfigHash = this.getConfigGroupHash(
         ConfigVariablesGroup.EmailSettings,
       );
@@ -37,10 +37,10 @@ export class EmailDriverFactory extends DriverFactoryBase<EmailDriverInterface> 
     const driver = this.twentyConfigService.get('EMAIL_DRIVER');
 
     switch (driver) {
-      case EmailDriver.Logger:
+      case EmailDriver.LOGGER:
         return new LoggerDriver();
 
-      case EmailDriver.Smtp: {
+      case EmailDriver.SMTP: {
         const host = this.twentyConfigService.get('EMAIL_SMTP_HOST');
         const port = this.twentyConfigService.get('EMAIL_SMTP_PORT');
         const user = this.twentyConfigService.get('EMAIL_SMTP_USER');

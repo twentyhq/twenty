@@ -206,7 +206,7 @@ export class PermissionsService {
 
     const isPermissionsV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsPermissionsV2Enabled,
+        FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
         workspaceId,
       );
 
@@ -234,7 +234,7 @@ export class PermissionsService {
   }): Promise<boolean> {
     const isPermissionsV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsPermissionsV2Enabled,
+        FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
         workspaceId,
       );
 
