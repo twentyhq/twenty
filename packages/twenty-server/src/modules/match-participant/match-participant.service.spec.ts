@@ -157,7 +157,7 @@ describe('MatchParticipantService', () => {
         id: 'person-2',
         emails: {
           primaryEmail: 'test-2@company.com',
-          additionalEmails: ['test-2@company.com'],
+          additionalEmails: ['test-2.alias@company.com'],
         },
       },
     ] as PersonWorkspaceEntity[];
@@ -351,7 +351,7 @@ describe('MatchParticipantService', () => {
           id: 'existing-person',
           emails: {
             primaryEmail: 'test-2@company.com',
-            additionalEmails: ['test-2@company.com'],
+            additionalEmails: ['test-2.alias@company.com'],
           },
         },
       },
