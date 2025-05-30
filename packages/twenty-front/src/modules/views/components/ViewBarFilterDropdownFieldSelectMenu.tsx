@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import React from 'react';
 
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 
@@ -12,7 +13,7 @@ import { useFilterDropdownSelectableFieldMetadataItems } from '@/object-record/o
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { ViewBarFilterDropdownAdvancedFilterButton } from '@/views/components/ViewBarFilterDropdownAdvancedFilterButton';
+import { ViewBarFilterDropdownBottomMenu } from '@/views/components/ViewBarFilterDropdownBottomMenu';
 import { ViewBarFilterDropdownFieldSelectMenuItem } from '@/views/components/ViewBarFilterDropdownFieldSelectMenuItem';
 import { useLingui } from '@lingui/react/macro';
 
@@ -99,7 +100,8 @@ export const ViewBarFilterDropdownFieldSelectMenu = () => {
           ))}
         </DropdownMenuItemsContainer>
       </SelectableList>
-      <ViewBarFilterDropdownAdvancedFilterButton />
+      <DropdownMenuSeparator />
+      <ViewBarFilterDropdownBottomMenu />
     </DropdownContent>
   );
 };

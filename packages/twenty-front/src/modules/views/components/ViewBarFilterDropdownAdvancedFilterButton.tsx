@@ -21,14 +21,6 @@ import { IconFilter } from 'twenty-ui/display';
 import { MenuItemLeftContent, StyledMenuItemBase } from 'twenty-ui/navigation';
 import { v4 } from 'uuid';
 
-export const StyledContainer = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(1)};
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
-`;
-
 export const StyledMenuItemSelect = styled(StyledMenuItemBase)`
   &:hover {
     background: ${({ theme }) => theme.background.transparent.light};
@@ -130,13 +122,11 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
   };
 
   return (
-    <StyledContainer>
-      <StyledMenuItemSelect onClick={handleClick}>
-        <MenuItemLeftContent LeftIcon={IconFilter} text={t`Advanced filter`} />
-        {advancedFilterQuerySubFilterCount > 0 && (
-          <StyledPill label={advancedFilterQuerySubFilterCount.toString()} />
-        )}
-      </StyledMenuItemSelect>
-    </StyledContainer>
+    <StyledMenuItemSelect onClick={handleClick}>
+      <MenuItemLeftContent LeftIcon={IconFilter} text={t`Advanced filter`} />
+      {advancedFilterQuerySubFilterCount > 0 && (
+        <StyledPill label={advancedFilterQuerySubFilterCount.toString()} />
+      )}
+    </StyledMenuItemSelect>
   );
 };
