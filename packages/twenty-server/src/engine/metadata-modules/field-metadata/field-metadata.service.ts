@@ -68,11 +68,14 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { ViewService } from 'src/modules/view/services/view.service';
-import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'src/utils/trim-and-remove-duplicated-whitespaces-from-object-string-properties';
 
 import { FieldMetadataValidationService } from './field-metadata-validation.service';
 import { FieldMetadataEntity } from './field-metadata.entity';
 
+import { FieldMetadataDefaultValueForAnyType } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
+import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'src/utils/trim-and-remove-duplicated-whitespaces-from-object-string-properties';
+import { trimAndRemoveDuplicatedWhitespacesFromString } from 'src/utils/trim-and-remove-duplicated-whitespaces-from-string';
 import { generateDefaultValue } from './utils/generate-default-value';
 import { generateRatingOptions } from './utils/generate-rating-optionts.util';
 
@@ -212,7 +215,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         : undefined;
       const defaultValueForUpdate =
         updatableFieldInput.defaultValue !== undefined
-          ? updatableFieldInput.defaultValue
+          ? this.prepareCustomFieldMetadataDefaultValue(
+              updatableFieldInput.defaultValue,
+            )
           : existingFieldMetadata.defaultValue;
 
       const fieldMetadataForUpdate = {
@@ -662,13 +667,15 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       }
     }
 
-    await this.fieldMetadataEnumValidationService.validateEnumFieldMetadataInput(
-      {
-        fieldMetadataInput,
-        fieldMetadataType,
-        existingFieldMetadata,
-      },
-    );
+    if (isEnumFieldMetadataType(fieldMetadataType)) {
+      await this.fieldMetadataEnumValidationService.validateEnumFieldMetadataInput(
+        {
+          fieldMetadataInput,
+          fieldMetadataType,
+          existingFieldMetadata,
+        },
+      );
+    }
 
     if (fieldMetadataInput.settings) {
       await this.fieldMetadataValidationService.validateSettingsOrThrow({
@@ -732,13 +739,28 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     };
   }
 
-  private prepareCustomFieldMetadata(fieldMetadataInput: CreateFieldInput) {
+  private prepareCustomFieldMetadataDefaultValue(
+    defaultValue: FieldMetadataDefaultValueForAnyType,
+  ) {
+    switch (typeof defaultValue) {
+      case 'string':
+        return trimAndRemoveDuplicatedWhitespacesFromString(defaultValue);
+      default:
+        return defaultValue;
+    }
+  }
+
+  private prepareCustomFieldMetadataForCreation(
+    fieldMetadataInput: CreateFieldInput,
+  ) {
     const options = fieldMetadataInput.options
       ? this.prepareCustomFieldMetadataOptions(fieldMetadataInput.options)
       : undefined;
-    const defaultValue =
-      fieldMetadataInput.defaultValue ??
-      generateDefaultValue(fieldMetadataInput.type);
+    const defaultValue = isDefined(fieldMetadataInput.defaultValue)
+      ? this.prepareCustomFieldMetadataDefaultValue(
+          fieldMetadataInput.defaultValue,
+        )
+      : generateDefaultValue(fieldMetadataInput.type);
 
     return {
       id: v4(),
@@ -787,7 +809,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     const fieldMetadataForCreate =
-      this.prepareCustomFieldMetadata(fieldMetadataInput);
+      this.prepareCustomFieldMetadataForCreation(fieldMetadataInput);
 
     await this.validateFieldMetadata({
       fieldMetadataType: fieldMetadataForCreate.type,

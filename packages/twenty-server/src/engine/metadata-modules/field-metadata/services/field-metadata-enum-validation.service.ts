@@ -2,27 +2,26 @@ import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, parseJson } from 'twenty-shared/utils';
 import { z } from 'zod';
 
-import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
-import { FieldMetadataDefaultValueString } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+import {
+  EnumFieldMetadataUnionType
+} from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import {
   beneathDatabaseIdentifierMinimumLength,
   exceedsDatabaseIdentifierMaximumLength,
 } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
 import { isSnakeCaseString } from 'src/utils/is-snake-case-string';
-import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'src/utils/trim-and-remove-duplicated-whitespaces-from-object-string-properties';
 
 type Validator<T> = { validator: (str: T) => boolean; message: string };
 
@@ -31,7 +30,7 @@ type FieldMetadataUpdateCreateInput = CreateFieldInput | UpdateFieldInput;
 type ValidateEnumFieldMetadataArgs = {
   existingFieldMetadata?: FieldMetadataEntity;
   fieldMetadataInput: FieldMetadataUpdateCreateInput;
-  fieldMetadataType: FieldMetadataType;
+  fieldMetadataType: EnumFieldMetadataUnionType;
 };
 
 const QUOTED_STRING_REGEX = /^['"](.*)['"]$/;
@@ -183,47 +182,52 @@ export class FieldMetadataEnumValidationService {
 
   private validateSelectDefaultValue(
     options: FieldMetadataOptions,
-    defaultValue: FieldMetadataDefaultValue,
+    defaultValue: unknown,
   ) {
-    if (!isDefined(defaultValue)) {
-      return;
-    }
-
-    const sanitizedValue =
-      trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
-        { value: defaultValue as string },
-        ['value'],
-      ).value;
-
-    const validators: Validator<string>[] = [
+    const validators: Validator<unknown>[] = [
       {
-        validator: (value) => options.every((option) => option.value !== value),
-        message: `Default value "${sanitizedValue}" must be one of the option values`,
+        validator: (value) => typeof value !== 'string',
+        message: 'Default value for select must be a string',
+      },
+      {
+        // TODO centralize this
+        validator: (value : string) => options.every((option) => option.value !== value.replace(QUOTED_STRING_REGEX, '$1')),
+        message: `Default value "${defaultValue}" must be one of the option values`,
       },
     ];
 
     validators.forEach((validator) =>
-      this.validatorRunner(sanitizedValue, validator),
+      this.validatorRunner(defaultValue, validator),
     );
   }
 
   private validateMultiSelectDefaultValue(
     options: FieldMetadataOptions,
-    defaulValue: FieldMetadataDefaultValueString['value'],
+    defaultValue: unknown,
   ) {
-    // TMP force cast should be fixed
-    const parsedDefaultValues: string[] = JSON.parse(defaulValue as string);
-
-    if (!Array.isArray(parsedDefaultValues)) {
+    if (typeof defaultValue !== 'string') {
       throw new FieldMetadataException(
-        'Default value for multi-select must be an array',
+        'Default value for multi-select must be a stringified array',
+        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      );
+    }
+
+    const parsedDefaultValues = defaultValue
+      ? parseJson<string[]>(defaultValue)
+      : null;
+
+    if (
+      !isDefined(parsedDefaultValues) ||
+      !Array.isArray(parsedDefaultValues)
+    ) {
+      throw new FieldMetadataException(
+        'Default value for multi-select must be an stringified array',
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
       );
     }
 
     const validators: Validator<string[]>[] = [
       {
-        // praise: nice
         validator: (values) => new Set(values).size !== values.length,
         message: 'Default values must be unique',
       },
@@ -247,10 +251,10 @@ export class FieldMetadataEnumValidationService {
     );
   }
 
-  private validateDefaultValueByType(
+  private validateFieldMetadataDefaultValue(
     fieldType: FieldMetadataType,
     options: FieldMetadataOptions,
-    defaultValue: FieldMetadataDefaultValueString['value'],
+    defaultValue: unknown,
   ) {
     switch (fieldType) {
       case FieldMetadataType.SELECT:
@@ -270,10 +274,6 @@ export class FieldMetadataEnumValidationService {
     fieldMetadataType,
     existingFieldMetadata,
   }: ValidateEnumFieldMetadataArgs) {
-    if (!isEnumFieldMetadataType(fieldMetadataType)) {
-      return;
-    }
-
     const isUpdate = isDefined(existingFieldMetadata);
     const shouldSkipFieldMetadataInputOptionsValidation =
       isUpdate && fieldMetadataInput.options === undefined;
@@ -293,10 +293,9 @@ export class FieldMetadataEnumValidationService {
         );
       }
 
-      this.validateDefaultValueByType(
+      this.validateFieldMetadataDefaultValue(
         fieldMetadataType,
         options,
-        // @ts-expect-error temporary fix, we gonna have to type the input default value
         fieldMetadataInput.defaultValue,
       );
     }
