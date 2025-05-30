@@ -1,7 +1,7 @@
 import { InMemoryCache, NormalizedCacheObject } from '@apollo/client';
 import { useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -27,11 +27,10 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const setCurrentUser = useSetRecoilState(currentUserState);
-  const setCurrentWorkspaceMember = useSetRecoilState(
+  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
     currentWorkspaceMemberState,
   );
+  const setCurrentUser = useSetRecoilState(currentUserState);
   const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
 
   const setWorkspaces = useSetRecoilState(workspacesState);
@@ -48,11 +47,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
           },
         },
       }),
-      headers: {
-        ...(currentWorkspace?.metadataVersion && {
-          'X-Schema-Version': `${currentWorkspace.metadataVersion}`,
-        }),
-      },
+
       defaultOptions: {
         watchQuery: {
           fetchPolicy: 'cache-and-network',
@@ -60,6 +55,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
       },
       connectToDevTools: process.env.IS_DEBUG_MODE === 'true',
       currentWorkspaceMember: currentWorkspaceMember,
+      currentWorkspace: currentWorkspace,
       onTokenPairChange: (tokenPair) => {
         setTokenPair(tokenPair);
       },
@@ -94,7 +90,6 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
     setCurrentWorkspaceMember,
     setCurrentWorkspace,
     setWorkspaces,
-    currentWorkspace?.metadataVersion,
     setPreviousUrl,
   ]);
 
@@ -103,6 +98,12 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
       apolloRef.current.updateWorkspaceMember(currentWorkspaceMember);
     }
   }, [currentWorkspaceMember]);
+
+  useUpdateEffect(() => {
+    if (isDefined(apolloRef.current)) {
+      apolloRef.current.updateCurrentWorkspace(currentWorkspace);
+    }
+  }, [currentWorkspace]);
 
   return apolloClient;
 };
