@@ -8,9 +8,6 @@ import {
   IconHome,
   IconMail,
   IconPhone,
-  IconPlus,
-  IconSearch,
-  IconSettings,
   IconUser,
 } from 'twenty-ui/display';
 import { ComponentWithRouterDecorator } from 'twenty-ui/testing';
@@ -46,14 +43,23 @@ const tabs = [
 ];
 
 const manyTabs = [
-  { id: 'general', title: 'General', Icon: IconSettings },
+  { id: 'general', title: 'General', logo: 'https://picsum.photos/200' },
   { id: 'contacts', title: 'Contacts', Icon: IconUser },
   { id: 'messages', title: 'Messages', Icon: IconMail },
   { id: 'calls', title: 'Calls', Icon: IconPhone },
   { id: 'calendar', title: 'Calendar', Icon: IconCalendar },
   { id: 'sales', title: 'Sales', Icon: IconHome, disabled: true },
-  { id: 'time', title: 'Time Tracking', Icon: IconSearch },
-  { id: 'activity', title: 'Activity', Icon: IconPlus, disabled: true },
+  {
+    id: 'time',
+    title: 'Time Tracking',
+    logo: 'https://picsum.photos/192/192',
+  },
+  {
+    id: 'activity',
+    title: 'Activity',
+    logo: 'https://twenty-front-screenshots.s3.eu-west-3.amazonaws.com/server-icon.png',
+    disabled: true,
+  },
   { id: 'favorites', title: 'Favorites', Icon: IconHeart },
   { id: 'reports', title: 'Reports', Icon: IconCheckbox },
 ];
@@ -133,7 +139,7 @@ export const ResponsiveDemo: Story = {
     <div>
       <h3>Responsive Tab Overflow Demo</h3>
       <StyledConstrainedContainer width="300px">
-        <strong>Narrow (300px) - Shows overflow</strong>
+        <strong>Narrow - Shows overflow</strong>
         <TabList
           tabs={args.tabs}
           componentInstanceId="responsive-tabs-narrow"
@@ -144,7 +150,7 @@ export const ResponsiveDemo: Story = {
         />
       </StyledConstrainedContainer>
       <StyledConstrainedContainer width="800px">
-        <strong>Wide (800px) - Shows most/all tabs</strong>
+        <strong>Wide - Shows most/all tabs</strong>
         <TabList
           tabs={args.tabs}
           componentInstanceId="responsive-tabs-wide"
@@ -155,7 +161,7 @@ export const ResponsiveDemo: Story = {
         />
       </StyledConstrainedContainer>
       <StyledConstrainedContainer width="1200px">
-        <strong>Extra Wide (1200px) - No overflow</strong>
+        <strong>Extra Wide - No overflow</strong>
         <TabList
           tabs={args.tabs}
           componentInstanceId="responsive-tabs-full"

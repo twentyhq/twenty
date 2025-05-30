@@ -122,7 +122,7 @@ export const Disabled: Story = {
 export const WithLogo: Story = {
   args: {
     title: 'Company',
-    logo: 'https://twenty-front-screenshots.s3.eu-west-3.amazonaws.com/server-icon.png',
+    logo: 'https://picsum.photos/192/192',
   },
   render: (args) => (
     <StyledTabContainer>
@@ -226,7 +226,7 @@ export const Catalog: CatalogStory<Story, typeof Tab> = {
                 return { Icon: IconSettings };
               case 'logo':
                 return {
-                  logo: 'https://twenty-front-screenshots.s3.eu-west-3.amazonaws.com/server-icon.png',
+                  logo: 'https://picsum.photos/192/192',
                   Icon: undefined,
                 };
               case 'pill':
