@@ -17,6 +17,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { IndexMetadataModule } from 'src/engine/metadata-modules/index-metadata/index-metadata.module';
 import { BeforeUpdateOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-update-one-object.hook';
 import { ObjectMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/object-metadata/interceptors/object-metadata-graphql-api-exception.interceptor';
+import { ObjectMetadataMapsService } from 'src/engine/metadata-modules/object-metadata/object-metadata-maps.service';
 import { ObjectMetadataResolver } from 'src/engine/metadata-modules/object-metadata/object-metadata.resolver';
 import { ObjectMetadataFieldRelationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-field-relation.service';
 import { ObjectMetadataMigrationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-migration.service';
@@ -30,6 +31,7 @@ import { SearchVectorModule } from 'src/engine/metadata-modules/search-vector/se
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
+import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
@@ -38,6 +40,8 @@ import { ObjectMetadataService } from './object-metadata.service';
 import { CreateObjectInput } from './dtos/create-object.input';
 import { ObjectMetadataDTO } from './dtos/object-metadata.dto';
 import { UpdateObjectPayload } from './dtos/update-object.input';
+
+// TODO there is an issue with the circular dependency between ObjectMetadataModule and SearchModule (or a missing dependency)
 
 @Module({
   imports: [
@@ -58,12 +62,14 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
         IndexMetadataModule,
         PermissionsModule,
         WorkspacePermissionsCacheModule,
+        WorkspaceCacheStorageModule,
       ],
       services: [
         ObjectMetadataService,
         ObjectMetadataMigrationService,
         ObjectMetadataFieldRelationService,
         ObjectMetadataRelatedRecordsService,
+        ObjectMetadataMapsService,
       ],
       resolvers: [
         {
@@ -92,10 +98,11 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
     }),
   ],
   providers: [
+    ObjectMetadataMapsService,
     ObjectMetadataService,
     ObjectMetadataResolver,
     BeforeUpdateOneObject,
   ],
-  exports: [ObjectMetadataService],
+  exports: [ObjectMetadataService, ObjectMetadataMapsService],
 })
 export class ObjectMetadataModule {}
