@@ -5,6 +5,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { useWebhookUpdateForm } from '@/settings/developers/hooks/useWebhookUpdateForm';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
@@ -101,7 +102,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
   ];
 
   if (loading || !formData) {
-    return <></>;
+    return <SettingsSkeletonLoader />;
   }
 
   const confirmationText = t`yes`;
@@ -115,7 +116,11 @@ export const SettingsDevelopersWebhooksDetail = () => {
           children: t`Workspace`,
           href: getSettingsPath(SettingsPath.Workspace),
         },
-        { children: t`Webhook` },
+        {
+          children: t`Webhooks`,
+          href: getSettingsPath(SettingsPath.Webhooks),
+        },
+        { children: title },
       ]}
     >
       <SettingsPageContainer>

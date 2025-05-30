@@ -66,7 +66,7 @@ export const SettingsApiKeys = () => {
                 title={t`Create API key`}
                 size="small"
                 variant="secondary"
-                to={getSettingsPath(SettingsPath.DevelopersNewApiKey)}
+                to={getSettingsPath(SettingsPath.NewApiKey)}
               />
             </StyledButtonContainer>
           </Section>

@@ -8,6 +8,7 @@ import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendEmailVerificationLinkEmail } from 'twenty-emails';
 import { APP_LOCALES } from 'twenty-shared/translations';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
@@ -45,6 +46,7 @@ export class EmailVerificationService {
       | WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType
       | undefined,
     locale: keyof typeof APP_LOCALES,
+    verifyEmailNextPath?: string,
   ) {
     if (!this.twentyConfigService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
       return { success: false };
@@ -55,7 +57,13 @@ export class EmailVerificationService {
 
     const linkPathnameAndSearchParams = {
       pathname: 'verify-email',
-      searchParams: { emailVerificationToken, email },
+      searchParams: {
+        emailVerificationToken,
+        email,
+        ...(isDefined(verifyEmailNextPath)
+          ? { nextPath: verifyEmailNextPath }
+          : {}),
+      },
     };
     const verificationLink = workspace
       ? this.domainManagerService.buildWorkspaceURL({

@@ -1,7 +1,7 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordGqlFieldsAggregate } from '@/object-record/graphql/types/RecordGqlFieldsAggregate';
 import { KanbanAggregateOperation } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -23,7 +23,7 @@ export const buildRecordGqlFieldsAggregateForView = ({
     if (
       isDefined(recordIndexKanbanAggregateOperation?.operation) &&
       recordIndexKanbanAggregateOperation.operation !==
-        AGGREGATE_OPERATIONS.count
+        AggregateOperations.COUNT
     ) {
       throw new Error(
         `No field found to compute aggregate operation ${recordIndexKanbanAggregateOperation.operation} on object ${objectMetadataItem.nameSingular}`,
@@ -31,7 +31,7 @@ export const buildRecordGqlFieldsAggregateForView = ({
     } else {
       recordGqlFieldsAggregate = {
         [FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION]: [
-          AGGREGATE_OPERATIONS.count,
+          AggregateOperations.COUNT,
         ],
       };
     }
@@ -39,7 +39,7 @@ export const buildRecordGqlFieldsAggregateForView = ({
     recordGqlFieldsAggregate = {
       [kanbanAggregateOperationFieldName]: [
         recordIndexKanbanAggregateOperation?.operation ??
-          AGGREGATE_OPERATIONS.count,
+          AggregateOperations.COUNT,
       ],
     };
   }

@@ -8,8 +8,8 @@ export const llmChatModelModuleFactory = (
   const driver = twentyConfigService.get('LLM_CHAT_MODEL_DRIVER');
 
   switch (driver) {
-    case LLMChatModelDriver.OpenAI: {
-      return { type: LLMChatModelDriver.OpenAI };
+    case LLMChatModelDriver.OPENAI: {
+      return { type: LLMChatModelDriver.OPENAI };
     }
     default:
     // `No LLM chat model driver (${driver})`);

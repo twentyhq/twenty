@@ -5,8 +5,8 @@ import { useEffect, useState } from 'react';
 
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
-import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/form-types/components/FormSingleRecordPicker';
+import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
@@ -18,7 +18,7 @@ import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 
 type WorkflowEditActionUpdateRecordProps = {
   action: WorkflowUpdateRecordAction;
@@ -38,24 +38,6 @@ type UpdateRecordFormData = {
   fieldsToUpdate: string[];
   [field: string]: unknown;
 };
-
-const AVAILABLE_FIELD_METADATA_TYPES = [
-  FieldMetadataType.TEXT,
-  FieldMetadataType.NUMBER,
-  FieldMetadataType.DATE,
-  FieldMetadataType.BOOLEAN,
-  FieldMetadataType.SELECT,
-  FieldMetadataType.MULTI_SELECT,
-  FieldMetadataType.EMAILS,
-  FieldMetadataType.LINKS,
-  FieldMetadataType.FULL_NAME,
-  FieldMetadataType.ADDRESS,
-  FieldMetadataType.PHONES,
-  FieldMetadataType.CURRENCY,
-  FieldMetadataType.DATE_TIME,
-  FieldMetadataType.RAW_JSON,
-  FieldMetadataType.UUID,
-];
 
 export const WorkflowEditActionUpdateRecord = ({
   action,
@@ -102,11 +84,8 @@ export const WorkflowEditActionUpdateRecord = ({
   const objectNameSingular = selectedObjectMetadataItem?.nameSingular;
 
   const inlineFieldMetadataItems = selectedObjectMetadataItem?.fields
-    .filter(
-      (fieldMetadataItem) =>
-        !fieldMetadataItem.isSystem &&
-        fieldMetadataItem.isActive &&
-        AVAILABLE_FIELD_METADATA_TYPES.includes(fieldMetadataItem.type),
+    .filter((fieldMetadataItem) =>
+      shouldDisplayFormField({ fieldMetadataItem, actionType: action.type }),
     )
     .sort((fieldMetadataItemA, fieldMetadataItemB) =>
       fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
@@ -222,22 +201,16 @@ export const WorkflowEditActionUpdateRecord = ({
           />
         )}
 
-        {isDefined(inlineFieldDefinitions) && (
-          <FormMultiSelectFieldInput
-            testId="workflow-edit-action-record-update-fields-to-update"
+        {isDefined(selectedObjectMetadataItem) && (
+          <WorkflowFieldsMultiSelect
             label="Fields to update"
-            defaultValue={formData.fieldsToUpdate}
-            options={inlineFieldDefinitions.map((field) => ({
-              label: field.label,
-              value: field.metadata.fieldName,
-              icon: getIcon(field.iconName),
-              color: 'gray',
-            }))}
-            onChange={(fieldsToUpdate) =>
+            placeholder="Select fields to update"
+            objectMetadataItem={selectedObjectMetadataItem}
+            handleFieldsChange={(fieldsToUpdate) =>
               handleFieldChange('fieldsToUpdate', fieldsToUpdate)
             }
-            placeholder="Select fields to update"
-            readonly={isFormDisabled}
+            readonly={isFormDisabled ?? false}
+            defaultFields={formData.fieldsToUpdate}
           />
         )}
 

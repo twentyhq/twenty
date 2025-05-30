@@ -123,7 +123,7 @@ export class UserResolver {
     ) {
       const isPermissionsV2Enabled =
         await this.featureFlagService.isFeatureEnabled(
-          FeatureFlagKey.IsPermissionsV2Enabled,
+          FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
           workspace.id,
         );
 
@@ -334,7 +334,7 @@ export class UserResolver {
   })
   supportUserHash(@Parent() parent: User): string | null {
     if (
-      this.twentyConfigService.get('SUPPORT_DRIVER') !== SupportDriver.Front
+      this.twentyConfigService.get('SUPPORT_DRIVER') !== SupportDriver.FRONT
     ) {
       return null;
     }

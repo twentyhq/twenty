@@ -15,7 +15,7 @@ const meta: Meta<PageDecoratorArgs> = {
   component: SettingsDevelopersApiKeyDetail,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/developers/api-keys/:apiKeyId',
+    routePath: '/settings/apis/:apiKeyId',
     routeParams: {
       ':apiKeyId': 'f7c6d736-8fcd-4e9c-ab99-28f6a9031570',
     },
@@ -50,14 +50,14 @@ export type Story = StoryObj<typeof SettingsDevelopersApiKeyDetail>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText('sfsfdsf API Key', undefined, { timeout: 3000 });
+    await canvas.findByText('sfsfdsf', undefined, { timeout: 3000 });
   },
 };
 
 export const RegenerateApiKey: Story = {
   play: async ({ step }) => {
     const canvas = within(document.body);
-    await canvas.findByText('sfsfdsf API Key', undefined, { timeout: 3000 });
+    await canvas.findByText('sfsfdsf', undefined, { timeout: 3000 });
 
     await userEvent.click(await canvas.findByText('Regenerate Key'));
 
@@ -85,7 +85,7 @@ export const RegenerateApiKey: Story = {
 export const DeleteApiKey: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText('sfsfdsf API Key', undefined, { timeout: 3000 });
+    await canvas.findByText('sfsfdsf', undefined, { timeout: 3000 });
 
     await userEvent.click(await canvas.findByText('Delete'));
 
