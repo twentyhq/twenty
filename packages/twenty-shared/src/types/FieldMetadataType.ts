@@ -24,3 +24,14 @@ export enum FieldMetadataType {
   ARRAY = 'ARRAY',
   TS_VECTOR = 'TS_VECTOR',
 }
+
+export const CompositeFieldMetadataType = [
+  FieldMetadataType.CURRENCY,
+  FieldMetadataType.EMAILS,
+  FieldMetadataType.PHONES,
+  FieldMetadataType.FULL_NAME,
+  FieldMetadataType.ADDRESS,
+  FieldMetadataType.RICH_TEXT_V2,
+  FieldMetadataType.ACTOR,
+  FieldMetadataType.LINKS,
+] as const;
