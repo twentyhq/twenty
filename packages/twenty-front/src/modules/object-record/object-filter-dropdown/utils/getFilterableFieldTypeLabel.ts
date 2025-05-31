@@ -4,5 +4,8 @@ import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/Set
 export const getFilterableFieldTypeLabel = (
   filterableFieldType: FilterableFieldType,
 ) => {
+  if (filterableFieldType === 'TS_VECTOR') {
+    return 'Search';
+  }
   return SETTINGS_FIELD_TYPE_CONFIGS[filterableFieldType].label;
 };
