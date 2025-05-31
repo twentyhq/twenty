@@ -66,6 +66,11 @@ export const buildValueFromFilter = ({
         filter.operand as (typeof FILTER_OPERANDS_MAP)['BOOLEAN'][number],
         filter.value,
       );
+    case 'TS_VECTOR':
+      return computeValueFromFilterTSVector(
+        filter.operand as (typeof FILTER_OPERANDS_MAP)['TS_VECTOR'][number],
+        filter.value,
+      );
     case 'ARRAY':
       return computeValueFromFilterArray(
         filter.operand as (typeof FILTER_OPERANDS_MAP)['ARRAY'][number],
@@ -292,6 +297,18 @@ const computeValueFromFilterRelation = (
     case ViewFilterOperand.IsNotEmpty: // todo
     case ViewFilterOperand.IsEmpty:
       return undefined;
+    default:
+      assertUnreachable(operand);
+  }
+};
+
+const computeValueFromFilterTSVector = (
+  operand: RecordFilterToRecordInputOperand<'TS_VECTOR'>,
+  value: string,
+) => {
+  switch (operand) {
+    case ViewFilterOperand.Search:
+      return value;
     default:
       assertUnreachable(operand);
   }

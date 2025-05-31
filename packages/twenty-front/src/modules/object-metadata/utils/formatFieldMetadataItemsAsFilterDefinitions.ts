@@ -49,6 +49,8 @@ export const getFilterTypeFromFieldType = (
       return 'RAW_JSON';
     case FieldMetadataType.BOOLEAN:
       return 'BOOLEAN';
+    case FieldMetadataType.TS_VECTOR:
+      return 'TS_VECTOR';
     default:
       return 'TEXT';
   }

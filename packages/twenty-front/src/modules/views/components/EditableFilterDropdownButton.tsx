@@ -7,9 +7,13 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { EditableFilterChip } from '@/views/components/EditableFilterChip';
 
 import { ObjectFilterDropdownFilterInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterInput';
+import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { ViewBarFilterDropdownSearchInput } from '@/views/components/ViewBarFilterDropdownSearchInput';
 import { useSetEditableFilterChipDropdownStates } from '@/views/hooks/useSetEditableFilterChipDropdownStates';
+import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 type EditableFilterDropdownButtonProps = {
   recordFilter: RecordFilter;
@@ -21,12 +25,17 @@ export const EditableFilterDropdownButton = ({
   hotkeyScope,
 }: EditableFilterDropdownButtonProps) => {
   const { closeDropdown } = useDropdown(recordFilter.id);
-
   const { removeRecordFilter } = useRemoveRecordFilter();
+  const { setEditableFilterChipDropdownStates } =
+    useSetEditableFilterChipDropdownStates();
+
+  const setSearchInputValue = useSetRecoilComponentStateV2(
+    objectFilterDropdownSearchInputComponentState,
+    recordFilter.id,
+  );
 
   const handleRemove = () => {
     closeDropdown();
-
     removeRecordFilter({ recordFilterId: recordFilter.id });
   };
 
@@ -38,10 +47,12 @@ export const EditableFilterDropdownButton = ({
     }
   }, [recordFilter, removeRecordFilter]);
 
-  const { setEditableFilterChipDropdownStates } =
-    useSetEditableFilterChipDropdownStates();
+  const isSearchFilter = recordFilter.operand === ViewFilterOperand.Search;
 
   const handleFilterChipClick = () => {
+    if (isSearchFilter) {
+      setSearchInputValue(recordFilter.value);
+    }
     setEditableFilterChipDropdownStates(recordFilter);
   };
 
@@ -57,7 +68,15 @@ export const EditableFilterDropdownButton = ({
           />
         }
         dropdownComponents={
-          <ObjectFilterDropdownFilterInput filterDropdownId={recordFilter.id} />
+          isSearchFilter ? (
+            <ViewBarFilterDropdownSearchInput
+              filterDropdownId={recordFilter.id}
+            />
+          ) : (
+            <ObjectFilterDropdownFilterInput
+              filterDropdownId={recordFilter.id}
+            />
+          )
         }
         dropdownHotkeyScope={hotkeyScope}
         dropdownOffset={{ y: 8, x: 0 }}

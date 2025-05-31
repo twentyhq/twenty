@@ -21,6 +21,7 @@ import { ViewBarRecordFilterEffect } from '@/views/components/ViewBarRecordFilte
 import { ViewBarRecordFilterGroupEffect } from '@/views/components/ViewBarRecordFilterGroupEffect';
 import { ViewBarRecordSortEffect } from '@/views/components/ViewBarRecordSortEffect';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
+import { useViewBarFilterHotKeys } from '../hooks/useViewBarFilterHotKeys';
 import { UpdateViewButtonGroup } from './UpdateViewButtonGroup';
 import { ViewBarDetails } from './ViewBarDetails';
 
@@ -38,6 +39,8 @@ export const ViewBar = ({
   const { objectNamePlural } = useParams();
 
   const loading = useIsPrefetchLoading();
+
+  useViewBarFilterHotKeys();
 
   if (!objectNamePlural) {
     return;

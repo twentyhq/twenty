@@ -4,6 +4,7 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
 
 type WhereConditionParts = {
   sql: string;
@@ -96,10 +97,7 @@ export const computeWhereConditionParts = ({
         params: { [`${key}${uuid}`]: value },
       };
     case 'search': {
-      const tsQuery = value
-        .split(/\s+/)
-        .map((term: string) => `${term}:*`)
-        .join(' & ');
+      const tsQuery = formatSearchTerms(value, 'and');
 
       return {
         sql: `(

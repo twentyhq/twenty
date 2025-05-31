@@ -142,6 +142,10 @@ export type RichTextV2Filter = {
   markdown?: RichTextV2LeafFilter;
 };
 
+export type TSVectorFilter = {
+  search: string;
+};
+
 export type LeafFilter =
   | UUIDFilter
   | StringFilter
@@ -158,6 +162,7 @@ export type LeafFilter =
   | ArrayFilter
   | RawJsonFilter
   | RichTextV2Filter
+  | TSVectorFilter
   | undefined;
 
 export type AndObjectRecordFilter = {
