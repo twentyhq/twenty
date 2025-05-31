@@ -8,6 +8,7 @@ import { useSearchFilter } from '@/views/hooks/useSearchFilter';
 
 const StyledSearchText = styled.span`
   color: ${({ theme }) => theme.font.color.light};
+  margin-left: ${({ theme }) => theme.spacing(1)};
 `;
 
 export const ViewBarFilterDropdownSearchButton = () => {
@@ -35,7 +36,7 @@ export const ViewBarFilterDropdownSearchButton = () => {
           <>
             {t`Search`}
             {searchInputValue && (
-              <StyledSearchText>{t` · ${searchInputValue}`}</StyledSearchText>
+              <StyledSearchText>{t`· ${searchInputValue}`}</StyledSearchText>
             )}
           </>
         }
