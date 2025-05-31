@@ -14,7 +14,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-export const ObjectFilterDropdownSearchInput = () => {
+export const ViewBarFilterDropdownSearchInput = () => {
   const { t } = useLingui();
   const { closeDropdown } = useDropdown(VIEW_BAR_FILTER_DROPDOWN_ID);
   const [searchValue, setSearchValue] = useRecoilComponentStateV2(
