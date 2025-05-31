@@ -10,16 +10,13 @@ import { CardType } from '@/object-record/record-show/types/CardType';
 import { ListenRecordUpdatesEffect } from '@/subscription/components/ListenUpdatesEffect';
 import { ShowPageActivityContainer } from '@/ui/layout/show-page/components/ShowPageActivityContainer';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
-import { WorkflowRunVisualizer } from '@/workflow/workflow-diagram/components/WorkflowRunVisualizer';
 import { WorkflowRunVisualizerEffect } from '@/workflow/workflow-diagram/components/WorkflowRunVisualizerEffect';
-import { WorkflowVersionVisualizer } from '@/workflow/workflow-diagram/components/WorkflowVersionVisualizer';
 import { WorkflowVersionVisualizerEffect } from '@/workflow/workflow-diagram/components/WorkflowVersionVisualizerEffect';
-import { WorkflowVisualizer } from '@/workflow/workflow-diagram/components/WorkflowVisualizer';
 import { WorkflowVisualizerEffect } from '@/workflow/workflow-diagram/components/WorkflowVisualizerEffect';
 import { WorkflowRunVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowRunVisualizerComponentInstanceContext';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import styled from '@emotion/styled';
-import { useId } from 'react';
+import { lazy, Suspense, useId } from 'react';
 
 const StyledGreyBox = styled.div<{ isInRightDrawer?: boolean }>`
   background: ${({ theme, isInRightDrawer }) =>
@@ -43,6 +40,30 @@ type CardComponentProps = {
 };
 
 type CardComponentType = (props: CardComponentProps) => JSX.Element | null;
+
+const WorkflowVisualizer = lazy(() =>
+  import('@/workflow/workflow-diagram/components/WorkflowVisualizer').then(
+    (module) => ({
+      default: module.WorkflowVisualizer,
+    }),
+  ),
+);
+
+const WorkflowVersionVisualizer = lazy(() =>
+  import(
+    '@/workflow/workflow-diagram/components/WorkflowVersionVisualizer'
+  ).then((module) => ({
+    default: module.WorkflowVersionVisualizer,
+  })),
+);
+
+const WorkflowRunVisualizer = lazy(() =>
+  import('@/workflow/workflow-diagram/components/WorkflowRunVisualizer').then(
+    (module) => ({
+      default: module.WorkflowRunVisualizer,
+    }),
+  ),
+);
 
 export const CardComponents: Record<CardType, CardComponentType> = {
   [CardType.TimelineCard]: ({ targetableObject, isInRightDrawer }) => (
@@ -95,7 +116,9 @@ export const CardComponents: Record<CardType, CardComponentType> = {
         }}
       >
         <WorkflowVisualizerEffect workflowId={targetableObject.id} />
-        <WorkflowVisualizer workflowId={targetableObject.id} />
+        <Suspense fallback={<div>Loading workflow...</div>}>
+          <WorkflowVisualizer workflowId={targetableObject.id} />
+        </Suspense>
       </WorkflowVisualizerComponentInstanceContext.Provider>
     );
   },
@@ -112,7 +135,9 @@ export const CardComponents: Record<CardType, CardComponentType> = {
         <WorkflowVersionVisualizerEffect
           workflowVersionId={targetableObject.id}
         />
-        <WorkflowVersionVisualizer workflowVersionId={targetableObject.id} />
+        <Suspense fallback={<div>Loading workflow version...</div>}>
+          <WorkflowVersionVisualizer workflowVersionId={targetableObject.id} />
+        </Suspense>
       </WorkflowVisualizerComponentInstanceContext.Provider>
     );
   },
@@ -139,7 +164,9 @@ export const CardComponents: Record<CardType, CardComponentType> = {
             recordId={targetableObject.id}
             listenedFields={['status', 'output']}
           />
-          <WorkflowRunVisualizer workflowRunId={targetableObject.id} />
+          <Suspense fallback={<div>Loading workflow run...</div>}>
+            <WorkflowRunVisualizer workflowRunId={targetableObject.id} />
+          </Suspense>
         </WorkflowRunVisualizerComponentInstanceContext.Provider>
       </WorkflowVisualizerComponentInstanceContext.Provider>
     );

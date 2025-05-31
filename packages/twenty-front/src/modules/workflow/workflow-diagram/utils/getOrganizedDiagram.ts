@@ -1,13 +1,10 @@
 import { WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import Dagre from '@dagrejs/dagre';
 
-export const getOrganizedDiagram = async (
+export const getOrganizedDiagram = (
   diagram: WorkflowDiagram,
-): Promise<WorkflowDiagram> => {
-  const Dagre = await import('@dagrejs/dagre');
-
-  const graph = new Dagre.default.graphlib.Graph().setDefaultEdgeLabel(
-    () => ({}),
-  );
+): WorkflowDiagram => {
+  const graph = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
   graph.setGraph({ rankdir: 'TB' });
 
   const biggestNodeWidth = diagram.nodes.reduce(
@@ -23,7 +20,7 @@ export const getOrganizedDiagram = async (
     }),
   );
 
-  Dagre.default.layout(graph);
+  Dagre.layout(graph);
 
   return {
     nodes: diagram.nodes.map((node) => {
