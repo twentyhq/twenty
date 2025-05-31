@@ -14,8 +14,8 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+// TODO centralize this constant
 const fieldMetadataEnumTypes: EnumFieldMetadataUnionType[] = [
-  //   FieldMetadataType.RATING,
   FieldMetadataType.MULTI_SELECT,
   FieldMetadataType.SELECT,
 ];
