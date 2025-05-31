@@ -11,14 +11,20 @@ import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useLingui } from '@lingui/react/macro';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { isDefined } from 'twenty-shared/utils';
 
-export const ViewBarFilterDropdownSearchInput = () => {
+export const ViewBarFilterDropdownSearchInput = ({
+  filterDropdownId,
+}: {
+  filterDropdownId: string;
+}) => {
   const { t } = useLingui();
-  const { closeDropdown } = useDropdown(VIEW_BAR_FILTER_DROPDOWN_ID);
+  const { closeDropdown, isDropdownOpen } = useDropdown(filterDropdownId);
   const [searchValue, setSearchValue] = useRecoilComponentStateV2(
     objectFilterDropdownSearchInputComponentState,
+    filterDropdownId || VIEW_BAR_FILTER_DROPDOWN_ID,
   );
   const { upsertRecordFilter } = useUpsertRecordFilter();
   const { removeRecordFilter } = useRemoveRecordFilter();
@@ -32,17 +38,19 @@ export const ViewBarFilterDropdownSearchInput = () => {
     (field) => field.type === 'TS_VECTOR' && field.name === 'searchVector',
   );
 
+  const handleDropdownClose = useCallback(() => {
+    if (!searchValue && isDefined(searchVectorField)) {
+      removeRecordFilter({
+        recordFilterId: `search-${searchVectorField.id}`,
+      });
+    }
+  }, [searchValue, searchVectorField, removeRecordFilter]);
+
   useEffect(() => {
     if (!searchVectorField) {
       return;
     }
 
-    if (!searchValue) {
-      removeRecordFilter({
-        recordFilterId: `search-${searchVectorField.id}`,
-      });
-      return;
-    }
     upsertRecordFilter({
       id: `search-${searchVectorField.id}`,
       fieldMetadataId: searchVectorField.id,
@@ -52,7 +60,13 @@ export const ViewBarFilterDropdownSearchInput = () => {
       operand: ViewFilterOperand.Search,
       label: 'Search',
     });
-  }, [searchValue, searchVectorField, upsertRecordFilter, removeRecordFilter]);
+  }, [searchValue, searchVectorField, upsertRecordFilter]);
+
+  useEffect(() => {
+    if (!isDropdownOpen) {
+      handleDropdownClose();
+    }
+  }, [isDropdownOpen, handleDropdownClose]);
 
   return (
     <DropdownContent widthInPixels={GenericDropdownContentWidth.Medium}>
@@ -63,7 +77,9 @@ export const ViewBarFilterDropdownSearchInput = () => {
         placeholder={t`Search`}
         onChange={(e) => setSearchValue(e.target.value)}
         onKeyDown={(e) => {
-          if (e.key === 'Escape') {
+          const shouldCloseDropdown =
+            e.key === 'Escape' && filterDropdownId !== undefined;
+          if (shouldCloseDropdown) {
             closeDropdown();
           }
         }}

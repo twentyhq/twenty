@@ -22,7 +22,9 @@ export const ViewBarFilterDropdownContent = () => {
   return (
     <>
       {showSearchInput ? (
-        <ViewBarFilterDropdownSearchInput />
+        <ViewBarFilterDropdownSearchInput
+          filterDropdownId={VIEW_BAR_FILTER_DROPDOWN_ID}
+        />
       ) : shouldShowFilterInput ? (
         <ObjectFilterDropdownFilterInput
           filterDropdownId={VIEW_BAR_FILTER_DROPDOWN_ID}
