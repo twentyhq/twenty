@@ -176,6 +176,12 @@ export type BillingMeteredProductUsageOutput = {
   usageQuantity: Scalars['Float'];
 };
 
+/** The different billing payment providers available */
+export enum BillingPaymentProviders {
+  Inter = 'Inter',
+  Stripe = 'Stripe'
+}
+
 /** The different billing plans available */
 export enum BillingPlanKey {
   ENTERPRISE = 'ENTERPRISE',
@@ -1272,6 +1278,7 @@ export type MutationAuthorizeAppArgs = {
 
 
 export type MutationCheckoutSessionArgs = {
+  paymentProvider?: BillingPaymentProviders;
   plan?: BillingPlanKey;
   recurringInterval: SubscriptionInterval;
   requirePaymentMethod?: Scalars['Boolean'];
@@ -1947,7 +1954,6 @@ export type OnDbEventInput = {
 export enum OnboardingStatus {
   COMPLETED = 'COMPLETED',
   INVITE_TEAM = 'INVITE_TEAM',
-  PAYMENT_REQUIRED = 'PAYMENT_REQUIRED',
   PLAN_REQUIRED = 'PLAN_REQUIRED',
   PROFILE_CREATION = 'PROFILE_CREATION',
   SYNC_EMAIL = 'SYNC_EMAIL',
@@ -3672,6 +3678,7 @@ export type CheckoutSessionMutationVariables = Exact<{
   successUrlPath?: InputMaybe<Scalars['String']>;
   plan: BillingPlanKey;
   requirePaymentMethod: Scalars['Boolean'];
+  paymentProvider?: InputMaybe<BillingPaymentProviders>;
 }>;
 
 
@@ -5685,12 +5692,13 @@ export type BillingPortalSessionQueryHookResult = ReturnType<typeof useBillingPo
 export type BillingPortalSessionLazyQueryHookResult = ReturnType<typeof useBillingPortalSessionLazyQuery>;
 export type BillingPortalSessionQueryResult = Apollo.QueryResult<BillingPortalSessionQuery, BillingPortalSessionQueryVariables>;
 export const CheckoutSessionDocument = gql`
-    mutation CheckoutSession($recurringInterval: SubscriptionInterval!, $successUrlPath: String, $plan: BillingPlanKey!, $requirePaymentMethod: Boolean!) {
+    mutation CheckoutSession($recurringInterval: SubscriptionInterval!, $successUrlPath: String, $plan: BillingPlanKey!, $requirePaymentMethod: Boolean!, $paymentProvider: BillingPaymentProviders) {
   checkoutSession(
     recurringInterval: $recurringInterval
     successUrlPath: $successUrlPath
     plan: $plan
     requirePaymentMethod: $requirePaymentMethod
+    paymentProvider: $paymentProvider
   ) {
     url
   }
@@ -5715,6 +5723,7 @@ export type CheckoutSessionMutationFn = Apollo.MutationFunction<CheckoutSessionM
  *      successUrlPath: // value for 'successUrlPath'
  *      plan: // value for 'plan'
  *      requirePaymentMethod: // value for 'requirePaymentMethod'
+ *      paymentProvider: // value for 'paymentProvider'
  *   },
  * });
  */
