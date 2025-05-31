@@ -760,3 +760,14 @@ exports[`Create field metadata SELECT tests suite Create should fail with undefi
   },
 ]
 `;
+
+exports[`Create field metadata SELECT tests suite Create should fail with undefined options 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+    },
+    "message": "Options are required for enum fields",
+  },
+]
+`;
