@@ -1,4 +1,4 @@
-import { SuggestionMenuProps } from '@blocknote/react';
+import type { SuggestionMenuProps } from '@blocknote/react';
 import styled from '@emotion/styled';
 
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';

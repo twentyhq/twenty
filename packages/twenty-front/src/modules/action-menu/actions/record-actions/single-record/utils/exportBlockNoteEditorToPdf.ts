@@ -1,4 +1,4 @@
-import { BlockNoteEditor } from '@blocknote/core';
+import { BlockNoteEditor, PartialBlock } from '@blocknote/core';
 import {
   PDFExporter,
   pdfDefaultSchemaMappings,
@@ -7,9 +7,13 @@ import { pdf } from '@react-pdf/renderer';
 import { saveAs } from 'file-saver';
 
 export const exportBlockNoteEditorToPdf = async (
-  editor: BlockNoteEditor,
+  parsedBody: PartialBlock[],
   filename: string,
 ) => {
+  const editor = BlockNoteEditor.create({
+    initialContent: parsedBody,
+  });
+
   const exporter = new PDFExporter(editor.schema, pdfDefaultSchemaMappings);
 
   const pdfDocument = await exporter.toReactPDFDocument(editor.document);

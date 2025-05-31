@@ -1,23 +1,23 @@
 import { getFunctionInputFromSourceCode } from '@/serverless-functions/utils/getFunctionInputFromSourceCode';
 
 describe('getFunctionInputFromSourceCode', () => {
-  it('should return empty input if not parameter', () => {
+  it('should return empty input if not parameter', async () => {
     const fileContent = 'function testFunction() { return }';
-    const result = getFunctionInputFromSourceCode(fileContent);
+    const result = await getFunctionInputFromSourceCode(fileContent);
     expect(result).toEqual({});
   });
-  it('should return first input if multiple parameters', () => {
+  it('should return first input if multiple parameters', async () => {
     const fileContent =
       'function testFunction(params1: {}, params2: {}) { return }';
-    const result = getFunctionInputFromSourceCode(fileContent);
+    const result = await getFunctionInputFromSourceCode(fileContent);
     expect(result).toEqual({});
   });
-  it('should return empty input if wrong parameter', () => {
+  it('should return empty input if wrong parameter', async () => {
     const fileContent = 'function testFunction(params: string) { return }';
-    const result = getFunctionInputFromSourceCode(fileContent);
+    const result = await getFunctionInputFromSourceCode(fileContent);
     expect(result).toEqual({});
   });
-  it('should return input from source code', () => {
+  it('should return input from source code', async () => {
     const fileContent = `
         function testFunction(
           params: {
@@ -34,7 +34,7 @@ describe('getFunctionInputFromSourceCode', () => {
         }
       `;
 
-    const result = getFunctionInputFromSourceCode(fileContent);
+    const result = await getFunctionInputFromSourceCode(fileContent);
     expect(result).toEqual({
       param1: null,
       param2: null,
