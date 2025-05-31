@@ -1,18 +1,8 @@
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
-import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
-import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
-import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
-import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { useSearchFilter } from '@/views/hooks/useSearchFilter';
 import { useLingui } from '@lingui/react/macro';
-import { useParams } from 'react-router-dom';
 
 export const ViewBarFilterDropdownSearchInput = ({
   filterDropdownId,
@@ -20,48 +10,13 @@ export const ViewBarFilterDropdownSearchInput = ({
   filterDropdownId: string;
 }) => {
   const { t } = useLingui();
-  const [searchValue, setSearchValue] = useRecoilComponentStateV2(
-    objectFilterDropdownSearchInputComponentState,
-    filterDropdownId || VIEW_BAR_FILTER_DROPDOWN_ID,
-  );
-  const { upsertRecordFilter } = useUpsertRecordFilter();
-  const { objectNamePlural = '' } = useParams();
-
-  const currentRecordFilters = useRecoilComponentValueV2(
-    currentRecordFiltersComponentState,
-  );
-
-  const { objectNameSingular } = useObjectNameSingularFromPlural({
-    objectNamePlural,
-  });
-  const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
-  const searchVectorField = objectMetadataItem.fields.find(
-    (field) => field.type === 'TS_VECTOR' && field.name === 'searchVector',
-  );
+  const { searchInputValue, setSearchInputValue, applySearchFilter } =
+    useSearchFilter(filterDropdownId);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
-
-    setSearchValue(inputValue);
-    if (!searchVectorField) {
-      return;
-    }
-
-    const existingSearchFilter = currentRecordFilters.find(
-      (filter) => filter.operand === ViewFilterOperand.Search,
-    );
-
-    const searchRecordFilter = {
-      id: existingSearchFilter?.id ?? searchVectorField.id,
-      fieldMetadataId: searchVectorField.id,
-      value: inputValue,
-      displayValue: inputValue,
-      operand: ViewFilterOperand.Search,
-      type: getFilterTypeFromFieldType(searchVectorField.type),
-      label: 'Search',
-    };
-
-    upsertRecordFilter(searchRecordFilter);
+    setSearchInputValue(inputValue);
+    applySearchFilter(inputValue);
   };
 
   return (
@@ -69,7 +24,7 @@ export const ViewBarFilterDropdownSearchInput = ({
       <DropdownMenuSearchInput
         autoFocus
         type="text"
-        value={searchValue}
+        value={searchInputValue}
         placeholder={t`Search`}
         onChange={handleSearchChange}
       />
