@@ -21,9 +21,13 @@ describe.each(fieldMetadataEnumTypes)(
   'Update field metadata %s tests suite',
   (testedFieldMetadataType) => {
     let createdObjectMetadataId: string;
-    const { failing: failingTestCases, successful: successfulTestCases } =
+    const testCases =
       UPDATE_ENUM_FIELD_METADATA_TEST_CASES[testedFieldMetadataType];
-
+    if (!isDefined(testCases)) {
+      return;
+    }
+    const { failing: failingTestCases, successful: successfulTestCases } =
+      testCases;
     const initialOptions: CreateOneFieldFactoryInput['options'] = [
       {
         label: 'Option 1',

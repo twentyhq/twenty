@@ -3,8 +3,8 @@ import { SELECT_OPERATION_AGNOSTIC_TEST_CASES } from 'test/integration/metadata/
 import { FieldMetadataEnumSuccessfulAndFailingTestCases } from 'test/integration/metadata/suites/field-metadata/enum/types/fieldMetadataEnumSuccessfulAndFailingTestCases';
 import { UpdateCreateFieldMetadataSelectTestCase } from 'test/integration/metadata/suites/field-metadata/enum/types/update-create-field-metadata-enum-test-case';
 
-import { EnumFieldMetadataUnionType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import { EnumFieldMetadataUnionType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 
 const fieldMetadataTypeAgnosticCreateFailingTestCases: UpdateCreateFieldMetadataSelectTestCase[] =
   [
@@ -26,14 +26,10 @@ const fieldMetadataTypeAgnosticCreateFailingTestCases: UpdateCreateFieldMetadata
     },
   ];
 
-export const CREATE_ENUM_FIELD_METADATA_TEST_CASES: Record<
+export const CREATE_ENUM_FIELD_METADATA_TEST_CASES: Partial<Record<
   EnumFieldMetadataUnionType,
   FieldMetadataEnumSuccessfulAndFailingTestCases
-> = {
-  RATING: {
-    failing: [],
-    successful: [],
-  },
+>> = {
   MULTI_SELECT: {
     failing: [
       ...MUTLI_SELECT_OPERATION_AGNOSTIC_TEST_CASES.failing,
