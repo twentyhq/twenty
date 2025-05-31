@@ -331,7 +331,7 @@ const FIND_MANY_COMPANIES_WITH_RELATION_QUERY_RESULT = {
             deletedAt: null,
             employees: null,
             id: '20202020-0713-40a5-8216-82802401d33e',
-            name: 'Qonto',
+            name: 'Anthropic',
             position: 3,
             opportunities: {
               __typename: 'OpportunityConnection',
@@ -339,12 +339,12 @@ const FIND_MANY_COMPANIES_WITH_RELATION_QUERY_RESULT = {
             },
             address: {
               __typename: 'Address',
-              addressStreet1: '18 rue de navarrin',
+              addressStreet1: '548 Market Street',
               addressStreet2: null,
-              addressCity: 'Paris',
+              addressCity: 'San Francisco',
               addressState: null,
-              addressCountry: 'France',
-              addressPostcode: '75009',
+              addressCountry: 'United States',
+              addressPostcode: '94104',
               addressLat: null,
               addressLng: null,
             },
@@ -357,7 +357,7 @@ const FIND_MANY_COMPANIES_WITH_RELATION_QUERY_RESULT = {
             },
             domainName: {
               __typename: 'Links',
-              primaryLinkUrl: 'https://qonto.com',
+              primaryLinkUrl: 'https://anthropic.com',
               primaryLinkLabel: '',
               secondaryLinks: [],
             },
@@ -403,7 +403,7 @@ const FIND_MANY_COMPANIES_WITH_RELATION_QUERY_RESULT = {
                     },
                     emails: {
                       __typename: 'Emails',
-                      primaryEmail: 'christopher.gonzalez@qonto.com',
+                      primaryEmail: 'christopher.gonzalez@anthropic.com',
                       additionalEmails: null,
                     },
                     linkedinLink: {
@@ -464,7 +464,7 @@ const FIND_MANY_COMPANIES_WITH_RELATION_QUERY_RESULT = {
                     },
                     emails: {
                       __typename: 'Emails',
-                      primaryEmail: 'ashley.parker@qonto.com',
+                      primaryEmail: 'ashley.parker@anthropic.com',
                       additionalEmails: null,
                     },
                     linkedinLink: {

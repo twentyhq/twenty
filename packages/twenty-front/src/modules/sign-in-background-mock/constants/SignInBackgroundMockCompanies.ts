@@ -3,25 +3,25 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     __typename: 'Company',
     id: '04b2e9f5-0713-40a5-8216-82802401d33e',
     domainName: {
-      primaryLinkUrl: 'qonto.com',
+      primaryLinkUrl: 'anthropic.com',
       primaryLinkLabel: '',
       secondaryLinks: [],
       __typename: 'Links',
     },
-    updatedAt: '2023-11-23T15:38:03.699Z',
-    employees: 1400,
-    name: 'Qonto',
+    updatedAt: '2024-11-23T15:38:03.699Z',
+    employees: 1100,
+    name: 'Anthropic',
     favorites: {
       __typename: 'FavoriteConnection',
       edges: [],
     },
     address: {
-      addressStreet1: 'OLINDA SAS',
-      addressStreet2: '18 rue de Navarin',
+      addressStreet1: '548 Market Street',
+      addressStreet2: null,
       addressState: null,
-      addressPostcode: '75009',
-      addressCountry: 'France',
-      addressCity: 'Paris',
+      addressPostcode: '94104',
+      addressCountry: 'United States',
+      addressCity: 'San Francisco',
       addressLat: null,
       addressLng: null,
       __typename: 'Address',
@@ -39,7 +39,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             avatarUrl:
               'person-picture/original/7e4d491e-5482-4c9f-a490-a4d1b62da10f.38',
             phone: '+33788901234',
-            createdAt: '2023-11-23T15:38:03.700Z',
+            createdAt: '2024-11-23T15:38:03.700Z',
             companyId: '04b2e9f5-0713-40a5-8216-82802401d33e',
             jobTitle: 'zdf',
             xLink: {
@@ -54,7 +54,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
               lastName: 'Voulzy',
             },
             city: 'Seattle',
-            updatedAt: '2023-11-23T15:38:03.700Z',
+            updatedAt: '2024-11-23T15:38:03.700Z',
             linkedinLink: {
               primaryLinkLabel: 'asd',
               primaryLinkUrl: 'asd.com',
@@ -69,11 +69,11 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       __typename: 'AttachmentConnection',
       edges: [],
     },
-    createdAt: '2023-11-23T15:38:03.699Z',
+    createdAt: '2024-11-23T15:38:03.699Z',
     idealCustomerProfile: null,
     linkedinLink: {
-      primaryLinkLabel: 'qonto',
-      primaryLinkUrl: 'https://www.linkedin.com/company/qonto',
+      primaryLinkLabel: 'Anthropic',
+      primaryLinkUrl: 'https://www.linkedin.com/company/anthropicresearch',
       secondaryLinks: [],
       __typename: 'Links',
     },
@@ -103,7 +103,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       secondaryLinks: [],
       __typename: 'Links',
     },
-    updatedAt: '2023-11-23T15:38:03.699Z',
+    updatedAt: '2024-11-23T15:38:03.699Z',
     employees: 72_000,
     name: 'Google',
     favorites: {
@@ -133,7 +133,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             email: 'madison.perez@google.com',
             avatarUrl: null,
             phone: '+33788901234',
-            createdAt: '2023-11-23T15:38:03.700Z',
+            createdAt: '2024-11-23T15:38:03.700Z',
             companyId: '0d940997-c21e-4ec2-873b-de4264d89025',
             jobTitle: null,
             xLink: {
@@ -148,7 +148,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
               lastName: 'Perez',
             },
             city: 'Seattle',
-            updatedAt: '2023-11-23T15:38:03.700Z',
+            updatedAt: '2024-11-23T15:38:03.700Z',
             linkedinLink: {
               primaryLinkLabel: null,
               primaryLinkUrl: null,
@@ -165,7 +165,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             email: 'avery.carter@airbnb.com',
             avatarUrl: null,
             phone: '+33786789012',
-            createdAt: '2023-11-23T15:38:03.700Z',
+            createdAt: '2024-11-23T15:38:03.700Z',
             companyId: '0d940997-c21e-4ec2-873b-de4264d89025',
             jobTitle: null,
             xLink: {
@@ -180,7 +180,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
               lastName: 'Carter',
             },
             city: 'New York',
-            updatedAt: '2023-11-23T15:38:03.700Z',
+            updatedAt: '2024-11-23T15:38:03.700Z',
             linkedinLink: {
               primaryLinkLabel: null,
               primaryLinkUrl: null,
@@ -197,7 +197,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             email: 'ethan.mitchell@google.com',
             avatarUrl: null,
             phone: '+33787890123',
-            createdAt: '2023-11-23T15:38:03.700Z',
+            createdAt: '2024-11-23T15:38:03.700Z',
             companyId: '0d940997-c21e-4ec2-873b-de4264d89025',
             jobTitle: null,
             xLink: {
@@ -212,7 +212,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
               lastName: 'Mitchell',
             },
             city: 'Los Angeles',
-            updatedAt: '2023-11-23T15:38:03.700Z',
+            updatedAt: '2024-11-23T15:38:03.700Z',
             linkedinLink: {
               primaryLinkLabel: null,
               primaryLinkUrl: null,
@@ -229,7 +229,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             email: 'elizabeth.baker@airbnb.com',
             avatarUrl: null,
             phone: '+33784567890',
-            createdAt: '2023-11-23T15:38:03.700Z',
+            createdAt: '2024-11-23T15:38:03.700Z',
             companyId: '0d940997-c21e-4ec2-873b-de4264d89025',
             jobTitle: null,
             xLink: {
@@ -244,7 +244,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
               lastName: 'Baker',
             },
             city: 'New York',
-            updatedAt: '2023-11-23T15:38:03.700Z',
+            updatedAt: '2024-11-23T15:38:03.700Z',
             linkedinLink: {
               primaryLinkLabel: null,
               primaryLinkUrl: null,
@@ -261,7 +261,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             email: 'christopher.nelson@airbnb.com',
             avatarUrl: null,
             phone: '+33785678901',
-            createdAt: '2023-11-23T15:38:03.700Z',
+            createdAt: '2024-11-23T15:38:03.700Z',
             companyId: '0d940997-c21e-4ec2-873b-de4264d89025',
             jobTitle: null,
             xLink: {
@@ -276,7 +276,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
               lastName: 'Nelson',
             },
             city: 'San Francisco',
-            updatedAt: '2023-11-23T15:38:03.700Z',
+            updatedAt: '2024-11-23T15:38:03.700Z',
             linkedinLink: {
               primaryLinkLabel: null,
               primaryLinkUrl: null,
@@ -291,7 +291,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       __typename: 'AttachmentConnection',
       edges: [],
     },
-    createdAt: '2023-11-23T15:38:03.699Z',
+    createdAt: '2024-11-23T15:38:03.699Z',
     idealCustomerProfile: null,
     linkedinLink: {
       primaryLinkLabel: 'google',
@@ -325,7 +325,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       secondaryLinks: [],
       __typename: 'Links',
     },
-    updatedAt: '2023-11-23T15:38:03.699Z',
+    updatedAt: '2024-11-23T15:38:03.699Z',
     employees: 87_000,
     name: 'Facebook',
     favorites: {
@@ -352,10 +352,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
           node: {
             __typename: 'Person',
             id: '93c72d2e-f517-42fd-80ae-14173b3b70ae',
-            email: 'christopher.gonzalez@qonto.com',
+            email: 'christopher.gonzalez@anthropic.com',
             avatarUrl: null,
             phone: '+33789012345',
-            createdAt: '2023-11-23T15:38:03.700Z',
+            createdAt: '2024-11-23T15:38:03.700Z',
             companyId: '118995f3-5d81-46d6-bf83-f7fd33ea6102',
             jobTitle: null,
             xLink: {
@@ -370,7 +370,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
               lastName: 'Gonzalez',
             },
             city: 'Seattle',
-            updatedAt: '2023-11-23T15:38:03.700Z',
+            updatedAt: '2024-11-23T15:38:03.700Z',
             linkedinLink: {
               primaryLinkLabel: null,
               primaryLinkUrl: null,
@@ -384,10 +384,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
           node: {
             __typename: 'Person',
             id: 'eeeacacf-eee1-4690-ad2c-8619e5b56a2e',
-            email: 'ashley.parker@qonto.com',
+            email: 'ashley.parker@anthropic.com',
             avatarUrl: null,
             phone: '+33780123456',
-            createdAt: '2023-11-23T15:38:03.700Z',
+            createdAt: '2024-11-23T15:38:03.700Z',
             companyId: '118995f3-5d81-46d6-bf83-f7fd33ea6102',
             jobTitle: null,
             xLink: {
@@ -402,7 +402,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
               lastName: 'Parker',
             },
             city: 'Los Angeles',
-            updatedAt: '2023-11-23T15:38:03.700Z',
+            updatedAt: '2024-11-23T15:38:03.700Z',
             linkedinLink: {
               primaryLinkLabel: null,
               primaryLinkUrl: null,
@@ -417,7 +417,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       __typename: 'AttachmentConnection',
       edges: [],
     },
-    createdAt: '2023-11-23T15:38:03.699Z',
+    createdAt: '2024-11-23T15:38:03.699Z',
     idealCustomerProfile: null,
     linkedinLink: {
       primaryLinkLabel: 'facebook',
@@ -440,11 +440,11 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
               amountMicros: 2000000,
               currencyCode: 'USD',
             },
-            createdAt: '2023-11-23T15:38:03.703Z',
-            closeDate: '2023-11-23T15:38:03.703Z',
+            createdAt: '2024-11-23T15:38:03.703Z',
+            closeDate: '2024-11-23T15:38:03.703Z',
             personId: '93c72d2e-f517-42fd-80ae-14173b3b70ae',
             companyId: '118995f3-5d81-46d6-bf83-f7fd33ea6102',
-            updatedAt: '2023-11-23T15:38:03.703Z',
+            updatedAt: '2024-11-23T15:38:03.703Z',
           },
         },
       ],
@@ -471,7 +471,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       secondaryLinks: [],
       __typename: 'Links',
     },
-    updatedAt: '2023-11-23T15:38:03.699Z',
+    updatedAt: '2024-11-23T15:38:03.699Z',
     employees: 3_000,
     name: 'Netflix',
     favorites: {
@@ -498,7 +498,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       __typename: 'AttachmentConnection',
       edges: [],
     },
-    createdAt: '2023-11-23T15:38:03.699Z',
+    createdAt: '2024-11-23T15:38:03.699Z',
     idealCustomerProfile: null,
     linkedinLink: {
       primaryLinkLabel: 'netflix',
@@ -532,7 +532,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       secondaryLinks: [],
       __typename: 'Links',
     },
-    updatedAt: '2023-11-23T15:38:03.699Z',
+    updatedAt: '2024-11-23T15:38:03.699Z',
     employees: 221_000,
     name: 'Microsoft',
     favorites: {
@@ -562,7 +562,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             email: 'isabella.scott@microsoft.com',
             avatarUrl: null,
             phone: '+33782345678',
-            createdAt: '2023-11-23T15:38:03.700Z',
+            createdAt: '2024-11-23T15:38:03.700Z',
             companyId: '460b6fb1-ed89-413a-b31a-962986e67bb4',
             jobTitle: null,
             xLink: {
@@ -577,7 +577,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
               lastName: 'Scott',
             },
             city: 'New York',
-            updatedAt: '2023-11-23T15:38:03.700Z',
+            updatedAt: '2024-11-23T15:38:03.700Z',
             linkedinLink: {
               primaryLinkLabel: null,
               primaryLinkUrl: null,
@@ -594,7 +594,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             email: 'matthew.green@microsoft.com',
             avatarUrl: null,
             phone: '+33783456789',
-            createdAt: '2023-11-23T15:38:03.700Z',
+            createdAt: '2024-11-23T15:38:03.700Z',
             companyId: '460b6fb1-ed89-413a-b31a-962986e67bb4',
             jobTitle: null,
             xLink: {
@@ -609,7 +609,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
               lastName: 'Green',
             },
             city: 'Seattle',
-            updatedAt: '2023-11-23T15:38:03.700Z',
+            updatedAt: '2024-11-23T15:38:03.700Z',
             linkedinLink: {
               primaryLinkLabel: null,
               primaryLinkUrl: null,
@@ -626,7 +626,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             email: 'nicholas.wright@microsoft.com',
             avatarUrl: null,
             phone: '+33781234567',
-            createdAt: '2023-11-23T15:38:03.700Z',
+            createdAt: '2024-11-23T15:38:03.700Z',
             companyId: '460b6fb1-ed89-413a-b31a-962986e67bb4',
             jobTitle: null,
             xLink: {
@@ -641,7 +641,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
               lastName: 'Wright',
             },
             city: 'Seattle',
-            updatedAt: '2023-11-23T15:38:03.700Z',
+            updatedAt: '2024-11-23T15:38:03.700Z',
             linkedinLink: {
               primaryLinkLabel: null,
               primaryLinkUrl: null,
@@ -656,7 +656,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       __typename: 'AttachmentConnection',
       edges: [],
     },
-    createdAt: '2023-11-23T15:38:03.699Z',
+    createdAt: '2024-11-23T15:38:03.699Z',
     idealCustomerProfile: null,
     linkedinLink: {
       primaryLinkLabel: 'microsoft',
@@ -679,11 +679,11 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
               amountMicros: 300000,
               currencyCode: 'USD',
             },
-            createdAt: '2023-11-23T15:38:03.703Z',
-            closeDate: '2023-11-23T15:38:03.703Z',
+            createdAt: '2024-11-23T15:38:03.703Z',
+            closeDate: '2024-11-23T15:38:03.703Z',
             personId: '9b324a88-6784-4449-afdf-dc62cb8702f2',
             companyId: '460b6fb1-ed89-413a-b31a-962986e67bb4',
-            updatedAt: '2023-11-23T15:38:03.703Z',
+            updatedAt: '2024-11-23T15:38:03.703Z',
           },
         },
         {
@@ -698,11 +698,11 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
               amountMicros: 4000000,
               currencyCode: 'USD',
             },
-            createdAt: '2023-11-23T15:38:03.703Z',
-            closeDate: '2023-11-23T15:38:03.703Z',
+            createdAt: '2024-11-23T15:38:03.703Z',
+            closeDate: '2024-11-23T15:38:03.703Z',
             personId: '98406e26-80f1-4dff-b570-a74942528de3',
             companyId: '460b6fb1-ed89-413a-b31a-962986e67bb4',
-            updatedAt: '2023-11-23T15:38:03.703Z',
+            updatedAt: '2024-11-23T15:38:03.703Z',
           },
         },
       ],
@@ -729,7 +729,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       secondaryLinks: [],
       __typename: 'Links',
     },
-    updatedAt: '2023-11-23T15:38:03.699Z',
+    updatedAt: '2024-11-23T15:38:03.699Z',
     employees: 50,
     name: 'Libeo',
     favorites: {
@@ -756,7 +756,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       __typename: 'AttachmentConnection',
       edges: [],
     },
-    createdAt: '2023-11-23T15:38:03.699Z',
+    createdAt: '2024-11-23T15:38:03.699Z',
     idealCustomerProfile: null,
     linkedinLink: {
       primaryLinkLabel: 'libeo',
@@ -790,7 +790,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       secondaryLinks: [],
       __typename: 'Links',
     },
-    updatedAt: '2023-11-23T15:38:03.699Z',
+    updatedAt: '2024-11-23T15:38:03.699Z',
     employees: 6_000,
     name: 'Airbnb',
     favorites: {
@@ -817,7 +817,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       __typename: 'AttachmentConnection',
       edges: [],
     },
-    createdAt: '2023-11-23T15:38:03.699Z',
+    createdAt: '2024-11-23T15:38:03.699Z',
     idealCustomerProfile: null,
     linkedinLink: {
       primaryLinkLabel: 'airbnb',
@@ -851,7 +851,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       secondaryLinks: [],
       __typename: 'Links',
     },
-    updatedAt: '2023-11-23T15:38:03.699Z',
+    updatedAt: '2024-11-23T15:38:03.699Z',
     employees: 7,
     name: 'Claap',
     favorites: {
@@ -878,7 +878,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       __typename: 'AttachmentConnection',
       edges: [],
     },
-    createdAt: '2023-11-23T15:38:03.699Z',
+    createdAt: '2024-11-23T15:38:03.699Z',
     idealCustomerProfile: null,
     linkedinLink: {
       primaryLinkLabel: 'claap',
@@ -912,7 +912,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       secondaryLinks: [],
       __typename: 'Links',
     },
-    updatedAt: '2023-11-23T15:38:03.699Z',
+    updatedAt: '2024-11-23T15:38:03.699Z',
     employees: 250,
     name: 'Algolia',
     favorites: {
@@ -942,7 +942,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             email: 'lorie.vladim@google.com',
             avatarUrl: null,
             phone: '+33788901235',
-            createdAt: '2023-11-23T15:38:03.700Z',
+            createdAt: '2024-11-23T15:38:03.700Z',
             companyId: 'a674fa6c-1455-4c57-afaf-dd5dc086361d',
             jobTitle: null,
             xLink: {
@@ -957,7 +957,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
               lastName: 'Vladim',
             },
             city: 'Seattle',
-            updatedAt: '2023-11-23T15:38:03.700Z',
+            updatedAt: '2024-11-23T15:38:03.700Z',
             linkedinLink: {
               primaryLinkLabel: null,
               primaryLinkUrl: null,
@@ -972,7 +972,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       __typename: 'AttachmentConnection',
       edges: [],
     },
-    createdAt: '2023-11-23T15:38:03.699Z',
+    createdAt: '2024-11-23T15:38:03.699Z',
     idealCustomerProfile: null,
     linkedinLink: {
       primaryLinkLabel: 'algolia',
@@ -1006,7 +1006,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       secondaryLinks: [],
       __typename: 'Links',
     },
-    updatedAt: '2023-11-23T15:38:03.699Z',
+    updatedAt: '2024-11-23T15:38:03.699Z',
     employees: 400_000,
     name: 'Samsung',
     favorites: {
@@ -1036,7 +1036,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             email: 'louis.duss@google.com',
             avatarUrl: null,
             phone: '+33788901234',
-            createdAt: '2023-11-23T15:38:03.700Z',
+            createdAt: '2024-11-23T15:38:03.700Z',
             companyId: 'a7bc68d5-f79e-40dd-bd06-c36e6abb4678',
             jobTitle: null,
             xLink: {
@@ -1051,7 +1051,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
               lastName: 'Duss',
             },
             city: 'Seattle',
-            updatedAt: '2023-11-23T15:38:03.700Z',
+            updatedAt: '2024-11-23T15:38:03.700Z',
             linkedinLink: {
               primaryLinkLabel: null,
               primaryLinkUrl: null,
@@ -1066,7 +1066,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       __typename: 'AttachmentConnection',
       edges: [],
     },
-    createdAt: '2023-11-23T15:38:03.699Z',
+    createdAt: '2024-11-23T15:38:03.699Z',
     idealCustomerProfile: null,
     linkedinLink: {
       primaryLinkLabel: 'samsung',
@@ -1100,7 +1100,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       secondaryLinks: [],
       __typename: 'Links',
     },
-    updatedAt: '2023-11-23T15:38:03.699Z',
+    updatedAt: '2024-11-23T15:38:03.699Z',
     employees: 17_000,
     name: 'Hasura',
     favorites: {
@@ -1127,7 +1127,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       __typename: 'AttachmentConnection',
       edges: [],
     },
-    createdAt: '2023-11-23T15:38:03.699Z',
+    createdAt: '2024-11-23T15:38:03.699Z',
     idealCustomerProfile: null,
     linkedinLink: {
       primaryLinkLabel: 'hasura',
@@ -1161,7 +1161,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       secondaryLinks: [],
       __typename: 'Links',
     },
-    updatedAt: '2023-11-23T15:38:03.699Z',
+    updatedAt: '2024-11-23T15:38:03.699Z',
     employees: 2_000,
     name: 'Wework',
     favorites: {
@@ -1188,7 +1188,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       __typename: 'AttachmentConnection',
       edges: [],
     },
-    createdAt: '2023-11-23T15:38:03.699Z',
+    createdAt: '2024-11-23T15:38:03.699Z',
     idealCustomerProfile: null,
     linkedinLink: {
       primaryLinkLabel: 'wework',
@@ -1222,7 +1222,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       secondaryLinks: [],
       __typename: 'Links',
     },
-    updatedAt: '2023-11-23T15:38:03.699Z',
+    updatedAt: '2024-11-23T15:38:03.699Z',
     employees: 20_000,
     name: 'Linkedin',
     favorites: {
@@ -1252,7 +1252,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             email: 'sylvie.palmer@linkedin.com',
             avatarUrl: null,
             phone: '+33780123456',
-            createdAt: '2023-11-23T15:38:03.700Z',
+            createdAt: '2024-11-23T15:38:03.700Z',
             companyId: 'fe256b39-3ec3-4fe3-8997-b76aa0bfa408',
             jobTitle: '',
             xLink: {
@@ -1267,7 +1267,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
               lastName: 'Palmer',
             },
             city: 'Los Angeles',
-            updatedAt: '2023-11-23T15:38:03.700Z',
+            updatedAt: '2024-11-23T15:38:03.700Z',
             linkedinLink: {
               primaryLinkLabel: null,
               primaryLinkUrl: null,
@@ -1284,7 +1284,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             email: 'christoph.calisto@linkedin.com',
             avatarUrl: null,
             phone: '+33789012345',
-            createdAt: '2023-11-23T15:38:03.700Z',
+            createdAt: '2024-11-23T15:38:03.700Z',
             companyId: 'fe256b39-3ec3-4fe3-8997-b76aa0bfa408',
             jobTitle: null,
             xLink: {
@@ -1299,7 +1299,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
               lastName: 'Callisto',
             },
             city: 'Seattle',
-            updatedAt: '2023-11-23T15:38:03.700Z',
+            updatedAt: '2024-11-23T15:38:03.700Z',
             linkedinLink: {
               primaryLinkLabel: null,
               primaryLinkUrl: null,
@@ -1314,7 +1314,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       __typename: 'AttachmentConnection',
       edges: [],
     },
-    createdAt: '2023-11-23T15:38:03.699Z',
+    createdAt: '2024-11-23T15:38:03.699Z',
     idealCustomerProfile: null,
     linkedinLink: {
       primaryLinkLabel: 'linkedin',
@@ -1337,11 +1337,11 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
               amountMicros: 100000,
               currencyCode: 'USD',
             },
-            createdAt: '2023-11-23T15:38:03.703Z',
-            closeDate: '2023-11-23T15:38:03.703Z',
+            createdAt: '2024-11-23T15:38:03.703Z',
+            closeDate: '2024-11-23T15:38:03.703Z',
             personId: '86083141-1c0e-494c-a1b6-85b1c6fefaa5',
             companyId: 'fe256b39-3ec3-4fe3-8997-b76aa0bfa408',
-            updatedAt: '2023-11-23T15:38:03.703Z',
+            updatedAt: '2024-11-23T15:38:03.703Z',
           },
         },
       ],
