@@ -7,19 +7,12 @@ import {
 } from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
   FieldMetadataComplexOption,
   FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { EnumFieldMetadataUnionType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
-
-// TODO centralize this constant
-const fieldMetadataEnumTypes: EnumFieldMetadataUnionType[] = [
-  FieldMetadataType.MULTI_SELECT,
-  FieldMetadataType.SELECT,
-];
+import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 
 describe.each(fieldMetadataEnumTypes)(
   'Create field metadata %s tests suite',
