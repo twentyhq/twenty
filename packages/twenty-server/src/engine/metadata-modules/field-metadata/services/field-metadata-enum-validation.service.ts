@@ -8,6 +8,10 @@ import { z } from 'zod';
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import {
+  FieldMetadataComplexOption,
+  FieldMetadataDefaultOption,
+} from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
@@ -124,38 +128,22 @@ export class FieldMetadataEnumValidationService {
   }
 
   private validateDuplicates(options: FieldMetadataOptions) {
-    const seenOptionIds = new Set<FieldMetadataOptions[number]['id']>();
-    const seenOptionValues = new Set<FieldMetadataOptions[number]['value']>();
-    const seenOptionPositions = new Set<
-      FieldMetadataOptions[number]['position']
-    >();
+    const fieldsToCheckForDuplicates = [
+      'position',
+      'id',
+      'value',
+    ] as const satisfies (keyof FieldMetadataOptions[number])[];
+    const duplicatedValidators = fieldsToCheckForDuplicates.map<
+      Validator<FieldMetadataDefaultOption[] | FieldMetadataComplexOption[]>
+    >((field) => ({
+      message: `Duplicated option ${field}`,
+      validator: () =>
+        new Set(options.map((option) => option[field])).size !== options.length,
+    }));
 
-    for (const option of options) {
-      if (seenOptionIds.has(option.id)) {
-        throw new FieldMetadataException(
-          `Duplicated option id "${option.id}"`,
-          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        );
-      }
-
-      if (seenOptionValues.has(option.value)) {
-        throw new FieldMetadataException(
-          `Duplicated option value "${option.value}"`,
-          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        );
-      }
-
-      if (seenOptionPositions.has(option.position)) {
-        throw new FieldMetadataException(
-          `Duplicated option position "${option.position}"`,
-          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        );
-      }
-
-      seenOptionIds.add(option.id);
-      seenOptionValues.add(option.value);
-      seenOptionPositions.add(option.position);
-    }
+    duplicatedValidators.forEach((validator) =>
+      this.validatorRunner(options, validator),
+    );
   }
 
   private validateFieldMetadataInputOptions(
@@ -257,7 +245,10 @@ export class FieldMetadataEnumValidationService {
         // TODO: Determine if RATING should be handled here
         break;
       default: {
-        assertUnreachable(fieldType, "Should never occur, unknown field metadata enum type");
+        assertUnreachable(
+          fieldType,
+          'Should never occur, unknown field metadata enum type',
+        );
       }
     }
   }
