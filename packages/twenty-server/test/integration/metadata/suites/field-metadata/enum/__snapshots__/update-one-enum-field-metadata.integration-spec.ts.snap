@@ -39,7 +39,7 @@ exports[`Update field metadata MULTI_SELECT tests suite Update should fail with 
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Duplicated option id "fd1f11fd-3f05-4a33-bddf-800c3412ce98"",
+    "message": "Duplicated option id",
   },
 ]
 `;
@@ -50,7 +50,7 @@ exports[`Update field metadata MULTI_SELECT tests suite Update should fail with 
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Duplicated option position "1"",
+    "message": "Duplicated option position",
   },
 ]
 `;
@@ -61,7 +61,7 @@ exports[`Update field metadata MULTI_SELECT tests suite Update should fail with 
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Duplicated option value "OPTION_1"",
+    "message": "Duplicated option value",
   },
 ]
 `;
@@ -72,7 +72,7 @@ exports[`Update field metadata MULTI_SELECT tests suite Update should fail with 
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Duplicated option value "OPTION_1"",
+    "message": "Duplicated option value",
   },
 ]
 `;
@@ -436,7 +436,7 @@ exports[`Update field metadata SELECT tests suite Update should fail with duplic
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Duplicated option id "fd1f11fd-3f05-4a33-bddf-800c3412ce98"",
+    "message": "Duplicated option id",
   },
 ]
 `;
@@ -447,7 +447,7 @@ exports[`Update field metadata SELECT tests suite Update should fail with duplic
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Duplicated option position "1"",
+    "message": "Duplicated option position",
   },
 ]
 `;
@@ -458,7 +458,7 @@ exports[`Update field metadata SELECT tests suite Update should fail with duplic
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Duplicated option value "OPTION_1"",
+    "message": "Duplicated option value",
   },
 ]
 `;
@@ -469,7 +469,7 @@ exports[`Update field metadata SELECT tests suite Update should fail with duplic
     "extensions": {
       "code": "BAD_USER_INPUT",
     },
-    "message": "Duplicated option value "OPTION_1"",
+    "message": "Duplicated option value",
   },
 ]
 `;

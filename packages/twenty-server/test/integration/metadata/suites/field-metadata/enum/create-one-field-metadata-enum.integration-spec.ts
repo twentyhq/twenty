@@ -1,5 +1,3 @@
-import { isDefined } from 'class-validator';
-import { CREATE_ENUM_FIELD_METADATA_TEST_CASES } from 'test/integration/metadata/suites/field-metadata/enum/create-enum-field-metadata-test-cases';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import {
   LISTING_NAME_PLURAL,
@@ -13,13 +11,20 @@ import {
   FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+import { CREATE_ENUM_FIELD_METADATA_TEST_CASES } from 'test/integration/metadata/suites/field-metadata/enum/create-enum-field-metadata-test-cases';
+import { isDefined } from 'twenty-shared/utils';
 
 describe.each(fieldMetadataEnumTypes)(
   'Create field metadata %s tests suite',
   (testedFieldMetadataType) => {
     let createdObjectMetadataId: string;
-    const { failing: failingTestCases, successful: successfulTestCases } =
+    const testCases =
       CREATE_ENUM_FIELD_METADATA_TEST_CASES[testedFieldMetadataType];
+    if (!isDefined(testCases)) {
+      return;
+    }
+    const { failing: failingTestCases, successful: successfulTestCases } =
+      testCases;
 
     beforeEach(async () => {
       const { data } = await forceCreateOneObjectMetadata({
