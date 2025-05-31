@@ -5,14 +5,14 @@ import {
 } from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
+import { CREATE_ENUM_FIELD_METADATA_TEST_CASES } from 'test/integration/metadata/suites/field-metadata/enum/create-enum-field-metadata-test-cases';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   FieldMetadataComplexOption,
   FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
-import { CREATE_ENUM_FIELD_METADATA_TEST_CASES } from 'test/integration/metadata/suites/field-metadata/enum/create-enum-field-metadata-test-cases';
-import { isDefined } from 'twenty-shared/utils';
 
 describe.each(fieldMetadataEnumTypes)(
   'Create field metadata %s tests suite',
@@ -20,6 +20,7 @@ describe.each(fieldMetadataEnumTypes)(
     let createdObjectMetadataId: string;
     const testCases =
       CREATE_ENUM_FIELD_METADATA_TEST_CASES[testedFieldMetadataType];
+
     if (!isDefined(testCases)) {
       return;
     }
