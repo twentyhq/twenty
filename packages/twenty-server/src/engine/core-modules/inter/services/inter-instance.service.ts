@@ -4,6 +4,7 @@ import fs from 'fs';
 import https from 'https';
 
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import qs from 'qs';
 
 import {
   GetAuthTokenInput,
@@ -48,16 +49,23 @@ export class InterInstanceService {
   async getOauthToken(): Promise<string> {
     const response = await this.getInterAxiosInstance().post<
       GetAuthTokenResponse,
-      AxiosResponse<GetAuthTokenResponse, GetAuthTokenInput>,
-      GetAuthTokenInput
-    >('/oauth/v2/token', {
-      client_id: this.twentyConfigService.get('INTER_CLIENT_ID'),
-      client_secret: this.twentyConfigService.get('INTER_CLIENT_SECRET'),
-      grant_type: 'client_credentials',
-      // TODO: Find a cleaner way to do this
-      scope:
-        'cob.write cob.read cobv.write cobv.read lotecobv.write lotecobv.read pix.write pix.read webhook.write webhook.read payloadlocation.write payloadlocation.read boleto-cobranca.read boleto-cobranca.write extrato.read pagamento-pix.write pagamento-pix.read extrato-usend.read pagamento-boleto.read pagamento-boleto.write pagamento-darf.write pagamento-lote.write pagamento-lote.read webhook-banking.read webhook-banking.write pagamento-pix.read',
-    });
+      AxiosResponse<GetAuthTokenResponse, GetAuthTokenInput>
+    >(
+      '/oauth/v2/token',
+      qs.stringify({
+        client_id: this.twentyConfigService.get('INTER_CLIENT_ID'),
+        client_secret: this.twentyConfigService.get('INTER_CLIENT_SECRET'),
+        grant_type: 'client_credentials',
+        // TODO: Find a cleaner way to do this
+        scope:
+          'cob.write cob.read cobv.write cobv.read lotecobv.write lotecobv.read pix.write pix.read webhook.write webhook.read payloadlocation.write payloadlocation.read boleto-cobranca.read boleto-cobranca.write extrato.read pagamento-pix.write pagamento-pix.read extrato-usend.read pagamento-boleto.read pagamento-boleto.write pagamento-darf.write pagamento-lote.write pagamento-lote.read webhook-banking.read webhook-banking.write pagamento-pix.read',
+      }),
+      {
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded',
+        },
+      },
+    );
 
     return response.data.access_token;
   }
