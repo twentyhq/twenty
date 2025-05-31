@@ -1,6 +1,6 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { InterService } from 'src/engine/core-modules/inter/inter.service';
+import { InterService } from 'src/engine/core-modules/inter/services/inter.service';
 
 import { InterIntegration } from './integration/inter-integration.entity';
 

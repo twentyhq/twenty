@@ -68,6 +68,8 @@ export class BillingController {
 
       res.status(200).send(result).end();
     } catch (error) {
+      this.logger.error(error);
+
       if (
         error instanceof BillingException ||
         error instanceof Stripe.errors.StripeError

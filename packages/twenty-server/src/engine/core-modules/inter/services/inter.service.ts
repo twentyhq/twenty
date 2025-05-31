@@ -1,16 +1,27 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Optional,
+} from '@nestjs/common';
 
 import axios from 'axios';
 
+import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 import { InterIntegrationService } from 'src/engine/core-modules/inter/integration/inter-integration.service';
-
-import { InterIntegration } from './integration/inter-integration.entity';
+import { InterInstanceService } from 'src/engine/core-modules/inter/services/inter-instance.service';
 
 @Injectable()
 export class InterService {
   constructor(
+    // TODO: Check if this breaks anything
+    @Optional()
     private readonly interIntegrationService: InterIntegrationService,
+    private readonly interInstanceService: InterInstanceService,
   ) {}
+
+  async createBolepixBilling() {
+    await this.interInstanceService.getOauthToken();
+  }
 
   async getAccountBalance(integration: InterIntegration) {
     try {
@@ -71,5 +82,5 @@ export class InterService {
     };
   }
 
-  // Adicione outros métodos para chamadas à API do Inter conforme necessário
+  // Adicione outros métodos para chamadas à API do Inter conforme necessáriot
 }

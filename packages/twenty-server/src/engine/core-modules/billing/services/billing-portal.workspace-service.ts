@@ -19,6 +19,7 @@ import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/se
 import { BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
 import { BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { InterService } from 'src/engine/core-modules/inter/services/inter.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { assert } from 'src/utils/assert';
@@ -27,6 +28,7 @@ import { assert } from 'src/utils/assert';
 export class BillingPortalWorkspaceService {
   protected readonly logger = new Logger(BillingPortalWorkspaceService.name);
   constructor(
+    private readonly interService: InterService,
     private readonly stripeCheckoutService: StripeCheckoutService,
     private readonly stripeBillingPortalService: StripeBillingPortalService,
     private readonly domainManagerService: DomainManagerService,
@@ -53,7 +55,9 @@ export class BillingPortalWorkspaceService {
 
     if (paymentProvider === BillingPaymentProviders.Inter) {
       //TODO: Call inter method to generate bolepix and sent through email
-      return `${frontBaseUrl.toString()}/plan-required/payment-success`;
+      await this.interService.createBolepixBilling();
+
+      return `${frontBaseUrl.toString()}plan-required/payment-success`;
     }
 
     const cancelUrl = frontBaseUrl.toString();
