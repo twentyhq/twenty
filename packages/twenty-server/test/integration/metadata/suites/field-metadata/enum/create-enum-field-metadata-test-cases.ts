@@ -26,10 +26,12 @@ const fieldMetadataTypeAgnosticCreateFailingTestCases: UpdateCreateFieldMetadata
     },
   ];
 
-export const CREATE_ENUM_FIELD_METADATA_TEST_CASES: Partial<Record<
-  EnumFieldMetadataUnionType,
-  FieldMetadataEnumSuccessfulAndFailingTestCases
->> = {
+export const CREATE_ENUM_FIELD_METADATA_TEST_CASES: Partial<
+  Record<
+    EnumFieldMetadataUnionType,
+    FieldMetadataEnumSuccessfulAndFailingTestCases
+  >
+> = {
   MULTI_SELECT: {
     failing: [
       ...MUTLI_SELECT_OPERATION_AGNOSTIC_TEST_CASES.failing,

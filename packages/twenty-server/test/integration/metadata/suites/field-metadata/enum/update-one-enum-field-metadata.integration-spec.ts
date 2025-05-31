@@ -23,6 +23,7 @@ describe.each(fieldMetadataEnumTypes)(
     let createdObjectMetadataId: string;
     const testCases =
       UPDATE_ENUM_FIELD_METADATA_TEST_CASES[testedFieldMetadataType];
+
     if (!isDefined(testCases)) {
       return;
     }
