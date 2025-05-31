@@ -1,8 +1,8 @@
 import { v4 } from 'uuid';
 
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import { FieldMetadataEnumSuccessfulAndFailingTestCases } from 'test/integration/metadata/suites/field-metadata/enum/types/fieldMetadataEnumSuccessfulAndFailingTestCases';
 import { UpdateCreateFieldMetadataSelectTestCase } from 'test/integration/metadata/suites/field-metadata/enum/types/update-create-field-metadata-enum-test-case';
-import { SuccessfulAndFailingTestCases } from 'twenty-shared/testing';
 import { isDefined } from 'twenty-shared/utils';
 
 const basicFailingStringEdgeCaseInputs: {
@@ -63,9 +63,7 @@ const fuzzedDefaultValueFailingTestCases: UpdateCreateFieldMetadataSelectTestCas
       },
     }));
 
-export const SELECT_AND_MULTI_SELECT_OPERATION_AGNOSTIC_SUCCESSFUL_AND_FAILING_TEST_CASES: SuccessfulAndFailingTestCases<
-  UpdateCreateFieldMetadataSelectTestCase['context']
-> = {
+export const SELECT_AND_MULTI_SELECT_OPERATION_AGNOSTIC_SUCCESSFUL_AND_FAILING_TEST_CASES: FieldMetadataEnumSuccessfulAndFailingTestCases = {
   failing: [
     ...fuzzedDefaultValueFailingTestCases,
     ...fuzzedOptionsStringFieldFailingTestCases,

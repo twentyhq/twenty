@@ -1,12 +1,9 @@
 import {
   SELECT_AND_MULTI_SELECT_OPERATION_AGNOSTIC_SUCCESSFUL_AND_FAILING_TEST_CASES,
 } from 'test/integration/metadata/suites/field-metadata/enum/common/select-and-multi-select-operation-agnostic-tests-cases';
-import { UpdateCreateFieldMetadataSelectTestCase } from 'test/integration/metadata/suites/field-metadata/enum/types/update-create-field-metadata-enum-test-case';
-import { SuccessfulAndFailingTestCases } from 'twenty-shared/testing';
+import { FieldMetadataEnumSuccessfulAndFailingTestCases } from 'test/integration/metadata/suites/field-metadata/enum/types/fieldMetadataEnumSuccessfulAndFailingTestCases';
 
-export const SELECT_OPERATION_AGNOSTIC_TEST_CASES: SuccessfulAndFailingTestCases<
-  UpdateCreateFieldMetadataSelectTestCase['context']
-> = {
+export const SELECT_OPERATION_AGNOSTIC_TEST_CASES: FieldMetadataEnumSuccessfulAndFailingTestCases = {
   failing: [
     ...SELECT_AND_MULTI_SELECT_OPERATION_AGNOSTIC_SUCCESSFUL_AND_FAILING_TEST_CASES.failing,
   ],
