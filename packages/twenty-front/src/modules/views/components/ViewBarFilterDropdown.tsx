@@ -7,10 +7,12 @@ import { OPERAND_DROPDOWN_CLICK_OUTSIDE_ID } from '@/object-record/object-filter
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { objectFilterDropdownSearchInputIsVisibleComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputIsVisibleComponentState';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewBarFilterDropdownContent } from '@/views/components/ViewBarFilterDropdownContent';
+import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewBarFilterButton } from './ViewBarFilterButton';
 
@@ -33,6 +35,10 @@ export const ViewBarFilterDropdown = ({
     objectFilterDropdownCurrentRecordFilterComponentState,
   );
 
+  const currentRecordFilters = useRecoilComponentValueV2(
+    currentRecordFiltersComponentState,
+  );
+
   const handleDropdownClickOutside = () => {
     const recordFilterIsEmpty =
       isDefined(objectFilterDropdownCurrentRecordFilter) &&
@@ -43,11 +49,37 @@ export const ViewBarFilterDropdown = ({
         recordFilterId: objectFilterDropdownCurrentRecordFilter.id,
       });
     }
+
+    const searchFilter = currentRecordFilters.find(
+      (filter) => filter.operand === ViewFilterOperand.Search,
+    );
+
+    if (
+      isDefined(searchFilter) &&
+      isRecordFilterConsideredEmpty(searchFilter)
+    ) {
+      removeRecordFilter({
+        recordFilterId: searchFilter.id,
+      });
+    }
   };
 
   const handleDropdownClose = () => {
     resetFilterDropdown();
     setShowSearchInput(false);
+
+    const searchFilter = currentRecordFilters.find(
+      (filter) => filter.operand === ViewFilterOperand.Search,
+    );
+
+    if (
+      isDefined(searchFilter) &&
+      isRecordFilterConsideredEmpty(searchFilter)
+    ) {
+      removeRecordFilter({
+        recordFilterId: searchFilter.id,
+      });
+    }
   };
 
   return (
