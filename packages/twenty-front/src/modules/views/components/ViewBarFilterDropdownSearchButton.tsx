@@ -35,7 +35,7 @@ export const ViewBarFilterDropdownSearchButton = () => {
           <>
             {t`Search`}
             {searchInputValue && (
-              <StyledSearchText>{t`· ${searchInputValue}`}</StyledSearchText>
+              <StyledSearchText>{t` · ${searchInputValue}`}</StyledSearchText>
             )}
           </>
         }
