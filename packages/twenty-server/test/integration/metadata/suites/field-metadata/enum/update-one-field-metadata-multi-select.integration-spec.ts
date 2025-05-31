@@ -14,10 +14,9 @@ import {
   FieldMetadataComplexOption,
   FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { SELECT_OPERATION_AGNOSTIC_TEST_CASES } from 'test/integration/metadata/suites/field-metadata/enum/common/select-operation-agnostic-test-cases';
-import { UpdateCreateFieldMetadataSelectTestCase } from 'test/integration/metadata/suites/field-metadata/enum/types/update-create-field-metadata-enum-test-case';
+import { MUTLI_SELECT_OPERATION_AGNOSTIC_TEST_CASES } from 'test/integration/metadata/suites/field-metadata/enum/common/multi-select-operation-agnostic-test-cases';
 
-describe('Field metadata select update tests group', () => {
+describe('Field metadata multi-select update tests group', () => {
   let createdObjectMetadataId: string;
   const initialOptions: CreateOneFieldFactoryInput['options'] = [
     {
@@ -61,7 +60,7 @@ describe('Field metadata select update tests group', () => {
     } = await createOneFieldMetadata({
       input: {
         objectMetadataId: createdObjectMetadataId,
-        type: FieldMetadataType.SELECT,
+        type: FieldMetadataType.MULTI_SELECT,
         name: 'testField',
         label: 'Test Field',
         isLabelSyncedWithName: false,
@@ -74,7 +73,7 @@ describe('Field metadata select update tests group', () => {
     });
 
     const createdFieldMetadata = createOneField.id;
-    const expectedDefaultValue = `'${initialOptions[0].value}'`;
+    const expectedDefaultValue = [`'${initialOptions[0].value}'`];
 
     const { data: firstUpdate } = await updateOneFieldMetadata({
       input: {
@@ -114,30 +113,15 @@ describe('Field metadata select update tests group', () => {
     expect(secondUpdate.updateOneField.options).toMatchObject(updatedOptions);
   });
 
-  const updateSpecificSuccessfulTestCases: UpdateCreateFieldMetadataSelectTestCase[] =
-    [
-      {
-        title: 'should succeed with default value and no options',
-        context: {
-          input: {
-            defaultValue: "'OPTION_2'",
-            options: undefined as unknown as FieldMetadataComplexOption[],
-          },
-          expectedOptions: initialOptions,
-        },
-      },
-    ];
-
-  test.each([
-    ...SELECT_OPERATION_AGNOSTIC_TEST_CASES.successful,
-    ...updateSpecificSuccessfulTestCases,
-  ])('Update $title', async ({ context: { input, expectedOptions } }) => {
+  test.each(
+    MUTLI_SELECT_OPERATION_AGNOSTIC_TEST_CASES.successful,
+  )('Update $title', async ({ context: { input, expectedOptions } }) => {
     const {
       data: { createOneField },
     } = await createOneFieldMetadata({
       input: {
         objectMetadataId: createdObjectMetadataId,
-        type: FieldMetadataType.SELECT,
+        type: FieldMetadataType.MULTI_SELECT,
         name: 'testField',
         label: 'Test Field',
         isLabelSyncedWithName: false,
@@ -183,29 +167,15 @@ describe('Field metadata select update tests group', () => {
     }
   });
 
-  const updateSpecificFailingTestCases: UpdateCreateFieldMetadataSelectTestCase[] =
-    [
-      {
-        title: 'should fail with unknown default value and no options',
-        context: {
-          input: {
-            defaultValue: "'OPTION_42'",
-            options: undefined as unknown as FieldMetadataComplexOption[],
-          },
-        },
-      },
-    ];
-
-  test.each([
-    ...updateSpecificFailingTestCases,
-    ...SELECT_OPERATION_AGNOSTIC_TEST_CASES.failing,
-  ])('Update $title', async ({ context: { input } }) => {
+  test.each(
+    MUTLI_SELECT_OPERATION_AGNOSTIC_TEST_CASES.failing,
+  )('Update $title', async ({ context: { input } }) => {
     const {
       data: { createOneField },
     } = await createOneFieldMetadata({
       input: {
         objectMetadataId: createdObjectMetadataId,
-        type: FieldMetadataType.SELECT,
+        type: FieldMetadataType.MULTI_SELECT,
         name: 'testField',
         label: 'Test Field',
         isLabelSyncedWithName: false,

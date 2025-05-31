@@ -1,4 +1,3 @@
-import { UpdateCreateFieldMetadataSelectTestCase } from 'test/integration/metadata/suites/field-metadata/enum/common/field-metadata-select-and-multi-select-common-tests-cases';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import {
   LISTING_NAME_PLURAL,
@@ -12,13 +11,15 @@ import {
   FieldMetadataComplexOption,
   FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
+import { MUTLI_SELECT_OPERATION_AGNOSTIC_TEST_CASES } from 'test/integration/metadata/suites/field-metadata/enum/common/multi-select-operation-agnostic-test-cases';
+import { UpdateCreateFieldMetadataSelectTestCase } from 'test/integration/metadata/suites/field-metadata/enum/types/update-create-field-metadata-enum-test-case';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 describe('Field metadata select creation tests group', () => {
   let createdObjectMetadataId: string;
 
   beforeEach(async () => {
-    const { data, errors } = await forceCreateOneObjectMetadata({
+    const { data, errors } = await createOneObjectMetadata({
       input: {
         labelSingular: LISTING_NAME_SINGULAR,
         labelPlural: LISTING_NAME_PLURAL,
@@ -40,177 +41,88 @@ describe('Field metadata select creation tests group', () => {
     });
   });
 
-  const successfullTestCases: UpdateCreateFieldMetadataSelectTestCase[] = [
-    {
-      title: 'should succeed with provided option id',
-      context: {
-        input: {
-          options: [
-            {
-              label: 'Option 1',
-              value: 'OPTION_1',
-              color: 'green',
-              position: 1,
-              id: '26c602c3-cba9-4d83-92d4-4ba7dbae2f31',
-            },
-          ],
-        },
+  test.each(
+    MUTLI_SELECT_OPERATION_AGNOSTIC_TEST_CASES.successful,
+  )('Create $title', async ({ context: { input, expectedOptions } }) => {
+    const { data, errors } = await createOneFieldMetadata({
+      input: {
+        objectMetadataId: createdObjectMetadataId,
+        type: FieldMetadataType.MULTI_SELECT,
+        name: 'testField',
+        label: 'Test Field',
+        isLabelSyncedWithName: false,
+        ...input,
       },
-    },
-    {
-      title: 'should succeed with valid multi-select default values',
-      context: {
-        input: {
-          defaultValue: ["'OPTION_1'", "'OPTION_2'"],
-          options: [
-            {
-              label: 'Option 1',
-              value: 'OPTION_1',
-              color: 'green',
-              position: 1,
-            },
-            {
-              label: 'Option 2',
-              value: 'OPTION_2',
-              color: 'blue',
-              position: 2,
-            },
-          ],
-        },
-      },
-    },
-  ];
-
-  test.each(successfullTestCases)(
-    'Create $title',
-    async ({ context: { input, expectedOptions } }) => {
-      const { data, errors } = await createOneFieldMetadata({
-        input: {
-          objectMetadataId: createdObjectMetadataId,
-          type: FieldMetadataType.MULTI_SELECT,
-          name: 'testField',
-          label: 'Test Field',
-          isLabelSyncedWithName: false,
-          ...input,
-        },
-        gqlFields: `
+      gqlFields: `
         id
         options
         defaultValue
         `,
-      });
+    });
 
-      console.log({ data, errors });
+    console.log({ data, errors });
 
-      expect(data).not.toBeNull();
-      expect(data.createOneField).toBeDefined();
-      const createdOptions:
-        | FieldMetadataDefaultOption[]
-        | FieldMetadataComplexOption[] = data.createOneField.options;
+    expect(data).not.toBeNull();
+    expect(data.createOneField).toBeDefined();
+    const createdOptions:
+      | FieldMetadataDefaultOption[]
+      | FieldMetadataComplexOption[] = data.createOneField.options;
 
-      const optionsToCompare = expectedOptions ?? input.options;
+    const optionsToCompare = expectedOptions ?? input.options;
 
-      expect(errors).toBeUndefined();
-      expect(createdOptions.length).toBe(optionsToCompare.length);
-      createdOptions.forEach((option) => expect(option.id).toBeDefined());
-      expect(createdOptions).toMatchObject(optionsToCompare);
+    expect(errors).toBeUndefined();
+    expect(createdOptions.length).toBe(optionsToCompare.length);
+    createdOptions.forEach((option) => expect(option.id).toBeDefined());
+    expect(createdOptions).toMatchObject(optionsToCompare);
 
-      if (isDefined(input.defaultValue)) {
-        expect(data.createOneField.defaultValue).toEqual(input.defaultValue);
-      }
-    },
-  );
+    if (isDefined(input.defaultValue)) {
+      expect(data.createOneField.defaultValue).toEqual(input.defaultValue);
+    }
+  });
 
-  const failingTestCases: UpdateCreateFieldMetadataSelectTestCase[] = [
-    {
-      title: 'should fail with non stringified array default value',
-      context: {
-        input: {
-          defaultValue: 'Option_1',
-          options: [
-            {
-              label: 'Option 1',
-              value: 'OPTION_1',
-              color: 'green',
-              position: 1,
-            },
-          ],
-        },
-      },
-    },
-    {
-      title: 'should fail with empty multi-select default values array',
-      context: {
-        input: {
-          defaultValue: [],
-          options: [
-            {
-              label: 'Option 1',
-              value: 'OPTION_1',
-              color: 'green',
-              position: 1,
-            },
-          ],
-        },
-      },
-    },
-    {
-      title: 'should fail with unknown multi-select default values',
-      context: {
-        input: {
-          type: FieldMetadataType.MULTI_SELECT,
-          defaultValue: ["'OPTION_1'", "'UNKNOWN_OPTION'"],
-          options: [
-            {
-              label: 'Option 1',
-              value: 'OPTION_1',
-              color: 'green',
-              position: 1,
-            },
-          ],
-        },
-      },
-    },
-    {
-      title: 'should fail with invalid multi-select default value format',
-      context: {
-        input: {
-          defaultValue: ['invalid', 'format'],
-          options: [
-            {
-              label: 'Option 1',
-              value: 'OPTION_1',
-              color: 'green',
-              position: 1,
-            },
-          ],
-        },
-      },
-    },
-  ];
-
-    test.each(failingTestCases)(
-      'Create $title',
-      async ({ context: { input } }) => {
-        const { data, errors } = await createOneFieldMetadata({
+  // Could centralize
+  const createSpecificFailingTestCases: UpdateCreateFieldMetadataSelectTestCase[] =
+    [
+      {
+        title: 'should fail with null options',
+        context: {
           input: {
-            objectMetadataId: createdObjectMetadataId,
-            type: FieldMetadataType.MULTI_SELECT,
-            name: 'testField',
-            label: 'Test Field',
-            isLabelSyncedWithName: false,
-            ...input,
+            options: null as unknown as FieldMetadataComplexOption[],
           },
-          gqlFields: `
+        },
+      },
+      {
+        title: 'should fail with undefined options',
+        context: {
+          input: {
+            options: undefined as unknown as FieldMetadataComplexOption[],
+          },
+        },
+      },
+    ];
+
+  test.each([
+    ...createSpecificFailingTestCases,
+    ...MUTLI_SELECT_OPERATION_AGNOSTIC_TEST_CASES.failing,
+  ])('Create $title', async ({ context: { input } }) => {
+    const { data, errors } = await createOneFieldMetadata({
+      input: {
+        objectMetadataId: createdObjectMetadataId,
+        type: FieldMetadataType.MULTI_SELECT,
+        name: 'testField',
+        label: 'Test Field',
+        isLabelSyncedWithName: false,
+        ...input,
+      },
+      gqlFields: `
             id
             options
             defaultValue
             `,
-        });
+    });
 
-        expect(data).toBeNull();
-        expect(errors).toBeDefined();
-        expect(errors).toMatchSnapshot();
-      },
-    );
+    expect(data).toBeNull();
+    expect(errors).toBeDefined();
+    expect(errors).toMatchSnapshot();
+  });
 });
