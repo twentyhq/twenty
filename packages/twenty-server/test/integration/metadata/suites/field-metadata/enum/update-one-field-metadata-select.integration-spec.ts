@@ -1,7 +1,7 @@
 import {
-  UPDATE_CREATE_ONE_FIELD_METADATA_SELECT_TEST_CASES,
+  FIELD_METADATA_SELECT_OR_MULTI_SELECT_OPERATION_AGNOSITC_TEST_CASES,
   UpdateCreateFieldMetadataSelectTestCase,
-} from 'test/integration/metadata/suites/field-metadata/enum/common/field-metadata-select-and-multi-select-common-tests-cases';
+} from 'test/integration/metadata/suites/field-metadata/enum/common/field-metadata-select-and-multi-select-operation-agnostic-tests-cases';
 import { CreateOneFieldFactoryInput } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata-query-factory.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
@@ -18,9 +18,10 @@ import {
   FieldMetadataComplexOption,
   FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import { sucessfulSelectOperationAgnosticTestCases } from 'test/integration/metadata/suites/field-metadata/enum/common/field-metadata-select-operation-agnostic-test-cases';
 
 const { failingTestCases, successfulTestCases } =
-  UPDATE_CREATE_ONE_FIELD_METADATA_SELECT_TEST_CASES;
+  FIELD_METADATA_SELECT_OR_MULTI_SELECT_OPERATION_AGNOSITC_TEST_CASES;
 
 describe('Field metadata select update tests group', () => {
   let createdObjectMetadataId: string;
@@ -133,7 +134,7 @@ describe('Field metadata select update tests group', () => {
       },
     ];
 
-  test.each([...successfulTestCases, ...updateSpecificSuccessfulTestCases])(
+  test.each([...successfulTestCases, ...sucessfulSelectOperationAgnosticTestCases, ...updateSpecificSuccessfulTestCases])(
     'Update $title',
     async ({ context: { input, expectedOptions } }) => {
       const {

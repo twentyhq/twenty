@@ -1,7 +1,7 @@
 import {
-  UPDATE_CREATE_ONE_FIELD_METADATA_SELECT_TEST_CASES,
+  FIELD_METADATA_SELECT_OR_MULTI_SELECT_OPERATION_AGNOSITC_TEST_CASES,
   UpdateCreateFieldMetadataSelectTestCase,
-} from 'test/integration/metadata/suites/field-metadata/enum/common/field-metadata-select-and-multi-select-common-tests-cases';
+} from 'test/integration/metadata/suites/field-metadata/enum/common/field-metadata-select-and-multi-select-operation-agnostic-tests-cases';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import {
   LISTING_NAME_PLURAL,
@@ -16,9 +16,10 @@ import {
   FieldMetadataComplexOption,
   FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import { sucessfulSelectOperationAgnosticTestCases } from 'test/integration/metadata/suites/field-metadata/enum/common/field-metadata-select-operation-agnostic-test-cases';
 
 const { failingTestCases, successfulTestCases } =
-  UPDATE_CREATE_ONE_FIELD_METADATA_SELECT_TEST_CASES;
+  FIELD_METADATA_SELECT_OR_MULTI_SELECT_OPERATION_AGNOSITC_TEST_CASES;
 
 describe('Field metadata select creation tests group', () => {
   let createdObjectMetadataId: string;
@@ -50,7 +51,7 @@ describe('Field metadata select creation tests group', () => {
       const { data, errors } = await createOneFieldMetadata({
         input: {
           objectMetadataId: createdObjectMetadataId,
-          type: input.type ?? FieldMetadataType.SELECT,
+          type: FieldMetadataType.SELECT,
           name: 'testField',
           label: 'Test Field',
           isLabelSyncedWithName: false,
@@ -102,13 +103,13 @@ describe('Field metadata select creation tests group', () => {
       },
     ];
 
-  test.each([...failingTestCases, ...createSpecificFailingTestCases])(
+  test.each([...failingTestCases, ...sucessfulSelectOperationAgnosticTestCases, ...createSpecificFailingTestCases])(
     'Create $title',
     async ({ context: { input } }) => {
       const { data, errors } = await createOneFieldMetadata({
         input: {
           objectMetadataId: createdObjectMetadataId,
-          type: input.type ?? FieldMetadataType.SELECT,
+          type: FieldMetadataType.SELECT,
           name: 'testField',
           label: 'Test Field',
           isLabelSyncedWithName: false,
