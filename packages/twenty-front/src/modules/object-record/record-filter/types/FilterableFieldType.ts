@@ -20,6 +20,7 @@ export const FILTERABLE_FIELD_TYPES = [
   'ARRAY',
   'RAW_JSON',
   'BOOLEAN',
+  'TS_VECTOR',
 ] as const;
 
 type FilterableFieldTypeBaseLiteral = (typeof FILTERABLE_FIELD_TYPES)[number];
