@@ -1,7 +1,3 @@
-import {
-  FIELD_METADATA_SELECT_OR_MULTI_SELECT_OPERATION_AGNOSITC_TEST_CASES,
-  UpdateCreateFieldMetadataSelectTestCase,
-} from 'test/integration/metadata/suites/field-metadata/enum/common/field-metadata-select-and-multi-select-operation-agnostic-tests-cases';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import {
   LISTING_NAME_PLURAL,
@@ -16,10 +12,8 @@ import {
   FieldMetadataComplexOption,
   FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { sucessfulSelectOperationAgnosticTestCases } from 'test/integration/metadata/suites/field-metadata/enum/common/field-metadata-select-operation-agnostic-test-cases';
-
-const { failingTestCases, successfulTestCases } =
-  FIELD_METADATA_SELECT_OR_MULTI_SELECT_OPERATION_AGNOSITC_TEST_CASES;
+import { SELECT_OPERATION_AGNOSTIC_TEST_CASES } from 'test/integration/metadata/suites/field-metadata/enum/common/select-operation-agnostic-test-cases';
+import { UpdateCreateFieldMetadataSelectTestCase } from 'test/integration/metadata/suites/field-metadata/enum/types/update-create-field-metadata-enum-test-case';
 
 describe('Field metadata select creation tests group', () => {
   let createdObjectMetadataId: string;
@@ -45,7 +39,7 @@ describe('Field metadata select creation tests group', () => {
     });
   });
 
-  test.each(successfulTestCases)(
+  test.each(SELECT_OPERATION_AGNOSTIC_TEST_CASES.successful)(
     'Create $title',
     async ({ context: { input, expectedOptions } }) => {
       const { data, errors } = await createOneFieldMetadata({
@@ -103,28 +97,28 @@ describe('Field metadata select creation tests group', () => {
       },
     ];
 
-  test.each([...failingTestCases, ...sucessfulSelectOperationAgnosticTestCases, ...createSpecificFailingTestCases])(
-    'Create $title',
-    async ({ context: { input } }) => {
-      const { data, errors } = await createOneFieldMetadata({
-        input: {
-          objectMetadataId: createdObjectMetadataId,
-          type: FieldMetadataType.SELECT,
-          name: 'testField',
-          label: 'Test Field',
-          isLabelSyncedWithName: false,
-          ...input,
-        },
-        gqlFields: `
+  test.each([
+    ...SELECT_OPERATION_AGNOSTIC_TEST_CASES.failing,
+    ...createSpecificFailingTestCases,
+  ])('Create $title', async ({ context: { input } }) => {
+    const { data, errors } = await createOneFieldMetadata({
+      input: {
+        objectMetadataId: createdObjectMetadataId,
+        type: FieldMetadataType.SELECT,
+        name: 'testField',
+        label: 'Test Field',
+        isLabelSyncedWithName: false,
+        ...input,
+      },
+      gqlFields: `
         id
         options
         defaultValue
         `,
-      });
+    });
 
-      expect(data).toBeNull();
-      expect(errors).toBeDefined();
-      expect(errors).toMatchSnapshot();
-    },
-  );
+    expect(data).toBeNull();
+    expect(errors).toBeDefined();
+    expect(errors).toMatchSnapshot();
+  });
 });

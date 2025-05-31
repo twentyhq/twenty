@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Field metadata select creation tests group Create should fail with an invalid default value 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with an invalid default value 1`] = `
 [
   {
     "extensions": {
@@ -11,7 +11,7 @@ exports[`Field metadata select creation tests group Create should fail with an i
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with an unknown default value 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with an unknown default value 1`] = `
 [
   {
     "extensions": {
@@ -22,7 +22,7 @@ exports[`Field metadata select creation tests group Create should fail with an u
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with comma in option label 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with comma in option label 1`] = `
 [
   {
     "extensions": {
@@ -33,7 +33,7 @@ exports[`Field metadata select creation tests group Create should fail with comm
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with duplicated option ids 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with duplicated option ids 1`] = `
 [
   {
     "extensions": {
@@ -44,7 +44,7 @@ exports[`Field metadata select creation tests group Create should fail with dupl
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with duplicated option positions 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with duplicated option positions 1`] = `
 [
   {
     "extensions": {
@@ -55,7 +55,7 @@ exports[`Field metadata select creation tests group Create should fail with dupl
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with duplicated option values 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with duplicated option values 1`] = `
 [
   {
     "extensions": {
@@ -66,7 +66,7 @@ exports[`Field metadata select creation tests group Create should fail with dupl
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with duplicated trimmed option values 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with duplicated trimmed option values 1`] = `
 [
   {
     "extensions": {
@@ -77,7 +77,7 @@ exports[`Field metadata select creation tests group Create should fail with dupl
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with empty multi-select default values array 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with empty multi-select default values array 1`] = `
 [
   {
     "extensions": {
@@ -88,7 +88,7 @@ exports[`Field metadata select creation tests group Create should fail with empt
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with empty options 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with empty options 1`] = `
 [
   {
     "extensions": {
@@ -99,7 +99,7 @@ exports[`Field metadata select creation tests group Create should fail with empt
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with empty string defaultValue 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with empty string defaultValue 1`] = `
 [
   {
     "extensions": {
@@ -110,7 +110,7 @@ exports[`Field metadata select creation tests group Create should fail with empt
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with empty string id 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with empty string id 1`] = `
 [
   {
     "extensions": {
@@ -121,7 +121,7 @@ exports[`Field metadata select creation tests group Create should fail with empt
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with empty string label 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with empty string label 1`] = `
 [
   {
     "extensions": {
@@ -132,7 +132,7 @@ exports[`Field metadata select creation tests group Create should fail with empt
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with empty string value 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with empty string value 1`] = `
 [
   {
     "extensions": {
@@ -143,7 +143,7 @@ exports[`Field metadata select creation tests group Create should fail with empt
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with invalid multi-select default value format 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with invalid multi-select default value format 1`] = `
 [
   {
     "extensions": {
@@ -154,7 +154,7 @@ exports[`Field metadata select creation tests group Create should fail with inva
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with invalid option id 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with invalid option id 1`] = `
 [
   {
     "extensions": {
@@ -165,7 +165,7 @@ exports[`Field metadata select creation tests group Create should fail with inva
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with invalid option value format 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with invalid option value format 1`] = `
 [
   {
     "extensions": {
@@ -176,7 +176,7 @@ exports[`Field metadata select creation tests group Create should fail with inva
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with non stringified array default value 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with non stringified array default value 1`] = `
 [
   {
     "extensions": {
@@ -187,7 +187,7 @@ exports[`Field metadata select creation tests group Create should fail with non 
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with not a string defaultValue 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with not a string defaultValue 1`] = `
 [
   {
     "extensions": {
@@ -198,7 +198,7 @@ exports[`Field metadata select creation tests group Create should fail with not 
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with not a string id 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with not a string id 1`] = `
 [
   {
     "extensions": {
@@ -209,7 +209,7 @@ exports[`Field metadata select creation tests group Create should fail with not 
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with not a string label 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with not a string label 1`] = `
 [
   {
     "extensions": {
@@ -221,7 +221,7 @@ exports[`Field metadata select creation tests group Create should fail with not 
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with not a string value 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with not a string value 1`] = `
 [
   {
     "extensions": {
@@ -232,7 +232,7 @@ exports[`Field metadata select creation tests group Create should fail with not 
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with null id 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with null id 1`] = `
 [
   {
     "extensions": {
@@ -243,7 +243,7 @@ exports[`Field metadata select creation tests group Create should fail with null
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with null label 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with null label 1`] = `
 [
   {
     "extensions": {
@@ -254,18 +254,7 @@ exports[`Field metadata select creation tests group Create should fail with null
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with null options 1`] = `
-[
-  {
-    "extensions": {
-      "code": "BAD_USER_INPUT",
-    },
-    "message": "Options are required for enum fields",
-  },
-]
-`;
-
-exports[`Field metadata select creation tests group Create should fail with null value 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with null value 1`] = `
 [
   {
     "extensions": {
@@ -276,7 +265,7 @@ exports[`Field metadata select creation tests group Create should fail with null
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with only white spaces defaultValue 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with only white spaces defaultValue 1`] = `
 [
   {
     "extensions": {
@@ -287,7 +276,7 @@ exports[`Field metadata select creation tests group Create should fail with only
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with only white spaces id 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with only white spaces id 1`] = `
 [
   {
     "extensions": {
@@ -298,7 +287,7 @@ exports[`Field metadata select creation tests group Create should fail with only
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with only white spaces label 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with only white spaces label 1`] = `
 [
   {
     "extensions": {
@@ -309,7 +298,7 @@ exports[`Field metadata select creation tests group Create should fail with only
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with only white spaces value 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with only white spaces value 1`] = `
 [
   {
     "extensions": {
@@ -320,7 +309,7 @@ exports[`Field metadata select creation tests group Create should fail with only
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with too long defaultValue 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with too long defaultValue 1`] = `
 [
   {
     "extensions": {
@@ -331,7 +320,7 @@ exports[`Field metadata select creation tests group Create should fail with too 
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with too long id 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with too long id 1`] = `
 [
   {
     "extensions": {
@@ -342,7 +331,7 @@ exports[`Field metadata select creation tests group Create should fail with too 
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with too long label 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with too long label 1`] = `
 [
   {
     "extensions": {
@@ -353,7 +342,7 @@ exports[`Field metadata select creation tests group Create should fail with too 
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with too long value 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with too long value 1`] = `
 [
   {
     "extensions": {
@@ -364,7 +353,7 @@ exports[`Field metadata select creation tests group Create should fail with too 
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with undefined option label 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with undefined option label 1`] = `
 [
   {
     "extensions": {
@@ -375,7 +364,7 @@ exports[`Field metadata select creation tests group Create should fail with unde
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with undefined option value 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with undefined option value 1`] = `
 [
   {
     "extensions": {
@@ -386,18 +375,7 @@ exports[`Field metadata select creation tests group Create should fail with unde
 ]
 `;
 
-exports[`Field metadata select creation tests group Create should fail with undefined options 1`] = `
-[
-  {
-    "extensions": {
-      "code": "BAD_USER_INPUT",
-    },
-    "message": "Options are required for enum fields",
-  },
-]
-`;
-
-exports[`Field metadata select creation tests group Create should fail with unknown multi-select default values 1`] = `
+exports[`Field metadata multi-select update tests group Update should fail with unknown multi-select default values 1`] = `
 [
   {
     "extensions": {
