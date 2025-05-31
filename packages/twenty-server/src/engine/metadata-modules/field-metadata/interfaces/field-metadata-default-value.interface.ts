@@ -16,6 +16,7 @@ import {
   FieldMetadataDefaultValueRawJson,
   FieldMetadataDefaultValueRichText,
   FieldMetadataDefaultValueString,
+  FieldMetadataDefaultValueStringArray,
   FieldMetadataDefaultValueUuidFunction,
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 
@@ -46,7 +47,7 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.ADDRESS]: FieldMetadataDefaultValueAddress;
   [FieldMetadataType.RATING]: FieldMetadataDefaultValueString;
   [FieldMetadataType.SELECT]: FieldMetadataDefaultValueString;
-  [FieldMetadataType.MULTI_SELECT]: FieldMetadataDefaultValueString;
+  [FieldMetadataType.MULTI_SELECT]: FieldMetadataDefaultValueStringArray;
   [FieldMetadataType.RAW_JSON]: FieldMetadataDefaultValueRawJson;
   [FieldMetadataType.RICH_TEXT]: FieldMetadataDefaultValueRichText;
   [FieldMetadataType.ACTOR]: FieldMetadataDefaultActor;
@@ -60,13 +61,21 @@ export type FieldMetadataFunctionDefaultValue = ExtractValueType<
   FieldMetadataDefaultValueUuidFunction | FieldMetadataDefaultValueNowFunction
 >;
 
+export type FieldMetadataDefaultValueForType<
+  T extends keyof FieldMetadataDefaultValueMapping,
+> = ExtractValueType<FieldMetadataDefaultValueMapping[T]> | null;
+
+export type FieldMetadataDefaultValueForAnyType = ExtractValueType<
+  UnionOfValues<FieldMetadataDefaultValueMapping>
+> | null;
+
 export type FieldMetadataDefaultValue<
   T extends FieldMetadataType = FieldMetadataType,
 > =
   IsExactly<T, FieldMetadataType> extends true
-    ? ExtractValueType<UnionOfValues<FieldMetadataDefaultValueMapping>> | null
+    ? FieldMetadataDefaultValueForAnyType
     : T extends keyof FieldMetadataDefaultValueMapping
-      ? ExtractValueType<FieldMetadataDefaultValueMapping[T]> | null
+      ? FieldMetadataDefaultValueForType<T>
       : never;
 
 type FieldMetadataDefaultValueExtractedTypes = {
