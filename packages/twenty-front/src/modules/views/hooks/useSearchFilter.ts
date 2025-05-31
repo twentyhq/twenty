@@ -47,7 +47,9 @@ export const useSearchFilter = (filterDropdownId: string) => {
   };
 
   const applySearchFilter = (value: string) => {
-    if (!searchVectorField) return;
+    if (!searchVectorField) {
+      return;
+    }
 
     const existingSearchFilter = getExistingSearchFilter();
 
