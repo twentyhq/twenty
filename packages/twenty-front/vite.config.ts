@@ -37,6 +37,14 @@ export default defineConfig(({ command, mode }) => {
     ? path.resolve(__dirname, './tsconfig.build.json')
     : path.resolve(__dirname, './tsconfig.dev.json');
 
+
+  const CHUNK_SIZE_WARNING_LIMIT = 1024 * 1024; // 1MB
+  // Please don't update this limit for main index chunk
+  // If it gets to big then find modules in the code base
+  // that can be loaded lazily
+  const MAIN_CHUNK_SIZE_LIMIT = 4.5 * 1024 * 1024; // 4.5MB for main index chunk
+  const OTHER_CHUNK_SIZE_LIMIT = 15 * 1024 * 1024; // 5MB for other chunks
+
   const checkers: Checkers = {
     overlay: false,
   };
@@ -167,20 +175,82 @@ export default defineConfig(({ command, mode }) => {
       outDir: 'build',
       sourcemap: VITE_BUILD_SOURCEMAP === 'true',
       rollupOptions: {
+        //  Don't use manual chunks as it causes many issue
+        // including this one we wasted a lot of time on:
+        // https://github.com/rollup/rollup/issues/2793
         output: {
-          manualChunks: (id) => {
-            if (id.includes('@scalar')) {
-              return 'scalar';
-            }
+          // Set chunk size warning limit (in bytes) - warns at 1MB
+          chunkSizeWarningLimit: CHUNK_SIZE_WARNING_LIMIT,
+          // Custom plugin to fail build if chunks exceed max size
+          plugins: [
+            {
+              name: 'chunk-size-limit',
+              generateBundle(_options, bundle) {
+                const oversizedChunks: string[] = [];
+                
+                Object.entries(bundle).forEach(([fileName, chunk]) => {
+                  if (chunk.type === 'chunk' && chunk.code) {
+                    const size = Buffer.byteLength(chunk.code, 'utf8');
+                    const isMainChunk = fileName.includes('index') && chunk.isEntry;
+                    const sizeLimit = isMainChunk ? MAIN_CHUNK_SIZE_LIMIT : OTHER_CHUNK_SIZE_LIMIT;
+                    const limitType = isMainChunk ? 'main' : 'other';
+                    
+                    if (size > sizeLimit) {
+                      oversizedChunks.push(`${fileName} (${limitType}): ${(size / 1024 / 1024).toFixed(2)}MB (limit: ${(sizeLimit / 1024 / 1024).toFixed(0)}MB)`);
+                    }
+                  }
+                });
+                
+                if (oversizedChunks.length > 0) {
+                  const errorMessage = `Build failed: The following chunks exceed their size limits:\n${oversizedChunks.map(chunk => `  - ${chunk}`).join('\n')}`;
+                  this.error(errorMessage);
+                }
+              }
+            },
+            // TODO; later - think about prefetching modules such 
+            // as date time picker, phone input etc...
+            /*
+            {
+              name: 'add-prefetched-modules',
+              transformIndexHtml(html: string, 
+                ctx: {
+                  path: string;
+                  filename: string;
+                  server?: ViteDevServer;
+                  bundle?: import('rollup').OutputBundle;
+                  chunk?: import('rollup').OutputChunk;
+                }) {
 
-            return null;
-          },
-        },
-      },
-      modulePreload: {
-        resolveDependencies: (filename, deps, { hostId }) => {
-          return deps.filter(dep => !dep.includes('scalar'));
-        },
+                  const bundles = Object.keys(ctx.bundle ?? {});
+
+                  let modernBundles = bundles.filter(
+                    (bundle) => bundle.endsWith('.map') === false
+                  );
+
+                  
+                  // Remove existing files and concatenate them into link tags
+                  const prefechBundlesString = modernBundles
+                    .filter((bundle) => html.includes(bundle) === false)
+                    .map((bundle) => `<link rel="prefetch" href="${ctx.server?.config.base}${bundle}">`)
+                    .join('');
+            
+                  // Use regular expression to get the content within <head> </head>
+                  const headContent = html.match(/<head>([\s\S]*)<\/head>/)?.[1] ?? '';
+                  // Insert the content of prefetch into the head
+                  const newHeadContent = `${headContent}${prefechBundlesString}`;
+                  // Replace the original head
+                  html = html.replace(
+                    /<head>([\s\S]*)<\/head>/,
+                    `<head>${newHeadContent}</head>`
+                  );
+            
+                  return html;
+            
+             
+              },
+            }*/
+          ]
+        }
       },
     },
 

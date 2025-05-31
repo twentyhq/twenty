@@ -1,11 +1,21 @@
 import { hasFlag } from 'country-flag-icons';
-import * as Flags from 'country-flag-icons/react/3x2';
 import { getCountries, getCountryCallingCode } from 'libphonenumber-js';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { Country } from '@/ui/input/components/internal/types/Country';
 
 export const useCountries = () => {
+  const [flags, setFlags] = useState<any>(null);
+
+  useEffect(() => {
+    const loadFlags = async () => {
+      const flagsModule = await import('country-flag-icons/react/3x2');
+      setFlags(flagsModule);
+    };
+
+    loadFlags();
+  }, []);
+
   return useMemo<Country[]>(() => {
     const regionNamesInEnglish = new Intl.DisplayNames(['en'], {
       type: 'region',
@@ -20,7 +30,7 @@ export const useCountries = () => {
 
       if (!hasFlag(countryCode)) return result;
 
-      const Flag = Flags[countryCode];
+      const Flag = flags[countryCode];
 
       const callingCode = getCountryCallingCode(countryCode);
 
@@ -33,5 +43,5 @@ export const useCountries = () => {
 
       return result;
     }, []);
-  }, []);
+  }, [flags]);
 };
