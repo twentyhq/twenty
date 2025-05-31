@@ -46,7 +46,7 @@ export class BillingController {
     private readonly billingWebhookCustomerService: BillingWebhookCustomerService,
   ) {}
 
-  @Post(['billing/webhooks', 'webhooks/stripe'])
+  @Post(['billing/webhooks', 'webhooks/stripe', 'webhooks/inter'])
   async handleWebhooks(
     @Headers('stripe-signature') signature: string,
     @Req() req: RawBodyRequest<Request>,
@@ -58,6 +58,9 @@ export class BillingController {
         BillingExceptionCode.BILLING_MISSING_REQUEST_BODY,
       );
     }
+
+    // TODO: Continue webhook logic for inter
+    console.log('req: ', req.body);
 
     try {
       const event = this.stripeWebhookService.constructEventFromPayload(

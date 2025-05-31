@@ -10,6 +10,7 @@ import { InterIntegrationResolver } from 'src/engine/core-modules/inter/integrat
 import { InterIntegrationService } from 'src/engine/core-modules/inter/integration/inter-integration.service';
 import { InterResolver } from 'src/engine/core-modules/inter/inter.resolver';
 import { InterInstanceService } from 'src/engine/core-modules/inter/services/inter-instance.service';
+import { InterWebhookService } from 'src/engine/core-modules/inter/services/inter-webhook.service';
 import { InterService } from 'src/engine/core-modules/inter/services/inter.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
@@ -34,6 +35,7 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
     InterService,
     InterResolver,
     InterInstanceService,
+    InterWebhookService,
   ],
   exports: [
     InterIntegrationResolver,
@@ -41,6 +43,7 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
     InterService,
     InterResolver,
     InterInstanceService,
+    InterWebhookService,
   ],
 })
 export class InterModule {}
