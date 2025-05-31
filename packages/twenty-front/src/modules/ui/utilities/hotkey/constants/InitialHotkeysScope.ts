@@ -7,5 +7,6 @@ export const INITIAL_HOTKEYS_SCOPE: HotkeyScope = {
     commandMenu: true,
     goto: true,
     keyboardShortcutMenu: true,
+    viewBarFilter: true,
   },
 };

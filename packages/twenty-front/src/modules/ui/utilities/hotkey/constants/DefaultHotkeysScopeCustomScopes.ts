@@ -4,4 +4,5 @@ export const DEFAULT_HOTKEYS_SCOPE_CUSTOM_SCOPES: CustomHotkeyScopes = {
   commandMenu: true,
   goto: false,
   keyboardShortcutMenu: false,
+  viewBarFilter: true,
 };
