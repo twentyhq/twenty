@@ -1,6 +1,6 @@
 import { WorkflowSendEmailAction } from '@/workflow/types/Workflow';
 import { Meta, StoryObj } from '@storybook/react';
-import { expect, fn, within } from '@storybook/test';
+import { expect, fn, waitFor, within } from '@storybook/test';
 import { graphql, HttpResponse } from 'msw';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -110,11 +110,12 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('Send Email')).toBeVisible();
-
-    expect(await canvas.findByText('Account')).toBeVisible();
-    expect(await canvas.findByText('Subject')).toBeVisible();
-    expect(await canvas.findByText('Body')).toBeVisible();
+    await waitFor(async () => {
+      expect(await canvas.findByText('Send Email')).toBeVisible();
+      expect(await canvas.findByText('Account')).toBeVisible();
+      expect(await canvas.findByText('Subject')).toBeVisible();
+      expect(await canvas.findByText('Body')).toBeVisible();
+    });
   },
 };
 
