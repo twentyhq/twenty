@@ -1,5 +1,6 @@
-import { trimAndRemoveDuplicatedWhitespacesFromString } from 'src/utils/trim-and-remove-duplicated-whitespaces-from-string';
 import { EachTestingContext } from 'twenty-shared/testing';
+
+import { trimAndRemoveDuplicatedWhitespacesFromString } from 'src/utils/trim-and-remove-duplicated-whitespaces-from-string';
 
 type TrimAndRemoveWhitespacesTestCase = EachTestingContext<{
   input: string;
@@ -64,4 +65,4 @@ describe('trim-and-remove-duplicated-whitespaces-from-string', () => {
 
     expect(result).toEqual(expected);
   });
-}); 
+});
