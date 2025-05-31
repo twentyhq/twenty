@@ -16,11 +16,15 @@ export const ViewBarFilterDropdownSearchButton = () => {
     searchInputValue,
     setShowSearchInput,
     setSearchInputValueFromExistingFilter,
+    applySearchFilter,
   } = useSearchFilter(VIEW_BAR_FILTER_DROPDOWN_ID);
 
   const handleSearchClick = () => {
     setSearchInputValueFromExistingFilter();
     setShowSearchInput(true);
+    if (searchInputValue.length > 0) {
+      applySearchFilter(searchInputValue);
+    }
   };
 
   return (
