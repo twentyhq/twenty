@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
@@ -19,6 +19,7 @@ import {
   beneathDatabaseIdentifierMinimumLength,
   exceedsDatabaseIdentifierMaximumLength,
 } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
+import { EnumFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/enum-column-action.factory';
 import { isSnakeCaseString } from 'src/utils/is-snake-case-string';
 
 type Validator<T> = { validator: (str: T) => boolean; message: string };
@@ -241,7 +242,7 @@ export class FieldMetadataEnumValidationService {
   }
 
   private validateFieldMetadataDefaultValue(
-    fieldType: FieldMetadataType,
+    fieldType: EnumFieldMetadataType,
     options: FieldMetadataOptions,
     defaultValue: unknown,
   ) {
@@ -252,9 +253,12 @@ export class FieldMetadataEnumValidationService {
       case FieldMetadataType.MULTI_SELECT:
         this.validateMultiSelectDefaultValue(options, defaultValue);
         break;
-      // TODO: Determine if RATING should be handled here
-      // case FieldMetadataType.RATING:
-      //   break;
+      case FieldMetadataType.RATING:
+        // TODO: Determine if RATING should be handled here
+        break;
+      default: {
+        assertUnreachable(fieldType, "Should never occur, unknown field metadata enum type");
+      }
     }
   }
 
