@@ -1,4 +1,6 @@
 import { ActionComponent } from '@/action-menu/actions/display/components/ActionComponent';
+import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
+import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/action-menu/constants/ActionMenuDropdownClickOutsideId';
@@ -12,6 +14,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
+import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
@@ -21,6 +24,7 @@ import { extractComponentState } from '@/ui/utilities/state/component-state/util
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { IconLayoutSidebarRightExpand } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
@@ -35,7 +39,7 @@ const StyledDropdownMenuContainer = styled.div`
 `;
 
 export const RecordIndexActionMenuDropdown = () => {
-  const { actions } = useContext(ActionMenuContext);
+  const { actions, actionMenuType } = useContext(ActionMenuContext);
 
   const recordIndexActions = actions.filter(
     (action) =>
@@ -68,57 +72,79 @@ export const RecordIndexActionMenuDropdown = () => {
     selectedItemIdComponentState,
     dropdownId,
   );
+  const deleteRecordAction = recordIndexActions?.find(
+    (action) =>
+      action.key === SingleRecordActionKeys.DELETE ||
+      action.key === MultipleRecordsActionKeys.DELETE,
+  );
 
+  const modalId = `${deleteRecordAction?.key}-action-modal-${actionMenuType}`;
+  const isModalOpened = useRecoilComponentValueV2(
+    isModalOpenedComponentState,
+    modalId,
+  );
+
+  if (isModalOpened && isDefined(deleteRecordAction)) {
+    closeDropdown(dropdownId);
+  }
   return (
-    <Dropdown
-      dropdownId={dropdownId}
-      dropdownHotkeyScope={{
-        scope: ActionMenuDropdownHotkeyScope.ActionMenuDropdown,
-      }}
-      data-select-disable
-      dropdownPlacement="bottom-start"
-      dropdownStrategy="absolute"
-      dropdownOffset={{
-        x: actionMenuDropdownPosition.x ?? 0,
-        y: actionMenuDropdownPosition.y ?? 0,
-      }}
-      dropdownComponents={
-        <DropdownContent>
-          <StyledDropdownMenuContainer
-            data-click-outside-id={ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
-          >
-            <DropdownMenuItemsContainer>
-              <SelectableList
-                hotkeyScope={ActionMenuDropdownHotkeyScope.ActionMenuDropdown}
-                selectableItemIdArray={selectedItemIdArray}
-                selectableListInstanceId={dropdownId}
+    <>
+      {isModalOpened && deleteRecordAction ? (
+        <ActionComponent action={deleteRecordAction} />
+      ) : (
+        <Dropdown
+          dropdownId={dropdownId}
+          dropdownHotkeyScope={{
+            scope: ActionMenuDropdownHotkeyScope.ActionMenuDropdown,
+          }}
+          data-select-disable
+          dropdownPlacement="bottom-start"
+          dropdownStrategy="absolute"
+          dropdownOffset={{
+            x: actionMenuDropdownPosition.x ?? 0,
+            y: actionMenuDropdownPosition.y ?? 0,
+          }}
+          dropdownComponents={
+            <DropdownContent>
+              <StyledDropdownMenuContainer
+                data-click-outside-id={ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
               >
-                {recordIndexActions.map((action) => (
-                  <ActionComponent action={action} key={action.key} />
-                ))}
-                <SelectableListItem
-                  itemId="more-actions"
-                  key="more-actions"
-                  onEnter={() => {
-                    closeDropdown(dropdownId);
-                    openCommandMenu();
-                  }}
-                >
-                  <MenuItem
-                    LeftIcon={IconLayoutSidebarRightExpand}
-                    onClick={() => {
-                      closeDropdown(dropdownId);
-                      openCommandMenu();
-                    }}
-                    focused={selectedItemId === 'more-actions'}
-                    text="More actions"
-                  />
-                </SelectableListItem>
-              </SelectableList>
-            </DropdownMenuItemsContainer>
-          </StyledDropdownMenuContainer>
-        </DropdownContent>
-      }
-    />
+                <DropdownMenuItemsContainer>
+                  <SelectableList
+                    hotkeyScope={
+                      ActionMenuDropdownHotkeyScope.ActionMenuDropdown
+                    }
+                    selectableItemIdArray={selectedItemIdArray}
+                    selectableListInstanceId={dropdownId}
+                  >
+                    {recordIndexActions.map((action) => (
+                      <ActionComponent action={action} key={action.key} />
+                    ))}
+                    <SelectableListItem
+                      itemId="more-actions"
+                      key="more-actions"
+                      onEnter={() => {
+                        closeDropdown(dropdownId);
+                        openCommandMenu();
+                      }}
+                    >
+                      <MenuItem
+                        LeftIcon={IconLayoutSidebarRightExpand}
+                        onClick={() => {
+                          closeDropdown(dropdownId);
+                          openCommandMenu();
+                        }}
+                        focused={selectedItemId === 'more-actions'}
+                        text="More actions"
+                      />
+                    </SelectableListItem>
+                  </SelectableList>
+                </DropdownMenuItemsContainer>
+              </StyledDropdownMenuContainer>
+            </DropdownContent>
+          }
+        />
+      )}
+    </>
   );
 };
