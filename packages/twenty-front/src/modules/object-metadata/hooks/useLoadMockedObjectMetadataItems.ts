@@ -1,13 +1,16 @@
 import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useRecoilCallback } from 'recoil';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useLoadMockedObjectMetadataItems = () => {
   const loadMockedObjectMetadataItems = useRecoilCallback(
     ({ set, snapshot }) =>
-      () => {
+      async () => {
+        const { generatedMockObjectMetadataItems } = await import(
+          '~/testing/mock-data/generatedMockObjectMetadataItems'
+        );
+
         if (
           !isDeeplyEqual(
             snapshot.getLoadable(objectMetadataItemsState).getValue(),
