@@ -59,6 +59,8 @@ export const ViewBarFilterDropdownFieldSelectMenu = () => {
     ...selectableHiddenFieldMetadataItems.map(
       (fieldMetadataItem) => fieldMetadataItem.id,
     ),
+    'search-button',
+    'advanced-filter-button',
   ];
 
   const shouldShowSeparator =
@@ -107,9 +109,9 @@ export const ViewBarFilterDropdownFieldSelectMenu = () => {
             )}
           </DropdownMenuItemsContainer>
         )}
+        {hasSelectableItems && <DropdownMenuSeparator />}
+        <ViewBarFilterDropdownBottomMenu />
       </SelectableList>
-      {hasSelectableItems && <DropdownMenuSeparator />}
-      <ViewBarFilterDropdownBottomMenu />
     </DropdownContent>
   );
 };
