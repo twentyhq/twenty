@@ -80,6 +80,7 @@ export class BillingResolver {
       plan,
       requirePaymentMethod,
       paymentProvider,
+      interChargeData,
     }: BillingCheckoutSessionInput,
     @AuthApiKey() apiKey?: string,
   ) {
@@ -108,6 +109,7 @@ export class BillingResolver {
         ...checkoutSessionParams,
         billingPricesPerPlan,
         paymentProvider,
+        interChargeData,
       });
 
     return {
