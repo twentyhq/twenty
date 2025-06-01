@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { InterInstanceService } from 'src/engine/core-modules/inter/services/inter-instance.service';
+import { InterWebhookRegistered } from 'src/engine/core-modules/inter/types/InterWebhookRegistered.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
@@ -21,7 +22,6 @@ export class InterWebhookService {
       webhook_url: WEBHOOK_URL,
     };
 
-    // TODO: Validate which data is passed in content-length and host
     try {
       const response = await this.interInstanceService
         .getInterAxiosInstance()
@@ -29,8 +29,6 @@ export class InterWebhookService {
           headers: {
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
-            'Content-Length': '',
-            Host: '',
             'x-conta-corrente': '123',
           },
         });
@@ -48,6 +46,34 @@ export class InterWebhookService {
       this.logger.error('Error registering the webhook: ', error.stack);
 
       return false;
+    }
+  }
+
+  async getWebhookRegistered(): Promise<InterWebhookRegistered | null> {
+    const accessToken = await this.interInstanceService.getOauthToken();
+
+    try {
+      const response = await this.interInstanceService
+        .getInterAxiosInstance()
+        .get('/cobranca/v3/cobrancas/webhook', {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+      if (response.status === 200) {
+        this.logger.log('Webhook data retrieved successfully');
+
+        return response.data;
+      } else {
+        this.logger.error(`Unexpected response status: ${response.status}`);
+
+        return null;
+      }
+    } catch (error) {
+      this.logger.error('Error retrieving webhook info:', error.stack);
+
+      return null;
     }
   }
 }
