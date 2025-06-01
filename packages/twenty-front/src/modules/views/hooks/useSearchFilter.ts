@@ -11,11 +11,13 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import { SEARCH_VECTOR_FIELD_NAME } from '../constants/ViewFieldConstants';
 
 export const useSearchFilter = (filterDropdownId: string) => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
   const searchVectorField = objectMetadataItem.fields.find(
-    (field) => field.type === 'TS_VECTOR' && field.name === 'searchVector',
+    (field) =>
+      field.type === 'TS_VECTOR' && field.name === SEARCH_VECTOR_FIELD_NAME,
   );
 
   const [, setShowSearchInput] = useRecoilComponentStateV2(

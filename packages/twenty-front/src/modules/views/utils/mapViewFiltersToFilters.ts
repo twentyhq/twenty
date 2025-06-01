@@ -4,6 +4,7 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { isDefined } from 'twenty-shared/utils';
+import { SEARCH_VECTOR_FIELD_NAME } from '../constants/ViewFieldConstants';
 import { ViewFilter } from '../types/ViewFilter';
 import { ViewFilterOperand } from '../types/ViewFilterOperand';
 
@@ -28,7 +29,7 @@ export const mapViewFiltersToFilters = (
       );
 
       const label =
-        availableFieldMetadataItem.name === 'searchVector' &&
+        availableFieldMetadataItem.name === SEARCH_VECTOR_FIELD_NAME &&
         viewFilter.operand === ViewFilterOperand.Search
           ? 'Search'
           : availableFieldMetadataItem.label;
