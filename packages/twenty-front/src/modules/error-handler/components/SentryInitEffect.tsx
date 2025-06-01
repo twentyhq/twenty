@@ -23,9 +23,9 @@ export const SentryInitEffect = () => {
   useEffect(() => {
     const initializeSentry = async () => {
       if (
-        !isSentryInitializing &&
         isNonEmptyString(sentryConfig?.dsn) &&
-        !isSentryInitialized
+        !isSentryInitialized &&
+        !isSentryInitializing
       ) {
         setIsSentryInitializing(true);
 
@@ -59,9 +59,9 @@ export const SentryInitEffect = () => {
 
     const updateSentryUser = async () => {
       if (
+        isSentryInitialized &&
         isDefined(currentUser) &&
-        !isSentryUserDefined &&
-        isSentryInitialized
+        !isSentryUserDefined
       ) {
         try {
           const { setUser } = await import('@sentry/react');

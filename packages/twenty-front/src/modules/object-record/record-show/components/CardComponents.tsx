@@ -1,4 +1,5 @@
 import { Calendar } from '@/activities/calendar/components/Calendar';
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { EmailThreads } from '@/activities/emails/components/EmailThreads';
 import { Attachments } from '@/activities/files/components/Attachments';
 import { Notes } from '@/activities/notes/components/Notes';
@@ -15,8 +16,10 @@ import { WorkflowVersionVisualizerEffect } from '@/workflow/workflow-diagram/com
 import { WorkflowVisualizerEffect } from '@/workflow/workflow-diagram/components/WorkflowVisualizerEffect';
 import { WorkflowRunVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowRunVisualizerComponentInstanceContext';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { lazy, Suspense, useId } from 'react';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 const StyledGreyBox = styled.div<{ isInRightDrawer?: boolean }>`
   background: ${({ theme, isInRightDrawer }) =>
@@ -31,6 +34,15 @@ const StyledGreyBox = styled.div<{ isInRightDrawer?: boolean }>`
     isInRightDrawer ? theme.spacing(4) : ''};
 `;
 
+const StyledLoadingSkeletonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(2)};
+  height: 100%;
+  padding: ${({ theme }) => theme.spacing(4)};
+  width: 100%;
+`;
+
 type CardComponentProps = {
   targetableObject: Pick<
     ActivityTargetableObject,
@@ -40,6 +52,24 @@ type CardComponentProps = {
 };
 
 type CardComponentType = (props: CardComponentProps) => JSX.Element | null;
+
+const LoadingSkeleton = () => {
+  const theme = useTheme();
+
+  return (
+    <StyledLoadingSkeletonContainer>
+      <SkeletonTheme
+        baseColor={theme.background.tertiary}
+        highlightColor={theme.background.transparent.lighter}
+        borderRadius={theme.border.radius.sm}
+      >
+        <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.m} />
+        <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.m} />
+        <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.m} />
+      </SkeletonTheme>
+    </StyledLoadingSkeletonContainer>
+  );
+};
 
 const WorkflowVisualizer = lazy(() =>
   import('@/workflow/workflow-diagram/components/WorkflowVisualizer').then(
@@ -116,7 +146,7 @@ export const CardComponents: Record<CardType, CardComponentType> = {
         }}
       >
         <WorkflowVisualizerEffect workflowId={targetableObject.id} />
-        <Suspense fallback={<div>Loading workflow...</div>}>
+        <Suspense fallback={<LoadingSkeleton />}>
           <WorkflowVisualizer workflowId={targetableObject.id} />
         </Suspense>
       </WorkflowVisualizerComponentInstanceContext.Provider>
@@ -135,7 +165,7 @@ export const CardComponents: Record<CardType, CardComponentType> = {
         <WorkflowVersionVisualizerEffect
           workflowVersionId={targetableObject.id}
         />
-        <Suspense fallback={<div>Loading workflow version...</div>}>
+        <Suspense fallback={<LoadingSkeleton />}>
           <WorkflowVersionVisualizer workflowVersionId={targetableObject.id} />
         </Suspense>
       </WorkflowVisualizerComponentInstanceContext.Provider>
@@ -164,7 +194,7 @@ export const CardComponents: Record<CardType, CardComponentType> = {
             recordId={targetableObject.id}
             listenedFields={['status', 'output']}
           />
-          <Suspense fallback={<div>Loading workflow run...</div>}>
+          <Suspense fallback={<LoadingSkeleton />}>
             <WorkflowRunVisualizer workflowRunId={targetableObject.id} />
           </Suspense>
         </WorkflowRunVisualizerComponentInstanceContext.Provider>

@@ -159,7 +159,6 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                       }, Path: ${graphQLError.path}`,
                     );
                   }
-                  // Lazy load Sentry for error capturing
                   import('@sentry/react')
                     .then(({ captureException }) => {
                       captureException(graphQLError);

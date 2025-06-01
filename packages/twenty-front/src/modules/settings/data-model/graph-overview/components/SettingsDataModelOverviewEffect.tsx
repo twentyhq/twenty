@@ -28,7 +28,7 @@ export const SettingsDataModelOverviewEffect = ({
       g.setDefaultEdgeLabel(() => ({}));
 
       const edges: Edge[] = [];
-      const nodes = [];
+      const nodes: Node[] = [];
       let i = 0;
       for (const object of items) {
         nodes.push({
@@ -95,8 +95,8 @@ export const SettingsDataModelOverviewEffect = ({
         node.position = {
           // We are shifting the dagre node position (anchor=center center) to the top left
           // so it matches the React Flow node anchor point (top left).
-          x: nodeWithPosition.x - node.width / 2,
-          y: nodeWithPosition.y - node.height / 2,
+          x: nodeWithPosition.x - (node.width ?? 0) / 2,
+          y: nodeWithPosition.y - (node.height ?? 0) / 2,
         };
       });
 

@@ -322,7 +322,6 @@ type DateTimePickerProps = {
   onClear?: () => void;
 };
 
-// Lazy load ReactDatePicker
 const ReactDatePicker = lazy(() => import('react-datepicker'));
 
 export const DateTimePicker = ({
