@@ -1,6 +1,10 @@
 /* @license Enterprise */
 
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import Stripe from 'stripe';
@@ -19,6 +23,7 @@ import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/se
 import { BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
 import { BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { InterCreateChargeDto } from 'src/engine/core-modules/inter/dtos/inter-create-charge.dto';
 import { InterService } from 'src/engine/core-modules/inter/services/inter.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -48,6 +53,7 @@ export class BillingPortalWorkspaceService {
     plan,
     requirePaymentMethod,
     paymentProvider,
+    interChargeData: interChargeInput,
   }: BillingPortalCheckoutSessionParameters): Promise<string> {
     const frontBaseUrl = this.domainManagerService.buildWorkspaceURL({
       workspace,
@@ -55,7 +61,13 @@ export class BillingPortalWorkspaceService {
 
     if (paymentProvider === BillingPaymentProviders.Inter) {
       //TODO: Call inter method to generate bolepix and sent through email
-      await this.interService.createBolepixBilling();
+      if (!isDefined(billingPricesPerPlan?.baseProductPrice.unitAmountDecimal))
+        throw new InternalServerErrorException('Plan price not found');
+
+      await this.interService.createBolepixBilling({
+        planPrice: billingPricesPerPlan.baseProductPrice.unitAmountDecimal,
+        ...(interChargeInput as InterCreateChargeDto),
+      });
 
       return `${frontBaseUrl.toString()}plan-required/payment-success`;
     }

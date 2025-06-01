@@ -2,17 +2,21 @@
 
 import { ArgsType, Field } from '@nestjs/graphql';
 
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
+  ValidateIf,
+  ValidateNested,
 } from 'class-validator';
 
 import { BillingPaymentProviders } from 'src/engine/core-modules/billing/enums/billing-payment-providers.enum';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
+import { InterCreateChargeDto } from 'src/engine/core-modules/inter/dtos/inter-create-charge.dto';
 
 @ArgsType()
 export class BillingCheckoutSessionInput {
@@ -42,4 +46,10 @@ export class BillingCheckoutSessionInput {
   @IsEnum(BillingPaymentProviders)
   @IsOptional()
   paymentProvider: BillingPaymentProviders;
+
+  @Field(() => InterCreateChargeDto, { nullable: true })
+  @ValidateNested()
+  @Type(() => InterCreateChargeDto)
+  @ValidateIf((data) => data.paymentProvider === BillingPaymentProviders.Inter)
+  interChargeData: InterCreateChargeDto;
 }
