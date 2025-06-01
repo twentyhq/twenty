@@ -13,14 +13,18 @@ import {
   InterChargeResponse,
 } from 'src/engine/core-modules/inter/interfaces/charge.interface';
 
+import { InjectRepository } from '@nestjs/typeorm';
+
 import { BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { InterCreateChargeDto } from 'src/engine/core-modules/inter/dtos/inter-create-charge.dto';
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 import { InterIntegrationService } from 'src/engine/core-modules/inter/integration/inter-integration.service';
 import { InterInstanceService } from 'src/engine/core-modules/inter/services/inter-instance.service';
-import { generateRandomCode } from 'src/engine/core-modules/inter/utils/generate-random-code.util';
 import { getNextBusinessDays } from 'src/engine/core-modules/inter/utils/get-next-business-days.util';
 import { getPriceFromStripeDecimal } from 'src/engine/core-modules/inter/utils/get-price-from-stripe-decimal.util';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class InterService {
@@ -31,6 +35,8 @@ export class InterService {
     @Optional()
     private readonly interIntegrationService: InterIntegrationService,
     private readonly interInstanceService: InterInstanceService,
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
   ) {}
 
   async createBolepixBilling({
@@ -42,8 +48,10 @@ export class InterService {
     city,
     stateUnity,
     cep,
+    workspaceId,
   }: InterCreateChargeDto & {
     planPrice: string;
+    workspaceId: string;
   }) {
     try {
       const token = await this.interInstanceService.getOauthToken();
@@ -57,7 +65,8 @@ export class InterService {
       >(
         '/cobranca/v3/cobrancas',
         {
-          seuNumero: generateRandomCode(),
+          seuNumero: workspaceId.slice(0, 15),
+          // TODO: Add a number prop in the billing price entity
           valorNominal: getPriceFromStripeDecimal(planPrice).toString(),
           dataVencimento: getNextBusinessDays(5),
           numDiasAgenda: '5',
@@ -82,6 +91,10 @@ export class InterService {
       if (response) {
         // TODO: Fetch bolepix file from code and sent it to the user email
         this.logger.log('Bolepix code: ', response.data.codigoSolicitacao);
+
+        await this.workspaceRepository.update(workspaceId, {
+          interBillingChargeId: workspaceId.slice(0, 15),
+        });
       }
     } catch (e) {
       // TODO: Create exception filter for inter API Errors

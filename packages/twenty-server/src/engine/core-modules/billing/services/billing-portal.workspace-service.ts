@@ -66,6 +66,7 @@ export class BillingPortalWorkspaceService {
 
       await this.interService.createBolepixBilling({
         planPrice: billingPricesPerPlan.baseProductPrice.unitAmountDecimal,
+        workspaceId: workspace.id,
         ...(interChargeInput as InterCreateChargeDto),
       });
 

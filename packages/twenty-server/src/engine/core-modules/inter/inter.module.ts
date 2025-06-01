@@ -17,7 +17,7 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([InterIntegration], 'core'),
+    TypeOrmModule.forFeature([InterIntegration, Workspace], 'core'),
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         NestjsQueryTypeOrmModule.forFeature(
