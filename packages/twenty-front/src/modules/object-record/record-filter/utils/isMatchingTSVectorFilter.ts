@@ -5,8 +5,13 @@ export const isMatchingTSVectorFilter = ({
   value,
 }: {
   tsVectorFilter: TSVectorFilter;
-  value: string;
+  value: string | undefined;
 }) => {
+  // For optimistic updates where value is undefined, skip filtering
+  if (value === undefined) {
+    return true;
+  }
+
   switch (true) {
     case tsVectorFilter.search !== undefined: {
       const searchQuery = tsVectorFilter.search.toLowerCase();
