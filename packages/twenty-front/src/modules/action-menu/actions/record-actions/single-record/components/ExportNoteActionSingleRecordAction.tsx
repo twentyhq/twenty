@@ -1,7 +1,6 @@
 import { Action } from '@/action-menu/actions/components/Action';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { BlockNoteEditor } from '@blocknote/core';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -33,15 +32,11 @@ export const ExportNoteActionSingleRecordAction = () => {
       console.warn(initialBody);
     }
 
-    const editor = BlockNoteEditor.create({
-      initialContent: parsedBody,
-    });
-
     const { exportBlockNoteEditorToPdf } = await import(
       '@/action-menu/actions/record-actions/single-record/utils/exportBlockNoteEditorToPdf'
     );
 
-    await exportBlockNoteEditorToPdf(editor, filename);
+    await exportBlockNoteEditorToPdf(parsedBody, filename);
 
     // TODO later: implement DOCX export
     // const { exportBlockNoteEditorToDocx } = await import(

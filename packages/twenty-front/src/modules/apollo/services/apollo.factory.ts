@@ -18,7 +18,6 @@ import { AuthTokenPair } from '~/generated/graphql';
 import { logDebug } from '~/utils/logDebug';
 
 import { i18n } from '@lingui/core';
-import { captureException } from '@sentry/react';
 import { GraphQLFormattedError } from 'graphql';
 import { isDefined } from 'twenty-shared/utils';
 import { cookieStorage } from '~/utils/cookie-storage';
@@ -160,7 +159,17 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                       }, Path: ${graphQLError.path}`,
                     );
                   }
-                  captureException(graphQLError);
+                  import('@sentry/react')
+                    .then(({ captureException }) => {
+                      captureException(graphQLError);
+                    })
+                    .catch((sentryError) => {
+                      // eslint-disable-next-line no-console
+                      console.error(
+                        'Failed to capture GraphQL error with Sentry:',
+                        sentryError,
+                      );
+                    });
               }
             }
           }

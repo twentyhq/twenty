@@ -1,4 +1,4 @@
-import { ActivityRichTextEditor } from '@/activities/components/ActivityRichTextEditor';
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useRichTextCommandMenu } from '@/command-menu/hooks/useRichTextCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -8,10 +8,18 @@ import {
   FieldInputEvent,
 } from '@/object-record/record-field/types/FieldInputEvent';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRef } from 'react';
+import { lazy, Suspense, useRef } from 'react';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { IconLayoutSidebarLeftCollapse } from 'twenty-ui/display';
 import { FloatingIconButton } from 'twenty-ui/input';
+
+const ActivityRichTextEditor = lazy(() =>
+  import('@/activities/components/ActivityRichTextEditor').then((module) => ({
+    default: module.ActivityRichTextEditor,
+  })),
+);
 
 export type RichTextFieldInputProps = {
   onClickOutside?: FieldInputClickOutsideEvent;
@@ -38,6 +46,19 @@ const StyledCollapseButton = styled.div`
   display: flex;
 `;
 
+const LoadingSkeleton = () => {
+  const theme = useTheme();
+
+  return (
+    <SkeletonTheme
+      baseColor={theme.background.tertiary}
+      highlightColor={theme.background.transparent.lighter}
+      borderRadius={theme.border.radius.sm}
+    >
+      <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
+    </SkeletonTheme>
+  );
+};
 export const RichTextFieldInput = ({
   targetableObject,
   onClickOutside,
@@ -70,10 +91,12 @@ export const RichTextFieldInput = ({
 
   return (
     <StyledContainer ref={containerRef}>
-      <ActivityRichTextEditor
-        activityId={targetableObject.id}
-        activityObjectNameSingular={targetableObject.targetObjectNameSingular}
-      />
+      <Suspense fallback={<LoadingSkeleton />}>
+        <ActivityRichTextEditor
+          activityId={targetableObject.id}
+          activityObjectNameSingular={targetableObject.targetObjectNameSingular}
+        />
+      </Suspense>
       <StyledCollapseButton>
         <FloatingIconButton
           Icon={IconLayoutSidebarLeftCollapse}
