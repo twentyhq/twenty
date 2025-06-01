@@ -24,7 +24,7 @@ export class BillingPlans {
   planId: string;
 
   @Field()
-  @Column({ type: 'number', nullable: true })
+  @Column({ type: 'decimal', nullable: true })
   planPrice: number;
 
   @Field(() => Workspace)
