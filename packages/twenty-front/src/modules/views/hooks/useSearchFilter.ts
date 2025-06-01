@@ -12,6 +12,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 export const useSearchFilter = (filterDropdownId: string) => {
   const { objectNamePlural = '' } = useParams();
@@ -54,7 +55,7 @@ export const useSearchFilter = (filterDropdownId: string) => {
     const existingSearchFilter = getExistingSearchFilter();
 
     const searchRecordFilter = {
-      id: existingSearchFilter?.id ?? crypto.randomUUID(),
+      id: existingSearchFilter?.id ?? v4(),
       fieldMetadataId: searchVectorField.id,
       value: value,
       displayValue: value,
