@@ -4,7 +4,6 @@ import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Column,
   Entity,
-  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   Relation,
@@ -24,9 +23,9 @@ export class BillingPlans {
   @Column({ type: 'text', nullable: true })
   planId: string;
 
-  // @Field()
-  // @Column({ type: 'number', nullable: true })
-  // planPrice: number;
+  @Field()
+  @Column({ type: 'number', nullable: true })
+  planPrice: number;
 
   @Field(() => Workspace)
   @ManyToOne(() => Workspace, {
