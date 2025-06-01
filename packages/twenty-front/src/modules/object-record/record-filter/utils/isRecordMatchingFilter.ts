@@ -376,7 +376,7 @@ export const isRecordMatchingFilter = ({
         }
 
         throw new Error(
-          `Not implemented yet, use UUID filter instead on the corredponding "${filterKey}Id" field`,
+          `Not implemented yet, use UUID filter instead on the corresponding "${filterKey}Id" field`,
         );
       }
       case FieldMetadataType.TS_VECTOR: {
