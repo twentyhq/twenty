@@ -13,15 +13,10 @@ const StyledSearchText = styled.span`
 
 export const ViewBarFilterDropdownSearchButton = () => {
   const { t } = useLingui();
-  const {
-    searchInputValue,
-    setShowSearchInput,
-    setSearchInputValueFromExistingFilter,
-    applySearchFilter,
-  } = useSearchFilter(VIEW_BAR_FILTER_DROPDOWN_ID);
+  const { searchInputValue, setShowSearchInput, applySearchFilter } =
+    useSearchFilter(VIEW_BAR_FILTER_DROPDOWN_ID);
 
   const handleSearchClick = () => {
-    setSearchInputValueFromExistingFilter();
     setShowSearchInput(true);
     if (searchInputValue.length > 0) {
       applySearchFilter(searchInputValue);
