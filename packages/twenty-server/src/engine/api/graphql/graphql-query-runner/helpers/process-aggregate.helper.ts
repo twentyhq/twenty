@@ -5,6 +5,7 @@ import { SelectQueryBuilder } from 'typeorm';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
+import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
 
 @Injectable()
@@ -15,7 +16,7 @@ export class ProcessAggregateHelper {
   }: {
     selectedAggregatedFields: Record<string, AggregationField>;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    queryBuilder: SelectQueryBuilder<any>;
+    queryBuilder: WorkspaceSelectQueryBuilder<any>;
   }) => {
     queryBuilder.select([]);
 
