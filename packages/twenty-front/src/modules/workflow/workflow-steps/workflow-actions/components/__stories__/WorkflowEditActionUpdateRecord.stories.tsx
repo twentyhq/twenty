@@ -119,9 +119,7 @@ export const DisabledWithEmptyValues: Story = {
     expect(openRecordSelectButton).not.toBeInTheDocument();
 
     const firstSelectedUpdatableField = await within(
-      await canvas.findByTestId(
-        'workflow-edit-action-record-update-fields-to-update',
-      ),
+      await canvas.findByTestId('workflow-fields-multi-select'),
     ).findByText('Creation date');
 
     await userEvent.click(firstSelectedUpdatableField);
@@ -189,9 +187,7 @@ export const DisabledWithDefaultStaticValues: Story = {
     expect(openRecordSelectButton).not.toBeInTheDocument();
 
     const firstSelectedUpdatableField = await within(
-      await canvas.findByTestId(
-        'workflow-edit-action-record-update-fields-to-update',
-      ),
+      await canvas.findByTestId('workflow-fields-multi-select'),
     ).findByText('Creation date');
 
     await userEvent.click(firstSelectedUpdatableField);
@@ -253,9 +249,7 @@ export const DisabledWithDefaultVariableValues: Story = {
     expect(openRecordSelectButton).not.toBeInTheDocument();
 
     const firstSelectedUpdatableField = await within(
-      await canvas.findByTestId(
-        'workflow-edit-action-record-update-fields-to-update',
-      ),
+      await canvas.findByTestId('workflow-fields-multi-select'),
     ).findByText('Creation date');
 
     await userEvent.click(firstSelectedUpdatableField);

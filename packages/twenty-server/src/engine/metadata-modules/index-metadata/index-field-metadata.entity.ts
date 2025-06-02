@@ -32,7 +32,7 @@ export class IndexFieldMetadataEntity {
   indexMetadata: Relation<IndexMetadataEntity>;
 
   @Column({ nullable: false })
-  @Index('IndexOnFieldMetadataId')
+  @Index('IDX_INDEX_FIELD_METADATA_FIELD_METADATA_ID', ['fieldMetadataId'])
   fieldMetadataId: string;
 
   @ManyToOne(

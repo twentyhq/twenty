@@ -11,8 +11,8 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledTableBody = styled(TableBody)`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -55,7 +55,7 @@ export const SettingsApiKeysTable = () => {
             <SettingsApiKeysFieldItemTableRow
               key={fieldItem.id}
               fieldItem={fieldItem as ApiFieldItem}
-              to={getSettingsPath(SettingsPath.DevelopersApiKeyDetail, {
+              to={getSettingsPath(SettingsPath.ApiKeyDetail, {
                 apiKeyId: fieldItem.id,
               })}
             />

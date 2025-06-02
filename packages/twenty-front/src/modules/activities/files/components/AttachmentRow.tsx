@@ -18,7 +18,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { PREVIEWABLE_EXTENSIONS } from '@/activities/files/const/previewable-extensions.const';
 import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
-import { isModifiedEvent } from 'twenty-ui/utilities';
+import { isNavigationModifierPressed } from 'twenty-ui/utilities';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
 
@@ -141,7 +141,7 @@ export const AttachmentRow = ({
 
   const handleOpenDocument = (e: React.MouseEvent) => {
     // Cmd/Ctrl+click opens new tab, right click opens context menu
-    if (isModifiedEvent(e) || e.button === 2) {
+    if (isNavigationModifierPressed(e) === true) {
       return;
     }
 

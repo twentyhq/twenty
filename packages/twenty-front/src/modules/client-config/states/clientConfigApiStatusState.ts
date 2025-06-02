@@ -2,9 +2,10 @@ import { createState } from 'twenty-ui/utilities';
 import { ClientConfig } from '~/generated/graphql';
 
 type ClientConfigApiStatus = {
-  isLoaded: boolean;
+  isLoadedOnce: boolean;
   isLoading: boolean;
   isErrored: boolean;
+  isSaved: boolean;
   error?: Error;
   data?: { clientConfig: ClientConfig };
 };
@@ -12,9 +13,10 @@ type ClientConfigApiStatus = {
 export const clientConfigApiStatusState = createState<ClientConfigApiStatus>({
   key: 'clientConfigApiStatus',
   defaultValue: {
-    isLoaded: false,
+    isLoadedOnce: false,
     isLoading: false,
     isErrored: false,
+    isSaved: false,
     error: undefined,
     data: undefined,
   },

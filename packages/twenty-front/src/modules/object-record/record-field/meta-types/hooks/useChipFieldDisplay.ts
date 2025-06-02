@@ -20,6 +20,7 @@ export const useChipFieldDisplay = () => {
     isLabelIdentifierCompact,
     disableChipClick,
     maxWidth,
+    triggerEvent,
   } = useContext(FieldContext);
 
   const { chipGeneratorPerObjectPerField } = useContext(
@@ -52,5 +53,6 @@ export const useChipFieldDisplay = () => {
     isLabelIdentifierCompact,
     disableChipClick,
     maxWidth,
+    triggerEvent,
   };
 };

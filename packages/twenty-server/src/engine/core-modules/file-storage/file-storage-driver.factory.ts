@@ -21,13 +21,13 @@ export class FileStorageDriverFactory extends DriverFactoryBase<StorageDriver> {
   protected buildConfigKey(): string {
     const storageType = this.twentyConfigService.get('STORAGE_TYPE');
 
-    if (storageType === StorageDriverType.Local) {
+    if (storageType === StorageDriverType.LOCAL) {
       const storagePath = this.twentyConfigService.get('STORAGE_LOCAL_PATH');
 
       return `local|${storagePath}`;
     }
 
-    if (storageType === StorageDriverType.S3) {
+    if (storageType === StorageDriverType.S_3) {
       const storageConfigHash = this.getConfigGroupHash(
         ConfigVariablesGroup.StorageConfig,
       );
@@ -42,7 +42,7 @@ export class FileStorageDriverFactory extends DriverFactoryBase<StorageDriver> {
     const storageType = this.twentyConfigService.get('STORAGE_TYPE');
 
     switch (storageType) {
-      case StorageDriverType.Local: {
+      case StorageDriverType.LOCAL: {
         const storagePath = this.twentyConfigService.get('STORAGE_LOCAL_PATH');
 
         return new LocalDriver({
@@ -50,7 +50,7 @@ export class FileStorageDriverFactory extends DriverFactoryBase<StorageDriver> {
         });
       }
 
-      case StorageDriverType.S3: {
+      case StorageDriverType.S_3: {
         const bucketName = this.twentyConfigService.get('STORAGE_S3_NAME');
         const endpoint = this.twentyConfigService.get('STORAGE_S3_ENDPOINT');
         const region = this.twentyConfigService.get('STORAGE_S3_REGION');

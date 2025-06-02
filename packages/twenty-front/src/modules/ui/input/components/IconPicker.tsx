@@ -107,6 +107,24 @@ export const IconPicker = ({
     setHotkeyScopeAndMemorizePreviousScope,
   } = usePreviousHotkeyScope();
 
+  const [isMouseInsideIconList, setIsMouseInsideIconList] = useState(false);
+
+  const handleMouseEnter = () => {
+    if (!isMouseInsideIconList) {
+      setIsMouseInsideIconList(true);
+      setHotkeyScopeAndMemorizePreviousScope({
+        scope: IconPickerHotkeyScope.IconPicker,
+      });
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (isMouseInsideIconList) {
+      setIsMouseInsideIconList(false);
+      goBackToPreviousHotkeyScope();
+    }
+  };
+
   const { closeDropdown } = useDropdown(dropdownId);
 
   const { getIcons, getIcon } = useIcons();
@@ -196,12 +214,8 @@ export const IconPicker = ({
               />
               <DropdownMenuSeparator />
               <div
-                onMouseEnter={() => {
-                  setHotkeyScopeAndMemorizePreviousScope({
-                    scope: IconPickerHotkeyScope.IconPicker,
-                  });
-                }}
-                onMouseLeave={goBackToPreviousHotkeyScope}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
               >
                 <DropdownMenuItemsContainer>
                   <StyledMenuIconItemsContainer>

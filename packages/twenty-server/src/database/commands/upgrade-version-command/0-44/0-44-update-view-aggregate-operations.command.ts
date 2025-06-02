@@ -8,7 +8,7 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -28,73 +28,73 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 
 const AGGREGATE_OPERATION_OPTIONS = [
   {
-    value: AGGREGATE_OPERATIONS.avg,
+    value: AggregateOperations.AVG,
     label: 'Average',
     position: 0,
     color: 'red',
   },
   {
-    value: AGGREGATE_OPERATIONS.count,
+    value: AggregateOperations.COUNT,
     label: 'Count',
     position: 1,
     color: 'purple',
   },
   {
-    value: AGGREGATE_OPERATIONS.max,
+    value: AggregateOperations.MAX,
     label: 'Maximum',
     position: 2,
     color: 'sky',
   },
   {
-    value: AGGREGATE_OPERATIONS.min,
+    value: AggregateOperations.MIN,
     label: 'Minimum',
     position: 3,
     color: 'turquoise',
   },
   {
-    value: AGGREGATE_OPERATIONS.sum,
+    value: AggregateOperations.SUM,
     label: 'Sum',
     position: 4,
     color: 'yellow',
   },
   {
-    value: AGGREGATE_OPERATIONS.countEmpty,
+    value: AggregateOperations.COUNT_EMPTY,
     label: 'Count empty',
     position: 5,
     color: 'red',
   },
   {
-    value: AGGREGATE_OPERATIONS.countNotEmpty,
+    value: AggregateOperations.COUNT_NOT_EMPTY,
     label: 'Count not empty',
     position: 6,
     color: 'purple',
   },
   {
-    value: AGGREGATE_OPERATIONS.countUniqueValues,
+    value: AggregateOperations.COUNT_UNIQUE_VALUES,
     label: 'Count unique values',
     position: 7,
     color: 'sky',
   },
   {
-    value: AGGREGATE_OPERATIONS.percentageEmpty,
+    value: AggregateOperations.PERCENTAGE_EMPTY,
     label: 'Percent empty',
     position: 8,
     color: 'turquoise',
   },
   {
-    value: AGGREGATE_OPERATIONS.percentageNotEmpty,
+    value: AggregateOperations.PERCENTAGE_NOT_EMPTY,
     label: 'Percent not empty',
     position: 9,
     color: 'yellow',
   },
   {
-    value: AGGREGATE_OPERATIONS.countTrue,
+    value: AggregateOperations.COUNT_TRUE,
     label: 'Count true',
     position: 10,
     color: 'red',
   },
   {
-    value: AGGREGATE_OPERATIONS.countFalse,
+    value: AggregateOperations.COUNT_FALSE,
     label: 'Count false',
     position: 11,
     color: 'purple',

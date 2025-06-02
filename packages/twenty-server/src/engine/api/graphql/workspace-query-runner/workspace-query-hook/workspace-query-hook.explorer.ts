@@ -201,7 +201,7 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
     isRequestScoped: boolean,
   ) {
     switch (type) {
-      case WorkspaceQueryHookType.PreHook:
+      case WorkspaceQueryHookType.PRE_HOOK:
         this.workspaceQueryHookStorage.registerWorkspaceQueryPreHookInstance(
           key,
           {
@@ -211,7 +211,7 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
           },
         );
         break;
-      case WorkspaceQueryHookType.PostHook:
+      case WorkspaceQueryHookType.POST_HOOK:
         this.workspaceQueryHookStorage.registerWorkspacePostQueryHookInstance(
           key,
           {

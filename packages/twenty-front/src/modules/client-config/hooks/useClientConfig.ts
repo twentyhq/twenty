@@ -1,4 +1,5 @@
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useCallback } from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { ClientConfig } from '~/generated/graphql';
 import { clientConfigApiStatusState } from '../states/clientConfigApiStatusState';
 import { getClientConfig } from '../utils/getClientConfig';
@@ -13,40 +14,37 @@ type UseClientConfigResult = {
 
 export const useClientConfig = (): UseClientConfigResult => {
   const clientConfigApiStatus = useRecoilValue(clientConfigApiStatusState);
-
-  const fetchClientConfig = useRecoilCallback(
-    ({ set }) =>
-      async () => {
-        set(clientConfigApiStatusState, (prev) => ({
-          ...prev,
-          isLoading: true,
-          isErrored: false,
-          error: undefined,
-        }));
-
-        try {
-          const clientConfig = await getClientConfig();
-          set(clientConfigApiStatusState, (prev) => ({
-            ...prev,
-            isLoading: false,
-            isLoaded: true,
-            data: { clientConfig },
-          }));
-        } catch (err) {
-          const error =
-            err instanceof Error
-              ? err
-              : new Error('Failed to fetch client config');
-          set(clientConfigApiStatusState, (prev) => ({
-            ...prev,
-            isLoading: false,
-            isErrored: true,
-            error,
-          }));
-        }
-      },
-    [],
+  const setClientConfigApiStatus = useSetRecoilState(
+    clientConfigApiStatusState,
   );
+
+  const fetchClientConfig = useCallback(async () => {
+    setClientConfigApiStatus((prev) => ({
+      ...prev,
+      isLoading: true,
+    }));
+
+    try {
+      const clientConfig = await getClientConfig();
+      setClientConfigApiStatus((prev) => ({
+        ...prev,
+        isLoading: false,
+        isLoadedOnce: true,
+        isErrored: false,
+        error: undefined,
+        data: { clientConfig },
+      }));
+    } catch (err) {
+      const error =
+        err instanceof Error ? err : new Error('Failed to fetch client config');
+      setClientConfigApiStatus((prev) => ({
+        ...prev,
+        isLoading: false,
+        isErrored: true,
+        error,
+      }));
+    }
+  }, [setClientConfigApiStatus]);
 
   return {
     data: clientConfigApiStatus.data,

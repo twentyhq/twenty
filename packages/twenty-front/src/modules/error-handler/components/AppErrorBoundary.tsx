@@ -1,5 +1,4 @@
 import { AppErrorBoundaryEffect } from '@/error-handler/components/internal/AppErrorBoundaryEffect';
-import { captureException } from '@sentry/react';
 import { ErrorInfo, ReactNode } from 'react';
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
 
@@ -14,11 +13,17 @@ export const AppErrorBoundary = ({
   FallbackComponent,
   resetOnLocationChange = true,
 }: AppErrorBoundaryProps) => {
-  const handleError = (error: Error, info: ErrorInfo) => {
-    captureException(error, (scope) => {
-      scope.setExtras({ info });
-      return scope;
-    });
+  const handleError = async (error: Error, info: ErrorInfo) => {
+    try {
+      const { captureException } = await import('@sentry/react');
+      captureException(error, (scope) => {
+        scope.setExtras({ info });
+        return scope;
+      });
+    } catch (sentryError) {
+      // eslint-disable-next-line no-console
+      console.error('Failed to capture exception with Sentry:', sentryError);
+    }
   };
 
   const handleReset = () => {
