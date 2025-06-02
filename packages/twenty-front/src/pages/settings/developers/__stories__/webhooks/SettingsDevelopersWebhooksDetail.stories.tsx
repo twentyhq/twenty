@@ -14,7 +14,7 @@ const meta: Meta<PageDecoratorArgs> = {
   component: SettingsDevelopersWebhooksDetail,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/developers/webhooks/:webhookId',
+    routePath: '/settings/webhooks/:webhookId',
     routeParams: { ':webhookId': '1234' },
   },
   parameters: {

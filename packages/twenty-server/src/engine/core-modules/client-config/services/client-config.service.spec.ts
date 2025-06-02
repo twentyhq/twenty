@@ -61,13 +61,13 @@ describe('ClientConfigService', () => {
             IS_MULTIWORKSPACE_ENABLED: true,
             IS_EMAIL_VERIFICATION_REQUIRED: true,
             DEFAULT_SUBDOMAIN: 'app',
-            NODE_ENV: NodeEnvironment.development,
-            SUPPORT_DRIVER: SupportDriver.Front,
+            NODE_ENV: NodeEnvironment.DEVELOPMENT,
+            SUPPORT_DRIVER: SupportDriver.FRONT,
             SUPPORT_FRONT_CHAT_ID: 'chat-123',
             SENTRY_ENVIRONMENT: 'development',
             APP_VERSION: '1.0.0',
             SENTRY_FRONT_DSN: 'https://sentry.example.com',
-            CAPTCHA_DRIVER: CaptchaDriverType.GoogleRecaptcha,
+            CAPTCHA_DRIVER: CaptchaDriverType.GOOGLE_RECAPTCHA,
             CAPTCHA_SITE_KEY: 'site-key-123',
             CHROME_EXTENSION_ID: 'extension-123',
             MUTATION_MAXIMUM_AFFECTED_RECORDS: 1000,
@@ -120,7 +120,7 @@ describe('ClientConfigService', () => {
         frontDomain: 'app.twenty.com',
         debugMode: true,
         support: {
-          supportDriver: 'Front',
+          supportDriver: 'FRONT',
           supportFrontChatId: 'chat-123',
         },
         sentry: {
@@ -129,7 +129,7 @@ describe('ClientConfigService', () => {
           dsn: 'https://sentry.example.com',
         },
         captcha: {
-          provider: 'GoogleRecaptcha',
+          provider: 'GOOGLE_RECAPTCHA',
           siteKey: 'site-key-123',
         },
         chromeExtensionId: 'extension-123',
@@ -152,7 +152,7 @@ describe('ClientConfigService', () => {
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
-          if (key === 'NODE_ENV') return NodeEnvironment.production;
+          if (key === 'NODE_ENV') return NodeEnvironment.PRODUCTION;
           if (key === 'IS_BILLING_ENABLED') return false;
 
           return undefined;
@@ -191,14 +191,14 @@ describe('ClientConfigService', () => {
 
       const result = await service.getClientConfig();
 
-      expect(result.support.supportDriver).toBe(SupportDriver.None);
+      expect(result.support.supportDriver).toBe(SupportDriver.NONE);
     });
 
     it('should handle billing enabled with feature flags', async () => {
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
-          if (key === 'NODE_ENV') return NodeEnvironment.production;
+          if (key === 'NODE_ENV') return NodeEnvironment.PRODUCTION;
           if (key === 'IS_BILLING_ENABLED') return true;
 
           return undefined;
@@ -207,46 +207,6 @@ describe('ClientConfigService', () => {
       const result = await service.getClientConfig();
 
       expect(result.canManageFeatureFlags).toBe(true);
-    });
-  });
-
-  describe('transformEnum', () => {
-    it('should transform enum by direct key match', () => {
-      const result = (service as any).transformEnum(
-        'GoogleRecaptcha',
-        CaptchaDriverType,
-      );
-
-      expect(result).toBe(CaptchaDriverType.GoogleRecaptcha);
-    });
-
-    it('should transform enum by value match', () => {
-      const result = (service as any).transformEnum(
-        'google-recaptcha',
-        CaptchaDriverType,
-      );
-
-      expect(result).toBe('GoogleRecaptcha');
-    });
-
-    it('should transform SupportDriver enum correctly', () => {
-      const result = (service as any).transformEnum('front', SupportDriver);
-
-      expect(result).toBe('Front');
-    });
-
-    it('should throw error for unknown enum value', () => {
-      expect(() => {
-        (service as any).transformEnum('unknown-value', CaptchaDriverType);
-      }).toThrow(
-        'Unknown enum value: unknown-value. Available keys: GoogleRecaptcha, Turnstile. Available values: google-recaptcha, turnstile',
-      );
-    });
-
-    it('should handle direct key match for SupportDriver', () => {
-      const result = (service as any).transformEnum('Front', SupportDriver);
-
-      expect(result).toBe(SupportDriver.Front);
     });
   });
 });

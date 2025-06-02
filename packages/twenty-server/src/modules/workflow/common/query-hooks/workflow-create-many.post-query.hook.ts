@@ -20,7 +20,7 @@ import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-ob
 
 @WorkspaceQueryHook({
   key: `workflow.createMany`,
-  type: WorkspaceQueryHookType.PostHook,
+  type: WorkspaceQueryHookType.POST_HOOK,
 })
 export class WorkflowCreateManyPostQueryHook
   implements WorkspacePostQueryHookInstance

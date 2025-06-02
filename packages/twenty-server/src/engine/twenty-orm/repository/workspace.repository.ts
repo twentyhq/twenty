@@ -67,7 +67,7 @@ export class WorkspaceRepository<
       queryRunner,
     ) as unknown as WorkspaceSelectQueryBuilder<U>;
     const isPermissionsV2Enabled =
-      this.featureFlagMap[FeatureFlagKey.IsPermissionsV2Enabled];
+      this.featureFlagMap[FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED];
 
     if (!isPermissionsV2Enabled) {
       return queryBuilder;

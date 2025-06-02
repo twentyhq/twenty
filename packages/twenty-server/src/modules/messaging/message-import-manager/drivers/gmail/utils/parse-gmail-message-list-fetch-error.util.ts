@@ -24,6 +24,13 @@ export const parseGmailMessageListFetchError = (error: {
         );
       }
       if (reason === 'failedPrecondition') {
+        if (message.includes('Mail service not enabled')) {
+          return new MessageImportDriverException(
+            message,
+            MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+          );
+        }
+
         return new MessageImportDriverException(
           message,
           MessageImportDriverExceptionCode.TEMPORARY_ERROR,

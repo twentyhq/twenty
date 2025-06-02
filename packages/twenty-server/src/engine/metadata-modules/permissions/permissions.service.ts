@@ -35,7 +35,8 @@ export class PermissionsService {
     workspaceId: string;
   }): Promise<{
     settingsPermissions: Record<SettingPermissionType, boolean>;
-    objectRecordsPermissions: ObjectRecordsPermissions;
+    objectRecordsPermissions: Record<PermissionsOnAllObjectRecords, boolean>;
+    objectPermissions: ObjectRecordsPermissions;
   }> {
     const [roleOfUserWorkspace] = await this.userRoleService
       .getRolesByUserWorkspaces({
@@ -76,12 +77,26 @@ export class PermissionsService {
         workspaceId,
       });
 
-    const objectRecordsPermissions =
-      rolesPermissions[roleOfUserWorkspace.id] ?? {};
+    const objectPermissions = rolesPermissions[roleOfUserWorkspace.id] ?? {};
+
+    const objectRecordsPermissionsMap: Record<
+      PermissionsOnAllObjectRecords,
+      boolean
+    > = {
+      [PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS]:
+        roleOfUserWorkspace.canReadAllObjectRecords ?? false,
+      [PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS]:
+        roleOfUserWorkspace.canUpdateAllObjectRecords ?? false,
+      [PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS]:
+        roleOfUserWorkspace.canSoftDeleteAllObjectRecords ?? false,
+      [PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS]:
+        roleOfUserWorkspace.canDestroyAllObjectRecords ?? false,
+    };
 
     return {
       settingsPermissions: settingsPermissionsMap,
-      objectRecordsPermissions: objectRecordsPermissions,
+      objectRecordsPermissions: objectRecordsPermissionsMap,
+      objectPermissions,
     };
   }
 
@@ -191,7 +206,7 @@ export class PermissionsService {
 
     const isPermissionsV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsPermissionsV2Enabled,
+        FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
         workspaceId,
       );
 
@@ -219,7 +234,7 @@ export class PermissionsService {
   }): Promise<boolean> {
     const isPermissionsV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsPermissionsV2Enabled,
+        FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
         workspaceId,
       );
 

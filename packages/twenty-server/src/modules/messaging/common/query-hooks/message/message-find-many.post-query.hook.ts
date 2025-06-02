@@ -11,7 +11,7 @@ import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-ob
 
 @WorkspaceQueryHook({
   key: `message.findMany`,
-  type: WorkspaceQueryHookType.PostHook,
+  type: WorkspaceQueryHookType.POST_HOOK,
 })
 export class MessageFindManyPostQueryHook
   implements WorkspacePostQueryHookInstance

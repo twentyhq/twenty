@@ -4,10 +4,13 @@ import { basename, dirname, extname } from 'path';
 import { Stream } from 'stream';
 
 import { v4 as uuidV4 } from 'uuid';
+import { buildSignedPath } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
 
 export type FilePayloadToEncode = {
   workspaceId: string;
@@ -32,6 +35,20 @@ export class FileService {
     return await this.fileStorageService.read({
       folderPath: workspaceFolderPath,
       filename,
+    });
+  }
+
+  signFileUrl({ url, workspaceId }: { url: string; workspaceId: string }) {
+    if (!isNonEmptyString(url)) {
+      return url;
+    }
+
+    return buildSignedPath({
+      path: url,
+      token: this.encodeFileToken({
+        filename: extractFilenameFromPath(url),
+        workspaceId,
+      }),
     });
   }
 
