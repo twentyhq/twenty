@@ -19,21 +19,21 @@ export const exceptionHandlerModuleFactory = async (
   const driverType = twentyConfigService.get('EXCEPTION_HANDLER_DRIVER');
 
   switch (driverType) {
-    case ExceptionHandlerDriver.Console: {
+    case ExceptionHandlerDriver.CONSOLE: {
       return {
-        type: ExceptionHandlerDriver.Console,
+        type: ExceptionHandlerDriver.CONSOLE,
       };
     }
-    case ExceptionHandlerDriver.Sentry: {
+    case ExceptionHandlerDriver.SENTRY: {
       return {
-        type: ExceptionHandlerDriver.Sentry,
+        type: ExceptionHandlerDriver.SENTRY,
         options: {
           environment: twentyConfigService.get('SENTRY_ENVIRONMENT'),
           release: twentyConfigService.get('APP_VERSION'),
           dsn: twentyConfigService.get('SENTRY_DSN') ?? '',
           serverInstance: adapterHost.httpAdapter?.getInstance(),
           debug:
-            twentyConfigService.get('NODE_ENV') === NodeEnvironment.development,
+            twentyConfigService.get('NODE_ENV') === NodeEnvironment.DEVELOPMENT,
         },
       };
     }

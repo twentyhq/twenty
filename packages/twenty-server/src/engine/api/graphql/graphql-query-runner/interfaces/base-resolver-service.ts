@@ -94,7 +94,7 @@ export abstract class GraphqlQueryBaseResolverService<
       const featureFlagsMap = workspaceDataSource.featureFlagMap;
 
       const isPermissionsV2Enabled =
-        featureFlagsMap[FeatureFlagKey.IsPermissionsV2Enabled];
+        featureFlagsMap[FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED];
 
       if (objectMetadataItemWithFieldMaps.isSystem === true) {
         await this.validateSystemObjectPermissionsOrThrow(options);

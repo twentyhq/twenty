@@ -15,7 +15,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/SettingsWorkspaceMembers',
   component: SettingsWorkspaceMembers,
   decorators: [PageDecorator],
-  args: { routePath: '/settings/workspace-members' },
+  args: { routePath: '/settings/members' },
   parameters: {
     msw: graphqlMocks,
   },

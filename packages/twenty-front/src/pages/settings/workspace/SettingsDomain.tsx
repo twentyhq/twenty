@@ -11,7 +11,6 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { ApolloError } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -19,10 +18,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
-import {
-  FeatureFlagKey,
-  useUpdateWorkspaceMutation,
-} from '~/generated/graphql';
+import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsCustomDomain } from '~/pages/settings/workspace/SettingsCustomDomain';
 import { SettingsSubdomain } from '~/pages/settings/workspace/SettingsSubdomain';
@@ -67,10 +63,6 @@ export const SettingsDomain = () => {
   const { enqueueSnackBar } = useSnackBar();
   const [updateWorkspace] = useUpdateWorkspaceMutation();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
-
-  const isCustomDomainEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCustomDomainEnabled,
-  );
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
@@ -236,7 +228,7 @@ export const SettingsDomain = () => {
         >
           <SettingsPageContainer>
             <SettingsSubdomain />
-            {isCustomDomainEnabled && <SettingsCustomDomain />}
+            <SettingsCustomDomain />
           </SettingsPageContainer>
         </SubMenuTopBarContainer>
         <ConfirmationModal

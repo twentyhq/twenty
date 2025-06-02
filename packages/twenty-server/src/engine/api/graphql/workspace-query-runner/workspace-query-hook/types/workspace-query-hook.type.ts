@@ -14,8 +14,8 @@ import {
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 export enum WorkspaceQueryHookType {
-  PreHook = 'PreHook',
-  PostHook = 'PostHook',
+  PRE_HOOK = 'PRE_HOOK',
+  POST_HOOK = 'POST_HOOK',
 }
 
 export type WorkspacePreQueryHookPayload<T> = T extends 'createMany'

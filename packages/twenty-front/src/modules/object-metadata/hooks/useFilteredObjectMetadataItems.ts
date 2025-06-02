@@ -10,7 +10,7 @@ export const useFilteredObjectMetadataItems = () => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const isWorkflowEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsWorkflowEnabled,
+    FeatureFlagKey.IS_WORKFLOW_ENABLED,
   );
 
   const isWorkflowToBeFiltered = useCallback(
