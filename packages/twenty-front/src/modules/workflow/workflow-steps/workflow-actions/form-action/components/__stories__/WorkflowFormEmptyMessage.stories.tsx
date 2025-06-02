@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowFormEmptyMessage } from '../WorkflowFormEmptyMessage';
 
 const meta: Meta<typeof WorkflowFormEmptyMessage> = {
@@ -8,6 +9,7 @@ const meta: Meta<typeof WorkflowFormEmptyMessage> = {
   parameters: {
     layout: 'centered',
   },
+  decorators: [I18nFrontDecorator],
 };
 
 export default meta;
@@ -17,8 +19,14 @@ export const Default: Story = {
   args: {},
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const messageContainer = await canvas.findByText('Add inputs to your form');
+    const messageTitleContainer = await canvas.findByTestId(
+      'empty-form-message-title',
+    );
+    const messageDescriptionContainer = await canvas.findByTestId(
+      'empty-form-message-description',
+    );
 
-    expect(messageContainer).toBeVisible();
+    expect(messageTitleContainer).toBeVisible();
+    expect(messageDescriptionContainer).toBeVisible();
   },
 };

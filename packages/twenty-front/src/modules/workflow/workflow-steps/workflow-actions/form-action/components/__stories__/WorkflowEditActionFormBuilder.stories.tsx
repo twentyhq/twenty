@@ -100,7 +100,7 @@ export const DeleteFields: Story = {
     await userEvent.click(deleteButton);
 
     await waitFor(() => {
-      expect(canvas.findByText('Company')).not.toBeInTheDocument();
+      expect(canvas.queryByText('Company')).not.toBeInTheDocument();
     });
 
     await waitFor(() => {
@@ -161,12 +161,12 @@ export const DisabledWithEmptyValues: Story = {
 
     await userEvent.click(titleText);
 
-    const titleInput = await canvas.findByDisplayValue('Form');
+    const titleInput = canvas.queryByDisplayValue('Form');
     expect(titleInput).not.toBeInTheDocument();
 
     await canvas.findByText('Company');
 
-    const addFieldButton = await canvas.findByText('Add Field');
+    const addFieldButton = canvas.queryByText('Add Field');
     expect(addFieldButton).not.toBeInTheDocument();
   },
 };
@@ -176,10 +176,19 @@ export const EmptyForm: Story = {
     actionOptions: {
       onActionUpdate: fn(),
     },
+    action: {
+      ...DEFAULT_ACTION,
+      settings: {
+        ...DEFAULT_ACTION.settings,
+        input: [],
+      },
+    },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const messageContainer = await canvas.findByText('Add inputs to your form');
+    const messageContainer = await canvas.findByTestId(
+      'empty-form-message-title',
+    );
 
     expect(messageContainer).toBeVisible();
 

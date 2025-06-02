@@ -235,7 +235,9 @@ export const WorkflowEditActionFormBuilder = ({
         disabled={actionOptions.readonly}
       />
       <StyledWorkflowStepBody>
-        {formData.length === 0 && <WorkflowFormEmptyMessage />}
+        {formData.length === 0 && (
+          <WorkflowFormEmptyMessage data-testid="empty-form-message" />
+        )}
         <DraggableList
           onDragEnd={handleDragEnd}
           draggableItems={

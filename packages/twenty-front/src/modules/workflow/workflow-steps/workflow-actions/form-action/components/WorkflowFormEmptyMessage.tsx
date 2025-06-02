@@ -50,10 +50,10 @@ export const WorkflowFormEmptyMessage = () => {
           <FormFieldInputInnerContainer hasRightElement={false}>
             <StyledFieldContainer>
               <StyledMessageContentContainer>
-                <StyledMessageTitle>
+                <StyledMessageTitle data-testid="empty-form-message-title">
                   {t`Add inputs to your form`}
                 </StyledMessageTitle>
-                <StyledMessageDescription>
+                <StyledMessageDescription data-testid="empty-form-message-description">
                   {t`Click on "Add Field" below to add the first input to your form. The form will pop up on the user's screen when the workflow is launched from a manual trigger. For other types of triggers, it will be displayed in the Workflow run record page.`}
                 </StyledMessageDescription>
               </StyledMessageContentContainer>
