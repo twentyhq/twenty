@@ -14,46 +14,24 @@ import OptionTable from '@site/src/theme/OptionTable'
 
 Twenty offers **two configuration modes** to suit different deployment needs:
 
-## Configuration Modes
+**Admin panel access:** Only users with admin privileges (`canAccessFullAdminPanel: true`) can access the configuration interface.
 
-### Mode 1: Database Configuration (Default - Recommended)
+## 1. Admin Panel Configuration (Default)
+
 ```bash
 IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
 ```
 
-**How it works:**
-- Admin panel can modify most settings through the UI
-- Changes take effect immediately (within 15 seconds for multi-container deployments)
-- Environment variables are only needed for infrastructure settings
-- Multi-container deployments share configuration automatically
-
-### Mode 2: Environment-Only Configuration
-```bash
-IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
-```
-
-**How it works:**
-- All configuration managed through `.env` files
-- Admin panel shows current values but cannot modify them
-- Requires container restart for changes
-- Full control over configuration versioning
-
----
-
-## Admin Panel Configuration (Mode 1 - Default)
-
 **Most configuration happens through the UI** after installation:
 
 1. Access your Twenty instance (usually `http://localhost:3000`)
-2. Go to **Settings → Admin Panel → Configuration Variables**  
+2. Go to **Settings / Admin Panel / Configuration Variables**  
 3. Configure integrations, email, storage, and more
 4. Changes take effect immediately (within 15 seconds for multi-container deployments)
 
 <ArticleWarning>
 **Multi-Container Deployments:** When using database configuration (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`), both server and worker containers read from the same database. Admin panel changes affect both automatically, eliminating the need to duplicate environment variables between containers (except for infrastructure variables).
 </ArticleWarning>
-
-**Who can access:** Only users with admin privileges (`canAccessFullAdminPanel: true`)
 
 **What you can configure through the admin panel:**
 - **Authentication** - Google/Microsoft OAuth, password settings
@@ -65,7 +43,18 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
 
 ![Admin Panel Configuration Variables](/images/user-guide/setup/admin-panel-config-variables.png)
 
-## Environment-Only Configuration (Mode 2)
+<ArticleWarning>
+**Some configuration requires setting in .env:** Infrastructure like database connections (`PG_DATABASE_URL`), server URLs (`SERVER_URL`), and app secrets (`APP_SECRET`) can only be configured via `.env` file.
+Those configurations are marked as `isEnvOnly: true` in the source code.
+
+[See complete list of environment-only variables →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
+</ArticleWarning>
+
+## 2. Environment-Only Configuration
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
+```
 
 **All configuration managed through `.env` files:**
 
@@ -73,42 +62,6 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
 2. Add all configuration variables to your `.env` file
 3. Restart containers for changes to take effect
 4. Admin panel will show current values but cannot modify them
-
-
-## Infrastructure Variables (Both Modes)
-
-Some **infrastructure variables** can only be set via environment variables for security reasons and require container restart:
-
-**Required infrastructure variables** (automatically set by install script):
-
-```bash
-# Database & Cache  
-PG_DATABASE_URL=postgres://user:password@localhost:5432/twenty
-REDIS_URL=redis://localhost:6379
-
-# Core Application
-SERVER_URL=http://localhost:3000  
-APP_SECRET=your-secret-key-here
-```
-
-**When you need to edit your .env file:**
-
-**Database Configuration Mode** (default - `IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`):
-- Only for variables marked as `isEnvOnly: true` in the code (infrastructure, logging, performance settings)
-- Application settings (auth providers, email, storage, integrations) use the admin panel
-
-**Environment-Only Mode** (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`):
-- All configuration changes require editing .env and container restart
-- Admin panel shows values but cannot modify them
-
-**Infrastructure variables** (cannot be changed via admin panel):
-- **Database:** `PG_DATABASE_URL`, `PG_SSL_ALLOW_SELF_SIGNED`, `PG_ENABLE_POOL_SHARING`, `PG_POOL_*`
-- **Server:** `SERVER_URL`, `APP_SECRET`, `NODE_PORT`, `NODE_ENV`, `FRONTEND_URL`
-- **Cache:** `REDIS_URL`, `IS_CONFIG_VARIABLES_IN_DB_ENABLED`
-- **SSL:** `SSL_KEY_PATH`, `SSL_CERT_PATH`
-- **Logging/Monitoring:** `EXCEPTION_HANDLER_DRIVER`, `LOG_LEVELS`, `LOGGER_DRIVER`, `METER_DRIVER`, `OTLP_COLLECTOR_ENDPOINT_URL`
-- **Performance:** `SERVERLESS_TYPE`, `LLM_CHAT_MODEL_DRIVER`, `LLM_TRACING_DRIVER`, `CAPTCHA_DRIVER`
-- **Enterprise:** `IS_MULTIWORKSPACE_ENABLED`, `APP_VERSION`
 
 ## Gmail & Google Calendar Integration
 
