@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
+import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 import { objectRecordChangedProperties as objectRecordUpdateEventChangedProperties } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-properties.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -153,6 +154,42 @@ export class MessageParticipantPersonListener {
         jobPromises.push(...removedEmailPromises, ...addedEmailPromises);
 
         await Promise.all(jobPromises);
+      }
+    }
+  }
+
+  @OnDatabaseBatchEvent('person', DatabaseEventAction.DESTROYED)
+  async handleDestroyedEvent(
+    payload: WorkspaceEventBatch<
+      ObjectRecordDeleteEvent<PersonWorkspaceEntity>
+    >,
+  ) {
+    for (const eventPayload of payload.events) {
+      await this.messageQueueService.add<MessageParticipantUnmatchParticipantJobData>(
+        MessageParticipantUnmatchParticipantJob.name,
+        {
+          workspaceId: payload.workspaceId,
+          email: eventPayload.properties.before.emails?.primaryEmail,
+          personId: eventPayload.recordId,
+        },
+      );
+
+      const additionalEmails =
+        eventPayload.properties.before.emails?.additionalEmails;
+
+      if (Array.isArray(additionalEmails)) {
+        const additionalEmailPromises = additionalEmails.map((email) =>
+          this.messageQueueService.add<MessageParticipantUnmatchParticipantJobData>(
+            MessageParticipantUnmatchParticipantJob.name,
+            {
+              workspaceId: payload.workspaceId,
+              email: email,
+              personId: eventPayload.recordId,
+            },
+          ),
+        );
+
+        await Promise.all(additionalEmailPromises);
       }
     }
   }
