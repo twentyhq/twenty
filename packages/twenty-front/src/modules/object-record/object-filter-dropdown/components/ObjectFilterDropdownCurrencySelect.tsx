@@ -2,7 +2,6 @@ import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { turnCurrencyIntoSelectableItem } from '@/object-record/object-filter-dropdown/utils/turnCurrencyIntoSelectableItem';
-import { StyledMultipleSelectDropdownAvatarChip } from '@/object-record/select/components/StyledMultipleSelectDropdownAvatarChip';
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -118,17 +117,7 @@ export const ObjectFilterDropdownCurrencySelect = () => {
                 handleMultipleItemSelectChange(item, newCheckedValue);
               }}
               text={item.name}
-              avatar={
-                <StyledMultipleSelectDropdownAvatarChip
-                  className="avatar-icon-container"
-                  name={item.name}
-                  avatarUrl={item.avatarUrl}
-                  LeftIcon={item.AvatarIcon}
-                  avatarType={item.avatarType}
-                  isIconInverted={item.isIconInverted}
-                  placeholderColorSeed={item.id}
-                />
-              }
+              avatar={item.AvatarIcon && <item.AvatarIcon size="16" />}
             />
           );
         })}
@@ -140,17 +129,8 @@ export const ObjectFilterDropdownCurrencySelect = () => {
               onSelectChange={(newCheckedValue) => {
                 handleMultipleItemSelectChange(item, newCheckedValue);
               }}
-              avatar={
-                <StyledMultipleSelectDropdownAvatarChip
-                  className="avatar-icon-container"
-                  name={item.name}
-                  avatarUrl={item.avatarUrl}
-                  LeftIcon={item.AvatarIcon}
-                  avatarType={item.avatarType}
-                  isIconInverted={item.isIconInverted}
-                  placeholderColorSeed={item.id}
-                />
-              }
+              text={item.name}
+              avatar={item.AvatarIcon && <item.AvatarIcon size="16" />}
             />
           );
         })}
