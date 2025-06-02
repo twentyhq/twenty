@@ -1,6 +1,6 @@
 import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-standard-id-to-id-map';
 
-import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
   PERSON_STANDARD_FIELD_IDS,
@@ -38,7 +38,7 @@ export const peopleAllView = (
         position: 1,
         isVisible: true,
         size: 150,
-        aggregateOperation: AGGREGATE_OPERATIONS.countUniqueValues,
+        aggregateOperation: AggregateOperations.COUNT_UNIQUE_VALUES,
       },
       {
         fieldMetadataId:
@@ -66,7 +66,7 @@ export const peopleAllView = (
         position: 4,
         isVisible: true,
         size: 150,
-        aggregateOperation: AGGREGATE_OPERATIONS.percentageEmpty,
+        aggregateOperation: AggregateOperations.PERCENTAGE_EMPTY,
       },
       {
         fieldMetadataId:
@@ -76,7 +76,7 @@ export const peopleAllView = (
         position: 5,
         isVisible: true,
         size: 150,
-        aggregateOperation: AGGREGATE_OPERATIONS.min,
+        aggregateOperation: AggregateOperations.MIN,
       },
       {
         fieldMetadataId:

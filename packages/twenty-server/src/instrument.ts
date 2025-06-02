@@ -23,7 +23,7 @@ const meterDrivers = parseArrayEnvVar(
   [],
 );
 
-if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry) {
+if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
   Sentry.init({
     environment: process.env.SENTRY_ENVIRONMENT,
     release: process.env.APP_VERSION,
@@ -43,7 +43,7 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry) {
     ],
     tracesSampleRate: 0.1,
     profilesSampleRate: 0.3,
-    debug: process.env.NODE_ENV === NodeEnvironment.development,
+    debug: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
   });
 }
 

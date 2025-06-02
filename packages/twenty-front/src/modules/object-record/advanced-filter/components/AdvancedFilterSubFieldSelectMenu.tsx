@@ -16,6 +16,7 @@ import { areCompositeTypeSubFieldsFilterable } from '@/object-record/record-filt
 import { isCompositeTypeFilterableByAnySubField } from '@/object-record/record-filter/utils/isCompositeTypeFilterableByAnySubField';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -110,7 +111,7 @@ export const AdvancedFilterSubFieldSelectMenu = ({
   ];
 
   return (
-    <>
+    <DropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -184,6 +185,6 @@ export const AdvancedFilterSubFieldSelectMenu = ({
             ))}
         </SelectableList>
       </DropdownMenuItemsContainer>
-    </>
+    </DropdownContent>
   );
 };

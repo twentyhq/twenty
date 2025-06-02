@@ -10,6 +10,7 @@ import {
 import { isBaseOutputSchema } from '@/workflow/workflow-variables/utils/isBaseOutputSchema';
 import { isRecordOutputSchema } from '@/workflow/workflow-variables/utils/isRecordOutputSchema';
 
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -117,7 +118,7 @@ export const WorkflowVariablesDropdownFieldItems = ({
     : options;
 
   return (
-    <>
+    <DropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -153,6 +154,6 @@ export const WorkflowVariablesDropdownFieldItems = ({
           />
         ))}
       </DropdownMenuItemsContainer>
-    </>
+    </DropdownContent>
   );
 };

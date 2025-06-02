@@ -7,14 +7,14 @@ export const getCaptchaUrlByProvider = (
   siteKey: string,
 ) => {
   switch (name) {
-    case CaptchaDriverType.GoogleRecaptcha:
+    case CaptchaDriverType.GOOGLE_RECAPTCHA:
       if (!isNonEmptyString(siteKey)) {
         throw new Error(
           'SiteKey must be provided while generating url for GoogleRecaptcha provider',
         );
       }
       return `https://www.google.com/recaptcha/api.js?render=${siteKey}`;
-    case CaptchaDriverType.Turnstile:
+    case CaptchaDriverType.TURNSTILE:
       return 'https://challenges.cloudflare.com/turnstile/v0/api.js';
     default:
       throw new Error('Unknown captcha provider');

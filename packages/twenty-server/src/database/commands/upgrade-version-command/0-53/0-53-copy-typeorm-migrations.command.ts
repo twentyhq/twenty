@@ -38,6 +38,24 @@ export class CopyTypeormMigrationsCommand extends MigrationCommandRunner {
       await queryRunner.connect();
       await queryRunner.startTransaction();
 
+      // Check if metadata._typeorm_migrations table exists
+      const tableExists = await queryRunner.query(
+        `SELECT EXISTS (
+          SELECT FROM information_schema.tables 
+          WHERE table_schema = 'metadata' 
+          AND table_name = '_typeorm_migrations'
+        )`,
+      );
+
+      if (!tableExists[0].exists) {
+        this.logger.log(
+          'metadata._typeorm_migrations table does not exist, skipping migration',
+        );
+        await queryRunner.commitTransaction();
+
+        return;
+      }
+
       const metadataMigrations = await queryRunner.query(
         'SELECT * FROM metadata._typeorm_migrations ORDER BY id ASC',
       );

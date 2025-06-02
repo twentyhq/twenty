@@ -56,7 +56,7 @@ export class GraphqlQueryRestoreManyResolverService extends GraphqlQueryBaseReso
     );
 
     this.apiEventEmitterService.emitRestoreEvents({
-      records: formattedRestoredRecords,
+      records: structuredClone(formattedRestoredRecords),
       authContext,
       objectMetadataItem: objectMetadataItemWithFieldMaps,
     });

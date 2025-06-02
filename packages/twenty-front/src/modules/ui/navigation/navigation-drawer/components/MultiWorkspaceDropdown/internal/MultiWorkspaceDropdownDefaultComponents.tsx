@@ -11,6 +11,7 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -92,7 +93,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   };
 
   return (
-    <>
+    <DropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -116,20 +117,21 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
             dropdownId={'multi-workspace-dropdown-context-menu'}
             dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
             dropdownComponents={
-              <DropdownMenuItemsContainer>
-                <MenuItem
-                  LeftIcon={IconPlus}
-                  text={t`Create Workspace`}
-                  onClick={createWorkspace}
-                />
-              </DropdownMenuItemsContainer>
+              <DropdownContent>
+                <DropdownMenuItemsContainer>
+                  <MenuItem
+                    LeftIcon={IconPlus}
+                    text={t`Create Workspace`}
+                    onClick={createWorkspace}
+                  />
+                </DropdownMenuItemsContainer>
+              </DropdownContent>
             }
           />
         }
       >
         {currentWorkspace?.displayName}
       </DropdownMenuHeader>
-      <DropdownMenuSeparator />
       {workspaces.length > 1 && (
         <>
           <StyledDropdownMenuItemsContainer>
@@ -193,6 +195,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
         </UndecoratedLink>
         <MenuItem LeftIcon={IconLogout} text={t`Log out`} onClick={signOut} />
       </DropdownMenuItemsContainer>
-    </>
+    </DropdownContent>
   );
 };

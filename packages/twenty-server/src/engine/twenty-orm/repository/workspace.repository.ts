@@ -24,6 +24,10 @@ import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
@@ -67,7 +71,7 @@ export class WorkspaceRepository<
       queryRunner,
     ) as unknown as WorkspaceSelectQueryBuilder<U>;
     const isPermissionsV2Enabled =
-      this.featureFlagMap[FeatureFlagKey.IsPermissionsV2Enabled];
+      this.featureFlagMap[FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED];
 
     if (!isPermissionsV2Enabled) {
       return queryBuilder;
@@ -890,7 +894,10 @@ export class WorkspaceRepository<
    * DEPRECATED AND RESTRICTED METHODS
    */
   override async query(): Promise<unknown> {
-    throw new Error('Method not allowed.');
+    throw new PermissionsException(
+      'Method not allowed.',
+      PermissionsExceptionCode.RAW_SQL_NOT_ALLOWED,
+    );
   }
 
   override async findByIds(): Promise<T[]> {

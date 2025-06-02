@@ -1,50 +1,16 @@
 import { DynamicModule, Global } from '@nestjs/common';
 
+import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import {
-  FileStorageModuleAsyncOptions,
-  FileStorageModuleOptions,
-} from 'src/engine/core-modules/file-storage/interfaces';
-import { STORAGE_DRIVER } from 'src/engine/core-modules/file-storage/file-storage.constants';
-import { LocalDriver } from 'src/engine/core-modules/file-storage/drivers/local.driver';
-import { S3Driver } from 'src/engine/core-modules/file-storage/drivers/s3.driver';
+import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 
 @Global()
 export class FileStorageModule {
-  static forRoot(options: FileStorageModuleOptions): DynamicModule {
-    const provider = {
-      provide: STORAGE_DRIVER,
-      useValue:
-        options.type === 's3'
-          ? new S3Driver(options.options)
-          : new LocalDriver(options.options),
-    };
-
+  static forRoot(): DynamicModule {
     return {
       module: FileStorageModule,
-      providers: [FileStorageService, provider],
-      exports: [FileStorageService],
-    };
-  }
-
-  static forRootAsync(options: FileStorageModuleAsyncOptions): DynamicModule {
-    const provider = {
-      provide: STORAGE_DRIVER,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      useFactory: async (...args: any[]) => {
-        const config = await options.useFactory(...args);
-
-        return config?.type === 's3'
-          ? new S3Driver(config.options)
-          : new LocalDriver(config.options);
-      },
-      inject: options.inject || [],
-    };
-
-    return {
-      module: FileStorageModule,
-      imports: options.imports || [],
-      providers: [FileStorageService, provider],
+      imports: [TwentyConfigModule],
+      providers: [FileStorageDriverFactory, FileStorageService],
       exports: [FileStorageService],
     };
   }

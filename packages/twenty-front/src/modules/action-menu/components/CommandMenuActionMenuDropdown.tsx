@@ -5,6 +5,7 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { CommandMenuActionMenuDropdownHotkeyScope } from '@/action-menu/types/CommandMenuActionMenuDropdownHotkeyScope';
 import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getRightDrawerActionMenuDropdownIdFromActionMenuId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -72,19 +73,21 @@ export const CommandMenuActionMenuDropdown = () => {
         setSelectedItemId(selectableItemIdArray[0]);
       }}
       dropdownComponents={
-        <DropdownMenuItemsContainer>
-          <SelectableList
-            selectableListInstanceId={actionMenuId}
-            hotkeyScope={
-              CommandMenuActionMenuDropdownHotkeyScope.CommandMenuActionMenuDropdown
-            }
-            selectableItemIdArray={selectableItemIdArray}
-          >
-            {recordSelectionActions.map((action) => (
-              <ActionComponent action={action} key={action.key} />
-            ))}
-          </SelectableList>
-        </DropdownMenuItemsContainer>
+        <DropdownContent>
+          <DropdownMenuItemsContainer>
+            <SelectableList
+              selectableListInstanceId={actionMenuId}
+              hotkeyScope={
+                CommandMenuActionMenuDropdownHotkeyScope.CommandMenuActionMenuDropdown
+              }
+              selectableItemIdArray={selectableItemIdArray}
+            >
+              {recordSelectionActions.map((action) => (
+                <ActionComponent action={action} key={action.key} />
+              ))}
+            </SelectableList>
+          </DropdownMenuItemsContainer>
+        </DropdownContent>
       }
     />
   );

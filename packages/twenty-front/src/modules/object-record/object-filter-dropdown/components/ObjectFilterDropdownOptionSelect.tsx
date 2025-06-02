@@ -20,11 +20,11 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isNonEmptyString } from '@sniptt/guards';
+import { MAX_OPTIONS_TO_DISPLAY } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/navigation';
 
 export const EMPTY_FILTER_VALUE = '';
-export const MAX_OPTIONS_TO_DISPLAY = 3;
 
 type SelectOptionForFilter = FieldMetadataItemOption & {
   isSelected: boolean;

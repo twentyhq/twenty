@@ -1,12 +1,12 @@
 import { Router } from 'express';
 
 export enum ExceptionHandlerDriver {
-  Sentry = 'sentry',
-  Console = 'console',
+  SENTRY = 'SENTRY',
+  CONSOLE = 'CONSOLE',
 }
 
 export interface ExceptionHandlerSentryDriverFactoryOptions {
-  type: ExceptionHandlerDriver.Sentry;
+  type: ExceptionHandlerDriver.SENTRY;
   options: {
     environment?: string;
     release?: string;
@@ -17,7 +17,7 @@ export interface ExceptionHandlerSentryDriverFactoryOptions {
 }
 
 export interface ExceptionHandlerDriverFactoryOptions {
-  type: ExceptionHandlerDriver.Console;
+  type: ExceptionHandlerDriver.CONSOLE;
 }
 
 export type ExceptionHandlerModuleOptions =

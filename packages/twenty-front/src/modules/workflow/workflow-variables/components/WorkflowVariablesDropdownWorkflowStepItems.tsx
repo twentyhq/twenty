@@ -1,3 +1,4 @@
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -32,7 +33,7 @@ export const WorkflowVariablesDropdownWorkflowStepItems = ({
   );
 
   return (
-    <>
+    <DropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -72,6 +73,6 @@ export const WorkflowVariablesDropdownWorkflowStepItems = ({
           />
         )}
       </DropdownMenuItemsContainer>
-    </>
+    </DropdownContent>
   );
 };

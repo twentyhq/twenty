@@ -20,6 +20,11 @@ import {
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 import { WorkflowAutomatedTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 
+export type ObjectMetadataInfo = {
+  objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps;
+  objectMetadataMaps: ObjectMetadataMaps;
+};
+
 @Injectable()
 export class WorkflowCommonWorkspaceService {
   constructor(
@@ -73,13 +78,9 @@ export class WorkflowCommonWorkspaceService {
     return { ...workflowVersion, trigger: workflowVersion.trigger };
   }
 
-  async getObjectMetadataItemWithFieldsMaps(
-    objectNameSingular: string,
+  async getObjectMetadataMaps(
     workspaceId: string,
-  ): Promise<{
-    objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps;
-    objectMetadataMaps: ObjectMetadataMaps;
-  }> {
+  ): Promise<ObjectMetadataMaps> {
     const currentCacheVersion =
       await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
 
@@ -102,6 +103,15 @@ export class WorkflowCommonWorkspaceService {
         WorkflowCommonExceptionCode.OBJECT_METADATA_NOT_FOUND,
       );
     }
+
+    return objectMetadataMaps;
+  }
+
+  async getObjectMetadataItemWithFieldsMaps(
+    objectNameSingular: string,
+    workspaceId: string,
+  ): Promise<ObjectMetadataInfo> {
+    const objectMetadataMaps = await this.getObjectMetadataMaps(workspaceId);
 
     const objectMetadataItemWithFieldsMaps =
       getObjectMetadataMapItemByNameSingular(

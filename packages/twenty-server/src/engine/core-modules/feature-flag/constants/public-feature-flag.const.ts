@@ -7,16 +7,13 @@ type FeatureFlagMetadata = {
 };
 
 export type PublicFeatureFlag = {
-  key: Extract<
-    FeatureFlagKey,
-    FeatureFlagKey.IsWorkflowEnabled | FeatureFlagKey.IsCustomDomainEnabled
-  >;
+  key: Extract<FeatureFlagKey, FeatureFlagKey.IS_WORKFLOW_ENABLED>;
   metadata: FeatureFlagMetadata;
 };
 
 export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
   {
-    key: FeatureFlagKey.IsWorkflowEnabled,
+    key: FeatureFlagKey.IS_WORKFLOW_ENABLED,
     metadata: {
       label: 'Workflows',
       description: 'Create custom workflows to automate your work.',
@@ -25,15 +22,9 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
   },
   ...(process.env.CLOUDFLARE_API_KEY
     ? [
-        {
-          key: FeatureFlagKey.IsCustomDomainEnabled as PublicFeatureFlag['key'],
-          metadata: {
-            label: 'Custom Domain',
-            description: 'Customize your workspace URL with your own domain.',
-            imagePath:
-              'https://twenty.com/images/lab/is-custom-domain-enabled.png',
-          },
-        },
+        // {
+        // Here you can add cloud only feature flags
+        // },
       ]
     : []),
 ];

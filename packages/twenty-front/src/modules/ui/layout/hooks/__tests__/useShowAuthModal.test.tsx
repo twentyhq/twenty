@@ -45,8 +45,6 @@ const testCases = [
   { loc: AppPath.PlanRequiredSuccess, res: true },
 
   { loc: AppPath.Index, res: false },
-  { loc: AppPath.TasksPage, res: false },
-  { loc: AppPath.OpportunitiesPage, res: false },
   { loc: AppPath.RecordIndexPage, res: false },
   { loc: AppPath.RecordShowPage, res: false },
   { loc: AppPath.SettingsCatchAll, res: false },

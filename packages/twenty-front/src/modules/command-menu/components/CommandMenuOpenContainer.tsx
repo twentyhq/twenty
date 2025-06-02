@@ -13,6 +13,7 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRef } from 'react';
 import { useRecoilCallback } from 'recoil';
+import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/components';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledCommandMenu = styled(motion.div)`
@@ -64,7 +65,10 @@ export const CommandMenuOpenContainer = ({
     refs: [commandMenuRef],
     callback: handleClickOutside,
     listenerId: 'COMMAND_MENU_LISTENER_ID',
-    excludedClickOutsideIds: [PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID],
+    excludedClickOutsideIds: [
+      PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID,
+      LINK_CHIP_CLICK_OUTSIDE_ID,
+    ],
   });
 
   return (

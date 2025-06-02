@@ -1,6 +1,6 @@
 import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-standard-id-to-id-map';
 
-import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { OPPORTUNITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
@@ -19,7 +19,7 @@ export const opportunitiesByStageView = (
       objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.opportunity].fields[
         OPPORTUNITY_STANDARD_FIELD_IDS.stage
       ],
-    kanbanAggregateOperation: AGGREGATE_OPERATIONS.min,
+    kanbanAggregateOperation: AggregateOperations.MIN,
     kanbanAggregateOperationFieldMetadataId:
       objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.opportunity].fields[
         OPPORTUNITY_STANDARD_FIELD_IDS.amount
