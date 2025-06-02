@@ -143,8 +143,8 @@ export class MicrosoftGetMessagesService {
         return response.body;
       }
 
-      if (!response.body) {
-        this.logger.error(`No body found for response`, response);
+      if (response.status !== 503 && response.status !== 429) {
+        this.logger.error(`Microsoft parseBatchResponse error`, response);
       }
 
       const errorParsed = response?.body?.error
