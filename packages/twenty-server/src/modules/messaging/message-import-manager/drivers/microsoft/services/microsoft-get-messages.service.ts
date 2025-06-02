@@ -9,6 +9,7 @@ import { MicrosoftImportDriverException } from 'src/modules/messaging/message-im
 import { MicrosoftGraphBatchResponse } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.interface';
 import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
+import { safeParseAddress } from 'src/modules/messaging/message-import-manager/utils/safe-parse.util';
 
 import { MicrosoftFetchByBatchService } from './microsoft-fetch-by-batch.service';
 import { MicrosoftHandleErrorService } from './microsoft-handle-error.service';
@@ -78,37 +79,39 @@ export class MicrosoftGetMessagesService {
         );
       }
 
-      const participants = [
-        ...formatAddressObjectAsParticipants(
-          response?.from?.emailAddress,
-          'from',
-        ),
-        ...formatAddressObjectAsParticipants(
-          response?.toRecipients
-            ?.filter(isDefined)
-            // @ts-expect-error legacy noImplicitAny
-            .map((recipient) => recipient.emailAddress),
-          'to',
-        ),
-        ...formatAddressObjectAsParticipants(
-          response?.ccRecipients
-            ?.filter(isDefined)
-            // @ts-expect-error legacy noImplicitAny
-            .map((recipient) => recipient.emailAddress),
-          'cc',
-        ),
-        ...formatAddressObjectAsParticipants(
-          response?.bccRecipients
-            ?.filter(isDefined)
-            // @ts-expect-error legacy noImplicitAny
-            .map((recipient) => recipient.emailAddress),
-          'bcc',
-        ),
-      ];
+      const safeParseAddressFrom = response?.from?.emailAddress
+        ? safeParseAddress(response?.from?.emailAddress)
+        : [];
 
-      const safeParticipantsFormat = participants.filter((participant) => {
-        return participant.handle.includes('@');
-      });
+      const safeParseAddressTo = response?.toRecipients
+        ?.filter(isDefined)
+        // @ts-expect-error legacy noImplicitAny
+        .map((recipient) => safeParseAddress(recipient.emailAddress));
+
+      const safeParseAddressCc = response?.ccRecipients
+        ?.filter(isDefined)
+        // @ts-expect-error legacy noImplicitAny
+        .map((recipient) => safeParseAddress(recipient.emailAddress));
+
+      const safeParseAddressBcc = response?.bccRecipients
+        ?.filter(isDefined)
+        // @ts-expect-error legacy noImplicitAny
+        .map((recipient) => safeParseAddress(recipient.emailAddress));
+
+      const participants = [
+        ...(safeParseAddressFrom
+          ? formatAddressObjectAsParticipants(safeParseAddressFrom, 'from')
+          : []),
+        ...(safeParseAddressTo
+          ? formatAddressObjectAsParticipants(safeParseAddressTo, 'to')
+          : []),
+        ...(safeParseAddressCc
+          ? formatAddressObjectAsParticipants(safeParseAddressCc, 'cc')
+          : []),
+        ...(safeParseAddressBcc
+          ? formatAddressObjectAsParticipants(safeParseAddressBcc, 'bcc')
+          : []),
+      ];
 
       return {
         externalId: response.id,
@@ -124,7 +127,7 @@ export class MicrosoftGetMessagesService {
               connectedAccount,
             )
           : MessageDirection.INCOMING,
-        participants: safeParticipantsFormat,
+        participants,
         attachments: [],
       };
     });

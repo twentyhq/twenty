@@ -40,11 +40,15 @@ export const parseAndFormatGmailMessage = (
     return null;
   }
 
+  const toParticipants = to ?? deliveredTo;
+
   const participants = [
-    ...formatAddressObjectAsParticipants(from, 'from'),
-    ...formatAddressObjectAsParticipants(to ?? deliveredTo, 'to'),
-    ...formatAddressObjectAsParticipants(cc, 'cc'),
-    ...formatAddressObjectAsParticipants(bcc, 'bcc'),
+    ...(from ? formatAddressObjectAsParticipants(from, 'from') : []),
+    ...(toParticipants
+      ? formatAddressObjectAsParticipants(toParticipants, 'to')
+      : []),
+    ...(cc ? formatAddressObjectAsParticipants(cc, 'cc') : []),
+    ...(bcc ? formatAddressObjectAsParticipants(bcc, 'bcc') : []),
   ];
 
   const textWithoutReplyQuotations = text
