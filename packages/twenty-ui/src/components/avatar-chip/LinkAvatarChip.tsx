@@ -21,8 +21,6 @@ export const LinkAvatarChip = ({
   to,
   onClick,
   name,
-  LeftIcon,
-  LeftIconColor,
   avatarType,
   avatarUrl,
   className,
@@ -49,8 +47,6 @@ export const LinkAvatarChip = ({
     leftComponent={
       <AvatarChipsLeftComponent
         name={name}
-        LeftIcon={LeftIcon}
-        LeftIconColor={LeftIconColor}
         avatarType={avatarType}
         avatarUrl={avatarUrl}
         isIconInverted={isIconInverted}

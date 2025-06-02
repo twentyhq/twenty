@@ -117,6 +117,7 @@ export const ObjectFilterDropdownCurrencySelect = () => {
               onSelectChange={(newCheckedValue) => {
                 handleMultipleItemSelectChange(item, newCheckedValue);
               }}
+              text={item.name}
               avatar={
                 <StyledMultipleSelectDropdownAvatarChip
                   className="avatar-icon-container"
