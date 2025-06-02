@@ -42,6 +42,10 @@ exports[`buildPersonEmailQueryBuilder case-insensitive email normalization: shou
     ],
     "method": "orWhere",
   },
+  {
+    "args": [],
+    "method": "withDeleted",
+  },
 ]
 `;
 
@@ -77,6 +81,10 @@ exports[`buildPersonEmailQueryBuilder emails with empty exclusion array: should 
     ],
     "method": "orWhere",
   },
+  {
+    "args": [],
+    "method": "withDeleted",
+  },
 ]
 `;
 
@@ -100,6 +108,10 @@ exports[`buildPersonEmailQueryBuilder empty emails array: should handle empty em
       },
     ],
     "method": "where",
+  },
+  {
+    "args": [],
+    "method": "withDeleted",
   },
 ]
 `;
@@ -163,6 +175,10 @@ exports[`buildPersonEmailQueryBuilder multiple emails with exclusions: should ha
     ],
     "method": "orWhere",
   },
+  {
+    "args": [],
+    "method": "withDeleted",
+  },
 ]
 `;
 
@@ -207,6 +223,10 @@ exports[`buildPersonEmailQueryBuilder multiple emails without exclusions: should
       },
     ],
     "method": "orWhere",
+  },
+  {
+    "args": [],
+    "method": "withDeleted",
   },
 ]
 `;
@@ -259,6 +279,10 @@ exports[`buildPersonEmailQueryBuilder single email with person ID exclusions: sh
     ],
     "method": "orWhere",
   },
+  {
+    "args": [],
+    "method": "withDeleted",
+  },
 ]
 `;
 
@@ -293,6 +317,10 @@ exports[`buildPersonEmailQueryBuilder single email without exclusions: should ha
       },
     ],
     "method": "orWhere",
+  },
+  {
+    "args": [],
+    "method": "withDeleted",
   },
 ]
 `;
@@ -348,6 +376,10 @@ exports[`buildPersonEmailQueryBuilder three emails with unique parameter generat
       },
     ],
     "method": "orWhere",
+  },
+  {
+    "args": [],
+    "method": "withDeleted",
   },
 ]
 `;

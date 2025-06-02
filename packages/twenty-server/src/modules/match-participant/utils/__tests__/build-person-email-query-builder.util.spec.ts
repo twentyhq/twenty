@@ -104,6 +104,11 @@ const mockQueryBuilder: Partial<SelectQueryBuilder<PersonWorkspaceEntity>> = {
 
     return mockQueryBuilder;
   }),
+  withDeleted: jest.fn().mockImplementation((...args) => {
+    queryBuilderCalls.push({ method: 'withDeleted', args });
+
+    return mockQueryBuilder;
+  }),
 };
 
 describe('buildPersonEmailQueryBuilder', () => {

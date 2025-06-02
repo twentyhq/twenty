@@ -47,5 +47,7 @@ export function buildPersonEmailQueryBuilder({
     });
   }
 
+  queryBuilder = queryBuilder.withDeleted();
+
   return queryBuilder;
 }

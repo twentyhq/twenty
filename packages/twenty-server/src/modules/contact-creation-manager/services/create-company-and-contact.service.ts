@@ -104,11 +104,11 @@ export class CreateCompanyAndContactService {
           currentContactEmails.push(emails.primaryEmail.toLowerCase());
         }
         if (Array.isArray(emails?.additionalEmails)) {
-          currentContactEmails.push(
-            ...emails.additionalEmails
-              .filter(isNonEmptyString)
-              .map((email) => email.toLowerCase()),
-          );
+          const additionalEmails = emails.additionalEmails
+            .filter(isNonEmptyString)
+            .map((email) => email.toLowerCase());
+
+          currentContactEmails.push(...additionalEmails);
         }
 
         return [...acc, ...currentContactEmails];
