@@ -34,6 +34,7 @@ export const ObjectFilterDropdownRecordPinnedItems = (props: {
                   placeholderColorSeed={selectableItem.id}
                   placeholder={selectableItem.name}
                   type={selectableItem.avatarType}
+                  size="md"
                 />
               ) : (
                 selectableItem.AvatarIcon && (
