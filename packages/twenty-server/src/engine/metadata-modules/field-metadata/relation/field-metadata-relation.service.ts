@@ -7,14 +7,14 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { ObjectMetadataMapsService } from 'src/engine/metadata-modules/object-metadata/object-metadata-maps.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { removeFieldMapsFromObjectMetadata } from 'src/engine/metadata-modules/utils/remove-field-maps-from-object-metadata.util';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
 export class FieldMetadataRelationService {
   constructor(
-    private readonly objectMetadataMapsService: ObjectMetadataMapsService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
 
   async findCachedFieldMetadataRelation(
@@ -38,7 +38,7 @@ export class FieldMetadataRelationService {
     }>
   > {
     const objectMetadataMaps =
-      await this.objectMetadataMapsService.getObjectMetadataMapsOrThrow(
+      await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
         workspaceId,
       );
 

@@ -31,11 +31,11 @@ import { RecordsWithObjectMetadataItem } from 'src/engine/core-modules/search/ty
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
-import { ObjectMetadataMapsService } from 'src/engine/metadata-modules/object-metadata/object-metadata-maps.service';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { generateObjectMetadataMaps } from 'src/engine/metadata-modules/utils/generate-object-metadata-maps.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 type LastRanks = { tsRankCD: number; tsRank: number };
 
@@ -51,12 +51,12 @@ export class SearchService {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly fileService: FileService,
-    private readonly objectMetadataMapsService: ObjectMetadataMapsService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
 
   async getObjectMetadataItemWithFieldMaps(workspace: Workspace) {
     const objectMetadataMaps =
-      await this.objectMetadataMapsService.getObjectMetadataMapsOrThrow(
+      await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
         workspace.id,
       );
 

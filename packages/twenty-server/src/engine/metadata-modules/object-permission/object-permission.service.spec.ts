@@ -3,7 +3,6 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { ObjectMetadataMapsService } from 'src/engine/metadata-modules/object-metadata/object-metadata-maps.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   PermissionsException,
@@ -13,6 +12,7 @@ import {
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 import { ObjectPermissionEntity } from './object-permission.entity';
 import { ObjectPermissionService } from './object-permission.service';
@@ -26,7 +26,7 @@ describe('ObjectPermissionService', () => {
   >;
   let roleRepository: jest.Mocked<Repository<RoleEntity>>;
   let workspacePermissionsCacheService: jest.Mocked<WorkspacePermissionsCacheService>;
-  let objectMetadataMapsService: jest.Mocked<ObjectMetadataMapsService>;
+  let workspaceCacheStorageService: jest.Mocked<WorkspaceCacheStorageService>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -58,7 +58,7 @@ describe('ObjectPermissionService', () => {
           },
         },
         {
-          provide: ObjectMetadataMapsService,
+          provide: WorkspaceCacheStorageService,
           useValue: {
             getObjectMetadataMapsOrThrow: jest.fn(),
           },
@@ -74,7 +74,7 @@ describe('ObjectPermissionService', () => {
     workspacePermissionsCacheService = module.get(
       WorkspacePermissionsCacheService,
     );
-    objectMetadataMapsService = module.get(ObjectMetadataMapsService);
+    workspaceCacheStorageService = module.get(WorkspaceCacheStorageService);
   });
 
   describe('upsertObjectPermissions', () => {
@@ -108,16 +108,18 @@ describe('ObjectPermissionService', () => {
       };
 
       // Mock object metadata maps with a system object
-      objectMetadataMapsService.getObjectMetadataMapsOrThrow.mockResolvedValue({
-        byId: {
-          [systemObjectMetadataId]: {
-            id: systemObjectMetadataId,
-            isSystem: true,
-            workspaceId,
-          } as ObjectMetadataItemWithFieldMaps,
+      workspaceCacheStorageService.getObjectMetadataMapsOrThrow.mockResolvedValue(
+        {
+          byId: {
+            [systemObjectMetadataId]: {
+              id: systemObjectMetadataId,
+              isSystem: true,
+              workspaceId,
+            } as ObjectMetadataItemWithFieldMaps,
+          },
+          idByNameSingular: {},
         },
-        idByNameSingular: {},
-      });
+      );
 
       // Act & Assert
       await expect(
@@ -155,16 +157,18 @@ describe('ObjectPermissionService', () => {
       };
 
       // Mock object metadata maps with a custom object
-      objectMetadataMapsService.getObjectMetadataMapsOrThrow.mockResolvedValue({
-        byId: {
-          [customObjectMetadataId]: {
-            id: customObjectMetadataId,
-            isSystem: false,
-            workspaceId,
-          } as ObjectMetadataItemWithFieldMaps,
+      workspaceCacheStorageService.getObjectMetadataMapsOrThrow.mockResolvedValue(
+        {
+          byId: {
+            [customObjectMetadataId]: {
+              id: customObjectMetadataId,
+              isSystem: false,
+              workspaceId,
+            } as ObjectMetadataItemWithFieldMaps,
+          },
+          idByNameSingular: {},
         },
-        idByNameSingular: {},
-      });
+      );
 
       // Mock successful upsert
       const mockObjectPermission = {
@@ -235,10 +239,12 @@ describe('ObjectPermissionService', () => {
       };
 
       // Mock empty object metadata maps
-      objectMetadataMapsService.getObjectMetadataMapsOrThrow.mockResolvedValue({
-        byId: {},
-        idByNameSingular: {},
-      });
+      workspaceCacheStorageService.getObjectMetadataMapsOrThrow.mockResolvedValue(
+        {
+          byId: {},
+          idByNameSingular: {},
+        },
+      );
 
       // Act & Assert
       await expect(

@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { ObjectMetadataMapsService } from 'src/engine/metadata-modules/object-metadata/object-metadata-maps.service';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import {
   WorkflowCommonException,
   WorkflowCommonExceptionCode,
@@ -30,7 +30,7 @@ export class WorkflowCommonWorkspaceService {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly serverlessFunctionService: ServerlessFunctionService,
-    private readonly objectMetadataMapsService: ObjectMetadataMapsService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
 
   async getWorkflowVersionOrFail(
@@ -82,7 +82,7 @@ export class WorkflowCommonWorkspaceService {
     workspaceId: string,
   ): Promise<ObjectMetadataMaps> {
     const objectMetadataMaps =
-      await this.objectMetadataMapsService.getObjectMetadataMapsOrThrow(
+      await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
         workspaceId,
       );
 

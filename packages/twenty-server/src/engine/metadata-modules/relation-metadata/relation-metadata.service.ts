@@ -15,7 +15,6 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
-import { ObjectMetadataMapsService } from 'src/engine/metadata-modules/object-metadata/object-metadata-maps.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { CreateRelationInput } from 'src/engine/metadata-modules/relation-metadata/dtos/create-relation.input';
@@ -35,6 +34,7 @@ import {
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { BASE_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
@@ -57,7 +57,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly indexMetadataService: IndexMetadataService,
-    private readonly objectMetadataMapsService: ObjectMetadataMapsService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {
     super(relationMetadataRepository);
   }
@@ -494,7 +494,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     workspaceId: string,
   ): Promise<(RelationMetadataEntity | NotFoundException)[]> {
     const objectMetadataMaps =
-      await this.objectMetadataMapsService.getObjectMetadataMapsOrThrow(
+      await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
         workspaceId,
       );
 

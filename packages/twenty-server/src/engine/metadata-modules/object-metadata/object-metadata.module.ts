@@ -17,7 +17,6 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { IndexMetadataModule } from 'src/engine/metadata-modules/index-metadata/index-metadata.module';
 import { BeforeUpdateOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-update-one-object.hook';
 import { ObjectMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/object-metadata/interceptors/object-metadata-graphql-api-exception.interceptor';
-import { ObjectMetadataMapsService } from 'src/engine/metadata-modules/object-metadata/object-metadata-maps.service';
 import { ObjectMetadataResolver } from 'src/engine/metadata-modules/object-metadata/object-metadata.resolver';
 import { ObjectMetadataFieldRelationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-field-relation.service';
 import { ObjectMetadataMigrationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-migration.service';
@@ -67,7 +66,6 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
         ObjectMetadataMigrationService,
         ObjectMetadataFieldRelationService,
         ObjectMetadataRelatedRecordsService,
-        ObjectMetadataMapsService,
       ],
       resolvers: [
         {
@@ -96,11 +94,10 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
     }),
   ],
   providers: [
-    ObjectMetadataMapsService,
     ObjectMetadataService,
     ObjectMetadataResolver,
     BeforeUpdateOneObject,
   ],
-  exports: [ObjectMetadataService, ObjectMetadataMapsService],
+  exports: [ObjectMetadataService],
 })
 export class ObjectMetadataModule {}

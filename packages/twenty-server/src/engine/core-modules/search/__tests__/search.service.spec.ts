@@ -4,8 +4,8 @@ import { encodeCursorData } from 'src/engine/api/graphql/graphql-query-runner/ut
 import { mockObjectMetadataItemsWithFieldMaps } from 'src/engine/core-modules/__mocks__/mockObjectMetadataItemsWithFieldMaps';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { SearchService } from 'src/engine/core-modules/search/services/search.service';
-import { ObjectMetadataMapsService } from 'src/engine/metadata-modules/object-metadata/object-metadata-maps.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 describe('SearchService', () => {
   let service: SearchService;
@@ -15,7 +15,7 @@ describe('SearchService', () => {
       providers: [
         SearchService,
         { provide: TwentyORMManager, useValue: {} },
-        { provide: ObjectMetadataMapsService, useValue: {} },
+        { provide: WorkspaceCacheStorageService, useValue: {} },
         { provide: FileService, useValue: {} },
       ],
     }).compile();
