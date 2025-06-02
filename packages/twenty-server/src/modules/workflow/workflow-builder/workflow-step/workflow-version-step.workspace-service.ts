@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
@@ -541,22 +540,7 @@ export class WorkflowVersionStepWorkspaceService {
           valid: false,
           settings: {
             ...BASE_STEP_DEFINITION,
-            input: [
-              {
-                id: v4(),
-                name: 'company',
-                label: 'Company',
-                placeholder: 'Select a company',
-                type: FieldMetadataType.TEXT,
-              },
-              {
-                id: v4(),
-                name: 'number',
-                label: 'Number',
-                placeholder: '1000',
-                type: FieldMetadataType.NUMBER,
-              },
-            ],
+            input: [],
           },
         };
       }
