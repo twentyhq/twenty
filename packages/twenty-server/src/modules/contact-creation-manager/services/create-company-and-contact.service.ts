@@ -4,13 +4,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isNonEmptyString } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import compact from 'lodash.compact';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
@@ -24,7 +23,6 @@ import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/ut
 import { getUniqueContactsAndHandles } from 'src/modules/contact-creation-manager/utils/get-unique-contacts-and-handles.util';
 import { buildPersonEmailQueryBuilder } from 'src/modules/match-participant/utils/build-person-email-query-builder.util';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
-import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { isWorkDomain, isWorkEmail } from 'src/utils/is-work-email';
 
@@ -33,8 +31,6 @@ export class CreateCompanyAndContactService {
   constructor(
     private readonly createContactService: CreateContactService,
     private readonly createCompaniesService: CreateCompanyService,
-    @InjectObjectMetadataRepository(WorkspaceMemberWorkspaceEntity)
-    private readonly workspaceMemberRepository: WorkspaceMemberRepository,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
@@ -61,8 +57,16 @@ export class CreateCompanyAndContactService {
         },
       );
 
-    const workspaceMembers =
-      await this.workspaceMemberRepository.getAllByWorkspaceId(workspaceId);
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        WorkspaceMemberWorkspaceEntity,
+        {
+          shouldBypassPermissionChecks: true,
+        },
+      );
+
+    const workspaceMembers = await workspaceMemberRepository.find();
 
     const contactsToCreateFromOtherCompanies =
       filterOutSelfAndContactsFromCompanyOrWorkspace(

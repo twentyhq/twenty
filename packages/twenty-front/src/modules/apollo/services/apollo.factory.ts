@@ -13,11 +13,11 @@ import { createUploadLink } from 'apollo-upload-client';
 
 import { renewToken } from '@/auth/services/AuthService';
 import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
+import { CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { AuthTokenPair } from '~/generated/graphql';
 import { logDebug } from '~/utils/logDebug';
 
 import { i18n } from '@lingui/core';
-import { captureException } from '@sentry/react';
 import { GraphQLFormattedError } from 'graphql';
 import { isDefined } from 'twenty-shared/utils';
 import { cookieStorage } from '~/utils/cookie-storage';
@@ -34,6 +34,7 @@ export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
   onTokenPairChange?: (tokenPair: AuthTokenPair) => void;
   onUnauthenticatedError?: () => void;
   currentWorkspaceMember: CurrentWorkspaceMember | null;
+  currentWorkspace: CurrentWorkspace | null;
   extraLinks?: ApolloLink[];
   isDebugMode?: boolean;
 }
@@ -41,6 +42,7 @@ export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
 export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
   private client: ApolloClient<TCacheShape>;
   private currentWorkspaceMember: CurrentWorkspaceMember | null = null;
+  private currentWorkspace: CurrentWorkspace | null = null;
 
   constructor(opts: Options<TCacheShape>) {
     const {
@@ -50,12 +52,14 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
       onTokenPairChange,
       onUnauthenticatedError,
       currentWorkspaceMember,
+      currentWorkspace,
       extraLinks,
       isDebugMode,
       ...options
     } = opts;
 
     this.currentWorkspaceMember = currentWorkspaceMember;
+    this.currentWorkspace = currentWorkspace;
 
     const buildApolloLink = (): ApolloLink => {
       const httpLink = createUploadLink({
@@ -84,6 +88,9 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
             ...(this.currentWorkspaceMember?.locale
               ? { 'x-locale': this.currentWorkspaceMember.locale }
               : { 'x-locale': i18n.locale }),
+            ...(this.currentWorkspace?.metadataVersion && {
+              'X-Schema-Version': `${this.currentWorkspace.metadataVersion}`,
+            }),
           },
         };
       });
@@ -152,7 +159,17 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                       }, Path: ${graphQLError.path}`,
                     );
                   }
-                  captureException(graphQLError);
+                  import('@sentry/react')
+                    .then(({ captureException }) => {
+                      captureException(graphQLError);
+                    })
+                    .catch((sentryError) => {
+                      // eslint-disable-next-line no-console
+                      console.error(
+                        'Failed to capture GraphQL error with Sentry:',
+                        sentryError,
+                      );
+                    });
               }
             }
           }
@@ -186,6 +203,10 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
 
   updateWorkspaceMember(workspaceMember: CurrentWorkspaceMember | null) {
     this.currentWorkspaceMember = workspaceMember;
+  }
+
+  updateCurrentWorkspace(workspace: CurrentWorkspace | null) {
+    this.currentWorkspace = workspace;
   }
 
   getClient() {

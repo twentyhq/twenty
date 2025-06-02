@@ -18,7 +18,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'featureFlag', schema: 'core' })
 @ObjectType()
-@Unique('IndexOnKeyAndWorkspaceIdUnique', ['key', 'workspaceId'])
+@Unique('IDX_FEATURE_FLAG_KEY_WORKSPACE_ID_UNIQUE', ['key', 'workspaceId'])
 export class FeatureFlag {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')

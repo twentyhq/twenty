@@ -1,6 +1,6 @@
 import { useRichTextV2FieldDisplay } from '@/object-record/record-field/meta-types/hooks/useRichTextV2FieldDisplay';
 import { getFirstNonEmptyLineOfRichText } from '@/ui/input/editor/utils/getFirstNonEmptyLineOfRichText';
-import { PartialBlock } from '@blocknote/core';
+import type { PartialBlock } from '@blocknote/core';
 import { isDefined, parseJson } from 'twenty-shared/utils';
 
 export const RichTextV2FieldDisplay = () => {

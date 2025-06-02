@@ -8,6 +8,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
@@ -34,6 +35,7 @@ registerEnumType(WorkspaceActivationStatus, {
 )
 @Entity({ name: 'workspace', schema: 'core' })
 @ObjectType()
+@Index('IDX_WORKSPACE_ID_DELETED_AT', ['id', 'deletedAt'])
 export class Workspace {
   // Fields
   @IDField(() => UUIDScalarType)
