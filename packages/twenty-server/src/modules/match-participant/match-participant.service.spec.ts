@@ -51,6 +51,7 @@ describe('MatchParticipantService', () => {
         orWhere: jest.fn().mockReturnThis(),
         orderBy: jest.fn().mockReturnThis(),
         getMany: jest.fn(),
+        withDeleted: jest.fn().mockReturnThis(),
       }),
       formatResult: jest.fn(),
     };
@@ -65,6 +66,7 @@ describe('MatchParticipantService', () => {
         orWhere: jest.fn().mockReturnThis(),
         orderBy: jest.fn().mockReturnThis(),
         getMany: jest.fn(),
+        withDeleted: jest.fn().mockReturnThis(),
       }),
       formatResult: jest.fn(),
     };
@@ -78,6 +80,7 @@ describe('MatchParticipantService', () => {
         orWhere: jest.fn().mockReturnThis(),
         orderBy: jest.fn().mockReturnThis(),
         getMany: jest.fn(),
+        withDeleted: jest.fn().mockReturnThis(),
       }),
       formatResult: jest.fn(),
     };
@@ -193,6 +196,7 @@ describe('MatchParticipantService', () => {
         orWhere: jest.fn().mockReturnThis(),
         orderBy: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue(mockPeople),
+        withDeleted: jest.fn().mockReturnThis(),
       };
 
       mockPersonRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
@@ -577,6 +581,7 @@ describe('MatchParticipantService', () => {
           orWhere: jest.fn().mockReturnThis(),
           orderBy: jest.fn().mockReturnThis(),
           getMany: jest.fn().mockResolvedValue(mockAlternativePeople),
+          withDeleted: jest.fn().mockReturnThis(),
         };
 
         mockPersonRepository.createQueryBuilder.mockReturnValue(
@@ -641,6 +646,7 @@ describe('MatchParticipantService', () => {
           orWhere: jest.fn().mockReturnThis(),
           orderBy: jest.fn().mockReturnThis(),
           getMany: jest.fn().mockResolvedValue([]),
+          withDeleted: jest.fn().mockReturnThis(),
         };
 
         mockPersonRepository.createQueryBuilder.mockReturnValue(
