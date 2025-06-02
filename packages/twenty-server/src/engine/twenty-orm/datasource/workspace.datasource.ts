@@ -1,3 +1,4 @@
+import { isDefined } from 'class-validator';
 import { ObjectRecordsPermissionsByRoleId } from 'twenty-shared/types';
 import {
   DataSource,
@@ -6,6 +7,7 @@ import {
   ObjectLiteral,
   QueryRunner,
   ReplicationMode,
+  SelectQueryBuilder,
 } from 'typeorm';
 
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
@@ -18,6 +20,10 @@ import {
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { WorkspaceQueryRunner } from 'src/engine/twenty-orm/query-runner/workspace-query-runner';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+
+type CreateQueryBuilderOptions = {
+  calledByWorkspaceEntityManager?: boolean;
+};
 
 export class WorkspaceDataSource extends DataSource {
   readonly internalContext: WorkspaceInternalContext;
@@ -81,6 +87,63 @@ export class WorkspaceDataSource extends DataSource {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return queryRunner as any as WorkspaceQueryRunner;
+  }
+
+  override createQueryBuilder<Entity extends ObjectLiteral>(
+    entityClass: EntityTarget<Entity>,
+    alias: string,
+    queryRunner?: QueryRunner,
+    options?: CreateQueryBuilderOptions,
+  ): SelectQueryBuilder<Entity>;
+
+  override createQueryBuilder(
+    queryRunner?: QueryRunner,
+    options?: CreateQueryBuilderOptions, // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): SelectQueryBuilder<any>;
+
+  // Only callable from workspaceEntityManager to guarantee a permission check was run
+  override createQueryBuilder(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    queryRunnerOrEntityClass?: QueryRunner | EntityTarget<any>,
+    aliasOrOptions?: string | CreateQueryBuilderOptions,
+    queryRunner?: QueryRunner,
+    options?: CreateQueryBuilderOptions,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): SelectQueryBuilder<any> {
+    let calledByWorkspaceEntityManager;
+
+    const isCalledWithEntityTarget =
+      isDefined(aliasOrOptions) && typeof aliasOrOptions === 'string';
+
+    if (isCalledWithEntityTarget) {
+      calledByWorkspaceEntityManager = options?.calledByWorkspaceEntityManager;
+    } else {
+      calledByWorkspaceEntityManager = (
+        aliasOrOptions as CreateQueryBuilderOptions
+      )?.calledByWorkspaceEntityManager;
+    }
+
+    if (!(calledByWorkspaceEntityManager === true)) {
+      throw new PermissionsException(
+        'Method not allowed because permissions are not implemented at datasource level.',
+        PermissionsExceptionCode.METHOD_NOT_ALLOWED,
+      );
+    }
+
+    if (isCalledWithEntityTarget) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const entityClass = queryRunnerOrEntityClass as EntityTarget<any>;
+
+      return super.createQueryBuilder(
+        entityClass,
+        aliasOrOptions as string,
+        queryRunner,
+      );
+    } else {
+      const queryRunner = queryRunnerOrEntityClass as QueryRunner;
+
+      return super.createQueryBuilder(queryRunner);
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

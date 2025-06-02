@@ -145,14 +145,20 @@ export class WorkspaceEntityManager extends EntityManager {
     let queryBuilder: SelectQueryBuilder<Entity>;
 
     if (alias) {
-      queryBuilder = super.createQueryBuilder(
+      queryBuilder = this.connection.createQueryBuilder(
         entityClassOrQueryRunner as EntityTarget<Entity>,
         alias as string,
         queryRunner as QueryRunner | undefined,
+        {
+          calledByWorkspaceEntityManager: true,
+        },
       );
     } else {
-      queryBuilder = super.createQueryBuilder(
+      queryBuilder = this.connection.createQueryBuilder(
         entityClassOrQueryRunner as QueryRunner,
+        {
+          calledByWorkspaceEntityManager: true,
+        },
       );
     }
 
