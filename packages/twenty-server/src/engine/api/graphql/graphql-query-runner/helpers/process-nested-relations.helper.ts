@@ -4,7 +4,6 @@ import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { ProcessNestedRelationsV2Helper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations-v2.helper';
 import { AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -16,7 +15,6 @@ import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.
 export class ProcessNestedRelationsHelper {
   constructor(
     private readonly processNestedRelationsV2Helper: ProcessNestedRelationsV2Helper,
-    private readonly processAggregateHelper: ProcessAggregateHelper,
   ) {}
 
   public async processNestedRelations<T extends ObjectRecord = ObjectRecord>({
@@ -28,7 +26,7 @@ export class ProcessNestedRelationsHelper {
     aggregate = {},
     limit,
     authContext,
-    dataSource,
+    workspaceDataSource,
     shouldBypassPermissionChecks,
     roleId,
   }: {
@@ -41,7 +39,7 @@ export class ProcessNestedRelationsHelper {
     aggregate?: Record<string, AggregationField>;
     limit: number;
     authContext: AuthContext;
-    dataSource: WorkspaceDataSource;
+    workspaceDataSource: WorkspaceDataSource;
     shouldBypassPermissionChecks: boolean;
     roleId?: string;
   }): Promise<void> {
@@ -54,7 +52,7 @@ export class ProcessNestedRelationsHelper {
       aggregate,
       limit,
       authContext,
-      dataSource,
+      workspaceDataSource,
       shouldBypassPermissionChecks,
       roleId,
     });

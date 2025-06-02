@@ -145,14 +145,20 @@ export class WorkspaceEntityManager extends EntityManager {
     let queryBuilder: SelectQueryBuilder<Entity>;
 
     if (alias) {
-      queryBuilder = super.createQueryBuilder(
+      queryBuilder = this.connection.createQueryBuilder(
         entityClassOrQueryRunner as EntityTarget<Entity>,
         alias as string,
         queryRunner as QueryRunner | undefined,
+        {
+          calledByWorkspaceEntityManager: true,
+        },
       );
     } else {
-      queryBuilder = super.createQueryBuilder(
+      queryBuilder = this.connection.createQueryBuilder(
         entityClassOrQueryRunner as QueryRunner,
+        {
+          calledByWorkspaceEntityManager: true,
+        },
       );
     }
 
@@ -912,7 +918,10 @@ export class WorkspaceEntityManager extends EntityManager {
       permissionOptions,
     )
       .setFindOptions(options || {})
-      .getExists();
+      .select('1')
+      .limit(1)
+      .getRawOne()
+      .then((result) => isDefined(result));
   }
 
   override existsBy<Entity extends ObjectLiteral>(
@@ -929,7 +938,10 @@ export class WorkspaceEntityManager extends EntityManager {
       permissionOptions,
     )
       .setFindOptions({ where })
-      .getExists();
+      .select('1')
+      .limit(1)
+      .getRawOne()
+      .then((result) => isDefined(result));
   }
 
   override count<Entity extends ObjectLiteral>(

@@ -104,7 +104,7 @@ export abstract class RestApiBaseHandler {
       throw new BadRequestException('Workspace not found');
     }
 
-    const dataSource =
+    const workspaceDataSource =
       await this.twentyORMGlobalManager.getDataSourceForWorkspace({
         workspaceId: workspace.id,
         shouldFailIfMetadataNotFound: false,
@@ -125,7 +125,7 @@ export abstract class RestApiBaseHandler {
       );
     }
 
-    const shouldBypassPermissionChecks = !!apiKey;
+    const shouldBypassPermissionChecks = isDefined(apiKey);
 
     const roleId =
       await this.workspacePermissionsCacheService.getRoleIdFromUserWorkspaceId({
@@ -133,7 +133,7 @@ export abstract class RestApiBaseHandler {
         userWorkspaceId,
       });
 
-    const repository = dataSource.getRepository<ObjectRecord>(
+    const repository = workspaceDataSource.getRepository<ObjectRecord>(
       objectMetadataNameSingular,
       shouldBypassPermissionChecks,
       roleId,
@@ -142,7 +142,7 @@ export abstract class RestApiBaseHandler {
     return {
       objectMetadata,
       repository,
-      dataSource,
+      workspaceDataSource,
       objectMetadataItemWithFieldsMaps,
     };
   }
