@@ -3,5 +3,4 @@ export type CustomHotkeyScopes = {
   commandMenu?: boolean;
   commandMenuOpen?: boolean;
   keyboardShortcutMenu?: boolean;
-  viewBarFilter?: boolean;
 };

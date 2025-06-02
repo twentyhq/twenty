@@ -19,9 +19,7 @@ const areCustomScopesEqual = (
     customScopesA?.commandMenu === customScopesB?.commandMenu &&
     customScopesA?.commandMenuOpen === customScopesB?.commandMenuOpen &&
     customScopesA?.goto === customScopesB?.goto &&
-    customScopesA?.keyboardShortcutMenu ===
-      customScopesB?.keyboardShortcutMenu &&
-    customScopesA?.viewBarFilter === customScopesB?.viewBarFilter
+    customScopesA?.keyboardShortcutMenu === customScopesB?.keyboardShortcutMenu
   );
 };
 
@@ -62,7 +60,6 @@ export const useSetHotkeyScope = () =>
             commandMenuOpen: customScopes?.commandMenuOpen ?? true,
             goto: customScopes?.goto ?? false,
             keyboardShortcutMenu: customScopes?.keyboardShortcutMenu ?? false,
-            viewBarFilter: customScopes?.viewBarFilter ?? true,
           },
         };
 
@@ -82,10 +79,6 @@ export const useSetHotkeyScope = () =>
 
         if (newHotkeyScope?.customScopes?.keyboardShortcutMenu === true) {
           scopesToSet.push(AppHotkeyScope.KeyboardShortcutMenu);
-        }
-
-        if (newHotkeyScope?.customScopes?.viewBarFilter === true) {
-          scopesToSet.push(AppHotkeyScope.ViewBarFilter);
         }
 
         scopesToSet.push(newHotkeyScope.scope);

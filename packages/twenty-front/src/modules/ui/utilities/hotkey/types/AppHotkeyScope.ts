@@ -5,5 +5,4 @@ export enum AppHotkeyScope {
   CommandMenuOpen = 'command-menu-open',
   KeyboardShortcutMenu = 'keyboard-shortcut-menu',
   KeyboardShortcutMenuOpen = 'keyboard-shortcut-menu-open',
-  ViewBarFilter = 'view-bar-filter',
 }
