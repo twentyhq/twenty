@@ -48,8 +48,11 @@ export class CopyTypeormMigrationsCommand extends MigrationCommandRunner {
       );
 
       if (!tableExists[0].exists) {
-        this.logger.log('metadata._typeorm_migrations table does not exist, skipping migration');
+        this.logger.log(
+          'metadata._typeorm_migrations table does not exist, skipping migration',
+        );
         await queryRunner.commitTransaction();
+
         return;
       }
 
