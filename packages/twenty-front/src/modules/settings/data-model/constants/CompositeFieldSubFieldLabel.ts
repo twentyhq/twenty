@@ -1,10 +1,8 @@
-import {
-  CompositeFieldMetadataType,
-  FieldMetadataType,
-} from 'twenty-shared/types';
+import { CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 export const COMPOSITE_FIELD_SUB_FIELD_LABELS: {
-  [key in (typeof CompositeFieldMetadataType)[number]]: Record<string, string>;
+  [key in CompositeFieldType]: Record<string, string>;
 } = {
   [FieldMetadataType.CURRENCY]: {
     amountMicros: 'Amount',

@@ -1,6 +1,7 @@
 import { json2csv } from 'json-2-csv';
 import { useMemo } from 'react';
 
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/object-options-dropdown/constants/ExportTableDataDefaultPageSize';
 import { useExportProcessRecordsForCSV } from '@/object-record/object-options-dropdown/hooks/useExportProcessRecordsForCSV';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
@@ -13,7 +14,7 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constants/CompositeFieldSubFieldLabel';
 import { t } from '@lingui/core/macro';
 import { saveAs } from 'file-saver';
-import { isCompositeFieldMetadataType, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from '~/generated/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -64,7 +65,7 @@ export const generateCsv: GenerateExport = ({
     };
 
     const columnType = col.type;
-    if (!isCompositeFieldMetadataType(columnType)) return [column];
+    if (!isCompositeFieldType(columnType)) return [column];
 
     const nestedFieldsWithoutTypename = Object.keys(rows[0][column.field])
       .filter((key) => key !== '__typename')
