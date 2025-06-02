@@ -25,14 +25,6 @@ import {
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
-import {
-  WorkspaceMetadataCacheException,
-  WorkspaceMetadataCacheExceptionCode,
-} from 'src/engine/metadata-modules/workspace-metadata-cache/exceptions/workspace-metadata-cache.exception';
-import {
-  WorkspaceMetadataVersionException,
-  WorkspaceMetadataVersionExceptionCode,
-} from 'src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
@@ -501,28 +493,10 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     >,
     workspaceId: string,
   ): Promise<(RelationMetadataEntity | NotFoundException)[]> {
-    const metadataVersion =
-      await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
-
-    if (!isDefined(metadataVersion)) {
-      throw new WorkspaceMetadataVersionException(
-        `Metadata version not found for workspace ${workspaceId}`,
-        WorkspaceMetadataVersionExceptionCode.METADATA_VERSION_NOT_FOUND,
-      );
-    }
-
     const objectMetadataMaps =
-      await this.workspaceCacheStorageService.getObjectMetadataMaps(
+      await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
         workspaceId,
-        metadataVersion,
       );
-
-    if (!objectMetadataMaps) {
-      throw new WorkspaceMetadataCacheException(
-        `Object metadata map not found for workspace ${workspaceId} and metadata version ${metadataVersion}`,
-        WorkspaceMetadataCacheExceptionCode.OBJECT_METADATA_MAP_NOT_FOUND,
-      );
-    }
 
     const mappedResult = fieldMetadataItems.map((fieldMetadataItem) => {
       const objectMetadata =
