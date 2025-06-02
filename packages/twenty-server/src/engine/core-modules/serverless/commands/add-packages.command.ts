@@ -1,9 +1,9 @@
 import { Logger } from '@nestjs/common';
 
+import { execFile } from 'child_process';
 import * as fs from 'fs/promises';
 import { resolve } from 'path';
 import { promisify } from 'util';
-import { execFile } from 'child_process';
 
 import { Command, CommandRunner, Option } from 'nest-commander';
 
@@ -40,7 +40,6 @@ export class AddPackagesCommand extends CommandRunner {
     );
 
     const currentVersion = await this.getLastLayerVersion();
-
     const newVersion = currentVersion + 1;
 
     const currentVersionFolder = `${layersFolder}/${currentVersion}`;
@@ -71,7 +70,6 @@ export class AddPackagesCommand extends CommandRunner {
 
   private getAbsoluteFilePath(path: string) {
     const rootPath = process.cwd();
-
     return resolve(rootPath, path);
   }
 
@@ -95,7 +93,7 @@ export class AddPackagesCommand extends CommandRunner {
       for (const packageName of packages) {
         this.logger.log(`- adding '${packageName}'...`);
         try {
-          await execPromise(`yarn add ${packageName}`, {
+          await execFilePromise('yarn', ['add', packageName], {
             cwd: folderPath,
           });
         } catch (error) {
