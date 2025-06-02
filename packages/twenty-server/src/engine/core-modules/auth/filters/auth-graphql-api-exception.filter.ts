@@ -1,5 +1,7 @@
 import { Catch, ExceptionFilter } from '@nestjs/common';
 
+import { t } from '@lingui/core/macro';
+
 import {
   AuthException,
   AuthExceptionCode,
@@ -25,16 +27,23 @@ export class AuthGraphqlApiExceptionFilter implements ExceptionFilter {
       case AuthExceptionCode.SSO_AUTH_FAILED:
       case AuthExceptionCode.USE_SSO_AUTH:
       case AuthExceptionCode.SIGNUP_DISABLED:
-      case AuthExceptionCode.GOOGLE_API_AUTH_DISABLED:
-      case AuthExceptionCode.MICROSOFT_API_AUTH_DISABLED:
       case AuthExceptionCode.MISSING_ENVIRONMENT_VARIABLE:
         throw new ForbiddenError(exception.message);
+      case AuthExceptionCode.GOOGLE_API_AUTH_DISABLED:
+      case AuthExceptionCode.MICROSOFT_API_AUTH_DISABLED:
+        throw new ForbiddenError(exception.message, {
+          errorFrontEndMessage: t`Authentication is not enabled with this provider.`,
+        });
       case AuthExceptionCode.EMAIL_NOT_VERIFIED:
       case AuthExceptionCode.INVALID_DATA:
         throw new ForbiddenError(exception.message, {
           subCode: AuthExceptionCode.EMAIL_NOT_VERIFIED,
+          errorFrontEndMessage: t`Email is not verified.`,
         });
       case AuthExceptionCode.UNAUTHENTICATED:
+        throw new AuthenticationError(exception.message, {
+          errorFrontEndMessage: t`You must be authenticated to perform this action.`,
+        });
       case AuthExceptionCode.USER_NOT_FOUND:
       case AuthExceptionCode.WORKSPACE_NOT_FOUND:
         throw new AuthenticationError(exception.message);

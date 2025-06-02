@@ -1,3 +1,5 @@
+import { t } from '@lingui/core/macro';
+
 import {
   ForbiddenError,
   NotFoundError,
@@ -13,11 +15,17 @@ export const permissionGraphqlApiExceptionHandler = (
 ) => {
   switch (error.code) {
     case PermissionsExceptionCode.PERMISSION_DENIED:
+      throw new ForbiddenError(error.message, {
+        errorFrontEndMessage: 'Permission denied.',
+      });
+    case PermissionsExceptionCode.ROLE_LABEL_ALREADY_EXISTS:
+      throw new ForbiddenError(error.message, {
+        errorFrontEndMessage: t`A role with this label already exists.`,
+      });
     case PermissionsExceptionCode.CANNOT_UNASSIGN_LAST_ADMIN:
     case PermissionsExceptionCode.CANNOT_UPDATE_SELF_ROLE:
     case PermissionsExceptionCode.CANNOT_DELETE_LAST_ADMIN_USER:
     case PermissionsExceptionCode.PERMISSIONS_V2_NOT_ENABLED:
-    case PermissionsExceptionCode.ROLE_LABEL_ALREADY_EXISTS:
     case PermissionsExceptionCode.ROLE_NOT_EDITABLE:
     case PermissionsExceptionCode.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT:
       throw new ForbiddenError(error.message);

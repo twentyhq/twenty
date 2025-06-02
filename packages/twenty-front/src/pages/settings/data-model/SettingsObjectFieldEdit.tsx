@@ -34,6 +34,7 @@ import { Section } from 'twenty-ui/layout';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { getErrorMessage } from '~/utils/get-error-message.util';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 //TODO: fix this type
@@ -140,7 +141,8 @@ export const SettingsObjectFieldEdit = () => {
         });
       }
     } catch (error) {
-      enqueueSnackBar((error as Error).message, {
+      const errorMessage = getErrorMessage(error);
+      enqueueSnackBar(errorMessage, {
         variant: SnackBarVariant.Error,
       });
     }
