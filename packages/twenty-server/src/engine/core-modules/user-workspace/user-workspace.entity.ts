@@ -7,6 +7,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -34,6 +35,9 @@ registerEnumType(PermissionsOnAllObjectRecords, {
 @Entity({ name: 'userWorkspace', schema: 'core' })
 @ObjectType()
 @Unique('IndexOnUserIdAndWorkspaceIdUnique', ['userId', 'workspaceId'])
+@Index('IDX_USER_WORKSPACE_ID_DELETED_AT', ['id', 'deletedAt'])
+@Index('IDX_USER_WORKSPACE_USER_ID', ['userId'])
+@Index('IDX_USER_WORKSPACE_WORKSPACE_ID', ['workspaceId'])
 export class UserWorkspace {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
