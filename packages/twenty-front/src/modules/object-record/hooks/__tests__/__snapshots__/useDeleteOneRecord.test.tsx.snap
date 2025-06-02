@@ -51,7 +51,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 1. Should handle succe
     "name": "Linkedin",
     "position": 1,
   },
-  "createdAt": "2024-08-02T09:52:46.814Z",
+  "createdAt": "2025-01-02T09:52:46.814Z",
   "createdBy": {
     "__typename": "Actor",
     "name": "Tim Apple",
@@ -136,7 +136,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 1. Should handle succe
     {
       "__typename": "Person",
       "city": "Seattle",
-      "createdAt": "2024-08-01T09:50:00.000Z",
+      "createdAt": "2025-01-01T09:50:00.000Z",
       "createdBy": {
         "__typename": "Actor",
         "name": "Tim Apple",
@@ -173,7 +173,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 1. Should handle succe
     {
       "__typename": "Person",
       "city": "Los Angeles",
-      "createdAt": "2024-08-02T09:48:36.193Z",
+      "createdAt": "2025-01-02T09:48:36.193Z",
       "createdBy": {
         "__typename": "Actor",
         "name": "Tim Apple",
@@ -256,7 +256,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 2. Should handle optim
     "name": "Linkedin",
     "position": 1,
   },
-  "createdAt": "2024-08-02T09:52:46.814Z",
+  "createdAt": "2025-01-02T09:52:46.814Z",
   "createdBy": {
     "__typename": "Actor",
     "name": "Tim Apple",
@@ -341,7 +341,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 2. Should handle optim
     {
       "__typename": "Person",
       "city": "Seattle",
-      "createdAt": "2024-08-01T09:50:00.000Z",
+      "createdAt": "2025-01-01T09:50:00.000Z",
       "createdBy": {
         "__typename": "Actor",
         "name": "Tim Apple",
@@ -378,7 +378,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 2. Should handle optim
     {
       "__typename": "Person",
       "city": "Los Angeles",
-      "createdAt": "2024-08-02T09:48:36.193Z",
+      "createdAt": "2025-01-02T09:48:36.193Z",
       "createdBy": {
         "__typename": "Actor",
         "name": "Tim Apple",
@@ -461,7 +461,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 3. Should handle optim
     "name": "Linkedin",
     "position": 1,
   },
-  "createdAt": "2024-08-02T09:52:46.814Z",
+  "createdAt": "2025-01-02T09:52:46.814Z",
   "createdBy": {
     "__typename": "Actor",
     "name": "Tim Apple",
@@ -546,7 +546,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 3. Should handle optim
     {
       "__typename": "Person",
       "city": "Seattle",
-      "createdAt": "2024-08-01T09:50:00.000Z",
+      "createdAt": "2025-01-01T09:50:00.000Z",
       "createdBy": {
         "__typename": "Actor",
         "name": "Tim Apple",
@@ -583,7 +583,7 @@ exports[`useDeleteOneRecord B. Starting from filled cache 3. Should handle optim
     {
       "__typename": "Person",
       "city": "Los Angeles",
-      "createdAt": "2024-08-02T09:48:36.193Z",
+      "createdAt": "2025-01-02T09:48:36.193Z",
       "createdBy": {
         "__typename": "Actor",
         "name": "Tim Apple",
