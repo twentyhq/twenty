@@ -10,6 +10,7 @@ import {
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -47,6 +48,7 @@ export class RoleResolver {
     private readonly featureFlagService: FeatureFlagService,
     private readonly objectPermissionService: ObjectPermissionService,
     private readonly settingPermissionService: SettingPermissionService,
+    private readonly fileService: FileService,
   ) {}
 
   @Query(() => [RoleDTO])
@@ -180,16 +182,19 @@ export class RoleResolver {
     @Parent() role: RoleDTO,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<WorkspaceMemberWorkspaceEntity[]> {
-    return this.userRoleService.getWorkspaceMembersAssignedToRole(
-      role.id,
-      workspace.id,
-    );
+    const workspaceMembers =
+      await this.userRoleService.getWorkspaceMembersAssignedToRole(
+        role.id,
+        workspace.id,
+      );
+
+    return workspaceMembers;
   }
 
   private async validatePermissionsV2EnabledOrThrow(workspace: Workspace) {
     const isPermissionsV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsPermissionsV2Enabled,
+        FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
         workspace.id,
       );
 

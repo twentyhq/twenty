@@ -1,7 +1,6 @@
 {
   "private": true,
   "dependencies": {
-    "@air/react-drag-to-select": "^5.0.8",
     "@apollo/client": "^3.7.17",
     "@apollo/server": "^4.7.3",
     "@aws-sdk/client-lambda": "^3.614.0",
@@ -94,6 +93,7 @@
     "facepaint": "^1.2.1",
     "file-type": "16.5.4",
     "framer-motion": "^11.18.0",
+    "fuse.js": "^7.1.0",
     "googleapis": "105",
     "graphiql": "^3.1.1",
     "graphql": "16.8.0",

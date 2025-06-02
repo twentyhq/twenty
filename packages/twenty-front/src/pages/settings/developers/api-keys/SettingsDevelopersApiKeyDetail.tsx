@@ -143,7 +143,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
 
         if (isNonEmptyString(apiKey?.token)) {
           setApiKeyTokenCallback(apiKey.id, apiKey.token);
-          navigate(SettingsPath.DevelopersApiKeyDetail, {
+          navigate(SettingsPath.ApiKeyDetail, {
             apiKeyId: apiKey.id,
           });
         }
@@ -173,7 +173,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
               children: t`APIs`,
               href: getSettingsPath(SettingsPath.APIs),
             },
-            { children: t`${apiKeyName} API Key` },
+            { children: t`${apiKeyName}` },
           ]}
         >
           <SettingsPageContainer>

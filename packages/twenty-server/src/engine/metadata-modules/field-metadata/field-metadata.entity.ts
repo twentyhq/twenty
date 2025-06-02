@@ -25,16 +25,20 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 @Entity('fieldMetadata')
-@Unique('IndexOnNameObjectMetadataIdAndWorkspaceIdUnique', [
+@Unique('IDX_FIELD_METADATA_NAME_OBJECT_METADATA_ID_WORKSPACE_ID_UNIQUE', [
   'name',
   'objectMetadataId',
   'workspaceId',
 ])
-@Index('IndexOnRelationTargetFieldMetadataId', [
+@Index('IDX_FIELD_METADATA_RELATION_TARGET_FIELD_METADATA_ID', [
   'relationTargetFieldMetadataId',
 ])
-@Index('IndexOnRelationTargetObjectMetadataId', [
+@Index('IDX_FIELD_METADATA_RELATION_TARGET_OBJECT_METADATA_ID', [
   'relationTargetObjectMetadataId',
+])
+@Index('IDX_FIELD_METADATA_OBJECT_METADATA_ID_WORKSPACE_ID', [
+  'objectMetadataId',
+  'workspaceId',
 ])
 export class FieldMetadataEntity<
   T extends FieldMetadataType = FieldMetadataType,
@@ -53,7 +57,7 @@ export class FieldMetadataEntity<
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'objectMetadataId' })
-  @Index('IndexOnObjectMetadataId')
+  @Index('IDX_FIELD_METADATA_OBJECT_METADATA_ID', ['objectMetadataId'])
   object: Relation<ObjectMetadataEntity>;
 
   @Column({
@@ -102,7 +106,7 @@ export class FieldMetadataEntity<
   isUnique: boolean;
 
   @Column({ nullable: false, type: 'uuid' })
-  @Index('IndexOnWorkspaceId')
+  @Index('IDX_FIELD_METADATA_WORKSPACE_ID', ['workspaceId'])
   workspaceId: string;
 
   @Column({ default: false })

@@ -9,6 +9,7 @@ import { recordGroupFieldMetadataComponentState } from '@/object-record/record-g
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
 import { useHandleRecordGroupField } from '@/object-record/record-index/hooks/useHandleRecordGroupField';
 import { SettingsPath } from '@/types/SettingsPath';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -103,7 +104,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
   }, [hiddenRecordGroupIds, currentContentId, onContentChange]);
 
   return (
-    <>
+    <DropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -124,6 +125,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
         placeholder={t`Search fields`}
         onChange={(event) => setRecordGroupFieldSearchInput(event.target.value)}
       />
+      <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
         {viewType === ViewType.Table && (
           <MenuItemSelect
@@ -154,6 +156,6 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
           <MenuItem LeftIcon={IconSettings} text={t`Create select field`} />
         </UndecoratedLink>
       </DropdownMenuItemsContainer>
-    </>
+    </DropdownContent>
   );
 };

@@ -29,6 +29,7 @@ import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/ge
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
@@ -246,21 +247,23 @@ export const RecordDetailRelationRecordsListItem = ({
                 />
               }
               dropdownComponents={
-                <DropdownMenuItemsContainer>
-                  <MenuItem
-                    LeftIcon={IconUnlink}
-                    text="Detach"
-                    onClick={handleDetach}
-                  />
-                  {!isAccountOwnerRelation && (
+                <DropdownContent>
+                  <DropdownMenuItemsContainer>
                     <MenuItem
-                      LeftIcon={IconTrash}
-                      text="Delete"
-                      accent="danger"
-                      onClick={handleDelete}
+                      LeftIcon={IconUnlink}
+                      text="Detach"
+                      onClick={handleDetach}
                     />
-                  )}
-                </DropdownMenuItemsContainer>
+                    {!isAccountOwnerRelation && (
+                      <MenuItem
+                        LeftIcon={IconTrash}
+                        text="Delete"
+                        accent="danger"
+                        onClick={handleDelete}
+                      />
+                    )}
+                  </DropdownMenuItemsContainer>
+                </DropdownContent>
               }
               dropdownHotkeyScope={{ scope: dropdownScopeId }}
             />

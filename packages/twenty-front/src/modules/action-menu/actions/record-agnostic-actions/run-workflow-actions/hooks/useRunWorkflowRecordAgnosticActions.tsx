@@ -13,7 +13,7 @@ import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useRunWorkflowRecordAgnosticActions = () => {
   const isWorkflowEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsWorkflowEnabled,
+    FeatureFlagKey.IS_WORKFLOW_ENABLED,
   );
 
   const { actionMenuType } = useContext(ActionMenuContext);

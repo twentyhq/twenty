@@ -284,8 +284,8 @@ export type Captcha = {
 };
 
 export enum CaptchaDriverType {
-  GoogleRecaptcha = 'GoogleRecaptcha',
-  Turnstile = 'Turnstile'
+  GOOGLE_RECAPTCHA = 'GOOGLE_RECAPTCHA',
+  TURNSTILE = 'TURNSTILE'
 }
 
 export type ClientConfig = {
@@ -583,15 +583,14 @@ export type FeatureFlagDto = {
 };
 
 export enum FeatureFlagKey {
-  IsAirtableIntegrationEnabled = 'IsAirtableIntegrationEnabled',
-  IsCopilotEnabled = 'IsCopilotEnabled',
-  IsCustomDomainEnabled = 'IsCustomDomainEnabled',
-  IsJsonFilterEnabled = 'IsJsonFilterEnabled',
-  IsPermissionsV2Enabled = 'IsPermissionsV2Enabled',
-  IsPostgreSQLIntegrationEnabled = 'IsPostgreSQLIntegrationEnabled',
-  IsStripeIntegrationEnabled = 'IsStripeIntegrationEnabled',
-  IsUniqueIndexesEnabled = 'IsUniqueIndexesEnabled',
-  IsWorkflowEnabled = 'IsWorkflowEnabled'
+  IS_AIRTABLE_INTEGRATION_ENABLED = 'IS_AIRTABLE_INTEGRATION_ENABLED',
+  IS_COPILOT_ENABLED = 'IS_COPILOT_ENABLED',
+  IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
+  IS_PERMISSIONS_V2_ENABLED = 'IS_PERMISSIONS_V2_ENABLED',
+  IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
+  IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',
+  IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
+  IS_WORKFLOW_ENABLED = 'IS_WORKFLOW_ENABLED'
 }
 
 export type Field = {
@@ -735,17 +734,6 @@ export enum HealthIndicatorId {
   redis = 'redis',
   worker = 'worker'
 }
-
-export type IdFilter = {
-  eq?: InputMaybe<Scalars['ID']>;
-  gt?: InputMaybe<Scalars['ID']>;
-  gte?: InputMaybe<Scalars['ID']>;
-  in?: InputMaybe<Array<Scalars['ID']>>;
-  is?: InputMaybe<FilterIs>;
-  lt?: InputMaybe<Scalars['ID']>;
-  lte?: InputMaybe<Scalars['ID']>;
-  neq?: InputMaybe<Scalars['ID']>;
-};
 
 export enum IdentityProviderType {
   OIDC = 'OIDC',
@@ -952,10 +940,10 @@ export type Mutation = {
   updateWorkspace: Workspace;
   updateWorkspaceFeatureFlag: Scalars['Boolean'];
   updateWorkspaceMemberRole: WorkspaceMember;
-  uploadFile: Scalars['String'];
-  uploadImage: Scalars['String'];
-  uploadProfilePicture: Scalars['String'];
-  uploadWorkspaceLogo: Scalars['String'];
+  uploadFile: SignedFileDto;
+  uploadImage: SignedFileDto;
+  uploadProfilePicture: SignedFileDto;
+  uploadWorkspaceLogo: SignedFileDto;
   upsertObjectPermissions: Array<ObjectPermission>;
   upsertSettingPermissions: Array<SettingPermission>;
   userLookupAdminPanel: UserLookup;
@@ -1121,6 +1109,7 @@ export type MutationGenerateApiKeyTokenArgs = {
 
 export type MutationGetAuthTokensFromLoginTokenArgs = {
   loginToken: Scalars['String'];
+  origin: Scalars['String'];
 };
 
 
@@ -1132,13 +1121,16 @@ export type MutationGetAuthorizationUrlForSsoArgs = {
 export type MutationGetLoginTokenFromCredentialsArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
+  origin: Scalars['String'];
   password: Scalars['String'];
 };
 
 
 export type MutationGetLoginTokenFromEmailVerificationTokenArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
   emailVerificationToken: Scalars['String'];
+  origin: Scalars['String'];
 };
 
 
@@ -1160,6 +1152,7 @@ export type MutationRenewTokenArgs = {
 
 export type MutationResendEmailVerificationTokenArgs = {
   email: Scalars['String'];
+  origin: Scalars['String'];
 };
 
 
@@ -1183,6 +1176,7 @@ export type MutationSignUpArgs = {
   email: Scalars['String'];
   locale?: InputMaybe<Scalars['String']>;
   password: Scalars['String'];
+  verifyEmailNextPath?: InputMaybe<Scalars['String']>;
   workspaceId?: InputMaybe<Scalars['String']>;
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
   workspacePersonalInviteToken?: InputMaybe<Scalars['String']>;
@@ -1397,9 +1391,7 @@ export type ObjectPermission = {
   canReadObjectRecords?: Maybe<Scalars['Boolean']>;
   canSoftDeleteObjectRecords?: Maybe<Scalars['Boolean']>;
   canUpdateObjectRecords?: Maybe<Scalars['Boolean']>;
-  id: Scalars['String'];
   objectMetadataId: Scalars['String'];
-  roleId: Scalars['String'];
 };
 
 export type ObjectPermissionInput = {
@@ -1414,7 +1406,7 @@ export type ObjectRecordFilterInput = {
   and?: InputMaybe<Array<ObjectRecordFilterInput>>;
   createdAt?: InputMaybe<DateFilter>;
   deletedAt?: InputMaybe<DateFilter>;
-  id?: InputMaybe<IdFilter>;
+  id?: InputMaybe<UuidFilter>;
   not?: InputMaybe<ObjectRecordFilterInput>;
   or?: InputMaybe<Array<ObjectRecordFilterInput>>;
   updatedAt?: InputMaybe<DateFilter>;
@@ -1550,7 +1542,7 @@ export type Query = {
   object: Object;
   objects: ObjectConnection;
   plans: Array<BillingPlanOutput>;
-  search: Array<SearchRecord>;
+  search: SearchResultConnection;
   validatePasswordResetToken: ValidatePasswordResetToken;
   versionInfo: VersionInfo;
 };
@@ -1597,6 +1589,11 @@ export type QueryGetIndicatorHealthStatusArgs = {
 };
 
 
+export type QueryGetPublicWorkspaceDataByDomainArgs = {
+  origin: Scalars['String'];
+};
+
+
 export type QueryGetQueueMetricsArgs = {
   queueName: Scalars['String'];
   timeRange?: InputMaybe<QueueMetricsTimeRange>;
@@ -1637,6 +1634,7 @@ export type QueryGetTimelineThreadsFromPersonIdArgs = {
 
 
 export type QuerySearchArgs = {
+  after?: InputMaybe<Scalars['String']>;
   excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']>>;
   filter?: InputMaybe<ObjectRecordFilterInput>;
   includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']>>;
@@ -1841,6 +1839,24 @@ export type SearchRecord = {
   tsRankCD: Scalars['Float'];
 };
 
+export type SearchResultConnection = {
+  __typename?: 'SearchResultConnection';
+  edges: Array<SearchResultEdge>;
+  pageInfo: SearchResultPageInfo;
+};
+
+export type SearchResultEdge = {
+  __typename?: 'SearchResultEdge';
+  cursor: Scalars['String'];
+  node: SearchRecord;
+};
+
+export type SearchResultPageInfo = {
+  __typename?: 'SearchResultPageInfo';
+  endCursor?: Maybe<Scalars['String']>;
+  hasNextPage: Scalars['Boolean'];
+};
+
 export type SendInvitationsOutput = {
   __typename?: 'SendInvitationsOutput';
   errors: Array<Scalars['String']>;
@@ -1950,6 +1966,12 @@ export type SignUpOutput = {
   __typename?: 'SignUpOutput';
   loginToken: AuthToken;
   workspace: WorkspaceUrlsAndId;
+};
+
+export type SignedFileDto = {
+  __typename?: 'SignedFileDTO';
+  path: Scalars['String'];
+  token: Scalars['String'];
 };
 
 export type StandardOverrides = {
@@ -2082,6 +2104,17 @@ export type TimelineThreadsWithTotal = {
 export type TransientToken = {
   __typename?: 'TransientToken';
   transientToken: AuthToken;
+};
+
+export type UuidFilter = {
+  eq?: InputMaybe<Scalars['UUID']>;
+  gt?: InputMaybe<Scalars['UUID']>;
+  gte?: InputMaybe<Scalars['UUID']>;
+  in?: InputMaybe<Array<Scalars['UUID']>>;
+  is?: InputMaybe<FilterIs>;
+  lt?: InputMaybe<Scalars['UUID']>;
+  lte?: InputMaybe<Scalars['UUID']>;
+  neq?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UuidFilterComparison = {
@@ -2285,6 +2318,8 @@ export type UserWorkspace = {
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   id: Scalars['UUID'];
+  objectPermissions?: Maybe<Array<ObjectPermission>>;
+  /** @deprecated Use objectPermissions instead */
   objectRecordsPermissions?: Maybe<Array<PermissionsOnAllObjectRecords>>;
   settingsPermissions?: Maybe<Array<SettingPermissionType>>;
   updatedAt: Scalars['DateTime'];
@@ -2525,7 +2560,7 @@ export type UploadFileMutationVariables = Exact<{
 }>;
 
 
-export type UploadFileMutation = { __typename?: 'Mutation', uploadFile: string };
+export type UploadFileMutation = { __typename?: 'Mutation', uploadFile: { __typename?: 'SignedFileDTO', path: string, token: string } };
 
 export type UploadImageMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -2533,7 +2568,7 @@ export type UploadImageMutationVariables = Exact<{
 }>;
 
 
-export type UploadImageMutation = { __typename?: 'Mutation', uploadImage: string };
+export type UploadImageMutation = { __typename?: 'Mutation', uploadImage: { __typename?: 'SignedFileDTO', path: string, token: string } };
 
 export type AuthTokenFragmentFragment = { __typename?: 'AuthToken', token: string, expiresAt: string };
 
@@ -2573,6 +2608,7 @@ export type GenerateTransientTokenMutation = { __typename?: 'Mutation', generate
 
 export type GetAuthTokensFromLoginTokenMutationVariables = Exact<{
   loginToken: Scalars['String'];
+  origin: Scalars['String'];
 }>;
 
 
@@ -2589,6 +2625,7 @@ export type GetLoginTokenFromCredentialsMutationVariables = Exact<{
   email: Scalars['String'];
   password: Scalars['String'];
   captchaToken?: InputMaybe<Scalars['String']>;
+  origin: Scalars['String'];
 }>;
 
 
@@ -2596,7 +2633,9 @@ export type GetLoginTokenFromCredentialsMutation = { __typename?: 'Mutation', ge
 
 export type GetLoginTokenFromEmailVerificationTokenMutationVariables = Exact<{
   emailVerificationToken: Scalars['String'];
+  email: Scalars['String'];
   captchaToken?: InputMaybe<Scalars['String']>;
+  origin: Scalars['String'];
 }>;
 
 
@@ -2619,6 +2658,7 @@ export type RenewTokenMutation = { __typename?: 'Mutation', renewToken: { __type
 
 export type ResendEmailVerificationTokenMutationVariables = Exact<{
   email: Scalars['String'];
+  origin: Scalars['String'];
 }>;
 
 
@@ -2632,6 +2672,7 @@ export type SignUpMutationVariables = Exact<{
   captchaToken?: InputMaybe<Scalars['String']>;
   workspaceId?: InputMaybe<Scalars['String']>;
   locale?: InputMaybe<Scalars['String']>;
+  verifyEmailNextPath?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -2658,7 +2699,9 @@ export type CheckUserExistsQueryVariables = Exact<{
 
 export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __typename: 'UserExists', exists: boolean, isEmailVerified: boolean, availableWorkspaces: Array<{ __typename?: 'AvailableWorkspaceOutput', id: string, displayName?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } | { __typename: 'UserNotExists', exists: boolean } };
 
-export type GetPublicWorkspaceDataByDomainQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetPublicWorkspaceDataByDomainQueryVariables = Exact<{
+  origin: Scalars['String'];
+}>;
 
 
 export type GetPublicWorkspaceDataByDomainQuery = { __typename?: 'Query', getPublicWorkspaceDataByDomain: { __typename?: 'PublicWorkspaceDataOutput', id: string, logo?: string | null, displayName?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, authProviders: { __typename?: 'AuthProviders', google: boolean, magicLink: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> } } };
@@ -2715,13 +2758,14 @@ export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typ
 export type SearchQueryVariables = Exact<{
   searchInput: Scalars['String'];
   limit: Scalars['Int'];
+  after?: InputMaybe<Scalars['String']>;
   excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
   includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
   filter?: InputMaybe<ObjectRecordFilterInput>;
 }>;
 
 
-export type SearchQuery = { __typename?: 'Query', search: Array<{ __typename?: 'SearchRecord', recordId: string, objectNameSingular: string, label: string, imageUrl?: string | null, tsRankCD: number, tsRank: number }> };
+export type SearchQuery = { __typename?: 'Query', search: { __typename?: 'SearchResultConnection', edges: Array<{ __typename?: 'SearchResultEdge', cursor: string, node: { __typename?: 'SearchRecord', recordId: string, objectNameSingular: string, label: string, imageUrl?: string | null, tsRankCD: number, tsRank: number } }>, pageInfo: { __typename?: 'SearchResultPageInfo', hasNextPage: boolean, endCursor?: string | null } } };
 
 export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -2811,7 +2855,7 @@ export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
 
 export type UpdateLabPublicFeatureFlagMutation = { __typename?: 'Mutation', updateLabPublicFeatureFlag: { __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean } };
 
-export type ObjectPermissionFragmentFragment = { __typename?: 'ObjectPermission', id: string, objectMetadataId: string, roleId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null };
+export type ObjectPermissionFragmentFragment = { __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null };
 
 export type RoleFragmentFragment = { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean };
 
@@ -2844,7 +2888,7 @@ export type UpsertObjectPermissionsMutationVariables = Exact<{
 }>;
 
 
-export type UpsertObjectPermissionsMutation = { __typename?: 'Mutation', upsertObjectPermissions: Array<{ __typename?: 'ObjectPermission', id: string, objectMetadataId: string, roleId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null }> };
+export type UpsertObjectPermissionsMutation = { __typename?: 'Mutation', upsertObjectPermissions: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null }> };
 
 export type UpsertSettingPermissionsMutationVariables = Exact<{
   upsertSettingPermissionsInput: UpsertSettingPermissionsInput;
@@ -2856,7 +2900,7 @@ export type UpsertSettingPermissionsMutation = { __typename?: 'Mutation', upsert
 export type GetRolesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetRolesQuery = { __typename?: 'Query', getRoles: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }>, settingPermissions?: Array<{ __typename?: 'SettingPermission', id: string, setting: SettingPermissionType, roleId: string }> | null, objectPermissions?: Array<{ __typename?: 'ObjectPermission', id: string, objectMetadataId: string, roleId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null }> | null }> };
+export type GetRolesQuery = { __typename?: 'Query', getRoles: Array<{ __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }>, settingPermissions?: Array<{ __typename?: 'SettingPermission', id: string, setting: SettingPermissionType, roleId: string }> | null, objectPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null }> | null }> };
 
 export type CreateApprovedAccessDomainMutationVariables = Exact<{
   input: CreateApprovedAccessDomainInput;
@@ -2936,7 +2980,7 @@ export type UploadProfilePictureMutationVariables = Exact<{
 }>;
 
 
-export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProfilePicture: string };
+export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProfilePicture: { __typename?: 'SignedFileDTO', path: string, token: string } };
 
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3067,7 +3111,7 @@ export type UploadWorkspaceLogoMutationVariables = Exact<{
 }>;
 
 
-export type UploadWorkspaceLogoMutation = { __typename?: 'Mutation', uploadWorkspaceLogo: string };
+export type UploadWorkspaceLogoMutation = { __typename?: 'Mutation', uploadWorkspaceLogo: { __typename?: 'SignedFileDTO', path: string, token: string } };
 
 export type CheckCustomDomainValidRecordsMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -3182,9 +3226,7 @@ export const AvailableSsoIdentityProvidersFragmentFragmentDoc = gql`
     `;
 export const ObjectPermissionFragmentFragmentDoc = gql`
     fragment ObjectPermissionFragment on ObjectPermission {
-  id
   objectMetadataId
-  roleId
   canReadObjectRecords
   canUpdateObjectRecords
   canSoftDeleteObjectRecords
@@ -3533,7 +3575,10 @@ export type TrackAnalyticsMutationResult = Apollo.MutationResult<TrackAnalyticsM
 export type TrackAnalyticsMutationOptions = Apollo.BaseMutationOptions<TrackAnalyticsMutation, TrackAnalyticsMutationVariables>;
 export const UploadFileDocument = gql`
     mutation uploadFile($file: Upload!, $fileFolder: FileFolder) {
-  uploadFile(file: $file, fileFolder: $fileFolder)
+  uploadFile(file: $file, fileFolder: $fileFolder) {
+    path
+    token
+  }
 }
     `;
 export type UploadFileMutationFn = Apollo.MutationFunction<UploadFileMutation, UploadFileMutationVariables>;
@@ -3565,7 +3610,10 @@ export type UploadFileMutationResult = Apollo.MutationResult<UploadFileMutation>
 export type UploadFileMutationOptions = Apollo.BaseMutationOptions<UploadFileMutation, UploadFileMutationVariables>;
 export const UploadImageDocument = gql`
     mutation uploadImage($file: Upload!, $fileFolder: FileFolder) {
-  uploadImage(file: $file, fileFolder: $fileFolder)
+  uploadImage(file: $file, fileFolder: $fileFolder) {
+    path
+    token
+  }
 }
     `;
 export type UploadImageMutationFn = Apollo.MutationFunction<UploadImageMutation, UploadImageMutationVariables>;
@@ -3737,8 +3785,8 @@ export type GenerateTransientTokenMutationHookResult = ReturnType<typeof useGene
 export type GenerateTransientTokenMutationResult = Apollo.MutationResult<GenerateTransientTokenMutation>;
 export type GenerateTransientTokenMutationOptions = Apollo.BaseMutationOptions<GenerateTransientTokenMutation, GenerateTransientTokenMutationVariables>;
 export const GetAuthTokensFromLoginTokenDocument = gql`
-    mutation GetAuthTokensFromLoginToken($loginToken: String!) {
-  getAuthTokensFromLoginToken(loginToken: $loginToken) {
+    mutation GetAuthTokensFromLoginToken($loginToken: String!, $origin: String!) {
+  getAuthTokensFromLoginToken(loginToken: $loginToken, origin: $origin) {
     tokens {
       ...AuthTokensFragment
     }
@@ -3761,6 +3809,7 @@ export type GetAuthTokensFromLoginTokenMutationFn = Apollo.MutationFunction<GetA
  * const [getAuthTokensFromLoginTokenMutation, { data, loading, error }] = useGetAuthTokensFromLoginTokenMutation({
  *   variables: {
  *      loginToken: // value for 'loginToken'
+ *      origin: // value for 'origin'
  *   },
  * });
  */
@@ -3807,11 +3856,12 @@ export type GetAuthorizationUrlForSsoMutationHookResult = ReturnType<typeof useG
 export type GetAuthorizationUrlForSsoMutationResult = Apollo.MutationResult<GetAuthorizationUrlForSsoMutation>;
 export type GetAuthorizationUrlForSsoMutationOptions = Apollo.BaseMutationOptions<GetAuthorizationUrlForSsoMutation, GetAuthorizationUrlForSsoMutationVariables>;
 export const GetLoginTokenFromCredentialsDocument = gql`
-    mutation GetLoginTokenFromCredentials($email: String!, $password: String!, $captchaToken: String) {
+    mutation GetLoginTokenFromCredentials($email: String!, $password: String!, $captchaToken: String, $origin: String!) {
   getLoginTokenFromCredentials(
     email: $email
     password: $password
     captchaToken: $captchaToken
+    origin: $origin
   ) {
     loginToken {
       ...AuthTokenFragment
@@ -3837,6 +3887,7 @@ export type GetLoginTokenFromCredentialsMutationFn = Apollo.MutationFunction<Get
  *      email: // value for 'email'
  *      password: // value for 'password'
  *      captchaToken: // value for 'captchaToken'
+ *      origin: // value for 'origin'
  *   },
  * });
  */
@@ -3848,10 +3899,12 @@ export type GetLoginTokenFromCredentialsMutationHookResult = ReturnType<typeof u
 export type GetLoginTokenFromCredentialsMutationResult = Apollo.MutationResult<GetLoginTokenFromCredentialsMutation>;
 export type GetLoginTokenFromCredentialsMutationOptions = Apollo.BaseMutationOptions<GetLoginTokenFromCredentialsMutation, GetLoginTokenFromCredentialsMutationVariables>;
 export const GetLoginTokenFromEmailVerificationTokenDocument = gql`
-    mutation GetLoginTokenFromEmailVerificationToken($emailVerificationToken: String!, $captchaToken: String) {
+    mutation GetLoginTokenFromEmailVerificationToken($emailVerificationToken: String!, $email: String!, $captchaToken: String, $origin: String!) {
   getLoginTokenFromEmailVerificationToken(
     emailVerificationToken: $emailVerificationToken
+    email: $email
     captchaToken: $captchaToken
+    origin: $origin
   ) {
     loginToken {
       ...AuthTokenFragment
@@ -3879,7 +3932,9 @@ export type GetLoginTokenFromEmailVerificationTokenMutationFn = Apollo.MutationF
  * const [getLoginTokenFromEmailVerificationTokenMutation, { data, loading, error }] = useGetLoginTokenFromEmailVerificationTokenMutation({
  *   variables: {
  *      emailVerificationToken: // value for 'emailVerificationToken'
+ *      email: // value for 'email'
  *      captchaToken: // value for 'captchaToken'
+ *      origin: // value for 'origin'
  *   },
  * });
  */
@@ -3969,8 +4024,8 @@ export type RenewTokenMutationHookResult = ReturnType<typeof useRenewTokenMutati
 export type RenewTokenMutationResult = Apollo.MutationResult<RenewTokenMutation>;
 export type RenewTokenMutationOptions = Apollo.BaseMutationOptions<RenewTokenMutation, RenewTokenMutationVariables>;
 export const ResendEmailVerificationTokenDocument = gql`
-    mutation ResendEmailVerificationToken($email: String!) {
-  resendEmailVerificationToken(email: $email) {
+    mutation ResendEmailVerificationToken($email: String!, $origin: String!) {
+  resendEmailVerificationToken(email: $email, origin: $origin) {
     success
   }
 }
@@ -3991,6 +4046,7 @@ export type ResendEmailVerificationTokenMutationFn = Apollo.MutationFunction<Res
  * const [resendEmailVerificationTokenMutation, { data, loading, error }] = useResendEmailVerificationTokenMutation({
  *   variables: {
  *      email: // value for 'email'
+ *      origin: // value for 'origin'
  *   },
  * });
  */
@@ -4002,7 +4058,7 @@ export type ResendEmailVerificationTokenMutationHookResult = ReturnType<typeof u
 export type ResendEmailVerificationTokenMutationResult = Apollo.MutationResult<ResendEmailVerificationTokenMutation>;
 export type ResendEmailVerificationTokenMutationOptions = Apollo.BaseMutationOptions<ResendEmailVerificationTokenMutation, ResendEmailVerificationTokenMutationVariables>;
 export const SignUpDocument = gql`
-    mutation SignUp($email: String!, $password: String!, $workspaceInviteHash: String, $workspacePersonalInviteToken: String = null, $captchaToken: String, $workspaceId: String, $locale: String) {
+    mutation SignUp($email: String!, $password: String!, $workspaceInviteHash: String, $workspacePersonalInviteToken: String = null, $captchaToken: String, $workspaceId: String, $locale: String, $verifyEmailNextPath: String) {
   signUp(
     email: $email
     password: $password
@@ -4011,6 +4067,7 @@ export const SignUpDocument = gql`
     captchaToken: $captchaToken
     workspaceId: $workspaceId
     locale: $locale
+    verifyEmailNextPath: $verifyEmailNextPath
   ) {
     loginToken {
       ...AuthTokenFragment
@@ -4047,6 +4104,7 @@ export type SignUpMutationFn = Apollo.MutationFunction<SignUpMutation, SignUpMut
  *      captchaToken: // value for 'captchaToken'
  *      workspaceId: // value for 'workspaceId'
  *      locale: // value for 'locale'
+ *      verifyEmailNextPath: // value for 'verifyEmailNextPath'
  *   },
  * });
  */
@@ -4195,8 +4253,8 @@ export type CheckUserExistsQueryHookResult = ReturnType<typeof useCheckUserExist
 export type CheckUserExistsLazyQueryHookResult = ReturnType<typeof useCheckUserExistsLazyQuery>;
 export type CheckUserExistsQueryResult = Apollo.QueryResult<CheckUserExistsQuery, CheckUserExistsQueryVariables>;
 export const GetPublicWorkspaceDataByDomainDocument = gql`
-    query GetPublicWorkspaceDataByDomain {
-  getPublicWorkspaceDataByDomain {
+    query GetPublicWorkspaceDataByDomain($origin: String!) {
+  getPublicWorkspaceDataByDomain(origin: $origin) {
     id
     logo
     displayName
@@ -4233,10 +4291,11 @@ export const GetPublicWorkspaceDataByDomainDocument = gql`
  * @example
  * const { data, loading, error } = useGetPublicWorkspaceDataByDomainQuery({
  *   variables: {
+ *      origin: // value for 'origin'
  *   },
  * });
  */
-export function useGetPublicWorkspaceDataByDomainQuery(baseOptions?: Apollo.QueryHookOptions<GetPublicWorkspaceDataByDomainQuery, GetPublicWorkspaceDataByDomainQueryVariables>) {
+export function useGetPublicWorkspaceDataByDomainQuery(baseOptions: Apollo.QueryHookOptions<GetPublicWorkspaceDataByDomainQuery, GetPublicWorkspaceDataByDomainQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetPublicWorkspaceDataByDomainQuery, GetPublicWorkspaceDataByDomainQueryVariables>(GetPublicWorkspaceDataByDomainDocument, options);
       }
@@ -4600,20 +4659,30 @@ export type GetClientConfigQueryHookResult = ReturnType<typeof useGetClientConfi
 export type GetClientConfigLazyQueryHookResult = ReturnType<typeof useGetClientConfigLazyQuery>;
 export type GetClientConfigQueryResult = Apollo.QueryResult<GetClientConfigQuery, GetClientConfigQueryVariables>;
 export const SearchDocument = gql`
-    query Search($searchInput: String!, $limit: Int!, $excludedObjectNameSingulars: [String!], $includedObjectNameSingulars: [String!], $filter: ObjectRecordFilterInput) {
+    query Search($searchInput: String!, $limit: Int!, $after: String, $excludedObjectNameSingulars: [String!], $includedObjectNameSingulars: [String!], $filter: ObjectRecordFilterInput) {
   search(
     searchInput: $searchInput
     limit: $limit
+    after: $after
     excludedObjectNameSingulars: $excludedObjectNameSingulars
     includedObjectNameSingulars: $includedObjectNameSingulars
     filter: $filter
   ) {
-    recordId
-    objectNameSingular
-    label
-    imageUrl
-    tsRankCD
-    tsRank
+    edges {
+      node {
+        recordId
+        objectNameSingular
+        label
+        imageUrl
+        tsRankCD
+        tsRank
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
   }
 }
     `;
@@ -4632,6 +4701,7 @@ export const SearchDocument = gql`
  *   variables: {
  *      searchInput: // value for 'searchInput'
  *      limit: // value for 'limit'
+ *      after: // value for 'after'
  *      excludedObjectNameSingulars: // value for 'excludedObjectNameSingulars'
  *      includedObjectNameSingulars: // value for 'includedObjectNameSingulars'
  *      filter: // value for 'filter'
@@ -5776,7 +5846,10 @@ export type DeleteUserAccountMutationResult = Apollo.MutationResult<DeleteUserAc
 export type DeleteUserAccountMutationOptions = Apollo.BaseMutationOptions<DeleteUserAccountMutation, DeleteUserAccountMutationVariables>;
 export const UploadProfilePictureDocument = gql`
     mutation UploadProfilePicture($file: Upload!) {
-  uploadProfilePicture(file: $file)
+  uploadProfilePicture(file: $file) {
+    path
+    token
+  }
 }
     `;
 export type UploadProfilePictureMutationFn = Apollo.MutationFunction<UploadProfilePictureMutation, UploadProfilePictureMutationVariables>;
@@ -6442,7 +6515,10 @@ export type UpdateWorkspaceMutationResult = Apollo.MutationResult<UpdateWorkspac
 export type UpdateWorkspaceMutationOptions = Apollo.BaseMutationOptions<UpdateWorkspaceMutation, UpdateWorkspaceMutationVariables>;
 export const UploadWorkspaceLogoDocument = gql`
     mutation UploadWorkspaceLogo($file: Upload!) {
-  uploadWorkspaceLogo(file: $file)
+  uploadWorkspaceLogo(file: $file) {
+    path
+    token
+  }
 }
     `;
 export type UploadWorkspaceLogoMutationFn = Apollo.MutationFunction<UploadWorkspaceLogoMutation, UploadWorkspaceLogoMutationVariables>;

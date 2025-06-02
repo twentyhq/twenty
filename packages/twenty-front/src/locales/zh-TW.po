@@ -83,15 +83,25 @@ msgstr "{0}"
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "{aggregateLabel} 的 {fieldLabel}"
 
+#. js-lingui-id: z5EvY5
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+msgid "{apiKeyName}"
+msgstr ""
+
 #. js-lingui-id: uogEAL
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-msgid "{apiKeyName} API Key"
-msgstr "{apiKeyName} API 密鑰"
+#~ msgid "{apiKeyName} API Key"
+#~ msgstr "{apiKeyName} API 密鑰"
 
 #. js-lingui-id: zi5SHH
 #: src/modules/object-record/record-index/components/RecordIndexPageHeader.tsx
 msgid "{contextStoreNumberOfSelectedRecords} selected"
 msgstr "{contextStoreNumberOfSelectedRecords} 已選取"
+
+#. js-lingui-id: wapGcj
+#: src/modules/auth/components/VerifyEmailEffect.tsx
+msgid "{message}"
+msgstr ""
 
 #. js-lingui-id: 6j5rE1
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowRecordAgnosticActions.tsx
@@ -103,6 +113,11 @@ msgstr "{name}"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
 msgstr "{workspaceMemberName} 將不再被指派以下角色："
+
+#. js-lingui-id: NNQszp
+#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
+msgid "⚠️ Please verify the auto mapping of the columns. You can also ignore or change the mapping of the columns."
+msgstr ""
 
 #. js-lingui-id: YT0WJ4
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -293,6 +308,11 @@ msgstr "添加字段"
 #: src/modules/views/components/ViewBarDetailsAddFilterButton.tsx
 msgid "Add filter"
 msgstr "添加篩選器"
+
+#. js-lingui-id: 7XzAKI
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage.tsx
+msgid "Add inputs to your form"
+msgstr ""
 
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
@@ -905,6 +925,11 @@ msgstr "清除"
 msgid "Clear the field or \"X\" to revert to environment/default value."
 msgstr ""
 
+#. js-lingui-id: HevGC0
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage.tsx
+msgid "Click on \"Add Field\" below to add the first input to your form. The form will pop up on the user's screen when the workflow is launched from a manual trigger. For other types of triggers, it will be displayed in the Workflow run record page."
+msgstr ""
+
 #. js-lingui-id: b8wwse
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Click on the checkmark to apply your changes."
@@ -1177,7 +1202,6 @@ msgstr "計數唯一值"
 
 #. js-lingui-id: hYgDIe
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
-#: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Create"
 msgstr "創建"
 
@@ -1809,8 +1833,8 @@ msgstr "電子郵件驗證"
 
 #. js-lingui-id: TBv/iZ
 #: src/modules/auth/components/VerifyEmailEffect.tsx
-msgid "Email verification failed."
-msgstr "電子郵件驗證失敗。"
+#~ msgid "Email verification failed."
+#~ msgstr "電子郵件驗證失敗。"
 
 #. js-lingui-id: svTijF
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
@@ -2172,7 +2196,12 @@ msgstr ""
 
 #. js-lingui-id: bVax4d
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
-msgid "Failed to remove  override"
+#~ msgid "Failed to remove  override"
+#~ msgstr ""
+
+#. js-lingui-id: A/P7PX
+#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
+msgid "Failed to remove override"
 msgstr ""
 
 #. js-lingui-id: Dzh4a2
@@ -2979,8 +3008,13 @@ msgstr ""
 
 #. js-lingui-id: 4cjU2u
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
-msgid "Manage the members of your space here"
-msgstr "在此管理您的空間成員"
+#~ msgid "Manage the members of your space here"
+#~ msgstr "在此管理您的空間成員"
+
+#. js-lingui-id: N7fMy9
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+msgid "Manage the members of your workspace here"
+msgstr ""
 
 #. js-lingui-id: FyFNsd
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -3347,8 +3381,8 @@ msgstr "沒有可用的數據指標"
 
 #. js-lingui-id: DL8pzn
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
-msgid "No more members to assign"
-msgstr "沒有更多成員可以指派"
+#~ msgid "No more members to assign"
+#~ msgstr "沒有更多成員可以指派"
 
 #. js-lingui-id: tTItk7
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -4037,7 +4071,6 @@ msgid "Russian"
 msgstr "俄語"
 
 #. js-lingui-id: tfDRzk
-#: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 msgid "Save"
@@ -4271,8 +4304,8 @@ msgstr ""
 
 #. js-lingui-id: mWHn81
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
-msgid "Select the correct field for each column you'd like to import."
-msgstr ""
+#~ msgid "Select the correct field for each column you'd like to import."
+#~ msgstr ""
 
 #. js-lingui-id: pofGCP
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
@@ -4772,6 +4805,11 @@ msgstr "此字段的值必須唯一"
 msgid "The whole event details will be shared with your team."
 msgstr "整個活動詳情將與您的團隊共享。"
 
+#. js-lingui-id: MssRHl
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
+msgid "The workspace needs at least one Admin"
+msgstr ""
+
 #. js-lingui-id: FEr96N
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Theme"
@@ -5127,6 +5165,11 @@ msgstr ""
 msgid "Values"
 msgstr "值"
 
+#. js-lingui-id: rawKOG
+#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
+msgid "Variable deleted successfully."
+msgstr ""
+
 #. js-lingui-id: dY/1ir
 #: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
 msgid "Variable not found"
@@ -5134,7 +5177,12 @@ msgstr "變量未找到"
 
 #. js-lingui-id: N/89ho
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
-msgid "Variable updated successfully"
+#~ msgid "Variable updated successfully"
+#~ msgstr ""
+
+#. js-lingui-id: 2ushgC
+#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
+msgid "Variable updated successfully."
 msgstr ""
 
 #. js-lingui-id: IHIWR4
@@ -5159,8 +5207,8 @@ msgstr "查看計費詳情"
 
 #. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "View execution details"
-msgstr "查看執行詳情"
+#~ msgid "View execution details"
+#~ msgstr "查看執行詳情"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
@@ -5225,13 +5273,14 @@ msgstr "我們將向您發送一個鏈接來驗證域所有權"
 
 #. js-lingui-id: TRDppN
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Webhook"
-msgstr "Webhook"
+#~ msgid "Webhook"
+#~ msgstr "Webhook"
 
 #. js-lingui-id: v1kQyJ
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Webhooks"
 msgstr "Webhooks"
@@ -5263,13 +5312,13 @@ msgstr "按鍵何時禁用"
 
 #. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow is running..."
-msgstr "工作流程正在運行……"
+#~ msgid "Workflow is running..."
+#~ msgstr "工作流程正在運行……"
 
 #. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow run failed"
-msgstr "工作流程運行失敗"
+#~ msgid "Workflow run failed"
+#~ msgstr "工作流程運行失敗"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx

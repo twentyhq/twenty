@@ -1,16 +1,17 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { Tab } from '../Tab';
+import { IconCheckbox } from 'twenty-ui/display';
 import {
   CatalogDecorator,
   CatalogStory,
-  ComponentDecorator,
+  ComponentWithRouterDecorator,
 } from 'twenty-ui/testing';
-import { IconCheckbox } from 'twenty-ui/display';
+import { Tab } from '../Tab';
 
 const meta: Meta<typeof Tab> = {
   title: 'UI/Layout/Tab/Tab',
   component: Tab,
+  decorators: [ComponentWithRouterDecorator],
 };
 
 export default meta;
@@ -23,8 +24,7 @@ export const Default: Story = {
     Icon: IconCheckbox,
     disabled: false,
   },
-
-  decorators: [ComponentDecorator],
+  decorators: [ComponentWithRouterDecorator],
 };
 
 export const Catalog: CatalogStory<Story, typeof Tab> = {

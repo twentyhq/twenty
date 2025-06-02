@@ -3,8 +3,9 @@ import { DynamicModule, Global, Module, Provider } from '@nestjs/common';
 import { capitalize } from 'twenty-shared/utils';
 
 import { metadataToRepositoryMapping } from 'src/engine/object-metadata-repository/metadata-to-repository.mapping';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 
 @Global()
@@ -25,18 +26,16 @@ export class ObjectMetadataRepositoryModule {
         provide: `${capitalize(
           convertClassNameToObjectMetadataName(objectMetadata.name),
         )}Repository`,
-        useFactory: (
-          workspaceDataSourceService: WorkspaceDataSourceService,
-        ) => {
-          return new repositoryClass(workspaceDataSourceService);
+        useFactory: (twentyORMGlobalManager: TwentyORMGlobalManager) => {
+          return new repositoryClass(twentyORMGlobalManager);
         },
-        inject: [WorkspaceDataSourceService],
+        inject: [TwentyORMGlobalManager],
       };
     });
 
     return {
       module: ObjectMetadataRepositoryModule,
-      imports: [WorkspaceDataSourceModule],
+      imports: [WorkspaceDataSourceModule, TwentyORMModule],
       providers: [...providers],
       exports: providers,
     };

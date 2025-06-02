@@ -1,5 +1,5 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { COUNT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/countAggregateOperationOptions';
 import { NON_STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/nonStandardAggregateOperationsOptions';
 import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/percentAggregateOperationOptions';
@@ -23,43 +23,43 @@ jest.mock(
   () => ({
     getAvailableAggregationsFromObjectFields: jest.fn().mockReturnValue({
       active: {
-        [AGGREGATE_OPERATIONS.countTrue]: 'countTrueActive',
-        [AGGREGATE_OPERATIONS.countFalse]: 'CountFalseActive',
+        [AggregateOperations.COUNT_TRUE]: 'countTrueActive',
+        [AggregateOperations.COUNT_FALSE]: 'CountFalseActive',
       },
       amount: {
-        [AGGREGATE_OPERATIONS.sum]: 'sumAmount',
-        [AGGREGATE_OPERATIONS.avg]: 'avgAmount',
-        [AGGREGATE_OPERATIONS.min]: 'minAmount',
-        [AGGREGATE_OPERATIONS.max]: 'maxAmount',
-        [AGGREGATE_OPERATIONS.count]: 'totalCount',
-        [AGGREGATE_OPERATIONS.countUniqueValues]: 'countUniqueValuesAmount',
-        [AGGREGATE_OPERATIONS.countEmpty]: 'countEmptyAmount',
-        [AGGREGATE_OPERATIONS.countNotEmpty]: 'countNotEmptyAmount',
-        [AGGREGATE_OPERATIONS.percentageEmpty]: 'percentageEmptyAmount',
-        [AGGREGATE_OPERATIONS.percentageNotEmpty]: 'percentageNotEmptyAmount',
+        [AggregateOperations.SUM]: 'sumAmount',
+        [AggregateOperations.AVG]: 'avgAmount',
+        [AggregateOperations.MIN]: 'minAmount',
+        [AggregateOperations.MAX]: 'maxAmount',
+        [AggregateOperations.COUNT]: 'totalCount',
+        [AggregateOperations.COUNT_UNIQUE_VALUES]: 'countUniqueValuesAmount',
+        [AggregateOperations.COUNT_EMPTY]: 'countEmptyAmount',
+        [AggregateOperations.COUNT_NOT_EMPTY]: 'countNotEmptyAmount',
+        [AggregateOperations.PERCENTAGE_EMPTY]: 'percentageEmptyAmount',
+        [AggregateOperations.PERCENTAGE_NOT_EMPTY]: 'percentageNotEmptyAmount',
       },
       price: {
-        [AGGREGATE_OPERATIONS.sum]: 'sumPriceAmountMicros',
-        [AGGREGATE_OPERATIONS.avg]: 'avgPriceAmountMicros',
-        [AGGREGATE_OPERATIONS.min]: 'minPriceAmountMicros',
-        [AGGREGATE_OPERATIONS.max]: 'maxPriceAmountMicros',
-        [AGGREGATE_OPERATIONS.count]: 'totalCount',
-        [AGGREGATE_OPERATIONS.countUniqueValues]:
+        [AggregateOperations.SUM]: 'sumPriceAmountMicros',
+        [AggregateOperations.AVG]: 'avgPriceAmountMicros',
+        [AggregateOperations.MIN]: 'minPriceAmountMicros',
+        [AggregateOperations.MAX]: 'maxPriceAmountMicros',
+        [AggregateOperations.COUNT]: 'totalCount',
+        [AggregateOperations.COUNT_UNIQUE_VALUES]:
           'countUniqueValuesPriceAmountMicros',
-        [AGGREGATE_OPERATIONS.countEmpty]: 'countEmptyPriceAmountMicros',
-        [AGGREGATE_OPERATIONS.countNotEmpty]: 'countNotEmptyPriceAmountMicros',
-        [AGGREGATE_OPERATIONS.percentageEmpty]:
+        [AggregateOperations.COUNT_EMPTY]: 'countEmptyPriceAmountMicros',
+        [AggregateOperations.COUNT_NOT_EMPTY]: 'countNotEmptyPriceAmountMicros',
+        [AggregateOperations.PERCENTAGE_EMPTY]:
           'percentageEmptyPriceAmountMicros',
-        [AGGREGATE_OPERATIONS.percentageNotEmpty]:
+        [AggregateOperations.PERCENTAGE_NOT_EMPTY]:
           'percentageNotEmptyPriceAmountMicros',
       },
       name: {
-        [AGGREGATE_OPERATIONS.count]: 'totalCount',
-        [AGGREGATE_OPERATIONS.countUniqueValues]: 'countUniqueValuesName',
-        [AGGREGATE_OPERATIONS.countEmpty]: 'countEmptyName',
-        [AGGREGATE_OPERATIONS.countNotEmpty]: 'countNotEmptyName',
-        [AGGREGATE_OPERATIONS.percentageEmpty]: 'percentageEmptyName',
-        [AGGREGATE_OPERATIONS.percentageNotEmpty]: 'percentageNotEmptyName',
+        [AggregateOperations.COUNT]: 'totalCount',
+        [AggregateOperations.COUNT_UNIQUE_VALUES]: 'countUniqueValuesName',
+        [AggregateOperations.COUNT_EMPTY]: 'countEmptyName',
+        [AggregateOperations.COUNT_NOT_EMPTY]: 'countNotEmptyName',
+        [AggregateOperations.PERCENTAGE_EMPTY]: 'percentageEmptyName',
+        [AggregateOperations.PERCENTAGE_NOT_EMPTY]: 'percentageNotEmptyName',
       },
     }),
   }),

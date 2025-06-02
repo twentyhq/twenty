@@ -10,6 +10,7 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
+import { CustomException } from 'src/utils/custom-exception';
 
 @Catch(BillingException, Stripe.errors.StripeError)
 export class BillingRestApiExceptionFilter implements ExceptionFilter {
@@ -30,7 +31,7 @@ export class BillingRestApiExceptionFilter implements ExceptionFilter {
           code: BillingExceptionCode.BILLING_STRIPE_ERROR,
           message: exception.message,
           name: 'StripeError',
-        },
+        } as CustomException,
         response,
         400,
       );

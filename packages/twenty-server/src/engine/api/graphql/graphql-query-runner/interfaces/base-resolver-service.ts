@@ -41,7 +41,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 export type GraphqlQueryResolverExecutionArgs<Input extends ResolverArgs> = {
   args: Input;
   options: WorkspaceQueryRunnerOptions;
-  dataSource: WorkspaceDataSource;
+  workspaceDataSource: WorkspaceDataSource;
   repository: WorkspaceRepository<ObjectLiteral>;
   graphqlQueryParser: GraphqlQueryParser;
   graphqlQuerySelectedFieldsResult: GraphqlQuerySelectedFieldsResult;
@@ -94,7 +94,7 @@ export abstract class GraphqlQueryBaseResolverService<
       const featureFlagsMap = workspaceDataSource.featureFlagMap;
 
       const isPermissionsV2Enabled =
-        featureFlagsMap[FeatureFlagKey.IsPermissionsV2Enabled];
+        featureFlagsMap[FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED];
 
       if (objectMetadataItemWithFieldMaps.isSystem === true) {
         await this.validateSystemObjectPermissionsOrThrow(options);
@@ -152,7 +152,7 @@ export abstract class GraphqlQueryBaseResolverService<
       const graphqlQueryResolverExecutionArgs = {
         args: computedArgs,
         options,
-        dataSource: workspaceDataSource,
+        workspaceDataSource,
         repository,
         graphqlQueryParser,
         graphqlQuerySelectedFieldsResult,

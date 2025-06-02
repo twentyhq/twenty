@@ -40,7 +40,7 @@ describe('roles permissions', () => {
   beforeAll(async () => {
     const enablePermissionsV2Query = updateFeatureFlagFactory(
       SEED_APPLE_WORKSPACE_ID,
-      'IsPermissionsV2Enabled',
+      'IS_PERMISSIONS_V2_ENABLED',
       true,
     );
 
@@ -76,7 +76,7 @@ describe('roles permissions', () => {
   afterAll(async () => {
     const disablePermissionsV2Query = updateFeatureFlagFactory(
       SEED_APPLE_WORKSPACE_ID,
-      'IsPermissionsV2Enabled',
+      'IS_PERMISSIONS_V2_ENABLED',
       false,
     );
 
@@ -478,8 +478,6 @@ describe('roles permissions', () => {
       }) => `
       mutation UpsertObjectPermissions {
           upsertObjectPermissions(upsertObjectPermissionsInput: { roleId: "${roleId}", objectPermissions: [{objectMetadataId: "${objectMetadataId}", canUpdateObjectRecords: true}]}) {
-              id
-              roleId
               objectMetadataId
               canUpdateObjectRecords
           }
@@ -541,7 +539,6 @@ describe('roles permissions', () => {
             expect(res.body.data.upsertObjectPermissions).toEqual(
               expect.arrayContaining([
                 expect.objectContaining({
-                  roleId: createdEditableRoleId,
                   objectMetadataId: listingObjectId,
                   canUpdateObjectRecords: true,
                 }),

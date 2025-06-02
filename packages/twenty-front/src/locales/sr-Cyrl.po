@@ -83,15 +83,25 @@ msgstr "{0}"
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "{aggregateLabel} од {fieldLabel}"
 
+#. js-lingui-id: z5EvY5
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+msgid "{apiKeyName}"
+msgstr ""
+
 #. js-lingui-id: uogEAL
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-msgid "{apiKeyName} API Key"
-msgstr "{apiKeyName} API кључ"
+#~ msgid "{apiKeyName} API Key"
+#~ msgstr "{apiKeyName} API кључ"
 
 #. js-lingui-id: zi5SHH
 #: src/modules/object-record/record-index/components/RecordIndexPageHeader.tsx
 msgid "{contextStoreNumberOfSelectedRecords} selected"
 msgstr "{contextStoreNumberOfSelectedRecords} изабрано"
+
+#. js-lingui-id: wapGcj
+#: src/modules/auth/components/VerifyEmailEffect.tsx
+msgid "{message}"
+msgstr ""
 
 #. js-lingui-id: 6j5rE1
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowRecordAgnosticActions.tsx
@@ -103,6 +113,11 @@ msgstr "{name}"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
 msgstr "{workspaceMemberName} ће бити уклоњен из следеће улоге:"
+
+#. js-lingui-id: NNQszp
+#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
+msgid "⚠️ Please verify the auto mapping of the columns. You can also ignore or change the mapping of the columns."
+msgstr ""
 
 #. js-lingui-id: YT0WJ4
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -293,6 +308,11 @@ msgstr "Додајте поље"
 #: src/modules/views/components/ViewBarDetailsAddFilterButton.tsx
 msgid "Add filter"
 msgstr "Додајте филтер"
+
+#. js-lingui-id: 7XzAKI
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage.tsx
+msgid "Add inputs to your form"
+msgstr ""
 
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
@@ -905,6 +925,11 @@ msgstr "Очисти"
 msgid "Clear the field or \"X\" to revert to environment/default value."
 msgstr ""
 
+#. js-lingui-id: HevGC0
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage.tsx
+msgid "Click on \"Add Field\" below to add the first input to your form. The form will pop up on the user's screen when the workflow is launched from a manual trigger. For other types of triggers, it will be displayed in the Workflow run record page."
+msgstr ""
+
 #. js-lingui-id: b8wwse
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Click on the checkmark to apply your changes."
@@ -1177,7 +1202,6 @@ msgstr "Број јединствених вредности"
 
 #. js-lingui-id: hYgDIe
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
-#: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Create"
 msgstr "Креирајте"
 
@@ -1809,8 +1833,8 @@ msgstr "Провера имејла"
 
 #. js-lingui-id: TBv/iZ
 #: src/modules/auth/components/VerifyEmailEffect.tsx
-msgid "Email verification failed."
-msgstr "Провера имејла није успела."
+#~ msgid "Email verification failed."
+#~ msgstr "Провера имејла није успела."
 
 #. js-lingui-id: svTijF
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
@@ -2172,7 +2196,12 @@ msgstr ""
 
 #. js-lingui-id: bVax4d
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
-msgid "Failed to remove  override"
+#~ msgid "Failed to remove  override"
+#~ msgstr ""
+
+#. js-lingui-id: A/P7PX
+#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
+msgid "Failed to remove override"
 msgstr ""
 
 #. js-lingui-id: Dzh4a2
@@ -2979,8 +3008,13 @@ msgstr ""
 
 #. js-lingui-id: 4cjU2u
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
-msgid "Manage the members of your space here"
-msgstr "Овде управљајте члановима свог простора"
+#~ msgid "Manage the members of your space here"
+#~ msgstr "Овде управљајте члановима свог простора"
+
+#. js-lingui-id: N7fMy9
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+msgid "Manage the members of your workspace here"
+msgstr ""
 
 #. js-lingui-id: FyFNsd
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -3347,8 +3381,8 @@ msgstr "Нема доступних података о метрикама"
 
 #. js-lingui-id: DL8pzn
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
-msgid "No more members to assign"
-msgstr "Нема више чланова за доделу"
+#~ msgid "No more members to assign"
+#~ msgstr "Нема више чланова за доделу"
 
 #. js-lingui-id: tTItk7
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -4037,7 +4071,6 @@ msgid "Russian"
 msgstr "Руски"
 
 #. js-lingui-id: tfDRzk
-#: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 msgid "Save"
@@ -4271,8 +4304,8 @@ msgstr ""
 
 #. js-lingui-id: mWHn81
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
-msgid "Select the correct field for each column you'd like to import."
-msgstr ""
+#~ msgid "Select the correct field for each column you'd like to import."
+#~ msgstr ""
 
 #. js-lingui-id: pofGCP
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
@@ -4772,6 +4805,11 @@ msgstr "Вредности овог поља морају бити јединс�
 msgid "The whole event details will be shared with your team."
 msgstr "Цели детаљи догађаја ће бити подељени са вашим тимом."
 
+#. js-lingui-id: MssRHl
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
+msgid "The workspace needs at least one Admin"
+msgstr ""
+
 #. js-lingui-id: FEr96N
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Theme"
@@ -5127,6 +5165,11 @@ msgstr ""
 msgid "Values"
 msgstr "Вредности"
 
+#. js-lingui-id: rawKOG
+#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
+msgid "Variable deleted successfully."
+msgstr ""
+
 #. js-lingui-id: dY/1ir
 #: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
 msgid "Variable not found"
@@ -5134,7 +5177,12 @@ msgstr "Променљива није пронађена"
 
 #. js-lingui-id: N/89ho
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
-msgid "Variable updated successfully"
+#~ msgid "Variable updated successfully"
+#~ msgstr ""
+
+#. js-lingui-id: 2ushgC
+#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
+msgid "Variable updated successfully."
 msgstr ""
 
 #. js-lingui-id: IHIWR4
@@ -5159,8 +5207,8 @@ msgstr "Прегледај детаље о плаћању"
 
 #. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "View execution details"
-msgstr "Прегледајте детаље извршења"
+#~ msgid "View execution details"
+#~ msgstr "Прегледајте детаље извршења"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
@@ -5225,13 +5273,14 @@ msgstr "Послаћемо вам линк за проверу власништ�
 
 #. js-lingui-id: TRDppN
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Webhook"
-msgstr "Вебхук"
+#~ msgid "Webhook"
+#~ msgstr "Вебхук"
 
 #. js-lingui-id: v1kQyJ
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Webhooks"
 msgstr "Вебхукс"
@@ -5263,13 +5312,13 @@ msgstr "Када ће кључ бити онемогућен"
 
 #. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow is running..."
-msgstr "Workflows се извршавају..."
+#~ msgid "Workflow is running..."
+#~ msgstr "Workflows се извршавају..."
 
 #. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow run failed"
-msgstr "Извршење Workflows није успело"
+#~ msgid "Workflow run failed"
+#~ msgstr "Извршење Workflows није успело"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx

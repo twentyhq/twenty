@@ -1,31 +1,4 @@
-import { FactoryProvider, ModuleMetadata } from '@nestjs/common';
-
-import { S3DriverOptions } from 'src/engine/core-modules/file-storage/drivers/s3.driver';
-import { LocalDriverOptions } from 'src/engine/core-modules/file-storage/drivers/local.driver';
-
 export enum StorageDriverType {
-  S3 = 's3',
-  Local = 'local',
+  S_3 = 'S_3',
+  LOCAL = 'LOCAL',
 }
-
-export interface S3DriverFactoryOptions {
-  type: StorageDriverType.S3;
-  options: S3DriverOptions;
-}
-
-export interface LocalDriverFactoryOptions {
-  type: StorageDriverType.Local;
-  options: LocalDriverOptions;
-}
-
-export type FileStorageModuleOptions =
-  | S3DriverFactoryOptions
-  | LocalDriverFactoryOptions;
-
-export type FileStorageModuleAsyncOptions = {
-  useFactory: (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ...args: any[]
-  ) => FileStorageModuleOptions | Promise<FileStorageModuleOptions>;
-} & Pick<ModuleMetadata, 'imports'> &
-  Pick<FactoryProvider, 'inject'>;

@@ -2,6 +2,7 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { getSubFieldOptionKey } from '@/object-record/spreadsheet-import/utils/getSubFieldOptionKey';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -68,7 +69,7 @@ export const MatchColumnSelectSubFieldSelectDropdownContent = ({
     .filter((subFieldName) => subFieldName.includes(searchFilter));
 
   return (
-    <>
+    <DropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -85,7 +86,7 @@ export const MatchColumnSelectSubFieldSelectDropdownContent = ({
         autoFocus
       />
       <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight width={200}>
+      <DropdownMenuItemsContainer hasMaxHeight>
         {subFieldNamesThatExistInOptions.map((subFieldName) => (
           <MenuItem
             key={subFieldName}
@@ -104,6 +105,6 @@ export const MatchColumnSelectSubFieldSelectDropdownContent = ({
           />
         ))}
       </DropdownMenuItemsContainer>
-    </>
+    </DropdownContent>
   );
 };

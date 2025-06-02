@@ -180,3 +180,25 @@ export const AutomaticLabelFromURL: Story = {
     expect(secondaryLink).toHaveAttribute('href', 'https://test.example.com');
   },
 };
+
+export const InvalidLinks: Story = {
+  args: {
+    value: {
+      primaryLinkUrl: 'wikipedia',
+      primaryLinkLabel: 'Invalid URL',
+      secondaryLinks: [{ url: 'lydia,com', label: 'Invalid URL with comma' }],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await waitFor(() => {
+      expect(canvas.queryByRole('link')).toBeNull();
+    });
+
+    expect(canvas.queryByText('Invalid URL')).not.toBeInTheDocument();
+    expect(
+      canvas.queryByText('Invalid URL with comma'),
+    ).not.toBeInTheDocument();
+  },
+};

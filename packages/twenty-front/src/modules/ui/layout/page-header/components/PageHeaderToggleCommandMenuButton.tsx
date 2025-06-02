@@ -125,9 +125,7 @@ export const PageHeaderToggleCommandMenuButton = () => {
           animatedSvg={
             <AnimatedIcon isCommandMenuOpened={isCommandMenuOpened} />
           }
-          data-click-outside-id={
-            PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID
-          }
+          dataClickOutsideId={PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID}
           dataTestId="page-header-command-menu-button"
           size={isMobile ? 'medium' : 'small'}
           variant="secondary"

@@ -37,13 +37,15 @@ export const useOpenRecordFilterChipFromTableHeader = () => {
       );
     }
 
-    const existingRecordFilter = currentRecordFilters.find(
-      (recordFilter) => recordFilter.fieldMetadataId === fieldMetadataItemId,
+    const existingNonAdvancedRecordFilter = currentRecordFilters.find(
+      (recordFilter) =>
+        recordFilter.fieldMetadataId === fieldMetadataItemId &&
+        !isDefined(recordFilter.recordFilterGroupId),
     );
 
-    if (isDefined(existingRecordFilter)) {
-      setEditableFilterChipDropdownStates(existingRecordFilter);
-      openDropdownFromOutside(existingRecordFilter.id);
+    if (isDefined(existingNonAdvancedRecordFilter)) {
+      setEditableFilterChipDropdownStates(existingNonAdvancedRecordFilter);
+      openDropdownFromOutside(existingNonAdvancedRecordFilter.id);
       return;
     }
 

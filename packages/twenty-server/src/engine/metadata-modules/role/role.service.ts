@@ -218,7 +218,7 @@ export class RoleService {
       canUpdateAllObjectRecords: true,
       canSoftDeleteAllObjectRecords: true,
       canDestroyAllObjectRecords: true,
-      isEditable: false,
+      isEditable: true,
       workspaceId,
     });
   }

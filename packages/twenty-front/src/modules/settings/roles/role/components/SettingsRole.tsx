@@ -1,3 +1,4 @@
+import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWorkspaceMemberRole';
@@ -22,7 +23,6 @@ import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLockOpen, IconSettings, IconUserPlus } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
 import { v4 } from 'uuid';
 import {
   FeatureFlagKey,
@@ -60,7 +60,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   );
 
   const isPermissionsV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsPermissionsV2Enabled,
+    FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
   );
 
   const navigateSettings = useNavigateSettings();
@@ -281,16 +281,11 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
         },
       ]}
       actionButton={
-        isDirty && (
-          <Button
-            title={isCreateMode ? t`Create` : t`Save`}
-            variant="primary"
-            size="small"
-            accent="blue"
-            onClick={handleSave}
-            disabled={!isRoleEditable}
-          />
-        )
+        <SaveAndCancelButtons
+          onSave={handleSave}
+          onCancel={() => navigateSettings(SettingsPath.Roles)}
+          isSaveDisabled={!isRoleEditable || !isDirty}
+        />
       }
     >
       <SettingsPageContainer>
