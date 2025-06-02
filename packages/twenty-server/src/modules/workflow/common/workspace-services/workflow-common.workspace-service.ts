@@ -132,6 +132,37 @@ export class WorkflowCommonWorkspaceService {
     };
   }
 
+  async restoreWorkflowSubEntities(workflowIds: string[]): Promise<void> {
+    const workflowVersionRepository =
+      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        'workflowVersion',
+      );
+
+    const workflowRunRepository =
+      await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
+        'workflowRun',
+      );
+
+    const workflowAutomatedTriggerRepository =
+      await this.twentyORMManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
+        'workflowAutomatedTrigger',
+      );
+
+    workflowIds.forEach((workflowId) => {
+      workflowAutomatedTriggerRepository.restore({
+        workflowId,
+      });
+
+      workflowRunRepository.restore({
+        workflowId,
+      });
+
+      workflowVersionRepository.restore({
+        workflowId,
+      });
+    });
+  }
+
   async cleanWorkflowsSubEntities(
     workflowIds: string[],
     workspaceId: string,
