@@ -918,7 +918,10 @@ export class WorkspaceEntityManager extends EntityManager {
       permissionOptions,
     )
       .setFindOptions(options || {})
-      .getExists();
+      .select('1')
+      .limit(1)
+      .getRawOne()
+      .then((result) => isDefined(result));
   }
 
   override existsBy<Entity extends ObjectLiteral>(
@@ -935,7 +938,10 @@ export class WorkspaceEntityManager extends EntityManager {
       permissionOptions,
     )
       .setFindOptions({ where })
-      .getExists();
+      .select('1')
+      .limit(1)
+      .getRawOne()
+      .then((result) => isDefined(result));
   }
 
   override count<Entity extends ObjectLiteral>(

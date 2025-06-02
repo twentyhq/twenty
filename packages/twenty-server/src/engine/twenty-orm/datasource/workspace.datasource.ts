@@ -13,6 +13,7 @@ import {
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -112,22 +113,28 @@ export class WorkspaceDataSource extends DataSource {
   ): SelectQueryBuilder<any> {
     let calledByWorkspaceEntityManager;
 
+    const isPermissionsV2Enabled =
+      this.featureFlagMap[FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED];
+
     const isCalledWithEntityTarget =
       isDefined(aliasOrOptions) && typeof aliasOrOptions === 'string';
 
-    if (isCalledWithEntityTarget) {
-      calledByWorkspaceEntityManager = options?.calledByWorkspaceEntityManager;
-    } else {
-      calledByWorkspaceEntityManager = (
-        aliasOrOptions as CreateQueryBuilderOptions
-      )?.calledByWorkspaceEntityManager;
-    }
+    if (isPermissionsV2Enabled) {
+      if (isCalledWithEntityTarget) {
+        calledByWorkspaceEntityManager =
+          options?.calledByWorkspaceEntityManager;
+      } else {
+        calledByWorkspaceEntityManager = (
+          aliasOrOptions as CreateQueryBuilderOptions
+        )?.calledByWorkspaceEntityManager;
+      }
 
-    if (!(calledByWorkspaceEntityManager === true)) {
-      throw new PermissionsException(
-        'Method not allowed because permissions are not implemented at datasource level.',
-        PermissionsExceptionCode.METHOD_NOT_ALLOWED,
-      );
+      if (!(calledByWorkspaceEntityManager === true)) {
+        throw new PermissionsException(
+          'Method not allowed because permissions are not implemented at datasource level.',
+          PermissionsExceptionCode.METHOD_NOT_ALLOWED,
+        );
+      }
     }
 
     if (isCalledWithEntityTarget) {
