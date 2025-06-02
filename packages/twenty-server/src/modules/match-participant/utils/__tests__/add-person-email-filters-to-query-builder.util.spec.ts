@@ -1,16 +1,16 @@
 import { EachTestingContext } from 'twenty-shared/testing';
 import { SelectQueryBuilder } from 'typeorm';
 
-import { buildPersonEmailQueryBuilder } from 'src/modules/match-participant/utils/build-person-email-query-builder.util';
+import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-filters-to-query-builder';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
-type BuildPersonEmailQueryBuilderTestCase = EachTestingContext<{
+type AddPersonEmailFiltersToQueryBuilderTestCase = EachTestingContext<{
   emails: string[];
   excludePersonIds?: string[];
   description: string;
 }>;
 
-const testCases: BuildPersonEmailQueryBuilderTestCase[] = [
+const testCases: AddPersonEmailFiltersToQueryBuilderTestCase[] = [
   {
     title: 'single email without exclusions',
     context: {
@@ -111,7 +111,7 @@ const mockQueryBuilder: Partial<SelectQueryBuilder<PersonWorkspaceEntity>> = {
   }),
 };
 
-describe('buildPersonEmailQueryBuilder', () => {
+describe('addPersonEmailFiltersToQueryBuilder', () => {
   beforeEach(() => {
     queryBuilderCalls = [];
     jest.clearAllMocks();
@@ -120,7 +120,7 @@ describe('buildPersonEmailQueryBuilder', () => {
   it.each(testCases)(
     '$title',
     ({ context: { emails, excludePersonIds, description } }) => {
-      const result = buildPersonEmailQueryBuilder({
+      const result = addPersonEmailFiltersToQueryBuilder({
         queryBuilder:
           mockQueryBuilder as SelectQueryBuilder<PersonWorkspaceEntity>,
         emails,

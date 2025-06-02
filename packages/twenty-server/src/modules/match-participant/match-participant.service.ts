@@ -7,7 +7,7 @@ import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/s
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
-import { buildPersonEmailQueryBuilder } from 'src/modules/match-participant/utils/build-person-email-query-builder.util';
+import { addPersonEmailFiltersToQuery } from 'src/modules/match-participant/utils/add-person-email-filters-to-query-builder';
 import { findPersonByPrimaryOrAdditionalEmail } from 'src/modules/match-participant/utils/find-person-by-primary-or-additional-email';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
@@ -67,7 +67,7 @@ export class MatchParticipantService<
         'person',
       );
 
-    const queryBuilder = buildPersonEmailQueryBuilder({
+    const queryBuilder = addPersonEmailFiltersToQuery({
       queryBuilder: personRepository.createQueryBuilder('person'),
       emails: uniqueParticipantsHandles,
     });
@@ -282,7 +282,7 @@ export class MatchParticipantService<
           'person',
         );
 
-      const queryBuilder = buildPersonEmailQueryBuilder({
+      const queryBuilder = addPersonEmailFiltersToQuery({
         queryBuilder: personRepository.createQueryBuilder('person'),
         emails: [handle],
         excludePersonIds: [personId],

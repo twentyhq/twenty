@@ -21,7 +21,7 @@ import { Contact } from 'src/modules/contact-creation-manager/types/contact.type
 import { filterOutSelfAndContactsFromCompanyOrWorkspace } from 'src/modules/contact-creation-manager/utils/filter-out-contacts-from-company-or-workspace.util';
 import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util';
 import { getUniqueContactsAndHandles } from 'src/modules/contact-creation-manager/utils/get-unique-contacts-and-handles.util';
-import { buildPersonEmailQueryBuilder } from 'src/modules/match-participant/utils/build-person-email-query-builder.util';
+import { addPersonEmailFiltersToQuery } from 'src/modules/match-participant/utils/add-person-email-filters-to-query-builder';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { isWorkDomain, isWorkEmail } from 'src/utils/is-work-email';
@@ -83,7 +83,7 @@ export class CreateCompanyAndContactService {
       return [];
     }
 
-    const queryBuilder = buildPersonEmailQueryBuilder({
+    const queryBuilder = addPersonEmailFiltersToQuery({
       queryBuilder: personRepository.createQueryBuilder('person'),
       emails: uniqueHandles,
     });

@@ -2,17 +2,17 @@ import { SelectQueryBuilder } from 'typeorm';
 
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
-export interface BuildPersonEmailQueryBuilderOptions {
+export interface AddPersonEmailFiltersToQueryBuilderOptions {
   queryBuilder: SelectQueryBuilder<PersonWorkspaceEntity>;
   emails: string[];
   excludePersonIds?: string[];
 }
 
-export function buildPersonEmailQueryBuilder({
+export function addPersonEmailFiltersToQueryBuilder({
   queryBuilder,
   emails,
   excludePersonIds = [],
-}: BuildPersonEmailQueryBuilderOptions): SelectQueryBuilder<PersonWorkspaceEntity> {
+}: AddPersonEmailFiltersToQueryBuilderOptions): SelectQueryBuilder<PersonWorkspaceEntity> {
   const normalizedEmails = emails.map((email) => email.toLowerCase());
 
   queryBuilder = queryBuilder
