@@ -1,7 +1,7 @@
 import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
 import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
 import { parseDateToString } from '@/ui/input/components/internal/date/utils/parseDateToString';
-import { Meta, Story, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 import {
   expect,
   fn,
