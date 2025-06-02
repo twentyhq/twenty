@@ -12,7 +12,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/SettingsWorkspace',
   component: SettingsWorkspace,
   decorators: [PageDecorator],
-  args: { routePath: '/settings/workspace' },
+  args: { routePath: '/settings/general' },
   parameters: {
     msw: graphqlMocks,
   },

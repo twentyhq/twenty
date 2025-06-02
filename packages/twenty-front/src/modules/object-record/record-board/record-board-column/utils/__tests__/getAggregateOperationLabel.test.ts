@@ -1,45 +1,43 @@
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
-import { DATE_AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/DateAggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { expect } from '@storybook/test';
 
 describe('getAggregateOperationLabel', () => {
   it('should return correct labels for each operation', () => {
-    expect(getAggregateOperationLabel(AGGREGATE_OPERATIONS.min)).toBe('Min');
-    expect(getAggregateOperationLabel(AGGREGATE_OPERATIONS.max)).toBe('Max');
-    expect(getAggregateOperationLabel(AGGREGATE_OPERATIONS.avg)).toBe(
-      'Average',
-    );
-    expect(getAggregateOperationLabel(DATE_AGGREGATE_OPERATIONS.earliest)).toBe(
+    expect(getAggregateOperationLabel(AggregateOperations.MIN)).toBe('Min');
+    expect(getAggregateOperationLabel(AggregateOperations.MAX)).toBe('Max');
+    expect(getAggregateOperationLabel(AggregateOperations.AVG)).toBe('Average');
+    expect(getAggregateOperationLabel(DateAggregateOperations.EARLIEST)).toBe(
       'Earliest date',
     );
-    expect(getAggregateOperationLabel(DATE_AGGREGATE_OPERATIONS.latest)).toBe(
+    expect(getAggregateOperationLabel(DateAggregateOperations.LATEST)).toBe(
       'Latest date',
     );
-    expect(getAggregateOperationLabel(AGGREGATE_OPERATIONS.sum)).toBe('Sum');
-    expect(getAggregateOperationLabel(AGGREGATE_OPERATIONS.count)).toBe(
+    expect(getAggregateOperationLabel(AggregateOperations.SUM)).toBe('Sum');
+    expect(getAggregateOperationLabel(AggregateOperations.COUNT)).toBe(
       'Count all',
     );
-    expect(getAggregateOperationLabel(AGGREGATE_OPERATIONS.countEmpty)).toBe(
+    expect(getAggregateOperationLabel(AggregateOperations.COUNT_EMPTY)).toBe(
       'Count empty',
     );
-    expect(getAggregateOperationLabel(AGGREGATE_OPERATIONS.countNotEmpty)).toBe(
-      'Count not empty',
-    );
     expect(
-      getAggregateOperationLabel(AGGREGATE_OPERATIONS.countUniqueValues),
+      getAggregateOperationLabel(AggregateOperations.COUNT_NOT_EMPTY),
+    ).toBe('Count not empty');
+    expect(
+      getAggregateOperationLabel(AggregateOperations.COUNT_UNIQUE_VALUES),
     ).toBe('Count unique values');
     expect(
-      getAggregateOperationLabel(AGGREGATE_OPERATIONS.percentageEmpty),
+      getAggregateOperationLabel(AggregateOperations.PERCENTAGE_EMPTY),
     ).toBe('Percent empty');
     expect(
-      getAggregateOperationLabel(AGGREGATE_OPERATIONS.percentageNotEmpty),
+      getAggregateOperationLabel(AggregateOperations.PERCENTAGE_NOT_EMPTY),
     ).toBe('Percent not empty');
   });
 
   it('should throw error for unknown operation', () => {
     expect(() =>
-      getAggregateOperationLabel('INVALID' as AGGREGATE_OPERATIONS),
+      getAggregateOperationLabel('INVALID' as AggregateOperations),
     ).toThrow('Unknown aggregate operation: INVALID');
   });
 });

@@ -1,11 +1,11 @@
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 
 export type AggregateOperationsOmittingStandardOperations = Exclude<
-  AGGREGATE_OPERATIONS,
-  | AGGREGATE_OPERATIONS.count
-  | AGGREGATE_OPERATIONS.countEmpty
-  | AGGREGATE_OPERATIONS.countNotEmpty
-  | AGGREGATE_OPERATIONS.countUniqueValues
-  | AGGREGATE_OPERATIONS.percentageEmpty
-  | AGGREGATE_OPERATIONS.percentageNotEmpty
+  AggregateOperations,
+  | AggregateOperations.COUNT
+  | AggregateOperations.COUNT_EMPTY
+  | AggregateOperations.COUNT_NOT_EMPTY
+  | AggregateOperations.COUNT_UNIQUE_VALUES
+  | AggregateOperations.PERCENTAGE_EMPTY
+  | AggregateOperations.PERCENTAGE_NOT_EMPTY
 >;

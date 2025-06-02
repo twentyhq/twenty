@@ -82,9 +82,14 @@ export const parseGmailMessagesImportError = (
         MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
       );
 
+    case 503:
+      return new MessageImportDriverException(
+        message,
+        MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+      );
+
     case 500:
     case 502:
-    case 503:
     case 504:
       if (reason === 'backendError') {
         return new MessageImportDriverException(

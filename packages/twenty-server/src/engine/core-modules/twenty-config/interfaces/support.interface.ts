@@ -1,4 +1,4 @@
 export enum SupportDriver {
-  None = 'none',
-  Front = 'front',
+  NONE = 'NONE',
+  FRONT = 'FRONT',
 }

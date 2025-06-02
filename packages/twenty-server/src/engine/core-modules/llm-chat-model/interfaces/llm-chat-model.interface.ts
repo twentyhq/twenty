@@ -1,7 +1,7 @@
-import { ModuleMetadata, FactoryProvider } from '@nestjs/common';
+import { FactoryProvider, ModuleMetadata } from '@nestjs/common';
 
 export enum LLMChatModelDriver {
-  OpenAI = 'openai',
+  OPENAI = 'OPENAI',
 }
 
 export interface LLMChatModelModuleOptions {
