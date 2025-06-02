@@ -230,7 +230,7 @@ export class UserResolver {
   })
   supportUserHash(@Parent() parent: User): string | null {
     if (
-      this.twentyConfigService.get('SUPPORT_DRIVER') !== SupportDriver.Front
+      this.twentyConfigService.get('SUPPORT_DRIVER') !== SupportDriver.FRONT
     ) {
       return null;
     }

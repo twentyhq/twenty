@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
-import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { ClientConfig } from 'src/engine/core-modules/client-config/client-config.entity';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
@@ -57,11 +56,9 @@ export class ClientConfigService {
       frontDomain: this.domainManagerService.getFrontUrl().hostname,
       debugMode:
         this.twentyConfigService.get('NODE_ENV') ===
-        NodeEnvironment.development,
+        NodeEnvironment.DEVELOPMENT,
       support: {
-        supportDriver: supportDriver
-          ? this.transformEnum(supportDriver, SupportDriver)
-          : SupportDriver.None,
+        supportDriver: supportDriver ? supportDriver : SupportDriver.NONE,
         supportFrontChatId: this.twentyConfigService.get(
           'SUPPORT_FRONT_CHAT_ID',
         ),
@@ -72,9 +69,7 @@ export class ClientConfigService {
         dsn: this.twentyConfigService.get('SENTRY_FRONT_DSN'),
       },
       captcha: {
-        provider: captchaProvider
-          ? this.transformEnum(captchaProvider, CaptchaDriverType)
-          : undefined,
+        provider: captchaProvider ? captchaProvider : undefined,
         siteKey: this.twentyConfigService.get('CAPTCHA_SITE_KEY'),
       },
       chromeExtensionId: this.twentyConfigService.get('CHROME_EXTENSION_ID'),
@@ -89,7 +84,7 @@ export class ClientConfigService {
       analyticsEnabled: this.twentyConfigService.get('ANALYTICS_ENABLED'),
       canManageFeatureFlags:
         this.twentyConfigService.get('NODE_ENV') ===
-          NodeEnvironment.development ||
+          NodeEnvironment.DEVELOPMENT ||
         this.twentyConfigService.get('IS_BILLING_ENABLED'),
       publicFeatureFlags: PUBLIC_FEATURE_FLAGS,
       isMicrosoftMessagingEnabled: this.twentyConfigService.get(
@@ -110,35 +105,5 @@ export class ClientConfigService {
     };
 
     return clientConfig;
-  }
-
-  // GraphQL enum values are in PascalCase, but the config values are in kebab-case
-  // This function transforms the config values, the same way GraphQL does
-  private transformEnum<T extends Record<string, string>>(
-    value: string,
-    enumObject: T,
-  ): T[keyof T] {
-    const directMatch = Object.keys(enumObject).find(
-      (key) => key === value,
-    ) as keyof T;
-
-    if (directMatch) {
-      return enumObject[directMatch];
-    }
-
-    const valueMatch = Object.entries(enumObject).find(
-      ([, enumValue]) => enumValue === value,
-    );
-
-    if (valueMatch) {
-      return valueMatch[0] as T[keyof T];
-    }
-
-    const availableKeys = Object.keys(enumObject);
-    const availableValues = Object.values(enumObject);
-
-    throw new Error(
-      `Unknown enum value: ${value}. Available keys: ${availableKeys.join(', ')}. Available values: ${availableValues.join(', ')}`,
-    );
   }
 }

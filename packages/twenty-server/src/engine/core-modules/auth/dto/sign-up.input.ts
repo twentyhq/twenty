@@ -39,4 +39,9 @@ export class SignUpInput {
   @IsString()
   @IsOptional()
   locale?: keyof typeof APP_LOCALES;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  verifyEmailNextPath?: string;
 }

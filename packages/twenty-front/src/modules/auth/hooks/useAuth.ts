@@ -11,11 +11,9 @@ import {
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
 import { workspacesState } from '@/auth/states/workspaces';
 import { billingState } from '@/client-config/states/billingState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
-import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -42,25 +40,27 @@ import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
+import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { captchaState } from '@/client-config/states/captchaState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { i18n } from '@lingui/core';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { iconsState } from 'twenty-ui/display';
@@ -88,8 +88,6 @@ export const useAuth = () => {
   const isEmailVerificationRequired = useRecoilValue(
     isEmailVerificationRequiredState,
   );
-
-  const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
 
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
@@ -123,10 +121,13 @@ export const useAuth = () => {
 
   const [, setSearchParams] = useSearchParams();
 
+  const navigate = useNavigate();
+
   const clearSession = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
         const emptySnapshot = snapshot_UNSTABLE();
+
         const iconsValue = snapshot.getLoadable(iconsState).getValue();
         const authProvidersValue = snapshot
           .getLoadable(workspaceAuthProvidersState)
@@ -136,7 +137,6 @@ export const useAuth = () => {
           .getLoadable(isDeveloperDefaultSignInPrefilledState)
           .getValue();
         const supportChat = snapshot.getLoadable(supportChatState).getValue();
-        const isDebugMode = snapshot.getLoadable(isDebugModeState).getValue();
         const captcha = snapshot.getLoadable(captchaState).getValue();
         const clientConfigApiStatus = snapshot
           .getLoadable(clientConfigApiStatusState)
@@ -150,6 +150,12 @@ export const useAuth = () => {
         const domainConfiguration = snapshot
           .getLoadable(domainConfigurationState)
           .getValue();
+        const apiConfig = snapshot.getLoadable(apiConfigState).getValue();
+        const sentryConfig = snapshot.getLoadable(sentryConfigState).getValue();
+        const workspacePublicData = snapshot
+          .getLoadable(workspacePublicDataState)
+          .getValue();
+
         const initialSnapshot = emptySnapshot.map(({ set }) => {
           set(iconsState, iconsValue);
           set(workspaceAuthProvidersState, authProvidersValue);
@@ -159,22 +165,27 @@ export const useAuth = () => {
             isDeveloperDefaultSignInPrefilled,
           );
           set(supportChatState, supportChat);
-          set(isDebugModeState, isDebugMode);
           set(captchaState, captcha);
+          set(apiConfigState, apiConfig);
+          set(sentryConfigState, sentryConfig);
+          set(workspacePublicDataState, workspacePublicData);
           set(clientConfigApiStatusState, clientConfigApiStatus);
           set(isCurrentUserLoadedState, isCurrentUserLoaded);
           set(isMultiWorkspaceEnabledState, isMultiWorkspaceEnabled);
           set(domainConfigurationState, domainConfiguration);
           return undefined;
         });
+
         goToRecoilSnapshot(initialSnapshot);
-        await client.clearStore();
+
         sessionStorage.clear();
         localStorage.clear();
+        await client.clearStore();
         // We need to explicitly clear the state to trigger the cookie deletion which include the parent domain
         setLastAuthenticateWorkspaceDomain(null);
+        navigate(AppPath.SignInUp);
       },
-    [client, goToRecoilSnapshot, setLastAuthenticateWorkspaceDomain],
+    [navigate, client, goToRecoilSnapshot, setLastAuthenticateWorkspaceDomain],
   );
 
   const handleGetLoginTokenFromCredentials = useCallback(
@@ -377,16 +388,9 @@ export const useAuth = () => {
         ),
       );
 
-      await refreshObjectMetadataItems();
       await loadCurrentUser();
     },
-    [
-      getAuthTokensFromLoginToken,
-      setTokenPair,
-      refreshObjectMetadataItems,
-      loadCurrentUser,
-      origin,
-    ],
+    [getAuthTokensFromLoginToken, setTokenPair, loadCurrentUser, origin],
   );
 
   const handleCredentialsSignIn = useCallback(
@@ -406,13 +410,21 @@ export const useAuth = () => {
   }, [clearSession]);
 
   const handleCredentialsSignUp = useCallback(
-    async (
-      email: string,
-      password: string,
-      workspaceInviteHash?: string,
-      workspacePersonalInviteToken?: string,
-      captchaToken?: string,
-    ) => {
+    async ({
+      email,
+      password,
+      workspaceInviteHash,
+      workspacePersonalInviteToken,
+      captchaToken,
+      verifyEmailNextPath,
+    }: {
+      email: string;
+      password: string;
+      workspaceInviteHash?: string;
+      workspacePersonalInviteToken?: string;
+      captchaToken?: string;
+      verifyEmailNextPath?: string;
+    }) => {
       const signUpResult = await signUp({
         variables: {
           email,
@@ -424,6 +436,7 @@ export const useAuth = () => {
           ...(workspacePublicData?.id
             ? { workspaceId: workspacePublicData.id }
             : {}),
+          verifyEmailNextPath,
         },
       });
 

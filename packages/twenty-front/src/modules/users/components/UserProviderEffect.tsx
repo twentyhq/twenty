@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react';
 import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceDeletedMembersState } from '@/auth/states/currentWorkspaceDeletedMembersStates';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
+import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { workspacesState } from '@/auth/states/workspaces';
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
@@ -21,6 +21,7 @@ import { AppPath } from '@/types/AppPath';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { enUS } from 'date-fns/locale';
+import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
@@ -32,7 +33,6 @@ import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { currentUserAvailableWorkspacesState } from '@/auth/states/currentUserAvailableWorkspaces';
 
 export const UserProviderEffect = () => {
-  const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
 
   const [isCurrentUserLoaded, setIsCurrentUserLoaded] = useRecoilState(
@@ -43,6 +43,8 @@ export const UserProviderEffect = () => {
   const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
   const setWorkspaces = useSetRecoilState(workspacesState);
   const setDateTimeFormat = useSetRecoilState(dateTimeFormatState);
+  const isLoggedIn = useIsLogged();
+
   const updateLocaleCatalog = useRecoilCallback(
     ({ snapshot, set }) =>
       async (newLocale: keyof typeof APP_LOCALES) => {
@@ -72,8 +74,9 @@ export const UserProviderEffect = () => {
     currentUserAvailableWorkspacesState,
   );
 
-  const { loading: queryLoading, data: queryData } = useGetCurrentUserQuery({
+  const { data: queryData, loading: queryLoading } = useGetCurrentUserQuery({
     skip:
+      !isLoggedIn ||
       isCurrentUserLoaded ||
       isMatchingLocation(location, AppPath.Verify) ||
       isMatchingLocation(location, AppPath.VerifyEmail),
@@ -81,7 +84,6 @@ export const UserProviderEffect = () => {
 
   useEffect(() => {
     if (!queryLoading) {
-      setIsLoading(false);
       setIsCurrentUserLoaded(true);
     }
 
@@ -169,16 +171,15 @@ export const UserProviderEffect = () => {
       setWorkspaces(workspaces);
     }
   }, [
+    queryLoading,
+    queryData?.currentUser,
     setCurrentUser,
     setCurrentUserWorkspace,
     setCurrentWorkspaceMembers,
     setCurrentUserAvailableWorkspaces,
-    isLoading,
-    queryLoading,
     setCurrentWorkspace,
     setCurrentWorkspaceMember,
     setWorkspaces,
-    queryData?.currentUser,
     setIsCurrentUserLoaded,
     setDateTimeFormat,
     setCurrentWorkspaceMembersWithDeleted,

@@ -4,12 +4,15 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
 
+import { verifyEmailNextPathState } from '@/app/states/verifyEmailNextPathState';
 import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { EmailVerificationSent } from '../sign-in-up/components/EmailVerificationSent';
@@ -22,8 +25,11 @@ export const VerifyEmailEffect = () => {
   const [searchParams] = useSearchParams();
   const [isError, setIsError] = useState(false);
 
+  const setVerifyEmailNextPath = useSetRecoilState(verifyEmailNextPathState);
+
   const email = searchParams.get('email');
   const emailVerificationToken = searchParams.get('emailVerificationToken');
+  const verifyEmailNextPath = searchParams.get('nextPath');
 
   const navigate = useNavigateApp();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
@@ -58,6 +64,11 @@ export const VerifyEmailEffect = () => {
             loginToken: loginToken.token,
           });
         }
+
+        if (isDefined(verifyEmailNextPath)) {
+          setVerifyEmailNextPath(verifyEmailNextPath);
+        }
+
         verifyLoginToken(loginToken.token);
       } catch (error) {
         const message: string =

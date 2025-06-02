@@ -37,7 +37,7 @@ describe('FileStorageDriverFactory', () => {
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
-          if (key === 'STORAGE_TYPE') return StorageDriverType.Local;
+          if (key === 'STORAGE_TYPE') return StorageDriverType.LOCAL;
           if (key === 'STORAGE_LOCAL_PATH') return storagePath;
 
           return undefined;
@@ -55,7 +55,7 @@ describe('FileStorageDriverFactory', () => {
     it('should build config key for S3 storage', () => {
       jest
         .spyOn(twentyConfigService, 'get')
-        .mockReturnValue(StorageDriverType.S3);
+        .mockReturnValue(StorageDriverType.S_3);
       jest
         .spyOn(factory as any, 'getConfigGroupHash')
         .mockReturnValue('s3-hash-123');
@@ -84,7 +84,7 @@ describe('FileStorageDriverFactory', () => {
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
-          if (key === 'STORAGE_TYPE') return StorageDriverType.Local;
+          if (key === 'STORAGE_TYPE') return StorageDriverType.LOCAL;
           if (key === 'STORAGE_LOCAL_PATH') return storagePath;
 
           return undefined;
@@ -102,7 +102,7 @@ describe('FileStorageDriverFactory', () => {
         .mockImplementation((key: string) => {
           switch (key) {
             case 'STORAGE_TYPE':
-              return StorageDriverType.S3;
+              return StorageDriverType.S_3;
             case 'STORAGE_S3_NAME':
               return 'test-bucket';
             case 'STORAGE_S3_ENDPOINT':
@@ -130,7 +130,7 @@ describe('FileStorageDriverFactory', () => {
         .mockImplementation((key: string) => {
           switch (key) {
             case 'STORAGE_TYPE':
-              return StorageDriverType.S3;
+              return StorageDriverType.S_3;
             case 'STORAGE_S3_NAME':
               return 'test-bucket';
             case 'STORAGE_S3_ENDPOINT':
@@ -168,7 +168,7 @@ describe('FileStorageDriverFactory', () => {
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
-          if (key === 'STORAGE_TYPE') return StorageDriverType.Local;
+          if (key === 'STORAGE_TYPE') return StorageDriverType.LOCAL;
           if (key === 'STORAGE_LOCAL_PATH') return storagePath;
 
           return undefined;
@@ -186,7 +186,7 @@ describe('FileStorageDriverFactory', () => {
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
-          if (key === 'STORAGE_TYPE') return StorageDriverType.Local;
+          if (key === 'STORAGE_TYPE') return StorageDriverType.LOCAL;
           if (key === 'STORAGE_LOCAL_PATH') return storagePath;
 
           return undefined;
@@ -203,7 +203,7 @@ describe('FileStorageDriverFactory', () => {
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
-          if (key === 'STORAGE_TYPE') return StorageDriverType.Local;
+          if (key === 'STORAGE_TYPE') return StorageDriverType.LOCAL;
           if (key === 'STORAGE_LOCAL_PATH') return '/tmp/storage1';
 
           return undefined;
@@ -215,7 +215,7 @@ describe('FileStorageDriverFactory', () => {
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
-          if (key === 'STORAGE_TYPE') return StorageDriverType.Local;
+          if (key === 'STORAGE_TYPE') return StorageDriverType.LOCAL;
           if (key === 'STORAGE_LOCAL_PATH') return '/tmp/storage2';
 
           return undefined;
@@ -233,7 +233,7 @@ describe('FileStorageDriverFactory', () => {
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
-          if (key === 'STORAGE_TYPE') return StorageDriverType.Local;
+          if (key === 'STORAGE_TYPE') return StorageDriverType.LOCAL;
           if (key === 'STORAGE_LOCAL_PATH') return '/tmp/storage';
 
           return undefined;
@@ -247,7 +247,7 @@ describe('FileStorageDriverFactory', () => {
         .mockImplementation((key: string) => {
           switch (key) {
             case 'STORAGE_TYPE':
-              return StorageDriverType.S3;
+              return StorageDriverType.S_3;
             case 'STORAGE_S3_NAME':
               return 'test-bucket';
             case 'STORAGE_S3_ENDPOINT':
@@ -285,7 +285,7 @@ describe('FileStorageDriverFactory', () => {
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
-          if (key === 'STORAGE_TYPE') return StorageDriverType.Local;
+          if (key === 'STORAGE_TYPE') return StorageDriverType.LOCAL;
           if (key === 'STORAGE_LOCAL_PATH') return storagePath;
 
           return undefined;

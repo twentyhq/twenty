@@ -15,13 +15,13 @@ export const serverlessModuleFactory = async (
   const options = { fileStorageService };
 
   switch (driverType) {
-    case ServerlessDriverType.Local: {
+    case ServerlessDriverType.LOCAL: {
       return {
-        type: ServerlessDriverType.Local,
+        type: ServerlessDriverType.LOCAL,
         options,
       };
     }
-    case ServerlessDriverType.Lambda: {
+    case ServerlessDriverType.LAMBDA: {
       const region = twentyConfigService.get('SERVERLESS_LAMBDA_REGION');
       const accessKeyId = twentyConfigService.get(
         'SERVERLESS_LAMBDA_ACCESS_KEY_ID',
@@ -36,7 +36,7 @@ export const serverlessModuleFactory = async (
       );
 
       return {
-        type: ServerlessDriverType.Lambda,
+        type: ServerlessDriverType.LAMBDA,
         options: {
           ...options,
           credentials: accessKeyId
