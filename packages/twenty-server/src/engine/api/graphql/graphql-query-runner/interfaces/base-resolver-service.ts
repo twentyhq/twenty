@@ -15,7 +15,7 @@ import {
   WorkspaceResolverBuilderMethodNames,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-import { SYSTEM_OBJECTS_PERMISSIONS_REQUIREMENTS } from 'src/engine/api/graphql/graphql-query-runner/constants/system-objects-permissions-requirements.constant';
+import { OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS } from 'src/engine/api/graphql/graphql-query-runner/constants/objects-with-settings-permissions-requirements';
 import { GraphqlQuerySelectedFieldsResult } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
@@ -37,6 +37,7 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 export type GraphqlQueryResolverExecutionArgs<Input extends ResolverArgs> = {
   args: Input;
@@ -96,8 +97,15 @@ export abstract class GraphqlQueryBaseResolverService<
       const isPermissionsV2Enabled =
         featureFlagsMap[FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED];
 
-      if (objectMetadataItemWithFieldMaps.isSystem === true) {
-        await this.validateSystemObjectPermissionsOrThrow(options);
+      const objectIsWorkflow =
+        objectMetadataItemWithFieldMaps.standardId ===
+        STANDARD_OBJECT_IDS.workflow;
+
+      if (
+        objectMetadataItemWithFieldMaps.isSystem === true ||
+        objectIsWorkflow
+      ) {
+        await this.validateSettingsPermissionsOnObjectOrThrow(options);
       } else {
         if (!isPermissionsV2Enabled)
           await this.validateObjectRecordPermissionsOrThrow({
@@ -185,19 +193,19 @@ export abstract class GraphqlQueryBaseResolverService<
     }
   }
 
-  private async validateSystemObjectPermissionsOrThrow(
+  private async validateSettingsPermissionsOnObjectOrThrow(
     options: WorkspaceQueryRunnerOptions,
   ) {
     const { authContext, objectMetadataItemWithFieldMaps } = options;
 
     if (
-      Object.keys(SYSTEM_OBJECTS_PERMISSIONS_REQUIREMENTS).includes(
+      Object.keys(OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS).includes(
         objectMetadataItemWithFieldMaps.nameSingular,
       )
     ) {
       const permissionRequired: SettingPermissionType =
         // @ts-expect-error legacy noImplicitAny
-        SYSTEM_OBJECTS_PERMISSIONS_REQUIREMENTS[
+        OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS[
           objectMetadataItemWithFieldMaps.nameSingular
         ];
 
