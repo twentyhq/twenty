@@ -20,7 +20,10 @@ import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billin
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 @Entity({ name: 'billingEntitlement', schema: 'core' })
 @ObjectType()
-@Unique('IndexOnFeatureKeyAndWorkspaceIdUnique', ['key', 'workspaceId'])
+@Unique('IDX_BILLING_ENTITLEMENT_KEY_WORKSPACE_ID_UNIQUE', [
+  'key',
+  'workspaceId',
+])
 export class BillingEntitlement {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')

@@ -1,12 +1,11 @@
 import { useTheme } from '@emotion/react';
 import { BaseEdge, EdgeProps, getStraightPath } from '@xyflow/react';
+import { CREATE_STEP_NODE_WIDTH } from '@/workflow/workflow-diagram/constants/CreateStepNodeWidth';
 
 type WorkflowDiagramDefaultEdgeProps = EdgeProps;
 
 export const WorkflowDiagramDefaultEdge = ({
-  sourceX,
   sourceY,
-  targetX,
   targetY,
   markerStart,
   markerEnd,
@@ -14,9 +13,9 @@ export const WorkflowDiagramDefaultEdge = ({
   const theme = useTheme();
 
   const [edgePath] = getStraightPath({
-    sourceX,
+    sourceX: CREATE_STEP_NODE_WIDTH,
     sourceY,
-    targetX,
+    targetX: CREATE_STEP_NODE_WIDTH,
     targetY,
   });
 

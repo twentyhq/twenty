@@ -59,15 +59,15 @@ export const mockCurrentWorkspace: Workspace = {
   isMicrosoftAuthEnabled: false,
   featureFlags: [
     {
-      key: FeatureFlagKey.IsAirtableIntegrationEnabled,
+      key: FeatureFlagKey.IS_AIRTABLE_INTEGRATION_ENABLED,
       value: true,
     },
     {
-      key: FeatureFlagKey.IsPostgreSQLIntegrationEnabled,
+      key: FeatureFlagKey.IS_POSTGRESQL_INTEGRATION_ENABLED,
       value: true,
     },
     {
-      key: FeatureFlagKey.IsWorkflowEnabled,
+      key: FeatureFlagKey.IS_WORKFLOW_ENABLED,
       value: true,
     },
   ],

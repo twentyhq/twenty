@@ -20,7 +20,7 @@ export const ActionMenuContextProvider = ({
   children: React.ReactNode;
 }) => {
   const isWorkflowEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsWorkflowEnabled,
+    FeatureFlagKey.IS_WORKFLOW_ENABLED,
   );
 
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
