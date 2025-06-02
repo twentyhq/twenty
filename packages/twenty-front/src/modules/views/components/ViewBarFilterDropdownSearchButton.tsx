@@ -6,6 +6,7 @@ import { useLingui } from '@lingui/react/macro';
 import { IconSearch } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
+import { VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS } from '@/views/constants/ViewBarFilterBottomMenuItemIds';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 import { useSearchFilterOperations } from '@/views/hooks/useSearchFilterOperations';
 import { useSearchInputState } from '@/views/hooks/useSearchInputState';
@@ -14,8 +15,6 @@ const StyledSearchText = styled.span`
   color: ${({ theme }) => theme.font.color.light};
   margin-left: ${({ theme }) => theme.spacing(1)};
 `;
-
-const SEARCH_BUTTON_ID = 'search-button';
 
 export const ViewBarFilterDropdownSearchButton = () => {
   const { t } = useLingui();
@@ -26,7 +25,7 @@ export const ViewBarFilterDropdownSearchButton = () => {
 
   const isSelected = useRecoilComponentFamilyValueV2(
     isSelectedItemIdComponentFamilySelector,
-    SEARCH_BUTTON_ID,
+    VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS.SEARCH,
   );
 
   const handleSearchClick = () => {
@@ -37,7 +36,10 @@ export const ViewBarFilterDropdownSearchButton = () => {
   };
 
   return (
-    <SelectableListItem itemId={SEARCH_BUTTON_ID} onEnter={handleSearchClick}>
+    <SelectableListItem
+      itemId={VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS.SEARCH}
+      onEnter={handleSearchClick}
+    >
       <MenuItem
         focused={isSelected}
         onClick={handleSearchClick}

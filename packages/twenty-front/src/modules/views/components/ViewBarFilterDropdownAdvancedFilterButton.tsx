@@ -6,6 +6,7 @@ import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUp
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS } from '@/views/constants/ViewBarFilterBottomMenuItemIds';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 
 import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
@@ -29,8 +30,6 @@ const StyledPill = styled(Pill)`
   color: ${({ theme }) => theme.color.blue};
 `;
 
-const ADVANCED_FILTER_BUTTON_ID = 'advanced-filter-button';
-
 export const ViewBarFilterDropdownAdvancedFilterButton = () => {
   const advancedFilterQuerySubFilterCount = 0; // TODO
 
@@ -38,7 +37,7 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
 
   const isSelected = useRecoilComponentFamilyValueV2(
     isSelectedItemIdComponentFamilySelector,
-    ADVANCED_FILTER_BUTTON_ID,
+    VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS.ADVANCED_FILTER,
   );
 
   const { openDropdown: openAdvancedFilterDropdown } = useDropdown(
@@ -127,7 +126,7 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
 
   return (
     <SelectableListItem
-      itemId={ADVANCED_FILTER_BUTTON_ID}
+      itemId={VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS.ADVANCED_FILTER}
       onEnter={handleClick}
     >
       <MenuItem

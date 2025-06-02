@@ -15,6 +15,8 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { ViewBarFilterDropdownBottomMenu } from '@/views/components/ViewBarFilterDropdownBottomMenu';
 import { ViewBarFilterDropdownFieldSelectMenuItem } from '@/views/components/ViewBarFilterDropdownFieldSelectMenuItem';
+
+import { VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS } from '@/views/constants/ViewBarFilterBottomMenuItemIds';
 import { useLingui } from '@lingui/react/macro';
 
 export const StyledInput = styled.input`
@@ -59,8 +61,8 @@ export const ViewBarFilterDropdownFieldSelectMenu = () => {
     ...selectableHiddenFieldMetadataItems.map(
       (fieldMetadataItem) => fieldMetadataItem.id,
     ),
-    'search-button',
-    'advanced-filter-button',
+    VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS.SEARCH,
+    VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS.ADVANCED_FILTER,
   ];
 
   const shouldShowSeparator =
