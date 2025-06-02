@@ -2,7 +2,9 @@ import {
   Check,
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
+  Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -22,6 +24,7 @@ export enum ServerlessFunctionRuntime {
 }
 
 @Entity('serverlessFunction')
+@Index('IDX_SERVERLESS_FUNCTION_ID_DELETED_AT', ['id', 'deletedAt'])
 export class ServerlessFunctionEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -67,4 +70,7 @@ export class ServerlessFunctionEntity {
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
+
+  @DeleteDateColumn({ type: 'timestamptz' })
+  deletedAt?: Date;
 }

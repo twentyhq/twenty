@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
@@ -19,6 +18,7 @@ import {
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 import { WorkflowAutomatedTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
+import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 
 export type ObjectMetadataInfo = {
   objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps;
@@ -148,19 +148,24 @@ export class WorkflowCommonWorkspaceService {
         'workflowAutomatedTrigger',
       );
 
-    workflowIds.forEach((workflowId) => {
-      workflowAutomatedTriggerRepository.restore({
+    for (const workflowId of workflowIds) {
+      await workflowAutomatedTriggerRepository.restore({
         workflowId,
       });
 
-      workflowRunRepository.restore({
+      await workflowRunRepository.restore({
         workflowId,
       });
 
-      workflowVersionRepository.restore({
+      await workflowVersionRepository.restore({
         workflowId,
       });
-    });
+
+      await this.restoreServerlessFunctions(
+        workflowVersionRepository,
+        workflowId,
+      );
+    }
   }
 
   async cleanWorkflowsSubEntities(
@@ -182,28 +187,28 @@ export class WorkflowCommonWorkspaceService {
         'workflowAutomatedTrigger',
       );
 
-    workflowIds.forEach((workflowId) => {
-      workflowAutomatedTriggerRepository.softDelete({
-        workflowId,
-      });
-
-      workflowRunRepository.softDelete({
-        workflowId,
-      });
-
-      workflowVersionRepository.softDelete({
-        workflowId,
-      });
-
-      this.deleteServerlessFunctions(
+    for (const workflowId of workflowIds) {
+      await this.softDeleteServerlessFunctions(
         workflowVersionRepository,
         workflowId,
         workspaceId,
       );
-    });
+
+      await workflowAutomatedTriggerRepository.softDelete({
+        workflowId,
+      });
+
+      await workflowRunRepository.softDelete({
+        workflowId,
+      });
+
+      await workflowVersionRepository.softDelete({
+        workflowId,
+      });
+    }
   }
 
-  private async deleteServerlessFunctions(
+  private async softDeleteServerlessFunctions(
     workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
     workflowId: string,
     workspaceId: string,
@@ -220,8 +225,29 @@ export class WorkflowCommonWorkspaceService {
           await this.serverlessFunctionService.deleteOneServerlessFunction({
             id: step.settings.input.serverlessFunctionId,
             workspaceId,
-            isHardDeletion: false,
+            softDelete: true,
           });
+        }
+      });
+    });
+  }
+
+  private async restoreServerlessFunctions(
+    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
+    workflowId: string,
+  ) {
+    const workflowVersions = await workflowVersionRepository.find({
+      where: {
+        workflowId,
+      },
+    });
+
+    workflowVersions.forEach((workflowVersion) => {
+      workflowVersion.steps?.forEach(async (step) => {
+        if (step.type === WorkflowActionType.CODE) {
+          await this.serverlessFunctionService.restoreOneServerlessFunction(
+            step.settings.input.serverlessFunctionId,
+          );
         }
       });
     });
