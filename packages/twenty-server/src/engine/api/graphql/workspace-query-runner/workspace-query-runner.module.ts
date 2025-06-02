@@ -13,9 +13,7 @@ import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { RecordTransformerModule } from 'src/engine/core-modules/record-transformer/record-transformer.module';
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
-import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listener';
 
@@ -25,7 +23,6 @@ import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listen
     WorkspaceQueryBuilderModule,
     WorkspaceDataSourceModule,
     WorkspaceQueryHookModule,
-    ObjectMetadataRepositoryModule.forFeature([WorkspaceMemberWorkspaceEntity]),
     TypeOrmModule.forFeature([FeatureFlag], 'core'),
     AuditModule,
     TelemetryModule,

@@ -36,10 +36,10 @@ describe('title-utils', () => {
     expect(getPageTitleFromPath('/settings/accounts/emails/:accountUuid')).toBe(
       SettingsPageTitles.Accounts,
     );
-    expect(getPageTitleFromPath('/settings/workspace-members')).toBe(
+    expect(getPageTitleFromPath('/settings/members')).toBe(
       SettingsPageTitles.Members,
     );
-    expect(getPageTitleFromPath('/settings/workspace')).toBe(
+    expect(getPageTitleFromPath('/settings/general')).toBe(
       SettingsPageTitles.General,
     );
     expect(getPageTitleFromPath('/')).toBe('Twenty');

@@ -1,4 +1,4 @@
-import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { ViewOpenRecordInType } from 'src/modules/view/standard-objects/view.workspace-entity';
 
 export interface ViewDefinition {
@@ -11,14 +11,14 @@ export interface ViewDefinition {
   icon?: string;
   openRecordIn?: ViewOpenRecordInType;
   kanbanFieldMetadataId?: string;
-  kanbanAggregateOperation?: AGGREGATE_OPERATIONS;
+  kanbanAggregateOperation?: AggregateOperations;
   kanbanAggregateOperationFieldMetadataId?: string;
   fields?: {
     fieldMetadataId: string;
     position: number;
     isVisible: boolean;
     size: number;
-    aggregateOperation?: AGGREGATE_OPERATIONS;
+    aggregateOperation?: AggregateOperations;
   }[];
   filters?: {
     fieldMetadataId: string;

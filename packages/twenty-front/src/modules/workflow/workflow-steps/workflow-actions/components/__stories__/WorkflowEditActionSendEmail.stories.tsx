@@ -111,7 +111,6 @@ export const Default: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Send Email')).toBeVisible();
-
     expect(await canvas.findByText('Account')).toBeVisible();
     expect(await canvas.findByText('Subject')).toBeVisible();
     expect(await canvas.findByText('Body')).toBeVisible();

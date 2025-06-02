@@ -33,7 +33,7 @@ describe('EmailDriverFactory', () => {
     it('should return "logger" for logger driver', () => {
       jest
         .spyOn(twentyConfigService, 'get')
-        .mockReturnValue(EmailDriver.Logger);
+        .mockReturnValue(EmailDriver.LOGGER);
 
       const result = factory['buildConfigKey']();
 
@@ -42,7 +42,7 @@ describe('EmailDriverFactory', () => {
     });
 
     it('should return smtp config key for smtp driver', () => {
-      jest.spyOn(twentyConfigService, 'get').mockReturnValue(EmailDriver.Smtp);
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue(EmailDriver.SMTP);
       jest
         .spyOn(factory as any, 'getConfigGroupHash')
         .mockReturnValue('smtp-hash-123');
@@ -66,7 +66,7 @@ describe('EmailDriverFactory', () => {
     it('should create logger driver', () => {
       jest
         .spyOn(twentyConfigService, 'get')
-        .mockReturnValue(EmailDriver.Logger);
+        .mockReturnValue(EmailDriver.LOGGER);
 
       const driver = factory['createDriver']();
 
@@ -80,7 +80,7 @@ describe('EmailDriverFactory', () => {
         .mockImplementation((key: string) => {
           switch (key) {
             case 'EMAIL_DRIVER':
-              return EmailDriver.Smtp;
+              return EmailDriver.SMTP;
             case 'EMAIL_SMTP_HOST':
               return 'smtp.example.com';
             case 'EMAIL_SMTP_PORT':
@@ -108,7 +108,7 @@ describe('EmailDriverFactory', () => {
         .mockImplementation((key: string) => {
           switch (key) {
             case 'EMAIL_DRIVER':
-              return EmailDriver.Smtp;
+              return EmailDriver.SMTP;
             case 'EMAIL_SMTP_HOST':
               return undefined;
             case 'EMAIL_SMTP_PORT':
@@ -136,7 +136,7 @@ describe('EmailDriverFactory', () => {
     it('should return current driver for logger', () => {
       jest
         .spyOn(twentyConfigService, 'get')
-        .mockReturnValue(EmailDriver.Logger);
+        .mockReturnValue(EmailDriver.LOGGER);
 
       const driver = factory.getCurrentDriver();
 
@@ -147,7 +147,7 @@ describe('EmailDriverFactory', () => {
     it('should reuse driver when config key unchanged', () => {
       jest
         .spyOn(twentyConfigService, 'get')
-        .mockReturnValue(EmailDriver.Logger);
+        .mockReturnValue(EmailDriver.LOGGER);
 
       const driver1 = factory.getCurrentDriver();
       const driver2 = factory.getCurrentDriver();
@@ -159,7 +159,7 @@ describe('EmailDriverFactory', () => {
       // First call with logger
       jest
         .spyOn(twentyConfigService, 'get')
-        .mockReturnValue(EmailDriver.Logger);
+        .mockReturnValue(EmailDriver.LOGGER);
 
       const driver1 = factory.getCurrentDriver();
 
@@ -169,7 +169,7 @@ describe('EmailDriverFactory', () => {
         .mockImplementation((key: string) => {
           switch (key) {
             case 'EMAIL_DRIVER':
-              return EmailDriver.Smtp;
+              return EmailDriver.SMTP;
             case 'EMAIL_SMTP_HOST':
               return 'smtp.example.com';
             case 'EMAIL_SMTP_PORT':
@@ -203,7 +203,7 @@ describe('EmailDriverFactory', () => {
         .mockImplementation((key: string) => {
           switch (key) {
             case 'EMAIL_DRIVER':
-              return EmailDriver.Smtp;
+              return EmailDriver.SMTP;
             case 'EMAIL_SMTP_HOST':
               return 'smtp.example.com';
             case 'EMAIL_SMTP_PORT':

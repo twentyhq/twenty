@@ -4,7 +4,7 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeRecordGqlOperationFilter';
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetViewGroupsFilters } from '@/views/hooks/useGetViewGroupsFilters';
 
@@ -36,7 +36,7 @@ export const useGetRecordIndexTotalCount = () => {
     objectNameSingular: objectMetadataItem.nameSingular,
     filter,
     recordGqlFieldsAggregate: {
-      id: [AGGREGATE_OPERATIONS.count],
+      id: [AggregateOperations.COUNT],
     },
   });
 

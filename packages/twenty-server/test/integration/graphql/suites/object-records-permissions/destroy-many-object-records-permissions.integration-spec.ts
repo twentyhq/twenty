@@ -81,7 +81,7 @@ describe('destroyManyObjectRecordsPermissions', () => {
     beforeAll(async () => {
       const enablePermissionsQuery = updateFeatureFlagFactory(
         SEED_APPLE_WORKSPACE_ID,
-        'IsPermissionsV2Enabled',
+        'IS_PERMISSIONS_V2_ENABLED',
         true,
       );
 
@@ -91,7 +91,7 @@ describe('destroyManyObjectRecordsPermissions', () => {
     afterAll(async () => {
       const disablePermissionsQuery = updateFeatureFlagFactory(
         SEED_APPLE_WORKSPACE_ID,
-        'IsPermissionsV2Enabled',
+        'IS_PERMISSIONS_V2_ENABLED',
         false,
       );
 

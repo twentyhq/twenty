@@ -21,11 +21,14 @@ import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permi
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 @Entity('objectMetadata')
-@Unique('IndexOnNameSingularAndWorkspaceIdUnique', [
+@Unique('IDX_OBJECT_METADATA_NAME_SINGULAR_WORKSPACE_ID_UNIQUE', [
   'nameSingular',
   'workspaceId',
 ])
-@Unique('IndexOnNamePluralAndWorkspaceIdUnique', ['namePlural', 'workspaceId'])
+@Unique('IDX_OBJECT_METADATA_NAME_PLURAL_WORKSPACE_ID_UNIQUE', [
+  'namePlural',
+  'workspaceId',
+])
 export class ObjectMetadataEntity implements ObjectMetadataInterface {
   @PrimaryGeneratedColumn('uuid')
   id: string;

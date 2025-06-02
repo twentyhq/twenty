@@ -58,7 +58,7 @@ type FormSingleRecordPickerValue =
 
 export type FormSingleRecordPickerProps = {
   label?: string;
-  defaultValue: RecordId | Variable;
+  defaultValue?: RecordId | Variable;
   onChange: (value: RecordId | Variable) => void;
   objectNameSingular: string;
   disabled?: boolean;
@@ -95,7 +95,7 @@ export const FormSingleRecordPicker = ({
         : '',
     objectNameSingular,
     withSoftDeleted: true,
-    skip: !isValidUuid(defaultValue),
+    skip: !isDefined(defaultValue) || !isValidUuid(defaultValue),
   });
 
   const dropdownId = `form-record-picker-${objectNameSingular}`;

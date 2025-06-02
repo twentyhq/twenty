@@ -36,7 +36,7 @@ describe('FeatureFlagService', () => {
   };
 
   const workspaceId = 'workspace-id';
-  const featureFlag = FeatureFlagKey.IsWorkflowEnabled;
+  const featureFlag = FeatureFlagKey.IS_WORKFLOW_ENABLED;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -121,13 +121,13 @@ describe('FeatureFlagService', () => {
       // Prepare
       mockWorkspaceFeatureFlagsMapCacheService.getWorkspaceFeatureFlagsMap.mockResolvedValue(
         {
-          [FeatureFlagKey.IsWorkflowEnabled]: true,
-          [FeatureFlagKey.IsCopilotEnabled]: false,
+          [FeatureFlagKey.IS_WORKFLOW_ENABLED]: true,
+          [FeatureFlagKey.IS_COPILOT_ENABLED]: false,
         },
       );
       const mockFeatureFlags = [
-        { key: FeatureFlagKey.IsWorkflowEnabled, value: true },
-        { key: FeatureFlagKey.IsCopilotEnabled, value: false },
+        { key: FeatureFlagKey.IS_WORKFLOW_ENABLED, value: true },
+        { key: FeatureFlagKey.IS_COPILOT_ENABLED, value: false },
       ];
 
       // Act
@@ -145,8 +145,8 @@ describe('FeatureFlagService', () => {
     it('should return a map of feature flags for a workspace', async () => {
       // Prepare
       const mockFeatureFlags = [
-        { key: FeatureFlagKey.IsWorkflowEnabled, value: true, workspaceId },
-        { key: FeatureFlagKey.IsCopilotEnabled, value: false, workspaceId },
+        { key: FeatureFlagKey.IS_WORKFLOW_ENABLED, value: true, workspaceId },
+        { key: FeatureFlagKey.IS_COPILOT_ENABLED, value: false, workspaceId },
       ];
 
       mockFeatureFlagRepository.find.mockResolvedValue(mockFeatureFlags);
@@ -156,8 +156,8 @@ describe('FeatureFlagService', () => {
 
       // Assert
       expect(result).toEqual({
-        [FeatureFlagKey.IsWorkflowEnabled]: true,
-        [FeatureFlagKey.IsCopilotEnabled]: false,
+        [FeatureFlagKey.IS_WORKFLOW_ENABLED]: true,
+        [FeatureFlagKey.IS_COPILOT_ENABLED]: false,
       });
     });
   });
@@ -166,8 +166,8 @@ describe('FeatureFlagService', () => {
     it('should enable multiple feature flags for a workspace', async () => {
       // Prepare
       const keys = [
-        FeatureFlagKey.IsWorkflowEnabled,
-        FeatureFlagKey.IsCopilotEnabled,
+        FeatureFlagKey.IS_WORKFLOW_ENABLED,
+        FeatureFlagKey.IS_COPILOT_ENABLED,
       ];
 
       mockFeatureFlagRepository.upsert.mockResolvedValue({});
@@ -212,7 +212,6 @@ describe('FeatureFlagService', () => {
       // Assert
       expect(result).toEqual(mockFeatureFlag);
       expect(mockFeatureFlagRepository.save).toHaveBeenCalledWith({
-        // @ts-expect-error legacy noImplicitAny
         key: FeatureFlagKey[featureFlag],
         value,
         workspaceId,

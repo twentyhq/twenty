@@ -1,8 +1,7 @@
 import styled from '@emotion/styled';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
@@ -29,7 +28,6 @@ export const LocalePicker = () => {
     currentWorkspaceMemberState,
   );
   const setDateLocale = useSetRecoilState(dateLocaleState);
-  const isDebugMode = useRecoilValue(isDebugModeState);
 
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
@@ -204,7 +202,7 @@ export const LocalePicker = () => {
     },
   ];
 
-  if (isDebugMode) {
+  if (process.env.NODE_ENV === 'development') {
     unsortedLocaleOptions.push({
       label: t`Pseudo-English`,
       value: APP_LOCALES['pseudo-en'],

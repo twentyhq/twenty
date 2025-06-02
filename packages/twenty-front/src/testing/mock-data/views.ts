@@ -1,4 +1,4 @@
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { View } from '@/views/types/View';
 import { ViewKey } from '@/views/types/ViewKey';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
@@ -26,7 +26,7 @@ export const mockedViewsData: View[] = [
     icon: 'IconSkyline',
     key: ViewKey.Index,
     kanbanFieldMetadataId: '',
-    kanbanAggregateOperation: AGGREGATE_OPERATIONS.count,
+    kanbanAggregateOperation: AggregateOperations.COUNT,
     kanbanAggregateOperationFieldMetadataId: '',
     position: 0,
     isCompact: false,
@@ -46,7 +46,7 @@ export const mockedViewsData: View[] = [
     icon: 'IconPerson',
     key: ViewKey.Index,
     kanbanFieldMetadataId: '',
-    kanbanAggregateOperation: AGGREGATE_OPERATIONS.count,
+    kanbanAggregateOperation: AggregateOperations.COUNT,
     kanbanAggregateOperationFieldMetadataId: '',
     position: 0,
     isCompact: false,
@@ -66,7 +66,7 @@ export const mockedViewsData: View[] = [
     icon: 'IconOpportunity',
     key: ViewKey.Index,
     kanbanFieldMetadataId: '',
-    kanbanAggregateOperation: AGGREGATE_OPERATIONS.count,
+    kanbanAggregateOperation: AggregateOperations.COUNT,
     kanbanAggregateOperationFieldMetadataId: '',
     position: 0,
     isCompact: false,
@@ -86,7 +86,7 @@ export const mockedViewsData: View[] = [
     icon: 'IconSkyline',
     key: null,
     kanbanFieldMetadataId: '',
-    kanbanAggregateOperation: AGGREGATE_OPERATIONS.count,
+    kanbanAggregateOperation: AggregateOperations.COUNT,
     kanbanAggregateOperationFieldMetadataId: '',
     position: 0,
     isCompact: false,

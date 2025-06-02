@@ -94,7 +94,7 @@ export class WorkspaceEntityManager extends EntityManager {
     const featureFlagMap = this.getFeatureFlagMap();
 
     const isPermissionsV2Enabled =
-      featureFlagMap[FeatureFlagKey.IsPermissionsV2Enabled];
+      featureFlagMap[FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED];
 
     if (permissionOptions?.roleId) {
       const objectPermissionsByRoleId = dataSource.permissionsPerRoleId;
@@ -159,7 +159,7 @@ export class WorkspaceEntityManager extends EntityManager {
     const featureFlagMap = this.getFeatureFlagMap();
 
     const isPermissionsV2Enabled =
-      featureFlagMap[FeatureFlagKey.IsPermissionsV2Enabled];
+      featureFlagMap[FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED];
 
     if (!isPermissionsV2Enabled) {
       return queryBuilder;
@@ -371,7 +371,7 @@ export class WorkspaceEntityManager extends EntityManager {
     const featureFlagMap = this.getFeatureFlagMap();
 
     const isPermissionsV2Enabled =
-      featureFlagMap[FeatureFlagKey.IsPermissionsV2Enabled];
+      featureFlagMap[FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED];
 
     if (!isPermissionsV2Enabled) {
       return;
@@ -405,15 +405,6 @@ export class WorkspaceEntityManager extends EntityManager {
   private extractTargetNameSingularFromEntity(entity: any): string {
     return this.connection.getMetadata(entity.constructor).name;
   }
-
-  // Forbidden methods
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  override query<T = any>(_query: string, _parameters?: any[]): Promise<T> {
-    throw new Error('Method not allowed.');
-  }
-
-  // Not in use methods - duplicated from TypeORM's EntityManager to use our createQueryBuilder
 
   override find<Entity extends ObjectLiteral>(
     entityClass: EntityTarget<Entity>,
@@ -1097,5 +1088,15 @@ export class WorkspaceEntityManager extends EntityManager {
     this.validatePermissions(target, 'update', permissionOptions);
 
     return super.decrement(target, criteria, propertyPath, value);
+  }
+
+  // Forbidden methods
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  override query<T = any>(_query: string, _parameters?: any[]): Promise<T> {
+    throw new PermissionsException(
+      'Method not allowed.',
+      PermissionsExceptionCode.RAW_SQL_NOT_ALLOWED,
+    );
   }
 }

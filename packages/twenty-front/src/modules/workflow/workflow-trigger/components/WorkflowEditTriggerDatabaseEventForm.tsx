@@ -1,4 +1,5 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -9,6 +10,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
 import { WorkflowDatabaseEventTrigger } from '@/workflow/types/Workflow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
@@ -20,6 +22,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
 import { useCallback, useMemo, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
@@ -31,7 +34,7 @@ const StyledLabel = styled.span`
   margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledContainer = styled.div<{ fullWidth?: boolean }>`
+const StyledRecordTypeSelectContainer = styled.div<{ fullWidth?: boolean }>`
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;
 
@@ -75,6 +78,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
   const triggerEvent = splitWorkflowTriggerEventName(
     trigger.settings.eventName,
   );
+  const isUpdateEvent = triggerEvent.event === 'updated';
 
   const regularObjects = objectMetadataItems
     .filter((item) => item.isActive && !item.isSystem)
@@ -96,6 +100,10 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
     [...regularObjects, ...systemObjects].find(
       (option) => option.value === triggerEvent?.objectType,
     ) || DEFAULT_SELECTED_OPTION;
+
+  const selectedObjectMetadataItem = objectMetadataItems.find(
+    (item) => item.nameSingular === selectedOption.value,
+  );
 
   const filteredRegularObjects = useMemo(
     () => filterOptionsBySearch(regularObjects, searchInputValue),
@@ -124,6 +132,20 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
       },
     });
     closeDropdown();
+  };
+
+  const handleFieldsChange = (fields: FieldMultiSelectValue | string) => {
+    if (triggerOptions.readonly === true) {
+      return;
+    }
+
+    triggerOptions.onTriggerUpdate({
+      ...trigger,
+      settings: {
+        ...trigger.settings,
+        fields: fields ? (Array.isArray(fields) ? fields : [fields]) : null,
+      },
+    });
   };
 
   const handleSystemObjectsClick = () => {
@@ -163,7 +185,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
         disabled={triggerOptions.readonly}
       />
       <WorkflowStepBody>
-        <StyledContainer fullWidth>
+        <StyledRecordTypeSelectContainer fullWidth>
           <StyledLabel>Record Type</StyledLabel>
           <Dropdown
             dropdownId="workflow-edit-trigger-record-type"
@@ -240,7 +262,17 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
             }
             dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
           />
-        </StyledContainer>
+        </StyledRecordTypeSelectContainer>
+        {isDefined(selectedObjectMetadataItem) && isUpdateEvent && (
+          <WorkflowFieldsMultiSelect
+            label="Fields (Optional)"
+            placeholder="Select specific fields to listen to"
+            objectMetadataItem={selectedObjectMetadataItem}
+            handleFieldsChange={handleFieldsChange}
+            readonly={triggerOptions.readonly ?? false}
+            defaultFields={trigger.settings.fields}
+          />
+        )}
       </WorkflowStepBody>
     </>
   );
