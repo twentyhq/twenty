@@ -41,8 +41,6 @@ import { CreateObjectInput } from './dtos/create-object.input';
 import { ObjectMetadataDTO } from './dtos/object-metadata.dto';
 import { UpdateObjectPayload } from './dtos/update-object.input';
 
-// TODO there is an issue with the circular dependency between ObjectMetadataModule and SearchModule (or a missing dependency)
-
 @Module({
   imports: [
     NestjsQueryGraphQLModule.forFeature({

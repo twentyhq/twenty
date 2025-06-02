@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { mockObjectMetadataItemsWithFieldMaps } from 'src/engine/core-modules/__mocks__/mockObjectMetadataItemsWithFieldMaps';
-import { SearchService } from 'src/engine/core-modules/search/services/search.service';
 import { encodeCursorData } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { mockObjectMetadataItemsWithFieldMaps } from 'src/engine/core-modules/__mocks__/mockObjectMetadataItemsWithFieldMaps';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { SearchService } from 'src/engine/core-modules/search/services/search.service';
+import { ObjectMetadataMapsService } from 'src/engine/metadata-modules/object-metadata/object-metadata-maps.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 
 describe('SearchService', () => {
@@ -15,7 +15,7 @@ describe('SearchService', () => {
       providers: [
         SearchService,
         { provide: TwentyORMManager, useValue: {} },
-        { provide: WorkspaceCacheStorageService, useValue: {} },
+        { provide: ObjectMetadataMapsService, useValue: {} },
         { provide: FileService, useValue: {} },
       ],
     }).compile();
