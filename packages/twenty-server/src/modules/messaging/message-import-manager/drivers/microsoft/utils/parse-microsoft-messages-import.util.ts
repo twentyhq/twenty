@@ -40,7 +40,7 @@ export const parseMicrosoftMessagesImportError = (error: {
     }
   }
 
-  if (error.statusCode === 429) {
+  if (error.statusCode === 429 || error.statusCode === 503) {
     return new MessageImportDriverException(
       `Microsoft Graph API ${error.code} ${error.statusCode} error: ${error.message}`,
       MessageImportDriverExceptionCode.TEMPORARY_ERROR,

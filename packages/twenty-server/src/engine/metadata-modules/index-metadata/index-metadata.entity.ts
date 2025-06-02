@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -19,8 +20,12 @@ export enum IndexType {
   GIN = 'GIN',
 }
 
-@Unique('IndexOnNameAndWorkspaceIdAndObjectMetadataUnique', [
+@Unique('IDX_INDEX_METADATA_NAME_WORKSPACE_ID_OBJECT_METADATA_ID_UNIQUE', [
   'name',
+  'workspaceId',
+  'objectMetadataId',
+])
+@Index('IDX_INDEX_METADATA_WORKSPACE_ID_OBJECT_METADATA_ID', [
   'workspaceId',
   'objectMetadataId',
 ])

@@ -29,7 +29,7 @@ registerEnumType(SubscriptionStatus, { name: 'SubscriptionStatus' });
 registerEnumType(SubscriptionInterval, { name: 'SubscriptionInterval' });
 
 @Entity({ name: 'billingSubscription', schema: 'core' })
-@Index('IndexOnActiveSubscriptionPerWorkspace', ['workspaceId'], {
+@Index('IDX_BILLING_SUBSCRIPTION_WORKSPACE_ID_UNIQUE', ['workspaceId'], {
   unique: true,
   where: `status IN ('trialing', 'active', 'past_due')`,
 })

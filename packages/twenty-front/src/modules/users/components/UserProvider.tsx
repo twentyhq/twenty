@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
+import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
 import { AppPath } from '@/types/AppPath';
 import { UserContext } from '@/users/contexts/UserContext';
