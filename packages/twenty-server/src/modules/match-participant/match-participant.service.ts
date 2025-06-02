@@ -48,6 +48,10 @@ export class MatchParticipantService<
     objectMetadataName: 'messageParticipant' | 'calendarEventParticipant';
     transactionManager?: WorkspaceEntityManager;
   }) {
+    if (participants.length === 0) {
+      return;
+    }
+
     const participantRepository =
       await this.getParticipantRepository(objectMetadataName);
 
