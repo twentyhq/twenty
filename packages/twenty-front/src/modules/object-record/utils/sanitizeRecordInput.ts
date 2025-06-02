@@ -1,9 +1,9 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { isSystemSearchVectorField } from '@/object-record/utils/isSystemSearchVectorField';
 import { isDefined } from 'twenty-shared/utils';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from '~/generated/graphql';
-import { SEARCH_VECTOR_FIELD_NAME } from '../../views/constants/ViewFieldConstants';
 
 export const sanitizeRecordInput = ({
   objectMetadataItem,
@@ -15,8 +15,7 @@ export const sanitizeRecordInput = ({
   const filteredResultRecord = Object.fromEntries(
     Object.entries(recordInput)
       .map<[string, unknown] | undefined>(([fieldName, fieldValue]) => {
-        // Skip the searchVector field as it's managed by PostgreSQL
-        if (fieldName === SEARCH_VECTOR_FIELD_NAME) {
+        if (isSystemSearchVectorField(fieldName)) {
           return undefined;
         }
 
