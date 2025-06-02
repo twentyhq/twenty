@@ -1,7 +1,8 @@
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useSearchFilter } from '@/views/hooks/useSearchFilter';
+import { useSearchFilterOperations } from '@/views/hooks/useSearchFilterOperations';
+import { useSearchInputState } from '@/views/hooks/useSearchInputState';
 import { useLingui } from '@lingui/react/macro';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -11,8 +12,9 @@ export const ViewBarFilterDropdownSearchInput = ({
   filterDropdownId: string;
 }) => {
   const { t } = useLingui();
-  const { searchInputValue, setSearchInputValue, applySearchFilter } =
-    useSearchFilter(filterDropdownId);
+  const { searchInputValue, setSearchInputValue } =
+    useSearchInputState(filterDropdownId);
+  const { applySearchFilter } = useSearchFilterOperations();
 
   const debouncedApplySearchFilter = useDebouncedCallback((value: string) => {
     applySearchFilter(value);

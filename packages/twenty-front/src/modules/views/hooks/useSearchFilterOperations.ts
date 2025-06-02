@@ -1,39 +1,19 @@
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
-import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
-import { objectFilterDropdownSearchInputIsVisibleComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputIsVisibleComponentState';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { SEARCH_VECTOR_FIELD_NAME } from '../constants/ViewFieldConstants';
+import { useSearchVectorField } from './useSearchVectorField';
 
-export const useSearchFilter = (filterDropdownId: string) => {
-  const { objectMetadataItem } = useRecordIndexContextOrThrow();
-  const searchVectorField = objectMetadataItem.fields.find(
-    (field) =>
-      field.type === 'TS_VECTOR' && field.name === SEARCH_VECTOR_FIELD_NAME,
-  );
-
-  const [, setShowSearchInput] = useRecoilComponentStateV2(
-    objectFilterDropdownSearchInputIsVisibleComponentState,
-    filterDropdownId,
-  );
-
-  const [searchInputValue, setSearchInputValue] = useRecoilComponentStateV2(
-    objectFilterDropdownSearchInputComponentState,
-    filterDropdownId,
-  );
-
+export const useSearchFilterOperations = () => {
+  const { searchVectorField } = useSearchVectorField();
   const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );
-
   const { upsertRecordFilter } = useUpsertRecordFilter();
   const { removeRecordFilter } = useRemoveRecordFilter();
 
@@ -76,19 +56,9 @@ export const useSearchFilter = (filterDropdownId: string) => {
     }
   };
 
-  const setSearchInputValueFromExistingFilter = () => {
-    const existingSearchFilter = getExistingSearchFilter();
-    if (isDefined(existingSearchFilter)) {
-      setSearchInputValue(existingSearchFilter.value);
-    }
-  };
-
   return {
-    searchInputValue,
-    setSearchInputValue,
-    setShowSearchInput,
     applySearchFilter,
     removeEmptySearchFilter,
-    setSearchInputValueFromExistingFilter,
+    getExistingSearchFilter,
   };
 };

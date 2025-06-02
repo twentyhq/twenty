@@ -7,7 +7,8 @@ import { IconSearch } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
-import { useSearchFilter } from '@/views/hooks/useSearchFilter';
+import { useSearchFilterOperations } from '@/views/hooks/useSearchFilterOperations';
+import { useSearchInputState } from '@/views/hooks/useSearchInputState';
 
 const StyledSearchText = styled.span`
   color: ${({ theme }) => theme.font.color.light};
@@ -18,8 +19,10 @@ const SEARCH_BUTTON_ID = 'search-button';
 
 export const ViewBarFilterDropdownSearchButton = () => {
   const { t } = useLingui();
-  const { searchInputValue, setShowSearchInput, applySearchFilter } =
-    useSearchFilter(VIEW_BAR_FILTER_DROPDOWN_ID);
+  const { searchInputValue, setShowSearchInput } = useSearchInputState(
+    VIEW_BAR_FILTER_DROPDOWN_ID,
+  );
+  const { applySearchFilter } = useSearchFilterOperations();
 
   const isSelected = useRecoilComponentFamilyValueV2(
     isSelectedItemIdComponentFamilySelector,

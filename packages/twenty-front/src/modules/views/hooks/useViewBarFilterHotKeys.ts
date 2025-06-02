@@ -2,14 +2,14 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
-import { useSearchFilter } from '@/views/hooks/useSearchFilter';
+import { useSearchInputState } from '@/views/hooks/useSearchInputState';
 import { useEffect } from 'react';
 import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
 
 export const useViewBarFilterHotKeys = () => {
   const { openDropdown } = useDropdown(VIEW_BAR_FILTER_DROPDOWN_ID);
   const { setShowSearchInput, setSearchInputValueFromExistingFilter } =
-    useSearchFilter(VIEW_BAR_FILTER_DROPDOWN_ID);
+    useSearchInputState(VIEW_BAR_FILTER_DROPDOWN_ID);
   const setHotkeyScope = useSetHotkeyScope();
 
   useEffect(() => {

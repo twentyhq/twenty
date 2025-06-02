@@ -2,6 +2,8 @@ import { useResetFilterDropdown } from '@/object-record/object-filter-dropdown/h
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
+import { useSearchFilterOperations } from '@/views/hooks/useSearchFilterOperations';
+import { useSearchInputState } from '@/views/hooks/useSearchInputState';
 
 import { OPERAND_DROPDOWN_CLICK_OUTSIDE_ID } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownOperandDropdown';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
@@ -9,7 +11,6 @@ import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRe
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewBarFilterDropdownContent } from '@/views/components/ViewBarFilterDropdownContent';
-import { useSearchFilter } from '@/views/hooks/useSearchFilter';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewBarFilterButton } from './ViewBarFilterButton';
 
@@ -21,9 +22,10 @@ export const ViewBarFilterDropdown = ({
   hotkeyScope,
 }: ViewBarFilterDropdownProps) => {
   const { resetFilterDropdown } = useResetFilterDropdown();
-  const { setShowSearchInput, removeEmptySearchFilter } = useSearchFilter(
+  const { setShowSearchInput } = useSearchInputState(
     VIEW_BAR_FILTER_DROPDOWN_ID,
   );
+  const { removeEmptySearchFilter } = useSearchFilterOperations();
   const { removeRecordFilter } = useRemoveRecordFilter();
 
   const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValueV2(
