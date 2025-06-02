@@ -137,116 +137,6 @@ export class MatchParticipantService<
     );
   }
 
-  public async matchParticipantsAfterPersonOrWorkspaceMemberCreation({
-    handle,
-    isPrimaryEmail,
-    objectMetadataName,
-    personId,
-    workspaceMemberId,
-  }: {
-    handle: string;
-    isPrimaryEmail: boolean;
-    objectMetadataName: 'messageParticipant' | 'calendarEventParticipant';
-    personId?: string;
-    workspaceMemberId?: string;
-  }) {
-    const participantRepository =
-      await this.getParticipantRepository(objectMetadataName);
-
-    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
-
-    if (!workspaceId) {
-      throw new Error('Workspace ID is required');
-    }
-
-    const participantsToUpdate = await participantRepository.find({
-      where: {
-        handle: Equal(handle),
-      },
-      relations: ['person'],
-    });
-
-    if (personId) {
-      const participantIdsToMatchWithPerson: string[] = [];
-
-      for (const participant of participantsToUpdate) {
-        const existingPerson = participant.person;
-
-        if (!existingPerson) {
-          participantIdsToMatchWithPerson.push(participant.id);
-          continue;
-        }
-
-        const isAssociatedToPrimaryEmail =
-          existingPerson.emails?.primaryEmail.toLowerCase() ===
-          handle.toLowerCase();
-
-        if (isAssociatedToPrimaryEmail) {
-          continue;
-        }
-
-        const isAssociatedToSecondaryEmail =
-          Array.isArray(existingPerson.emails?.additionalEmails) &&
-          existingPerson.emails.additionalEmails.some(
-            (email) => email.toLowerCase() === handle.toLowerCase(),
-          );
-
-        if (isAssociatedToSecondaryEmail && isPrimaryEmail) {
-          participantIdsToMatchWithPerson.push(participant.id);
-        }
-      }
-
-      if (participantIdsToMatchWithPerson.length > 0) {
-        await participantRepository.update(
-          {
-            id: Any(participantIdsToMatchWithPerson),
-          },
-          {
-            person: {
-              id: personId,
-            },
-          },
-        );
-
-        const updatedParticipants = await participantRepository.find({
-          where: {
-            id: Any(participantIdsToMatchWithPerson),
-          },
-        });
-
-        this.workspaceEventEmitter.emitCustomBatchEvent(
-          `${objectMetadataName}_matched`,
-          [
-            {
-              workspaceId,
-              name: `${objectMetadataName}_matched`,
-              workspaceMemberId: null,
-              participants: updatedParticipants,
-            },
-          ],
-          workspaceId,
-        );
-      }
-    }
-
-    if (workspaceMemberId) {
-      const participantIdsToMatchWithWorkspaceMember = participantsToUpdate.map(
-        (participant) => participant.id,
-      );
-
-      await participantRepository.update(
-        {
-          id: Any(participantIdsToMatchWithWorkspaceMember),
-        },
-        {
-          workspaceMember: {
-            id: workspaceMemberId,
-          },
-        },
-      );
-    }
-  }
-
   public async unmatchParticipants({
     handle,
     objectMetadataName,
@@ -340,5 +230,134 @@ export class MatchParticipantService<
         },
       );
     }
+  }
+
+  public async matchParticipantsAfterPersonCreation({
+    handle,
+    isPrimaryEmail,
+    personId,
+    objectMetadataName,
+  }: {
+    handle: string;
+    isPrimaryEmail: boolean;
+    personId: string;
+    objectMetadataName: 'messageParticipant' | 'calendarEventParticipant';
+  }) {
+    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
+
+    if (!workspaceId) {
+      throw new Error('Workspace ID is required');
+    }
+
+    const participantRepository =
+      await this.getParticipantRepository(objectMetadataName);
+
+    const participantsToUpdate = await participantRepository.find({
+      where: {
+        handle: Equal(handle),
+      },
+      relations: ['person'],
+    });
+
+    const participantIdsToMatchWithPerson: string[] = [];
+
+    for (const participant of participantsToUpdate) {
+      const existingPerson = participant.person;
+
+      if (!existingPerson) {
+        participantIdsToMatchWithPerson.push(participant.id);
+        continue;
+      }
+
+      const isAssociatedToPrimaryEmail =
+        existingPerson.emails?.primaryEmail.toLowerCase() ===
+        handle.toLowerCase();
+
+      if (isAssociatedToPrimaryEmail) {
+        continue;
+      }
+
+      const isAssociatedToSecondaryEmail =
+        Array.isArray(existingPerson.emails?.additionalEmails) &&
+        existingPerson.emails.additionalEmails.some(
+          (email) => email.toLowerCase() === handle.toLowerCase(),
+        );
+
+      if (isAssociatedToSecondaryEmail && isPrimaryEmail) {
+        participantIdsToMatchWithPerson.push(participant.id);
+      }
+    }
+
+    if (participantIdsToMatchWithPerson.length > 0) {
+      await participantRepository.update(
+        {
+          id: Any(participantIdsToMatchWithPerson),
+        },
+        {
+          person: {
+            id: personId,
+          },
+        },
+      );
+
+      const updatedParticipants = await participantRepository.find({
+        where: {
+          id: Any(participantIdsToMatchWithPerson),
+        },
+      });
+
+      this.workspaceEventEmitter.emitCustomBatchEvent(
+        `${objectMetadataName}_matched`,
+        [
+          {
+            workspaceId,
+            name: `${objectMetadataName}_matched`,
+            workspaceMemberId: null,
+            participants: updatedParticipants,
+          },
+        ],
+        workspaceId,
+      );
+    }
+  }
+
+  public async matchParticipantsAfterWorkspaceMemberCreation({
+    handle,
+    workspaceMemberId,
+    objectMetadataName,
+  }: {
+    handle: string;
+    workspaceMemberId: string;
+    objectMetadataName: 'messageParticipant' | 'calendarEventParticipant';
+  }) {
+    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
+
+    if (!workspaceId) {
+      throw new Error('Workspace ID is required');
+    }
+
+    const participantRepository =
+      await this.getParticipantRepository(objectMetadataName);
+
+    const participantsToUpdate = await participantRepository.find({
+      where: {
+        handle: Equal(handle),
+      },
+    });
+
+    const participantIdsToMatchWithWorkspaceMember = participantsToUpdate.map(
+      (participant) => participant.id,
+    );
+
+    await participantRepository.update(
+      {
+        id: Any(participantIdsToMatchWithWorkspaceMember),
+      },
+      {
+        workspaceMember: {
+          id: workspaceMemberId,
+        },
+      },
+    );
   }
 }

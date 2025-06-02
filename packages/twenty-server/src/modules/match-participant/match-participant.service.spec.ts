@@ -388,7 +388,7 @@ describe('MatchParticipantService', () => {
 
     describe('person matching', () => {
       it('should match unmatched participants to new person', async () => {
-        await service.matchParticipantsAfterPersonOrWorkspaceMemberCreation({
+        await service.matchParticipantsAfterPersonCreation({
           handle: 'test-1@example.com',
           isPrimaryEmail: true,
           objectMetadataName: 'messageParticipant',
@@ -408,7 +408,7 @@ describe('MatchParticipantService', () => {
       });
 
       it('should re-match participants when new person has primary email and existing person has secondary', async () => {
-        await service.matchParticipantsAfterPersonOrWorkspaceMemberCreation({
+        await service.matchParticipantsAfterPersonCreation({
           handle: 'test-2@company.com',
           isPrimaryEmail: true,
           objectMetadataName: 'messageParticipant',
@@ -446,7 +446,7 @@ describe('MatchParticipantService', () => {
           participantsWithPrimaryEmail,
         );
 
-        await service.matchParticipantsAfterPersonOrWorkspaceMemberCreation({
+        await service.matchParticipantsAfterPersonCreation({
           handle: 'test-1@example.com',
           isPrimaryEmail: false,
           objectMetadataName: 'messageParticipant',
@@ -457,7 +457,7 @@ describe('MatchParticipantService', () => {
       });
 
       it('should not re-match when new email is secondary and existing person has secondary', async () => {
-        await service.matchParticipantsAfterPersonOrWorkspaceMemberCreation({
+        await service.matchParticipantsAfterPersonCreation({
           handle: 'test-1@example.com',
           isPrimaryEmail: false,
           objectMetadataName: 'messageParticipant',
@@ -476,7 +476,7 @@ describe('MatchParticipantService', () => {
           .mockResolvedValueOnce(mockExistingParticipants)
           .mockResolvedValueOnce(updatedParticipants);
 
-        await service.matchParticipantsAfterPersonOrWorkspaceMemberCreation({
+        await service.matchParticipantsAfterPersonCreation({
           handle: 'test-1@example.com',
           isPrimaryEmail: true,
           objectMetadataName: 'messageParticipant',
@@ -500,9 +500,8 @@ describe('MatchParticipantService', () => {
 
     describe('workspace member matching', () => {
       it('should match all participants to workspace member', async () => {
-        await service.matchParticipantsAfterPersonOrWorkspaceMemberCreation({
+        await service.matchParticipantsAfterWorkspaceMemberCreation({
           handle: 'test-1@example.com',
-          isPrimaryEmail: true,
           objectMetadataName: 'messageParticipant',
           workspaceMemberId: 'workspace-member-id',
         });
@@ -526,7 +525,7 @@ describe('MatchParticipantService', () => {
       });
 
       await expect(
-        service.matchParticipantsAfterPersonOrWorkspaceMemberCreation({
+        service.matchParticipantsAfterPersonCreation({
           handle: 'test-1@example.com',
           isPrimaryEmail: true,
           objectMetadataName: 'messageParticipant',

@@ -46,14 +46,23 @@ export class CalendarEventParticipantMatchParticipantJob {
       return;
     }
 
-    await this.matchParticipantService.matchParticipantsAfterPersonOrWorkspaceMemberCreation(
-      {
+    if (personId) {
+      await this.matchParticipantService.matchParticipantsAfterPersonCreation({
         handle: email,
         isPrimaryEmail,
         objectMetadataName: 'calendarEventParticipant',
         personId,
-        workspaceMemberId,
-      },
-    );
+      });
+    }
+
+    if (workspaceMemberId) {
+      await this.matchParticipantService.matchParticipantsAfterWorkspaceMemberCreation(
+        {
+          handle: email,
+          objectMetadataName: 'calendarEventParticipant',
+          workspaceMemberId,
+        },
+      );
+    }
   }
 }

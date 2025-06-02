@@ -27,14 +27,23 @@ export class MessageParticipantMatchParticipantJob {
   async handle(data: MessageParticipantMatchParticipantJobData): Promise<void> {
     const { isPrimaryEmail, email, personId, workspaceMemberId } = data;
 
-    await this.matchParticipantService.matchParticipantsAfterPersonOrWorkspaceMemberCreation(
-      {
+    if (personId) {
+      await this.matchParticipantService.matchParticipantsAfterPersonCreation({
         handle: email,
         isPrimaryEmail,
-        objectMetadataName: 'messageParticipant',
+        objectMetadataName: 'calendarEventParticipant',
         personId,
-        workspaceMemberId,
-      },
-    );
+      });
+    }
+
+    if (workspaceMemberId) {
+      await this.matchParticipantService.matchParticipantsAfterWorkspaceMemberCreation(
+        {
+          handle: email,
+          objectMetadataName: 'calendarEventParticipant',
+          workspaceMemberId,
+        },
+      );
+    }
   }
 }
