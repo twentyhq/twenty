@@ -50,6 +50,7 @@ export class BillingCheckoutSessionInput {
   @Field(() => InterCreateChargeDto, { nullable: true })
   @ValidateNested()
   @Type(() => InterCreateChargeDto)
+  @IsNotEmpty()
   @ValidateIf((data) => data.paymentProvider === BillingPaymentProviders.Inter)
   interChargeData: InterCreateChargeDto;
 }
