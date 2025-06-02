@@ -37,9 +37,7 @@ export class FixMetadataIndexes1748846032709 implements MigrationInterface {
     await queryRunner.query(
       `ALTER TABLE "core"."settingPermission" DROP CONSTRAINT "IndexOnSettingPermissionUnique"`,
     );
-    await queryRunner.query(
-      `CREATE INDEX "IDX_INDEX_METADATA_WORKSPACE_ID_OBJECT_METADATA_ID" ON "core"."indexMetadata" ("workspaceId", "objectMetadataId") `,
-    );
+
     await queryRunner.query(
       `CREATE INDEX "IDX_INDEX_FIELD_METADATA_FIELD_METADATA_ID" ON "core"."indexFieldMetadata" ("fieldMetadataId") `,
     );
@@ -133,9 +131,7 @@ export class FixMetadataIndexes1748846032709 implements MigrationInterface {
     await queryRunner.query(
       `DROP INDEX "core"."IDX_INDEX_FIELD_METADATA_FIELD_METADATA_ID"`,
     );
-    await queryRunner.query(
-      `DROP INDEX "core"."IDX_INDEX_METADATA_WORKSPACE_ID_OBJECT_METADATA_ID"`,
-    );
+
     await queryRunner.query(
       `ALTER TABLE "core"."settingPermission" ADD CONSTRAINT "IndexOnSettingPermissionUnique" UNIQUE ("roleId", "setting")`,
     );
