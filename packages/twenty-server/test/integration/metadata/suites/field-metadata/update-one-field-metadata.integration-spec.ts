@@ -164,7 +164,7 @@ describe('updateOne', () => {
         input: {
           idToUpdate: createdFieldMetadata.createOneField.id,
           updatePayload: {
-            defaultValue: 'OPTION_2',
+            defaultValue: "'OPTION_2'",
           },
         },
         gqlFields: `
