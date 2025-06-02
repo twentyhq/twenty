@@ -6,47 +6,150 @@ image: /images/user-guide/table-views/table.png
 
 import OptionTable from '@site/src/theme/OptionTable'
 
-# Setup Messaging & Calendar sync
+# Configuration Management
 
-Twenty offers integrations with Gmail and Google Calendar.
+<ArticleWarning>
+**First time installing?** Follow the [Docker Compose installation guide](https://twenty.com/developers/section/self-hosting/docker-compose) to get Twenty running, then return here for configuration.
+</ArticleWarning>
 
-## For Gmail and Google Calendar
+Twenty offers **two configuration modes** to suit different deployment needs:
 
-### Create a project in Google Cloud
+## Configuration Modes
 
-You will need to create a project in Google Cloud and get the credentials.
+### Mode 1: Database Configuration (Default - Recommended)
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
+```
 
-Then you can set the following environment variables:
+**How it works:**
+- Admin panel can modify most settings through the UI
+- Changes take effect immediately (within 15 seconds for multi-container deployments)
+- Environment variables are only needed for infrastructure settings
+- Multi-container deployments share configuration automatically
 
-- `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
-- `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
-- `MESSAGING_PROVIDER_MICROSOFT_ENABLED=false`
-- `CALENDAR_PROVIDER_MICROSOFT_ENABLED=false`
-- `AUTH_GOOGLE_CLIENT_ID=<client-id>`
-- `AUTH_GOOGLE_CLIENT_SECRET=<client-secret>`
-- `AUTH_GOOGLE_CALLBACK_URL=https://<your-domain>/auth/google/redirect` if you want to use Google SSO
-- `AUTH_GOOGLE_APIS_CALLBACK_URL=https://<your-domain>/auth/google-apis/get-access-token`
+### Mode 2: Environment-Only Configuration
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
+```
 
-### Enable APIs
+**How it works:**
+- All configuration managed through `.env` files
+- Admin panel shows current values but cannot modify them
+- Requires container restart for changes
+- Full control over configuration versioning
 
-On Google Cloud Console, go to [APIs & Services](https://console.cloud.google.com/apis/library/) and enable the following APIs:
+---
 
+## Admin Panel Configuration (Mode 1 - Default)
+
+**Most configuration happens through the UI** after installation:
+
+1. Access your Twenty instance (usually `http://localhost:3000`)
+2. Go to **Settings → Admin Panel → Configuration Variables**  
+3. Configure integrations, email, storage, and more
+4. Changes take effect immediately (within 15 seconds for multi-container deployments)
+
+<ArticleWarning>
+**Multi-Container Deployments:** When using database configuration (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`), both server and worker containers read from the same database. Admin panel changes affect both automatically, eliminating the need to duplicate environment variables between containers (except for infrastructure variables).
+</ArticleWarning>
+
+**Who can access:** Only users with admin privileges (`canAccessFullAdminPanel: true`)
+
+**What you can configure through the admin panel:**
+- **Authentication** - Google/Microsoft OAuth, password settings
+- **Email** - SMTP settings, templates, verification  
+- **Storage** - S3 configuration, local storage paths
+- **Integrations** - Gmail, Google Calendar, Microsoft services
+- **Workflow & Rate Limiting** - Execution limits, API throttling
+- **And much more...**
+
+![Admin Panel Configuration Variables](/images/user-guide/setup/admin-panel-config-variables.png)
+
+## Environment-Only Configuration (Mode 2)
+
+**All configuration managed through `.env` files:**
+
+1. Set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` in your `.env` file
+2. Add all configuration variables to your `.env` file
+3. Restart containers for changes to take effect
+4. Admin panel will show current values but cannot modify them
+
+
+## Infrastructure Variables (Both Modes)
+
+Some **infrastructure variables** can only be set via environment variables for security reasons and require container restart:
+
+**Required infrastructure variables** (automatically set by install script):
+
+```bash
+# Database & Cache  
+PG_DATABASE_URL=postgres://user:password@localhost:5432/twenty
+REDIS_URL=redis://localhost:6379
+
+# Core Application
+SERVER_URL=http://localhost:3000  
+APP_SECRET=your-secret-key-here
+```
+
+**When you need to edit your .env file:**
+
+**Database Configuration Mode** (default - `IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`):
+- Only for variables marked as `isEnvOnly: true` in the code (infrastructure, logging, performance settings)
+- Application settings (auth providers, email, storage, integrations) use the admin panel
+
+**Environment-Only Mode** (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`):
+- All configuration changes require editing .env and container restart
+- Admin panel shows values but cannot modify them
+
+**Infrastructure variables** (cannot be changed via admin panel):
+- **Database:** `PG_DATABASE_URL`, `PG_SSL_ALLOW_SELF_SIGNED`, `PG_ENABLE_POOL_SHARING`, `PG_POOL_*`
+- **Server:** `SERVER_URL`, `APP_SECRET`, `NODE_PORT`, `NODE_ENV`, `FRONTEND_URL`
+- **Cache:** `REDIS_URL`, `IS_CONFIG_VARIABLES_IN_DB_ENABLED`
+- **SSL:** `SSL_KEY_PATH`, `SSL_CERT_PATH`
+- **Logging/Monitoring:** `EXCEPTION_HANDLER_DRIVER`, `LOG_LEVELS`, `LOGGER_DRIVER`, `METER_DRIVER`, `OTLP_COLLECTOR_ENDPOINT_URL`
+- **Performance:** `SERVERLESS_TYPE`, `LLM_CHAT_MODEL_DRIVER`, `LLM_TRACING_DRIVER`, `CAPTCHA_DRIVER`
+- **Enterprise:** `IS_MULTIWORKSPACE_ENABLED`, `APP_VERSION`
+
+## Gmail & Google Calendar Integration
+
+### Create Google Cloud Project
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select existing one
+3. Enable these APIs:
 - [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
 - [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
 - [People API](https://console.cloud.google.com/apis/library/people.googleapis.com)
 
-### Authorized redirect URIs
+### Configure OAuth
 
-Under [Credentials](https://console.cloud.google.com/apis/credentials), in OAuth 2.0 Client IDs, you need to add the following redirect URIs to your project:
+1. Go to [Credentials](https://console.cloud.google.com/apis/credentials)
+2. Create OAuth 2.0 Client ID
+3. Add these redirect URIs:
+   - `https://<your-domain>/auth/google/redirect` (for SSO)
+   - `https://<your-domain>/auth/google-apis/get-access-token` (for integrations)
 
-- `https://<your-domain>/auth/google/redirect` if you want to use Google SSO
-- `https://<your-domain>/auth/google-apis/get-access-token`
+### Configure in Twenty
 
-### Configure scopes
+1. Go to **Settings → Admin Panel → Configuration Variables**
+2. Find the **Google Auth** section
+3. Set these variables:
+   - `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
+   - `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
+   - `AUTH_GOOGLE_CLIENT_ID=<client-id>`
+   - `AUTH_GOOGLE_CLIENT_SECRET=<client-secret>`
+   - `AUTH_GOOGLE_CALLBACK_URL=https://<your-domain>/auth/google/redirect`
+   - `AUTH_GOOGLE_APIS_CALLBACK_URL=https://<your-domain>/auth/google-apis/get-access-token`
+
+<ArticleWarning>
+**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+</ArticleWarning>
+
+**Required scopes** (automatically configured):
 [See relevant source code](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes.ts#L4-L10)
-- 'https://www.googleapis.com/auth/calendar.events'
-- 'https://www.googleapis.com/auth/gmail.readonly'
-- 'https://www.googleapis.com/auth/profile.emails.read'
+- `https://www.googleapis.com/auth/calendar.events`
+- `https://www.googleapis.com/auth/gmail.readonly`  
+- `https://www.googleapis.com/auth/profile.emails.read`
 
 ### If your app is in test mode
 
@@ -54,21 +157,7 @@ If your app is in test mode, you will need to add test users to your project.
 
 Under [OAuth consent screen](https://console.cloud.google.com/apis/credentials/consent), add your test users to the "Test users" section.
 
-### Start the cron jobs
-
-Register the following recurring jobs:
-```
-# from your worker container
-yarn command:prod cron:messaging:messages-import
-yarn command:prod cron:messaging:message-list-fetch
-yarn command:prod cron:calendar:calendar-event-list-fetch
-yarn command:prod cron:calendar:calendar-events-import
-yarn command:prod cron:messaging:ongoing-stale
-yarn command:prod cron:calendar:ongoing-stale
-yarn command:prod cron:workflow:automated-cron-trigger
-```
-
-## For Outlook and Outlook Calendar (Microsoft 365)
+## Microsoft 365 Integration
 
 <ArticleWarning>
 Users must have a [Microsoft 365 Licence](https://admin.microsoft.com/Adminportal/Home) to be able to use the Calendar and Messaging API. They will not be able to sync their account on Twenty without one.
@@ -77,16 +166,6 @@ Users must have a [Microsoft 365 Licence](https://admin.microsoft.com/Adminporta
 ### Create a project in Microsoft Azure
 
 You will need to create a project in [Microsoft Azure](https://portal.azure.com/#view/Microsoft_AAD_IAM/AppGalleryBladeV2) and get the credentials.
-
-Then you can set the following environment variables:
-
-- `MESSAGING_PROVIDER_MICROSOFT_ENABLED=true`
-- `CALENDAR_PROVIDER_MICROSOFT_ENABLED=true`
-- `AUTH_MICROSOFT_ENABLED=true`
-- `AUTH_MICROSOFT_CLIENT_ID=<client-id>`
-- `AUTH_MICROSOFT_CLIENT_SECRET=<client-secret>`
-- `AUTH_MICROSOFT_CALLBACK_URL=https://<your-domain>/auth/microsoft/redirect` if you want to use Microsoft SSO
-- `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://<your-domain>/auth/microsoft-apis/get-access-token`
 
 ### Enable APIs
 
@@ -109,6 +188,23 @@ You need to add the following redirect URIs to your project:
 - `https://<your-domain>/auth/microsoft/redirect` if you want to use Microsoft SSO
 - `https://<your-domain>/auth/microsoft-apis/get-access-token`
 
+### Configure in Twenty
+
+1. Go to **Settings → Admin Panel → Configuration Variables**
+2. Find the **Microsoft Auth** section
+3. Set these variables:
+   - `MESSAGING_PROVIDER_MICROSOFT_ENABLED=true`
+   - `CALENDAR_PROVIDER_MICROSOFT_ENABLED=true`
+   - `AUTH_MICROSOFT_ENABLED=true`
+   - `AUTH_MICROSOFT_CLIENT_ID=<client-id>`
+   - `AUTH_MICROSOFT_CLIENT_SECRET=<client-secret>`
+   - `AUTH_MICROSOFT_CALLBACK_URL=https://<your-domain>/auth/microsoft/redirect`
+   - `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://<your-domain>/auth/microsoft-apis/get-access-token`
+
+<ArticleWarning>
+**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+</ArticleWarning>
+
 ### Configure scopes
 [See relevant source code](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
 - 'openid'
@@ -125,10 +221,12 @@ If your app is in test mode, you will need to add test users to your project.
 
 Add your test users to the "Users and groups" section.
 
-### Start the cron jobs
+## Background Jobs for Calendar & Messaging
 
-Register the following recurring jobs:
-```
+After configuring Gmail, Google Calendar, or Microsoft 365 integrations, you need to start the background jobs that sync data.
+
+Register the following recurring jobs in your worker container:
+```bash
 # from your worker container
 yarn command:prod cron:messaging:messages-import
 yarn command:prod cron:messaging:message-list-fetch
@@ -139,88 +237,11 @@ yarn command:prod cron:calendar:ongoing-stale
 yarn command:prod cron:workflow:automated-cron-trigger
 ```
 
-# Configuration Management
+## Email Configuration
 
-Twenty uses a hybrid approach for configuration management, combining environment variables with an admin panel interface.
-
-## Admin Panel Configuration
-
-**Most configuration can be managed through the Admin Panel** once your instance is running:
-
-1. Sign in to your Twenty instance
-2. Go to **Settings → Admin Panel → Configuration Variables**
-3. Configure authentication, email, storage, integrations, and more
-4. Changes take effect immediately (within 15 seconds for multi-instance deployments)
-
-<ArticleWarning>
-**Multi-Container Deployments:** When using database configuration (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`), both server and worker containers read from the same database. Admin panel changes affect both automatically, eliminating the need to duplicate environment variables between containers (except for infrastructure variables).
-</ArticleWarning>
-
-### Who Can Access
-Only users with admin privileges (`canAccessFullAdminPanel: true`) can access the admin panel configuration.
-
-### What Can Be Configured
-The admin panel allows you to configure:
-- **Authentication:** Google/Microsoft OAuth, password settings
-- **Email:** SMTP settings, email templates, verification
-- **Storage:** Local/S3 configuration
-- **Integrations:** Gmail, Google Calendar, Microsoft services
-- **Workflow & Rate Limiting:** Execution limits, API throttling
-- And much more...
-
-![Admin Panel Configuration Variables](/images/user-guide/setup/admin-panel-config-variables-1.png)
-
-## Essential Environment Variables
-
-Before starting Twenty, you **must** set these core infrastructure variables that cannot be changed through the admin panel:
-
-### Required Infrastructure
-```bash
-# Database & Cache
-PG_DATABASE_URL=postgres://user:password@localhost:5432/twenty
-REDIS_URL=redis://localhost:6379
-
-# Server Configuration  
-SERVER_URL=http://localhost:3000
-APP_SECRET=your-secret-key-here
-
-# Frontend URL (defaults to SERVER_URL if not set)
-FRONTEND_URL=http://localhost:3001
-```
-
-### Environment-Only Variables
-Some infrastructure and system-level variables cannot be changed through the admin panel and must remain in your `.env` file. These are marked as `isEnvOnly: true` in the codebase for security and infrastructure reasons.
-
-**Key categories that remain environment-only:**
-- **Database & Cache connections** (`PG_DATABASE_URL`, `REDIS_URL`)
-- **Core server configuration** (`SERVER_URL`, `APP_SECRET`, `NODE_ENV`)
-- **Infrastructure settings** (database pool, logging drivers, SSL certificates)
-
-
-## Configuration Modes
-
-### Default Mode (Database Configuration Enabled)
-- `IS_CONFIG_VARIABLES_IN_DB_ENABLED=true` (default)
-- Admin panel changes **override** .env values
-- Most settings can be changed without touching .env files
-
-![Config Variables](/images/user-guide/setup/admin-panel-config-variables-2.png)
-
-### Environment-Only Mode
-- Set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`
-- Admin panel shows current values and descriptions but can't be changed
-- All configuration must be managed through .env files
-
-
-## Frontend
-
-<ArticleTable options={[
-    ['REACT_APP_SERVER_BASE_URL', 'http://localhost:3000', 'Url of backend server'],
-    ['GENERATE_SOURCEMAP', 'false', 'Generate source maps for debugging'],
-    ['CHROMATIC_PROJECT_TOKEN', '', 'Chromatic token used for CI'],
-    ]}></ArticleTable>
-
-#### Email SMTP Server configuration examples
+1. Go to **Settings → Admin Panel → Configuration Variables**
+2. Find the **Email** section
+3. Configure your SMTP settings:
 
 <ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
 
@@ -251,7 +272,7 @@ Some infrastructure and system-level variables cannot be changed through the adm
   **smtp4dev** is a fake SMTP email server for development and testing.
   - Run the smtp4dev image: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
   - Access the smtp4dev ui here: [http://localhost:8090](http://localhost:8090)
-  - Set the following env variables:
+  - Set the following variables:
     - EMAIL_DRIVER=smtp
     - EMAIL_SMTP_HOST=localhost
     - EMAIL_SMTP_PORT=2525
@@ -259,3 +280,7 @@ Some infrastructure and system-level variables cannot be changed through the adm
   </ArticleTab>
 
 </ArticleTabs>
+
+<ArticleWarning>
+**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+</ArticleWarning>
