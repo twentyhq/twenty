@@ -47,6 +47,13 @@ export const SettingsRolePermissionsObjectsSection = ({
         setSettingsDraftRole({
           ...settingsDraftRole,
           canReadAllObjectRecords: value,
+          ...(value === false
+            ? {
+                canUpdateAllObjectRecords: value,
+                canSoftDeleteAllObjectRecords: value,
+                canDestroyAllObjectRecords: value,
+              }
+            : {}),
         });
       },
     },
@@ -64,6 +71,11 @@ export const SettingsRolePermissionsObjectsSection = ({
         setSettingsDraftRole({
           ...settingsDraftRole,
           canUpdateAllObjectRecords: value,
+          ...(value === true
+            ? {
+                canReadAllObjectRecords: value,
+              }
+            : {}),
         });
       },
     },
@@ -81,6 +93,11 @@ export const SettingsRolePermissionsObjectsSection = ({
         setSettingsDraftRole({
           ...settingsDraftRole,
           canSoftDeleteAllObjectRecords: value,
+          ...(value === true
+            ? {
+                canReadAllObjectRecords: value,
+              }
+            : {}),
         });
       },
     },
@@ -98,6 +115,11 @@ export const SettingsRolePermissionsObjectsSection = ({
         setSettingsDraftRole({
           ...settingsDraftRole,
           canDestroyAllObjectRecords: value,
+          ...(value === true
+            ? {
+                canReadAllObjectRecords: value,
+              }
+            : {}),
         });
       },
     },
