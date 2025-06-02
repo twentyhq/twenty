@@ -36,8 +36,11 @@ export class BillingCustomer {
   @Column({ nullable: false, type: 'uuid', unique: true })
   workspaceId: string;
 
-  @Column({ nullable: false, unique: true })
+  @Column({ nullable: true, unique: true })
   stripeCustomerId: string;
+
+  @Column({ nullable: true, unique: true })
+  interBillingChargeId: string;
 
   @OneToMany(
     () => BillingSubscription,

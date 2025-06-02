@@ -29,6 +29,9 @@ import { BillingWebhookInvoiceService } from 'src/engine/core-modules/billing/we
 import { BillingWebhookPriceService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-price.service';
 import { BillingWebhookProductService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-product.service';
 import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-subscription.service';
+import { InterWebhookSubscriptionService } from 'src/engine/core-modules/billing/webhooks/services/inter-webhook-subscription.service';
+import { InterChargeStatus } from 'src/engine/core-modules/inter/enums/InterChargeStatus.enum';
+import { InterWebhookPayload } from 'src/engine/core-modules/inter/types/InterWebhookPayload.type';
 @Controller()
 @UseFilters(BillingRestApiExceptionFilter)
 export class BillingController {
@@ -44,6 +47,7 @@ export class BillingController {
     private readonly billingWebhookAlertService: BillingWebhookAlertService,
     private readonly billingWebhookInvoiceService: BillingWebhookInvoiceService,
     private readonly billingWebhookCustomerService: BillingWebhookCustomerService,
+    private readonly interWebhookSubscriptionService: InterWebhookSubscriptionService,
   ) {}
 
   @Post(['billing/webhooks', 'webhooks/stripe', 'webhooks/inter'])
@@ -59,15 +63,21 @@ export class BillingController {
       );
     }
 
-    // TODO: Continue webhook logic for inter
-    console.log('req: ', req.body);
-
     try {
-      const event = this.stripeWebhookService.constructEventFromPayload(
-        signature,
-        req.rawBody,
-      );
-      const result = await this.handleStripeEvent(event);
+      let result;
+
+      if (req.url.includes('/webhooks/inter')) {
+        const payloadArray = JSON.parse(req.rawBody.toString('utf-8'));
+
+        result = this.handleInterEvent(payloadArray[0]);
+      } else {
+        const event = this.stripeWebhookService.constructEventFromPayload(
+          signature,
+          req.rawBody,
+        );
+
+        result = await this.handleStripeEvent(event);
+      }
 
       res.status(200).send(result).end();
     } catch (error) {
@@ -143,6 +153,21 @@ export class BillingController {
           event,
         );
       }
+      default:
+        return {};
+    }
+  }
+
+  private async handleInterEvent(payload: InterWebhookPayload) {
+    const { situacao, seuNumero } = payload;
+
+    switch (situacao) {
+      case InterChargeStatus.A_RECEBER:
+      case InterChargeStatus.RECEBIDO:
+        return await this.interWebhookSubscriptionService.processInterEvent(
+          seuNumero,
+          situacao,
+        );
       default:
         return {};
     }
