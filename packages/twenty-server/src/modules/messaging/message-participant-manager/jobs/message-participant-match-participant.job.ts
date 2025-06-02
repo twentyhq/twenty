@@ -31,7 +31,7 @@ export class MessageParticipantMatchParticipantJob {
       await this.matchParticipantService.matchParticipantsAfterPersonCreation({
         handle: email,
         isPrimaryEmail,
-        objectMetadataName: 'calendarEventParticipant',
+        objectMetadataName: 'messageParticipant',
         personId,
       });
     }
@@ -40,7 +40,7 @@ export class MessageParticipantMatchParticipantJob {
       await this.matchParticipantService.matchParticipantsAfterWorkspaceMemberCreation(
         {
           handle: email,
-          objectMetadataName: 'calendarEventParticipant',
+          objectMetadataName: 'messageParticipant',
           workspaceMemberId,
         },
       );
