@@ -535,7 +535,6 @@ export const DateTimePicker = ({
                   prevMonthButtonDisabled={prevMonthButtonDisabled}
                   nextMonthButtonDisabled={nextMonthButtonDisabled}
                   isDateTimeInput={isDateTimeInput}
-                  timeZone={timeZone}
                   hideInput={hideHeaderInput}
                 />
               )
