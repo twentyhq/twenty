@@ -1,6 +1,5 @@
 import { Key } from 'ts-key-enum';
 
-import { StyledMultipleSelectDropdownAvatarChip } from '@/object-record/select/components/StyledMultipleSelectDropdownAvatarChip';
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -12,6 +11,7 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { Avatar } from 'twenty-ui/display';
 import { MenuItem, MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
 
 export const MultipleSelectDropdown = ({
@@ -105,15 +105,14 @@ export const MultipleSelectDropdown = ({
                     resetSelectedItem();
                     handleItemSelectChange(item, newCheckedValue);
                   }}
+                  text={item.name}
                   avatar={
-                    <StyledMultipleSelectDropdownAvatarChip
-                      className="avatar-icon-container"
-                      name={item.name}
+                    <Avatar
                       avatarUrl={item.avatarUrl}
-                      LeftIcon={item.AvatarIcon}
-                      avatarType={item.avatarType}
-                      isIconInverted={item.isIconInverted}
                       placeholderColorSeed={item.id}
+                      placeholder={item.name}
+                      size="md"
+                      type={item.avatarType}
                     />
                   }
                 />

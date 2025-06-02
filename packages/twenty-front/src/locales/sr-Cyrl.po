@@ -309,6 +309,11 @@ msgstr "Додајте поље"
 msgid "Add filter"
 msgstr "Додајте филтер"
 
+#. js-lingui-id: 7XzAKI
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage.tsx
+msgid "Add inputs to your form"
+msgstr ""
+
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
 msgid "Add new"
@@ -918,6 +923,11 @@ msgstr "Очисти"
 #. js-lingui-id: wu0RfR
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Clear the field or \"X\" to revert to environment/default value."
+msgstr ""
+
+#. js-lingui-id: HevGC0
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage.tsx
+msgid "Click on \"Add Field\" below to add the first input to your form. The form will pop up on the user's screen when the workflow is launched from a manual trigger. For other types of triggers, it will be displayed in the Workflow run record page."
 msgstr ""
 
 #. js-lingui-id: b8wwse
