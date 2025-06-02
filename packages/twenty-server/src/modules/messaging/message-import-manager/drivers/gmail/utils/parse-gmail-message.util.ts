@@ -11,7 +11,7 @@ import { getPropertyFromHeaders } from 'src/modules/messaging/message-import-man
  * Safely parses an email address string using addressparser
  * Returns undefined if parsing fails
  */
-const safeParseAddress = (address: string | undefined) => {
+const safeParseAddress = (address: string | undefined | null) => {
   if (!address) return undefined;
   try {
     return addressparser(address);
