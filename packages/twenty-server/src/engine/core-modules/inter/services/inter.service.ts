@@ -4,16 +4,16 @@ import {
   Logger,
   Optional,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import axios, { AxiosResponse, isAxiosError } from 'axios';
+import { Repository } from 'typeorm';
 
 import {
   InterChargeErrorResponse,
   InterChargeRequest,
   InterChargeResponse,
 } from 'src/engine/core-modules/inter/interfaces/charge.interface';
-
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { InterCreateChargeDto } from 'src/engine/core-modules/inter/dtos/inter-create-charge.dto';
@@ -23,8 +23,6 @@ import { InterInstanceService } from 'src/engine/core-modules/inter/services/int
 import { getNextBusinessDays } from 'src/engine/core-modules/inter/utils/get-next-business-days.util';
 import { getPriceFromStripeDecimal } from 'src/engine/core-modules/inter/utils/get-price-from-stripe-decimal.util';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class InterService {

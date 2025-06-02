@@ -200,6 +200,7 @@ export type BillingPlans = {
   __typename?: 'BillingPlans';
   id: Scalars['UUID'];
   planId: Scalars['String'];
+  planPrice: Scalars['Float'];
   workspace: Workspace;
 };
 
@@ -1055,6 +1056,53 @@ export enum IntegrationType {
   WHATSAPP = 'WHATSAPP'
 }
 
+export type InterCreateChargeDto = {
+  address: Scalars['String'];
+  cep: Scalars['String'];
+  city: Scalars['String'];
+  cpfCnpj: Scalars['String'];
+  legalEntity: InterCustomerType;
+  name: Scalars['String'];
+  stateUnity: InterCustomerUf;
+};
+
+/** Tipos de pessoa para o cliente Inter */
+export enum InterCustomerType {
+  FISICA = 'FISICA',
+  JURIDICA = 'JURIDICA'
+}
+
+/** Estados brasileiros para o cliente Inter */
+export enum InterCustomerUf {
+  AC = 'AC',
+  AL = 'AL',
+  AM = 'AM',
+  AP = 'AP',
+  BA = 'BA',
+  CE = 'CE',
+  DF = 'DF',
+  ES = 'ES',
+  GO = 'GO',
+  MA = 'MA',
+  MG = 'MG',
+  MS = 'MS',
+  MT = 'MT',
+  PA = 'PA',
+  PB = 'PB',
+  PE = 'PE',
+  PI = 'PI',
+  PR = 'PR',
+  RJ = 'RJ',
+  RN = 'RN',
+  RO = 'RO',
+  RR = 'RR',
+  RS = 'RS',
+  SC = 'SC',
+  SE = 'SE',
+  SP = 'SP',
+  TO = 'TO'
+}
+
 export type InterIntegration = {
   __typename?: 'InterIntegration';
   certificate?: Maybe<Scalars['String']>;
@@ -1278,6 +1326,7 @@ export type MutationAuthorizeAppArgs = {
 
 
 export type MutationCheckoutSessionArgs = {
+  interChargeData?: InputMaybe<InterCreateChargeDto>;
   paymentProvider?: BillingPaymentProviders;
   plan?: BillingPlanKey;
   recurringInterval: SubscriptionInterval;
@@ -3327,6 +3376,7 @@ export type Workspace = {
   __typename?: 'Workspace';
   activationStatus: WorkspaceActivationStatus;
   allowImpersonation: Scalars['Boolean'];
+  billingPlans: Array<BillingPlans>;
   billingSubscriptions: Array<BillingSubscription>;
   createdAt: Scalars['DateTime'];
   creatorEmail?: Maybe<Scalars['String']>;
@@ -3679,6 +3729,7 @@ export type CheckoutSessionMutationVariables = Exact<{
   plan: BillingPlanKey;
   requirePaymentMethod: Scalars['Boolean'];
   paymentProvider?: InputMaybe<BillingPaymentProviders>;
+  interChargeData?: InputMaybe<InterCreateChargeDto>;
 }>;
 
 
@@ -5692,13 +5743,14 @@ export type BillingPortalSessionQueryHookResult = ReturnType<typeof useBillingPo
 export type BillingPortalSessionLazyQueryHookResult = ReturnType<typeof useBillingPortalSessionLazyQuery>;
 export type BillingPortalSessionQueryResult = Apollo.QueryResult<BillingPortalSessionQuery, BillingPortalSessionQueryVariables>;
 export const CheckoutSessionDocument = gql`
-    mutation CheckoutSession($recurringInterval: SubscriptionInterval!, $successUrlPath: String, $plan: BillingPlanKey!, $requirePaymentMethod: Boolean!, $paymentProvider: BillingPaymentProviders) {
+    mutation CheckoutSession($recurringInterval: SubscriptionInterval!, $successUrlPath: String, $plan: BillingPlanKey!, $requirePaymentMethod: Boolean!, $paymentProvider: BillingPaymentProviders, $interChargeData: InterCreateChargeDto) {
   checkoutSession(
     recurringInterval: $recurringInterval
     successUrlPath: $successUrlPath
     plan: $plan
     requirePaymentMethod: $requirePaymentMethod
     paymentProvider: $paymentProvider
+    interChargeData: $interChargeData
   ) {
     url
   }
@@ -5724,6 +5776,7 @@ export type CheckoutSessionMutationFn = Apollo.MutationFunction<CheckoutSessionM
  *      plan: // value for 'plan'
  *      requirePaymentMethod: // value for 'requirePaymentMethod'
  *      paymentProvider: // value for 'paymentProvider'
+ *      interChargeData: // value for 'interChargeData'
  *   },
  * });
  */
