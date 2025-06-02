@@ -57,9 +57,6 @@ export class FixMetadataIndexes1748846032709 implements MigrationInterface {
       `CREATE INDEX "IDX_FIELD_METADATA_RELATION_TARGET_FIELD_METADATA_ID" ON "core"."fieldMetadata" ("relationTargetFieldMetadataId") `,
     );
     await queryRunner.query(
-      `CREATE INDEX "IDX_USER_WORKSPACE_ROLE_USER_WORKSPACE_ID_WORKSPACE_ID" ON "core"."userWorkspaceRole" ("userWorkspaceId", "workspaceId") `,
-    );
-    await queryRunner.query(
       `ALTER TABLE "core"."indexMetadata" ADD CONSTRAINT "IDX_INDEX_METADATA_NAME_WORKSPACE_ID_OBJECT_METADATA_ID_UNIQUE" UNIQUE ("name", "workspaceId", "objectMetadataId")`,
     );
     await queryRunner.query(
@@ -109,9 +106,6 @@ export class FixMetadataIndexes1748846032709 implements MigrationInterface {
     );
     await queryRunner.query(
       `ALTER TABLE "core"."indexMetadata" DROP CONSTRAINT "IDX_INDEX_METADATA_NAME_WORKSPACE_ID_OBJECT_METADATA_ID_UNIQUE"`,
-    );
-    await queryRunner.query(
-      `DROP INDEX "core"."IDX_USER_WORKSPACE_ROLE_USER_WORKSPACE_ID_WORKSPACE_ID"`,
     );
     await queryRunner.query(
       `DROP INDEX "core"."IDX_FIELD_METADATA_RELATION_TARGET_FIELD_METADATA_ID"`,

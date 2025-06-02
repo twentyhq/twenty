@@ -26,21 +26,6 @@ export class FixCoreIndexes1748846118238 implements MigrationInterface {
       `CREATE UNIQUE INDEX "IDX_KEY_VALUE_PAIR_KEY_WORKSPACE_ID_NULL_USER_ID_UNIQUE" ON "core"."keyValuePair" ("key", "workspaceId") WHERE "userId" is NULL`,
     );
     await queryRunner.query(
-      `CREATE INDEX "IDX_USER_WORKSPACE_WORKSPACE_ID" ON "core"."userWorkspace" ("workspaceId") `,
-    );
-    await queryRunner.query(
-      `CREATE INDEX "IDX_USER_WORKSPACE_USER_ID" ON "core"."userWorkspace" ("userId") `,
-    );
-    await queryRunner.query(
-      `CREATE INDEX "IDX_USER_WORKSPACE_ID_DELETED_AT" ON "core"."userWorkspace" ("id", "deletedAt") `,
-    );
-    await queryRunner.query(
-      `CREATE INDEX "IDX_USER_ID_DELETED_AT" ON "core"."user" ("id", "deletedAt") `,
-    );
-    await queryRunner.query(
-      `CREATE INDEX "IDX_WORKSPACE_ID_DELETED_AT" ON "core"."workspace" ("id", "deletedAt") `,
-    );
-    await queryRunner.query(
       `ALTER TABLE "core"."keyValuePair" ADD CONSTRAINT "IDX_KEY_VALUE_PAIR_KEY_USER_ID_WORKSPACE_ID_UNIQUE" UNIQUE ("key", "userId", "workspaceId")`,
     );
     await queryRunner.query(
@@ -60,15 +45,6 @@ export class FixCoreIndexes1748846118238 implements MigrationInterface {
     );
     await queryRunner.query(
       `ALTER TABLE "core"."keyValuePair" DROP CONSTRAINT "IDX_KEY_VALUE_PAIR_KEY_USER_ID_WORKSPACE_ID_UNIQUE"`,
-    );
-    await queryRunner.query(`DROP INDEX "core"."IDX_WORKSPACE_ID_DELETED_AT"`);
-    await queryRunner.query(`DROP INDEX "core"."IDX_USER_ID_DELETED_AT"`);
-    await queryRunner.query(
-      `DROP INDEX "core"."IDX_USER_WORKSPACE_ID_DELETED_AT"`,
-    );
-    await queryRunner.query(`DROP INDEX "core"."IDX_USER_WORKSPACE_USER_ID"`);
-    await queryRunner.query(
-      `DROP INDEX "core"."IDX_USER_WORKSPACE_WORKSPACE_ID"`,
     );
     await queryRunner.query(
       `DROP INDEX "core"."IDX_KEY_VALUE_PAIR_KEY_WORKSPACE_ID_NULL_USER_ID_UNIQUE"`,
