@@ -5,8 +5,10 @@ import { RecordGqlFieldsAggregate } from '@/object-record/graphql/types/RecordGq
 import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
 import { useAggregateRecordsQuery } from '@/object-record/hooks/useAggregateRecordsQuery';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import isEmpty from 'lodash.isempty';
+import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export type AggregateRecordsData = {
@@ -35,10 +37,22 @@ export const useAggregateRecords = <T extends AggregateRecordsData>({
     recordGqlFieldsAggregate,
   });
 
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
+  const hasReadPermission = useMemo(() => {
+    if (!objectPermissionsByObjectMetadataId || !objectMetadataItem.id) {
+      return true;
+    }
+
+    const objectPermission =
+      objectPermissionsByObjectMetadataId[objectMetadataItem.id];
+    return objectPermission?.canReadObjectRecords !== false;
+  }, [objectPermissionsByObjectMetadataId, objectMetadataItem.id]);
+
   const { data, loading, error } = useQuery<RecordGqlOperationFindManyResult>(
     aggregateQuery,
     {
-      skip: skip || !objectMetadataItem,
+      skip: skip || !objectMetadataItem || !hasReadPermission,
       variables: {
         filter,
       },

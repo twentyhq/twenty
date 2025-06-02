@@ -8,10 +8,12 @@ import { UseFindManyRecordsParams } from '@/object-record/hooks/useFindManyRecor
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { useHandleFindManyRecordsCompleted } from '@/object-record/hooks/useHandleFindManyRecordsCompleted';
 import { useHandleFindManyRecordsError } from '@/object-record/hooks/useHandleFindManyRecordsError';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { cursorFamilyState } from '@/object-record/states/cursorFamilyState';
 import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
+import { useMemo } from 'react';
 
 type UseLazyFindManyRecordsParams<T> = Omit<
   UseFindManyRecordsParams<T>,
@@ -55,6 +57,18 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     onCompleted,
   });
 
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
+  const hasReadPermission = useMemo(() => {
+    if (!objectPermissionsByObjectMetadataId || !objectMetadataItem.id) {
+      return true;
+    }
+
+    const objectPermission =
+      objectPermissionsByObjectMetadataId[objectMetadataItem.id];
+    return objectPermission?.canReadObjectRecords !== false;
+  }, [objectPermissionsByObjectMetadataId, objectMetadataItem.id]);
+
   const [findManyRecords, { data, loading, error, fetchMore }] =
     useLazyQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
       variables: {
@@ -83,6 +97,20 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   const findManyRecordsLazy = useRecoilCallback(
     ({ set }) =>
       async () => {
+        if (!hasReadPermission) {
+          set(hasNextPageFamilyState(queryIdentifier), false);
+          set(cursorFamilyState(queryIdentifier), '');
+
+          onCompleted?.([]);
+
+          return {
+            data: null,
+            loading: false,
+            error: undefined,
+            called: true,
+          };
+        }
+
         const result = await findManyRecords();
 
         const hasNextPage =
@@ -98,19 +126,26 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
         return result;
       },
-    [queryIdentifier, findManyRecords, objectMetadataItem],
+    [
+      hasReadPermission,
+      findManyRecords,
+      objectMetadataItem.namePlural,
+      queryIdentifier,
+      onCompleted,
+    ],
   );
 
   return {
     objectMetadataItem,
     records,
     totalCount,
-    loading,
-    error,
+    loading: hasReadPermission ? loading : false,
+    error: hasReadPermission ? error : undefined,
     fetchMore,
     fetchMoreRecords,
     queryStateIdentifier: queryIdentifier,
     findManyRecords: findManyRecordsLazy,
     hasNextPage,
+    hasReadPermission,
   };
 };

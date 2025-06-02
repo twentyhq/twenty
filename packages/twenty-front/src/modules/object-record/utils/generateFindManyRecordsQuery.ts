@@ -21,7 +21,7 @@ export const generateFindManyRecordsQuery = ({
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
   computeReferences?: boolean;
   cursorDirection?: QueryCursorDirection;
-  objectPermissionsByObjectMetadataId?: Record<string, ObjectPermission>;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>;
 }) => gql`
 query FindMany${capitalize(
   objectMetadataItem.namePlural,

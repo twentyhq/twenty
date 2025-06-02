@@ -9,9 +9,11 @@ import { useFetchMoreRecordsWithPagination } from '@/object-record/hooks/useFetc
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { useHandleFindManyRecordsCompleted } from '@/object-record/hooks/useHandleFindManyRecordsCompleted';
 import { useHandleFindManyRecordsError } from '@/object-record/hooks/useHandleFindManyRecordsError';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { OnFindManyRecordsCompleted } from '@/object-record/types/OnFindManyRecordsCompleted';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
+import { useMemo } from 'react';
 
 export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
   RecordGqlOperationVariables & {
@@ -64,13 +66,25 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     onCompleted,
   });
 
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
+  const hasReadPermission = useMemo(() => {
+    if (!objectPermissionsByObjectMetadataId || !objectMetadataItem.id) {
+      return true;
+    }
+
+    const objectPermission =
+      objectPermissionsByObjectMetadataId[objectMetadataItem.id];
+    return objectPermission?.canReadObjectRecords !== false;
+  }, [objectPermissionsByObjectMetadataId, objectMetadataItem.id]);
+
   const withSoftDeleterFilter = {
     or: [{ deletedAt: { is: 'NULL' } }, { deletedAt: { is: 'NOT_NULL' } }],
   };
 
   const { data, loading, error, fetchMore } =
     useQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
-      skip: skip || !objectMetadataItem,
+      skip: skip || !objectMetadataItem || !hasReadPermission,
       variables: {
         filter: withSoftDeleted
           ? {

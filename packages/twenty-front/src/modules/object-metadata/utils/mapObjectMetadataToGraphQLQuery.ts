@@ -16,7 +16,7 @@ type MapObjectMetadataToGraphQLQueryArgs = {
   recordGqlFields?: RecordGqlFields;
   computeReferences?: boolean;
   isRootLevel?: boolean;
-  objectPermissionsByObjectMetadataId?: Record<string, ObjectPermission>;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>;
 };
 
 export const mapObjectMetadataToGraphQLQuery = ({
@@ -27,7 +27,6 @@ export const mapObjectMetadataToGraphQLQuery = ({
   isRootLevel = true,
   objectPermissionsByObjectMetadataId,
 }: MapObjectMetadataToGraphQLQueryArgs): string => {
-  // Check if current object has read permission (only for non-root level objects)
   if (
     !isRootLevel &&
     isDefined(objectPermissionsByObjectMetadataId) &&
@@ -36,7 +35,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
     const objectPermission =
       objectPermissionsByObjectMetadataId[objectMetadataItem.id];
     if (objectPermission?.canReadObjectRecords === false) {
-      return ''; // Return empty string if no read permission
+      return '';
     }
   }
 
@@ -99,25 +98,11 @@ export const mapObjectMetadataToGraphQLQuery = ({
         objectPermissionsByObjectMetadataId,
       });
     })
-    .filter((field) => field !== '') // Filter out empty fields from permission restrictions
+    .filter((field) => field !== '')
     .join('\n');
-
-  // Ensure we always have at least __typename and id if available
-  const hasIdField = objectMetadataItem.fields.some(
-    (field) => field.name === 'id' && field.isActive,
-  );
-
-  const hasIdInQuery = gqlFieldWithFieldMetadataThatSouldBeQueried.some(
-    (field) => field.gqlField === 'id',
-  );
-
-  // Always include id if it exists and wasn't filtered out by recordGqlFields
-  const shouldIncludeId =
-    hasIdField && (!recordGqlFields || recordGqlFields.id !== false);
-  const idField = shouldIncludeId && !hasIdInQuery ? 'id\n' : '';
 
   return `{
 __typename
-${idField}${mappedFields}
+${mappedFields}
 }`;
 };

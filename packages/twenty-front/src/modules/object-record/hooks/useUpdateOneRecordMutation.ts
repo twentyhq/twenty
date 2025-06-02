@@ -47,15 +47,15 @@ export const useUpdateOneRecordMutation = ({
 
   const updateOneRecordMutation = gql`
     mutation UpdateOne${capitalizedObjectName}($idToUpdate: UUID!, $input: ${capitalizedObjectName}UpdateInput!)  {
-       ${mutationResponseField}(id: $idToUpdate, data: $input) ${mapObjectMetadataToGraphQLQuery(
-         {
-           objectMetadataItems,
-           objectMetadataItem,
-           computeReferences,
-           recordGqlFields: appliedRecordGqlFields,
-           objectPermissionsByObjectMetadataId,
-         },
-       )}
+      ${mutationResponseField}(id: $idToUpdate, data: $input) ${mapObjectMetadataToGraphQLQuery(
+        {
+          objectMetadataItems,
+          objectMetadataItem,
+          computeReferences,
+          recordGqlFields: appliedRecordGqlFields,
+          objectPermissionsByObjectMetadataId,
+        },
+      )}
     }
   `;
 

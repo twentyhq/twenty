@@ -1,9 +1,9 @@
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { isUndefined } from '@sniptt/guards';
 import {
-    FieldMetadataType,
-    ObjectPermission,
-    RelationDefinitionType,
+  FieldMetadataType,
+  ObjectPermission,
+  RelationDefinitionType,
 } from '~/generated-metadata/graphql';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -21,7 +21,7 @@ type MapFieldMetadataToGraphQLQueryArgs = {
   >;
   relationRecordGqlFields?: RecordGqlFields;
   computeReferences?: boolean;
-  objectPermissionsByObjectMetadataId?: Record<string, ObjectPermission>;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>;
 };
 // TODO: change ObjectMetadataItems mock before refactoring with relationDefinition computed field
 export const mapFieldMetadataToGraphQLQuery = ({
@@ -55,15 +55,14 @@ export const mapFieldMetadataToGraphQLQuery = ({
       return '';
     }
 
-    // Check if the target object has read permission
     if (
-      objectPermissionsByObjectMetadataId &&
+      isDefined(objectPermissionsByObjectMetadataId) &&
       isDefined(relationMetadataItem.id)
     ) {
       const objectPermission =
         objectPermissionsByObjectMetadataId[relationMetadataItem.id];
       if (objectPermission?.canReadObjectRecords === false) {
-        return ''; // Skip this relation if no read permission
+        return '';
       }
     }
 
@@ -97,15 +96,14 @@ ${mapObjectMetadataToGraphQLQuery({
       return '';
     }
 
-    // Check if the target object has read permission
     if (
-      objectPermissionsByObjectMetadataId &&
+      isDefined(objectPermissionsByObjectMetadataId) &&
       isDefined(relationMetadataItem.id)
     ) {
       const objectPermission =
         objectPermissionsByObjectMetadataId[relationMetadataItem.id];
       if (objectPermission?.canReadObjectRecords === false) {
-        return ''; // Skip this relation if no read permission
+        return '';
       }
     }
 

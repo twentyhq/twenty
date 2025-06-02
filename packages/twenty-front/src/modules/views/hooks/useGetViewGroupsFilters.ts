@@ -10,7 +10,7 @@ export const useGetViewGroupsFilters = (): RecordFilter[] => {
 
   return (
     currentView?.viewGroups
-      ?.filter((recordGroup) => !recordGroup.isVisible)
+      .filter((recordGroup) => !recordGroup.isVisible)
       .map((recordGroup) => {
         return {
           id: recordGroup.id,
