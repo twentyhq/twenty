@@ -34,6 +34,7 @@ import { BillingWebhookInvoiceService } from 'src/engine/core-modules/billing/we
 import { BillingWebhookPriceService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-price.service';
 import { BillingWebhookProductService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-product.service';
 import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-subscription.service';
+import { InterWebhookSubscriptionService } from 'src/engine/core-modules/billing/webhooks/services/inter-webhook-subscription.service';
 import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -94,6 +95,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     // TODO: This is not the optimal solution, find a way to import InterModule here instead.
     InterInstanceService,
     InterService,
+    InterWebhookSubscriptionService,
   ],
   exports: [
     BillingSubscriptionService,
