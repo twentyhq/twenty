@@ -33,15 +33,15 @@ export const AppRouterProviders = () => {
   const pageTitle = getPageTitleFromPath(pathname);
 
   return (
-    <CaptchaProvider>
-      <ApolloProvider>
-        <BaseThemeProvider>
-          <ClientConfigProviderEffect />
-          <ClientConfigProvider>
+    <ApolloProvider>
+      <BaseThemeProvider>
+        <ClientConfigProviderEffect />
+        <UserProviderEffect />
+        <WorkspaceProviderEffect />
+        <ClientConfigProvider>
+          <CaptchaProvider>
             <ChromeExtensionSidecarEffect />
             <ChromeExtensionSidecarProvider>
-              <UserProviderEffect />
-              <WorkspaceProviderEffect />
               <UserProvider>
                 <AuthProvider>
                   <ApolloMetadataClientProvider>
@@ -71,9 +71,9 @@ export const AppRouterProviders = () => {
                 </AuthProvider>
               </UserProvider>
             </ChromeExtensionSidecarProvider>
-          </ClientConfigProvider>
-        </BaseThemeProvider>
-      </ApolloProvider>
-    </CaptchaProvider>
+          </CaptchaProvider>
+        </ClientConfigProvider>
+      </BaseThemeProvider>
+    </ApolloProvider>
   );
 };

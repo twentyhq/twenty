@@ -171,17 +171,10 @@ export const ResetsDateByErasingInputContent: Story = {
 
     await userEvent.clear(input);
 
-    await Promise.all([
-      userEvent.type(input, '{Enter}'),
+    await userEvent.type(input, '{Enter}');
 
-      waitForElementToBeRemoved(() => canvas.queryByRole('dialog')),
-      waitFor(() => {
-        expect(args.onChange).toHaveBeenCalledWith(null);
-      }),
-      waitFor(() => {
-        expect(input).toHaveDisplayValue('');
-      }),
-    ]);
+    expect(args.onChange).toHaveBeenCalledWith(null);
+    expect(input).toHaveDisplayValue('');
   },
 };
 
@@ -202,44 +195,39 @@ export const DefaultsToMinValueWhenTypingReallyOldDate: Story = {
     const datePicker = await canvas.findByRole('dialog');
     expect(datePicker).toBeVisible();
 
-    await Promise.all([
-      userEvent.type(input, '02/02/1500{Enter}'),
+    await userEvent.type(input, '02/02/1500{Enter}');
+    await waitFor(() => {
+      expect(args.onChange).toHaveBeenCalledWith(MIN_DATE.toISOString());
+    });
 
-      waitFor(() => {
-        expect(args.onChange).toHaveBeenCalledWith(MIN_DATE.toISOString());
+    expect(input).toHaveDisplayValue(
+      parseDateToString({
+        date: MIN_DATE,
+        isDateTimeInput: false,
+        userTimezone: undefined,
       }),
-      waitFor(() => {
-        expect(input).toHaveDisplayValue(
-          parseDateToString({
-            date: MIN_DATE,
-            isDateTimeInput: false,
-            userTimezone: undefined,
-          }),
-        );
-      }),
-      waitFor(() => {
-        const expectedDate = DateTime.fromJSDate(MIN_DATE)
-          .toLocal()
-          .set({
-            day: MIN_DATE.getUTCDate(),
-            month: MIN_DATE.getUTCMonth() + 1,
-            year: MIN_DATE.getUTCFullYear(),
-            hour: 0,
-            minute: 0,
-            second: 0,
-            millisecond: 0,
-          });
+    );
 
-        const selectedDay = within(datePicker).getByRole('option', {
-          selected: true,
-          name: (accessibleName) => {
-            // The name looks like "Choose Sunday, December 31st, 1899"
-            return accessibleName.includes(expectedDate.toFormat('yyyy'));
-          },
-        });
-        expect(selectedDay).toBeVisible();
-      }),
-    ]);
+    const expectedDate = DateTime.fromJSDate(MIN_DATE)
+      .toLocal()
+      .set({
+        day: MIN_DATE.getUTCDate(),
+        month: MIN_DATE.getUTCMonth() + 1,
+        year: MIN_DATE.getUTCFullYear(),
+        hour: 0,
+        minute: 0,
+        second: 0,
+        millisecond: 0,
+      });
+
+    const selectedDay = within(datePicker).getByRole('option', {
+      selected: true,
+      name: (accessibleName) => {
+        // The name looks like "Choose Sunday, December 31st, 1899"
+        return accessibleName.includes(expectedDate.toFormat('yyyy'));
+      },
+    });
+    expect(selectedDay).toBeVisible();
   },
 };
 

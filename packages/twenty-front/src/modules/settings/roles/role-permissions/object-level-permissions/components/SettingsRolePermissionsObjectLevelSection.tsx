@@ -82,7 +82,13 @@ export const SettingsRolePermissionsObjectLevelSection = ({
         ...(draftRole.objectPermissions ?? []).filter(
           (permission) => permission.objectMetadataId !== objectMetadataId,
         ),
-        { objectMetadataId, roleId },
+        {
+          objectMetadataId,
+          canReadObjectRecords: null,
+          canUpdateObjectRecords: null,
+          canSoftDeleteObjectRecords: null,
+          canDestroyObjectRecords: null,
+        },
       ],
     }));
     navigate(SettingsPath.RoleObjectLevel, {

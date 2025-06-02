@@ -64,12 +64,12 @@ export class GraphqlQueryFilterFieldParser {
       );
     }
 
-    const { sql, params } = computeWhereConditionParts(
+    const { sql, params } = computeWhereConditionParts({
       operator,
       objectNameSingular,
       key,
       value,
-    );
+    });
 
     if (isFirst) {
       queryBuilder.where(sql, params);
@@ -124,12 +124,12 @@ export class GraphqlQueryFilterFieldParser {
         );
       }
 
-      const { sql, params } = computeWhereConditionParts(
+      const { sql, params } = computeWhereConditionParts({
         operator,
         objectNameSingular,
-        fullFieldName,
+        key: fullFieldName,
         value,
-      );
+      });
 
       if (isFirst && index === 0) {
         queryBuilder.where(sql, params);
