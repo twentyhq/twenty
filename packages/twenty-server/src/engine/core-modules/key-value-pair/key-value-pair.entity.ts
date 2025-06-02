@@ -26,15 +26,27 @@ export enum KeyValuePairType {
 
 @Entity({ name: 'keyValuePair', schema: 'core' })
 @ObjectType()
-@Unique('IndexOnKeyUserIdWorkspaceIdUnique', ['key', 'userId', 'workspaceId'])
-@Index('IndexOnKeyWorkspaceIdAndNullUserIdUnique', ['key', 'workspaceId'], {
-  unique: true,
-  where: '"userId" is NULL',
-})
-@Index('IndexOnKeyUserIdAndNullWorkspaceIdUnique', ['key', 'userId'], {
-  unique: true,
-  where: '"workspaceId" is NULL',
-})
+@Unique('IDX_KEY_VALUE_PAIR_KEY_USER_ID_WORKSPACE_ID_UNIQUE', [
+  'key',
+  'userId',
+  'workspaceId',
+])
+@Index(
+  'IDX_KEY_VALUE_PAIR_KEY_WORKSPACE_ID_NULL_USER_ID_UNIQUE',
+  ['key', 'workspaceId'],
+  {
+    unique: true,
+    where: '"userId" is NULL',
+  },
+)
+@Index(
+  'IDX_KEY_VALUE_PAIR_KEY_USER_ID_NULL_WORKSPACE_ID_UNIQUE',
+  ['key', 'userId'],
+  {
+    unique: true,
+    where: '"workspaceId" is NULL',
+  },
+)
 export class KeyValuePair {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')

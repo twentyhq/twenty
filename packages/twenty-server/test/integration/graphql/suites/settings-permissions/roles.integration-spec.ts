@@ -40,7 +40,7 @@ describe('roles permissions', () => {
   beforeAll(async () => {
     const enablePermissionsV2Query = updateFeatureFlagFactory(
       SEED_APPLE_WORKSPACE_ID,
-      'IsPermissionsV2Enabled',
+      'IS_PERMISSIONS_V2_ENABLED',
       true,
     );
 
@@ -76,7 +76,7 @@ describe('roles permissions', () => {
   afterAll(async () => {
     const disablePermissionsV2Query = updateFeatureFlagFactory(
       SEED_APPLE_WORKSPACE_ID,
-      'IsPermissionsV2Enabled',
+      'IS_PERMISSIONS_V2_ENABLED',
       false,
     );
 

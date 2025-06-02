@@ -232,7 +232,7 @@ export class DatabaseEventTriggerListener {
 
     const isWorkflowEnabled =
       await this.isFeatureFlagEnabledService.isFeatureEnabled(
-        FeatureFlagKey.IsWorkflowEnabled,
+        FeatureFlagKey.IS_WORKFLOW_ENABLED,
         workspaceId,
       );
 

@@ -5,13 +5,17 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateConnectedAccountService } from 'src/engine/core-modules/auth/services/create-connected-account.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
+import { GoogleAPIScopesService } from 'src/engine/core-modules/auth/services/google-apis-scopes';
 import { ResetCalendarChannelService } from 'src/engine/core-modules/auth/services/reset-calendar-channel.service';
 import { ResetMessageChannelService } from 'src/engine/core-modules/auth/services/reset-message-channel.service';
 import { UpdateConnectedAccountOnReconnectService } from 'src/engine/core-modules/auth/services/update-connected-account-on-reconnect.service';
-import { getGoogleApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -59,6 +63,7 @@ export class GoogleAPIsService {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    private readonly googleAPIScopesService: GoogleAPIScopesService,
   ) {}
 
   async refreshGoogleRefreshToken(input: {
@@ -112,7 +117,17 @@ export class GoogleAPIsService {
         workspaceId,
       });
 
-    const scopes = getGoogleApisOauthScopes();
+    const { scopes, isValid } =
+      await this.googleAPIScopesService.getScopesFromGoogleAccessTokenAndCheckIfExpectedScopesArePresent(
+        input.accessToken,
+      );
+
+    if (!isValid) {
+      throw new AuthException(
+        'Unable to connect: Please ensure all permissions are granted',
+        AuthExceptionCode.INSUFFICIENT_SCOPES,
+      );
+    }
 
     await workspaceDataSource.transaction(
       async (manager: WorkspaceEntityManager) => {

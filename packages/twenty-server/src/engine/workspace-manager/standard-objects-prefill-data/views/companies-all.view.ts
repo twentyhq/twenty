@@ -1,6 +1,6 @@
 import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-standard-id-to-id-map';
 
-import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
   COMPANY_STANDARD_FIELD_IDS,
@@ -38,7 +38,7 @@ export const companiesAllView = (
         position: 1,
         isVisible: true,
         size: 100,
-        aggregateOperation: AGGREGATE_OPERATIONS.count,
+        aggregateOperation: AggregateOperations.COUNT,
       },
       {
         fieldMetadataId:
@@ -75,7 +75,7 @@ export const companiesAllView = (
         position: 5,
         isVisible: true,
         size: 150,
-        aggregateOperation: AGGREGATE_OPERATIONS.max,
+        aggregateOperation: AggregateOperations.MAX,
       },
       {
         fieldMetadataId:
@@ -85,7 +85,7 @@ export const companiesAllView = (
         position: 6,
         isVisible: true,
         size: 170,
-        aggregateOperation: AGGREGATE_OPERATIONS.percentageEmpty,
+        aggregateOperation: AggregateOperations.PERCENTAGE_EMPTY,
       },
       {
         fieldMetadataId:
@@ -95,7 +95,7 @@ export const companiesAllView = (
         position: 7,
         isVisible: true,
         size: 170,
-        aggregateOperation: AGGREGATE_OPERATIONS.countNotEmpty,
+        aggregateOperation: AggregateOperations.COUNT_NOT_EMPTY,
       },
     ],
   };

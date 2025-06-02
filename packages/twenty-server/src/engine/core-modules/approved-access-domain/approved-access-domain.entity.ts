@@ -7,8 +7,8 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
   Unique,
+  UpdateDateColumn,
 } from 'typeorm';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -17,7 +17,10 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'approvedAccessDomain', schema: 'core' })
 @ObjectType()
-@Unique('IndexOnDomainAndWorkspaceId', ['domain', 'workspaceId'])
+@Unique('IDX_APPROVED_ACCESS_DOMAIN_DOMAIN_WORKSPACE_ID_UNIQUE', [
+  'domain',
+  'workspaceId',
+])
 export class ApprovedAccessDomain {
   @PrimaryGeneratedColumn('uuid')
   id: string;

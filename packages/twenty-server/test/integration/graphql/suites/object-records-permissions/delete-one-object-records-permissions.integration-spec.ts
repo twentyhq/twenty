@@ -78,7 +78,7 @@ describe('deleteOneObjectRecordsPermissions', () => {
 
       const enablePermissionsQuery = updateFeatureFlagFactory(
         SEED_APPLE_WORKSPACE_ID,
-        'IsPermissionsV2Enabled',
+        'IS_PERMISSIONS_V2_ENABLED',
         true,
       );
 
@@ -88,7 +88,7 @@ describe('deleteOneObjectRecordsPermissions', () => {
     afterAll(async () => {
       const disablePermissionsQuery = updateFeatureFlagFactory(
         SEED_APPLE_WORKSPACE_ID,
-        'IsPermissionsV2Enabled',
+        'IS_PERMISSIONS_V2_ENABLED',
         false,
       );
 

@@ -10,11 +10,8 @@ export const DEMO_SEED_USER_IDS = {
   TIM: '20202020-9e3b-46d4-a556-88b9ddc2b034',
 };
 
-export const seedUsers = async (
-  workspaceDataSource: DataSource,
-  schemaName: string,
-) => {
-  await workspaceDataSource
+export const seedUsers = async (dataSource: DataSource, schemaName: string) => {
+  await dataSource
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${tableName}`, [

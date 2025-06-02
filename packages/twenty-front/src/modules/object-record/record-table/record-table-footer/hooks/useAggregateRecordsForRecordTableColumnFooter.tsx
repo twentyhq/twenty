@@ -5,7 +5,7 @@ import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeRecordGqlOperationFilter';
 import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
@@ -62,9 +62,9 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
     isFieldMetadataDateKind(fieldMetadataItem.type) &&
     isDefined(aggregateOperationForViewFieldWithProbableImpossibleValues) &&
     (aggregateOperationForViewFieldWithProbableImpossibleValues ===
-      AGGREGATE_OPERATIONS.min ||
+      AggregateOperations.MIN ||
       aggregateOperationForViewFieldWithProbableImpossibleValues ===
-        AGGREGATE_OPERATIONS.max);
+        AggregateOperations.MAX);
 
   const aggregateOperationForViewField:
     | ExtendedAggregateOperations

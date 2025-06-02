@@ -240,6 +240,5 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  searchVector: any;
+  searchVector: string;
 }

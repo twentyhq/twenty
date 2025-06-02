@@ -29,7 +29,7 @@ export function WorkspaceQueryHook(
 
   // Default to PreHook
   if (!options.type) {
-    options.type = WorkspaceQueryHookType.PreHook;
+    options.type = WorkspaceQueryHookType.PRE_HOOK;
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-types

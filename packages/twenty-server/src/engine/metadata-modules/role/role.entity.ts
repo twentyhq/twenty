@@ -14,7 +14,7 @@ import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-w
 import { SettingPermissionEntity } from 'src/engine/metadata-modules/setting-permission/setting-permission.entity';
 
 @Entity('role')
-@Unique('IndexOnRoleUnique', ['label', 'workspaceId'])
+@Unique('IDX_ROLE_LABEL_WORKSPACE_ID_UNIQUE', ['label', 'workspaceId'])
 export class RoleEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
