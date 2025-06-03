@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { trimAndRemoveDuplicatedWhitespacesFromString } from 'src/utils/trim-and-remove-duplicated-whitespaces-from-string';
 
 type OnlyStringPropertiesKey<T> = Extract<keyof T, string>;
 
@@ -8,9 +8,6 @@ type StringPropertyKeys<T> = {
     : never;
 }[OnlyStringPropertiesKey<T>];
 
-const sanitizeString = (str: string | null) =>
-  isDefined(str) ? str.trim().replace(/\s+/g, ' ') : str;
-
 export const trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties = <T>(
   obj: T,
   keys: StringPropertyKeys<T>[],
@@ -18,13 +15,17 @@ export const trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties = <T>(
   return keys.reduce((acc, key) => {
     const occurrence = acc[key];
 
-    if (occurrence === undefined || typeof occurrence !== 'string') {
+    if (
+      occurrence === undefined ||
+      typeof occurrence !== 'string' ||
+      occurrence === null
+    ) {
       return acc;
     }
 
     return {
       ...acc,
-      [key]: sanitizeString(acc[key] as string | null),
+      [key]: trimAndRemoveDuplicatedWhitespacesFromString(occurrence),
     };
   }, obj);
 };
