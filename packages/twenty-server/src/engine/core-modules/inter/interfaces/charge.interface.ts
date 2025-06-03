@@ -118,3 +118,7 @@ export interface InterChargeErrorResponse {
     propriedade?: string;
   }>;
 }
+
+export interface InterGetChargePDFResponse {
+  pdf: string;
+}

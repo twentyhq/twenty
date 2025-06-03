@@ -167,8 +167,12 @@ export class Workspace {
   @OneToMany(() => BillingPlans, (billingPlans) => billingPlans.workspace)
   billingPlans: Relation<BillingPlans[]>;
 
-  @Column({ nullable: true, unique: true })
-  interBillingChargeId: string;
+  // TODO: Probably move these inter files to billing plans in the future
+  @Column({ type: 'varchar', nullable: true, unique: true })
+  interBillingChargeId: string | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  interBillingChargeFilePath: string | null;
 
   @Field(() => [StripeIntegration])
   @OneToMany(

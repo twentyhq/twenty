@@ -6,6 +6,7 @@ import { BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/t
 import { InterCreateChargeDto } from 'src/engine/core-modules/inter/dtos/inter-create-charge.dto';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { APP_LOCALES } from 'twenty-shared/translations';
 
 export type BillingPortalCheckoutSessionParameters = {
   user: User;
@@ -16,4 +17,5 @@ export type BillingPortalCheckoutSessionParameters = {
   requirePaymentMethod?: boolean;
   paymentProvider?: BillingPaymentProviders;
   interChargeData?: InterCreateChargeDto;
+  locale?: keyof typeof APP_LOCALES;
 };

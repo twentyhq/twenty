@@ -38,6 +38,8 @@ import { InterWebhookSubscriptionService } from 'src/engine/core-modules/billing
 import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
+import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { InterInstanceService } from 'src/engine/core-modules/inter/services/inter-instance.service';
 import { InterService } from 'src/engine/core-modules/inter/services/inter.service';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
@@ -49,6 +51,8 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
   imports: [
     FeatureFlagModule,
     StripeModule,
+    FileUploadModule,
+    FileModule,
     DomainManagerModule,
     MessageQueueModule,
     PermissionsModule,

@@ -28,6 +28,7 @@ import { InterService } from 'src/engine/core-modules/inter/services/inter.servi
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { assert } from 'src/utils/assert';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 @Injectable()
 export class BillingPortalWorkspaceService {
@@ -53,6 +54,7 @@ export class BillingPortalWorkspaceService {
     plan,
     requirePaymentMethod,
     paymentProvider,
+    locale,
     interChargeData: interChargeInput,
   }: BillingPortalCheckoutSessionParameters): Promise<string> {
     const frontBaseUrl = this.domainManagerService.buildWorkspaceURL({
@@ -68,6 +70,8 @@ export class BillingPortalWorkspaceService {
         planPrice: billingPricesPerPlan.baseProductPrice.unitAmountDecimal,
         workspaceId: workspace.id,
         ...(interChargeInput as InterCreateChargeDto),
+        locale: locale || SOURCE_LOCALE,
+        userEmail: user.email,
       });
 
       return `${frontBaseUrl.toString()}plan-required/payment-success`;

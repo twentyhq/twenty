@@ -4,6 +4,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
+import { EmailModule } from 'src/engine/core-modules/email/email.module';
+import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
+import { FileModule } from 'src/engine/core-modules/file/file.module';
 
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 import { InterIntegrationResolver } from 'src/engine/core-modules/inter/integration/inter-integration.resolver';
@@ -17,6 +20,9 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
 
 @Module({
   imports: [
+    FileUploadModule,
+    FileModule,
+    EmailModule,
     TypeOrmModule.forFeature([InterIntegration, Workspace], 'core'),
     NestjsQueryGraphQLModule.forFeature({
       imports: [
