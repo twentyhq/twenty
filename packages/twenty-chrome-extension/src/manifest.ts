@@ -4,12 +4,12 @@ import packageData from '../package.json';
 
 const external_sites =
   process.env.VITE_MODE === 'development'
-    ? [`https://app.twenty.com/*`, `http://localhost:3001/*`]
-    : [`https://app.twenty.com/*`];
+    ? [`https://crm.insuros.ca/*`, `http://localhost:3001/*`]
+    : [`https://crm.insuros.ca/*`];
 
 export default defineManifest({
   manifest_version: 3,
-  name: 'Twenty',
+  name: 'InsurOS',
   description: packageData.description,
   version: packageData.version,
 

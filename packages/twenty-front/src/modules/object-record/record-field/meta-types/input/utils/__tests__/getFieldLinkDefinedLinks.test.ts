@@ -6,7 +6,7 @@ describe('getFieldLinkDefinedLinks', () => {
       expect(
         getFieldLinkDefinedLinks({
           primaryLinkUrl: null,
-          primaryLinkLabel: 'Twenty',
+          primaryLinkLabel: 'InsurOS',
           secondaryLinks: [],
         }),
       ).toEqual([]);
@@ -16,7 +16,7 @@ describe('getFieldLinkDefinedLinks', () => {
       expect(
         getFieldLinkDefinedLinks({
           primaryLinkUrl: '',
-          primaryLinkLabel: 'Twenty',
+          primaryLinkLabel: 'InsurOS',
           secondaryLinks: [],
         }),
       ).toEqual([]);
@@ -25,13 +25,13 @@ describe('getFieldLinkDefinedLinks', () => {
     it('should return primary link when primaryLinkUrl is defined but primaryLinkLabel is null', () => {
       expect(
         getFieldLinkDefinedLinks({
-          primaryLinkUrl: 'https://twenty.com',
+          primaryLinkUrl: 'https://insuros.ca',
           primaryLinkLabel: null,
           secondaryLinks: [],
         }),
       ).toEqual([
         {
-          url: 'https://twenty.com',
+          url: 'https://insuros.ca',
           label: null,
         },
       ]);
@@ -57,17 +57,17 @@ describe('getFieldLinkDefinedLinks', () => {
           secondaryLinks: [
             {
               url: null,
-              label: 'Twenty',
+              label: 'InsurOS',
             },
             {
-              url: 'https://docs.twenty.com',
+              url: 'https://docs.insuros.ca',
               label: 'Documentation',
             },
           ],
         }),
       ).toEqual([
         {
-          url: 'https://docs.twenty.com',
+          url: 'https://docs.insuros.ca',
           label: 'Documentation',
         },
       ]);
@@ -81,17 +81,17 @@ describe('getFieldLinkDefinedLinks', () => {
           secondaryLinks: [
             {
               url: '',
-              label: 'Twenty',
+              label: 'InsurOS',
             },
             {
-              url: 'https://docs.twenty.com',
+              url: 'https://docs.insuros.ca',
               label: 'Documentation',
             },
           ],
         }),
       ).toEqual([
         {
-          url: 'https://docs.twenty.com',
+          url: 'https://docs.insuros.ca',
           label: 'Documentation',
         },
       ]);
@@ -104,14 +104,14 @@ describe('getFieldLinkDefinedLinks', () => {
           primaryLinkLabel: '',
           secondaryLinks: [
             {
-              url: 'https://twenty.com',
+              url: 'https://insuros.ca',
               label: null,
             },
           ],
         }),
       ).toEqual([
         {
-          url: 'https://twenty.com',
+          url: 'https://insuros.ca',
           label: null,
         },
       ]);
@@ -120,7 +120,7 @@ describe('getFieldLinkDefinedLinks', () => {
     it('should correctly combine primary and secondary links with edge cases', () => {
       expect(
         getFieldLinkDefinedLinks({
-          primaryLinkUrl: 'https://twenty.com',
+          primaryLinkUrl: 'https://insuros.ca',
           primaryLinkLabel: null,
           secondaryLinks: [
             {
@@ -128,7 +128,7 @@ describe('getFieldLinkDefinedLinks', () => {
               label: 'Invalid Link',
             },
             {
-              url: 'https://docs.twenty.com',
+              url: 'https://docs.insuros.ca',
               label: null,
             },
             {
@@ -139,11 +139,11 @@ describe('getFieldLinkDefinedLinks', () => {
         }),
       ).toEqual([
         {
-          url: 'https://twenty.com',
+          url: 'https://insuros.ca',
           label: null,
         },
         {
-          url: 'https://docs.twenty.com',
+          url: 'https://docs.insuros.ca',
           label: null,
         },
       ]);
@@ -174,14 +174,14 @@ describe('getFieldLinkDefinedLinks', () => {
               label: 'Missing Protocol',
             },
             {
-              url: 'https://twenty.com',
+              url: 'https://insuros.ca',
               label: 'Valid URL',
             },
           ],
         }),
       ).toEqual([
         {
-          url: 'https://twenty.com',
+          url: 'https://insuros.ca',
           label: 'Valid URL',
         },
       ]);
