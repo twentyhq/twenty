@@ -4,13 +4,14 @@ import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUp
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useVectorSearchFieldInRecordIndexContextOrThrow } from '@/views/hooks/useVectorSearchFieldInRecordIndexContextOrThrow';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { useVectorSearchField } from './useVectorSearchField';
 
 export const useVectorSearchFilterOperations = () => {
-  const { vectorSearchField } = useVectorSearchField();
+  const { vectorSearchField } =
+    useVectorSearchFieldInRecordIndexContextOrThrow();
   const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );

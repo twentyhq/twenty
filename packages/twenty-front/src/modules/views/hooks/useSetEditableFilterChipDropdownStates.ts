@@ -4,17 +4,18 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { useVectorSearchFieldInRecordIndexContextOrThrow } from '@/views/hooks/useVectorSearchFieldInRecordIndexContextOrThrow';
 import { vectorSearchInputComponentState } from '@/views/states/vectorSearchInputComponentState';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { useVectorSearchField } from './useVectorSearchField';
 
 export const useSetEditableFilterChipDropdownStates = () => {
   const { filterableFieldMetadataItems } =
     useFilterableFieldMetadataItemsInRecordIndexContext();
 
-  const { vectorSearchField } = useVectorSearchField();
+  const { vectorSearchField } =
+    useVectorSearchFieldInRecordIndexContextOrThrow();
 
   const setEditableFilterChipDropdownStates = useRecoilCallback(
     ({ set }) =>
