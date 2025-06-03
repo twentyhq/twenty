@@ -23,10 +23,6 @@ import {
   FieldMetadataComplexOption,
   FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import {
-  RelationDefinitionDTO,
-  RelationDefinitionType,
-} from 'src/engine/metadata-modules/field-metadata/dtos/relation-definition.dto';
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import {
   FieldMetadataException,
@@ -46,7 +42,6 @@ import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metad
 import { isSelectOrMultiSelectFieldMetadata } from 'src/engine/metadata-modules/field-metadata/utils/is-select-or-multi-select-field-metadata.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.type';
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
@@ -91,8 +86,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(RelationMetadataEntity, 'metadata')
-    private readonly relationMetadataRepository: Repository<RelationMetadataEntity>,
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
@@ -374,20 +367,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           );
         }
 
-        // TODO: remove this once we have deleted the relation metadata table
-        await this.relationMetadataRepository.delete({
-          fromFieldMetadataId: In([
-            fieldMetadata.id,
-            fieldMetadata.relationTargetFieldMetadata.id,
-          ]),
-        });
-        await this.relationMetadataRepository.delete({
-          toFieldMetadataId: In([
-            fieldMetadata.id,
-            fieldMetadata.relationTargetFieldMetadata.id,
-          ]),
-        });
-
         await fieldMetadataRepository.delete({
           id: In([
             fieldMetadata.id,
@@ -555,61 +534,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     return updatableStandardFieldInput;
-  }
-
-  public async getRelationDefinitionFromRelationMetadata(
-    fieldMetadataDTO: FieldMetadataDTO,
-    relationMetadata: RelationMetadataEntity,
-  ): Promise<RelationDefinitionDTO | null> {
-    if (fieldMetadataDTO.type !== FieldMetadataType.RELATION) {
-      return null;
-    }
-
-    const isRelationFromSource =
-      relationMetadata.fromFieldMetadata.id === fieldMetadataDTO.id;
-
-    // TODO: implement MANY_TO_MANY
-    if (
-      relationMetadata.relationType === RelationMetadataType.MANY_TO_MANY ||
-      relationMetadata.relationType === RelationMetadataType.MANY_TO_ONE
-    ) {
-      throw new FieldMetadataException(
-        `
-        Relation type ${relationMetadata.relationType} not supported
-      `,
-        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-      );
-    }
-
-    if (isRelationFromSource) {
-      const direction =
-        relationMetadata.relationType === RelationMetadataType.ONE_TO_ONE
-          ? RelationDefinitionType.ONE_TO_ONE
-          : RelationDefinitionType.ONE_TO_MANY;
-
-      return {
-        relationId: relationMetadata.id,
-        sourceObjectMetadata: relationMetadata.fromObjectMetadata,
-        sourceFieldMetadata: relationMetadata.fromFieldMetadata,
-        targetObjectMetadata: relationMetadata.toObjectMetadata,
-        targetFieldMetadata: relationMetadata.toFieldMetadata,
-        direction,
-      };
-    } else {
-      const direction =
-        relationMetadata.relationType === RelationMetadataType.ONE_TO_ONE
-          ? RelationDefinitionType.ONE_TO_ONE
-          : RelationDefinitionType.MANY_TO_ONE;
-
-      return {
-        relationId: relationMetadata.id,
-        sourceObjectMetadata: relationMetadata.toObjectMetadata,
-        sourceFieldMetadata: relationMetadata.toFieldMetadata,
-        targetObjectMetadata: relationMetadata.fromObjectMetadata,
-        targetFieldMetadata: relationMetadata.fromFieldMetadata,
-        direction,
-      };
-    }
   }
 
   private async validateFieldMetadata<
