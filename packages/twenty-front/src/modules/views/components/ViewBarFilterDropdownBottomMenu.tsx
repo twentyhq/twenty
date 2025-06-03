@@ -3,12 +3,11 @@ import { ViewBarFilterDropdownVectorSearchButton } from '@/views/components/View
 import styled from '@emotion/styled';
 
 const StyledContainer = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(1)};
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: ${({ theme }) => theme.spacing(1)};
 `;
 
 export const ViewBarFilterDropdownBottomMenu = () => {
