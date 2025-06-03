@@ -1,20 +1,15 @@
-import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { ViewFilter } from '../types/ViewFilter';
+import { getFilterableFieldsWithVectorSearch } from '../utils/getFilterableFieldsWithVectorSearch';
 import { mapViewFiltersToFilters } from '../utils/mapViewFiltersToFilters';
-import { useVectorSearchField } from './useVectorSearchField';
 
 export const useMapViewFiltersToFilters = () => {
-  const { filterableFieldMetadataItems } =
-    useFilterableFieldMetadataItemsInRecordIndexContext();
-  const { vectorSearchField } = useVectorSearchField();
+  const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const mapViewFiltersToRecordFilters = (viewFilters: ViewFilter[]) => {
-    const allFieldMetadataItems = [
-      ...filterableFieldMetadataItems,
-      ...(vectorSearchField ? [vectorSearchField] : []),
-    ];
-
-    return mapViewFiltersToFilters(viewFilters, allFieldMetadataItems);
+    const filterableFieldMetadataItems =
+      getFilterableFieldsWithVectorSearch(objectMetadataItem);
+    return mapViewFiltersToFilters(viewFilters, filterableFieldMetadataItems);
   };
 
   return { mapViewFiltersToRecordFilters };
