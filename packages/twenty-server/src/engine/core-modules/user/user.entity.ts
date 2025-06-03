@@ -34,7 +34,6 @@ registerEnumType(OnboardingStatus, {
   unique: true,
   where: '"deletedAt" IS NULL',
 })
-@Index('IDX_USER_ID_DELETED_AT', ['id', 'deletedAt'])
 export class User {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
