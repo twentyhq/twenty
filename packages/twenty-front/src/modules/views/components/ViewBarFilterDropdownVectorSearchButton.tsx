@@ -20,9 +20,10 @@ const StyledSearchText = styled.span`
 
 export const ViewBarFilterDropdownVectorSearchButton = () => {
   const { t } = useLingui();
-  const { vectorSearchInputValue } = useVectorSearchInputState(
-    VIEW_BAR_FILTER_DROPDOWN_ID,
-  );
+  const {
+    vectorSearchInputValue,
+    setVectorSearchInputValueFromExistingFilter,
+  } = useVectorSearchInputState(VIEW_BAR_FILTER_DROPDOWN_ID);
   const { applyVectorSearchFilter } = useVectorSearchFilterOperations();
   const { openVectorSearchFilter } = useOpenVectorSearchFilter();
 
@@ -35,6 +36,8 @@ export const ViewBarFilterDropdownVectorSearchButton = () => {
     openVectorSearchFilter();
     if (vectorSearchInputValue.length > 0) {
       applyVectorSearchFilter(vectorSearchInputValue);
+    } else {
+      setVectorSearchInputValueFromExistingFilter();
     }
   };
 
