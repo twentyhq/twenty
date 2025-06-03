@@ -47,6 +47,7 @@ export class WorkflowRunWorkspaceService {
     const workflowRunRepository =
       await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
         'workflowRun',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowVersion =
@@ -57,6 +58,7 @@ export class WorkflowRunWorkspaceService {
     const workflowRepository =
       await this.twentyORMManager.getRepository<WorkflowWorkspaceEntity>(
         'workflow',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflow = await workflowRepository.findOne({
@@ -122,6 +124,7 @@ export class WorkflowRunWorkspaceService {
     const workflowRunRepository =
       await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
         'workflowRun',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowRunToUpdate = await workflowRunRepository.findOneBy({
@@ -169,6 +172,7 @@ export class WorkflowRunWorkspaceService {
     const workflowRunRepository =
       await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
         'workflowRun',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowRunToUpdate = await workflowRunRepository.findOneBy({
@@ -212,6 +216,7 @@ export class WorkflowRunWorkspaceService {
     const workflowRunRepository =
       await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
         'workflowRun',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowRunToUpdate = await workflowRunRepository.findOneBy({
@@ -257,6 +262,7 @@ export class WorkflowRunWorkspaceService {
     const workflowRunRepository =
       await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
         'workflowRun',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowRunToUpdate = await workflowRunRepository.findOneBy({
@@ -308,6 +314,7 @@ export class WorkflowRunWorkspaceService {
     const workflowRunRepository =
       await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
         'workflowRun',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowRun = await workflowRunRepository.findOne({
@@ -355,6 +362,7 @@ export class WorkflowRunWorkspaceService {
     const workflowRunRepository =
       await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
         'workflowRun',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowRunAfter = await workflowRunRepository.findOneBy({

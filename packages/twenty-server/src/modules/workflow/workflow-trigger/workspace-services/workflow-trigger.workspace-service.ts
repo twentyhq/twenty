@@ -154,6 +154,7 @@ export class WorkflowTriggerWorkspaceService {
       const workflowVersionRepository =
         await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
           'workflowVersion',
+          { shouldBypassPermissionChecks: true },
         );
 
       await this.performDeactivationSteps(

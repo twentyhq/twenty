@@ -120,6 +120,7 @@ export class WorkflowVersionStepWorkspaceService {
     const workflowVersionRepository =
       await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
         'workflowVersion',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowVersion = await workflowVersionRepository.findOne({
@@ -176,6 +177,7 @@ export class WorkflowVersionStepWorkspaceService {
     const workflowVersionRepository =
       await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
         'workflowVersion',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowVersion = await workflowVersionRepository.findOne({

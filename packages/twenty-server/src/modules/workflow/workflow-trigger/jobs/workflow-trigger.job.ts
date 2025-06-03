@@ -45,6 +45,7 @@ export class WorkflowTriggerJob {
       const workflowRepository =
         await this.twentyORMManager.getRepository<WorkflowWorkspaceEntity>(
           'workflow',
+          { shouldBypassPermissionChecks: true },
         );
 
       const workflow = await workflowRepository.findOneBy({
@@ -68,6 +69,7 @@ export class WorkflowTriggerJob {
       const workflowVersionRepository =
         await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
           'workflowVersion',
+          { shouldBypassPermissionChecks: true },
         );
 
       const workflowVersion = await workflowVersionRepository.findOneBy({

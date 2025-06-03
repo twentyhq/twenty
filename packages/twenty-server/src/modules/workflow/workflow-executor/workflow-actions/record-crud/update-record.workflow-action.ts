@@ -81,6 +81,7 @@ export class UpdateRecordWorkflowAction implements WorkflowExecutor {
 
     const repository = await this.twentyORMManager.getRepository(
       workflowActionInput.objectName,
+      { shouldBypassPermissionChecks: true },
     );
 
     const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;

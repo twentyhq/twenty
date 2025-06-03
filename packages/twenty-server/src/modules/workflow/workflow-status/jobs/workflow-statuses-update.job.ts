@@ -127,11 +127,13 @@ export class WorkflowStatusesUpdateJob {
     const workflowRepository =
       await this.twentyORMManager.getRepository<WorkflowWorkspaceEntity>(
         'workflow',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowVersionRepository =
       await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
         'workflowVersion',
+        { shouldBypassPermissionChecks: true },
       );
 
     const newWorkflowStatuses = await this.getWorkflowStatuses({
@@ -245,11 +247,13 @@ export class WorkflowStatusesUpdateJob {
     const workflowRepository =
       await this.twentyORMManager.getRepository<WorkflowWorkspaceEntity>(
         'workflow',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowVersionRepository =
       await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
         'workflowVersion',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflow = await workflowRepository.findOneOrFail({

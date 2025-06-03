@@ -78,6 +78,7 @@ export class CreateRecordWorkflowAction implements WorkflowExecutor {
 
     const repository = await this.twentyORMManager.getRepository(
       workflowActionInput.objectName,
+      { shouldBypassPermissionChecks: true },
     );
 
     const objectMetadata = await this.objectMetadataRepository.findOne({

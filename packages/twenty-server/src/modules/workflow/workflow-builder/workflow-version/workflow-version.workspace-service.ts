@@ -46,6 +46,7 @@ export class WorkflowVersionWorkspaceService {
     const workflowVersionRepository =
       await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
         'workflowVersion',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowVersionToCopy = await workflowVersionRepository.findOne({
