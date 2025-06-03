@@ -294,11 +294,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       value: true,
     });
 
-    console.log(
-      'NODE_ENV------------------',
-      this.twentyConfigService.get('NODE_ENV'),
-    );
-
     if (this.twentyConfigService.get('NODE_ENV') === 'production') {
       this.logger.log('Starting telephony setup for workspace: ', workspace.id);
 
