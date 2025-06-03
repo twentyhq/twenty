@@ -24,6 +24,7 @@ import {
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { serverlessFunctionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-graphql-api-exception-handler.utils';
+import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 @UseGuards(WorkspaceAuthGuard)
 @Resolver()
@@ -32,6 +33,8 @@ export class ServerlessFunctionResolver {
     private readonly serverlessFunctionService: ServerlessFunctionService,
     @InjectRepository(FeatureFlag, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlag>,
+    @InjectRepository(ServerlessFunctionEntity, 'metadata')
+    private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
   ) {}
 
   async checkFeatureFlag(workspaceId: string) {
@@ -57,9 +60,11 @@ export class ServerlessFunctionResolver {
     try {
       await this.checkFeatureFlag(workspaceId);
 
-      return await this.serverlessFunctionService.findOneOrFail({
-        id,
-        workspaceId,
+      return await this.serverlessFunctionRepository.findOneOrFail({
+        where: {
+          id,
+          workspaceId,
+        },
       });
     } catch (error) {
       serverlessFunctionGraphQLApiExceptionHandler(error);
