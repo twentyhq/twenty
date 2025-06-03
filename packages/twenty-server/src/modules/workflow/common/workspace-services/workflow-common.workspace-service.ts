@@ -46,6 +46,7 @@ export class WorkflowCommonWorkspaceService {
     const workflowVersionRepository =
       await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
         'workflowVersion',
+        { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
       );
 
     const workflowVersion = await workflowVersionRepository.findOne({
@@ -121,16 +122,19 @@ export class WorkflowCommonWorkspaceService {
     const workflowVersionRepository =
       await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
         'workflowVersion',
+        { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
       );
 
     const workflowRunRepository =
       await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
         'workflowRun',
+        { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
       );
 
     const workflowAutomatedTriggerRepository =
       await this.twentyORMManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
         'workflowAutomatedTrigger',
+        { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
       );
 
     workflowIds.forEach((workflowId) => {

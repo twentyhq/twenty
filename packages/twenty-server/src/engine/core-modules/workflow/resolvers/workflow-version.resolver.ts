@@ -5,12 +5,18 @@ import { CreateDraftFromWorkflowVersionInput } from 'src/engine/core-modules/wor
 import { WorkflowVersionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version.dto';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { WorkflowVersionWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version/workflow-version.workspace-service';
 
 @Resolver()
-@UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+@UseGuards(
+  WorkspaceAuthGuard,
+  UserAuthGuard,
+  SettingsPermissionsGuard(SettingPermissionType.WORKFLOWS),
+)
 export class WorkflowVersionResolver {
   constructor(
     private readonly workflowVersionWorkspaceService: WorkflowVersionWorkspaceService,

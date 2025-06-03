@@ -43,6 +43,7 @@ export class WorkflowVersionValidationWorkspaceService {
     const workflowVersionRepository =
       await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
         'workflowVersion',
+        { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
       );
 
     const workflowAlreadyHasDraftVersion =
@@ -104,6 +105,7 @@ export class WorkflowVersionValidationWorkspaceService {
     const workflowVersionRepository =
       await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
         'workflowVersion',
+        { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
       );
 
     const otherWorkflowVersionsExist = await workflowVersionRepository.exists({

@@ -84,6 +84,7 @@ export class WorkflowTriggerWorkspaceService {
     const workflowVersionRepository =
       await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
         'workflowVersion',
+        { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
       );
 
     const workflowVersionNullable = await workflowVersionRepository.findOne({
@@ -98,6 +99,7 @@ export class WorkflowTriggerWorkspaceService {
     const workflowRepository =
       await this.twentyORMManager.getRepository<WorkflowWorkspaceEntity>(
         'workflow',
+        { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
       );
 
     const workflow = await workflowRepository.findOne({
