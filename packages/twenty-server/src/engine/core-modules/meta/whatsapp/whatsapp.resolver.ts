@@ -19,9 +19,12 @@ export class WhatsappResolver {
   @Mutation(() => Boolean)
   async sendTemplate(
     @Args('sendTemplateInput') sendTemplateInput: SendTemplateInput,
+    @AuthWorkspace() workspace: Workspace,
   ) {
-    const sendTemplateConfirmation =
-      await this.whatsappService.sendTemplate(sendTemplateInput);
+    const sendTemplateConfirmation = await this.whatsappService.sendTemplate(
+      sendTemplateInput,
+      workspace.id,
+    );
 
     if (sendTemplateConfirmation) {
       const today = new Date();
