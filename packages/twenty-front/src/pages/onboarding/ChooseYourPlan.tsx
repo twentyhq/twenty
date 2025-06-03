@@ -217,7 +217,7 @@ export const ChooseYourPlan = () => {
                         name="payment-provider"
                       >
                         <StyledPaymentProviderCardContainer>
-                          {label}
+                          {label.message}
                         </StyledPaymentProviderCardContainer>
                       </CardPicker>
                     ))}

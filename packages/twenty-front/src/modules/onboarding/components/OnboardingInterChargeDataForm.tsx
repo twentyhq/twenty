@@ -142,7 +142,12 @@ export const OnboardingInterChargeDataForm = ({
                   dropdownId="inter-charge-data-legal-entity"
                   value={value}
                   onChange={onChange}
-                  options={INTER_CUSTOMER_TYPE_OPTIONS}
+                  options={INTER_CUSTOMER_TYPE_OPTIONS.map(
+                    ({ label, value }) => ({
+                      value,
+                      label: label.message as string,
+                    }),
+                  )}
                 />
               )}
             />
