@@ -14,13 +14,13 @@ export const baseSchema = (
       title: 'InsurOS Api',
       description: `This is a **InsurOS REST/API** playground based on the **OpenAPI 3.1 specification**.`,
       termsOfService:
-        'https://github.com/twentyhq/twenty?tab=coc-ov-file#readme',
+        'https://github.com/insuros/twenty?tab=coc-ov-file#readme',
       contact: {
         email: 'felix@twenty.com',
       },
       license: {
         name: 'AGPL-3.0',
-        url: 'https://github.com/twentyhq/twenty?tab=License-1-ov-file#readme',
+        url: 'https://github.com/insuros/twenty?tab=License-1-ov-file#readme',
       },
       version: API_Version,
     },
