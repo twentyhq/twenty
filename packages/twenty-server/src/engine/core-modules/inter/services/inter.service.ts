@@ -7,32 +7,32 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { i18n } from '@lingui/core';
+import { t } from '@lingui/core/macro';
+import { render } from '@react-email/render';
 import axios, { AxiosInstance, AxiosResponse, isAxiosError } from 'axios';
+import { InterBillingChargeFileEmail } from 'twenty-emails';
+import { APP_LOCALES } from 'twenty-shared/translations';
 import { Repository } from 'typeorm';
 
+import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import {
   InterChargeErrorResponse,
   InterChargeRequest,
   InterChargeResponse,
+  InterGetChargePDFResponse,
 } from 'src/engine/core-modules/inter/interfaces/charge.interface';
 
-import { t } from '@lingui/core/macro';
-import { render } from '@react-email/render';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { InterCreateChargeDto } from 'src/engine/core-modules/inter/dtos/inter-create-charge.dto';
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 import { InterIntegrationService } from 'src/engine/core-modules/inter/integration/inter-integration.service';
-import { InterGetChargePDFResponse } from 'src/engine/core-modules/inter/interfaces/charge.interface';
 import { InterInstanceService } from 'src/engine/core-modules/inter/services/inter-instance.service';
 import { getNextBusinessDays } from 'src/engine/core-modules/inter/utils/get-next-business-days.util';
 import { getPriceFromStripeDecimal } from 'src/engine/core-modules/inter/utils/get-price-from-stripe-decimal.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { InterBillingChargeFileEmail } from 'twenty-emails';
-import { APP_LOCALES } from 'twenty-shared/translations';
 
 @Injectable()
 export class InterService {
@@ -72,6 +72,10 @@ export class InterService {
     userEmail: string;
   }) {
     try {
+      await this.workspaceRepository.update(workspaceId, {
+        interBillingChargeId: workspaceId.slice(0, 15),
+      });
+
       const token = await this.interInstanceService.getOauthToken();
 
       const response = await this.interInstance.post<

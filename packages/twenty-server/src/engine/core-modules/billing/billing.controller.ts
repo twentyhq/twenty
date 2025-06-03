@@ -162,7 +162,8 @@ export class BillingController {
     const { situacao, seuNumero } = payload;
 
     switch (situacao) {
-      case InterChargeStatus.A_RECEBER:
+      // TODO: Investigate best blocking strategy when inter = receive
+      // case InterChargeStatus.A_RECEBER:
       case InterChargeStatus.RECEBIDO:
         return await this.interWebhookSubscriptionService.processInterEvent(
           seuNumero,

@@ -5,7 +5,7 @@ export const interToSubscriptionStatusMap: Record<
   InterChargeStatus,
   SubscriptionStatus
 > = {
-  [InterChargeStatus.A_RECEBER]: SubscriptionStatus.Incomplete,
+  [InterChargeStatus.A_RECEBER]: SubscriptionStatus.Unpaid,
   [InterChargeStatus.RECEBIDO]: SubscriptionStatus.Active,
   [InterChargeStatus.ATRASADO]: SubscriptionStatus.Unpaid,
   [InterChargeStatus.CANCELADO]: SubscriptionStatus.Canceled,
