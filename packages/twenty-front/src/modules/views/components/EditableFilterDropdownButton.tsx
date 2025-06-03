@@ -28,7 +28,7 @@ export const EditableFilterDropdownButton = ({
   const { setEditableFilterChipDropdownStates } =
     useSetEditableFilterChipDropdownStates();
 
-  const setSearchInputValue = useSetRecoilComponentStateV2(
+  const setVectorSearchInputValue = useSetRecoilComponentStateV2(
     objectFilterDropdownSearchInputComponentState,
     recordFilter.id,
   );
@@ -46,11 +46,12 @@ export const EditableFilterDropdownButton = ({
     }
   }, [recordFilter, removeRecordFilter]);
 
-  const isSearchFilter = recordFilter.operand === ViewFilterOperand.Search;
+  const isVectorSearchFilter =
+    recordFilter.operand === ViewFilterOperand.VectorSearch;
 
   const handleFilterChipClick = () => {
-    if (isSearchFilter) {
-      setSearchInputValue(recordFilter.value);
+    if (isVectorSearchFilter) {
+      setVectorSearchInputValue(recordFilter.value);
     }
     setEditableFilterChipDropdownStates(recordFilter);
   };

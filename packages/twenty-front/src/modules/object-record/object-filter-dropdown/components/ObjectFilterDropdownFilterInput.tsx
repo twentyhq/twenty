@@ -5,7 +5,7 @@ import { ObjectFilterDropdownRatingInput } from '@/object-record/object-filter-d
 import { ObjectFilterDropdownRecordSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordSelect';
 import { ObjectFilterDropdownSearchInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { ViewBarFilterDropdownSearchInput } from '@/views/components/ViewBarFilterDropdownSearchInput';
+import { ViewBarFilterDropdownVectorSearchInput } from '@/views/components/ViewBarFilterDropdownVectorSearchInput';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
@@ -56,11 +56,14 @@ export const ObjectFilterDropdownFilterInput = ({
       ViewFilterOperand.IsRelative,
     ].includes(selectedOperandInDropdown);
 
-  const isSearchFilter = selectedOperandInDropdown === ViewFilterOperand.Search;
+  const isVectorSearchFilter =
+    selectedOperandInDropdown === ViewFilterOperand.VectorSearch;
 
-  if (isSearchFilter && isDefined(filterDropdownId)) {
+  if (isVectorSearchFilter && isDefined(filterDropdownId)) {
     return (
-      <ViewBarFilterDropdownSearchInput filterDropdownId={filterDropdownId} />
+      <ViewBarFilterDropdownVectorSearchInput
+        filterDropdownId={filterDropdownId}
+      />
     );
   }
 

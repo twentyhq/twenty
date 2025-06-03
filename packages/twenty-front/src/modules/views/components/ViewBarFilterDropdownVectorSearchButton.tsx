@@ -9,20 +9,22 @@ import { MenuItem } from 'twenty-ui/navigation';
 import { VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS } from '@/views/constants/ViewBarFilterBottomMenuItemIds';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 
-import { useOpenSearchFilter } from '@/views/hooks/useOpenSearchFilter';
-import { useSearchFilterOperations } from '@/views/hooks/useSearchFilterOperations';
-import { useSearchInputState } from '@/views/hooks/useSearchInputState';
+import { useOpenVectorSearchFilter } from '@/views/hooks/useOpenVectorSearchFilter';
+import { useVectorSearchFilterOperations } from '@/views/hooks/useVectorSearchFilterOperations';
+import { useVectorSearchInputState } from '@/views/hooks/useVectorSearchInputState';
 
 const StyledSearchText = styled.span`
   color: ${({ theme }) => theme.font.color.light};
   margin-left: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const ViewBarFilterDropdownSearchButton = () => {
+export const ViewBarFilterDropdownVectorSearchButton = () => {
   const { t } = useLingui();
-  const { searchInputValue } = useSearchInputState(VIEW_BAR_FILTER_DROPDOWN_ID);
-  const { applySearchFilter } = useSearchFilterOperations();
-  const { openSearchFilter } = useOpenSearchFilter();
+  const { vectorSearchInputValue } = useVectorSearchInputState(
+    VIEW_BAR_FILTER_DROPDOWN_ID,
+  );
+  const { applyVectorSearchFilter } = useVectorSearchFilterOperations();
+  const { openVectorSearchFilter } = useOpenVectorSearchFilter();
 
   const isSelected = useRecoilComponentFamilyValueV2(
     isSelectedItemIdComponentFamilySelector,
@@ -30,9 +32,9 @@ export const ViewBarFilterDropdownSearchButton = () => {
   );
 
   const handleSearchClick = () => {
-    openSearchFilter();
-    if (searchInputValue.length > 0) {
-      applySearchFilter(searchInputValue);
+    openVectorSearchFilter();
+    if (vectorSearchInputValue.length > 0) {
+      applyVectorSearchFilter(vectorSearchInputValue);
     }
   };
 
@@ -48,8 +50,8 @@ export const ViewBarFilterDropdownSearchButton = () => {
         text={
           <>
             {t`Search`}
-            {searchInputValue && (
-              <StyledSearchText>{t`· ${searchInputValue}`}</StyledSearchText>
+            {vectorSearchInputValue && (
+              <StyledSearchText>{t`· ${vectorSearchInputValue}`}</StyledSearchText>
             )}
           </>
         }

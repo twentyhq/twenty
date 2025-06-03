@@ -307,7 +307,7 @@ const computeValueFromFilterTSVector = (
   value: string,
 ) => {
   switch (operand) {
-    case ViewFilterOperand.Search:
+    case ViewFilterOperand.VectorSearch:
       return value;
     default:
       assertUnreachable(operand);

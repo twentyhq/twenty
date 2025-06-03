@@ -3,17 +3,16 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 
-import { useOpenSearchFilter } from '@/views/hooks/useOpenSearchFilter';
-import { useSearchInputState } from '@/views/hooks/useSearchInputState';
+import { useOpenVectorSearchFilter } from '@/views/hooks/useOpenVectorSearchFilter';
+import { useVectorSearchInputState } from '@/views/hooks/useVectorSearchInputState';
 import { useEffect } from 'react';
 import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
 
 export const useViewBarFilterHotKeys = () => {
   const { openDropdown } = useDropdown(VIEW_BAR_FILTER_DROPDOWN_ID);
-  const { setSearchInputValueFromExistingFilter } = useSearchInputState(
-    VIEW_BAR_FILTER_DROPDOWN_ID,
-  );
-  const { openSearchFilter } = useOpenSearchFilter();
+  const { setVectorSearchInputValueFromExistingFilter } =
+    useVectorSearchInputState(VIEW_BAR_FILTER_DROPDOWN_ID);
+  const { openVectorSearchFilter } = useOpenVectorSearchFilter();
   const setHotkeyScope = useSetHotkeyScope();
 
   useEffect(() => {
@@ -23,11 +22,15 @@ export const useViewBarFilterHotKeys = () => {
   useScopedHotkeys(
     'ctrl+f,meta+f',
     () => {
-      setSearchInputValueFromExistingFilter();
+      setVectorSearchInputValueFromExistingFilter();
       openDropdown();
-      openSearchFilter();
+      openVectorSearchFilter();
     },
     ViewsHotkeyScope.ViewBarFilter,
-    [openDropdown, openSearchFilter, setSearchInputValueFromExistingFilter],
+    [
+      openDropdown,
+      openVectorSearchFilter,
+      setVectorSearchInputValueFromExistingFilter,
+    ],
   );
 };

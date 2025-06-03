@@ -4,7 +4,7 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
-export const useOpenSearchFilter = () => {
+export const useOpenVectorSearchFilter = () => {
   const setSelectedOperandInDropdown = useSetRecoilComponentStateV2(
     selectedOperandInDropdownComponentState,
     VIEW_BAR_FILTER_DROPDOWN_ID,
@@ -15,12 +15,12 @@ export const useOpenSearchFilter = () => {
     VIEW_BAR_FILTER_DROPDOWN_ID,
   );
 
-  const openSearchFilter = () => {
+  const openVectorSearchFilter = () => {
     setObjectFilterDropdownFilterIsSelected(true);
-    setSelectedOperandInDropdown(ViewFilterOperand.Search);
+    setSelectedOperandInDropdown(ViewFilterOperand.VectorSearch);
   };
 
   return {
-    openSearchFilter,
+    openVectorSearchFilter,
   };
 };

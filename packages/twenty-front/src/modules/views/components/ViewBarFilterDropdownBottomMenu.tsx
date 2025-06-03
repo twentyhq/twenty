@@ -1,5 +1,5 @@
 import { ViewBarFilterDropdownAdvancedFilterButton } from '@/views/components/ViewBarFilterDropdownAdvancedFilterButton';
-import { ViewBarFilterDropdownSearchButton } from '@/views/components/ViewBarFilterDropdownSearchButton';
+import { ViewBarFilterDropdownVectorSearchButton } from '@/views/components/ViewBarFilterDropdownVectorSearchButton';
 import styled from '@emotion/styled';
 
 const StyledContainer = styled.div`
@@ -14,7 +14,7 @@ const StyledContainer = styled.div`
 export const ViewBarFilterDropdownBottomMenu = () => {
   return (
     <StyledContainer>
-      <ViewBarFilterDropdownSearchButton />
+      <ViewBarFilterDropdownVectorSearchButton />
       <ViewBarFilterDropdownAdvancedFilterButton />
     </StyledContainer>
   );

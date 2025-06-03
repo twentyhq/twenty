@@ -2,7 +2,7 @@ import { useResetFilterDropdown } from '@/object-record/object-filter-dropdown/h
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
-import { useSearchFilterOperations } from '@/views/hooks/useSearchFilterOperations';
+import { useVectorSearchFilterOperations } from '@/views/hooks/useVectorSearchFilterOperations';
 
 import { OPERAND_DROPDOWN_CLICK_OUTSIDE_ID } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownOperandDropdown';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
@@ -21,7 +21,7 @@ export const ViewBarFilterDropdown = ({
   hotkeyScope,
 }: ViewBarFilterDropdownProps) => {
   const { resetFilterDropdown } = useResetFilterDropdown();
-  const { removeEmptySearchFilter } = useSearchFilterOperations();
+  const { removeEmptyVectorSearchFilter } = useVectorSearchFilterOperations();
   const { removeRecordFilter } = useRemoveRecordFilter();
 
   const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValueV2(
@@ -39,12 +39,12 @@ export const ViewBarFilterDropdown = ({
       });
     }
 
-    removeEmptySearchFilter();
+    removeEmptyVectorSearchFilter();
   };
 
   const handleDropdownClose = () => {
     resetFilterDropdown();
-    removeEmptySearchFilter();
+    removeEmptyVectorSearchFilter();
   };
 
   return (

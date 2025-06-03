@@ -124,7 +124,7 @@ export const FILTER_OPERANDS_MAP = {
     ...emptyOperands,
   ],
   BOOLEAN: [RecordFilterOperand.Is],
-  TS_VECTOR: [RecordFilterOperand.Search],
+  TS_VECTOR: [RecordFilterOperand.VectorSearch],
 } as const satisfies FilterOperandMap;
 
 export const COMPOSITE_FIELD_FILTER_OPERANDS_MAP = {

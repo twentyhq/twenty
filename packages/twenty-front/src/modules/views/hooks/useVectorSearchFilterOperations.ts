@@ -7,58 +7,58 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { useSearchVectorField } from './useSearchVectorField';
+import { useVectorSearchField } from './useVectorSearchField';
 
-export const useSearchFilterOperations = () => {
-  const { searchVectorField } = useSearchVectorField();
+export const useVectorSearchFilterOperations = () => {
+  const { vectorSearchField } = useVectorSearchField();
   const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );
   const { upsertRecordFilter } = useUpsertRecordFilter();
   const { removeRecordFilter } = useRemoveRecordFilter();
 
-  const getExistingSearchFilter = () => {
+  const getExistingVectorSearchFilter = () => {
     return currentRecordFilters.find(
-      (filter) => filter.operand === ViewFilterOperand.Search,
+      (filter) => filter.operand === ViewFilterOperand.VectorSearch,
     );
   };
 
-  const applySearchFilter = (value: string) => {
-    if (!searchVectorField) {
+  const applyVectorSearchFilter = (value: string) => {
+    if (!vectorSearchField) {
       return;
     }
 
-    const existingSearchFilter = getExistingSearchFilter();
+    const existingVectorSearchFilter = getExistingVectorSearchFilter();
 
-    const searchRecordFilter = {
-      id: existingSearchFilter?.id ?? v4(),
-      fieldMetadataId: searchVectorField.id,
+    const vectorSearchRecordFilter = {
+      id: existingVectorSearchFilter?.id ?? v4(),
+      fieldMetadataId: vectorSearchField.id,
       value: value,
       displayValue: value,
-      operand: ViewFilterOperand.Search,
-      type: getFilterTypeFromFieldType(searchVectorField.type),
+      operand: ViewFilterOperand.VectorSearch,
+      type: getFilterTypeFromFieldType(vectorSearchField.type),
       label: 'Search',
     };
 
-    upsertRecordFilter(searchRecordFilter);
+    upsertRecordFilter(vectorSearchRecordFilter);
   };
 
-  const removeEmptySearchFilter = () => {
-    const searchFilter = getExistingSearchFilter();
+  const removeEmptyVectorSearchFilter = () => {
+    const vectorSearchFilter = getExistingVectorSearchFilter();
 
     if (
-      isDefined(searchFilter) &&
-      isRecordFilterConsideredEmpty(searchFilter)
+      isDefined(vectorSearchFilter) &&
+      isRecordFilterConsideredEmpty(vectorSearchFilter)
     ) {
       removeRecordFilter({
-        recordFilterId: searchFilter.id,
+        recordFilterId: vectorSearchFilter.id,
       });
     }
   };
 
   return {
-    applySearchFilter,
-    removeEmptySearchFilter,
-    getExistingSearchFilter,
+    applyVectorSearchFilter,
+    removeEmptyVectorSearchFilter,
+    getExistingVectorSearchFilter,
   };
 };

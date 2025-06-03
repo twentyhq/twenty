@@ -121,7 +121,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
       }
     case 'TS_VECTOR':
       switch (recordFilter.operand) {
-        case RecordFilterOperand.Search:
+        case RecordFilterOperand.VectorSearch:
           return {
             [correspondingFieldMetadataItem.name]: {
               search: recordFilter.value,

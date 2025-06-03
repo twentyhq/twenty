@@ -14,5 +14,5 @@ export enum ViewFilterOperand {
   IsInPast = 'isInPast',
   IsInFuture = 'isInFuture',
   IsToday = 'isToday',
-  Search = 'search',
+  VectorSearch = 'search',
 }

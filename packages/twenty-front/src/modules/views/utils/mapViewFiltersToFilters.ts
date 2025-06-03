@@ -30,7 +30,7 @@ export const mapViewFiltersToFilters = (
 
       const label =
         availableFieldMetadataItem.name === SEARCH_VECTOR_FIELD_NAME &&
-        viewFilter.operand === ViewFilterOperand.Search
+        viewFilter.operand === ViewFilterOperand.VectorSearch
           ? 'Search'
           : availableFieldMetadataItem.label;
 
