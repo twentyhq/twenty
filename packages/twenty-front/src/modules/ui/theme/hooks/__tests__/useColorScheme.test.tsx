@@ -3,7 +3,7 @@ import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { MockWorkspaceMember } from '~/testing/mock-data/workspace-members';
 
 const updateOneRecordMock = jest.fn();
 
@@ -13,10 +13,7 @@ jest.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
   }),
 }));
 
-const workspaceMember: Omit<
-  WorkspaceMember,
-  'createdAt' | 'updatedAt' | 'userId' | 'userEmail'
-> = {
+const workspaceMember: MockWorkspaceMember = {
   __typename: 'WorkspaceMember',
   id: 'id',
   name: {
@@ -25,6 +22,10 @@ const workspaceMember: Omit<
   },
   locale: 'en',
   colorScheme: 'System',
+  createdAt: '2023-12-18T09:51:19.645Z',
+  updatedAt: '2023-12-18T09:51:19.645Z',
+  userId: '20202020-7169-42cf-bc47-1cfef15264b8',
+  userEmail: 'jane.doe@twenty.com',
 };
 
 describe('useColorScheme', () => {

@@ -18,6 +18,7 @@ import {
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { StepOutput } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-step/utils/insert-step';
 import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-step/utils/remove-step';
@@ -91,6 +92,8 @@ export class WorkflowVersionStepWorkspaceService {
       );
     }
 
+    assertWorkflowVersionIsDraft(workflowVersion);
+
     const existingSteps = workflowVersion.steps || [];
     const updatedSteps = insertStep({
       existingSteps,
@@ -132,6 +135,8 @@ export class WorkflowVersionStepWorkspaceService {
         WorkflowVersionStepExceptionCode.NOT_FOUND,
       );
     }
+
+    assertWorkflowVersionIsDraft(workflowVersion);
 
     if (!isDefined(workflowVersion.steps)) {
       throw new WorkflowVersionStepException(
@@ -186,6 +191,8 @@ export class WorkflowVersionStepWorkspaceService {
         WorkflowVersionStepExceptionCode.NOT_FOUND,
       );
     }
+
+    assertWorkflowVersionIsDraft(workflowVersion);
 
     if (!isDefined(workflowVersion.steps)) {
       throw new WorkflowVersionStepException(

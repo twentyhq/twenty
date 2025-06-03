@@ -79,7 +79,7 @@ export class IssuerService {
       throw new NotFoundException(`Issuer with ID "${id}" not found to update`);
     }
 
-    const { id: _, workspaceId: __, ...updateData } = updateInput;
+    const { workspaceId: __, ...updateData } = updateInput;
 
     Object.assign(issuer, updateData);
 

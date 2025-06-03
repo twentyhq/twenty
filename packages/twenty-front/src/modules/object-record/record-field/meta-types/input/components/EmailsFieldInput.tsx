@@ -77,7 +77,8 @@ export const EmailsFieldInput = ({
         <EmailsFieldMenuItem
           key={index}
           dropdownId={`emails-${index}`}
-          isPrimary={isPrimaryEmail(index)}
+          showPrimaryIcon={isPrimaryEmail(index)}
+          showSetAsPrimaryButton={!isPrimaryEmail(index)}
           email={email}
           onEdit={handleEdit}
           onSetAsPrimary={handleSetPrimary}

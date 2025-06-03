@@ -7,7 +7,7 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 import { normalizeGQLQuery } from '~/utils/normalizeGQLQuery';
 
 const expectedQueryTemplate = `
-mutation UpdateOnePerson($idToUpdate: ID!, $input: PersonUpdateInput!) {
+mutation UpdateOnePerson($idToUpdate: UUID!, $input: PersonUpdateInput!) {
   updatePerson(id: $idToUpdate, data: $input) {
       ${PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS}
   }

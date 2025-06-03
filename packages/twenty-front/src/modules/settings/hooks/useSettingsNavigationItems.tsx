@@ -30,6 +30,7 @@ import {
   IconUserCircle,
   IconUsers,
   IconWebhook,
+  IconCreditCard,
 } from 'twenty-ui/display';
 import { SettingPermissionType } from '~/generated/graphql';
 
@@ -159,19 +160,18 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
             !permissionMap[SettingPermissionType.WORKSPACE],
         },
         {
+          label: 'Billing',
+          path: SettingsPath.BillingPlan,
+          Icon: IconCreditCard,
+          isHidden: !isBillingEnabled,
+        },
+        {
           label: t`Roles`,
           path: SettingsPath.Roles,
           Icon: IconLock,
           isHidden: !permissionMap[SettingPermissionType.ROLES],
         },
-        {
-          label: t`Billing`,
-          path: SettingsPath.Billing,
-          Icon: IconCurrencyDollar,
-          isHidden:
-            !isBillingEnabled ||
-            !permissionMap[SettingPermissionType.WORKSPACE],
-        },
+
         {
           label: t`Data model`,
           path: SettingsPath.Objects,

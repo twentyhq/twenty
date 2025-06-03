@@ -125,6 +125,8 @@ export const ChatbotFlowCondicionalEventForm = ({
   useEffect(() => {
     // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (selectedNode.data.logic) {
+      // @ts-expect-error Incorrect type
+      // TODO: Check type
       setNodeData(selectedNode.data.logic);
     }
   }, [selectedNode.data.logic]);
@@ -178,6 +180,8 @@ export const ChatbotFlowCondicionalEventForm = ({
       n.id === selectedNode.id ? updatedNode : n,
     );
 
+    // @ts-expect-error 'id', '__typename' and 'workspace' don't exist in 'chatbotFlow'.
+    // TODO: Build a type using Omit<...> instead.
     const { id, __typename, workspace, ...chatbotFlowWithoutId } = chatbotFlow;
 
     const updatedChatbotFlow = {

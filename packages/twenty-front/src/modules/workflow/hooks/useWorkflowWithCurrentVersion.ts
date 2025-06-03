@@ -18,7 +18,17 @@ export const useWorkflowWithCurrentVersion = (
       name: true,
       statuses: true,
       lastPublishedVersionId: true,
-      versions: true,
+      versions: {
+        id: true,
+        status: true,
+        name: true,
+        steps: true,
+        trigger: true,
+        workflowId: true,
+        deletedAt: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     },
     skip: !isDefined(workflowId),
   });

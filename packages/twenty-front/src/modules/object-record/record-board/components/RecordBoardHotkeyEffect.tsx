@@ -52,7 +52,9 @@ export const RecordBoardHotkeyEffect = () => {
   useScopedHotkeys(
     Key.ArrowLeft,
     () => {
-      setHotkeyScopeAndMemorizePreviousScope(BoardHotkeyScope.BoardFocus);
+      setHotkeyScopeAndMemorizePreviousScope({
+        scope: BoardHotkeyScope.BoardFocus,
+      });
       move('left');
     },
     RecordIndexHotkeyScope.RecordIndex,
@@ -61,7 +63,9 @@ export const RecordBoardHotkeyEffect = () => {
   useScopedHotkeys(
     Key.ArrowRight,
     () => {
-      setHotkeyScopeAndMemorizePreviousScope(BoardHotkeyScope.BoardFocus);
+      setHotkeyScopeAndMemorizePreviousScope({
+        scope: BoardHotkeyScope.BoardFocus,
+      });
       move('right');
     },
     RecordIndexHotkeyScope.RecordIndex,
@@ -70,7 +74,9 @@ export const RecordBoardHotkeyEffect = () => {
   useScopedHotkeys(
     Key.ArrowUp,
     () => {
-      setHotkeyScopeAndMemorizePreviousScope(BoardHotkeyScope.BoardFocus);
+      setHotkeyScopeAndMemorizePreviousScope({
+        scope: BoardHotkeyScope.BoardFocus,
+      });
       move('up');
     },
     RecordIndexHotkeyScope.RecordIndex,
@@ -79,7 +85,9 @@ export const RecordBoardHotkeyEffect = () => {
   useScopedHotkeys(
     Key.ArrowDown,
     () => {
-      setHotkeyScopeAndMemorizePreviousScope(BoardHotkeyScope.BoardFocus);
+      setHotkeyScopeAndMemorizePreviousScope({
+        scope: BoardHotkeyScope.BoardFocus,
+      });
       move('down');
     },
     RecordIndexHotkeyScope.RecordIndex,

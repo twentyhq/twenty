@@ -32,19 +32,21 @@ const StyledPlusIconHeaderCell = styled.th<{
     `
       : 'width: 100%'};
   z-index: 1;
+
+  &:hover {
+    background: ${({ theme }) => theme.background.transparent.secondary};
+  }
 `;
 
 const StyledPlusIconContainer = styled.div`
   align-items: center;
   display: flex;
   height: 32px;
-  justify-content: center;
+  justify-content: flex-start;
+  margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledDropdownContainer = styled.div`
-  &:hover {
-    background: ${({ theme }) => theme.background.transparent.light};
-  }
   cursor: pointer;
 `;
 

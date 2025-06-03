@@ -40,7 +40,7 @@ type CacheResult<T, U> = {
   data: U;
 };
 
-const ONE_HOUR_IN_MS = 3600_000;
+const TWENTY_MINUTES_IN_MS = 120_000;
 
 @Injectable()
 export class WorkspaceDatasourceFactory {
@@ -57,6 +57,52 @@ export class WorkspaceDatasourceFactory {
     private readonly workspacePermissionsCacheStorageService: WorkspacePermissionsCacheStorageService,
     private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
   ) {}
+
+  private async conditionalDestroyDataSource(
+    dataSource: WorkspaceDataSource,
+  ): Promise<void> {
+    const isPoolSharingEnabled = this.twentyConfigService.get(
+      'PG_ENABLE_POOL_SHARING',
+    );
+
+    if (isPoolSharingEnabled) {
+      this.logger.debug(
+        `PromiseMemoizer Event: A WorkspaceDataSource (using shared pool) is being cleared. Actual pool closure managed by PgPoolSharedService. Not calling dataSource.destroy().`,
+      );
+      // We should NOT call dataSource.destroy() here, because that would end
+      // the shared pool, potentially affecting other active users of that pool.
+      // The PgPoolSharedService is responsible for the lifecycle of shared pools.
+    } else {
+      this.logger.debug(
+        `PromiseMemoizer Event: A WorkspaceDataSource (using dedicated pool) is being cleared. Calling safelyDestroyDataSource.`,
+      );
+      await this.safelyDestroyDataSource(dataSource);
+    }
+  }
+
+  private async safelyDestroyDataSource(
+    dataSource: WorkspaceDataSource,
+  ): Promise<void> {
+    try {
+      await dataSource.destroy();
+    } catch (error) {
+      // Ignore known race-condition errors to prevent noise during shutdown
+      if (
+        error.message === 'Called end on pool more than once' ||
+        error.message?.includes(
+          'pool is draining and cannot accommodate new clients',
+        )
+      ) {
+        this.logger.debug(
+          `Ignoring pool error during cleanup: ${error.message}`,
+        );
+
+        return;
+      }
+
+      throw error;
+    }
+  }
 
   public async create(
     workspaceId: string,
@@ -182,10 +228,10 @@ export class WorkspaceDatasourceFactory {
               extra: {
                 query_timeout: 10000,
                 // https://node-postgres.com/apis/pool
-                // TypeORM doesn't allow sharing connection pools bet
-                // So for now we keep a small pool open for longer
-                // for each workspace.
-                idleTimeoutMillis: ONE_HOUR_IN_MS,
+                // TypeORM doesn't allow sharing connection pools between data sources
+                // So we keep a small pool open for longer if connection pooling patch isn't enabled
+                // TODO: Probably not needed anymore when connection pooling patch is enabled
+                idleTimeoutMillis: TWENTY_MINUTES_IN_MS,
                 max: 4,
                 allowExitOnIdle: true,
               },
@@ -200,17 +246,7 @@ export class WorkspaceDatasourceFactory {
 
           return workspaceDataSource;
         },
-        async (dataSource) => {
-          try {
-            await dataSource.destroy();
-          } catch (error) {
-            // Ignore error if pool has already been destroyed which is a common race condition case
-            if (error.message === 'Called end on pool more than once') {
-              return;
-            }
-            throw error;
-          }
-        },
+        this.conditionalDestroyDataSource.bind(this),
       );
 
     if (!workspaceDataSource) {
@@ -359,8 +395,16 @@ export class WorkspaceDatasourceFactory {
   }
 
   public async destroy(workspaceId: string) {
-    await this.promiseMemoizer.clearKeys(`${workspaceId}-`, (dataSource) => {
-      dataSource.destroy();
-    });
+    try {
+      await this.promiseMemoizer.clearKeys(
+        `${workspaceId}-`,
+        this.conditionalDestroyDataSource.bind(this),
+      );
+    } catch (error) {
+      // Log and swallow any errors during cleanup to prevent crashes
+      this.logger.warn(
+        `Error cleaning up datasources for workspace ${workspaceId}: ${error.message}`,
+      );
+    }
   }
 }

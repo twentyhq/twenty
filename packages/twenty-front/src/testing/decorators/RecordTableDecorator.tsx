@@ -10,7 +10,6 @@ import { RecordFiltersComponentInstanceContext } from '@/object-record/record-fi
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
-import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { RecordTableBodyContextProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { RecordTableContextProvider } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
@@ -126,41 +125,39 @@ export const RecordTableDecorator: Decorator = (Story, context) => {
   );
 
   return (
-    <RecordFieldValueSelectorContextProvider>
-      <RecordTableComponentInstanceContext.Provider
-        value={{ instanceId: recordIndexId, onColumnsChange: () => {} }}
+    <RecordTableComponentInstanceContext.Provider
+      value={{ instanceId: recordIndexId, onColumnsChange: () => {} }}
+    >
+      <ViewComponentInstanceContext.Provider
+        value={{ instanceId: recordIndexId }}
       >
-        <ViewComponentInstanceContext.Provider
+        <RecordFilterGroupsComponentInstanceContext.Provider
           value={{ instanceId: recordIndexId }}
         >
-          <RecordFilterGroupsComponentInstanceContext.Provider
+          <RecordFiltersComponentInstanceContext.Provider
             value={{ instanceId: recordIndexId }}
           >
-            <RecordFiltersComponentInstanceContext.Provider
+            <RecordSortsComponentInstanceContext.Provider
               value={{ instanceId: recordIndexId }}
             >
-              <RecordSortsComponentInstanceContext.Provider
-                value={{ instanceId: recordIndexId }}
+              <ActionMenuComponentInstanceContext.Provider
+                value={{
+                  instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
+                }}
               >
-                <ActionMenuComponentInstanceContext.Provider
-                  value={{
-                    instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
-                  }}
+                <InternalTableStateLoaderEffect
+                  objectMetadataItem={objectMetadataItem}
+                />
+                <InternalTableContextProviders
+                  objectMetadataItem={objectMetadataItem}
                 >
-                  <InternalTableStateLoaderEffect
-                    objectMetadataItem={objectMetadataItem}
-                  />
-                  <InternalTableContextProviders
-                    objectMetadataItem={objectMetadataItem}
-                  >
-                    <Story />
-                  </InternalTableContextProviders>
-                </ActionMenuComponentInstanceContext.Provider>
-              </RecordSortsComponentInstanceContext.Provider>
-            </RecordFiltersComponentInstanceContext.Provider>
-          </RecordFilterGroupsComponentInstanceContext.Provider>
-        </ViewComponentInstanceContext.Provider>
-      </RecordTableComponentInstanceContext.Provider>
-    </RecordFieldValueSelectorContextProvider>
+                  <Story />
+                </InternalTableContextProviders>
+              </ActionMenuComponentInstanceContext.Provider>
+            </RecordSortsComponentInstanceContext.Provider>
+          </RecordFiltersComponentInstanceContext.Provider>
+        </RecordFilterGroupsComponentInstanceContext.Provider>
+      </ViewComponentInstanceContext.Provider>
+    </RecordTableComponentInstanceContext.Provider>
   );
 };

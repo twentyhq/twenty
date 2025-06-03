@@ -3,7 +3,8 @@ import { useRecoilValue } from 'recoil';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
 import { AppPath } from '@/types/AppPath';
-import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
+import { useLocation } from 'react-router-dom';
+import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   children,
@@ -12,13 +13,13 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
     clientConfigApiStatusState,
   );
 
-  const { isMatchingLocation } = useIsMatchingLocation();
+  const location = useLocation();
 
   // TODO: Implement a better loading strategy
   if (
     !isLoaded &&
-    !isMatchingLocation(AppPath.Verify) &&
-    !isMatchingLocation(AppPath.VerifyEmail)
+    !isMatchingLocation(location, AppPath.Verify) &&
+    !isMatchingLocation(location, AppPath.VerifyEmail)
   )
     return null;
 

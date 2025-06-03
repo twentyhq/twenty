@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { lazy, ReactElement, Suspense, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import { DropZone } from '@/activities/files/components/DropZone';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
@@ -184,52 +185,55 @@ export const AttachmentList = ({
           </StyledDropZoneContainer>
         </StyledContainer>
       )}
-      {previewedAttachment && isAttachmentPreviewEnabled && (
-        <StyledModal
-          modalId={PREVIEW_MODAL_ID}
-          size="large"
-          isClosable
-          onClose={handleClosePreview}
-        >
-          <StyledModalHeader>
-            <StyledHeader>
-              <StyledModalTitle>{previewedAttachment.name}</StyledModalTitle>
-              <StyledButtonContainer>
-                <IconButton
-                  Icon={IconDownload}
-                  onClick={handleDownload}
-                  size="small"
-                />
-                <IconButton
-                  Icon={IconX}
-                  onClick={handleClosePreview}
-                  size="small"
-                />
-              </StyledButtonContainer>
-            </StyledHeader>
-          </StyledModalHeader>
-          <ScrollWrapper
-            componentInstanceId={`preview-modal-${previewedAttachment.id}`}
+      {previewedAttachment &&
+        isAttachmentPreviewEnabled &&
+        createPortal(
+          <StyledModal
+            modalId={PREVIEW_MODAL_ID}
+            size="large"
+            isClosable
+            onClose={handleClosePreview}
           >
-            <StyledModalContent>
-              <Suspense
-                fallback={
-                  <StyledLoadingContainer>
-                    <StyledLoadingText>
-                      Loading document viewer...
-                    </StyledLoadingText>
-                  </StyledLoadingContainer>
-                }
-              >
-                <DocumentViewer
-                  documentName={previewedAttachment.name}
-                  documentUrl={previewedAttachment.fullPath}
-                />
-              </Suspense>
-            </StyledModalContent>
-          </ScrollWrapper>
-        </StyledModal>
-      )}
+            <StyledModalHeader>
+              <StyledHeader>
+                <StyledModalTitle>{previewedAttachment.name}</StyledModalTitle>
+                <StyledButtonContainer>
+                  <IconButton
+                    Icon={IconDownload}
+                    onClick={handleDownload}
+                    size="small"
+                  />
+                  <IconButton
+                    Icon={IconX}
+                    onClick={handleClosePreview}
+                    size="small"
+                  />
+                </StyledButtonContainer>
+              </StyledHeader>
+            </StyledModalHeader>
+            <ScrollWrapper
+              componentInstanceId={`preview-modal-${previewedAttachment.id}`}
+            >
+              <StyledModalContent>
+                <Suspense
+                  fallback={
+                    <StyledLoadingContainer>
+                      <StyledLoadingText>
+                        Loading document viewer...
+                      </StyledLoadingText>
+                    </StyledLoadingContainer>
+                  }
+                >
+                  <DocumentViewer
+                    documentName={previewedAttachment.name}
+                    documentUrl={previewedAttachment.fullPath}
+                  />
+                </Suspense>
+              </StyledModalContent>
+            </ScrollWrapper>
+          </StyledModal>,
+          document.body,
+        )}
     </>
   );
 };

@@ -1,6 +1,5 @@
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { ContextStoreTargetedRecordsRule } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -8,19 +7,21 @@ import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort
 import { MockedResponse } from '@apollo/client/testing';
 import { ReactNode } from 'react';
 import { MutableSnapshot } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  JestContextStoreSetter,
+  JestContextStoreSetterMocks,
+} from '~/testing/jest/JestContextStoreSetter';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 export type GetJestMetadataAndApolloMocksAndActionMenuWrapperProps = {
   apolloMocks:
     | readonly MockedResponse<Record<string, any>, Record<string, any>>[]
     | undefined;
   onInitializeRecoilSnapshot?: (snapshot: MutableSnapshot) => void;
-  contextStoreTargetedRecordsRule?: ContextStoreTargetedRecordsRule;
-  contextStoreNumberOfSelectedRecords?: number;
-  contextStoreCurrentObjectMetadataNameSingular?: string;
   componentInstanceId: string;
-};
+} & JestContextStoreSetterMocks;
 
 export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
   apolloMocks,
@@ -30,12 +31,25 @@ export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
   contextStoreCurrentViewType,
   contextStoreNumberOfSelectedRecords,
   contextStoreCurrentObjectMetadataNameSingular,
+  contextStoreFilters,
   componentInstanceId,
 }: GetJestMetadataAndApolloMocksAndActionMenuWrapperProps) => {
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks,
     onInitializeRecoilSnapshot,
   });
+
+  const mockObjectMetadataItem = generatedMockObjectMetadataItems.find(
+    (objectMetadataItem) =>
+      objectMetadataItem.nameSingular ===
+      contextStoreCurrentObjectMetadataNameSingular,
+  );
+
+  if (!isDefined(mockObjectMetadataItem)) {
+    throw new Error(
+      `Mock object metadata item ${contextStoreCurrentObjectMetadataNameSingular} not found`,
+    );
+  }
 
   return ({ children }: { children: ReactNode }) => (
     <Wrapper>

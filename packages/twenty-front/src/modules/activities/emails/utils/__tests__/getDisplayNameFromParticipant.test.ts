@@ -48,6 +48,7 @@ describe('getDisplayNameFromParticipant', () => {
       userEmail: '',
       userId: '',
       colorScheme: 'Light',
+      agentId: '20202020-2020-2020-2020-202020202020',
     },
   };
 

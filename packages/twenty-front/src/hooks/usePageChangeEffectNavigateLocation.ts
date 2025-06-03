@@ -5,38 +5,37 @@ import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { OnboardingStatus } from '~/generated/graphql';
-import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
+import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 export const usePageChangeEffectNavigateLocation = () => {
-  const { isMatchingLocation } = useIsMatchingLocation();
   const isLoggedIn = useIsLogged();
   const onboardingStatus = useOnboardingStatus();
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.SUSPENDED,
   );
   const { defaultHomePagePath } = useDefaultHomePagePath();
+  const location = useLocation();
 
   const someMatchingLocationOf = (appPaths: AppPath[]): boolean =>
-    appPaths.some((appPath) => isMatchingLocation(appPath));
+    appPaths.some((appPath) => isMatchingLocation(location, appPath));
   const onGoingUserCreationPaths = [
     AppPath.Invite,
     AppPath.SignInUp,
     AppPath.VerifyEmail,
     AppPath.Verify,
   ];
-
   const onboardingPaths = [
     AppPath.CreateWorkspace,
     AppPath.CreateProfile,
     AppPath.SyncEmails,
     AppPath.InviteTeam,
     AppPath.PlanRequired,
-    AppPath.PaymentRequiredSuccess,
+    AppPath.PlanRequiredSuccess,
   ];
 
   const objectNamePlural = useParams().objectNamePlural ?? '';
@@ -57,15 +56,15 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (
     onboardingStatus === OnboardingStatus.PLAN_REQUIRED &&
-    !someMatchingLocationOf([
-      AppPath.PlanRequired,
-      AppPath.PaymentRequiredSuccess,
-    ])
+    !someMatchingLocationOf([AppPath.PlanRequired, AppPath.PlanRequiredSuccess])
   ) {
     return AppPath.PlanRequired;
   }
 
-  if (isWorkspaceSuspended && !isMatchingLocation(AppPath.SettingsCatchAll)) {
+  if (
+    isWorkspaceSuspended &&
+    !isMatchingLocation(location, AppPath.SettingsCatchAll)
+  ) {
     return `${AppPath.SettingsCatchAll.replace('/*', '')}/${
       SettingsPath.Billing
     }`;
@@ -75,7 +74,7 @@ export const usePageChangeEffectNavigateLocation = () => {
     onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION &&
     !someMatchingLocationOf([
       AppPath.CreateWorkspace,
-      AppPath.PaymentRequiredSuccess,
+      AppPath.PlanRequiredSuccess,
     ])
   ) {
     return AppPath.CreateWorkspace;
@@ -83,40 +82,21 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (
     onboardingStatus === OnboardingStatus.PROFILE_CREATION &&
-    !isMatchingLocation(AppPath.CreateProfile)
+    !isMatchingLocation(location, AppPath.CreateProfile)
   ) {
     return AppPath.CreateProfile;
   }
 
   if (
-    onboardingStatus === OnboardingStatus.PLAN_REQUIRED &&
-    !isMatchingLocation(AppPath.PlanRequired)
-  ) {
-    return AppPath.PlanRequired;
-  }
-
-  const allowedPaths = [
-    AppPath.PaymentRequired,
-    AppPath.PaymentRequiredSuccess,
-  ];
-
-  if (
-    onboardingStatus === OnboardingStatus.PAYMENT_REQUIRED &&
-    !allowedPaths.some((path) => isMatchingLocation(path))
-  ) {
-    return AppPath.PaymentRequired;
-  }
-
-  if (
     onboardingStatus === OnboardingStatus.SYNC_EMAIL &&
-    !isMatchingLocation(AppPath.SyncEmails)
+    !isMatchingLocation(location, AppPath.SyncEmails)
   ) {
     return AppPath.SyncEmails;
   }
 
   if (
     onboardingStatus === OnboardingStatus.INVITE_TEAM &&
-    !isMatchingLocation(AppPath.InviteTeam)
+    !isMatchingLocation(location, AppPath.InviteTeam)
   ) {
     return AppPath.InviteTeam;
   }
@@ -124,18 +104,18 @@ export const usePageChangeEffectNavigateLocation = () => {
   if (
     onboardingStatus === OnboardingStatus.COMPLETED &&
     someMatchingLocationOf([...onboardingPaths, ...onGoingUserCreationPaths]) &&
-    !isMatchingLocation(AppPath.ResetPassword) &&
+    !isMatchingLocation(location, AppPath.ResetPassword) &&
     isLoggedIn
   ) {
     return defaultHomePagePath;
   }
 
-  if (isMatchingLocation(AppPath.Index) && isLoggedIn) {
+  if (isMatchingLocation(location, AppPath.Index) && isLoggedIn) {
     return defaultHomePagePath;
   }
 
   if (
-    isMatchingLocation(AppPath.RecordIndexPage) &&
+    isMatchingLocation(location, AppPath.RecordIndexPage) &&
     !isDefined(objectMetadataItem)
   ) {
     return AppPath.NotFound;

@@ -43,6 +43,19 @@ export class MessagingFullMessageListFetchService {
           messageChannel,
         );
 
+      const isEmptyMailbox = fullMessageLists.some(
+        (fullMessageList) => fullMessageList.messageExternalIds.length === 0,
+      );
+
+      if (isEmptyMailbox) {
+        await this.messageChannelSyncStatusService.resetAndScheduleFullMessageListFetch(
+          [messageChannel.id],
+          workspaceId,
+        );
+
+        return;
+      }
+
       for (const fullMessageList of fullMessageLists) {
         const { messageExternalIds, nextSyncCursor, folderId } =
           fullMessageList;

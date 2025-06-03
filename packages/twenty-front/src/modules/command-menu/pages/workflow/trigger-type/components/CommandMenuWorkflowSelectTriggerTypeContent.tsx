@@ -24,7 +24,8 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = ({
   const { getIcon } = useIcons();
   const { updateTrigger } = useUpdateWorkflowVersionTrigger({ workflow });
 
-  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
+  const { activeNonSystemObjectMetadataItems } =
+    useFilteredObjectMetadataItems();
 
   const setWorkflowSelectedNode = useSetRecoilComponentStateV2(
     workflowSelectedNodeComponentState,
@@ -45,7 +46,7 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = ({
         getTriggerDefaultDefinition({
           defaultLabel,
           type,
-          activeObjectMetadataItems,
+          activeNonSystemObjectMetadataItems,
         }),
       );
 

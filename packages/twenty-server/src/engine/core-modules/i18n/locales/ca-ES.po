@@ -150,8 +150,8 @@ msgstr ""
 
 #. js-lingui-id: juBVjt
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-msgid "A workflow event listener"
-msgstr "Un escoltador d'esdeveniments de flux de treball"
+#~ msgid "A workflow event listener"
+#~ msgstr "Un escoltador d'esdeveniments de flux de treball"
 
 #. js-lingui-id: 1+xDbI
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -1055,8 +1055,8 @@ msgstr ""
 
 #. js-lingui-id: 81maJp
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-msgid "Event Listeners"
-msgstr "Oients de l'esdeveniment"
+#~ msgid "Event Listeners"
+#~ msgstr "Oients de l'esdeveniment"
 
 #. js-lingui-id: PYs3rP
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1878,7 +1878,6 @@ msgstr "Token de refresc del proveïdor de missatgeria"
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 #: src/modules/whatsapp-integration/standard-objects/whatsapp-integration.workspace-entity.ts
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -2814,8 +2813,8 @@ msgstr ""
 
 #. js-lingui-id: 7mPrpl
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-msgid "The workflow event listener name"
-msgstr "El nom de l'oient d'esdeveniment del flux de treball"
+#~ msgid "The workflow event listener name"
+#~ msgstr "El nom de l'oient d'esdeveniment del flux de treball"
 
 #. js-lingui-id: od0omS
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -3354,7 +3353,6 @@ msgstr ""
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -3370,8 +3368,8 @@ msgstr ""
 
 #. js-lingui-id: E03XpH
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-msgid "Workflow event listeners linked to the workflow."
-msgstr "Esdeveniments d'oïdors de flux de treball vinculats al flux de treball."
+#~ msgid "Workflow event listeners linked to the workflow."
+#~ msgstr "Esdeveniments d'oïdors de flux de treball vinculats al flux de treball."
 
 #. js-lingui-id: vwSkSW
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -3474,18 +3472,18 @@ msgstr ""
 
 #. js-lingui-id: ENOy6I
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-msgid "WorkflowEventListener"
-msgstr "Oïdor d'Esdeveniments de Flux de Treball"
+#~ msgid "WorkflowEventListener"
+#~ msgstr "Oïdor d'Esdeveniments de Flux de Treball"
 
 #. js-lingui-id: HN90FO
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-msgid "WorkflowEventListener workflow"
-msgstr "Flux de treball de l'Oïdor d'Esdeveniments de Flux de Treball"
+#~ msgid "WorkflowEventListener workflow"
+#~ msgstr "Flux de treball de l'Oïdor d'Esdeveniments de Flux de Treball"
 
 #. js-lingui-id: 3JA9se
 #: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-msgid "WorkflowEventListeners"
-msgstr "Oïdors d'Esdeveniments de Flux de Treball"
+#~ msgid "WorkflowEventListeners"
+#~ msgstr "Oïdors d'Esdeveniments de Flux de Treball"
 
 #. js-lingui-id: woYYQq
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts

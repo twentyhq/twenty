@@ -1,19 +1,22 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Post,
   Put,
+  UseFilters,
 } from '@nestjs/common';
 
+import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { CreateOnboardingPlansInput } from 'src/engine/core-modules/onboarding-plans/dtos/onboarding-plans.input';
 import { UpdateOnboardingPlansInput } from 'src/engine/core-modules/onboarding-plans/dtos/update-onboarding-plans.input';
 
 import { OnboardingPlansService } from './onboarding-plans.service';
 
 @Controller('onboarding-plans')
+@UseFilters(RestApiExceptionFilter)
 export class OnboardingPlansController {
   constructor(private readonly service: OnboardingPlansService) {}
 
