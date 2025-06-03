@@ -1,12 +1,12 @@
-import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { vectorSearchInputComponentState } from '@/views/states/vectorSearchInputComponentState';
 import { isDefined } from 'twenty-shared/utils';
 import { useVectorSearchFilterOperations } from './useVectorSearchFilterOperations';
 
 export const useVectorSearchInputState = (filterDropdownId: string) => {
   const [vectorSearchInputValue, setVectorSearchInputValue] =
     useRecoilComponentStateV2(
-      objectFilterDropdownSearchInputComponentState,
+      vectorSearchInputComponentState,
       filterDropdownId,
     );
 

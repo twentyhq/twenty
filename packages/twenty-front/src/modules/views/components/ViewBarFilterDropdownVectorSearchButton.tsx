@@ -9,6 +9,8 @@ import { MenuItem } from 'twenty-ui/navigation';
 import { VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS } from '@/views/constants/ViewBarFilterBottomMenuItemIds';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 
+import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useOpenVectorSearchFilter } from '@/views/hooks/useOpenVectorSearchFilter';
 import { useVectorSearchFilterOperations } from '@/views/hooks/useVectorSearchFilterOperations';
 import { useVectorSearchInputState } from '@/views/hooks/useVectorSearchInputState';
@@ -21,9 +23,15 @@ const StyledSearchText = styled.span`
 export const ViewBarFilterDropdownVectorSearchButton = () => {
   const { t } = useLingui();
   const {
-    vectorSearchInputValue,
+    setVectorSearchInputValue,
     setVectorSearchInputValueFromExistingFilter,
   } = useVectorSearchInputState(VIEW_BAR_FILTER_DROPDOWN_ID);
+
+  const fieldSearchInputValue = useRecoilComponentValueV2(
+    objectFilterDropdownSearchInputComponentState,
+    VIEW_BAR_FILTER_DROPDOWN_ID,
+  );
+
   const { applyVectorSearchFilter } = useVectorSearchFilterOperations();
   const { openVectorSearchFilter } = useOpenVectorSearchFilter();
 
@@ -34,8 +42,10 @@ export const ViewBarFilterDropdownVectorSearchButton = () => {
 
   const handleSearchClick = () => {
     openVectorSearchFilter();
-    if (vectorSearchInputValue.length > 0) {
-      applyVectorSearchFilter(vectorSearchInputValue);
+
+    if (fieldSearchInputValue.length > 0) {
+      setVectorSearchInputValue(fieldSearchInputValue);
+      applyVectorSearchFilter(fieldSearchInputValue);
     } else {
       setVectorSearchInputValueFromExistingFilter();
     }
@@ -53,8 +63,8 @@ export const ViewBarFilterDropdownVectorSearchButton = () => {
         text={
           <>
             {t`Search`}
-            {vectorSearchInputValue && (
-              <StyledSearchText>{t`· ${vectorSearchInputValue}`}</StyledSearchText>
+            {fieldSearchInputValue && (
+              <StyledSearchText>{t`· ${fieldSearchInputValue}`}</StyledSearchText>
             )}
           </>
         }
