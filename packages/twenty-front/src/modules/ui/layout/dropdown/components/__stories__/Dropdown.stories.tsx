@@ -7,6 +7,13 @@ import { useState } from 'react';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { Modal } from '@/ui/layout/modal/components/Modal';
+import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
+import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
+import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
+import { internalHotkeysEnabledScopesState } from '@/ui/utilities/hotkey/states/internal/internalHotkeysEnabledScopesState';
 import { Avatar, IconChevronLeft } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import {
@@ -15,6 +22,8 @@ import {
   MenuItemSelectAvatar,
 } from 'twenty-ui/navigation';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { Dropdown } from '../Dropdown';
 import { DropdownMenuHeader } from '../DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuInput } from '../DropdownMenuInput';
@@ -320,4 +329,95 @@ export const CheckableMenuItemWithAvatar: Story = {
     ),
   },
   play: playInteraction,
+};
+
+const modalId = 'dropdown-modal-test';
+
+const ModalWithDropdown = () => {
+  return (
+    <>
+      <Modal modalId={modalId} size="medium" padding="medium" isClosable={true}>
+        <Modal.Header>Modal with Dropdown Test</Modal.Header>
+        <Modal.Content>
+          <p>
+            This modal contains a dropdown that should appear above the modal
+            (higher z-index).
+          </p>
+          <div style={{ marginTop: '20px' }}>
+            <Dropdown
+              clickableComponent={
+                <Button
+                  dataTestId="dropdown-button"
+                  title="Open Dropdown in Modal"
+                />
+              }
+              dropdownHotkeyScope={{ scope: 'modal-dropdown' }}
+              dropdownOffset={{ x: 0, y: 8 }}
+              dropdownId="modal-dropdown-test"
+              isDropdownInModal={true}
+              dropdownComponents={
+                <DropdownMenuItemsContainer hasMaxHeight>
+                  <div data-testid="dropdown-content">
+                    <FakeSelectableMenuItemList hasAvatar />
+                  </div>
+                </DropdownMenuItemsContainer>
+              }
+            />
+          </div>
+        </Modal.Content>
+      </Modal>
+    </>
+  );
+};
+
+const initializeModalState = ({
+  set,
+}: {
+  set: (atom: any, value: any) => void;
+}) => {
+  set(
+    isModalOpenedComponentState.atomFamily({
+      instanceId: modalId,
+    }),
+    true,
+  );
+
+  set(currentHotkeyScopeState, {
+    scope: ModalHotkeyScope.ModalFocus,
+    customScopes: {
+      commandMenu: true,
+      goto: false,
+      keyboardShortcutMenu: false,
+    },
+  });
+
+  set(internalHotkeysEnabledScopesState, [ModalHotkeyScope.ModalFocus]);
+
+  set(focusStackState, [
+    {
+      componentType: FocusComponentType.MODAL,
+      componentId: modalId,
+      instanceId: modalId,
+    },
+  ]);
+};
+
+export const DropdownInsideModal: Story = {
+  decorators: [I18nFrontDecorator, RootDecorator, ComponentDecorator],
+  parameters: {
+    initializeState: initializeModalState,
+    disableHotkeyInitialization: true,
+  },
+  render: () => <ModalWithDropdown />,
+  play: async () => {
+    const canvas = within(document.body);
+
+    const dropdownButton = await canvas.findByTestId('dropdown-button');
+
+    await userEvent.click(dropdownButton);
+
+    const dropdownContent = await canvas.findByTestId('dropdown-content');
+
+    expect(dropdownContent).toBeVisible();
+  },
 };
