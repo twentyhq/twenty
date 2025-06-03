@@ -90,9 +90,6 @@ export class CallWebhookJob {
         ...commonPayload,
         ...(err.response && { status: err.response.status }),
       });
-      this.logger.error(
-        `Error calling webhook on targetUrl '${data.targetUrl}': ${err}`,
-      );
     }
   }
 }
