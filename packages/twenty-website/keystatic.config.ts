@@ -5,7 +5,7 @@ export default config({
   storage: {
     kind: 'github',
     repo: {
-      owner: 'twentyhq',
+      owner: 'insuros',
       name: 'twenty',
     },
     pathPrefix: 'packages/twenty-website',

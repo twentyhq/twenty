@@ -1,9 +1,9 @@
+import { isDefined } from 'twenty-shared/utils';
 import { createDefaultButton } from '~/contentScript/createButton';
 import changeSidePanelUrl from '~/contentScript/utils/changeSidepanelUrl';
 import extractFirstAndLastName from '~/contentScript/utils/extractFirstAndLastName';
 import { createPerson, fetchPerson } from '~/db/person.db';
 import { PersonInput } from '~/db/types/person.types';
-import { isDefined } from 'twenty-shared/utils';
 
 export const checkIfPersonExists = async () => {
   const { tab: activeTab } = await chrome.runtime.sendMessage({
@@ -109,7 +109,7 @@ export const insertButtonForPerson = async () => {
     const person = await checkIfPersonExists();
 
     const openPersonOnSidePanel = (personId: string) => {
-      personButtonSpan.textContent = 'View in Twenty';
+      personButtonSpan.textContent = 'View in InsurOS';
       personButtonDiv.onClickHandler(async () => {
         await changeSidePanelUrl(`/object/person/${personId}`);
         chrome.runtime.sendMessage({ action: 'openSidepanel' });
@@ -121,7 +121,7 @@ export const insertButtonForPerson = async () => {
       if (isDefined(person.id)) openPersonOnSidePanel(person.id);
     } else {
       await changeSidePanelUrl(`/objects/people`);
-      personButtonSpan.textContent = 'Add to Twenty';
+      personButtonSpan.textContent = 'Add to InsurOS';
       personButtonDiv.onClickHandler(async () => {
         personButtonSpan.textContent = 'Saving...';
         const personId = await addPerson();

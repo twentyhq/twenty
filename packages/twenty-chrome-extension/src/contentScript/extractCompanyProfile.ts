@@ -99,7 +99,7 @@ export const insertButtonForCompany = async () => {
   const company = await checkIfCompanyExists();
 
   const openCompanyOnSidePanel = (companyId: string) => {
-    companyButtonSpan.textContent = 'View in Twenty';
+    companyButtonSpan.textContent = 'View in InsurOS';
     companyButtonDiv.onClickHandler(async () => {
       await changeSidePanelUrl(`/object/company/${companyId}`);
       chrome.runtime.sendMessage({ action: 'openSidepanel' });
@@ -111,7 +111,7 @@ export const insertButtonForCompany = async () => {
     if (isDefined(company.id)) openCompanyOnSidePanel(company.id);
   } else {
     await changeSidePanelUrl(`/objects/companies`);
-    companyButtonSpan.textContent = 'Add to Twenty';
+    companyButtonSpan.textContent = 'Add to InsurOS';
 
     companyButtonDiv.onClickHandler(async () => {
       companyButtonSpan.textContent = 'Saving...';
