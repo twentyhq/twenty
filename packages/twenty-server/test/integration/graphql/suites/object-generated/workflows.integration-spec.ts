@@ -12,6 +12,7 @@ describe('workflowsResolver (e2e)', () => {
               node {
                 name
                 lastPublishedVersionId
+                statuses
                 position
                 id
                 createdAt
@@ -46,6 +47,7 @@ describe('workflowsResolver (e2e)', () => {
 
           expect(workflows).toHaveProperty('name');
           expect(workflows).toHaveProperty('lastPublishedVersionId');
+          expect(workflows).toHaveProperty('statuses');
           expect(workflows).toHaveProperty('position');
           expect(workflows).toHaveProperty('id');
           expect(workflows).toHaveProperty('createdAt');
