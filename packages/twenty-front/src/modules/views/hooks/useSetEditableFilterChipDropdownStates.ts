@@ -6,21 +6,42 @@ import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-re
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { useVectorSearchField } from './useVectorSearchField';
+import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { vectorSearchInputComponentState } from '@/views/states/vectorSearchInputComponentState';
 
 export const useSetEditableFilterChipDropdownStates = () => {
   const { filterableFieldMetadataItems } =
     useFilterableFieldMetadataItemsInRecordIndexContext();
 
+  const { vectorSearchField } = useVectorSearchField();
+
   const setEditableFilterChipDropdownStates = useRecoilCallback(
     ({ set }) =>
       (recordFilter: RecordFilter) => {
-        const fieldMetadataItem = filterableFieldMetadataItems.find(
+        const filterableFieldsWithVector = [
+          ...filterableFieldMetadataItems,
+          vectorSearchField,
+        ];
+        const fieldMetadataItem = filterableFieldsWithVector.find(
           (fieldMetadataItem) =>
             fieldMetadataItem.id === recordFilter.fieldMetadataId,
         );
 
         if (!isDefined(fieldMetadataItem)) {
           return;
+        }
+
+        const isVectorSearchFilter =
+          recordFilter.operand === ViewFilterOperand.VectorSearch;
+
+        if (isVectorSearchFilter) {
+          set(
+            vectorSearchInputComponentState.atomFamily({
+              instanceId: recordFilter.id,
+            }),
+            recordFilter.value,
+          );
         }
 
         set(
@@ -51,7 +72,7 @@ export const useSetEditableFilterChipDropdownStates = () => {
           recordFilter.subFieldName,
         );
       },
-    [filterableFieldMetadataItems],
+    [filterableFieldMetadataItems, vectorSearchField],
   );
 
   return {

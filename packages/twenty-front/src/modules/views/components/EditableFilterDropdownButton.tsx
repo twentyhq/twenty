@@ -10,9 +10,6 @@ import { ObjectFilterDropdownFilterInput } from '@/object-record/object-filter-d
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
 import { useSetEditableFilterChipDropdownStates } from '@/views/hooks/useSetEditableFilterChipDropdownStates';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { useVectorSearchInputState } from '@/views/hooks/useVectorSearchInputState';
-import { useOpenVectorSearchFilter } from '@/views/hooks/useOpenVectorSearchFilter';
 
 type EditableFilterDropdownButtonProps = {
   recordFilter: RecordFilter;
@@ -28,12 +25,6 @@ export const EditableFilterDropdownButton = ({
   const { setEditableFilterChipDropdownStates } =
     useSetEditableFilterChipDropdownStates();
 
-  const { setVectorSearchInputValue } = useVectorSearchInputState(
-    recordFilter.id,
-  );
-
-  const { openVectorSearchFilter } = useOpenVectorSearchFilter(recordFilter.id);
-
   const handleRemove = () => {
     closeDropdown();
     removeRecordFilter({ recordFilterId: recordFilter.id });
@@ -47,14 +38,7 @@ export const EditableFilterDropdownButton = ({
     }
   }, [recordFilter, removeRecordFilter]);
 
-  const isVectorSearchFilter =
-    recordFilter.operand === ViewFilterOperand.VectorSearch;
-
   const handleFilterChipClick = () => {
-    if (isVectorSearchFilter) {
-      openVectorSearchFilter();
-      setVectorSearchInputValue(recordFilter.value);
-    }
     setEditableFilterChipDropdownStates(recordFilter);
   };
 
