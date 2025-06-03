@@ -46,6 +46,11 @@ export class GoogleCalendarGetEventsService {
           showDeleted: true,
         })
         .catch(async (error: GaxiosError) => {
+          this.logger.error(
+            `Error in ${GoogleCalendarGetEventsService.name} - getCalendarEvents`,
+            error,
+          );
+
           this.handleError(error);
 
           return {
