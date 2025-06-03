@@ -14,6 +14,7 @@ import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { internalHotkeysEnabledScopesState } from '@/ui/utilities/hotkey/states/internal/internalHotkeysEnabledScopesState';
+import { SetRecoilState } from 'recoil';
 import { Avatar, IconChevronLeft } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import {
@@ -370,11 +371,7 @@ const ModalWithDropdown = () => {
   );
 };
 
-const initializeModalState = ({
-  set,
-}: {
-  set: (atom: any, value: any) => void;
-}) => {
+const initializeModalState = ({ set }: { set: SetRecoilState }) => {
   set(
     isModalOpenedComponentState.atomFamily({
       instanceId: modalId,
@@ -395,9 +392,15 @@ const initializeModalState = ({
 
   set(focusStackState, [
     {
-      componentType: FocusComponentType.MODAL,
-      componentId: modalId,
-      instanceId: modalId,
+      focusId: modalId,
+      componentInstance: {
+        componentType: FocusComponentType.MODAL,
+        componentInstanceId: modalId,
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysWithModifiers: true,
+        enableGlobalHotkeysConflictingWithKeyboard: true,
+      },
     },
   ]);
 };
