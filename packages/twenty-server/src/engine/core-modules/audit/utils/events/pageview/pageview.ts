@@ -6,13 +6,13 @@ export const pageviewSchema = baseEventSchema.extend({
   type: z.literal('page'),
   name: z.string(),
   properties: z.object({
-    href: z.string(),
-    locale: z.string(),
-    pathname: z.string(),
-    referrer: z.string(),
-    sessionId: z.string(),
-    timeZone: z.string(),
-    userAgent: z.string(),
+    href: z.string().optional().default(''),
+    locale: z.string().optional().default(''),
+    pathname: z.string().optional().default(''),
+    referrer: z.string().optional().default(''),
+    sessionId: z.string().optional().default(''),
+    timeZone: z.string().optional().default(''),
+    userAgent: z.string().optional().default(''),
   }),
 });
 
