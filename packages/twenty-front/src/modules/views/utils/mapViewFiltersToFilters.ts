@@ -3,10 +3,9 @@ import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { isSystemSearchVectorField } from '@/object-record/utils/isSystemSearchVectorField';
 import { isDefined } from 'twenty-shared/utils';
-import { SEARCH_VECTOR_FIELD_NAME } from '../constants/ViewFieldConstants';
 import { ViewFilter } from '../types/ViewFilter';
-import { ViewFilterOperand } from '../types/ViewFilterOperand';
 
 export const mapViewFiltersToFilters = (
   viewFilters: ViewFilter[],
@@ -28,11 +27,9 @@ export const mapViewFiltersToFilters = (
         availableFieldMetadataItem.type,
       );
 
-      const label =
-        availableFieldMetadataItem.name === SEARCH_VECTOR_FIELD_NAME &&
-        viewFilter.operand === ViewFilterOperand.VectorSearch
-          ? 'Search'
-          : availableFieldMetadataItem.label;
+      const label = isSystemSearchVectorField(availableFieldMetadataItem.name)
+        ? 'Search'
+        : availableFieldMetadataItem.label;
 
       return {
         id: viewFilter.id,
