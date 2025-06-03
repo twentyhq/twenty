@@ -3,7 +3,6 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 import { useSearchFilterOperations } from '@/views/hooks/useSearchFilterOperations';
-import { useSearchInputState } from '@/views/hooks/useSearchInputState';
 
 import { OPERAND_DROPDOWN_CLICK_OUTSIDE_ID } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownOperandDropdown';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
@@ -22,9 +21,6 @@ export const ViewBarFilterDropdown = ({
   hotkeyScope,
 }: ViewBarFilterDropdownProps) => {
   const { resetFilterDropdown } = useResetFilterDropdown();
-  const { setShowSearchInput } = useSearchInputState(
-    VIEW_BAR_FILTER_DROPDOWN_ID,
-  );
   const { removeEmptySearchFilter } = useSearchFilterOperations();
   const { removeRecordFilter } = useRemoveRecordFilter();
 
@@ -48,7 +44,6 @@ export const ViewBarFilterDropdown = ({
 
   const handleDropdownClose = () => {
     resetFilterDropdown();
-    setShowSearchInput(false);
     removeEmptySearchFilter();
   };
 
