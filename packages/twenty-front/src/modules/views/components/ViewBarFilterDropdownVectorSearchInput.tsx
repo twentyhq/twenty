@@ -1,7 +1,7 @@
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useVectorSearchFilterOperations } from '@/views/hooks/useVectorSearchFilterOperations';
+import { useVectorSearchFilterActions } from '@/views/hooks/useVectorSearchFilterActions';
 import { useVectorSearchInputState } from '@/views/hooks/useVectorSearchInputState';
 import { useLingui } from '@lingui/react/macro';
 import { useDebouncedCallback } from 'use-debounce';
@@ -14,7 +14,7 @@ export const ViewBarFilterDropdownVectorSearchInput = ({
   const { t } = useLingui();
   const { vectorSearchInputValue, setVectorSearchInputValue } =
     useVectorSearchInputState(filterDropdownId);
-  const { applyVectorSearchFilter } = useVectorSearchFilterOperations();
+  const { applyVectorSearchFilter } = useVectorSearchFilterActions();
 
   const debouncedApplyVectorSearchFilter = useDebouncedCallback(
     (value: string) => {

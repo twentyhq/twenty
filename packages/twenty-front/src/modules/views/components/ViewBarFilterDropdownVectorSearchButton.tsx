@@ -12,7 +12,7 @@ import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDrop
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useOpenVectorSearchFilter } from '@/views/hooks/useOpenVectorSearchFilter';
-import { useVectorSearchFilterOperations } from '@/views/hooks/useVectorSearchFilterOperations';
+import { useVectorSearchFilterActions } from '@/views/hooks/useVectorSearchFilterActions';
 import { useVectorSearchInputState } from '@/views/hooks/useVectorSearchInputState';
 
 const StyledSearchText = styled.span`
@@ -32,7 +32,7 @@ export const ViewBarFilterDropdownVectorSearchButton = () => {
     VIEW_BAR_FILTER_DROPDOWN_ID,
   );
 
-  const { applyVectorSearchFilter } = useVectorSearchFilterOperations();
+  const { applyVectorSearchFilter } = useVectorSearchFilterActions();
   const { openVectorSearchFilter } = useOpenVectorSearchFilter(
     VIEW_BAR_FILTER_DROPDOWN_ID,
   );
