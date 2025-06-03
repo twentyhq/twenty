@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useIMask } from 'react-imask';
 import { useRecoilValue } from 'recoil';
 
-import { DateFormat } from '@/localization/constants/DateFormat';
 import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
 import { DATE_BLOCKS } from '@/ui/input/components/internal/date/constants/DateBlocks';
 import { DATE_TIME_BLOCKS } from '@/ui/input/components/internal/date/constants/DateTimeBlocks';
@@ -104,24 +103,11 @@ export const DateTimeInput = ({
     setValue(parseToString(date));
   }, [date, setValue, parseToString]);
 
-  const getPlaceholder = () => {
-    const formatMap: Record<DateFormat, string> = {
-      [DateFormat.SYSTEM]: 'mm/dd/yyyy',
-      [DateFormat.MONTH_FIRST]: 'mm/dd/yyyy',
-      [DateFormat.DAY_FIRST]: 'dd/mm/yyyy',
-      [DateFormat.YEAR_FIRST]: 'yyyy-mm-dd',
-    };
-
-    const dateFormatStr = formatMap[dateFormat];
-    return `Type date${isDateTimeInput ? ' and time' : ` (${dateFormatStr})`}`;
-  };
-
   return (
     <StyledInputContainer>
       <StyledInput
         type="text"
         ref={ref as any}
-        placeholder={getPlaceholder()}
         value={value}
         onChange={() => {}} // Prevent React warning
         hasError={hasError}
