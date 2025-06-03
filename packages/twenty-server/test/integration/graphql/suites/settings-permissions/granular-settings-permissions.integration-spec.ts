@@ -117,12 +117,10 @@ describe('Granular settings permissions', () => {
       `,
     };
 
-    const res = await client
+    await client
       .post('/graphql')
       .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
       .send(updateMemberRoleQuery);
-
-    console.log(res.body);
   });
 
   afterAll(async () => {
