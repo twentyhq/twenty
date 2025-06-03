@@ -15,11 +15,11 @@ import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types
 import { VIEW_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ViewSortDropdownId';
 import { ObjectSortDropdownComponentInstanceContext } from '@/object-record/object-sort-dropdown/states/context/ObjectSortDropdownComponentInstanceContext';
 import { ViewBarFilterDropdown } from '@/views/components/ViewBarFilterDropdown';
+import { ViewBarFilterDropdownVectorSearchHotkeyEffect } from '@/views/components/ViewBarFilterDropdownVectorSearchHotkeyEffect';
 import { ViewBarRecordFilterEffect } from '@/views/components/ViewBarRecordFilterEffect';
 import { ViewBarRecordFilterGroupEffect } from '@/views/components/ViewBarRecordFilterGroupEffect';
 import { ViewBarRecordSortEffect } from '@/views/components/ViewBarRecordSortEffect';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
-import { useViewBarFilterHotKeys } from '../hooks/useViewBarFilterHotKeys';
 import { UpdateViewButtonGroup } from './UpdateViewButtonGroup';
 import { ViewBarDetails } from './ViewBarDetails';
 
@@ -37,8 +37,6 @@ export const ViewBar = ({
   const { objectNamePlural } = useParams();
   const loading = useIsPrefetchLoading();
 
-  useViewBarFilterHotKeys();
-
   if (!objectNamePlural) {
     return;
   }
@@ -47,6 +45,7 @@ export const ViewBar = ({
     <ObjectSortDropdownComponentInstanceContext.Provider
       value={{ instanceId: VIEW_SORT_DROPDOWN_ID }}
     >
+      <ViewBarFilterDropdownVectorSearchHotkeyEffect />
       <ViewBarRecordFilterGroupEffect />
       <ViewBarRecordFilterEffect />
       <ViewBarRecordSortEffect />
