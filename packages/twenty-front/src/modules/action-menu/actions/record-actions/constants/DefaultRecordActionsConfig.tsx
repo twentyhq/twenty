@@ -66,8 +66,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     position: 0,
     isPinned: true,
     Icon: IconPlus,
-    shouldBeRegistered: ({ hasObjectReadOnlyPermission }) =>
-      !hasObjectReadOnlyPermission,
+    shouldBeRegistered: ({ objectPermissions }) =>
+      objectPermissions?.canUpdateObjectRecords === true,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     component: <CreateNewTableRecordNoSelectionRecordAction />,
   },
@@ -215,12 +215,12 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     accent: 'default',
     isPinned: true,
     shouldBeRegistered: ({
-      hasObjectReadOnlyPermission,
+      objectPermissions,
       isRemote,
       isSoftDeleteFilterActive,
       numberOfSelectedRecords,
     }) =>
-      !hasObjectReadOnlyPermission &&
+      objectPermissions?.canSoftDeleteObjectRecords === true &&
       !isRemote &&
       !isSoftDeleteFilterActive &&
       isDefined(numberOfSelectedRecords) &&
@@ -268,12 +268,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconTrashX,
     accent: 'danger',
     isPinned: true,
-    shouldBeRegistered: ({
-      selectedRecord,
-      hasObjectReadOnlyPermission,
-      isRemote,
-    }) =>
-      !hasObjectReadOnlyPermission &&
+    shouldBeRegistered: ({ selectedRecord, objectPermissions, isRemote }) =>
+      objectPermissions?.canDestroyObjectRecords === true &&
       !isRemote &&
       isDefined(selectedRecord?.deletedAt),
     availableOn: [
@@ -317,12 +313,12 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     accent: 'danger',
     isPinned: true,
     shouldBeRegistered: ({
-      hasObjectReadOnlyPermission,
+      objectPermissions,
       isRemote,
       isSoftDeleteFilterActive,
       numberOfSelectedRecords,
     }) =>
-      !hasObjectReadOnlyPermission &&
+      objectPermissions?.canDestroyObjectRecords === true &&
       !isRemote &&
       isDefined(isSoftDeleteFilterActive) &&
       isSoftDeleteFilterActive &&
@@ -343,14 +339,14 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     isPinned: true,
     shouldBeRegistered: ({
       selectedRecord,
-      hasObjectReadOnlyPermission,
+      objectPermissions,
       isRemote,
       isShowPage,
       isSoftDeleteFilterActive,
     }) =>
       !isRemote &&
       isDefined(selectedRecord?.deletedAt) &&
-      !hasObjectReadOnlyPermission &&
+      objectPermissions?.canSoftDeleteObjectRecords === true &&
       ((isDefined(isShowPage) && isShowPage) ||
         (isDefined(isSoftDeleteFilterActive) && isSoftDeleteFilterActive)),
     availableOn: [
@@ -370,12 +366,12 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     accent: 'default',
     isPinned: true,
     shouldBeRegistered: ({
-      hasObjectReadOnlyPermission,
+      objectPermissions,
       isRemote,
       isSoftDeleteFilterActive,
       numberOfSelectedRecords,
     }) =>
-      !hasObjectReadOnlyPermission &&
+      objectPermissions?.canSoftDeleteObjectRecords === true &&
       !isRemote &&
       isDefined(isSoftDeleteFilterActive) &&
       isSoftDeleteFilterActive &&

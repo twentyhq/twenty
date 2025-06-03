@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
 
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
 import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
@@ -9,7 +10,6 @@ import { useAggregateRecordsForRecordBoardColumn } from '@/object-record/record-
 import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
-import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { Tag } from 'twenty-ui/components';
 import { IconDotsVertical, IconPlus } from 'twenty-ui/display';
@@ -95,8 +95,7 @@ export const RecordBoardColumnHeader = () => {
   const { aggregateValue, aggregateLabel } =
     useAggregateRecordsForRecordBoardColumn();
 
-  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
-
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { createNewIndexRecord } = useCreateNewIndexRecord({
     objectMetadataItem: objectMetadataItem,
   });
@@ -143,7 +142,8 @@ export const RecordBoardColumnHeader = () => {
                   Icon={IconDotsVertical}
                   onClick={handleBoardColumnMenuOpen}
                 />
-                {!hasObjectReadOnlyPermission && (
+                {objectPermissionsByObjectMetadataId[objectMetadataItem.id]
+                  ?.canUpdateObjectRecords === true && (
                   <LightIconButton
                     accent="tertiary"
                     Icon={IconPlus}

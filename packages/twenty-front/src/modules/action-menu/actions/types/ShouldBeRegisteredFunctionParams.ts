@@ -3,10 +3,11 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
+import { ObjectPermission } from '~/generated-metadata/graphql';
 
 export type ShouldBeRegisteredFunctionParams = {
   objectMetadataItem?: ObjectMetadataItem;
-  hasObjectReadOnlyPermission?: boolean;
+  objectPermissions?: ObjectPermission;
   isWorkflowEnabled: boolean;
   recordFilters?: RecordFilter[];
   isShowPage?: boolean;

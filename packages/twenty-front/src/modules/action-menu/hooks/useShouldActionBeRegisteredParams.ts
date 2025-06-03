@@ -8,9 +8,9 @@ import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
-import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
@@ -42,7 +42,7 @@ export const useShouldActionBeRegisteredParams = ({
   const selectedRecord =
     useRecoilValue(recordStoreFamilyState(recordId ?? '')) || undefined;
 
-  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const isNoteOrTask =
     objectMetadataItem?.nameSingular === CoreObjectNameSingular.Note ||
@@ -78,7 +78,8 @@ export const useShouldActionBeRegisteredParams = ({
   return {
     objectMetadataItem,
     isFavorite,
-    hasObjectReadOnlyPermission,
+    objectPermissions:
+      objectPermissionsByObjectMetadataId[objectMetadataItem?.id],
     isNoteOrTask,
     isInRightDrawer,
     isSoftDeleteFilterActive,
