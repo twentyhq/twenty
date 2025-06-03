@@ -1882,7 +1882,6 @@ export type ServerlessFunction = {
   name: Scalars['String'];
   publishedVersions: Array<Scalars['String']>;
   runtime: Scalars['String'];
-  syncStatus: ServerlessFunctionSyncStatus;
   timeoutSeconds: Scalars['Float'];
   updatedAt: Scalars['DateTime'];
 };
@@ -1912,13 +1911,6 @@ export type ServerlessFunctionIdInput = {
   /** The id of the function. */
   id: Scalars['ID'];
 };
-
-/** SyncStatus of the serverlessFunction */
-export enum ServerlessFunctionSyncStatus {
-  BUILDING = 'BUILDING',
-  NOT_READY = 'NOT_READY',
-  READY = 'READY'
-}
 
 export type SettingPermission = {
   __typename?: 'SettingPermission';

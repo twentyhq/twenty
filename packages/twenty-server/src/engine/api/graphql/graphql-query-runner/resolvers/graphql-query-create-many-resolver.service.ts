@@ -415,7 +415,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
       limit: QUERY_MAX_RECORDS,
       authContext: executionArgs.options.authContext,
-      dataSource: executionArgs.dataSource,
+      workspaceDataSource: executionArgs.workspaceDataSource,
       roleId,
       shouldBypassPermissionChecks,
     });

@@ -33,6 +33,7 @@ import { isFieldRichTextV2 } from '@/object-record/record-field/types/guards/isF
 import { isFieldRichTextValue } from '@/object-record/record-field/types/guards/isFieldRichTextValue';
 import { isFieldRichTextV2Value } from '@/object-record/record-field/types/guards/isFieldRichTextValueV2';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { FieldContext } from '../contexts/FieldContext';
 import { isFieldBoolean } from '../types/guards/isFieldBoolean';
 import { isFieldBooleanValue } from '../types/guards/isFieldBooleanValue';
@@ -57,7 +58,7 @@ export const usePersistField = () => {
   const [updateRecord] = useUpdateRecord();
 
   const persistField = useRecoilCallback(
-    ({ set }) =>
+    ({ set, snapshot }) =>
       (valueToPersist: unknown) => {
         const fieldIsRelationToOneObject =
           isFieldRelationToOneObject(
@@ -156,6 +157,22 @@ export const usePersistField = () => {
 
         if (isValuePersistable) {
           const fieldName = fieldDefinition.metadata.fieldName;
+
+          const currentValue: any = snapshot
+            .getLoadable(recordStoreFamilySelector({ recordId, fieldName }))
+            .getValue();
+
+          if (
+            fieldIsRelationToOneObject &&
+            valueToPersist?.id === currentValue?.id
+          ) {
+            return;
+          }
+
+          if (isDeeplyEqual(valueToPersist, currentValue)) {
+            return;
+          }
+
           set(
             recordStoreFamilySelector({ recordId, fieldName }),
             valueToPersist,

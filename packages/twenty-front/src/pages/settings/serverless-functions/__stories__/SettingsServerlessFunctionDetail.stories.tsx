@@ -36,7 +36,6 @@ const meta: Meta<PageDecoratorArgs> = {
                 id: 'adb4bd21-7670-4c81-9f74-1fc196fe87ea',
                 name: 'Serverless Function Name',
                 description: '',
-                syncStatus: 'READY',
                 runtime: 'nodejs18.x',
                 updatedAt: '2024-02-24T10:23:10.673Z',
                 createdAt: '2024-02-24T10:23:10.673Z',

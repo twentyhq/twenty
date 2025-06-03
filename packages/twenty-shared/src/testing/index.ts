@@ -8,3 +8,4 @@
  */
 
 export type { EachTestingContext } from './types/EachTestingContext.type';
+export type { SuccessfulAndFailingTestCases } from './types/SuccessfulAndFailingTestCases';

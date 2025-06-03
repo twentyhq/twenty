@@ -110,10 +110,10 @@ export class CalendarEventParticipantService {
       transactionManager,
     );
 
-    await this.matchParticipantService.matchParticipants(
-      savedParticipants,
-      'calendarEventParticipant',
+    await this.matchParticipantService.matchParticipants({
+      participants: savedParticipants,
+      objectMetadataName: 'calendarEventParticipant',
       transactionManager,
-    );
+    });
   }
 }

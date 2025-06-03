@@ -1202,7 +1202,6 @@ msgstr "Tell unike verdier"
 
 #. js-lingui-id: hYgDIe
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
-#: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Create"
 msgstr "Opprett"
 
@@ -4072,7 +4071,6 @@ msgid "Russian"
 msgstr "Russisk"
 
 #. js-lingui-id: tfDRzk
-#: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 msgid "Save"
