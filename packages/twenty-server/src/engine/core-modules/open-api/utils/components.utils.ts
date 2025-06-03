@@ -329,18 +329,19 @@ const getSchemaComponentsRelationProperties = (
       return node;
     }
 
-    let itemProperty = {} as Property;
+    const itemProperty = {} as Property;
 
-    if (field.fromRelationMetadata?.toObjectMetadata.nameSingular) {
-      itemProperty = {
-        type: 'array',
-        items: {
-          $ref: `#/components/schemas/${capitalize(
-            field.fromRelationMetadata?.toObjectMetadata.nameSingular,
-          )} for Response`,
-        },
-      };
-    }
+    // TODO: Charles fix
+    // if (field.fromRelationMetadata?.toObjectMetadata.nameSingular) {
+    //   itemProperty = {
+    //     type: 'array',
+    //     items: {
+    //       $ref: `#/components/schemas/${capitalize(
+    //         field.fromRelationMetadata?.toObjectMetadata.nameSingular,
+    //       )} for Response`,
+    //     },
+    //   };
+    // }
 
     if (field.description) {
       itemProperty.description = field.description;

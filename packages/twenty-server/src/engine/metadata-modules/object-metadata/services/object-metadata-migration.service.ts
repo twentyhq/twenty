@@ -9,8 +9,6 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { buildMigrationsForCustomObjectRelations } from 'src/engine/metadata-modules/object-metadata/utils/build-migrations-for-custom-object-relations.util';
-import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { RelationToDelete } from 'src/engine/metadata-modules/relation-metadata/types/relation-to-delete';
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
@@ -31,8 +29,6 @@ export class ObjectMetadataMigrationService {
   constructor(
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    @InjectRepository(RelationMetadataEntity, 'metadata')
-    private readonly relationMetadataRepository: Repository<RelationMetadataEntity>,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
   ) {}
@@ -220,38 +216,8 @@ export class ObjectMetadataMigrationService {
     objectMetadata: ObjectMetadataEntity,
     workspaceId: string,
   ) {
-    const relationsMetadataToDelete: RelationToDelete[] = [];
-
-    // TODO: Most of this logic should be moved to relation-metadata.service.ts
-    for (const relation of [
-      ...objectMetadata.fromRelations,
-      ...objectMetadata.toRelations,
-    ]) {
-      relationsMetadataToDelete.push({
-        id: relation.id,
-        fromFieldMetadataId: relation.fromFieldMetadata.id,
-        toFieldMetadataId: relation.toFieldMetadata.id,
-        fromFieldMetadataName: relation.fromFieldMetadata.name,
-        toFieldMetadataName: relation.toFieldMetadata.name,
-        fromObjectMetadataId: relation.fromObjectMetadata.id,
-        toObjectMetadataId: relation.toObjectMetadata.id,
-        fromObjectName: relation.fromObjectMetadata.nameSingular,
-        toObjectName: relation.toObjectMetadata.nameSingular,
-        toFieldMetadataIsCustom: relation.toFieldMetadata.isCustom,
-        toObjectMetadataIsCustom: relation.toObjectMetadata.isCustom,
-        direction:
-          relation.fromObjectMetadata.nameSingular ===
-          objectMetadata.nameSingular
-            ? 'from'
-            : 'to',
-      });
-    }
-
-    if (relationsMetadataToDelete.length > 0) {
-      await this.relationMetadataRepository.delete(
-        relationsMetadataToDelete.map((relation) => relation.id),
-      );
-    }
+    // TODO: Charles fix
+    const relationsMetadataToDelete: any[] = [];
 
     for (const relationToDelete of relationsMetadataToDelete) {
       const foreignKeyFieldsToDelete = await this.fieldMetadataRepository.find({
