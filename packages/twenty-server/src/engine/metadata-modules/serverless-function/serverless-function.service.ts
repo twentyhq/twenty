@@ -312,12 +312,13 @@ export class ServerlessFunctionService {
     serverlessFunctionInput: CreateServerlessFunctionInput,
     workspaceId: string,
   ) {
-    const serverlessFunctionToCreate =
-      await this.serverlessFunctionRepository.create({
+    const serverlessFunctionToCreate = this.serverlessFunctionRepository.create(
+      {
         ...serverlessFunctionInput,
         workspaceId,
         layerVersion: LAST_LAYER_VERSION,
-      });
+      },
+    );
 
     const createdServerlessFunction =
       await this.serverlessFunctionRepository.save(serverlessFunctionToCreate);
