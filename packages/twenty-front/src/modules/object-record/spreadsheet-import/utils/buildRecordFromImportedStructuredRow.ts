@@ -20,10 +20,67 @@ type BuildRecordFromImportedStructuredRowArgs = {
   importedStructuredRow: ImportedStructuredRow<any>;
   fields: FieldMetadataItem[];
 };
+
 export const buildRecordFromImportedStructuredRow = ({
   fields,
   importedStructuredRow,
 }: BuildRecordFromImportedStructuredRowArgs) => {
+  const stringArrayJSONSchema = z
+    .preprocess((value) => {
+      try {
+        if (typeof value !== 'string') {
+          return [];
+        }
+        return JSON.parse(value);
+      } catch {
+        return [];
+      }
+    }, z.array(z.string()))
+    .catch([]);
+
+  const linkArrayJSONSchema = z
+    .preprocess(
+      (value) => {
+        try {
+          if (typeof value !== 'string') {
+            return [];
+          }
+          return JSON.parse(value);
+        } catch {
+          return [];
+        }
+      },
+      z.array(
+        z.object({
+          label: z.string().nullable(),
+          url: z.string().nullable(),
+        }),
+      ),
+    )
+    .catch([]);
+
+  const phoneArrayJSONSchema = z
+    .preprocess(
+      (value) => {
+        try {
+          if (typeof value !== 'string') {
+            return [];
+          }
+          return JSON.parse(value);
+        } catch {
+          return [];
+        }
+      },
+      z.array(
+        z.object({
+          number: z.string(),
+          callingCode: z.string().optional(),
+          countryCode: z.string(),
+        }),
+      ),
+    )
+    .catch([]);
+
   const recordToBuild: Record<string, any> = {};
 
   const {
@@ -37,9 +94,14 @@ export const buildRecordFromImportedStructuredRow = ({
     },
     CURRENCY: { amountMicrosLabel, currencyCodeLabel },
     FULL_NAME: { firstNameLabel, lastNameLabel },
-    LINKS: { primaryLinkUrlLabel },
-    EMAILS: { primaryEmailLabel },
-    PHONES: { primaryPhoneNumberLabel, primaryPhoneCountryCodeLabel },
+    LINKS: { primaryLinkUrlLabel, primaryLinkLabelLabel, secondaryLinksLabel },
+    EMAILS: { primaryEmailLabel, additionalEmailsLabel },
+    PHONES: {
+      primaryPhoneNumberLabel,
+      primaryPhoneCountryCodeLabel,
+      primaryPhoneCallingCodeLabel,
+      additionalPhonesLabel,
+    },
     RICH_TEXT_V2: { blocknoteLabel, markdownLabel },
   } = COMPOSITE_FIELD_IMPORT_LABELS;
 
@@ -115,15 +177,23 @@ export const buildRecordFromImportedStructuredRow = ({
       case FieldMetadataType.LINKS: {
         if (
           isDefined(
-            importedStructuredRow[`${primaryLinkUrlLabel} (${field.name})`],
+            importedStructuredRow[`${primaryLinkUrlLabel} (${field.name})`] ||
+              importedStructuredRow[
+                `${primaryLinkLabelLabel} (${field.name})`
+              ] ||
+              importedStructuredRow[`${secondaryLinksLabel} (${field.name})`],
           )
         ) {
           recordToBuild[field.name] = {
-            primaryLinkLabel: '',
+            primaryLinkLabel: castToString(
+              importedStructuredRow[`${primaryLinkLabelLabel} (${field.name})`],
+            ),
             primaryLinkUrl: castToString(
               importedStructuredRow[`${primaryLinkUrlLabel} (${field.name})`],
             ),
-            secondaryLinks: [],
+            secondaryLinks: linkArrayJSONSchema.parse(
+              importedStructuredRow[`${secondaryLinksLabel} (${field.name})`],
+            ),
           } satisfies FieldLinksValue;
         }
         break;
@@ -136,7 +206,11 @@ export const buildRecordFromImportedStructuredRow = ({
             ] ||
               importedStructuredRow[
                 `${primaryPhoneNumberLabel} (${field.name})`
-              ],
+              ] ||
+              importedStructuredRow[
+                `${primaryPhoneCallingCodeLabel} (${field.name})`
+              ] ||
+              importedStructuredRow[`${additionalPhonesLabel} (${field.name})`],
           )
         ) {
           recordToBuild[field.name] = {
@@ -150,7 +224,14 @@ export const buildRecordFromImportedStructuredRow = ({
                 `${primaryPhoneNumberLabel} (${field.name})`
               ],
             ),
-            additionalPhones: null,
+            primaryPhoneCallingCode: castToString(
+              importedStructuredRow[
+                `${primaryPhoneCallingCodeLabel} (${field.name})`
+              ],
+            ),
+            additionalPhones: phoneArrayJSONSchema.parse(
+              importedStructuredRow[`${additionalPhonesLabel} (${field.name})`],
+            ),
           } satisfies FieldPhonesValue;
         }
         break;
@@ -177,13 +258,18 @@ export const buildRecordFromImportedStructuredRow = ({
         if (
           isDefined(
             importedStructuredRow[`${primaryEmailLabel} (${field.name})`],
+          ) ||
+          isDefined(
+            importedStructuredRow[`${additionalEmailsLabel} (${field.name})`],
           )
         ) {
           recordToBuild[field.name] = {
             primaryEmail: castToString(
               importedStructuredRow[`${primaryEmailLabel} (${field.name})`],
             ),
-            additionalEmails: null,
+            additionalEmails: stringArrayJSONSchema.parse(
+              importedStructuredRow[`${additionalEmailsLabel} (${field.name})`],
+            ),
           } satisfies FieldEmailsValue;
         }
         break;
@@ -219,19 +305,6 @@ export const buildRecordFromImportedStructuredRow = ({
         break;
       case FieldMetadataType.ARRAY:
       case FieldMetadataType.MULTI_SELECT: {
-        const stringArrayJSONSchema = z
-          .preprocess((value) => {
-            try {
-              if (typeof value !== 'string') {
-                return [];
-              }
-              return JSON.parse(value);
-            } catch {
-              return [];
-            }
-          }, z.array(z.string()))
-          .catch([]);
-
         recordToBuild[field.name] =
           stringArrayJSONSchema.parse(importedFieldValue);
         break;
