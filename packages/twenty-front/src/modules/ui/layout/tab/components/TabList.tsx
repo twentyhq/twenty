@@ -8,6 +8,7 @@ import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimensio
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { IconComponent } from 'twenty-ui/display';
 import { Tab } from './Tab';
@@ -201,30 +202,32 @@ export const TabList = ({
           tabListIds={tabs.map((tab) => tab.id)}
         />
 
-        {visibleTabs.length > 1 && (
-          <StyledHiddenMeasurement>
-            {visibleTabs.map((tab, index) => (
-              <NodeDimension
-                key={tab.id}
-                onDimensionChange={handleTabWidthChange(index)}
-              >
-                <Tab
-                  id={tab.id}
-                  title={tab.title}
-                  Icon={tab.Icon}
-                  logo={tab.logo}
-                  active={tab.id === activeTabId}
-                  disabled={tab.disabled ?? loading}
-                  pill={tab.pill}
-                />
-              </NodeDimension>
-            ))}
+        {visibleTabs.length > 1 &&
+          createPortal(
+            <StyledHiddenMeasurement aria-hidden="true">
+              {visibleTabs.map((tab, index) => (
+                <NodeDimension
+                  key={tab.id}
+                  onDimensionChange={handleTabWidthChange(index)}
+                >
+                  <Tab
+                    id={tab.id}
+                    title={tab.title}
+                    Icon={tab.Icon}
+                    logo={tab.logo}
+                    active={tab.id === activeTabId}
+                    disabled={tab.disabled ?? loading}
+                    pill={tab.pill}
+                  />
+                </NodeDimension>
+              ))}
 
-            <NodeDimension onDimensionChange={handleMoreButtonWidthChange}>
-              <TabMoreButton hiddenTabsCount={1} active={false} />
-            </NodeDimension>
-          </StyledHiddenMeasurement>
-        )}
+              <NodeDimension onDimensionChange={handleMoreButtonWidthChange}>
+                <TabMoreButton hiddenTabsCount={1} active={false} />
+              </NodeDimension>
+            </StyledHiddenMeasurement>,
+            document.body,
+          )}
 
         <NodeDimension onDimensionChange={handleContainerWidthChange}>
           <StyledContainer className={className}>
