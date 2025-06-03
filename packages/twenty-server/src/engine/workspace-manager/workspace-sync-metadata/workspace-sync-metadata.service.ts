@@ -17,7 +17,6 @@ import { WorkspaceSyncFieldMetadataService } from 'src/engine/workspace-manager/
 import { WorkspaceSyncIndexMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-index-metadata.service';
 import { WorkspaceSyncObjectMetadataIdentifiersService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-object-metadata-identifiers.service';
 import { WorkspaceSyncObjectMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-object-metadata.service';
-import { WorkspaceSyncRelationMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-relation-metadata.service';
 import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
 
 interface SynchronizeOptions {
@@ -33,7 +32,6 @@ export class WorkspaceSyncMetadataService {
     private readonly metadataDataSource: DataSource,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceSyncObjectMetadataService: WorkspaceSyncObjectMetadataService,
-    private readonly workspaceSyncRelationMetadataService: WorkspaceSyncRelationMetadataService,
     private readonly workspaceSyncFieldMetadataService: WorkspaceSyncFieldMetadataService,
     private readonly workspaceSyncFieldMetadataRelationService: WorkspaceSyncFieldMetadataRelationService,
     private readonly workspaceSyncIndexMetadataService: WorkspaceSyncIndexMetadataService,

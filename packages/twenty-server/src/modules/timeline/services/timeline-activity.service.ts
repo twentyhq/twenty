@@ -256,9 +256,10 @@ export class TimelineActivityService {
 
     if (!isDefined(activity)) return;
 
+    // TODO: Charles fix
     const activityObjectMetadataId = event.objectMetadata.fields.find(
       (field) => field.name === activityType,
-    )?.toRelationMetadata?.fromObjectMetadataId;
+    )?.relationTargetObjectMetadataId;
 
     const targetColumn: string[] = Object.entries(activityTarget[0])
       .map(([columnName, columnValue]: [string, string]) => {
