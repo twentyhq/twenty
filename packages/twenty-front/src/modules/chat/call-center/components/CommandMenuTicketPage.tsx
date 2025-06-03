@@ -8,7 +8,7 @@ import { RightDrawerStepListContainer } from '@/workflow/workflow-steps/componen
 import styled from '@emotion/styled';
 // eslint-disable-next-line no-restricted-imports
 import { selectedChatState } from '@/chat/call-center/state/selectedChatState';
-import { ITimeline } from '@/chat/types/WhatsappDocument';
+import { ITimeline, statusEnum } from '@/chat/types/WhatsappDocument';
 import { formatDate } from '@/chat/utils/formatDate';
 import { format, parse } from 'date-fns';
 import { useEffect, useState } from 'react';
@@ -85,6 +85,16 @@ export const CommandMenuTicketPage = () => {
 
   const selectedChat = useRecoilValue(selectedChatState);
 
+  const [name, setName] = useState<string>(selectedChat?.client.name ?? '');
+  const [email, setEmail] = useState<string>(EMAIL_EXAMPLE);
+  const [phone, setPhone] = useState<string>(
+    selectedChat?.client.phone ?? '5500912345678',
+  );
+  const [status, setStatus] = useState<statusEnum>(
+    selectedChat?.status ?? statusEnum.Pending,
+  );
+  const [sector, setSector] = useState<string>(selectedChat?.sector ?? '');
+
   const [formattedTimeline, setFormattedTimeline] = useState<string[]>([]);
 
   const { createOneRecord: createOneOpportunity } = useCreateOneRecord({
@@ -95,9 +105,9 @@ export const CommandMenuTicketPage = () => {
     objectNameSingular: CoreObjectNameSingular.Person,
   });
 
-  // const { createOneRecord: createOneSupport } = useCreateOneRecord({
-  //   objectNameSingular: CoreObjectNameSingular.Support,
-  // });
+  const { createOneRecord: createOneSupport } = useCreateOneRecord({
+    objectNameSingular: CoreObjectNameSingular.Support,
+  });
 
   const { records } = useFindManyRecords<Person>({
     objectNameSingular: CoreObjectNameSingular.Person,
@@ -105,12 +115,12 @@ export const CommandMenuTicketPage = () => {
       or: [
         {
           additionalEmails: {
-            eq: EMAIL_EXAMPLE,
+            eq: email,
           },
         },
         {
           phones: {
-            eq: selectedChat?.client.phone,
+            eq: phone,
           },
         },
       ],
@@ -123,18 +133,17 @@ export const CommandMenuTicketPage = () => {
     if (records.length > 0) {
       personId = records[0].id;
     } else {
-      const rawPhone = selectedChat?.client.phone || '';
+      const rawPhone = phone || '';
       const callingCode = rawPhone.slice(0, 2);
       const phoneNumber = rawPhone.slice(2);
 
       const newPerson = await createOnePerson({
         id: v4(),
         name: {
-          firstName: selectedChat?.client.name,
+          firstName: name,
           lastName: '',
         },
-        emails: { primaryEmail: EMAIL_EXAMPLE },
-
+        emails: { primaryEmail: email },
         phones: {
           primaryPhoneNumber: phoneNumber,
           primaryPhoneCountryCode: 'BR',
@@ -149,22 +158,29 @@ export const CommandMenuTicketPage = () => {
 
     createOneOpportunity({
       id: v4(),
-      name: selectedChat?.client.name,
+      name: name,
       position: 'first',
       pointOfContactId: personId,
     });
   };
 
   const handleOpenSupportTicket = async () => {
-    // TO DO: Implement functionality to open support ticket
-    console.log('Open support ticket');
-    // createOneSupport({
-    //   id: v4(),
-    //   name: ticketData.name,
-    //   email: ticketData.email,
-    //   phone: ticketData.phone,
-    //   position: 'first',
-    // });
+    const rawPhone = phone || '';
+    const callingCode = rawPhone.slice(0, 2);
+    const phoneNumber = rawPhone.slice(2);
+
+    await createOneSupport({
+      id: v4(),
+      name: name,
+      emails: { primaryEmail: email, additionalEmails: null },
+      phones: {
+        primaryPhoneNumber: phoneNumber,
+        primaryPhoneCountryCode: 'BR',
+        primaryPhoneCallingCode: `+${callingCode}`,
+        additionalPhones: null,
+      },
+      position: 'first',
+    });
   };
 
   const getUniqueFormattedDates = (timeline: ITimeline[]) => {
@@ -174,10 +190,18 @@ export const CommandMenuTicketPage = () => {
   };
 
   useEffect(() => {
-    const dates = getUniqueFormattedDates(selectedChat?.timeline ?? []);
-    setFormattedTimeline(dates);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
+    if (selectedChat) {
+      setName(selectedChat.client.name || '');
+      setEmail(EMAIL_EXAMPLE);
+      setPhone(selectedChat.client.phone || '');
+      setStatus(selectedChat.status || '');
+      setSector(selectedChat.sector || '');
+
+      const dates = getUniqueFormattedDates(selectedChat.timeline ?? []);
+      setFormattedTimeline(dates);
+    }
+  }, [selectedChat]);
 
   const getEventsByDate = (date: string) => {
     return (
@@ -201,32 +225,35 @@ export const CommandMenuTicketPage = () => {
         <InfoSection
           Icon={IconUser}
           title={'Name'}
-          data={selectedChat?.client.name}
           type={'text'}
+          value={name}
+          onTextChange={(newText) => setName(newText)}
         />
         <InfoSection
           Icon={IconMail}
           title={'Email'}
-          data={EMAIL_EXAMPLE}
           type={'text'}
+          value={email}
+          onTextChange={(newText) => setEmail(newText)}
         />
         <InfoSection
           Icon={IconPhone}
           title={'Phone'}
-          data={selectedChat?.client.phone}
           type={'text'}
+          value={phone}
+          onTextChange={(newText) => setPhone(newText)}
         />
         <InfoSection
           Icon={IconProgressCheck}
           title={'Status'}
           type={'select'}
-          data={selectedChat?.status}
+          value={status}
         />
         <InfoSection
           Icon={IconIdBadge2}
           title={'Sector'}
           type={'select'}
-          data={selectedChat?.sector}
+          value={sector}
         />
       </StyledProfileData>
       <StyledButtonsContainer>
