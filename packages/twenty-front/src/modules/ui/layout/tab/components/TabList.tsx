@@ -210,7 +210,7 @@ export const TabList = ({
               >
                 <Tab
                   id={tab.id + '-measurement'}
-                  title={tab.title}
+                  title={tab.title + '-measurement'}
                   Icon={tab.Icon}
                   logo={tab.logo}
                   active={tab.id === activeTabId}
