@@ -37,7 +37,6 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 export type GraphqlQueryResolverExecutionArgs<Input extends ResolverArgs> = {
   args: Input;
@@ -97,14 +96,7 @@ export abstract class GraphqlQueryBaseResolverService<
       const isPermissionsV2Enabled =
         featureFlagsMap[FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED];
 
-      const objectIsWorkflow =
-        objectMetadataItemWithFieldMaps.standardId ===
-        STANDARD_OBJECT_IDS.workflow;
-
-      if (
-        objectMetadataItemWithFieldMaps.isSystem === true ||
-        objectIsWorkflow
-      ) {
+      if (objectMetadataItemWithFieldMaps.isSystem === true) {
         await this.validateSettingsPermissionsOnObjectOrThrow(options);
       } else {
         if (!isPermissionsV2Enabled)

@@ -3,5 +3,4 @@ import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/c
 export const OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS = {
   apiKey: SettingPermissionType.API_KEYS_AND_WEBHOOKS,
   webhook: SettingPermissionType.API_KEYS_AND_WEBHOOKS,
-  workflow: SettingPermissionType.WORKFLOWS,
 } as const;
