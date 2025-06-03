@@ -11,7 +11,6 @@ import { objectFilterDropdownSearchInputComponentState } from '@/object-record/o
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { ViewBarFilterDropdownSearchInput } from '@/views/components/ViewBarFilterDropdownSearchInput';
 import { useSetEditableFilterChipDropdownStates } from '@/views/hooks/useSetEditableFilterChipDropdownStates';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
@@ -68,15 +67,7 @@ export const EditableFilterDropdownButton = ({
           />
         }
         dropdownComponents={
-          isSearchFilter ? (
-            <ViewBarFilterDropdownSearchInput
-              filterDropdownId={recordFilter.id}
-            />
-          ) : (
-            <ObjectFilterDropdownFilterInput
-              filterDropdownId={recordFilter.id}
-            />
-          )
+          <ObjectFilterDropdownFilterInput filterDropdownId={recordFilter.id} />
         }
         dropdownHotkeyScope={hotkeyScope}
         dropdownOffset={{ y: 8, x: 0 }}

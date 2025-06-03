@@ -5,6 +5,7 @@ import { ObjectFilterDropdownRatingInput } from '@/object-record/object-filter-d
 import { ObjectFilterDropdownRecordSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordSelect';
 import { ObjectFilterDropdownSearchInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { ViewBarFilterDropdownSearchInput } from '@/views/components/ViewBarFilterDropdownSearchInput';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
@@ -16,6 +17,7 @@ import { DATE_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/object-record/object-filte
 import { NUMBER_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/NumberFilterTypes';
 import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/TextFilterTypes';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
+import { objectFilterDropdownSearchInputIsVisibleComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputIsVisibleComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -40,6 +42,11 @@ export const ObjectFilterDropdownFilterInput = ({
     filterDropdownId,
   );
 
+  const showSearchInput = useRecoilComponentValueV2(
+    objectFilterDropdownSearchInputIsVisibleComponentState,
+    filterDropdownId,
+  );
+
   const isConfigurable =
     selectedOperandInDropdown &&
     [
@@ -54,6 +61,13 @@ export const ObjectFilterDropdownFilterInput = ({
       ViewFilterOperand.DoesNotContain,
       ViewFilterOperand.IsRelative,
     ].includes(selectedOperandInDropdown);
+  const isSearchFilter = selectedOperandInDropdown === ViewFilterOperand.Search;
+
+  if ((isSearchFilter || showSearchInput) && isDefined(filterDropdownId)) {
+    return (
+      <ViewBarFilterDropdownSearchInput filterDropdownId={filterDropdownId} />
+    );
+  }
 
   if (!isDefined(fieldMetadataItemUsedInDropdown)) {
     return null;

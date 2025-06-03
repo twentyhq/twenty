@@ -3,7 +3,6 @@ import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-rec
 import { objectFilterDropdownSearchInputIsVisibleComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputIsVisibleComponentState';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { ViewBarFilterDropdownFieldSelectMenu } from '@/views/components/ViewBarFilterDropdownFieldSelectMenu';
-import { ViewBarFilterDropdownSearchInput } from '@/views/components/ViewBarFilterDropdownSearchInput';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 
 export const ViewBarFilterDropdownContent = () => {
@@ -11,21 +10,17 @@ export const ViewBarFilterDropdownContent = () => {
     objectFilterDropdownFilterIsSelectedComponentState,
     VIEW_BAR_FILTER_DROPDOWN_ID,
   );
-
   const [showSearchInput] = useRecoilComponentStateV2(
     objectFilterDropdownSearchInputIsVisibleComponentState,
     VIEW_BAR_FILTER_DROPDOWN_ID,
   );
 
-  const shouldShowFilterInput = objectFilterDropdownFilterIsSelected;
+  const shouldShowFilterInput =
+    objectFilterDropdownFilterIsSelected || showSearchInput;
 
   return (
     <>
-      {showSearchInput ? (
-        <ViewBarFilterDropdownSearchInput
-          filterDropdownId={VIEW_BAR_FILTER_DROPDOWN_ID}
-        />
-      ) : shouldShowFilterInput ? (
+      {shouldShowFilterInput ? (
         <ObjectFilterDropdownFilterInput
           filterDropdownId={VIEW_BAR_FILTER_DROPDOWN_ID}
         />
