@@ -150,7 +150,7 @@ export const WorkflowEditActionServerlessFunction = ({
         return;
       }
 
-      const newFunctionInput = getFunctionInputFromSourceCode(sourceCode);
+      const newFunctionInput = await getFunctionInputFromSourceCode(sourceCode);
       const newMergedInput = mergeDefaultFunctionInputAndFunctionInput({
         newInput: newFunctionInput,
         oldInput: action.settings.input.serverlessFunctionInput,
