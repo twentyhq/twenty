@@ -122,13 +122,10 @@ export class WorkspaceSyncObjectMetadataService {
         WorkspaceMigrationBuilderAction.UPDATE,
       );
 
-    // TODO: Charles fix
     const deleteObjectWorkspaceMigrations =
       await this.workspaceMigrationObjectFactory.create(
         storage.objectMetadataDeleteCollection,
         WorkspaceMigrationBuilderAction.DELETE,
-        // TODO: Charles fix
-        {},
       );
 
     this.logger.log('Saving migrations');
