@@ -68,6 +68,7 @@ export const CommandMenuOpenContainer = ({
     excludedClickOutsideIds: [
       PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID,
       LINK_CHIP_CLICK_OUTSIDE_ID,
+      'record-chip-click-outside-id',
     ],
   });
 
