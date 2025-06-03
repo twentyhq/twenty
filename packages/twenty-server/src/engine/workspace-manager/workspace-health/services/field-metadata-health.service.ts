@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
-import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import {
   WorkspaceHealthIssue,
   WorkspaceHealthIssueType,
@@ -17,10 +17,7 @@ import {
   computeCompositeColumnName,
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import {
-  EnumFieldMetadataUnionType,
-  isEnumFieldMetadataType,
-} from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
 import { validateDefaultValueForType } from 'src/engine/metadata-modules/field-metadata/utils/validate-default-value-for-type.util';
 import { validateOptionsForType } from 'src/engine/metadata-modules/field-metadata/utils/validate-options-for-type.util';
@@ -291,15 +288,34 @@ export class FieldMetadataHealthService {
       const enumValues = fieldMetadata.options?.map((option) =>
         serializeDefaultValue(`'${option.value}'`),
       );
-      const metadataDefaultValue =
-        fieldMetadata.defaultValue as FieldMetadataDefaultValue<EnumFieldMetadataUnionType>;
+      const metadataDefaultValue = fieldMetadata.defaultValue;
 
-      if (metadataDefaultValue && !enumValues.includes(metadataDefaultValue)) {
-        issues.push({
-          type: WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_NOT_VALID,
-          fieldMetadata,
-          message: `Column default value is not in the enum values "${metadataDefaultValue}" NOT IN "${enumValues}"`,
-        });
+      if (isDefined(metadataDefaultValue)) {
+        if (fieldMetadata.type === FieldMetadataType.MULTI_SELECT) {
+          if (!Array.isArray(metadataDefaultValue)) {
+            issues.push({
+              type: WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_NOT_VALID,
+              fieldMetadata,
+              message: `Column default value for multi-select must be an array, got "${metadataDefaultValue}"`,
+            });
+          } else {
+            metadataDefaultValue.forEach((value) => {
+              if (!enumValues.includes(value)) {
+                issues.push({
+                  type: WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_NOT_VALID,
+                  fieldMetadata,
+                  message: `Column default value "${value}" is not in the enum values "${enumValues}"`,
+                });
+              }
+            });
+          }
+        } else if (enumValues.includes(metadataDefaultValue as string)) {
+          issues.push({
+            type: WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_NOT_VALID,
+            fieldMetadata,
+            message: `Column default value is not in the enum values "${metadataDefaultValue}" NOT IN "${enumValues}"`,
+          });
+        }
       }
     }
 

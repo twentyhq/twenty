@@ -85,7 +85,7 @@ export const validateDefaultValueForType = (
   }
 
   const validationResults = validators.map((validator) => {
-    const conputedDefaultValue = isCompositeFieldMetadataType(type)
+    const computedDefaultValue = isCompositeFieldMetadataType(type)
       ? defaultValue
       : { value: defaultValue };
 
@@ -93,7 +93,7 @@ export const validateDefaultValueForType = (
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       any,
       FieldMetadataClassValidation
-    >(validator, conputedDefaultValue as FieldMetadataClassValidation);
+    >(validator, computedDefaultValue as FieldMetadataClassValidation);
 
     const errors = validateSync(defaultValueInstance, {
       whitelist: true,
