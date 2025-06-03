@@ -24,7 +24,6 @@ import { ObjectMetadataRelatedRecordsService } from 'src/engine/metadata-modules
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { RemoteTableRelationsModule } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.module';
 import { SearchVectorModule } from 'src/engine/metadata-modules/search-vector/search-vector.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
@@ -46,7 +45,7 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
       imports: [
         TypeORMModule,
         NestjsQueryTypeOrmModule.forFeature(
-          [ObjectMetadataEntity, FieldMetadataEntity, RelationMetadataEntity],
+          [ObjectMetadataEntity, FieldMetadataEntity],
           'metadata',
         ),
         TypeOrmModule.forFeature([FeatureFlag], 'core'),

@@ -17,7 +17,6 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
@@ -47,8 +46,6 @@ export class WorkspaceManagerService {
     private readonly permissionsService: PermissionsService,
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    @InjectRepository(RelationMetadataEntity, 'metadata')
-    private readonly relationMetadataRepository: Repository<RelationMetadataEntity>,
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly roleService: RoleService,
@@ -274,12 +271,6 @@ export class WorkspaceManagerService {
   public async delete(workspaceId: string): Promise<void> {
     //TODO: delete all logs when #611 closed
     this.logger.log(`Deleting workspace ${workspaceId} ...`);
-
-    // Delete data from metadata tables
-    await this.relationMetadataRepository.delete({
-      workspaceId,
-    });
-    this.logger.log(`workspace ${workspaceId} relation metadata deleted`);
 
     await this.fieldMetadataRepository.delete({
       workspaceId,

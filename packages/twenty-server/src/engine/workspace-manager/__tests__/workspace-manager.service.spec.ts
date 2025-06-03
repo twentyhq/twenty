@@ -12,7 +12,6 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
@@ -29,7 +28,6 @@ describe('WorkspaceManagerService', () => {
   let objectMetadataService: ObjectMetadataService;
   let workspaceMigrationRepository: Repository<WorkspaceMigrationEntity>;
   let dataSourceRepository: Repository<DataSourceEntity>;
-  let workspaceRelationMetadataRepository: Repository<RelationMetadataEntity>;
   let workspaceFieldMetadataRepository: Repository<FieldMetadataEntity>;
   let workspaceDataSourceService: WorkspaceDataSourceService;
   let userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>;
@@ -51,12 +49,6 @@ describe('WorkspaceManagerService', () => {
         },
         {
           provide: getRepositoryToken(FieldMetadataEntity, 'metadata'),
-          useValue: {
-            delete: jest.fn(),
-          },
-        },
-        {
-          provide: getRepositoryToken(RelationMetadataEntity, 'metadata'),
           useValue: {
             delete: jest.fn(),
           },
@@ -140,9 +132,6 @@ describe('WorkspaceManagerService', () => {
     dataSourceRepository = module.get<Repository<DataSourceEntity>>(
       getRepositoryToken(DataSourceEntity, 'metadata'),
     );
-    workspaceRelationMetadataRepository = module.get<
-      Repository<RelationMetadataEntity>
-    >(getRepositoryToken(RelationMetadataEntity, 'metadata'));
     workspaceFieldMetadataRepository = module.get<
       Repository<FieldMetadataEntity>
     >(getRepositoryToken(FieldMetadataEntity, 'metadata'));
@@ -165,9 +154,6 @@ describe('WorkspaceManagerService', () => {
     it('should delete all the workspace metadata tables and workspace schema', async () => {
       await service.delete('workspace-id');
       expect(objectMetadataService.deleteObjectsMetadata).toHaveBeenCalled();
-      expect(workspaceRelationMetadataRepository.delete).toHaveBeenCalledWith({
-        workspaceId: 'workspace-id',
-      });
       expect(workspaceFieldMetadataRepository.delete).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',
       });
