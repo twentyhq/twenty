@@ -162,15 +162,14 @@ export const usePersistField = () => {
             .getLoadable(recordStoreFamilySelector({ recordId, fieldName }))
             .getValue();
 
-          let valueToCompare = valueToPersist;
-          let currentValueToCompare = currentValue;
-
-          if (fieldIsRelationToOneObject) {
-            valueToCompare = valueToPersist?.id ?? null;
-            currentValueToCompare = currentValue?.id ?? null;
+          if (
+            fieldIsRelationToOneObject &&
+            valueToPersist?.id === currentValue?.id
+          ) {
+            return;
           }
 
-          if (isDeeplyEqual(valueToCompare, currentValueToCompare)) {
+          if (isDeeplyEqual(valueToPersist, currentValue)) {
             return;
           }
 
