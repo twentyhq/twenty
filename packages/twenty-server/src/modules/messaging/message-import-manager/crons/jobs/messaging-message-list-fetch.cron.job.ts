@@ -18,7 +18,8 @@ import {
   MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 
-export const MESSAGING_MESSAGE_LIST_FETCH_CRON_PATTERN = '*/5 * * * *';
+// InsurOS: every minute
+export const MESSAGING_MESSAGE_LIST_FETCH_CRON_PATTERN = '* * * * *';
 
 @Processor(MessageQueue.cronQueue)
 export class MessagingMessageListFetchCronJob {
