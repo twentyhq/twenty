@@ -18,7 +18,6 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { DatabaseStructureService } from 'src/engine/workspace-manager/workspace-health/services/database-structure.service';
 import { FieldMetadataHealthService } from 'src/engine/workspace-manager/workspace-health/services/field-metadata-health.service';
 import { ObjectMetadataHealthService } from 'src/engine/workspace-manager/workspace-health/services/object-metadata-health.service';
-import { RelationMetadataHealthService } from 'src/engine/workspace-manager/workspace-health/services/relation-metadata.health.service';
 import { WorkspaceFixService } from 'src/engine/workspace-manager/workspace-health/services/workspace-fix.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 
@@ -35,7 +34,6 @@ export class WorkspaceHealthService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly objectMetadataHealthService: ObjectMetadataHealthService,
     private readonly fieldMetadataHealthService: FieldMetadataHealthService,
-    private readonly relationMetadataHealthService: RelationMetadataHealthService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceFixService: WorkspaceFixService,
   ) {}
@@ -100,16 +98,6 @@ export class WorkspaceHealthService {
       );
 
       issues.push(...fieldIssues);
-
-      // Check relation metadata health
-      const relationIssues = this.relationMetadataHealthService.healthCheck(
-        workspaceTableColumns,
-        objectMetadataCollection,
-        objectMetadata,
-        options,
-      );
-
-      issues.push(...relationIssues);
     }
 
     return issues;
