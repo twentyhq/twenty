@@ -11,11 +11,11 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
-import { ServerlessFunctionIdInput } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-id.input';
 import { ExecuteServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/execute-serverless-function.input';
 import { GetServerlessFunctionSourceCodeInput } from 'src/engine/metadata-modules/serverless-function/dtos/get-serverless-function-source-code.input';
 import { PublishServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/publish-serverless-function.input';
 import { ServerlessFunctionExecutionResultDTO } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
+import { ServerlessFunctionIdInput } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-id.input';
 import { ServerlessFunctionDTO } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function.dto';
 import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
 import {
@@ -24,6 +24,7 @@ import {
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { serverlessFunctionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-graphql-api-exception-handler.utils';
+import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 @UseGuards(WorkspaceAuthGuard)
 @Resolver()
@@ -32,12 +33,14 @@ export class ServerlessFunctionResolver {
     private readonly serverlessFunctionService: ServerlessFunctionService,
     @InjectRepository(FeatureFlag, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlag>,
+    @InjectRepository(ServerlessFunctionEntity, 'metadata')
+    private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
   ) {}
 
   async checkFeatureFlag(workspaceId: string) {
     const isWorkflowEnabled = await this.featureFlagRepository.findOneBy({
       workspaceId,
-      key: FeatureFlagKey.IsWorkflowEnabled,
+      key: FeatureFlagKey.IS_WORKFLOW_ENABLED,
       value: true,
     });
 
@@ -57,9 +60,11 @@ export class ServerlessFunctionResolver {
     try {
       await this.checkFeatureFlag(workspaceId);
 
-      return await this.serverlessFunctionService.findOneOrFail({
-        id,
-        workspaceId,
+      return await this.serverlessFunctionRepository.findOneOrFail({
+        where: {
+          id,
+          workspaceId,
+        },
       });
     } catch (error) {
       serverlessFunctionGraphQLApiExceptionHandler(error);

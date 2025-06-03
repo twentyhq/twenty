@@ -5,11 +5,11 @@ import react from '@vitejs/plugin-react-swc';
 import wyw from '@wyw-in-js/vite';
 import fs from 'fs';
 import path from 'path';
-import { defineConfig, loadEnv, searchForWorkspaceRoot } from 'vite';
+import { visualizer } from 'rollup-plugin-visualizer';
+import { defineConfig, loadEnv, PluginOption, searchForWorkspaceRoot } from 'vite';
 import checker from 'vite-plugin-checker';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
-
 type Checkers = Parameters<typeof checker>[0];
 
 export default defineConfig(({ command, mode }) => {
@@ -24,6 +24,7 @@ export default defineConfig(({ command, mode }) => {
     SSL_CERT_PATH,
     SSL_KEY_PATH,
     REACT_APP_PORT,
+    IS_DEBUG_MODE,
   } = env;
 
   const port = isNonEmptyString(REACT_APP_PORT)
@@ -35,6 +36,14 @@ export default defineConfig(({ command, mode }) => {
   const tsConfigPath = isBuildCommand
     ? path.resolve(__dirname, './tsconfig.build.json')
     : path.resolve(__dirname, './tsconfig.dev.json');
+
+
+  const CHUNK_SIZE_WARNING_LIMIT = 1024 * 1024; // 1MB
+  // Please don't increase this limit for main index chunk
+  // If it gets too big then find modules in the code base
+  // that can be loaded lazily, there are more!
+  const MAIN_CHUNK_SIZE_LIMIT = 4.1 * 1024 * 1024; // 4.1MB for main index chunk
+  const OTHER_CHUNK_SIZE_LIMIT = 15 * 1024 * 1024; // 5MB for other chunks
 
   const checkers: Checkers = {
     overlay: false,
@@ -145,6 +154,12 @@ export default defineConfig(({ command, mode }) => {
           presets: ['@babel/preset-typescript', '@babel/preset-react'],
         },
       }),
+      visualizer({
+        open: true,
+        gzipSize: true,
+        brotliSize: true,
+        filename: 'dist/stats.html',
+      }) as PluginOption, // https://github.com/btd/rollup-plugin-visualizer/issues/162#issuecomment-1538265997,
     ],
 
     optimizeDeps: {
@@ -156,24 +171,86 @@ export default defineConfig(({ command, mode }) => {
     },
 
     build: {
-      minify: false,
+      minify: 'esbuild',
       outDir: 'build',
       sourcemap: VITE_BUILD_SOURCEMAP === 'true',
       rollupOptions: {
+        //  Don't use manual chunks as it causes many issue
+        // including this one we wasted a lot of time on:
+        // https://github.com/rollup/rollup/issues/2793
         output: {
-          manualChunks: (id) => {
-            if (id.includes('@scalar')) {
-              return 'scalar';
-            }
+          // Set chunk size warning limit (in bytes) - warns at 1MB
+          chunkSizeWarningLimit: CHUNK_SIZE_WARNING_LIMIT,
+          // Custom plugin to fail build if chunks exceed max size
+          plugins: [
+            {
+              name: 'chunk-size-limit',
+              generateBundle(_options, bundle) {
+                const oversizedChunks: string[] = [];
+                
+                Object.entries(bundle).forEach(([fileName, chunk]) => {
+                  if (chunk.type === 'chunk' && chunk.code) {
+                    const size = Buffer.byteLength(chunk.code, 'utf8');
+                    const isMainChunk = fileName.includes('index') && chunk.isEntry;
+                    const sizeLimit = isMainChunk ? MAIN_CHUNK_SIZE_LIMIT : OTHER_CHUNK_SIZE_LIMIT;
+                    const limitType = isMainChunk ? 'main' : 'other';
+                    
+                    if (size > sizeLimit) {
+                      oversizedChunks.push(`${fileName} (${limitType}): ${(size / 1024 / 1024).toFixed(2)}MB (limit: ${(sizeLimit / 1024 / 1024).toFixed(0)}MB)`);
+                    }
+                  }
+                });
+                
+                if (oversizedChunks.length > 0) {
+                  const errorMessage = `Build failed: The following chunks exceed their size limits:\n${oversizedChunks.map(chunk => `  - ${chunk}`).join('\n')}`;
+                  this.error(errorMessage);
+                }
+              }
+            },
+            // TODO; later - think about prefetching modules such 
+            // as date time picker, phone input etc...
+            /*
+            {
+              name: 'add-prefetched-modules',
+              transformIndexHtml(html: string, 
+                ctx: {
+                  path: string;
+                  filename: string;
+                  server?: ViteDevServer;
+                  bundle?: import('rollup').OutputBundle;
+                  chunk?: import('rollup').OutputChunk;
+                }) {
 
-            return null;
-          },
-        },
-      },
-      modulePreload: {
-        resolveDependencies: (filename, deps, { hostId }) => {
-          return deps.filter(dep => !dep.includes('scalar'));
-        },
+                  const bundles = Object.keys(ctx.bundle ?? {});
+
+                  let modernBundles = bundles.filter(
+                    (bundle) => bundle.endsWith('.map') === false
+                  );
+
+                  
+                  // Remove existing files and concatenate them into link tags
+                  const prefechBundlesString = modernBundles
+                    .filter((bundle) => html.includes(bundle) === false)
+                    .map((bundle) => `<link rel="prefetch" href="${ctx.server?.config.base}${bundle}">`)
+                    .join('');
+            
+                  // Use regular expression to get the content within <head> </head>
+                  const headContent = html.match(/<head>([\s\S]*)<\/head>/)?.[1] ?? '';
+                  // Insert the content of prefetch into the head
+                  const newHeadContent = `${headContent}${prefechBundlesString}`;
+                  // Replace the original head
+                  html = html.replace(
+                    /<head>([\s\S]*)<\/head>/,
+                    `<head>${newHeadContent}</head>`
+                  );
+            
+                  return html;
+            
+             
+              },
+            }*/
+          ]
+        }
       },
     },
 
@@ -185,6 +262,7 @@ export default defineConfig(({ command, mode }) => {
       },
       'process.env': {
         REACT_APP_SERVER_BASE_URL,
+        IS_DEBUG_MODE,
       },
     },
     css: {

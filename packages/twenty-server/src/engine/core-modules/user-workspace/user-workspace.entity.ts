@@ -7,6 +7,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -20,6 +21,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-factor-method.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 
 registerEnumType(SettingPermissionType, {
@@ -32,7 +34,12 @@ registerEnumType(PermissionsOnAllObjectRecords, {
 
 @Entity({ name: 'userWorkspace', schema: 'core' })
 @ObjectType()
-@Unique('IndexOnUserIdAndWorkspaceIdUnique', ['userId', 'workspaceId'])
+@Unique('IDX_USER_WORKSPACE_USER_ID_WORKSPACE_ID_UNIQUE', [
+  'userId',
+  'workspaceId',
+])
+@Index('IDX_USER_WORKSPACE_USER_ID', ['userId'])
+@Index('IDX_USER_WORKSPACE_WORKSPACE_ID', ['workspaceId'])
 export class UserWorkspace {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
@@ -84,6 +91,12 @@ export class UserWorkspace {
   @Field(() => [SettingPermissionType], { nullable: true })
   settingsPermissions?: SettingPermissionType[];
 
-  @Field(() => [PermissionsOnAllObjectRecords], { nullable: true })
+  @Field(() => [PermissionsOnAllObjectRecords], {
+    nullable: true,
+    deprecationReason: 'Use objectPermissions instead',
+  })
   objectRecordsPermissions?: PermissionsOnAllObjectRecords[];
+
+  @Field(() => [ObjectPermissionDTO], { nullable: true })
+  objectPermissions?: ObjectPermissionDTO[];
 }

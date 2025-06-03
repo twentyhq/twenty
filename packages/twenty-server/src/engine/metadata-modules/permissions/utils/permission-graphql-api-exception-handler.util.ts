@@ -19,6 +19,7 @@ export const permissionGraphqlApiExceptionHandler = (
     case PermissionsExceptionCode.PERMISSIONS_V2_NOT_ENABLED:
     case PermissionsExceptionCode.ROLE_LABEL_ALREADY_EXISTS:
     case PermissionsExceptionCode.ROLE_NOT_EDITABLE:
+    case PermissionsExceptionCode.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT:
       throw new ForbiddenError(error.message);
     case PermissionsExceptionCode.INVALID_ARG:
     case PermissionsExceptionCode.INVALID_SETTING:
@@ -37,6 +38,9 @@ export const permissionGraphqlApiExceptionHandler = (
     case PermissionsExceptionCode.UNKNOWN_OPERATION_NAME:
     case PermissionsExceptionCode.UNKNOWN_REQUIRED_PERMISSION:
     case PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE:
+    case PermissionsExceptionCode.NO_PERMISSIONS_FOUND_IN_DATASOURCE:
+    case PermissionsExceptionCode.METHOD_NOT_ALLOWED:
+    case PermissionsExceptionCode.RAW_SQL_NOT_ALLOWED:
       throw error;
     default: {
       const _exhaustiveCheck: never = error.code;

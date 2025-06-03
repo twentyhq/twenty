@@ -1,19 +1,23 @@
 import { useMemo } from 'react';
 
 import { SettingsPath } from '@/types/SettingsPath';
-import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
+import { useLocation } from 'react-router-dom';
+import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 export const useShowFullscreen = () => {
-  const { isMatchingLocation } = useIsMatchingLocation();
+  const location = useLocation();
 
   return useMemo(() => {
     if (
-      isMatchingLocation('settings/' + SettingsPath.RestPlayground + '/*') ||
-      isMatchingLocation('settings/' + SettingsPath.GraphQLPlayground)
+      isMatchingLocation(
+        location,
+        'settings/' + SettingsPath.RestPlayground + '/*',
+      ) ||
+      isMatchingLocation(location, 'settings/' + SettingsPath.GraphQLPlayground)
     ) {
       return true;
     }
 
     return false;
-  }, [isMatchingLocation]);
+  }, [location]);
 };

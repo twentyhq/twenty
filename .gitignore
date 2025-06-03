@@ -44,3 +44,5 @@ dump.rdb
 
 .crowdin.yml
 .react-email/
+
+mcp.json

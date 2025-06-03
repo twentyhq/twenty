@@ -6,6 +6,7 @@ import { ReactElement } from 'react';
 import { Link } from 'react-router-dom';
 import { Pill } from 'twenty-ui/components';
 import { Avatar, IconComponent } from 'twenty-ui/display';
+import { useMouseDownNavigation } from 'twenty-ui/utilities';
 
 type TabProps = {
   id: string;
@@ -87,6 +88,13 @@ export const Tab = ({
   logo,
 }: TabProps) => {
   const theme = useTheme();
+  const { onClick: handleClick, onMouseDown: handleMouseDown } =
+    useMouseDownNavigation({
+      to,
+      onClick,
+      disabled,
+    });
+
   const iconColor = active
     ? theme.font.color.primary
     : disabled
@@ -95,7 +103,8 @@ export const Tab = ({
 
   return (
     <StyledTab
-      onClick={onClick}
+      onClick={handleClick}
+      onMouseDown={handleMouseDown}
       active={active}
       className={className}
       disabled={disabled}

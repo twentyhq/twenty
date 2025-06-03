@@ -30,7 +30,7 @@ export const App = () => {
               <ExceptionHandlerProvider>
                 <HelmetProvider>
                   <ClickOutsideListenerContext.Provider
-                    value={{ excludeClassName: undefined }}
+                    value={{ excludedClickOutsideId: undefined }}
                   >
                     <AppRouter />
                   </ClickOutsideListenerContext.Provider>

@@ -1,97 +1,61 @@
-import { v4 } from 'uuid';
-
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { BaseOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
-import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-object-record';
-import { camelToTitleCase } from 'src/utils/camel-to-title-case';
+import {
+  BaseOutputSchema,
+  RecordOutputSchema,
+} from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
+import { ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { generateObjectRecordFields } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-object-record-fields';
+
+const generateFakeObjectRecordEventWithPrefix = ({
+  objectMetadataInfo,
+  prefix,
+}: {
+  objectMetadataInfo: ObjectMetadataInfo;
+  prefix: string;
+}): RecordOutputSchema => {
+  const recordFields = generateObjectRecordFields({ objectMetadataInfo });
+  const prefixedRecordFields = Object.entries(recordFields).reduce(
+    (acc, [key, value]) => {
+      acc[`${prefix}.${key}`] = value;
+
+      return acc;
+    },
+    {} as BaseOutputSchema,
+  );
+
+  return {
+    object: {
+      isLeaf: true,
+      icon: objectMetadataInfo.objectMetadataItemWithFieldsMaps.icon,
+      label: objectMetadataInfo.objectMetadataItemWithFieldsMaps.labelSingular,
+      value: objectMetadataInfo.objectMetadataItemWithFieldsMaps.description,
+      nameSingular:
+        objectMetadataInfo.objectMetadataItemWithFieldsMaps.nameSingular,
+      fieldIdName: `${prefix}.id`,
+    },
+    fields: prefixedRecordFields,
+    _outputSchemaType: 'RECORD',
+  };
+};
 
 export const generateFakeObjectRecordEvent = (
-  objectMetadataEntity: ObjectMetadataEntity,
+  objectMetadataInfo: ObjectMetadataInfo,
   action: DatabaseEventAction,
-): BaseOutputSchema => {
-  const recordId = v4();
-  const userId = v4();
-  const workspaceMemberId = v4();
-
-  const after = generateFakeObjectRecord(objectMetadataEntity);
-  const formattedObjectMetadataEntity = Object.entries(
-    objectMetadataEntity,
-  ).reduce((acc: BaseOutputSchema, [key, value]) => {
-    acc[key] = { isLeaf: true, value, label: camelToTitleCase(key) };
-
-    return acc;
-  }, {});
-
-  const baseResult: BaseOutputSchema = {
-    recordId: {
-      isLeaf: true,
-      type: 'string',
-      value: recordId,
-      label: 'Record ID',
-    },
-    userId: { isLeaf: true, type: 'string', value: userId, label: 'User ID' },
-    workspaceMemberId: {
-      isLeaf: true,
-      type: 'string',
-      value: workspaceMemberId,
-      label: 'Workspace Member ID',
-    },
-    objectMetadata: {
-      isLeaf: false,
-      value: formattedObjectMetadataEntity,
-      label: 'Object Metadata',
-    },
-  };
-
-  if (action === DatabaseEventAction.CREATED) {
-    return {
-      ...baseResult,
-      'properties.after': {
-        isLeaf: false,
-        value: after,
-        label: 'Record Fields',
-      },
-    };
+): RecordOutputSchema => {
+  switch (action) {
+    case DatabaseEventAction.CREATED:
+    case DatabaseEventAction.UPDATED:
+      return generateFakeObjectRecordEventWithPrefix({
+        objectMetadataInfo,
+        prefix: 'properties.after',
+      });
+    case DatabaseEventAction.DELETED:
+    case DatabaseEventAction.DESTROYED:
+      return generateFakeObjectRecordEventWithPrefix({
+        objectMetadataInfo,
+        prefix: 'properties.before',
+      });
+    default:
+      throw new Error(`Unknown action '${action}'`);
   }
-
-  const before = generateFakeObjectRecord(objectMetadataEntity);
-
-  if (action === DatabaseEventAction.UPDATED) {
-    return {
-      ...baseResult,
-      properties: {
-        isLeaf: false,
-        value: {
-          before: { isLeaf: false, value: before, label: 'Before Update' },
-          after: { isLeaf: false, value: after, label: 'After Update' },
-        },
-        label: 'Record Fields',
-      },
-    };
-  }
-
-  if (action === DatabaseEventAction.DELETED) {
-    return {
-      ...baseResult,
-      'properties.before': {
-        isLeaf: false,
-        value: before,
-        label: 'Record Fields',
-      },
-    };
-  }
-
-  if (action === DatabaseEventAction.DESTROYED) {
-    return {
-      ...baseResult,
-      'properties.before': {
-        isLeaf: false,
-        value: before,
-        label: 'Record Fields',
-      },
-    };
-  }
-
-  throw new Error(`Unknown action '${action}'`);
 };

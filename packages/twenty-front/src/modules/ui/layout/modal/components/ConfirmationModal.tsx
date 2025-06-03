@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import { ReactNode, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -108,62 +107,58 @@ export const ConfirmationModal = ({
   };
 
   return (
-    <AnimatePresence mode="wait">
-      <LayoutGroup>
-        <StyledConfirmationModal
-          modalId={modalId}
-          onClose={() => {
-            onClose?.();
-          }}
-          onEnter={handleEnter}
-          isClosable={true}
-          padding="large"
-          modalVariant={modalVariant}
-          className="confirmation-modal"
-        >
-          <StyledCenteredTitle>
-            <H1Title title={title} fontColor={H1TitleFontColor.Primary} />
-          </StyledCenteredTitle>
-          <StyledSection
-            alignment={SectionAlignment.Center}
-            fontColor={SectionFontColor.Primary}
-          >
-            {subtitle}
-          </StyledSection>
-          {confirmationValue && (
-            <Section>
-              <TextInput
-                dataTestId="confirmation-modal-input"
-                value={inputConfirmationValue}
-                onChange={handleInputConfimrationValueChange}
-                placeholder={confirmationPlaceholder}
-                fullWidth
-                disableHotkeys
-                key={'input-' + confirmationValue}
-              />
-            </Section>
-          )}
-          <StyledCenteredButton
-            onClick={handleCancelClick}
-            variant="secondary"
-            title={t`Cancel`}
+    <StyledConfirmationModal
+      modalId={modalId}
+      onClose={() => {
+        onClose?.();
+      }}
+      onEnter={handleEnter}
+      isClosable={true}
+      padding="large"
+      modalVariant={modalVariant}
+      data-globally-prevent-click-outside
+    >
+      <StyledCenteredTitle>
+        <H1Title title={title} fontColor={H1TitleFontColor.Primary} />
+      </StyledCenteredTitle>
+      <StyledSection
+        alignment={SectionAlignment.Center}
+        fontColor={SectionFontColor.Primary}
+      >
+        {subtitle}
+      </StyledSection>
+      {confirmationValue && (
+        <Section>
+          <TextInput
+            dataTestId="confirmation-modal-input"
+            value={inputConfirmationValue}
+            onChange={handleInputConfimrationValueChange}
+            placeholder={confirmationPlaceholder}
             fullWidth
-            dataTestId="confirmation-modal-cancel-button"
+            disableHotkeys
+            key={'input-' + confirmationValue}
           />
+        </Section>
+      )}
+      <StyledCenteredButton
+        onClick={handleCancelClick}
+        variant="secondary"
+        title={t`Cancel`}
+        fullWidth
+        dataTestId="confirmation-modal-cancel-button"
+      />
 
-          {AdditionalButtons}
+      {AdditionalButtons}
 
-          <StyledCenteredButton
-            onClick={handleConfirmClick}
-            variant="secondary"
-            accent={confirmButtonAccent}
-            title={confirmButtonText}
-            disabled={!isValidValue || loading}
-            fullWidth
-            dataTestId="confirmation-modal-confirm-button"
-          />
-        </StyledConfirmationModal>
-      </LayoutGroup>
-    </AnimatePresence>
+      <StyledCenteredButton
+        onClick={handleConfirmClick}
+        variant="secondary"
+        accent={confirmButtonAccent}
+        title={confirmButtonText}
+        disabled={!isValidValue || loading}
+        fullWidth
+        dataTestId="confirmation-modal-confirm-button"
+      />
+    </StyledConfirmationModal>
   );
 };

@@ -20,6 +20,7 @@ import { ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dt
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ApiKeyService } from 'src/engine/core-modules/auth/services/api-key.service';
 // import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
   AuthException,
   AuthExceptionCode,
@@ -47,7 +48,6 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -78,6 +78,8 @@ export class AuthResolver {
   constructor(
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
+    @InjectRepository(AppToken, 'core')
+    private readonly appTokenRepository: Repository<AppToken>,
     private authService: AuthService,
     private renewTokenService: RenewTokenService,
     private userService: UserService,
@@ -159,7 +161,7 @@ export class AuthResolver {
   async getLoginTokenFromCredentials(
     @Args()
     getLoginTokenFromCredentialsInput: GetLoginTokenFromCredentialsInput,
-    @OriginHeader() origin: string,
+    @Args('origin') origin: string,
   ): Promise<LoginToken> {
     const workspace =
       await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
@@ -191,23 +193,26 @@ export class AuthResolver {
   async getLoginTokenFromEmailVerificationToken(
     @Args()
     getLoginTokenFromEmailVerificationTokenInput: GetLoginTokenFromEmailVerificationTokenInput,
-    @OriginHeader() origin: string,
+    @Args('origin') origin: string,
   ) {
-    const user =
+    const appToken =
       await this.emailVerificationTokenService.validateEmailVerificationTokenOrThrow(
-        getLoginTokenFromEmailVerificationTokenInput.emailVerificationToken,
+        getLoginTokenFromEmailVerificationTokenInput,
       );
 
     const workspace =
       (await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,
       )) ??
-      (await this.userWorkspaceService.findFirstWorkspaceByUserId(user.id));
+      (await this.userWorkspaceService.findFirstWorkspaceByUserId(
+        appToken.user.id,
+      ));
 
-    await this.userService.markEmailAsVerified(user.id);
+    await this.userService.markEmailAsVerified(appToken.user.id);
+    await this.appTokenRepository.remove(appToken);
 
     const loginToken = await this.loginTokenService.generateLoginToken(
-      user.email,
+      appToken.user.email,
       workspace.id,
     );
 
@@ -270,6 +275,7 @@ export class AuthResolver {
       user.email,
       workspace,
       signUpInput.locale ?? SOURCE_LOCALE,
+      signUpInput.verifyEmailNextPath,
     );
 
     const loginToken = await this.loginTokenService.generateLoginToken(
@@ -370,7 +376,7 @@ export class AuthResolver {
   @Mutation(() => AuthTokens)
   async getAuthTokensFromLoginToken(
     @Args() getAuthTokensFromLoginTokenInput: GetAuthTokensFromLoginTokenInput,
-    @OriginHeader() origin: string,
+    @Args('origin') origin: string,
   ): Promise<AuthTokens> {
     const workspace =
       await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(

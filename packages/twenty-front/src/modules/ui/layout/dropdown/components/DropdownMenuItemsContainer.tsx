@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 const StyledDropdownMenuItemsExternalContainer = styled.div<{
   hasMaxHeight?: boolean;
-  width: number | 'auto';
+  width: number | 'auto' | '100%';
 }>`
   --padding: ${({ theme }) => theme.spacing(1)};
 
@@ -19,10 +19,13 @@ const StyledDropdownMenuItemsExternalContainer = styled.div<{
   padding: var(--padding);
 
   ${({ width }) =>
-    isDefined(width) &&
-    css`
-      width: ${width}px;
-    `}
+    isDefined(width) && width === '100%'
+      ? css`
+          width: 100%;
+        `
+      : css`
+          width: ${width}px;
+        `}
 `;
 
 const StyledDropdownMenuItemsInternalContainer = styled.div`
@@ -31,6 +34,7 @@ const StyledDropdownMenuItemsInternalContainer = styled.div`
 
   flex-direction: column;
   gap: 2px;
+
   height: 100%;
   width: 100%;
 `;
@@ -39,20 +43,18 @@ const StyledScrollWrapper = styled(ScrollWrapper)`
   width: 100%;
 `;
 
-// TODO: refactor this, the dropdown should handle the max height behavior + scroll with the size middleware
-// We should instead create a DropdownMenuItemsContainerScrollable or take for granted that it is the default behavior
 export const DropdownMenuItemsContainer = ({
   children,
   hasMaxHeight,
   className,
-  width = 200,
   scrollable = true,
+  width = 'auto',
 }: {
   children: React.ReactNode;
   hasMaxHeight?: boolean;
   className?: string;
   scrollable?: boolean;
-  width?: number | 'auto';
+  width?: number | 'auto' | '100%';
 }) => {
   const id = useId();
 

@@ -54,16 +54,16 @@ export class ActivityQueryResultGetterHandler
 
         imageUrl.searchParams.delete('token');
 
-        const signedPayload = this.fileService.encodeFileToken({
-          noteBlockId: block.id,
-          workspaceId: workspaceId,
+        const signedPath = this.fileService.signFileUrl({
+          url: imageProps.url.toString(),
+          workspaceId,
         });
 
         return {
           ...block,
           props: {
             ...imageProps,
-            url: `${imageUrl.toString()}?token=${signedPayload}`,
+            url: signedPath,
           },
         };
       }),

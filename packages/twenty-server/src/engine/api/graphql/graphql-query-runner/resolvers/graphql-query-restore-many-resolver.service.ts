@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+
 import {
   GraphqlQueryBaseResolverService,
   GraphqlQueryResolverExecutionArgs,
@@ -8,7 +10,6 @@ import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/int
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { RestoreManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
@@ -55,7 +56,7 @@ export class GraphqlQueryRestoreManyResolverService extends GraphqlQueryBaseReso
     );
 
     this.apiEventEmitterService.emitRestoreEvents({
-      records: formattedRestoredRecords,
+      records: structuredClone(formattedRestoredRecords),
       authContext,
       objectMetadataItem: objectMetadataItemWithFieldMaps,
     });
@@ -68,7 +69,7 @@ export class GraphqlQueryRestoreManyResolverService extends GraphqlQueryBaseReso
         relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         limit: QUERY_MAX_RECORDS,
         authContext,
-        dataSource: executionArgs.dataSource,
+        workspaceDataSource: executionArgs.workspaceDataSource,
         roleId,
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });

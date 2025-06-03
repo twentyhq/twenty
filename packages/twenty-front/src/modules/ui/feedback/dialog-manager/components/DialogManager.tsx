@@ -15,7 +15,6 @@ export const DialogManager = ({ children }: React.PropsWithChildren) => {
       {dialogInternal.queue.map(({ buttons, children, id, message, title }) => (
         <Dialog
           key={id}
-          className="dialog-manager-dialog"
           {...{ title, message, buttons, id, children }}
           onClose={() => closeDialog(id)}
         />

@@ -35,10 +35,10 @@ export class MessagingMessageParticipantService {
       transactionManager,
     );
 
-    await this.matchParticipantService.matchParticipants(
-      savedParticipants,
-      'messageParticipant',
+    await this.matchParticipantService.matchParticipants({
+      participants: savedParticipants,
+      objectMetadataName: 'messageParticipant',
       transactionManager,
-    );
+    });
   }
 }

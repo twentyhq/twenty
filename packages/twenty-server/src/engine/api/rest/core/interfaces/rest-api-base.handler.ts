@@ -3,7 +3,7 @@ import { BadRequestException, Inject } from '@nestjs/common';
 import { Request } from 'express';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { In, ObjectLiteral, SelectQueryBuilder } from 'typeorm';
+import { In, ObjectLiteral } from 'typeorm';
 
 import {
   ObjectRecord,
@@ -12,6 +12,7 @@ import {
 
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
+import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
 import { GetVariablesFactory } from 'src/engine/api/rest/core/query-builder/factories/get-variables.factory';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
@@ -21,18 +22,18 @@ import {
   DepthInputFactory,
   MAX_DEPTH,
 } from 'src/engine/api/rest/input-factories/depth-input.factory';
+import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
+import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult as formatGetManyData } from 'src/engine/twenty-orm/utils/format-result.util';
-import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
-import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
-import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
 
 export interface PageInfo {
   hasNextPage?: boolean;
@@ -103,7 +104,7 @@ export abstract class RestApiBaseHandler {
       throw new BadRequestException('Workspace not found');
     }
 
-    const dataSource =
+    const workspaceDataSource =
       await this.twentyORMGlobalManager.getDataSourceForWorkspace({
         workspaceId: workspace.id,
         shouldFailIfMetadataNotFound: false,
@@ -124,7 +125,7 @@ export abstract class RestApiBaseHandler {
       );
     }
 
-    const shouldBypassPermissionChecks = !!apiKey;
+    const shouldBypassPermissionChecks = isDefined(apiKey);
 
     const roleId =
       await this.workspacePermissionsCacheService.getRoleIdFromUserWorkspaceId({
@@ -132,7 +133,7 @@ export abstract class RestApiBaseHandler {
         userWorkspaceId,
       });
 
-    const repository = dataSource.getRepository<ObjectRecord>(
+    const repository = workspaceDataSource.getRepository<ObjectRecord>(
       objectMetadataNameSingular,
       shouldBypassPermissionChecks,
       roleId,
@@ -141,7 +142,7 @@ export abstract class RestApiBaseHandler {
     return {
       objectMetadata,
       repository,
-      dataSource,
+      workspaceDataSource,
       objectMetadataItemWithFieldsMaps,
     };
   }
@@ -392,7 +393,7 @@ export abstract class RestApiBaseHandler {
   }
 
   async getTotalCount(
-    query: SelectQueryBuilder<ObjectLiteral>,
+    query: WorkspaceSelectQueryBuilder<ObjectLiteral>,
   ): Promise<number> {
     const countQuery = query.clone();
 

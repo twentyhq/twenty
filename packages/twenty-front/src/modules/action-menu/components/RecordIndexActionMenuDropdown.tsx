@@ -1,6 +1,7 @@
 import { ActionComponent } from '@/action-menu/actions/display/components/ActionComponent';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
+import { ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/action-menu/constants/ActionMenuDropdownClickOutsideId';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
@@ -8,6 +9,7 @@ import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDro
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -81,37 +83,41 @@ export const RecordIndexActionMenuDropdown = () => {
         y: actionMenuDropdownPosition.y ?? 0,
       }}
       dropdownComponents={
-        <StyledDropdownMenuContainer className="action-menu-dropdown">
-          <DropdownMenuItemsContainer>
-            <SelectableList
-              hotkeyScope={ActionMenuDropdownHotkeyScope.ActionMenuDropdown}
-              selectableItemIdArray={selectedItemIdArray}
-              selectableListInstanceId={dropdownId}
-            >
-              {recordIndexActions.map((action) => (
-                <ActionComponent action={action} key={action.key} />
-              ))}
-              <SelectableListItem
-                itemId="more-actions"
-                key="more-actions"
-                onEnter={() => {
-                  closeDropdown(dropdownId);
-                  openCommandMenu();
-                }}
+        <DropdownContent>
+          <StyledDropdownMenuContainer
+            data-click-outside-id={ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
+          >
+            <DropdownMenuItemsContainer>
+              <SelectableList
+                hotkeyScope={ActionMenuDropdownHotkeyScope.ActionMenuDropdown}
+                selectableItemIdArray={selectedItemIdArray}
+                selectableListInstanceId={dropdownId}
               >
-                <MenuItem
-                  LeftIcon={IconLayoutSidebarRightExpand}
-                  onClick={() => {
+                {recordIndexActions.map((action) => (
+                  <ActionComponent action={action} key={action.key} />
+                ))}
+                <SelectableListItem
+                  itemId="more-actions"
+                  key="more-actions"
+                  onEnter={() => {
                     closeDropdown(dropdownId);
                     openCommandMenu();
                   }}
-                  focused={selectedItemId === 'more-actions'}
-                  text="More actions"
-                />
-              </SelectableListItem>
-            </SelectableList>
-          </DropdownMenuItemsContainer>
-        </StyledDropdownMenuContainer>
+                >
+                  <MenuItem
+                    LeftIcon={IconLayoutSidebarRightExpand}
+                    onClick={() => {
+                      closeDropdown(dropdownId);
+                      openCommandMenu();
+                    }}
+                    focused={selectedItemId === 'more-actions'}
+                    text="More actions"
+                  />
+                </SelectableListItem>
+              </SelectableList>
+            </DropdownMenuItemsContainer>
+          </StyledDropdownMenuContainer>
+        </DropdownContent>
       }
     />
   );

@@ -365,7 +365,7 @@ export class AuthService {
         name: 'Chrome Extension',
         redirectUrl:
           this.twentyConfigService.get('NODE_ENV') ===
-          NodeEnvironment.development
+          NodeEnvironment.DEVELOPMENT
             ? authorizeAppInput.redirectUrl
             : `https://${this.twentyConfigService.get(
                 'CHROME_EXTENSION_ID',

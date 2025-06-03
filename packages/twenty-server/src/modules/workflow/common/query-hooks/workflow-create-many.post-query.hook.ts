@@ -21,7 +21,7 @@ import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.
 
 @WorkspaceQueryHook({
   key: `workflow.createMany`,
-  type: WorkspaceQueryHookType.PostHook,
+  type: WorkspaceQueryHookType.POST_HOOK,
 })
 export class WorkflowCreateManyPostQueryHook
   implements WorkspacePostQueryHookInstance

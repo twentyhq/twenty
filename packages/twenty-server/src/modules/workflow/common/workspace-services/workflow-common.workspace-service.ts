@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
@@ -11,6 +10,7 @@ import {
   WorkflowCommonException,
   WorkflowCommonExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-common.exception';
+import { WorkflowAutomatedTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -18,7 +18,12 @@ import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
-import { WorkflowAutomatedTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
+import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
+
+export type ObjectMetadataInfo = {
+  objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps;
+  objectMetadataMaps: ObjectMetadataMaps;
+};
 
 @Injectable()
 export class WorkflowCommonWorkspaceService {
@@ -73,35 +78,22 @@ export class WorkflowCommonWorkspaceService {
     return { ...workflowVersion, trigger: workflowVersion.trigger };
   }
 
+  async getObjectMetadataMaps(
+    workspaceId: string,
+  ): Promise<ObjectMetadataMaps> {
+    const objectMetadataMaps =
+      await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
+        workspaceId,
+      );
+
+    return objectMetadataMaps;
+  }
+
   async getObjectMetadataItemWithFieldsMaps(
     objectNameSingular: string,
     workspaceId: string,
-  ): Promise<{
-    objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps;
-    objectMetadataMaps: ObjectMetadataMaps;
-  }> {
-    const currentCacheVersion =
-      await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
-
-    if (currentCacheVersion === undefined) {
-      throw new WorkflowCommonException(
-        'Failed to read: Metadata cache version not found',
-        WorkflowCommonExceptionCode.INVALID_CACHE_VERSION,
-      );
-    }
-
-    const objectMetadataMaps =
-      await this.workspaceCacheStorageService.getObjectMetadataMaps(
-        workspaceId,
-        currentCacheVersion,
-      );
-
-    if (!objectMetadataMaps) {
-      throw new WorkflowCommonException(
-        'Failed to read: Object metadata collection not found',
-        WorkflowCommonExceptionCode.OBJECT_METADATA_NOT_FOUND,
-      );
-    }
+  ): Promise<ObjectMetadataInfo> {
+    const objectMetadataMaps = await this.getObjectMetadataMaps(workspaceId);
 
     const objectMetadataItemWithFieldsMaps =
       getObjectMetadataMapItemByNameSingular(
@@ -122,10 +114,15 @@ export class WorkflowCommonWorkspaceService {
     };
   }
 
-  async cleanWorkflowsSubEntities(
-    workflowIds: string[],
-    workspaceId: string,
-  ): Promise<void> {
+  async handleWorkflowSubEntities({
+    workflowIds,
+    workspaceId,
+    operation,
+  }: {
+    workflowIds: string[];
+    workspaceId: string;
+    operation: 'restore' | 'delete' | 'destroy';
+  }): Promise<void> {
     const workflowVersionRepository =
       await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
         'workflowVersion',
@@ -141,46 +138,91 @@ export class WorkflowCommonWorkspaceService {
         'workflowAutomatedTrigger',
       );
 
-    workflowIds.forEach((workflowId) => {
-      workflowAutomatedTriggerRepository.softDelete({
-        workflowId,
-      });
+    for (const workflowId of workflowIds) {
+      switch (operation) {
+        case 'delete':
+          await workflowAutomatedTriggerRepository.softDelete({
+            workflowId,
+          });
 
-      workflowRunRepository.softDelete({
-        workflowId,
-      });
+          await workflowRunRepository.softDelete({
+            workflowId,
+          });
 
-      workflowVersionRepository.softDelete({
-        workflowId,
-      });
+          await workflowVersionRepository.softDelete({
+            workflowId,
+          });
 
-      this.deleteServerlessFunctions(
+          break;
+        case 'restore':
+          await workflowAutomatedTriggerRepository.restore({
+            workflowId,
+          });
+
+          await workflowRunRepository.restore({
+            workflowId,
+          });
+
+          await workflowVersionRepository.restore({
+            workflowId,
+          });
+
+          break;
+      }
+
+      await this.handleServerlessFunctionSubEntities({
         workflowVersionRepository,
         workflowId,
         workspaceId,
-      );
-    });
+        operation,
+      });
+    }
   }
 
-  private async deleteServerlessFunctions(
-    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
-    workflowId: string,
-    workspaceId: string,
-  ) {
+  async handleServerlessFunctionSubEntities({
+    workflowVersionRepository,
+    workflowId,
+    workspaceId,
+    operation,
+  }: {
+    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
+
+    workflowId: string;
+
+    workspaceId: string;
+    operation: 'restore' | 'delete' | 'destroy';
+  }) {
     const workflowVersions = await workflowVersionRepository.find({
       where: {
         workflowId,
       },
+      withDeleted: true,
     });
 
     workflowVersions.forEach((workflowVersion) => {
       workflowVersion.steps?.forEach(async (step) => {
         if (step.type === WorkflowActionType.CODE) {
-          await this.serverlessFunctionService.deleteOneServerlessFunction({
-            id: step.settings.input.serverlessFunctionId,
-            workspaceId,
-            isHardDeletion: false,
-          });
+          switch (operation) {
+            case 'delete':
+              await this.serverlessFunctionService.deleteOneServerlessFunction({
+                id: step.settings.input.serverlessFunctionId,
+                workspaceId,
+                softDelete: true,
+              });
+              break;
+            case 'restore':
+              await this.serverlessFunctionService.restoreOneServerlessFunction(
+                step.settings.input.serverlessFunctionId,
+              );
+              break;
+            case 'destroy':
+              await this.serverlessFunctionService.deleteOneServerlessFunction({
+                id: step.settings.input.serverlessFunctionId,
+                workspaceId,
+                softDelete: false,
+              });
+              break;
+          }
         }
       });
     });

@@ -22,7 +22,7 @@ export class ExceptionHandlerModule extends ConfigurableModuleClass {
     const provider = {
       provide: EXCEPTION_HANDLER_DRIVER,
       useValue:
-        options.type === ExceptionHandlerDriver.Console
+        options.type === ExceptionHandlerDriver.CONSOLE
           ? new ExceptionHandlerConsoleDriver()
           : new ExceptionHandlerSentryDriver(),
     };
@@ -45,7 +45,7 @@ export class ExceptionHandlerModule extends ConfigurableModuleClass {
           return null;
         }
 
-        return config.type === ExceptionHandlerDriver.Console
+        return config.type === ExceptionHandlerDriver.CONSOLE
           ? new ExceptionHandlerConsoleDriver()
           : new ExceptionHandlerSentryDriver();
       },

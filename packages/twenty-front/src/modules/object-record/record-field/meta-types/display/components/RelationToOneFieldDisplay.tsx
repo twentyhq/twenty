@@ -9,7 +9,7 @@ export const RelationToOneFieldDisplay = () => {
   const { fieldValue, fieldDefinition, generateRecordChipData } =
     useRelationToOneFieldDisplay();
 
-  const { disableChipClick } = useContext(FieldContext);
+  const { disableChipClick, triggerEvent } = useContext(FieldContext);
 
   if (
     !isDefined(fieldValue) ||
@@ -31,6 +31,7 @@ export const RelationToOneFieldDisplay = () => {
       forceDisableClick={
         isWorkspaceMemberFieldMetadataRelation || disableChipClick
       }
+      triggerEvent={triggerEvent}
     />
   );
 };

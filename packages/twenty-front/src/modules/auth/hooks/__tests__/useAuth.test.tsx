@@ -1,6 +1,5 @@
 import { useAuth } from '@/auth/hooks/useAuth';
 import { billingState } from '@/client-config/states/billingState';
-import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
@@ -119,7 +118,6 @@ describe('useAuth', () => {
           isDeveloperDefaultSignInPrefilledState,
         );
         const supportChat = useRecoilValue(supportChatState);
-        const isDebugMode = useRecoilValue(isDebugModeState);
         const isMultiWorkspaceEnabled = useRecoilValue(
           isMultiWorkspaceEnabledState,
         );
@@ -132,7 +130,6 @@ describe('useAuth', () => {
             billing,
             isDeveloperDefaultSignInPrefilled,
             supportChat,
-            isDebugMode,
             isMultiWorkspaceEnabled,
           },
         };
@@ -161,14 +158,13 @@ describe('useAuth', () => {
       supportDriver: 'none',
       supportFrontChatId: null,
     });
-    expect(state.isDebugMode).toBe(false);
   });
 
   it('should handle credential sign-up', async () => {
     const { result } = renderHooks();
 
     await act(async () => {
-      await result.current.signUpWithCredentials(email, password);
+      await result.current.signUpWithCredentials({ email, password });
     });
 
     expect(mocks[2].result).toHaveBeenCalled();

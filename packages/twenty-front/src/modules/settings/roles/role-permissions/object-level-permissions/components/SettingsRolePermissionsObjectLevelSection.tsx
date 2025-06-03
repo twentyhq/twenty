@@ -15,7 +15,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { v4 } from 'uuid';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledCreateObjectOverrideSection = styled(Section)`
@@ -81,11 +80,15 @@ export const SettingsRolePermissionsObjectLevelSection = ({
       ...draftRole,
       objectPermissions: [
         ...(draftRole.objectPermissions ?? []).filter(
-          (permission) =>
-            permission.objectMetadataId !== objectMetadataId ||
-            permission.roleId !== roleId,
+          (permission) => permission.objectMetadataId !== objectMetadataId,
         ),
-        { objectMetadataId, roleId, id: v4() },
+        {
+          objectMetadataId,
+          canReadObjectRecords: null,
+          canUpdateObjectRecords: null,
+          canSoftDeleteObjectRecords: null,
+          canDestroyObjectRecords: null,
+        },
       ],
     }));
     navigate(SettingsPath.RoleObjectLevel, {
@@ -107,11 +110,12 @@ export const SettingsRolePermissionsObjectLevelSection = ({
           filteredObjectPermissions?.length > 0 ? (
             filteredObjectPermissions?.map((objectPermission) => (
               <SettingsRolePermissionsObjectLevelTableRow
-                key={objectPermission.id}
+                key={objectPermission.objectMetadataId}
                 objectPermission={objectPermission}
                 objectMetadataItem={
                   objectMetadataMap[objectPermission.objectMetadataId]
                 }
+                roleId={roleId}
               />
             ))
           ) : (
@@ -132,6 +136,7 @@ export const SettingsRolePermissionsObjectLevelSection = ({
               disabled={!isEditable}
             />
           }
+          dropdownOffset={{ x: 0, y: 4 }}
           dropdownComponents={
             <SettingsRolePermissionsObjectLevelObjectPickerDropdownContent
               excludedObjectMetadataIds={

@@ -1,7 +1,6 @@
-import { ObjectFilterOperandSelectAndInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterOperandSelectAndInput';
+import { ObjectFilterDropdownFilterInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterInput';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { ViewBarFilterDropdownAdvancedFilterButton } from '@/views/components/ViewBarFilterDropdownAdvancedFilterButton';
 import { ViewBarFilterDropdownFieldSelectMenu } from '@/views/components/ViewBarFilterDropdownFieldSelectMenu';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 
@@ -16,14 +15,11 @@ export const ViewBarFilterDropdownContent = () => {
   return (
     <>
       {shouldShowFilterInput ? (
-        <ObjectFilterOperandSelectAndInput
+        <ObjectFilterDropdownFilterInput
           filterDropdownId={VIEW_BAR_FILTER_DROPDOWN_ID}
         />
       ) : (
-        <>
-          <ViewBarFilterDropdownFieldSelectMenu />
-          <ViewBarFilterDropdownAdvancedFilterButton />
-        </>
+        <ViewBarFilterDropdownFieldSelectMenu />
       )}
     </>
   );

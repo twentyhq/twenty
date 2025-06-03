@@ -34,9 +34,9 @@ export const validateRemoteServerType = async (
 const getFeatureFlagKey = (remoteServerType: RemoteServerType) => {
   switch (remoteServerType) {
     case RemoteServerType.POSTGRES_FDW:
-      return FeatureFlagKey.IsPostgreSQLIntegrationEnabled;
+      return FeatureFlagKey.IS_POSTGRESQL_INTEGRATION_ENABLED;
     case RemoteServerType.STRIPE_FDW:
-      return FeatureFlagKey.IsStripeIntegrationEnabled;
+      return FeatureFlagKey.IS_STRIPE_INTEGRATION_ENABLED;
     default:
       throw new RemoteServerException(
         `Type ${remoteServerType} is not supported.`,

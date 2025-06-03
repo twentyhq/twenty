@@ -1,6 +1,6 @@
+import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 import { useReadDefaultDomainFromConfiguration } from '@/domain-manager/hooks/useReadDefaultDomainFromConfiguration';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
-import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 
 export const useRedirectToDefaultDomain = () => {
   const { defaultDomain } = useReadDefaultDomainFromConfiguration();

@@ -12,7 +12,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { isFieldRichTextV2 } from '@/object-record/record-field/types/guards/isFieldRichTextV2';
 import { isFieldRichTextV2Value } from '@/object-record/record-field/types/guards/isFieldRichTextValueV2';
-import { PartialBlock } from '@blocknote/core';
+import type { PartialBlock } from '@blocknote/core';
 import { isNonEmptyString } from '@sniptt/guards';
 import { FieldContext } from '../../contexts/FieldContext';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';

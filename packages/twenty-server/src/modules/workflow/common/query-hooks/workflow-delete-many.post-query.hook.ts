@@ -9,7 +9,7 @@ import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.
 
 @WorkspaceQueryHook({
   key: `workflow.deleteMany`,
-  type: WorkspaceQueryHookType.PostHook,
+  type: WorkspaceQueryHookType.POST_HOOK,
 })
 export class WorkflowDeleteManyPostQueryHook
   implements WorkspacePostQueryHookInstance
@@ -27,9 +27,10 @@ export class WorkflowDeleteManyPostQueryHook
 
     workspaceValidator.assertIsDefinedOrThrow(workspace);
 
-    this.workflowCommonWorkspaceService.cleanWorkflowsSubEntities(
-      payload.map((workflow) => workflow.id),
-      workspace.id,
-    );
+    this.workflowCommonWorkspaceService.handleWorkflowSubEntities({
+      workflowIds: payload.map((workflow) => workflow.id),
+      workspaceId: authContext.workspace.id,
+      operation: 'delete',
+    });
   }
 }

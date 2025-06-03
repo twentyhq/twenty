@@ -10,7 +10,9 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { FILTER_FIELD_LIST_ID } from '@/object-record/object-filter-dropdown/constants/FilterFieldListId';
 import { useFilterDropdownSelectableFieldMetadataItems } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdownSelectableFieldMetadataItems';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { ViewBarFilterDropdownAdvancedFilterButton } from '@/views/components/ViewBarFilterDropdownAdvancedFilterButton';
 import { ViewBarFilterDropdownFieldSelectMenuItem } from '@/views/components/ViewBarFilterDropdownFieldSelectMenuItem';
 import { useLingui } from '@lingui/react/macro';
 
@@ -65,7 +67,7 @@ export const ViewBarFilterDropdownFieldSelectMenu = () => {
   const { t } = useLingui();
 
   return (
-    <>
+    <DropdownContent>
       <StyledInput
         value={objectFilterDropdownSearchInput}
         autoFocus
@@ -79,7 +81,7 @@ export const ViewBarFilterDropdownFieldSelectMenu = () => {
         selectableItemIdArray={selectableFieldMetadataItemIds}
         selectableListInstanceId={FILTER_FIELD_LIST_ID}
       >
-        <DropdownMenuItemsContainer width={200}>
+        <DropdownMenuItemsContainer>
           {selectableVisibleFieldMetadataItems.map(
             (visibleFieldMetadataItem) => (
               <ViewBarFilterDropdownFieldSelectMenuItem
@@ -97,6 +99,7 @@ export const ViewBarFilterDropdownFieldSelectMenu = () => {
           ))}
         </DropdownMenuItemsContainer>
       </SelectableList>
-    </>
+      <ViewBarFilterDropdownAdvancedFilterButton />
+    </DropdownContent>
   );
 };

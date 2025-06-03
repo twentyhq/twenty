@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+
 import {
   GraphqlQueryBaseResolverService,
   GraphqlQueryResolverExecutionArgs,
@@ -8,7 +10,6 @@ import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/int
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { RestoreOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
@@ -47,12 +48,6 @@ export class GraphqlQueryRestoreOneResolverService extends GraphqlQueryBaseResol
       objectMetadataMaps,
     );
 
-    this.apiEventEmitterService.emitRestoreEvents({
-      records: formattedRestoredRecords,
-      authContext,
-      objectMetadataItem: objectMetadataItemWithFieldMaps,
-    });
-
     if (formattedRestoredRecords.length === 0) {
       throw new GraphqlQueryRunnerException(
         'Record not found',
@@ -62,6 +57,12 @@ export class GraphqlQueryRestoreOneResolverService extends GraphqlQueryBaseResol
 
     const restoredRecord = formattedRestoredRecords[0];
 
+    this.apiEventEmitterService.emitRestoreEvents({
+      records: structuredClone(formattedRestoredRecords),
+      authContext,
+      objectMetadataItem: objectMetadataItemWithFieldMaps,
+    });
+
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
@@ -70,7 +71,7 @@ export class GraphqlQueryRestoreOneResolverService extends GraphqlQueryBaseResol
         relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         limit: QUERY_MAX_RECORDS,
         authContext,
-        dataSource: executionArgs.dataSource,
+        workspaceDataSource: executionArgs.workspaceDataSource,
         roleId,
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });

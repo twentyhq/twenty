@@ -69,11 +69,10 @@ export class WorkspaceInvitationResolver {
     let workspaceLogoWithToken = '';
 
     if (workspace.logo) {
-      const workspaceLogoToken = this.fileService.encodeFileToken({
+      workspaceLogoWithToken = this.fileService.signFileUrl({
+        url: workspace.logo,
         workspaceId: workspace.id,
       });
-
-      workspaceLogoWithToken = `${workspace.logo}?token=${workspaceLogoToken}`;
     }
 
     return await this.workspaceInvitationService.sendInvitations(

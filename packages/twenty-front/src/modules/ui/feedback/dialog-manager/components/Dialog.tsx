@@ -4,6 +4,7 @@ import { Key } from 'ts-key-enum';
 
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
+import { DIALOG_CLICK_OUTSIDE_ID } from '@/ui/feedback/dialog-manager/constants/DialogClickOutsideId';
 import { DIALOG_LISTENER_ID } from '@/ui/feedback/dialog-manager/constants/DialogListenerId';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -138,6 +139,7 @@ export const Dialog = ({
       animate="open"
       exit="closed"
       className={className}
+      data-click-outside-id={DIALOG_CLICK_OUTSIDE_ID}
     >
       <StyledDialogContainer
         variants={containerVariants}

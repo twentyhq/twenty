@@ -3,6 +3,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 
+import { OPERAND_DROPDOWN_CLICK_OUTSIDE_ID } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownOperandDropdown';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
@@ -51,6 +52,7 @@ export const ViewBarFilterDropdown = ({
       dropdownHotkeyScope={hotkeyScope}
       dropdownOffset={{ y: 8 }}
       onClickOutside={handleDropdownClickOutside}
+      excludedClickOutsideIds={[OPERAND_DROPDOWN_CLICK_OUTSIDE_ID]}
     />
   );
 };

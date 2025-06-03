@@ -2,7 +2,9 @@ import {
   Check,
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
+  Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -11,17 +13,12 @@ import { InputSchema } from 'src/modules/workflow/workflow-builder/workflow-sche
 
 const DEFAULT_SERVERLESS_TIMEOUT_SECONDS = 300; // 5 minutes
 
-export enum ServerlessFunctionSyncStatus {
-  NOT_READY = 'NOT_READY',
-  BUILDING = 'BUILDING',
-  READY = 'READY',
-}
-
 export enum ServerlessFunctionRuntime {
   NODE18 = 'nodejs18.x',
 }
 
 @Entity('serverlessFunction')
+@Index('IDX_SERVERLESS_FUNCTION_ID_DELETED_AT', ['id', 'deletedAt'])
 export class ServerlessFunctionEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -51,14 +48,6 @@ export class ServerlessFunctionEntity {
   @Column({ nullable: true })
   layerVersion: number;
 
-  @Column({
-    nullable: false,
-    default: ServerlessFunctionSyncStatus.NOT_READY,
-    type: 'enum',
-    enum: ServerlessFunctionSyncStatus,
-  })
-  syncStatus: ServerlessFunctionSyncStatus;
-
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
@@ -67,4 +56,7 @@ export class ServerlessFunctionEntity {
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
+
+  @DeleteDateColumn({ type: 'timestamptz' })
+  deletedAt?: Date;
 }

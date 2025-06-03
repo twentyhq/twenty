@@ -24,6 +24,13 @@ export const parseGmailMessageListFetchError = (error: {
         );
       }
       if (reason === 'failedPrecondition') {
+        if (message.includes('Mail service not enabled')) {
+          return new MessageImportDriverException(
+            message,
+            MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+          );
+        }
+
         return new MessageImportDriverException(
           message,
           MessageImportDriverExceptionCode.TEMPORARY_ERROR,
@@ -73,7 +80,15 @@ export const parseGmailMessageListFetchError = (error: {
         MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
       );
 
+    case 503:
+      return new MessageImportDriverException(
+        message,
+        MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+      );
+
     case 500:
+    case 502:
+    case 504:
       if (reason === 'backendError') {
         return new MessageImportDriverException(
           message,
@@ -81,6 +96,12 @@ export const parseGmailMessageListFetchError = (error: {
         );
       }
 
+      if (errors?.[0]?.message.includes(`Authentication backend unavailable`)) {
+        return new MessageImportDriverException(
+          `${code} - ${reason} - ${message}`,
+          MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+        );
+      }
       break;
 
     default:

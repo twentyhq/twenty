@@ -12,6 +12,7 @@ export const ActorFieldDisplay = () => {
   }
 
   const { fieldValue, name, avatarUrl } = actorFieldDisplay;
+
   return displayActorField ? (
     <ActorDisplay
       name={name}
