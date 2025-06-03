@@ -3,7 +3,6 @@ import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-re
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { SEARCH_VECTOR_FIELD_NAME } from '@/views/constants/ViewFieldConstants';
 
 export const useFilterDropdownSelectableFieldMetadataItems = () => {
   const { recordIndexId } = useRecordIndexContextOrThrow();
@@ -26,12 +25,9 @@ export const useFilterDropdownSelectableFieldMetadataItems = () => {
 
   const filteredSearchInputFieldMetadataItems =
     filterableFieldMetadataItems.filter((fieldMetadataItem) => {
-      return (
-        fieldMetadataItem.name !== SEARCH_VECTOR_FIELD_NAME &&
-        fieldMetadataItem.label
-          .toLocaleLowerCase()
-          .includes(objectFilterDropdownSearchInput.toLocaleLowerCase())
-      );
+      return fieldMetadataItem.label
+        .toLocaleLowerCase()
+        .includes(objectFilterDropdownSearchInput.toLocaleLowerCase());
     });
 
   const selectableVisibleFieldMetadataItems =
