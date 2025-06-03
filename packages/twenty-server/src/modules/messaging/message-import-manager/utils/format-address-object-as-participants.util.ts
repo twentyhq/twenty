@@ -1,25 +1,16 @@
-import addressparser from 'addressparser';
-import { isDefined } from 'class-validator';
+import { isDefined } from 'twenty-shared/utils';
 
 import { Participant } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message.type';
-
-const formatAddressObjectAsArray = (
-  addressObject: addressparser.EmailAddress | addressparser.EmailAddress[],
-): addressparser.EmailAddress[] => {
-  return Array.isArray(addressObject) ? addressObject : [addressObject];
-};
+import { EmailAddress } from 'src/modules/messaging/message-import-manager/types/email-address';
 
 const removeSpacesAndLowerCase = (email: string): string => {
   return email.replace(/\s/g, '').toLowerCase();
 };
 
 export const formatAddressObjectAsParticipants = (
-  addressObject: addressparser.EmailAddress | addressparser.EmailAddress[],
+  addressObjects: EmailAddress[],
   role: 'from' | 'to' | 'cc' | 'bcc',
 ): Participant[] => {
-  if (!addressObject) return [];
-  const addressObjects = formatAddressObjectAsArray(addressObject);
-
   const participants = addressObjects.map((addressObject) => {
     const address = addressObject.address;
 
@@ -38,5 +29,5 @@ export const formatAddressObjectAsParticipants = (
     };
   });
 
-  return participants.filter((p): p is Participant => p !== null);
+  return participants.filter(isDefined) as Participant[];
 };

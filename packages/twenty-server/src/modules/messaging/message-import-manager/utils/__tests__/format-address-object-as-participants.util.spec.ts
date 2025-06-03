@@ -29,7 +29,7 @@ describe('formatAddressObjectAsParticipants', () => {
       address: 'john.doe',
     };
 
-    const result = formatAddressObjectAsParticipants(addressObject, 'to');
+    const result = formatAddressObjectAsParticipants([addressObject], 'to');
 
     expect(result).toEqual([]);
   });
@@ -40,7 +40,7 @@ describe('formatAddressObjectAsParticipants', () => {
       address: '',
     };
 
-    const result = formatAddressObjectAsParticipants(addressObject, 'to');
+    const result = formatAddressObjectAsParticipants([addressObject], 'to');
 
     expect(result).toEqual([]);
   });
@@ -51,7 +51,7 @@ describe('formatAddressObjectAsParticipants', () => {
       address: 'John.Doe@example.com',
     };
 
-    const result = formatAddressObjectAsParticipants(addressObject, 'to');
+    const result = formatAddressObjectAsParticipants([addressObject], 'to');
 
     expect(result).toEqual([
       {

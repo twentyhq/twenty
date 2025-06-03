@@ -80,7 +80,12 @@ export class MicrosoftGetMessagesService {
       }
 
       const safeParseAddressFrom = response?.from?.emailAddress
-        ? safeParseAddress(response?.from?.emailAddress)
+        ? [
+            {
+              address: safeParseAddress(response.from.emailAddress) || '',
+              name: response.from.emailAddress.name,
+            },
+          ]
         : [];
 
       const safeParseAddressTo = response?.toRecipients
