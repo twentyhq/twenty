@@ -14,6 +14,7 @@ import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/ob
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { VIEW_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ViewSortDropdownId';
 import { ObjectSortDropdownComponentInstanceContext } from '@/object-record/object-sort-dropdown/states/context/ObjectSortDropdownComponentInstanceContext';
+import { RecordIndexHotkeyScope } from '@/object-record/record-index/types/RecordIndexHotkeyScope';
 import { ViewBarFilterDropdown } from '@/views/components/ViewBarFilterDropdown';
 import { ViewBarFilterDropdownVectorSearchHotkeyEffect } from '@/views/components/ViewBarFilterDropdownVectorSearchHotkeyEffect';
 import { ViewBarRecordFilterEffect } from '@/views/components/ViewBarRecordFilterEffect';
@@ -63,7 +64,7 @@ export const ViewBar = ({
             >
               <ViewBarFilterDropdown
                 hotkeyScope={{
-                  scope: ViewsHotkeyScope.ViewBarFilter,
+                  scope: RecordIndexHotkeyScope.RecordIndex,
                 }}
               />
             </ObjectFilterDropdownComponentInstanceContext.Provider>
