@@ -64,7 +64,7 @@ export const ViewBar = ({
             >
               <ViewBarFilterDropdown
                 hotkeyScope={{
-                  scope: FiltersHotkeyScope.ObjectFilterDropdownButton,
+                  scope: ViewsHotkeyScope.ViewBarFilter,
                 }}
               />
             </ObjectFilterDropdownComponentInstanceContext.Provider>
