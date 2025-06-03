@@ -70,6 +70,7 @@ export class AddPackagesCommand extends CommandRunner {
 
   private getAbsoluteFilePath(path: string) {
     const rootPath = process.cwd();
+
     return resolve(rootPath, path);
   }
 
