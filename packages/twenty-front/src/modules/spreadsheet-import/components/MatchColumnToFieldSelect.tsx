@@ -137,6 +137,7 @@ export const MatchColumnToFieldSelect = ({
         )
       }
       onClickOutside={handleClickOutside}
+      isDropdownInModal={true}
     />
   );
 };

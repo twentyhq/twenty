@@ -69,6 +69,7 @@ export const SubMatchingSelectRowRightDropdown = <T extends string>({
             onOptionSelected={handleSelect}
           />
         }
+        isDropdownInModal={true}
       />
     </StyledDropdownContainer>
   );
