@@ -253,6 +253,30 @@ export class WorkspaceRepository<
   }
 
   /**
+   * CREATE METHOD
+   */
+  override create(): T;
+
+  override create(entityLikeArray: DeepPartial<T>[]): T[];
+
+  override create(entityLike: DeepPartial<T>): T;
+
+  override create(
+    entityLikeOrEntityLikeArray?: DeepPartial<T>[] | DeepPartial<T>,
+  ): T[] | T {
+    const permissionOptions = {
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+    };
+
+    return this.manager.create(
+      this.target,
+      entityLikeOrEntityLikeArray,
+      permissionOptions,
+    );
+  }
+
+  /**
    * SAVE METHODS
    */
   override save<U extends DeepPartial<T>>(
