@@ -9,7 +9,6 @@ import {
   objectMetadataItemMock,
 } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { mapFieldMetadataToGraphqlQuery } from 'src/engine/api/rest/core/query-builder/utils/map-field-metadata-to-graphql-query.utils';
-import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.type';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
@@ -109,10 +108,6 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
           name: 'toObjectMetadataName',
           label: 'Test Field',
           objectMetadataId: 'object-metadata-id',
-          fromRelationMetadata: {
-            relationType: RelationMetadataType.ONE_TO_MANY,
-            toObjectMetadataId: objectMetadataItemMock.id,
-          } as any,
         };
 
         expect(
