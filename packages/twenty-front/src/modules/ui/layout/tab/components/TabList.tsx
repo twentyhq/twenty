@@ -209,8 +209,8 @@ export const TabList = ({
                 onDimensionChange={handleTabWidthChange(index)}
               >
                 <Tab
-                  id={tab.id + '-measurement'}
-                  title={tab.title + '-measurement'}
+                  id={tab.id}
+                  title={tab.title}
                   Icon={tab.Icon}
                   logo={tab.logo}
                   active={tab.id === activeTabId}
