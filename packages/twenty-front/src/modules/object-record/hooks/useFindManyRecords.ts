@@ -13,7 +13,6 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { OnFindManyRecordsCompleted } from '@/object-record/types/OnFindManyRecordsCompleted';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
-import { useMemo } from 'react';
 
 export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
   RecordGqlOperationVariables & {
@@ -68,19 +67,12 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const hasReadPermission = useMemo(() => {
-    if (!objectPermissionsByObjectMetadataId || !objectMetadataItem.id) {
-      return true;
-    }
-
-    const objectPermission =
-      objectPermissionsByObjectMetadataId[objectMetadataItem.id];
-    return objectPermission?.canReadObjectRecords !== false;
-  }, [objectPermissionsByObjectMetadataId, objectMetadataItem.id]);
-
   const withSoftDeleterFilter = {
     or: [{ deletedAt: { is: 'NULL' } }, { deletedAt: { is: 'NOT_NULL' } }],
   };
+
+  const hasReadPermission =
+    objectPermissionsByObjectMetadataId[objectMetadataItem.id].canReadObjectRecords === true;
 
   const { data, loading, error, fetchMore } =
     useQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {

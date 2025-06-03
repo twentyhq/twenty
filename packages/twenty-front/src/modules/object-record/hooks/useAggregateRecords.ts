@@ -8,7 +8,6 @@ import { useAggregateRecordsQuery } from '@/object-record/hooks/useAggregateReco
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import isEmpty from 'lodash.isempty';
-import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export type AggregateRecordsData = {
@@ -39,15 +38,9 @@ export const useAggregateRecords = <T extends AggregateRecordsData>({
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const hasReadPermission = useMemo(() => {
-    if (!objectPermissionsByObjectMetadataId || !objectMetadataItem.id) {
-      return true;
-    }
-
-    const objectPermission =
-      objectPermissionsByObjectMetadataId[objectMetadataItem.id];
-    return objectPermission?.canReadObjectRecords !== false;
-  }, [objectPermissionsByObjectMetadataId, objectMetadataItem.id]);
+  const hasReadPermission =
+    objectPermissionsByObjectMetadataId[objectMetadataItem.id]
+      ?.canReadObjectRecords === true;
 
   const { data, loading, error } = useQuery<RecordGqlOperationFindManyResult>(
     aggregateQuery,

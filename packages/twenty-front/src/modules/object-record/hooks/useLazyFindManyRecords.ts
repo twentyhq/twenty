@@ -13,7 +13,6 @@ import { cursorFamilyState } from '@/object-record/states/cursorFamilyState';
 import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
-import { useMemo } from 'react';
 
 type UseLazyFindManyRecordsParams<T> = Omit<
   UseFindManyRecordsParams<T>,
@@ -59,15 +58,9 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const hasReadPermission = useMemo(() => {
-    if (!objectPermissionsByObjectMetadataId || !objectMetadataItem.id) {
-      return true;
-    }
-
-    const objectPermission =
-      objectPermissionsByObjectMetadataId[objectMetadataItem.id];
-    return objectPermission?.canReadObjectRecords !== false;
-  }, [objectPermissionsByObjectMetadataId, objectMetadataItem.id]);
+  const hasReadPermission =
+    objectPermissionsByObjectMetadataId[objectMetadataItem.id]
+      ?.canReadObjectRecords === true;
 
   const [findManyRecords, { data, loading, error, fetchMore }] =
     useLazyQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
