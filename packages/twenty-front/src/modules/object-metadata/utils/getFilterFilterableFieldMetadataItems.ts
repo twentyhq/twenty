@@ -39,14 +39,10 @@ export const getFilterFilterableFieldMetadataItems = ({
       FieldMetadataType.PHONES,
       FieldMetadataType.ARRAY,
       ...(isJsonFilterEnabled ? [FieldMetadataType.RAW_JSON] : []),
-      FieldMetadataType.TS_VECTOR,
     ].includes(field.type);
 
-    const isSystemFieldAllowed =
-      !isSystemField || field.type === FieldMetadataType.TS_VECTOR;
-
     const isFieldFilterable =
-      isSystemFieldAllowed &&
+      !isSystemField &&
       isFieldActive &&
       isRelationFieldHandled &&
       isFieldTypeFilterable;

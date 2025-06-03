@@ -1,27 +1,24 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
-
 import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeRecordGqlOperationFilter';
 import { View } from '@/views/types/View';
 import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFilterGroupsToRecordFilterGroups';
-import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { isDefined } from 'twenty-shared/utils';
+import { useMapViewFiltersToFilters } from './useMapViewFiltersToFilters';
 
-export const getQueryVariablesFromView = ({
+export const useQueryVariablesFromView = ({
   view,
-  fieldMetadataItems,
   objectMetadataItem,
   filterValueDependencies,
 }: {
   view: View | null | undefined;
-  fieldMetadataItems: FieldMetadataItem[];
   objectMetadataItem: ObjectMetadataItem;
   filterValueDependencies: RecordFilterValueDependencies;
 }) => {
+  const { mapViewFiltersToRecordFilters } = useMapViewFiltersToFilters();
+
   if (!isDefined(view)) {
     return {
       filter: undefined,
@@ -35,10 +32,7 @@ export const getQueryVariablesFromView = ({
     viewFilterGroups ?? [],
   );
 
-  const recordFilters = mapViewFiltersToFilters(
-    viewFilters,
-    fieldMetadataItems,
-  );
+  const recordFilters = mapViewFiltersToRecordFilters(viewFilters);
 
   const filter = computeRecordGqlOperationFilter({
     fields: objectMetadataItem?.fields ?? [],
