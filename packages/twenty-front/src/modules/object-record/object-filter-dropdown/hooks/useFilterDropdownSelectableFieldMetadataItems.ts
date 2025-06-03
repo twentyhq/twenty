@@ -24,11 +24,11 @@ export const useFilterDropdownSelectableFieldMetadataItems = () => {
   );
 
   const filteredSearchInputFieldMetadataItems =
-    filterableFieldMetadataItems.filter((fieldMetadataItem) => {
-      return fieldMetadataItem.label
+    filterableFieldMetadataItems.filter((fieldMetadataItem) =>
+      fieldMetadataItem.label
         .toLocaleLowerCase()
-        .includes(objectFilterDropdownSearchInput.toLocaleLowerCase());
-    });
+        .includes(objectFilterDropdownSearchInput.toLocaleLowerCase()),
+    );
 
   const selectableVisibleFieldMetadataItems =
     filteredSearchInputFieldMetadataItems
