@@ -1,15 +1,14 @@
 import gql from 'graphql-tag';
 import { useRecoilValue } from 'recoil';
 
-import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { EMPTY_MUTATION } from '@/object-record/constants/EmptyMutation';
 import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getCreateManyRecordsMutationResponseField } from '@/object-record/utils/getCreateManyRecordsMutationResponseField';
 import { capitalize } from 'twenty-shared/utils';
-import { ObjectPermission } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useCreateManyRecordsMutation = ({
@@ -23,18 +22,9 @@ export const useCreateManyRecordsMutation = ({
     objectNameSingular,
   });
 
-  const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);
-  const objectPermissions = currentUserWorkspace?.objectPermissions;
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-
-  const objectPermissionsByObjectMetadataId = objectPermissions?.reduce(
-    (acc, objectPermission) => {
-      acc[objectPermission.objectMetadataId] = objectPermission;
-      return acc;
-    },
-    {} as Record<string, ObjectPermission>,
-  );
 
   if (isUndefinedOrNull(objectMetadataItem)) {
     return { createManyRecordsMutation: EMPTY_MUTATION };

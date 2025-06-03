@@ -17,28 +17,24 @@ export type GetRecordFromCacheArgs = {
   objectMetadataItems: ObjectMetadataItem[];
   objectMetadataItem: ObjectMetadataItem;
   recordGqlFields?: RecordGqlFields;
-  objectPermissionsByObjectMetadataId?: Record<string, ObjectPermission>;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>;
 };
-
-export const getRecordFromCache = <T extends ObjectRecord>({
+export const getRecordFromCache = <T extends ObjectRecord = ObjectRecord>({
+  objectMetadataItem,
+  objectMetadataItems,
   cache,
   recordId,
-  objectMetadataItems,
-  objectMetadataItem,
   recordGqlFields,
   objectPermissionsByObjectMetadataId,
-}: GetRecordFromCacheArgs): T | null => {
-  const capitalizedObjectName = capitalize(objectMetadataItem.nameSingular);
-
-  const appliedRecordGqlFields =
-    recordGqlFields ??
-    generateDepthOneRecordGqlFields({
-      objectMetadataItem,
-    });
-
-  if (isEmptyObject(appliedRecordGqlFields)) {
+}: GetRecordFromCacheArgs) => {
+  if (isUndefinedOrNull(objectMetadataItem)) {
     return null;
   }
+
+  const appliedRecordGqlFields =
+    recordGqlFields ?? generateDepthOneRecordGqlFields({ objectMetadataItem });
+
+  const capitalizedObjectName = capitalize(objectMetadataItem.nameSingular);
 
   const cacheReadFragment = gql`
       fragment ${capitalizedObjectName}Fragment on ${capitalizedObjectName} ${mapObjectMetadataToGraphQLQuery(
@@ -52,20 +48,21 @@ export const getRecordFromCache = <T extends ObjectRecord>({
     `;
 
   const cachedRecordId = cache.identify({
-    __typename: capitalizedObjectName,
+    __typename: capitalize(objectMetadataItem.nameSingular),
     id: recordId,
   });
 
-  const cachedRecord = cache.readFragment({
+  const record = cache.readFragment<T & { __typename: string }>({
     id: cachedRecordId,
     fragment: cacheReadFragment,
+    returnPartialData: true,
   });
 
-  if (isUndefinedOrNull(cachedRecord)) {
+  if (isUndefinedOrNull(record) || isEmptyObject(record)) {
     return null;
   }
 
   return getRecordFromRecordNode<T>({
-    recordNode: cachedRecord as any,
+    recordNode: record,
   });
 };

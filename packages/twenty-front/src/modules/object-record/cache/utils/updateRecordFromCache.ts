@@ -23,7 +23,7 @@ export const updateRecordFromCache = <T extends ObjectRecord>({
   cache: ApolloCache<object>;
   recordGqlFields: Record<string, boolean>;
   record: T;
-  objectPermissionsByObjectMetadataId?: Record<string, ObjectPermission>;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>;
 }) => {
   if (isUndefinedOrNull(objectMetadataItem)) {
     return null;
