@@ -25,10 +25,7 @@ import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.se
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
-import {
-  ServerlessFunctionEntity,
-  ServerlessFunctionSyncStatus,
-} from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
@@ -320,7 +317,6 @@ export class ServerlessFunctionService {
         ...serverlessFunctionInput,
         workspaceId,
         layerVersion: LAST_LAYER_VERSION,
-        syncStatus: ServerlessFunctionSyncStatus.NOT_READY,
       });
 
     const createdServerlessFunction =

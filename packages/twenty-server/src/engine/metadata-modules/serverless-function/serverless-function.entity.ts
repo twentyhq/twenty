@@ -13,12 +13,6 @@ import { InputSchema } from 'src/modules/workflow/workflow-builder/workflow-sche
 
 const DEFAULT_SERVERLESS_TIMEOUT_SECONDS = 300; // 5 minutes
 
-export enum ServerlessFunctionSyncStatus {
-  NOT_READY = 'NOT_READY',
-  BUILDING = 'BUILDING',
-  READY = 'READY',
-}
-
 export enum ServerlessFunctionRuntime {
   NODE18 = 'nodejs18.x',
 }
@@ -53,14 +47,6 @@ export class ServerlessFunctionEntity {
 
   @Column({ nullable: true })
   layerVersion: number;
-
-  @Column({
-    nullable: false,
-    default: ServerlessFunctionSyncStatus.NOT_READY,
-    type: 'enum',
-    enum: ServerlessFunctionSyncStatus,
-  })
-  syncStatus: ServerlessFunctionSyncStatus;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
