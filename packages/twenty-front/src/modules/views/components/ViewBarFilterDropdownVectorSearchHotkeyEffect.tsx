@@ -8,7 +8,9 @@ import { useSetVectorSearchInputValueFromExistingFilter } from '@/views/hooks/us
 import { useEffect } from 'react';
 
 export const ViewBarFilterDropdownVectorSearchHotkeyEffect = () => {
-  const { openDropdown } = useDropdown(VIEW_BAR_FILTER_DROPDOWN_ID);
+  const { openDropdown, isDropdownOpen } = useDropdown(
+    VIEW_BAR_FILTER_DROPDOWN_ID,
+  );
   const { setVectorSearchInputValueFromExistingFilter } =
     useSetVectorSearchInputValueFromExistingFilter(VIEW_BAR_FILTER_DROPDOWN_ID);
   const { openVectorSearchFilter } = useOpenVectorSearchFilter(
@@ -18,8 +20,10 @@ export const ViewBarFilterDropdownVectorSearchHotkeyEffect = () => {
   const setHotkeyScope = useSetHotkeyScope();
 
   useEffect(() => {
-    setHotkeyScope(RecordIndexHotkeyScope.RecordIndex);
-  }, [setHotkeyScope]);
+    if (!isDropdownOpen) {
+      setHotkeyScope(RecordIndexHotkeyScope.RecordIndex);
+    }
+  }, [setHotkeyScope, isDropdownOpen]);
 
   useScopedHotkeys(
     'ctrl+f,meta+f',
