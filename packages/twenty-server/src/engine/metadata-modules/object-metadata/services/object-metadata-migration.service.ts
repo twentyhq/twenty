@@ -4,8 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { In, Repository } from 'typeorm';
 
-import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { buildMigrationsForCustomObjectRelations } from 'src/engine/metadata-modules/object-metadata/utils/build-migrations-for-custom-object-relations.util';
@@ -13,7 +11,6 @@ import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/works
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   WorkspaceMigrationColumnActionType,
-  WorkspaceMigrationColumnDrop,
   WorkspaceMigrationTableAction,
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
@@ -21,8 +18,6 @@ import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
-import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
-import { RELATION_MIGRATION_PRIORITY_PREFIX } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 
 @Injectable()
 export class ObjectMetadataMigrationService {
@@ -217,80 +212,81 @@ export class ObjectMetadataMigrationService {
     workspaceId: string,
   ) {
     // TODO: Charles fix
-    const relationsMetadataToDelete: any[] = [];
+    // const _relationsMetadataToDelete: FieldMetadataEntity<FieldMetadataType.RELATION>[] =
+    //   [];
 
-    for (const relationToDelete of relationsMetadataToDelete) {
-      const foreignKeyFieldsToDelete = await this.fieldMetadataRepository.find({
-        where: {
-          name: `${relationToDelete.toFieldMetadataName}Id`,
-          objectMetadataId: relationToDelete.toObjectMetadataId,
-          workspaceId,
-        },
-      });
+    // for (const relationToDelete of relationsMetadataToDelete) {
+    //   const foreignKeyFieldsToDelete = await this.fieldMetadataRepository.find({
+    //     where: {
+    //       name: `${relationToDelete.toFieldMetadataName}Id`,
+    //       objectMetadataId: relationToDelete.toObjectMetadataId,
+    //       workspaceId,
+    //     },
+    //   });
 
-      const foreignKeyFieldsToDeleteIds = foreignKeyFieldsToDelete.map(
-        (field) => field.id,
-      );
+    //   const foreignKeyFieldsToDeleteIds = foreignKeyFieldsToDelete.map(
+    //     (field) => field.id,
+    //   );
 
-      await this.fieldMetadataRepository.delete([
-        ...foreignKeyFieldsToDeleteIds,
-        relationToDelete.fromFieldMetadataId,
-        relationToDelete.toFieldMetadataId,
-      ]);
-    }
+    //   await this.fieldMetadataRepository.delete([
+    //     ...foreignKeyFieldsToDeleteIds,
+    //     relationToDelete.fromFieldMetadataId,
+    //     relationToDelete.toFieldMetadataId,
+    //   ]);
+    // }
 
-    const manyToOneRelationFieldsToDelete = objectMetadata.fields.filter(
-      (field) =>
-        isFieldMetadataInterfaceOfType(field, FieldMetadataType.RELATION) &&
-        (field as FieldMetadataEntity<FieldMetadataType.RELATION>).settings
-          ?.relationType === RelationType.MANY_TO_ONE,
-    ) as FieldMetadataEntity<FieldMetadataType.RELATION>[];
+    // const manyToOneRelationFieldsToDelete = objectMetadata.fields.filter(
+    //   (field) =>
+    //     isFieldMetadataInterfaceOfType(field, FieldMetadataType.RELATION) &&
+    //     (field as FieldMetadataEntity<FieldMetadataType.RELATION>).settings
+    //       ?.relationType === RelationType.MANY_TO_ONE,
+    // ) as FieldMetadataEntity<FieldMetadataType.RELATION>[];
 
-    const oneToManyRelationFieldsToDelete = objectMetadata.fields.filter(
-      (field) =>
-        isFieldMetadataInterfaceOfType(field, FieldMetadataType.RELATION) &&
-        (field as FieldMetadataEntity<FieldMetadataType.RELATION>).settings
-          ?.relationType === RelationType.ONE_TO_MANY,
-    );
+    // const oneToManyRelationFieldsToDelete = objectMetadata.fields.filter(
+    //   (field) =>
+    //     isFieldMetadataInterfaceOfType(field, FieldMetadataType.RELATION) &&
+    //     (field as FieldMetadataEntity<FieldMetadataType.RELATION>).settings
+    //       ?.relationType === RelationType.ONE_TO_MANY,
+    // );
 
-    const relationFieldsToDelete = [
-      ...manyToOneRelationFieldsToDelete,
-      ...(oneToManyRelationFieldsToDelete.map(
-        (field) => field.relationTargetFieldMetadata,
-      ) as FieldMetadataEntity<FieldMetadataType.RELATION>[]),
-    ];
+    // const relationFieldsToDelete = [
+    //   ...manyToOneRelationFieldsToDelete,
+    //   ...(oneToManyRelationFieldsToDelete.map(
+    //     (field) => field.relationTargetFieldMetadata,
+    //   ) as FieldMetadataEntity<FieldMetadataType.RELATION>[]),
+    // ];
 
-    for (const relationFieldToDelete of relationFieldsToDelete) {
-      const joinColumnName = relationFieldToDelete.settings?.joinColumnName;
+    // for (const relationFieldToDelete of relationFieldsToDelete) {
+    //   const joinColumnName = relationFieldToDelete.settings?.joinColumnName;
 
-      if (!joinColumnName) {
-        throw new Error(
-          `Join column name is not set for relation field ${relationFieldToDelete.name}`,
-        );
-      }
+    //   if (!joinColumnName) {
+    //     throw new Error(
+    //       `Join column name is not set for relation field ${relationFieldToDelete.name}`,
+    //     );
+    //   }
 
-      await this.workspaceMigrationService.createCustomMigration(
-        generateMigrationName(
-          `delete-${RELATION_MIGRATION_PRIORITY_PREFIX}-${relationFieldToDelete.name}`,
-        ),
-        workspaceId,
-        [
-          {
-            name: computeTableName(
-              relationFieldToDelete.object.nameSingular,
-              relationFieldToDelete.object.isCustom,
-            ),
-            action: WorkspaceMigrationTableActionType.ALTER,
-            columns: [
-              {
-                action: WorkspaceMigrationColumnActionType.DROP,
-                columnName: joinColumnName,
-              } satisfies WorkspaceMigrationColumnDrop,
-            ],
-          },
-        ],
-      );
-    }
+    //   await this.workspaceMigrationService.createCustomMigration(
+    //     generateMigrationName(
+    //       `delete-${RELATION_MIGRATION_PRIORITY_PREFIX}-${relationFieldToDelete.name}`,
+    //     ),
+    //     workspaceId,
+    //     [
+    //       {
+    //         name: computeTableName(
+    //           relationFieldToDelete.object.nameSingular,
+    //           relationFieldToDelete.object.isCustom,
+    //         ),
+    //         action: WorkspaceMigrationTableActionType.ALTER,
+    //         columns: [
+    //           {
+    //             action: WorkspaceMigrationColumnActionType.DROP,
+    //             columnName: joinColumnName,
+    //           } satisfies WorkspaceMigrationColumnDrop,
+    //         ],
+    //       },
+    //     ],
+    //   );
+    // }
 
     // DROP TABLE
     await this.workspaceMigrationService.createCustomMigration(
