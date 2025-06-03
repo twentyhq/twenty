@@ -3,9 +3,9 @@ import { useRecoilValue } from 'recoil';
 
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
 import {
-    IconDeviceFloppy,
-    IconPencil,
-    IconRefreshAlert,
+  IconDeviceFloppy,
+  IconPencil,
+  IconRefreshAlert,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { ConfigSource, ConfigVariable } from '~/generated/graphql';
