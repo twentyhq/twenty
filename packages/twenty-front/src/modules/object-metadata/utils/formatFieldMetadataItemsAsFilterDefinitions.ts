@@ -1,6 +1,6 @@
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { FilterableFieldTypeWithVector } from '@/object-record/record-filter/types/FilterableFieldType';
+import { FilterableAndTSVectorFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
 import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
 export const getRelationObjectMetadataNameSingular = ({
@@ -13,7 +13,7 @@ export const getRelationObjectMetadataNameSingular = ({
 
 export const getFilterTypeFromFieldType = (
   fieldType: FieldMetadataType,
-): FilterableFieldTypeWithVector => {
+): FilterableAndTSVectorFieldType => {
   switch (fieldType) {
     case FieldMetadataType.DATE_TIME:
       return 'DATE_TIME';

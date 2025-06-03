@@ -1,8 +1,8 @@
 import { isExpectedSubFieldName } from '@/object-record/object-filter-dropdown/utils/isExpectedSubFieldName';
 import { isFilterOnActorSourceSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorSourceSubField';
 import {
+  FilterableAndTSVectorFieldType,
   FilterableFieldType,
-  FilterableFieldTypeWithVector,
 } from '@/object-record/record-filter/types/FilterableFieldType';
 import { CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { ViewFilterOperand as RecordFilterOperand } from '@/views/types/ViewFilterOperand';
@@ -10,7 +10,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 export type GetRecordFilterOperandsParams = {
-  filterType: FilterableFieldTypeWithVector;
+  filterType: FilterableAndTSVectorFieldType;
   subFieldName?: string | null | undefined;
 };
 
@@ -25,7 +25,7 @@ const relationOperands = [
 ] as const;
 
 type FilterOperandMap = {
-  [K in FilterableFieldTypeWithVector]: readonly RecordFilterOperand[];
+  [K in FilterableAndTSVectorFieldType]: readonly RecordFilterOperand[];
 };
 
 // TODO: we would need to refactor the typing of SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS first
