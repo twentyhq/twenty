@@ -4,11 +4,11 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { vectorSearchInputComponentState } from '@/views/states/vectorSearchInputComponentState';
+import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useVectorSearchField } from './useVectorSearchField';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { vectorSearchInputComponentState } from '@/views/states/vectorSearchInputComponentState';
 
 export const useSetEditableFilterChipDropdownStates = () => {
   const { filterableFieldMetadataItems } =
@@ -19,10 +19,10 @@ export const useSetEditableFilterChipDropdownStates = () => {
   const setEditableFilterChipDropdownStates = useRecoilCallback(
     ({ set }) =>
       (recordFilter: RecordFilter) => {
-        const filterableFieldsWithVector = [
-          ...filterableFieldMetadataItems,
-          vectorSearchField,
-        ];
+        const filterableFieldsWithVector = vectorSearchField
+          ? filterableFieldMetadataItems.concat(vectorSearchField)
+          : filterableFieldMetadataItems;
+
         const fieldMetadataItem = filterableFieldsWithVector.find(
           (fieldMetadataItem) =>
             fieldMetadataItem.id === recordFilter.fieldMetadataId,
