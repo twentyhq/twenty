@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import { WORKFLOW_GQL_FIELDS } from 'test/integration/constants/workflow-gql-fields.constants';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
 import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
@@ -58,6 +59,17 @@ describe('workflowsPermissions', () => {
         expect(response.body.data.createWorkflow.name).toBe(
           'Test Workflow Admin',
         );
+
+        // Clean up - delete the created workflow
+        const destroyWorkflowOperation = destroyOneOperationFactory({
+          objectMetadataSingularName: 'workflow',
+          gqlFields: `
+            id
+        `,
+          recordId: response.body.data.createWorkflow.id,
+        });
+
+        await makeGraphqlAPIRequest(destroyWorkflowOperation);
       });
     });
 
@@ -113,7 +125,7 @@ describe('workflowsPermissions', () => {
           gqlFields: WORKFLOW_GQL_FIELDS,
           data: {
             id: workflowId,
-            name: 'Test Workflow Admin V2',
+            name: 'Test Workflow Admin',
           },
         });
 
@@ -123,8 +135,19 @@ describe('workflowsPermissions', () => {
         expect(response.body.data.createWorkflow).toBeDefined();
         expect(response.body.data.createWorkflow.id).toBe(workflowId);
         expect(response.body.data.createWorkflow.name).toBe(
-          'Test Workflow Admin V2',
+          'Test Workflow Admin',
         );
+
+        // Clean up - delete the created workflow
+        const destroyWorkflowOperation = destroyOneOperationFactory({
+          objectMetadataSingularName: 'workflow',
+          gqlFields: `
+              id
+          `,
+          recordId: response.body.data.createWorkflow.id,
+        });
+
+        await makeGraphqlAPIRequest(destroyWorkflowOperation);
       });
 
       it('should create a workflow when executed by api key', async () => {
@@ -147,6 +170,17 @@ describe('workflowsPermissions', () => {
         expect(response.body.data.createWorkflow.name).toBe(
           'Test Workflow API Key',
         );
+
+        // Clean up - delete the created workflow
+        const destroyWorkflowOperation = destroyOneOperationFactory({
+          objectMetadataSingularName: 'workflow',
+          gqlFields: `
+              id
+          `,
+          recordId: response.body.data.createWorkflow.id,
+        });
+
+        await makeGraphqlAPIRequest(destroyWorkflowOperation);
       });
     });
   });
@@ -166,6 +200,18 @@ describe('workflowsPermissions', () => {
         });
 
         await makeGraphqlAPIRequest(createWorkflowOperation);
+      });
+
+      afterAll(async () => {
+        const destroyWorkflowOperation = destroyOneOperationFactory({
+          objectMetadataSingularName: 'workflow',
+          gqlFields: `
+              id
+          `,
+          recordId: workflowId,
+        });
+
+        await makeGraphqlAPIRequest(destroyWorkflowOperation);
       });
 
       it('should throw a permission error when user does not have permission (guest role)', async () => {
@@ -237,6 +283,16 @@ describe('workflowsPermissions', () => {
       });
 
       afterAll(async () => {
+        const destroyWorkflowOperation = destroyOneOperationFactory({
+          objectMetadataSingularName: 'workflow',
+          gqlFields: `
+              id
+          `,
+          recordId: workflowId,
+        });
+
+        await makeGraphqlAPIRequest(destroyWorkflowOperation);
+
         const disablePermissionsQuery = updateFeatureFlagFactory(
           SEED_APPLE_WORKSPACE_ID,
           'IS_PERMISSIONS_V2_ENABLED',
