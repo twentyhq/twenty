@@ -32,6 +32,7 @@ const StyledContainer = styled.div`
 const StyledTabList = styled(TabList)`
   background-color: ${({ theme }) => theme.background.secondary};
   padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
 type TabId = WorkflowRunTabIdType;

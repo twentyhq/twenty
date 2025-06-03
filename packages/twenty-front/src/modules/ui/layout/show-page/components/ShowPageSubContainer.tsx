@@ -28,11 +28,18 @@ const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
 `;
 
 const StyledTabListContainer = styled.div<{ shouldDisplay: boolean }>`
-  display: ${({ shouldDisplay }) => (shouldDisplay ? 'flex' : 'none')};
+  ${({ shouldDisplay }) =>
+    !shouldDisplay &&
+    `
+    visibility: hidden;
+    height: 0;
+    overflow: hidden;
+  `}
 `;
 
 const StyledTabList = styled(TabList)`
   padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`

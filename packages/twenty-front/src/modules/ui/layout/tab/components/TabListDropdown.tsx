@@ -56,7 +56,14 @@ export const TabListDropdown = ({
                   text={tab.title}
                   avatar={<TabAvatar tab={tab} />}
                   selected={tab.id === tabs.activeId}
-                  onClick={isDisabled ? undefined : () => onTabSelect(tab.id)}
+                  onClick={
+                    isDisabled
+                      ? undefined
+                      : () => {
+                          onTabSelect(tab.id);
+                          onClose();
+                        }
+                  }
                   disabled={isDisabled}
                 />
               );

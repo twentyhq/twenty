@@ -3,7 +3,6 @@ import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/action-men
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { AppPath } from '@/types/AppPath';
@@ -16,18 +15,13 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import styled from '@emotion/styled';
 import { useCallback } from 'react';
-import { Link } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconBrowserMaximize } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-const StyledLink = styled(Link)`
-  text-decoration: none;
-`;
 
 type RecordShowRightDrawerOpenRecordButtonProps = {
   objectNameSingular: string;
@@ -117,18 +111,15 @@ export const RecordShowRightDrawerOpenRecordButton = ({
     return null;
   }
 
-  const to = getLinkToShowPage(objectNameSingular, record);
-
   return (
-    <StyledLink to={to} onClick={closeCommandMenu}>
-      <Button
-        title="Open"
-        variant="primary"
-        accent="blue"
-        size="medium"
-        Icon={IconBrowserMaximize}
-        hotkeys={[getOsControlSymbol(), '⏎']}
-      />
-    </StyledLink>
+    <Button
+      title="Open"
+      variant="primary"
+      accent="blue"
+      size="medium"
+      Icon={IconBrowserMaximize}
+      hotkeys={[getOsControlSymbol(), '⏎']}
+      onClick={handleOpenRecord}
+    />
   );
 };

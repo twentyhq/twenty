@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
-import { Avatar, IconChevronDown } from 'twenty-ui/display';
+import { IconChevronDown } from 'twenty-ui/display';
 import {
   StyledTabHover,
   StyledTabIconContainer,
@@ -21,11 +21,9 @@ export const TabMoreButton = ({
       <StyledTabHover>
         +{hiddenTabsCount} {t`More`}
         <StyledTabIconContainer>
-          <Avatar
-            Icon={IconChevronDown}
-            size="md"
-            placeholder={'+' + hiddenTabsCount + ' ' + t`More`}
-            iconColor={
+          <IconChevronDown
+            size={theme.icon.size.sm}
+            color={
               active ? theme.font.color.primary : theme.font.color.secondary
             }
           />
