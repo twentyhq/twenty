@@ -27,6 +27,7 @@ import {
   WorkflowAction,
   WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 export enum WorkflowVersionEventType {
   CREATE = 'CREATE',
@@ -75,6 +76,8 @@ export class WorkflowStatusesUpdateJob {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     protected readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectRepository(ServerlessFunctionEntity, 'metadata')
+    private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
   ) {}
 
   @Process(WorkflowStatusesUpdateJob.name)
@@ -212,9 +215,11 @@ export class WorkflowStatusesUpdateJob {
           }
 
           const serverlessFunction =
-            await this.serverlessFunctionService.findOneOrFail({
-              id: step.settings.input.serverlessFunctionId,
-              workspaceId,
+            await this.serverlessFunctionRepository.findOneOrFail({
+              where: {
+                id: step.settings.input.serverlessFunctionId,
+                workspaceId,
+              },
             });
 
           const newStepSettings = { ...step.settings };

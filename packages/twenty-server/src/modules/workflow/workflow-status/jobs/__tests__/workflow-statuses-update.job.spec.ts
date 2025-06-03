@@ -12,6 +12,7 @@ import {
   WorkflowVersionBatchEvent,
   WorkflowVersionEventType,
 } from 'src/modules/workflow/workflow-status/jobs/workflow-statuses-update.job';
+import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 describe('WorkflowStatusesUpdate', () => {
   let job: WorkflowStatusesUpdateJob;
@@ -70,6 +71,14 @@ describe('WorkflowStatusesUpdate', () => {
           useValue: {
             findOneOrFail: jest.fn().mockResolvedValue({
               nameSingular: 'workflow',
+            }),
+          },
+        },
+        {
+          provide: getRepositoryToken(ServerlessFunctionEntity, 'metadata'),
+          useValue: {
+            findOneOrFail: jest.fn().mockResolvedValue({
+              latestVersion: 'v2',
             }),
           },
         },

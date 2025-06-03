@@ -7,10 +7,10 @@ import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-ob
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 
 @WorkspaceQueryHook({
-  key: `workflow.deleteMany`,
+  key: 'workflow.restoreMany',
   type: WorkspaceQueryHookType.POST_HOOK,
 })
-export class WorkflowDeleteManyPostQueryHook
+export class WorkflowRestoreManyPostQueryHook
   implements WorkspacePostQueryHookInstance
 {
   constructor(
@@ -25,7 +25,7 @@ export class WorkflowDeleteManyPostQueryHook
     this.workflowCommonWorkspaceService.handleWorkflowSubEntities({
       workflowIds: payload.map((workflow) => workflow.id),
       workspaceId: authContext.workspace.id,
-      operation: 'delete',
+      operation: 'restore',
     });
   }
 }
