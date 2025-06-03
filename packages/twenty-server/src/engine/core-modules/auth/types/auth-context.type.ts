@@ -17,6 +17,7 @@ type CommonPropertiesJwtPayload = {
 export type FileTokenJwtPayload = CommonPropertiesJwtPayload & {
   type: 'FILE';
   workspaceId: string;
+  filename: string;
   workspaceMemberId?: string;
   noteBlockId?: string;
   attachmentId?: string;

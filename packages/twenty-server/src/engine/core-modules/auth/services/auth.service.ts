@@ -808,13 +808,15 @@ export class AuthService {
         workspace,
         billingCheckoutSessionState,
       });
-    } catch (err) {
-      return this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
-        err,
-        this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
-          currentWorkspace,
-        ),
-      );
+    } catch (error) {
+      return this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
+        error,
+        workspace:
+          this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
+            currentWorkspace,
+          ),
+        pathname: '/verify',
+      });
     }
   }
 }
