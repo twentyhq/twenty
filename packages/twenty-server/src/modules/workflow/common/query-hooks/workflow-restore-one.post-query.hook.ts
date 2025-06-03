@@ -18,12 +18,14 @@ export class WorkflowRestoreOnePostQueryHook
   ) {}
 
   async execute(
-    _authContext: AuthContext,
+    authContext: AuthContext,
     _objectName: string,
     payload: WorkflowWorkspaceEntity[],
   ): Promise<void> {
-    this.workflowCommonWorkspaceService.restoreWorkflowSubEntities(
-      payload.map((workflow) => workflow.id),
-    );
+    this.workflowCommonWorkspaceService.handleWorkflowSubEntities({
+      workflowIds: payload.map((workflow) => workflow.id),
+      workspaceId: authContext.workspace.id,
+      operation: 'restore',
+    });
   }
 }

@@ -22,9 +22,10 @@ export class WorkflowDeleteManyPostQueryHook
     _objectName: string,
     payload: WorkflowWorkspaceEntity[],
   ): Promise<void> {
-    this.workflowCommonWorkspaceService.cleanWorkflowsSubEntities(
-      payload.map((workflow) => workflow.id),
-      authContext.workspace.id,
-    );
+    this.workflowCommonWorkspaceService.handleWorkflowSubEntities({
+      workflowIds: payload.map((workflow) => workflow.id),
+      workspaceId: authContext.workspace.id,
+      operation: 'delete',
+    });
   }
 }

@@ -30,6 +30,8 @@ import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/work
 import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service';
 import { WorkflowRestoreOnePostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-restore-one.post-query.hook';
 import { WorkflowRestoreManyPostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-restore-many.post-query.hook';
+import { WorkflowDestroyOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-destroy-one.pre-query.hook';
+import { WorkflowDestroyManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-destroy-many.pre-query.hook';
 
 @Module({
   imports: [
@@ -63,6 +65,8 @@ import { WorkflowRestoreManyPostQueryHook } from 'src/modules/workflow/common/qu
     WorkflowCommonWorkspaceService,
     WorkflowDeleteManyPostQueryHook,
     WorkflowDeleteOnePostQueryHook,
+    WorkflowDestroyOnePreQueryHook,
+    WorkflowDestroyManyPreQueryHook,
   ],
 })
 export class WorkflowQueryHookModule {}

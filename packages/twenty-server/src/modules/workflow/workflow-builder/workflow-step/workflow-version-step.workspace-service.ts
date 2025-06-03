@@ -376,6 +376,7 @@ export class WorkflowVersionStepWorkspaceService {
           await this.serverlessFunctionService.deleteOneServerlessFunction({
             id: step.settings.input.serverlessFunctionId,
             workspaceId,
+            softDelete: false,
           });
         }
         break;

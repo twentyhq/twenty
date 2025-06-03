@@ -132,7 +132,15 @@ export class WorkflowCommonWorkspaceService {
     };
   }
 
-  async restoreWorkflowSubEntities(workflowIds: string[]): Promise<void> {
+  async handleWorkflowSubEntities({
+    workflowIds,
+    workspaceId,
+    operation,
+  }: {
+    workflowIds: string[];
+    workspaceId: string;
+    operation: 'restore' | 'delete' | 'destroy';
+  }): Promise<void> {
     const workflowVersionRepository =
       await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
         'workflowVersion',
@@ -149,105 +157,90 @@ export class WorkflowCommonWorkspaceService {
       );
 
     for (const workflowId of workflowIds) {
-      await workflowAutomatedTriggerRepository.restore({
-        workflowId,
-      });
+      switch (operation) {
+        case 'delete':
+          await workflowAutomatedTriggerRepository.softDelete({
+            workflowId,
+          });
 
-      await workflowRunRepository.restore({
-        workflowId,
-      });
+          await workflowRunRepository.softDelete({
+            workflowId,
+          });
 
-      await workflowVersionRepository.restore({
-        workflowId,
-      });
+          await workflowVersionRepository.softDelete({
+            workflowId,
+          });
 
-      await this.restoreServerlessFunctions(
-        workflowVersionRepository,
-        workflowId,
-      );
-    }
-  }
+          break;
+        case 'restore':
+          await workflowAutomatedTriggerRepository.restore({
+            workflowId,
+          });
 
-  async cleanWorkflowsSubEntities(
-    workflowIds: string[],
-    workspaceId: string,
-  ): Promise<void> {
-    const workflowVersionRepository =
-      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
-        'workflowVersion',
-      );
+          await workflowRunRepository.restore({
+            workflowId,
+          });
 
-    const workflowRunRepository =
-      await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
-        'workflowRun',
-      );
+          await workflowVersionRepository.restore({
+            workflowId,
+          });
 
-    const workflowAutomatedTriggerRepository =
-      await this.twentyORMManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
-        'workflowAutomatedTrigger',
-      );
+          break;
+      }
 
-    for (const workflowId of workflowIds) {
-      await this.softDeleteServerlessFunctions(
+      await this.handleServerlessFunctionSubEntities({
         workflowVersionRepository,
         workflowId,
         workspaceId,
-      );
-
-      await workflowAutomatedTriggerRepository.softDelete({
-        workflowId,
-      });
-
-      await workflowRunRepository.softDelete({
-        workflowId,
-      });
-
-      await workflowVersionRepository.softDelete({
-        workflowId,
+        operation,
       });
     }
   }
 
-  private async softDeleteServerlessFunctions(
-    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
-    workflowId: string,
-    workspaceId: string,
-  ) {
+  async handleServerlessFunctionSubEntities({
+    workflowVersionRepository,
+    workflowId,
+    workspaceId,
+    operation,
+  }: {
+    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
+
+    workflowId: string;
+
+    workspaceId: string;
+    operation: 'restore' | 'delete' | 'destroy';
+  }) {
     const workflowVersions = await workflowVersionRepository.find({
       where: {
         workflowId,
       },
+      withDeleted: true,
     });
 
     workflowVersions.forEach((workflowVersion) => {
       workflowVersion.steps?.forEach(async (step) => {
         if (step.type === WorkflowActionType.CODE) {
-          await this.serverlessFunctionService.deleteOneServerlessFunction({
-            id: step.settings.input.serverlessFunctionId,
-            workspaceId,
-            softDelete: true,
-          });
-        }
-      });
-    });
-  }
-
-  private async restoreServerlessFunctions(
-    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
-    workflowId: string,
-  ) {
-    const workflowVersions = await workflowVersionRepository.find({
-      where: {
-        workflowId,
-      },
-    });
-
-    workflowVersions.forEach((workflowVersion) => {
-      workflowVersion.steps?.forEach(async (step) => {
-        if (step.type === WorkflowActionType.CODE) {
-          await this.serverlessFunctionService.restoreOneServerlessFunction(
-            step.settings.input.serverlessFunctionId,
-          );
+          switch (operation) {
+            case 'delete':
+              await this.serverlessFunctionService.deleteOneServerlessFunction({
+                id: step.settings.input.serverlessFunctionId,
+                workspaceId,
+                softDelete: true,
+              });
+              break;
+            case 'restore':
+              await this.serverlessFunctionService.restoreOneServerlessFunction(
+                step.settings.input.serverlessFunctionId,
+              );
+              break;
+            case 'destroy':
+              await this.serverlessFunctionService.deleteOneServerlessFunction({
+                id: step.settings.input.serverlessFunctionId,
+                workspaceId,
+                softDelete: false,
+              });
+              break;
+          }
         }
       });
     });

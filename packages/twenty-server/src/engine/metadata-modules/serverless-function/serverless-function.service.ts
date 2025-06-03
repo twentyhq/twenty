@@ -54,15 +54,19 @@ export class ServerlessFunctionService {
   async findOneOrFail({
     workspaceId,
     id,
+    withDeleted = false,
   }: {
     workspaceId: string;
     id: string;
+    withDeleted?: boolean;
   }) {
-    const serverlessFunction =
-      await this.serverlessFunctionRepository.findOneBy({
+    const serverlessFunction = await this.serverlessFunctionRepository.findOne({
+      where: {
         id,
         workspaceId,
-      });
+      },
+      withDeleted,
+    });
 
     if (!serverlessFunction) {
       throw new ServerlessFunctionException(
@@ -231,6 +235,7 @@ export class ServerlessFunctionService {
     const existingServerlessFunction = await this.findOneOrFail({
       id,
       workspaceId,
+      withDeleted: true,
     });
 
     if (softDelete) {
