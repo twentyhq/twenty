@@ -8,7 +8,6 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
@@ -36,12 +35,7 @@ import { WorkspaceManagerService } from './workspace-manager.service';
     RoleModule,
     UserRoleModule,
     TypeOrmModule.forFeature(
-      [
-        FieldMetadataEntity,
-        RelationMetadataEntity,
-        UserWorkspaceRoleEntity,
-        RoleEntity,
-      ],
+      [FieldMetadataEntity, UserWorkspaceRoleEntity, RoleEntity],
       'metadata',
     ),
   ],
