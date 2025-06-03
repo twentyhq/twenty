@@ -17,7 +17,6 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
-import { BillingPlans } from 'src/engine/core-modules/billing-plans/billing-plans.entity';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
@@ -162,10 +161,6 @@ export class Workspace {
   @Field()
   @Column({ default: false })
   isCustomDomainEnabled: boolean;
-
-  @Field(() => [BillingPlans])
-  @OneToMany(() => BillingPlans, (billingPlans) => billingPlans.workspace)
-  billingPlans: Relation<BillingPlans[]>;
 
   // TODO: Probably move these inter files to billing plans in the future
   @Column({ type: 'varchar', nullable: true, unique: true })
