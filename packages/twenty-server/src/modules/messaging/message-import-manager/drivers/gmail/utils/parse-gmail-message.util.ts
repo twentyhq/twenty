@@ -5,7 +5,7 @@ import { gmail_v1 } from 'googleapis';
 import { getAttachmentData } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/get-attachment-data.util';
 import { getBodyData } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/get-body-data.util';
 import { getPropertyFromHeaders } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/get-property-from-headers.util';
-import { safeParseAddress } from 'src/modules/messaging/message-import-manager/utils/safe-parse.util';
+import { safeParseEmailAddressAddress } from 'src/modules/messaging/message-import-manager/utils/safe-parse.util';
 
 export const parseGmailMessage = (message: gmail_v1.Schema$Message) => {
   const subject = getPropertyFromHeaders(message, 'Subject');
@@ -36,11 +36,13 @@ export const parseGmailMessage = (message: gmail_v1.Schema$Message) => {
     historyId,
     internalDate,
     subject,
-    from: rawFrom ? safeParseAddress(rawFrom) : undefined,
-    deliveredTo: rawDeliveredTo ? safeParseAddress(rawDeliveredTo) : undefined,
-    to: rawTo ? safeParseAddress(rawTo) : undefined,
-    cc: rawCc ? safeParseAddress(rawCc) : undefined,
-    bcc: rawBcc ? safeParseAddress(rawBcc) : undefined,
+    from: rawFrom ? safeParseEmailAddressAddress(rawFrom) : undefined,
+    deliveredTo: rawDeliveredTo
+      ? safeParseEmailAddressAddress(rawDeliveredTo)
+      : undefined,
+    to: rawTo ? safeParseEmailAddressAddress(rawTo) : undefined,
+    cc: rawCc ? safeParseEmailAddressAddress(rawCc) : undefined,
+    bcc: rawBcc ? safeParseEmailAddressAddress(rawBcc) : undefined,
     text,
     attachments,
   };

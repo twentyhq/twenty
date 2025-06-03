@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { EmailAddress } from 'addressparser';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -9,7 +10,7 @@ import { MicrosoftImportDriverException } from 'src/modules/messaging/message-im
 import { MicrosoftGraphBatchResponse } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.interface';
 import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
-import { safeParseAddress } from 'src/modules/messaging/message-import-manager/utils/safe-parse.util';
+import { safeParseEmailAddress } from 'src/modules/messaging/message-import-manager/utils/safe-parse.util';
 
 import { MicrosoftFetchByBatchService } from './microsoft-fetch-by-batch.service';
 import { MicrosoftHandleErrorService } from './microsoft-handle-error.service';
@@ -79,42 +80,40 @@ export class MicrosoftGetMessagesService {
         );
       }
 
-      const safeParseAddressFrom = response?.from?.emailAddress
-        ? [
-            {
-              address: safeParseAddress(response.from.emailAddress) || '',
-              name: response.from.emailAddress.name,
-            },
-          ]
+      const safeParseFrom = response?.from?.emailAddress
+        ? [safeParseEmailAddress(response.from.emailAddress)]
         : [];
 
-      const safeParseAddressTo = response?.toRecipients
+      const safeParseTo = response?.toRecipients
         ?.filter(isDefined)
-        // @ts-expect-error legacy noImplicitAny
-        .map((recipient) => safeParseAddress(recipient.emailAddress));
+        .map((recipient: { emailAddress: EmailAddress }) =>
+          safeParseEmailAddress(recipient.emailAddress),
+        );
 
-      const safeParseAddressCc = response?.ccRecipients
+      const safeParseCc = response?.ccRecipients
         ?.filter(isDefined)
-        // @ts-expect-error legacy noImplicitAny
-        .map((recipient) => safeParseAddress(recipient.emailAddress));
+        .map((recipient: { emailAddress: EmailAddress }) =>
+          safeParseEmailAddress(recipient.emailAddress),
+        );
 
-      const safeParseAddressBcc = response?.bccRecipients
+      const safeParseBcc = response?.bccRecipients
         ?.filter(isDefined)
-        // @ts-expect-error legacy noImplicitAny
-        .map((recipient) => safeParseAddress(recipient.emailAddress));
+        .map((recipient: { emailAddress: EmailAddress }) =>
+          safeParseEmailAddress(recipient.emailAddress),
+        );
 
       const participants = [
-        ...(safeParseAddressFrom
-          ? formatAddressObjectAsParticipants(safeParseAddressFrom, 'from')
+        ...(safeParseFrom
+          ? formatAddressObjectAsParticipants(safeParseFrom, 'from')
           : []),
-        ...(safeParseAddressTo
-          ? formatAddressObjectAsParticipants(safeParseAddressTo, 'to')
+        ...(safeParseTo
+          ? formatAddressObjectAsParticipants(safeParseTo, 'to')
           : []),
-        ...(safeParseAddressCc
-          ? formatAddressObjectAsParticipants(safeParseAddressCc, 'cc')
+        ...(safeParseCc
+          ? formatAddressObjectAsParticipants(safeParseCc, 'cc')
           : []),
-        ...(safeParseAddressBcc
-          ? formatAddressObjectAsParticipants(safeParseAddressBcc, 'bcc')
+        ...(safeParseBcc
+          ? formatAddressObjectAsParticipants(safeParseBcc, 'bcc')
           : []),
       ];
 
