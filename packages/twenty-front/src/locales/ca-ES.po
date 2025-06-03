@@ -383,6 +383,12 @@ msgstr "Afegit {beautifyPastDateRelative}"
 msgid "Added to blocklist"
 msgstr "Afegit a la llista de bloqueig"
 
+#. js-lingui-id: Du6bPw
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Address"
+msgstr ""
+
 #. js-lingui-id: Eis4ey
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 msgid "Adjust the role-related settings"
@@ -611,6 +617,11 @@ msgstr ""
 #~ msgid "Are you sure you want to assign this role?"
 #~ msgstr "Are you sure you want to assign this role?"
 
+#. js-lingui-id: mupq7U
+#: src/pages/settings/billing/CancelSubscriptionPlan.tsx
+msgid "Are you sure you want to cancel?"
+msgstr ""
+
 #. js-lingui-id: 8Y3Jbl
 #: src/modules/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction.tsx
 #~ msgid "Are you sure you want to delete these records? They can be recovered from the Command menu ({osControlSymbol} + K)."
@@ -735,6 +746,7 @@ msgstr "Mitjana"
 
 #. js-lingui-id: iH8pgl
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
 msgid "Back"
 msgstr ""
 
@@ -747,7 +759,6 @@ msgstr "Tornar al contingut"
 #: src/pages/settings/SettingsBilling.tsx
 #: src/pages/settings/SettingsBilling.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Billing"
 msgstr "Facturació"
 
@@ -755,6 +766,11 @@ msgstr "Facturació"
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Blocklist"
 msgstr "Llista de blocatges"
+
+#. js-lingui-id: HssMtJ
+#: src/modules/billing/utils/billingPaymentProvidersMap.ts
+msgid "Boleto"
+msgstr ""
 
 #. js-lingui-id: 2yl5lQ
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -834,10 +850,20 @@ msgstr "Cancel·la el pla"
 msgid "Cancel your subscription"
 msgstr "Cancel·la la subscripció"
 
+#. js-lingui-id: GHEVpv
+#: src/modules/billing/utils/billingPaymentProvidersMap.ts
+msgid "Cartão de crédito"
+msgstr ""
+
 #. js-lingui-id: M1RLfx
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Catalan"
 msgstr "Català"
+
+#. js-lingui-id: V9PU36
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "CEP"
+msgstr ""
 
 #. js-lingui-id: OfzMnb
 #: src/pages/settings/SettingsBilling.tsx
@@ -859,6 +885,11 @@ msgstr ""
 #. js-lingui-id: EYSFEW
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Change subdomain?"
+msgstr ""
+
+#. js-lingui-id: tGRbQa
+#: src/pages/settings/billing/ConfirmChangeSubscriptionPlan.tsx
+msgid "Change subscription plan"
 msgstr ""
 
 #. js-lingui-id: b0h4XW
@@ -902,12 +933,13 @@ msgid "Choose the format used to display date value"
 msgstr ""
 
 #. js-lingui-id: tjXxZj
-#: src/pages/onboarding/PaymentOptions.tsx
+#: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Choose your payment method"
 msgstr ""
 
 #. js-lingui-id: y1elF1
-#: src/pages/onboarding/Plans.tsx
+#: src/pages/settings/billing/ChangeSubscriptionPlan.tsx
+#: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Choose your plan"
 msgstr ""
 
@@ -920,6 +952,11 @@ msgstr "Trieu el vostre proveïdor"
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Choose your Trial"
 msgstr "Trieu la vostra prova"
+
+#. js-lingui-id: 3wV73y
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "City"
+msgstr ""
 
 #. js-lingui-id: xCJdfg
 #: src/modules/ui/input/components/internal/date/components/InternalDatePicker.tsx
@@ -1069,15 +1106,13 @@ msgid "Context"
 msgstr "Context"
 
 #. js-lingui-id: xGVfLh
-#: src/pages/onboarding/Plans.tsx
-#: src/pages/onboarding/PaymentSuccess.tsx
-#: src/pages/onboarding/PaymentOptions.tsx
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/pages/onboarding/CreateWorkspace.tsx
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx
 msgid "Continue"
 msgstr "Continua"
@@ -1203,6 +1238,11 @@ msgstr "Compta cert"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count unique values"
 msgstr "Compta valors únics"
+
+#. js-lingui-id: Md8EZY
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Cpf/Cnpj"
+msgstr ""
 
 #. js-lingui-id: hYgDIe
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
@@ -1925,7 +1965,7 @@ msgid "English"
 msgstr "Anglès"
 
 #. js-lingui-id: /bfFKe
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/onboarding/components/OnboardingPlanCard.tsx
 msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
 msgstr "Gaudeix d'un període de prova gratuït de {withCreditCardTrialPeriodDuration} dies"
 
@@ -2381,8 +2421,8 @@ msgstr "Treu el màxim partit al teu espai de treball convidant al teu equip."
 
 #. js-lingui-id: zSGbaR
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "Get your subscription"
-msgstr "Obteniu la vostra subscripció"
+#~ msgid "Get your subscription"
+#~ msgstr "Obteniu la vostra subscripció"
 
 #. js-lingui-id: 2GT3Hf
 #: src/modules/command-menu/components/CommandMenu.tsx
@@ -2593,6 +2633,11 @@ msgstr "Proveïdor d'identitat"
 msgid "Identity Provider Metadata XML"
 msgstr "Metadades XML del Proveïdor d'Identitat"
 
+#. js-lingui-id: HlNkTA
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Identy"
+msgstr ""
+
 #. js-lingui-id: ZfP/Ap
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
 msgid "If this is unexpected, please verify your settings."
@@ -2666,6 +2711,11 @@ msgstr "Instàncies"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Integrations"
 msgstr "Integracions"
+
+#. js-lingui-id: 26GmDR
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Inter Bolepix charge data"
+msgstr ""
 
 #. js-lingui-id: GNRDhm
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -2944,6 +2994,16 @@ msgstr "Iniciar"
 msgid "Layout"
 msgstr "Disseny"
 
+#. js-lingui-id: Ae7Hr2
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Legal entity"
+msgstr ""
+
+#. js-lingui-id: /2pITc
+#: src/modules/onboarding/constants/OnboardingInterCustomerTypeOptions.ts
+msgid "Legal person"
+msgstr ""
+
 #. js-lingui-id: haJ2Hb
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
@@ -2982,8 +3042,6 @@ msgid "Loading..."
 msgstr ""
 
 #. js-lingui-id: FgAxTj
-#: src/pages/onboarding/Plans.tsx
-#: src/pages/onboarding/PaymentOptions.tsx
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Log out"
@@ -3165,6 +3223,7 @@ msgstr "Moure a la dreta"
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
 msgid "Name"
 msgstr "Nom"
 
@@ -3188,6 +3247,11 @@ msgstr "Nom de la teva clau API"
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Name of your workspace"
 msgstr "Nom del teu espai de treball"
+
+#. js-lingui-id: Rx5k5c
+#: src/modules/onboarding/constants/OnboardingInterCustomerTypeOptions.ts
+msgid "Natural person"
+msgstr ""
 
 #. js-lingui-id: 2T8KCk
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -4095,6 +4159,7 @@ msgid "Russian"
 msgstr "Rus"
 
 #. js-lingui-id: tfDRzk
+#: src/pages/settings/billing/ChangeSubscriptionPlan.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
@@ -4767,6 +4832,11 @@ msgstr "Provar Workflow"
 msgid "Text copied to clipboard"
 msgstr "Text copiat al porta-retalls"
 
+#. js-lingui-id: jEOcvL
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "The address data as it will used as payer infromation."
+msgstr ""
+
 #. js-lingui-id: 1xQkU9
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "The default country code for new phone numbers."
@@ -4808,6 +4878,11 @@ msgstr "El nom del teu domini"
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "The name of your organization"
 msgstr "El nom de la vostra organització"
+
+#. js-lingui-id: hS1s+i
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "The name/social reason as it will used as payer infromation."
+msgstr ""
 
 #. js-lingui-id: L97sPr
 #: src/pages/not-found/NotFound.tsx
@@ -5025,6 +5100,11 @@ msgstr "Tipus"
 #: src/modules/command-menu/components/CommandMenuTopBar.tsx
 msgid "Type anything"
 msgstr "Teclegeu qualsevol cosa"
+
+#. js-lingui-id: VKRQFd
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "UF"
+msgstr ""
 
 #. js-lingui-id: V9+2pH
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx

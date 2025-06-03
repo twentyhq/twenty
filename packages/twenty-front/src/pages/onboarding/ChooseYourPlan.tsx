@@ -1,15 +1,12 @@
-import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
-import { SubscriptionBenefit } from '@/billing/components/SubscriptionBenefit';
-import { SubscriptionPrice } from '@/billing/components/SubscriptionPrice';
-import { TrialCard } from '@/billing/components/TrialCard';
 import { useHandleCheckoutSession } from '@/billing/hooks/useHandleCheckoutSession';
 import { billingPaymentProvidersMap } from '@/billing/utils/billingPaymentProvidersMap';
 import { isBillingPriceLicensed } from '@/billing/utils/isBillingPriceLicensed';
 import { billingState } from '@/client-config/states/billingState';
 import { OnboardingInterChargeDataForm } from '@/onboarding/components/OnboardingInterChargeDataForm';
+import { OnboardingPlanCard } from '@/onboarding/components/OnboardingPlanCard';
 import { useInterChargeDataForm } from '@/onboarding/hooks/useInterChargeDataForm';
 import {
   OnboardingPlanStep,
@@ -36,46 +33,11 @@ import {
   useBillingBaseProductPricesQuery,
 } from '~/generated/graphql';
 
-const StyledSubscriptionContainer = styled.div<{
-  withLongerMarginBottom: boolean;
-}>`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-
+const StyledChoosePlanCardContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  margin: ${({ theme }) => theme.spacing(8)} 0
-    ${({ theme, withLongerMarginBottom }) =>
-      theme.spacing(withLongerMarginBottom ? 8 : 2)};
-  width: 100%;
-`;
-
-const StyledSubscriptionPriceContainer = styled.div`
-  align-items: center;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  display: flex;
-  flex-direction: column;
-  margin: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(3)}
-    0 ${({ theme }) => theme.spacing(4)};
-  padding-bottom: ${({ theme }) => theme.spacing(3)};
-`;
-
-const StyledBenefitsContainer = styled.div`
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: 16px;
-  padding: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(3)};
-`;
-
-const StyledChooseTrialContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  margin-bottom: ${({ theme }) => theme.spacing(8)};
+  width: 500px;
   gap: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
 const StyledChooseProviderContainer = styled.div`
@@ -128,8 +90,6 @@ export const ChooseYourPlan = () => {
 
   const { data: plans } = useBillingBaseProductPricesQuery();
 
-  const currentPlan = billingCheckoutSession.plan;
-
   const getPlanBenefits = (planKey: BillingPlanKey) => {
     if (planKey === BillingPlanKey.ENTERPRISE) {
       return [
@@ -153,27 +113,14 @@ export const ChooseYourPlan = () => {
     ];
   };
 
-  const benefits = getPlanBenefits(currentPlan);
-
-  const baseProduct = plans?.plans.find(
-    (plan) => plan.planKey === currentPlan,
-  )?.baseProduct;
-
-  const baseProductPrice = baseProduct?.prices?.find(
-    (price): price is BillingPriceLicensedDto =>
-      isBillingPriceLicensed(price) &&
-      price.recurringInterval === billingCheckoutSession.interval,
-  );
-
-  const hasWithoutCreditCardTrialPeriod = false;
-  /*
-    TODO: Disabling trial period selection for now. When enabled, the provider selection doesnt work properly.
-    billing?.trialPeriods.some(
+  const hasWithoutCreditCardTrialPeriod = billing?.trialPeriods.some(
     (trialPeriod) =>
       !trialPeriod.isCreditCardRequired && trialPeriod.duration !== 0,
-  );*/
+  );
+
   const withCreditCardTrialPeriod = billing?.trialPeriods.find(
-    (trialPeriod) => trialPeriod.isCreditCardRequired,
+    (trialPeriod) =>
+      trialPeriod.isCreditCardRequired && trialPeriod.duration !== 0,
   );
 
   const { handleCheckoutSession, isSubmitting } = useHandleCheckoutSession({
@@ -183,31 +130,23 @@ export const ChooseYourPlan = () => {
     paymentProvider: billingCheckoutSession.paymentProvider,
   });
 
-  const handleTrialPeriodChange = (withCreditCard: boolean) => {
-    return () => {
-      if (
-        isDefined(baseProductPrice) &&
-        billingCheckoutSession.requirePaymentMethod !== withCreditCard
-      ) {
-        setBillingCheckoutSession({
-          ...billingCheckoutSession,
-          plan: currentPlan,
-          interval: baseProductPrice.recurringInterval,
-          requirePaymentMethod: withCreditCard,
-        });
-      }
-    };
-  };
-
   const handleChangePaymentProviderChange = (
     paymentProvider: BillingPaymentProviders,
   ) => {
     return () => {
-      if (isDefined(baseProductPrice))
-        setBillingCheckoutSession({
-          ...billingCheckoutSession,
-          paymentProvider,
-        });
+      setBillingCheckoutSession({
+        ...billingCheckoutSession,
+        paymentProvider,
+      });
+    };
+  };
+
+  const handleChangePlanChange = (plan: BillingPlanKey) => {
+    return () => {
+      setBillingCheckoutSession({
+        ...billingCheckoutSession,
+        plan,
+      });
     };
   };
 
@@ -215,12 +154,9 @@ export const ChooseYourPlan = () => {
 
   const withCreditCardTrialPeriodDuration = withCreditCardTrialPeriod?.duration;
 
-  const planName = plans?.plans.find((plan) => plan.planKey === currentPlan)
-    ?.baseProduct.name;
-
   return (
     <Modal.Content isVerticalCentered>
-      {isDefined(baseProductPrice) && isDefined(billing) ? (
+      {isDefined(billing) ? (
         (() => {
           switch (onboardingPlanStep) {
             case OnboardingPlanStep.Init:
@@ -229,54 +165,40 @@ export const ChooseYourPlan = () => {
                   <Title noMarginTop>
                     {hasWithoutCreditCardTrialPeriod
                       ? t`Choose your Trial`
-                      : t`Get your subscription`}
+                      : t`Choose your plan`}
                   </Title>
-                  {hasWithoutCreditCardTrialPeriod ? (
-                    <SubTitle>{planName}</SubTitle>
-                  ) : (
-                    withCreditCardTrialPeriod && (
-                      <SubTitle>
-                        {t`Enjoy a ${withCreditCardTrialPeriodDuration}-days free trial`}
-                      </SubTitle>
-                    )
-                  )}
-                  <StyledSubscriptionContainer
-                    withLongerMarginBottom={!hasWithoutCreditCardTrialPeriod}
-                  >
-                    <StyledSubscriptionPriceContainer>
-                      <SubscriptionPrice
-                        type={baseProductPrice.recurringInterval}
-                        price={baseProductPrice.unitAmount / 100}
-                      />
-                    </StyledSubscriptionPriceContainer>
-                    <StyledBenefitsContainer>
-                      {benefits.map((benefit) => (
-                        <SubscriptionBenefit key={benefit}>
-                          {benefit}
-                        </SubscriptionBenefit>
-                      ))}
-                    </StyledBenefitsContainer>
-                  </StyledSubscriptionContainer>
-                  {hasWithoutCreditCardTrialPeriod && (
-                    <StyledChooseTrialContainer>
-                      {billing.trialPeriods.map((trialPeriod) => (
+                  <StyledChoosePlanCardContainer>
+                    {plans?.plans.map(({ baseProduct, planKey }, index) => (
+                      <>
                         <CardPicker
-                          checked={
-                            billingCheckoutSession.requirePaymentMethod ===
-                            trialPeriod.isCreditCardRequired
-                          }
-                          handleChange={handleTrialPeriodChange(
-                            trialPeriod.isCreditCardRequired,
-                          )}
+                          checked={billingCheckoutSession.plan === planKey}
+                          handleChange={handleChangePlanChange(planKey)}
+                          key={`payment-plan-${index}`}
+                          name="payment-plan"
                         >
-                          <TrialCard
-                            duration={trialPeriod.duration}
-                            withCreditCard={trialPeriod.isCreditCardRequired}
+                          <OnboardingPlanCard
+                            productPrice={baseProduct?.prices?.find(
+                              (price): price is BillingPriceLicensedDto =>
+                                isBillingPriceLicensed(price) &&
+                                price.recurringInterval ===
+                                  billingCheckoutSession.interval,
+                            )}
+                            benefits={getPlanBenefits(planKey)}
+                            planName={baseProduct.name}
+                            withCreditCardTrialPeriod={
+                              !!withCreditCardTrialPeriod
+                            }
+                            withCreditCardTrialPeriodDuration={
+                              withCreditCardTrialPeriodDuration
+                            }
+                            hasWithoutCreditCardTrialPeriod={
+                              hasWithoutCreditCardTrialPeriod
+                            }
                           />
                         </CardPicker>
-                      ))}
-                    </StyledChooseTrialContainer>
-                  )}
+                      </>
+                    ))}
+                  </StyledChoosePlanCardContainer>
                   <Title noMarginTop>{t`Choose your payment method`}</Title>
                   <StyledChooseProviderContainer>
                     {(
@@ -292,6 +214,7 @@ export const ChooseYourPlan = () => {
                           provider,
                         )}
                         key={`payment-provider-${provider}`}
+                        name="payment-provider"
                       >
                         <StyledPaymentProviderCardContainer>
                           {label}
