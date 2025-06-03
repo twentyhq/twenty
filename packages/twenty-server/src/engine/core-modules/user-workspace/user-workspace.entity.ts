@@ -38,7 +38,6 @@ registerEnumType(PermissionsOnAllObjectRecords, {
   'userId',
   'workspaceId',
 ])
-@Index('IDX_USER_WORKSPACE_ID_DELETED_AT', ['id', 'deletedAt'])
 @Index('IDX_USER_WORKSPACE_USER_ID', ['userId'])
 @Index('IDX_USER_WORKSPACE_WORKSPACE_ID', ['workspaceId'])
 export class UserWorkspace {
