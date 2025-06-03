@@ -13,15 +13,10 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-
-export type WorkspaceTokenType =
-  | 'ACCESS'
-  | 'LOGIN'
-  | 'REFRESH'
-  | 'FILE'
-  | 'POSTGRES_PROXY'
-  | 'REMOTE_SERVER'
-  | 'API_KEY';
+import {
+  JwtPayload,
+  JwtAuthTokenType,
+} from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @Injectable()
 export class JwtWrapperService {
@@ -30,17 +25,16 @@ export class JwtWrapperService {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  sign(payload: string | object, options?: JwtSignOptions): string {
+  sign(payload: JwtPayload, options?: JwtSignOptions): string {
     // Typescript does not handle well the overloads of the sign method, helping it a little bit
-    if (typeof payload === 'object') {
-      return this.jwtService.sign(payload, options);
-    }
-
     return this.jwtService.sign(payload, options);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  verify<T extends object = any>(token: string, options?: JwtVerifyOptions): T {
+  verify<T extends object = any>(
+    token: string,
+    options?: { secret: string },
+  ): T {
     return this.jwtService.verify(token, options);
   }
 
@@ -49,9 +43,9 @@ export class JwtWrapperService {
     return this.jwtService.decode(payload, options);
   }
 
-  verifyWorkspaceToken(
+  verifyJwtToken(
     token: string,
-    type: WorkspaceTokenType,
+    type: JwtAuthTokenType,
     options?: JwtVerifyOptions,
   ) {
     const payload = this.decode(token, {
@@ -79,6 +73,17 @@ export class JwtWrapperService {
         });
       }
 
+      // Handle workspace-agnostic tokens
+      if (
+        payload.type === 'WORKSPACE_AGNOSTIC' &&
+        type === 'WORKSPACE_AGNOSTIC'
+      ) {
+        return this.jwtService.verify(token, {
+          ...options,
+          secret: this.generateAppSecret('WORKSPACE_AGNOSTIC'),
+        });
+      }
+
       return this.jwtService.verify(token, {
         ...options,
         secret: this.generateAppSecret(type, payload.workspaceId),
@@ -103,7 +108,7 @@ export class JwtWrapperService {
     }
   }
 
-  generateAppSecret(type: WorkspaceTokenType, workspaceId?: string): string {
+  generateAppSecret(type: JwtAuthTokenType, workspaceId?: string): string {
     const appSecret = this.twentyConfigService.get('APP_SECRET');
 
     if (!appSecret) {

@@ -6,6 +6,7 @@ import ms from 'ms';
 import { AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { LoginTokenJwtPayload, TransientTokenJwtPayload } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @Injectable()
 export class TransientTokenService {
@@ -14,13 +15,21 @@ export class TransientTokenService {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  async generateTransientToken(
-    workspaceMemberId: string,
-    userId: string,
-    workspaceId: string,
-  ): Promise<AuthToken> {
+  async generateTransientToken({
+    workspaceMemberId,
+    workspaceId,
+    userId,
+  }: Omit<TransientTokenJwtPayload, 'type' | 'sub'>): Promise<AuthToken> {
+    const jwtPayload: TransientTokenJwtPayload = {
+      sub: workspaceMemberId,
+      userId: userId,
+      workspaceId: workspaceId,
+      workspaceMemberId: workspaceMemberId,
+      type: 'LOGIN',
+    };
+
     const secret = this.jwtWrapperService.generateAppSecret(
-      'LOGIN',
+      jwtPayload.type,
       workspaceId,
     );
     const expiresIn = this.twentyConfigService.get(
@@ -28,11 +37,6 @@ export class TransientTokenService {
     );
 
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
-    const jwtPayload = {
-      sub: workspaceMemberId,
-      userId,
-      workspaceId,
-    };
 
     return {
       token: this.jwtWrapperService.sign(jwtPayload, {
@@ -43,19 +47,14 @@ export class TransientTokenService {
     };
   }
 
-  async verifyTransientToken(transientToken: string): Promise<{
-    workspaceMemberId: string;
-    userId: string;
-    workspaceId: string;
-  }> {
-    await this.jwtWrapperService.verifyWorkspaceToken(transientToken, 'LOGIN');
+  async verifyTransientToken(
+    transientToken: string,
+  ): Promise<Omit<TransientTokenJwtPayload, 'type' | 'sub'>> {
+    await this.jwtWrapperService.verifyJwtToken(transientToken, 'LOGIN');
 
-    const payload = await this.jwtWrapperService.decode(transientToken);
+    const { type: _type, ...payload } =
+      this.jwtWrapperService.decode<TransientTokenJwtPayload>(transientToken);
 
-    return {
-      workspaceMemberId: payload.sub,
-      userId: payload.userId,
-      workspaceId: payload.workspaceId,
-    };
+    return payload;
   }
 }

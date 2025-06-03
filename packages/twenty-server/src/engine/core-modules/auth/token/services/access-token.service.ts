@@ -14,6 +14,7 @@ import {
 import { AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
 import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
 import {
+  AccessTokenJwtPayload,
   AuthContext,
   JwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -26,6 +27,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { userWorkspaceValidator } from 'src/engine/core-modules/user-workspace/user-workspace.validate';
 
 @Injectable()
 export class AccessTokenService {
@@ -42,10 +44,13 @@ export class AccessTokenService {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
   ) {}
 
-  async generateAccessToken(
-    userId: string,
-    workspaceId: string,
-  ): Promise<AuthToken> {
+  async generateAccessToken({
+    userId,
+    workspaceId,
+  }: Omit<
+    AccessTokenJwtPayload,
+    'type' | 'workspaceMemberId' | 'userWorkspaceId' | 'sub'
+  >): Promise<AuthToken> {
     const expiresIn = this.twentyConfigService.get('ACCESS_TOKEN_EXPIRES_IN');
 
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
@@ -99,11 +104,15 @@ export class AccessTokenService {
       },
     });
 
-    const jwtPayload: JwtPayload = {
+    userWorkspaceValidator.assertIsDefinedOrThrow(userWorkspace);
+
+    const jwtPayload: AccessTokenJwtPayload = {
       sub: user.id,
+      userId: user.id,
       workspaceId,
       workspaceMemberId: tokenWorkspaceMemberId,
-      userWorkspaceId: userWorkspace?.id,
+      userWorkspaceId: userWorkspace.id,
+      type: 'ACCESS',
     };
 
     return {
@@ -116,12 +125,12 @@ export class AccessTokenService {
   }
 
   async validateToken(token: string): Promise<AuthContext> {
-    await this.jwtWrapperService.verifyWorkspaceToken(token, 'ACCESS');
+    await this.jwtWrapperService.verifyJwtToken(token, 'ACCESS');
 
-    const decoded = await this.jwtWrapperService.decode(token);
+    const decoded = this.jwtWrapperService.decode<AccessTokenJwtPayload>(token);
 
     const { user, apiKey, workspace, workspaceMemberId, userWorkspaceId } =
-      await this.jwtStrategy.validate(decoded as JwtPayload);
+      await this.jwtStrategy.validate(decoded);
 
     return { user, apiKey, workspace, workspaceMemberId, userWorkspaceId };
   }

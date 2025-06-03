@@ -85,7 +85,7 @@ export class FileUploadService {
       folder,
     });
 
-    const signedPayload = await this.fileService.encodeFileToken({
+    const signedPayload = this.fileService.encodeFileToken({
       workspaceId: workspaceId,
     });
 

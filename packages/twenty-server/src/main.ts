@@ -42,10 +42,6 @@ const bootstrap = async () => {
 
   app.use(session(getSessionStorageOptions(twentyConfigService)));
 
-  // TODO: Double check this as it's not working for now, it's going to be helpful for durable trees in twenty "orm"
-  // // Apply context id strategy for durable trees
-  // ContextIdFactory.apply(new AggregateByWorkspaceContextIdStrategy());
-
   // Apply class-validator container so that we can use injection in validators
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 

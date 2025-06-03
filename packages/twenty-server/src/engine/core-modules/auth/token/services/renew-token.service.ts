@@ -51,10 +51,10 @@ export class RenewTokenService {
       user.id,
       workspaceId,
     );
-    const refreshToken = await this.refreshTokenService.generateRefreshToken(
-      user.id,
+    const refreshToken = await this.refreshTokenService.generateRefreshToken({
+      userId: user.id,
       workspaceId,
-    );
+    });
 
     return {
       accessToken,

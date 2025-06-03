@@ -110,9 +110,21 @@ export class AuthResolver {
     @Args() listAvailableWorkspacesInput: EmailAndCaptchaInput,
   ): Promise<Array<AvailableWorkspaceOutput>> {
     return await this.authService.listAvailableWorkspacesForAuthentication(
-      listAvailableWorkspacesInput.email,
+      listAvailableWorkspacesInput.email.toLowerCase(),
     );
   }
+
+  // @UseGuards(CaptchaGuard)
+  // @Query(() => UserExistsOutput)
+  // async signUpWithCredentials(
+  //   @Args() checkUserExistsInput: CheckUserExistsInput,
+  // ): Promise<typeof UserExistsOutput> {}
+  //
+  // @UseGuards(CaptchaGuard)
+  // @Query(() => UserExistsOutput)
+  // async signInWithCredentials(
+  //   @Args() checkUserExistsInput: CheckUserExistsInput,
+  // ): Promise<typeof UserExistsOutput> {}
 
   @Mutation(() => GetAuthorizationUrlForSSOOutput)
   async getAuthorizationUrlForSSO(
@@ -346,11 +358,11 @@ export class AuthResolver {
       return;
     }
     const transientToken =
-      await this.transientTokenService.generateTransientToken(
-        workspaceMember.id,
-        user.id,
-        workspace.id,
-      );
+      await this.transientTokenService.generateTransientToken({
+        workspaceId: workspace.id,
+        userId: user.id,
+        workspaceMemberId: workspaceMember.id,
+      });
 
     return { transientToken };
   }

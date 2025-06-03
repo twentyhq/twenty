@@ -6,6 +6,7 @@ import ms from 'ms';
 import { AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { LoginTokenJwtPayload } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @Injectable()
 export class LoginTokenService {
@@ -18,18 +19,20 @@ export class LoginTokenService {
     email: string,
     workspaceId: string,
   ): Promise<AuthToken> {
+    const jwtPayload: LoginTokenJwtPayload = {
+      type: 'LOGIN',
+      sub: email,
+      workspaceId,
+    };
+
     const secret = this.jwtWrapperService.generateAppSecret(
-      'LOGIN',
+      jwtPayload.type,
       workspaceId,
     );
 
     const expiresIn = this.twentyConfigService.get('LOGIN_TOKEN_EXPIRES_IN');
 
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
-    const jwtPayload = {
-      sub: email,
-      workspaceId,
-    };
 
     return {
       token: this.jwtWrapperService.sign(jwtPayload, {
@@ -43,7 +46,7 @@ export class LoginTokenService {
   async verifyLoginToken(
     loginToken: string,
   ): Promise<{ sub: string; workspaceId: string }> {
-    await this.jwtWrapperService.verifyWorkspaceToken(loginToken, 'LOGIN');
+    await this.jwtWrapperService.verifyJwtToken(loginToken, 'LOGIN');
 
     return this.jwtWrapperService.decode(loginToken, {
       json: true,

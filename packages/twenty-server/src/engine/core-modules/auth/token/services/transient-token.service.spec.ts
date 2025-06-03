@@ -18,7 +18,7 @@ describe('TransientTokenService', () => {
           provide: JwtWrapperService,
           useValue: {
             sign: jest.fn(),
-            verifyWorkspaceToken: jest.fn(),
+            verifyJwtToken: jest.fn(),
             decode: jest.fn(),
             generateAppSecret: jest.fn().mockReturnValue('mocked-secret'),
           },
@@ -56,11 +56,11 @@ describe('TransientTokenService', () => {
       });
       jest.spyOn(jwtWrapperService, 'sign').mockReturnValue(mockToken);
 
-      const result = await service.generateTransientToken(
+      const result = await service.generateTransientToken({
         workspaceMemberId,
         userId,
         workspaceId,
-      );
+      });
 
       expect(result).toEqual({
         token: mockToken,
@@ -93,7 +93,7 @@ describe('TransientTokenService', () => {
       };
 
       jest
-        .spyOn(jwtWrapperService, 'verifyWorkspaceToken')
+        .spyOn(jwtWrapperService, 'verifyJwtToken')
         .mockResolvedValue(undefined);
       jest.spyOn(jwtWrapperService, 'decode').mockReturnValue(mockPayload);
 
@@ -104,7 +104,7 @@ describe('TransientTokenService', () => {
         userId: mockPayload.userId,
         workspaceId: mockPayload.workspaceId,
       });
-      expect(jwtWrapperService.verifyWorkspaceToken).toHaveBeenCalledWith(
+      expect(jwtWrapperService.verifyJwtToken).toHaveBeenCalledWith(
         mockToken,
         'LOGIN',
       );
@@ -115,7 +115,7 @@ describe('TransientTokenService', () => {
       const mockToken = 'invalid-token';
 
       jest
-        .spyOn(jwtWrapperService, 'verifyWorkspaceToken')
+        .spyOn(jwtWrapperService, 'verifyJwtToken')
         .mockRejectedValue(new Error('Invalid token'));
 
       await expect(service.verifyTransientToken(mockToken)).rejects.toThrow();

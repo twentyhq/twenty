@@ -8,6 +8,7 @@ import { v4 as uuidV4 } from 'uuid';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { FileTokenJwtPayload } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @Injectable()
 export class FileService {
@@ -30,27 +31,26 @@ export class FileService {
     });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  encodeFileToken(payloadToEncode: Record<string, any>) {
+  encodeFileToken(payloadToEncode: Omit<FileTokenJwtPayload, 'type' | 'sub'>) {
     const fileTokenExpiresIn = this.twentyConfigService.get(
       'FILE_TOKEN_EXPIRES_IN',
     );
+
+    const payload: FileTokenJwtPayload = {
+      ...payloadToEncode,
+      sub: payloadToEncode.workspaceId,
+      type: 'FILE',
+    };
+
     const secret = this.jwtWrapperService.generateAppSecret(
-      'FILE',
+      payload.type,
       payloadToEncode.workspaceId,
     );
 
-    const signedPayload = this.jwtWrapperService.sign(
-      {
-        ...payloadToEncode,
-      },
-      {
-        secret,
-        expiresIn: fileTokenExpiresIn,
-      },
-    );
-
-    return signedPayload;
+    return this.jwtWrapperService.sign(payload, {
+      secret,
+      expiresIn: fileTokenExpiresIn,
+    });
   }
 
   async deleteFile({
