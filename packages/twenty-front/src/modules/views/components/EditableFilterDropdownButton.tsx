@@ -7,12 +7,12 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { EditableFilterChip } from '@/views/components/EditableFilterChip';
 
 import { ObjectFilterDropdownFilterInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterInput';
-import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useSetEditableFilterChipDropdownStates } from '@/views/hooks/useSetEditableFilterChipDropdownStates';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { useVectorSearchInputState } from '@/views/hooks/useVectorSearchInputState';
+import { useOpenVectorSearchFilter } from '@/views/hooks/useOpenVectorSearchFilter';
 
 type EditableFilterDropdownButtonProps = {
   recordFilter: RecordFilter;
@@ -28,10 +28,11 @@ export const EditableFilterDropdownButton = ({
   const { setEditableFilterChipDropdownStates } =
     useSetEditableFilterChipDropdownStates();
 
-  const setVectorSearchInputValue = useSetRecoilComponentStateV2(
-    objectFilterDropdownSearchInputComponentState,
+  const { setVectorSearchInputValue } = useVectorSearchInputState(
     recordFilter.id,
   );
+
+  const { openVectorSearchFilter } = useOpenVectorSearchFilter(recordFilter.id);
 
   const handleRemove = () => {
     closeDropdown();
@@ -51,6 +52,7 @@ export const EditableFilterDropdownButton = ({
 
   const handleFilterChipClick = () => {
     if (isVectorSearchFilter) {
+      openVectorSearchFilter();
       setVectorSearchInputValue(recordFilter.value);
     }
     setEditableFilterChipDropdownStates(recordFilter);

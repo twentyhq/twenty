@@ -12,7 +12,9 @@ export const useViewBarFilterHotKeys = () => {
   const { openDropdown } = useDropdown(VIEW_BAR_FILTER_DROPDOWN_ID);
   const { setVectorSearchInputValueFromExistingFilter } =
     useVectorSearchInputState(VIEW_BAR_FILTER_DROPDOWN_ID);
-  const { openVectorSearchFilter } = useOpenVectorSearchFilter();
+  const { openVectorSearchFilter } = useOpenVectorSearchFilter(
+    VIEW_BAR_FILTER_DROPDOWN_ID,
+  );
   const setHotkeyScope = useSetHotkeyScope();
 
   useEffect(() => {

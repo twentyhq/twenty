@@ -33,7 +33,9 @@ export const ViewBarFilterDropdownVectorSearchButton = () => {
   );
 
   const { applyVectorSearchFilter } = useVectorSearchFilterOperations();
-  const { openVectorSearchFilter } = useOpenVectorSearchFilter();
+  const { openVectorSearchFilter } = useOpenVectorSearchFilter(
+    VIEW_BAR_FILTER_DROPDOWN_ID,
+  );
 
   const isSelected = useRecoilComponentFamilyValueV2(
     isSelectedItemIdComponentFamilySelector,
