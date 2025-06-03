@@ -248,6 +248,7 @@ export type BillingSubscription = {
   billingSubscriptionItems?: Maybe<Array<BillingSubscriptionItem>>;
   id: Scalars['UUID']['output'];
   interval?: Maybe<SubscriptionInterval>;
+  metadata: Scalars['JSON']['output'];
   status: SubscriptionStatus;
 };
 
@@ -256,6 +257,7 @@ export type BillingSubscriptionItem = {
   billingProduct?: Maybe<BillingProduct>;
   hasReachedCurrentPeriodCap: Scalars['Boolean']['output'];
   id: Scalars['UUID']['output'];
+  quantity?: Maybe<Scalars['Float']['output']>;
 };
 
 export type BillingTrialPeriodDto = {
@@ -1006,6 +1008,7 @@ export type Mutation = {
   signUpInNewWorkspace: SignUpOutput;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   submitFormStep: Scalars['Boolean']['output'];
+  switchToEnterprisePlan: BillingUpdateOutput;
   switchToYearlyInterval: BillingUpdateOutput;
   syncRemoteTable: RemoteTable;
   syncRemoteTableSchemaChanges: RemoteTable;

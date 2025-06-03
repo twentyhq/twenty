@@ -18,18 +18,39 @@ import {
   IconCalendarEvent,
   IconCircleX,
   IconCreditCard,
+  IconTag,
+  IconUsers,
+  IconArrowUp,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
+  BillingPlanKey,
+  BillingPlanOutput,
+  BillingProductKey,
   SubscriptionInterval,
   SubscriptionStatus,
+  useBillingBaseProductPricesQuery,
   useBillingPortalSessionQuery,
+  useSwitchSubscriptionToEnterprisePlanMutation,
   useSwitchSubscriptionToYearlyIntervalMutation,
 } from '~/generated/graphql';
+import styled from '@emotion/styled';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { SubscriptionInfoContainer } from '@/billing/components/SubscriptionInfoContainer';
+import { SubscriptionInfoRowContainer } from '@/billing/components/SubscriptionInfoRowContainer';
+import { Tag } from 'twenty-ui/components';
+import { formatPrices } from '@/billing/utils/formatPrices';
 
 const SWITCH_BILLING_INTERVAL_MODAL_ID = 'switch-billing-interval-modal';
+const SWITCH_BILLING_PLAN_MODAL_ID = 'switch-billing-plan-modal';
+
+const StyledSwitchButtonContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${({ theme }) => theme.spacing(4)};
+`;
 
 export const SettingsBilling = () => {
   const { t } = useLingui();
@@ -39,10 +60,15 @@ export const SettingsBilling = () => {
   const { enqueueSnackBar } = useSnackBar();
 
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
+
   const subscriptions = currentWorkspace?.billingSubscriptions;
+
   const hasSubscriptions = (subscriptions?.length ?? 0) > 0;
 
   const subscriptionStatus = useSubscriptionStatus();
+
+  const { data: pricesData } = useBillingBaseProductPricesQuery();
+
   const hasNotCanceledCurrentSubscription =
     isDefined(subscriptionStatus) &&
     subscriptionStatus !== SubscriptionStatus.Canceled;
@@ -51,6 +77,10 @@ export const SettingsBilling = () => {
 
   const [switchToYearlyInterval] =
     useSwitchSubscriptionToYearlyIntervalMutation();
+
+  const [switchToEnterprisePlan] =
+    useSwitchSubscriptionToEnterprisePlanMutation();
+
   const { data, loading } = useBillingPortalSessionQuery({
     variables: {
       returnUrlPath: '/settings/billing',
@@ -82,15 +112,99 @@ export const SettingsBilling = () => {
         };
         setCurrentWorkspace(newCurrentWorkspace);
       }
-      enqueueSnackBar(t`Subscription has been switched to yearly.`, {
+      enqueueSnackBar(t`Subscription has been switched to Yearly.`, {
         variant: SnackBarVariant.Success,
       });
     } catch (error: any) {
-      enqueueSnackBar(t`Error while switching subscription to yearly.`, {
+      enqueueSnackBar(t`Error while switching subscription to Yearly.`, {
         variant: SnackBarVariant.Error,
       });
     }
   };
+
+  const switchPlan = async () => {
+    try {
+      await switchToEnterprisePlan();
+      if (isDefined(currentWorkspace?.currentBillingSubscription)) {
+        const newCurrentWorkspace = {
+          ...currentWorkspace,
+          currentBillingSubscription: {
+            ...currentWorkspace?.currentBillingSubscription,
+            metadata: {
+              ...currentWorkspace?.currentBillingSubscription.metadata,
+              plan: BillingPlanKey.ENTERPRISE,
+            },
+          },
+        };
+        setCurrentWorkspace(newCurrentWorkspace);
+      }
+      enqueueSnackBar(t`Subscription has been switched to Organization Plan.`, {
+        variant: SnackBarVariant.Success,
+      });
+    } catch (error: any) {
+      enqueueSnackBar(
+        t`Error while switching subscription to Organization Plan.`,
+        {
+          variant: SnackBarVariant.Error,
+        },
+      );
+    }
+  };
+
+  const isMonthlyPlan =
+    currentWorkspace?.currentBillingSubscription?.interval ===
+    SubscriptionInterval.Month;
+
+  const isYearlyPlan =
+    currentWorkspace?.currentBillingSubscription?.interval ===
+    SubscriptionInterval.Year;
+
+  const isProPlan =
+    currentWorkspace?.currentBillingSubscription?.metadata['plan'] ===
+    BillingPlanKey.PRO;
+
+  const isEnterprisePlan =
+    currentWorkspace?.currentBillingSubscription?.metadata['plan'] ===
+    BillingPlanKey.ENTERPRISE;
+
+  const planTag = isProPlan ? (
+    <Tag color={'sky'} text={t`Pro`} />
+  ) : isEnterprisePlan ? (
+    <Tag color={'purple'} text={t`Organization`} />
+  ) : undefined;
+
+  const intervalLabel = isMonthlyPlan
+    ? t`Monthly`
+    : isYearlyPlan
+      ? t`Yearly`
+      : undefined;
+
+  const baseProductKey = Object.values(BillingProductKey).find(
+    (productKey) => productKey === BillingProductKey.BASE_PRODUCT,
+  );
+
+  const seats =
+    currentWorkspace?.currentBillingSubscription?.billingSubscriptionItems?.find(
+      (item) => item.billingProduct?.metadata.productKey === baseProductKey,
+    )?.quantity;
+
+  const baseProductPrices = pricesData?.plans as BillingPlanOutput[];
+
+  const formattedPrices = formatPrices(baseProductPrices, seats);
+
+  const yearlyPrice =
+    formattedPrices?.[
+      currentWorkspace?.currentBillingSubscription?.metadata[
+        'plan'
+      ] as BillingPlanKey
+    ][SubscriptionInterval.Year];
+
+  const enterprisePrice =
+    formattedPrices?.[BillingPlanKey.ENTERPRISE][
+      currentWorkspace?.currentBillingSubscription?.interval as
+        | SubscriptionInterval.Month
+        | SubscriptionInterval.Year
+    ];
 
   return (
     <SubMenuTopBarContainer
@@ -104,12 +218,55 @@ export const SettingsBilling = () => {
       ]}
     >
       <SettingsPageContainer>
+        <Section>
+          <H2Title
+            title={t`Subscription`}
+            description={t`About my subscription`}
+          />
+          <SubscriptionInfoContainer>
+            <SubscriptionInfoRowContainer
+              label={t`Plan`}
+              Icon={IconTag}
+              value={planTag}
+            />
+            <SubscriptionInfoRowContainer
+              label={t`Billing interval`}
+              Icon={IconCalendarEvent}
+              value={intervalLabel}
+            />
+            <SubscriptionInfoRowContainer
+              label={t`Seats`}
+              Icon={IconUsers}
+              value={seats}
+            />
+          </SubscriptionInfoContainer>
+          <StyledSwitchButtonContainer>
+            {isMonthlyPlan && (
+              <Button
+                Icon={IconArrowUp}
+                title={t`Switch to Yearly`}
+                variant="secondary"
+                onClick={() => openModal(SWITCH_BILLING_INTERVAL_MODAL_ID)}
+                disabled={!hasNotCanceledCurrentSubscription}
+              />
+            )}
+            {isProPlan && (
+              <Button
+                Icon={IconArrowUp}
+                title={t`Switch to Organization`}
+                variant="secondary"
+                onClick={() => openModal(SWITCH_BILLING_PLAN_MODAL_ID)}
+                disabled={!hasNotCanceledCurrentSubscription}
+              />
+            )}
+          </StyledSwitchButtonContainer>
+        </Section>
         {hasNotCanceledCurrentSubscription && (
           <SettingsBillingMonthlyCreditsSection />
         )}
         <Section>
           <H2Title
-            title={t`Manage your subscription`}
+            title={t`Manage billing information`}
             description={t`Edit payment method, see your invoices and more`}
           />
           <Button
@@ -120,22 +277,6 @@ export const SettingsBilling = () => {
             disabled={billingPortalButtonDisabled}
           />
         </Section>
-        {currentWorkspace?.currentBillingSubscription?.interval ===
-          SubscriptionInterval.Month && (
-          <Section>
-            <H2Title
-              title={t`Edit billing interval`}
-              description={t`Switch from monthly to yearly`}
-            />
-            <Button
-              Icon={IconCalendarEvent}
-              title={t`Switch to yearly`}
-              variant="secondary"
-              onClick={() => openModal(SWITCH_BILLING_INTERVAL_MODAL_ID)}
-              disabled={!hasNotCanceledCurrentSubscription}
-            />
-          </Section>
-        )}
         <Section>
           <H2Title
             title={t`Cancel your subscription`}
@@ -147,16 +288,26 @@ export const SettingsBilling = () => {
             variant="secondary"
             accent="danger"
             onClick={openBillingPortal}
-            disabled={!hasNotCanceledCurrentSubscription}
+            disabled={
+              billingPortalButtonDisabled || !hasNotCanceledCurrentSubscription
+            }
           />
         </Section>
       </SettingsPageContainer>
       <ConfirmationModal
         modalId={SWITCH_BILLING_INTERVAL_MODAL_ID}
-        title={t`Switch billing to yearly`}
-        subtitle={t`Are you sure that you want to change your billing interval? You will be charged immediately for the full year.`}
+        title={t`Change to Yearly?`}
+        subtitle={t`You will be billed ${yearlyPrice}$ per user per year. A prorata with your current subscription will be applied`}
         onConfirmClick={switchInterval}
-        confirmButtonText={t`Change to yearly`}
+        confirmButtonText={t`Confirm`}
+        confirmButtonAccent={'blue'}
+      />
+      <ConfirmationModal
+        modalId={SWITCH_BILLING_PLAN_MODAL_ID}
+        title={t`Change to Organization Plan?`}
+        subtitle={t`You will be billed ${enterprisePrice}$ per user per month.`}
+        onConfirmClick={switchPlan}
+        confirmButtonText={t`Confirm`}
         confirmButtonAccent={'blue'}
       />
     </SubMenuTopBarContainer>
