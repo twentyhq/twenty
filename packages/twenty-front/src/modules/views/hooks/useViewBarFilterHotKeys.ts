@@ -4,14 +4,14 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 
 import { useOpenVectorSearchFilter } from '@/views/hooks/useOpenVectorSearchFilter';
-import { useVectorSearchInputState } from '@/views/hooks/useVectorSearchInputState';
+import { useSetVectorSearchInputValueFromExistingFilter } from '@/views/hooks/useSetVectorSearchInputValueFromExistingFilter';
 import { useEffect } from 'react';
 import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
 
 export const useViewBarFilterHotKeys = () => {
   const { openDropdown } = useDropdown(VIEW_BAR_FILTER_DROPDOWN_ID);
   const { setVectorSearchInputValueFromExistingFilter } =
-    useVectorSearchInputState(VIEW_BAR_FILTER_DROPDOWN_ID);
+    useSetVectorSearchInputValueFromExistingFilter(VIEW_BAR_FILTER_DROPDOWN_ID);
   const { openVectorSearchFilter } = useOpenVectorSearchFilter(
     VIEW_BAR_FILTER_DROPDOWN_ID,
   );

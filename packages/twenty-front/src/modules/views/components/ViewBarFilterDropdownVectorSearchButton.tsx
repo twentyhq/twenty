@@ -1,6 +1,8 @@
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { IconSearch } from 'twenty-ui/display';
@@ -10,10 +12,10 @@ import { VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS } from '@/views/constants/ViewBarF
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useOpenVectorSearchFilter } from '@/views/hooks/useOpenVectorSearchFilter';
+import { useSetVectorSearchInputValueFromExistingFilter } from '@/views/hooks/useSetVectorSearchInputValueFromExistingFilter';
 import { useVectorSearchFilterActions } from '@/views/hooks/useVectorSearchFilterActions';
-import { useVectorSearchInputState } from '@/views/hooks/useVectorSearchInputState';
+import { vectorSearchInputComponentState } from '@/views/states/vectorSearchInputComponentState';
 
 const StyledSearchText = styled.span`
   color: ${({ theme }) => theme.font.color.light};
@@ -22,10 +24,12 @@ const StyledSearchText = styled.span`
 
 export const ViewBarFilterDropdownVectorSearchButton = () => {
   const { t } = useLingui();
-  const {
-    setVectorSearchInputValue,
-    setVectorSearchInputValueFromExistingFilter,
-  } = useVectorSearchInputState(VIEW_BAR_FILTER_DROPDOWN_ID);
+  const [, setVectorSearchInputValue] = useRecoilComponentStateV2(
+    vectorSearchInputComponentState,
+    VIEW_BAR_FILTER_DROPDOWN_ID,
+  );
+  const { setVectorSearchInputValueFromExistingFilter } =
+    useSetVectorSearchInputValueFromExistingFilter(VIEW_BAR_FILTER_DROPDOWN_ID);
 
   const fieldSearchInputValue = useRecoilComponentValueV2(
     objectFilterDropdownSearchInputComponentState,
