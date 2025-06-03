@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 
 import { MainButton } from '@/ui/input/button/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { clearStore } from '~/utils/apolloClient';
 import { isDefined } from 'twenty-shared/utils';
+import { clearStore } from '~/utils/apolloClient';
 
 const StyledWrapper = styled.div`
   align-items: center;
@@ -82,7 +82,7 @@ const Settings = () => {
   return (
     <StyledWrapper>
       <StyledContainer>
-        <img src="/logo/32-32.svg" alt="twenty-logo" height={40} width={40} />
+        <img src="/logo/32-32.svg" alt="insurOS-logo" height={40} width={40} />
         <StyledActionContainer>
           <TextInput
             label="Client URL"

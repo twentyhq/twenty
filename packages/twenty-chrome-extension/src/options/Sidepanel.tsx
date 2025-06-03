@@ -155,7 +155,7 @@ const Sidepanel = () => {
   ) : (
     <StyledWrapper>
       <StyledContainer>
-        <img src="/logo/32-32.svg" alt="twenty-logo" height={40} width={40} />
+        <img src="/logo/32-32.svg" alt="insurOS-logo" height={40} width={40} />
         <StyledActionContainer>
           <MainButton
             title="Connect your account"

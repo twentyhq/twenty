@@ -14,7 +14,7 @@ const StyledContainer = styled.div`
 const Loading = () => {
   return (
     <StyledContainer>
-      <img src="/logo/32-32.svg" alt="twenty-logo" height={64} width={64} />
+      <img src="/logo/32-32.svg" alt="insurOS-logo" height={64} width={64} />
       <Loader />
     </StyledContainer>
   );

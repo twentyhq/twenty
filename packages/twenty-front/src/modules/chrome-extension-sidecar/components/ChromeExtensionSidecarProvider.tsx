@@ -10,8 +10,8 @@
 //   return (
 //     <StyledContainer>
 //       <img
-//         src="/images/integrations/twenty-logo.svg"
-//         alt="twenty-icon"
+//         src="/images/integrations/insurOS-logo.png"
+//         alt="insurOS-icon"
 //         height={40}
 //         width={40}
 //       />
