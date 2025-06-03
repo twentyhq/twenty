@@ -101,22 +101,24 @@ export class MiddlewareService {
 
   public async authenticateRestRequest(request: Request) {
     const data = await this.accessTokenService.validateTokenByRequest(request);
-    const metadataVersion =
-      await this.workspaceStorageCacheService.getMetadataVersion(
-        data.workspace.id,
-      );
+    const metadataVersion = data.workspace
+      ? await this.workspaceStorageCacheService.getMetadataVersion(
+          data.workspace.id,
+        )
+      : undefined;
 
-    if (metadataVersion === undefined) {
+    if (metadataVersion === undefined && isDefined(data.workspace)) {
       await this.workspaceMetadataCacheService.recomputeMetadataCache({
         workspaceId: data.workspace.id,
       });
       throw new Error('Metadata cache version not found');
     }
 
-    const dataSourcesMetadata =
-      await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
-        data.workspace.id,
-      );
+    const dataSourcesMetadata = data.workspace
+      ? await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
+          data.workspace.id,
+        )
+      : undefined;
 
     if (!dataSourcesMetadata || dataSourcesMetadata.length === 0) {
       throw new Error('No data sources found');
@@ -131,10 +133,11 @@ export class MiddlewareService {
     );
 
     const data = await graphqlTokenValidationProxy.validateToken(request);
-    const metadataVersion =
-      await this.workspaceStorageCacheService.getMetadataVersion(
-        data.workspace.id,
-      );
+    const metadataVersion = data.workspace
+      ? await this.workspaceStorageCacheService.getMetadataVersion(
+          data.workspace.id,
+        )
+      : undefined;
 
     this.bindDataToRequestObject(data, request, metadataVersion);
   }
@@ -151,7 +154,7 @@ export class MiddlewareService {
     request.user = data.user;
     request.apiKey = data.apiKey;
     request.workspace = data.workspace;
-    request.workspaceId = data.workspace.id;
+    request.workspaceId = data.workspace?.id;
     request.workspaceMetadataVersion = metadataVersion;
     request.workspaceMemberId = data.workspaceMemberId;
     request.userWorkspaceId = data.userWorkspaceId;

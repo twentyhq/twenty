@@ -104,7 +104,7 @@ export class RefreshTokenService {
   }
 
   async generateRefreshToken(
-    payload: Omit<RefreshTokenJwtPayload, 'type' | 'sub'>,
+    payload: Omit<RefreshTokenJwtPayload, 'type' | 'sub' | 'jti'>,
   ): Promise<AuthToken> {
     const secret = this.jwtWrapperService.generateAppSecret(
       'REFRESH',
@@ -131,13 +131,13 @@ export class RefreshTokenService {
       token: this.jwtWrapperService.sign(
         {
           ...payload,
+          sub: payload.userId,
           type: 'REFRESH',
+          jti: refreshToken.id,
         },
         {
           secret,
           expiresIn,
-          // Jwtid will be used to link RefreshToken entity to this token
-          jwtid: refreshToken.id,
         },
       ),
       expiresAt: refreshToken.expiresAt,

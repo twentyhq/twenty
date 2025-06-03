@@ -6,7 +6,7 @@ export type AuthContext = {
   user?: User | null | undefined;
   apiKey?: ApiKeyWorkspaceEntity | null | undefined;
   workspaceMemberId?: string;
-  workspace: Workspace;
+  workspace?: Workspace;
   userWorkspaceId?: string;
 };
 

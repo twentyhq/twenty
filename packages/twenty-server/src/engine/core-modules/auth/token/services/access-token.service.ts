@@ -16,7 +16,6 @@ import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.aut
 import {
   AccessTokenJwtPayload,
   AuthContext,
-  JwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';

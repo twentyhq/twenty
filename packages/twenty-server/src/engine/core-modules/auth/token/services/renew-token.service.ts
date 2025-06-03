@@ -47,10 +47,10 @@ export class RenewTokenService {
       },
     );
 
-    const accessToken = await this.accessTokenService.generateAccessToken(
-      user.id,
+    const accessToken = await this.accessTokenService.generateAccessToken({
+      userId: user.id,
       workspaceId,
-    );
+    });
     const refreshToken = await this.refreshTokenService.generateRefreshToken({
       userId: user.id,
       workspaceId,

@@ -17,6 +17,7 @@ import {
   JwtPayload,
   JwtAuthTokenType,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @Injectable()
 export class JwtWrapperService {
@@ -48,7 +49,7 @@ export class JwtWrapperService {
     type: JwtAuthTokenType,
     options?: JwtVerifyOptions,
   ) {
-    const payload = this.decode(token, {
+    const payload = this.decode<JwtPayload>(token, {
       json: true,
     });
 
@@ -66,28 +67,31 @@ export class JwtWrapperService {
 
     try {
       // TODO: Deprecate this once old API KEY tokens are no longer in use
-      if (!payload.type && !payload.workspaceId && type === 'ACCESS') {
+      if (!payload.type && !('workspaceId' in payload) && type === 'ACCESS') {
         return this.jwtService.verify(token, {
           ...options,
           secret: this.generateAppSecretLegacy(),
         });
       }
 
-      // Handle workspace-agnostic tokens
-      if (
-        payload.type === 'WORKSPACE_AGNOSTIC' &&
-        type === 'WORKSPACE_AGNOSTIC'
-      ) {
+      if (payload.type === 'WORKSPACE_AGNOSTIC') {
         return this.jwtService.verify(token, {
           ...options,
-          secret: this.generateAppSecret('WORKSPACE_AGNOSTIC'),
+          secret: this.generateAppSecret(type, payload.userId),
         });
       }
 
-      return this.jwtService.verify(token, {
-        ...options,
-        secret: this.generateAppSecret(type, payload.workspaceId),
-      });
+      if ('workspaceId' in payload) {
+        return this.jwtService.verify(token, {
+          ...options,
+          secret: this.generateAppSecret(type, payload.workspaceId),
+        });
+      }
+
+      throw new AuthException(
+        'Invalid token type',
+        AuthExceptionCode.INVALID_JWT_TOKEN_TYPE,
+      );
     } catch (error) {
       if (error instanceof jwt.TokenExpiredError) {
         throw new AuthException(
@@ -108,7 +112,7 @@ export class JwtWrapperService {
     }
   }
 
-  generateAppSecret(type: JwtAuthTokenType, workspaceId?: string): string {
+  generateAppSecret(type: JwtAuthTokenType, appSecretBody: string): string {
     const appSecret = this.twentyConfigService.get('APP_SECRET');
 
     if (!appSecret) {
@@ -116,7 +120,7 @@ export class JwtWrapperService {
     }
 
     return createHash('sha256')
-      .update(`${appSecret}${workspaceId}${type}`)
+      .update(`${appSecret}${appSecretBody}${type}`)
       .digest('hex');
   }
 

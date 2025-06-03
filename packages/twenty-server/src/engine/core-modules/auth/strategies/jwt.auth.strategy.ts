@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Strategy } from 'passport-jwt';
 import { Repository } from 'typeorm';
-import { isDefined } from 'twenty-shared/utils';
 
 import {
   AuthException,
@@ -14,7 +13,9 @@ import {
   AccessTokenJwtPayload,
   ApiKeyTokenJwtPayload,
   AuthContext,
+  FileTokenJwtPayload,
   JwtPayload,
+  WorkspaceAgnosticTokenJwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -23,6 +24,8 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
 import { userWorkspaceValidator } from 'src/engine/core-modules/user-workspace/user-workspace.validate';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { userValidator } from 'src/engine/core-modules/user/user.validate';
 
 @Injectable()
 export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -40,13 +43,20 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     // @ts-expect-error legacy noImplicitAny
     const secretOrKeyProviderFunction = async (_request, rawJwtToken, done) => {
       try {
-        const decodedToken = jwtWrapperService.decode(
-          rawJwtToken,
-        ) as JwtPayload;
-        const workspaceId = decodedToken.workspaceId;
+        const decodedToken = jwtWrapperService.decode<
+          | FileTokenJwtPayload
+          | AccessTokenJwtPayload
+          | WorkspaceAgnosticTokenJwtPayload
+        >(rawJwtToken);
+
+        const appSecretBody =
+          decodedToken.type === 'WORKSPACE_AGNOSTIC'
+            ? decodedToken.userId
+            : decodedToken.workspaceId;
+
         const secret = jwtWrapperService.generateAppSecret(
-          'ACCESS',
-          workspaceId,
+          decodedToken.type,
+          appSecretBody,
         );
 
         done(null, secret);
@@ -99,7 +109,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       );
     }
 
-    return { apiKey, workspace };
+    return { apiKey, workspace, workspaceMemberId: payload.workspaceMemberId };
   }
 
   private async validateAccessToken(
@@ -151,61 +161,52 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       ),
     );
 
-    return { user, workspace, userWorkspaceId: userWorkspace.id };
+    return {
+      user,
+      workspace,
+      userWorkspaceId: userWorkspace.id,
+      workspaceMemberId: payload.workspaceMemberId,
+    };
   }
 
   private async validateWorkspaceAgnosticToken(
-    payload: JwtPayload,
-  ): Promise<AuthContext> {
-    if (payload.type !== 'WORKSPACE_AGNOSTIC') {
-      throw new AuthException(
-        'Invalid token type',
-        AuthExceptionCode.UNAUTHENTICATED,
-      );
-    }
-
+    payload: WorkspaceAgnosticTokenJwtPayload,
+  ) {
     const user = await this.userRepository.findOne({
       where: { id: payload.sub },
     });
 
-    if (!user) {
-      throw new AuthException(
-        'User not found',
-        AuthExceptionCode.USER_NOT_FOUND,
-      );
-    }
+    userValidator.assertIsDefinedOrThrow(
+      user,
+      new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
+    );
 
     return { user };
   }
 
+  private isLegacyApiKeyPayload(
+    payload: JwtPayload,
+  ): payload is ApiKeyTokenJwtPayload {
+    return !payload.type && !('workspaceId' in payload);
+  }
+
   async validate(payload: JwtPayload): Promise<AuthContext> {
     // Support legacy api keys
-    if (
-      !payload.type &&
-      !('workspaceId' in payload) &&
-      'workspaceMemberId' in payload &&
-      isDefined(payload.workspaceMemberId)
-    ) {
-      return {
-        ...(await this.validateAPIKey(payload)),
-        workspaceMemberId: payload.workspaceMemberId,
-      };
+    if (payload.type === 'API_KEY' || this.isLegacyApiKeyPayload(payload)) {
+      return await this.validateAPIKey(payload);
     }
 
     if (payload.type === 'WORKSPACE_AGNOSTIC') {
       return await this.validateWorkspaceAgnosticToken(payload);
     }
 
-    if (payload.type === 'API_KEY') {
-      return {
-        ...(await this.validateAPIKey(payload)),
-        workspaceMemberId: payload.workspaceMemberId,
-      };
+    if (payload.type === 'ACCESS') {
+      return await this.validateAccessToken(payload);
     }
 
-    return {
-      ...(await this.validateAccessToken(payload)),
-      workspaceMemberId: payload.workspaceMemberId,
-    };
+    throw new AuthException(
+      'Invalid token',
+      AuthExceptionCode.INVALID_JWT_TOKEN_TYPE,
+    );
   }
 }
