@@ -21,12 +21,12 @@ export const EditableFilterDropdownButton = ({
   hotkeyScope,
 }: EditableFilterDropdownButtonProps) => {
   const { closeDropdown } = useDropdown(recordFilter.id);
+
   const { removeRecordFilter } = useRemoveRecordFilter();
-  const { setEditableFilterChipDropdownStates } =
-    useSetEditableFilterChipDropdownStates();
 
   const handleRemove = () => {
     closeDropdown();
+
     removeRecordFilter({ recordFilterId: recordFilter.id });
   };
 
@@ -37,6 +37,9 @@ export const EditableFilterDropdownButton = ({
       removeRecordFilter({ recordFilterId: recordFilter.id });
     }
   }, [recordFilter, removeRecordFilter]);
+
+  const { setEditableFilterChipDropdownStates } =
+    useSetEditableFilterChipDropdownStates();
 
   const handleFilterChipClick = () => {
     setEditableFilterChipDropdownStates(recordFilter);
