@@ -5,6 +5,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
@@ -39,6 +40,7 @@ export const FieldsCard = ({
     objectNameSingular,
   });
   const { objectMetadataItems } = useObjectMetadataItems();
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
     objectNameSingular,
@@ -80,15 +82,23 @@ export const FieldsCard = ({
         fieldMetadataItem.name === 'taskTargets'),
   );
 
-  const boxedRelationFieldMetadataItems = relationFieldMetadataItems?.filter(
-    (fieldMetadataItem) =>
-      !(
-        (objectNameSingular === CoreObjectNameSingular.Note &&
-          fieldMetadataItem.name === 'noteTargets') ||
-        (objectNameSingular === CoreObjectNameSingular.Task &&
-          fieldMetadataItem.name === 'taskTargets')
-      ),
-  );
+  const boxedRelationFieldMetadataItems = relationFieldMetadataItems
+    ?.filter(
+      (fieldMetadataItem) =>
+        !(
+          (objectNameSingular === CoreObjectNameSingular.Note &&
+            fieldMetadataItem.name === 'noteTargets') ||
+          (objectNameSingular === CoreObjectNameSingular.Task &&
+            fieldMetadataItem.name === 'taskTargets')
+        ),
+    )
+    ?.filter((fieldMetadataItem) => {
+      const objectPermission =
+        objectPermissionsByObjectMetadataId[
+          fieldMetadataItem.relationDefinition?.targetObjectMetadata.id
+        ];
+      return objectPermission?.canReadObjectRecords === true;
+    });
 
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId: objectRecordId,
