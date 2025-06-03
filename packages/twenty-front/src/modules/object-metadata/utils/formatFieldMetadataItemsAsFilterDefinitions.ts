@@ -13,7 +13,7 @@ export const getRelationObjectMetadataNameSingular = ({
 
 export const getFilterTypeFromFieldType = (
   fieldType: FieldMetadataType,
-): FilterableFieldType => {
+): FilterableFieldType | 'TS_VECTOR' => {
   switch (fieldType) {
     case FieldMetadataType.DATE_TIME:
       return 'DATE_TIME';
