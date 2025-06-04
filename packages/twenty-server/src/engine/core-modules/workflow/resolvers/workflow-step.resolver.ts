@@ -84,10 +84,12 @@ export class WorkflowStepResolver {
 
   @Mutation(() => WorkflowActionDTO)
   async updateWorkflowRunStep(
+    @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args('input')
     { workflowRunId, step }: UpdateWorkflowRunStepInput,
   ): Promise<WorkflowActionDTO> {
     await this.workflowRunWorkspaceService.updateWorkflowRunStep({
+      workspaceId,
       workflowRunId,
       step,
     });
