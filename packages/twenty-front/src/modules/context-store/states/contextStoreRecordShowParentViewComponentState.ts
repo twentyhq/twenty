@@ -6,6 +6,7 @@ import { createComponentStateV2 } from '@/ui/utilities/state/component-state/uti
 
 type RecordShowParentViewComponentState = {
   parentViewComponentId: string;
+  parentViewObjectNameSingular: string;
   parentViewFilterGroups: RecordFilterGroup[];
   parentViewFilters: RecordFilter[];
   parentViewSorts: RecordSort[];

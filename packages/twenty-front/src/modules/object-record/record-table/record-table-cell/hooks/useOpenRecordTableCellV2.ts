@@ -180,6 +180,7 @@ export const useOpenRecordTableCellV2 = (recordTableId: string) => {
             }),
             {
               parentViewComponentId: recordTableId,
+              parentViewObjectNameSingular: objectNameSingular,
               parentViewFilterGroups,
               parentViewFilters,
               parentViewSorts,
