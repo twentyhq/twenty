@@ -33,7 +33,7 @@ const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
         return theme.color.blue;
     }
   }};
-  height: 26px;
+  height: 24px;
   box-sizing: border-box;
   cursor: pointer;
   display: flex;
@@ -87,6 +87,10 @@ const StyledLabelKey = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
+const StyledValue = styled.span`
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+`;
+
 export type SortOrFilterChipVariant = 'default' | 'danger';
 
 type SortOrFilterChipProps = {
@@ -123,7 +127,7 @@ export const SortOrFilterChip = ({
         </StyledIcon>
       )}
       {labelKey && <StyledLabelKey>{labelKey}</StyledLabelKey>}
-      {labelValue}
+      <StyledValue>{labelValue}</StyledValue>
       <StyledDelete
         variant={variant}
         onClick={handleDeleteClick}
