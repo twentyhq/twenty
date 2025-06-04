@@ -36,9 +36,10 @@ export class FilePathGuard implements CanActivate {
       return false;
     }
 
-    const decodedPayload = await this.jwtWrapperService.decode<FileTokenJwtPayload>(fileSignature, {
-      json: true,
-    });
+    const decodedPayload =
+      await this.jwtWrapperService.decode<FileTokenJwtPayload>(fileSignature, {
+        json: true,
+      });
 
     request.workspaceId = decodedPayload.workspaceId;
 

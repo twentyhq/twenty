@@ -17,7 +17,6 @@ import {
   JwtPayload,
   JwtAuthTokenType,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @Injectable()
 export class JwtWrapperService {

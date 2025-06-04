@@ -6,7 +6,7 @@ import ms from 'ms';
 import { AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { LoginTokenJwtPayload, TransientTokenJwtPayload } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { TransientTokenJwtPayload } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @Injectable()
 export class TransientTokenService {
