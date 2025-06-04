@@ -24,6 +24,8 @@ export type SingleTabProps<T extends string = string> = {
   logo?: string;
 };
 
+type TabWidthsById = Record<string, number>;
+
 type TabListProps = {
   tabs: SingleTabProps[];
   loading?: boolean;
@@ -92,25 +94,32 @@ export const TabList = ({
     componentInstanceId,
   );
 
-  const [tabWidths, setTabWidths] = useState<number[]>([]);
+  const [tabWidthsById, setTabWidthsById] = useState<TabWidthsById>({});
   const [containerWidth, setContainerWidth] = useState(0);
   const [moreButtonWidth, setMoreButtonWidth] = useState(0);
 
   const initialActiveTabId = activeTabId || visibleTabs[0]?.id || '';
 
   const visibleTabCount = useMemo(() => {
-    if (tabWidths.length === 0 || containerWidth === 0) {
+    if (Object.keys(tabWidthsById).length === 0 || containerWidth === 0) {
       return visibleTabs.length;
     }
 
     const availableWidth = containerWidth - LEFT_PADDING - RIGHT_PADDING;
 
     let totalWidth = 0;
-    for (let i = 0; i < tabWidths.length; i++) {
-      const tabWidth = tabWidths[i];
+    for (let i = 0; i < visibleTabs.length; i++) {
+      const tab = visibleTabs[i];
+      const tabWidth = tabWidthsById[tab.id];
+
+      // Skip if width not measured yet
+      if (tabWidth === undefined) {
+        return visibleTabs.length;
+      }
+
       const gapsWidth = i > 0 ? GAP_WIDTH : 0;
       const potentialMoreButtonWidth =
-        i < tabWidths.length - 1 ? moreButtonWidth + GAP_WIDTH : 0;
+        i < visibleTabs.length - 1 ? moreButtonWidth + GAP_WIDTH : 0;
 
       totalWidth += tabWidth + gapsWidth;
 
@@ -119,7 +128,7 @@ export const TabList = ({
       }
     }
     return visibleTabs.length;
-  }, [tabWidths, containerWidth, moreButtonWidth, visibleTabs.length]);
+  }, [tabWidthsById, containerWidth, moreButtonWidth, visibleTabs]);
 
   const hiddenTabsCount = visibleTabs.length - visibleTabCount;
   const hasHiddenTabs = hiddenTabsCount > 0;
@@ -155,13 +164,13 @@ export const TabList = ({
   );
 
   const handleTabWidthChange = useCallback(
-    (index: number) => (dimensions: { width: number; height: number }) => {
-      setTabWidths((prev) => {
-        const newWidths = [...prev];
-
-        if (newWidths[index] !== dimensions.width) {
-          newWidths[index] = dimensions.width;
-          return newWidths;
+    (tabId: string) => (dimensions: { width: number; height: number }) => {
+      setTabWidthsById((prev) => {
+        if (prev[tabId] !== dimensions.width) {
+          return {
+            ...prev,
+            [tabId]: dimensions.width,
+          };
         }
         return prev;
       });
@@ -203,10 +212,10 @@ export const TabList = ({
 
         {visibleTabs.length > 1 && (
           <StyledHiddenMeasurement>
-            {visibleTabs.map((tab, index) => (
+            {visibleTabs.map((tab) => (
               <NodeDimension
                 key={tab.id}
-                onDimensionChange={handleTabWidthChange(index)}
+                onDimensionChange={handleTabWidthChange(tab.id)}
               >
                 <Tab
                   id={tab.id}
