@@ -119,9 +119,11 @@ export class RefreshTokenService {
       );
     }
 
+    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
+
     const refreshToken = this.appTokenRepository.create({
       ...payload,
-      expiresAt: addMilliseconds(new Date().getTime(), ms(expiresIn)),
+      expiresAt,
       type: AppTokenType.RefreshToken,
     });
 
@@ -133,14 +135,14 @@ export class RefreshTokenService {
           ...payload,
           sub: payload.userId,
           type: 'REFRESH',
-          jti: refreshToken.id,
         },
         {
           secret,
           expiresIn,
+          jwtid: refreshToken.id,
         },
       ),
-      expiresAt: refreshToken.expiresAt,
+      expiresAt,
     };
   }
 }

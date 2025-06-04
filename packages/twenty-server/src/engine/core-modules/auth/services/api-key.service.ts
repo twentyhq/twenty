@@ -33,7 +33,6 @@ export class ApiKeyService {
         sub: workspaceId,
         type: 'API_KEY',
         workspaceId,
-        jti: apiKeyId,
       },
       {
         secret,

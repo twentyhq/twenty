@@ -69,7 +69,7 @@ describe('LoginTokenService', () => {
         'LOGIN_TOKEN_EXPIRES_IN',
       );
       expect(jwtWrapperService.sign).toHaveBeenCalledWith(
-        { sub: email, workspaceId },
+        { sub: email, workspaceId, type: 'LOGIN' },
         { secret: mockSecret, expiresIn: mockExpiresIn },
       );
     });

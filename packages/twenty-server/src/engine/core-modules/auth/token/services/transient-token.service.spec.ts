@@ -72,8 +72,10 @@ describe('TransientTokenService', () => {
       expect(jwtWrapperService.sign).toHaveBeenCalledWith(
         {
           sub: workspaceMemberId,
+          type: 'LOGIN',
           userId,
           workspaceId,
+          workspaceMemberId,
         },
         expect.objectContaining({
           secret: 'mocked-secret',
@@ -90,6 +92,7 @@ describe('TransientTokenService', () => {
         sub: 'workspace-member-id',
         userId: 'user-id',
         workspaceId: 'workspace-id',
+        workspaceMemberId: 'workspace-member-id',
       };
 
       jest
@@ -100,7 +103,8 @@ describe('TransientTokenService', () => {
       const result = await service.verifyTransientToken(mockToken);
 
       expect(result).toEqual({
-        workspaceMemberId: mockPayload.sub,
+        workspaceMemberId: mockPayload.workspaceMemberId,
+        sub: mockPayload.sub,
         userId: mockPayload.userId,
         workspaceId: mockPayload.workspaceId,
       });

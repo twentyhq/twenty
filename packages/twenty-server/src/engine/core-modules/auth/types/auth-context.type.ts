@@ -40,7 +40,7 @@ export type RefreshTokenJwtPayload = CommonPropertiesJwtPayload & {
   type: 'REFRESH';
   workspaceId: string;
   userId: string;
-  jti: string;
+  jti?: string;
 };
 
 export type WorkspaceAgnosticTokenJwtPayload = CommonPropertiesJwtPayload & {
@@ -52,7 +52,7 @@ export type ApiKeyTokenJwtPayload = CommonPropertiesJwtPayload & {
   type: 'API_KEY';
   workspaceId: string;
   workspaceMemberId?: string;
-  jti: string;
+  jti?: string;
 };
 
 export type AccessTokenJwtPayload = CommonPropertiesJwtPayload & {
