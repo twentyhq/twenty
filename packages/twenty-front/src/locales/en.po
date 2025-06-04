@@ -378,6 +378,12 @@ msgstr "Added {beautifyPastDateRelative}"
 msgid "Added to blocklist"
 msgstr "Added to blocklist"
 
+#. js-lingui-id: Du6bPw
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Address"
+msgstr "Address"
+
 #. js-lingui-id: Eis4ey
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 msgid "Adjust the role-related settings"
@@ -606,6 +612,11 @@ msgstr "Are you sure that you want to change your billing interval? You will be 
 #~ msgid "Are you sure you want to assign this role?"
 #~ msgstr "Are you sure you want to assign this role?"
 
+#. js-lingui-id: mupq7U
+#: src/pages/settings/billing/CancelSubscriptionPlan.tsx
+msgid "Are you sure you want to cancel?"
+msgstr "Are you sure you want to cancel?"
+
 #. js-lingui-id: 8Y3Jbl
 #: src/modules/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction.tsx
 #~ msgid "Are you sure you want to delete these records? They can be recovered from the Command menu ({osControlSymbol} + K)."
@@ -730,6 +741,7 @@ msgstr "Average"
 
 #. js-lingui-id: iH8pgl
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
 msgid "Back"
 msgstr "Back"
 
@@ -742,7 +754,6 @@ msgstr "Back to content"
 #: src/pages/settings/SettingsBilling.tsx
 #: src/pages/settings/SettingsBilling.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Billing"
 msgstr "Billing"
 
@@ -750,6 +761,11 @@ msgstr "Billing"
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Blocklist"
 msgstr "Blocklist"
+
+#. js-lingui-id: HssMtJ
+#: src/modules/billing/hooks/useBillingPaymentProvidersMap.ts
+msgid "Boleto"
+msgstr "Bank slip"
 
 #. js-lingui-id: 2yl5lQ
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -829,10 +845,20 @@ msgstr "Cancel Plan"
 msgid "Cancel your subscription"
 msgstr "Cancel your subscription"
 
+#. js-lingui-id: GHEVpv
+#: src/modules/billing/hooks/useBillingPaymentProvidersMap.ts
+msgid "Cartão de crédito"
+msgstr "Credit Card"
+
 #. js-lingui-id: M1RLfx
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Catalan"
 msgstr "Catalan"
+
+#. js-lingui-id: V9PU36
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "CEP"
+msgstr "CEP"
 
 #. js-lingui-id: OfzMnb
 #: src/pages/settings/SettingsBilling.tsx
@@ -855,6 +881,11 @@ msgstr "Change Plan"
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Change subdomain?"
 msgstr "Change subdomain?"
+
+#. js-lingui-id: tGRbQa
+#: src/pages/settings/billing/ConfirmChangeSubscriptionPlan.tsx
+msgid "Change subscription plan"
+msgstr "Change subscription plan"
 
 #. js-lingui-id: b0h4XW
 #: src/pages/settings/SettingsBilling.tsx
@@ -897,12 +928,13 @@ msgid "Choose the format used to display date value"
 msgstr "Choose the format used to display date value"
 
 #. js-lingui-id: tjXxZj
-#: src/pages/onboarding/PaymentOptions.tsx
+#: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Choose your payment method"
 msgstr "Choose your payment method"
 
 #. js-lingui-id: y1elF1
-#: src/pages/onboarding/Plans.tsx
+#: src/pages/settings/billing/ChangeSubscriptionPlan.tsx
+#: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Choose your plan"
 msgstr "Choose your plan"
 
@@ -915,6 +947,11 @@ msgstr "Choose your provider"
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Choose your Trial"
 msgstr "Choose your Trial"
+
+#. js-lingui-id: 3wV73y
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "City"
+msgstr "City"
 
 #. js-lingui-id: xCJdfg
 #: src/modules/ui/input/components/internal/date/components/InternalDatePicker.tsx
@@ -1064,15 +1101,13 @@ msgid "Context"
 msgstr "Context"
 
 #. js-lingui-id: xGVfLh
-#: src/pages/onboarding/Plans.tsx
-#: src/pages/onboarding/PaymentSuccess.tsx
-#: src/pages/onboarding/PaymentOptions.tsx
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/pages/onboarding/CreateWorkspace.tsx
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx
 msgid "Continue"
 msgstr "Continue"
@@ -1198,6 +1233,11 @@ msgstr "Count true"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count unique values"
 msgstr "Count unique values"
+
+#. js-lingui-id: Md8EZY
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Cpf/Cnpj"
+msgstr "Cpf/Cnpj"
 
 #. js-lingui-id: hYgDIe
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
@@ -1920,7 +1960,7 @@ msgid "English"
 msgstr "English"
 
 #. js-lingui-id: /bfFKe
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/onboarding/components/OnboardingPlanCard.tsx
 msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
 msgstr "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
 
@@ -2376,8 +2416,8 @@ msgstr "Get the most out of your workspace by inviting your team."
 
 #. js-lingui-id: zSGbaR
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "Get your subscription"
-msgstr "Get your subscription"
+#~ msgid "Get your subscription"
+#~ msgstr "Get your subscription"
 
 #. js-lingui-id: 2GT3Hf
 #: src/modules/command-menu/components/CommandMenu.tsx
@@ -2588,6 +2628,11 @@ msgstr "Identity Provider"
 msgid "Identity Provider Metadata XML"
 msgstr "Identity Provider Metadata XML"
 
+#. js-lingui-id: HlNkTA
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Identy"
+msgstr "Identy"
+
 #. js-lingui-id: ZfP/Ap
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
 msgid "If this is unexpected, please verify your settings."
@@ -2661,6 +2706,11 @@ msgstr "Instances"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Integrations"
 msgstr "Integrations"
+
+#. js-lingui-id: 26GmDR
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Inter Bolepix charge data"
+msgstr "Inter Bolepix charge data"
 
 #. js-lingui-id: GNRDhm
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -2939,6 +2989,16 @@ msgstr "Launch"
 msgid "Layout"
 msgstr "Layout"
 
+#. js-lingui-id: Ae7Hr2
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Legal entity"
+msgstr "Legal entity"
+
+#. js-lingui-id: /2pITc
+#: src/modules/onboarding/hooks/useInterCustomerTypeOptions.ts
+msgid "Legal person"
+msgstr "Legal person"
+
 #. js-lingui-id: haJ2Hb
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
@@ -2977,8 +3037,6 @@ msgid "Loading..."
 msgstr "Loading..."
 
 #. js-lingui-id: FgAxTj
-#: src/pages/onboarding/Plans.tsx
-#: src/pages/onboarding/PaymentOptions.tsx
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Log out"
@@ -3160,6 +3218,7 @@ msgstr "Move right"
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
 msgid "Name"
 msgstr "Name"
 
@@ -3183,6 +3242,11 @@ msgstr "Name of your API key"
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Name of your workspace"
 msgstr "Name of your workspace"
+
+#. js-lingui-id: Rx5k5c
+#: src/modules/onboarding/hooks/useInterCustomerTypeOptions.ts
+msgid "Natural person"
+msgstr "Natural person"
 
 #. js-lingui-id: 2T8KCk
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -4090,6 +4154,7 @@ msgid "Russian"
 msgstr "Russian"
 
 #. js-lingui-id: tfDRzk
+#: src/pages/settings/billing/ChangeSubscriptionPlan.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
@@ -4762,6 +4827,11 @@ msgstr "Test Workflow"
 msgid "Text copied to clipboard"
 msgstr "Text copied to clipboard"
 
+#. js-lingui-id: jEOcvL
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "The address data as it will used as payer infromation."
+msgstr "The address data as it will used as payer infromation."
+
 #. js-lingui-id: 1xQkU9
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "The default country code for new phone numbers."
@@ -4803,6 +4873,11 @@ msgstr "The name of your Domain"
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "The name of your organization"
 msgstr "The name of your organization"
+
+#. js-lingui-id: hS1s+i
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "The name/social reason as it will used as payer infromation."
+msgstr "The name/social reason as it will used as payer infromation."
 
 #. js-lingui-id: L97sPr
 #: src/pages/not-found/NotFound.tsx
@@ -5020,6 +5095,11 @@ msgstr "Type"
 #: src/modules/command-menu/components/CommandMenuTopBar.tsx
 msgid "Type anything"
 msgstr "Type anything"
+
+#. js-lingui-id: VKRQFd
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "UF"
+msgstr "UF"
 
 #. js-lingui-id: V9+2pH
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx

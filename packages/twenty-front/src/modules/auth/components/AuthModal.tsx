@@ -14,13 +14,20 @@ type AuthModalProps = {
   children: React.ReactNode;
 };
 
-export const AuthModal = ({ children }: AuthModalProps) => (
-  <>
-    <AuthModalMountEffect />
-    <Modal modalId={AUTH_MODAL_ID} padding={'none'} modalVariant="primary">
-      <ScrollWrapper componentInstanceId="scroll-wrapper-modal-content">
-        <StyledContent>{children}</StyledContent>
-      </ScrollWrapper>
-    </Modal>
-  </>
-);
+export const AuthModal = ({ children }: AuthModalProps) => {
+  return (
+    <>
+      <AuthModalMountEffect />
+      <Modal
+        modalId={AUTH_MODAL_ID}
+        padding={'none'}
+        modalVariant="primary"
+        size="auto"
+      >
+        <ScrollWrapper componentInstanceId="scroll-wrapper-modal-content">
+          <StyledContent>{children}</StyledContent>
+        </ScrollWrapper>
+      </Modal>
+    </>
+  );
+};

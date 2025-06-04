@@ -15,6 +15,7 @@ import {
   IconCalendarEvent,
   IconColorSwatch,
   IconComponent,
+  IconCreditCard,
   IconCurrencyDollar,
   IconDoorEnter,
   IconFlask,
@@ -30,7 +31,6 @@ import {
   IconUserCircle,
   IconUsers,
   IconWebhook,
-  IconCreditCard,
 } from 'twenty-ui/display';
 import { SettingPermissionType } from '~/generated/graphql';
 
@@ -155,15 +155,15 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Billing`,
           path: SettingsPath.Billing,
           Icon: IconCurrencyDollar,
-          isHidden:
-            !isBillingEnabled ||
-            !permissionMap[SettingPermissionType.WORKSPACE],
+          isHidden: true,
+          // !isBillingEnabled ||
+          // !permissionMap[SettingPermissionType.WORKSPACE],
         },
         {
           label: 'Billing',
           path: SettingsPath.BillingPlan,
           Icon: IconCreditCard,
-          isHidden: !isBillingEnabled,
+          isHidden: true, // !isBillingEnabled,
         },
         {
           label: t`Roles`,

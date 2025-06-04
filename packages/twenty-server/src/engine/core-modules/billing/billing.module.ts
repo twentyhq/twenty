@@ -34,9 +34,14 @@ import { BillingWebhookInvoiceService } from 'src/engine/core-modules/billing/we
 import { BillingWebhookPriceService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-price.service';
 import { BillingWebhookProductService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-product.service';
 import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-subscription.service';
+import { InterWebhookSubscriptionService } from 'src/engine/core-modules/billing/webhooks/services/inter-webhook-subscription.service';
 import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
+import { FileModule } from 'src/engine/core-modules/file/file.module';
+import { InterInstanceService } from 'src/engine/core-modules/inter/services/inter-instance.service';
+import { InterService } from 'src/engine/core-modules/inter/services/inter.service';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -46,6 +51,8 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
   imports: [
     FeatureFlagModule,
     StripeModule,
+    FileUploadModule,
+    FileModule,
     DomainManagerModule,
     MessageQueueModule,
     PermissionsModule,
@@ -89,6 +96,10 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     BillingSyncPlansDataCommand,
     BillingAddWorkflowSubscriptionItemCommand,
     BillingUsageService,
+    // TODO: This is not the optimal solution, find a way to import InterModule here instead.
+    InterInstanceService,
+    InterService,
+    InterWebhookSubscriptionService,
   ],
   exports: [
     BillingSubscriptionService,

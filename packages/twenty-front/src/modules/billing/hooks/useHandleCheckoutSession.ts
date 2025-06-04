@@ -1,23 +1,38 @@
-import { SettingsPath } from '@/types/SettingsPath';
+import { useRedirect } from '@/domain-manager/hooks/useRedirect';
+import {
+  OnboardingPlanStep,
+  onboardingPlanStepState,
+} from '@/onboarding/states/onboardingPlanStepState';
+import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useState } from 'react';
+import { useRecoilState } from 'recoil';
 import {
   BillingPlanKey,
   SubscriptionInterval,
 } from '~/generated-metadata/graphql';
-import { useCheckoutSessionMutation } from '~/generated/graphql';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { useRedirect } from '@/domain-manager/hooks/useRedirect';
+import {
+  BillingPaymentProviders,
+  InterCreateChargeDto,
+  useCheckoutSessionMutation,
+} from '~/generated/graphql';
+import { getAppPath } from '~/utils/navigation/getAppPath';
+
+export type HandleCheckoutSessionFn = (
+  interChargeData?: InterCreateChargeDto,
+) => Promise<void>;
 
 export const useHandleCheckoutSession = ({
   recurringInterval,
   plan,
   requirePaymentMethod,
+  paymentProvider,
 }: {
   recurringInterval: SubscriptionInterval;
   plan: BillingPlanKey;
   requirePaymentMethod: boolean;
+  paymentProvider?: BillingPaymentProviders;
 }) => {
   const { redirect } = useRedirect();
 
@@ -27,14 +42,32 @@ export const useHandleCheckoutSession = ({
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleCheckoutSession = async () => {
+  const [onboardingPlanStep, setOnboardingPlanStep] = useRecoilState(
+    onboardingPlanStepState,
+  );
+
+  const handleCheckoutSession: HandleCheckoutSessionFn = async (
+    interChargeData,
+  ) => {
     setIsSubmitting(true);
+
+    if (
+      paymentProvider === BillingPaymentProviders.Inter &&
+      onboardingPlanStep === OnboardingPlanStep.Init
+    ) {
+      setOnboardingPlanStep(OnboardingPlanStep.InterChargeData);
+      setIsSubmitting(false);
+      return;
+    }
+
     const { data } = await checkoutSession({
       variables: {
         recurringInterval,
-        successUrlPath: getSettingsPath(SettingsPath.Billing),
+        successUrlPath: getAppPath(AppPath.PlanRequiredSuccess),
         plan,
         requirePaymentMethod,
+        paymentProvider,
+        interChargeData,
       },
     });
     setIsSubmitting(false);

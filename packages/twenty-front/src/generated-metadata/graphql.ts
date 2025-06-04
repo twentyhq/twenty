@@ -185,6 +185,12 @@ export type BillingMeteredProductUsageOutput = {
   usageQuantity: Scalars['Float']['output'];
 };
 
+/** The different billing payment providers available */
+export enum BillingPaymentProviders {
+  Inter = 'Inter',
+  Stripe = 'Stripe'
+}
+
 /** The different billing plans available */
 export enum BillingPlanKey {
   ENTERPRISE = 'ENTERPRISE',
@@ -203,6 +209,7 @@ export type BillingPlans = {
   __typename?: 'BillingPlans';
   id: Scalars['UUID']['output'];
   planId: Scalars['String']['output'];
+  planPrice: Scalars['Float']['output'];
   workspace: Workspace;
 };
 
@@ -1126,6 +1133,53 @@ export enum IntegrationType {
   WHATSAPP = 'WHATSAPP'
 }
 
+export type InterCreateChargeDto = {
+  address: Scalars['String']['input'];
+  cep: Scalars['String']['input'];
+  city: Scalars['String']['input'];
+  cpfCnpj: Scalars['String']['input'];
+  legalEntity: InterCustomerType;
+  name: Scalars['String']['input'];
+  stateUnity: InterCustomerUf;
+};
+
+/** Tipos de pessoa para o cliente Inter */
+export enum InterCustomerType {
+  FISICA = 'FISICA',
+  JURIDICA = 'JURIDICA'
+}
+
+/** Estados brasileiros para o cliente Inter */
+export enum InterCustomerUf {
+  AC = 'AC',
+  AL = 'AL',
+  AM = 'AM',
+  AP = 'AP',
+  BA = 'BA',
+  CE = 'CE',
+  DF = 'DF',
+  ES = 'ES',
+  GO = 'GO',
+  MA = 'MA',
+  MG = 'MG',
+  MS = 'MS',
+  MT = 'MT',
+  PA = 'PA',
+  PB = 'PB',
+  PE = 'PE',
+  PI = 'PI',
+  PR = 'PR',
+  RJ = 'RJ',
+  RN = 'RN',
+  RO = 'RO',
+  RR = 'RR',
+  RS = 'RS',
+  SC = 'SC',
+  SE = 'SE',
+  SP = 'SP',
+  TO = 'TO'
+}
+
 export type InterIntegration = {
   __typename?: 'InterIntegration';
   certificate?: Maybe<Scalars['String']['output']>;
@@ -1357,6 +1411,8 @@ export type MutationAuthorizeAppArgs = {
 
 
 export type MutationCheckoutSessionArgs = {
+  interChargeData?: InputMaybe<InterCreateChargeDto>;
+  paymentProvider?: BillingPaymentProviders;
   plan?: BillingPlanKey;
   recurringInterval: SubscriptionInterval;
   requirePaymentMethod?: Scalars['Boolean']['input'];
@@ -2082,7 +2138,6 @@ export type OnDbEventInput = {
 export enum OnboardingStatus {
   COMPLETED = 'COMPLETED',
   INVITE_TEAM = 'INVITE_TEAM',
-  PAYMENT_REQUIRED = 'PAYMENT_REQUIRED',
   PLAN_REQUIRED = 'PLAN_REQUIRED',
   PROFILE_CREATION = 'PROFILE_CREATION',
   SYNC_EMAIL = 'SYNC_EMAIL',
@@ -3545,6 +3600,7 @@ export type Workspace = {
   __typename?: 'Workspace';
   activationStatus: WorkspaceActivationStatus;
   allowImpersonation: Scalars['Boolean']['output'];
+  billingPlans: Array<BillingPlans>;
   billingSubscriptions: Array<BillingSubscription>;
   createdAt: Scalars['DateTime']['output'];
   creatorEmail?: Maybe<Scalars['String']['output']>;
