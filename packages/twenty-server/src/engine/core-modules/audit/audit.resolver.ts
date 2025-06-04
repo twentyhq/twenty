@@ -11,6 +11,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 import {
@@ -41,7 +42,7 @@ export class AuditResolver {
   async createObjectEvent(
     @Args()
     createObjectEventInput: CreateObjectEventInput,
-    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
+    @AuthWorkspace() workspace: Workspace | undefined,
     @AuthUser({ allowUndefined: true }) user: User | undefined,
   ) {
     if (!workspace) {
@@ -65,7 +66,7 @@ export class AuditResolver {
   }
 
   @Mutation(() => Analytics)
-  @UseGuards(WorkspaceAuthGuard)
+  @UseGuards(PublicEndpointGuard)
   async trackAnalytics(
     @Args()
     createAnalyticsInput: CreateAnalyticsInputV2,
