@@ -25,6 +25,10 @@ import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropd
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { recordShowParentViewComponentState } from '@/object-record/record-show/states/recordShowParentViewComponentState';
+import { computeRecordShowComponentInstanceId } from '@/object-record/record-show/utils/computeRecordShowComponentInstanceId';
+import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useSetRecordTableFocusPosition } from '@/object-record/record-table/hooks/internal/useSetRecordTableFocusPosition';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
@@ -51,7 +55,7 @@ export type OpenTableCellArgs = {
   isNavigating: boolean;
 };
 
-export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
+export const useOpenRecordTableCellV2 = (recordTableId: string) => {
   const clickOutsideListenerIsActivatedState =
     useRecoilComponentCallbackStateV2(
       clickOutsideListenerIsActivatedComponentState,
@@ -60,12 +64,12 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
   const { indexIdentifierUrl } = useRecordIndexContextOrThrow();
   const setCurrentTableCellInEditModePosition = useSetRecoilComponentStateV2(
     recordTableCellEditModePositionComponentState,
-    tableScopeId,
+    recordTableId,
   );
 
   const { setDragSelectionStartEnabled } = useDragSelect();
 
-  const leaveTableFocus = useLeaveTableFocus(tableScopeId);
+  const leaveTableFocus = useLeaveTableFocus(recordTableId);
   const { toggleClickOutside } = useClickOutsideListener(
     FOCUS_CLICK_OUTSIDE_LISTENER_ID,
   );
@@ -87,16 +91,26 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
   const { openFieldInput } = useOpenFieldInputEditMode();
 
   const { activateRecordTableRow, deactivateRecordTableRow } =
-    useActiveRecordTableRow(tableScopeId);
+    useActiveRecordTableRow(recordTableId);
 
-  const { unfocusRecordTableRow } = useFocusedRecordTableRow(tableScopeId);
+  const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
 
   const setIsRowFocusActive = useSetRecoilComponentStateV2(
     isRecordTableRowFocusActiveComponentState,
-    tableScopeId,
+    recordTableId,
   );
 
   const setFocusPosition = useSetRecordTableFocusPosition();
+
+  const currentRecordFilters = useRecoilComponentCallbackStateV2(
+    currentRecordFiltersComponentState,
+    recordTableId,
+  );
+
+  const currentRecordSorts = useRecoilComponentCallbackStateV2(
+    currentRecordSortsComponentState,
+    recordTableId,
+  );
 
   const openTableCell = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -143,6 +157,25 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
 
           if (openRecordIn === ViewOpenRecordInType.RECORD_PAGE) {
             navigate(indexIdentifierUrl(recordId));
+
+            const parentViewFilters = snapshot
+              .getLoadable(currentRecordFilters)
+              .getValue();
+
+            const parentViewSorts = snapshot
+              .getLoadable(currentRecordSorts)
+              .getValue();
+
+            set(
+              recordShowParentViewComponentState.atomFamily({
+                instanceId: computeRecordShowComponentInstanceId(recordId),
+              }),
+              {
+                parentViewComponentId: recordTableId,
+                parentViewFilters,
+                parentViewSorts,
+              },
+            );
           }
 
           if (openRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
