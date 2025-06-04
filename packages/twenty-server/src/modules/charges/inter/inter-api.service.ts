@@ -11,6 +11,7 @@ import { Repository } from 'typeorm';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { ChargeData, ChargeResponse } from 'src/modules/charges/types/inter';
 
 @Injectable()
@@ -177,7 +178,7 @@ export class InterApiService {
     workspaceId: string,
     seuNumero: string,
     cancelReason: string,
-  ): Promise<any> {
+  ): Promise<void> {
     const integration = await this.getIntegration(workspaceId);
     const token = await this.getAccessToken(workspaceId, this.SCOPES.WRITE);
     const httpsAgent = await this.getHttpsAgentFromIntegration(integration);
@@ -257,7 +258,7 @@ export class InterApiService {
 
   async issueChargeAndStoreAttachment(
     workspaceId: string,
-    attachmentRepository: Repository<any>,
+    attachmentRepository: Repository<AttachmentWorkspaceEntity>,
     data: ChargeData,
   ): Promise<ChargeResponse> {
     this.logger.log(

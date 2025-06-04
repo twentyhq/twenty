@@ -1,45 +1,34 @@
-import { SubTitle } from '@/auth/components/SubTitle';
-import { Title } from '@/auth/components/Title';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { OnboardingSubscriptionStatusCard } from '@/onboarding/components/OnboarindPaymentStatusCard';
 import { AppPath } from '@/types/AppPath';
 import { Modal } from '@/ui/layout/modal/components/Modal';
-import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { useTheme } from '@emotion/react';
+import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
+import { subscriptionStatusState } from '@/workspace/states/subscriptionStatusState';
+import { useQuery } from '@apollo/client';
 import styled from '@emotion/styled';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCheck } from 'twenty-ui/display';
-import { MainButton } from 'twenty-ui/input';
-import { RGBA } from 'twenty-ui/theme';
-import { AnimatedEaseIn } from 'twenty-ui/utilities';
-import { useGetCurrentUserLazyQuery } from '~/generated/graphql';
+import { Loader } from 'twenty-ui/feedback';
+import {
+  GetCurrentUserQuery,
+  useGetCurrentUserLazyQuery,
+} from '~/generated/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-
-const StyledCheckContainer = styled.div`
-  align-items: center;
+const StyledLoaderContainer = styled.div`
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  border: 2px solid ${(props) => props.color};
-  border-radius: ${({ theme }) => theme.border.radius.rounded};
-  box-shadow: ${(props) =>
-    props.color && `-4px 4px 0 -2px ${RGBA(props.color, 1)}`};
-  height: 36px;
-  width: 36px;
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
-`;
-
-const StyledButtonContainer = styled.div`
-  margin-top: ${({ theme }) => theme.spacing(8)};
+  min-height: 250px;
 `;
 
 export const PaymentSuccess = () => {
-  const theme = useTheme();
   const navigate = useNavigateApp();
-  const subscriptionStatus = useSubscriptionStatus();
+  const subscriptionStatus = useRecoilValue(subscriptionStatusState);
+
   const [getCurrentUser] = useGetCurrentUserLazyQuery();
+
   const setCurrentUser = useSetRecoilState(currentUserState);
-  const color =
-    theme.name === 'light' ? theme.grayScale.gray90 : theme.grayScale.gray10;
 
   const navigateWithSubscriptionCheck = async () => {
     if (isDefined(subscriptionStatus)) {
@@ -59,27 +48,35 @@ export const PaymentSuccess = () => {
     }
 
     throw new Error(
-      "We're waiting for a confirmation from our payment provider (Stripe).\n" +
+      "We're waiting for a confirmation from our payment provider.\n" +
         'Please try again in a few seconds, sorry.',
     );
   };
 
+  const { loading, refetch } = useQuery<GetCurrentUserQuery>(GET_CURRENT_USER, {
+    fetchPolicy: 'no-cache',
+    pollInterval: 10000, // Poll every 10 seconds
+    onCompleted: async (data) => {
+      const refreshedSubscriptionStatus =
+        data.currentUser.currentWorkspace?.currentBillingSubscription?.status;
+
+      if (isDefined(refreshedSubscriptionStatus)) {
+        await navigateWithSubscriptionCheck();
+      }
+    },
+  });
+
   return (
     <Modal.Content isVerticalCentered isHorizontalCentered>
-      <AnimatedEaseIn>
-        <StyledCheckContainer color={color}>
-          <IconCheck color={color} size={24} stroke={3} />
-        </StyledCheckContainer>
-      </AnimatedEaseIn>
-      <Title>All set!</Title>
-      <SubTitle>Your account has been activated.</SubTitle>
-      <StyledButtonContainer>
-        <MainButton
-          title="Start"
-          width={200}
-          onClick={navigateWithSubscriptionCheck}
+      {loading ? (
+        <StyledLoaderContainer>
+          <Loader />
+        </StyledLoaderContainer>
+      ) : (
+        <OnboardingSubscriptionStatusCard
+          {...{ navigateWithSubscriptionCheck, refetch }}
         />
-      </StyledButtonContainer>
+      )}
     </Modal.Content>
   );
 };

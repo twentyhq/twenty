@@ -1,5 +1,5 @@
-import React from 'react';
 import styled from '@emotion/styled';
+import React from 'react';
 
 import { Radio } from './Radio';
 
@@ -27,17 +27,19 @@ type CardPickerProps = {
   children: React.ReactNode;
   handleChange?: () => void;
   checked?: boolean;
+  name: string;
 };
 
 export const CardPicker = ({
   children,
   checked,
   handleChange,
+  name,
 }: CardPickerProps) => {
   return (
     <StyledSubscriptionCardContainer onClick={handleChange}>
       <StyledRadioContainer>
-        <Radio checked={checked} />
+        <Radio name={name} checked={checked} />
       </StyledRadioContainer>
       {children}
     </StyledSubscriptionCardContainer>

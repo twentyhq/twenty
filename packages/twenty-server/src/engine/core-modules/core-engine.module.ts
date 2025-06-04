@@ -68,6 +68,7 @@ import { ClientConfigModule } from './client-config/client-config.module';
 import { FileModule } from './file/file.module';
 import { IssuerModule } from './issuer/issuer.module';
 import { StripeModule } from './stripe/stripe.module';
+
 @Module({
   imports: [
     TwentyConfigModule.forRoot(),
@@ -99,7 +100,6 @@ import { StripeModule } from './stripe/stripe.module';
     StripeModule,
     BillingPlansModule,
     InterModule,
-    FocusNfeModule,
     IssuerModule,
     TwentyConfigModule,
     RedisClientModule,
@@ -113,6 +113,7 @@ import { StripeModule } from './stripe/stripe.module';
     ChatbotFlowModule,
     WorkspaceQueryRunnerModule,
     SubscriptionsModule,
+    FocusNfeModule,
     FileStorageModule.forRootAsync({
       useFactory: fileStorageModuleFactory,
       inject: [TwentyConfigService],
@@ -166,9 +167,9 @@ import { StripeModule } from './stripe/stripe.module';
     WorkspaceInvitationModule,
     WorkspaceSSOModule,
     StripeModule,
+    InterModule,
     OnboardingPlansModule,
     BillingPlansModule,
-    InterModule,
     FocusNfeModule,
     IssuerModule,
   ],

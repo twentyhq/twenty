@@ -14,6 +14,17 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. js-lingui-explicit-id
+#: src/emails/inter-billing-charge-file.email.tsx
+#: src/emails/inter-billing-charge-file.email.tsx
+msgid "Boleto Inter"
+msgstr "Boleto Inter"
+
+#. js-lingui-explicit-id
+#: src/emails/inter-billing-charge-file.email.tsx
+msgid "This is youre inter-billing charge file. It is only valid for the next {duration}."
+msgstr "This is youre inter-billing charge file. It is only valid for the next {duration}."
+
+#. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Suspended Workspace"
 msgstr "Suspended Workspace"
