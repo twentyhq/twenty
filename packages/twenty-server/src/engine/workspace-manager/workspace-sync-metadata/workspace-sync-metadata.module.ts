@@ -30,7 +30,7 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
     WorkspaceMigrationRunnerModule,
     TypeOrmModule.forFeature(
       [FieldMetadataEntity, ObjectMetadataEntity, WorkspaceMigrationEntity],
-      'metadata',
+      'core',
     ),
     DataSourceModule,
     TypeOrmModule.forFeature([Workspace, FeatureFlag], 'core'),
