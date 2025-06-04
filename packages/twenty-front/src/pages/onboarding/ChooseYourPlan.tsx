@@ -26,7 +26,9 @@ import {
   TWENTY_PRICING_LINK,
 } from 'twenty-ui/navigation';
 import { Entries } from 'type-fest';
+import { ArrayElement } from 'type-fest/source/internal';
 import {
+  BillingBaseProductPricesQuery,
   BillingPaymentProviders,
   BillingPlanKey,
   BillingPriceLicensedDto,
@@ -92,7 +94,13 @@ export const ChooseYourPlan = () => {
 
   const { billingPaymentProvidersMap } = useBillingPaymentProvidersMap();
 
-  const getPlanBenefits = (planKey: BillingPlanKey) => {
+  const getPlanBenefits = (
+    planKey: BillingPlanKey,
+    product: ArrayElement<
+      BillingBaseProductPricesQuery['plans']
+    >['baseProduct'],
+  ) => {
+    if (isDefined(product.marketingFeatures)) return product.marketingFeatures;
     if (planKey === BillingPlanKey.ENTERPRISE) {
       return [
         t`Full access`,
@@ -185,7 +193,7 @@ export const ChooseYourPlan = () => {
                                 price.recurringInterval ===
                                   billingCheckoutSession.interval,
                             )}
-                            benefits={getPlanBenefits(planKey)}
+                            benefits={getPlanBenefits(planKey, baseProduct)}
                             planName={baseProduct.name}
                             withCreditCardTrialPeriod={
                               !!withCreditCardTrialPeriod

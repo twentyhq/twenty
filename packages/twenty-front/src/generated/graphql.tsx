@@ -240,6 +240,7 @@ export type BillingProduct = {
   __typename?: 'BillingProduct';
   description: Scalars['String'];
   images?: Maybe<Array<Scalars['String']>>;
+  marketingFeatures?: Maybe<Array<Scalars['String']>>;
   metadata: BillingProductMetadata;
   name: Scalars['String'];
   prices?: Maybe<Array<BillingPriceUnionDto>>;
@@ -472,6 +473,13 @@ export type CreateBillingPlansInput = {
   workspaceId: Scalars['ID'];
 };
 
+export type CreateDialingPlanInput = {
+  cliente_id: Scalars['Int'];
+  nome: Scalars['String'];
+  plano_discagem_id: Scalars['Int'];
+  workspaceId: Scalars['ID'];
+};
+
 export type CreateDraftFromWorkflowVersionInput = {
   /** Workflow ID */
   workflowId: Scalars['String'];
@@ -535,6 +543,65 @@ export type CreateIssuerInput = {
 export type CreateOneFieldMetadataInput = {
   /** The record to create */
   field: CreateFieldInput;
+};
+
+export type CreatePabxCompanyInput = {
+  acao_limite_espaco: Scalars['Int'];
+  aviso_disco_email_alerta?: InputMaybe<Scalars['Int']>;
+  aviso_disco_email_urgente?: InputMaybe<Scalars['Int']>;
+  bairro?: InputMaybe<Scalars['String']>;
+  cel?: InputMaybe<Scalars['String']>;
+  cep?: InputMaybe<Scalars['String']>;
+  cidade?: InputMaybe<Scalars['String']>;
+  cliente_bloqueado?: InputMaybe<Scalars['Int']>;
+  cnpj?: InputMaybe<Scalars['String']>;
+  compl?: InputMaybe<Scalars['String']>;
+  cortar_prefixo_ramal?: InputMaybe<Scalars['Int']>;
+  dias_aviso_remocao_mailings?: InputMaybe<Scalars['Int']>;
+  dias_remocao_mailings?: InputMaybe<Scalars['Int']>;
+  email_cliente?: InputMaybe<Scalars['String']>;
+  end?: InputMaybe<Scalars['String']>;
+  espaco_disco?: InputMaybe<Scalars['Int']>;
+  estado?: InputMaybe<Scalars['String']>;
+  faixa_max?: InputMaybe<Scalars['Int']>;
+  faixa_min?: InputMaybe<Scalars['Int']>;
+  forma_arredondamento?: InputMaybe<Scalars['Int']>;
+  formato_numeros_contatos?: InputMaybe<Scalars['Int']>;
+  habilita_prefixo_sainte?: InputMaybe<Scalars['Int']>;
+  habilitar_aviso_disco_email?: InputMaybe<Scalars['Int']>;
+  login: Scalars['String'];
+  max_chamadas_simultaneas?: InputMaybe<Scalars['Int']>;
+  modulos?: InputMaybe<Scalars['String']>;
+  nome: Scalars['String'];
+  prefixo?: InputMaybe<Scalars['String']>;
+  prefixo_sainte?: InputMaybe<Scalars['Int']>;
+  qtd_ramais_max_pa: Scalars['Int'];
+  qtd_ramais_max_pabx: Scalars['Int'];
+  ramal_resp?: InputMaybe<Scalars['String']>;
+  razao_social?: InputMaybe<Scalars['String']>;
+  remover_mailings?: InputMaybe<Scalars['Int']>;
+  resp?: InputMaybe<Scalars['String']>;
+  salas_conf_num_max: Scalars['Int'];
+  senha: Scalars['String'];
+  tel?: InputMaybe<Scalars['String']>;
+  tipo: Scalars['Int'];
+  usuario_padrao_id?: InputMaybe<Scalars['Int']>;
+  workspaceId: Scalars['ID'];
+};
+
+export type CreatePabxTrunkInput = {
+  autentica_user_pass?: InputMaybe<Scalars['Int']>;
+  cliente_id: Scalars['Int'];
+  endereco: Scalars['String'];
+  host_dinamico?: InputMaybe<Scalars['Int']>;
+  insere_digitos?: InputMaybe<Scalars['String']>;
+  nome: Scalars['String'];
+  qtd_digitos_cortados?: InputMaybe<Scalars['Int']>;
+  senha?: InputMaybe<Scalars['String']>;
+  tarifas?: InputMaybe<Array<TarifaTroncoInput>>;
+  tronco_id: Scalars['Int'];
+  usuario?: InputMaybe<Scalars['String']>;
+  workspaceId: Scalars['ID'];
 };
 
 export type CreateRoleInput = {
@@ -865,6 +932,7 @@ export enum FieldMetadataType {
 
 export enum FileFolder {
   Attachment = 'Attachment',
+  InterCharge = 'InterCharge',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
   ServerlessFunction = 'ServerlessFunction',
@@ -1201,6 +1269,7 @@ export type Mutation = {
   createApprovedAccessDomain: ApprovedAccessDomain;
   createBillingPlans: BillingPlans;
   createDatabaseConfigVariable: Scalars['Boolean'];
+  createDialingPlan: PabxDialingPlanResponseType;
   createDraftFromWorkflowVersion: WorkflowVersion;
   createFocusNfeIntegration: FocusNfeIntegrationPublicDto;
   createInterIntegration: InterIntegration;
@@ -1212,6 +1281,8 @@ export type Mutation = {
   createOneObject: Object;
   createOneRole: Role;
   createOneServerlessFunction: ServerlessFunction;
+  createPabxCompany: PabxCompanyResponseType;
+  createPabxTrunk: PabxTrunkResponseType;
   createSAMLIdentityProvider: SetupSsoOutput;
   createSector: Sector;
   createStripeIntegration: StripeIntegration;
@@ -1261,6 +1332,7 @@ export type Mutation = {
   sendInvitations: SendInvitationsOutput;
   sendMessage: Scalars['Boolean'];
   sendTemplate: Scalars['Boolean'];
+  setupPabxEnvironment: SetupPabxEnvironmentResponseType;
   signUp: SignUpOutput;
   signUpInNewWorkspace: SignUpOutput;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
@@ -1285,6 +1357,7 @@ export type Mutation = {
   updateOneRole: Role;
   updateOneServerlessFunction: ServerlessFunction;
   updatePasswordViaResetToken: InvalidatePassword;
+  updateRoutingRules: UpdateRoutingRulesResponseType;
   updateSector: Sector;
   updateStripeIntegration: StripeIntegration;
   updateTelephony: Telephony;
@@ -1361,6 +1434,11 @@ export type MutationCreateDatabaseConfigVariableArgs = {
 };
 
 
+export type MutationCreateDialingPlanArgs = {
+  input: CreateDialingPlanInput;
+};
+
+
 export type MutationCreateDraftFromWorkflowVersionArgs = {
   input: CreateDraftFromWorkflowVersionInput;
 };
@@ -1406,6 +1484,16 @@ export type MutationCreateOneRoleArgs = {
 
 export type MutationCreateOneServerlessFunctionArgs = {
   input: CreateServerlessFunctionInput;
+};
+
+
+export type MutationCreatePabxCompanyArgs = {
+  input: CreatePabxCompanyInput;
+};
+
+
+export type MutationCreatePabxTrunkArgs = {
+  input: CreatePabxTrunkInput;
 };
 
 
@@ -1637,6 +1725,11 @@ export type MutationSendTemplateArgs = {
 };
 
 
+export type MutationSetupPabxEnvironmentArgs = {
+  input: SetupPabxEnvironmentInput;
+};
+
+
 export type MutationSignUpArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
@@ -1751,6 +1844,11 @@ export type MutationUpdateOneServerlessFunctionArgs = {
 export type MutationUpdatePasswordViaResetTokenArgs = {
   newPassword: Scalars['String'];
   passwordResetToken: Scalars['String'];
+};
+
+
+export type MutationUpdateRoutingRulesArgs = {
+  input: UpdateRoutingRulesInput;
 };
 
 
@@ -2015,6 +2113,85 @@ export type OnboardingStepSuccess = {
   success: Scalars['Boolean'];
 };
 
+export type PabxCompanyCreationDetailsInput = {
+  acao_limite_espaco: Scalars['Int'];
+  aviso_disco_email_alerta?: InputMaybe<Scalars['Int']>;
+  aviso_disco_email_urgente?: InputMaybe<Scalars['Int']>;
+  bairro?: InputMaybe<Scalars['String']>;
+  cel?: InputMaybe<Scalars['String']>;
+  cep?: InputMaybe<Scalars['String']>;
+  cidade?: InputMaybe<Scalars['String']>;
+  cliente_bloqueado?: InputMaybe<Scalars['Int']>;
+  cnpj?: InputMaybe<Scalars['String']>;
+  compl?: InputMaybe<Scalars['String']>;
+  cortar_prefixo_ramal?: InputMaybe<Scalars['Int']>;
+  dias_aviso_remocao_mailings?: InputMaybe<Scalars['Int']>;
+  dias_remocao_mailings?: InputMaybe<Scalars['Int']>;
+  email_cliente?: InputMaybe<Scalars['String']>;
+  end?: InputMaybe<Scalars['String']>;
+  espaco_disco?: InputMaybe<Scalars['Int']>;
+  estado?: InputMaybe<Scalars['String']>;
+  faixa_max?: InputMaybe<Scalars['Int']>;
+  faixa_min?: InputMaybe<Scalars['Int']>;
+  forma_arredondamento?: InputMaybe<Scalars['Int']>;
+  formato_numeros_contatos?: InputMaybe<Scalars['Int']>;
+  habilita_prefixo_sainte?: InputMaybe<Scalars['Int']>;
+  habilitar_aviso_disco_email?: InputMaybe<Scalars['Int']>;
+  login: Scalars['String'];
+  max_chamadas_simultaneas?: InputMaybe<Scalars['Int']>;
+  modulos?: InputMaybe<Scalars['String']>;
+  nome: Scalars['String'];
+  prefixo?: InputMaybe<Scalars['String']>;
+  prefixo_sainte?: InputMaybe<Scalars['Int']>;
+  qtd_ramais_max_pa: Scalars['Int'];
+  qtd_ramais_max_pabx: Scalars['Int'];
+  ramal_resp?: InputMaybe<Scalars['String']>;
+  razao_social?: InputMaybe<Scalars['String']>;
+  remover_mailings?: InputMaybe<Scalars['Int']>;
+  resp?: InputMaybe<Scalars['String']>;
+  salas_conf_num_max: Scalars['Int'];
+  senha: Scalars['String'];
+  tel?: InputMaybe<Scalars['String']>;
+  tipo: Scalars['Int'];
+  usuario_padrao_id?: InputMaybe<Scalars['Int']>;
+};
+
+export type PabxCompanyResponseType = {
+  __typename?: 'PabxCompanyResponseType';
+  message?: Maybe<Scalars['String']>;
+  success: Scalars['Boolean'];
+};
+
+export type PabxDialingPlanCreationDetailsInput = {
+  nome: Scalars['String'];
+  plano_discagem_id: Scalars['Int'];
+};
+
+export type PabxDialingPlanResponseType = {
+  __typename?: 'PabxDialingPlanResponseType';
+  message: Scalars['String'];
+  success: Scalars['Boolean'];
+};
+
+export type PabxTrunkCreationDetailsInput = {
+  autentica_user_pass?: InputMaybe<Scalars['Int']>;
+  endereco: Scalars['String'];
+  host_dinamico?: InputMaybe<Scalars['Int']>;
+  insere_digitos?: InputMaybe<Scalars['String']>;
+  nome: Scalars['String'];
+  qtd_digitos_cortados?: InputMaybe<Scalars['Int']>;
+  senha?: InputMaybe<Scalars['String']>;
+  tarifas?: InputMaybe<Array<TarifaTroncoInput>>;
+  tronco_id: Scalars['Int'];
+  usuario?: InputMaybe<Scalars['String']>;
+};
+
+export type PabxTrunkResponseType = {
+  __typename?: 'PabxTrunkResponseType';
+  message?: Maybe<Scalars['String']>;
+  success: Scalars['Boolean'];
+};
+
 export type PageInfo = {
   __typename?: 'PageInfo';
   /** The cursor of the last returned record. */
@@ -2194,6 +2371,11 @@ export type QueryGetAllBillingPlansArgs = {
 };
 
 
+export type QueryGetAllExtensionsArgs = {
+  workspaceId: Scalars['ID'];
+};
+
+
 export type QueryGetAllStripeIntegrationsArgs = {
   workspaceId: Scalars['String'];
 };
@@ -2265,6 +2447,26 @@ export type QueryGetStripeIntegrationByIdArgs = {
 };
 
 
+export type QueryGetTelephonyCallFlowsArgs = {
+  workspaceId: Scalars['ID'];
+};
+
+
+export type QueryGetTelephonyDidsArgs = {
+  workspaceId: Scalars['ID'];
+};
+
+
+export type QueryGetTelephonyPlansArgs = {
+  workspaceId: Scalars['ID'];
+};
+
+
+export type QueryGetTelephonyUrAsArgs = {
+  workspaceId: Scalars['ID'];
+};
+
+
 export type QueryGetTimelineCalendarEventsFromCompanyIdArgs = {
   companyId: Scalars['UUID'];
   page: Scalars['Int'];
@@ -2295,6 +2497,7 @@ export type QueryGetTimelineThreadsFromPersonIdArgs = {
 
 export type QueryGetUserSoftfoneArgs = {
   extNum: Scalars['String'];
+  workspaceId: Scalars['ID'];
 };
 
 
@@ -2375,6 +2578,12 @@ export enum QueueMetricsTimeRange {
   SevenDays = 'SevenDays',
   TwelveHours = 'TwelveHours'
 }
+
+export type RegionInput = {
+  regiao_id: Scalars['Int'];
+  regiao_nome: Scalars['String'];
+  roteamentos: Array<RoutingRuleInput>;
+};
 
 export type Relation = {
   __typename?: 'Relation';
@@ -2498,6 +2707,12 @@ export type Role = {
   workspaceMembers: Array<WorkspaceMember>;
 };
 
+export type RoutingRuleInput = {
+  prioridade: Scalars['Int'];
+  tronco_id?: InputMaybe<Scalars['Int']>;
+  tronco_nome: Scalars['String'];
+};
+
 export type RunWorkflowVersionInput = {
   /** Execution result in JSON format */
   payload?: InputMaybe<Scalars['JSON']>;
@@ -2600,6 +2815,7 @@ export type SendMessageInput = {
 
 export type SendTemplateInput = {
   agent?: InputMaybe<MessageAgent>;
+  from: Scalars['String'];
   integrationId: Scalars['String'];
   language: Scalars['String'];
   message: Scalars['String'];
@@ -2684,6 +2900,23 @@ export type SetupOidcSsoInput = {
   clientSecret: Scalars['String'];
   issuer: Scalars['String'];
   name: Scalars['String'];
+};
+
+export type SetupPabxEnvironmentInput = {
+  companyDetails: PabxCompanyCreationDetailsInput;
+  dialingPlanDetails: PabxDialingPlanCreationDetailsInput;
+  routingRulesData: UpdateRoutingRulesDataInput;
+  trunkDetails: PabxTrunkCreationDetailsInput;
+  workspaceId: Scalars['ID'];
+};
+
+export type SetupPabxEnvironmentResponseType = {
+  __typename?: 'SetupPabxEnvironmentResponseType';
+  companyId?: Maybe<Scalars['ID']>;
+  dialingPlanId?: Maybe<Scalars['ID']>;
+  message?: Maybe<Scalars['String']>;
+  success: Scalars['Boolean'];
+  trunkId?: Maybe<Scalars['ID']>;
 };
 
 export type SetupSamlSsoInput = {
@@ -2778,6 +3011,12 @@ export type SystemHealthService = {
   id: HealthIndicatorId;
   label: Scalars['String'];
   status: AdminPanelHealthServiceStatus;
+};
+
+export type TarifaTroncoInput = {
+  fracionamento: Scalars['String'];
+  regiao_id: Scalars['Int'];
+  tarifa: Scalars['Int'];
 };
 
 export type Telephony = {
@@ -3114,6 +3353,22 @@ export type UpdateRolePayload = {
   label?: InputMaybe<Scalars['String']>;
 };
 
+export type UpdateRoutingRulesDataInput = {
+  regioes: Array<RegionInput>;
+};
+
+export type UpdateRoutingRulesInput = {
+  cliente_id: Scalars['Int'];
+  dados: UpdateRoutingRulesDataInput;
+  plano_discagem_id: Scalars['Int'];
+};
+
+export type UpdateRoutingRulesResponseType = {
+  __typename?: 'UpdateRoutingRulesResponseType';
+  message: Scalars['String'];
+  success: Scalars['Boolean'];
+};
+
 export type UpdateSectorInput = {
   icon?: InputMaybe<Scalars['String']>;
   id: Scalars['String'];
@@ -3376,7 +3631,6 @@ export type Workspace = {
   __typename?: 'Workspace';
   activationStatus: WorkspaceActivationStatus;
   allowImpersonation: Scalars['Boolean'];
-  billingPlans: Array<BillingPlans>;
   billingSubscriptions: Array<BillingSubscription>;
   createdAt: Scalars['DateTime'];
   creatorEmail?: Maybe<Scalars['String']>;
@@ -3398,6 +3652,9 @@ export type Workspace = {
   isPublicInviteLinkEnabled: Scalars['Boolean'];
   logo?: Maybe<Scalars['String']>;
   metadataVersion: Scalars['Float'];
+  pabxCompanyId?: Maybe<Scalars['Float']>;
+  pabxDialingPlanId?: Maybe<Scalars['Float']>;
+  pabxTrunkId?: Maybe<Scalars['Float']>;
   stripeIntegrations: Array<StripeIntegration>;
   subdomain: Scalars['String'];
   updatedAt: Scalars['DateTime'];
@@ -3714,7 +3971,7 @@ export type ValidatePasswordResetTokenQuery = { __typename?: 'Query', validatePa
 export type BillingBaseProductPricesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type BillingBaseProductPricesQuery = { __typename?: 'Query', plans: Array<{ __typename?: 'BillingPlanOutput', planKey: BillingPlanKey, baseProduct: { __typename?: 'BillingProduct', name: string, prices?: Array<{ __typename?: 'BillingPriceLicensedDTO', unitAmount: number, stripePriceId: string, recurringInterval: SubscriptionInterval } | { __typename?: 'BillingPriceMeteredDTO' }> | null } }> };
+export type BillingBaseProductPricesQuery = { __typename?: 'Query', plans: Array<{ __typename?: 'BillingPlanOutput', planKey: BillingPlanKey, baseProduct: { __typename?: 'BillingProduct', name: string, marketingFeatures?: Array<string> | null, prices?: Array<{ __typename?: 'BillingPriceLicensedDTO', unitAmount: number, stripePriceId: string, recurringInterval: SubscriptionInterval } | { __typename?: 'BillingPriceMeteredDTO' }> | null } }> };
 
 export type BillingPortalSessionQueryVariables = Exact<{
   returnUrlPath?: InputMaybe<Scalars['String']>;
@@ -4222,22 +4479,30 @@ export type UpdateTelephonyMutationVariables = Exact<{
 
 export type UpdateTelephonyMutation = { __typename?: 'Mutation', updateTelephony: { __typename?: 'Telephony', id: any, memberId: string, numberExtension: string } };
 
-export type GetTelephonyCallFlowsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetTelephonyCallFlowsQueryVariables = Exact<{
+  workspaceId: Scalars['ID'];
+}>;
 
 
 export type GetTelephonyCallFlowsQuery = { __typename?: 'Query', getTelephonyCallFlows?: Array<{ __typename?: 'TelephonyCallFlow', fluxo_chamada_id?: string | null, fluxo_chamada_nome?: string | null }> | null };
 
-export type GetTelephonyPlansQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetTelephonyPlansQueryVariables = Exact<{
+  workspaceId: Scalars['ID'];
+}>;
 
 
 export type GetTelephonyPlansQuery = { __typename?: 'Query', getTelephonyPlans?: Array<{ __typename?: 'TelephonyDialingPlan', plano_discagem_id?: string | null, nome?: string | null, cliente_id?: string | null }> | null };
 
-export type GetTelephonyDidsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetTelephonyDidsQueryVariables = Exact<{
+  workspaceId: Scalars['ID'];
+}>;
 
 
 export type GetTelephonyDidsQuery = { __typename?: 'Query', getTelephonyDids?: Array<{ __typename?: 'TelephonyDids', did_id?: string | null, numero?: string | null }> | null };
 
-export type GetAllExtensionsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetAllExtensionsQueryVariables = Exact<{
+  workspaceId: Scalars['ID'];
+}>;
 
 
 export type GetAllExtensionsQuery = { __typename?: 'Query', getAllExtensions?: Array<{ __typename?: 'TelephonyExtension', codigo_incorporacao?: string | null, cliente_id?: string | null, codigo_area?: string | null, nome?: string | null, numero?: string | null, plano_discagem_id?: string | null, ramal_id?: string | null, caller_id_externo?: string | null, usuario_autenticacao?: string | null }> | null };
@@ -4249,13 +4514,16 @@ export type GetAllTelephonysQueryVariables = Exact<{
 
 export type GetAllTelephonysQuery = { __typename?: 'Query', findAllTelephony: Array<{ __typename?: 'Telephony', id: any, memberId: string, numberExtension: string, createdAt: string, updatedAt: string, SIPPassword?: string | null, areaCode?: string | null, blockExtension?: boolean | null, callerExternalID?: string | null, destinyMailboxAllCallsOrOffline?: string | null, destinyMailboxBusy?: string | null, dialingPlan?: string | null, emailForMailbox?: string | null, enableMailbox?: boolean | null, extensionAllCallsOrOffline?: string | null, extensionBusy?: string | null, extensionGroup?: string | null, extensionName?: string | null, externalNumberAllCallsOrOffline?: string | null, externalNumberBusy?: string | null, fowardAllCalls?: string | null, fowardBusyNotAvailable?: string | null, fowardOfflineWithoutService?: string | null, listenToCalls?: boolean | null, pullCalls?: string | null, recordCalls?: boolean | null, type?: string | null, advancedFowarding1?: string | null, advancedFowarding2?: string | null, advancedFowarding3?: string | null, advancedFowarding4?: string | null, advancedFowarding5?: string | null, advancedFowarding1Value?: string | null, advancedFowarding2Value?: string | null, advancedFowarding3Value?: string | null, advancedFowarding4Value?: string | null, advancedFowarding5Value?: string | null, workspace: { __typename?: 'Workspace', id: any } }> };
 
-export type GetTelephonyUrAsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetTelephonyUrAsQueryVariables = Exact<{
+  workspaceId: Scalars['ID'];
+}>;
 
 
 export type GetTelephonyUrAsQuery = { __typename?: 'Query', getTelephonyURAs?: Array<{ __typename?: 'Campaign', campanha_id?: string | null, nome?: string | null }> | null };
 
 export type GetUserSoftfoneQueryVariables = Exact<{
   extNum: Scalars['String'];
+  workspaceId: Scalars['ID'];
 }>;
 
 
@@ -5669,6 +5937,7 @@ export const BillingBaseProductPricesDocument = gql`
     planKey
     baseProduct {
       name
+      marketingFeatures
       prices {
         ... on BillingPriceLicensedDTO {
           unitAmount
@@ -8507,8 +8776,8 @@ export type UpdateTelephonyMutationHookResult = ReturnType<typeof useUpdateTelep
 export type UpdateTelephonyMutationResult = Apollo.MutationResult<UpdateTelephonyMutation>;
 export type UpdateTelephonyMutationOptions = Apollo.BaseMutationOptions<UpdateTelephonyMutation, UpdateTelephonyMutationVariables>;
 export const GetTelephonyCallFlowsDocument = gql`
-    query getTelephonyCallFlows {
-  getTelephonyCallFlows {
+    query getTelephonyCallFlows($workspaceId: ID!) {
+  getTelephonyCallFlows(workspaceId: $workspaceId) {
     fluxo_chamada_id
     fluxo_chamada_nome
   }
@@ -8527,10 +8796,11 @@ export const GetTelephonyCallFlowsDocument = gql`
  * @example
  * const { data, loading, error } = useGetTelephonyCallFlowsQuery({
  *   variables: {
+ *      workspaceId: // value for 'workspaceId'
  *   },
  * });
  */
-export function useGetTelephonyCallFlowsQuery(baseOptions?: Apollo.QueryHookOptions<GetTelephonyCallFlowsQuery, GetTelephonyCallFlowsQueryVariables>) {
+export function useGetTelephonyCallFlowsQuery(baseOptions: Apollo.QueryHookOptions<GetTelephonyCallFlowsQuery, GetTelephonyCallFlowsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetTelephonyCallFlowsQuery, GetTelephonyCallFlowsQueryVariables>(GetTelephonyCallFlowsDocument, options);
       }
@@ -8542,8 +8812,8 @@ export type GetTelephonyCallFlowsQueryHookResult = ReturnType<typeof useGetTelep
 export type GetTelephonyCallFlowsLazyQueryHookResult = ReturnType<typeof useGetTelephonyCallFlowsLazyQuery>;
 export type GetTelephonyCallFlowsQueryResult = Apollo.QueryResult<GetTelephonyCallFlowsQuery, GetTelephonyCallFlowsQueryVariables>;
 export const GetTelephonyPlansDocument = gql`
-    query getTelephonyPlans {
-  getTelephonyPlans {
+    query getTelephonyPlans($workspaceId: ID!) {
+  getTelephonyPlans(workspaceId: $workspaceId) {
     plano_discagem_id
     nome
     cliente_id
@@ -8563,10 +8833,11 @@ export const GetTelephonyPlansDocument = gql`
  * @example
  * const { data, loading, error } = useGetTelephonyPlansQuery({
  *   variables: {
+ *      workspaceId: // value for 'workspaceId'
  *   },
  * });
  */
-export function useGetTelephonyPlansQuery(baseOptions?: Apollo.QueryHookOptions<GetTelephonyPlansQuery, GetTelephonyPlansQueryVariables>) {
+export function useGetTelephonyPlansQuery(baseOptions: Apollo.QueryHookOptions<GetTelephonyPlansQuery, GetTelephonyPlansQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetTelephonyPlansQuery, GetTelephonyPlansQueryVariables>(GetTelephonyPlansDocument, options);
       }
@@ -8578,8 +8849,8 @@ export type GetTelephonyPlansQueryHookResult = ReturnType<typeof useGetTelephony
 export type GetTelephonyPlansLazyQueryHookResult = ReturnType<typeof useGetTelephonyPlansLazyQuery>;
 export type GetTelephonyPlansQueryResult = Apollo.QueryResult<GetTelephonyPlansQuery, GetTelephonyPlansQueryVariables>;
 export const GetTelephonyDidsDocument = gql`
-    query getTelephonyDids {
-  getTelephonyDids {
+    query getTelephonyDids($workspaceId: ID!) {
+  getTelephonyDids(workspaceId: $workspaceId) {
     did_id
     numero
   }
@@ -8598,10 +8869,11 @@ export const GetTelephonyDidsDocument = gql`
  * @example
  * const { data, loading, error } = useGetTelephonyDidsQuery({
  *   variables: {
+ *      workspaceId: // value for 'workspaceId'
  *   },
  * });
  */
-export function useGetTelephonyDidsQuery(baseOptions?: Apollo.QueryHookOptions<GetTelephonyDidsQuery, GetTelephonyDidsQueryVariables>) {
+export function useGetTelephonyDidsQuery(baseOptions: Apollo.QueryHookOptions<GetTelephonyDidsQuery, GetTelephonyDidsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetTelephonyDidsQuery, GetTelephonyDidsQueryVariables>(GetTelephonyDidsDocument, options);
       }
@@ -8613,8 +8885,8 @@ export type GetTelephonyDidsQueryHookResult = ReturnType<typeof useGetTelephonyD
 export type GetTelephonyDidsLazyQueryHookResult = ReturnType<typeof useGetTelephonyDidsLazyQuery>;
 export type GetTelephonyDidsQueryResult = Apollo.QueryResult<GetTelephonyDidsQuery, GetTelephonyDidsQueryVariables>;
 export const GetAllExtensionsDocument = gql`
-    query getAllExtensions {
-  getAllExtensions {
+    query getAllExtensions($workspaceId: ID!) {
+  getAllExtensions(workspaceId: $workspaceId) {
     codigo_incorporacao
     cliente_id
     codigo_area
@@ -8641,10 +8913,11 @@ export const GetAllExtensionsDocument = gql`
  * @example
  * const { data, loading, error } = useGetAllExtensionsQuery({
  *   variables: {
+ *      workspaceId: // value for 'workspaceId'
  *   },
  * });
  */
-export function useGetAllExtensionsQuery(baseOptions?: Apollo.QueryHookOptions<GetAllExtensionsQuery, GetAllExtensionsQueryVariables>) {
+export function useGetAllExtensionsQuery(baseOptions: Apollo.QueryHookOptions<GetAllExtensionsQuery, GetAllExtensionsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetAllExtensionsQuery, GetAllExtensionsQueryVariables>(GetAllExtensionsDocument, options);
       }
@@ -8730,8 +9003,8 @@ export type GetAllTelephonysQueryHookResult = ReturnType<typeof useGetAllTelepho
 export type GetAllTelephonysLazyQueryHookResult = ReturnType<typeof useGetAllTelephonysLazyQuery>;
 export type GetAllTelephonysQueryResult = Apollo.QueryResult<GetAllTelephonysQuery, GetAllTelephonysQueryVariables>;
 export const GetTelephonyUrAsDocument = gql`
-    query getTelephonyURAs {
-  getTelephonyURAs {
+    query getTelephonyURAs($workspaceId: ID!) {
+  getTelephonyURAs(workspaceId: $workspaceId) {
     campanha_id
     nome
   }
@@ -8750,10 +9023,11 @@ export const GetTelephonyUrAsDocument = gql`
  * @example
  * const { data, loading, error } = useGetTelephonyUrAsQuery({
  *   variables: {
+ *      workspaceId: // value for 'workspaceId'
  *   },
  * });
  */
-export function useGetTelephonyUrAsQuery(baseOptions?: Apollo.QueryHookOptions<GetTelephonyUrAsQuery, GetTelephonyUrAsQueryVariables>) {
+export function useGetTelephonyUrAsQuery(baseOptions: Apollo.QueryHookOptions<GetTelephonyUrAsQuery, GetTelephonyUrAsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetTelephonyUrAsQuery, GetTelephonyUrAsQueryVariables>(GetTelephonyUrAsDocument, options);
       }
@@ -8765,8 +9039,8 @@ export type GetTelephonyUrAsQueryHookResult = ReturnType<typeof useGetTelephonyU
 export type GetTelephonyUrAsLazyQueryHookResult = ReturnType<typeof useGetTelephonyUrAsLazyQuery>;
 export type GetTelephonyUrAsQueryResult = Apollo.QueryResult<GetTelephonyUrAsQuery, GetTelephonyUrAsQueryVariables>;
 export const GetUserSoftfoneDocument = gql`
-    query getUserSoftfone($extNum: String!) {
-  getUserSoftfone(extNum: $extNum) {
+    query getUserSoftfone($extNum: String!, $workspaceId: ID!) {
+  getUserSoftfone(extNum: $extNum, workspaceId: $workspaceId) {
     codigo_incorporacao
     cliente_id
     codigo_area
@@ -8795,6 +9069,7 @@ export const GetUserSoftfoneDocument = gql`
  * const { data, loading, error } = useGetUserSoftfoneQuery({
  *   variables: {
  *      extNum: // value for 'extNum'
+ *      workspaceId: // value for 'workspaceId'
  *   },
  * });
  */
