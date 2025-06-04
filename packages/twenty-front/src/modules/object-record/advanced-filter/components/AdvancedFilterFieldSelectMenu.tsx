@@ -25,6 +25,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useLingui } from '@lingui/react/macro';
 
 type AdvancedFilterFieldSelectMenuProps = {
   recordFilterId: string;
@@ -136,6 +137,8 @@ export const AdvancedFilterFieldSelectMenu = ({
     ),
   ];
 
+  const { t } = useLingui();
+
   return (
     <DropdownContent>
       <AdvancedFilterFieldSelectSearchInput />
@@ -146,7 +149,7 @@ export const AdvancedFilterFieldSelectMenu = ({
       >
         {shouldShowVisibleFields && (
           <>
-            <DropdownMenuSectionLabel label="Visible fields" />
+            <DropdownMenuSectionLabel label={t`Visible fields`} />
             <DropdownMenuItemsContainer scrollWrapperHeightAuto>
               {visibleColumnsFieldMetadataItems.map(
                 (visibleFieldMetadataItem, index) => (
@@ -170,7 +173,7 @@ export const AdvancedFilterFieldSelectMenu = ({
         {shouldShowSeparator && <DropdownMenuSeparator />}
         {shouldShowHiddenFields && (
           <>
-            <DropdownMenuSectionLabel label="Hidden fields" />
+            <DropdownMenuSectionLabel label={t`Hidden fields`} />
             <DropdownMenuItemsContainer scrollWrapperHeightAuto>
               {hiddenColumnsFieldMetadataItems.map(
                 (hiddenFieldMetadataItem, index) => (

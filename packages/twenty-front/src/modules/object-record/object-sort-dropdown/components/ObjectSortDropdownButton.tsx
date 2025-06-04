@@ -285,7 +285,7 @@ export const ObjectSortDropdownButton = ({
             />
             {shouldShowVisibleFields && (
               <>
-                <DropdownMenuSectionLabel label="Visible fields" />
+                <DropdownMenuSectionLabel label={t`Visible fields`} />
                 <DropdownMenuItemsContainer scrollWrapperHeightAuto>
                   {visibleFieldMetadataItems.map(
                     (visibleFieldMetadataItem, index) => (
@@ -314,7 +314,7 @@ export const ObjectSortDropdownButton = ({
             {shouldShowSeparator && <DropdownMenuSeparator />}
             {shouldShowHiddenFields && (
               <>
-                <DropdownMenuSectionLabel label="Hidden fields" />
+                <DropdownMenuSectionLabel label={t`Hidden fields`} />
                 <DropdownMenuItemsContainer scrollWrapperHeightAuto>
                   {hiddenFieldMetadataItems.map(
                     (hiddenFieldMetadataItem, index) => (

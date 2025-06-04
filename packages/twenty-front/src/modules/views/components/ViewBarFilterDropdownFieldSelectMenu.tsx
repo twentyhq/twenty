@@ -88,7 +88,7 @@ export const ViewBarFilterDropdownFieldSelectMenu = () => {
       >
         {shouldShowVisibleFields && (
           <>
-            <DropdownMenuSectionLabel label="Visible fields" />
+            <DropdownMenuSectionLabel label={t`Visible fields`} />
             <DropdownMenuItemsContainer scrollWrapperHeightAuto>
               {selectableVisibleFieldMetadataItems.map(
                 (visibleFieldMetadataItem) => (
@@ -104,7 +104,7 @@ export const ViewBarFilterDropdownFieldSelectMenu = () => {
         {shouldShowSeparator && <DropdownMenuSeparator />}
         {shouldShowHiddenFields && (
           <>
-            <DropdownMenuSectionLabel label="Hidden fields" />
+            <DropdownMenuSectionLabel label={t`Hidden fields`} />
             <DropdownMenuItemsContainer scrollWrapperHeightAuto>
               {selectableHiddenFieldMetadataItems.map(
                 (hiddenFieldMetadataItem) => (
