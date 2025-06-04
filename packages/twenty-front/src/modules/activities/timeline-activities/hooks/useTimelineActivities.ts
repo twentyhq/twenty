@@ -12,13 +12,42 @@ import { isDefined } from 'twenty-shared/utils';
 export const useTimelineActivities = (
   targetableObject: ActivityTargetableObject,
 ) => {
-  const targetableObjectFieldIdName = getActivityTargetObjectFieldIdName({
-    nameSingular: targetableObject.targetObjectNameSingular,
+  const { objectMetadataItem: timelineActivityObjectMetadata } =
+    useObjectMetadataItem({
+      objectNameSingular: CoreObjectNameSingular.TimelineActivity,
+    });
+
+  const { objectMetadataItem: targetObjectMetadata } = useObjectMetadataItem({
+    // Ensure targetObjectNameSingular is a valid CoreObjectNameSingular if it comes from a variable source
+    objectNameSingular:
+      targetableObject.targetObjectNameSingular as CoreObjectNameSingular,
   });
 
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.TimelineActivity,
-  });
+  let filter = {};
+  let skipQuery = false;
+
+  if (
+    targetableObject.targetObjectNameSingular === CoreObjectNameSingular.Product
+  ) {
+    if (isDefined(targetObjectMetadata)) {
+      filter = {
+        linkedRecordId: { eq: targetableObject.id },
+        linkedObjectMetadataId: { eq: targetObjectMetadata.id },
+      };
+    } else {
+      // If targetObjectMetadata for Product is not yet loaded, skip the query
+      skipQuery = true;
+    }
+  } else {
+    const targetableObjectFieldIdName = getActivityTargetObjectFieldIdName({
+      nameSingular: targetableObject.targetObjectNameSingular,
+    });
+    filter = {
+      [targetableObjectFieldIdName]: {
+        eq: targetableObject.id,
+      },
+    };
+  }
 
   const {
     records: timelineActivities,
@@ -26,18 +55,17 @@ export const useTimelineActivities = (
     fetchMoreRecords,
   } = useFindManyRecords<TimelineActivity>({
     objectNameSingular: CoreObjectNameSingular.TimelineActivity,
-    filter: {
-      [targetableObjectFieldIdName]: {
-        eq: targetableObject.id,
-      },
-    },
+    filter,
     orderBy: [
       {
         createdAt: 'DescNullsFirst',
       },
     ],
-    recordGqlFields: generateDepthOneRecordGqlFields({ objectMetadataItem }),
+    recordGqlFields: generateDepthOneRecordGqlFields({
+      objectMetadataItem: timelineActivityObjectMetadata,
+    }),
     fetchPolicy: 'cache-and-network',
+    skip: skipQuery, // Skip query if necessary
   });
 
   const activityIds = timelineActivities
