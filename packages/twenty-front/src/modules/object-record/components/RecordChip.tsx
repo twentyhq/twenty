@@ -27,6 +27,7 @@ export type RecordChipProps = {
   size?: ChipSize;
   isLabelHidden?: boolean;
   triggerEvent?: TriggerEventType;
+  onclick?: () => void;
 };
 
 export const RecordChip = ({
@@ -40,6 +41,7 @@ export const RecordChip = ({
   forceDisableClick = false,
   isLabelHidden = false,
   triggerEvent = 'MOUSE_DOWN',
+  onclick,
 }: RecordChipProps) => {
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
@@ -59,6 +61,7 @@ export const RecordChip = ({
           recordId: record.id,
           objectNameSingular,
         });
+        onclick?.();
       }
     : undefined;
 
