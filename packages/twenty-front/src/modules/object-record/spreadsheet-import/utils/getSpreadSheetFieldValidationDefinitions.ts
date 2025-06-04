@@ -1,6 +1,7 @@
 import { emailSchema } from '@/object-record/record-field/validation-schemas/emailSchema';
 import { SpreadsheetImportFieldValidationDefinition } from '@/spreadsheet-import/types';
-import { isString, isDate } from '@sniptt/guards';
+import { t } from '@lingui/core/macro';
+import { isDate, isString } from '@sniptt/guards';
 import { absoluteUrlSchema, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -9,7 +10,7 @@ const getNumberValidationDefinition = (
 ): SpreadsheetImportFieldValidationDefinition => ({
   rule: 'function',
   isValid: (value: string) => !isNaN(+value),
-  errorMessage: fieldName + ' must be a number',
+  errorMessage: `${fieldName} ${t`must be a number`}`,
   level: 'error',
 });
 
@@ -27,7 +28,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
         {
           rule: 'function',
           isValid: (value: string) => isValidUuid(value),
-          errorMessage: fieldName + ' is not valid',
+          errorMessage: `${fieldName} ${t`is not a valid UUID`}`,
           level: 'error',
         },
       ];
@@ -45,7 +46,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
             {
               rule: 'function',
               isValid: (email: string) => emailSchema.safeParse(email).success,
-              errorMessage: fieldName + ' is not valid email',
+              errorMessage: `${fieldName} ${t`is not a valid email`}`,
               level: 'error',
             },
           ];
@@ -66,7 +67,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
                   return false;
                 }
               },
-              errorMessage: fieldName + ' must be an array of valid emails',
+              errorMessage: `${fieldName} ${t`must be an array of valid emails`}`,
               level: 'error',
             },
           ];
@@ -83,7 +84,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
                 if (!isDefined(primaryLinkUrl)) return true;
                 return absoluteUrlSchema.safeParse(primaryLinkUrl).success;
               },
-              errorMessage: fieldName + ' is not valid URL',
+              errorMessage: `${fieldName} ${t`is not a valid URL`}`,
               level: 'error',
             },
           ];
@@ -103,9 +104,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
                   return false;
                 }
               },
-              errorMessage:
-                fieldName +
-                ' must be an array of object with valid url and label ({url: string|null, label: string|null})',
+              errorMessage: `${fieldName} ${t`must be an array of object with valid url and label (format: '[{"url":"valid.url", "label":"label value")}]'`}`,
               level: 'error',
             },
           ];
@@ -114,6 +113,17 @@ export const getSpreadSheetFieldValidationDefinitions = (
       }
 
     case FieldMetadataType.DATE_TIME:
+      return [
+        {
+          rule: 'function',
+          isValid: (value: string) => {
+            const date = new Date(value);
+            return isDate(date) && !isNaN(date.getTime());
+          },
+          errorMessage: `${fieldName} ${t`is not a valid date time (format: '2021-01-01T00:00:00Z')`}`,
+          level: 'error',
+        },
+      ];
     case FieldMetadataType.DATE:
       return [
         {
@@ -122,7 +132,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
             const date = new Date(value);
             return isDate(date) && !isNaN(date.getTime());
           },
-          errorMessage: fieldName + ' is not valid date',
+          errorMessage: `${fieldName} ${t`is not a valid date (format: '2021-01-01')`}`,
           level: 'error',
         },
       ];
@@ -133,7 +143,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
             {
               rule: 'regex',
               value: '^[0-9]+$',
-              errorMessage: fieldName + ' must contain only numbers',
+              errorMessage: `${fieldName} ${t`must contain only numbers`}`,
               level: 'error',
             },
           ];
@@ -162,9 +172,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
                   return false;
                 }
               },
-              errorMessage:
-                fieldName +
-                ' must be an array of object with valid phone, calling code and country code ({number: string, callingCode: string, countryCode: string})',
+              errorMessage: `${fieldName} ${t`must be an array of object with valid phone, calling code and country code (format: '[{"number":"123456789", "callingCode":"+33", "countryCode":"FR"}]')`}`,
               level: 'error',
             },
           ];
@@ -183,7 +191,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
               return false;
             }
           },
-          errorMessage: fieldName + ' is not valid JSON',
+          errorMessage: `${fieldName} ${t`is not a valid JSON`}`,
           level: 'error',
         },
       ];
@@ -202,7 +210,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
               return false;
             }
           },
-          errorMessage: fieldName + ' is not valid array',
+          errorMessage: `${fieldName} ${t`is not a valid array`}`,
           level: 'error',
         },
       ];
