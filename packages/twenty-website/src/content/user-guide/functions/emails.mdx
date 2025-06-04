@@ -58,6 +58,17 @@ Note that internal emails are not synced to the CRM, so your colleagues won't be
 
 <img src="/images/user-guide/emails/auto-creation.png" style={{width:'100%'}}/>
 
+### Multiple emails support
+
+You can add multiple email addresses to each contact, including a primary email and additional ones.
+When syncing emails and calendar events, they remain linked even if they come from additional email addresses.
+
+
+Note: For now, we only support linking an email or an event to one contact.
+If two contacts have the same email: one primary, and one additional, the email will be linked to the primary contact.
+If two contacts have the same additional email (edge case), the email will be linked to the oldest one.
+Soft deleted contacts are still linked to the email. Emails and events are rematched only when the contact is destroyed.
+
 ### Upcoming Features
 
 Soon, you will have the capability to send emails, view attachments, and request access to email content that you're not allowed to read.

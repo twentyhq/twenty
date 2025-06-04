@@ -1,7 +1,9 @@
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsRoleAssignmentConfirmationModalSelectedWorkspaceMember } from '@/settings/roles/role-assignment/types/SettingsRoleAssignmentConfirmationModalSelectedWorkspaceMember';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { useRecoilValue } from 'recoil';
 import { Avatar } from 'twenty-ui/display';
 
 const StyledSettingsCardContainer = styled.div`
@@ -17,7 +19,13 @@ export const SettingsRoleAssignmentConfirmationModalSubtitle = ({
   selectedWorkspaceMember,
   onRoleClick,
 }: SettingsRoleAssignmentConfirmationModalSubtitleProps) => {
-  const workspaceMemberName = selectedWorkspaceMember.name;
+  const currentWorkspaceMembers = useRecoilValue(currentWorkspaceMembersState);
+
+  const enrichedSelectedWorkspaceMember = currentWorkspaceMembers.find(
+    (member) => member.id === selectedWorkspaceMember.id,
+  );
+
+  const workspaceMemberName = `${enrichedSelectedWorkspaceMember?.name.firstName} ${enrichedSelectedWorkspaceMember?.name.lastName}`;
 
   return (
     <>
@@ -27,9 +35,9 @@ export const SettingsRoleAssignmentConfirmationModalSubtitle = ({
           title={selectedWorkspaceMember.role?.label || ''}
           Icon={
             <Avatar
-              avatarUrl={selectedWorkspaceMember.avatarUrl}
-              placeholderColorSeed={selectedWorkspaceMember.id}
-              placeholder={selectedWorkspaceMember.name}
+              avatarUrl={enrichedSelectedWorkspaceMember?.avatarUrl}
+              placeholderColorSeed={enrichedSelectedWorkspaceMember?.id}
+              placeholder={workspaceMemberName}
               size="md"
               type="rounded"
             />
