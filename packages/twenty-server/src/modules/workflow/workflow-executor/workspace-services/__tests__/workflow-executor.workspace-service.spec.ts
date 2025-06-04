@@ -423,7 +423,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
   describe('sendWorkflowNodeRunEvent', () => {
     it('should emit a billing event', () => {
-      service['sendWorkflowNodeRunEvent']();
+      service['sendWorkflowNodeRunEvent']('workspace-id');
 
       expect(scopedWorkspaceContextFactory.create).toHaveBeenCalled();
       expect(workspaceEventEmitter.emitCustomBatchEvent).toHaveBeenCalledWith(
@@ -435,25 +435,6 @@ describe('WorkflowExecutorWorkspaceService', () => {
           },
         ],
         'workspace-id',
-      );
-    });
-
-    it('should handle missing workspace ID', () => {
-      mockScopedWorkspaceContextFactory.create.mockReturnValueOnce({
-        workspaceId: null,
-      });
-
-      service['sendWorkflowNodeRunEvent']();
-
-      expect(workspaceEventEmitter.emitCustomBatchEvent).toHaveBeenCalledWith(
-        BILLING_FEATURE_USED,
-        [
-          {
-            eventName: BillingMeterEventName.WORKFLOW_NODE_RUN,
-            value: 1,
-          },
-        ],
-        '',
       );
     });
   });
