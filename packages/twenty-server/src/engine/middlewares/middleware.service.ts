@@ -44,11 +44,12 @@ export class MiddlewareService {
   public checkUnauthenticatedAccess(request: Request): boolean {
     const { body } = request;
 
+    const isUserUnauthenticated = !this.isTokenPresent(request);
     const isExcludedOperation =
       !body?.operationName ||
       this.excludedOperations.includes(body.operationName);
 
-    return isExcludedOperation;
+    return isUserUnauthenticated && isExcludedOperation;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
