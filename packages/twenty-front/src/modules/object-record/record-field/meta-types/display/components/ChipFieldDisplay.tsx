@@ -1,7 +1,6 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useChipFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useChipFieldDisplay';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useContext } from 'react';
@@ -18,11 +17,10 @@ export const ChipFieldDisplay = () => {
     maxWidth,
     triggerEvent,
   } = useChipFieldDisplay();
-  const { recordTableId } = useRecordTableContextOrThrow();
   const { cellPosition } = useContext(RecordTableCellContext);
 
-  const { activateRecordTableRow } = useActiveRecordTableRow(recordTableId);
-  const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
+  const { activateRecordTableRow } = useActiveRecordTableRow();
+  const { unfocusRecordTableRow } = useFocusedRecordTableRow();
   const onclick = () => {
     activateRecordTableRow(cellPosition.row);
     unfocusRecordTableRow();
