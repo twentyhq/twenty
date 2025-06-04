@@ -13,7 +13,6 @@ import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrap
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { INTERNAL_SERVER_ERROR } from 'src/engine/middlewares/constants/default-error-message.constant';
-import { EXCLUDED_MIDDLEWARE_OPERATIONS } from 'src/engine/middlewares/constants/excluded-middleware-operations.constant';
 import { GraphqlTokenValidationProxy } from 'src/engine/middlewares/utils/graphql-token-validation-utils';
 import {
   handleException,
@@ -33,23 +32,10 @@ export class MiddlewareService {
     private readonly jwtWrapperService: JwtWrapperService,
   ) {}
 
-  private excludedOperations = EXCLUDED_MIDDLEWARE_OPERATIONS;
-
   public isTokenPresent(request: Request): boolean {
     const token = this.jwtWrapperService.extractJwtFromRequest()(request);
 
     return !!token;
-  }
-
-  public checkUnauthenticatedAccess(request: Request): boolean {
-    const { body } = request;
-
-    const isUserUnauthenticated = !this.isTokenPresent(request);
-    const isExcludedOperation =
-      !body?.operationName ||
-      this.excludedOperations.includes(body.operationName);
-
-    return isUserUnauthenticated && isExcludedOperation;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -125,7 +111,11 @@ export class MiddlewareService {
     this.bindDataToRequestObject(data, request, metadataVersion);
   }
 
-  public async authenticateGraphqlRequest(request: Request) {
+  public async hydrateGraphqlRequest(request: Request) {
+    if (!this.isTokenPresent(request)) {
+      return;
+    }
+
     const graphqlTokenValidationProxy = new GraphqlTokenValidationProxy(
       this.accessTokenService,
     );

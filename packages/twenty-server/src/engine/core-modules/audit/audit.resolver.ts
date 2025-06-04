@@ -29,7 +29,7 @@ export class AuditResolver {
   async createPageview(
     @Args()
     createAnalyticsInput: CreateAnalyticsInputV2,
-    @AuthWorkspace() workspace: Workspace | undefined,
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
     @AuthUser({ allowUndefined: true }) user: User | undefined,
   ) {
     return this.trackAnalytics(createAnalyticsInput, workspace, user);
@@ -39,7 +39,7 @@ export class AuditResolver {
   async createObjectEvent(
     @Args()
     createObjectEventInput: CreateObjectEventInput,
-    @AuthWorkspace() workspace: Workspace | undefined,
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
     @AuthUser({ allowUndefined: true }) user: User | undefined,
   ) {
     if (!workspace) {
@@ -66,7 +66,7 @@ export class AuditResolver {
   async trackAnalytics(
     @Args()
     createAnalyticsInput: CreateAnalyticsInputV2,
-    @AuthWorkspace() workspace: Workspace | undefined,
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
     @AuthUser({ allowUndefined: true }) user: User | undefined,
   ) {
     const analyticsContext = this.auditService.createContext({
