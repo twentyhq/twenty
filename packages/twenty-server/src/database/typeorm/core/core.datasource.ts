@@ -17,11 +17,11 @@ export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
   entities:
     process.env.IS_BILLING_ENABLED === 'true'
       ? [
-          // `${isJest ? '' : 'dist/'}src/engine/core-modules/**/*.entity{.ts,.js}`,
+          `${isJest ? '' : 'dist/'}src/engine/core-modules/**/*.entity{.ts,.js}`,
           `${isJest ? '' : 'dist/'}src/engine/metadata-modules/**/*.entity{.ts,.js}`,
         ]
       : [
-          // `${isJest ? '' : 'dist/'}src/engine/core-modules/**/!(billing-*).entity{.ts,.js}`,
+          `${isJest ? '' : 'dist/'}src/engine/core-modules/**/!(billing-*).entity.{ts,js}`,
           `${isJest ? '' : 'dist/'}src/engine/metadata-modules/**/*.entity{.ts,.js}`,
         ],
   synchronize: false,
