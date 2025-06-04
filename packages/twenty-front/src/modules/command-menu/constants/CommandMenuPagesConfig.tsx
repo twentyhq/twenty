@@ -1,3 +1,4 @@
+import { CommandMenuTicketPage } from '@/chat/call-center/components/CommandMenuTicketPage';
 import { CommandMenuChatbotFlowEditStep } from '@/chatbot/components/CommandMenuChatbotFlowEditStep';
 import { CommandMenuChatbotFlowPage } from '@/chatbot/components/CommandMenuChatbotFlowPage';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
@@ -36,4 +37,5 @@ export const COMMAND_MENU_PAGES_CONFIG = new Map<
   [CommandMenuPages.SearchRecords, <CommandMenuSearchRecordsPage />],
   [CommandMenuPages.ChatbotFlow, <CommandMenuChatbotFlowPage />],
   [CommandMenuPages.ChatbotFlowStepEdit, <CommandMenuChatbotFlowEditStep />],
+  [CommandMenuPages.Ticket, <CommandMenuTicketPage />],
 ]);

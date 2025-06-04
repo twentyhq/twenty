@@ -108,8 +108,9 @@ const StyledMainContainer = styled.div`
   left: 40px;
   padding: ${({ theme }) => theme.spacing(2)};
   position: absolute;
-  top: 50px;
+  top: 270px;
   width: 130px;
+  z-index: 1;
 `;
 
 export const SelectServiceStatus = ({

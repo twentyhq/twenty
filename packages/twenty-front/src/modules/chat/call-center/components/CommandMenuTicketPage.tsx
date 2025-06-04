@@ -1,17 +1,18 @@
+import { Timeline } from '@/chat/call-center/components/Timeline';
+import { InfoSection } from '@/chat/internal/components/InfoSection';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Person } from '@/people/types/Person';
+import { RightDrawerStepListContainer } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepContainer';
 import styled from '@emotion/styled';
-
-import { Timeline } from '@/chat/call-center/components/Timeline';
-import { InfoSection } from '@/chat/internal/components/InfoSection';
 // eslint-disable-next-line no-restricted-imports
-import { TicketDataType } from '@/chat/types/TicketDataType';
-import { ITimeline } from '@/chat/types/WhatsappDocument';
+import { selectedChatState } from '@/chat/call-center/state/selectedChatState';
+import { ITimeline, statusEnum } from '@/chat/types/WhatsappDocument';
 import { formatDate } from '@/chat/utils/formatDate';
 import { format, parse } from 'date-fns';
 import { useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import {
   IconHelp,
   IconIdBadge2,
@@ -20,27 +21,9 @@ import {
   IconPlus,
   IconProgressCheck,
   IconUser,
-  IconX,
 } from 'twenty-ui/display';
-import { Button, IconButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
 import { v4 } from 'uuid';
-
-type DetailsProps = {
-  ticketData: TicketDataType;
-  setIsDetailsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
-const StyledMainContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  min-height: 100dvh;
-  position: fixed;
-  right: 0;
-  top: 0;
-  transition: transform 0.3s ease;
-  width: 320px;
-  z-index: 100;
-`;
 
 const StyledDiv = styled.div`
   display: flex;
@@ -55,12 +38,6 @@ const StyledTicketHeader = styled.div`
   font-size: ${({ theme }) => theme.font.size.lg};
   color: ${({ theme }) => theme.font.color.primary};
   font-weight: 600;
-`;
-
-const StyledIconButton = styled(IconButton)`
-  position: absolute;
-  right: ${({ theme }) => theme.spacing(2)};
-  top: ${({ theme }) => theme.spacing(13.75)} / 2;
 `;
 
 const StyledProfileData = styled.div`
@@ -103,10 +80,21 @@ const StyledTimelineDivider = styled.div`
   background: ${({ theme }) => theme.background.transparent.light};
 `;
 
-const StyledTimelineContent = styled.div``;
+export const CommandMenuTicketPage = () => {
+  const EMAIL_EXAMPLE = 'email@example.com';
 
-export const Details = ({ ticketData, setIsDetailsOpen }: DetailsProps) => {
-  // const { t } = useTranslation();
+  const selectedChat = useRecoilValue(selectedChatState);
+
+  const [name, setName] = useState<string>(selectedChat?.client.name ?? '');
+  const [email, setEmail] = useState<string>(EMAIL_EXAMPLE);
+  const [phone, setPhone] = useState<string>(
+    selectedChat?.client.phone ?? '5500912345678',
+  );
+  const [status, setStatus] = useState<statusEnum>(
+    selectedChat?.status ?? statusEnum.Pending,
+  );
+  const [sector, setSector] = useState<string>(selectedChat?.sector ?? '');
+
   const [formattedTimeline, setFormattedTimeline] = useState<string[]>([]);
 
   const { createOneRecord: createOneOpportunity } = useCreateOneRecord({
@@ -117,29 +105,27 @@ export const Details = ({ ticketData, setIsDetailsOpen }: DetailsProps) => {
     objectNameSingular: CoreObjectNameSingular.Person,
   });
 
-  // const { createOneRecord: createOneSupport } = useCreateOneRecord({
-  //   objectNameSingular: CoreObjectNameSingular.Support,
-  // });
+  const { createOneRecord: createOneSupport } = useCreateOneRecord({
+    objectNameSingular: CoreObjectNameSingular.Support,
+  });
 
   const { records } = useFindManyRecords<Person>({
     objectNameSingular: CoreObjectNameSingular.Person,
     filter: {
       or: [
         {
-          email: {
-            eq: ticketData.email,
+          additionalEmails: {
+            eq: email,
           },
         },
         {
-          phone: {
-            eq: ticketData.phone,
+          phones: {
+            eq: phone,
           },
         },
       ],
     },
   });
-
-  const [firstName, lastName = ''] = ticketData.name.split(' ', 2);
 
   const handleAddButtonClick = async () => {
     let personId: string | undefined;
@@ -147,14 +133,23 @@ export const Details = ({ ticketData, setIsDetailsOpen }: DetailsProps) => {
     if (records.length > 0) {
       personId = records[0].id;
     } else {
+      const rawPhone = phone || '';
+      const callingCode = rawPhone.slice(0, 2);
+      const phoneNumber = rawPhone.slice(2);
+
       const newPerson = await createOnePerson({
         id: v4(),
         name: {
-          firstName: firstName,
-          lastName: lastName,
+          firstName: name,
+          lastName: '',
         },
-        email: ticketData.email,
-        phone: ticketData.phone,
+        emails: { primaryEmail: email },
+        phones: {
+          primaryPhoneNumber: phoneNumber,
+          primaryPhoneCountryCode: 'BR',
+          primaryPhoneCallingCode: `+${callingCode}`,
+          additionalPhones: null,
+        },
         position: 'first',
       });
 
@@ -163,22 +158,29 @@ export const Details = ({ ticketData, setIsDetailsOpen }: DetailsProps) => {
 
     createOneOpportunity({
       id: v4(),
-      name: ticketData.name,
+      name: name,
       position: 'first',
       pointOfContactId: personId,
     });
   };
 
   const handleOpenSupportTicket = async () => {
-    // TO DO: Implement functionality to open support ticket
-    console.log('Open support ticket');
-    // createOneSupport({
-    //   id: v4(),
-    //   name: ticketData.name,
-    //   email: ticketData.email,
-    //   phone: ticketData.phone,
-    //   position: 'first',
-    // });
+    const rawPhone = phone || '';
+    const callingCode = rawPhone.slice(0, 2);
+    const phoneNumber = rawPhone.slice(2);
+
+    await createOneSupport({
+      id: v4(),
+      name: name,
+      emails: { primaryEmail: email, additionalEmails: null },
+      phones: {
+        primaryPhoneNumber: phoneNumber,
+        primaryPhoneCountryCode: 'BR',
+        primaryPhoneCallingCode: `+${callingCode}`,
+        additionalPhones: null,
+      },
+      position: 'first',
+    });
   };
 
   const getUniqueFormattedDates = (timeline: ITimeline[]) => {
@@ -188,14 +190,24 @@ export const Details = ({ ticketData, setIsDetailsOpen }: DetailsProps) => {
   };
 
   useEffect(() => {
-    const dates = getUniqueFormattedDates(ticketData.timeline);
-    setFormattedTimeline(dates);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
+    if (selectedChat) {
+      setName(selectedChat.client.name || '');
+      setEmail(EMAIL_EXAMPLE);
+      setPhone(selectedChat.client.phone || '');
+      setStatus(selectedChat.status || '');
+      setSector(selectedChat.sector || '');
+
+      const dates = getUniqueFormattedDates(selectedChat.timeline ?? []);
+      setFormattedTimeline(dates);
+    }
+  }, [selectedChat]);
 
   const getEventsByDate = (date: string) => {
-    return ticketData.timeline.filter(
-      (item) => formatDate(item.date).date === date,
+    return (
+      selectedChat?.timeline.filter(
+        (item) => formatDate(item.date).date === date,
+      ) ?? []
     );
   };
 
@@ -205,46 +217,43 @@ export const Details = ({ ticketData, setIsDetailsOpen }: DetailsProps) => {
   };
 
   return (
-    <StyledMainContainer style={{ height: '90%', overflow: 'auto' }}>
+    <RightDrawerStepListContainer>
       <StyledDiv>
         <StyledTicketHeader>{'Service Data'}</StyledTicketHeader>
-        <StyledIconButton
-          Icon={IconX}
-          variant="tertiary"
-          accent="default"
-          onClick={() => setIsDetailsOpen(false)}
-        />
       </StyledDiv>
       <StyledProfileData>
         <InfoSection
           Icon={IconUser}
           title={'Name'}
-          data={ticketData.name}
           type={'text'}
+          value={name}
+          onTextChange={(newText) => setName(newText)}
         />
         <InfoSection
           Icon={IconMail}
           title={'Email'}
-          data={ticketData.email}
           type={'text'}
+          value={email}
+          onTextChange={(newText) => setEmail(newText)}
         />
         <InfoSection
           Icon={IconPhone}
           title={'Phone'}
-          data={ticketData.phone}
           type={'text'}
+          value={phone}
+          onTextChange={(newText) => setPhone(newText)}
         />
         <InfoSection
           Icon={IconProgressCheck}
           title={'Status'}
           type={'select'}
-          data={ticketData.status}
+          value={status}
         />
         <InfoSection
           Icon={IconIdBadge2}
           title={'Sector'}
           type={'select'}
-          data={ticketData.sector}
+          value={sector}
         />
       </StyledProfileData>
       <StyledButtonsContainer>
@@ -276,11 +285,11 @@ export const Details = ({ ticketData, setIsDetailsOpen }: DetailsProps) => {
             <StyledTimelineTitle>{formatMonthYear(date)}</StyledTimelineTitle>
             <StyledTimelineDivider />
           </StyledTimelineDividerContainer>
-          <StyledTimelineContent>
+          <div>
             <Timeline data={getEventsByDate(date)} />
-          </StyledTimelineContent>
+          </div>
         </div>
       ))}
-    </StyledMainContainer>
+    </RightDrawerStepListContainer>
   );
 };

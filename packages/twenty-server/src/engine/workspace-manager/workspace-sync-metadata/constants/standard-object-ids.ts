@@ -57,4 +57,5 @@ export const STANDARD_OBJECT_IDS = {
   whatsappIntegration: 'a88de77d-7078-4591-a22b-f7df762c4e65',
   product: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c63',
   workflowAutomatedTrigger: '20202020-3319-4234-a34c-7f3b9d2e4d1f',
+  support: '7bd330f2-29fa-4191-ae86-10554ca66048',
 };

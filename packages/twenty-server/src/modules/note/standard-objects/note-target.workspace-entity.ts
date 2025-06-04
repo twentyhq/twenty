@@ -1,8 +1,8 @@
 import { msg } from '@lingui/core/macro';
 
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
@@ -19,6 +19,7 @@ import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/com
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { SupportWorkspaceEntity } from 'src/modules/support/support.workspace-entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.noteTarget,
@@ -93,6 +94,22 @@ export class NoteTargetWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('opportunity')
   opportunityId: string | null;
+
+  @WorkspaceRelation({
+    standardId: NOTE_TARGET_STANDARD_FIELD_IDS.support,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Support`,
+    description: msg`NoteTarget support`,
+    icon: 'IconBuildingSkyscraper',
+    inverseSideTarget: () => SupportWorkspaceEntity,
+    inverseSideFieldKey: 'noteTargets',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  support: Relation<SupportWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('support')
+  supportId: string | null;
 
   @WorkspaceDynamicRelation({
     type: RelationType.MANY_TO_ONE,
