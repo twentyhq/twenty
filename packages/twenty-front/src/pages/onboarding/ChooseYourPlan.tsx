@@ -31,6 +31,8 @@ import {
   useBillingBaseProductPricesQuery,
 } from '~/generated/graphql';
 
+import { IconCheck } from 'twenty-ui/display';
+
 const StyledChoosePlanCardContainer = styled.div`
   display: flex;
   width: 500px;
@@ -82,6 +84,30 @@ const StyledChooseYourPlanPlaceholder = styled.div`
   height: 566px;
 `;
 
+const StyledBenefitsContainer = styled.div`
+  background-color: ${({ theme }) => theme.background.secondary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(3)};
+  width: 100%;
+`;
+
+const StyledBenefitCard = styled.div`
+  box-sizing: border-box;
+  display: flex;
+  width: 100%;
+  gap: 16px;
+`;
+
+type PlansQueryBillingBaseProduct = ArrayElement<
+  BillingBaseProductPricesQuery['plans']
+>['baseProduct'];
+
 export const ChooseYourPlan = () => {
   const billing = useRecoilValue(billingState);
   const { t } = useLingui();
@@ -98,11 +124,17 @@ export const ChooseYourPlan = () => {
 
   const { billingPaymentProvidersMap } = useBillingPaymentProvidersMap();
 
+  const getCurrentSelectedPlan = (planKey: BillingPlanKey) => {
+    const plan = plans?.plans.find(
+      (plan) => plan.planKey === planKey,
+    )?.baseProduct;
+
+    return plan;
+  };
+
   const getPlanBenefits = (
     planKey: BillingPlanKey,
-    product: ArrayElement<
-      BillingBaseProductPricesQuery['plans']
-    >['baseProduct'],
+    product: PlansQueryBillingBaseProduct,
   ) => {
     if (isDefined(product.marketingFeatures)) return product.marketingFeatures;
     if (planKey === BillingPlanKey.ENTERPRISE) {
@@ -197,7 +229,6 @@ export const ChooseYourPlan = () => {
                                 price.recurringInterval ===
                                   billingCheckoutSession.interval,
                             )}
-                            benefits={getPlanBenefits(planKey, baseProduct)}
                             planName={baseProduct.name}
                             withCreditCardTrialPeriod={
                               !!withCreditCardTrialPeriod
@@ -213,6 +244,23 @@ export const ChooseYourPlan = () => {
                       </>
                     ))}
                   </StyledChoosePlanCardContainer>
+                  {isDefined(
+                    getCurrentSelectedPlan(billingCheckoutSession.plan),
+                  ) && (
+                    <StyledBenefitsContainer>
+                      {getPlanBenefits(
+                        billingCheckoutSession.plan,
+                        getCurrentSelectedPlan(
+                          billingCheckoutSession.plan,
+                        ) as PlansQueryBillingBaseProduct,
+                      ).map((benefit) => (
+                        <StyledBenefitCard key={benefit}>
+                          <IconCheck size={16} />
+                          {benefit}
+                        </StyledBenefitCard>
+                      ))}
+                    </StyledBenefitsContainer>
+                  )}
                   <Title noMarginTop>{t`Choose your payment method`}</Title>
                   <StyledChooseProviderContainer>
                     {(

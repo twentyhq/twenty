@@ -3,7 +3,6 @@ import { t } from '@lingui/core/macro';
 import { CardPicker } from 'twenty-ui/input';
 
 import { SubTitle } from '@/auth/components/SubTitle';
-import { SubscriptionBenefit } from '@/billing/components/SubscriptionBenefit';
 import { SubscriptionPrice } from '@/billing/components/SubscriptionPrice';
 import { TrialCard } from '@/billing/components/TrialCard';
 
@@ -28,21 +27,10 @@ const StyledSubscriptionContainer = styled.div<{
 
 const StyledSubscriptionPriceContainer = styled.div`
   align-items: center;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
   flex-direction: column;
   margin: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(3)}
     0 ${({ theme }) => theme.spacing(4)};
-  padding-bottom: ${({ theme }) => theme.spacing(3)};
-`;
-
-const StyledBenefitsContainer = styled.div`
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: 16px;
-  padding: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledChooseTrialContainer = styled.div`
@@ -54,7 +42,6 @@ const StyledChooseTrialContainer = styled.div`
 `;
 
 type OnboardingPlanCardProps = {
-  benefits: string[];
   planName?: string;
   productPrice?: BillingPriceLicensedDto;
   withCreditCardTrialPeriod?: boolean;
@@ -63,7 +50,6 @@ type OnboardingPlanCardProps = {
 };
 
 export const OnboardingPlanCard = ({
-  benefits,
   productPrice,
   planName,
   withCreditCardTrialPeriod = false,
@@ -108,11 +94,6 @@ export const OnboardingPlanCard = ({
             price={(productPrice?.unitAmount || 0) / 100}
           />
         </StyledSubscriptionPriceContainer>
-        <StyledBenefitsContainer>
-          {benefits.map((benefit) => (
-            <SubscriptionBenefit key={benefit}>{benefit}</SubscriptionBenefit>
-          ))}
-        </StyledBenefitsContainer>
       </StyledSubscriptionContainer>
       {hasWithoutCreditCardTrialPeriod && (
         <StyledChooseTrialContainer>
