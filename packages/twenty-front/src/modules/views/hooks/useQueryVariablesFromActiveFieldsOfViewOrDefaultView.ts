@@ -1,7 +1,8 @@
-import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
-import { useViewOrDefaultViewFromPrefetchedViews } from '@/views/hooks/useViewOrDefaultViewFromPrefetchedViews';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { getQueryVariablesFromView } from '@/views/utils/getQueryVariablesFromView';
 
 export const useQueryVariablesFromActiveFieldsOfViewOrDefaultView = ({
@@ -9,20 +10,18 @@ export const useQueryVariablesFromActiveFieldsOfViewOrDefaultView = ({
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const { view } = useViewOrDefaultViewFromPrefetchedViews({
-    objectMetadataItemId: objectMetadataItem.id,
-  });
-
-  const { activeFieldMetadataItems } = useActiveFieldMetadataItems({
-    objectMetadataItem,
-  });
+  const recordShowParentView = useRecoilComponentValueV2(
+    contextStoreRecordShowParentViewComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
+  );
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
   const { filter, orderBy } = getQueryVariablesFromView({
-    fieldMetadataItems: activeFieldMetadataItems,
+    recordFilterGroups: recordShowParentView?.parentViewFilterGroups ?? [],
+    recordFilters: recordShowParentView?.parentViewFilters ?? [],
+    recordSorts: recordShowParentView?.parentViewSorts ?? [],
     objectMetadataItem,
-    view,
     filterValueDependencies,
   });
 

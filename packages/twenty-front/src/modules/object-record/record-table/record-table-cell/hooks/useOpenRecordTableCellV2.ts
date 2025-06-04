@@ -25,10 +25,10 @@ import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropd
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { recordShowParentViewComponentState } from '@/object-record/record-show/states/recordShowParentViewComponentState';
-import { computeRecordShowComponentInstanceId } from '@/object-record/record-show/utils/computeRecordShowComponentInstanceId';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useSetRecordTableFocusPosition } from '@/object-record/record-table/hooks/internal/useSetRecordTableFocusPosition';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
@@ -40,6 +40,7 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useNavigate } from 'react-router-dom';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
+
 export const DEFAULT_CELL_SCOPE: HotkeyScope = {
   scope: TableHotkeyScope.CellEditMode,
 };
@@ -177,8 +178,8 @@ export const useOpenRecordTableCellV2 = (recordTableId: string) => {
               .getValue();
 
             set(
-              recordShowParentViewComponentState.atomFamily({
-                instanceId: computeRecordShowComponentInstanceId(recordId),
+              contextStoreRecordShowParentViewComponentState.atomFamily({
+                instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
               }),
               {
                 parentViewComponentId: recordTableId,
@@ -262,6 +263,7 @@ export const useOpenRecordTableCellV2 = (recordTableId: string) => {
       indexIdentifierUrl,
       currentRecordFilters,
       currentRecordSorts,
+      currentRecordFilterGroups,
       recordTableId,
       openRecordInCommandMenu,
       activateRecordTableRow,
