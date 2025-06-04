@@ -13,7 +13,7 @@ import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDro
 import { RecordBoardCardBody } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBody';
 import { RecordBoardCardHeader } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHeader';
 import { RECORD_BOARD_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardClickOutsideId';
-import { useOpenRecordBoardCard } from '@/object-record/record-board/record-board-card/hooks/useOpenRecordBoardCard';
+import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
@@ -141,7 +141,7 @@ export const RecordBoardCard = () => {
 
   const { openDropdown } = useDropdownV2();
 
-  const { openBoardCard } = useOpenRecordBoardCard(recordBoardId);
+  const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
   const handleActionMenuDropdown = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -156,7 +156,7 @@ export const RecordBoardCard = () => {
   };
 
   const handleCardClick = () => {
-    openBoardCard({ recordId });
+    openRecordFromIndexView({ recordId });
   };
 
   const onMouseLeaveBoard = useDebouncedCallback(() => {

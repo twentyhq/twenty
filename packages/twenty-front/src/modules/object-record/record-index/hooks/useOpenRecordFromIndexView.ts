@@ -12,7 +12,9 @@ import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useRecoilCallback } from 'recoil';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
-export const useOpenRecordBoardCard = (recordBoardId: string) => {
+export const useOpenRecordFromIndexView = () => {
+  const { recordIndexId } = useRecordIndexContextOrThrow();
+
   const { objectNameSingular } = useRecordIndexContextOrThrow();
 
   const navigate = useNavigateApp();
@@ -20,20 +22,20 @@ export const useOpenRecordBoardCard = (recordBoardId: string) => {
 
   const currentRecordFilters = useRecoilComponentCallbackStateV2(
     currentRecordFiltersComponentState,
-    recordBoardId,
+    recordIndexId,
   );
 
   const currentRecordSorts = useRecoilComponentCallbackStateV2(
     currentRecordSortsComponentState,
-    recordBoardId,
+    recordIndexId,
   );
 
   const currentRecordFilterGroups = useRecoilComponentCallbackStateV2(
     currentRecordFilterGroupsComponentState,
-    recordBoardId,
+    recordIndexId,
   );
 
-  const openBoardCard = useRecoilCallback(
+  const openRecordFromIndexView = useRecoilCallback(
     ({ snapshot, set }) =>
       ({ recordId }: { recordId: string }) => {
         const recordIndexOpenRecordIn = snapshot
@@ -57,7 +59,7 @@ export const useOpenRecordBoardCard = (recordBoardId: string) => {
             instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
           }),
           {
-            parentViewComponentId: recordBoardId,
+            parentViewComponentId: recordIndexId,
             parentViewObjectNameSingular: objectNameSingular,
             parentViewFilterGroups,
             parentViewFilters,
@@ -81,12 +83,12 @@ export const useOpenRecordBoardCard = (recordBoardId: string) => {
       currentRecordFilters,
       currentRecordSorts,
       currentRecordFilterGroups,
-      recordBoardId,
+      recordIndexId,
       objectNameSingular,
       navigate,
       openRecordInCommandMenu,
     ],
   );
 
-  return { openBoardCard };
+  return { openRecordFromIndexView };
 };

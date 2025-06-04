@@ -1,6 +1,7 @@
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { RecordUpdateContext } from '@/object-record/record-table/contexts/EntityUpdateMutationHookContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
@@ -37,6 +38,8 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
   const isLabelIdentifierCompact =
     isMobile && !isRecordTableScrolledLeftComponent;
 
+  const { openRecordFromIndexView } = useOpenRecordFromIndexView();
+
   return (
     <FieldContext.Provider
       value={{
@@ -49,6 +52,9 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
         displayedMaxRows: 1,
         isReadOnly: isFieldReadOnly,
         maxWidth: columnDefinition.size,
+        onRecordChipClick: () => {
+          openRecordFromIndexView({ recordId });
+        },
       }}
     >
       {children}

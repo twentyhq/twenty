@@ -25,10 +25,9 @@ import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropd
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useSetRecordTableFocusPosition } from '@/object-record/record-table/hooks/internal/useSetRecordTableFocusPosition';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
@@ -119,6 +118,8 @@ export const useOpenRecordTableCellV2 = (recordTableId: string) => {
     recordTableId,
   );
 
+  const { openRecordFromIndexView } = useOpenRecordFromIndexView();
+
   const openTableCell = useRecoilCallback(
     ({ snapshot, set }) =>
       ({
@@ -162,44 +163,12 @@ export const useOpenRecordTableCellV2 = (recordTableId: string) => {
             .getLoadable(recordIndexOpenRecordInState)
             .getValue();
 
-          const parentViewFilters = snapshot
-            .getLoadable(currentRecordFilters)
-            .getValue();
-
-          const parentViewSorts = snapshot
-            .getLoadable(currentRecordSorts)
-            .getValue();
-
-          const parentViewFilterGroups = snapshot
-            .getLoadable(currentRecordFilterGroups)
-            .getValue();
-
-          set(
-            contextStoreRecordShowParentViewComponentState.atomFamily({
-              instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-            }),
-            {
-              parentViewComponentId: recordTableId,
-              parentViewObjectNameSingular: objectNameSingular,
-              parentViewFilterGroups,
-              parentViewFilters,
-              parentViewSorts,
-            },
-          );
-
-          if (openRecordIn === ViewOpenRecordInType.RECORD_PAGE) {
-            navigate(indexIdentifierUrl(recordId));
-          }
-
           if (openRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
-            openRecordInCommandMenu({
-              recordId,
-              objectNameSingular,
-            });
-
             activateRecordTableRow(cellPosition.row);
             unfocusRecordTableRow();
           }
+
+          openRecordFromIndexView({ recordId });
 
           return;
         }
