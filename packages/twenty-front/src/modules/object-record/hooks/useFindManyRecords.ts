@@ -72,7 +72,8 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   };
 
   const hasReadPermission =
-    objectPermissionsByObjectMetadataId[objectMetadataItem.id].canReadObjectRecords === true;
+    objectPermissionsByObjectMetadataId[objectMetadataItem.id]
+      ?.canReadObjectRecords === true;
 
   const { data, loading, error, fetchMore } =
     useQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {

@@ -9,7 +9,9 @@ export const useObjectPermissions = () => {
   const objectPermissions = currentUserWorkspace?.objectPermissions;
 
   if (!isDefined(objectPermissions)) {
-    throw new Error('Object permissions not found');
+    return {
+      objectPermissionsByObjectMetadataId: {},
+    };
   }
 
   const objectPermissionsByObjectMetadataId = objectPermissions.reduce(
