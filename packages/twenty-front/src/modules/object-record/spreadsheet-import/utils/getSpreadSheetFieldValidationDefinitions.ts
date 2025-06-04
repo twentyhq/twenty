@@ -1,5 +1,6 @@
 import { emailSchema } from '@/object-record/record-field/validation-schemas/emailSchema';
 import { SpreadsheetImportFieldValidationDefinition } from '@/spreadsheet-import/types';
+import { isString, isDate } from '@sniptt/guards';
 import { absoluteUrlSchema, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -119,7 +120,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
           rule: 'function',
           isValid: (value: string) => {
             const date = new Date(value);
-            return date instanceof Date && !isNaN(date.getTime());
+            return isDate(date) && !isNaN(date.getTime());
           },
           errorMessage: fieldName + ' is not valid date',
           level: 'error',
@@ -195,7 +196,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
               const parsedValue = JSON.parse(value);
               return (
                 Array.isArray(parsedValue) &&
-                parsedValue.every((item: any) => typeof item === 'string')
+                parsedValue.every((item: any) => isString(item))
               );
             } catch {
               return false;
