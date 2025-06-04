@@ -13,12 +13,12 @@ import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { Select } from '@/ui/input/components/Select';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { H2Title } from 'twenty-ui/display';
+import { H1Title, H1TitleFontColor, H2Title } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { InterCustomerType } from '~/generated/graphql';
@@ -33,6 +33,15 @@ const StyledComboInputContainer = styled.div`
   > * + * {
     margin-left: ${({ theme }) => theme.spacing(4)};
   }
+`;
+
+const StyledContentDescription = styled.div`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  margin: 0;
+  margin-top: ${({ theme }) => theme.spacing(2)};
+  justify-content: center;
 `;
 
 const StyledContentContainer = styled(motion.div)`
@@ -102,10 +111,14 @@ export const OnboardingInterChargeDataForm = ({
   return (
     <>
       <StyledContentContainer>
-        <H2Title
+        <H1Title
           title={t`Payment data`}
-          description={t`Theses are the necessary data to emit your bank slip`}
+          titleCentered
+          fontColor={H1TitleFontColor.Primary}
         />
+        <StyledContentDescription>
+          <Trans>Theses are the necessary data to emit your bank slip</Trans>
+        </StyledContentDescription>
         <StyledSectionContainer>
           <H2Title title={t`Personal Details`} />
           <Controller

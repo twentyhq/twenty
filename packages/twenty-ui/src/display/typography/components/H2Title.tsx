@@ -6,6 +6,7 @@ type H2TitleProps = {
   description?: string;
   adornment?: React.ReactNode;
   className?: string;
+  titleCentered?: boolean;
 };
 
 const StyledContainer = styled.div`
@@ -14,10 +15,11 @@ const StyledContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
-const StyledTitleContainer = styled.div`
+const StyledTitleContainer = styled.div<{ titleCentered?: boolean }>`
   align-items: center;
   display: flex;
-  justify-content: space-between;
+  justify-content: ${({ titleCentered }) =>
+    titleCentered ? 'center' : 'start'};
 `;
 
 const StyledTitle = styled.h2`
@@ -40,9 +42,10 @@ export const H2Title = ({
   description,
   adornment,
   className,
+  titleCentered = false,
 }: H2TitleProps) => (
   <StyledContainer className={className}>
-    <StyledTitleContainer>
+    <StyledTitleContainer titleCentered={titleCentered}>
       <StyledTitle>{title}</StyledTitle>
       {adornment}
     </StyledTitleContainer>
