@@ -1,21 +1,21 @@
-import { DATE_PARSER_FORMAT } from '@/ui/input/components/internal/date/constants/DateParserFormat';
-import { DATE_TIME_PARSER_FORMAT } from '@/ui/input/components/internal/date/constants/DateTimeParserFormat';
+import { DateFormat } from '@/localization/constants/DateFormat';
 import { DateTime } from 'luxon';
+import { getDateFormatString } from '~/utils/date-utils';
 
 type ParseStringToDateArgs = {
   dateAsString: string;
   isDateTimeInput: boolean;
   userTimezone: string | undefined;
+  dateFormat: DateFormat;
 };
 
 export const parseStringToDate = ({
   dateAsString,
   isDateTimeInput,
   userTimezone,
+  dateFormat,
 }: ParseStringToDateArgs) => {
-  const parsingFormat = isDateTimeInput
-    ? DATE_TIME_PARSER_FORMAT
-    : DATE_PARSER_FORMAT;
+  const parsingFormat = getDateFormatString(dateFormat, isDateTimeInput);
 
   const parsedDate = isDateTimeInput
     ? DateTime.fromFormat(dateAsString, parsingFormat, { zone: userTimezone })

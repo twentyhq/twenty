@@ -1,18 +1,19 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useIMask } from 'react-imask';
+import { useRecoilValue } from 'recoil';
 
+import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
 import { DATE_BLOCKS } from '@/ui/input/components/internal/date/constants/DateBlocks';
-import { DATE_MASK } from '@/ui/input/components/internal/date/constants/DateMask';
 import { DATE_TIME_BLOCKS } from '@/ui/input/components/internal/date/constants/DateTimeBlocks';
-import { DATE_TIME_MASK } from '@/ui/input/components/internal/date/constants/DateTimeMask';
 import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
 import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
-import { parseDateToString } from '@/ui/input/components/internal/date/utils/parseDateToString';
-import { parseStringToDate } from '@/ui/input/components/internal/date/utils/parseStringToDate';
+import { getDateMask } from '@/ui/input/components/internal/date/utils/getDateMask';
+import { getDateTimeMask } from '@/ui/input/components/internal/date/utils/getDateTimeMask';
 import { isNull } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { useDateParser } from '../../hooks/useDateParser';
 
 const StyledInputContainer = styled.div`
   align-items: center;
@@ -44,42 +45,30 @@ type DateTimeInputProps = {
   onChange?: (date: Date | null) => void;
   date: Date | null;
   isDateTimeInput?: boolean;
-  userTimezone?: string;
-  onError?: (error: Error) => void;
 };
 
 export const DateTimeInput = ({
   date,
   onChange,
   isDateTimeInput,
-  userTimezone,
 }: DateTimeInputProps) => {
   const [hasError, setHasError] = useState(false);
-
-  const handleParseDateToString = useCallback(
-    (date: any) => {
-      return parseDateToString({
-        date,
-        isDateTimeInput: isDateTimeInput === true,
-        userTimezone,
-      });
-    },
-    [isDateTimeInput, userTimezone],
-  );
+  const { dateFormat } = useRecoilValue(dateTimeFormatState);
+  const { parseToString, parseToDate } = useDateParser({
+    isDateTimeInput: isDateTimeInput === true,
+  });
 
   const handleParseStringToDate = (str: string) => {
-    const date = parseStringToDate({
-      dateAsString: str,
-      isDateTimeInput: isDateTimeInput === true,
-      userTimezone,
-    });
+    const date = parseToDate(str);
 
     setHasError(isNull(date) === true);
 
     return date;
   };
 
-  const pattern = isDateTimeInput ? DATE_TIME_MASK : DATE_MASK;
+  const pattern = isDateTimeInput
+    ? getDateTimeMask(dateFormat)
+    : getDateMask(dateFormat);
   const blocks = isDateTimeInput ? DATE_TIME_BLOCKS : DATE_BLOCKS;
 
   const { ref, setValue, value } = useIMask(
@@ -89,18 +78,14 @@ export const DateTimeInput = ({
       blocks,
       min: MIN_DATE,
       max: MAX_DATE,
-      format: handleParseDateToString,
+      format: (date: any) => parseToString(date),
       parse: handleParseStringToDate,
       lazy: false,
       autofix: true,
     },
     {
       onComplete: (value) => {
-        const parsedDate = parseStringToDate({
-          dateAsString: value,
-          isDateTimeInput: isDateTimeInput === true,
-          userTimezone,
-        });
+        const parsedDate = parseToDate(value);
 
         onChange?.(parsedDate);
       },
@@ -115,23 +100,14 @@ export const DateTimeInput = ({
       return;
     }
 
-    setValue(
-      parseDateToString({
-        date: date,
-        isDateTimeInput: isDateTimeInput === true,
-        userTimezone,
-      }),
-    );
-  }, [date, setValue, isDateTimeInput, userTimezone]);
+    setValue(parseToString(date));
+  }, [date, setValue, parseToString]);
 
   return (
     <StyledInputContainer>
       <StyledInput
         type="text"
         ref={ref as any}
-        placeholder={`Type date${
-          isDateTimeInput ? ' and time' : ' (mm/dd/yyyy)'
-        }`}
         value={value}
         onChange={() => {}} // Prevent React warning
         hasError={hasError}

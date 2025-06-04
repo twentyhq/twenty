@@ -29,6 +29,10 @@ import { WorkflowVersionUpdateManyPreQueryHook } from 'src/modules/workflow/comm
 import { WorkflowVersionUpdateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-update-one.pre-query.hook';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service';
+import { WorkflowRestoreOnePostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-restore-one.post-query.hook';
+import { WorkflowRestoreManyPostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-restore-many.post-query.hook';
+import { WorkflowDestroyOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-destroy-one.pre-query.hook';
+import { WorkflowDestroyManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-destroy-many.pre-query.hook';
 
 @Module({
   imports: [
@@ -49,6 +53,8 @@ import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/
     WorkflowRunUpdateManyPreQueryHook,
     WorkflowRunDeleteOnePreQueryHook,
     WorkflowRunDeleteManyPreQueryHook,
+    WorkflowRestoreOnePostQueryHook,
+    WorkflowRestoreManyPostQueryHook,
     WorkflowVersionCreateOnePreQueryHook,
     WorkflowVersionCreateManyPreQueryHook,
     WorkflowVersionUpdateOnePreQueryHook,
@@ -61,6 +67,8 @@ import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/
     WorkflowCommonWorkspaceService,
     WorkflowDeleteManyPostQueryHook,
     WorkflowDeleteOnePostQueryHook,
+    WorkflowDestroyOnePreQueryHook,
+    WorkflowDestroyManyPreQueryHook,
   ],
 })
 export class WorkflowQueryHookModule {}
