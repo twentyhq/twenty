@@ -12,7 +12,7 @@ import { WorkflowVersionModule } from 'src/modules/workflow/workflow-builder/wor
     WorkflowSchemaModule,
     WorkflowVersionModule,
     WorkflowVersionStepModule,
-    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
+    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
   ],
   exports: [
     WorkflowSchemaModule,

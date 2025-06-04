@@ -15,11 +15,6 @@ import {
   UpgradeCommandRunner,
   VersionCommands,
 } from 'src/database/commands/command-runners/upgrade.command-runner';
-import { BackfillWorkflowNextStepIdsCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-backfill-workflow-next-step-ids.command';
-import { CopyTypeormMigrationsCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-copy-typeorm-migrations.command';
-import { MigrateWorkflowEventListenersToAutomatedTriggersCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-migrate-workflow-event-listeners-to-automated-triggers.command';
-import { RemoveRelationForeignKeyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-remove-relation-foreign-key-field-metadata.command';
-import { UpgradeSearchVectorOnPersonEntityCommand } from 'src/database/commands/upgrade-version-command/0-53/0-53-upgrade-search-vector-on-person-entity.command';
 import { CleanNotFoundFilesCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-clean-not-found-files.command';
 import { FixCreatedByDefaultValueCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-created-by-default-value.command';
 import { FixStandardSelectFieldsPositionCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-fix-standard-select-fields-position.command';
@@ -40,7 +35,6 @@ export class DatabaseMigrationService {
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    protected readonly copyTypeormMigrationsCommand: CopyTypeormMigrationsCommand,
   ) {}
 
   // TODO centralize with ActiveOrSuspendedRunner method
@@ -70,17 +64,6 @@ export class DatabaseMigrationService {
     this.logger.log('Running global database migrations');
 
     try {
-      this.logger.log('Running metadata datasource migrations...');
-      await this.copyTypeormMigrationsCommand.runMigrationCommand([], {
-        dryRun: false,
-        verbose: false,
-      });
-      const metadataResult = await execPromise(
-        'npx -y typeorm migration:run -d dist/src/database/typeorm/metadata/metadata.datasource',
-      );
-
-      this.logger.log(metadataResult.stdout);
-
       this.logger.log('Running core datasource migrations...');
       const coreResult = await execPromise(
         'npx -y typeorm migration:run -d dist/src/database/typeorm/core/core.datasource',
@@ -142,13 +125,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     private readonly databaseMigrationService: DatabaseMigrationService,
 
-    // 0.53 Commands
-    protected readonly migrateWorkflowEventListenersToAutomatedTriggersCommand: MigrateWorkflowEventListenersToAutomatedTriggersCommand,
-    protected readonly backfillWorkflowNextStepIdsCommand: BackfillWorkflowNextStepIdsCommand,
-    protected readonly copyTypeormMigrationsCommand: CopyTypeormMigrationsCommand,
-    protected readonly upgradeSearchVectorOnPersonEntityCommand: UpgradeSearchVectorOnPersonEntityCommand,
-    protected readonly removeRelationForeignKeyFieldMetadataCommand: RemoveRelationForeignKeyFieldMetadataCommand,
-
     // 0.54 Commands
     protected readonly fixStandardSelectFieldsPositionCommand: FixStandardSelectFieldsPositionCommand,
     protected readonly fixCreatedByDefaultValueCommand: FixCreatedByDefaultValueCommand,
@@ -163,15 +139,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       syncWorkspaceMetadataCommand,
     );
 
-    const commands_053: VersionCommands = {
-      beforeSyncMetadata: [this.removeRelationForeignKeyFieldMetadataCommand],
-      afterSyncMetadata: [
-        this.migrateWorkflowEventListenersToAutomatedTriggersCommand,
-        this.backfillWorkflowNextStepIdsCommand,
-        this.upgradeSearchVectorOnPersonEntityCommand,
-      ],
-    };
-
     const commands_054: VersionCommands = {
       beforeSyncMetadata: [
         this.fixStandardSelectFieldsPositionCommand,
@@ -185,7 +152,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     };
 
     this.allCommands = {
-      '0.53.0': commands_053,
       '0.54.0': commands_054,
     };
   }

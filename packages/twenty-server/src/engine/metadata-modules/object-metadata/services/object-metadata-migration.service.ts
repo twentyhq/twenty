@@ -22,7 +22,7 @@ import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 @Injectable()
 export class ObjectMetadataMigrationService {
   constructor(
-    @InjectRepository(FieldMetadataEntity, 'metadata')
+    @InjectRepository(FieldMetadataEntity, 'core')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,

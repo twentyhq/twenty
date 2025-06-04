@@ -42,7 +42,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
       imports: [
         NestjsQueryTypeOrmModule.forFeature(
           [FieldMetadataEntity, ObjectMetadataEntity],
-          'metadata',
+          'core',
         ),
         WorkspaceMigrationModule,
         WorkspaceMigrationRunnerModule,

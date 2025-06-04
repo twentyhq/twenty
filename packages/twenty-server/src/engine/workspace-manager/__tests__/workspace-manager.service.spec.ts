@@ -48,37 +48,37 @@ describe('WorkspaceManagerService', () => {
           useValue: {},
         },
         {
-          provide: getRepositoryToken(FieldMetadataEntity, 'metadata'),
+          provide: getRepositoryToken(FieldMetadataEntity, 'core'),
           useValue: {
             delete: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(ObjectMetadataEntity, 'metadata'),
+          provide: getRepositoryToken(ObjectMetadataEntity, 'core'),
           useValue: {
             delete: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(WorkspaceMigrationEntity, 'metadata'),
+          provide: getRepositoryToken(WorkspaceMigrationEntity, 'core'),
           useValue: {
             delete: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(DataSourceEntity, 'metadata'),
+          provide: getRepositoryToken(DataSourceEntity, 'core'),
           useValue: {
             delete: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(UserWorkspaceRoleEntity, 'metadata'),
+          provide: getRepositoryToken(UserWorkspaceRoleEntity, 'core'),
           useValue: {
             delete: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(RoleEntity, 'metadata'),
+          provide: getRepositoryToken(RoleEntity, 'core'),
           useValue: {
             delete: jest.fn(),
           },
@@ -128,21 +128,21 @@ describe('WorkspaceManagerService', () => {
     );
     workspaceMigrationRepository = module.get<
       Repository<WorkspaceMigrationEntity>
-    >(getRepositoryToken(WorkspaceMigrationEntity, 'metadata'));
+    >(getRepositoryToken(WorkspaceMigrationEntity, 'core'));
     dataSourceRepository = module.get<Repository<DataSourceEntity>>(
-      getRepositoryToken(DataSourceEntity, 'metadata'),
+      getRepositoryToken(DataSourceEntity, 'core'),
     );
     workspaceFieldMetadataRepository = module.get<
       Repository<FieldMetadataEntity>
-    >(getRepositoryToken(FieldMetadataEntity, 'metadata'));
+    >(getRepositoryToken(FieldMetadataEntity, 'core'));
     workspaceDataSourceService = module.get<WorkspaceDataSourceService>(
       WorkspaceDataSourceService,
     );
     userWorkspaceRoleRepository = module.get<
       Repository<UserWorkspaceRoleEntity>
-    >(getRepositoryToken(UserWorkspaceRoleEntity, 'metadata'));
+    >(getRepositoryToken(UserWorkspaceRoleEntity, 'core'));
     roleRepository = module.get<Repository<RoleEntity>>(
-      getRepositoryToken(RoleEntity, 'metadata'),
+      getRepositoryToken(RoleEntity, 'core'),
     );
   });
 

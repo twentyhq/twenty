@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { V0_53_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/0-53/0-53-upgrade-version-command.module';
 import { V0_54_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/0-54/0-54-upgrade-version-command.module';
 import { V0_55_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/0-55/0-55-upgrade-version-command.module';
 import {
@@ -14,7 +13,6 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
 @Module({
   imports: [
     TypeOrmModule.forFeature([Workspace], 'core'),
-    V0_53_UpgradeVersionCommandModule,
     V0_54_UpgradeVersionCommandModule,
     V0_55_UpgradeVersionCommandModule,
     WorkspaceSyncMetadataModule,

@@ -80,11 +80,11 @@ type ValidateFieldMetadataArgs<T extends UpdateFieldInput | CreateFieldInput> =
 @Injectable()
 export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntity> {
   constructor(
-    @InjectDataSource('metadata')
-    private readonly metadataDataSource: DataSource,
-    @InjectRepository(FieldMetadataEntity, 'metadata')
+    @InjectDataSource('core')
+    private readonly coreDataSource: DataSource,
+    @InjectRepository(FieldMetadataEntity, 'core')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
@@ -118,7 +118,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     id: string,
     fieldMetadataInput: UpdateFieldInput,
   ): Promise<FieldMetadataEntity> {
-    const queryRunner = this.metadataDataSource.createQueryRunner();
+    const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -304,7 +304,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     input: DeleteOneFieldInput,
     workspaceId: string,
   ): Promise<FieldMetadataEntity> {
-    const queryRunner = this.metadataDataSource.createQueryRunner();
+    const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction(); // transaction not safe as a different queryRunner is used within workspaceMigrationRunnerService
@@ -758,7 +758,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     const workspaceId = fieldMetadataInputs[0].workspaceId;
-    const queryRunner = this.metadataDataSource.createQueryRunner();
+    const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();

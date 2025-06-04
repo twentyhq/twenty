@@ -66,7 +66,7 @@ describe('UserWorkspaceService', () => {
           },
         },
         {
-          provide: getRepositoryToken(ObjectMetadataEntity, 'metadata'),
+          provide: getRepositoryToken(ObjectMetadataEntity, 'core'),
           useValue: {
             findOneOrFail: jest.fn(),
           },
@@ -142,7 +142,7 @@ describe('UserWorkspaceService', () => {
     );
     userRepository = module.get(getRepositoryToken(User, 'core'));
     objectMetadataRepository = module.get(
-      getRepositoryToken(ObjectMetadataEntity, 'metadata'),
+      getRepositoryToken(ObjectMetadataEntity, 'core'),
     );
     typeORMService = module.get<TypeORMService>(TypeORMService);
     workspaceInvitationService = module.get<WorkspaceInvitationService>(
