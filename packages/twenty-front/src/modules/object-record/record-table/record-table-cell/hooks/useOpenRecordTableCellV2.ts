@@ -162,32 +162,32 @@ export const useOpenRecordTableCellV2 = (recordTableId: string) => {
             .getLoadable(recordIndexOpenRecordInState)
             .getValue();
 
+          const parentViewFilters = snapshot
+            .getLoadable(currentRecordFilters)
+            .getValue();
+
+          const parentViewSorts = snapshot
+            .getLoadable(currentRecordSorts)
+            .getValue();
+
+          const parentViewFilterGroups = snapshot
+            .getLoadable(currentRecordFilterGroups)
+            .getValue();
+
+          set(
+            contextStoreRecordShowParentViewComponentState.atomFamily({
+              instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+            }),
+            {
+              parentViewComponentId: recordTableId,
+              parentViewFilterGroups,
+              parentViewFilters,
+              parentViewSorts,
+            },
+          );
+
           if (openRecordIn === ViewOpenRecordInType.RECORD_PAGE) {
             navigate(indexIdentifierUrl(recordId));
-
-            const parentViewFilters = snapshot
-              .getLoadable(currentRecordFilters)
-              .getValue();
-
-            const parentViewSorts = snapshot
-              .getLoadable(currentRecordSorts)
-              .getValue();
-
-            const parentViewFilterGroups = snapshot
-              .getLoadable(currentRecordFilterGroups)
-              .getValue();
-
-            set(
-              contextStoreRecordShowParentViewComponentState.atomFamily({
-                instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-              }),
-              {
-                parentViewComponentId: recordTableId,
-                parentViewFilterGroups,
-                parentViewFilters,
-                parentViewSorts,
-              },
-            );
           }
 
           if (openRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
