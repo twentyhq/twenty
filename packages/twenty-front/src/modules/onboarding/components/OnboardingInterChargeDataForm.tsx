@@ -18,7 +18,7 @@ import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { H1Title, H2Title } from 'twenty-ui/display';
+import { H2Title } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { InterCustomerType } from '~/generated/graphql';
@@ -50,7 +50,7 @@ const StyledControlButtonContainer = styled.div`
 `;
 
 const StyledSectionContainer = styled.div`
-  margin-top: ${({ theme }) => theme.spacing(8)};
+  margin-top: ${({ theme }) => theme.spacing(6)};
 `;
 
 export type OnboardingInterChargeDataFormProps = {
@@ -101,13 +101,13 @@ export const OnboardingInterChargeDataForm = ({
 
   return (
     <>
-      <H1Title title={t`Inter Bolepix charge data`} />
       <StyledContentContainer>
+        <H2Title
+          title={t`Payment data`}
+          description={t`Theses are the necessary data to emit your bank slip`}
+        />
         <StyledSectionContainer>
-          <H2Title
-            title={t`Identy`}
-            description={t`The name/social reason as it will used as payer infromation.`}
-          />
+          <H2Title title={t`Personal Details`} />
           <Controller
             name="name"
             control={control}
@@ -117,7 +117,7 @@ export const OnboardingInterChargeDataForm = ({
             }) => (
               <TextInputV2
                 autoFocus
-                label={t`Name`}
+                label={t`Full Name`}
                 value={value}
                 onFocus={() => setIsEditingMode(true)}
                 onBlur={() => {
@@ -125,7 +125,7 @@ export const OnboardingInterChargeDataForm = ({
                   setIsEditingMode(false);
                 }}
                 onChange={onChange}
-                placeholder="Tim"
+                placeholder="Tim Apple"
                 error={error?.message}
                 fullWidth
               />
@@ -156,7 +156,9 @@ export const OnboardingInterChargeDataForm = ({
                 fieldState: { error },
               }) => (
                 <TextInputV2
-                  label={t`Cpf/Cnpj`}
+                  label={
+                    legalEntity === InterCustomerType.FISICA ? 'CPF' : 'CNPJ'
+                  }
                   value={
                     legalEntity === InterCustomerType.FISICA
                       ? formatCpf(value)
@@ -182,10 +184,7 @@ export const OnboardingInterChargeDataForm = ({
           </StyledComboInputContainer>
         </StyledSectionContainer>
         <StyledSectionContainer>
-          <H2Title
-            title={t`Address`}
-            description={t`The address data as it will used as payer infromation.`}
-          />
+          <H2Title title={t`Address`} />
           <StyledComboInputContainer>
             <Controller
               name="cep"
@@ -227,7 +226,7 @@ export const OnboardingInterChargeDataForm = ({
                     setIsEditingMode(false);
                   }}
                   onChange={onChange}
-                  placeholder="The payer address"
+                  placeholder="EX.: Rua, Av., Rodovia"
                   error={error?.message}
                   fullWidth
                 />
@@ -268,7 +267,7 @@ export const OnboardingInterChargeDataForm = ({
                     setIsEditingMode(false);
                   }}
                   onChange={onChange}
-                  placeholder="The payer city"
+                  placeholder="EX.: Sorocaba"
                   error={error?.message}
                   fullWidth
                 />
