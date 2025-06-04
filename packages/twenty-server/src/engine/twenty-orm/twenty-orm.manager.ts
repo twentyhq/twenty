@@ -21,23 +21,14 @@ export class TwentyORMManager {
 
   async getRepository<T extends ObjectLiteral>(
     workspaceEntity: Type<T>,
-    options?: {
-      shouldBypassPermissionChecks?: boolean;
-    },
   ): Promise<WorkspaceRepository<T>>;
 
   async getRepository<T extends ObjectLiteral>(
     objectMetadataName: string,
-    options?: {
-      shouldBypassPermissionChecks?: boolean;
-    },
   ): Promise<WorkspaceRepository<T>>;
 
   async getRepository<T extends ObjectLiteral>(
     workspaceEntityOrObjectMetadataName: Type<T> | string,
-    options?: {
-      shouldBypassPermissionChecks?: boolean;
-    },
   ): Promise<WorkspaceRepository<T>> {
     const {
       workspaceId,
@@ -78,8 +69,7 @@ export class TwentyORMManager {
       roleId = userWorkspaceRole?.roleId;
     }
 
-    const shouldBypassPermissionChecks =
-      !!isExecutedByApiKey || options?.shouldBypassPermissionChecks;
+    const shouldBypassPermissionChecks = !!isExecutedByApiKey;
 
     return workspaceDataSource.getRepository<T>(
       objectMetadataName,

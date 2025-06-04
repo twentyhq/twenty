@@ -179,20 +179,6 @@ export class WorkspaceEntityManager extends EntityManager {
     }
   }
 
-  override create<Entity, EntityLike extends DeepPartial<Entity>>(
-    entityClass: EntityTarget<Entity>,
-    plainObjectOrObjects?: EntityLike[] | EntityLike,
-    permissionOptions?: PermissionOptions,
-  ): Entity[] | Entity {
-    this.validatePermissions(entityClass, 'insert', permissionOptions);
-
-    if (Array.isArray(plainObjectOrObjects)) {
-      return super.create(entityClass, plainObjectOrObjects as EntityLike[]);
-    }
-
-    return super.create(entityClass, plainObjectOrObjects as EntityLike);
-  }
-
   override insert<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
     entity: QueryDeepPartialEntity<Entity> | QueryDeepPartialEntity<Entity>[],

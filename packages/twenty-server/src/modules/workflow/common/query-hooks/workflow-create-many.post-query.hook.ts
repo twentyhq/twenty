@@ -41,7 +41,6 @@ export class WorkflowCreateManyPostQueryHook
     const workflowVersionRepository =
       await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
         'workflowVersion',
-        { shouldBypassPermissionChecks: true },
       );
 
     const position = await this.recordPositionService.buildRecordPosition({
