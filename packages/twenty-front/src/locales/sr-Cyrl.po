@@ -64,6 +64,11 @@ msgstr ": Прошлост"
 msgid ": Today"
 msgstr ": Данас"
 
+#. js-lingui-id: nSri0b
+#: src/modules/views/components/ViewBarFilterDropdownVectorSearchButton.tsx
+msgid "· {fieldSearchInputValue}"
+msgstr ""
+
 #. js-lingui-id: ZBGbuw
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
@@ -4087,6 +4092,8 @@ msgid "Schema"
 msgstr "Шема"
 
 #. js-lingui-id: A1taO8
+#: src/modules/views/components/ViewBarFilterDropdownVectorSearchInput.tsx
+#: src/modules/views/components/ViewBarFilterDropdownVectorSearchButton.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPickerDropdownContent.tsx
