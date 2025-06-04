@@ -3,9 +3,12 @@ import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateAct
 import { NoteList } from '@/activities/notes/components/NoteList';
 import { useNotes } from '@/activities/notes/hooks/useNotes';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import styled from '@emotion/styled';
+import { IconPlus } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -14,8 +17,6 @@ import {
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from 'twenty-ui/layout';
-import { Button } from 'twenty-ui/input';
-import { IconPlus } from 'twenty-ui/display';
 
 const StyledNotesContainer = styled.div`
   display: flex;
@@ -32,13 +33,21 @@ export const Notes = ({
 }) => {
   const { notes, loading } = useNotes(targetableObject);
 
-  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
-
   const openCreateActivity = useOpenCreateActivityDrawer({
     activityObjectNameSingular: CoreObjectNameSingular.Note,
   });
 
   const isNotesEmpty = !notes || notes.length === 0;
+
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: targetableObject.targetObjectNameSingular,
+  });
+
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
+  const hasObjectReadOnlyPermission =
+    objectPermissionsByObjectMetadataId[objectMetadataItem.id]
+      ?.canUpdateObjectRecords === false;
 
   if (loading && isNotesEmpty) {
     return <SkeletonLoader />;

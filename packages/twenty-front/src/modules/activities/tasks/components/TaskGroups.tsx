@@ -5,8 +5,9 @@ import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateAct
 import { useTasks } from '@/activities/tasks/hooks/useTasks';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { Task } from '@/activities/types/Task';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import groupBy from 'lodash.groupby';
@@ -31,15 +32,23 @@ const StyledContainer = styled.div`
 
 type TaskGroupsProps = {
   filterDropdownId?: string;
-  targetableObject?: ActivityTargetableObject;
+  targetableObject: ActivityTargetableObject;
 };
 
 export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
   const { tasks, tasksLoading } = useTasks({
-    targetableObjects: targetableObject ? [targetableObject] : [],
+    targetableObjects: [targetableObject],
   });
 
-  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: targetableObject.targetObjectNameSingular,
+  });
+
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
+  const hasObjectReadOnlyPermission =
+    objectPermissionsByObjectMetadataId[objectMetadataItem.id]
+      ?.canUpdateObjectRecords === false;
 
   const openCreateActivity = useOpenCreateActivityDrawer({
     activityObjectNameSingular: CoreObjectNameSingular.Task,
@@ -81,7 +90,7 @@ export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
             variant={'secondary'}
             onClick={() =>
               openCreateActivity({
-                targetableObjects: targetableObject ? [targetableObject] : [],
+                targetableObjects: [targetableObject],
               })
             }
           />

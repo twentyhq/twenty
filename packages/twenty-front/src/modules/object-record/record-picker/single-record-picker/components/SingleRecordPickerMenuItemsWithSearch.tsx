@@ -1,3 +1,5 @@
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import {
   SingleRecordPickerMenuItems,
   SingleRecordPickerMenuItemsProps,
@@ -7,7 +9,6 @@ import { useSingleRecordPickerSearch } from '@/object-record/record-picker/singl
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
 import { RecordPickerLayoutDirection } from '@/object-record/record-picker/types/RecordPickerLayoutDirection';
-import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -48,8 +49,6 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
     SingleRecordPickerComponentInstanceContext,
   );
 
-  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
-
   const recordPickerSearchFilter = useRecoilComponentValueV2(
     singleRecordPickerSearchFilterComponentState,
     recordPickerInstanceId,
@@ -59,6 +58,16 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
     objectNameSingular,
     excludedRecordIds,
   });
+
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
+  const hasObjectReadOnlyPermission =
+    objectPermissionsByObjectMetadataId[objectMetadataItem.id]
+      ?.canUpdateObjectRecords === false;
 
   const createNewButton = isDefined(onCreate) && (
     <CreateNewButton
