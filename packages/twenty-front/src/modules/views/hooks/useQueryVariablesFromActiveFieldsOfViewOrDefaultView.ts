@@ -1,8 +1,7 @@
-import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useViewOrDefaultViewFromPrefetchedViews } from '@/views/hooks/useViewOrDefaultViewFromPrefetchedViews';
-import { getQueryVariablesFromView } from '@/views/utils/getQueryVariablesFromView';
+import { useQueryVariablesFromView } from './useQueryVariablesFromView';
 
 export const useQueryVariablesFromActiveFieldsOfViewOrDefaultView = ({
   objectMetadataItem,
@@ -13,14 +12,9 @@ export const useQueryVariablesFromActiveFieldsOfViewOrDefaultView = ({
     objectMetadataItemId: objectMetadataItem.id,
   });
 
-  const { activeFieldMetadataItems } = useActiveFieldMetadataItems({
-    objectMetadataItem,
-  });
-
   const { filterValueDependencies } = useFilterValueDependencies();
 
-  const { filter, orderBy } = getQueryVariablesFromView({
-    fieldMetadataItems: activeFieldMetadataItems,
+  const { filter, orderBy } = useQueryVariablesFromView({
     objectMetadataItem,
     view,
     filterValueDependencies,
