@@ -12,12 +12,9 @@ type TabListDropdownProps = {
   overflow: {
     hiddenTabsCount: number;
     isActiveTabHidden: boolean;
-    firstHiddenTabIndex: number;
   };
-  tabs: {
-    visible: SingleTabProps[];
-    activeId: string | null;
-  };
+  hiddenTabs: SingleTabProps[];
+  activeTabId: string | null;
   onTabSelect: (tabId: string) => void;
   loading?: boolean;
 };
@@ -26,12 +23,11 @@ export const TabListDropdown = ({
   dropdownId,
   onClose,
   overflow,
-  tabs,
+  hiddenTabs,
+  activeTabId,
   onTabSelect,
   loading,
 }: TabListDropdownProps) => {
-  const hiddenTabs = tabs.visible.slice(overflow.firstHiddenTabIndex);
-
   return (
     <Dropdown
       dropdownId={dropdownId}
@@ -55,7 +51,7 @@ export const TabListDropdown = ({
                   key={tab.id}
                   text={tab.title}
                   avatar={<TabAvatar tab={tab} />}
-                  selected={tab.id === tabs.activeId}
+                  selected={tab.id === activeTabId}
                   onClick={
                     isDisabled
                       ? undefined

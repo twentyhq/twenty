@@ -265,12 +265,9 @@ export const TabList = ({
                 overflow={{
                   hiddenTabsCount,
                   isActiveTabHidden,
-                  firstHiddenTabIndex: visibleTabCount,
                 }}
-                tabs={{
-                  visible: visibleTabs,
-                  activeId: activeTabId,
-                }}
+                hiddenTabs={visibleTabs.slice(visibleTabCount)}
+                activeTabId={activeTabId}
                 onTabSelect={handleTabSelectFromDropdown}
                 loading={loading}
               />
