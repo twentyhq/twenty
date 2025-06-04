@@ -121,9 +121,10 @@ export const DropdownInternalContainer = ({
       if (isDropdownOpen) {
         closeDropdown();
       }
+      onClickOutside?.();
     },
     hotkeyScope?.scope,
-    [closeDropdown, isDropdownOpen],
+    [closeDropdown, isDropdownOpen, onClickOutside],
   );
 
   const dropdownMenuStyles = {
