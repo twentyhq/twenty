@@ -25,6 +25,7 @@ import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropd
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { recordShowParentViewComponentState } from '@/object-record/record-show/states/recordShowParentViewComponentState';
 import { computeRecordShowComponentInstanceId } from '@/object-record/record-show/utils/computeRecordShowComponentInstanceId';
@@ -112,6 +113,11 @@ export const useOpenRecordTableCellV2 = (recordTableId: string) => {
     recordTableId,
   );
 
+  const currentRecordFilterGroups = useRecoilComponentCallbackStateV2(
+    currentRecordFilterGroupsComponentState,
+    recordTableId,
+  );
+
   const openTableCell = useRecoilCallback(
     ({ snapshot, set }) =>
       ({
@@ -166,12 +172,17 @@ export const useOpenRecordTableCellV2 = (recordTableId: string) => {
               .getLoadable(currentRecordSorts)
               .getValue();
 
+            const parentViewFilterGroups = snapshot
+              .getLoadable(currentRecordFilterGroups)
+              .getValue();
+
             set(
               recordShowParentViewComponentState.atomFamily({
                 instanceId: computeRecordShowComponentInstanceId(recordId),
               }),
               {
                 parentViewComponentId: recordTableId,
+                parentViewFilterGroups,
                 parentViewFilters,
                 parentViewSorts,
               },
@@ -249,6 +260,9 @@ export const useOpenRecordTableCellV2 = (recordTableId: string) => {
       leaveTableFocus,
       navigate,
       indexIdentifierUrl,
+      currentRecordFilters,
+      currentRecordSorts,
+      recordTableId,
       openRecordInCommandMenu,
       activateRecordTableRow,
       unfocusRecordTableRow,

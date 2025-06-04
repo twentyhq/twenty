@@ -1,3 +1,4 @@
+import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordShowComponentInstanceContext } from '@/object-record/record-show/states/contexts/RecordShowComponentInstanceContext';
 import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
@@ -5,6 +6,7 @@ import { createComponentStateV2 } from '@/ui/utilities/state/component-state/uti
 
 type RecordShowParentViewComponentState = {
   parentViewComponentId: string;
+  parentViewFilterGroups: RecordFilterGroup[];
   parentViewFilters: RecordFilter[];
   parentViewSorts: RecordSort[];
 };
