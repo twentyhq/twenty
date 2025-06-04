@@ -28,9 +28,9 @@ export const SpreadsheetImportStepperContainer = () => {
   const { t } = useLingui();
 
   const stepTitles = {
-    uploadStep: t`Upload file`,
-    matchColumnsStep: t`Match columns`,
-    validationStep: t`Validate data`,
+    uploadStep: t`Upload File`,
+    matchColumnsStep: t`Match Columns`,
+    validationStep: t`Validate Data`,
   };
 
   const { initialStepState } = useSpreadsheetImportInternal();
