@@ -9,6 +9,7 @@ import {
   Req,
   Res,
   UseFilters,
+  UseGuards,
 } from '@nestjs/common';
 
 import { Response } from 'express';
@@ -29,6 +30,8 @@ import { BillingWebhookInvoiceService } from 'src/engine/core-modules/billing/we
 import { BillingWebhookPriceService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-price.service';
 import { BillingWebhookProductService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-product.service';
 import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing/webhooks/services/billing-webhook-subscription.service';
+import { PublicEndpoint } from 'src/engine/guards/public-endpoint.guard';
+
 @Controller()
 @UseFilters(BillingRestApiExceptionFilter)
 export class BillingController {
@@ -47,6 +50,7 @@ export class BillingController {
   ) {}
 
   @Post(['webhooks/stripe'])
+  @UseGuards(PublicEndpoint)
   async handleWebhooks(
     @Headers('stripe-signature') signature: string,
     @Req() req: RawBodyRequest<Request>,
