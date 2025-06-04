@@ -7,10 +7,10 @@ const logoStyle = {
 export const Logo = () => {
   return (
     <Img
-      src="images/icons/windows11/Woulz-logo.png"
+      src="https://woulz.com.br/images/icons/windows11/Woulz-logoprincipal.png"
       alt="Woulz logo"
-      width="40"
-      height="40"
+      height={50}
+      className="mx-auto"
       style={logoStyle}
     />
   );

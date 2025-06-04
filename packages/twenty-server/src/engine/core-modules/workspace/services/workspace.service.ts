@@ -294,84 +294,88 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       value: true,
     });
 
-    const techPrefix = this.generateTechPrefix();
+    if (this.twentyConfigService.get('NODE_ENV') === 'production') {
+      this.logger.log('Starting telephony setup for workspace: ', workspace.id);
 
-    const clienteData = {
-      nome: user.email,
-      login: user.email,
-      senha: user.email,
-      revenda: 0,
-      max_cps: 10,
-      max_chamadas_simult: 5,
-      prepaid_mode: 1,
-      cota_diaria_limite: 100,
-      cota_mensal_limite: 1000,
-      franquia_minima: 50,
-      cobranca_extra_mensal: 0,
-      cota_diaria_consumo: 0,
-      cota_mensal_consumo: 0,
-      tipo_cobranca: 3,
-      dia_cobranca: 5,
-      bloqueia_prejuizo: 0,
-      expira_saldo: 0,
-      bloqueia_fixo: 0,
-      bloqueia_movel: 0,
-      bloqueia_internacional: 0,
-    };
+      const techPrefix = this.generateTechPrefix();
 
-    const contaVoipData = {
-      numero: techPrefix,
-      dominio: 'log.kvoip.com.br',
-      senha: this.generateRandomPassword(),
-      postpaid: true,
-      aviso_saldo_habilita: 1,
-      aviso_saldo_valor: 1,
-      assinatura_valor: 1,
-      assinatura_dia: 1,
-      saldo: 0,
-    };
+      const clienteData = {
+        nome: user.email,
+        login: user.email,
+        senha: user.email,
+        revenda: 0,
+        max_cps: 10,
+        max_chamadas_simult: 5,
+        prepaid_mode: 1,
+        cota_diaria_limite: 100,
+        cota_mensal_limite: 1000,
+        franquia_minima: 50,
+        cobranca_extra_mensal: 0,
+        cota_diaria_consumo: 0,
+        cota_mensal_consumo: 0,
+        tipo_cobranca: 3,
+        dia_cobranca: 5,
+        bloqueia_prejuizo: 0,
+        expira_saldo: 0,
+        bloqueia_fixo: 0,
+        bloqueia_movel: 0,
+        bloqueia_internacional: 0,
+      };
 
-    const ipData = {
-      ip: '186.209.119.150', // 186.209.119.150 / 192.168.1.88
-      pospago: true,
-      compartilhado: 1,
-      tech_prefix: techPrefix,
-      monitora_ping: false,
-      tabela_roteamento_id: 22,
-      tabela_venda_id: 177,
-      notificacao_saldo_habilitado: true,
-      notificacao_saldo_valor: 100.5,
-      local: 11,
-    };
+      const contaVoipData = {
+        numero: techPrefix,
+        dominio: 'log.kvoip.com.br',
+        senha: this.generateRandomPassword(),
+        postpaid: true,
+        aviso_saldo_habilita: 1,
+        aviso_saldo_valor: 1,
+        assinatura_valor: 1,
+        assinatura_dia: 1,
+        saldo: 0,
+      };
 
-    try {
-      const soapResult = await this.soapClientService.createCompleteClient(
-        clienteData,
-        contaVoipData,
-        ipData,
-        22,
-        177,
-        11,
-      );
+      const ipData = {
+        ip: '186.209.119.150', // 186.209.119.150 / 192.168.1.88
+        pospago: true,
+        compartilhado: 1,
+        tech_prefix: techPrefix,
+        monitora_ping: false,
+        tabela_roteamento_id: 22,
+        tabela_venda_id: 177,
+        notificacao_saldo_habilitado: true,
+        notificacao_saldo_valor: 100.5,
+        local: 11,
+      };
 
-      this.logger.log('SOAP client setup completed:', soapResult);
+      try {
+        const soapResult = await this.soapClientService.createCompleteClient(
+          clienteData,
+          contaVoipData,
+          ipData,
+          22,
+          177,
+          11,
+        );
 
-      await this.setupPabxEnvironment(
-        workspace,
-        user,
-        data.displayName,
-        techPrefix,
-      );
+        this.logger.log('SOAP client setup completed:', soapResult);
 
-      await this.featureFlagRepository.save(stripeFeatureFlag);
-
-      return await this.workspaceRepository.findOneBy({
-        id: workspace.id,
-      });
-    } catch (error) {
-      this.logger.error('Error in workspace activation:', error);
-      throw error;
+        await this.setupPabxEnvironment(
+          workspace,
+          user,
+          data.displayName,
+          techPrefix,
+        );
+      } catch (error) {
+        this.logger.error('Error in workspace activation:', error);
+        throw error;
+      }
     }
+
+    await this.featureFlagRepository.save(stripeFeatureFlag);
+
+    return await this.workspaceRepository.findOneBy({
+      id: workspace.id,
+    });
   }
 
   async setupPabxEnvironment(

@@ -6,6 +6,7 @@ export enum FileFolder {
   Attachment = 'attachment',
   PersonPicture = 'person-picture',
   ServerlessFunction = 'serverless-function',
+  InterCharge = 'inter-charge',
 }
 
 registerEnumType(FileFolder, {
@@ -31,5 +32,9 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
   },
   [FileFolder.ServerlessFunction]: {
     ignoreExpirationToken: false,
+  },
+  [FileFolder.InterCharge]: {
+    // TODO: Maybe we shouldn't ignore expiration token for Inter charges?
+    ignoreExpirationToken: true,
   },
 };

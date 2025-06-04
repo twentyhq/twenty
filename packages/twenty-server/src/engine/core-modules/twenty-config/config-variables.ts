@@ -4,6 +4,7 @@ import { plainToClass } from 'class-transformer';
 import {
   IsDefined,
   IsEnum,
+  IsNotEmpty,
   IsOptional,
   IsString,
   IsUrl,
@@ -1102,6 +1103,10 @@ export class ConfigVariables {
   @IsOptional()
   META_WEBHOOK_URL: string;
 
+  @IsString()
+  @IsOptional()
+  WEBHOOK_URL: string;
+
   // Onesignal
   @IsString()
   @IsOptional()
@@ -1284,6 +1289,61 @@ export class ConfigVariables {
   )
   @IsString()
   FOCUS_NFE_ENCRYPTION_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description: 'Inter base url.',
+    isSensitive: false,
+    type: ConfigVariableType.STRING,
+  })
+  @IsString()
+  @IsNotEmpty()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  INTER_BASE_URL: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BillingConfig,
+    description: 'Inter client id',
+    isSensitive: true,
+    type: ConfigVariableType.STRING,
+  })
+  @IsString()
+  @IsNotEmpty()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  INTER_CLIENT_ID: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BillingConfig,
+    description: 'Inter client secret',
+    isSensitive: true,
+    type: ConfigVariableType.STRING,
+  })
+  @IsString()
+  @IsNotEmpty()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  INTER_CLIENT_SECRET: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BillingConfig,
+    description: 'Inter secret key path.',
+    isSensitive: true,
+    type: ConfigVariableType.STRING,
+  })
+  @IsString()
+  @IsNotEmpty()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  INTER_SECRET_KEY_PATH: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BillingConfig,
+    description: 'Inter secret cert path.',
+    isSensitive: true,
+    type: ConfigVariableType.STRING,
+  })
+  @IsString()
+  @IsNotEmpty()
+  @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
+  INTER_SECRET_CERT_PATH: string;
 }
 
 export const validate = (config: Record<string, unknown>): ConfigVariables => {

@@ -1,8 +1,9 @@
 /* @license Enterprise */
 
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
@@ -20,6 +21,7 @@ import { BillingUsageService } from 'src/engine/core-modules/billing/services/bi
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
 import { formatBillingDatabaseProductToGraphqlDTO } from 'src/engine/core-modules/billing/utils/format-database-product-to-graphql-dto.util';
+import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
@@ -73,12 +75,15 @@ export class BillingResolver {
     @AuthWorkspace() workspace: Workspace,
     @AuthUser() user: User,
     @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Context() context: I18nContext,
     @Args()
     {
       recurringInterval,
       successUrlPath,
       plan,
       requirePaymentMethod,
+      paymentProvider,
+      interChargeData,
     }: BillingCheckoutSessionInput,
     @AuthApiKey() apiKey?: string,
   ) {
@@ -102,10 +107,14 @@ export class BillingResolver {
         interval: recurringInterval,
       },
     );
+
     const checkoutSessionURL =
       await this.billingPortalWorkspaceService.computeCheckoutSessionURL({
         ...checkoutSessionParams,
         billingPricesPerPlan,
+        paymentProvider,
+        interChargeData,
+        locale: context.req.headers['x-locale'] || SOURCE_LOCALE,
       });
 
     return {

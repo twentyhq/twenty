@@ -51,11 +51,14 @@ export class BillingSubscription {
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   stripeCustomerId: string;
 
-  @Column({ unique: true, nullable: false })
+  @Column({ unique: true, nullable: true })
   stripeSubscriptionId: string;
+
+  @Column({ nullable: true, unique: true })
+  interBillingChargeId: string;
 
   @Field(() => SubscriptionStatus)
   @Column({

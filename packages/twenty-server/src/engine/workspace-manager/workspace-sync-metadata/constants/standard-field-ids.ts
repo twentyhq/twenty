@@ -201,6 +201,18 @@ export const PRODUCT_STANDARD_FIELD_IDS = {
   position: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c61',
   searchVector: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c62',
   charges: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c68',
+  ncm: '0beb7064-e505-4451-82a1-4469b3ac68f2',
+  cfop: 'b8990536-861d-4ede-82c1-4e794b8bdaae',
+  cest: '46b3b263-8245-4eb6-bd80-1894c3d5fef3',
+  unidade: 'aab4abdd-101b-4b4d-9004-f38da02c1c03',
+  origem: '8523f0af-4e57-40b9-8b91-6da6d35a5f6d',
+  cstIcmsCsosn: 'c6efc059-14fe-4ffb-a884-5e57bf0d556b',
+  cstPis: '004ea842-997a-4f9a-8099-23ecfcaea421',
+  cstCofins: 'ebcc8de5-3821-43f1-bd42-2261fbc81f96',
+  aliquotaIcms: '5dce0057-f878-4e98-9901-889ba0c6a53d',
+  aliquotaPis: '542891a0-5388-4ac8-b58a-ce3404704f49',
+  aliquotaCofins: 'd3719fd0-094c-435d-bb89-b3134bb56df7',
+  valorIpi: 'adf71e83-c959-4eba-991e-33672d835622',
 };
 
 export const TRACEABLE_STANDARD_FIELD_IDS = {
