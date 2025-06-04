@@ -47,7 +47,7 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
         TypeORMModule,
         NestjsQueryTypeOrmModule.forFeature(
           [ObjectMetadataEntity, FieldMetadataEntity, RelationMetadataEntity],
-          'metadata',
+          'core',
         ),
         TypeOrmModule.forFeature([FeatureFlag], 'core'),
         DataSourceModule,

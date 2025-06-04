@@ -23,7 +23,7 @@ export class UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand extends Acti
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     protected readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {

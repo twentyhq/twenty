@@ -28,7 +28,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
     ObjectMetadataRepositoryModule.forFeature([
       TimelineActivityWorkspaceEntity,
     ]),
-    TypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
+    TypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
     MessagingCommonModule,
     MatchParticipantModule,
   ],

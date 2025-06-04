@@ -47,9 +47,9 @@ import {
 @Injectable()
 export class RelationMetadataService extends TypeOrmQueryService<RelationMetadataEntity> {
   constructor(
-    @InjectRepository(RelationMetadataEntity, 'metadata')
+    @InjectRepository(RelationMetadataEntity, 'core')
     private readonly relationMetadataRepository: Repository<RelationMetadataEntity>,
-    @InjectRepository(FieldMetadataEntity, 'metadata')
+    @InjectRepository(FieldMetadataEntity, 'core')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly fieldMetadataService: FieldMetadataService,

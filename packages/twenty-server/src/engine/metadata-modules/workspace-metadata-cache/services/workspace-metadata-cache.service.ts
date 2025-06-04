@@ -22,7 +22,7 @@ export class WorkspaceMetadataCacheService {
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
 

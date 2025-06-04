@@ -16,7 +16,7 @@ import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-met
 @Injectable()
 export class BeforeDeleteOneRelation implements BeforeDeleteOneHook {
   constructor(
-    @InjectRepository(RelationMetadataEntity, 'metadata')
+    @InjectRepository(RelationMetadataEntity, 'core')
     private readonly relationMetadataRepository: Repository<RelationMetadataEntity>,
   ) {}
 

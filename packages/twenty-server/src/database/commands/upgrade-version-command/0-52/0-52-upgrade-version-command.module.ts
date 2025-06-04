@@ -13,7 +13,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
     TypeOrmModule.forFeature([Workspace], 'core'),
     TypeOrmModule.forFeature(
       [ObjectMetadataEntity, FieldMetadataEntity],
-      'metadata',
+      'core',
     ),
     WorkspaceDataSourceModule,
   ],

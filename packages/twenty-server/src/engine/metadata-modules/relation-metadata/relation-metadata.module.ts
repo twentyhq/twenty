@@ -35,7 +35,7 @@ import { RelationMetadataDTO } from './dtos/relation-metadata.dto';
       imports: [
         NestjsQueryTypeOrmModule.forFeature(
           [RelationMetadataEntity, FieldMetadataEntity],
-          'metadata',
+          'core',
         ),
         ObjectMetadataModule,
         FieldMetadataModule,

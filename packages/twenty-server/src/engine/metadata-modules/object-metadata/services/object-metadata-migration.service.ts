@@ -29,9 +29,9 @@ import { RELATION_MIGRATION_PRIORITY_PREFIX } from 'src/engine/workspace-manager
 @Injectable()
 export class ObjectMetadataMigrationService {
   constructor(
-    @InjectRepository(FieldMetadataEntity, 'metadata')
+    @InjectRepository(FieldMetadataEntity, 'core')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    @InjectRepository(RelationMetadataEntity, 'metadata')
+    @InjectRepository(RelationMetadataEntity, 'core')
     private readonly relationMetadataRepository: Repository<RelationMetadataEntity>,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,

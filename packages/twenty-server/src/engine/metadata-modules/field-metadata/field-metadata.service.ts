@@ -42,6 +42,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { isSelectOrMultiSelectFieldMetadata } from 'src/engine/metadata-modules/field-metadata/utils/is-select-or-multi-select-field-metadata.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
@@ -68,7 +69,6 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { ViewService } from 'src/modules/view/services/view.service';
-import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'src/utils/trim-and-remove-duplicated-whitespaces-from-object-string-properties';
 
 import { FieldMetadataValidationService } from './field-metadata-validation.service';
@@ -88,13 +88,13 @@ type ValidateFieldMetadataArgs<T extends UpdateFieldInput | CreateFieldInput> =
 @Injectable()
 export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntity> {
   constructor(
-    @InjectDataSource('metadata')
-    private readonly metadataDataSource: DataSource,
-    @InjectRepository(FieldMetadataEntity, 'metadata')
+    @InjectDataSource('core')
+    private readonly coreDataSource: DataSource,
+    @InjectRepository(FieldMetadataEntity, 'core')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(RelationMetadataEntity, 'metadata')
+    @InjectRepository(RelationMetadataEntity, 'core')
     private readonly relationMetadataRepository: Repository<RelationMetadataEntity>,
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
@@ -128,7 +128,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     id: string,
     fieldMetadataInput: UpdateFieldInput,
   ): Promise<FieldMetadataEntity> {
-    const queryRunner = this.metadataDataSource.createQueryRunner();
+    const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -314,7 +314,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     input: DeleteOneFieldInput,
     workspaceId: string,
   ): Promise<FieldMetadataEntity> {
-    const queryRunner = this.metadataDataSource.createQueryRunner();
+    const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction(); // transaction not safe as a different queryRunner is used within workspaceMigrationRunnerService
@@ -837,7 +837,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     const workspaceId = fieldMetadataInputs[0].workspaceId;
-    const queryRunner = this.metadataDataSource.createQueryRunner();
+    const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();

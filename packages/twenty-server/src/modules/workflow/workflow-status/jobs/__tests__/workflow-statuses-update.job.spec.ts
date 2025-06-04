@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -12,7 +13,6 @@ import {
   WorkflowVersionBatchEvent,
   WorkflowVersionEventType,
 } from 'src/modules/workflow/workflow-status/jobs/workflow-statuses-update.job';
-import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 describe('WorkflowStatusesUpdate', () => {
   let job: WorkflowStatusesUpdateJob;
@@ -67,7 +67,7 @@ describe('WorkflowStatusesUpdate', () => {
           useValue: mockWorkspaceEventEmitter,
         },
         {
-          provide: getRepositoryToken(ObjectMetadataEntity, 'metadata'),
+          provide: getRepositoryToken(ObjectMetadataEntity, 'core'),
           useValue: {
             findOneOrFail: jest.fn().mockResolvedValue({
               nameSingular: 'workflow',
@@ -75,7 +75,7 @@ describe('WorkflowStatusesUpdate', () => {
           },
         },
         {
-          provide: getRepositoryToken(ServerlessFunctionEntity, 'metadata'),
+          provide: getRepositoryToken(ServerlessFunctionEntity, 'core'),
           useValue: {
             findOneOrFail: jest.fn().mockResolvedValue({
               latestVersion: 'v2',

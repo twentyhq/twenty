@@ -20,7 +20,7 @@ export class MigrateIsSearchableForCustomObjectMetadataCommand extends ActiveOrS
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     protected readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);

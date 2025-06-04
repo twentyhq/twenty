@@ -33,7 +33,7 @@ export class UserService extends TypeOrmQueryService<User> {
   constructor(
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,

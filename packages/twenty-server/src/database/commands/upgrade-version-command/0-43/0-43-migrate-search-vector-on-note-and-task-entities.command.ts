@@ -28,7 +28,7 @@ export class MigrateSearchVectorOnNoteAndTaskEntitiesCommand extends ActiveOrSus
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(FeatureFlag, 'core')
     protected readonly featureFlagRepository: Repository<FeatureFlag>,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     protected readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly searchVectorService: SearchVectorService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,

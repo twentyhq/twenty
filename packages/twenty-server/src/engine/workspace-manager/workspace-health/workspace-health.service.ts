@@ -27,8 +27,8 @@ export class WorkspaceHealthService {
   private readonly logger = new Logger(WorkspaceHealthService.name);
 
   constructor(
-    @InjectDataSource('metadata')
-    private readonly metadataDataSource: DataSource,
+    @InjectDataSource('core')
+    private readonly coreDataSource: DataSource,
     private readonly dataSourceService: DataSourceService,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly databaseStructureService: DatabaseStructureService,
@@ -132,7 +132,7 @@ export class WorkspaceHealthService {
     // Set default options
     options.applyChanges ??= true;
 
-    const queryRunner = this.metadataDataSource.createQueryRunner();
+    const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();

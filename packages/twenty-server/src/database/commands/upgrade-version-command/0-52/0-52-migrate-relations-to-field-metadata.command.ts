@@ -28,7 +28,7 @@ export class MigrateRelationsToFieldMetadataCommand extends ActiveOrSuspendedWor
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(FieldMetadataEntity, 'metadata')
+    @InjectRepository(FieldMetadataEntity, 'core')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {

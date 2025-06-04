@@ -25,7 +25,7 @@ export class UpgradeSearchVectorOnPersonEntityCommand extends ActiveOrSuspendedW
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     protected readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly searchVectorService: SearchVectorService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,

@@ -22,7 +22,7 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 export class DistantTableService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    @InjectRepository(RemoteServerEntity, 'metadata')
+    @InjectRepository(RemoteServerEntity, 'core')
     private readonly remoteServerRepository: Repository<
       RemoteServerEntity<RemoteServerType>
     >,

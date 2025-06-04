@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { In, Repository } from 'typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { In, Repository } from 'typeorm';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
@@ -24,10 +24,10 @@ import { createForeignKeyDeterministicUuid } from 'src/engine/workspace-manager/
 @Injectable()
 export class RemoteTableRelationsService {
   constructor(
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
 
-    @InjectRepository(FieldMetadataEntity, 'metadata')
+    @InjectRepository(FieldMetadataEntity, 'core')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
   ) {}

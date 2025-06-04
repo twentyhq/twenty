@@ -22,7 +22,7 @@ export class UpgradeCreatedByEnumCommand extends ActiveOrSuspendedWorkspacesMigr
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,

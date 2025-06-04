@@ -45,9 +45,9 @@ export class WorkspaceManagerService {
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
     private readonly permissionsService: PermissionsService,
-    @InjectRepository(FieldMetadataEntity, 'metadata')
+    @InjectRepository(FieldMetadataEntity, 'core')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    @InjectRepository(RelationMetadataEntity, 'metadata')
+    @InjectRepository(RelationMetadataEntity, 'core')
     private readonly relationMetadataRepository: Repository<RelationMetadataEntity>,
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
@@ -56,9 +56,9 @@ export class WorkspaceManagerService {
     private readonly featureFlagService: FeatureFlagService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(UserWorkspaceRoleEntity, 'metadata')
+    @InjectRepository(UserWorkspaceRoleEntity, 'core')
     private readonly userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>,
-    @InjectRepository(RoleEntity, 'metadata')
+    @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
   ) {}
 

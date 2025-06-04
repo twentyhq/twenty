@@ -29,8 +29,8 @@ export class WorkspaceSyncMetadataService {
   private readonly logger = new Logger(WorkspaceSyncMetadataService.name);
 
   constructor(
-    @InjectDataSource('metadata')
-    private readonly metadataDataSource: DataSource,
+    @InjectDataSource('core')
+    private readonly coreDataSource: DataSource,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceSyncObjectMetadataService: WorkspaceSyncObjectMetadataService,
     private readonly workspaceSyncRelationMetadataService: WorkspaceSyncRelationMetadataService,
@@ -59,7 +59,7 @@ export class WorkspaceSyncMetadataService {
   }> {
     let workspaceMigrations: WorkspaceMigrationEntity[] = [];
     const storage = new WorkspaceSyncStorage();
-    const queryRunner = this.metadataDataSource.createQueryRunner();
+    const queryRunner = this.coreDataSource.createQueryRunner();
 
     this.logger.log('Syncing standard objects and fields metadata');
 

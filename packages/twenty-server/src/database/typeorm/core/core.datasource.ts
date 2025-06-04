@@ -16,9 +16,13 @@ export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
   schema: 'core',
   entities:
     process.env.IS_BILLING_ENABLED === 'true'
-      ? [`${isJest ? '' : 'dist/'}src/engine/core-modules/**/*.entity{.ts,.js}`]
+      ? [
+          `${isJest ? '' : 'dist/'}src/engine/core-modules/**/*.entity{.ts,.js}`,
+          `${isJest ? '' : 'dist/'}src/engine/metadata-modules/**/*.entity{.ts,.js}`,
+        ]
       : [
           `${isJest ? '' : 'dist/'}src/engine/core-modules/**/!(billing-*).entity{.ts,.js}`,
+          `${isJest ? '' : 'dist/'}src/engine/metadata-modules/**/!(billing-*).entity{.ts,.js}`,
         ],
   synchronize: false,
   migrationsRun: false,
@@ -39,6 +43,9 @@ export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
           rejectUnauthorized: false,
         }
       : undefined,
+  extra: {
+    query_timeout: 10000,
+  },
 };
 
 export const connectionSource = new DataSource(
