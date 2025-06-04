@@ -4,6 +4,7 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
+import { isInsurOSAdminAccount } from '@/settings/integrations/utils/AdminAccounts';
 import { useSettingsPermissionMap } from '@/settings/roles/hooks/useSettingsPermissionMap';
 import { NavigationDrawerItemIndentationLevel } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { t } from '@lingui/core/macro';
@@ -59,8 +60,8 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const currentUser = useRecoilValue(currentUserState);
   const isAdminEnabled =
-    (currentUser?.canImpersonate || currentUser?.canAccessFullAdminPanel) ??
-    false;
+    (currentUser?.canImpersonate || currentUser?.canAccessFullAdminPanel) &&
+    isInsurOSAdminAccount(currentUser?.email ?? '');
   const labPublicFeatureFlags = useRecoilValue(labPublicFeatureFlagsState);
 
   const permissionMap = useSettingsPermissionMap();
