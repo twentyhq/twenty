@@ -36,7 +36,7 @@ export const useBuildAvailableFieldsForImport = () => {
       fieldMetadataItem: FieldMetadataItem,
       fieldType: CompositeFieldType,
     ) => {
-      //tododo : work on typing here - subFieldKey vs subFieldName vs subFieldLabel, not clear
+      //tododo : refacto -  work on typing here - subFieldKey vs subFieldName vs subFieldLabel, not clear
       Object.entries(COMPOSITE_FIELD_IMPORT_LABELS[fieldType]).forEach(
         ([subFieldKey, subFieldLabel]) => {
           const label = `${fieldMetadataItem.label} / ${subFieldLabel}`;

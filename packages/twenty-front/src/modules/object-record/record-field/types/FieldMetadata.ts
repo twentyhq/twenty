@@ -278,7 +278,7 @@ export type FieldArrayValue = string[];
 
 export type PhoneRecord = {
   number: string;
-  callingCode?: string;
+  callingCode: string;
   countryCode: string;
 };
 

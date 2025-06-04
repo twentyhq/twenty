@@ -146,17 +146,24 @@ export const getSpreadSheetFieldValidationDefinitions = (
                   const additionalPhones = JSON.parse(
                     stringifiedAdditionalPhones,
                   );
-                  return additionalPhones.every((phone: { number: string }) => {
-                    if (!isDefined(phone.number)) return true;
-                    return /^[0-9]+$/.test(phone.number);
-                  });
+                  return additionalPhones.every(
+                    (phone: {
+                      number: string;
+                      callingCode: string;
+                      countryCode: string;
+                    }) =>
+                      isDefined(phone.number) &&
+                      /^[0-9]+$/.test(phone.number) &&
+                      isDefined(phone.callingCode) &&
+                      isDefined(phone.countryCode),
+                  );
                 } catch {
                   return false;
                 }
               },
               errorMessage:
                 fieldName +
-                ' must be an array of object with valid phone, calling code and country code ({number: string|null, callingCode: string|null, countryCode: string|null})',
+                ' must be an array of object with valid phone, calling code and country code ({number: string, callingCode: string, countryCode: string})',
               level: 'error',
             },
           ];

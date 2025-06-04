@@ -74,7 +74,7 @@ export const buildRecordFromImportedStructuredRow = ({
       z.array(
         z.object({
           number: z.string(),
-          callingCode: z.string().optional(),
+          callingCode: z.string(),
           countryCode: z.string(),
         }),
       ),
