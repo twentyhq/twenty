@@ -1,6 +1,6 @@
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { isVectorSearchFilter } from '@/views/utils/isVectorSearchFilter';
 
 export const useVectorSearchFilterState = () => {
   const currentRecordFilters = useRecoilComponentValueV2(
@@ -8,9 +8,7 @@ export const useVectorSearchFilterState = () => {
   );
 
   const getExistingVectorSearchFilter = () => {
-    return currentRecordFilters.find(
-      (filter) => filter.operand === ViewFilterOperand.VectorSearch,
-    );
+    return currentRecordFilters.find(isVectorSearchFilter);
   };
 
   return {

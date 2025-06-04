@@ -6,7 +6,7 @@ import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-re
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useVectorSearchFieldInRecordIndexContextOrThrow } from '@/views/hooks/useVectorSearchFieldInRecordIndexContextOrThrow';
 import { vectorSearchInputComponentState } from '@/views/states/vectorSearchInputComponentState';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { isVectorSearchFilter } from '@/views/utils/isVectorSearchFilter';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -33,10 +33,7 @@ export const useSetEditableFilterChipDropdownStates = () => {
           return;
         }
 
-        const isVectorSearchFilter =
-          recordFilter.operand === ViewFilterOperand.VectorSearch;
-
-        if (isVectorSearchFilter) {
+        if (isVectorSearchFilter(recordFilter)) {
           set(
             vectorSearchInputComponentState.atomFamily({
               instanceId: recordFilter.id,
