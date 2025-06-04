@@ -13,7 +13,6 @@ import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrap
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { INTERNAL_SERVER_ERROR } from 'src/engine/middlewares/constants/default-error-message.constant';
-import { GraphqlTokenValidationProxy } from 'src/engine/middlewares/utils/graphql-token-validation-utils';
 import {
   handleException,
   handleExceptionAndConvertToGraphQLError,
@@ -116,11 +115,7 @@ export class MiddlewareService {
       return;
     }
 
-    const graphqlTokenValidationProxy = new GraphqlTokenValidationProxy(
-      this.accessTokenService,
-    );
-
-    const data = await graphqlTokenValidationProxy.validateToken(request);
+    const data = await this.accessTokenService.validateTokenByRequest(request);
     const metadataVersion =
       await this.workspaceStorageCacheService.getMetadataVersion(
         data.workspace.id,
