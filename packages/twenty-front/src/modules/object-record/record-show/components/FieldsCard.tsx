@@ -102,6 +102,7 @@ export const FieldsCard = ({
 
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId: objectRecordId,
+    objectMetadataId: objectMetadataItem.id,
   });
 
   return (

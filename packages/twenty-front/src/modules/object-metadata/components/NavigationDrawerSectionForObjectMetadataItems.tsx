@@ -1,5 +1,6 @@
 import { NavigationDrawerItemForObjectMetadataItem } from '@/object-metadata/components/NavigationDrawerItemForObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
@@ -26,6 +27,8 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
   const { toggleNavigationSection, isNavigationSectionOpenState } =
     useNavigationSection('Objects' + (isRemote ? 'Remote' : 'Workspace'));
   const isNavigationSectionOpen = useRecoilValue(isNavigationSectionOpenState);
+
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const sortedStandardObjectMetadataItems = [...objectMetadataItems]
     .filter((item) => ORDERED_STANDARD_OBJECTS.includes(item.nameSingular))
@@ -58,6 +61,13 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
     ...sortedCustomObjectMetadataItems,
   ];
 
+  const objectMetadataItemsForNavigationItemsWithReadPermission =
+    objectMetadataItemsForNavigationItems.filter(
+      (objectMetadataItem) =>
+        objectPermissionsByObjectMetadataId[objectMetadataItem.id]
+          ?.canReadObjectRecords,
+    );
+
   return (
     objectMetadataItems.length > 0 && (
       <NavigationDrawerSection>
@@ -68,12 +78,14 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
           />
         </NavigationDrawerAnimatedCollapseWrapper>
         {isNavigationSectionOpen &&
-          objectMetadataItemsForNavigationItems.map((objectMetadataItem) => (
-            <NavigationDrawerItemForObjectMetadataItem
-              key={`navigation-drawer-item-${objectMetadataItem.id}`}
-              objectMetadataItem={objectMetadataItem}
-            />
-          ))}
+          objectMetadataItemsForNavigationItemsWithReadPermission.map(
+            (objectMetadataItem) => (
+              <NavigationDrawerItemForObjectMetadataItem
+                key={`navigation-drawer-item-${objectMetadataItem.id}`}
+                objectMetadataItem={objectMetadataItem}
+              />
+            ),
+          )}
       </NavigationDrawerSection>
     )
   );

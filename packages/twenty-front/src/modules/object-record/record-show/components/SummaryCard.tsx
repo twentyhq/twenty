@@ -1,4 +1,5 @@
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
@@ -55,8 +56,13 @@ export const SummaryCard = ({
     }),
   );
 
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId: objectRecordId,
+    objectMetadataId: objectMetadataItem.id,
   });
 
   return (

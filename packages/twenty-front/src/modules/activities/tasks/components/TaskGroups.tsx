@@ -10,8 +10,8 @@ import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObj
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import groupBy from 'lodash.groupby';
-import { AddTaskButton } from './AddTaskButton';
-import { TaskList } from './TaskList';
+import { IconPlus } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -20,8 +20,8 @@ import {
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from 'twenty-ui/layout';
-import { Button } from 'twenty-ui/input';
-import { IconPlus } from 'twenty-ui/display';
+import { AddTaskButton } from './AddTaskButton';
+import { TaskList } from './TaskList';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -31,12 +31,12 @@ const StyledContainer = styled.div`
 
 type TaskGroupsProps = {
   filterDropdownId?: string;
-  targetableObjects?: ActivityTargetableObject[];
+  targetableObject?: ActivityTargetableObject;
 };
 
-export const TaskGroups = ({ targetableObjects }: TaskGroupsProps) => {
+export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
   const { tasks, tasksLoading } = useTasks({
-    targetableObjects: targetableObjects ?? [],
+    targetableObjects: targetableObject ? [targetableObject] : [],
   });
 
   const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
@@ -81,7 +81,7 @@ export const TaskGroups = ({ targetableObjects }: TaskGroupsProps) => {
             variant={'secondary'}
             onClick={() =>
               openCreateActivity({
-                targetableObjects: targetableObjects ?? [],
+                targetableObjects: targetableObject ? [targetableObject] : [],
               })
             }
           />
@@ -107,7 +107,7 @@ export const TaskGroups = ({ targetableObjects }: TaskGroupsProps) => {
           tasks={tasksByStatus}
           button={
             (status === 'TODO' || !hasTodoStatus) && (
-              <AddTaskButton activityTargetableObjects={targetableObjects} />
+              <AddTaskButton activityTargetableObject={targetableObject} />
             )
           }
         />
