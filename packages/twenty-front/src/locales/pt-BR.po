@@ -768,9 +768,9 @@ msgid "Blocklist"
 msgstr "Lista de Bloqueio"
 
 #. js-lingui-id: HssMtJ
-#: src/modules/billing/utils/billingPaymentProvidersMap.ts
+#: src/modules/billing/hooks/useBillingPaymentProvidersMap.ts
 msgid "Boleto"
-msgstr ""
+msgstr "Boleto"
 
 #. js-lingui-id: 2yl5lQ
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -851,9 +851,9 @@ msgid "Cancel your subscription"
 msgstr "Cancelar sua assinatura"
 
 #. js-lingui-id: GHEVpv
-#: src/modules/billing/utils/billingPaymentProvidersMap.ts
+#: src/modules/billing/hooks/useBillingPaymentProvidersMap.ts
 msgid "Cartão de crédito"
-msgstr ""
+msgstr "Cartão de crédito"
 
 #. js-lingui-id: M1RLfx
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -2997,12 +2997,12 @@ msgstr "Disposição"
 #. js-lingui-id: Ae7Hr2
 #: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
 msgid "Legal entity"
-msgstr ""
+msgstr "Pessoa Jurídica"
 
 #. js-lingui-id: /2pITc
-#: src/modules/onboarding/constants/OnboardingInterCustomerTypeOptions.ts
+#: src/modules/onboarding/hooks/useInterCustomerTypeOptions.ts
 msgid "Legal person"
-msgstr ""
+msgstr "Pessoa Jurídica"
 
 #. js-lingui-id: haJ2Hb
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -3249,9 +3249,9 @@ msgid "Name of your workspace"
 msgstr "Nome do seu workspace"
 
 #. js-lingui-id: Rx5k5c
-#: src/modules/onboarding/constants/OnboardingInterCustomerTypeOptions.ts
+#: src/modules/onboarding/hooks/useInterCustomerTypeOptions.ts
 msgid "Natural person"
-msgstr ""
+msgstr "Pessoa Fisica"
 
 #. js-lingui-id: 2T8KCk
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx

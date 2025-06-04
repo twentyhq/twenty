@@ -3,8 +3,8 @@ import { motion } from 'framer-motion';
 
 import { HandleCheckoutSessionFn } from '@/billing/hooks/useHandleCheckoutSession';
 import { INTER_STATE_UNITY_OPTIONS } from '@/onboarding/constants/OnboardingInterChargeDataStateUnityOptions';
-import { INTER_CUSTOMER_TYPE_OPTIONS } from '@/onboarding/constants/OnboardingInterCustomerTypeOptions';
 import { InterCharteDataForm } from '@/onboarding/hooks/useInterChargeDataForm';
+import { useInterCustomerTypeOptions } from '@/onboarding/hooks/useInterCustomerTypeOptions';
 import {
   OnboardingPlanStep,
   onboardingPlanStepState,
@@ -68,6 +68,8 @@ export const OnboardingInterChargeDataForm = ({
     handleSubmit,
     formState: { isSubmitting },
   } = useFormContext<InterCharteDataForm>();
+
+  const { INTER_CUSTOMER_TYPE_OPTIONS } = useInterCustomerTypeOptions();
 
   const setOnboardingPlanStep = useSetRecoilState(onboardingPlanStepState);
 
@@ -142,12 +144,7 @@ export const OnboardingInterChargeDataForm = ({
                   dropdownId="inter-charge-data-legal-entity"
                   value={value}
                   onChange={onChange}
-                  options={INTER_CUSTOMER_TYPE_OPTIONS.map(
-                    ({ label, value }) => ({
-                      value,
-                      label: label.message as string,
-                    }),
-                  )}
+                  options={INTER_CUSTOMER_TYPE_OPTIONS}
                 />
               )}
             />

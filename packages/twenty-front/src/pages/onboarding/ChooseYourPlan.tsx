@@ -1,8 +1,8 @@
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
+import { useBillingPaymentProvidersMap } from '@/billing/hooks/useBillingPaymentProvidersMap';
 import { useHandleCheckoutSession } from '@/billing/hooks/useHandleCheckoutSession';
-import { billingPaymentProvidersMap } from '@/billing/utils/billingPaymentProvidersMap';
 import { isBillingPriceLicensed } from '@/billing/utils/isBillingPriceLicensed';
 import { billingState } from '@/client-config/states/billingState';
 import { OnboardingInterChargeDataForm } from '@/onboarding/components/OnboardingInterChargeDataForm';
@@ -89,6 +89,8 @@ export const ChooseYourPlan = () => {
   const onboardingPlanStep = useRecoilValue(onboardingPlanStepState);
 
   const { data: plans } = useBillingBaseProductPricesQuery();
+
+  const { billingPaymentProvidersMap } = useBillingPaymentProvidersMap();
 
   const getPlanBenefits = (planKey: BillingPlanKey) => {
     if (planKey === BillingPlanKey.ENTERPRISE) {
@@ -217,7 +219,7 @@ export const ChooseYourPlan = () => {
                         name="payment-provider"
                       >
                         <StyledPaymentProviderCardContainer>
-                          {label.message}
+                          {label}
                         </StyledPaymentProviderCardContainer>
                       </CardPicker>
                     ))}
