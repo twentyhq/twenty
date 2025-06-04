@@ -1,5 +1,7 @@
 /* @license Enterprise */
 
+import Stripe from 'stripe';
+
 import { BillingPriceLicensedDTO } from 'src/engine/core-modules/billing/dtos/billing-price-licensed.dto';
 import { BillingPriceMeteredDTO } from 'src/engine/core-modules/billing/dtos/billing-price-metered.dto';
 import { BillingPlanOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-plan.output';
@@ -9,6 +11,13 @@ import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/bill
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { BillingGetPlanResult } from 'src/engine/core-modules/billing/types/billing-get-plan-result.type';
 
+const getMarketingFeaturesList = (
+  featers?: Stripe.Product.MarketingFeature[],
+) =>
+  featers && featers.length > 0
+    ? featers.map((feat) => feat?.name || null)
+    : null;
+
 export const formatBillingDatabaseProductToGraphqlDTO = (
   plan: BillingGetPlanResult,
 ): BillingPlanOutput => {
@@ -16,6 +25,9 @@ export const formatBillingDatabaseProductToGraphqlDTO = (
     planKey: plan.planKey,
     baseProduct: {
       ...plan.baseProduct,
+      marketingFeatures: getMarketingFeaturesList(
+        plan.baseProduct.marketingFeatures,
+      ),
       metadata: {
         ...plan.baseProduct.metadata,
         priceUsageBased: BillingUsageType.LICENSED,
@@ -34,6 +46,9 @@ export const formatBillingDatabaseProductToGraphqlDTO = (
         prices: product.billingPrices.map(
           formatBillingDatabasePriceToLicensedPriceDTO,
         ),
+        marketingFeatures: product.marketingFeatures.map(
+          (feat) => feat?.name || null,
+        ),
       };
     }),
     meteredProducts: plan.meteredProducts.map((product) => {
@@ -45,6 +60,9 @@ export const formatBillingDatabaseProductToGraphqlDTO = (
         },
         prices: product.billingPrices.map(
           formatBillingDatabasePriceToMeteredPriceDTO,
+        ),
+        marketingFeatures: product.marketingFeatures.map(
+          (feat) => feat?.name || null,
         ),
       };
     }),
