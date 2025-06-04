@@ -8,8 +8,8 @@ import { useStepBar } from '@/ui/navigation/step-bar/hooks/useStepBar';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useLingui } from '@lingui/react/macro';
-import { SpreadsheetImportStepper } from './SpreadsheetImportStepper';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { SpreadsheetImportStepper } from './SpreadsheetImportStepper';
 
 const StyledHeader = styled(Modal.Header)`
   background-color: ${({ theme }) => theme.background.secondary};

@@ -17,7 +17,6 @@ const StyledGrid = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  margin-top: ${({ theme }) => theme.spacing(8)};
   width: 100%;
 `;
 

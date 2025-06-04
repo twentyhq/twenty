@@ -1,4 +1,3 @@
-import { Heading } from '@/spreadsheet-import/components/Heading';
 import { SpreadsheetImportTable } from '@/spreadsheet-import/components/SpreadsheetImportTable';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
@@ -31,8 +30,7 @@ import { generateColumns } from './components/columns';
 import { ImportedStructuredRowMetadata } from './types';
 
 const StyledContent = styled(Modal.Content)`
-  padding-left: ${({ theme }) => theme.spacing(6)};
-  padding-right: ${({ theme }) => theme.spacing(6)};
+  padding: 0px;
 `;
 
 const StyledToolbar = styled.div`
@@ -255,10 +253,6 @@ export const ValidationStep = <T extends string>({
   return (
     <>
       <StyledContent>
-        <Heading
-          title={t`Review your import`}
-          description={t`Correct the issues and fill the missing data.`}
-        />
         <StyledToolbar>
           <StyledErrorToggle>
             <Toggle

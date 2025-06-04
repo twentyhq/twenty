@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Heading } from '@/spreadsheet-import/components/Heading';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { ImportedRow, ImportedStructuredRow } from '@/spreadsheet-import/types';
@@ -35,8 +34,7 @@ import { UserTableColumn } from './components/UserTableColumn';
 
 const StyledContent = styled(Modal.Content)`
   align-items: center;
-  padding-left: ${({ theme }) => theme.spacing(6)};
-  padding-right: ${({ theme }) => theme.spacing(6)};
+  padding: 0px;
 `;
 
 const StyledColumnsContainer = styled.div`
@@ -278,10 +276,6 @@ export const MatchColumnsStep = <T extends string>({
     <>
       <ScrollWrapper componentInstanceId="scroll-wrapper-modal-content">
         <StyledContent>
-          <Heading
-            title={t`Match Columns`}
-            description={t`⚠️ Please verify the auto mapping of the columns. You can also ignore or change the mapping of the columns.`}
-          />
           <ColumnGrid
             columns={columns}
             renderUserColumn={(columns, columnIndex) => (
