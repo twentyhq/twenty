@@ -1,5 +1,6 @@
 import { useCreateAppRouter } from '@/app/hooks/useCreateAppRouter';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { isInsurOSAdminAccount } from '@/settings/integrations/utils/AdminAccounts';
 import { RouterProvider } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
@@ -10,8 +11,8 @@ export const AppRouter = () => {
   const currentUser = useRecoilValue(currentUserState);
 
   const isAdminPageEnabled =
-    (currentUser?.canImpersonate || currentUser?.canAccessFullAdminPanel) ??
-    false;
+    (currentUser?.canImpersonate || currentUser?.canAccessFullAdminPanel) &&
+    isInsurOSAdminAccount(currentUser?.email ?? '');
 
   return (
     <RouterProvider
