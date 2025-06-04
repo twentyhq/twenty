@@ -2,7 +2,6 @@ import { RecordChip } from '@/object-record/components/RecordChip';
 import { useChipFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useChipFieldDisplay';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
-import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { ChipSize } from 'twenty-ui/components';
@@ -20,10 +19,8 @@ export const ChipFieldDisplay = () => {
   const { cellPosition } = useContext(RecordTableCellContext);
 
   const { activateRecordTableRow } = useActiveRecordTableRow();
-  const { unfocusRecordTableRow } = useFocusedRecordTableRow();
   const onclick = () => {
     activateRecordTableRow(cellPosition.row);
-    unfocusRecordTableRow();
   };
 
   if (!isDefined(recordValue)) {
