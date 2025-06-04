@@ -140,8 +140,6 @@ describe('RefreshTokenService', () => {
         workspaceId,
       });
 
-      console.log('>>>>>>>>>>>>>>', result);
-
       expect(result).toEqual({
         token: mockToken,
         expiresAt: expect.any(Date),
