@@ -6,9 +6,9 @@ const StyledDropdownMenuSectionLabel = styled.div`
   min-height: 20px;
   width: auto;
   font-size: ${({ theme }) => theme.font.size.xxs};
-  display: flex-start;
+  display: flex;
   align-items: center;
-  justify-content: left;
+  justify-content: flex-start;
   padding-left: ${({ theme }) => theme.spacing(1)};
   user-select: none;
 `;
