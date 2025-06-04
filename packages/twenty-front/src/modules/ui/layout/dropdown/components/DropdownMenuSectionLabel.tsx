@@ -6,7 +6,7 @@ const StyledDropdownMenuSectionLabel = styled.div`
   min-height: 20px;
   width: auto;
   font-size: ${({ theme }) => theme.font.size.xxs};
-  display: flex;
+  display: flex-start;
   align-items: center;
   justify-content: left;
   padding-left: ${({ theme }) => theme.spacing(1)};
