@@ -130,7 +130,7 @@ export const OnboardingInterChargeDataForm = ({
             }) => (
               <TextInputV2
                 autoFocus
-                label={t`Full Name`}
+                label={t`Full name`}
                 value={value}
                 onFocus={() => setIsEditingMode(true)}
                 onBlur={() => {
@@ -153,7 +153,7 @@ export const OnboardingInterChargeDataForm = ({
               render={({ field: { onChange, value } }) => (
                 <Select
                   fullWidth
-                  label={t`Legal entity`}
+                  label={t`Person type`}
                   dropdownId="inter-charge-data-legal-entity"
                   value={value}
                   onChange={onChange}

@@ -765,7 +765,7 @@ msgstr "Blocklist"
 #. js-lingui-id: HssMtJ
 #: src/modules/billing/hooks/useBillingPaymentProvidersMap.ts
 msgid "Boleto"
-msgstr "Bank slip"
+msgstr "Boleto"
 
 #. js-lingui-id: 2yl5lQ
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -848,7 +848,7 @@ msgstr "Cancel your subscription"
 #. js-lingui-id: GHEVpv
 #: src/modules/billing/hooks/useBillingPaymentProvidersMap.ts
 msgid "Cartão de crédito"
-msgstr "Credit Card"
+msgstr "Cartão de crédito"
 
 #. js-lingui-id: M1RLfx
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -1025,6 +1025,11 @@ msgstr "Compact view"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Companies"
 msgstr "Companies"
+
+#. js-lingui-id: 7i8j3G
+#: src/modules/onboarding/hooks/useInterCustomerTypeOptions.ts
+msgid "Company"
+msgstr "Company"
 
 #. js-lingui-id: Vj43Y/
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
@@ -1236,8 +1241,8 @@ msgstr "Count unique values"
 
 #. js-lingui-id: Md8EZY
 #: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
-msgid "Cpf/Cnpj"
-msgstr "Cpf/Cnpj"
+#~ msgid "Cpf/Cnpj"
+#~ msgstr "Cpf/Cnpj"
 
 #. js-lingui-id: hYgDIe
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
@@ -2390,6 +2395,16 @@ msgstr "French"
 msgid "Full access"
 msgstr "Full access"
 
+#. js-lingui-id: 0W0FHK
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Full name"
+msgstr "Full name"
+
+#. js-lingui-id: /4TFrF
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+#~ msgid "Full Name"
+#~ msgstr "Full Name"
+
 #. js-lingui-id: xANKBj
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Functions"
@@ -2630,8 +2645,8 @@ msgstr "Identity Provider Metadata XML"
 
 #. js-lingui-id: HlNkTA
 #: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
-msgid "Identy"
-msgstr "Identy"
+#~ msgid "Identy"
+#~ msgstr "Identy"
 
 #. js-lingui-id: ZfP/Ap
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
@@ -2684,6 +2699,11 @@ msgstr "incoming"
 msgid "Indexes"
 msgstr "Indexes"
 
+#. js-lingui-id: fByw/g
+#: src/modules/onboarding/hooks/useInterCustomerTypeOptions.ts
+msgid "Individual"
+msgstr "Individual"
+
 #. js-lingui-id: JE2tjr
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
@@ -2709,8 +2729,8 @@ msgstr "Integrations"
 
 #. js-lingui-id: 26GmDR
 #: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
-msgid "Inter Bolepix charge data"
-msgstr "Inter Bolepix charge data"
+#~ msgid "Inter Bolepix charge data"
+#~ msgstr "Inter Bolepix charge data"
 
 #. js-lingui-id: GNRDhm
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -2991,13 +3011,13 @@ msgstr "Layout"
 
 #. js-lingui-id: Ae7Hr2
 #: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
-msgid "Legal entity"
-msgstr "Legal entity"
+#~ msgid "Legal entity"
+#~ msgstr "Legal entity"
 
 #. js-lingui-id: /2pITc
 #: src/modules/onboarding/hooks/useInterCustomerTypeOptions.ts
-msgid "Legal person"
-msgstr "Legal person"
+#~ msgid "Legal person"
+#~ msgstr "Legal person"
 
 #. js-lingui-id: haJ2Hb
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -3218,7 +3238,6 @@ msgstr "Move right"
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
 msgid "Name"
 msgstr "Name"
 
@@ -3245,8 +3264,8 @@ msgstr "Name of your workspace"
 
 #. js-lingui-id: Rx5k5c
 #: src/modules/onboarding/hooks/useInterCustomerTypeOptions.ts
-msgid "Natural person"
-msgstr "Natural person"
+#~ msgid "Natural person"
+#~ msgstr "Natural person"
 
 #. js-lingui-id: 2T8KCk
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -3731,6 +3750,11 @@ msgstr "Password has been updated"
 msgid "Password reset link has been sent to the email"
 msgstr "Password reset link has been sent to the email"
 
+#. js-lingui-id: +Fx9ea
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Payment data"
+msgstr "Payment data"
+
 #. js-lingui-id: 1wdjme
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -3799,6 +3823,16 @@ msgstr "Permanently destroy workflows"
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Permissions"
 msgstr "Permissions"
+
+#. js-lingui-id: 19jdAl
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Person type"
+msgstr "Person type"
+
+#. js-lingui-id: sJYPeP
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Personal Details"
+msgstr "Personal Details"
 
 #. js-lingui-id: qlqT9z
 #: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
@@ -4829,8 +4863,8 @@ msgstr "Text copied to clipboard"
 
 #. js-lingui-id: jEOcvL
 #: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
-msgid "The address data as it will used as payer infromation."
-msgstr "The address data as it will used as payer infromation."
+#~ msgid "The address data as it will used as payer infromation."
+#~ msgstr "The address data as it will used as payer infromation."
 
 #. js-lingui-id: 1xQkU9
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
@@ -4876,8 +4910,8 @@ msgstr "The name of your organization"
 
 #. js-lingui-id: hS1s+i
 #: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
-msgid "The name/social reason as it will used as payer infromation."
-msgstr "The name/social reason as it will used as payer infromation."
+#~ msgid "The name/social reason as it will used as payer infromation."
+#~ msgstr "The name/social reason as it will used as payer infromation."
 
 #. js-lingui-id: L97sPr
 #: src/pages/not-found/NotFound.tsx
@@ -4935,6 +4969,11 @@ msgstr "There was an issue"
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
 #~ msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
 #~ msgstr "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
+
+#. js-lingui-id: Fb+kqj
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Theses are the necessary data to emit your bank slip"
+msgstr "Theses are the necessary data to emit your bank slip"
 
 #. js-lingui-id: hqCwGc
 #: src/pages/settings/SettingsWorkspaceMembers.tsx

@@ -7,11 +7,11 @@ export const useInterCustomerTypeOptions = () => {
   const INTER_CUSTOMER_TYPE_OPTIONS = [
     {
       value: InterCustomerType.FISICA,
-      label: t`Natural person`,
+      label: t`Individual`,
     },
     {
       value: InterCustomerType.JURIDICA,
-      label: t`Legal person`,
+      label: t`Company`,
     },
   ];
 

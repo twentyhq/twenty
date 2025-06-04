@@ -20,11 +20,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { CardPicker, MainButton } from 'twenty-ui/input';
-import {
-  CAL_LINK,
-  ClickToActionLink,
-  TWENTY_PRICING_LINK,
-} from 'twenty-ui/navigation';
+import { CAL_LINK, ClickToActionLink } from 'twenty-ui/navigation';
 import { Entries } from 'type-fest';
 import { ArrayElement } from 'type-fest/source/internal';
 import {
@@ -52,10 +48,18 @@ const StyledChooseProviderContainer = styled.div`
 `;
 
 const StyledPaymentProviderCardContainer = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.md};
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.lg};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
   display: flex;
+  flex-direction: column;
+  align-items: start;
   width: 100%;
+`;
+
+const StyledPaymentProviderCardTooltipCard = styled.div`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.sm};
 `;
 
 const StyledLinkGroup = styled.div`
@@ -227,6 +231,9 @@ export const ChooseYourPlan = () => {
                         name="payment-provider"
                       >
                         <StyledPaymentProviderCardContainer>
+                          <StyledPaymentProviderCardTooltipCard>
+                            {provider}
+                          </StyledPaymentProviderCardTooltipCard>
                           {label}
                         </StyledPaymentProviderCardContainer>
                       </CardPicker>
@@ -245,10 +252,10 @@ export const ChooseYourPlan = () => {
                     <ClickToActionLink onClick={signOut}>
                       <Trans>Log out</Trans>
                     </ClickToActionLink>
-                    <span />
+                    {/* <span />
                     <ClickToActionLink href={TWENTY_PRICING_LINK}>
                       <Trans>Change Plan</Trans>
-                    </ClickToActionLink>
+                    </ClickToActionLink> */}
                     <span />
                     <ClickToActionLink
                       href={CAL_LINK}
