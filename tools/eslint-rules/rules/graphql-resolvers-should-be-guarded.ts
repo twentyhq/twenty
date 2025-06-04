@@ -44,11 +44,11 @@ export const rule = createRule<[], 'graphqlResolversShouldBeGuarded'>({
   meta: {
     docs: {
       description:
-        'GraphQL root resolvers (Query, Mutation, Subscription) should have authentication guards (UserAuthGuard or WorkspaceAuthGuard) or be explicitly marked as public (PublicEndpoint) to maintain our security model.',
+        'GraphQL root resolvers (Query, Mutation, Subscription) should have authentication guards (UserAuthGuard or WorkspaceAuthGuard) or be explicitly marked as public (PublicEndpointGuard) to maintain our security model.',
     },
     messages: {
       graphqlResolversShouldBeGuarded:
-        'All GraphQL root resolver methods (@Query, @Mutation, @Subscription) should have @UseGuards(UserAuthGuard), @UseGuards(WorkspaceAuthGuard), or @UseGuards(PublicEndpoint) decorators, or one decorating the root of the Resolver class.',
+        'All GraphQL root resolver methods (@Query, @Mutation, @Subscription) should have @UseGuards(UserAuthGuard), @UseGuards(WorkspaceAuthGuard), or @UseGuards(PublicEndpointGuard) decorators, or one decorating the root of the Resolver class.',
     },
     schema: [],
     hasSuggestions: false,

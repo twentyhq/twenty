@@ -44,7 +44,7 @@ export const typedTokenHelpers = {
           if (arg.type === TSESTree.AST_NODE_TYPES.Identifier) {
             return arg.name === 'UserAuthGuard' || 
                    arg.name === 'WorkspaceAuthGuard' || 
-                   arg.name === 'PublicEndpoint';
+                   arg.name === 'PublicEndpointGuard';
           }
           return false;
         });

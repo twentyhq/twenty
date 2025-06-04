@@ -30,7 +30,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestResolver {
           @Query()
-          @UseGuards(PublicEndpoint)
+          @UseGuards(PublicEndpointGuard)
           testQuery() {}
         }
       `,
@@ -39,7 +39,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestResolver {
           @Query()
-          @UseGuards(CaptchaGuard, PublicEndpoint)
+          @UseGuards(CaptchaGuard, PublicEndpointGuard)
           testQuery() {}
         }
       `,
@@ -64,7 +64,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        @UseGuards(PublicEndpoint)
+        @UseGuards(PublicEndpointGuard)
         class TestResolver {
           @Query()
           testQuery() {}

@@ -1,17 +1,17 @@
 import { ExecutionContext } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { PublicEndpoint } from 'src/engine/guards/public-endpoint.guard';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
-describe('PublicEndpoint', () => {
-  let guard: PublicEndpoint;
+describe('PublicEndpointGuard', () => {
+  let guard: PublicEndpointGuard;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [PublicEndpoint],
+      providers: [PublicEndpointGuard],
     }).compile();
 
-    guard = module.get<PublicEndpoint>(PublicEndpoint);
+    guard = module.get<PublicEndpointGuard>(PublicEndpointGuard);
   });
 
   it('should be defined', () => {
@@ -32,6 +32,6 @@ describe('PublicEndpoint', () => {
   });
 
   it('should be injectable', () => {
-    expect(guard).toBeInstanceOf(PublicEndpoint);
+    expect(guard).toBeInstanceOf(PublicEndpointGuard);
   });
 });

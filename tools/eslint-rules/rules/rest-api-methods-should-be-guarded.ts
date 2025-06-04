@@ -44,11 +44,11 @@ export const rule = createRule<[], 'restApiMethodsShouldBeGuarded'>({
   meta: {
     docs: {
       description:
-        'REST API endpoints should have authentication guards (UserAuthGuard or WorkspaceAuthGuard) or be explicitly marked as public (PublicEndpoint) to maintain our security model.',
+        'REST API endpoints should have authentication guards (UserAuthGuard or WorkspaceAuthGuard) or be explicitly marked as public (PublicEndpointGuard) to maintain our security model.',
     },
     messages: {
       restApiMethodsShouldBeGuarded:
-        'All REST API controller endpoints should have @UseGuards(UserAuthGuard), @UseGuards(WorkspaceAuthGuard), or @UseGuards(PublicEndpoint) decorators, or one decorating the root of the Controller.',
+        'All REST API controller endpoints should have @UseGuards(UserAuthGuard), @UseGuards(WorkspaceAuthGuard), or @UseGuards(PublicEndpointGuard) decorators, or one decorating the root of the Controller.',
     },
     schema: [],
     hasSuggestions: false,

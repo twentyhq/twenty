@@ -5,10 +5,10 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
  * This guard always returns true and serves as documentation
  * that the endpoint is intentionally accessible without authentication.
  *
- * Usage: @UseGuards(PublicEndpoint)
+ * Usage: @UseGuards(PublicEndpointGuard)
  */
 @Injectable()
-export class PublicEndpoint implements CanActivate {
+export class PublicEndpointGuard implements CanActivate {
   canActivate(_context: ExecutionContext): boolean {
     // Always allow access - this is an explicit marker for public endpoints
     return true;

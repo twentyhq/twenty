@@ -44,7 +44,7 @@ import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { PublicEndpoint } from 'src/engine/guards/public-endpoint.guard';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -284,7 +284,7 @@ export class WorkspaceResolver {
   }
 
   @Query(() => PublicWorkspaceDataOutput)
-  @UseGuards(PublicEndpoint)
+  @UseGuards(PublicEndpointGuard)
   async getPublicWorkspaceDataByDomain(
     @Args('origin') origin: string,
   ): Promise<PublicWorkspaceDataOutput | undefined> {
