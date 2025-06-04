@@ -85,7 +85,7 @@ export class MiddlewareService {
     res.end();
   }
 
-  public async authenticateRestRequest(request: Request) {
+  public async hydrateRestRequest(request: Request) {
     const data = await this.accessTokenService.validateTokenByRequest(request);
     const metadataVersion =
       await this.workspaceStorageCacheService.getMetadataVersion(
