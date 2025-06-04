@@ -18,6 +18,10 @@ const StyledUserName = styled.p`
   margin-bottom: ${({ theme }) => theme.spacing(1.5)};
 `;
 
+const getCleanName = (name: string) => {
+  return name.startsWith('_') ? name.slice(1) : name;
+};
+
 export const AvatarComponent: React.FC<WhatsappProps> = ({
   message,
   selectedChat,
@@ -46,7 +50,7 @@ export const UsernameComponent: React.FC<WhatsappProps> = ({ message }) => {
         margin: 0,
       }}
     >
-      {message.from}
+      {getCleanName(message.from)}
     </StyledUserName>
   );
 };

@@ -263,7 +263,12 @@ export const CallCenterProvider = ({
           (bot: any) => bot.id === chatbotId,
         );
 
-        if (last.from === findChatbot.name) continue;
+        if (
+          last.from === findChatbot.name &&
+          last.from !==
+            `_${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`
+        )
+          continue;
 
         if (!executor) {
           // Change the way the request is made to chatbot flow

@@ -358,7 +358,7 @@ export const PaneChat = () => {
       integrationId: selectedChat.integrationId,
       to: `${identifier}`,
       type,
-      from: `${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`,
+      from: `_${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`,
     };
 
     // if (type === MessageType.FB_RESPONSE) {
@@ -601,7 +601,7 @@ export const PaneChat = () => {
           {isAnexOpen && (
             <ChatAnex
               setIsAnexOpen={setIsAnexOpen}
-              from={`${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`}
+              from={`_${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`}
             />
           )}
           <StyledInput
