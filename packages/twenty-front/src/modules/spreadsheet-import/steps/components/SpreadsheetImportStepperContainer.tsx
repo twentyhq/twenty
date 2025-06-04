@@ -14,10 +14,9 @@ import { SpreadsheetImportStepper } from './SpreadsheetImportStepper';
 const StyledHeader = styled(Modal.Header)`
   background-color: ${({ theme }) => theme.background.secondary};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
+  padding: 0px ${({ theme }) => theme.spacing(30)};
   height: 60px;
-  padding: 0px;
-  padding-left: ${({ theme }) => theme.spacing(30)};
-  padding-right: ${({ theme }) => theme.spacing(30)};
+  flex-shrink: 0;
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     padding-left: ${({ theme }) => theme.spacing(4)};
     padding-right: ${({ theme }) => theme.spacing(4)};

@@ -16,7 +16,10 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 
 import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';
+import { ColumnGrid } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid';
+import { TemplateColumn } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/TemplateColumn';
 import { UnmatchColumn } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumn';
+import { UserTableColumn } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn';
 import { initialComputedColumnsSelector } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/states/initialComputedColumnsState';
 import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
@@ -28,9 +31,6 @@ import { getMatchedColumnsWithFuse } from '@/spreadsheet-import/utils/getMatched
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
-import { ColumnGrid } from './components/ColumnGrid';
-import { TemplateColumn } from './components/TemplateColumn';
-import { UserTableColumn } from './components/UserTableColumn';
 
 const StyledContent = styled(Modal.Content)`
   align-items: center;
