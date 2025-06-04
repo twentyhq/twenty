@@ -8,6 +8,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import Stripe from 'stripe';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -28,7 +29,6 @@ import { InterService } from 'src/engine/core-modules/inter/services/inter.servi
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { assert } from 'src/utils/assert';
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 @Injectable()
 export class BillingPortalWorkspaceService {
@@ -108,8 +108,7 @@ export class BillingPortalWorkspaceService {
         stripeCustomerId: customer?.stripeCustomerId,
         plan,
         requirePaymentMethod,
-        withTrialPeriod:
-          !isDefined(customer) || customer.billingSubscriptions.length === 0,
+        withTrialPeriod: false,
       });
 
     assert(checkoutSession.url, 'Error: missing checkout.session.url');
