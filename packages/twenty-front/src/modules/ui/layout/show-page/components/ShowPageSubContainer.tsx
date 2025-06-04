@@ -39,7 +39,6 @@ const StyledTabListContainer = styled.div<{ shouldDisplay: boolean }>`
 
 const StyledTabList = styled(TabList)`
   padding-left: ${({ theme }) => theme.spacing(2)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
