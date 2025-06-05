@@ -39,6 +39,7 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
       Sentry.expressIntegration(),
       Sentry.graphqlIntegration(),
       Sentry.postgresIntegration(),
+      Sentry.vercelAIIntegration(),
       nodeProfilingIntegration(),
     ],
     tracesSampleRate: 0.1,

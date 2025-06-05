@@ -122,12 +122,12 @@ describe('FeatureFlagService', () => {
       mockWorkspaceFeatureFlagsMapCacheService.getWorkspaceFeatureFlagsMap.mockResolvedValue(
         {
           [FeatureFlagKey.IS_WORKFLOW_ENABLED]: true,
-          [FeatureFlagKey.IS_COPILOT_ENABLED]: false,
+          [FeatureFlagKey.IS_AI_ENABLED]: false,
         },
       );
       const mockFeatureFlags = [
         { key: FeatureFlagKey.IS_WORKFLOW_ENABLED, value: true },
-        { key: FeatureFlagKey.IS_COPILOT_ENABLED, value: false },
+        { key: FeatureFlagKey.IS_AI_ENABLED, value: false },
       ];
 
       // Act
@@ -146,7 +146,7 @@ describe('FeatureFlagService', () => {
       // Prepare
       const mockFeatureFlags = [
         { key: FeatureFlagKey.IS_WORKFLOW_ENABLED, value: true, workspaceId },
-        { key: FeatureFlagKey.IS_COPILOT_ENABLED, value: false, workspaceId },
+        { key: FeatureFlagKey.IS_AI_ENABLED, value: false, workspaceId },
       ];
 
       mockFeatureFlagRepository.find.mockResolvedValue(mockFeatureFlags);
@@ -157,7 +157,7 @@ describe('FeatureFlagService', () => {
       // Assert
       expect(result).toEqual({
         [FeatureFlagKey.IS_WORKFLOW_ENABLED]: true,
-        [FeatureFlagKey.IS_COPILOT_ENABLED]: false,
+        [FeatureFlagKey.IS_AI_ENABLED]: false,
       });
     });
   });
@@ -167,7 +167,7 @@ describe('FeatureFlagService', () => {
       // Prepare
       const keys = [
         FeatureFlagKey.IS_WORKFLOW_ENABLED,
-        FeatureFlagKey.IS_COPILOT_ENABLED,
+        FeatureFlagKey.IS_AI_ENABLED,
       ];
 
       mockFeatureFlagRepository.upsert.mockResolvedValue({});
