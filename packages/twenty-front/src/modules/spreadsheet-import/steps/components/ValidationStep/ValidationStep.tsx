@@ -13,7 +13,7 @@ import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import {
   Dispatch,
   SetStateAction,
@@ -24,19 +24,35 @@ import {
 // @ts-expect-error Todo: remove usage of react-data-grid`
 import { RowsChangeData } from 'react-data-grid';
 import { isDefined } from 'twenty-shared/utils';
+import { IconTrash } from 'twenty-ui/display';
+import { Button, Toggle } from 'twenty-ui/input';
 import { generateColumns } from './components/columns';
 import { ImportedStructuredRowMetadata } from './types';
 
 const StyledContent = styled(Modal.Content)`
   padding: 0px;
+  position: relative;
 `;
 
 const StyledToolbar = styled.div`
+  align-items: center;
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  background-color: ${({ theme }) => theme.background.secondary};
+  bottom: ${({ theme }) => theme.spacing(3)};
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
-  margin-top: ${({ theme }) => theme.spacing(8)};
+  left: 50%;
+  position: absolute;
+  transform: translateX(-50%);
+  width: 400px;
+  padding: ${({ theme }) => theme.spacing(3)};
+  z-index: 1;
+`;
+
+const StyledButton = styled(Button)`
+  height: 24px;
 `;
 
 const StyledErrorToggle = styled.div`
@@ -46,8 +62,8 @@ const StyledErrorToggle = styled.div`
 `;
 
 const StyledErrorToggleDescription = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  color: ${({ theme }) => theme.font.color.secondary};
+  font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   margin-left: ${({ theme }) => theme.spacing(2)};
 `;
@@ -250,24 +266,6 @@ export const ValidationStep = <T extends string>({
   return (
     <>
       <StyledContent>
-        {/* <StyledToolbar>
-          <StyledErrorToggle>
-            <Toggle
-              value={filterByErrors}
-              onChange={() => setFilterByErrors(!filterByErrors)}
-            />
-            <StyledErrorToggleDescription>
-              <Trans>Show only rows with errors</Trans>
-            </StyledErrorToggleDescription>
-          </StyledErrorToggle>
-          <Button
-            Icon={IconTrash}
-            title={t`Remove`}
-            accent="danger"
-            onClick={deleteSelectedRows}
-            disabled={selectedRows.size === 0}
-          />
-        </StyledToolbar> */}
         <StyledScrollContainer>
           <SpreadsheetImportTable
             headerRowHeight={32}
@@ -288,6 +286,25 @@ export const ValidationStep = <T extends string>({
             }}
           />
         </StyledScrollContainer>
+        <StyledToolbar>
+          <StyledErrorToggle>
+            <Toggle
+              value={filterByErrors}
+              onChange={() => setFilterByErrors(!filterByErrors)}
+              toggleSize="small"
+            />
+            <StyledErrorToggleDescription>
+              <Trans>Show only rows with errors</Trans>
+            </StyledErrorToggleDescription>
+          </StyledErrorToggle>
+          <StyledButton
+            Icon={IconTrash}
+            title={t`Remove`}
+            accent={selectedRows.size === 0 ? 'default' : 'danger'}
+            onClick={deleteSelectedRows}
+            disabled={selectedRows.size === 0}
+          />
+        </StyledToolbar>
       </StyledContent>
       <StepNavigationButton
         onClick={onContinue}
