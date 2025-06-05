@@ -40,7 +40,7 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { SubscriptionInfoContainer } from '@/billing/components/SubscriptionInfoContainer';
 import { SubscriptionInfoRowContainer } from '@/billing/components/SubscriptionInfoRowContainer';
 import { Tag } from 'twenty-ui/components';
-import { formatPrices } from '@/billing/utils/formatPrices';
+import { formatMonthlyPrices } from '@/billing/utils/formatMonthlyPrices';
 
 const SWITCH_BILLING_INTERVAL_MODAL_ID = 'switch-billing-interval-modal';
 const SWITCH_BILLING_PLAN_MODAL_ID = 'switch-billing-plan-modal';
@@ -188,7 +188,7 @@ export const SettingsBilling = () => {
 
   const baseProductPrices = pricesData?.plans as BillingPlanOutput[];
 
-  const formattedPrices = formatPrices(baseProductPrices, seats);
+  const formattedPrices = formatMonthlyPrices(baseProductPrices);
 
   const yearlyPrice =
     formattedPrices?.[
@@ -295,7 +295,7 @@ export const SettingsBilling = () => {
       <ConfirmationModal
         modalId={SWITCH_BILLING_INTERVAL_MODAL_ID}
         title={t`Change to Yearly?`}
-        subtitle={t`You will be billed ${yearlyPrice}$ per user per year. A prorata with your current subscription will be applied`}
+        subtitle={t`You will be charged $${yearlyPrice} per user per month billed annually. A prorata with your current subscription will be applied`}
         onConfirmClick={switchInterval}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent={'blue'}
@@ -303,7 +303,11 @@ export const SettingsBilling = () => {
       <ConfirmationModal
         modalId={SWITCH_BILLING_PLAN_MODAL_ID}
         title={t`Change to Organization Plan?`}
-        subtitle={t`You will be billed ${enterprisePrice}$ per user per month.`}
+        subtitle={
+          isYearlyPlan
+            ? t`You will be charged $${enterprisePrice} per user per month billed annually.`
+            : t`You will be charged $${enterprisePrice} per user per month.`
+        }
         onConfirmClick={switchPlan}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent={'blue'}

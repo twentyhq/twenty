@@ -6,11 +6,8 @@ import {
 } from '~/generated/graphql';
 import { isDefined } from 'twenty-shared/utils';
 
-export const formatPrices = (
-  plans: BillingPlanOutput[] | undefined,
-  seats: number | undefined,
-) => {
-  if (!isDefined(plans) || !isDefined(seats)) {
+export const formatMonthlyPrices = (plans: BillingPlanOutput[] | undefined) => {
+  if (!isDefined(plans)) {
     return;
   }
 
@@ -38,14 +35,12 @@ export const formatPrices = (
 
   return {
     [BillingPlanKey.ENTERPRISE]: {
-      [SubscriptionInterval.Year]:
-        (seats * enterpriseYearPrice?.unitAmount) / 100,
-      [SubscriptionInterval.Month]:
-        (seats * enterpriseMonthPrice?.unitAmount) / 100,
+      [SubscriptionInterval.Year]: enterpriseYearPrice?.unitAmount / 100 / 12,
+      [SubscriptionInterval.Month]: enterpriseMonthPrice?.unitAmount / 100,
     },
     [BillingPlanKey.PRO]: {
-      [SubscriptionInterval.Year]: (seats * proYearPrice?.unitAmount) / 100,
-      [SubscriptionInterval.Month]: (seats * proMonthPrice?.unitAmount) / 100,
+      [SubscriptionInterval.Year]: proYearPrice?.unitAmount / 100 / 12,
+      [SubscriptionInterval.Month]: proMonthPrice?.unitAmount / 100,
     },
   };
 };
