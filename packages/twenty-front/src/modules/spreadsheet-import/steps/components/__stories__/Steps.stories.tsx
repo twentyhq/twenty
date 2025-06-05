@@ -33,6 +33,6 @@ export const Default: Story = {
     expect(await canvas.findByText('Upload File')).toBeInTheDocument();
     expect(await canvas.findByText('Match Columns')).toBeInTheDocument();
     expect(await canvas.findByText('Validate Data')).toBeInTheDocument();
-    expect(await canvas.findByText('Select File')).toBeInTheDocument();
+    expect(await canvas.findByText('Select file')).toBeInTheDocument();
   },
 };
