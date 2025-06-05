@@ -18,5 +18,11 @@ export const getObjectPermissionsForObject = (
     };
   }
 
-  return objectPermissions;
+  return {
+    canReadObjectRecords: objectPermissions.canReadObjectRecords ?? true,
+    canUpdateObjectRecords: objectPermissions.canUpdateObjectRecords ?? true,
+    canSoftDeleteObjectRecords:
+      objectPermissions.canSoftDeleteObjectRecords ?? true,
+    canDestroyObjectRecords: objectPermissions.canDestroyObjectRecords ?? true,
+  };
 };
