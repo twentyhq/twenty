@@ -5,6 +5,7 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -65,6 +66,8 @@ const InternalTableContextProviders = ({
     visibleTableColumnsComponentSelector,
   );
 
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
   return (
     <RecordIndexContextProvider
       value={{
@@ -73,6 +76,7 @@ const InternalTableContextProviders = ({
         objectNamePlural: objectMetadataItem.namePlural,
         objectNameSingular: objectMetadataItem.nameSingular,
         objectMetadataItem: objectMetadataItem,
+        objectPermissionsByObjectMetadataId,
         recordIndexId: 'record-index',
       }}
     >
