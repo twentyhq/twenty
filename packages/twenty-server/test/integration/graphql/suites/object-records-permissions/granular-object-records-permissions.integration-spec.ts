@@ -101,7 +101,7 @@ describe('granularObjectRecordsPermissions', () => {
     it('should successfully query person when person reading rights are overriden to true', async () => {
       // Arrange
       const { roleId } = await createCustomRoleWithObjectPermissions({
-        label: 'PersonAndCompanyRole',
+        label: 'PersonRole',
         canReadPerson: true,
         hasAllObjectRecordsReadPermission: false,
       });

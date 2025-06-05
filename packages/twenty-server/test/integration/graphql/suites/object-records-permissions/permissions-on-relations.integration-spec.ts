@@ -72,7 +72,7 @@ describe('permissionsOnRelations', () => {
             name
           }
         `,
-        filter: { city: { eq: 'Seattle' } },
+        filter: { name: { lastName: { eq: 'Voulzy' } } },
       });
 
       const response = await makeGraphqlAPIRequestWithJony(graphqlOperation);
@@ -113,7 +113,7 @@ describe('permissionsOnRelations', () => {
             name
           }
         `,
-        filter: { city: { eq: 'Seattle' } },
+        filter: { name: { lastName: { eq: 'Voulzy' } } },
       });
 
       const response = await makeGraphqlAPIRequestWithJony(graphqlOperation);
@@ -157,7 +157,7 @@ describe('permissionsOnRelations', () => {
             }
           }
         `,
-        filter: { city: { eq: 'Seattle' } },
+        filter: { name: { lastName: { eq: 'Voulzy' } } },
       });
 
       const response = await makeGraphqlAPIRequestWithJony(graphqlOperation);

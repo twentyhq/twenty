@@ -122,5 +122,10 @@ export const createCustomRoleWithObjectPermissions = async (options: {
     await makeGraphqlAPIRequest(upsertObjectPermissionsOperation);
   }
 
-  return { roleId, personObjectId, companyObjectId };
+  return {
+    roleId,
+    personObjectId,
+    companyObjectId,
+    opportunityObjectId,
+  };
 };
