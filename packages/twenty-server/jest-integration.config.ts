@@ -18,7 +18,6 @@ const jestConfig: JestConfigWithTsJest = {
   rootDir: '.',
   testEnvironment: 'node',
   testPathIgnorePatterns: [
-    '<rootDir>/test/integration/billing',
     ...(isBillingEnabled ? [] : ['<rootDir>/test/integration/billing']),
     ...(isClickhouseEnabled ? [] : ['<rootDir>/test/integration/audit']),
   ],
