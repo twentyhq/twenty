@@ -260,15 +260,17 @@ describe('buildLexicographicOrderingWhereCondition', () => {
         );
 
         expect(result).toHaveProperty('or');
-        expect(Array.isArray(result.or)).toBe(true);
-        expect(result.or).toHaveLength(filteredProperties.length);
+        const orConditions = result.or;
 
-        expect(result.or[0]).toHaveProperty(key);
+        expect(Array.isArray(orConditions)).toBe(true);
+        expect(orConditions).toHaveLength(filteredProperties.length);
 
-        for (let i = 1; i < filteredProperties.length; i++) {
-          expect(result.or[i]).toHaveProperty('and');
-          expect(Array.isArray(result.or[i].and)).toBe(true);
-          expect(result.or[i].and).toHaveLength(i + 1);
+        expect(orConditions[0]).toHaveProperty(key);
+
+        for (const [index, orCondition] of orConditions.slice(1).entries()) {
+          expect(orCondition).toHaveProperty('and');
+          expect(Array.isArray(orCondition.and)).toBe(true);
+          expect(orCondition.and).toHaveLength(index + 2);
         }
       },
     );
