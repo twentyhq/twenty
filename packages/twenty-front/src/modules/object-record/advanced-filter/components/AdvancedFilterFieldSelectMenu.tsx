@@ -22,8 +22,10 @@ import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-rec
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useLingui } from '@lingui/react/macro';
 
 type AdvancedFilterFieldSelectMenuProps = {
   recordFilterId: string;
@@ -119,6 +121,9 @@ export const AdvancedFilterFieldSelectMenu = ({
     }
   };
 
+  const shouldShowVisibleFields = visibleColumnsFieldMetadataItems.length > 0;
+  const shouldShowHiddenFields = hiddenColumnsFieldMetadataItems.length > 0;
+
   const shouldShowSeparator =
     visibleColumnsFieldMetadataItems.length > 0 &&
     hiddenColumnsFieldMetadataItems.length > 0;
@@ -132,6 +137,8 @@ export const AdvancedFilterFieldSelectMenu = ({
     ),
   ];
 
+  const { t } = useLingui();
+
   return (
     <DropdownContent>
       <AdvancedFilterFieldSelectSearchInput />
@@ -140,41 +147,53 @@ export const AdvancedFilterFieldSelectMenu = ({
         selectableItemIdArray={selectableItemIdArray}
         selectableListInstanceId={advancedFilterFieldSelectDropdownId}
       >
-        <DropdownMenuItemsContainer>
-          {visibleColumnsFieldMetadataItems.map(
-            (visibleFieldMetadataItem, index) => (
-              <SelectableListItem
-                itemId={visibleFieldMetadataItem.id}
-                key={`visible-select-filter-${index}`}
-                onEnter={() => {
-                  handleFieldMetadataItemSelect(visibleFieldMetadataItem);
-                }}
-              >
-                <ObjectFilterDropdownFilterSelectMenuItemV2
-                  fieldMetadataItemToSelect={visibleFieldMetadataItem}
-                  onClick={handleFieldMetadataItemSelect}
-                />
-              </SelectableListItem>
-            ),
-          )}
-          {shouldShowSeparator && <DropdownMenuSeparator />}
-          {hiddenColumnsFieldMetadataItems.map(
-            (hiddenFieldMetadataItem, index) => (
-              <SelectableListItem
-                itemId={hiddenFieldMetadataItem.id}
-                key={`hidden-select-filter-${index}`}
-                onEnter={() => {
-                  handleFieldMetadataItemSelect(hiddenFieldMetadataItem);
-                }}
-              >
-                <ObjectFilterDropdownFilterSelectMenuItemV2
-                  fieldMetadataItemToSelect={hiddenFieldMetadataItem}
-                  onClick={handleFieldMetadataItemSelect}
-                />
-              </SelectableListItem>
-            ),
-          )}
-        </DropdownMenuItemsContainer>
+        {shouldShowVisibleFields && (
+          <>
+            <DropdownMenuSectionLabel label={t`Visible fields`} />
+            <DropdownMenuItemsContainer scrollWrapperHeightAuto>
+              {visibleColumnsFieldMetadataItems.map(
+                (visibleFieldMetadataItem, index) => (
+                  <SelectableListItem
+                    itemId={visibleFieldMetadataItem.id}
+                    key={`visible-select-filter-${index}`}
+                    onEnter={() => {
+                      handleFieldMetadataItemSelect(visibleFieldMetadataItem);
+                    }}
+                  >
+                    <ObjectFilterDropdownFilterSelectMenuItemV2
+                      fieldMetadataItemToSelect={visibleFieldMetadataItem}
+                      onClick={handleFieldMetadataItemSelect}
+                    />
+                  </SelectableListItem>
+                ),
+              )}
+            </DropdownMenuItemsContainer>
+          </>
+        )}
+        {shouldShowSeparator && <DropdownMenuSeparator />}
+        {shouldShowHiddenFields && (
+          <>
+            <DropdownMenuSectionLabel label={t`Hidden fields`} />
+            <DropdownMenuItemsContainer scrollWrapperHeightAuto>
+              {hiddenColumnsFieldMetadataItems.map(
+                (hiddenFieldMetadataItem, index) => (
+                  <SelectableListItem
+                    itemId={hiddenFieldMetadataItem.id}
+                    key={`hidden-select-filter-${index}`}
+                    onEnter={() => {
+                      handleFieldMetadataItemSelect(hiddenFieldMetadataItem);
+                    }}
+                  >
+                    <ObjectFilterDropdownFilterSelectMenuItemV2
+                      fieldMetadataItemToSelect={hiddenFieldMetadataItem}
+                      onClick={handleFieldMetadataItemSelect}
+                    />
+                  </SelectableListItem>
+                ),
+              )}
+            </DropdownMenuItemsContainer>
+          </>
+        )}
       </SelectableList>
     </DropdownContent>
   );

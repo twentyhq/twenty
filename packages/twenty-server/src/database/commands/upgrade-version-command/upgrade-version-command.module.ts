@@ -8,6 +8,7 @@ import { V0_51_UpgradeVersionCommandModule } from 'src/database/commands/upgrade
 import { V0_52_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/0-52/0-52-upgrade-version-command.module';
 import { V0_53_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/0-53/0-53-upgrade-version-command.module';
 import { V0_54_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/0-54/0-54-upgrade-version-command.module';
+import { V0_55_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/0-55/0-55-upgrade-version-command.module';
 import {
   DatabaseMigrationService,
   UpgradeCommand,
@@ -25,6 +26,7 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     V0_52_UpgradeVersionCommandModule,
     V0_53_UpgradeVersionCommandModule,
     V0_54_UpgradeVersionCommandModule,
+    V0_55_UpgradeVersionCommandModule,
     WorkspaceSyncMetadataModule,
   ],
   providers: [DatabaseMigrationService, UpgradeCommand],

@@ -60,9 +60,11 @@ export const USER_QUERY_FRAGMENT = gql`
         id
         status
         interval
+        metadata
         billingSubscriptionItems {
           id
           hasReachedCurrentPeriodCap
+          quantity
           billingProduct {
             name
             description
@@ -77,6 +79,7 @@ export const USER_QUERY_FRAGMENT = gql`
       billingSubscriptions {
         id
         status
+        metadata
       }
       workspaceMembersCount
       defaultRole {
