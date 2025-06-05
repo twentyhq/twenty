@@ -120,7 +120,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
             const date = new Date(value);
             return isDate(date) && !isNaN(date.getTime());
           },
-          errorMessage: `${fieldName} ${t`is not a valid date time (format: '2021-01-01T00:00:00Z')`}`,
+          errorMessage: `${fieldName} ${t`is not a valid date time (format: '2021-12-01T00:00:00Z')`}`,
           level: 'error',
         },
       ];
@@ -132,7 +132,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
             const date = new Date(value);
             return isDate(date) && !isNaN(date.getTime());
           },
-          errorMessage: `${fieldName} ${t`is not a valid date (format: '2021-01-01')`}`,
+          errorMessage: `${fieldName} ${t`is not a valid date (format: '2021-12-01')`}`,
           level: 'error',
         },
       ];
