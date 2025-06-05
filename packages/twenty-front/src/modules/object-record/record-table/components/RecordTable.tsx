@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRef } from 'react';
 
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordTableBodyEffectsWrapper } from '@/object-record/record-table/components/RecordTableBodyEffectsWrapper';
@@ -16,7 +17,12 @@ import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useC
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const RecordTable = () => {
-  const { recordTableId, objectNameSingular } = useRecordTableContextOrThrow();
+  const { recordTableId, objectNameSingular, objectMetadataItem } =
+    useRecordTableContextOrThrow();
+
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
 
   const tableBodyRef = useRef<HTMLTableElement>(null);
 
@@ -61,12 +67,16 @@ export const RecordTable = () => {
 
   return (
     <>
-      <RecordTableBodyEffectsWrapper
-        hasRecordGroups={hasRecordGroups}
-        tableBodyRef={tableBodyRef}
-      />
-      <RecordTableScrollToFocusedCellEffect />
-      <RecordTableScrollToFocusedRowEffect />
+      {objectPermissions.canReadObjectRecords && (
+        <>
+          <RecordTableBodyEffectsWrapper
+            hasRecordGroups={hasRecordGroups}
+            tableBodyRef={tableBodyRef}
+          />
+          <RecordTableScrollToFocusedCellEffect />
+          <RecordTableScrollToFocusedRowEffect />
+        </>
+      )}
       {recordTableIsEmpty && !hasRecordGroups ? (
         <RecordTableEmpty tableBodyRef={tableBodyRef} />
       ) : (

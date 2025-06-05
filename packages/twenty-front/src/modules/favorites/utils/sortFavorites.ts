@@ -95,9 +95,8 @@ export const sortFavorites = (
           } as ProcessedFavorite;
         }
       }
-      return {
-        ...favorite,
-      } as ProcessedFavorite;
+      return null;
     })
+    .filter(isDefined)
     .sort((a, b) => a.position - b.position);
 };

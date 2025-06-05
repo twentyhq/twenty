@@ -22,9 +22,14 @@ import { Keys } from 'react-hotkeys-hook';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-export const StyledDropdownContentContainer = styled.div`
+export const StyledDropdownContentContainer = styled.div<{
+  isDropdownInModal?: boolean;
+}>`
   display: flex;
-  z-index: ${RootStackingContextZIndices.DropdownPortal};
+  z-index: ${({ isDropdownInModal }) =>
+    isDropdownInModal
+      ? RootStackingContextZIndices.DropdownPortalAboveModal
+      : RootStackingContextZIndices.DropdownPortalBelowModal};
 `;
 
 const StyledDropdownInsideContainer = styled.div`
@@ -50,6 +55,7 @@ export type DropdownInternalContainerProps = {
   dropdownComponents: React.ReactNode;
   parentDropdownId?: string;
   excludedClickOutsideIds?: string[];
+  isDropdownInModal?: boolean;
 };
 
 export const DropdownInternalContainer = ({
@@ -63,6 +69,7 @@ export const DropdownInternalContainer = ({
   onHotkeyTriggered,
   dropdownComponents,
   excludedClickOutsideIds,
+  isDropdownInModal = false,
 }: DropdownInternalContainerProps) => {
   const { isDropdownOpen, closeDropdown, setDropdownPlacement } =
     useDropdown(dropdownId);
@@ -140,6 +147,7 @@ export const DropdownInternalContainer = ({
           role="listbox"
           id={`${dropdownId}-options`}
           data-click-outside-id={excludedClickOutsideId}
+          isDropdownInModal={isDropdownInModal}
         >
           <OverlayContainer>
             <StyledDropdownInsideContainer id={dropdownId} data-select-disable>
