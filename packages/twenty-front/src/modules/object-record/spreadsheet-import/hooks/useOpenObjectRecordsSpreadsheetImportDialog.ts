@@ -39,6 +39,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
           fieldMetadataItem.isActive &&
           (!fieldMetadataItem.isSystem || fieldMetadataItem.name === 'id') &&
           fieldMetadataItem.name !== 'createdAt' &&
+          fieldMetadataItem.name !== 'updatedAt' &&
           (fieldMetadataItem.type !== FieldMetadataType.RELATION ||
             fieldMetadataItem.relationDefinition?.direction ===
               RelationDefinitionType.MANY_TO_ONE),
