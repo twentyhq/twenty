@@ -1,27 +1,28 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { Webhook } from '@/settings/developers/types/webhook/Webhook';
+import {
+  webhookFormSchema,
+  WebhookFormValues,
+} from '@/settings/developers/validation-schemas/webhookFormSchema';
 import { SettingsPath } from '@/types/SettingsPath';
-import { useState } from 'react';
-import { useDebouncedCallback } from 'use-debounce';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { WEBHOOK_EMPTY_OPERATION } from '~/pages/settings/developers/webhooks/constants/WebhookEmptyOperation';
-import { WebhookOperationType } from '~/pages/settings/developers/webhooks/types/WebhookOperationsType';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
   getUrlHostnameOrThrow,
   isDefined,
   isValidUrl,
 } from 'twenty-shared/utils';
-
-type WebhookFormData = {
-  targetUrl: string;
-  description?: string;
-  operations: WebhookOperationType[];
-  secret?: string;
-};
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { WEBHOOK_EMPTY_OPERATION } from '~/pages/settings/developers/webhooks/constants/WebhookEmptyOperation';
+import { WebhookOperationType } from '~/pages/settings/developers/webhooks/types/WebhookOperationsType';
 
 export const useWebhookUpdateForm = ({
   webhookId,
@@ -31,24 +32,10 @@ export const useWebhookUpdateForm = ({
   isCreationMode: boolean;
 }) => {
   const navigate = useNavigateSettings();
+  const { enqueueSnackBar } = useSnackBar();
 
-  const [isCreated, setIsCreated] = useState(!isCreationMode);
   const [loading, setLoading] = useState(!isCreationMode);
   const [title, setTitle] = useState(isCreationMode ? 'New Webhook' : '');
-
-  const [formData, setFormData] = useState<WebhookFormData>({
-    targetUrl: '',
-    description: '',
-    operations: [
-      {
-        object: '*',
-        action: '*',
-      },
-    ],
-    secret: '',
-  });
-
-  const [isTargetUrlValid, setIsTargetUrlValid] = useState(true);
 
   const { updateOneRecord } = useUpdateOneRecord<Webhook>({
     objectNameSingular: CoreObjectNameSingular.Webhook,
@@ -58,9 +45,30 @@ export const useWebhookUpdateForm = ({
     objectNameSingular: CoreObjectNameSingular.Webhook,
   });
 
+  const formConfig = useForm<WebhookFormValues>({
+    mode: isCreationMode ? 'onSubmit' : 'onTouched',
+    resolver: zodResolver(webhookFormSchema),
+    defaultValues: {
+      targetUrl: '',
+      description: '',
+      operations: [
+        {
+          object: '*',
+          action: '*',
+        },
+      ],
+      secret: '',
+    },
+  });
+
+  const { isDirty, isValid, isSubmitting } = formConfig.formState;
+  const canSave = isCreationMode
+    ? isValid && !isSubmitting
+    : isDirty && isValid && !isSubmitting;
+
   const addEmptyOperationIfNecessary = (
     newOperations: WebhookOperationType[],
-  ) => {
+  ): WebhookOperationType[] => {
     if (
       !newOperations.some((op) => op.object === '*' && op.action === '*') &&
       !newOperations.some((op) => op.object === null)
@@ -80,87 +88,69 @@ export const useWebhookUpdateForm = ({
     );
   };
 
-  const handleSave = useDebouncedCallback(async () => {
-    const cleanedOperations = cleanAndFormatOperations(formData.operations);
+  const handleSave = async (formValues: WebhookFormValues) => {
+    try {
+      const cleanedOperations = cleanAndFormatOperations(formValues.operations);
 
-    const webhookData = {
-      ...(isTargetUrlValid && { targetUrl: formData.targetUrl.trim() }),
-      operations: cleanedOperations,
-      description: formData.description,
-      secret: formData.secret,
-    };
-
-    if (!isCreated) {
-      await createOneRecord({ id: webhookId, ...webhookData });
-      setIsCreated(true);
-      return;
-    }
-
-    await updateOneRecord({
-      idToUpdate: webhookId,
-      updateOneRecordInput: {
-        ...(isTargetUrlValid && { targetUrl: formData.targetUrl.trim() }),
+      const webhookData = {
+        targetUrl: formValues.targetUrl.trim(),
         operations: cleanedOperations,
-        description: formData.description,
-        secret: formData.secret,
-      },
-    });
-  }, 300);
+        description: formValues.description,
+        secret: formValues.secret,
+      };
 
-  const isFormValidAndSetErrors = () => {
-    const { targetUrl } = formData;
-
-    if (isDefined(targetUrl)) {
-      const trimmedUrl = targetUrl.trim();
-      const isValid = isValidUrl(trimmedUrl);
-
-      if (!isValid) {
-        setIsTargetUrlValid(false);
-        return false;
+      if (isCreationMode) {
+        const { data: response } = await createOneRecord({
+          id: webhookId,
+          ...webhookData,
+        });
+        navigate(
+          response ? SettingsPath.WebhookDetail : SettingsPath.Webhooks,
+          response ? { webhookId: response.id } : undefined,
+        );
+        return;
       }
 
-      setIsTargetUrlValid(true);
+      await updateOneRecord({
+        idToUpdate: webhookId,
+        updateOneRecordInput: webhookData,
+      });
+    } catch (error) {
+      enqueueSnackBar((error as Error).message, {
+        variant: SnackBarVariant.Error,
+      });
     }
-
-    return true;
   };
 
-  const updateWebhook = async (data: Partial<WebhookFormData>) => {
-    setFormData((prev) => ({ ...prev, ...data }));
-
-    if (!isFormValidAndSetErrors()) {
-      return;
-    }
-
-    if (isDefined(data?.targetUrl)) {
-      setTitle(getUrlHostnameOrThrow(data.targetUrl) || 'New Webhook');
-    }
-
-    await handleSave();
-  };
-
-  const updateOperation = async (
+  const updateOperation = (
     index: number,
     field: 'object' | 'action',
     value: string | null,
   ) => {
-    const newOperations = [...formData.operations];
+    const currentOperations = formConfig.getValues('operations');
+    const newOperations = [...currentOperations];
 
     newOperations[index] = {
       ...newOperations[index],
       [field]: value,
     };
 
-    await updateWebhook({
-      operations: addEmptyOperationIfNecessary(newOperations),
-    });
+    formConfig.setValue(
+      'operations',
+      addEmptyOperationIfNecessary(newOperations),
+      { shouldDirty: true, shouldValidate: true },
+    );
   };
 
-  const removeOperation = async (index: number) => {
-    const newOperations = formData.operations.filter((_, i) => i !== index);
-    await updateWebhook({
-      operations: addEmptyOperationIfNecessary(newOperations),
-    });
+  const removeOperation = (index: number) => {
+    const currentOperations = formConfig.getValues('operations');
+    const newOperations = currentOperations.filter((_, i) => i !== index);
+
+    formConfig.setValue(
+      'operations',
+      addEmptyOperationIfNecessary(newOperations),
+      { shouldDirty: true, shouldValidate: true },
+    );
   };
 
   const { deleteOneRecord: deleteOneWebhook } = useDeleteOneRecord({
@@ -168,9 +158,28 @@ export const useWebhookUpdateForm = ({
   });
 
   const deleteWebhook = async () => {
-    await deleteOneWebhook(webhookId);
-    navigate(SettingsPath.Webhooks);
+    try {
+      await deleteOneWebhook(webhookId);
+      enqueueSnackBar('Webhook deleted successfully', {
+        variant: SnackBarVariant.Success,
+      });
+      navigate(SettingsPath.Webhooks);
+    } catch (error) {
+      enqueueSnackBar((error as Error).message, {
+        variant: SnackBarVariant.Error,
+      });
+    }
   };
+
+  // Watch targetUrl to update title
+  const targetUrl = formConfig.watch('targetUrl');
+  useEffect(() => {
+    if (isDefined(targetUrl) && isValidUrl(targetUrl.trim())) {
+      setTitle(getUrlHostnameOrThrow(targetUrl) || 'New Webhook');
+    } else if (isCreationMode) {
+      setTitle('New Webhook');
+    }
+  }, [targetUrl, isCreationMode]);
 
   useFindOneRecord({
     skip: isCreationMode,
@@ -191,12 +200,14 @@ export const useWebhookUpdateForm = ({
             ]
           : [];
       const operations = addEmptyOperationIfNecessary(baseOperations);
-      setFormData({
-        targetUrl: data.targetUrl,
-        description: data.description,
+
+      formConfig.reset({
+        targetUrl: data.targetUrl || '',
+        description: data.description || '',
         operations,
-        secret: data.secret,
+        secret: data.secret || '',
       });
+
       if (isValidUrl(data.targetUrl)) {
         setTitle(getUrlHostnameOrThrow(data.targetUrl));
       }
@@ -206,10 +217,10 @@ export const useWebhookUpdateForm = ({
   });
 
   return {
-    formData,
+    formConfig,
     title,
-    isTargetUrlValid,
-    updateWebhook,
+    canSave,
+    handleSave,
     updateOperation,
     removeOperation,
     deleteWebhook,

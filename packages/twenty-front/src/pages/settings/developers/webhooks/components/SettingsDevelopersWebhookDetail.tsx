@@ -1,9 +1,11 @@
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
+import { Controller, FormProvider } from 'react-hook-form';
 import { useParams, useSearchParams } from 'react-router-dom';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { useWebhookUpdateForm } from '@/settings/developers/hooks/useWebhookUpdateForm';
@@ -27,7 +29,9 @@ import {
 } from 'twenty-ui/display';
 import { Button, IconButton, SelectOption } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+
 const OBJECT_DROPDOWN_WIDTH = 340;
 const ACTION_DROPDOWN_WIDTH = 140;
 const OBJECT_MOBILE_WIDTH = 150;
@@ -53,6 +57,7 @@ const DELETE_WEBHOOK_MODAL_ID = 'delete-webhook-modal';
 
 export const SettingsDevelopersWebhooksDetail = () => {
   const { t } = useLingui();
+  const navigate = useNavigateSettings();
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -67,11 +72,11 @@ export const SettingsDevelopersWebhooksDetail = () => {
   const isCreationMode = isDefined(searchParams.get('creationMode'));
 
   const {
-    formData,
+    formConfig,
     title,
     loading,
-    isTargetUrlValid,
-    updateWebhook,
+    canSave,
+    handleSave,
     updateOperation,
     removeOperation,
     deleteWebhook,
@@ -101,148 +106,186 @@ export const SettingsDevelopersWebhooksDetail = () => {
     { value: 'deleted', label: t`Deleted`, Icon: IconTrash },
   ];
 
-  if (loading || !formData) {
+  if (loading) {
     return <SettingsSkeletonLoader />;
   }
 
   const confirmationText = t`yes`;
 
   return (
-    <SubMenuTopBarContainer
-      title={title}
-      reserveTitleSpace
-      links={[
-        {
-          children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
-        },
-        {
-          children: t`Webhooks`,
-          href: getSettingsPath(SettingsPath.Webhooks),
-        },
-        { children: title },
-      ]}
-    >
-      <SettingsPageContainer>
-        <Section>
-          <H2Title
-            title={t`Endpoint URL`}
-            description={t`We will send POST requests to this endpoint for every new event`}
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <FormProvider {...formConfig}>
+      <SubMenuTopBarContainer
+        title={title}
+        reserveTitleSpace
+        links={[
+          {
+            children: t`Workspace`,
+            href: getSettingsPath(SettingsPath.Workspace),
+          },
+          {
+            children: t`Webhooks`,
+            href: getSettingsPath(SettingsPath.Webhooks),
+          },
+          { children: title },
+        ]}
+        actionButton={
+          <SaveAndCancelButtons
+            isSaveDisabled={!canSave}
+            isCancelDisabled={formConfig.formState.isSubmitting}
+            onCancel={() => navigate(SettingsPath.Webhooks)}
+            onSave={formConfig.handleSubmit(handleSave)}
           />
-          <TextInput
-            placeholder={t`URL`}
-            value={formData.targetUrl}
-            onChange={(targetUrl) => {
-              updateWebhook({ targetUrl });
-            }}
-            error={!isTargetUrlValid ? t`Please enter a valid URL` : undefined}
-            fullWidth
-            autoFocus={formData.targetUrl.trim() === ''}
-          />
-        </Section>
-        <Section>
-          <H2Title
-            title={t`Description`}
-            description={t`An optional description`}
-          />
-          <TextArea
-            placeholder={t`Write a description`}
-            minRows={4}
-            value={formData.description}
-            onChange={(description) => {
-              updateWebhook({ description });
-            }}
-          />
-        </Section>
-        <Section>
-          <H2Title
-            title={t`Filters`}
-            description={t`Select the events you wish to send to this endpoint`}
-          />
-          {formData.operations.map((operation, index) => (
-            <StyledFilterRow isMobile={isMobile} key={index}>
-              <Select
-                withSearchInput
-                dropdownWidth={
-                  isMobile ? OBJECT_MOBILE_WIDTH : OBJECT_DROPDOWN_WIDTH
-                }
-                dropdownId={`object-webhook-type-select-${index}`}
-                value={operation.object}
-                onChange={(object) => updateOperation(index, 'object', object)}
-                options={fieldTypeOptions}
-                emptyOption={{
-                  value: null,
-                  label: t`Choose an object`,
-                  Icon: IconBox,
-                }}
-              />
-
-              <Select
-                dropdownWidth={
-                  isMobile ? ACTION_MOBILE_WIDTH : ACTION_DROPDOWN_WIDTH
-                }
-                dropdownId={`operation-webhook-type-select-${index}`}
-                value={operation.action}
-                onChange={(action) => updateOperation(index, 'action', action)}
-                options={actionOptions}
-              />
-
-              {index < formData.operations.length - 1 ? (
-                <IconButton
-                  onClick={() => removeOperation(index)}
-                  variant="tertiary"
-                  size="medium"
-                  Icon={IconTrash}
+        }
+      >
+        <SettingsPageContainer>
+          <Section>
+            <H2Title
+              title={t`Endpoint URL`}
+              description={t`We will send POST requests to this endpoint for every new event`}
+            />
+            <Controller
+              name="targetUrl"
+              control={formConfig.control}
+              render={({
+                field: { onChange, value },
+                fieldState: { error },
+              }) => (
+                <TextInput
+                  placeholder={t`URL`}
+                  value={value}
+                  onChange={onChange}
+                  error={error?.message}
+                  fullWidth
+                  autoFocus={value.trim() === ''}
                 />
-              ) : (
-                <StyledPlaceholder />
               )}
-            </StyledFilterRow>
-          ))}
-        </Section>
-        <Section>
-          <H2Title
-            title={t`Secret`}
-            description={t`Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt.`}
-          />
-          <TextInput
-            type="password"
-            placeholder={t`Write a secret`}
-            value={formData.secret}
-            onChange={(secret: string) => {
-              updateWebhook({ secret: secret.trim() });
-            }}
-            fullWidth
-          />
-        </Section>
-        <Section>
-          <H2Title
-            title={t`Danger zone`}
-            description={t`Delete this integration`}
-          />
-          <Button
-            accent="danger"
-            variant="secondary"
-            title={t`Delete`}
-            Icon={IconTrash}
-            onClick={() => openModal(DELETE_WEBHOOK_MODAL_ID)}
-          />
-          <ConfirmationModal
-            confirmationPlaceholder={confirmationText}
-            confirmationValue={confirmationText}
-            modalId={DELETE_WEBHOOK_MODAL_ID}
-            title={t`Delete webhook`}
-            subtitle={
-              <Trans>
-                Please type {confirmationText} to confirm you want to delete
-                this webhook.
-              </Trans>
-            }
-            onConfirmClick={deleteWebhook}
-            confirmButtonText={t`Delete webhook`}
-          />
-        </Section>
-      </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+            />
+          </Section>
+          <Section>
+            <H2Title
+              title={t`Description`}
+              description={t`An optional description`}
+            />
+            <Controller
+              name="description"
+              control={formConfig.control}
+              render={({ field: { onChange, value } }) => (
+                <TextArea
+                  placeholder={t`Write a description`}
+                  minRows={4}
+                  value={value || ''}
+                  onChange={onChange}
+                />
+              )}
+            />
+          </Section>
+          <Section>
+            <H2Title
+              title={t`Filters`}
+              description={t`Select the events you wish to send to this endpoint`}
+            />
+            <Controller
+              name="operations"
+              control={formConfig.control}
+              render={({ field: { value: operations } }) => (
+                <>
+                  {operations.map((operation, index) => (
+                    <StyledFilterRow isMobile={isMobile} key={index}>
+                      <Select
+                        withSearchInput
+                        dropdownWidth={
+                          isMobile ? OBJECT_MOBILE_WIDTH : OBJECT_DROPDOWN_WIDTH
+                        }
+                        dropdownId={`object-webhook-type-select-${index}`}
+                        value={operation.object}
+                        onChange={(object) =>
+                          updateOperation(index, 'object', object)
+                        }
+                        options={fieldTypeOptions}
+                        emptyOption={{
+                          value: null,
+                          label: t`Choose an object`,
+                          Icon: IconBox,
+                        }}
+                      />
+
+                      <Select
+                        dropdownWidth={
+                          isMobile ? ACTION_MOBILE_WIDTH : ACTION_DROPDOWN_WIDTH
+                        }
+                        dropdownId={`operation-webhook-type-select-${index}`}
+                        value={operation.action}
+                        onChange={(action) =>
+                          updateOperation(index, 'action', action)
+                        }
+                        options={actionOptions}
+                      />
+
+                      {index < operations.length - 1 ? (
+                        <IconButton
+                          onClick={() => removeOperation(index)}
+                          variant="tertiary"
+                          size="medium"
+                          Icon={IconTrash}
+                        />
+                      ) : (
+                        <StyledPlaceholder />
+                      )}
+                    </StyledFilterRow>
+                  ))}
+                </>
+              )}
+            />
+          </Section>
+          <Section>
+            <H2Title
+              title={t`Secret`}
+              description={t`Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt.`}
+            />
+            <Controller
+              name="secret"
+              control={formConfig.control}
+              render={({ field: { onChange, value } }) => (
+                <TextInput
+                  type="password"
+                  placeholder={t`Write a secret`}
+                  value={value || ''}
+                  onChange={(secret: string) => onChange(secret.trim())}
+                  fullWidth
+                />
+              )}
+            />
+          </Section>
+          <Section>
+            <H2Title
+              title={t`Danger zone`}
+              description={t`Delete this integration`}
+            />
+            <Button
+              accent="danger"
+              variant="secondary"
+              title={t`Delete`}
+              Icon={IconTrash}
+              onClick={() => openModal(DELETE_WEBHOOK_MODAL_ID)}
+            />
+            <ConfirmationModal
+              confirmationPlaceholder={confirmationText}
+              confirmationValue={confirmationText}
+              modalId={DELETE_WEBHOOK_MODAL_ID}
+              title={t`Delete webhook`}
+              subtitle={
+                <Trans>
+                  Please type {confirmationText} to confirm you want to delete
+                  this webhook.
+                </Trans>
+              }
+              onConfirmClick={deleteWebhook}
+              confirmButtonText={t`Delete webhook`}
+            />
+          </Section>
+        </SettingsPageContainer>
+      </SubMenuTopBarContainer>
+    </FormProvider>
   );
 };
