@@ -180,7 +180,7 @@ describe('AuthService', () => {
       .spyOn(userWorkspaceService, 'checkUserWorkspaceExists')
       .mockReturnValueOnce({} as any);
 
-    const response = await service.getLoginTokenFromCredentials(
+    const response = await service.validateLoginWithPassword(
       {
         email: 'email',
         password: 'password',
@@ -228,7 +228,7 @@ describe('AuthService', () => {
       .spyOn(userWorkspaceService, 'addUserToWorkspaceIfUserNotInWorkspace')
       .mockReturnValueOnce({} as any);
 
-    const response = await service.getLoginTokenFromCredentials(
+    const response = await service.validateLoginWithPassword(
       {
         email: 'email',
         password: 'password',

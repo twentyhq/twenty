@@ -273,14 +273,14 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
         getDomainNameByEmail(email),
       );
 
-    return [
-      ...alreadyMemberWorkspaces,
-      ...approvedAccessDomains
+    return {
+      availableWorkspacesForSignIn: alreadyMemberWorkspaces,
+      availableWorkspacesForSignUp: approvedAccessDomains
         .filter(({ workspace }) =>
           alreadyMemberWorkspaces.every(({ id }) => id !== workspace.id),
         )
         .map(({ workspace }) => workspace),
-    ];
+    };
   }
 
   async getUserWorkspaceForUserOrThrow({
@@ -374,16 +374,23 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     return files[0].path;
   }
 
-  async listAvailableWorkspacesForAuthentication(
-    email: string,
-  ): Promise<Array<AvailableWorkspace>> {
-    const workspaces = await this.findAvailableWorkspacesByEmail(email);
+  async listAvailableWorkspacesForAuthentication(email: string) {
+    const { availableWorkspacesForSignIn, availableWorkspacesForSignUp } =
+      await this.findAvailableWorkspacesByEmail(email);
 
-    return this.castWorkspacesToAvailableWorkspaces(workspaces);
+
+    return {
+      availableWorkspacesForSignIn: this.castWorkspacesToAvailableWorkspaces(
+        availableWorkspacesForSignIn,
+      ),
+      availableWorkspacesForSignUp: this.castWorkspacesToAvailableWorkspaces(
+        availableWorkspacesForSignUp,
+      ),
+    };
   }
 
-  private async castWorkspacesToAvailableWorkspaces(workspaces: Array<Workspace>) {
-    return workspaces.map<AvailableWorkspace>((workspace) => ({
+  castWorkspaceToAvailableWorkspace(workspace: Workspace) {
+    return {
       id: workspace.id,
       displayName: workspace.displayName,
       workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
@@ -405,6 +412,12 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
           ),
         [] as AvailableWorkspace['sso'],
       ),
-    }));
+    };
+  }
+
+  castWorkspacesToAvailableWorkspaces(workspaces: Array<Workspace>) {
+    return workspaces.map<AvailableWorkspace>(
+      this.castWorkspaceToAvailableWorkspace.bind(this),
+    );
   }
 }

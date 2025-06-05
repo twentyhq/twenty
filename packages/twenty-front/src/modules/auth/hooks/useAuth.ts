@@ -25,6 +25,7 @@ import {
   useGetLoginTokenFromCredentialsMutation,
   useGetLoginTokenFromEmailVerificationTokenMutation,
   useSignUpMutation,
+  useSignInMutation,
 } from '~/generated/graphql';
 
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
@@ -70,6 +71,7 @@ import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
+import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -90,6 +92,7 @@ export const useAuth = () => {
   );
 
   const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
+  const { createWorkspace } = useSignUpInNewWorkspace();
 
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
@@ -99,6 +102,7 @@ export const useAuth = () => {
 
   const [getLoginTokenFromCredentials] =
     useGetLoginTokenFromCredentialsMutation();
+  const [signIn] = useSignInMutation();
   const [signUp] = useSignUpMutation();
   const [getAuthTokensFromLoginToken] =
     useGetAuthTokensFromLoginTokenMutation();
@@ -409,6 +413,62 @@ export const useAuth = () => {
 
   const handleCredentialsSignIn = useCallback(
     async (email: string, password: string, captchaToken?: string) => {
+      signIn({
+        variables: { email, password, captchaToken },
+        onCompleted: async (data) => {
+          handleSetAuthTokens(data.signIn.tokens);
+          const { user } = await loadCurrentUser();
+
+          const availableWorkspacesCount = Object.values(
+            user.availableWorkspaces,
+          ).flat(2).length;
+
+          if (availableWorkspacesCount === 0) {
+            return createWorkspace();
+          }
+
+          if (availableWorkspacesCount === 1) {
+            const targetWorkspace =
+              user.availableWorkspaces.availableWorkspacesForSignIn[0] ??
+              user.availableWorkspaces.availableWorkspacesForSignUp[0];
+            return await redirectToWorkspaceDomain(
+              getWorkspaceUrl(targetWorkspace.workspaceUrls),
+              AppPath.SignInUp,
+              {
+                ...(targetWorkspace.loginToken && {
+                  loginToken: targetWorkspace.loginToken,
+                }),
+                email: user.email,
+              },
+            );
+          }
+
+          setSignInUpStep(SignInUpStep.WorkspaceSelection);
+        },
+        onError: (error) => {
+          if (
+            error instanceof ApolloError &&
+            error.graphQLErrors[0]?.extensions?.subCode === 'EMAIL_NOT_VERIFIED'
+          ) {
+            setSearchParams({ email });
+            setSignInUpStep(SignInUpStep.EmailVerification);
+            throw error;
+          }
+          throw error;
+        },
+      });
+    },
+    [
+      handleSetAuthTokens,
+      signIn,
+      setSearchParams,
+      setSignInUpStep,
+      createWorkspace,
+    ],
+  );
+
+  const handleCredentialsSignInInWorkspace = useCallback(
+    async (email: string, password: string, captchaToken?: string) => {
       const { loginToken } = await handleGetLoginTokenFromCredentials(
         email,
         password,
@@ -573,6 +633,7 @@ export const useAuth = () => {
     clearSession,
     signOut: handleSignOut,
     signUpWithCredentials: handleCredentialsSignUp,
+    signInWithCredentialsInWorkspace: handleCredentialsSignInInWorkspace,
     signInWithCredentials: handleCredentialsSignIn,
     signInWithGoogle: handleGoogleLogin,
     signInWithMicrosoft: handleMicrosoftLogin,

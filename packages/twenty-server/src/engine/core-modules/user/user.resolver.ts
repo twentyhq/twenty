@@ -24,7 +24,6 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
@@ -57,7 +56,7 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { AvailableWorkspace } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { AvailableWorkspaces } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -80,7 +79,6 @@ export class UserResolver {
     private readonly onboardingService: OnboardingService,
     private readonly userVarService: UserVarsService,
     private readonly fileService: FileService,
-    private readonly domainManagerService: DomainManagerService,
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly userRoleService: UserRoleService,
@@ -196,7 +194,7 @@ export class UserResolver {
     @AuthWorkspace() workspace: Workspace | undefined,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<Record<string, any>> {
-    if (!workspace) return;
+    if (!workspace) return {};
 
     const userVars = await this.userVarService.getAll({
       userId: user.id,
@@ -223,7 +221,7 @@ export class UserResolver {
     @Parent() user: User,
     @AuthWorkspace() workspace: Workspace | undefined,
   ): Promise<WorkspaceMember | null> {
-    if (!workspace) return;
+    if (!workspace) return null;
 
     const workspaceMember = await this.userService.loadWorkspaceMember(
       user,
@@ -248,7 +246,7 @@ export class UserResolver {
     @Parent() _user: User,
     @AuthWorkspace() workspace: Workspace | undefined,
   ): Promise<WorkspaceMember[]> {
-    if (!workspace) return;
+    if (!workspace) return [];
 
     const workspaceMemberEntities = await this.userService.loadWorkspaceMembers(
       workspace,
@@ -335,7 +333,7 @@ export class UserResolver {
     @Parent() _user: User,
     @AuthWorkspace() workspace: Workspace | undefined,
   ): Promise<DeletedWorkspaceMember[]> {
-    if (!workspace) return;
+    if (!workspace) return [];
 
     const workspaceMemberEntities =
       await this.userService.loadDeletedWorkspaceMembersOnly(workspace);
@@ -403,8 +401,8 @@ export class UserResolver {
   async onboardingStatus(
     @Parent() user: User,
     @AuthWorkspace() workspace: Workspace | undefined,
-  ): Promise<OnboardingStatus> {
-    if (!workspace) return;
+  ): Promise<OnboardingStatus | null> {
+    if (!workspace) return null;
 
     return this.onboardingService.getOnboardingStatus(user, workspace);
   }
@@ -416,10 +414,10 @@ export class UserResolver {
     return workspace;
   }
 
-  @ResolveField(() => [AvailableWorkspace], {
-    nullable: true,
-  })
-  async availableWorkspaces(@AuthUser() { email }: User) {
+  @ResolveField(() => AvailableWorkspaces)
+  async availableWorkspaces(
+    @AuthUser() { email }: User,
+  ): Promise<AvailableWorkspaces> {
     return this.userWorkspaceService.listAvailableWorkspacesForAuthentication(
       email,
     );

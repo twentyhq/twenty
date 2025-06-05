@@ -10,6 +10,7 @@ export const EXCLUDED_MIDDLEWARE_OPERATIONS = [
   'GetLoginTokenFromEmailVerificationToken',
   'ResendEmailVerificationToken',
   'SignUp',
+  'SignIn',
   'RenewToken',
   'EmailPasswordResetLink',
   'ValidatePasswordResetToken',

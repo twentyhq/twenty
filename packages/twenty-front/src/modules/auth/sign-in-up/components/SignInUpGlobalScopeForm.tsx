@@ -136,12 +136,9 @@ export const SignInUpGlobalScopeForm = () => {
   const signInUpStep = useRecoilValue(signInUpStepState);
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
 
-  const { checkUserExists } = useAuth();
-  const { readCaptchaToken } = useReadCaptchaToken();
-  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const { createWorkspace } = useSignUpInNewWorkspace();
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
-  const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
+  const [signInUpMode] = useRecoilState(signInUpModeState);
   const availableWorkspaces = useRecoilValue(availableWorkspacesState);
   const theme = useTheme();
   const { t } = useLingui();
@@ -150,15 +147,11 @@ export const SignInUpGlobalScopeForm = () => {
     isRequestingCaptchaTokenState,
   );
 
-  const { enqueueSnackBar } = useSnackBar();
-  const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
-
   const [showErrors, setShowErrors] = useState(false);
 
   const { form } = useSignInUpForm();
-  const { pathname } = useLocation();
 
-  const { submitCredentials } = useSignInUp(form);
+  const { submitCredentials, continueWithCredentials } = useSignInUp(form);
 
   const handleSubmit = async () => {
     if (isDefined(form?.formState?.errors?.email)) {
@@ -171,44 +164,7 @@ export const SignInUpGlobalScopeForm = () => {
       return;
     }
 
-    const token = await readCaptchaToken();
-    await checkUserExists.checkUserExistsQuery({
-      variables: {
-        email: form.getValues('email').toLowerCase().trim(),
-        captchaToken: token,
-      },
-      onError: (error) => {
-        enqueueSnackBar(`${error.message}`, {
-          variant: SnackBarVariant.Error,
-        });
-      },
-      onCompleted: async (data) => {
-        requestFreshCaptchaToken();
-        const response = data.checkUserExists;
-
-        if (
-          response.exists === false &&
-          response.availableWorkspaces.length === 0
-        ) {
-          setSignInUpMode(SignInUpMode.SignUp);
-          setSignInUpStep(SignInUpStep.Password);
-          return;
-        }
-
-        if (
-          response.exists === true &&
-          response.availableWorkspaces.length === 1
-        ) {
-          return await redirectToWorkspaceDomain(
-            getWorkspaceUrl(response.availableWorkspaces[0].workspaceUrls),
-            pathname,
-            { email: form.getValues('email') },
-          );
-        }
-
-        setSignInUpStep(SignInUpStep.WorkspaceSelection);
-      },
-    });
+    continueWithCredentials();
   };
 
   const onEmailChange = (email: string) => {
@@ -219,60 +175,62 @@ export const SignInUpGlobalScopeForm = () => {
 
   return (
     <>
-      {signInUpStep === SignInUpStep.WorkspaceSelection &&
-        availableWorkspaces.length > 0 && (
-          <StyledWorkspaceContainer>
-            {availableWorkspaces.map((workspace) => (
-              <UndecoratedLink
-                key={workspace.id}
-                to={buildWorkspaceUrl(
-                  getWorkspaceUrl(workspace.workspaceUrls),
-                  AppPath.SignInUp,
-                  {
-                    email: form.getValues('email'),
-                  },
-                )}
-              >
-                <StyledWorkspaceItem>
-                  <StyledWorkspaceContent>
-                    <Avatar
-                      placeholder={workspace.displayName || ''}
-                      avatarUrl={workspace.logo ?? DEFAULT_WORKSPACE_LOGO}
-                      size="lg"
-                    />
-                    <StyledWorkspaceTextContainer>
-                      <StyledWorkspaceName>
-                        {workspace.displayName || workspace.id}
-                      </StyledWorkspaceName>
-                      <StyledWorkspaceUrl>
-                        {
-                          new URL(getWorkspaceUrl(workspace.workspaceUrls))
-                            .hostname
-                        }
-                      </StyledWorkspaceUrl>
-                    </StyledWorkspaceTextContainer>
-                    <StyledChevronIcon>
-                      <IconChevronRight size={theme.icon.size.md} />
-                    </StyledChevronIcon>
-                  </StyledWorkspaceContent>
-                </StyledWorkspaceItem>
-              </UndecoratedLink>
-            ))}
-            <StyledWorkspaceItem onClick={() => createWorkspace()}>
-              <StyledWorkspaceContent>
-                <StyledWorkspaceLogo>
-                  <IconPlus size={theme.icon.size.lg} />
-                </StyledWorkspaceLogo>
-                <StyledWorkspaceTextContainer>
-                  <StyledWorkspaceName>{t`Create a workspace`}</StyledWorkspaceName>
-                </StyledWorkspaceTextContainer>
-                <StyledChevronIcon>
-                  <IconChevronRight size={theme.icon.size.md} />
-                </StyledChevronIcon>
-              </StyledWorkspaceContent>
-            </StyledWorkspaceItem>
-          </StyledWorkspaceContainer>
-        )}
+      {signInUpStep === SignInUpStep.WorkspaceSelection && (
+        <StyledWorkspaceContainer>
+          {[
+            ...availableWorkspaces.availableWorkspacesForSignIn,
+            ...availableWorkspaces.availableWorkspacesForSignUp,
+          ].map((workspace) => (
+            <UndecoratedLink
+              key={workspace.id}
+              to={buildWorkspaceUrl(
+                getWorkspaceUrl(workspace.workspaceUrls),
+                AppPath.SignInUp,
+                {
+                  email: form.getValues('email'),
+                },
+              )}
+            >
+              <StyledWorkspaceItem>
+                <StyledWorkspaceContent>
+                  <Avatar
+                    placeholder={workspace.displayName || ''}
+                    avatarUrl={workspace.logo ?? DEFAULT_WORKSPACE_LOGO}
+                    size="lg"
+                  />
+                  <StyledWorkspaceTextContainer>
+                    <StyledWorkspaceName>
+                      {workspace.displayName || workspace.id}
+                    </StyledWorkspaceName>
+                    <StyledWorkspaceUrl>
+                      {
+                        new URL(getWorkspaceUrl(workspace.workspaceUrls))
+                          .hostname
+                      }
+                    </StyledWorkspaceUrl>
+                  </StyledWorkspaceTextContainer>
+                  <StyledChevronIcon>
+                    <IconChevronRight size={theme.icon.size.md} />
+                  </StyledChevronIcon>
+                </StyledWorkspaceContent>
+              </StyledWorkspaceItem>
+            </UndecoratedLink>
+          ))}
+          <StyledWorkspaceItem onClick={() => createWorkspace()}>
+            <StyledWorkspaceContent>
+              <StyledWorkspaceLogo>
+                <IconPlus size={theme.icon.size.lg} />
+              </StyledWorkspaceLogo>
+              <StyledWorkspaceTextContainer>
+                <StyledWorkspaceName>{t`Create a workspace`}</StyledWorkspaceName>
+              </StyledWorkspaceTextContainer>
+              <StyledChevronIcon>
+                <IconChevronRight size={theme.icon.size.md} />
+              </StyledChevronIcon>
+            </StyledWorkspaceContent>
+          </StyledWorkspaceItem>
+        </StyledWorkspaceContainer>
+      )}
       {signInUpStep !== SignInUpStep.WorkspaceSelection && (
         <StyledContentContainer>
           {authProviders.google && (
@@ -301,7 +259,9 @@ export const SignInUpGlobalScopeForm = () => {
                 disabled={isRequestingCaptchaToken}
                 title={
                   signInUpStep === SignInUpStep.Password
-                    ? t`Sign Up`
+                    ? signInUpMode === SignInUpMode.SignIn
+                      ? t`Sign In`
+                      : t`Sign Up`
                     : t`Continue`
                 }
                 type="submit"

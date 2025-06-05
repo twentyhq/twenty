@@ -30,7 +30,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.util';
 import { AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.entity';
 import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
-import { GetLoginTokenFromCredentialsInput } from 'src/engine/core-modules/auth/dto/get-login-token-from-credentials.input';
+import { UserCredentialsInput } from 'src/engine/core-modules/auth/dto/user-credentials.input';
 import { AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
 import { UpdatePassword } from 'src/engine/core-modules/auth/dto/update-password.entity';
 import { WorkspaceInviteHashValid } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.entity';
@@ -57,7 +57,6 @@ import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/w
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { CheckUserExistOutput } from 'src/engine/core-modules/auth/dto/user-exists.entity';
-import { AvailableWorkspace } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
 import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
@@ -127,11 +126,11 @@ export class AuthService {
     );
   }
 
-  async getLoginTokenFromCredentials(
-    input: GetLoginTokenFromCredentialsInput,
-    targetWorkspace: Workspace,
+  async validateLoginWithPassword(
+    input: UserCredentialsInput,
+    targetWorkspace?: Workspace,
   ) {
-    if (!targetWorkspace.isPasswordAuthEnabled) {
+    if (targetWorkspace && !targetWorkspace.isPasswordAuthEnabled) {
       throw new AuthException(
         'Email/Password auth is not enabled for this workspace',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
@@ -152,7 +151,9 @@ export class AuthService {
       );
     }
 
-    await this.checkAccessAndUseInvitationOrThrow(targetWorkspace, user);
+    if (targetWorkspace) {
+      await this.checkAccessAndUseInvitationOrThrow(targetWorkspace, user);
+    }
 
     if (!user.passwordHash) {
       throw new AuthException(
@@ -291,6 +292,12 @@ export class AuthService {
     };
   }
 
+  async countAvailableWorkspacesByEmail(email: string): Promise<number> {
+    return Object.values(
+      await this.userWorkspaceService.findAvailableWorkspacesByEmail(email),
+    ).flat(2).length;
+  }
+
   async checkUserExists(email: string): Promise<CheckUserExistOutput> {
     const user = await this.userRepository.findOneBy({
       email,
@@ -300,8 +307,8 @@ export class AuthService {
 
     return {
       exists: isUserExist,
-      availableWorkspaces:
-        await this.userWorkspaceService.listAvailableWorkspacesForAuthentication(email),
+      availableWorkspacesCount:
+        await this.countAvailableWorkspacesByEmail(email),
       isEmailVerified: isUserExist ? user.isEmailVerified : false,
     };
   }
@@ -672,11 +679,7 @@ export class AuthService {
 
     const availableWorkspacesCount =
       action === 'list-available-workspaces'
-        ? (
-            await this.userWorkspaceService.findAvailableWorkspacesByEmail(
-              email,
-            )
-          ).length
+        ? await this.countAvailableWorkspacesByEmail(email)
         : 0;
 
     const existingUser = await this.userRepository.findOne({
