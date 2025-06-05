@@ -6,7 +6,6 @@ import { COMMAND_MENU_PAGES_CONFIG } from '@/command-menu/constants/CommandMenuP
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
-import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
@@ -49,15 +48,13 @@ export const CommandMenuRouter = () => {
           <CommandMenuTopBar />
         </motion.div>
         <StyledCommandMenuContent>
-          <RightDrawerProvider value={{ isInRightDrawer: true }}>
-            <ActionMenuContextProvider
-              isInRightDrawer={true}
-              displayType="listItem"
-              actionMenuType="command-menu"
-            >
-              {commandMenuPageComponent}
-            </ActionMenuContextProvider>
-          </RightDrawerProvider>
+          <ActionMenuContextProvider
+            isInRightDrawer={true}
+            displayType="listItem"
+            actionMenuType="command-menu"
+          >
+            {commandMenuPageComponent}
+          </ActionMenuContextProvider>
         </StyledCommandMenuContent>
       </CommandMenuPageComponentInstanceContext.Provider>
     </CommandMenuContainer>
