@@ -1,3 +1,4 @@
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -58,6 +59,10 @@ export const ObjectRecordShowPageBreadcrumb = ({
     },
   });
 
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
   const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
     objectNameSingular,
     objectRecordId,
@@ -65,6 +70,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
 
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId: objectRecordId,
+    objectMetadataId: objectMetadataItem.id,
   });
 
   const { navigateToIndexView, rankInView, totalCount } =

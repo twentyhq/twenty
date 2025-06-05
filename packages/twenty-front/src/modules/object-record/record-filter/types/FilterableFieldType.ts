@@ -28,3 +28,5 @@ export type FilterableFieldType = PickLiteral<
   FieldType,
   FilterableFieldTypeBaseLiteral
 >;
+
+export type FilterableAndTSVectorFieldType = FilterableFieldType | 'TS_VECTOR';

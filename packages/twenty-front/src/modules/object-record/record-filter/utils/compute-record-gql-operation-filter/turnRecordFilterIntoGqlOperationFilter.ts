@@ -16,6 +16,7 @@ import {
   RelationFilter,
   SelectFilter,
   StringFilter,
+  TSVectorFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { Field } from '~/generated/graphql';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
@@ -112,6 +113,19 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
                 ilike: `%${recordFilter.value}%`,
               } as StringFilter,
             },
+          };
+        default:
+          throw new Error(
+            `Unknown operand ${recordFilter.operand} for ${filterType} filter`,
+          );
+      }
+    case 'TS_VECTOR':
+      switch (recordFilter.operand) {
+        case RecordFilterOperand.VectorSearch:
+          return {
+            [correspondingFieldMetadataItem.name]: {
+              search: recordFilter.value,
+            } as TSVectorFilter,
           };
         default:
           throw new Error(
