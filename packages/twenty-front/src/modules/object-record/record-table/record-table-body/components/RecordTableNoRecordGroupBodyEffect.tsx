@@ -140,16 +140,14 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
   ]);
 
   useEffect(() => {
+    setIsRecordTableInitialLoading(false);
+
     if (showAuthModal) {
-      setIsRecordTableInitialLoading(false);
       return;
     }
-  }, [showAuthModal, setIsRecordTableInitialLoading]);
 
-  useEffect(() => {
     findManyRecords();
-    setIsRecordTableInitialLoading(false);
-  }, [findManyRecords, setIsRecordTableInitialLoading]);
+  }, [findManyRecords, setIsRecordTableInitialLoading, showAuthModal]);
 
   return <></>;
 };
