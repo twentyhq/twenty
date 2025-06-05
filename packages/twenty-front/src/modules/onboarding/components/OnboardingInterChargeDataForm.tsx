@@ -54,6 +54,8 @@ const StyledContentContainer = styled(motion.div)`
 
 const StyledControlButtonContainer = styled.div`
   display: flex;
+  justify-content: center;
+  flex: 1;
   gap: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 `;
