@@ -50,6 +50,7 @@ export const initialFavorites: Favorite[] = [
     key: mockId,
     labelIdentifier: 'favoriteLabel',
     avatarUrl: 'example.com',
+    company: { id: '5', name: 'Company Test 2' },
     avatarType: 'squared' as AvatarType,
     link: 'example.com',
     recordId: '1',
