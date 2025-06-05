@@ -35,7 +35,7 @@ export class RefreshTokenService {
 
     await this.jwtWrapperService.verifyJwtToken(refreshToken, 'REFRESH');
     const jwtPayload =
-      await this.jwtWrapperService.decode<RefreshTokenJwtPayload>(refreshToken);
+      this.jwtWrapperService.decode<RefreshTokenJwtPayload>(refreshToken);
 
     if (!(jwtPayload.jti && jwtPayload.sub)) {
       throw new AuthException(
@@ -108,7 +108,7 @@ export class RefreshTokenService {
   ): Promise<AuthToken> {
     const secret = this.jwtWrapperService.generateAppSecret(
       'REFRESH',
-      payload.workspaceId,
+      payload.workspaceId ?? payload.userId,
     );
     const expiresIn = this.twentyConfigService.get('REFRESH_TOKEN_EXPIRES_IN');
 

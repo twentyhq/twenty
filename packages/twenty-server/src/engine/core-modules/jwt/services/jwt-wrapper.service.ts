@@ -16,6 +16,10 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import {
   JwtPayload,
   JwtAuthTokenType,
+  TransientTokenJwtPayload,
+  RefreshTokenJwtPayload,
+  WorkspaceAgnosticTokenJwtPayload,
+  AccessTokenJwtPayload, FileTokenJwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @Injectable()
@@ -45,16 +49,26 @@ export class JwtWrapperService {
 
   verifyJwtToken(
     token: string,
+    // @deprecated - use type from decoded payload
     type: JwtAuthTokenType,
     options?: JwtVerifyOptions,
   ) {
-    const payload = this.decode<JwtPayload>(token, {
+    const payload = this.decode<
+      | TransientTokenJwtPayload
+      | RefreshTokenJwtPayload
+      | WorkspaceAgnosticTokenJwtPayload
+      | AccessTokenJwtPayload
+      | FileTokenJwtPayload
+    >(token, {
       json: true,
     });
 
     if (!isDefined(payload)) {
       throw new AuthException('No payload', AuthExceptionCode.UNAUTHENTICATED);
     }
+
+    // support legacy token that doesn't include type in payload
+    type = payload.type ?? type;
 
     // TODO: check if this is really needed
     if (type !== 'FILE' && !payload.sub) {
@@ -73,24 +87,22 @@ export class JwtWrapperService {
         });
       }
 
-      if (payload.type === 'WORKSPACE_AGNOSTIC') {
-        return this.jwtService.verify(token, {
-          ...options,
-          secret: this.generateAppSecret(type, payload.userId),
-        });
+      const appSecretBody =
+        payload.type === 'WORKSPACE_AGNOSTIC'
+          ? payload.userId
+          : payload.workspaceId;
+
+      if (appSecretBody === undefined) {
+        throw new AuthException(
+          'Invalid token type',
+          AuthExceptionCode.INVALID_JWT_TOKEN_TYPE,
+        );
       }
 
-      if ('workspaceId' in payload) {
-        return this.jwtService.verify(token, {
-          ...options,
-          secret: this.generateAppSecret(type, payload.workspaceId),
-        });
-      }
-
-      throw new AuthException(
-        'Invalid token type',
-        AuthExceptionCode.INVALID_JWT_TOKEN_TYPE,
-      );
+      return this.jwtService.verify(token, {
+        ...options,
+        secret: this.generateAppSecret(type, appSecretBody),
+      });
     } catch (error) {
       if (error instanceof jwt.TokenExpiredError) {
         throw new AuthException(

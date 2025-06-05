@@ -38,7 +38,7 @@ export type TransientTokenJwtPayload = CommonPropertiesJwtPayload & {
 
 export type RefreshTokenJwtPayload = CommonPropertiesJwtPayload & {
   type: 'REFRESH';
-  workspaceId: string;
+  workspaceId?: string;
   userId: string;
   jti?: string;
 };

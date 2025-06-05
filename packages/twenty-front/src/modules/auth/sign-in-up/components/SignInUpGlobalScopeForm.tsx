@@ -41,7 +41,7 @@ import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
-import { useCreateWorkspaceFromWorkspaceList } from '@/auth/sign-in-up/hooks/useCreateWorkspaceFromWorkspaceList';
+import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 import { AppPath } from '@/types/AppPath';
 
 const StyledContentContainer = styled(motion.div)`
@@ -140,8 +140,7 @@ export const SignInUpGlobalScopeForm = () => {
   const { checkUserExists } = useAuth();
   const { readCaptchaToken } = useReadCaptchaToken();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
-  const { handleCreateWorkspaceFromWorkspaceList } =
-    useCreateWorkspaceFromWorkspaceList();
+  const { createWorkspace } = useSignUpInNewWorkspace();
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
   const setAvailableWorkspaces = useSetRecoilState(availableWorkspacesState);
@@ -262,9 +261,7 @@ export const SignInUpGlobalScopeForm = () => {
                 </StyledWorkspaceItem>
               </UndecoratedLink>
             ))}
-            <StyledWorkspaceItem
-              onClick={handleCreateWorkspaceFromWorkspaceList}
-            >
+            <StyledWorkspaceItem onClick={() => createWorkspace()}>
               <StyledWorkspaceContent>
                 <StyledWorkspaceLogo>
                   <IconPlus size={theme.icon.size.lg} />

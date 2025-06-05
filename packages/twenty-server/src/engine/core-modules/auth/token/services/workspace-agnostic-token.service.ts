@@ -10,7 +10,6 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
-import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
 import {
   AuthContext,
   WorkspaceAgnosticTokenJwtPayload,
@@ -24,14 +23,15 @@ import { userValidator } from 'src/engine/core-modules/user/user.validate';
 export class WorkspaceAgnosticTokenService {
   constructor(
     private readonly jwtWrapperService: JwtWrapperService,
-    private readonly jwtStrategy: JwtAuthStrategy,
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
   ) {}
 
   async generateWorkspaceAgnosticToken(userId: string): Promise<AuthToken> {
-    const expiresIn = this.twentyConfigService.get('ACCESS_TOKEN_EXPIRES_IN');
+    const expiresIn = this.twentyConfigService.get(
+      'WORKSPACE_AGNOSTIC_TOKEN_EXPIRES_IN',
+    );
 
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
@@ -65,9 +65,7 @@ export class WorkspaceAgnosticTokenService {
   async validateToken(token: string): Promise<AuthContext> {
     try {
       const decoded =
-        await this.jwtWrapperService.decode<WorkspaceAgnosticTokenJwtPayload>(
-          token,
-        );
+        this.jwtWrapperService.decode<WorkspaceAgnosticTokenJwtPayload>(token);
 
       this.jwtWrapperService.verify(token, {
         secret: this.jwtWrapperService.generateAppSecret(

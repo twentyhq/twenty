@@ -18,6 +18,7 @@ import { supportChatState } from '@/client-config/states/supportChatState';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
+  AuthTokenPair,
   useCheckUserExistsLazyQuery,
   useGetAuthTokensFromLoginTokenMutation,
   useGetCurrentUserLazyQuery,
@@ -70,7 +71,6 @@ import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
-import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 
 export const useAuth = () => {
@@ -92,7 +92,6 @@ export const useAuth = () => {
   );
 
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
-  const { readCaptchaToken } = useReadCaptchaToken();
 
   const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
 
@@ -121,14 +120,8 @@ export const useAuth = () => {
     useCheckUserExistsLazyQuery();
   const [listAvailableWorkspacesQuery] = useListAvailableWorkspacesLazyQuery();
 
-  const getAvailableWorkspaces = async (email: string) => {
-    const token = await readCaptchaToken();
-
+  const getAvailableWorkspaces = async () => {
     listAvailableWorkspacesQuery({
-      variables: {
-        email,
-        captchaToken: token,
-      },
       onCompleted: (data) => {
         requestFreshCaptchaToken();
         setAvailableWorkspaces(data.listAvailableWorkspaces);
@@ -379,6 +372,14 @@ export const useAuth = () => {
     setWorkspaces,
   ]);
 
+  const handleSetAuthTokens = useCallback(
+    (tokens: AuthTokenPair) => {
+      setTokenPair(tokens);
+      cookieStorage.setItem('tokenPair', JSON.stringify(tokens));
+    },
+    [setTokenPair],
+  );
+
   const handleGetAuthTokensFromLoginToken = useCallback(
     async (loginToken: string) => {
       const getAuthTokensResult = await getAuthTokensFromLoginToken({
@@ -396,14 +397,8 @@ export const useAuth = () => {
         throw new Error('No getAuthTokensFromLoginToken result');
       }
 
-      setTokenPair(
-        getAuthTokensResult.data?.getAuthTokensFromLoginToken.tokens,
-      );
-      cookieStorage.setItem(
-        'tokenPair',
-        JSON.stringify(
-          getAuthTokensResult.data?.getAuthTokensFromLoginToken.tokens,
-        ),
+      handleSetAuthTokens(
+        getAuthTokensResult.data.getAuthTokensFromLoginToken.tokens,
       );
 
       // TODO: We can't parallelize this yet because when loadCurrentUSer is loaded
@@ -414,9 +409,9 @@ export const useAuth = () => {
     },
     [
       getAuthTokensFromLoginToken,
-      setTokenPair,
       loadCurrentUser,
       origin,
+      handleSetAuthTokens,
       refreshObjectMetadataItems,
     ],
   );
@@ -590,6 +585,7 @@ export const useAuth = () => {
     signInWithCredentials: handleCredentialsSignIn,
     signInWithGoogle: handleGoogleLogin,
     signInWithMicrosoft: handleMicrosoftLogin,
+    setAuthTokens: handleSetAuthTokens,
     getAvailableWorkspaces,
   };
 };

@@ -62,12 +62,14 @@ import { MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/micros
 import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class AuthService {
   constructor(
     private readonly accessTokenService: AccessTokenService,
+    private readonly workspaceAgnosticTokenService: WorkspaceAgnosticTokenService,
     private readonly domainManagerService: DomainManagerService,
     private readonly refreshTokenService: RefreshTokenService,
     private readonly loginTokenService: LoginTokenService,
@@ -726,25 +728,32 @@ export class AuthService {
       action === 'list-available-workspaces' &&
       availableWorkspacesCount !== 0
     ) {
+      const user =
+        existingUser ??
+        (await this.signInUpService.signUpWithoutWorkspace(
+          {
+            firstName,
+            lastName,
+            email,
+            picture,
+          },
+          {
+            provider: authProvider,
+          },
+        ));
+
       const url = this.domainManagerService.buildBaseUrl({
         pathname: '/welcome',
         searchParams: {
-          signInUpCallback: JSON.stringify(
-            existingUser
-              ? {
-                  authProvider,
-                  type: 'existingUser',
-                  email,
-                }
-              : {
-                  authProvider,
-                  type: 'newUser',
-                  firstName,
-                  lastName,
-                  email,
-                  picture,
-                },
-          ),
+          tokenPair: JSON.stringify({
+            accessToken:
+              await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
+                user.id,
+              ),
+            refreshToken: await this.refreshTokenService.generateRefreshToken({
+              userId: user.id,
+            }),
+          }),
         },
       });
 

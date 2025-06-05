@@ -389,6 +389,4 @@ export class SignInUpService {
       await this.setDefaultImpersonateAndAccessFullAdminPanel(),
     );
   }
-
-  async signInWithoutWorkspace() {}
 }

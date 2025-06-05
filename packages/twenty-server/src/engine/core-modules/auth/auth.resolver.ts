@@ -55,7 +55,6 @@ import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/c
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { GetLoginTokenFromEmailVerificationTokenOutput } from 'src/engine/core-modules/auth/dto/get-login-token-from-email-verification-token.output';
 import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
-import { CreateUserAndWorkspaceInput } from 'src/engine/core-modules/auth/dto/create-user-and-workspace.input';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { GetLoginTokenFromCredentialsInput } from './dto/get-login-token-from-credentials.input';
@@ -106,27 +105,14 @@ export class AuthResolver {
     );
   }
 
-  @UseGuards(CaptchaGuard)
   @Query(() => [AvailableWorkspaceOutput])
   async listAvailableWorkspaces(
-    @Args() listAvailableWorkspacesInput: EmailAndCaptchaInput,
+    @AuthUser() currentUser: User,
   ): Promise<Array<AvailableWorkspaceOutput>> {
     return await this.authService.listAvailableWorkspacesForAuthentication(
-      listAvailableWorkspacesInput.email.toLowerCase(),
+      currentUser.email,
     );
   }
-
-  // @UseGuards(CaptchaGuard)
-  // @Query(() => UserExistsOutput)
-  // async signUpWithCredentials(
-  //   @Args() checkUserExistsInput: CheckUserExistsInput,
-  // ): Promise<typeof UserExistsOutput> {}
-  //
-  // @UseGuards(CaptchaGuard)
-  // @Query(() => UserExistsOutput)
-  // async signInWithCredentials(
-  //   @Args() checkUserExistsInput: CheckUserExistsInput,
-  // ): Promise<typeof UserExistsOutput> {}
 
   @Mutation(() => GetAuthorizationUrlForSSOOutput)
   async getAuthorizationUrlForSSO(
@@ -292,32 +278,6 @@ export class AuthResolver {
     };
   }
 
-  @UseGuards(CaptchaGuard)
-  @Mutation(() => SignUpOutput)
-  async createUserAndWorkspace(
-    @Args() createUserAndWorkspaceInput: CreateUserAndWorkspaceInput,
-  ): Promise<SignUpOutput> {
-    const { user, workspace } = await this.signInUpService.signUpOnNewWorkspace(
-      {
-        type: 'newUserWithPicture',
-        newUserWithPicture: createUserAndWorkspaceInput,
-      },
-    );
-
-    const loginToken = await this.loginTokenService.generateLoginToken(
-      user.email,
-      workspace.id,
-    );
-
-    return {
-      loginToken,
-      workspace: {
-        id: workspace.id,
-        workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
-      },
-    };
-  }
-
   @Mutation(() => SignUpOutput)
   async signUpInNewWorkspace(
     @AuthUser() currentUser: User,
@@ -378,17 +338,17 @@ export class AuthResolver {
     @Args() getAuthTokensFromLoginTokenInput: GetAuthTokensFromLoginTokenInput,
     @Args('origin') origin: string,
   ): Promise<AuthTokens> {
+    const { sub: email, workspaceId } =
+      await this.loginTokenService.verifyLoginToken(
+        getAuthTokensFromLoginTokenInput.loginToken,
+      );
+
     const workspace =
       await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,
       );
 
     workspaceValidator.assertIsDefinedOrThrow(workspace);
-
-    const { sub: email, workspaceId } =
-      await this.loginTokenService.verifyLoginToken(
-        getAuthTokensFromLoginTokenInput.loginToken,
-      );
 
     if (workspaceId !== workspace.id) {
       throw new AuthException(

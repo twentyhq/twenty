@@ -226,6 +226,15 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TokensDuration,
+    description: 'Duration for which the workspace agnostic token is valid',
+    type: ConfigVariableType.STRING,
+  })
+  @IsDuration()
+  @IsOptional()
+  WORKSPACE_AGNOSTIC_TOKEN_EXPIRES_IN = '30m';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TokensDuration,
     description: 'Duration for which the refresh token is valid',
     type: ConfigVariableType.STRING,
   })
