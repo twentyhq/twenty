@@ -8,7 +8,7 @@ import {
   UpdateOneResolverArgs,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   WorkflowQueryValidationException,
   WorkflowQueryValidationExceptionCode,
@@ -24,10 +24,11 @@ import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/work
 export class WorkflowVersionValidationWorkspaceService {
   constructor(
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   async validateWorkflowVersionForCreateOne(
+    workspaceId: string,
     payload: CreateOneResolverArgs<WorkflowVersionWorkspaceEntity>,
   ) {
     if (
@@ -41,8 +42,10 @@ export class WorkflowVersionValidationWorkspaceService {
     }
 
     const workflowVersionRepository =
-      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+        workspaceId,
         'workflowVersion',
+        { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
       );
 
     const workflowAlreadyHasDraftVersion =
@@ -63,13 +66,18 @@ export class WorkflowVersionValidationWorkspaceService {
     }
   }
 
-  async validateWorkflowVersionForUpdateOne(
-    payload: UpdateOneResolverArgs<WorkflowVersionWorkspaceEntity>,
-  ) {
+  async validateWorkflowVersionForUpdateOne({
+    workspaceId,
+    payload,
+  }: {
+    workspaceId: string;
+    payload: UpdateOneResolverArgs<WorkflowVersionWorkspaceEntity>;
+  }) {
     const workflowVersion =
-      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail(
-        payload.id,
-      );
+      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
+        workspaceId,
+        workflowVersionId: payload.id,
+      });
 
     // If the only field updated is the name, we can update the workflow version
     // Otherwise, we need to assert that the workflow version is a draft
@@ -93,17 +101,23 @@ export class WorkflowVersionValidationWorkspaceService {
     }
   }
 
-  async validateWorkflowVersionForDeleteOne(payload: DeleteOneResolverArgs) {
+  async validateWorkflowVersionForDeleteOne(
+    workspaceId: string,
+    payload: DeleteOneResolverArgs,
+  ) {
     const workflowVersion =
-      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail(
-        payload.id,
-      );
+      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
+        workspaceId,
+        workflowVersionId: payload.id,
+      });
 
     assertWorkflowVersionIsDraft(workflowVersion);
 
     const workflowVersionRepository =
-      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+        workspaceId,
         'workflowVersion',
+        { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
       );
 
     const otherWorkflowVersionsExist = await workflowVersionRepository.exists({

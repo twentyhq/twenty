@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { WorkflowTriggerRestApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-rest-api-exception.filter';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   WorkflowVersionStatus,
   WorkflowVersionWorkspaceEntity,
@@ -22,7 +22,7 @@ import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-t
 @UseFilters(WorkflowTriggerRestApiExceptionFilter)
 export class WorkflowTriggerController {
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workflowTriggerWorkspaceService: WorkflowTriggerWorkspaceService,
   ) {}
 
@@ -57,8 +57,10 @@ export class WorkflowTriggerController {
     workspaceId: string;
   }) {
     const workflowRepository =
-      await this.twentyORMManager.getRepository<WorkflowWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowWorkspaceEntity>(
+        workspaceId,
         'workflow',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflow = await workflowRepository.findOne({
@@ -83,8 +85,10 @@ export class WorkflowTriggerController {
     }
 
     const workflowVersionRepository =
-      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+        workspaceId,
         'workflowVersion',
+        { shouldBypassPermissionChecks: true },
       );
     const workflowVersion = await workflowVersionRepository.findOne({
       where: { id: workflow.lastPublishedVersionId },

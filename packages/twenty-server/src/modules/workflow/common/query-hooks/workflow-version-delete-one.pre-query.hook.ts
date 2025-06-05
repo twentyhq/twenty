@@ -14,11 +14,14 @@ export class WorkflowVersionDeleteOnePreQueryHook
   ) {}
 
   async execute(
-    _authContext: AuthContext,
+    authContext: AuthContext,
     _objectName: string,
     payload: DeleteOneResolverArgs,
   ): Promise<DeleteOneResolverArgs> {
+    const { workspace } = authContext;
+
     await this.workflowVersionValidationWorkspaceService.validateWorkflowVersionForDeleteOne(
+      workspace.id,
       payload,
     );
 

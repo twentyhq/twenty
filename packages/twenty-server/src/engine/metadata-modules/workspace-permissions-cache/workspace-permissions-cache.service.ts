@@ -11,6 +11,7 @@ import { In, Repository } from 'typeorm';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
 import { UserWorkspaceRoleMap } from 'src/engine/metadata-modules/workspace-permissions-cache/types/user-workspace-role-map.type';
@@ -18,6 +19,7 @@ import { WorkspacePermissionsCacheStorageService } from 'src/engine/metadata-mod
 import { TwentyORMExceptionCode } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { getFromCacheWithRecompute } from 'src/engine/utils/get-data-from-cache-with-recompute.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 type CacheResult<T, U> = {
   version: T;
@@ -244,40 +246,59 @@ export class WorkspacePermissionsCacheService {
         workspaceId,
         ...(roleIds ? { id: In(roleIds) } : {}),
       },
-      relations: ['objectPermissions'],
+      relations: ['objectPermissions', 'settingPermissions'],
     });
 
-    const workspaceObjectMetadataIds =
-      await this.getWorkspaceObjectMetadataIds(workspaceId);
+    const workspaceObjectMetadataIdsAndStandardIds =
+      await this.getWorkspaceObjectMetadataIdsAndStandardIds(workspaceId);
 
     const permissionsByRoleId: ObjectRecordsPermissionsByRoleId = {};
 
     for (const role of roles) {
       const objectRecordsPermissions: ObjectRecordsPermissions = {};
 
-      for (const objectMetadataId of workspaceObjectMetadataIds) {
+      for (const [
+        objectMetadataId,
+        standardId,
+      ] of workspaceObjectMetadataIdsAndStandardIds) {
         let canRead = role.canReadAllObjectRecords;
         let canUpdate = role.canUpdateAllObjectRecords;
         let canSoftDelete = role.canSoftDeleteAllObjectRecords;
         let canDestroy = role.canDestroyAllObjectRecords;
 
         if (isPermissionsV2Enabled) {
-          const objectRecordPermissionsOverride = role.objectPermissions.find(
-            (objectPermission) =>
-              objectPermission.objectMetadataId === objectMetadataId,
-          );
+          if (
+            standardId &&
+            [
+              STANDARD_OBJECT_IDS.workflow,
+              STANDARD_OBJECT_IDS.workflowRun,
+              STANDARD_OBJECT_IDS.workflowVersion,
+            ].includes(standardId)
+          ) {
+            const hasWorkflowsPermissions = this.hasWorkflowsPermissions(role);
 
-          canRead =
-            objectRecordPermissionsOverride?.canReadObjectRecords ?? canRead;
-          canUpdate =
-            objectRecordPermissionsOverride?.canUpdateObjectRecords ??
-            canUpdate;
-          canSoftDelete =
-            objectRecordPermissionsOverride?.canSoftDeleteObjectRecords ??
-            canSoftDelete;
-          canDestroy =
-            objectRecordPermissionsOverride?.canDestroyObjectRecords ??
-            canDestroy;
+            canRead = hasWorkflowsPermissions;
+            canUpdate = hasWorkflowsPermissions;
+            canSoftDelete = hasWorkflowsPermissions;
+            canDestroy = hasWorkflowsPermissions;
+          } else {
+            const objectRecordPermissionsOverride = role.objectPermissions.find(
+              (objectPermission) =>
+                objectPermission.objectMetadataId === objectMetadataId,
+            );
+
+            canRead =
+              objectRecordPermissionsOverride?.canReadObjectRecords ?? canRead;
+            canUpdate =
+              objectRecordPermissionsOverride?.canUpdateObjectRecords ??
+              canUpdate;
+            canSoftDelete =
+              objectRecordPermissionsOverride?.canSoftDeleteObjectRecords ??
+              canSoftDelete;
+            canDestroy =
+              objectRecordPermissionsOverride?.canDestroyObjectRecords ??
+              canDestroy;
+          }
         }
 
         objectRecordsPermissions[objectMetadataId] = {
@@ -294,17 +315,35 @@ export class WorkspacePermissionsCacheService {
     return permissionsByRoleId;
   }
 
-  private async getWorkspaceObjectMetadataIds(
+  private hasWorkflowsPermissions(role: RoleEntity): boolean {
+    const hasWorkflowsPermissionFromRole = role.canUpdateAllSettings;
+    const hasWorkflowsPermissionsFromSettingPermissions = isDefined(
+      role.settingPermissions.find(
+        (settingPermission) =>
+          settingPermission.setting === SettingPermissionType.WORKFLOWS,
+      ),
+    );
+
+    return (
+      hasWorkflowsPermissionFromRole ||
+      hasWorkflowsPermissionsFromSettingPermissions
+    );
+  }
+
+  private async getWorkspaceObjectMetadataIdsAndStandardIds(
     workspaceId: string,
-  ): Promise<string[]> {
+  ): Promise<[string, string | null][]> {
     const workspaceObjectMetadata = await this.objectMetadataRepository.find({
       where: {
         workspaceId,
       },
-      select: ['id'],
+      select: ['id', 'standardId'],
     });
 
-    return workspaceObjectMetadata.map((objectMetadata) => objectMetadata.id);
+    return workspaceObjectMetadata.map((objectMetadata) => [
+      objectMetadata.id,
+      objectMetadata.standardId,
+    ]);
   }
 
   private async getUserWorkspaceRoleMapFromDatabase({

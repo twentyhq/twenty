@@ -84,7 +84,7 @@ export class RemoteServerService<T extends RemoteServerType> {
         const createdRemoteServer = entityManager.create(
           RemoteServerEntity,
           remoteServerToCreate,
-        );
+        ) as RemoteServerEntity<RemoteServerType>;
 
         const foreignDataWrapperQuery =
           this.foreignDataWrapperServerQueryFactory.createForeignDataWrapperServer(
