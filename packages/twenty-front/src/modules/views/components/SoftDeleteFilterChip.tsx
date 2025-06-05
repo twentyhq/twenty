@@ -38,6 +38,7 @@ export const SoftDeleteFilterChip = ({
       labelValue={recordFilter.label ?? ''}
       Icon={ChipIcon}
       onRemove={handleRemoveClick}
+      type="filter"
     />
   );
 };
