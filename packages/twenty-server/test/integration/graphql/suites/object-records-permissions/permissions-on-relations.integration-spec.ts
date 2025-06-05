@@ -1,6 +1,7 @@
 import { default as request } from 'supertest';
 import { createCustomRoleWithObjectPermissions } from 'test/integration/graphql/utils/create-custom-role-with-object-permissions.util';
 import { deleteRole } from 'test/integration/graphql/utils/delete-one-role.util';
+import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlAPIRequestWithMemberRole as makeGraphqlAPIRequestWithJony } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
@@ -61,8 +62,9 @@ describe('permissionsOnRelations', () => {
       });
 
       // Create GraphQL query that includes company relation
-      const graphqlOperation = findOneOperationFactory({
+      const graphqlOperation = findManyOperationFactory({
         objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
         gqlFields: `
           id
           city
@@ -72,7 +74,6 @@ describe('permissionsOnRelations', () => {
             name
           }
         `,
-        filter: { name: { lastName: { eq: 'Voulzy' } } },
       });
 
       const response = await makeGraphqlAPIRequestWithJony(graphqlOperation);
@@ -102,8 +103,9 @@ describe('permissionsOnRelations', () => {
       });
 
       // Create GraphQL query that includes company relation
-      const graphqlOperation = findOneOperationFactory({
+      const graphqlOperation = findManyOperationFactory({
         objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
         gqlFields: `
           id
           city
@@ -113,15 +115,17 @@ describe('permissionsOnRelations', () => {
             name
           }
         `,
-        filter: { name: { lastName: { eq: 'Voulzy' } } },
       });
 
       const response = await makeGraphqlAPIRequestWithJony(graphqlOperation);
 
       // The query should succeed
       expect(response.body.data).toBeDefined();
-      expect(response.body.data.person).toBeDefined();
-      expect(response.body.data.person.company).toBeDefined();
+      expect(response.body.data.people).toBeDefined();
+      const person = response.body.data.people.edges[0].node;
+
+      expect(person.company).toBeDefined();
+      expect(response.body.error).toBeUndefined();
     });
 
     it('nested relations - should throw permission error when querying nested opportunity relation without opportunity read permission', async () => {
