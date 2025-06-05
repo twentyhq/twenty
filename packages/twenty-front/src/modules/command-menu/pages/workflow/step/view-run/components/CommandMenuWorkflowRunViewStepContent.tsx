@@ -1,8 +1,11 @@
 import { getIsInputTabDisabled } from '@/command-menu/pages/workflow/step/view-run/utils/getIsInputTabDisabled';
 import { getIsOutputTabDisabled } from '@/command-menu/pages/workflow/step/view-run/utils/getIsOutputTabDisabled';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
-import { SingleTabProps, TabList } from '@/ui/layout/tab/components/TabList';
-import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import {
+  SingleTabProps,
+  TabList,
+} from '@/ui/layout/tab-list/components/TabList';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';

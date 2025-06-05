@@ -2,7 +2,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { SettingsAdminTabContent } from '@/settings/admin-panel/components/SettingsAdminTabContent';
 import { SETTINGS_ADMIN_TABS } from '@/settings/admin-panel/constants/SettingsAdminTabs';
 import { SETTINGS_ADMIN_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminTabsId';
-import { TabList } from '@/ui/layout/tab/components/TabList';
+import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { IconHeart, IconSettings2, IconVariable } from 'twenty-ui/display';

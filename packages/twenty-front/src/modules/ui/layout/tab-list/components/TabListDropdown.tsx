@@ -1,9 +1,9 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { TabAvatar } from '@/ui/layout/tab/components/TabAvatar';
-import { SingleTabProps } from '@/ui/layout/tab/components/TabList';
-import { TabMoreButton } from '@/ui/layout/tab/components/TabMoreButton';
+import { TabAvatar } from '@/ui/layout/tab-list/components/TabAvatar';
+import { SingleTabProps } from '@/ui/layout/tab-list/components/TabList';
+import { TabMoreButton } from '@/ui/layout/tab-list/components/TabMoreButton';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
 
 type TabListDropdownProps = {

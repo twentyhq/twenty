@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { TabMoreButton } from '../TabMoreButton';
 
 const meta: Meta<typeof TabMoreButton> = {
-  title: 'UI/Layout/Tab/TabMoreButton',
+  title: 'UI/Layout/TabList/TabMoreButton',
   component: TabMoreButton,
   args: {
     hiddenTabsCount: 3,

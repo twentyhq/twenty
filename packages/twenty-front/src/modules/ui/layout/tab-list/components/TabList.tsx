@@ -1,16 +1,16 @@
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab/components/TabListFromUrlOptionalEffect';
-import { TabMoreButton } from '@/ui/layout/tab/components/TabMoreButton';
-import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
-import { TabListComponentInstanceContext } from '@/ui/layout/tab/states/contexts/TabListComponentInstanceContext';
-import { LayoutCard } from '@/ui/layout/tab/types/LayoutCard';
+import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
+import { TabMoreButton } from '@/ui/layout/tab-list/components/TabMoreButton';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
+import { LayoutCard } from '@/ui/layout/tab-list/types/LayoutCard';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IconComponent } from 'twenty-ui/display';
-import { Tab } from './Tab';
+import { TabButton } from 'twenty-ui/input';
 import { TabListDropdown } from './TabListDropdown';
 
 export type SingleTabProps<T extends string = string> = {
@@ -39,7 +39,7 @@ const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
-  height: 40px;
+  height: ${({ theme }) => theme.spacing(10)};
   position: relative;
   user-select: none;
   width: 100%;
@@ -217,10 +217,10 @@ export const TabList = ({
                 key={tab.id}
                 onDimensionChange={handleTabWidthChange(tab.id)}
               >
-                <Tab
+                <TabButton
                   id={tab.id}
                   title={tab.title}
-                  Icon={tab.Icon}
+                  LeftIcon={tab.Icon}
                   logo={tab.logo}
                   active={tab.id === activeTabId}
                   disabled={tab.disabled ?? loading}
@@ -239,11 +239,11 @@ export const TabList = ({
           <StyledContainer className={className}>
             <StyledTabContainer>
               {visibleTabs.slice(0, visibleTabCount).map((tab) => (
-                <Tab
+                <TabButton
                   key={tab.id}
                   id={tab.id}
                   title={tab.title}
-                  Icon={tab.Icon}
+                  LeftIcon={tab.Icon}
                   logo={tab.logo}
                   active={tab.id === activeTabId}
                   disabled={tab.disabled ?? loading}

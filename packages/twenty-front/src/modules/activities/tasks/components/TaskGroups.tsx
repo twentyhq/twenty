@@ -7,11 +7,11 @@ import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableE
 import { Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
-import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import groupBy from 'lodash.groupby';
-import { AddTaskButton } from './AddTaskButton';
-import { TaskList } from './TaskList';
+import { IconPlus } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -20,8 +20,8 @@ import {
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from 'twenty-ui/layout';
-import { Button } from 'twenty-ui/input';
-import { IconPlus } from 'twenty-ui/display';
+import { AddTaskButton } from './AddTaskButton';
+import { TaskList } from './TaskList';
 
 const StyledContainer = styled.div`
   display: flex;

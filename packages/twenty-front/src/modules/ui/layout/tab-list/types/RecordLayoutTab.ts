@@ -1,5 +1,5 @@
-import { LayoutCard } from '@/ui/layout/tab/types/LayoutCard';
-import { TabVisibilityConfig } from '@/ui/layout/tab/types/TabVisibilityConfig';
+import { LayoutCard } from '@/ui/layout/tab-list/types/LayoutCard';
+import { TabVisibilityConfig } from '@/ui/layout/tab-list/types/TabVisibilityConfig';
 import { IconComponent } from 'twenty-ui/display';
 
 export type RecordLayoutTab = {
