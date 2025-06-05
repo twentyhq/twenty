@@ -45,6 +45,7 @@ export const SignInBackgroundMockContainer = () => {
     <StyledContainer>
       <RecordIndexContextProvider
         value={{
+          objectPermissionsByObjectMetadataId: {},
           recordIndexId,
           objectNamePlural,
           objectNameSingular,

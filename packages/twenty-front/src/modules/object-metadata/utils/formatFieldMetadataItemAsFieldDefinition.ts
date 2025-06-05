@@ -33,6 +33,7 @@ export const formatFieldMetadataItemAsFieldDefinition = ({
       relationObjectMetadataItem?.nameSingular ?? '',
     relationObjectMetadataNamePlural:
       relationObjectMetadataItem?.namePlural ?? '',
+    relationObjectMetadataId: relationObjectMetadataItem?.id ?? '',
     objectMetadataNameSingular: objectMetadataItem.nameSingular ?? '',
     targetFieldMetadataName:
       field.relationDefinition?.targetFieldMetadata?.name ?? '',
