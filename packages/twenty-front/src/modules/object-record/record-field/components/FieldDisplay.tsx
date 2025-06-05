@@ -4,6 +4,7 @@ import { ActorFieldDisplay } from '@/object-record/record-field/meta-types/displ
 import { ArrayFieldDisplay } from '@/object-record/record-field/meta-types/display/components/ArrayFieldDisplay';
 import { BooleanFieldDisplay } from '@/object-record/record-field/meta-types/display/components/BooleanFieldDisplay';
 import { EmailsFieldDisplay } from '@/object-record/record-field/meta-types/display/components/EmailsFieldDisplay';
+import { ForbiddenFieldDisplay } from '@/object-record/record-field/meta-types/display/components/ForbiddenFieldDisplay';
 import { LinksFieldDisplay } from '@/object-record/record-field/meta-types/display/components/LinksFieldDisplay';
 import { PhonesFieldDisplay } from '@/object-record/record-field/meta-types/display/components/PhonesFieldDisplay';
 import { RatingFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RatingFieldDisplay';
@@ -22,6 +23,7 @@ import { isFieldRelationFromManyObjects } from '@/object-record/record-field/typ
 import { isFieldRelationToOneObject } from '@/object-record/record-field/types/guards/isFieldRelationToOneObject';
 import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
 import { isFieldRichTextV2 } from '@/object-record/record-field/types/guards/isFieldRichTextV2';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldContext } from '../contexts/FieldContext';
 import { AddressFieldDisplay } from '../meta-types/display/components/AddressFieldDisplay';
 import { ChipFieldDisplay } from '../meta-types/display/components/ChipFieldDisplay';
@@ -49,12 +51,17 @@ import { isFieldText } from '../types/guards/isFieldText';
 import { isFieldUuid } from '../types/guards/isFieldUuid';
 
 export const FieldDisplay = () => {
-  const { fieldDefinition, isLabelIdentifier } = useContext(FieldContext);
+  const { fieldDefinition, isLabelIdentifier, isForbidden } =
+    useContext(FieldContext);
 
   const isChipDisplay = isFieldIdentifierDisplay(
     fieldDefinition,
     isLabelIdentifier,
   );
+
+  if (isDefined(isForbidden) && isForbidden) {
+    return <ForbiddenFieldDisplay />;
+  }
 
   return isChipDisplay ? (
     <ChipFieldDisplay />

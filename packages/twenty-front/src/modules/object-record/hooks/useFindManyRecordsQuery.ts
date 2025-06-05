@@ -3,6 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import {
   generateFindManyRecordsQuery,
   QueryCursorDirection,
@@ -25,12 +26,15 @@ export const useFindManyRecordsQuery = ({
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
   const findManyRecordsQuery = generateFindManyRecordsQuery({
     objectMetadataItem,
     objectMetadataItems,
     recordGqlFields,
     computeReferences,
     cursorDirection,
+    objectPermissionsByObjectMetadataId,
   });
 
   return {

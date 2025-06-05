@@ -131,6 +131,7 @@ export type FieldRelationMetadata = BaseFieldMetadata & {
   relationFieldMetadataId: string;
   relationObjectMetadataNamePlural: string;
   relationObjectMetadataNameSingular: string;
+  relationObjectMetadataId: string;
   relationType?: RelationDefinitionType;
   targetFieldMetadataName?: string;
   useEditButton?: boolean;
