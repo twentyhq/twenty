@@ -11,8 +11,7 @@ import {
 } from 'class-validator';
 import { isDefined } from 'twenty-shared/utils';
 
-import { LLMChatModelDriver } from 'src/engine/core-modules/llm-chat-model/interfaces/llm-chat-model.interface';
-import { LLMTracingDriver } from 'src/engine/core-modules/llm-tracing/interfaces/llm-tracing.interface';
+import { AiDriver } from 'src/engine/core-modules/ai/interfaces/ai.interface';
 import { AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces/aws-region.interface';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
@@ -952,13 +951,13 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
-    description: 'Driver for the LLM chat model',
+    description: 'Driver for the AI chat model',
     type: ConfigVariableType.ENUM,
-    options: Object.values(LLMChatModelDriver),
+    options: Object.values(AiDriver),
     isEnvOnly: true,
   })
   @CastToUpperSnakeCase()
-  LLM_CHAT_MODEL_DRIVER: LLMChatModelDriver;
+  AI_DRIVER: AiDriver;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
@@ -967,31 +966,6 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
   })
   OPENAI_API_KEY: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LLM,
-    isSensitive: true,
-    description: 'Secret key for Langfuse integration',
-    type: ConfigVariableType.STRING,
-  })
-  LANGFUSE_SECRET_KEY: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LLM,
-    description: 'Public key for Langfuse integration',
-    type: ConfigVariableType.STRING,
-  })
-  LANGFUSE_PUBLIC_KEY: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LLM,
-    description: 'Driver for LLM tracing',
-    type: ConfigVariableType.ENUM,
-    options: Object.values(LLMTracingDriver),
-    isEnvOnly: true,
-  })
-  @CastToUpperSnakeCase()
-  LLM_TRACING_DRIVER: LLMTracingDriver = LLMTracingDriver.CONSOLE;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ServerConfig,
