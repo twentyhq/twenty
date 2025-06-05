@@ -73,6 +73,10 @@ export const SettingsBilling = () => {
     isDefined(subscriptionStatus) &&
     subscriptionStatus !== SubscriptionStatus.Canceled;
 
+  const canSwitchSubscription =
+    hasNotCanceledCurrentSubscription &&
+    subscriptionStatus !== SubscriptionStatus.PastDue;
+
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
 
   const [switchToYearlyInterval] =
@@ -245,7 +249,7 @@ export const SettingsBilling = () => {
                 title={t`Switch to Yearly`}
                 variant="secondary"
                 onClick={() => openModal(SWITCH_BILLING_INTERVAL_MODAL_ID)}
-                disabled={!hasNotCanceledCurrentSubscription}
+                disabled={!canSwitchSubscription}
               />
             )}
             {isProPlan && (
@@ -254,7 +258,7 @@ export const SettingsBilling = () => {
                 title={t`Switch to Organization`}
                 variant="secondary"
                 onClick={() => openModal(SWITCH_BILLING_PLAN_MODAL_ID)}
-                disabled={!hasNotCanceledCurrentSubscription}
+                disabled={!canSwitchSubscription}
               />
             )}
           </StyledSwitchButtonContainer>
@@ -295,7 +299,7 @@ export const SettingsBilling = () => {
       <ConfirmationModal
         modalId={SWITCH_BILLING_INTERVAL_MODAL_ID}
         title={t`Change to Yearly?`}
-        subtitle={t`You will be charged $${yearlyPrice} per user per month billed annually. A prorata with your current subscription will be applied`}
+        subtitle={t`You will be charged $${yearlyPrice} per user per month billed annually. A prorata with your current subscription will be applied.`}
         onConfirmClick={switchInterval}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent={'blue'}
