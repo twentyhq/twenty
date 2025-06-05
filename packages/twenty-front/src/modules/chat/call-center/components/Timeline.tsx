@@ -1,3 +1,4 @@
+import { getCleanName } from '@/chat/call-center/utils/getCleanName';
 import { MessageEventType } from '@/chat/types/MessageEventType';
 import { MessageType } from '@/chat/types/MessageType';
 import { ITimeline } from '@/chat/types/WhatsappDocument';
@@ -154,7 +155,7 @@ const SummaryComponent = ({ item }: { item: ITimeline }) => {
 
   return (
     <>
-      <StyledSummaryTitle>{item.agent}</StyledSummaryTitle>
+      <StyledSummaryTitle>{getCleanName(item.agent ?? '')}</StyledSummaryTitle>
       <StyledSummaryDescription>{message}</StyledSummaryDescription>
     </>
   );

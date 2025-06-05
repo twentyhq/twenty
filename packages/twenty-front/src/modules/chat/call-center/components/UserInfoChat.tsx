@@ -1,4 +1,5 @@
 import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
+import { getCleanName } from '@/chat/call-center/utils/getCleanName';
 
 import { IMessage, WhatsappDocument } from '@/chat/types/WhatsappDocument';
 import styled from '@emotion/styled';
@@ -17,10 +18,6 @@ const StyledUserName = styled.p`
   margin: 0;
   margin-bottom: ${({ theme }) => theme.spacing(1.5)};
 `;
-
-const getCleanName = (name: string) => {
-  return name.startsWith('_') ? name.slice(1) : name;
-};
 
 export const AvatarComponent: React.FC<WhatsappProps> = ({
   message,
