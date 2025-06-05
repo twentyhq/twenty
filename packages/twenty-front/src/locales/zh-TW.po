@@ -64,6 +64,11 @@ msgstr ": 過去"
 msgid ": Today"
 msgstr ": 今天"
 
+#. js-lingui-id: nSri0b
+#: src/modules/views/components/ViewBarFilterDropdownVectorSearchButton.tsx
+msgid "· {fieldSearchInputValue}"
+msgstr ""
+
 #. js-lingui-id: ZBGbuw
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
@@ -2302,6 +2307,11 @@ msgstr "前5行"
 msgid "First Name"
 msgstr "名字"
 
+#. js-lingui-id: 7JBW66
+#: src/modules/object-record/record-field/meta-types/display/components/ForbiddenFieldDisplay.tsx
+msgid "Forbidden"
+msgstr ""
+
 #. js-lingui-id: glx6on
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx
 msgid "Forgot your password?"
@@ -2772,6 +2782,41 @@ msgstr "是過去的"
 msgid "Is not"
 msgstr "不是"
 
+#. js-lingui-id: /2on+O
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid array"
+msgstr ""
+
+#. js-lingui-id: LmaaLR
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid date (format: '2021-12-01')"
+msgstr ""
+
+#. js-lingui-id: ntHJJY
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid date time (format: '2021-12-01T00:00:00Z')"
+msgstr ""
+
+#. js-lingui-id: M9i8dv
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid email"
+msgstr ""
+
+#. js-lingui-id: 96g038
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid JSON"
+msgstr ""
+
+#. js-lingui-id: Ir+3AW
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid URL"
+msgstr ""
+
+#. js-lingui-id: MgIflq
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid UUID"
+msgstr ""
+
 #. js-lingui-id: ldI7NO
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is not empty"
@@ -3124,6 +3169,31 @@ msgstr "向左移動"
 msgid "Move right"
 msgstr "向右移動"
 
+#. js-lingui-id: asWVA5
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "must be a number"
+msgstr ""
+
+#. js-lingui-id: qJVW/e
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "must be an array of object with valid phone, calling code and country code (format: '[{\"number\":\"123456789\", \"callingCode\":\"+33\", \"countryCode\":\"FR\"}]')"
+msgstr ""
+
+#. js-lingui-id: hTW2Fw
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "must be an array of object with valid url and label (format: '[{\"url\":\"valid.url\", \"label\":\"label value\")}]'"
+msgstr ""
+
+#. js-lingui-id: 5rovyq
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "must be an array of valid emails"
+msgstr ""
+
+#. js-lingui-id: amJfUq
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "must contain only numbers"
+msgstr ""
+
 #. js-lingui-id: 6YtxFj
 #: src/testing/mock-data/tableData.ts
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -3256,8 +3326,6 @@ msgid "New Password"
 msgstr "新密碼"
 
 #. js-lingui-id: BcCzLv
-#: src/modules/ui/layout/page/components/PageAddButton.tsx
-#: src/modules/ui/layout/page/components/PageAddButton.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "New record"
 msgstr "新記錄"
@@ -4087,6 +4155,8 @@ msgid "Schema"
 msgstr "結構"
 
 #. js-lingui-id: A1taO8
+#: src/modules/views/components/ViewBarFilterDropdownVectorSearchInput.tsx
+#: src/modules/views/components/ViewBarFilterDropdownVectorSearchButton.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPickerDropdownContent.tsx

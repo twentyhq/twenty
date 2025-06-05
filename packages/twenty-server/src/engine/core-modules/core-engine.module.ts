@@ -5,6 +5,8 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { AdminPanelModule } from 'src/engine/core-modules/admin-panel/admin-panel.module';
+import { AiModule } from 'src/engine/core-modules/ai/ai.module';
+import { aiModuleFactory } from 'src/engine/core-modules/ai/ai.module-factory';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
 import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
@@ -21,10 +23,6 @@ import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-sto
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
 import { LabModule } from 'src/engine/core-modules/lab/lab.module';
-import { LLMChatModelModule } from 'src/engine/core-modules/llm-chat-model/llm-chat-model.module';
-import { llmChatModelModuleFactory } from 'src/engine/core-modules/llm-chat-model/llm-chat-model.module-factory';
-import { LLMTracingModule } from 'src/engine/core-modules/llm-tracing/llm-tracing.module';
-import { llmTracingModuleFactory } from 'src/engine/core-modules/llm-tracing/llm-tracing.module-factory';
 import { LoggerModule } from 'src/engine/core-modules/logger/logger.module';
 import { loggerModuleFactory } from 'src/engine/core-modules/logger/logger.module-factory';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
@@ -105,12 +103,8 @@ import { FileModule } from './file/file.module';
       wildcard: true,
     }),
     CacheStorageModule,
-    LLMChatModelModule.forRoot({
-      useFactory: llmChatModelModuleFactory,
-      inject: [TwentyConfigService],
-    }),
-    LLMTracingModule.forRoot({
-      useFactory: llmTracingModuleFactory,
+    AiModule.forRoot({
+      useFactory: aiModuleFactory,
       inject: [TwentyConfigService],
     }),
     ServerlessModule.forRootAsync({

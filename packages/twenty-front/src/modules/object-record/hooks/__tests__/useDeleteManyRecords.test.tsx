@@ -57,6 +57,7 @@ describe('useDeleteManyRecords', () => {
         objectMetadataItem,
         objectMetadataItems,
         recordId: expectedRecord.id,
+        objectPermissionsByObjectMetadataId: {},
       });
       expect(cachedRecord).not.toBeNull();
       if (cachedRecord === null) throw new Error('Should never occur');
@@ -72,6 +73,7 @@ describe('useDeleteManyRecords', () => {
           objectMetadataItem,
           objectMetadataItems,
           recordId,
+          objectPermissionsByObjectMetadataId: {},
         }),
       ).toBeNull(),
     );
@@ -119,6 +121,7 @@ describe('useDeleteManyRecords', () => {
             objectMetadataItem,
             record,
           }),
+          objectPermissionsByObjectMetadataId: {},
         }),
       );
     });

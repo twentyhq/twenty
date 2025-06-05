@@ -12,9 +12,10 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { sortByAscString } from '~/utils/array/sortByAscString';
 import { isDefined } from 'twenty-shared/utils';
+import { sortByAscString } from '~/utils/array/sortByAscString';
 
 export const usePrepareFindManyActivitiesQuery = ({
   activityObjectNameSingular,
@@ -32,6 +33,7 @@ export const usePrepareFindManyActivitiesQuery = ({
 
   const cache = useApolloClient().cache;
   const { objectMetadataItems } = useObjectMetadataItems();
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const { upsertFindManyRecordsQueryInCache: upsertFindManyActivitiesInCache } =
     useUpsertFindManyRecordsQueryInCache({
@@ -64,6 +66,7 @@ export const usePrepareFindManyActivitiesQuery = ({
       objectMetadataItem: targetableObjectMetadataItem,
       objectMetadataItems,
       cache,
+      objectPermissionsByObjectMetadataId,
     });
 
     const activityTargets: (TaskTarget | NoteTarget)[] =

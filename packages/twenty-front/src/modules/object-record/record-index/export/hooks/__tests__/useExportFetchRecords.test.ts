@@ -229,6 +229,7 @@ describe('useRecordData', () => {
                 options: null,
                 placeHolder: 'Last update',
                 relationFieldMetadataId: undefined,
+                relationObjectMetadataId: '',
                 relationObjectMetadataNamePlural: '',
                 relationObjectMetadataNameSingular: '',
                 relationType: undefined,

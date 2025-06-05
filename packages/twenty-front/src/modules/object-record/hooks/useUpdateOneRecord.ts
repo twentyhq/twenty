@@ -10,6 +10,7 @@ import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNo
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -57,6 +58,7 @@ export const useUpdateOneRecord = <
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { objectMetadataItems } = useObjectMetadataItems();
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const { refetchAggregateQueries } = useRefetchAggregateQueries({
     objectMetadataNamePlural: objectMetadataItem.namePlural,
@@ -75,6 +77,7 @@ export const useUpdateOneRecord = <
         recordInput: updateOneRecordInput,
         cache: apolloClient.cache,
         objectMetadataItems,
+        objectPermissionsByObjectMetadataId,
       });
     const cachedRecord = getRecordFromCache<ObjectRecord>(idToUpdate);
     const cachedRecordWithConnection = getRecordNodeFromRecord<ObjectRecord>({
@@ -118,6 +121,7 @@ export const useUpdateOneRecord = <
         cache: apolloClient.cache,
         record: computedOptimisticRecord,
         recordGqlFields,
+        objectPermissionsByObjectMetadataId,
       });
 
       triggerUpdateRecordOptimisticEffect({
@@ -190,6 +194,7 @@ export const useUpdateOneRecord = <
             ),
           },
           recordGqlFields,
+          objectPermissionsByObjectMetadataId,
         });
 
         triggerUpdateRecordOptimisticEffect({
