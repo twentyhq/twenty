@@ -9,7 +9,9 @@ import { MatchColumnSelectSubFieldSelectDropdownContent } from '@/spreadsheet-im
 import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
+import { IconChevronDown } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 
@@ -21,6 +23,11 @@ interface MatchColumnToFieldSelectProps {
   placeholder?: string;
 }
 
+const StyledMenuItem = styled(MenuItem)`
+  background-color: ${({ theme }) => theme.background.transparent.lighter};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+`;
 export const MatchColumnToFieldSelect = ({
   onChange,
   value,
@@ -112,10 +119,11 @@ export const MatchColumnToFieldSelect = ({
       }}
       dropdownPlacement="bottom-start"
       clickableComponent={
-        <MenuItem
+        <StyledMenuItem
           LeftIcon={value?.Icon}
           text={value?.label ?? placeholder ?? ''}
           accent={value?.label ? 'default' : 'placeholder'}
+          RightIcon={IconChevronDown}
         />
       }
       dropdownComponents={
