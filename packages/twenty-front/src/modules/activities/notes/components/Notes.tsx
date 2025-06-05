@@ -49,8 +49,7 @@ export const Notes = ({
 
   const objectPermissions = getObjectPermissionsForObject();
 
-  const hasObjectUpdatePermissions =
-    objectPermissions.canUpdateObjectRecords === false;
+  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
   if (loading && isNotesEmpty) {
     return <SkeletonLoader />;

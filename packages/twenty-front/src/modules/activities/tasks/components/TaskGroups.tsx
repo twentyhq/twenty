@@ -50,8 +50,7 @@ export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
 
   const objectPermissions = getObjectPermissionsForObject();
 
-  const hasObjectUpdatePermissions =
-    objectPermissions.canUpdateObjectRecords === false;
+  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
   const openCreateActivity = useOpenCreateActivityDrawer({
     activityObjectNameSingular: CoreObjectNameSingular.Task,

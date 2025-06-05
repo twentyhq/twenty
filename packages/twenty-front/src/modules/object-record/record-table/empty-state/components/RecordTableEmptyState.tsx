@@ -29,8 +29,7 @@ export const RecordTableEmptyState = () => {
 
   const objectPermissions = getObjectPermissionsForObject();
 
-  const hasObjectUpdatePermissions =
-    objectPermissions.canUpdateObjectRecords === true;
+  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
   if (!hasObjectUpdatePermissions) {
     return <RecordTableEmptyStateReadOnly />;

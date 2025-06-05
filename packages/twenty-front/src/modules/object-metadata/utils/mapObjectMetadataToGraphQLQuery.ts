@@ -37,7 +37,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
       objectPermissionsByObjectMetadataId,
       objectMetadataItem.id,
     );
-    if (objectPermission.canReadObjectRecords === false) {
+    if (!objectPermission.canReadObjectRecords) {
       return '';
     }
   }

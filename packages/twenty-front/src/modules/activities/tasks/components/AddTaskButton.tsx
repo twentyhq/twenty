@@ -25,10 +25,9 @@ export const AddTaskButton = ({
 
   const objectPermissions = getObjectPermissionsForObject();
 
-  const hasObjectUpdatePermissions =
-    objectPermissions.canUpdateObjectRecords === false;
+  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
-  if (hasObjectUpdatePermissions) {
+  if (!hasObjectUpdatePermissions) {
     return null;
   }
 

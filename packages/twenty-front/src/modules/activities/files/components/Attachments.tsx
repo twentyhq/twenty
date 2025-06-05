@@ -72,8 +72,7 @@ export const Attachments = ({
 
   const objectPermissions = getObjectPermissionsForObject();
 
-  const hasObjectUpdatePermissions =
-    objectPermissions.canUpdateObjectRecords === false;
+  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
   if (loading && isAttachmentsEmpty) {
     return <SkeletonLoader />;

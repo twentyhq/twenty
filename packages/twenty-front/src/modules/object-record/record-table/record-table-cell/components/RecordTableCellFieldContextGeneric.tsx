@@ -44,8 +44,7 @@ export const RecordTableCellFieldContextGeneric = ({
     objectMetadataItem.id,
   );
 
-  let hasObjectReadPermissions =
-    objectPermissions.canReadObjectRecords === true;
+  let hasObjectReadPermissions = objectPermissions.canReadObjectRecords;
 
   if (
     isFieldRelationToOneObject(columnDefinition) ||
@@ -66,7 +65,7 @@ export const RecordTableCellFieldContextGeneric = ({
         );
 
         hasObjectReadPermissions =
-          relationObjectPermissions.canReadObjectRecords === true;
+          relationObjectPermissions.canReadObjectRecords;
       }
     }
   }

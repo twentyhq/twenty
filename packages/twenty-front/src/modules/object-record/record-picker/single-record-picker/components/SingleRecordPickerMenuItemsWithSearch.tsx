@@ -69,8 +69,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
 
   const objectPermissions = getObjectPermissionsForObject();
 
-  const hasObjectUpdatePermissions =
-    objectPermissions.canUpdateObjectRecords === true;
+  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
   const createNewButton = isDefined(onCreate) && (
     <CreateNewButton

@@ -94,7 +94,7 @@ export const FieldsCard = ({
       getObjectPermissionsForObject(
         objectPermissionsByObjectMetadataId,
         fieldMetadataItem.relationDefinition?.targetObjectMetadata.id,
-      ).canReadObjectRecords === true,
+      ).canReadObjectRecords,
   );
 
   const isRecordReadOnly = useIsRecordReadOnly({

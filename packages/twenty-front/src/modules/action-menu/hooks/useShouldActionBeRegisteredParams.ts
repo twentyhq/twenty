@@ -77,10 +77,12 @@ export const useShouldActionBeRegisteredParams = ({
     contextStoreTargetedRecordsRule,
   );
 
+  const objectPermissions = getObjectPermissionsForObject();
+
   return {
     objectMetadataItem,
     isFavorite,
-    objectPermissions: getObjectPermissionsForObject(),
+    objectPermissions,
     isNoteOrTask,
     isInRightDrawer,
     isSoftDeleteFilterActive,

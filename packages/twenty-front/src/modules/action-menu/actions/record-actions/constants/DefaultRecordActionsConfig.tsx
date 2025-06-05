@@ -67,7 +67,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     isPinned: true,
     Icon: IconPlus,
     shouldBeRegistered: ({ objectPermissions }) =>
-      objectPermissions.canUpdateObjectRecords === true,
+      objectPermissions.canUpdateObjectRecords,
     availableOn: [ActionViewType.INDEX_PAGE_NO_SELECTION],
     component: <CreateNewTableRecordNoSelectionRecordAction />,
   },
@@ -202,7 +202,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       isDefined(selectedRecord) &&
       !selectedRecord.isRemote &&
       !isSoftDeleteFilterActive &&
-      objectPermissions.canSoftDeleteObjectRecords === true,
+      objectPermissions.canSoftDeleteObjectRecords,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
@@ -225,7 +225,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       isSoftDeleteFilterActive,
       numberOfSelectedRecords,
     }) =>
-      objectPermissions.canSoftDeleteObjectRecords === true &&
+      objectPermissions.canSoftDeleteObjectRecords &&
       !isRemote &&
       !isSoftDeleteFilterActive &&
       isDefined(numberOfSelectedRecords) &&
@@ -274,7 +274,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     accent: 'danger',
     isPinned: true,
     shouldBeRegistered: ({ selectedRecord, objectPermissions, isRemote }) =>
-      objectPermissions.canDestroyObjectRecords === true &&
+      objectPermissions.canDestroyObjectRecords &&
       !isRemote &&
       isDefined(selectedRecord?.deletedAt),
     availableOn: [
@@ -323,7 +323,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       isSoftDeleteFilterActive,
       numberOfSelectedRecords,
     }) =>
-      objectPermissions.canDestroyObjectRecords === true &&
+      objectPermissions.canDestroyObjectRecords &&
       !isRemote &&
       isDefined(isSoftDeleteFilterActive) &&
       isSoftDeleteFilterActive &&
@@ -351,7 +351,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     }) =>
       !isRemote &&
       isDefined(selectedRecord?.deletedAt) &&
-      objectPermissions.canSoftDeleteObjectRecords === true &&
+      objectPermissions.canSoftDeleteObjectRecords &&
       ((isDefined(isShowPage) && isShowPage) ||
         (isDefined(isSoftDeleteFilterActive) && isSoftDeleteFilterActive)),
     availableOn: [
@@ -376,7 +376,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       isSoftDeleteFilterActive,
       numberOfSelectedRecords,
     }) =>
-      objectPermissions.canSoftDeleteObjectRecords === true &&
+      objectPermissions.canSoftDeleteObjectRecords &&
       !isRemote &&
       isDefined(isSoftDeleteFilterActive) &&
       isSoftDeleteFilterActive &&

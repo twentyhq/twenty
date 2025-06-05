@@ -41,8 +41,7 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
 
   const objectPermissions = getObjectPermissionsForObject();
 
-  const hasObjectReadPermissions =
-    objectPermissions.canReadObjectRecords === true;
+  const hasObjectReadPermissions = objectPermissions.canReadObjectRecords;
 
   const updateRecord = useContext(RecordUpdateContext);
 

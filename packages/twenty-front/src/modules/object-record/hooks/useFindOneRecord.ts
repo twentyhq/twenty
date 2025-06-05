@@ -45,7 +45,7 @@ export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
 
   const objectPermissions = getObjectPermissionsForObject();
 
-  const hasReadPermission = objectPermissions.canReadObjectRecords === true;
+  const hasReadPermission = objectPermissions.canReadObjectRecords;
 
   const { data, loading, error } = useQuery<{
     [nameSingular: string]: RecordGqlNode;

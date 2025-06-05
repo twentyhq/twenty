@@ -38,8 +38,7 @@ export const RecordBoardColumnNewRecordButton = () => {
 
   const objectPermissions = getObjectPermissionsForObject();
 
-  const hasObjectUpdatePermissions =
-    objectPermissions.canUpdateObjectRecords === true;
+  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
   const { createNewIndexRecord } = useCreateNewIndexRecord({
     objectMetadataItem: objectMetadataItem,

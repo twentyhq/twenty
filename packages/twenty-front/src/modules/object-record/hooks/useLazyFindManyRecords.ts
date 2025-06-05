@@ -62,7 +62,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
   const objectPermissions = getObjectPermissionsForObject();
 
-  const hasReadPermission = objectPermissions.canReadObjectRecords === true;
+  const hasReadPermission = objectPermissions.canReadObjectRecords;
 
   const [findManyRecords, { data, loading, error, fetchMore }] =
     useLazyQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {

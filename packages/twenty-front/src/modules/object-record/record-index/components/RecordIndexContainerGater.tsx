@@ -64,8 +64,7 @@ export const RecordIndexContainerGater = () => {
 
   const objectPermissions = getObjectPermissionsForObject();
 
-  const hasObjectReadPermissions =
-    objectPermissions.canReadObjectRecords === true;
+  const hasObjectReadPermissions = objectPermissions.canReadObjectRecords;
 
   if (!hasObjectReadPermissions) {
     return <></>;

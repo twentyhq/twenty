@@ -25,8 +25,7 @@ export const useIsRecordReadOnly = ({
 
   const objectPermissions = getObjectPermissionsForObject();
 
-  const hasObjectUpdatePermissions =
-    objectPermissions.canUpdateObjectRecords === true;
+  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
   return !hasObjectUpdatePermissions || isDefined(recordDeletedAt);
 };

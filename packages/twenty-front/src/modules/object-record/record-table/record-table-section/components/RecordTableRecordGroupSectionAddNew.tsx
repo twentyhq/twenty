@@ -37,8 +37,7 @@ export const RecordTableRecordGroupSectionAddNew = () => {
 
   const objectPermissions = getObjectPermissionsForObject();
 
-  const hasObjectUpdatePermissions =
-    objectPermissions.canUpdateObjectRecords === true;
+  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
   if (!hasObjectUpdatePermissions) {
     return null;

@@ -65,7 +65,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
       isDefined(objectPermissionsByObjectMetadataId) &&
       isDefined(relationMetadataItem.id)
     ) {
-      if (objectPermission.canReadObjectRecords === false) {
+      if (!objectPermission.canReadObjectRecords) {
         return '';
       }
     }
@@ -104,7 +104,7 @@ ${mapObjectMetadataToGraphQLQuery({
       isDefined(objectPermissionsByObjectMetadataId) &&
       isDefined(relationMetadataItem.id)
     ) {
-      if (objectPermission.canReadObjectRecords === false) {
+      if (!objectPermission.canReadObjectRecords) {
         return '';
       }
     }
