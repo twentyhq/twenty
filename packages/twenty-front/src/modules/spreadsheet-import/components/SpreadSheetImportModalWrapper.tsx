@@ -42,7 +42,7 @@ export const SpreadSheetImportModalWrapper = ({
 
   return (
     <StyledModal
-      size="large"
+      size="extraLarge"
       modalId={modalId}
       isClosable={true}
       onClose={onClose}

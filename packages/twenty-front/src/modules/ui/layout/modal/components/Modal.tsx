@@ -45,10 +45,12 @@ const StyledModalDiv = styled(motion.div)<{
         return theme.modal.size.md;
       case 'large':
         return theme.modal.size.lg;
+      case 'extraLarge':
+        return theme.modal.size.xl.width;
       default:
         return 'auto';
     }
-  }};
+  }} !important;
 
   padding: ${({ padding, theme }) => {
     switch (padding) {
@@ -64,8 +66,12 @@ const StyledModalDiv = styled(motion.div)<{
         return 'auto';
     }
   }};
-  height: ${({ isMobile, theme }) =>
-    isMobile ? theme.modal.size.fullscreen : 'auto'};
+  height: ${({ isMobile, theme, size }) =>
+    isMobile
+      ? theme.modal.size.fullscreen
+      : size === 'extraLarge'
+        ? theme.modal.size.xl.height
+        : 'auto'} !important;
   max-height: ${({ isMobile }) => (isMobile ? 'none' : '90dvh')};
 `;
 
@@ -165,7 +171,7 @@ const ModalFooter = ({ children, className }: ModalFooterProps) => (
   <StyledFooter className={className}>{children}</StyledFooter>
 );
 
-export type ModalSize = 'small' | 'medium' | 'large';
+export type ModalSize = 'small' | 'medium' | 'large' | 'extraLarge';
 export type ModalPadding = 'none' | 'small' | 'medium' | 'large';
 export type ModalVariants = 'primary' | 'secondary' | 'tertiary';
 
