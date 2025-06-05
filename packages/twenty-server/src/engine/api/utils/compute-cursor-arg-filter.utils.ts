@@ -3,32 +3,18 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import {
   ObjectRecordFilter,
   ObjectRecordOrderBy,
-  OrderByDirection,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { buildLexicographicOrdering } from 'src/engine/api/utils/build-lexicographic-ordering.utils';
+import { computeOperator } from 'src/engine/api/utils/compute-operator.utils';
+import { isAscendingOrder } from 'src/engine/api/utils/is-ascending-order.utils';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
-
-const computeOperator = (
-  isAscending: boolean,
-  isForwardPagination: boolean,
-  defaultOperator?: string,
-): string => {
-  if (defaultOperator) return defaultOperator;
-
-  return isAscending
-    ? isForwardPagination
-      ? 'gt'
-      : 'lt'
-    : isForwardPagination
-      ? 'lt'
-      : 'gt';
-};
 
 const validateAndGetOrderBy = (
   key: string,
@@ -46,10 +32,6 @@ const validateAndGetOrderBy = (
 
   return keyOrderBy;
 };
-
-const isAscendingOrder = (direction: OrderByDirection): boolean =>
-  direction === OrderByDirection.AscNullsFirst ||
-  direction === OrderByDirection.AscNullsLast;
 
 export const computeCursorArgFilter = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -160,31 +142,34 @@ const buildCompositeWhereCondition = (
   }
 
   const keyOrderBy = validateAndGetOrderBy(key, orderBy);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const result: Record<string, any> = {};
 
-  compositeType.properties.forEach((property) => {
-    if (
-      property.type === FieldMetadataType.RAW_JSON ||
-      value[property.name] === undefined
-    ) {
-      return;
-    }
+  const filteredProperties = compositeType.properties.filter(
+    (property) =>
+      property.type !== FieldMetadataType.RAW_JSON &&
+      value[property.name] !== undefined,
+  );
 
-    const isAscending = isAscendingOrder(keyOrderBy[key][property.name]);
-    const computedOperator = computeOperator(
-      isAscending,
-      isForwardPagination,
-      operator,
-    );
+  if (operator === 'eq') {
+    const result: Record<string, object> = {};
 
-    result[key] = {
-      ...result[key],
-      [property.name]: {
-        [computedOperator]: value[property.name],
-      },
-    };
-  });
+    filteredProperties.forEach((property) => {
+      result[key] = {
+        ...result[key],
+        [property.name]: {
+          eq: value[property.name],
+        },
+      };
+    });
 
-  return result;
+    return result;
+  }
+
+  return buildLexicographicOrdering(
+    filteredProperties,
+    key,
+    keyOrderBy,
+    value,
+    isForwardPagination,
+    operator,
+  );
 };
