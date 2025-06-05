@@ -2,6 +2,7 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconComponent } from '@ui/display';
 import React from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 export type IconButtonSize = 'medium' | 'small';
 export type IconButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
@@ -13,6 +14,7 @@ export type IconButtonProps = {
   Icon?: IconComponent;
   variant?: IconButtonVariant;
   size?: IconButtonSize;
+  iconSize?: number;
   position?: IconButtonPosition;
   accent?: IconButtonAccent;
   disabled?: boolean;
@@ -257,6 +259,7 @@ export const IconButton = ({
   ariaLabel,
   onClick,
   to,
+  iconSize,
 }: IconButtonProps) => {
   const theme = useTheme();
   return (
@@ -273,7 +276,9 @@ export const IconButton = ({
       aria-label={ariaLabel}
       to={to}
     >
-      {Icon && <Icon size={theme.icon.size.md} />}
+      {Icon && (
+        <Icon size={isDefined(iconSize) ? iconSize : theme.icon.size.md} />
+      )}
     </StyledButton>
   );
 };

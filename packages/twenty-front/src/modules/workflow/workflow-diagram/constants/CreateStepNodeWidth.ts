@@ -1,6 +1,6 @@
 import { NODE_BORDER_WIDTH } from '@/workflow/workflow-diagram/constants/NodeBorderWidth';
 
-const STEP_ICON_WIDTH = 24;
+export const STEP_ICON_WIDTH = 24;
 
 const STEP_PADDING = 8;
 
