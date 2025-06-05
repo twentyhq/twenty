@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { V0_54_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/0-54/0-54-upgrade-version-command.module';
+import { V0_55_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/0-55/0-55-upgrade-version-command.module';
 import {
   DatabaseMigrationService,
   UpgradeCommand,
@@ -13,6 +14,7 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
   imports: [
     TypeOrmModule.forFeature([Workspace], 'core'),
     V0_54_UpgradeVersionCommandModule,
+    V0_55_UpgradeVersionCommandModule,
     WorkspaceSyncMetadataModule,
   ],
   providers: [DatabaseMigrationService, UpgradeCommand],
