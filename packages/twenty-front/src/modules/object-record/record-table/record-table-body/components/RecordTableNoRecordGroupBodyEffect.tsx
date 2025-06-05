@@ -58,8 +58,6 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
     lastShowPageRecordIdState,
   );
 
-  const [hasInitialized, setHasInitialized] = useState(false);
-
   const { scrollToPosition } = useScrollToPosition();
 
   useEffect(() => {
@@ -142,21 +140,14 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
   ]);
 
   useEffect(() => {
+    setIsRecordTableInitialLoading(false);
+
     if (showAuthModal) {
-      setIsRecordTableInitialLoading(false);
       return;
     }
 
-    if (!hasInitialized) {
-      findManyRecords();
-      setHasInitialized(true);
-    }
-  }, [
-    findManyRecords,
-    hasInitialized,
-    setIsRecordTableInitialLoading,
-    showAuthModal,
-  ]);
+    findManyRecords();
+  }, [findManyRecords, setIsRecordTableInitialLoading, showAuthModal]);
 
   return <></>;
 };
