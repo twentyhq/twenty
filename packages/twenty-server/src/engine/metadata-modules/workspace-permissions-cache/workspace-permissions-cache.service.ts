@@ -9,7 +9,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
@@ -40,7 +39,6 @@ export class WorkspacePermissionsCacheService {
     private readonly userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>,
     private readonly workspacePermissionsCacheStorageService: WorkspacePermissionsCacheStorageService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async recomputeRolesPermissionsCache({
@@ -85,11 +83,15 @@ export class WorkspacePermissionsCacheService {
           );
       }
 
+      const featureFlagsMap =
+        await this.workspaceCacheStorageService.getFeatureFlagsMap(workspaceId);
+
       const isPermissionsV2Enabled =
-        await this.featureFlagService.isFeatureEnabled(
-          FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
-          workspaceId,
-        );
+        featureFlagsMap?.[FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED];
+
+      if (!isDefined(isPermissionsV2Enabled)) {
+        throw new Error('Feature flag map not found');
+      }
 
       const recomputedRolesPermissions =
         await this.getObjectRecordPermissionsForRoles({
