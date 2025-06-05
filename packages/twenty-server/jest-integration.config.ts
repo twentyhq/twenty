@@ -1,6 +1,14 @@
+import dotenv from 'dotenv';
 import { JestConfigWithTsJest, pathsToModuleNameMapper } from 'ts-jest';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
+
+// Load .env vars at jest boot time
+if (process.env.NODE_ENV === 'test') {
+  dotenv.config({ path: '.env.test', override: true });
+} else {
+  dotenv.config({ path: '.env', override: true });
+}
 
 const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
 const isClickhouseEnabled = process.env.CLICKHOUSE_URL !== undefined;
