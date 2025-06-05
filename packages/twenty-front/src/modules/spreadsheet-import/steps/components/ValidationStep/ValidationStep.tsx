@@ -13,7 +13,7 @@ import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import styled from '@emotion/styled';
-import { Trans, useLingui } from '@lingui/react/macro';
+import { useLingui } from '@lingui/react/macro';
 import {
   Dispatch,
   SetStateAction,
@@ -24,8 +24,6 @@ import {
 // @ts-expect-error Todo: remove usage of react-data-grid`
 import { RowsChangeData } from 'react-data-grid';
 import { isDefined } from 'twenty-shared/utils';
-import { IconTrash } from 'twenty-ui/display';
-import { Button, Toggle } from 'twenty-ui/input';
 import { generateColumns } from './components/columns';
 import { ImportedStructuredRowMetadata } from './types';
 
@@ -252,7 +250,7 @@ export const ValidationStep = <T extends string>({
   return (
     <>
       <StyledContent>
-        <StyledToolbar>
+        {/* <StyledToolbar>
           <StyledErrorToggle>
             <Toggle
               value={filterByErrors}
@@ -269,9 +267,10 @@ export const ValidationStep = <T extends string>({
             onClick={deleteSelectedRows}
             disabled={selectedRows.size === 0}
           />
-        </StyledToolbar>
+        </StyledToolbar> */}
         <StyledScrollContainer>
           <SpreadsheetImportTable
+            headerRowHeight={32}
             rowKeyGetter={rowKeyGetter}
             rows={tableData}
             onRowsChange={updateRow}
