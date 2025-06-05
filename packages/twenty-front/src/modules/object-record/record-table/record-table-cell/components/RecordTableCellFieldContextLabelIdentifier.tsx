@@ -1,4 +1,4 @@
-import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -18,7 +18,8 @@ type RecordTableCellFieldContextLabelIdentifierProps = {
 export const RecordTableCellFieldContextLabelIdentifier = ({
   children,
 }: RecordTableCellFieldContextLabelIdentifierProps) => {
-  const { indexIdentifierUrl } = useRecordIndexContextOrThrow();
+  const { indexIdentifierUrl, objectPermissionsByObjectMetadataId } =
+    useRecordIndexContextOrThrow();
   const { recordId, isReadOnly: isTableRowReadOnly } =
     useRecordTableRowContextOrThrow();
 
@@ -35,7 +36,8 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
     isRecordReadOnly: isTableRowReadOnly ?? false,
   });
 
-  const objectPermissions = useObjectPermissionsForObject(
+  const objectPermissions = getObjectPermissionsForObject(
+    objectPermissionsByObjectMetadataId,
     objectMetadataItem.id,
   );
 

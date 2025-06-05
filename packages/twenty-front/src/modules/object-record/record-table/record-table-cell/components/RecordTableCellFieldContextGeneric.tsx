@@ -1,7 +1,5 @@
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { isFieldRelationFromManyObjects } from '@/object-record/record-field/types/guards/isFieldRelationFromManyObjects';
@@ -12,7 +10,6 @@ import { RecordTableCellContext } from '@/object-record/record-table/contexts/Re
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { ReactNode, useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
 type RecordTableCellFieldContextGenericProps = {
   children: ReactNode;
@@ -25,7 +22,8 @@ export const RecordTableCellFieldContextGeneric = ({
     useRecordTableRowContextOrThrow();
 
   const { objectMetadataItem } = useRecordTableContextOrThrow();
-  const { indexIdentifierUrl } = useRecordIndexContextOrThrow();
+  const { indexIdentifierUrl, objectPermissionsByObjectMetadataId } =
+    useRecordIndexContextOrThrow();
   const { columnDefinition } = useContext(RecordTableCellContext);
 
   const isFieldReadOnly = useIsFieldValueReadOnly({
@@ -34,10 +32,6 @@ export const RecordTableCellFieldContextGeneric = ({
   });
 
   const updateRecord = useContext(RecordUpdateContext);
-
-  const { objectMetadataItems } = useObjectMetadataItems();
-
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const objectPermissions = getObjectPermissionsForObject(
     objectPermissionsByObjectMetadataId,
@@ -50,24 +44,15 @@ export const RecordTableCellFieldContextGeneric = ({
     isFieldRelationToOneObject(columnDefinition) ||
     isFieldRelationFromManyObjects(columnDefinition)
   ) {
-    const relationObjectMetadataNameSingular =
-      columnDefinition.metadata.relationObjectMetadataNameSingular;
+    const relationObjectMetadataId =
+      columnDefinition.metadata.relationObjectMetadataId;
 
-    if (isDefined(relationObjectMetadataNameSingular)) {
-      const relationObjectMetadataId = objectMetadataItems.find(
-        (item) => item.nameSingular === relationObjectMetadataNameSingular,
-      )?.id;
+    const relationObjectPermissions = getObjectPermissionsForObject(
+      objectPermissionsByObjectMetadataId,
+      relationObjectMetadataId,
+    );
 
-      if (isDefined(relationObjectMetadataId)) {
-        const relationObjectPermissions = getObjectPermissionsForObject(
-          objectPermissionsByObjectMetadataId,
-          relationObjectMetadataId,
-        );
-
-        hasObjectReadPermissions =
-          relationObjectPermissions.canReadObjectRecords;
-      }
-    }
+    hasObjectReadPermissions = relationObjectPermissions.canReadObjectRecords;
   }
 
   return (
