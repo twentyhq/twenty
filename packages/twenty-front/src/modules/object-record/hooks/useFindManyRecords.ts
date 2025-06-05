@@ -7,9 +7,9 @@ import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types
 import { RecordGqlOperationVariables } from '@/object-record/graphql/types/RecordGqlOperationVariables';
 import { useFetchMoreRecordsWithPagination } from '@/object-record/hooks/useFetchMoreRecordsWithPagination';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
-import { useGetObjectPermissionsForObject } from '@/object-record/hooks/useGetObjectPermissionsForObject';
 import { useHandleFindManyRecordsCompleted } from '@/object-record/hooks/useHandleFindManyRecordsCompleted';
 import { useHandleFindManyRecordsError } from '@/object-record/hooks/useHandleFindManyRecordsError';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { OnFindManyRecordsCompleted } from '@/object-record/types/OnFindManyRecordsCompleted';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
@@ -69,11 +69,9 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     or: [{ deletedAt: { is: 'NULL' } }, { deletedAt: { is: 'NOT_NULL' } }],
   };
 
-  const getObjectPermissionsForObject = useGetObjectPermissionsForObject(
+  const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,
   );
-
-  const objectPermissions = getObjectPermissionsForObject();
 
   const hasReadPermission = objectPermissions.canReadObjectRecords;
 

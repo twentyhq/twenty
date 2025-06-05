@@ -5,7 +5,7 @@ import { useNotes } from '@/activities/notes/hooks/useNotes';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useGetObjectPermissionsForObject } from '@/object-record/hooks/useGetObjectPermissionsForObject';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import styled from '@emotion/styled';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -43,11 +43,9 @@ export const Notes = ({
     objectNameSingular: targetableObject.targetObjectNameSingular,
   });
 
-  const getObjectPermissionsForObject = useGetObjectPermissionsForObject(
+  const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,
   );
-
-  const objectPermissions = getObjectPermissionsForObject();
 
   const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 

@@ -5,7 +5,7 @@ import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionM
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { useGetObjectPermissionsForObject } from '@/object-record/hooks/useGetObjectPermissionsForObject';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
@@ -58,11 +58,9 @@ export const RecordIndexContainerGater = () => {
     recordIndexId,
   });
 
-  const getObjectPermissionsForObject = useGetObjectPermissionsForObject(
+  const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,
   );
-
-  const objectPermissions = getObjectPermissionsForObject();
 
   const hasObjectReadPermissions = objectPermissions.canReadObjectRecords;
 

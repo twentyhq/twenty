@@ -1,4 +1,4 @@
-import { useGetObjectPermissionsForObject } from '@/object-record/hooks/useGetObjectPermissionsForObject';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilValue } from 'recoil';
@@ -20,10 +20,7 @@ export const useIsRecordReadOnly = ({
     }),
   );
 
-  const getObjectPermissionsForObject =
-    useGetObjectPermissionsForObject(objectMetadataId);
-
-  const objectPermissions = getObjectPermissionsForObject();
+  const objectPermissions = useObjectPermissionsForObject(objectMetadataId);
 
   const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 

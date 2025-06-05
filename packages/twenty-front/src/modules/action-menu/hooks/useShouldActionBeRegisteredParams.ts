@@ -8,7 +8,7 @@ import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useGetObjectPermissionsForObject } from '@/object-record/hooks/useGetObjectPermissionsForObject';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -42,7 +42,7 @@ export const useShouldActionBeRegisteredParams = ({
   const selectedRecord =
     useRecoilValue(recordStoreFamilyState(recordId ?? '')) || undefined;
 
-  const getObjectPermissionsForObject = useGetObjectPermissionsForObject(
+  const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem?.id,
   );
 
@@ -76,8 +76,6 @@ export const useShouldActionBeRegisteredParams = ({
     contextStoreCurrentViewType,
     contextStoreTargetedRecordsRule,
   );
-
-  const objectPermissions = getObjectPermissionsForObject();
 
   return {
     objectMetadataItem,

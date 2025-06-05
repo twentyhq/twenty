@@ -1,5 +1,6 @@
 import { Theme, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { Trans } from '@lingui/react/macro';
 
 const StyledContainer = styled.div<{ theme: Theme }>`
   align-items: center;
@@ -18,5 +19,9 @@ const StyledContainer = styled.div<{ theme: Theme }>`
 export const ForbiddenFieldDisplay = () => {
   const theme = useTheme();
 
-  return <StyledContainer theme={theme}>Forbidden</StyledContainer>;
+  return (
+    <StyledContainer theme={theme}>
+      <Trans>Forbidden</Trans>
+    </StyledContainer>
+  );
 };

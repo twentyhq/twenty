@@ -1,12 +1,12 @@
 import { getObjectPermissionsForObject } from '~/modules/object-metadata/utils/getObjectPermissionsForObject';
 
-import { useCallback } from 'react';
+import { useMemo } from 'react';
 import { useObjectPermissions } from './useObjectPermissions';
 
-export const useGetObjectPermissionsForObject = (objectMetadataId: string) => {
+export const useObjectPermissionsForObject = (objectMetadataId: string) => {
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  return useCallback(() => {
+  return useMemo(() => {
     return getObjectPermissionsForObject(
       objectPermissionsByObjectMetadataId,
       objectMetadataId,
