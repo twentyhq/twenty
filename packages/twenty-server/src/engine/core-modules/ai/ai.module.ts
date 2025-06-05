@@ -31,7 +31,7 @@ export class AiModule {
 
     return {
       module: AiModule,
-      imports: [FeatureFlagModule, FeatureFlagModule],
+      imports: [FeatureFlagModule],
       controllers: [AiController],
       providers: [AiService, provider],
       exports: [AiService],

@@ -33,7 +33,6 @@ export class AiController {
   ) {}
 
   @Post()
-  @UseGuards(WorkspaceAuthGuard)
   async chat(
     @Body() request: ChatRequest,
     @AuthWorkspace() workspace: Workspace,
