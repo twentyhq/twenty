@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import rehypeStringify from 'rehype-stringify';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
-import { unified } from 'unified';
+import { PluggableList, unified } from 'unified';
 import { visit } from 'unist-util-visit';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -89,9 +89,7 @@ export const Releases = () => {
       for (const release of json) {
         release.html = String(
           await unified()
-            .use(remarkParse)
-            .use(remarkRehype)
-            .use(rehypeStringify)
+            .use([remarkParse, remarkRehype, rehypeStringify] as PluggableList)
             .use(() => (tree: any) => {
               visit(tree, (node) => {
                 if (node.tagName === 'h1' || node.tagName === 'h2') {
