@@ -101,7 +101,6 @@ export const ValidationStep = <T extends string>({
     ReadonlySet<number | string>
   >(new Set());
   const [filterByErrors, setFilterByErrors] = useState(false);
-  const [showUnmatchedColumns, setShowUnmatchedColumns] = useState(false);
 
   const updateData = useCallback(
     (rows: typeof data) => {
@@ -162,11 +161,11 @@ export const ValidationStep = <T extends string>({
                 column.key === 'select-row',
             ).length > 0;
 
-          if (!hasBeenImported && !showUnmatchedColumns) return null;
+          if (!hasBeenImported) return null;
           return column;
         })
         .filter(Boolean),
-    [fields, importedColumns, showUnmatchedColumns],
+    [fields, importedColumns],
   );
 
   const tableData = useMemo(() => {
@@ -261,15 +260,6 @@ export const ValidationStep = <T extends string>({
             />
             <StyledErrorToggleDescription>
               <Trans>Show only rows with errors</Trans>
-            </StyledErrorToggleDescription>
-          </StyledErrorToggle>
-          <StyledErrorToggle>
-            <Toggle
-              value={showUnmatchedColumns}
-              onChange={() => setShowUnmatchedColumns(!showUnmatchedColumns)}
-            />
-            <StyledErrorToggleDescription>
-              <Trans>Show unmatched columns</Trans>
             </StyledErrorToggleDescription>
           </StyledErrorToggle>
           <Button
