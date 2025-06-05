@@ -6,12 +6,14 @@ import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { WorkflowStatusesUpdateJob } from 'src/modules/workflow/workflow-status/jobs/workflow-statuses-update.job';
 import { WorkflowVersionStatusListener } from 'src/modules/workflow/workflow-status/listeners/workflow-version-status.listener';
+import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 @Module({
   imports: [
     ServerlessFunctionModule,
     WorkspaceEventEmitterModule,
     TypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
+    TypeOrmModule.forFeature([ServerlessFunctionEntity], 'metadata'),
   ],
   providers: [WorkflowStatusesUpdateJob, WorkflowVersionStatusListener],
 })

@@ -1,5 +1,7 @@
+import { UseFilters } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
+import { AuditExceptionFilter } from 'src/engine/core-modules/audit/audit-exception-filter';
 import {
   AuditException,
   AuditExceptionCode,
@@ -19,6 +21,7 @@ import { Analytics } from './entities/analytics.entity';
 import { AuditService } from './services/audit.service';
 
 @Resolver(() => Analytics)
+@UseFilters(AuditExceptionFilter)
 export class AuditResolver {
   constructor(private readonly auditService: AuditService) {}
 

@@ -23,6 +23,8 @@ import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewCompon
 import styled from '@emotion/styled';
 import { useRecoilCallback } from 'recoil';
 import { capitalize } from 'twenty-shared/utils';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 
 const StyledIndexContainer = styled.div`
   display: flex;
@@ -57,10 +59,23 @@ export const RecordIndexContainerGater = () => {
     recordIndexId,
   });
 
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const objectPermissions = getObjectPermissionsForObject(
+    objectPermissionsByObjectMetadataId,
+    objectMetadataItem.id,
+  );
+
+  const hasObjectReadPermissions = objectPermissions.canReadObjectRecords;
+
+  if (!hasObjectReadPermissions) {
+    return <></>;
+  }
+
   return (
     <>
       <RecordIndexContextProvider
         value={{
+          objectPermissionsByObjectMetadataId,
           recordIndexId,
           objectNamePlural: objectMetadataItem.namePlural,
           objectNameSingular: objectMetadataItem.nameSingular,

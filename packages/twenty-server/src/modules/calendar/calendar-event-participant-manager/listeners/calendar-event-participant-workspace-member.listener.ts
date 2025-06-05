@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 import { objectRecordChangedProperties as objectRecordUpdateEventChangedProperties } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-properties.util';
@@ -16,8 +18,6 @@ import {
   CalendarEventParticipantUnmatchParticipantJobData,
 } from 'src/modules/calendar/calendar-event-participant-manager/jobs/calendar-event-participant-unmatch-participant.job';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
 export class CalendarEventParticipantWorkspaceMemberListener {
@@ -43,6 +43,7 @@ export class CalendarEventParticipantWorkspaceMemberListener {
           workspaceId: payload.workspaceId,
           email: eventPayload.properties.after.userEmail,
           workspaceMemberId: eventPayload.recordId,
+          isPrimaryEmail: true,
         },
       );
     }
@@ -76,6 +77,7 @@ export class CalendarEventParticipantWorkspaceMemberListener {
             workspaceId: payload.workspaceId,
             email: eventPayload.properties.after.userEmail,
             workspaceMemberId: eventPayload.recordId,
+            isPrimaryEmail: true,
           },
         );
       }

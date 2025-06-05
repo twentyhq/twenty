@@ -31,6 +31,7 @@ const meta: Meta = {
         >
           <RecordIndexContextProvider
             value={{
+              objectPermissionsByObjectMetadataId: {},
               indexIdentifierUrl: () => '',
               onIndexRecordsLoaded: () => {},
               objectNamePlural: CoreObjectNamePlural.Company,

@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import React from 'react';
 
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 
@@ -12,8 +13,10 @@ import { useFilterDropdownSelectableFieldMetadataItems } from '@/object-record/o
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { ViewBarFilterDropdownAdvancedFilterButton } from '@/views/components/ViewBarFilterDropdownAdvancedFilterButton';
+import { ViewBarFilterDropdownBottomMenu } from '@/views/components/ViewBarFilterDropdownBottomMenu';
 import { ViewBarFilterDropdownFieldSelectMenuItem } from '@/views/components/ViewBarFilterDropdownFieldSelectMenuItem';
+
+import { VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS } from '@/views/constants/ViewBarFilterBottomMenuItemIds';
 import { useLingui } from '@lingui/react/macro';
 
 export const StyledInput = styled.input`
@@ -58,10 +61,16 @@ export const ViewBarFilterDropdownFieldSelectMenu = () => {
     ...selectableHiddenFieldMetadataItems.map(
       (fieldMetadataItem) => fieldMetadataItem.id,
     ),
+    VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS.SEARCH,
+    VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS.ADVANCED_FILTER,
   ];
 
   const shouldShowSeparator =
     selectableVisibleFieldMetadataItems.length > 0 &&
+    selectableHiddenFieldMetadataItems.length > 0;
+
+  const hasSelectableItems =
+    selectableVisibleFieldMetadataItems.length > 0 ||
     selectableHiddenFieldMetadataItems.length > 0;
 
   const { t } = useLingui();
@@ -81,25 +90,30 @@ export const ViewBarFilterDropdownFieldSelectMenu = () => {
         selectableItemIdArray={selectableFieldMetadataItemIds}
         selectableListInstanceId={FILTER_FIELD_LIST_ID}
       >
-        <DropdownMenuItemsContainer>
-          {selectableVisibleFieldMetadataItems.map(
-            (visibleFieldMetadataItem) => (
-              <ViewBarFilterDropdownFieldSelectMenuItem
-                key={visibleFieldMetadataItem.id}
-                fieldMetadataItemToSelect={visibleFieldMetadataItem}
-              />
-            ),
-          )}
-          {shouldShowSeparator && <DropdownMenuSeparator />}
-          {selectableHiddenFieldMetadataItems.map((hiddenFieldMetadataItem) => (
-            <ViewBarFilterDropdownFieldSelectMenuItem
-              key={hiddenFieldMetadataItem.id}
-              fieldMetadataItemToSelect={hiddenFieldMetadataItem}
-            />
-          ))}
-        </DropdownMenuItemsContainer>
+        {hasSelectableItems && (
+          <DropdownMenuItemsContainer>
+            {selectableVisibleFieldMetadataItems.map(
+              (visibleFieldMetadataItem) => (
+                <ViewBarFilterDropdownFieldSelectMenuItem
+                  key={visibleFieldMetadataItem.id}
+                  fieldMetadataItemToSelect={visibleFieldMetadataItem}
+                />
+              ),
+            )}
+            {shouldShowSeparator && <DropdownMenuSeparator />}
+            {selectableHiddenFieldMetadataItems.map(
+              (hiddenFieldMetadataItem) => (
+                <ViewBarFilterDropdownFieldSelectMenuItem
+                  key={hiddenFieldMetadataItem.id}
+                  fieldMetadataItemToSelect={hiddenFieldMetadataItem}
+                />
+              ),
+            )}
+          </DropdownMenuItemsContainer>
+        )}
+        {hasSelectableItems && <DropdownMenuSeparator />}
+        <ViewBarFilterDropdownBottomMenu />
       </SelectableList>
-      <ViewBarFilterDropdownAdvancedFilterButton />
     </DropdownContent>
   );
 };

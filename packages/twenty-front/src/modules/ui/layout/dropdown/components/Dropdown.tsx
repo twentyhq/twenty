@@ -58,6 +58,7 @@ export type DropdownProps = {
   onClose?: () => void;
   onOpen?: () => void;
   excludedClickOutsideIds?: string[];
+  isDropdownInModal?: boolean;
 };
 
 export const Dropdown = ({
@@ -74,6 +75,7 @@ export const Dropdown = ({
   onOpen,
   clickableComponentWidth = 'auto',
   excludedClickOutsideIds,
+  isDropdownInModal = false,
 }: DropdownProps) => {
   const { isDropdownOpen, toggleDropdown } = useDropdown(dropdownId);
 
@@ -193,6 +195,7 @@ export const Dropdown = ({
               onClickOutside={onClickOutside}
               onHotkeyTriggered={toggleDropdown}
               excludedClickOutsideIds={excludedClickOutsideIds}
+              isDropdownInModal={isDropdownInModal}
             />
           )}
           <DropdownOnToggleEffect

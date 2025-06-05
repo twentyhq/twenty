@@ -3,20 +3,23 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { UPDATE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/updateWorkflowVersionStep';
 import { WorkflowVersion } from '@/workflow/types/Workflow';
 import { useApolloClient, useMutation } from '@apollo/client';
+import { isDefined } from 'twenty-shared/utils';
 import {
   UpdateWorkflowVersionStepInput,
   UpdateWorkflowVersionStepMutation,
   UpdateWorkflowVersionStepMutationVariables,
   WorkflowAction,
 } from '~/generated/graphql';
-import { isDefined } from 'twenty-shared/utils';
 
 export const useUpdateWorkflowVersionStep = () => {
   const apolloClient = useApolloClient();
   const { objectMetadataItems } = useObjectMetadataItems();
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
   });
@@ -65,6 +68,7 @@ export const useUpdateWorkflowVersionStep = () => {
       cache: apolloClient.cache,
       record: newCachedRecord,
       recordGqlFields,
+      objectPermissionsByObjectMetadataId,
     });
     return result;
   };
