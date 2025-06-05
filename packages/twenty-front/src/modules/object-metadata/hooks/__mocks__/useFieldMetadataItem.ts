@@ -158,8 +158,7 @@ export const queries = {
         hasValidEnterpriseKey
         customDomain
         workspaceUrls {
-          subdomainUrl
-          customUrl
+          ...WorkspaceUrlsFragment
         }
         featureFlags {
           id
@@ -187,8 +186,7 @@ export const queries = {
           subdomain
           customDomain
           workspaceUrls {
-            subdomainUrl
-            customUrl
+            ...WorkspaceUrlsFragment
           }
         }
       }

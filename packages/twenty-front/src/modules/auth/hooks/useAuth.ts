@@ -68,6 +68,7 @@ import { iconsState } from 'twenty-ui/display';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { currentUserAvailableWorkspacesState } from '@/auth/states/currentUserAvailableWorkspaces';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -76,6 +77,9 @@ export const useAuth = () => {
     currentWorkspaceMemberState,
   );
   const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
+  const setCurrentUserAvailableWorkspaces = useSetRecoilState(
+    currentUserAvailableWorkspacesState,
+  );
   const { origin } = useOrigin();
 
   const setCurrentWorkspaceMembers = useSetRecoilState(
@@ -337,6 +341,10 @@ export const useAuth = () => {
       setWorkspaces(validWorkspaces);
     }
 
+    if (isDefined(user.availableWorkspaces)) {
+      setCurrentUserAvailableWorkspaces(user.availableWorkspaces);
+    }
+
     return {
       user,
       workspaceMember,
@@ -353,6 +361,7 @@ export const useAuth = () => {
     setDateTimeFormat,
     setLastAuthenticateWorkspaceDomain,
     setWorkspaces,
+    setCurrentUserAvailableWorkspaces,
   ]);
 
   const handleGetAuthTokensFromLoginToken = useCallback(

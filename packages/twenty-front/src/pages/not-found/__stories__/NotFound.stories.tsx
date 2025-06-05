@@ -1,5 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
+import { mockedApolloClient } from '~/testing/mockedApolloClient';
+import { mockedMetadataApolloClient } from '~/testing/mockedMetadataApolloClient';
 
 import {
   PageDecorator,
@@ -26,6 +28,9 @@ export type Story = StoryObj<typeof NotFound>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {
+    await mockedApolloClient.clearStore();
+    await mockedMetadataApolloClient.clearStore();
+
     const canvas = within(canvasElement);
     await canvas.findByText('Off the beaten path');
   },
