@@ -424,7 +424,7 @@ export class WorkspaceEntityManager extends EntityManager {
 
   override increment<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
-    criteria: unknown,
+    criteria: string,
     propertyPath: string,
     value: number | string,
     permissionOptions?: PermissionOptions,
@@ -439,10 +439,11 @@ export class WorkspaceEntityManager extends EntityManager {
     if (isNaN(Number(value)))
       throw new TypeORMError(`Value "${value}" is not a number.`);
     // convert possible embeded path "social.likes" into object { social: { like: () => value } }
-    const values = propertyPath.split('.').reduceRight(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const values = propertyPath.split('.').reduceRight<any>(
       (value, key) => ({ [key]: value }),
       () => this.connection.driver.escape(column.databaseName) + ' + ' + value,
-    ) as any;
+    );
 
     return this.createQueryBuilder(
       target,
@@ -450,7 +451,7 @@ export class WorkspaceEntityManager extends EntityManager {
       undefined,
       permissionOptions,
     )
-      .update(target)
+      .update(target as QueryDeepPartialEntity<Entity>)
       .set(values)
       .where(criteria)
       .execute();
@@ -1245,7 +1246,7 @@ export class WorkspaceEntityManager extends EntityManager {
 
   override decrement<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
-    criteria: unknown,
+    criteria: string,
     propertyPath: string,
     value: number | string,
     permissionOptions?: PermissionOptions,
@@ -1259,11 +1260,11 @@ export class WorkspaceEntityManager extends EntityManager {
       );
     if (isNaN(Number(value)))
       throw new TypeORMError(`Value "${value}" is not a number.`);
-    // convert possible embeded path "social.likes" into object { social: { like: () => value } }
-    const values = propertyPath.split('.').reduceRight(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const values = propertyPath.split('.').reduceRight<any>(
       (value, key) => ({ [key]: value }),
       () => this.connection.driver.escape(column.databaseName) + ' - ' + value,
-    ) as any;
+    );
 
     return this.createQueryBuilder(
       target,
@@ -1271,7 +1272,7 @@ export class WorkspaceEntityManager extends EntityManager {
       undefined,
       permissionOptions,
     )
-      .update(target)
+      .update(target as QueryDeepPartialEntity<Entity>)
       .set(values)
       .where(criteria)
       .execute();
