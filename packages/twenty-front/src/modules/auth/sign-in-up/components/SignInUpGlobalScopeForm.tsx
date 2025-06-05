@@ -8,6 +8,7 @@ import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
+import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { SignInUpEmailField } from '@/auth/sign-in-up/components/internal/SignInUpEmailField';
@@ -16,7 +17,6 @@ import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/internal/SignIn
 import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/internal/SignInUpWithMicrosoft';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
-import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { signInUpModeState } from '@/auth/states/signInUpModeState';
 import {
   SignInUpStep,
@@ -134,7 +134,6 @@ const StyledChevronIcon = styled.div`
 export const SignInUpGlobalScopeForm = () => {
   const authProviders = useRecoilValue(authProvidersState);
   const signInUpStep = useRecoilValue(signInUpStepState);
-  const availableWorkspaces = useRecoilValue(availableWorkspacesState);
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
 
   const { checkUserExists } = useAuth();
@@ -143,7 +142,7 @@ export const SignInUpGlobalScopeForm = () => {
   const { createWorkspace } = useSignUpInNewWorkspace();
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
-  const setAvailableWorkspaces = useSetRecoilState(availableWorkspacesState);
+  const availableWorkspaces = useRecoilValue(availableWorkspacesState);
   const theme = useTheme();
   const { t } = useLingui();
 
@@ -186,8 +185,6 @@ export const SignInUpGlobalScopeForm = () => {
       onCompleted: async (data) => {
         requestFreshCaptchaToken();
         const response = data.checkUserExists;
-
-        setAvailableWorkspaces(response.availableWorkspaces);
 
         if (
           response.exists === false &&

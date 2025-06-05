@@ -1,8 +1,11 @@
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
-import { SignInUpStep } from '@/auth/states/signInUpStepState';
+import {
+  SignInUpStep,
+  signInUpStepState,
+} from '@/auth/states/signInUpStepState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
@@ -33,11 +36,13 @@ const StandardContent = ({
   signInUpForm,
   signInUpStep,
   title,
+  onClickOnLogo,
 }: {
   workspacePublicData: PublicWorkspaceDataOutput | null;
   signInUpForm: JSX.Element | null;
   signInUpStep: SignInUpStep;
   title: string;
+  onClickOnLogo: () => void;
 }) => {
   return (
     <Modal.Content isVerticalCentered isHorizontalCentered>
@@ -45,6 +50,7 @@ const StandardContent = ({
         <Logo
           secondaryLogo={workspacePublicData?.logo}
           placeholder={workspacePublicData?.displayName}
+          onClick={onClickOnLogo}
         />
       </AnimatedEaseIn>
       <Title animate>{title}</Title>
@@ -56,6 +62,7 @@ const StandardContent = ({
 
 export const SignInUp = () => {
   const { t } = useLingui();
+  const setSignInUpStep = useSetRecoilState(signInUpStepState);
 
   const { form } = useSignInUpForm();
   const { signInUpStep } = useSignInUp(form);
@@ -68,6 +75,11 @@ export const SignInUp = () => {
     useWorkspaceFromInviteHash();
 
   const [searchParams] = useSearchParams();
+
+  const onClickOnLogo = () => {
+    setSignInUpStep(SignInUpStep.Init);
+  };
+
   const title = useMemo(() => {
     if (isDefined(workspaceInviteHash)) {
       return `Join ${workspaceFromInviteHash?.displayName ?? ''} team`;
@@ -153,6 +165,7 @@ export const SignInUp = () => {
       signInUpForm={signInUpForm}
       signInUpStep={signInUpStep}
       title={title}
+      onClickOnLogo={onClickOnLogo}
     />
   );
 };

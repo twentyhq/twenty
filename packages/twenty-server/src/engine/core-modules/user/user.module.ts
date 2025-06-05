@@ -47,6 +47,7 @@ import { UserService } from './services/user.service';
     OnboardingModule,
     TypeOrmModule.forFeature([KeyValuePair, UserWorkspace], 'core'),
     UserVarsModule,
+    UserWorkspaceModule,
     AuditModule,
     DomainManagerModule,
     UserRoleModule,

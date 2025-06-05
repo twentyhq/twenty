@@ -24,7 +24,6 @@ import {
   useGetCurrentUserLazyQuery,
   useGetLoginTokenFromCredentialsMutation,
   useGetLoginTokenFromEmailVerificationTokenMutation,
-  useListAvailableWorkspacesLazyQuery,
   useSignUpMutation,
 } from '~/generated/graphql';
 
@@ -70,18 +69,17 @@ import { iconsState } from 'twenty-ui/display';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
-import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
   const setCurrentUser = useSetRecoilState(currentUserState);
+  const setAvailableWorkspaces = useSetRecoilState(availableWorkspacesState);
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
   );
   const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
   const { origin } = useOrigin();
-  const setAvailableWorkspaces = useSetRecoilState(availableWorkspacesState);
 
   const setCurrentWorkspaceMembers = useSetRecoilState(
     currentWorkspaceMembersState,
@@ -90,8 +88,6 @@ export const useAuth = () => {
   const isEmailVerificationRequired = useRecoilValue(
     isEmailVerificationRequiredState,
   );
-
-  const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
 
   const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
 
@@ -118,16 +114,6 @@ export const useAuth = () => {
     useLastAuthenticatedWorkspaceDomain();
   const [checkUserExistsQuery, { data: checkUserExistsData }] =
     useCheckUserExistsLazyQuery();
-  const [listAvailableWorkspacesQuery] = useListAvailableWorkspacesLazyQuery();
-
-  const getAvailableWorkspaces = async () => {
-    listAvailableWorkspacesQuery({
-      onCompleted: (data) => {
-        requestFreshCaptchaToken();
-        setAvailableWorkspaces(data.listAvailableWorkspaces);
-      },
-    });
-  };
 
   const client = useApolloClient();
 
@@ -297,6 +283,10 @@ export const useAuth = () => {
       setCurrentWorkspaceMembers(workspaceMembers);
     }
 
+    if (isDefined(user.availableWorkspaces)) {
+      setAvailableWorkspaces(user.availableWorkspaces);
+    }
+
     if (isDefined(user.currentUserWorkspace)) {
       setCurrentUserWorkspace(user.currentUserWorkspace);
     }
@@ -370,6 +360,7 @@ export const useAuth = () => {
     setDateTimeFormat,
     setLastAuthenticateWorkspaceDomain,
     setWorkspaces,
+    setAvailableWorkspaces,
   ]);
 
   const handleSetAuthTokens = useCallback(
@@ -586,6 +577,5 @@ export const useAuth = () => {
     signInWithGoogle: handleGoogleLogin,
     signInWithMicrosoft: handleMicrosoftLogin,
     setAuthTokens: handleSetAuthTokens,
-    getAvailableWorkspaces,
   };
 };

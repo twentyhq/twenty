@@ -1,9 +1,7 @@
 import { createState } from 'twenty-ui/utilities';
-import { CheckUserExistOutput } from '~/generated/graphql';
+import { AvailableWorkspace } from '~/generated/graphql';
 
-export const availableWorkspacesState = createState<
-  CheckUserExistOutput['availableWorkspaces']
->({
+export const availableWorkspacesState = createState<Array<AvailableWorkspace>>({
   key: 'availableWorkspacesState',
   defaultValue: [],
 });

@@ -28,7 +28,7 @@ class SSOConnection {
 }
 
 @ObjectType()
-export class AvailableWorkspaceOutput {
+export class AvailableWorkspace {
   @Field(() => String)
   id: string;
 

@@ -57,7 +57,7 @@ import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/w
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { CheckUserExistOutput } from 'src/engine/core-modules/auth/dto/user-exists.entity';
-import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { AvailableWorkspace } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
 import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
@@ -291,45 +291,6 @@ export class AuthService {
     };
   }
 
-  private castWorkspaceToAvailableWorkspacesForCheckUserExistOutput(
-    workspaces: Array<Workspace>,
-  ) {
-    return workspaces.map<AvailableWorkspaceOutput>((workspace) => ({
-      id: workspace.id,
-      displayName: workspace.displayName,
-      workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
-      logo: workspace.logo,
-      sso: workspace.workspaceSSOIdentityProviders.reduce(
-        (acc, identityProvider) =>
-          acc.concat(
-            identityProvider.status === 'Inactive'
-              ? []
-              : [
-                  {
-                    id: identityProvider.id,
-                    name: identityProvider.name,
-                    issuer: identityProvider.issuer,
-                    type: identityProvider.type,
-                    status: identityProvider.status,
-                  },
-                ],
-          ),
-        [] as AvailableWorkspaceOutput['sso'],
-      ),
-    }));
-  }
-
-  async listAvailableWorkspacesForAuthentication(
-    email: string,
-  ): Promise<Array<AvailableWorkspaceOutput>> {
-    const workspaces =
-      await this.userWorkspaceService.findAvailableWorkspacesByEmail(email);
-
-    return this.castWorkspaceToAvailableWorkspacesForCheckUserExistOutput(
-      workspaces,
-    );
-  }
-
   async checkUserExists(email: string): Promise<CheckUserExistOutput> {
     const user = await this.userRepository.findOneBy({
       email,
@@ -340,7 +301,7 @@ export class AuthService {
     return {
       exists: isUserExist,
       availableWorkspaces:
-        await this.listAvailableWorkspacesForAuthentication(email),
+        await this.userWorkspaceService.listAvailableWorkspacesForAuthentication(email),
       isEmailVerified: isUserExist ? user.isEmailVerified : false,
     };
   }

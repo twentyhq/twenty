@@ -5,7 +5,7 @@ export const CHECK_USER_EXISTS = gql`
     checkUserExists(email: $email, captchaToken: $captchaToken) {
       exists
       availableWorkspaces {
-        ...AvailableWorkspaceForAuthFragment
+        ...AvailableWorkspacesFragment
       }
       isEmailVerified
     }

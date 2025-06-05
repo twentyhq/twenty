@@ -434,66 +434,6 @@ describe('AuthService', () => {
     });
   });
 
-  describe('listAvailableWorkspacesForAuthentication', () => {
-    it('should return formatted workspace data for available workspaces matching the given email', async () => {
-      const workspace = {
-        id: 'workspace-id-1',
-        displayName: 'Workspace 1',
-        logo: 'logo1.png',
-        workspaceSSOIdentityProviders: [
-          {
-            id: 'sso-id-1',
-            name: 'SSO Provider 1',
-            issuer: 'issuer1',
-            type: 'type1',
-            status: 'Active',
-          },
-          {
-            id: 'sso-id-2',
-            name: 'SSO Provider 2',
-            issuer: 'issuer2',
-            type: 'type2',
-            status: 'Inactive',
-          },
-        ],
-      } as unknown as Workspace;
-
-      jest
-        .spyOn(userWorkspaceService, 'findAvailableWorkspacesByEmail')
-        .mockResolvedValue([workspace]);
-
-      jest.spyOn(domainManagerService, 'getWorkspaceUrls').mockReturnValueOnce({
-        customUrl: 'https://crm.custom1.com',
-        subdomainUrl: 'https://workspace1.twenty.com',
-      });
-
-      const email = 'test@example.com';
-      const result =
-        await service.listAvailableWorkspacesForAuthentication(email);
-
-      expect(result).toEqual([
-        {
-          id: workspace.id,
-          displayName: workspace.displayName,
-          workspaceUrls: {
-            customUrl: 'https://crm.custom1.com',
-            subdomainUrl: 'https://workspace1.twenty.com',
-          },
-          logo: workspace.logo,
-          sso: [
-            {
-              id: 'sso-id-1',
-              name: 'SSO Provider 1',
-              issuer: 'issuer1',
-              type: 'type1',
-              status: 'Active',
-            },
-          ],
-        },
-      ]);
-    });
-  });
-
   describe('findWorkspaceForSignInUp', () => {
     it('findWorkspaceForSignInUp - signup password auth', async () => {
       const spyWorkspaceRepository = jest.spyOn(workspaceRepository, 'findOne');

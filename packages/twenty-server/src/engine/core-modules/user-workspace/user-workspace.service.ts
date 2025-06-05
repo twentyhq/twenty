@@ -35,6 +35,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 import { assert } from 'src/utils/assert';
 import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
+import { AvailableWorkspace } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   constructor(
@@ -371,5 +372,39 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     }
 
     return files[0].path;
+  }
+
+  async listAvailableWorkspacesForAuthentication(
+    email: string,
+  ): Promise<Array<AvailableWorkspace>> {
+    const workspaces = await this.findAvailableWorkspacesByEmail(email);
+
+    return this.castWorkspacesToAvailableWorkspaces(workspaces);
+  }
+
+  private async castWorkspacesToAvailableWorkspaces(workspaces: Array<Workspace>) {
+    return workspaces.map<AvailableWorkspace>((workspace) => ({
+      id: workspace.id,
+      displayName: workspace.displayName,
+      workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
+      logo: workspace.logo,
+      sso: workspace.workspaceSSOIdentityProviders.reduce(
+        (acc, identityProvider) =>
+          acc.concat(
+            identityProvider.status === 'Inactive'
+              ? []
+              : [
+                  {
+                    id: identityProvider.id,
+                    name: identityProvider.name,
+                    issuer: identityProvider.issuer,
+                    type: identityProvider.type,
+                    status: identityProvider.status,
+                  },
+                ],
+          ),
+        [] as AvailableWorkspace['sso'],
+      ),
+    }));
   }
 }

@@ -18,8 +18,8 @@ export const AUTH_TOKENS = gql`
   }
 `;
 
-export const AVAILABLE_WORKSPACE_FOR_AUTH = gql`
-  fragment AvailableWorkspaceForAuthFragment on AvailableWorkspaceOutput {
+export const AVAILABLE_WORKSPACES_FOR_AUTH_FRAGMENT = gql`
+  fragment AvailableWorkspacesFragment on AvailableWorkspace {
     id
     displayName
     workspaceUrls {

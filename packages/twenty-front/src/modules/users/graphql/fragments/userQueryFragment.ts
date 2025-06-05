@@ -2,6 +2,7 @@ import { ROLE_FRAGMENT } from '@/settings/roles/graphql/fragments/roleFragment';
 import { DELETED_WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/deletedWorkspaceMemberQueryFragment';
 import { WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/workspaceMemberQueryFragment';
 import { gql } from '@apollo/client';
+import { AVAILABLE_WORKSPACES_FOR_AUTH_FRAGMENT } from '@/auth/graphql/fragments/authFragments';
 
 export const USER_QUERY_FRAGMENT = gql`
   ${ROLE_FRAGMENT}
@@ -91,9 +92,13 @@ export const USER_QUERY_FRAGMENT = gql`
         }
       }
     }
+    availableWorkspaces {
+      ...AvailableWorkspacesFragment
+    }
     userVars
   }
 
   ${WORKSPACE_MEMBER_QUERY_FRAGMENT}
   ${DELETED_WORKSPACE_MEMBER_QUERY_FRAGMENT}
+  ${AVAILABLE_WORKSPACES_FOR_AUTH_FRAGMENT}
 `;
