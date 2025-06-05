@@ -5,7 +5,7 @@ import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-build
 import { computeOperator } from 'src/engine/api/utils/compute-operator.utils';
 import { isAscendingOrder } from 'src/engine/api/utils/is-ascending-order.utils';
 
-export const buildLexicographicOrdering = (
+export const buildLexicographicOrderingWhereCondition = (
   filteredProperties: Array<{ name: string; type: FieldMetadataType }>,
   key: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

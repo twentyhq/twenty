@@ -9,7 +9,7 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { buildLexicographicOrdering } from 'src/engine/api/utils/build-lexicographic-ordering.utils';
+import { buildLexicographicOrderingWhereCondition } from 'src/engine/api/utils/build-lexicographic-ordering-where-condition.utils';
 import { computeOperator } from 'src/engine/api/utils/compute-operator.utils';
 import { isAscendingOrder } from 'src/engine/api/utils/is-ascending-order.utils';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
@@ -164,7 +164,7 @@ const buildCompositeWhereCondition = (
     return result;
   }
 
-  return buildLexicographicOrdering(
+  return buildLexicographicOrderingWhereCondition(
     filteredProperties,
     key,
     keyOrderBy,
