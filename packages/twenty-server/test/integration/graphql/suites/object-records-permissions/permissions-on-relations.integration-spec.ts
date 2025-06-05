@@ -79,7 +79,9 @@ describe('permissionsOnRelations', () => {
       const response = await makeGraphqlAPIRequestWithJony(graphqlOperation);
 
       // The query should fail when trying to access company relation without permission
-      expect(response.body.errors).toBeDefined();
+      console.log(response.body.errors);
+      console.log(response.body.data);
+      expect(response.body.errors).toBe('remove me');
       expect(response.body.errors[0].message).toBe(
         PermissionsExceptionMessage.PERMISSION_DENIED,
       );
@@ -121,6 +123,8 @@ describe('permissionsOnRelations', () => {
 
       // The query should succeed
       expect(response.body.data).toBeDefined();
+      console.log(response.body.data.people);
+      expect(response.body.data.people).toBe('remove me');
       expect(response.body.data.people).toBeDefined();
       const person = response.body.data.people.edges[0].node;
 
@@ -129,7 +133,6 @@ describe('permissionsOnRelations', () => {
     });
 
     it('nested relations - should throw permission error when querying nested opportunity relation without opportunity read permission', async () => {
-      // For example: person -> company -> opportunity
       // Where user has person and company read permissions but not opportunity read permission
 
       const { roleId } = await createCustomRoleWithObjectPermissions({
