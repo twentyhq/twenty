@@ -80,8 +80,8 @@ export class DeduplicateIndexedFieldsCommand extends ActiveOrSuspendedWorkspaces
       .select('company.domainNamePrimaryLinkUrl')
       .addSelect('COUNT(*)', 'count')
       .where('company.deletedAt IS NULL')
-      .where('company.domainNamePrimaryLinkUrl IS NOT NULL')
-      .where("company.domainNamePrimaryLinkUrl != ''")
+      .andWhere('company.domainNamePrimaryLinkUrl IS NOT NULL')
+      .andWhere("company.domainNamePrimaryLinkUrl != ''")
       .groupBy('company.domainNamePrimaryLinkUrl')
       .having('COUNT(*) > 1')
       .getRawMany();
@@ -128,8 +128,8 @@ export class DeduplicateIndexedFieldsCommand extends ActiveOrSuspendedWorkspaces
       .select('person.emailsPrimaryEmail')
       .addSelect('COUNT(*)', 'count')
       .where('person.deletedAt IS NULL')
-      .where('person.emailsPrimaryEmail IS NOT NULL')
-      .where("person.emailsPrimaryEmail != ''")
+      .andWhere('person.emailsPrimaryEmail IS NOT NULL')
+      .andWhere("person.emailsPrimaryEmail != ''")
       .groupBy('person.emailsPrimaryEmail')
       .having('COUNT(*) > 1')
       .getRawMany();
