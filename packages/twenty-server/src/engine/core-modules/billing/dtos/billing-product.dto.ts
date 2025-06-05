@@ -21,6 +21,9 @@ export class BillingProductDTO {
   @Field(() => [BillingPriceUnionDTO], { nullable: true })
   prices: Array<BillingPriceLicensedDTO> | Array<BillingPriceMeteredDTO>;
 
+  @Field(() => [String], { nullable: true })
+  marketingFeatures: Array<string | null> | null;
+
   @Field(() => BillingProductMetadata)
   metadata: BillingProductMetadata;
 }

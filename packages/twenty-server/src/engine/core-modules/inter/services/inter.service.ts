@@ -78,6 +78,7 @@ export class InterService {
 
       const token = await this.interInstanceService.getOauthToken();
 
+      // TODO: Check if there aready a pending payment for the curent workspace before creating another charge since it will fail anyways if that's the case.
       const response = await this.interInstance.post<
         InterChargeResponse,
         AxiosResponse<InterChargeResponse, InterChargeRequest>,

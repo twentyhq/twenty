@@ -1023,6 +1023,11 @@ msgstr ""
 msgid "Companies"
 msgstr ""
 
+#. js-lingui-id: 7i8j3G
+#: src/modules/onboarding/hooks/useInterCustomerTypeOptions.ts
+msgid "Company"
+msgstr ""
+
 #. js-lingui-id: Vj43Y/
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
@@ -1233,8 +1238,8 @@ msgstr ""
 
 #. js-lingui-id: Md8EZY
 #: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
-msgid "Cpf/Cnpj"
-msgstr ""
+#~ msgid "Cpf/Cnpj"
+#~ msgstr ""
 
 #. js-lingui-id: hYgDIe
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
@@ -2387,6 +2392,16 @@ msgstr ""
 msgid "Full access"
 msgstr ""
 
+#. js-lingui-id: 0W0FHK
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Full name"
+msgstr ""
+
+#. js-lingui-id: /4TFrF
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+#~ msgid "Full Name"
+#~ msgstr ""
+
 #. js-lingui-id: xANKBj
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Functions"
@@ -2627,8 +2642,8 @@ msgstr ""
 
 #. js-lingui-id: HlNkTA
 #: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
-msgid "Identy"
-msgstr ""
+#~ msgid "Identy"
+#~ msgstr ""
 
 #. js-lingui-id: ZfP/Ap
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
@@ -2681,6 +2696,11 @@ msgstr ""
 msgid "Indexes"
 msgstr ""
 
+#. js-lingui-id: fByw/g
+#: src/modules/onboarding/hooks/useInterCustomerTypeOptions.ts
+msgid "Individual"
+msgstr ""
+
 #. js-lingui-id: JE2tjr
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
@@ -2706,8 +2726,8 @@ msgstr ""
 
 #. js-lingui-id: 26GmDR
 #: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
-msgid "Inter Bolepix charge data"
-msgstr ""
+#~ msgid "Inter Bolepix charge data"
+#~ msgstr ""
 
 #. js-lingui-id: GNRDhm
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -2988,13 +3008,13 @@ msgstr ""
 
 #. js-lingui-id: Ae7Hr2
 #: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
-msgid "Legal entity"
-msgstr ""
+#~ msgid "Legal entity"
+#~ msgstr ""
 
 #. js-lingui-id: /2pITc
 #: src/modules/onboarding/hooks/useInterCustomerTypeOptions.ts
-msgid "Legal person"
-msgstr ""
+#~ msgid "Legal person"
+#~ msgstr ""
 
 #. js-lingui-id: haJ2Hb
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -3215,7 +3235,6 @@ msgstr ""
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
 msgid "Name"
 msgstr ""
 
@@ -3242,8 +3261,8 @@ msgstr ""
 
 #. js-lingui-id: Rx5k5c
 #: src/modules/onboarding/hooks/useInterCustomerTypeOptions.ts
-msgid "Natural person"
-msgstr ""
+#~ msgid "Natural person"
+#~ msgstr ""
 
 #. js-lingui-id: 2T8KCk
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -3728,6 +3747,11 @@ msgstr ""
 msgid "Password reset link has been sent to the email"
 msgstr ""
 
+#. js-lingui-id: +Fx9ea
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Payment data"
+msgstr ""
+
 #. js-lingui-id: 1wdjme
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -3795,6 +3819,16 @@ msgstr ""
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Permissions"
+msgstr ""
+
+#. js-lingui-id: 19jdAl
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Person type"
+msgstr ""
+
+#. js-lingui-id: sJYPeP
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Personal Details"
 msgstr ""
 
 #. js-lingui-id: qlqT9z
@@ -4826,8 +4860,8 @@ msgstr ""
 
 #. js-lingui-id: jEOcvL
 #: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
-msgid "The address data as it will used as payer infromation."
-msgstr ""
+#~ msgid "The address data as it will used as payer infromation."
+#~ msgstr ""
 
 #. js-lingui-id: 1xQkU9
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
@@ -4873,8 +4907,8 @@ msgstr ""
 
 #. js-lingui-id: hS1s+i
 #: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
-msgid "The name/social reason as it will used as payer infromation."
-msgstr ""
+#~ msgid "The name/social reason as it will used as payer infromation."
+#~ msgstr ""
 
 #. js-lingui-id: L97sPr
 #: src/pages/not-found/NotFound.tsx
@@ -4932,6 +4966,11 @@ msgstr ""
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
 #~ msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
 #~ msgstr ""
+
+#. js-lingui-id: Fb+kqj
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Theses are the necessary data to emit your bank slip"
+msgstr ""
 
 #. js-lingui-id: hqCwGc
 #: src/pages/settings/SettingsWorkspaceMembers.tsx

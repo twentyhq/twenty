@@ -13,12 +13,12 @@ import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { Select } from '@/ui/input/components/Select';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { H1Title, H2Title } from 'twenty-ui/display';
+import { H1Title, H1TitleFontColor, H2Title } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { InterCustomerType } from '~/generated/graphql';
@@ -35,6 +35,15 @@ const StyledComboInputContainer = styled.div`
   }
 `;
 
+const StyledContentDescription = styled.div`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  margin: 0;
+  margin-top: ${({ theme }) => theme.spacing(2)};
+  justify-content: center;
+`;
+
 const StyledContentContainer = styled(motion.div)`
   display: flex;
   flex-direction: column;
@@ -45,12 +54,14 @@ const StyledContentContainer = styled(motion.div)`
 
 const StyledControlButtonContainer = styled.div`
   display: flex;
+  justify-content: center;
+  flex: 1;
   gap: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 `;
 
 const StyledSectionContainer = styled.div`
-  margin-top: ${({ theme }) => theme.spacing(8)};
+  margin-top: ${({ theme }) => theme.spacing(6)};
 `;
 
 export type OnboardingInterChargeDataFormProps = {
@@ -101,13 +112,17 @@ export const OnboardingInterChargeDataForm = ({
 
   return (
     <>
-      <H1Title title={t`Inter Bolepix charge data`} />
       <StyledContentContainer>
+        <H1Title
+          title={t`Payment data`}
+          titleCentered
+          fontColor={H1TitleFontColor.Primary}
+        />
+        <StyledContentDescription>
+          <Trans>Theses are the necessary data to emit your bank slip</Trans>
+        </StyledContentDescription>
         <StyledSectionContainer>
-          <H2Title
-            title={t`Identy`}
-            description={t`The name/social reason as it will used as payer infromation.`}
-          />
+          <H2Title title={t`Personal Details`} />
           <Controller
             name="name"
             control={control}
@@ -117,7 +132,7 @@ export const OnboardingInterChargeDataForm = ({
             }) => (
               <TextInputV2
                 autoFocus
-                label={t`Name`}
+                label={t`Full name`}
                 value={value}
                 onFocus={() => setIsEditingMode(true)}
                 onBlur={() => {
@@ -125,7 +140,7 @@ export const OnboardingInterChargeDataForm = ({
                   setIsEditingMode(false);
                 }}
                 onChange={onChange}
-                placeholder="Tim"
+                placeholder="Tim Apple"
                 error={error?.message}
                 fullWidth
               />
@@ -140,7 +155,7 @@ export const OnboardingInterChargeDataForm = ({
               render={({ field: { onChange, value } }) => (
                 <Select
                   fullWidth
-                  label={t`Legal entity`}
+                  label={t`Person type`}
                   dropdownId="inter-charge-data-legal-entity"
                   value={value}
                   onChange={onChange}
@@ -156,7 +171,9 @@ export const OnboardingInterChargeDataForm = ({
                 fieldState: { error },
               }) => (
                 <TextInputV2
-                  label={t`Cpf/Cnpj`}
+                  label={
+                    legalEntity === InterCustomerType.FISICA ? 'CPF' : 'CNPJ'
+                  }
                   value={
                     legalEntity === InterCustomerType.FISICA
                       ? formatCpf(value)
@@ -182,10 +199,7 @@ export const OnboardingInterChargeDataForm = ({
           </StyledComboInputContainer>
         </StyledSectionContainer>
         <StyledSectionContainer>
-          <H2Title
-            title={t`Address`}
-            description={t`The address data as it will used as payer infromation.`}
-          />
+          <H2Title title={t`Address`} />
           <StyledComboInputContainer>
             <Controller
               name="cep"
@@ -227,7 +241,7 @@ export const OnboardingInterChargeDataForm = ({
                     setIsEditingMode(false);
                   }}
                   onChange={onChange}
-                  placeholder="The payer address"
+                  placeholder="EX.: Rua, Av., Rodovia"
                   error={error?.message}
                   fullWidth
                 />
@@ -268,7 +282,7 @@ export const OnboardingInterChargeDataForm = ({
                     setIsEditingMode(false);
                   }}
                   onChange={onChange}
-                  placeholder="The payer city"
+                  placeholder="EX.: Sorocaba"
                   error={error?.message}
                   fullWidth
                 />

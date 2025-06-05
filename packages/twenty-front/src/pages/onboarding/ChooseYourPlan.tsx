@@ -20,18 +20,18 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { CardPicker, MainButton } from 'twenty-ui/input';
-import {
-  CAL_LINK,
-  ClickToActionLink,
-  TWENTY_PRICING_LINK,
-} from 'twenty-ui/navigation';
+import { CAL_LINK, ClickToActionLink } from 'twenty-ui/navigation';
 import { Entries } from 'type-fest';
+import { ArrayElement } from 'type-fest/source/internal';
 import {
+  BillingBaseProductPricesQuery,
   BillingPaymentProviders,
   BillingPlanKey,
   BillingPriceLicensedDto,
   useBillingBaseProductPricesQuery,
 } from '~/generated/graphql';
+
+import { IconCheck } from 'twenty-ui/display';
 
 const StyledChoosePlanCardContainer = styled.div`
   display: flex;
@@ -50,10 +50,18 @@ const StyledChooseProviderContainer = styled.div`
 `;
 
 const StyledPaymentProviderCardContainer = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.md};
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.lg};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
   display: flex;
+  flex-direction: column;
+  align-items: start;
   width: 100%;
+`;
+
+const StyledPaymentProviderCardTooltipCard = styled.div`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.sm};
 `;
 
 const StyledLinkGroup = styled.div`
@@ -76,6 +84,30 @@ const StyledChooseYourPlanPlaceholder = styled.div`
   height: 566px;
 `;
 
+const StyledBenefitsContainer = styled.div`
+  background-color: ${({ theme }) => theme.background.secondary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(3)};
+  width: 100%;
+`;
+
+const StyledBenefitCard = styled.div`
+  box-sizing: border-box;
+  display: flex;
+  width: 100%;
+  gap: 16px;
+`;
+
+type PlansQueryBillingBaseProduct = ArrayElement<
+  BillingBaseProductPricesQuery['plans']
+>['baseProduct'];
+
 export const ChooseYourPlan = () => {
   const billing = useRecoilValue(billingState);
   const { t } = useLingui();
@@ -92,7 +124,19 @@ export const ChooseYourPlan = () => {
 
   const { billingPaymentProvidersMap } = useBillingPaymentProvidersMap();
 
-  const getPlanBenefits = (planKey: BillingPlanKey) => {
+  const getCurrentSelectedPlan = (planKey: BillingPlanKey) => {
+    const plan = plans?.plans.find(
+      (plan) => plan.planKey === planKey,
+    )?.baseProduct;
+
+    return plan;
+  };
+
+  const getPlanBenefits = (
+    planKey: BillingPlanKey,
+    product: PlansQueryBillingBaseProduct,
+  ) => {
+    if (isDefined(product.marketingFeatures)) return product.marketingFeatures;
     if (planKey === BillingPlanKey.ENTERPRISE) {
       return [
         t`Full access`,
@@ -185,7 +229,6 @@ export const ChooseYourPlan = () => {
                                 price.recurringInterval ===
                                   billingCheckoutSession.interval,
                             )}
-                            benefits={getPlanBenefits(planKey)}
                             planName={baseProduct.name}
                             withCreditCardTrialPeriod={
                               !!withCreditCardTrialPeriod
@@ -201,6 +244,23 @@ export const ChooseYourPlan = () => {
                       </>
                     ))}
                   </StyledChoosePlanCardContainer>
+                  {isDefined(
+                    getCurrentSelectedPlan(billingCheckoutSession.plan),
+                  ) && (
+                    <StyledBenefitsContainer>
+                      {getPlanBenefits(
+                        billingCheckoutSession.plan,
+                        getCurrentSelectedPlan(
+                          billingCheckoutSession.plan,
+                        ) as PlansQueryBillingBaseProduct,
+                      ).map((benefit) => (
+                        <StyledBenefitCard key={benefit}>
+                          <IconCheck size={16} />
+                          {benefit}
+                        </StyledBenefitCard>
+                      ))}
+                    </StyledBenefitsContainer>
+                  )}
                   <Title noMarginTop>{t`Choose your payment method`}</Title>
                   <StyledChooseProviderContainer>
                     {(
@@ -219,6 +279,9 @@ export const ChooseYourPlan = () => {
                         name="payment-provider"
                       >
                         <StyledPaymentProviderCardContainer>
+                          <StyledPaymentProviderCardTooltipCard>
+                            {provider}
+                          </StyledPaymentProviderCardTooltipCard>
                           {label}
                         </StyledPaymentProviderCardContainer>
                       </CardPicker>
@@ -237,10 +300,10 @@ export const ChooseYourPlan = () => {
                     <ClickToActionLink onClick={signOut}>
                       <Trans>Log out</Trans>
                     </ClickToActionLink>
-                    <span />
+                    {/* <span />
                     <ClickToActionLink href={TWENTY_PRICING_LINK}>
                       <Trans>Change Plan</Trans>
-                    </ClickToActionLink>
+                    </ClickToActionLink> */}
                     <span />
                     <ClickToActionLink
                       href={CAL_LINK}
