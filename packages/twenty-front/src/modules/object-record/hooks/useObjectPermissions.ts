@@ -4,7 +4,11 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { isDefined } from 'twenty-shared/utils';
 import { ObjectPermission } from '~/generated-metadata/graphql';
 
-export const useObjectPermissions = () => {
+type useObjectPermissionsReturnType = {
+  objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>;
+};
+
+export const useObjectPermissions = (): useObjectPermissionsReturnType => {
   const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);
   const objectPermissions = currentUserWorkspace?.objectPermissions;
 
@@ -14,12 +18,12 @@ export const useObjectPermissions = () => {
     };
   }
 
-  const objectPermissionsByObjectMetadataId = objectPermissions.reduce(
-    (acc, objectPermission) => {
+  const objectPermissionsByObjectMetadataId = objectPermissions?.reduce(
+    (acc: Record<string, ObjectPermission>, objectPermission) => {
       acc[objectPermission.objectMetadataId] = objectPermission;
       return acc;
     },
-    {} as Record<string, ObjectPermission>,
+    {},
   );
 
   return {

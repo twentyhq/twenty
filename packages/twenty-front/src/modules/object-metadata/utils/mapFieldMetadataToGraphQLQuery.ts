@@ -7,6 +7,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { isNonCompositeField } from '@/object-record/object-filter-dropdown/utils/isNonCompositeField';
 import { isDefined } from 'twenty-shared/utils';
@@ -36,6 +37,11 @@ export const mapFieldMetadataToGraphQLQuery = ({
 
   const fieldIsNonCompositeField = isNonCompositeField(fieldType);
 
+  const objectPermission = getObjectPermissionsForObject(
+    objectPermissionsByObjectMetadataId,
+    fieldMetadata.relationDefinition?.targetObjectMetadata.id,
+  );
+
   if (fieldIsNonCompositeField) {
     return gqlField;
   }
@@ -59,9 +65,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
       isDefined(objectPermissionsByObjectMetadataId) &&
       isDefined(relationMetadataItem.id)
     ) {
-      const objectPermission =
-        objectPermissionsByObjectMetadataId[relationMetadataItem.id];
-      if (objectPermission?.canReadObjectRecords === false) {
+      if (objectPermission.canReadObjectRecords === false) {
         return '';
       }
     }
@@ -100,9 +104,7 @@ ${mapObjectMetadataToGraphQLQuery({
       isDefined(objectPermissionsByObjectMetadataId) &&
       isDefined(relationMetadataItem.id)
     ) {
-      const objectPermission =
-        objectPermissionsByObjectMetadataId[relationMetadataItem.id];
-      if (objectPermission?.canReadObjectRecords === false) {
+      if (objectPermission.canReadObjectRecords === false) {
         return '';
       }
     }

@@ -8,7 +8,7 @@ import { useAttachments } from '@/activities/files/hooks/useAttachments';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useGetObjectPermissionsForObject } from '@/object-record/hooks/useGetObjectPermissionsForObject';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -66,11 +66,14 @@ export const Attachments = ({
     objectNameSingular: targetableObject.targetObjectNameSingular,
   });
 
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const getObjectPermissionsForObject = useGetObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
 
-  const hasObjectReadOnlyPermission =
-    objectPermissionsByObjectMetadataId[objectMetadataItem.id]
-      ?.canUpdateObjectRecords === false;
+  const objectPermissions = getObjectPermissionsForObject();
+
+  const hasObjectUpdatePermissions =
+    objectPermissions.canUpdateObjectRecords === false;
 
   if (loading && isAttachmentsEmpty) {
     return <SkeletonLoader />;
@@ -103,7 +106,7 @@ export const Attachments = ({
               onChange={handleFileChange}
               type="file"
             />
-            {!hasObjectReadOnlyPermission && (
+            {!hasObjectUpdatePermissions && (
               <Button
                 Icon={IconPlus}
                 title="Add file"
@@ -129,7 +132,7 @@ export const Attachments = ({
         title="All"
         attachments={attachments ?? []}
         button={
-          !hasObjectReadOnlyPermission && (
+          !hasObjectUpdatePermissions && (
             <Button
               Icon={IconPlus}
               size="small"

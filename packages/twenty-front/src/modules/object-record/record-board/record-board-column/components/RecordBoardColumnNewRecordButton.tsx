@@ -1,4 +1,4 @@
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useGetObjectPermissionsForObject } from '@/object-record/hooks/useGetObjectPermissionsForObject';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
@@ -32,16 +32,20 @@ export const RecordBoardColumnNewRecordButton = () => {
 
   const { columnDefinition } = useContext(RecordBoardColumnContext);
 
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const getObjectPermissionsForObject = useGetObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
+
+  const objectPermissions = getObjectPermissionsForObject();
+
+  const hasObjectUpdatePermissions =
+    objectPermissions.canUpdateObjectRecords === true;
 
   const { createNewIndexRecord } = useCreateNewIndexRecord({
     objectMetadataItem: objectMetadataItem,
   });
 
-  if (
-    objectPermissionsByObjectMetadataId[objectMetadataItem.id]
-      ?.canUpdateObjectRecords === false
-  ) {
+  if (!hasObjectUpdatePermissions) {
     return null;
   }
 

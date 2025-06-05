@@ -2,7 +2,7 @@ import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateAct
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useGetObjectPermissionsForObject } from '@/object-record/hooks/useGetObjectPermissionsForObject';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
@@ -19,13 +19,16 @@ export const AddTaskButton = ({
     objectNameSingular: activityTargetableObject.targetObjectNameSingular,
   });
 
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const getObjectPermissionsForObject = useGetObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
 
-  const hasObjectReadOnlyPermission =
-    objectPermissionsByObjectMetadataId[objectMetadataItem.id]
-      ?.canUpdateObjectRecords === false;
+  const objectPermissions = getObjectPermissionsForObject();
 
-  if (hasObjectReadOnlyPermission) {
+  const hasObjectUpdatePermissions =
+    objectPermissions.canUpdateObjectRecords === false;
+
+  if (hasObjectUpdatePermissions) {
     return null;
   }
 

@@ -1,5 +1,5 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useGetObjectPermissionsForObject } from '@/object-record/hooks/useGetObjectPermissionsForObject';
 import {
   SingleRecordPickerMenuItems,
   SingleRecordPickerMenuItemsProps,
@@ -63,11 +63,14 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
     objectNameSingular,
   });
 
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const getObjectPermissionsForObject = useGetObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
 
-  const hasObjectReadOnlyPermission =
-    objectPermissionsByObjectMetadataId[objectMetadataItem.id]
-      ?.canUpdateObjectRecords === false;
+  const objectPermissions = getObjectPermissionsForObject();
+
+  const hasObjectUpdatePermissions =
+    objectPermissions.canUpdateObjectRecords === true;
 
   const createNewButton = isDefined(onCreate) && (
     <CreateNewButton
@@ -81,7 +84,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
     <>
       {layoutDirection === 'search-bar-on-bottom' && (
         <>
-          {isDefined(onCreate) && !hasObjectReadOnlyPermission && (
+          {isDefined(onCreate) && !hasObjectUpdatePermissions && (
             <DropdownMenuItemsContainer scrollable={false}>
               {createNewButton}
             </DropdownMenuItemsContainer>
@@ -125,7 +128,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
           {records.recordsToSelect.length > 0 && isDefined(onCreate) && (
             <DropdownMenuSeparator />
           )}
-          {isDefined(onCreate) && !hasObjectReadOnlyPermission && (
+          {isDefined(onCreate) && !hasObjectUpdatePermissions && (
             <DropdownMenuItemsContainer scrollable={false}>
               {createNewButton}
             </DropdownMenuItemsContainer>

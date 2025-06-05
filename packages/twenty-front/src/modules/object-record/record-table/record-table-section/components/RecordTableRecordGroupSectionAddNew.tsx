@@ -1,4 +1,4 @@
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useGetObjectPermissionsForObject } from '@/object-record/hooks/useGetObjectPermissionsForObject';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
@@ -12,7 +12,6 @@ import { IconPlus } from 'twenty-ui/display';
 
 export const RecordTableRecordGroupSectionAddNew = () => {
   const { objectMetadataItem } = useRecordTableContextOrThrow();
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const currentRecordGroupId = useCurrentRecordGroupId();
 
@@ -32,10 +31,16 @@ export const RecordTableRecordGroupSectionAddNew = () => {
     (field) => field.id === recordGroup?.fieldMetadataId,
   );
 
-  if (
-    objectPermissionsByObjectMetadataId[objectMetadataItem.id]
-      ?.canUpdateObjectRecords === false
-  ) {
+  const getObjectPermissionsForObject = useGetObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
+
+  const objectPermissions = getObjectPermissionsForObject();
+
+  const hasObjectUpdatePermissions =
+    objectPermissions.canUpdateObjectRecords === true;
+
+  if (!hasObjectUpdatePermissions) {
     return null;
   }
 

@@ -6,9 +6,9 @@ import { RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/
 import { useFetchMoreRecordsWithPagination } from '@/object-record/hooks/useFetchMoreRecordsWithPagination';
 import { UseFindManyRecordsParams } from '@/object-record/hooks/useFindManyRecords';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
+import { useGetObjectPermissionsForObject } from '@/object-record/hooks/useGetObjectPermissionsForObject';
 import { useHandleFindManyRecordsCompleted } from '@/object-record/hooks/useHandleFindManyRecordsCompleted';
 import { useHandleFindManyRecordsError } from '@/object-record/hooks/useHandleFindManyRecordsError';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { cursorFamilyState } from '@/object-record/states/cursorFamilyState';
 import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -56,11 +56,13 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     onCompleted,
   });
 
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const getObjectPermissionsForObject = useGetObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
 
-  const hasReadPermission =
-    objectPermissionsByObjectMetadataId[objectMetadataItem.id]
-      ?.canReadObjectRecords === true;
+  const objectPermissions = getObjectPermissionsForObject();
+
+  const hasReadPermission = objectPermissions.canReadObjectRecords === true;
 
   const [findManyRecords, { data, loading, error, fetchMore }] =
     useLazyQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {

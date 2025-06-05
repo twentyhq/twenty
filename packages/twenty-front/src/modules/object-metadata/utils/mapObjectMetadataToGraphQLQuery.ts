@@ -1,4 +1,5 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { mapFieldMetadataToGraphQLQuery } from '@/object-metadata/utils/mapFieldMetadataToGraphQLQuery';
 import { shouldFieldBeQueried } from '@/object-metadata/utils/shouldFieldBeQueried';
 import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
@@ -32,9 +33,11 @@ export const mapObjectMetadataToGraphQLQuery = ({
     isDefined(objectPermissionsByObjectMetadataId) &&
     isDefined(objectMetadataItem.id)
   ) {
-    const objectPermission =
-      objectPermissionsByObjectMetadataId[objectMetadataItem.id];
-    if (objectPermission?.canReadObjectRecords === false) {
+    const objectPermission = getObjectPermissionsForObject(
+      objectPermissionsByObjectMetadataId,
+      objectMetadataItem.id,
+    );
+    if (objectPermission.canReadObjectRecords === false) {
       return '';
     }
   }

@@ -5,7 +5,7 @@ import { useNotes } from '@/activities/notes/hooks/useNotes';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useGetObjectPermissionsForObject } from '@/object-record/hooks/useGetObjectPermissionsForObject';
 import styled from '@emotion/styled';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -43,11 +43,14 @@ export const Notes = ({
     objectNameSingular: targetableObject.targetObjectNameSingular,
   });
 
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const getObjectPermissionsForObject = useGetObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
 
-  const hasObjectReadOnlyPermission =
-    objectPermissionsByObjectMetadataId[objectMetadataItem.id]
-      ?.canUpdateObjectRecords === false;
+  const objectPermissions = getObjectPermissionsForObject();
+
+  const hasObjectUpdatePermissions =
+    objectPermissions.canUpdateObjectRecords === false;
 
   if (loading && isNotesEmpty) {
     return <SkeletonLoader />;
@@ -68,7 +71,7 @@ export const Notes = ({
             There are no associated notes with this record.
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
-        {!hasObjectReadOnlyPermission && (
+        {!hasObjectUpdatePermissions && (
           <Button
             Icon={IconPlus}
             title="New note"
@@ -90,7 +93,7 @@ export const Notes = ({
         title="All"
         notes={notes}
         button={
-          !hasObjectReadOnlyPermission && (
+          !hasObjectUpdatePermissions && (
             <Button
               Icon={IconPlus}
               size="small"

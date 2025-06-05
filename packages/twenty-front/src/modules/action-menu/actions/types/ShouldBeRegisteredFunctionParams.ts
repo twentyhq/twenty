@@ -1,13 +1,13 @@
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { ObjectPermissions } from '@/object-record/cache/types/ObjectPermissions';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
-import { ObjectPermission } from '~/generated-metadata/graphql';
 
 export type ShouldBeRegisteredFunctionParams = {
   objectMetadataItem?: ObjectMetadataItem;
-  objectPermissions?: ObjectPermission;
+  objectPermissions: ObjectPermissions;
   isWorkflowEnabled: boolean;
   recordFilters?: RecordFilter[];
   isShowPage?: boolean;

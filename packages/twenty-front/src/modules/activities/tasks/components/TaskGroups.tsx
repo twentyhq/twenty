@@ -7,7 +7,7 @@ import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableE
 import { Task } from '@/activities/types/Task';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useGetObjectPermissionsForObject } from '@/object-record/hooks/useGetObjectPermissionsForObject';
 import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import groupBy from 'lodash.groupby';
@@ -44,11 +44,14 @@ export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
     objectNameSingular: targetableObject.targetObjectNameSingular,
   });
 
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const getObjectPermissionsForObject = useGetObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
 
-  const hasObjectReadOnlyPermission =
-    objectPermissionsByObjectMetadataId[objectMetadataItem.id]
-      ?.canUpdateObjectRecords === false;
+  const objectPermissions = getObjectPermissionsForObject();
+
+  const hasObjectUpdatePermissions =
+    objectPermissions.canUpdateObjectRecords === false;
 
   const openCreateActivity = useOpenCreateActivityDrawer({
     activityObjectNameSingular: CoreObjectNameSingular.Task,
@@ -83,7 +86,7 @@ export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
             All tasks addressed. Maintain the momentum.
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
-        {!hasObjectReadOnlyPermission && (
+        {!hasObjectUpdatePermissions && (
           <Button
             Icon={IconPlus}
             title="New task"

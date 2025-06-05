@@ -8,7 +8,7 @@ import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useGetObjectPermissionsForObject } from '@/object-record/hooks/useGetObjectPermissionsForObject';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -42,7 +42,9 @@ export const useShouldActionBeRegisteredParams = ({
   const selectedRecord =
     useRecoilValue(recordStoreFamilyState(recordId ?? '')) || undefined;
 
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const getObjectPermissionsForObject = useGetObjectPermissionsForObject(
+    objectMetadataItem?.id,
+  );
 
   const isNoteOrTask =
     objectMetadataItem?.nameSingular === CoreObjectNameSingular.Note ||
@@ -78,8 +80,7 @@ export const useShouldActionBeRegisteredParams = ({
   return {
     objectMetadataItem,
     isFavorite,
-    objectPermissions:
-      objectPermissionsByObjectMetadataId[objectMetadataItem?.id],
+    objectPermissions: getObjectPermissionsForObject(),
     isNoteOrTask,
     isInRightDrawer,
     isSoftDeleteFilterActive,

@@ -5,7 +5,7 @@ import { RecordGqlFieldsAggregate } from '@/object-record/graphql/types/RecordGq
 import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
 import { useAggregateRecordsQuery } from '@/object-record/hooks/useAggregateRecordsQuery';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useGetObjectPermissionsForObject } from '@/object-record/hooks/useGetObjectPermissionsForObject';
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import isEmpty from 'lodash.isempty';
 import { isDefined } from 'twenty-shared/utils';
@@ -36,11 +36,13 @@ export const useAggregateRecords = <T extends AggregateRecordsData>({
     recordGqlFieldsAggregate,
   });
 
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const getObjectPermissionsForObject = useGetObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
 
-  const hasReadPermission =
-    objectPermissionsByObjectMetadataId[objectMetadataItem.id]
-      ?.canReadObjectRecords === true;
+  const objectPermissions = getObjectPermissionsForObject();
+
+  const hasReadPermission = objectPermissions.canReadObjectRecords === true;
 
   const { data, loading, error } = useQuery<RecordGqlOperationFindManyResult>(
     aggregateQuery,

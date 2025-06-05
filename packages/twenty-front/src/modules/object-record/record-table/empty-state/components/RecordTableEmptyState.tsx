@@ -1,5 +1,5 @@
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useGetObjectPermissionsForObject } from '@/object-record/hooks/useGetObjectPermissionsForObject';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableEmptyStateNoGroupNoRecordAtAll } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateNoGroupNoRecordAtAll';
 import { RecordTableEmptyStateNoRecordFoundForFilter } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateNoRecordFoundForFilter';
@@ -13,8 +13,6 @@ export const RecordTableEmptyState = () => {
   const { recordTableId, objectNameSingular, objectMetadataItem } =
     useRecordTableContextOrThrow();
 
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-
   const { totalCount } = useFindManyRecords({ objectNameSingular, limit: 1 });
   const noRecordAtAll = totalCount === 0;
 
@@ -25,10 +23,16 @@ export const RecordTableEmptyState = () => {
     recordTableId,
   );
 
-  if (
-    objectPermissionsByObjectMetadataId[objectMetadataItem.id]
-      ?.canUpdateObjectRecords === false
-  ) {
+  const getObjectPermissionsForObject = useGetObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
+
+  const objectPermissions = getObjectPermissionsForObject();
+
+  const hasObjectUpdatePermissions =
+    objectPermissions.canUpdateObjectRecords === true;
+
+  if (!hasObjectUpdatePermissions) {
     return <RecordTableEmptyStateReadOnly />;
   }
 

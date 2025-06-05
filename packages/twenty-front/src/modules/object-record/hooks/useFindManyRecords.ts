@@ -7,9 +7,9 @@ import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types
 import { RecordGqlOperationVariables } from '@/object-record/graphql/types/RecordGqlOperationVariables';
 import { useFetchMoreRecordsWithPagination } from '@/object-record/hooks/useFetchMoreRecordsWithPagination';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
+import { useGetObjectPermissionsForObject } from '@/object-record/hooks/useGetObjectPermissionsForObject';
 import { useHandleFindManyRecordsCompleted } from '@/object-record/hooks/useHandleFindManyRecordsCompleted';
 import { useHandleFindManyRecordsError } from '@/object-record/hooks/useHandleFindManyRecordsError';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { OnFindManyRecordsCompleted } from '@/object-record/types/OnFindManyRecordsCompleted';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
@@ -65,15 +65,17 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     onCompleted,
   });
 
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-
   const withSoftDeleterFilter = {
     or: [{ deletedAt: { is: 'NULL' } }, { deletedAt: { is: 'NOT_NULL' } }],
   };
 
-  const hasReadPermission =
-    objectPermissionsByObjectMetadataId[objectMetadataItem.id]
-      ?.canReadObjectRecords === true;
+  const getObjectPermissionsForObject = useGetObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
+
+  const objectPermissions = getObjectPermissionsForObject();
+
+  const hasReadPermission = objectPermissions.canReadObjectRecords === true;
 
   const { data, loading, error, fetchMore } =
     useQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {

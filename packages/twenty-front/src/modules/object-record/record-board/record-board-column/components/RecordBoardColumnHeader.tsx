@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
 
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useGetObjectPermissionsForObject } from '@/object-record/hooks/useGetObjectPermissionsForObject';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
 import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
@@ -95,7 +95,15 @@ export const RecordBoardColumnHeader = () => {
   const { aggregateValue, aggregateLabel } =
     useAggregateRecordsForRecordBoardColumn();
 
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const getObjectPermissionsForObject = useGetObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
+
+  const objectPermissions = getObjectPermissionsForObject();
+
+  const hasObjectUpdatePermissions =
+    objectPermissions.canUpdateObjectRecords === true;
+
   const { createNewIndexRecord } = useCreateNewIndexRecord({
     objectMetadataItem: objectMetadataItem,
   });
@@ -142,8 +150,7 @@ export const RecordBoardColumnHeader = () => {
                   Icon={IconDotsVertical}
                   onClick={handleBoardColumnMenuOpen}
                 />
-                {objectPermissionsByObjectMetadataId[objectMetadataItem.id]
-                  ?.canUpdateObjectRecords === true && (
+                {hasObjectUpdatePermissions && (
                   <LightIconButton
                     accent="tertiary"
                     Icon={IconPlus}

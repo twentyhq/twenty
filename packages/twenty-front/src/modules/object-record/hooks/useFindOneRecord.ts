@@ -8,7 +8,7 @@ import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useGetObjectPermissionsForObject } from '@/object-record/hooks/useGetObjectPermissionsForObject';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -39,11 +39,13 @@ export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
     withSoftDeleted,
   });
 
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const getObjectPermissionsForObject = useGetObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
 
-  const hasReadPermission =
-    objectPermissionsByObjectMetadataId[objectMetadataItem.id]
-      ?.canReadObjectRecords === true;
+  const objectPermissions = getObjectPermissionsForObject();
+
+  const hasReadPermission = objectPermissions.canReadObjectRecords === true;
 
   const { data, loading, error } = useQuery<{
     [nameSingular: string]: RecordGqlNode;

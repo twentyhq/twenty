@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRef } from 'react';
 
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useGetObjectPermissionsForObject } from '@/object-record/hooks/useGetObjectPermissionsForObject';
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordTableBodyEffectsWrapper } from '@/object-record/record-table/components/RecordTableBodyEffectsWrapper';
@@ -20,7 +20,11 @@ export const RecordTable = () => {
   const { recordTableId, objectNameSingular, objectMetadataItem } =
     useRecordTableContextOrThrow();
 
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const getObjectPermissionsForObject = useGetObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
+
+  const objectPermissions = getObjectPermissionsForObject();
 
   const tableBodyRef = useRef<HTMLTableElement>(null);
 
@@ -65,8 +69,7 @@ export const RecordTable = () => {
 
   return (
     <>
-      {objectPermissionsByObjectMetadataId[objectMetadataItem.id]
-        ?.canReadObjectRecords && (
+      {objectPermissions.canReadObjectRecords && (
         <>
           <RecordTableBodyEffectsWrapper
             hasRecordGroups={hasRecordGroups}

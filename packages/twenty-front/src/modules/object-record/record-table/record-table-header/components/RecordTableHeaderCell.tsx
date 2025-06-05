@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useGetObjectPermissionsForObject } from '@/object-record/hooks/useGetObjectPermissionsForObject';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
@@ -223,7 +223,15 @@ export const RecordTableHeaderCell = ({
 
   const isReadOnly = isObjectMetadataReadOnly(objectMetadataItem);
 
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const getObjectPermissionsForObject = useGetObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
+
+  const objectPermissions = getObjectPermissionsForObject();
+
+  const hasObjectUpdatePermissions =
+    objectPermissions.canUpdateObjectRecords === true;
+
   const isFirstRowActive = useRecoilComponentFamilyValueV2(
     isRecordTableRowActiveComponentFamilyState,
     0,
@@ -255,8 +263,7 @@ export const RecordTableHeaderCell = ({
         {(useIsMobile() || iconVisibility) &&
           !!column.isLabelIdentifier &&
           !isReadOnly &&
-          objectPermissionsByObjectMetadataId[objectMetadataItem.id]
-            ?.canUpdateObjectRecords === true && (
+          hasObjectUpdatePermissions && (
             <StyledHeaderIcon>
               <LightIconButton
                 Icon={IconPlus}

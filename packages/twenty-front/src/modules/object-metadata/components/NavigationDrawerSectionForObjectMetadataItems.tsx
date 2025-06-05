@@ -1,5 +1,6 @@
 import { NavigationDrawerItemForObjectMetadataItem } from '@/object-metadata/components/NavigationDrawerItemForObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
@@ -64,8 +65,10 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
   const objectMetadataItemsForNavigationItemsWithReadPermission =
     objectMetadataItemsForNavigationItems.filter(
       (objectMetadataItem) =>
-        objectPermissionsByObjectMetadataId[objectMetadataItem.id]
-          ?.canReadObjectRecords,
+        getObjectPermissionsForObject(
+          objectPermissionsByObjectMetadataId,
+          objectMetadataItem.id,
+        ).canReadObjectRecords,
     );
 
   return (
