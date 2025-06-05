@@ -1,4 +1,4 @@
-import { RecordLayoutTab } from '@/ui/layout/tab/types/RecordLayoutTab';
+import { RecordLayoutTab } from '@/ui/layout/tab-list/types/RecordLayoutTab';
 
 export type RecordLayout = {
   hideSummaryAndFields?: boolean;
