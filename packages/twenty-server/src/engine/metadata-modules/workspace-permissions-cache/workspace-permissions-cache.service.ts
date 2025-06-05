@@ -247,15 +247,17 @@ export class WorkspacePermissionsCacheService {
       relations: ['objectPermissions'],
     });
 
-    const workspaceObjectMetadataIds =
-      await this.getWorkspaceObjectMetadataIds(workspaceId);
+    const workspaceObjectMetadataCollection =
+      await this.getWorkspaceObjectMetadataCollection(workspaceId);
 
     const permissionsByRoleId: ObjectRecordsPermissionsByRoleId = {};
 
     for (const role of roles) {
       const objectRecordsPermissions: ObjectRecordsPermissions = {};
 
-      for (const objectMetadataId of workspaceObjectMetadataIds) {
+      for (const objectMetadata of workspaceObjectMetadataCollection) {
+        const { id: objectMetadataId, isSystem } = objectMetadata;
+
         let canRead = role.canReadAllObjectRecords;
         let canUpdate = role.canUpdateAllObjectRecords;
         let canSoftDelete = role.canSoftDeleteAllObjectRecords;
@@ -267,17 +269,27 @@ export class WorkspacePermissionsCacheService {
               objectPermission.objectMetadataId === objectMetadataId,
           );
 
-          canRead =
-            objectRecordPermissionsOverride?.canReadObjectRecords ?? canRead;
-          canUpdate =
-            objectRecordPermissionsOverride?.canUpdateObjectRecords ??
-            canUpdate;
-          canSoftDelete =
-            objectRecordPermissionsOverride?.canSoftDeleteObjectRecords ??
-            canSoftDelete;
-          canDestroy =
-            objectRecordPermissionsOverride?.canDestroyObjectRecords ??
-            canDestroy;
+          const getPermissionValue = (
+            overrideValue: boolean | undefined,
+            defaultValue: boolean,
+          ) => (isSystem ? true : (overrideValue ?? defaultValue));
+
+          canRead = getPermissionValue(
+            objectRecordPermissionsOverride?.canReadObjectRecords,
+            canRead,
+          );
+          canUpdate = getPermissionValue(
+            objectRecordPermissionsOverride?.canUpdateObjectRecords,
+            canUpdate,
+          );
+          canSoftDelete = getPermissionValue(
+            objectRecordPermissionsOverride?.canSoftDeleteObjectRecords,
+            canSoftDelete,
+          );
+          canDestroy = getPermissionValue(
+            objectRecordPermissionsOverride?.canDestroyObjectRecords,
+            canDestroy,
+          );
         }
 
         objectRecordsPermissions[objectMetadataId] = {
@@ -294,17 +306,17 @@ export class WorkspacePermissionsCacheService {
     return permissionsByRoleId;
   }
 
-  private async getWorkspaceObjectMetadataIds(
+  private async getWorkspaceObjectMetadataCollection(
     workspaceId: string,
-  ): Promise<string[]> {
+  ): Promise<ObjectMetadataEntity[]> {
     const workspaceObjectMetadata = await this.objectMetadataRepository.find({
       where: {
         workspaceId,
       },
-      select: ['id'],
+      select: ['id', 'isSystem'],
     });
 
-    return workspaceObjectMetadata.map((objectMetadata) => objectMetadata.id);
+    return workspaceObjectMetadata;
   }
 
   private async getUserWorkspaceRoleMapFromDatabase({

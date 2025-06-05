@@ -8,6 +8,7 @@ import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObje
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { prefillRecord } from '@/object-record/utils/prefillRecord';
 import { capitalize } from 'twenty-shared/utils';
@@ -21,6 +22,8 @@ export const useCreateOneRecordInCache = <T extends ObjectRecord>({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
   const apolloClient = useApolloClient();
 
   return (record: ObjectRecord) => {
@@ -42,6 +45,7 @@ export const useCreateOneRecordInCache = <T extends ObjectRecord>({
             objectMetadataItem,
             computeReferences: true,
             recordGqlFields,
+            objectPermissionsByObjectMetadataId,
           })}
         `;
 

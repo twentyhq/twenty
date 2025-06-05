@@ -115,6 +115,7 @@ export const RecordDetailRelationSection = ({
 
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId,
+    objectMetadataId: relationObjectMetadataItem.id,
   });
 
   const isFieldReadOnly = useIsFieldValueReadOnly({

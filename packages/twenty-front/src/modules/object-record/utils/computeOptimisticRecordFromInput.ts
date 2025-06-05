@@ -22,13 +22,17 @@ type ComputeOptimisticCacheRecordInputArgs = {
   objectMetadataItem: ObjectMetadataItem;
   recordInput: Partial<ObjectRecord>;
   currentWorkspaceMember: CurrentWorkspaceMember | null;
-} & Pick<GetRecordFromCacheArgs, 'cache' | 'objectMetadataItems'>;
+} & Pick<
+  GetRecordFromCacheArgs,
+  'cache' | 'objectMetadataItems' | 'objectPermissionsByObjectMetadataId'
+>;
 export const computeOptimisticRecordFromInput = ({
   objectMetadataItem,
   recordInput,
   cache,
   objectMetadataItems,
   currentWorkspaceMember,
+  objectPermissionsByObjectMetadataId,
 }: ComputeOptimisticCacheRecordInputArgs) => {
   const unknownRecordInputFields = Object.keys(recordInput).filter(
     (recordKey) => {
@@ -177,6 +181,7 @@ export const computeOptimisticRecordFromInput = ({
       objectMetadataItem: targetObjectMetataDataItem,
       objectMetadataItems,
       recordId: recordInputFieldIdValue as string,
+      objectPermissionsByObjectMetadataId,
     });
 
     optimisticRecord[relationFieldIdName] = recordInputFieldIdValue;
