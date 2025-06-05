@@ -29,8 +29,9 @@
     "workerDirectory": "public"
   },
   "dependencies": {
-    "@blocknote/xl-docx-exporter": "^0.22.0",
-    "@blocknote/xl-pdf-exporter": "^0.22.0",
+    "@blocknote/xl-ai": "^0.31.1",
+    "@blocknote/xl-docx-exporter": "^0.31.1",
+    "@blocknote/xl-pdf-exporter": "^0.31.1",
     "@cyntler/react-doc-viewer": "^1.17.0",
     "@lingui/core": "^5.1.2",
     "@lingui/detect-locale": "^5.2.0",

@@ -1,12 +1,11 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { useMapViewFiltersToFilters } from './useMapViewFiltersToFilters';
 
 export const useApplyCurrentViewFiltersToCurrentRecordFilters = () => {
   const currentViewId = useRecoilComponentValueV2(
@@ -17,8 +16,7 @@ export const useApplyCurrentViewFiltersToCurrentRecordFilters = () => {
     currentRecordFiltersComponentState,
   );
 
-  const { filterableFieldMetadataItems } =
-    useFilterableFieldMetadataItemsInRecordIndexContext();
+  const { mapViewFiltersToRecordFilters } = useMapViewFiltersToFilters();
 
   const applyCurrentViewFiltersToCurrentRecordFilters = useRecoilCallback(
     ({ snapshot }) =>
@@ -33,14 +31,11 @@ export const useApplyCurrentViewFiltersToCurrentRecordFilters = () => {
 
         if (isDefined(currentView)) {
           setCurrentRecordFilters(
-            mapViewFiltersToFilters(
-              currentView.viewFilters,
-              filterableFieldMetadataItems,
-            ),
+            mapViewFiltersToRecordFilters(currentView.viewFilters),
           );
         }
       },
-    [currentViewId, filterableFieldMetadataItems, setCurrentRecordFilters],
+    [currentViewId, mapViewFiltersToRecordFilters, setCurrentRecordFilters],
   );
 
   return {
