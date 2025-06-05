@@ -2492,6 +2492,13 @@ msgstr "Tiếng Do Thái"
 msgid "Hidden"
 msgstr "Ẩn"
 
+#. js-lingui-id: em+S/U
+#: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectMenu.tsx
+msgid "Hidden fields"
+msgstr ""
+
 #. js-lingui-id: oK+1Wj
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
@@ -3148,6 +3155,11 @@ msgstr "Giám sát việc thực thi công việc đồng bộ email của bạn
 #. js-lingui-id: 1cOZuL
 #: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
 msgid "Monthly Credits"
+msgstr ""
+
+#. js-lingui-id: 2FYpfJ
+#: src/modules/ui/layout/tab-list/components/TabMoreButton.tsx
+msgid "More"
 msgstr ""
 
 #. js-lingui-id: 3Siwmw
@@ -4224,7 +4236,6 @@ msgstr ""
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput.tsx
-#: src/modules/object-record/advanced-filter/components/AdvancedFilterDropdownFieldSelectMenu.tsx
 msgid "Search fields"
 msgstr "Tìm kiếm các trường"
 
@@ -5300,6 +5311,13 @@ msgstr "Tính khả dụng"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
 msgid "Visible"
 msgstr "Có thể nhìn thấy"
+
+#. js-lingui-id: zYTdqe
+#: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectMenu.tsx
+msgid "Visible fields"
+msgstr ""
 
 #. js-lingui-id: JiDDG4
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
