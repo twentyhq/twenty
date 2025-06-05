@@ -94,8 +94,6 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
           set(hasNextPageFamilyState(queryIdentifier), false);
           set(cursorFamilyState(queryIdentifier), '');
 
-          onCompleted?.([]);
-
           return {
             data: null,
             loading: false,
@@ -124,7 +122,6 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       findManyRecords,
       objectMetadataItem.namePlural,
       queryIdentifier,
-      onCompleted,
     ],
   );
 
