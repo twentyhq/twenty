@@ -11,12 +11,13 @@ import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordF
 import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMutationBatchSize';
 import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { useDeleteManyRecordsMutation } from '@/object-record/hooks/useDeleteManyRecordsMutation';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getDeleteManyRecordsMutationResponseField } from '@/object-record/utils/getDeleteManyRecordsMutationResponseField';
 import { useRecoilValue } from 'recoil';
-import { sleep } from '~/utils/sleep';
 import { isDefined } from 'twenty-shared/utils';
+import { sleep } from '~/utils/sleep';
 
 type useDeleteManyRecordProps = {
   objectNameSingular: string;
@@ -52,7 +53,7 @@ export const useDeleteManyRecords = ({
   });
 
   const { objectMetadataItems } = useObjectMetadataItems();
-
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { refetchAggregateQueries } = useRefetchAggregateQueries({
     objectMetadataNamePlural: objectMetadataItem.namePlural,
   });
@@ -115,6 +116,7 @@ export const useDeleteManyRecords = ({
               cache: apolloClient.cache,
               record: computedOptimisticRecord,
               recordGqlFields,
+              objectPermissionsByObjectMetadataId,
             });
 
             computedOptimisticRecordsNode.push(optimisticRecordNode);
@@ -156,6 +158,7 @@ export const useDeleteManyRecords = ({
               cache: apolloClient.cache,
               record: { ...cachedRecord, deletedAt: null },
               recordGqlFields,
+              objectPermissionsByObjectMetadataId,
             });
 
             const cachedRecordWithConnection =

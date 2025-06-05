@@ -18,6 +18,7 @@ describe('mapFieldMetadataToGraphQLQuery', () => {
       fieldMetadata: personObjectMetadataItem.fields.find(
         (field) => field.name === 'id',
       )!,
+      objectPermissionsByObjectMetadataId: {},
     });
     expect(normalizeGQLField(res)).toEqual(normalizeGQLField('id'));
   });
@@ -28,6 +29,7 @@ describe('mapFieldMetadataToGraphQLQuery', () => {
       fieldMetadata: personObjectMetadataItem.fields.find(
         (field) => field.name === 'name',
       )!,
+      objectPermissionsByObjectMetadataId: {},
     });
     expect(normalizeGQLField(res)).toEqual(
       normalizeGQLField(`name
@@ -45,6 +47,7 @@ describe('mapFieldMetadataToGraphQLQuery', () => {
       fieldMetadata: personObjectMetadataItem.fields.find(
         (field) => field.name === 'company',
       )!,
+      objectPermissionsByObjectMetadataId: {},
     });
     expect(normalizeGQLField(res)).toEqual(
       normalizeGQLField(`company
@@ -122,6 +125,7 @@ idealCustomerProfile
       fieldMetadata: personObjectMetadataItem.fields.find(
         (field) => field.name === 'company',
       )!,
+      objectPermissionsByObjectMetadataId: {},
     });
     expect(normalizeGQLField(res)).toEqual(
       normalizeGQLField(`company

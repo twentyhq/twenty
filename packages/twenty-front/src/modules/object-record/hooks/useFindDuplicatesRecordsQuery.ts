@@ -5,6 +5,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { isAggregationEnabled } from '@/object-metadata/utils/isAggregationEnabled';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getFindDuplicateRecordsQueryResponseField } from '@/object-record/utils/getFindDuplicateRecordsQueryResponseField';
 import { capitalize } from 'twenty-shared/utils';
 
@@ -16,6 +17,8 @@ export const useFindDuplicateRecordsQuery = ({
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
+
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
@@ -30,6 +33,7 @@ export const useFindDuplicateRecordsQuery = ({
           node ${mapObjectMetadataToGraphQLQuery({
             objectMetadataItems,
             objectMetadataItem,
+            objectPermissionsByObjectMetadataId,
           })}
           cursor
         }
