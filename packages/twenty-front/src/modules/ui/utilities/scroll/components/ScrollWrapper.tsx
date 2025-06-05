@@ -7,7 +7,7 @@ import { scrollWrapperScrollLeftComponentState } from '@/ui/utilities/scroll/sta
 import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollTopComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
-const StyledScrollWrapper = styled.div`
+const StyledScrollWrapper = styled.div<{ height: string }>`
   &.scroll-wrapper-x-enabled {
     overflow-x: overlay;
   }
@@ -17,7 +17,7 @@ const StyledScrollWrapper = styled.div`
   overflow-x: hidden;
   overflow-y: hidden;
   width: 100%;
-  height: 100%;
+  height: ${({ height }) => height};
 `;
 
 export type ScrollWrapperProps = {
@@ -26,6 +26,7 @@ export type ScrollWrapperProps = {
   defaultEnableXScroll?: boolean;
   defaultEnableYScroll?: boolean;
   componentInstanceId: string;
+  heightAuto?: boolean;
 };
 
 export const ScrollWrapper = ({
@@ -34,6 +35,7 @@ export const ScrollWrapper = ({
   className,
   defaultEnableXScroll = true,
   defaultEnableYScroll = true,
+  heightAuto = false,
 }: ScrollWrapperProps) => {
   const setScrollTop = useSetRecoilComponentStateV2(
     scrollWrapperScrollTopComponentState,
@@ -71,6 +73,7 @@ export const ScrollWrapper = ({
         id={`scroll-wrapper-${componentInstanceId}`}
         className={className}
         onScroll={handleScroll}
+        height={heightAuto ? 'auto' : '100%'}
       >
         {children}
       </StyledScrollWrapper>
