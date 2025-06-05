@@ -11,6 +11,7 @@ import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObje
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 import { ViewFilter } from '@/views/types/ViewFilter';
@@ -44,6 +45,8 @@ export const useViewFromQueryParams = () => {
   });
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const queryParamsValidation = filterQueryParamsSchema.safeParse(
     qs.parse(searchParams.toString()),
@@ -122,6 +125,7 @@ export const useViewFromQueryParams = () => {
                     query: generateFindManyRecordsQuery({
                       objectMetadataItem: relationObjectMetadataItem,
                       objectMetadataItems,
+                      objectPermissionsByObjectMetadataId,
                     }),
                     variables: {
                       filter: {
@@ -182,6 +186,7 @@ export const useViewFromQueryParams = () => {
       hasFiltersQueryParams,
       objectMetadataItem.fields,
       objectMetadataItems,
+      objectPermissionsByObjectMetadataId,
     ],
   );
 

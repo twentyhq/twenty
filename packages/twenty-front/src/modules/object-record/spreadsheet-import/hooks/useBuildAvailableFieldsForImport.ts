@@ -3,13 +3,9 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { COMPOSITE_FIELD_IMPORT_LABELS } from '@/object-record/spreadsheet-import/constants/CompositeFieldImportLabels';
 import { AvailableFieldForImport } from '@/object-record/spreadsheet-import/types/AvailableFieldForImport';
 import { getSpreadSheetFieldValidationDefinitions } from '@/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions';
+import { CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
 import { useIcons } from 'twenty-ui/display';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-
-type CompositeFieldType = keyof typeof COMPOSITE_FIELD_IMPORT_LABELS;
-
-// Helper type for field validation type resolvers
-type ValidationTypeResolver = (key: string, label: string) => FieldMetadataType;
 
 export const useBuildAvailableFieldsForImport = () => {
   const { getIcon } = useIcons();
@@ -39,22 +35,21 @@ export const useBuildAvailableFieldsForImport = () => {
     const handleCompositeFieldWithLabels = (
       fieldMetadataItem: FieldMetadataItem,
       fieldType: CompositeFieldType,
-      validationTypeResolver?: ValidationTypeResolver,
     ) => {
       Object.entries(COMPOSITE_FIELD_IMPORT_LABELS[fieldType]).forEach(
-        ([key, subFieldLabel]) => {
+        ([subFieldKey, subFieldLabel]) => {
           const label = `${fieldMetadataItem.label} / ${subFieldLabel}`;
-          // Use the custom validation type if provided, otherwise use the field's type
-          const validationType = validationTypeResolver
-            ? validationTypeResolver(key, subFieldLabel)
-            : fieldMetadataItem.type;
 
           availableFieldsForImport.push(
             createBaseField(fieldMetadataItem, {
               label,
               key: `${subFieldLabel} (${fieldMetadataItem.name})`,
               fieldValidationDefinitions:
-                getSpreadSheetFieldValidationDefinitions(validationType, label),
+                getSpreadSheetFieldValidationDefinitions(
+                  fieldMetadataItem.type,
+                  label,
+                  subFieldKey,
+                ),
             }),
           );
         },
@@ -83,12 +78,6 @@ export const useBuildAvailableFieldsForImport = () => {
         }),
       );
     };
-
-    // Special validation type resolver for currency fields
-    const currencyValidationResolver: ValidationTypeResolver = (key) =>
-      key === 'amountMicrosLabel'
-        ? FieldMetadataType.NUMBER
-        : FieldMetadataType.CURRENCY;
 
     const fieldTypeHandlers: Record<
       string,
@@ -134,7 +123,6 @@ export const useBuildAvailableFieldsForImport = () => {
         handleCompositeFieldWithLabels(
           fieldMetadataItem,
           FieldMetadataType.CURRENCY,
-          currencyValidationResolver,
         );
       },
       [FieldMetadataType.ACTOR]: (fieldMetadataItem) => {

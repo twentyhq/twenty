@@ -61,6 +61,7 @@ export class InMemoryTestingCacheInstance {
             objectMetadataItem,
             record,
           }),
+          objectPermissionsByObjectMetadataId: {},
         }),
       ),
     );
@@ -75,6 +76,7 @@ export class InMemoryTestingCacheInstance {
       objectMetadataItem,
       objectMetadataItems: this.objectMetadataItems,
       recordId,
+      objectPermissionsByObjectMetadataId: {},
     });
     expect(cachedRecord).toBeNull();
   };
@@ -90,6 +92,7 @@ export class InMemoryTestingCacheInstance {
       objectMetadataItem,
       objectMetadataItems: this.objectMetadataItems,
       recordId,
+      objectPermissionsByObjectMetadataId: {},
     });
     expect(cachedRecord).not.toBeNull();
 

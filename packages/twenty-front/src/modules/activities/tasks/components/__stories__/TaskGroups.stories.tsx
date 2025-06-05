@@ -42,12 +42,10 @@ export const Empty: Story = {};
 
 export const WithTasks: Story = {
   args: {
-    targetableObjects: [
-      {
-        id: mockedTasks[0].taskTargets?.[0].personId,
-        targetObjectNameSingular: 'person',
-      },
-    ] as ActivityTargetableObject[],
+    targetableObject: {
+      id: mockedTasks[0].taskTargets?.[0].personId,
+      targetObjectNameSingular: 'person',
+    } as ActivityTargetableObject,
   },
   parameters: {
     msw: graphqlMocks,

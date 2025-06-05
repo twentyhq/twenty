@@ -97,6 +97,7 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
       return (
         <RecordIndexContextProvider
           value={{
+            objectPermissionsByObjectMetadataId: {},
             indexIdentifierUrl: () => '',
             onIndexRecordsLoaded: () => {},
             objectNamePlural: CoreObjectNamePlural.Company,
