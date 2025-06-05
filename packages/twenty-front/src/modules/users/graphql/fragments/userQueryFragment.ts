@@ -74,6 +74,7 @@ export const USER_QUERY_FRAGMENT = gql`
       billingSubscriptions {
         id
         status
+        metadata
       }
       workspaceMembersCount
       defaultRole {
