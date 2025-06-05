@@ -17,7 +17,7 @@ type UseGetUserSoftfoneReturn = {
 export const useGetUserSoftfone = ({
   extNum,
 }: {
-  extNum: string;
+  extNum?: string;
 }): UseGetUserSoftfoneReturn => {
   const { enqueueSnackBar } = useSnackBar();
 
