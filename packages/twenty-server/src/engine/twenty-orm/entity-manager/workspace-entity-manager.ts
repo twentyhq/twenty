@@ -184,9 +184,16 @@ export class WorkspaceEntityManager extends EntityManager {
     entity: QueryDeepPartialEntity<Entity> | QueryDeepPartialEntity<Entity>[],
     permissionOptions?: PermissionOptions,
   ): Promise<InsertResult> {
-    this.validatePermissions(target, 'insert', permissionOptions);
-
-    return super.insert(target, entity);
+    return this.createQueryBuilder(
+      undefined,
+      undefined,
+      undefined,
+      permissionOptions,
+    )
+      .insert()
+      .into(target)
+      .values(entity)
+      .execute();
   }
 
   override upsert<Entity extends ObjectLiteral>(
@@ -200,9 +207,59 @@ export class WorkspaceEntityManager extends EntityManager {
       objectRecordsPermissions?: ObjectRecordsPermissions;
     },
   ): Promise<InsertResult> {
-    this.validatePermissions(target, 'update', permissionOptions);
+    const metadata = this.connection.getMetadata(target);
+    let options;
 
-    return super.upsert(target, entityOrEntities, conflictPathsOrOptions);
+    if (Array.isArray(conflictPathsOrOptions)) {
+      options = {
+        conflictPaths: conflictPathsOrOptions,
+      };
+    } else {
+      options = conflictPathsOrOptions;
+    }
+    let entities;
+
+    if (!Array.isArray(entityOrEntities)) {
+      entities = [entityOrEntities];
+    } else {
+      entities = entityOrEntities;
+    }
+    const conflictColumns = metadata.mapPropertyPathsToColumns(
+      Array.isArray(options.conflictPaths)
+        ? options.conflictPaths
+        : Object.keys(options.conflictPaths),
+    );
+    const overwriteColumns = metadata.columns.filter(
+      (col) =>
+        !conflictColumns.includes(col) &&
+        entities.some(
+          (entity) => typeof col.getEntityValue(entity) !== 'undefined',
+        ),
+    );
+
+    return this.createQueryBuilder(
+      undefined,
+      undefined,
+      undefined,
+      permissionOptions,
+    )
+      .insert()
+      .into(target)
+      .values(entities)
+      .orUpdate(
+        [...conflictColumns, ...overwriteColumns].map(
+          (col) => col.databaseName,
+        ),
+        conflictColumns.map((col) => col.databaseName),
+        {
+          skipUpdateIfNoValuesChanged: options.skipUpdateIfNoValuesChanged,
+          indexPredicate: options.indexPredicate,
+          upsertType:
+            options.upsertType ||
+            this.connection.driver.supportedUpsertTypes[0],
+        },
+      )
+      .execute();
   }
 
   override update<Entity extends ObjectLiteral>(
@@ -220,9 +277,46 @@ export class WorkspaceEntityManager extends EntityManager {
     partialEntity: QueryDeepPartialEntity<Entity>,
     permissionOptions?: PermissionOptions,
   ): Promise<UpdateResult> {
-    this.validatePermissions(target, 'update', permissionOptions);
-
-    return super.update(target, criteria, partialEntity);
+    if (
+      criteria === undefined ||
+      criteria === null ||
+      criteria === '' ||
+      (Array.isArray(criteria) && criteria.length === 0)
+    ) {
+      return Promise.reject(
+        new TypeORMError(
+          `Empty criteria(s) are not allowed for the update method.`,
+        ),
+      );
+    }
+    if (
+      typeof criteria === 'string' ||
+      typeof criteria === 'number' ||
+      criteria instanceof Date ||
+      Array.isArray(criteria)
+    ) {
+      return this.createQueryBuilder(
+        undefined,
+        undefined,
+        undefined,
+        permissionOptions,
+      )
+        .update(target)
+        .set(partialEntity)
+        .whereInIds(criteria)
+        .execute();
+    } else {
+      return this.createQueryBuilder(
+        undefined,
+        undefined,
+        undefined,
+        permissionOptions,
+      )
+        .update(target)
+        .set(partialEntity)
+        .where(criteria)
+        .execute();
+    }
   }
 
   override save<Entity extends ObjectLiteral>(
@@ -335,9 +429,31 @@ export class WorkspaceEntityManager extends EntityManager {
     value: number | string,
     permissionOptions?: PermissionOptions,
   ): Promise<UpdateResult> {
-    this.validatePermissions(target, 'update', permissionOptions);
+    const metadata = this.connection.getMetadata(target);
+    const column = metadata.findColumnWithPropertyPath(propertyPath);
 
-    return super.increment(target, criteria, propertyPath, value);
+    if (!column)
+      throw new TypeORMError(
+        `Column ${propertyPath} was not found in ${metadata.targetName} entity.`,
+      );
+    if (isNaN(Number(value)))
+      throw new TypeORMError(`Value "${value}" is not a number.`);
+    // convert possible embeded path "social.likes" into object { social: { like: () => value } }
+    const values = propertyPath.split('.').reduceRight(
+      (value, key) => ({ [key]: value }),
+      () => this.connection.driver.escape(column.databaseName) + ' + ' + value,
+    ) as any;
+
+    return this.createQueryBuilder(
+      target,
+      'entity',
+      undefined,
+      permissionOptions,
+    )
+      .update(target)
+      .set(values)
+      .where(criteria)
+      .execute();
   }
 
   private getRepositoryKey({
@@ -570,9 +686,46 @@ export class WorkspaceEntityManager extends EntityManager {
     criteria: unknown,
     permissionOptions?: PermissionOptions,
   ): Promise<DeleteResult> {
-    this.validatePermissions(targetOrEntity, 'delete', permissionOptions);
-
-    return super.delete(targetOrEntity, criteria);
+    if (
+      criteria === undefined ||
+      criteria === null ||
+      criteria === '' ||
+      (Array.isArray(criteria) && criteria.length === 0)
+    ) {
+      return Promise.reject(
+        new TypeORMError(
+          `Empty criteria(s) are not allowed for the delete method.`,
+        ),
+      );
+    }
+    if (
+      typeof criteria === 'string' ||
+      typeof criteria === 'number' ||
+      criteria instanceof Date ||
+      Array.isArray(criteria)
+    ) {
+      return this.createQueryBuilder(
+        undefined,
+        undefined,
+        undefined,
+        permissionOptions,
+      )
+        .delete()
+        .from(targetOrEntity)
+        .whereInIds(criteria)
+        .execute();
+    } else {
+      return this.createQueryBuilder(
+        undefined,
+        undefined,
+        undefined,
+        permissionOptions,
+      )
+        .delete()
+        .from(targetOrEntity)
+        .where(criteria)
+        .execute();
+    }
   }
 
   override remove<Entity>(
@@ -1097,9 +1250,31 @@ export class WorkspaceEntityManager extends EntityManager {
     value: number | string,
     permissionOptions?: PermissionOptions,
   ): Promise<UpdateResult> {
-    this.validatePermissions(target, 'update', permissionOptions);
+    const metadata = this.connection.getMetadata(target);
+    const column = metadata.findColumnWithPropertyPath(propertyPath);
 
-    return super.decrement(target, criteria, propertyPath, value);
+    if (!column)
+      throw new TypeORMError(
+        `Column ${propertyPath} was not found in ${metadata.targetName} entity.`,
+      );
+    if (isNaN(Number(value)))
+      throw new TypeORMError(`Value "${value}" is not a number.`);
+    // convert possible embeded path "social.likes" into object { social: { like: () => value } }
+    const values = propertyPath.split('.').reduceRight(
+      (value, key) => ({ [key]: value }),
+      () => this.connection.driver.escape(column.databaseName) + ' - ' + value,
+    ) as any;
+
+    return this.createQueryBuilder(
+      target,
+      'entity',
+      undefined,
+      permissionOptions,
+    )
+      .update(target)
+      .set(values)
+      .where(criteria)
+      .execute();
   }
 
   // Forbidden methods
