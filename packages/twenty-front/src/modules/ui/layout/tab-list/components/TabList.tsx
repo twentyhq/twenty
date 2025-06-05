@@ -225,6 +225,7 @@ export const TabList = ({
                   active={tab.id === activeTabId}
                   disabled={tab.disabled ?? loading}
                   pill={tab.pill}
+                  disableTestId={true}
                 />
               </NodeDimension>
             ))}

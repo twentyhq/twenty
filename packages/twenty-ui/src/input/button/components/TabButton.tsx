@@ -75,6 +75,7 @@ type TabButtonProps = {
   RightIcon?: IconComponent;
   pill?: string | ReactElement;
   contentSize?: 'sm' | 'md';
+  disableTestId?: boolean;
 };
 
 export const TabButton = ({
@@ -90,6 +91,7 @@ export const TabButton = ({
   RightIcon,
   pill,
   contentSize = 'sm',
+  disableTestId = false,
 }: TabButtonProps) => {
   const { theme } = useContext(ThemeContext);
   const iconColor = active
@@ -100,7 +102,7 @@ export const TabButton = ({
 
   return (
     <StyledTabButton
-      data-testid={'tab-' + id}
+      data-testid={disableTestId ? undefined : `tab-${id}`}
       active={active}
       disabled={disabled}
       as={to ? Link : 'button'}
