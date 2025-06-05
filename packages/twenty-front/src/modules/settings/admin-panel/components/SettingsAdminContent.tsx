@@ -31,54 +31,6 @@ export const SettingsAdminContent = () => {
       Icon: IconHeart,
       disabled: !canAccessFullAdminPanel,
     },
-    {
-      id: SETTINGS_ADMIN_TABS.CHECK_1,
-      title: t`C`,
-      Icon: IconHeart,
-      disabled: !canAccessFullAdminPanel,
-    },
-    {
-      id: SETTINGS_ADMIN_TABS.CHECK_2,
-      title: t`Check 2`,
-      Icon: IconHeart,
-      disabled: !canAccessFullAdminPanel,
-    },
-    {
-      id: SETTINGS_ADMIN_TABS.CHECK_3,
-      title: t`Check 3`,
-      Icon: IconHeart,
-      disabled: !canAccessFullAdminPanel,
-    },
-    {
-      id: SETTINGS_ADMIN_TABS.CHECK_4,
-      title: t`Check 4`,
-      Icon: IconHeart,
-      disabled: !canAccessFullAdminPanel,
-    },
-    {
-      id: SETTINGS_ADMIN_TABS.CHECK_5,
-      title: t`Check 5`,
-      Icon: IconHeart,
-      disabled: !canAccessFullAdminPanel,
-    },
-    {
-      id: SETTINGS_ADMIN_TABS.CHECK_6,
-      title: t`Check 6`,
-      Icon: IconHeart,
-      disabled: !canAccessFullAdminPanel,
-    },
-    {
-      id: SETTINGS_ADMIN_TABS.CHECK_7,
-      title: t`Check 7`,
-      Icon: IconHeart,
-      disabled: !canAccessFullAdminPanel,
-    },
-    {
-      id: SETTINGS_ADMIN_TABS.CHECK_8,
-      title: t`Check 8`,
-      Icon: IconHeart,
-      disabled: !canAccessFullAdminPanel,
-    },
   ];
 
   return (
