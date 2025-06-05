@@ -179,14 +179,12 @@ export const SettingsBilling = () => {
       ? t`Yearly`
       : undefined;
 
-  const baseProductKey = Object.values(BillingProductKey).find(
-    (productKey) => productKey === BillingProductKey.BASE_PRODUCT,
-  );
-
   const seats =
     currentWorkspace?.currentBillingSubscription?.billingSubscriptionItems?.find(
-      (item) => item.billingProduct?.metadata.productKey === baseProductKey,
-    )?.quantity;
+      (item) =>
+        item.billingProduct?.metadata.productKey ===
+        BillingProductKey.BASE_PRODUCT,
+    )?.quantity as number | undefined;
 
   const baseProductPrices = pricesData?.plans as BillingPlanOutput[];
 

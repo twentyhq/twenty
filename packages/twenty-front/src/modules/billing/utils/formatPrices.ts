@@ -8,9 +8,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const formatPrices = (
   plans: BillingPlanOutput[] | undefined,
-  seats: number,
+  seats: number | undefined,
 ) => {
-  if (!isDefined(plans)) {
+  if (!isDefined(plans) || !isDefined(seats)) {
     return;
   }
 

@@ -23,7 +23,7 @@ export class BillingProductService {
   }: {
     interval: SubscriptionInterval;
     planKey: BillingPlanKey;
-  }) {
+  }): Promise<BillingPrice[]> {
     const billingProducts = await this.getProductsByPlan(planKey);
 
     return this.getProductPricesByInterval({
