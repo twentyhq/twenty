@@ -1,4 +1,4 @@
-import { SingleTabProps } from '@/ui/layout/tab-list/components/TabList';
+import { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useTheme } from '@emotion/react';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';

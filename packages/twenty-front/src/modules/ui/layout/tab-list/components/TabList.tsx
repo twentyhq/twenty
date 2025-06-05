@@ -1,44 +1,23 @@
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
-import { TabMoreButton } from '@/ui/layout/tab-list/components/TabMoreButton';
+import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
-import { LayoutCard } from '@/ui/layout/tab-list/types/LayoutCard';
+import { TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
+import { TabWidthsById } from '@/ui/layout/tab-list/types/TabWidthsById';
+import { calculateVisibleTabCount } from '@/ui/layout/tab-list/utils/calculateVisibleTabCount';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import styled from '@emotion/styled';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { IconComponent } from 'twenty-ui/display';
 import { TabButton } from 'twenty-ui/input';
 import { TabListDropdown } from './TabListDropdown';
-
-export type SingleTabProps<T extends string = string> = {
-  title: string;
-  Icon?: IconComponent;
-  id: T;
-  hide?: boolean;
-  disabled?: boolean;
-  pill?: string | React.ReactElement;
-  cards?: LayoutCard[];
-  logo?: string;
-};
-
-type TabWidthsById = Record<string, number>;
-
-type TabListProps = {
-  tabs: SingleTabProps[];
-  loading?: boolean;
-  behaveAsLinks?: boolean;
-  className?: string;
-  isInRightDrawer?: boolean;
-  componentInstanceId: string;
-};
+import { TabListFromUrlOptionalEffect } from './TabListFromUrlOptionalEffect';
+import { TabMoreButton } from './TabMoreButton';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ theme }) => theme.spacing(10)};
   position: relative;
   user-select: none;
@@ -57,7 +36,7 @@ const StyledContainer = styled.div`
 
 const StyledTabContainer = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${TAB_LIST_GAP}px;
   position: relative;
   overflow: hidden;
   max-width: 100%;
@@ -65,18 +44,12 @@ const StyledTabContainer = styled.div`
 
 const StyledHiddenMeasurement = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${TAB_LIST_GAP}px;
   pointer-events: none;
   position: absolute;
   top: -9999px;
   visibility: hidden;
 `;
-
-// TODO: Move these to a shared file
-// but before that, this would be optional because the padding is being set in the parent component, not just when in right drawer
-const GAP_WIDTH = 4;
-const LEFT_PADDING = 8;
-const RIGHT_PADDING = 8;
 
 export const TabList = ({
   tabs,
@@ -101,45 +74,25 @@ export const TabList = ({
   const initialActiveTabId = activeTabId || visibleTabs[0]?.id || '';
 
   const visibleTabCount = useMemo(() => {
-    if (Object.keys(tabWidthsById).length === 0 || containerWidth === 0) {
-      return visibleTabs.length;
-    }
-
-    const availableWidth = containerWidth - LEFT_PADDING - RIGHT_PADDING;
-
-    let totalWidth = 0;
-    for (let i = 0; i < visibleTabs.length; i++) {
-      const tab = visibleTabs[i];
-      const tabWidth = tabWidthsById[tab.id];
-
-      // Skip if width not measured yet
-      if (tabWidth === undefined) {
-        return visibleTabs.length;
-      }
-
-      const gapsWidth = i > 0 ? GAP_WIDTH : 0;
-      const potentialMoreButtonWidth =
-        i < visibleTabs.length - 1 ? moreButtonWidth + GAP_WIDTH : 0;
-
-      totalWidth += tabWidth + gapsWidth;
-
-      if (totalWidth + potentialMoreButtonWidth > availableWidth) {
-        return Math.max(1, i);
-      }
-    }
-    return visibleTabs.length;
+    return calculateVisibleTabCount({
+      visibleTabs,
+      tabWidthsById,
+      containerWidth,
+      moreButtonWidth,
+    });
   }, [tabWidthsById, containerWidth, moreButtonWidth, visibleTabs]);
 
   const hiddenTabsCount = visibleTabs.length - visibleTabCount;
   const hasHiddenTabs = hiddenTabsCount > 0;
+
   const dropdownId = `tab-overflow-${componentInstanceId}`;
   const { closeDropdown } = useDropdown(dropdownId);
 
-  const isActiveTabHidden = (() => {
+  const isActiveTabHidden = useMemo(() => {
     if (!hasHiddenTabs) return false;
     const hiddenTabs = visibleTabs.slice(visibleTabCount);
     return hiddenTabs.some((tab) => tab.id === activeTabId);
-  })();
+  }, [hasHiddenTabs, visibleTabs, visibleTabCount, activeTabId]);
 
   useEffect(() => {
     setActiveTabId(initialActiveTabId);
@@ -268,7 +221,7 @@ export const TabList = ({
                   isActiveTabHidden,
                 }}
                 hiddenTabs={visibleTabs.slice(visibleTabCount)}
-                activeTabId={activeTabId}
+                activeTabId={activeTabId || ''}
                 onTabSelect={handleTabSelectFromDropdown}
                 loading={loading}
               />
