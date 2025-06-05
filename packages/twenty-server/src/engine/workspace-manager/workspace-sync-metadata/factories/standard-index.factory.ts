@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { PartialIndexMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-index-metadata.interface';
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
@@ -14,6 +14,8 @@ import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-syn
 
 @Injectable()
 export class StandardIndexFactory {
+  private readonly logger = new Logger(StandardIndexFactory.name);
+
   create(
     standardObjectMetadataDefinitions: (typeof BaseWorkspaceEntity)[],
     context: WorkspaceSyncContext,
@@ -67,30 +69,46 @@ export class StandardIndexFactory {
         );
       });
 
-    return workspaceIndexMetadataArgsCollection.map(
-      (workspaceIndexMetadataArgs) => {
-        const objectMetadata =
-          originalStandardObjectMetadataMap[workspaceEntity.nameSingular];
+    return (
+      workspaceIndexMetadataArgsCollection
+        .map((workspaceIndexMetadataArgs) => {
+          const objectMetadata =
+            originalStandardObjectMetadataMap[workspaceEntity.nameSingular];
 
-        if (!objectMetadata) {
-          throw new Error(
-            `Object metadata not found for ${workspaceEntity.nameSingular}`,
+          if (!objectMetadata) {
+            throw new Error(
+              `Object metadata not found for ${workspaceEntity.nameSingular}`,
+            );
+          }
+
+          const indexMetadata: PartialIndexMetadata = {
+            workspaceId: context.workspaceId,
+            objectMetadataId: objectMetadata.id,
+            name: workspaceIndexMetadataArgs.name,
+            columns: workspaceIndexMetadataArgs.columns,
+            isUnique: workspaceIndexMetadataArgs.isUnique,
+            isCustom: false,
+            indexWhereClause: workspaceIndexMetadataArgs.whereClause,
+            indexType: workspaceIndexMetadataArgs.type,
+          };
+
+          return indexMetadata;
+        })
+        // TODO: remove this filter when we have a way to handle index on relations
+        .filter((workspaceIndexMetadataArgs) => {
+          const objectMetadata =
+            originalStandardObjectMetadataMap[workspaceEntity.nameSingular];
+
+          const hasAllFields = workspaceIndexMetadataArgs.columns.every(
+            (expectedField) => {
+              return objectMetadata.fields.some(
+                (field) => field.name === expectedField,
+              );
+            },
           );
-        }
 
-        const indexMetadata: PartialIndexMetadata = {
-          workspaceId: context.workspaceId,
-          objectMetadataId: objectMetadata.id,
-          name: workspaceIndexMetadataArgs.name,
-          columns: workspaceIndexMetadataArgs.columns,
-          isUnique: workspaceIndexMetadataArgs.isUnique,
-          isCustom: false,
-          indexWhereClause: workspaceIndexMetadataArgs.whereClause,
-          indexType: workspaceIndexMetadataArgs.type,
-        };
-
-        return indexMetadata;
-      },
+          return hasAllFields;
+        })
     );
   }
 
