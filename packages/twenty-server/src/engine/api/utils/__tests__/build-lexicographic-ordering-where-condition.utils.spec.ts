@@ -1,5 +1,3 @@
-import { title } from 'process';
-
 import { EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -137,6 +135,7 @@ describe('buildLexicographicOrderingWhereCondition', () => {
           keyOrderBy,
           value,
           isForwardPagination,
+          description,
         } = context;
 
         const result = buildLexicographicOrderingWhereCondition(
@@ -147,7 +146,7 @@ describe('buildLexicographicOrderingWhereCondition', () => {
           isForwardPagination,
         );
 
-        expect(result).toMatchSnapshot(`single property - ${title}`);
+        expect(result).toMatchSnapshot(`single property - ${description}`);
       },
     );
   });
@@ -284,6 +283,7 @@ describe('buildLexicographicOrderingWhereCondition', () => {
           keyOrderBy,
           value,
           isForwardPagination,
+          description,
         } = context;
 
         const result = buildLexicographicOrderingWhereCondition(
@@ -294,7 +294,7 @@ describe('buildLexicographicOrderingWhereCondition', () => {
           isForwardPagination,
         );
 
-        expect(result).toMatchSnapshot(`multiple properties - ${title}`);
+        expect(result).toMatchSnapshot(`multiple properties - ${description}`);
       },
     );
   });

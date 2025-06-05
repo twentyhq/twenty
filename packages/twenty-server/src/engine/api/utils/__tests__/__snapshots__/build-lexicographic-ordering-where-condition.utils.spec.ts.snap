@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`buildLexicographicOrderingWhereCondition multiple properties cases should match snapshots for three properties - all ascending, forward pagination: multiple properties - node 1`] = `
+exports[`buildLexicographicOrderingWhereCondition multiple properties cases should match snapshots for three properties - all ascending, forward pagination: multiple properties - three properties - all ascending, forward pagination 1`] = `
 {
   "or": [
     {
@@ -57,7 +57,7 @@ exports[`buildLexicographicOrderingWhereCondition multiple properties cases shou
 }
 `;
 
-exports[`buildLexicographicOrderingWhereCondition multiple properties cases should match snapshots for two properties - both ascending, backward pagination: multiple properties - node 1`] = `
+exports[`buildLexicographicOrderingWhereCondition multiple properties cases should match snapshots for two properties - both ascending, backward pagination: multiple properties - two properties - both ascending, backward pagination 1`] = `
 {
   "or": [
     {
@@ -89,7 +89,7 @@ exports[`buildLexicographicOrderingWhereCondition multiple properties cases shou
 }
 `;
 
-exports[`buildLexicographicOrderingWhereCondition multiple properties cases should match snapshots for two properties - both ascending, forward pagination: multiple properties - node 1`] = `
+exports[`buildLexicographicOrderingWhereCondition multiple properties cases should match snapshots for two properties - both ascending, forward pagination: multiple properties - two properties - both ascending, forward pagination 1`] = `
 {
   "or": [
     {
@@ -121,7 +121,7 @@ exports[`buildLexicographicOrderingWhereCondition multiple properties cases shou
 }
 `;
 
-exports[`buildLexicographicOrderingWhereCondition multiple properties cases should match snapshots for two properties - mixed ordering, forward pagination: multiple properties - node 1`] = `
+exports[`buildLexicographicOrderingWhereCondition multiple properties cases should match snapshots for two properties - mixed ordering, forward pagination: multiple properties - two properties - mixed ordering, forward pagination 1`] = `
 {
   "or": [
     {
@@ -153,7 +153,7 @@ exports[`buildLexicographicOrderingWhereCondition multiple properties cases shou
 }
 `;
 
-exports[`buildLexicographicOrderingWhereCondition single property cases should match snapshot for ascending order with backward pagination: single property - node 1`] = `
+exports[`buildLexicographicOrderingWhereCondition single property cases should match snapshot for ascending order with backward pagination: single property - ascending order with backward pagination 1`] = `
 {
   "person": {
     "firstName": {
@@ -163,7 +163,7 @@ exports[`buildLexicographicOrderingWhereCondition single property cases should m
 }
 `;
 
-exports[`buildLexicographicOrderingWhereCondition single property cases should match snapshot for ascending order with forward pagination: single property - node 1`] = `
+exports[`buildLexicographicOrderingWhereCondition single property cases should match snapshot for ascending order with forward pagination: single property - ascending order with forward pagination 1`] = `
 {
   "person": {
     "firstName": {
@@ -173,7 +173,7 @@ exports[`buildLexicographicOrderingWhereCondition single property cases should m
 }
 `;
 
-exports[`buildLexicographicOrderingWhereCondition single property cases should match snapshot for descending order with backward pagination: single property - node 1`] = `
+exports[`buildLexicographicOrderingWhereCondition single property cases should match snapshot for descending order with backward pagination: single property - descending order with backward pagination 1`] = `
 {
   "person": {
     "firstName": {
@@ -183,7 +183,7 @@ exports[`buildLexicographicOrderingWhereCondition single property cases should m
 }
 `;
 
-exports[`buildLexicographicOrderingWhereCondition single property cases should match snapshot for descending order with forward pagination: single property - node 1`] = `
+exports[`buildLexicographicOrderingWhereCondition single property cases should match snapshot for descending order with forward pagination: single property - descending order with forward pagination 1`] = `
 {
   "person": {
     "firstName": {
