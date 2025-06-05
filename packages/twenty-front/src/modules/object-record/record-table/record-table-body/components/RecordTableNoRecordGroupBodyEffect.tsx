@@ -8,7 +8,6 @@ import { ROW_HEIGHT } from '@/object-record/record-table/constants/RowHeight';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { hasRecordTableFetchedAllRecordsComponentStateV2 } from '@/object-record/record-table/states/hasRecordTableFetchedAllRecordsComponentStateV2';
-import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { tableEncounteredUnrecoverableErrorComponentState } from '@/object-record/record-table/states/tableEncounteredUnrecoverableErrorComponentState';
 import { tableLastRowVisibleComponentState } from '@/object-record/record-table/states/tableLastRowVisibleComponentState';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
@@ -57,10 +56,6 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
 
   const [lastShowPageRecordId, setLastShowPageRecordId] = useRecoilState(
     lastShowPageRecordIdState,
-  );
-
-  const isRecordTableInitialLoading = useRecoilComponentValueV2(
-    isRecordTableInitialLoadingComponentState,
   );
 
   const { scrollToPosition } = useScrollToPosition();
@@ -152,15 +147,8 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
   }, [showAuthModal, setIsRecordTableInitialLoading]);
 
   useEffect(() => {
-    if (!isRecordTableInitialLoading) {
-      setIsRecordTableInitialLoading(false);
-      findManyRecords();
-    }
-  }, [
-    findManyRecords,
-    setIsRecordTableInitialLoading,
-    isRecordTableInitialLoading,
-  ]);
+    findManyRecords();
+  }, [findManyRecords]);
 
   return <></>;
 };
