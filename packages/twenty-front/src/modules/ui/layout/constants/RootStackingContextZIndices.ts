@@ -15,9 +15,10 @@
 export enum RootStackingContextZIndices {
   CommandMenu = 21,
   CommandMenuButton = 22,
+  DropdownPortalBelowModal = 38,
   RootModalBackDrop = 39,
   RootModal = 40,
-  DropdownPortal = 50,
+  DropdownPortalAboveModal = 50,
   Dialog = 9999,
   SnackBar = 10002,
   NotFound = 10001,
