@@ -148,7 +148,8 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
 
   useEffect(() => {
     findManyRecords();
-  }, [findManyRecords]);
+    setIsRecordTableInitialLoading(false);
+  }, [findManyRecords, setIsRecordTableInitialLoading]);
 
   return <></>;
 };
