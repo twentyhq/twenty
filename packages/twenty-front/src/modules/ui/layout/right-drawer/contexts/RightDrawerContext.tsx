@@ -1,9 +1,8 @@
-import { createContext } from 'react';
+import { createRequiredContext } from '~/utils/createRequiredContext';
 
 type RightDrawerContextType = {
   isInRightDrawer: boolean;
 };
 
-export const RightDrawerContext = createContext<RightDrawerContextType>({
-  isInRightDrawer: false,
-});
+export const [RightDrawerProvider, useIsInRightDrawerOrThrow] =
+  createRequiredContext<RightDrawerContextType>('RightDrawer');
