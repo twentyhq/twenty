@@ -84,6 +84,13 @@ const StyledNoRowsContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(8)};
 `;
 
+const StyledNoRowsWithErrorsContainer = styled.div`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  display: flex;
+  justify-content: center;
+  margin: auto 0;
+`;
+
 type ValidationStepProps<T extends string> = {
   initialData: ImportedStructuredRow<T>[];
   importedColumns: SpreadsheetColumns<string>;
@@ -267,26 +274,32 @@ export const ValidationStep = <T extends string>({
   return (
     <>
       <StyledContent>
-        <StyledScrollContainer>
-          <SpreadsheetImportTable
-            headerRowHeight={32}
-            rowKeyGetter={rowKeyGetter}
-            rows={tableData}
-            onRowsChange={updateRow}
-            columns={columns}
-            selectedRows={selectedRows}
-            onSelectedRowsChange={setSelectedRows as any} // TODO: replace 'any'
-            components={{
-              noRowsFallback: (
-                <StyledNoRowsContainer>
-                  {filterByErrors
-                    ? t`No data containing errors`
-                    : t`No data found`}
-                </StyledNoRowsContainer>
-              ),
-            }}
-          />
-        </StyledScrollContainer>
+        {filterByErrors && tableData.length === 0 ? (
+          <StyledNoRowsWithErrorsContainer>
+            <Trans>No rows with errors</Trans>
+          </StyledNoRowsWithErrorsContainer>
+        ) : (
+          <StyledScrollContainer>
+            <SpreadsheetImportTable
+              headerRowHeight={32}
+              rowKeyGetter={rowKeyGetter}
+              rows={tableData}
+              onRowsChange={updateRow}
+              columns={columns}
+              selectedRows={selectedRows}
+              onSelectedRowsChange={setSelectedRows as any} // TODO: replace 'any'
+              components={{
+                noRowsFallback: (
+                  <StyledNoRowsContainer>
+                    {filterByErrors
+                      ? t`No data containing errors`
+                      : t`No data found`}
+                  </StyledNoRowsContainer>
+                ),
+              }}
+            />
+          </StyledScrollContainer>
+        )}
         <StyledToolbar>
           <StyledErrorToggle>
             <Toggle
@@ -301,7 +314,7 @@ export const ValidationStep = <T extends string>({
           <StyledButton
             Icon={IconTrash}
             title={t`Remove`}
-            accent={selectedRows.size === 0 ? 'default' : 'danger'}
+            accent={'default'}
             onClick={deleteSelectedRows}
             disabled={selectedRows.size === 0}
           />
