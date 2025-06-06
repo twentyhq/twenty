@@ -108,7 +108,7 @@ export const ColumnGrid = <T extends string>({
     <>
       <StyledGridContainer>
         <StyledGrid>
-          <StyledGridRow height="29px">
+          <StyledGridRow height="32px">
             <StyledGridHeader position="left">Imported data</StyledGridHeader>
             <StyledGridHeader position="right">Twenty fields</StyledGridHeader>
           </StyledGridRow>

@@ -11,6 +11,7 @@ const StyledFooter = styled(Modal.Footer)`
   gap: ${({ theme }) => theme.spacing(2.5)};
   justify-content: space-between;
   padding: ${({ theme }) => theme.spacing(4)};
+  height: auto;
 `;
 
 type StepNavigationButtonProps = {

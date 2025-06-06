@@ -274,8 +274,8 @@ export const MatchColumnsStep = <T extends string>({
 
   return (
     <>
-      <ScrollWrapper componentInstanceId="scroll-wrapper-modal-content">
-        <StyledContent>
+      <StyledContent>
+        <ScrollWrapper componentInstanceId="scroll-wrapper-modal-content">
           <ColumnGrid
             columns={columns}
             renderUserColumn={(columns, columnIndex) => (
@@ -301,8 +301,8 @@ export const MatchColumnsStep = <T extends string>({
               />
             )}
           />
-        </StyledContent>
-      </ScrollWrapper>
+        </ScrollWrapper>
+      </StyledContent>
       <StepNavigationButton
         onClick={handleOnContinue}
         isLoading={isLoading}
