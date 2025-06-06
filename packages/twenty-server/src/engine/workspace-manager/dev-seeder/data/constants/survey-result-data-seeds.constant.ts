@@ -9,27 +9,26 @@ type SurveyResultDataSeed = {
   shortNotes: string;
 };
 
-export const SURVEY_RESULTS_DATA_SEED_COLUMNS: (keyof SurveyResultDataSeed)[] =
-  [
-    'id',
-    'name',
-    'score',
-    'percentageOfCompletion',
-    'participants',
-    'averageEstimatedNumberOfAtomsInTheUniverse',
-    'comments',
-    'shortNotes',
-  ];
+export const SURVEY_RESULT_DATA_SEED_COLUMNS: (keyof SurveyResultDataSeed)[] = [
+  'id',
+  'name',
+  'score',
+  'percentageOfCompletion',
+  'participants',
+  'averageEstimatedNumberOfAtomsInTheUniverse',
+  'comments',
+  'shortNotes',
+];
 
-export const SURVEY_RESULTS_DATA_SEED_IDS = {
+export const SURVEY_RESULT_DATA_SEED_IDS = {
   ID_1: '20202020-0f2a-49d8-8aa2-ec8786153a0b',
   ID_2: '20202020-4e83-41ec-93e2-fd70ff09f68c',
   ID_3: '20202020-e716-4dd5-ac61-3315bc559e2d',
 };
 
-export const SURVEY_RESULTS_DATA_SEEDS: SurveyResultDataSeed[] = [
+export const SURVEY_RESULT_DATA_SEEDS: SurveyResultDataSeed[] = [
   {
-    id: SURVEY_RESULTS_DATA_SEED_IDS.ID_1,
+    id: SURVEY_RESULT_DATA_SEED_IDS.ID_1,
     name: 'First survey results - 2021',
     score: 0.26022134837694466,
     percentageOfCompletion: 76.3561814092,
@@ -41,7 +40,7 @@ export const SURVEY_RESULTS_DATA_SEEDS: SurveyResultDataSeed[] = [
     shortNotes: 'verto ascit iure tribuo vulnero',
   },
   {
-    id: SURVEY_RESULTS_DATA_SEED_IDS.ID_2,
+    id: SURVEY_RESULT_DATA_SEED_IDS.ID_2,
     name: 'With only people from the US',
     score: 0.07128839939832687,
     percentageOfCompletion: 61.6284981836,
@@ -53,7 +52,7 @@ export const SURVEY_RESULTS_DATA_SEEDS: SurveyResultDataSeed[] = [
     shortNotes: 'tres tantillus vado aequus ago',
   },
   {
-    id: SURVEY_RESULTS_DATA_SEED_IDS.ID_3,
+    id: SURVEY_RESULT_DATA_SEED_IDS.ID_3,
     name: 'People who like cats',
     score: 0.1480973360594362,
     percentageOfCompletion: 72.4289541366,

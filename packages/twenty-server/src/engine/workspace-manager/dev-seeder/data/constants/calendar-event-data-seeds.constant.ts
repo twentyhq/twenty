@@ -27,6 +27,7 @@ export const CALENDAR_EVENT_DATA_SEED_COLUMNS: (keyof CalendarEventDataSeed)[] =
     'externalUpdatedAt',
     'description',
     'location',
+    'iCalUID',
     'conferenceSolution',
     'conferenceLinkPrimaryLinkLabel',
     'conferenceLinkPrimaryLinkUrl',

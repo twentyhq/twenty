@@ -27,7 +27,7 @@ export const WORKSPACE_MEMBER_DATA_SEED_IDS = {
   PHIL: '20202020-1553-45c6-a028-5a9064cce07f',
 };
 
-export const WORKSPACE_MEMBERS_DATA_SEEDS: WorkspaceMemberDataSeed[] = [
+export const WORKSPACE_MEMBER_DATA_SEEDS: WorkspaceMemberDataSeed[] = [
   {
     id: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     nameFirstName: 'Tim',

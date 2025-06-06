@@ -18,7 +18,7 @@ export class DevSeederMetadataService {
     private readonly fieldMetadataService: FieldMetadataService,
   ) {}
 
-  public async seedMetadata({
+  public async seed({
     dataSourceMetadata,
     workspaceId,
   }: {

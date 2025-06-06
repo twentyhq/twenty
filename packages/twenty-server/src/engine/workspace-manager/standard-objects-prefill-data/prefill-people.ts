@@ -6,10 +6,9 @@ import {
   FIGMA_ID,
   NOTION_ID,
   STRIPE_ID,
-} from 'src/engine/workspace-manager/standard-objects-prefill-data/company';
+} from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-companies';
 
-// FixMe: Is this file a duplicate of src/database/typeorm-seeds/workspace/people.ts
-export const personPrefillData = async (
+export const prefillPeople = async (
   entityManager: WorkspaceEntityManager,
   schemaName: string,
 ) => {

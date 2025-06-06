@@ -7,7 +7,7 @@ export const STRIPE_ID = '1f70157c-4ea5-4d81-bc49-e1401abfbb94';
 export const FIGMA_ID = '9d5bcf43-7d38-4e88-82cb-d6d4ce638bf0';
 export const NOTION_ID = '06290608-8bf0-4806-99ae-a715a6a93fad';
 
-export const companyPrefillData = async (
+export const prefillCompanies = async (
   entityManager: WorkspaceEntityManager,
   schemaName: string,
 ) => {

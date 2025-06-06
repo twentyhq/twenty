@@ -39,7 +39,7 @@ export const OPPORTUNITY_DATA_SEED_IDS = {
   ID_4: '20202020-35b1-4045-9cde-42f715148954',
 };
 
-export const OPPORTUNITIES_DATA_SEEDS: OpportunityDataSeed[] = [
+export const OPPORTUNITY_DATA_SEEDS: OpportunityDataSeed[] = [
   {
     id: OPPORTUNITY_DATA_SEED_IDS.ID_1,
     name: 'Opportunity 1',

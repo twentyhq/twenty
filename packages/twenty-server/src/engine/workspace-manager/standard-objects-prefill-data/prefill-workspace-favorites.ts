@@ -4,7 +4,7 @@ import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/wor
 
 const tableName = 'favorite';
 
-export const seedWorkspaceFavorites = async (
+export const prefillWorkspaceFavorites = async (
   viewIds: string[],
   entityManager: WorkspaceEntityManager,
   schemaName: string,

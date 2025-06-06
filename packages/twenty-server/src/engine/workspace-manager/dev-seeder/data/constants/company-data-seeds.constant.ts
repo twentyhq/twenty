@@ -3,7 +3,7 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 type CompanyDataSeed = {
   id: string;
   name: string;
-  domainName: string;
+  domainNamePrimaryLinkUrl: string;
   addressAddressCity: string;
   employees: number;
   linkedinLinkPrimaryLinkUrl: string;
@@ -15,7 +15,7 @@ type CompanyDataSeed = {
 export const COMPANY_DATA_SEED_COLUMNS: (keyof CompanyDataSeed)[] = [
   'id',
   'name',
-  'domainName',
+  'domainNamePrimaryLinkUrl',
   'addressAddressCity',
   'employees',
   'linkedinLinkPrimaryLinkUrl',
@@ -1831,7 +1831,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_1,
     name: 'Google',
-    domainName: 'goo.gle',
+    domainNamePrimaryLinkUrl: 'goo.gle',
     addressAddressCity: 'Mountain View',
     employees: 284571,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/google',
@@ -1843,7 +1843,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_2,
     name: 'Microsoft',
-    domainName: 'microsoft.com',
+    domainNamePrimaryLinkUrl: 'microsoft.com',
     addressAddressCity: 'Redmond',
     employees: 226067,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/microsoft',
@@ -1855,7 +1855,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_3,
     name: 'Meta',
-    domainName: 'metacareers.com',
+    domainNamePrimaryLinkUrl: 'metacareers.com',
     addressAddressCity: 'Menlo Park',
     employees: 119511,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/meta',
@@ -1867,7 +1867,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_4,
     name: 'SLB',
-    domainName: 'slb.com',
+    domainNamePrimaryLinkUrl: 'slb.com',
     addressAddressCity: 'Houston',
     employees: 113151,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/slbglobal',
@@ -1879,7 +1879,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_5,
     name: 'Cisco',
-    domainName: 'cisco.com',
+    domainNamePrimaryLinkUrl: 'cisco.com',
     addressAddressCity: 'San Jose',
     employees: 99625,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/cisco',
@@ -1891,7 +1891,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_6,
     name: 'Uber',
-    domainName: 'uber.com',
+    domainNamePrimaryLinkUrl: 'uber.com',
     addressAddressCity: 'San Francisco',
     employees: 90545,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/uber-com',
@@ -1903,7 +1903,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_7,
     name: 'Salesforce',
-    domainName: 'salesforce.com',
+    domainNamePrimaryLinkUrl: 'salesforce.com',
     addressAddressCity: 'San Francisco',
     employees: 71322,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/salesforce',
@@ -1915,7 +1915,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_8,
     name: 'Amdocs',
-    domainName: 'amdocs.com',
+    domainNamePrimaryLinkUrl: 'amdocs.com',
     addressAddressCity: 'Chesterfield',
     employees: 35731,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/amdocs',
@@ -1927,7 +1927,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_9,
     name: 'VMware',
-    domainName: 'vmware.com',
+    domainNamePrimaryLinkUrl: 'vmware.com',
     addressAddressCity: 'Palo Alto',
     employees: 34759,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/vmware',
@@ -1939,7 +1939,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_10,
     name: 'GlobalLogic',
-    domainName: 'globallogic.com',
+    domainNamePrimaryLinkUrl: 'globallogic.com',
     addressAddressCity: 'Santa Clara',
     employees: 24461,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/globallogic',
@@ -1951,7 +1951,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_11,
     name: 'ServiceNow',
-    domainName: 'servicenow.com',
+    domainNamePrimaryLinkUrl: 'servicenow.com',
     addressAddressCity: 'Santa Clara',
     employees: 24104,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/servicenow',
@@ -1963,7 +1963,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_12,
     name: 'SS&C Technologies',
-    domainName: 'ssctech.com',
+    domainNamePrimaryLinkUrl: 'ssctech.com',
     addressAddressCity: 'Windsor',
     employees: 20311,
     linkedinLinkPrimaryLinkUrl:
@@ -1976,7 +1976,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_13,
     name: 'Workday',
-    domainName: 'workday.com',
+    domainNamePrimaryLinkUrl: 'workday.com',
     addressAddressCity: 'Pleasanton',
     employees: 20036,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/workday',
@@ -1988,7 +1988,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_14,
     name: 'Red Hat',
-    domainName: 'redhat.com',
+    domainNamePrimaryLinkUrl: 'redhat.com',
     addressAddressCity: 'Raleigh',
     employees: 19945,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/red-hat',
@@ -2000,7 +2000,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_15,
     name: 'NetSuite',
-    domainName: 'netsuite.com',
+    domainNamePrimaryLinkUrl: 'netsuite.com',
     addressAddressCity: 'Austin',
     employees: 19269,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/netsuite',
@@ -2012,7 +2012,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_16,
     name: 'Synopsys Inc',
-    domainName: 'synopsys.com',
+    domainNamePrimaryLinkUrl: 'synopsys.com',
     addressAddressCity: 'Sunnyvale',
     employees: 18061,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/synopsys',
@@ -2024,7 +2024,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_17,
     name: 'Siemens Digital Industries Software',
-    domainName: 'sw.siemens.com',
+    domainNamePrimaryLinkUrl: 'sw.siemens.com',
     addressAddressCity: 'Plano',
     employees: 17262,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/siemenssoftware',
@@ -2036,7 +2036,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_18,
     name: 'SAS',
-    domainName: 'sas.com',
+    domainNamePrimaryLinkUrl: 'sas.com',
     addressAddressCity: 'Cary',
     employees: 16287,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sas',
@@ -2048,7 +2048,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_19,
     name: 'Intuit',
-    domainName: 'intuit.com',
+    domainNamePrimaryLinkUrl: 'intuit.com',
     addressAddressCity: 'Mountain View',
     employees: 15851,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/intuit',
@@ -2060,7 +2060,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_20,
     name: 'Broadcom Software',
-    domainName: 'broadcom.com',
+    domainNamePrimaryLinkUrl: 'broadcom.com',
     addressAddressCity: 'San Jose',
     employees: 15127,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/broadcomsoftware',
@@ -2072,7 +2072,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_21,
     name: 'Autodesk',
-    domainName: 'autodesk.com',
+    domainNamePrimaryLinkUrl: 'autodesk.com',
     addressAddressCity: 'San Francisco',
     employees: 14593,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/autodesk',
@@ -2084,7 +2084,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_22,
     name: 'Epic',
-    domainName: 'epic.com',
+    domainNamePrimaryLinkUrl: 'epic.com',
     addressAddressCity: 'Verona',
     employees: 13765,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/epic1979',
@@ -2096,7 +2096,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_23,
     name: 'Bosch USA',
-    domainName: 'bosch.us',
+    domainNamePrimaryLinkUrl: 'bosch.us',
     addressAddressCity: 'Farmington',
     employees: 13754,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/boschusa',
@@ -2108,7 +2108,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_24,
     name: 'Cloud Software Group',
-    domainName: 'cloudsoftwaregroup.com',
+    domainNamePrimaryLinkUrl: 'cloudsoftwaregroup.com',
     addressAddressCity: 'Fort Lauderdale',
     employees: 13111,
     linkedinLinkPrimaryLinkUrl:
@@ -2121,7 +2121,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_25,
     name: 'Pitney Bowes',
-    domainName: 'pitneybowes.com',
+    domainNamePrimaryLinkUrl: 'pitneybowes.com',
     addressAddressCity: 'Stamford',
     employees: 12306,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/pitney-bowes',
@@ -2133,7 +2133,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_26,
     name: 'Juniper Networks',
-    domainName: 'juniper.net',
+    domainNamePrimaryLinkUrl: 'juniper.net',
     addressAddressCity: 'Sunnyvale',
     employees: 11928,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/juniper-networks',
@@ -2145,7 +2145,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_27,
     name: 'Chegg Inc.',
-    domainName: 'chegg.com',
+    domainNamePrimaryLinkUrl: 'chegg.com',
     addressAddressCity: 'Santa Clara',
     employees: 10790,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/chegg-inc-',
@@ -2157,7 +2157,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_28,
     name: 'Teradata',
-    domainName: 'teradata.com',
+    domainNamePrimaryLinkUrl: 'teradata.com',
     addressAddressCity: 'San Diego',
     employees: 10748,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/teradata',
@@ -2169,7 +2169,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_29,
     name: 'NICE',
-    domainName: 'nice.com',
+    domainNamePrimaryLinkUrl: 'nice.com',
     addressAddressCity: 'Hoboken',
     employees: 10258,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/nice-systems',
@@ -2181,7 +2181,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_30,
     name: 'Cadence Design Systems',
-    domainName: 'cadence.com',
+    domainNamePrimaryLinkUrl: 'cadence.com',
     addressAddressCity: 'San Jose',
     employees: 9377,
     linkedinLinkPrimaryLinkUrl:
@@ -2194,7 +2194,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_31,
     name: 'Cox Automotive Inc.',
-    domainName: 'coxautoinc.com',
+    domainNamePrimaryLinkUrl: 'coxautoinc.com',
     addressAddressCity: 'Atlanta',
     employees: 9331,
     linkedinLinkPrimaryLinkUrl:
@@ -2207,7 +2207,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_32,
     name: 'Trimble Inc.',
-    domainName: 'trimble.com',
+    domainNamePrimaryLinkUrl: 'trimble.com',
     addressAddressCity: 'Broomfield',
     employees: 9311,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/trimble',
@@ -2219,7 +2219,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_33,
     name: '[24]7.ai',
-    domainName: '247.ai',
+    domainNamePrimaryLinkUrl: '247.ai',
     addressAddressCity: 'San Jose',
     employees: 9170,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/24-7-ai',
@@ -2231,7 +2231,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_34,
     name: 'Akamai Technologies',
-    domainName: 'akamai.com',
+    domainNamePrimaryLinkUrl: 'akamai.com',
     addressAddressCity: 'Cambridge',
     employees: 9168,
     linkedinLinkPrimaryLinkUrl:
@@ -2244,7 +2244,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_35,
     name: 'Splunk',
-    domainName: 'splunk.com',
+    domainNamePrimaryLinkUrl: 'splunk.com',
     addressAddressCity: 'San Francisco',
     employees: 8891,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/splunk',
@@ -2256,7 +2256,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_36,
     name: 'Okta',
-    domainName: 'okta.com',
+    domainNamePrimaryLinkUrl: 'okta.com',
     addressAddressCity: 'San Francisco',
     employees: 8860,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/okta-inc-',
@@ -2268,7 +2268,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_37,
     name: 'Ceridian',
-    domainName: 'ceridian.com',
+    domainNamePrimaryLinkUrl: 'ceridian.com',
     addressAddressCity: 'Minneapolis',
     employees: 8813,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ceridian',
@@ -2280,7 +2280,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_38,
     name: 'RealPage, Inc.',
-    domainName: 'realpage.com',
+    domainNamePrimaryLinkUrl: 'realpage.com',
     addressAddressCity: 'Richardson',
     employees: 8227,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/realpage',
@@ -2292,7 +2292,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_39,
     name: 'Freelance',
-    domainName: 'jobicy.com',
+    domainNamePrimaryLinkUrl: 'jobicy.com',
     addressAddressCity: 'Ny',
     employees: 8180,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/pro-freelance',
@@ -2304,7 +2304,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_40,
     name: 'Stripe',
-    domainName: 'stripe.com',
+    domainNamePrimaryLinkUrl: 'stripe.com',
     addressAddressCity: 'South San Francisco',
     employees: 8145,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/stripe',
@@ -2316,7 +2316,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_41,
     name: 'Shutterfly',
-    domainName: 'shutterflyinc.com',
+    domainNamePrimaryLinkUrl: 'shutterflyinc.com',
     addressAddressCity: 'San Jose',
     employees: 8070,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/shutterfly',
@@ -2328,7 +2328,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_42,
     name: 'Unity',
-    domainName: 'unity.com',
+    domainNamePrimaryLinkUrl: 'unity.com',
     addressAddressCity: 'San Francisco',
     employees: 8063,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/unity',
@@ -2340,7 +2340,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_43,
     name: 'Veeva Systems',
-    domainName: 'veeva.com',
+    domainNamePrimaryLinkUrl: 'veeva.com',
     addressAddressCity: 'Pleasanton',
     employees: 7831,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/veeva-systems',
@@ -2352,7 +2352,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_44,
     name: 'Nuance Communications',
-    domainName: 'nuance.com',
+    domainNamePrimaryLinkUrl: 'nuance.com',
     addressAddressCity: 'Burlington',
     employees: 7761,
     linkedinLinkPrimaryLinkUrl:
@@ -2365,7 +2365,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_45,
     name: 'Freshworks',
-    domainName: 'freshworks.com',
+    domainNamePrimaryLinkUrl: 'freshworks.com',
     addressAddressCity: 'San Mateo',
     employees: 7687,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/freshworks-inc',
@@ -2377,7 +2377,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_46,
     name: 'Seal Software, a DocuSign Company',
-    domainName: 'seal-software.com',
+    domainNamePrimaryLinkUrl: 'seal-software.com',
     addressAddressCity: 'Walnut Creek',
     employees: 7586,
     linkedinLinkPrimaryLinkUrl:
@@ -2390,7 +2390,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_47,
     name: 'DocuSign',
-    domainName: 'docusign.com',
+    domainNamePrimaryLinkUrl: 'docusign.com',
     addressAddressCity: 'San Francisco',
     employees: 7557,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/docusign',
@@ -2402,7 +2402,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_48,
     name: 'Nutanix',
-    domainName: 'nutanix.com',
+    domainNamePrimaryLinkUrl: 'nutanix.com',
     addressAddressCity: 'San Jose',
     employees: 7454,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/nutanix',
@@ -2414,7 +2414,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_49,
     name: 'Genesys',
-    domainName: 'genesys.com',
+    domainNamePrimaryLinkUrl: 'genesys.com',
     addressAddressCity: 'Menlo Park',
     employees: 7371,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/genesys',
@@ -2426,7 +2426,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_50,
     name: 'SAP Concur',
-    domainName: 'concur.com',
+    domainNamePrimaryLinkUrl: 'concur.com',
     addressAddressCity: 'Bellevue',
     employees: 7305,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sapconcur',
@@ -2438,7 +2438,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_51,
     name: 'Square',
-    domainName: 'squareup.com',
+    domainNamePrimaryLinkUrl: 'squareup.com',
     addressAddressCity: 'San Francisco',
     employees: 7233,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/joinsquare',
@@ -2450,7 +2450,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_52,
     name: 'Snap Inc.',
-    domainName: 'snap.com',
+    domainNamePrimaryLinkUrl: 'snap.com',
     addressAddressCity: 'Santa Monica',
     employees: 7219,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/snap-inc-co',
@@ -2462,7 +2462,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_53,
     name: 'MathWorks',
-    domainName: 'mathworks.com',
+    domainNamePrimaryLinkUrl: 'mathworks.com',
     addressAddressCity: 'Natick',
     employees: 7188,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/the-mathworks_2',
@@ -2474,7 +2474,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_54,
     name: 'PTC',
-    domainName: 'ptc.co',
+    domainNamePrimaryLinkUrl: 'ptc.co',
     addressAddressCity: 'Boston',
     employees: 7119,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ptcinc',
@@ -2486,7 +2486,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_55,
     name: 'Ansys',
-    domainName: 'ansys.com',
+    domainNamePrimaryLinkUrl: 'ansys.com',
     addressAddressCity: 'Canonsburg',
     employees: 7112,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ansys-inc',
@@ -2498,7 +2498,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_56,
     name: 'Aricent',
-    domainName: 'altran.com',
+    domainNamePrimaryLinkUrl: 'altran.com',
     addressAddressCity: 'Santa Clara',
     employees: 7016,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/aricent',
@@ -2510,7 +2510,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_57,
     name: 'Databricks',
-    domainName: 'databricks.com',
+    domainNamePrimaryLinkUrl: 'databricks.com',
     addressAddressCity: 'San Francisco',
     employees: 6927,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/databricks',
@@ -2522,7 +2522,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_58,
     name: 'Shipt',
-    domainName: 'shipt.com',
+    domainNamePrimaryLinkUrl: 'shipt.com',
     addressAddressCity: 'Birmingham',
     employees: 6902,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/shipt',
@@ -2534,7 +2534,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_59,
     name: 'CSG',
-    domainName: 'csgi.com',
+    domainNamePrimaryLinkUrl: 'csgi.com',
     addressAddressCity: 'Englewood',
     employees: 6849,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/csg-',
@@ -2546,7 +2546,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_60,
     name: 'Twilio',
-    domainName: 'twilio.com',
+    domainNamePrimaryLinkUrl: 'twilio.com',
     addressAddressCity: 'San Francisco',
     employees: 6721,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/twilio-inc-',
@@ -2558,7 +2558,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_61,
     name: 'Veritas Technologies LLC',
-    domainName: 'veritas.com',
+    domainNamePrimaryLinkUrl: 'veritas.com',
     addressAddressCity: 'Santa Clara',
     employees: 6718,
     linkedinLinkPrimaryLinkUrl:
@@ -2571,7 +2571,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_62,
     name: 'Citrix',
-    domainName: 'citrix.com',
+    domainNamePrimaryLinkUrl: 'citrix.com',
     addressAddressCity: 'Fort Lauderdale',
     employees: 6528,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/citrix',
@@ -2583,7 +2583,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_63,
     name: 'Tyler Technologies',
-    domainName: 'tylertech.com',
+    domainNamePrimaryLinkUrl: 'tylertech.com',
     addressAddressCity: 'Plano',
     employees: 6496,
     linkedinLinkPrimaryLinkUrl:
@@ -2596,7 +2596,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_64,
     name: 'Esri',
-    domainName: 'esri.com',
+    domainNamePrimaryLinkUrl: 'esri.com',
     addressAddressCity: 'Redlands',
     employees: 6463,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/esri',
@@ -2608,7 +2608,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_65,
     name: 'Paycom',
-    domainName: 'paycom.com',
+    domainNamePrimaryLinkUrl: 'paycom.com',
     addressAddressCity: 'Oklahoma City',
     employees: 6378,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/paycom',
@@ -2620,7 +2620,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_66,
     name: 'Roblox',
-    domainName: 'roblox.com',
+    domainNamePrimaryLinkUrl: 'roblox.com',
     addressAddressCity: 'San Mateo',
     employees: 6297,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/roblox',
@@ -2632,7 +2632,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_67,
     name: 'Zendesk',
-    domainName: 'zendesk.com',
+    domainNamePrimaryLinkUrl: 'zendesk.com',
     addressAddressCity: 'San Francisco',
     employees: 6255,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/zendesk',
@@ -2644,7 +2644,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_68,
     name: 'Newfold Digital',
-    domainName: 'newfold.com',
+    domainNamePrimaryLinkUrl: 'newfold.com',
     addressAddressCity: 'Jacksonville',
     employees: 6213,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/newfold',
@@ -2656,7 +2656,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_69,
     name: 'Informatica',
-    domainName: 'informatica.com',
+    domainNamePrimaryLinkUrl: 'informatica.com',
     addressAddressCity: 'Redwood City',
     employees: 5850,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/informatica',
@@ -2668,7 +2668,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_70,
     name: 'Caf\u00e9',
-    domainName: 'at.cafe',
+    domainNamePrimaryLinkUrl: 'at.cafe',
     addressAddressCity: 'New York',
     employees: 5795,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/get-cafe',
@@ -2680,7 +2680,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_71,
     name: 'Mavenir',
-    domainName: 'mavenir.com',
+    domainNamePrimaryLinkUrl: 'mavenir.com',
     addressAddressCity: 'Richardson',
     employees: 5763,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mavenir',
@@ -2692,7 +2692,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_72,
     name: 'Allscripts',
-    domainName: 'allscripts.com',
+    domainNamePrimaryLinkUrl: 'allscripts.com',
     addressAddressCity: 'Chicago',
     employees: 5719,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/allscripts',
@@ -2704,7 +2704,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_73,
     name: 'Yardi',
-    domainName: 'yardi.com',
+    domainNamePrimaryLinkUrl: 'yardi.com',
     addressAddressCity: 'Goleta',
     employees: 5583,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/yardi',
@@ -2716,7 +2716,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_74,
     name: 'Datadog',
-    domainName: 'datadoghq.com',
+    domainNamePrimaryLinkUrl: 'datadoghq.com',
     addressAddressCity: 'New York',
     employees: 5470,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/datadog',
@@ -2728,7 +2728,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_75,
     name: 'Epicor',
-    domainName: 'epicor.com',
+    domainNamePrimaryLinkUrl: 'epicor.com',
     addressAddressCity: 'Austin',
     employees: 5310,
     linkedinLinkPrimaryLinkUrl:
@@ -2741,7 +2741,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_76,
     name: 'Hexagon Asset Lifecycle Intelligence',
-    domainName: 'hexagonppm.com',
+    domainNamePrimaryLinkUrl: 'hexagonppm.com',
     addressAddressCity: 'Madison',
     employees: 5262,
     linkedinLinkPrimaryLinkUrl:
@@ -2754,7 +2754,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_77,
     name: 'Blue Yonder',
-    domainName: 'blueyonder.com',
+    domainNamePrimaryLinkUrl: 'blueyonder.com',
     addressAddressCity: 'Scottsdale',
     employees: 5205,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/blueyonder',
@@ -2766,7 +2766,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_78,
     name: 'MongoDB',
-    domainName: 'mongodb.com',
+    domainNamePrimaryLinkUrl: 'mongodb.com',
     addressAddressCity: 'New York',
     employees: 5182,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mongodbinc',
@@ -2778,7 +2778,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_79,
     name: 'uTest',
-    domainName: 'utest.com',
+    domainNamePrimaryLinkUrl: 'utest.com',
     addressAddressCity: 'Framingham',
     employees: 5125,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/utest',
@@ -2790,7 +2790,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_80,
     name: 'Paylocity',
-    domainName: 'paylocity.com',
+    domainNamePrimaryLinkUrl: 'paylocity.com',
     addressAddressCity: 'Schaumburg',
     employees: 5095,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/paylocity',
@@ -2802,7 +2802,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_81,
     name: 'IAC',
-    domainName: 'iac.com',
+    domainNamePrimaryLinkUrl: 'iac.com',
     addressAddressCity: 'New York',
     employees: 5040,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/iac',
@@ -2814,7 +2814,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_82,
     name: 'Toast',
-    domainName: 'toasttab.com',
+    domainNamePrimaryLinkUrl: 'toasttab.com',
     addressAddressCity: 'Boston',
     employees: 5008,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/toast-inc',
@@ -2826,7 +2826,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_83,
     name: 'Bentley Systems',
-    domainName: 'bentley.com',
+    domainNamePrimaryLinkUrl: 'bentley.com',
     addressAddressCity: 'Exton',
     employees: 4862,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/bentley-systems',
@@ -2838,7 +2838,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_84,
     name: 'Owner.com',
-    domainName: 'owner.com',
+    domainNamePrimaryLinkUrl: 'owner.com',
     addressAddressCity: 'Palo Alto',
     employees: 4677,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/profitboss',
@@ -2850,7 +2850,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_85,
     name: 'eClinicalWorks',
-    domainName: 'eclinicalworks.com',
+    domainNamePrimaryLinkUrl: 'eclinicalworks.com',
     addressAddressCity: 'Westborough',
     employees: 4661,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/eclinicalworks',
@@ -2862,7 +2862,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_86,
     name: 'Altimetrik',
-    domainName: 'altimetrik.com',
+    domainNamePrimaryLinkUrl: 'altimetrik.com',
     addressAddressCity: 'Southfield',
     employees: 4629,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/altimetrik',
@@ -2874,7 +2874,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_87,
     name: 'CA Technologies',
-    domainName: 'ca.com',
+    domainNamePrimaryLinkUrl: 'ca.com',
     addressAddressCity: 'San Jose',
     employees: 4616,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ca-technologies',
@@ -2886,7 +2886,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_88,
     name: 'Dynatrace',
-    domainName: 'dynatrace.com',
+    domainNamePrimaryLinkUrl: 'dynatrace.com',
     addressAddressCity: 'Waltham',
     employees: 4502,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/dynatrace',
@@ -2898,7 +2898,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_89,
     name: 'Sprinklr',
-    domainName: 'sprinklr.com',
+    domainNamePrimaryLinkUrl: 'sprinklr.com',
     addressAddressCity: 'New York',
     employees: 4495,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sprinklr',
@@ -2910,7 +2910,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_90,
     name: 'UiPath',
-    domainName: 'uipath.com',
+    domainNamePrimaryLinkUrl: 'uipath.com',
     addressAddressCity: 'New York',
     employees: 4484,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/uipath',
@@ -2922,7 +2922,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_91,
     name: 'The Reynolds and Reynolds Company',
-    domainName: 'reyrey.com',
+    domainNamePrimaryLinkUrl: 'reyrey.com',
     addressAddressCity: 'Dayton',
     employees: 4473,
     linkedinLinkPrimaryLinkUrl:
@@ -2935,7 +2935,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_92,
     name: 'Stealth',
-    domainName: 'stealthstartup.com',
+    domainNamePrimaryLinkUrl: 'stealthstartup.com',
     addressAddressCity: 'San Francisco',
     employees: 4472,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/stealthstartup',
@@ -2947,7 +2947,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_93,
     name: 'WEX',
-    domainName: 'wexinc.com',
+    domainNamePrimaryLinkUrl: 'wexinc.com',
     addressAddressCity: 'Portland',
     employees: 4377,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/wexinc',
@@ -2959,7 +2959,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_94,
     name: 'HighRadius',
-    domainName: 'highradius.com',
+    domainNamePrimaryLinkUrl: 'highradius.com',
     addressAddressCity: 'Houston',
     employees: 4316,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/highradius',
@@ -2971,7 +2971,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_95,
     name: 'Avalara',
-    domainName: 'avalara.com',
+    domainNamePrimaryLinkUrl: 'avalara.com',
     addressAddressCity: 'Seattle',
     employees: 4311,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/avalara',
@@ -2983,7 +2983,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_96,
     name: 'Manhattan Associates',
-    domainName: 'manh.com',
+    domainNamePrimaryLinkUrl: 'manh.com',
     addressAddressCity: 'Atlanta',
     employees: 4236,
     linkedinLinkPrimaryLinkUrl:
@@ -2996,7 +2996,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_97,
     name: 'Aspen Technology',
-    domainName: 'aspentech.com',
+    domainNamePrimaryLinkUrl: 'aspentech.com',
     addressAddressCity: 'Bedford',
     employees: 4194,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/aspen-technology',
@@ -3008,7 +3008,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_98,
     name: 'Hyland',
-    domainName: 'hyland.com',
+    domainNamePrimaryLinkUrl: 'hyland.com',
     addressAddressCity: 'Westlake',
     employees: 4166,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/hyland-software',
@@ -3020,7 +3020,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_99,
     name: 'Palantir Technologies',
-    domainName: 'palantir.com',
+    domainNamePrimaryLinkUrl: 'palantir.com',
     addressAddressCity: 'Denver',
     employees: 4104,
     linkedinLinkPrimaryLinkUrl:
@@ -3033,7 +3033,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_100,
     name: 'Market America, Inc.',
-    domainName: 'marketamerica.com',
+    domainNamePrimaryLinkUrl: 'marketamerica.com',
     addressAddressCity: 'Greensboro',
     employees: 4091,
     linkedinLinkPrimaryLinkUrl:
@@ -3046,7 +3046,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_101,
     name: 'Procore Technologies',
-    domainName: 'procore.com',
+    domainNamePrimaryLinkUrl: 'procore.com',
     addressAddressCity: 'Carpinteria',
     employees: 4010,
     linkedinLinkPrimaryLinkUrl:
@@ -3059,7 +3059,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_102,
     name: 'ZoomInfo',
-    domainName: 'zoominfo.com',
+    domainNamePrimaryLinkUrl: 'zoominfo.com',
     addressAddressCity: 'Vancouver',
     employees: 3875,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/zoominfo',
@@ -3071,7 +3071,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_103,
     name: 'TIBCO',
-    domainName: 'tibco.com',
+    domainNamePrimaryLinkUrl: 'tibco.com',
     addressAddressCity: 'Palo Alto',
     employees: 3871,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tibco',
@@ -3083,7 +3083,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_104,
     name: 'GE Digital',
-    domainName: 'ge.com',
+    domainNamePrimaryLinkUrl: 'ge.com',
     addressAddressCity: 'San Ramon',
     employees: 3849,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ge-digital',
@@ -3095,7 +3095,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_105,
     name: 'RMS',
-    domainName: 'rms.com',
+    domainNamePrimaryLinkUrl: 'rms.com',
     addressAddressCity: 'Newark',
     employees: 3844,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/rms',
@@ -3107,7 +3107,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_106,
     name: 'Tableau',
-    domainName: 'tableau.com',
+    domainNamePrimaryLinkUrl: 'tableau.com',
     addressAddressCity: 'Seattle',
     employees: 3838,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tableau-software',
@@ -3119,7 +3119,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_107,
     name: 'Extreme Networks',
-    domainName: 'extremenetworks.com',
+    domainNamePrimaryLinkUrl: 'extremenetworks.com',
     addressAddressCity: 'Morrisville',
     employees: 3799,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/extreme-networks',
@@ -3131,7 +3131,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_108,
     name: 'Smartsheet',
-    domainName: 'smartsheet.com',
+    domainNamePrimaryLinkUrl: 'smartsheet.com',
     addressAddressCity: 'Bellevue',
     employees: 3798,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/smartsheet-com',
@@ -3143,7 +3143,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_109,
     name: 'Quest Software',
-    domainName: 'quest.com',
+    domainNamePrimaryLinkUrl: 'quest.com',
     addressAddressCity: 'Aliso Viejo',
     employees: 3795,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/quest-software',
@@ -3155,7 +3155,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_110,
     name: 'Motive',
-    domainName: 'gomotive.com',
+    domainNamePrimaryLinkUrl: 'gomotive.com',
     addressAddressCity: 'San Francisco',
     employees: 3788,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/motive-inc',
@@ -3167,7 +3167,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_111,
     name: 'Retired Life',
-    domainName: 'swde.com',
+    domainNamePrimaryLinkUrl: 'swde.com',
     addressAddressCity: 'San Jose',
     employees: 3774,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/retired-life',
@@ -3179,7 +3179,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_112,
     name: 'Dropbox',
-    domainName: 'dropbox.com',
+    domainNamePrimaryLinkUrl: 'dropbox.com',
     addressAddressCity: 'San Francisco',
     employees: 3751,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/dropbox',
@@ -3191,7 +3191,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_113,
     name: 'Deltek',
-    domainName: 'deltek.com',
+    domainNamePrimaryLinkUrl: 'deltek.com',
     addressAddressCity: 'Herndon',
     employees: 3727,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/deltek',
@@ -3203,7 +3203,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_114,
     name: 'e2open',
-    domainName: 'e2open.com',
+    domainNamePrimaryLinkUrl: 'e2open.com',
     addressAddressCity: 'Austin',
     employees: 3694,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/e2open',
@@ -3215,7 +3215,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_115,
     name: 'Altair',
-    domainName: 'altair.com',
+    domainNamePrimaryLinkUrl: 'altair.com',
     addressAddressCity: 'Troy',
     employees: 3596,
     linkedinLinkPrimaryLinkUrl:
@@ -3228,7 +3228,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_116,
     name: 'Gopuff',
-    domainName: 'gopuff.com',
+    domainNamePrimaryLinkUrl: 'gopuff.com',
     addressAddressCity: 'Philadelphia',
     employees: 3574,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/gopuff',
@@ -3240,7 +3240,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_117,
     name: 'FICO',
-    domainName: 'fico.com',
+    domainNamePrimaryLinkUrl: 'fico.com',
     addressAddressCity: 'Bozeman',
     employees: 3511,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/fico',
@@ -3252,7 +3252,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_118,
     name: 'Elastic',
-    domainName: 'elastic.co',
+    domainNamePrimaryLinkUrl: 'elastic.co',
     addressAddressCity: 'Mountain View',
     employees: 3489,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/elastic-co',
@@ -3264,7 +3264,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_119,
     name: 'Blackbaud',
-    domainName: 'blackbaud.com',
+    domainNamePrimaryLinkUrl: 'blackbaud.com',
     addressAddressCity: 'Charleston',
     employees: 3478,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/blackbaud',
@@ -3276,7 +3276,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_120,
     name: 'MicroStrategy',
-    domainName: 'microstrategy.com',
+    domainNamePrimaryLinkUrl: 'microstrategy.com',
     addressAddressCity: 'Vienna',
     employees: 3469,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/microstrategy',
@@ -3288,7 +3288,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_121,
     name: 'Discord',
-    domainName: 'discord.com',
+    domainNamePrimaryLinkUrl: 'discord.com',
     addressAddressCity: 'San Francisco',
     employees: 3467,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/discord',
@@ -3300,7 +3300,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_122,
     name: 'Inovalon',
-    domainName: 'inovalon.com',
+    domainNamePrimaryLinkUrl: 'inovalon.com',
     addressAddressCity: 'Bowie',
     employees: 3459,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/inovalon',
@@ -3312,7 +3312,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_123,
     name: 'Progress',
-    domainName: 'progress.com',
+    domainNamePrimaryLinkUrl: 'progress.com',
     addressAddressCity: 'Burlington',
     employees: 3428,
     linkedinLinkPrimaryLinkUrl:
@@ -3325,7 +3325,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_124,
     name: 'Rubrik',
-    domainName: 'rbrk.co',
+    domainNamePrimaryLinkUrl: 'rbrk.co',
     addressAddressCity: 'Palo Alto',
     employees: 3370,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/rubrik-inc',
@@ -3337,7 +3337,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_125,
     name: 'Axtria - Ingenious Insights',
-    domainName: 'axtria.com',
+    domainNamePrimaryLinkUrl: 'axtria.com',
     addressAddressCity: 'Berkeley Heights',
     employees: 3367,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/axtria',
@@ -3349,7 +3349,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_126,
     name: 'Audible',
-    domainName: 'audible.com',
+    domainNamePrimaryLinkUrl: 'audible.com',
     addressAddressCity: 'Newark',
     employees: 3192,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/audible',
@@ -3361,7 +3361,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_127,
     name: 'Kaseya',
-    domainName: 'kaseya.com',
+    domainNamePrimaryLinkUrl: 'kaseya.com',
     addressAddressCity: 'Miami',
     employees: 3191,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/kaseya',
@@ -3373,7 +3373,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_128,
     name: 'MRI Software',
-    domainName: 'mrisoftware.com',
+    domainNamePrimaryLinkUrl: 'mrisoftware.com',
     addressAddressCity: 'Solon',
     employees: 3107,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mri-software-llc',
@@ -3385,7 +3385,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_129,
     name: 'CyberArk',
-    domainName: 'cyberark.com',
+    domainNamePrimaryLinkUrl: 'cyberark.com',
     addressAddressCity: 'Newton Center',
     employees: 3099,
     linkedinLinkPrimaryLinkUrl:
@@ -3398,7 +3398,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_130,
     name: 'Cornerstone OnDemand',
-    domainName: 'cornerstoneondemand.com',
+    domainNamePrimaryLinkUrl: 'cornerstoneondemand.com',
     addressAddressCity: 'Santa Monica',
     employees: 3089,
     linkedinLinkPrimaryLinkUrl:
@@ -3411,7 +3411,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_131,
     name: 'Reddit, Inc.',
-    domainName: 'redditinc.com',
+    domainNamePrimaryLinkUrl: 'redditinc.com',
     addressAddressCity: 'San Francisco',
     employees: 3061,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/reddit-com',
@@ -3423,7 +3423,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_132,
     name: 'Ivanti',
-    domainName: 'ivanti.com',
+    domainNamePrimaryLinkUrl: 'ivanti.com',
     addressAddressCity: 'South Jordan',
     employees: 3056,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ivanti',
@@ -3435,7 +3435,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_133,
     name: 'Cloudera',
-    domainName: 'cloudera.com',
+    domainNamePrimaryLinkUrl: 'cloudera.com',
     addressAddressCity: 'Santa Clara',
     employees: 3007,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/cloudera',
@@ -3447,7 +3447,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_134,
     name: 'Medidata Solutions',
-    domainName: 'medidata.com',
+    domainNamePrimaryLinkUrl: 'medidata.com',
     addressAddressCity: 'New York',
     employees: 3001,
     linkedinLinkPrimaryLinkUrl:
@@ -3460,7 +3460,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_135,
     name: 'Commvault',
-    domainName: 'commvault.com',
+    domainNamePrimaryLinkUrl: 'commvault.com',
     addressAddressCity: 'Eatontown',
     employees: 2974,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/commvault',
@@ -3472,7 +3472,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_136,
     name: 'ConnectWise',
-    domainName: 'connectwise.com',
+    domainNamePrimaryLinkUrl: 'connectwise.com',
     addressAddressCity: 'Tampa',
     employees: 2937,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/connectwise',
@@ -3484,7 +3484,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_137,
     name: 'BILL',
-    domainName: 'bill.com',
+    domainNamePrimaryLinkUrl: 'bill.com',
     addressAddressCity: 'Alviso',
     employees: 2932,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/bill',
@@ -3496,7 +3496,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_138,
     name: 'Alteryx',
-    domainName: 'alteryx.com',
+    domainNamePrimaryLinkUrl: 'alteryx.com',
     addressAddressCity: 'Irvine',
     employees: 2916,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/alteryx',
@@ -3508,7 +3508,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_139,
     name: 'MNC Software',
-    domainName: 'mncsoftware.com',
+    domainNamePrimaryLinkUrl: 'mncsoftware.com',
     addressAddressCity: 'San Diego',
     employees: 2912,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mnc-software',
@@ -3520,7 +3520,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_140,
     name: 'Celonis',
-    domainName: 'celonis.com',
+    domainNamePrimaryLinkUrl: 'celonis.com',
     addressAddressCity: 'New York',
     employees: 2906,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/celonis',
@@ -3532,7 +3532,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_141,
     name: 'Attachmate',
-    domainName: 'microfocus.com',
+    domainNamePrimaryLinkUrl: 'microfocus.com',
     addressAddressCity: 'Seattle',
     employees: 2889,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/attachmate',
@@ -3544,7 +3544,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_142,
     name: 'NETSCOUT',
-    domainName: 'netscout.com',
+    domainNamePrimaryLinkUrl: 'netscout.com',
     addressAddressCity: 'Westford',
     employees: 2853,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/netscout',
@@ -3556,7 +3556,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_143,
     name: 'Confluent',
-    domainName: 'confluent.io',
+    domainNamePrimaryLinkUrl: 'confluent.io',
     addressAddressCity: 'Mountain View',
     employees: 2844,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/confluent',
@@ -3568,7 +3568,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_144,
     name: 'Samsara',
-    domainName: 'samsara.com',
+    domainNamePrimaryLinkUrl: 'samsara.com',
     addressAddressCity: 'San Francisco',
     employees: 2824,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/samsara',
@@ -3580,7 +3580,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_145,
     name: 'Chetu, Inc.',
-    domainName: 'chetu.com',
+    domainNamePrimaryLinkUrl: 'chetu.com',
     addressAddressCity: 'Fort Lauderdale',
     employees: 2809,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/chetu-inc-',
@@ -3592,7 +3592,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_146,
     name: 'Kronos Incorporated',
-    domainName: 'ukg.com',
+    domainNamePrimaryLinkUrl: 'ukg.com',
     addressAddressCity: 'Lowell',
     employees: 2808,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/kronos',
@@ -3604,7 +3604,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_147,
     name: 'Qlik',
-    domainName: 'qlik.com',
+    domainNamePrimaryLinkUrl: 'qlik.com',
     addressAddressCity: 'King Of Prussia',
     employees: 2779,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/qlik',
@@ -3616,7 +3616,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_148,
     name: 'Vertafore',
-    domainName: 'vertafore.com',
+    domainNamePrimaryLinkUrl: 'vertafore.com',
     addressAddressCity: 'Denver',
     employees: 2768,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/vertafore',
@@ -3628,7 +3628,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_149,
     name: 'Asana',
-    domainName: 'asana.com',
+    domainNamePrimaryLinkUrl: 'asana.com',
     addressAddressCity: 'San Francisco',
     employees: 2753,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/asana',
@@ -3640,7 +3640,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_150,
     name: 'Jamf',
-    domainName: 'jamf.com',
+    domainNamePrimaryLinkUrl: 'jamf.com',
     addressAddressCity: 'Minneapolis',
     employees: 2721,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/jamf-software',
@@ -3652,7 +3652,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_151,
     name: 'Paycor',
-    domainName: 'paycor.com',
+    domainNamePrimaryLinkUrl: 'paycor.com',
     addressAddressCity: 'Cincinnati',
     employees: 2719,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/paycor',
@@ -3664,7 +3664,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_152,
     name: 'Hudl',
-    domainName: 'hudl.com',
+    domainNamePrimaryLinkUrl: 'hudl.com',
     addressAddressCity: 'Lincoln',
     employees: 2709,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/hudl',
@@ -3676,7 +3676,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_153,
     name: 'Precisely',
-    domainName: 'precisely.com',
+    domainNamePrimaryLinkUrl: 'precisely.com',
     addressAddressCity: 'Burlington',
     employees: 2662,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/preciselydata',
@@ -3688,7 +3688,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_154,
     name: 'New Relic',
-    domainName: 'newrelic.com',
+    domainNamePrimaryLinkUrl: 'newrelic.com',
     addressAddressCity: 'San Francisco',
     employees: 2636,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/new-relic-inc-',
@@ -3700,7 +3700,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_155,
     name: 'Aptean',
-    domainName: 'aptean.com',
+    domainNamePrimaryLinkUrl: 'aptean.com',
     addressAddressCity: 'Alpharetta',
     employees: 2617,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/aptean',
@@ -3712,7 +3712,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_156,
     name: 'o9 Solutions, Inc.',
-    domainName: 'o9solutions.com',
+    domainNamePrimaryLinkUrl: 'o9solutions.com',
     addressAddressCity: 'Dallas',
     employees: 2612,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/o9solutions',
@@ -3724,7 +3724,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_157,
     name: 'SpotOn',
-    domainName: 'spoton.com',
+    domainNamePrimaryLinkUrl: 'spoton.com',
     addressAddressCity: 'San Francisco',
     employees: 2608,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/spoton',
@@ -3736,7 +3736,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_158,
     name: 'Automation Anywhere',
-    domainName: 'automationanywhere.com',
+    domainNamePrimaryLinkUrl: 'automationanywhere.com',
     addressAddressCity: 'San Jose',
     employees: 2588,
     linkedinLinkPrimaryLinkUrl:
@@ -3749,7 +3749,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_159,
     name: 'Tekion Corp',
-    domainName: 'tekion.com',
+    domainNamePrimaryLinkUrl: 'tekion.com',
     addressAddressCity: 'Pleasanton',
     employees: 2579,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tekion',
@@ -3761,7 +3761,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_160,
     name: 'Aurora',
-    domainName: 'aurora.tech',
+    domainNamePrimaryLinkUrl: 'aurora.tech',
     addressAddressCity: 'Mountain View',
     employees: 2557,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/aurora-inc.',
@@ -3773,7 +3773,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_161,
     name: 'SolarWinds',
-    domainName: 'solarwinds.com',
+    domainNamePrimaryLinkUrl: 'solarwinds.com',
     addressAddressCity: 'Austin',
     employees: 2529,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/solarwinds',
@@ -3785,7 +3785,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_162,
     name: 'GoTo',
-    domainName: 'goto.com',
+    domainNamePrimaryLinkUrl: 'goto.com',
     addressAddressCity: 'Boston',
     employees: 2505,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/goto',
@@ -3797,7 +3797,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_163,
     name: 'PROS',
-    domainName: 'pros.com',
+    domainNamePrimaryLinkUrl: 'pros.com',
     addressAddressCity: 'Houston',
     employees: 2479,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/pros',
@@ -3809,7 +3809,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_164,
     name: 'Miro',
-    domainName: 'miro.com',
+    domainNamePrimaryLinkUrl: 'miro.com',
     addressAddressCity: 'San Francisco',
     employees: 2445,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mirohq',
@@ -3821,7 +3821,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_165,
     name: 'Kofax',
-    domainName: 'kofax.com',
+    domainNamePrimaryLinkUrl: 'kofax.com',
     addressAddressCity: 'Irvine',
     employees: 2442,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/kofax',
@@ -3833,7 +3833,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_166,
     name: 'Accolite Digital',
-    domainName: 'accolite.com',
+    domainNamePrimaryLinkUrl: 'accolite.com',
     addressAddressCity: 'Addison',
     employees: 2438,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/accolitedigital',
@@ -3845,7 +3845,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_167,
     name: 'HashiCorp',
-    domainName: 'hashicorp.com',
+    domainNamePrimaryLinkUrl: 'hashicorp.com',
     addressAddressCity: 'San Francisco',
     employees: 2436,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/hashicorp',
@@ -3857,7 +3857,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_168,
     name: 'Pluralsight',
-    domainName: 'pluralsight.com',
+    domainNamePrimaryLinkUrl: 'pluralsight.com',
     addressAddressCity: 'Draper',
     employees: 2433,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/pluralsight',
@@ -3869,7 +3869,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_169,
     name: 'Bottomline Technologies',
-    domainName: 'bottomline.com',
+    domainNamePrimaryLinkUrl: 'bottomline.com',
     addressAddressCity: 'Portsmouth',
     employees: 2407,
     linkedinLinkPrimaryLinkUrl:
@@ -3882,7 +3882,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_170,
     name: 'Anaplan',
-    domainName: 'anaplan.com',
+    domainNamePrimaryLinkUrl: 'anaplan.com',
     addressAddressCity: 'San Francisco',
     employees: 2401,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/anaplan',
@@ -3894,7 +3894,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_171,
     name: 'OneTrust',
-    domainName: 'onetrust.com',
+    domainNamePrimaryLinkUrl: 'onetrust.com',
     addressAddressCity: 'Atlanta',
     employees: 2383,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/onetrust',
@@ -3906,7 +3906,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_172,
     name: 'Medallia',
-    domainName: 'medallia.com',
+    domainNamePrimaryLinkUrl: 'medallia.com',
     addressAddressCity: 'Pleasanton',
     employees: 2381,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/medallia-inc.',
@@ -3918,7 +3918,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_173,
     name: 'SailPoint',
-    domainName: 'sailpoint.com',
+    domainNamePrimaryLinkUrl: 'sailpoint.com',
     addressAddressCity: 'Austin',
     employees: 2366,
     linkedinLinkPrimaryLinkUrl:
@@ -3931,7 +3931,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_174,
     name: 'Appian Corporation',
-    domainName: 'appian.com',
+    domainNamePrimaryLinkUrl: 'appian.com',
     addressAddressCity: 'Mc Lean',
     employees: 2345,
     linkedinLinkPrimaryLinkUrl:
@@ -3944,7 +3944,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_175,
     name: 'Dealertrack',
-    domainName: 'dealertrack.com',
+    domainNamePrimaryLinkUrl: 'dealertrack.com',
     addressAddressCity: 'New Hyde Park',
     employees: 2335,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/dealertrack',
@@ -3956,7 +3956,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_176,
     name: 'impact.com',
-    domainName: 'impact.com',
+    domainNamePrimaryLinkUrl: 'impact.com',
     addressAddressCity: 'Santa Barbara',
     employees: 2327,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/impactdotcom',
@@ -3968,7 +3968,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_177,
     name: 'Inhabit\u00ae',
-    domainName: 'inhabitiq.com',
+    domainNamePrimaryLinkUrl: 'inhabitiq.com',
     addressAddressCity: 'Knoxville',
     employees: 2286,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/inhabit-iq',
@@ -3980,7 +3980,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_178,
     name: 'SymphonyAI',
-    domainName: 'symphonyai.com',
+    domainNamePrimaryLinkUrl: 'symphonyai.com',
     addressAddressCity: 'Palo Alto',
     employees: 2282,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/symphonyai',
@@ -3992,7 +3992,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_179,
     name: 'CCC Intelligent Solutions',
-    domainName: 'cccis.com',
+    domainNamePrimaryLinkUrl: 'cccis.com',
     addressAddressCity: 'Chicago',
     employees: 2282,
     linkedinLinkPrimaryLinkUrl:
@@ -4005,7 +4005,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_180,
     name: 'Toshiba Global Commerce Solutions',
-    domainName: 'toshiba.com',
+    domainNamePrimaryLinkUrl: 'toshiba.com',
     addressAddressCity: 'Durham',
     employees: 2281,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/toshibacommerce',
@@ -4017,7 +4017,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_181,
     name: 'Vertex Inc.',
-    domainName: 'vertexinc.com',
+    domainNamePrimaryLinkUrl: 'vertexinc.com',
     addressAddressCity: 'King Of Prussia',
     employees: 2265,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/vertex-inc.',
@@ -4029,7 +4029,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_182,
     name: 'PRO Unlimited',
-    domainName: 'magnitglobal.com',
+    domainNamePrimaryLinkUrl: 'magnitglobal.com',
     addressAddressCity: 'San Francisco',
     employees: 2264,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/prounlimited',
@@ -4041,7 +4041,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_183,
     name: 'Five9',
-    domainName: 'five9.com',
+    domainNamePrimaryLinkUrl: 'five9.com',
     addressAddressCity: 'San Ramon',
     employees: 2253,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/five9',
@@ -4053,7 +4053,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_184,
     name: 'Cohesity',
-    domainName: 'cohesity.com',
+    domainNamePrimaryLinkUrl: 'cohesity.com',
     addressAddressCity: 'San Jose',
     employees: 2252,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/cohesity',
@@ -4065,7 +4065,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_185,
     name: 'Wind River',
-    domainName: 'windriver.com',
+    domainNamePrimaryLinkUrl: 'windriver.com',
     addressAddressCity: 'Alameda',
     employees: 2244,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/wind-river',
@@ -4077,7 +4077,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_186,
     name: 'Icertis',
-    domainName: 'icertis.com',
+    domainNamePrimaryLinkUrl: 'icertis.com',
     addressAddressCity: 'Bellevue',
     employees: 2233,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/icertis',
@@ -4089,7 +4089,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_187,
     name: 'Navan',
-    domainName: 'navan.com',
+    domainNamePrimaryLinkUrl: 'navan.com',
     addressAddressCity: 'Palo Alto',
     employees: 2221,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/navan',
@@ -4101,7 +4101,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_188,
     name: 'Diligent',
-    domainName: 'diligent.com',
+    domainNamePrimaryLinkUrl: 'diligent.com',
     addressAddressCity: 'New York',
     employees: 2215,
     linkedinLinkPrimaryLinkUrl:
@@ -4114,7 +4114,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_189,
     name: 'Applied Systems',
-    domainName: 'appliedsystems.com',
+    domainNamePrimaryLinkUrl: 'appliedsystems.com',
     addressAddressCity: 'University Park',
     employees: 2198,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/applied-systems',
@@ -4126,7 +4126,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_190,
     name: 'Forcepoint',
-    domainName: 'forcepoint.com',
+    domainNamePrimaryLinkUrl: 'forcepoint.com',
     addressAddressCity: 'Austin',
     employees: 2196,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/forcepoint',
@@ -4138,7 +4138,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_191,
     name: 'Compuware',
-    domainName: 'bmc.com',
+    domainNamePrimaryLinkUrl: 'bmc.com',
     addressAddressCity: 'Detroit',
     employees: 2183,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/compuware',
@@ -4150,7 +4150,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_192,
     name: 'Netsmart',
-    domainName: 'ntst.com',
+    domainNamePrimaryLinkUrl: 'ntst.com',
     addressAddressCity: 'Leawood',
     employees: 2177,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/netsmart',
@@ -4162,7 +4162,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_193,
     name: 'The Apache Software Foundation',
-    domainName: 'apache.org',
+    domainNamePrimaryLinkUrl: 'apache.org',
     addressAddressCity: 'Wilmington',
     employees: 2177,
     linkedinLinkPrimaryLinkUrl:
@@ -4175,7 +4175,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_194,
     name: 'ArisGlobal',
-    domainName: 'arisglobal.com',
+    domainNamePrimaryLinkUrl: 'arisglobal.com',
     addressAddressCity: 'Miami',
     employees: 2168,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/aris-global',
@@ -4187,7 +4187,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_195,
     name: 'WORKING BY MY SELF',
-    domainName: 'fcutechnologies.com',
+    domainNamePrimaryLinkUrl: 'fcutechnologies.com',
     addressAddressCity: 'Fort Lauderdale',
     employees: 2148,
     linkedinLinkPrimaryLinkUrl:
@@ -4200,7 +4200,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_196,
     name: 'Varonis',
-    domainName: 'varonis.com',
+    domainNamePrimaryLinkUrl: 'varonis.com',
     addressAddressCity: 'New York',
     employees: 2140,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/varonis',
@@ -4212,7 +4212,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_197,
     name: 'Fever',
-    domainName: 'feverup.com',
+    domainNamePrimaryLinkUrl: 'feverup.com',
     addressAddressCity: 'New York',
     employees: 2125,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/fever-up',
@@ -4224,7 +4224,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_198,
     name: 'Agilysys',
-    domainName: 'agilysys.com',
+    domainNamePrimaryLinkUrl: 'agilysys.com',
     addressAddressCity: 'Alpharetta',
     employees: 2081,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/agilysys',
@@ -4236,7 +4236,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_199,
     name: 'OutSystems',
-    domainName: 'outsystems.com',
+    domainNamePrimaryLinkUrl: 'outsystems.com',
     addressAddressCity: 'Boston',
     employees: 2057,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/outsystems',
@@ -4248,7 +4248,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_200,
     name: 'Entrata',
-    domainName: 'entrata.com',
+    domainNamePrimaryLinkUrl: 'entrata.com',
     addressAddressCity: 'Lehi',
     employees: 2045,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/entratasoftware',
@@ -4260,7 +4260,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_201,
     name: 'Verkada',
-    domainName: 'verkada.com',
+    domainNamePrimaryLinkUrl: 'verkada.com',
     addressAddressCity: 'San Mateo',
     employees: 2044,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/verkada',
@@ -4272,7 +4272,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_202,
     name: 'Majesco',
-    domainName: 'majesco.com',
+    domainNamePrimaryLinkUrl: 'majesco.com',
     addressAddressCity: 'Morristown',
     employees: 2021,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/majesco',
@@ -4284,7 +4284,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_203,
     name: 'Boomi',
-    domainName: 'boomi.com',
+    domainNamePrimaryLinkUrl: 'boomi.com',
     addressAddressCity: 'Wayne',
     employees: 2009,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/boomi-inc',
@@ -4296,7 +4296,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_204,
     name: 'PDI Technologies',
-    domainName: 'pditechnologies.com',
+    domainNamePrimaryLinkUrl: 'pditechnologies.com',
     addressAddressCity: 'Alpharetta',
     employees: 2005,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/pdi-technologies',
@@ -4308,7 +4308,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_205,
     name: 'ServiceTitan',
-    domainName: 'servicetitan.com',
+    domainNamePrimaryLinkUrl: 'servicetitan.com',
     addressAddressCity: 'Glendale',
     employees: 1997,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/servicetitan',
@@ -4320,7 +4320,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_206,
     name: 'Sitecore',
-    domainName: 'sitecore.com',
+    domainNamePrimaryLinkUrl: 'sitecore.com',
     addressAddressCity: 'San Francisco',
     employees: 1943,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sitecore',
@@ -4332,7 +4332,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_207,
     name: 'SAP SuccessFactors',
-    domainName: 'sap.com',
+    domainNamePrimaryLinkUrl: 'sap.com',
     addressAddressCity: 'South San Francisco',
     employees: 1941,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/successfactors',
@@ -4344,7 +4344,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_208,
     name: 'Postman',
-    domainName: 'postman.com',
+    domainNamePrimaryLinkUrl: 'postman.com',
     addressAddressCity: 'San Francisco',
     employees: 1928,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/postman-platform',
@@ -4356,7 +4356,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_209,
     name: 'Scale AI',
-    domainName: 'scale.com',
+    domainNamePrimaryLinkUrl: 'scale.com',
     addressAddressCity: 'San Francisco',
     employees: 1906,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/scaleai',
@@ -4368,7 +4368,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_210,
     name: 'Duck Creek Technologies',
-    domainName: 'duckcreek.com',
+    domainNamePrimaryLinkUrl: 'duckcreek.com',
     addressAddressCity: 'Boston',
     employees: 1894,
     linkedinLinkPrimaryLinkUrl:
@@ -4381,7 +4381,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_211,
     name: 'MICROS Systems Inc',
-    domainName: 'oracle.com',
+    domainNamePrimaryLinkUrl: 'oracle.com',
     addressAddressCity: 'Columbia',
     employees: 1882,
     linkedinLinkPrimaryLinkUrl:
@@ -4394,7 +4394,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_212,
     name: 'Riverbed Technology',
-    domainName: 'riverbed.com',
+    domainNamePrimaryLinkUrl: 'riverbed.com',
     addressAddressCity: 'San Francisco',
     employees: 1874,
     linkedinLinkPrimaryLinkUrl:
@@ -4407,7 +4407,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_213,
     name: 'Fast Enterprises, LLC',
-    domainName: 'fastenterprises.com',
+    domainNamePrimaryLinkUrl: 'fastenterprises.com',
     addressAddressCity: 'Englewood',
     employees: 1833,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/fast-enterprises',
@@ -4419,7 +4419,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_214,
     name: 'Alvaria, Inc.',
-    domainName: 'alvaria.com',
+    domainNamePrimaryLinkUrl: 'alvaria.com',
     addressAddressCity: 'Westford',
     employees: 1830,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/alvaria-inc',
@@ -4431,7 +4431,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_215,
     name: 'BlackLine',
-    domainName: 'blackline.com',
+    domainNamePrimaryLinkUrl: 'blackline.com',
     addressAddressCity: 'Woodland Hills',
     employees: 1826,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/blackline',
@@ -4443,7 +4443,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_216,
     name: '3Pillar Global',
-    domainName: '3pillarglobal.com',
+    domainNamePrimaryLinkUrl: '3pillarglobal.com',
     addressAddressCity: 'Fairfax',
     employees: 1824,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/3pillar-global',
@@ -4455,7 +4455,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_217,
     name: 'Saama',
-    domainName: 'saama.com',
+    domainNamePrimaryLinkUrl: 'saama.com',
     addressAddressCity: 'Campbell',
     employees: 1809,
     linkedinLinkPrimaryLinkUrl:
@@ -4468,7 +4468,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_218,
     name: 'Ancestry',
-    domainName: 'ancestry.com',
+    domainNamePrimaryLinkUrl: 'ancestry.com',
     addressAddressCity: 'Lehi',
     employees: 1794,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ancestry.com',
@@ -4480,7 +4480,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_219,
     name: 'insightsoftware',
-    domainName: 'insightsoftware.com',
+    domainNamePrimaryLinkUrl: 'insightsoftware.com',
     addressAddressCity: 'Raleigh',
     employees: 1788,
     linkedinLinkPrimaryLinkUrl:
@@ -4493,7 +4493,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_220,
     name: 'Ebix',
-    domainName: 'ebix.com',
+    domainNamePrimaryLinkUrl: 'ebix.com',
     addressAddressCity: 'Duluth',
     employees: 1757,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ebix',
@@ -4505,7 +4505,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_221,
     name: 'Zuora',
-    domainName: 'zuora.com',
+    domainNamePrimaryLinkUrl: 'zuora.com',
     addressAddressCity: 'Redwood City',
     employees: 1746,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/zuora',
@@ -4517,7 +4517,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_222,
     name: 'IntelyCare',
-    domainName: 'intelycare.com',
+    domainNamePrimaryLinkUrl: 'intelycare.com',
     addressAddressCity: 'Quincy',
     employees: 1731,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/intelycare',
@@ -4529,7 +4529,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_223,
     name: 'Axway',
-    domainName: 'axway.com',
+    domainNamePrimaryLinkUrl: 'axway.com',
     addressAddressCity: 'Scottsdale',
     employees: 1731,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/axway',
@@ -4541,7 +4541,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_224,
     name: 'Community Brands',
-    domainName: 'communitybrands.com',
+    domainNamePrimaryLinkUrl: 'communitybrands.com',
     addressAddressCity: 'Saint Petersburg',
     employees: 1731,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/communitybrands',
@@ -4553,7 +4553,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_225,
     name: 'InterSystems',
-    domainName: 'intersystems.com',
+    domainNamePrimaryLinkUrl: 'intersystems.com',
     addressAddressCity: 'Cambridge',
     employees: 1730,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/intersystems',
@@ -4565,7 +4565,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_226,
     name: 'Mozilla',
-    domainName: 'mozilla.org',
+    domainNamePrimaryLinkUrl: 'mozilla.org',
     addressAddressCity: 'San Francisco',
     employees: 1721,
     linkedinLinkPrimaryLinkUrl:
@@ -4578,7 +4578,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_227,
     name: 'Semrush',
-    domainName: 'semrush.com',
+    domainNamePrimaryLinkUrl: 'semrush.com',
     addressAddressCity: 'Boston',
     employees: 1706,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/semrush',
@@ -4590,7 +4590,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_228,
     name: 'Avid',
-    domainName: 'avid.com',
+    domainNamePrimaryLinkUrl: 'avid.com',
     addressAddressCity: 'Burlington',
     employees: 1705,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/avid-technology',
@@ -4602,7 +4602,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_229,
     name: 'Conga',
-    domainName: 'conga.com',
+    domainNamePrimaryLinkUrl: 'conga.com',
     addressAddressCity: 'Broomfield',
     employees: 1695,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/conga',
@@ -4614,7 +4614,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_230,
     name: 'InfoBeans',
-    domainName: 'infobeans.com',
+    domainNamePrimaryLinkUrl: 'infobeans.com',
     addressAddressCity: 'Danville',
     employees: 1691,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/infobeans',
@@ -4626,7 +4626,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_231,
     name: 'AppFolio, Inc.',
-    domainName: 'appfolioinc.com',
+    domainNamePrimaryLinkUrl: 'appfolioinc.com',
     addressAddressCity: 'Goleta',
     employees: 1688,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/appfolio-inc',
@@ -4638,7 +4638,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_232,
     name: 'Sovos',
-    domainName: 'sovos.com',
+    domainNamePrimaryLinkUrl: 'sovos.com',
     addressAddressCity: 'Wilmington',
     employees: 1684,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sovos',
@@ -4650,7 +4650,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_233,
     name: 'nCino, Inc.',
-    domainName: 'ncino.com',
+    domainNamePrimaryLinkUrl: 'ncino.com',
     addressAddressCity: 'Wilmington',
     employees: 1680,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ncino-inc-',
@@ -4662,7 +4662,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_234,
     name: 'Vistex',
-    domainName: 'vistex.com',
+    domainNamePrimaryLinkUrl: 'vistex.com',
     addressAddressCity: 'Hoffman Estates',
     employees: 1677,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/vistex',
@@ -4674,7 +4674,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_235,
     name: 'Taboola',
-    domainName: 'taboola.com',
+    domainNamePrimaryLinkUrl: 'taboola.com',
     addressAddressCity: 'New York',
     employees: 1677,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/taboola',
@@ -4686,7 +4686,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_236,
     name: 'EverCommerce',
-    domainName: 'evercommerce.com',
+    domainNamePrimaryLinkUrl: 'evercommerce.com',
     addressAddressCity: 'Denver',
     employees: 1673,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/evercommerce',
@@ -4698,7 +4698,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_237,
     name: 'Virgin Pulse',
-    domainName: 'virginpulse.com',
+    domainNamePrimaryLinkUrl: 'virginpulse.com',
     addressAddressCity: 'Providence',
     employees: 1666,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/virgin-pulse',
@@ -4710,7 +4710,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_238,
     name: 'Houzz',
-    domainName: 'houzz.com',
+    domainNamePrimaryLinkUrl: 'houzz.com',
     addressAddressCity: 'Palo Alto',
     employees: 1641,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/houzz',
@@ -4722,7 +4722,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_239,
     name: 'AvidXchange, Inc.',
-    domainName: 'avidxchange.com',
+    domainNamePrimaryLinkUrl: 'avidxchange.com',
     addressAddressCity: 'Charlotte',
     employees: 1639,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/avidxchange-inc-',
@@ -4734,7 +4734,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_240,
     name: 'Planview, Inc.',
-    domainName: 'planview.com',
+    domainNamePrimaryLinkUrl: 'planview.com',
     addressAddressCity: 'Austin',
     employees: 1634,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/planview',
@@ -4746,7 +4746,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_241,
     name: 'HackerRank',
-    domainName: 'hackerrank.com',
+    domainNamePrimaryLinkUrl: 'hackerrank.com',
     addressAddressCity: 'Mountain View',
     employees: 1632,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/hackerrank',
@@ -4758,7 +4758,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_242,
     name: 'Clearwater Analytics',
-    domainName: 'clearwateranalytics.com',
+    domainNamePrimaryLinkUrl: 'clearwateranalytics.com',
     addressAddressCity: 'Boise',
     employees: 1615,
     linkedinLinkPrimaryLinkUrl:
@@ -4771,7 +4771,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_243,
     name: 'Outreach',
-    domainName: 'outreach.io',
+    domainNamePrimaryLinkUrl: 'outreach.io',
     addressAddressCity: 'Seattle',
     employees: 1612,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/outreach-saas',
@@ -4783,7 +4783,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_244,
     name: 'Everbridge',
-    domainName: 'everbridge.com',
+    domainNamePrimaryLinkUrl: 'everbridge.com',
     addressAddressCity: 'Burlington',
     employees: 1607,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/everbridge',
@@ -4795,7 +4795,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_245,
     name: 'Zycus',
-    domainName: 'zycus.com',
+    domainNamePrimaryLinkUrl: 'zycus.com',
     addressAddressCity: 'Princeton',
     employees: 1604,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/zycus',
@@ -4807,7 +4807,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_246,
     name: 'Bullhorn',
-    domainName: 'bullhorn.com',
+    domainNamePrimaryLinkUrl: 'bullhorn.com',
     addressAddressCity: 'Boston',
     employees: 1604,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/bullhorn',
@@ -4819,7 +4819,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_247,
     name: 'LivePerson',
-    domainName: 'liveperson.com',
+    domainNamePrimaryLinkUrl: 'liveperson.com',
     addressAddressCity: 'New York',
     employees: 1603,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/liveperson',
@@ -4831,7 +4831,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_248,
     name: 'Relativity',
-    domainName: 'relativity.com',
+    domainNamePrimaryLinkUrl: 'relativity.com',
     addressAddressCity: 'Chicago',
     employees: 1601,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/relativityhq',
@@ -4843,7 +4843,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_249,
     name: 'HealthEdge',
-    domainName: 'healthedge.com',
+    domainNamePrimaryLinkUrl: 'healthedge.com',
     addressAddressCity: 'Burlington',
     employees: 1600,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/healthedge',
@@ -4855,7 +4855,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_250,
     name: 'QAD',
-    domainName: 'qad.com',
+    domainNamePrimaryLinkUrl: 'qad.com',
     addressAddressCity: 'Santa Barbara',
     employees: 1598,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/qad',
@@ -4867,7 +4867,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_251,
     name: 'Braze',
-    domainName: 'braze.com',
+    domainNamePrimaryLinkUrl: 'braze.com',
     addressAddressCity: 'New York',
     employees: 1598,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/braze-',
@@ -4879,7 +4879,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_252,
     name: 'Exadel',
-    domainName: 'exadel.com',
+    domainNamePrimaryLinkUrl: 'exadel.com',
     addressAddressCity: 'Walnut Creek',
     employees: 1592,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/exadel',
@@ -4891,7 +4891,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_253,
     name: 'Phenom',
-    domainName: 'phenom.com',
+    domainNamePrimaryLinkUrl: 'phenom.com',
     addressAddressCity: 'Ambler',
     employees: 1592,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/phenomtxm',
@@ -4903,7 +4903,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_254,
     name: 'Bazaarvoice',
-    domainName: 'bazaarvoice.com',
+    domainNamePrimaryLinkUrl: 'bazaarvoice.com',
     addressAddressCity: 'Austin',
     employees: 1587,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/bazaarvoice',
@@ -4915,7 +4915,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_255,
     name: 'AppDynamics',
-    domainName: 'appdynamics.com',
+    domainNamePrimaryLinkUrl: 'appdynamics.com',
     addressAddressCity: 'San Francisco',
     employees: 1553,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/appdynamics',
@@ -4927,7 +4927,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_256,
     name: 'Mitchell International',
-    domainName: 'mitchell.com',
+    domainNamePrimaryLinkUrl: 'mitchell.com',
     addressAddressCity: 'San Diego',
     employees: 1548,
     linkedinLinkPrimaryLinkUrl:
@@ -4940,7 +4940,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_257,
     name: 'Talkdesk',
-    domainName: 'talkdesk.com',
+    domainNamePrimaryLinkUrl: 'talkdesk.com',
     addressAddressCity: 'San Francisco',
     employees: 1491,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/talkdesk',
@@ -4952,7 +4952,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_258,
     name: 'Hughes Systique Corporation (HSC)',
-    domainName: 'hsc.com',
+    domainNamePrimaryLinkUrl: 'hsc.com',
     addressAddressCity: 'Rockville',
     employees: 1481,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/hsc',
@@ -4964,7 +4964,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_259,
     name: 'Avature',
-    domainName: 'avature.net',
+    domainNamePrimaryLinkUrl: 'avature.net',
     addressAddressCity: 'New York',
     employees: 1478,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/avature',
@@ -4976,7 +4976,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_260,
     name: 'Anyone Home Inc',
-    domainName: 'anyonehome.com',
+    domainNamePrimaryLinkUrl: 'anyonehome.com',
     addressAddressCity: 'Lake Forest',
     employees: 1476,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/anyone-home-inc',
@@ -4988,7 +4988,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_261,
     name: 'Engineer.ai',
-    domainName: 'builder.ai',
+    domainNamePrimaryLinkUrl: 'builder.ai',
     addressAddressCity: 'Venice',
     employees: 1474,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/engineer.ai',
@@ -5000,7 +5000,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_262,
     name: 'Apptio',
-    domainName: 'apptio.com',
+    domainNamePrimaryLinkUrl: 'apptio.com',
     addressAddressCity: 'Bellevue',
     employees: 1467,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/apptio',
@@ -5012,7 +5012,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_263,
     name: 'KMS Technology, Inc.',
-    domainName: 'kms-technology.com',
+    domainNamePrimaryLinkUrl: 'kms-technology.com',
     addressAddressCity: 'Atlanta',
     employees: 1464,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/kms-technology',
@@ -5024,7 +5024,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_264,
     name: 'JFrog',
-    domainName: 'jfrog.com',
+    domainNamePrimaryLinkUrl: 'jfrog.com',
     addressAddressCity: 'Sunnyvale',
     employees: 1459,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/jfrog-ltd',
@@ -5036,7 +5036,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_265,
     name: 'ASG Technologies',
-    domainName: 'asg.com',
+    domainNamePrimaryLinkUrl: 'asg.com',
     addressAddressCity: 'Naples',
     employees: 1459,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/asg',
@@ -5048,7 +5048,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_266,
     name: 'Seismic',
-    domainName: 'seismic.com',
+    domainNamePrimaryLinkUrl: 'seismic.com',
     addressAddressCity: 'San Diego',
     employees: 1457,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/seismic',
@@ -5060,7 +5060,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_267,
     name: 'ModMed',
-    domainName: 'modmed.com',
+    domainNamePrimaryLinkUrl: 'modmed.com',
     addressAddressCity: 'Boca Raton',
     employees: 1452,
     linkedinLinkPrimaryLinkUrl:
@@ -5073,7 +5073,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_268,
     name: 'ACV Auctions',
-    domainName: 'acvauctions.com',
+    domainNamePrimaryLinkUrl: 'acvauctions.com',
     addressAddressCity: 'Buffalo',
     employees: 1450,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/acv-auctions',
@@ -5085,7 +5085,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_269,
     name: 'Cerence Inc.',
-    domainName: 'cerence.com',
+    domainNamePrimaryLinkUrl: 'cerence.com',
     addressAddressCity: 'Burlington',
     employees: 1448,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/cerence',
@@ -5097,7 +5097,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_270,
     name: 'Via',
-    domainName: 'ridewithvia.com',
+    domainNamePrimaryLinkUrl: 'ridewithvia.com',
     addressAddressCity: 'New York',
     employees: 1446,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ridewithvia',
@@ -5109,7 +5109,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_271,
     name: 'Kingsoft',
-    domainName: 'ksosoft.com',
+    domainNamePrimaryLinkUrl: 'ksosoft.com',
     addressAddressCity: 'Palo Alto',
     employees: 1445,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/kingsoft',
@@ -5121,7 +5121,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_272,
     name: 'Model N',
-    domainName: 'modeln.com',
+    domainNamePrimaryLinkUrl: 'modeln.com',
     addressAddressCity: 'San Mateo',
     employees: 1445,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/modeln',
@@ -5133,7 +5133,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_273,
     name: 'ThoughtSpot',
-    domainName: 'thoughtspot.com',
+    domainNamePrimaryLinkUrl: 'thoughtspot.com',
     addressAddressCity: 'Mountain View',
     employees: 1436,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/thoughtspot',
@@ -5145,7 +5145,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_274,
     name: 'SSS',
-    domainName: 'getebs.com',
+    domainNamePrimaryLinkUrl: 'getebs.com',
     addressAddressCity: 'Littleton',
     employees: 1431,
     linkedinLinkPrimaryLinkUrl:
@@ -5158,7 +5158,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_275,
     name: 'BeyondTrust',
-    domainName: 'beyondtrust.com',
+    domainNamePrimaryLinkUrl: 'beyondtrust.com',
     addressAddressCity: 'Duluth',
     employees: 1428,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/beyondtrust',
@@ -5170,7 +5170,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_276,
     name: 'MetricStream',
-    domainName: 'metricstream.com',
+    domainNamePrimaryLinkUrl: 'metricstream.com',
     addressAddressCity: 'Alviso',
     employees: 1426,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/metricstream',
@@ -5182,7 +5182,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_277,
     name: 'LogMeIn',
-    domainName: 'logmeininc.com',
+    domainNamePrimaryLinkUrl: 'logmeininc.com',
     addressAddressCity: 'Boston',
     employees: 1425,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/logmein',
@@ -5194,7 +5194,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_278,
     name: 'Khoros',
-    domainName: 'khoros.com',
+    domainNamePrimaryLinkUrl: 'khoros.com',
     addressAddressCity: 'Austin',
     employees: 1424,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/khoros',
@@ -5206,7 +5206,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_279,
     name: 'Sprout Social, Inc.',
-    domainName: 'sproutsocial.com',
+    domainNamePrimaryLinkUrl: 'sproutsocial.com',
     addressAddressCity: 'Chicago',
     employees: 1416,
     linkedinLinkPrimaryLinkUrl:
@@ -5219,7 +5219,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_280,
     name: 'Odessa',
-    domainName: 'odessainc.com',
+    domainNamePrimaryLinkUrl: 'odessainc.com',
     addressAddressCity: 'Philadelphia',
     employees: 1415,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/odessa-inc-',
@@ -5231,7 +5231,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_281,
     name: 'Enverus',
-    domainName: 'enverus.com',
+    domainNamePrimaryLinkUrl: 'enverus.com',
     addressAddressCity: 'Austin',
     employees: 1404,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/enverus-energy',
@@ -5243,7 +5243,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_282,
     name: 'AvePoint',
-    domainName: 'avepoint.com',
+    domainNamePrimaryLinkUrl: 'avepoint.com',
     addressAddressCity: 'Jersey City',
     employees: 1404,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/avepoint',
@@ -5255,7 +5255,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_283,
     name: 'Gong',
-    domainName: 'gong.io',
+    domainNamePrimaryLinkUrl: 'gong.io',
     addressAddressCity: 'San Francisco',
     employees: 1398,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/gong-io',
@@ -5267,7 +5267,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_284,
     name: 'Syncfusion',
-    domainName: 'syncfusion.com',
+    domainNamePrimaryLinkUrl: 'syncfusion.com',
     addressAddressCity: 'Morrisville',
     employees: 1397,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/syncfusion',
@@ -5279,7 +5279,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_285,
     name: 'Ping Identity',
-    domainName: 'pingidentity.com',
+    domainNamePrimaryLinkUrl: 'pingidentity.com',
     addressAddressCity: 'Denver',
     employees: 1388,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ping-identity',
@@ -5291,7 +5291,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_286,
     name: 'WellSky',
-    domainName: 'wellsky.com',
+    domainNamePrimaryLinkUrl: 'wellsky.com',
     addressAddressCity: 'Overland Park',
     employees: 1387,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/wellsky',
@@ -5303,7 +5303,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_287,
     name: 'Tricentis',
-    domainName: 'tricentis.com',
+    domainNamePrimaryLinkUrl: 'tricentis.com',
     addressAddressCity: 'Austin',
     employees: 1383,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tricentis',
@@ -5315,7 +5315,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_288,
     name: 'Taskrabbit',
-    domainName: 'taskrabbit.com',
+    domainNamePrimaryLinkUrl: 'taskrabbit.com',
     addressAddressCity: 'San Francisco',
     employees: 1383,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/taskrabbit',
@@ -5327,7 +5327,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_289,
     name: 'Syniti',
-    domainName: 'syniti.com',
+    domainNamePrimaryLinkUrl: 'syniti.com',
     addressAddressCity: 'Needham Heights',
     employees: 1372,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/synitidata',
@@ -5339,7 +5339,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_290,
     name: 'BigCommerce',
-    domainName: 'bigcommerce.com',
+    domainNamePrimaryLinkUrl: 'bigcommerce.com',
     addressAddressCity: 'Austin',
     employees: 1360,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/bigcommerce',
@@ -5351,7 +5351,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_291,
     name: 'OEC',
-    domainName: 'oeconnection.com',
+    domainNamePrimaryLinkUrl: 'oeconnection.com',
     addressAddressCity: 'Richfield',
     employees: 1357,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/oeconnection',
@@ -5363,7 +5363,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_292,
     name: 'Calsoft',
-    domainName: 'calsoftinc.com',
+    domainNamePrimaryLinkUrl: 'calsoftinc.com',
     addressAddressCity: 'San Jose',
     employees: 1357,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/calsoft',
@@ -5375,7 +5375,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_293,
     name: 'Taller',
-    domainName: 'tallertechnologies.com',
+    domainNamePrimaryLinkUrl: 'tallertechnologies.com',
     addressAddressCity: 'San Francisco',
     employees: 1351,
     linkedinLinkPrimaryLinkUrl:
@@ -5388,7 +5388,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_294,
     name: 'Planet',
-    domainName: 'planet.com',
+    domainNamePrimaryLinkUrl: 'planet.com',
     addressAddressCity: 'San Francisco',
     employees: 1348,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/planet-labs',
@@ -5400,7 +5400,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_295,
     name: '6sense',
-    domainName: '6sense.com',
+    domainNamePrimaryLinkUrl: '6sense.com',
     addressAddressCity: 'San Francisco',
     employees: 1346,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/6sense',
@@ -5412,7 +5412,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_296,
     name: 'Vitech Systems Group',
-    domainName: 'vitechinc.com',
+    domainNamePrimaryLinkUrl: 'vitechinc.com',
     addressAddressCity: 'New York',
     employees: 1345,
     linkedinLinkPrimaryLinkUrl:
@@ -5425,7 +5425,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_297,
     name: 'Smarsh',
-    domainName: 'smarsh.com',
+    domainNamePrimaryLinkUrl: 'smarsh.com',
     addressAddressCity: 'Portland',
     employees: 1344,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/smarsh',
@@ -5437,7 +5437,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_298,
     name: 'NICE Actimize',
-    domainName: 'niceactimize.com',
+    domainNamePrimaryLinkUrl: 'niceactimize.com',
     addressAddressCity: 'Hoboken',
     employees: 1343,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/actimize',
@@ -5449,7 +5449,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_299,
     name: 'Dataiku',
-    domainName: 'dataiku.com',
+    domainNamePrimaryLinkUrl: 'dataiku.com',
     addressAddressCity: 'New York',
     employees: 1340,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/dataiku',
@@ -5461,7 +5461,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_300,
     name: 'Liferay',
-    domainName: 'liferay.com',
+    domainNamePrimaryLinkUrl: 'liferay.com',
     addressAddressCity: 'Diamond Bar',
     employees: 1329,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/liferay-inc-',
@@ -5473,7 +5473,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_301,
     name: 'Gainsight',
-    domainName: 'gainsight.com',
+    domainNamePrimaryLinkUrl: 'gainsight.com',
     addressAddressCity: 'San Francisco',
     employees: 1328,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/gainsight',
@@ -5485,7 +5485,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_302,
     name: 'Infotech',
-    domainName: 'infotechinc.com',
+    domainNamePrimaryLinkUrl: 'infotechinc.com',
     addressAddressCity: 'Gainesville',
     employees: 1322,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/infotech-inc',
@@ -5497,7 +5497,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_303,
     name: 'JAGGAER',
-    domainName: 'jaggaer.com',
+    domainNamePrimaryLinkUrl: 'jaggaer.com',
     addressAddressCity: 'Morrisville',
     employees: 1317,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/jaggaer',
@@ -5509,7 +5509,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_304,
     name: 'Checkr, Inc.',
-    domainName: 'checkr.com',
+    domainNamePrimaryLinkUrl: 'checkr.com',
     addressAddressCity: 'San Francisco',
     employees: 1304,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/checkr-com',
@@ -5521,7 +5521,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_305,
     name: 'CARFAX',
-    domainName: 'carfax.com',
+    domainNamePrimaryLinkUrl: 'carfax.com',
     addressAddressCity: 'Centreville',
     employees: 1296,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/carfax',
@@ -5533,7 +5533,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_306,
     name: 'Lucid Software',
-    domainName: 'lucid.co',
+    domainNamePrimaryLinkUrl: 'lucid.co',
     addressAddressCity: 'South Jordan',
     employees: 1295,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/lucidsoftware',
@@ -5545,7 +5545,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_307,
     name: 'Domo',
-    domainName: 'domo.com',
+    domainNamePrimaryLinkUrl: 'domo.com',
     addressAddressCity: 'American Fork',
     employees: 1293,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/domotalk',
@@ -5557,7 +5557,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_308,
     name: 'Podium',
-    domainName: 'podium.com',
+    domainNamePrimaryLinkUrl: 'podium.com',
     addressAddressCity: 'Lehi',
     employees: 1292,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/podium',
@@ -5569,7 +5569,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_309,
     name: 'Mendix',
-    domainName: 'mendix.com',
+    domainNamePrimaryLinkUrl: 'mendix.com',
     addressAddressCity: 'Boston',
     employees: 1290,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mendix',
@@ -5581,7 +5581,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_310,
     name: 'EDB',
-    domainName: 'edbpostgres.com',
+    domainNamePrimaryLinkUrl: 'edbpostgres.com',
     addressAddressCity: 'Bedford',
     employees: 1289,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/edbpostgres',
@@ -5593,7 +5593,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_311,
     name: 'OneStream Software',
-    domainName: 'onestreamsoftware.com',
+    domainNamePrimaryLinkUrl: 'onestreamsoftware.com',
     addressAddressCity: 'Birmingham',
     employees: 1288,
     linkedinLinkPrimaryLinkUrl:
@@ -5606,7 +5606,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_312,
     name: 'Rent.',
-    domainName: 'rent.com',
+    domainNamePrimaryLinkUrl: 'rent.com',
     addressAddressCity: 'Atlanta',
     employees: 1285,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/rentsolutions',
@@ -5618,7 +5618,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_313,
     name: 'Waystar',
-    domainName: 'waystar.com',
+    domainNamePrimaryLinkUrl: 'waystar.com',
     addressAddressCity: 'Louisville',
     employees: 1273,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/waystar',
@@ -5630,7 +5630,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_314,
     name: '2020',
-    domainName: '2020spaces.com',
+    domainNamePrimaryLinkUrl: '2020spaces.com',
     addressAddressCity: 'Westford',
     employees: 1267,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/2020spaces',
@@ -5642,7 +5642,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_315,
     name: 'isolved',
-    domainName: 'isolvedhcm.com',
+    domainNamePrimaryLinkUrl: 'isolvedhcm.com',
     addressAddressCity: 'Charlotte',
     employees: 1261,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/isolved',
@@ -5654,7 +5654,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_316,
     name: 'Art Technology Group',
-    domainName: 'atg.com',
+    domainNamePrimaryLinkUrl: 'atg.com',
     addressAddressCity: 'Cambridge',
     employees: 1259,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/atg',
@@ -5666,7 +5666,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_317,
     name: 'CAST',
-    domainName: 'castsoftware.com',
+    domainNamePrimaryLinkUrl: 'castsoftware.com',
     addressAddressCity: 'New York',
     employees: 1259,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/cast',
@@ -5678,7 +5678,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_318,
     name: 'OCLC',
-    domainName: 'oc.lc',
+    domainNamePrimaryLinkUrl: 'oc.lc',
     addressAddressCity: 'Dublin',
     employees: 1258,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/oclc',
@@ -5690,7 +5690,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_319,
     name: 'Mediaocean',
-    domainName: 'mediaocean.com',
+    domainNamePrimaryLinkUrl: 'mediaocean.com',
     addressAddressCity: 'New York',
     employees: 1255,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mediaocean',
@@ -5702,7 +5702,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_320,
     name: 'Bandwidth Inc.',
-    domainName: 'bandwidth.com',
+    domainNamePrimaryLinkUrl: 'bandwidth.com',
     addressAddressCity: 'Raleigh',
     employees: 1252,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/bandwidth-inc',
@@ -5714,7 +5714,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_321,
     name: 'Hexagon Safety, Infrastructure & Geospatial',
-    domainName: 'hexagonsafetyinfrastructure.com',
+    domainNamePrimaryLinkUrl: 'hexagonsafetyinfrastructure.com',
     addressAddressCity: 'Madison',
     employees: 1252,
     linkedinLinkPrimaryLinkUrl:
@@ -5727,7 +5727,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_322,
     name: 'Wish',
-    domainName: 'wish.com',
+    domainNamePrimaryLinkUrl: 'wish.com',
     addressAddressCity: 'San Francisco',
     employees: 1248,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/wishshopping',
@@ -5739,7 +5739,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_323,
     name: 'Sagitec Solutions',
-    domainName: 'sagitec.com',
+    domainNamePrimaryLinkUrl: 'sagitec.com',
     addressAddressCity: 'Saint Paul',
     employees: 1244,
     linkedinLinkPrimaryLinkUrl:
@@ -5752,7 +5752,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_324,
     name: 'Zinnia ',
-    domainName: 'zinnia.com',
+    domainNamePrimaryLinkUrl: 'zinnia.com',
     addressAddressCity: 'Greenwich',
     employees: 1243,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/zinniatm',
@@ -5764,7 +5764,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_325,
     name: 'CureMD',
-    domainName: 'curemd.com',
+    domainNamePrimaryLinkUrl: 'curemd.com',
     addressAddressCity: 'New York',
     employees: 1243,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/curemd',
@@ -5776,7 +5776,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_326,
     name: 'Druva',
-    domainName: 'druva.com',
+    domainNamePrimaryLinkUrl: 'druva.com',
     addressAddressCity: 'Santa Clara',
     employees: 1238,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/druva',
@@ -5788,7 +5788,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_327,
     name: 'Restaurant365',
-    domainName: 'restaurant365.com',
+    domainNamePrimaryLinkUrl: 'restaurant365.com',
     addressAddressCity: 'Irvine',
     employees: 1234,
     linkedinLinkPrimaryLinkUrl:
@@ -5801,7 +5801,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_328,
     name: 'Lawson Software',
-    domainName: 'lawson.com',
+    domainNamePrimaryLinkUrl: 'lawson.com',
     addressAddressCity: 'New York',
     employees: 1231,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/lawson-software',
@@ -5813,7 +5813,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_329,
     name: 'AlphaSense',
-    domainName: 'alpha-sense.com',
+    domainNamePrimaryLinkUrl: 'alpha-sense.com',
     addressAddressCity: 'New York',
     employees: 1223,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/alphasense',
@@ -5825,7 +5825,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_330,
     name: 'ECI Software Solutions',
-    domainName: 'ecisolutions.com',
+    domainNamePrimaryLinkUrl: 'ecisolutions.com',
     addressAddressCity: 'Fort Worth',
     employees: 1223,
     linkedinLinkPrimaryLinkUrl:
@@ -5838,7 +5838,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_331,
     name: 'Wrike',
-    domainName: 'wrike.com',
+    domainNamePrimaryLinkUrl: 'wrike.com',
     addressAddressCity: 'San Diego',
     employees: 1210,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/wrike',
@@ -5850,7 +5850,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_332,
     name: 'Syndigo',
-    domainName: 'syndigo.com',
+    domainNamePrimaryLinkUrl: 'syndigo.com',
     addressAddressCity: 'Chicago',
     employees: 1208,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/syndigo',
@@ -5862,7 +5862,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_333,
     name: 'Gigamon',
-    domainName: 'gigamon.com',
+    domainNamePrimaryLinkUrl: 'gigamon.com',
     addressAddressCity: 'Santa Clara',
     employees: 1196,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/gigamon',
@@ -5874,7 +5874,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_334,
     name: 'Fastly',
-    domainName: 'fastly.com',
+    domainNamePrimaryLinkUrl: 'fastly.com',
     addressAddressCity: 'San Francisco',
     employees: 1188,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/fastly',
@@ -5886,7 +5886,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_335,
     name: 'Cantaloupe Inc',
-    domainName: 'cantaloupe.com',
+    domainNamePrimaryLinkUrl: 'cantaloupe.com',
     addressAddressCity: 'Malvern',
     employees: 1187,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/cantaloupeinc',
@@ -5898,7 +5898,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_336,
     name: 'EagleView',
-    domainName: 'eagleview.com',
+    domainNamePrimaryLinkUrl: 'eagleview.com',
     addressAddressCity: 'Bellevue',
     employees: 1184,
     linkedinLinkPrimaryLinkUrl:
@@ -5911,7 +5911,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_337,
     name: 'Litera',
-    domainName: 'litera.com',
+    domainNamePrimaryLinkUrl: 'litera.com',
     addressAddressCity: 'Chicago',
     employees: 1183,
     linkedinLinkPrimaryLinkUrl:
@@ -5924,7 +5924,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_338,
     name: 'Collibra',
-    domainName: 'collibra.com',
+    domainNamePrimaryLinkUrl: 'collibra.com',
     addressAddressCity: 'New York',
     employees: 1183,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/collibra',
@@ -5936,7 +5936,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_339,
     name: 'Picsart',
-    domainName: 'picsart.com',
+    domainNamePrimaryLinkUrl: 'picsart.com',
     addressAddressCity: 'Miami Beach',
     employees: 1180,
     linkedinLinkPrimaryLinkUrl:
@@ -5949,7 +5949,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_340,
     name: 'CalAmp',
-    domainName: 'calamp.com',
+    domainNamePrimaryLinkUrl: 'calamp.com',
     addressAddressCity: 'Irvine',
     employees: 1180,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/calamp-corp',
@@ -5961,7 +5961,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_341,
     name: 'ESS',
-    domainName: 'ess-home.com',
+    domainNamePrimaryLinkUrl: 'ess-home.com',
     addressAddressCity: 'Tempe',
     employees: 1178,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ess',
@@ -5973,7 +5973,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_342,
     name: 'Grafana Labs',
-    domainName: 'grafana.com',
+    domainNamePrimaryLinkUrl: 'grafana.com',
     addressAddressCity: 'New York',
     employees: 1178,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/grafana-labs',
@@ -5985,7 +5985,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_343,
     name: 'Fivetran',
-    domainName: '5tran.co',
+    domainNamePrimaryLinkUrl: '5tran.co',
     addressAddressCity: 'Oakland',
     employees: 1176,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/fivetran',
@@ -5997,7 +5997,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_344,
     name: 'CentralSquare Technologies',
-    domainName: 'centralsquare.com',
+    domainNamePrimaryLinkUrl: 'centralsquare.com',
     addressAddressCity: 'Lake Mary',
     employees: 1175,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/centralsqtech',
@@ -6009,7 +6009,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_345,
     name: 'StubHub',
-    domainName: 'stubhub.com',
+    domainNamePrimaryLinkUrl: 'stubhub.com',
     addressAddressCity: 'New York',
     employees: 1164,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/stubhub',
@@ -6021,7 +6021,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_346,
     name: 'EIS Ltd',
-    domainName: 'eisgroup.com',
+    domainNamePrimaryLinkUrl: 'eisgroup.com',
     addressAddressCity: 'San Francisco',
     employees: 1154,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/eisgroupltd',
@@ -6033,7 +6033,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_347,
     name: 'Tebra',
-    domainName: 'tebra.com',
+    domainNamePrimaryLinkUrl: 'tebra.com',
     addressAddressCity: 'Corona Del Mar',
     employees: 1151,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tebra',
@@ -6045,7 +6045,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_348,
     name: 'Benefitfocus',
-    domainName: 'benefitfocus.com',
+    domainNamePrimaryLinkUrl: 'benefitfocus.com',
     addressAddressCity: 'Charleston',
     employees: 1148,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/benefitfocus',
@@ -6057,7 +6057,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_349,
     name: 'NISC',
-    domainName: 'nisc.coop',
+    domainNamePrimaryLinkUrl: 'nisc.coop',
     addressAddressCity: 'Lake Saint Louis',
     employees: 1140,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/nisc',
@@ -6069,7 +6069,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_350,
     name: 'Dell Compellent',
-    domainName: 'dell.com',
+    domainNamePrimaryLinkUrl: 'dell.com',
     addressAddressCity: 'Eden Prairie',
     employees: 1138,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/dell-compellent',
@@ -6081,7 +6081,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_351,
     name: 'Radancy',
-    domainName: 'radancy.com',
+    domainNamePrimaryLinkUrl: 'radancy.com',
     addressAddressCity: 'New York',
     employees: 1137,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/radancy',
@@ -6093,7 +6093,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_352,
     name: 'Granicus',
-    domainName: 'granicus.com',
+    domainNamePrimaryLinkUrl: 'granicus.com',
     addressAddressCity: 'Denver',
     employees: 1134,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/granicusinc',
@@ -6105,7 +6105,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_353,
     name: 'ACTIVE Network',
-    domainName: 'activenetwork.com',
+    domainNamePrimaryLinkUrl: 'activenetwork.com',
     addressAddressCity: 'Plano',
     employees: 1134,
     linkedinLinkPrimaryLinkUrl:
@@ -6118,7 +6118,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_354,
     name: 'Acquia',
-    domainName: 'acquia.com',
+    domainNamePrimaryLinkUrl: 'acquia.com',
     addressAddressCity: 'Boston',
     employees: 1134,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/acquia',
@@ -6130,7 +6130,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_355,
     name: 'WalkMe\u2122',
-    domainName: 'walkme.com',
+    domainNamePrimaryLinkUrl: 'walkme.com',
     addressAddressCity: 'San Francisco',
     employees: 1127,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/walkme',
@@ -6142,7 +6142,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_356,
     name: 'Outbrain',
-    domainName: 'outbrain.com',
+    domainNamePrimaryLinkUrl: 'outbrain.com',
     addressAddressCity: 'New York',
     employees: 1123,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/outbrain',
@@ -6154,7 +6154,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_357,
     name: 'WillowTree',
-    domainName: 'willowtreeapps.com',
+    domainNamePrimaryLinkUrl: 'willowtreeapps.com',
     addressAddressCity: 'Charlottesville',
     employees: 1117,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/willowtreeapps',
@@ -6166,7 +6166,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_358,
     name: 'LogicMonitor',
-    domainName: 'logicmonitor.com',
+    domainNamePrimaryLinkUrl: 'logicmonitor.com',
     addressAddressCity: 'Santa Barbara',
     employees: 1113,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/logicmonitor',
@@ -6178,7 +6178,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_359,
     name: 'Jellysmack',
-    domainName: 'jellysmack.com',
+    domainNamePrimaryLinkUrl: 'jellysmack.com',
     addressAddressCity: 'New York',
     employees: 1109,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/jellysmack',
@@ -6190,7 +6190,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_360,
     name: 'Henry Schein One',
-    domainName: 'henryscheinone.com',
+    domainNamePrimaryLinkUrl: 'henryscheinone.com',
     addressAddressCity: 'American Fork',
     employees: 1108,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/henry-schein-one',
@@ -6202,7 +6202,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_361,
     name: 'Prometheus Group',
-    domainName: 'prometheusgroup.com',
+    domainNamePrimaryLinkUrl: 'prometheusgroup.com',
     addressAddressCity: 'Raleigh',
     employees: 1102,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/prometheusgroup',
@@ -6214,7 +6214,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_362,
     name: 'Atlas',
-    domainName: 'atlashxm.com',
+    domainNamePrimaryLinkUrl: 'atlashxm.com',
     addressAddressCity: 'Chicago',
     employees: 1101,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/atlashxm',
@@ -6226,7 +6226,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_363,
     name: 'Dialpad',
-    domainName: 'dialpad.com',
+    domainNamePrimaryLinkUrl: 'dialpad.com',
     addressAddressCity: 'San Ramon',
     employees: 1101,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/dialpad',
@@ -6238,7 +6238,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_364,
     name: 'Accruent',
-    domainName: 'accruent.com',
+    domainNamePrimaryLinkUrl: 'accruent.com',
     addressAddressCity: 'Austin',
     employees: 1098,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/accruent',
@@ -6250,7 +6250,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_365,
     name: 'Charles River Development',
-    domainName: 'crd.com',
+    domainNamePrimaryLinkUrl: 'crd.com',
     addressAddressCity: 'Burlington',
     employees: 1090,
     linkedinLinkPrimaryLinkUrl:
@@ -6263,7 +6263,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_366,
     name: 'Flexera',
-    domainName: 'flexera.com',
+    domainNamePrimaryLinkUrl: 'flexera.com',
     addressAddressCity: 'Itasca',
     employees: 1089,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/flexera',
@@ -6275,7 +6275,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_367,
     name: 'Quotient Technology Inc.',
-    domainName: 'quotient.com',
+    domainNamePrimaryLinkUrl: 'quotient.com',
     addressAddressCity: 'Salt Lake City',
     employees: 1087,
     linkedinLinkPrimaryLinkUrl:
@@ -6288,7 +6288,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_368,
     name: 'Sage Intacct, Inc.',
-    domainName: 'sageintacct.com',
+    domainNamePrimaryLinkUrl: 'sageintacct.com',
     addressAddressCity: 'San Jose',
     employees: 1087,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sageintacct',
@@ -6300,7 +6300,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_369,
     name: 'Plaid',
-    domainName: 'plaid.com',
+    domainNamePrimaryLinkUrl: 'plaid.com',
     addressAddressCity: 'San Francisco',
     employees: 1081,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/plaid-',
@@ -6312,7 +6312,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_370,
     name: 'C3 AI',
-    domainName: 'c3.ai',
+    domainNamePrimaryLinkUrl: 'c3.ai',
     addressAddressCity: 'Redwood City',
     employees: 1077,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/c3-ai',
@@ -6324,7 +6324,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_371,
     name: 'Upland Software',
-    domainName: 'uplandsoftware.com',
+    domainNamePrimaryLinkUrl: 'uplandsoftware.com',
     addressAddressCity: 'Austin',
     employees: 1072,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/upland-software',
@@ -6336,7 +6336,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_372,
     name: 'Zapier',
-    domainName: 'zapier.com',
+    domainNamePrimaryLinkUrl: 'zapier.com',
     addressAddressCity: 'San Francisco',
     employees: 1066,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/zapier',
@@ -6348,7 +6348,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_373,
     name: 'WSO2',
-    domainName: 'wso2.com',
+    domainNamePrimaryLinkUrl: 'wso2.com',
     addressAddressCity: 'Santa Clara',
     employees: 1065,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/wso2',
@@ -6360,7 +6360,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_374,
     name: 'Auctane',
-    domainName: 'auctane.com',
+    domainNamePrimaryLinkUrl: 'auctane.com',
     addressAddressCity: 'Austin',
     employees: 1055,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/auctane',
@@ -6372,7 +6372,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_375,
     name: 'Salesloft',
-    domainName: 'salesloft.com',
+    domainNamePrimaryLinkUrl: 'salesloft.com',
     addressAddressCity: 'Atlanta',
     employees: 1055,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/salesloft',
@@ -6384,7 +6384,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_376,
     name: 'RLDatix',
-    domainName: 'rldatix.com',
+    domainNamePrimaryLinkUrl: 'rldatix.com',
     addressAddressCity: 'Chicago',
     employees: 1048,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/rldatix',
@@ -6396,7 +6396,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_377,
     name: 'SS&C Blue Prism',
-    domainName: 'blueprism.com',
+    domainNamePrimaryLinkUrl: 'blueprism.com',
     addressAddressCity: 'Windsor',
     employees: 1048,
     linkedinLinkPrimaryLinkUrl:
@@ -6409,7 +6409,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_378,
     name: 'Waitr',
-    domainName: 'waitrapp.com',
+    domainNamePrimaryLinkUrl: 'waitrapp.com',
     addressAddressCity: 'Lafayette',
     employees: 1043,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/waitr-inc-',
@@ -6421,7 +6421,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_379,
     name: 'Software Engineering Institute | Carnegie Mellon University',
-    domainName: 'sei.cmu.edu',
+    domainNamePrimaryLinkUrl: 'sei.cmu.edu',
     addressAddressCity: 'Pittsburgh',
     employees: 1043,
     linkedinLinkPrimaryLinkUrl:
@@ -6434,7 +6434,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_380,
     name: 'Downey Unified School District',
-    domainName: 'dusd.net',
+    domainNamePrimaryLinkUrl: 'dusd.net',
     addressAddressCity: 'Downey',
     employees: 1038,
     linkedinLinkPrimaryLinkUrl:
@@ -6447,7 +6447,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_381,
     name: 'Private Access, Inc.',
-    domainName: 'privateaccess.com',
+    domainNamePrimaryLinkUrl: 'privateaccess.com',
     addressAddressCity: 'Irvine',
     employees: 1037,
     linkedinLinkPrimaryLinkUrl:
@@ -6460,7 +6460,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_382,
     name: 'iManage',
-    domainName: 'imanage.com',
+    domainNamePrimaryLinkUrl: 'imanage.com',
     addressAddressCity: 'Chicago',
     employees: 1036,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/imanage',
@@ -6472,7 +6472,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_383,
     name: 'QASource',
-    domainName: 'qasource.com',
+    domainNamePrimaryLinkUrl: 'qasource.com',
     addressAddressCity: 'Pleasanton',
     employees: 1032,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/qasource',
@@ -6484,7 +6484,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_384,
     name: 'Azuga, Inc.',
-    domainName: 'azuga.com',
+    domainNamePrimaryLinkUrl: 'azuga.com',
     addressAddressCity: 'San Jose',
     employees: 1026,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/azuga-inc-',
@@ -6496,7 +6496,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_385,
     name: 'Talent Systems, LLC',
-    domainName: 'talentsystems.com',
+    domainNamePrimaryLinkUrl: 'talentsystems.com',
     addressAddressCity: 'Los Angeles',
     employees: 1022,
     linkedinLinkPrimaryLinkUrl:
@@ -6509,7 +6509,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_386,
     name: 'Datasite',
-    domainName: 'datasite.com',
+    domainNamePrimaryLinkUrl: 'datasite.com',
     addressAddressCity: 'Minneapolis',
     employees: 1021,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/datasiteglobal',
@@ -6521,7 +6521,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_387,
     name: 'AVASOFT',
-    domainName: 'avasoft.com',
+    domainNamePrimaryLinkUrl: 'avasoft.com',
     addressAddressCity: 'Blue Bell',
     employees: 1017,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/avasoft',
@@ -6533,7 +6533,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_388,
     name: 'DataRobot',
-    domainName: 'datarobot.com',
+    domainNamePrimaryLinkUrl: 'datarobot.com',
     addressAddressCity: 'Boston',
     employees: 1015,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/datarobot',
@@ -6545,7 +6545,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_389,
     name: 'Technisys',
-    domainName: 'technisys.com',
+    domainNamePrimaryLinkUrl: 'technisys.com',
     addressAddressCity: 'Miami',
     employees: 1014,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/technisys',
@@ -6557,7 +6557,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_390,
     name: 'project44',
-    domainName: 'project44.com',
+    domainNamePrimaryLinkUrl: 'project44.com',
     addressAddressCity: 'Chicago',
     employees: 1013,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/project-44',
@@ -6569,7 +6569,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_391,
     name: 'Imprivata',
-    domainName: 'imprivata.com',
+    domainNamePrimaryLinkUrl: 'imprivata.com',
     addressAddressCity: 'Waltham',
     employees: 1013,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/imprivata',
@@ -6581,7 +6581,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_392,
     name: 'Webflow',
-    domainName: 'webflow.com',
+    domainNamePrimaryLinkUrl: 'webflow.com',
     addressAddressCity: 'San Francisco',
     employees: 1011,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/webflow-inc-',
@@ -6593,7 +6593,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_393,
     name: 'Blend',
-    domainName: 'blend.com',
+    domainNamePrimaryLinkUrl: 'blend.com',
     addressAddressCity: 'San Francisco',
     employees: 1011,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/blend-',
@@ -6605,7 +6605,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_394,
     name: 'Egnyte',
-    domainName: 'egnyte.com',
+    domainNamePrimaryLinkUrl: 'egnyte.com',
     addressAddressCity: 'Mountain View',
     employees: 1009,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/egnyte',
@@ -6617,7 +6617,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_395,
     name: 'SS&C Eze',
-    domainName: 'ezesoft.com',
+    domainNamePrimaryLinkUrl: 'ezesoft.com',
     addressAddressCity: 'Windsor',
     employees: 1008,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ezesoftware',
@@ -6629,7 +6629,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_396,
     name: 'Tipalti',
-    domainName: 'tipalti.com',
+    domainNamePrimaryLinkUrl: 'tipalti.com',
     addressAddressCity: 'San Mateo',
     employees: 1007,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tipalti',
@@ -6641,7 +6641,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_397,
     name: 'Altium\u00ae',
-    domainName: 'altium.com',
+    domainNamePrimaryLinkUrl: 'altium.com',
     addressAddressCity: 'La Jolla',
     employees: 1005,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/altium',
@@ -6653,7 +6653,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_398,
     name: 'airSlate',
-    domainName: 'airslate.com',
+    domainNamePrimaryLinkUrl: 'airslate.com',
     addressAddressCity: 'Brookline',
     employees: 1001,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/airslate',
@@ -6665,7 +6665,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_399,
     name: 'Arbisoft',
-    domainName: 'arbisoft.com',
+    domainNamePrimaryLinkUrl: 'arbisoft.com',
     addressAddressCity: 'Mckinney',
     employees: 996,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/arbisoft',
@@ -6677,7 +6677,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_400,
     name: 'Airtable',
-    domainName: 'airtable.com',
+    domainNamePrimaryLinkUrl: 'airtable.com',
     addressAddressCity: 'San Francisco',
     employees: 989,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/airtable',
@@ -6689,7 +6689,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_401,
     name: 'Birdeye',
-    domainName: 'birdeye.com',
+    domainNamePrimaryLinkUrl: 'birdeye.com',
     addressAddressCity: 'Palo Alto',
     employees: 988,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/birdeye',
@@ -6701,7 +6701,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_402,
     name: 'Ultimate Software',
-    domainName: 'ultimatesoftware.com',
+    domainNamePrimaryLinkUrl: 'ultimatesoftware.com',
     addressAddressCity: 'Fort Lauderdale',
     employees: 988,
     linkedinLinkPrimaryLinkUrl:
@@ -6714,7 +6714,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_403,
     name: 'Homecare Homebase',
-    domainName: 'hchb.com',
+    domainNamePrimaryLinkUrl: 'hchb.com',
     addressAddressCity: 'Dallas',
     employees: 987,
     linkedinLinkPrimaryLinkUrl:
@@ -6727,7 +6727,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_404,
     name: 'DISCO',
-    domainName: 'csdisco.com',
+    domainNamePrimaryLinkUrl: 'csdisco.com',
     addressAddressCity: 'Austin',
     employees: 984,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/cs-disco-llc',
@@ -6739,7 +6739,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_405,
     name: 'Highspot',
-    domainName: 'highspot.com',
+    domainNamePrimaryLinkUrl: 'highspot.com',
     addressAddressCity: 'Seattle',
     employees: 982,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/highspot',
@@ -6751,7 +6751,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_406,
     name: 'Sagent',
-    domainName: 'sagent.com',
+    domainNamePrimaryLinkUrl: 'sagent.com',
     addressAddressCity: 'King Of Prussia',
     employees: 981,
     linkedinLinkPrimaryLinkUrl:
@@ -6764,7 +6764,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_407,
     name: 'Apollo.io',
-    domainName: 'apollo.io',
+    domainNamePrimaryLinkUrl: 'apollo.io',
     addressAddressCity: 'San Francisco',
     employees: 981,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/apolloio',
@@ -6776,7 +6776,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_408,
     name: 'PAS',
-    domainName: 'pas.com',
+    domainNamePrimaryLinkUrl: 'pas.com',
     addressAddressCity: 'Houston',
     employees: 981,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/pas',
@@ -6788,7 +6788,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_409,
     name: 'Wikimedia Foundation',
-    domainName: 'wikimediafoundation.org',
+    domainNamePrimaryLinkUrl: 'wikimediafoundation.org',
     addressAddressCity: 'San Francisco',
     employees: 981,
     linkedinLinkPrimaryLinkUrl:
@@ -6801,7 +6801,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_410,
     name: 'Nintex',
-    domainName: 'nintex.com',
+    domainNamePrimaryLinkUrl: 'nintex.com',
     addressAddressCity: 'Bellevue',
     employees: 978,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/nintex',
@@ -6813,7 +6813,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_411,
     name: 'RUCKUS Networks',
-    domainName: 'commscope.com',
+    domainNamePrimaryLinkUrl: 'commscope.com',
     addressAddressCity: 'Sunnyvale',
     employees: 978,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ruckus-networks',
@@ -6825,7 +6825,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_412,
     name: 'ForgeRock',
-    domainName: 'forgerock.com',
+    domainNamePrimaryLinkUrl: 'forgerock.com',
     addressAddressCity: 'San Francisco',
     employees: 977,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/forgerock',
@@ -6837,7 +6837,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_413,
     name: 'Trading Technologies',
-    domainName: 'tradingtechnologies.com',
+    domainNamePrimaryLinkUrl: 'tradingtechnologies.com',
     addressAddressCity: 'Chicago',
     employees: 975,
     linkedinLinkPrimaryLinkUrl:
@@ -6850,7 +6850,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_414,
     name: 'KANINI',
-    domainName: 'kanini.com',
+    domainNamePrimaryLinkUrl: 'kanini.com',
     addressAddressCity: 'Nashville',
     employees: 972,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/kanini',
@@ -6862,7 +6862,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_415,
     name: 'Dealer.com',
-    domainName: 'dealer.com',
+    domainNamePrimaryLinkUrl: 'dealer.com',
     addressAddressCity: 'Burlington',
     employees: 962,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/dealer-com',
@@ -6874,7 +6874,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_416,
     name: 'WS',
-    domainName: 'ws-inc.com',
+    domainNamePrimaryLinkUrl: 'ws-inc.com',
     addressAddressCity: 'Pinehurst',
     employees: 960,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/wbem-solutions',
@@ -6886,7 +6886,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_417,
     name: 'Kyriba',
-    domainName: 'kyriba.com',
+    domainNamePrimaryLinkUrl: 'kyriba.com',
     addressAddressCity: 'San Diego',
     employees: 960,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/kyriba',
@@ -6898,7 +6898,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_418,
     name: 'Demandbase',
-    domainName: 'demandbase.com',
+    domainNamePrimaryLinkUrl: 'demandbase.com',
     addressAddressCity: 'San Francisco',
     employees: 958,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/demandbase',
@@ -6910,7 +6910,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_419,
     name: 'Sumo Logic',
-    domainName: 'sumologic.com',
+    domainNamePrimaryLinkUrl: 'sumologic.com',
     addressAddressCity: 'Redwood City',
     employees: 954,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sumo-logic',
@@ -6922,7 +6922,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_420,
     name: 'Edifecs',
-    domainName: 'edifecs.com',
+    domainNamePrimaryLinkUrl: 'edifecs.com',
     addressAddressCity: 'Bellevue',
     employees: 949,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/edifecs',
@@ -6934,7 +6934,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_421,
     name: 'ibi | Information Builders',
-    domainName: 'ibi.com',
+    domainNamePrimaryLinkUrl: 'ibi.com',
     addressAddressCity: 'Fort Lauderdale',
     employees: 948,
     linkedinLinkPrimaryLinkUrl:
@@ -6947,7 +6947,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_422,
     name: 'Emburse',
-    domainName: 'emburse.com',
+    domainNamePrimaryLinkUrl: 'emburse.com',
     addressAddressCity: 'Los Angeles',
     employees: 941,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/emburse',
@@ -6959,7 +6959,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_423,
     name: 'ConstructConnect',
-    domainName: 'constructconnect.com',
+    domainNamePrimaryLinkUrl: 'constructconnect.com',
     addressAddressCity: 'Cincinnati',
     employees: 940,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/constructconnect',
@@ -6971,7 +6971,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_424,
     name: 'Perforce Software',
-    domainName: 'perforce.com',
+    domainNamePrimaryLinkUrl: 'perforce.com',
     addressAddressCity: 'Minneapolis',
     employees: 939,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/perforce',
@@ -6983,7 +6983,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_425,
     name: 'Insurity',
-    domainName: 'insurity.com',
+    domainNamePrimaryLinkUrl: 'insurity.com',
     addressAddressCity: 'Hartford',
     employees: 938,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/insurity',
@@ -6995,7 +6995,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_426,
     name: 'webOS',
-    domainName: 'developer.lge.com',
+    domainNamePrimaryLinkUrl: 'developer.lge.com',
     addressAddressCity: 'Santa Clara',
     employees: 936,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/webos',
@@ -7007,7 +7007,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_427,
     name: 'Zenoti',
-    domainName: 'zenoti.com',
+    domainNamePrimaryLinkUrl: 'zenoti.com',
     addressAddressCity: 'Bellevue',
     employees: 934,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/zenoti',
@@ -7019,7 +7019,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_428,
     name: 'Intapp',
-    domainName: 'intapp.com',
+    domainNamePrimaryLinkUrl: 'intapp.com',
     addressAddressCity: 'Palo Alto',
     employees: 930,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/intapp',
@@ -7031,7 +7031,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_429,
     name: 'OATI',
-    domainName: 'oati.com',
+    domainNamePrimaryLinkUrl: 'oati.com',
     addressAddressCity: 'Minneapolis',
     employees: 930,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/oati',
@@ -7043,7 +7043,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_430,
     name: 'Frontline Education',
-    domainName: 'frontlineeducation.com',
+    domainNamePrimaryLinkUrl: 'frontlineeducation.com',
     addressAddressCity: 'Malvern',
     employees: 926,
     linkedinLinkPrimaryLinkUrl:
@@ -7056,7 +7056,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_431,
     name: 'Aspect Software',
-    domainName: 'aspect.com',
+    domainNamePrimaryLinkUrl: 'aspect.com',
     addressAddressCity: 'Westford',
     employees: 920,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/aspect-software',
@@ -7068,7 +7068,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_432,
     name: 'GreyOrange',
-    domainName: 'greyorange.com',
+    domainNamePrimaryLinkUrl: 'greyorange.com',
     addressAddressCity: 'Roswell',
     employees: 919,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/gogreyorange',
@@ -7080,7 +7080,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_433,
     name: 'Sirion',
-    domainName: 'sirionlabs.com',
+    domainNamePrimaryLinkUrl: 'sirionlabs.com',
     addressAddressCity: 'Bellevue',
     employees: 918,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sirionlabs',
@@ -7092,7 +7092,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_434,
     name: 'In Time Tec',
-    domainName: 'intimetec.com',
+    domainNamePrimaryLinkUrl: 'intimetec.com',
     addressAddressCity: 'Meridian',
     employees: 917,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/in-time-tec',
@@ -7104,7 +7104,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_435,
     name: 'Operative',
-    domainName: 'operative.com',
+    domainNamePrimaryLinkUrl: 'operative.com',
     addressAddressCity: 'New York',
     employees: 910,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/operative',
@@ -7116,7 +7116,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_436,
     name: 'Kore.ai',
-    domainName: 'kore.ai',
+    domainNamePrimaryLinkUrl: 'kore.ai',
     addressAddressCity: 'Orlando',
     employees: 908,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/kore-inc',
@@ -7128,7 +7128,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_437,
     name: 'Redis',
-    domainName: 'redis.com',
+    domainNamePrimaryLinkUrl: 'redis.com',
     addressAddressCity: 'Mountain View',
     employees: 908,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/redisinc',
@@ -7140,7 +7140,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_438,
     name: 'Addepar',
-    domainName: 'addepar.com',
+    domainNamePrimaryLinkUrl: 'addepar.com',
     addressAddressCity: 'Mountain View',
     employees: 907,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/addepar',
@@ -7152,7 +7152,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_439,
     name: 'TCP Software',
-    domainName: 'tcpsoftware.com',
+    domainNamePrimaryLinkUrl: 'tcpsoftware.com',
     addressAddressCity: 'Austin',
     employees: 902,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tcpsoftware',
@@ -7164,7 +7164,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_440,
     name: 'TraceLink',
-    domainName: 'tracelink.com',
+    domainNamePrimaryLinkUrl: 'tracelink.com',
     addressAddressCity: 'Wilmington',
     employees: 897,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tracelink',
@@ -7176,7 +7176,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_441,
     name: 'Benchling',
-    domainName: 'benchling.com',
+    domainNamePrimaryLinkUrl: 'benchling.com',
     addressAddressCity: 'San Francisco',
     employees: 895,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/benchling',
@@ -7188,7 +7188,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_442,
     name: 'Housecall Pro',
-    domainName: 'housecallpro.com',
+    domainNamePrimaryLinkUrl: 'housecallpro.com',
     addressAddressCity: 'Denver',
     employees: 894,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/housecallpro',
@@ -7200,7 +7200,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_443,
     name: 'Turnitin',
-    domainName: 'turnitin.com',
+    domainNamePrimaryLinkUrl: 'turnitin.com',
     addressAddressCity: 'Oakland',
     employees: 885,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/turnitin',
@@ -7212,7 +7212,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_444,
     name: 'Schr\u00f6dinger',
-    domainName: 'schrodinger.com',
+    domainNamePrimaryLinkUrl: 'schrodinger.com',
     addressAddressCity: 'New York',
     employees: 885,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/schr-dinger',
@@ -7224,7 +7224,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_445,
     name: 'eGain Corporation',
-    domainName: 'egain.com',
+    domainNamePrimaryLinkUrl: 'egain.com',
     addressAddressCity: 'Sunnyvale',
     employees: 879,
     linkedinLinkPrimaryLinkUrl:
@@ -7237,7 +7237,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_446,
     name: 'Brightly',
-    domainName: 'brightlysoftware.com',
+    domainNamePrimaryLinkUrl: 'brightlysoftware.com',
     addressAddressCity: 'Cary',
     employees: 878,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/brightlysoftware',
@@ -7249,7 +7249,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_447,
     name: 'Snap-on Business Solutions',
-    domainName: 'snapon.com',
+    domainNamePrimaryLinkUrl: 'snapon.com',
     addressAddressCity: 'Richfield',
     employees: 876,
     linkedinLinkPrimaryLinkUrl:
@@ -7262,7 +7262,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_448,
     name: 'ACS Technologies',
-    domainName: 'acstechnologies.com',
+    domainNamePrimaryLinkUrl: 'acstechnologies.com',
     addressAddressCity: 'Florence',
     employees: 874,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/acs-technologies',
@@ -7274,7 +7274,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_449,
     name: 'Uniphore',
-    domainName: 'uniphore.com',
+    domainNamePrimaryLinkUrl: 'uniphore.com',
     addressAddressCity: 'Palo Alto',
     employees: 872,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/uniphore',
@@ -7286,7 +7286,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_450,
     name: 'Folio3 Software',
-    domainName: 'folio3.com',
+    domainNamePrimaryLinkUrl: 'folio3.com',
     addressAddressCity: 'Belmont',
     employees: 872,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/folio3',
@@ -7298,7 +7298,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_451,
     name: 'MHC',
-    domainName: 'mhcautomation.com',
+    domainNamePrimaryLinkUrl: 'mhcautomation.com',
     addressAddressCity: 'Burnsville',
     employees: 871,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mhcautomation',
@@ -7310,7 +7310,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_452,
     name: 'Xactly Corp',
-    domainName: 'xactlycorp.com',
+    domainNamePrimaryLinkUrl: 'xactlycorp.com',
     addressAddressCity: 'Los Gatos',
     employees: 865,
     linkedinLinkPrimaryLinkUrl:
@@ -7323,7 +7323,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_453,
     name: 'Weave',
-    domainName: 'getweave.com',
+    domainNamePrimaryLinkUrl: 'getweave.com',
     addressAddressCity: 'Lehi',
     employees: 864,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/getweave',
@@ -7335,7 +7335,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_454,
     name: 'Microworkers',
-    domainName: 'microworkers.com',
+    domainNamePrimaryLinkUrl: 'microworkers.com',
     addressAddressCity: 'Frisco',
     employees: 862,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/microworkers.com',
@@ -7347,7 +7347,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_455,
     name: 'Trilogy',
-    domainName: 'trilogy.com',
+    domainNamePrimaryLinkUrl: 'trilogy.com',
     addressAddressCity: 'Austin',
     employees: 861,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/trilogy',
@@ -7359,7 +7359,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_456,
     name: 'Akvelon, Inc.',
-    domainName: 'akvelon.com',
+    domainNamePrimaryLinkUrl: 'akvelon.com',
     addressAddressCity: 'Bellevue',
     employees: 860,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/akvelon',
@@ -7371,7 +7371,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_457,
     name: 'iPipeline',
-    domainName: 'ipipeline.com',
+    domainNamePrimaryLinkUrl: 'ipipeline.com',
     addressAddressCity: 'Exton',
     employees: 856,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ipipeline',
@@ -7383,7 +7383,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_458,
     name: 'Salary.com',
-    domainName: 'salary.com',
+    domainNamePrimaryLinkUrl: 'salary.com',
     addressAddressCity: 'Wellesley Hills',
     employees: 854,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/salarydotcom',
@@ -7395,7 +7395,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_459,
     name: 'PandaDoc',
-    domainName: 'pandadoc.com',
+    domainNamePrimaryLinkUrl: 'pandadoc.com',
     addressAddressCity: 'San Francisco',
     employees: 851,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/pandadoc',
@@ -7407,7 +7407,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_460,
     name: 'MSC Software',
-    domainName: 'mscsoftware.com',
+    domainNamePrimaryLinkUrl: 'mscsoftware.com',
     addressAddressCity: 'Newport Beach',
     employees: 849,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/msc-software',
@@ -7419,7 +7419,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_461,
     name: 'Harness',
-    domainName: 'harness.io',
+    domainNamePrimaryLinkUrl: 'harness.io',
     addressAddressCity: 'San Francisco',
     employees: 848,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/harnessinc',
@@ -7431,7 +7431,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_462,
     name: 'ActiveCampaign',
-    domainName: 'activecampaign.com',
+    domainNamePrimaryLinkUrl: 'activecampaign.com',
     addressAddressCity: 'Chicago',
     employees: 848,
     linkedinLinkPrimaryLinkUrl:
@@ -7444,7 +7444,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_463,
     name: 'Doximity',
-    domainName: 'doximity.com',
+    domainNamePrimaryLinkUrl: 'doximity.com',
     addressAddressCity: 'San Francisco',
     employees: 848,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/doximity',
@@ -7456,7 +7456,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_464,
     name: 'Couchbase',
-    domainName: 'couchbase.com',
+    domainNamePrimaryLinkUrl: 'couchbase.com',
     addressAddressCity: 'Santa Clara',
     employees: 847,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/couchbase',
@@ -7468,7 +7468,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_465,
     name: 'Lytx, Inc.',
-    domainName: 'lytx.com',
+    domainNamePrimaryLinkUrl: 'lytx.com',
     addressAddressCity: 'San Diego',
     employees: 845,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/lytxinc',
@@ -7480,7 +7480,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_466,
     name: 'Pendo.io',
-    domainName: 'pendo.io',
+    domainNamePrimaryLinkUrl: 'pendo.io',
     addressAddressCity: 'Raleigh',
     employees: 844,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/pendo-io',
@@ -7492,7 +7492,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_467,
     name: 'Workato',
-    domainName: 'workato.com',
+    domainNamePrimaryLinkUrl: 'workato.com',
     addressAddressCity: 'Mountain View',
     employees: 842,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/workato',
@@ -7504,7 +7504,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_468,
     name: 'Saviynt',
-    domainName: 'saviynt.com',
+    domainNamePrimaryLinkUrl: 'saviynt.com',
     addressAddressCity: 'El Segundo',
     employees: 842,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/saviynt',
@@ -7516,7 +7516,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_469,
     name: 'SmartBear',
-    domainName: 'smartbear.com',
+    domainNamePrimaryLinkUrl: 'smartbear.com',
     addressAddressCity: 'Somerville',
     employees: 838,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/smartbear',
@@ -7528,7 +7528,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_470,
     name: 'Rovi Corporation (now TiVo)',
-    domainName: 'tivo.com',
+    domainNamePrimaryLinkUrl: 'tivo.com',
     addressAddressCity: 'San Carlos',
     employees: 837,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/rovi',
@@ -7540,7 +7540,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_471,
     name: 'Handshake',
-    domainName: 'joinhandshake.com',
+    domainNamePrimaryLinkUrl: 'joinhandshake.com',
     addressAddressCity: 'San Francisco',
     employees: 833,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/team-handshake',
@@ -7552,7 +7552,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_472,
     name: 'Navitaire, an Amadeus company',
-    domainName: 'navitaire.com',
+    domainNamePrimaryLinkUrl: 'navitaire.com',
     addressAddressCity: 'Minneapolis',
     employees: 829,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/navitaire',
@@ -7564,7 +7564,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_473,
     name: 'OneSpan',
-    domainName: 'onespan.com',
+    domainNamePrimaryLinkUrl: 'onespan.com',
     addressAddressCity: 'Chicago',
     employees: 826,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/onespan',
@@ -7576,7 +7576,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_474,
     name: 'Bitsight',
-    domainName: 'bitsight.com',
+    domainNamePrimaryLinkUrl: 'bitsight.com',
     addressAddressCity: 'Boston',
     employees: 824,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/bitsight',
@@ -7588,7 +7588,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_475,
     name: 'ID.me',
-    domainName: 'id.me',
+    domainNamePrimaryLinkUrl: 'id.me',
     addressAddressCity: 'Mc Lean',
     employees: 823,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/id.me',
@@ -7600,7 +7600,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_476,
     name: 'SymphonyAI Retail CPG',
-    domainName: 'symphonyretailai.com',
+    domainNamePrimaryLinkUrl: 'symphonyretailai.com',
     addressAddressCity: 'Frisco',
     employees: 823,
     linkedinLinkPrimaryLinkUrl:
@@ -7613,7 +7613,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_477,
     name: 'Unilog',
-    domainName: 'unilogcorp.com',
+    domainNamePrimaryLinkUrl: 'unilogcorp.com',
     addressAddressCity: 'Wayne',
     employees: 823,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/unilog-inc',
@@ -7625,7 +7625,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_478,
     name: 'Teletrac Navman',
-    domainName: 'teletracnavman.com',
+    domainNamePrimaryLinkUrl: 'teletracnavman.com',
     addressAddressCity: 'Irvine',
     employees: 821,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/teletrac',
@@ -7637,7 +7637,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_479,
     name: 'Buildertrend',
-    domainName: 'buildertrend.com',
+    domainNamePrimaryLinkUrl: 'buildertrend.com',
     addressAddressCity: 'Omaha',
     employees: 819,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/buildertrend',
@@ -7649,7 +7649,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_480,
     name: 'Tecsys Inc.',
-    domainName: 'tecsys.com',
+    domainNamePrimaryLinkUrl: 'tecsys.com',
     addressAddressCity: 'Chicago',
     employees: 816,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tecsys-inc',
@@ -7661,7 +7661,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_481,
     name: 'ThousandEyes (part of Cisco)',
-    domainName: 'thousandeyes.com',
+    domainNamePrimaryLinkUrl: 'thousandeyes.com',
     addressAddressCity: 'San Francisco',
     employees: 816,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/thousandeyes',
@@ -7673,7 +7673,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_482,
     name: 'Greenhouse Software',
-    domainName: 'greenhouse.io',
+    domainNamePrimaryLinkUrl: 'greenhouse.io',
     addressAddressCity: 'New York',
     employees: 814,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/greenhouse-inc-',
@@ -7685,7 +7685,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_483,
     name: 'Exiger',
-    domainName: 'exiger.com',
+    domainNamePrimaryLinkUrl: 'exiger.com',
     addressAddressCity: 'New York',
     employees: 811,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/exiger',
@@ -7697,7 +7697,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_484,
     name: 'MBO Partners',
-    domainName: 'mbopartners.com',
+    domainNamePrimaryLinkUrl: 'mbopartners.com',
     addressAddressCity: 'Ashburn',
     employees: 808,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mbo-partners',
@@ -7709,7 +7709,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_485,
     name: 'Neo4j',
-    domainName: 'neo4j.com',
+    domainNamePrimaryLinkUrl: 'neo4j.com',
     addressAddressCity: 'San Mateo',
     employees: 808,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/neo4j',
@@ -7721,7 +7721,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_486,
     name: 'VTS',
-    domainName: 'vts.com',
+    domainNamePrimaryLinkUrl: 'vts.com',
     addressAddressCity: 'New York',
     employees: 805,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/we-are-vts',
@@ -7733,7 +7733,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_487,
     name: 'Slice',
-    domainName: 'slicelife.com',
+    domainNamePrimaryLinkUrl: 'slicelife.com',
     addressAddressCity: 'New York',
     employees: 805,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/slice',
@@ -7745,7 +7745,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_488,
     name: 'Amplitude',
-    domainName: 'amplitude.com',
+    domainNamePrimaryLinkUrl: 'amplitude.com',
     addressAddressCity: 'San Francisco',
     employees: 803,
     linkedinLinkPrimaryLinkUrl:
@@ -7758,7 +7758,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_489,
     name: 'Daxko',
-    domainName: 'daxko.com',
+    domainNamePrimaryLinkUrl: 'daxko.com',
     addressAddressCity: 'Birmingham',
     employees: 802,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/daxko',
@@ -7770,7 +7770,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_490,
     name: 'AppLovin',
-    domainName: 'applovin.com',
+    domainNamePrimaryLinkUrl: 'applovin.com',
     addressAddressCity: 'Palo Alto',
     employees: 802,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/applovin',
@@ -7782,7 +7782,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_491,
     name: 'Xometry',
-    domainName: 'xometry.com',
+    domainNamePrimaryLinkUrl: 'xometry.com',
     addressAddressCity: 'Rockville',
     employees: 801,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/xometry',
@@ -7794,7 +7794,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_492,
     name: 'Quickbase',
-    domainName: 'quickbase.com',
+    domainNamePrimaryLinkUrl: 'quickbase.com',
     addressAddressCity: 'Boston',
     employees: 796,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/quickbase',
@@ -7806,7 +7806,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_493,
     name: 'Agora',
-    domainName: 'agora.io',
+    domainNamePrimaryLinkUrl: 'agora.io',
     addressAddressCity: 'Santa Clara',
     employees: 793,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/agora-lab-inc',
@@ -7818,7 +7818,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_494,
     name: 'InMoment',
-    domainName: 'inmoment.com',
+    domainNamePrimaryLinkUrl: 'inmoment.com',
     addressAddressCity: 'South Jordan',
     employees: 793,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/weareinmoment',
@@ -7830,7 +7830,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_495,
     name: 'PatientPoint\u00ae',
-    domainName: 'patientpoint.com',
+    domainNamePrimaryLinkUrl: 'patientpoint.com',
     addressAddressCity: 'Cincinnati',
     employees: 789,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/patientpoint',
@@ -7842,7 +7842,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_496,
     name: 'HHAeXchange',
-    domainName: 'hhaexchange.com',
+    domainNamePrimaryLinkUrl: 'hhaexchange.com',
     addressAddressCity: 'New York',
     employees: 788,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/hhaexchange',
@@ -7854,7 +7854,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_497,
     name: 'NinjaOne',
-    domainName: 'ninjaone.com',
+    domainNamePrimaryLinkUrl: 'ninjaone.com',
     addressAddressCity: 'Austin',
     employees: 787,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ninjaone',
@@ -7866,7 +7866,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_498,
     name: 'Zywave',
-    domainName: 'zywave.com',
+    domainNamePrimaryLinkUrl: 'zywave.com',
     addressAddressCity: 'Milwaukee',
     employees: 785,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/zywave',
@@ -7878,7 +7878,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_499,
     name: 'Adobe Marketo',
-    domainName: 'marketo.com',
+    domainNamePrimaryLinkUrl: 'marketo.com',
     addressAddressCity: 'San Jose',
     employees: 784,
     linkedinLinkPrimaryLinkUrl:
@@ -7891,7 +7891,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_500,
     name: 'MasterControl',
-    domainName: 'mastercontrol.com',
+    domainNamePrimaryLinkUrl: 'mastercontrol.com',
     addressAddressCity: 'Salt Lake City',
     employees: 783,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mastercontrol',
@@ -7903,7 +7903,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_501,
     name: 'Jumio Corporation',
-    domainName: 'jumio.com',
+    domainNamePrimaryLinkUrl: 'jumio.com',
     addressAddressCity: 'Sunnyvale',
     employees: 779,
     linkedinLinkPrimaryLinkUrl:
@@ -7916,7 +7916,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_502,
     name: 'CRMNEXT',
-    domainName: 'crmnext.com',
+    domainNamePrimaryLinkUrl: 'crmnext.com',
     addressAddressCity: 'Raleigh',
     employees: 778,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/crmnext',
@@ -7928,7 +7928,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_503,
     name: 'ChannelAdvisor',
-    domainName: 'channeladvisor.com',
+    domainNamePrimaryLinkUrl: 'channeladvisor.com',
     addressAddressCity: 'Morrisville',
     employees: 777,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/channeladvisor',
@@ -7940,7 +7940,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_504,
     name: 'SumTotal Systems, LLC',
-    domainName: 'sumtotalsystems.com',
+    domainNamePrimaryLinkUrl: 'sumtotalsystems.com',
     addressAddressCity: 'Gainesville',
     employees: 776,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sumtotal-systems',
@@ -7952,7 +7952,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_505,
     name: 'Payscale',
-    domainName: 'payscale.com',
+    domainNamePrimaryLinkUrl: 'payscale.com',
     addressAddressCity: 'Seattle',
     employees: 775,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/payscale',
@@ -7964,7 +7964,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_506,
     name: 'Riskonnect, Inc.',
-    domainName: 'riskonnect.com',
+    domainNamePrimaryLinkUrl: 'riskonnect.com',
     addressAddressCity: 'Kennesaw',
     employees: 775,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/riskonnect-inc',
@@ -7976,7 +7976,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_507,
     name: 'Riskified',
-    domainName: 'riskified.com',
+    domainNamePrimaryLinkUrl: 'riskified.com',
     addressAddressCity: 'New York',
     employees: 770,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/riskified',
@@ -7988,7 +7988,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_508,
     name: 'Shopkeeper',
-    domainName: 'shopkeeper.com',
+    domainNamePrimaryLinkUrl: 'shopkeeper.com',
     addressAddressCity: 'Pompano Beach',
     employees: 770,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/shopkeeperapp',
@@ -8000,7 +8000,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_509,
     name: 'Stack Overflow',
-    domainName: 'stackoverflow.com',
+    domainNamePrimaryLinkUrl: 'stackoverflow.com',
     addressAddressCity: 'New York',
     employees: 768,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/stack-overflow',
@@ -8012,7 +8012,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_510,
     name: 'Netwrix Corporation',
-    domainName: 'netwrix.com',
+    domainNamePrimaryLinkUrl: 'netwrix.com',
     addressAddressCity: 'Frisco',
     employees: 768,
     linkedinLinkPrimaryLinkUrl:
@@ -8025,7 +8025,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_511,
     name: 'Securonix',
-    domainName: 'securonix.com',
+    domainNamePrimaryLinkUrl: 'securonix.com',
     addressAddressCity: 'Addison',
     employees: 767,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/securonix',
@@ -8037,7 +8037,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_512,
     name: 'Draup',
-    domainName: 'draup.com',
+    domainNamePrimaryLinkUrl: 'draup.com',
     addressAddressCity: 'Spring',
     employees: 766,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/draupplatform',
@@ -8049,7 +8049,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_513,
     name: 'eQ Technologic',
-    domainName: '1eq.com',
+    domainNamePrimaryLinkUrl: '1eq.com',
     addressAddressCity: 'Costa Mesa',
     employees: 766,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/eq-technologic',
@@ -8061,7 +8061,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_514,
     name: 'Mindtickle',
-    domainName: 'mindtickle.com',
+    domainNamePrimaryLinkUrl: 'mindtickle.com',
     addressAddressCity: 'San Francisco',
     employees: 765,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mindtickle',
@@ -8073,7 +8073,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_515,
     name: 'Omnitracs',
-    domainName: 'omnitracs.com',
+    domainNamePrimaryLinkUrl: 'omnitracs.com',
     addressAddressCity: 'Roanoke',
     employees: 764,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/omnitracs',
@@ -8085,7 +8085,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_516,
     name: 'Programmer',
-    domainName: 'gregoryleroy.com',
+    domainNamePrimaryLinkUrl: 'gregoryleroy.com',
     addressAddressCity: 'Austin',
     employees: 762,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/programmer',
@@ -8097,7 +8097,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_517,
     name: 'Navis',
-    domainName: 'navis.com',
+    domainNamePrimaryLinkUrl: 'navis.com',
     addressAddressCity: 'Alpharetta',
     employees: 761,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/navis',
@@ -8109,7 +8109,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_518,
     name: 'AuditBoard',
-    domainName: 'auditboard.com',
+    domainNamePrimaryLinkUrl: 'auditboard.com',
     addressAddressCity: 'Cerritos',
     employees: 759,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/auditboard',
@@ -8121,7 +8121,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_519,
     name: 'Algolia',
-    domainName: 'algolia.com',
+    domainNamePrimaryLinkUrl: 'algolia.com',
     addressAddressCity: 'San Francisco',
     employees: 759,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/algolia',
@@ -8133,7 +8133,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_520,
     name: 'YML',
-    domainName: 'yml.co',
+    domainNamePrimaryLinkUrl: 'yml.co',
     addressAddressCity: 'Redwood City',
     employees: 754,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ymlco',
@@ -8145,7 +8145,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_521,
     name: 'Bolt',
-    domainName: 'bolt.com',
+    domainNamePrimaryLinkUrl: 'bolt.com',
     addressAddressCity: 'San Francisco',
     employees: 750,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/bolt-com',
@@ -8157,7 +8157,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_522,
     name: 'Dandy',
-    domainName: 'meetdandy.com',
+    domainNamePrimaryLinkUrl: 'meetdandy.com',
     addressAddressCity: 'New York',
     employees: 745,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/dandyofficial',
@@ -8169,7 +8169,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_523,
     name: 'Diverse Lynx',
-    domainName: 'diverselynx.com',
+    domainNamePrimaryLinkUrl: 'diverselynx.com',
     addressAddressCity: 'Princeton',
     employees: 743,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/diverselynx',
@@ -8181,7 +8181,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_524,
     name: 'JMP',
-    domainName: 'jmp.com',
+    domainNamePrimaryLinkUrl: 'jmp.com',
     addressAddressCity: 'Cary',
     employees: 741,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/jmp',
@@ -8193,7 +8193,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_525,
     name: 'ON24',
-    domainName: 'on24.com',
+    domainNamePrimaryLinkUrl: 'on24.com',
     addressAddressCity: 'San Francisco',
     employees: 741,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/on24',
@@ -8205,7 +8205,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_526,
     name: 'LabVantage Solutions, Inc',
-    domainName: 'labvantage.com',
+    domainNamePrimaryLinkUrl: 'labvantage.com',
     addressAddressCity: 'Somerset',
     employees: 740,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/labvantage',
@@ -8217,7 +8217,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_527,
     name: 'Exabeam',
-    domainName: 'exabeam.com',
+    domainNamePrimaryLinkUrl: 'exabeam.com',
     addressAddressCity: 'San Mateo',
     employees: 739,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/exabeam',
@@ -8229,7 +8229,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_528,
     name: 'Iterable',
-    domainName: 'iterable.com',
+    domainNamePrimaryLinkUrl: 'iterable.com',
     addressAddressCity: 'San Francisco',
     employees: 739,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/iterable',
@@ -8241,7 +8241,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_529,
     name: 'Clari',
-    domainName: 'clari.com',
+    domainNamePrimaryLinkUrl: 'clari.com',
     addressAddressCity: 'Sunnyvale',
     employees: 737,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/clari',
@@ -8253,7 +8253,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_530,
     name: 'Komodo Health',
-    domainName: 'komodohealth.com',
+    domainNamePrimaryLinkUrl: 'komodohealth.com',
     addressAddressCity: 'San Francisco',
     employees: 737,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/komodo-health',
@@ -8265,7 +8265,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_531,
     name: 'Alation',
-    domainName: 'alation.com',
+    domainNamePrimaryLinkUrl: 'alation.com',
     addressAddressCity: 'Redwood City',
     employees: 736,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/alation',
@@ -8277,7 +8277,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_532,
     name: 'Celigo',
-    domainName: 'celigo.com',
+    domainNamePrimaryLinkUrl: 'celigo.com',
     addressAddressCity: 'Redwood City',
     employees: 733,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/celigo-inc',
@@ -8289,7 +8289,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_533,
     name: 'Aptos Retail',
-    domainName: 'aptos.com',
+    domainNamePrimaryLinkUrl: 'aptos.com',
     addressAddressCity: 'Alpharetta',
     employees: 733,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/aptos-retail',
@@ -8301,7 +8301,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_534,
     name: 'WorkForce Software',
-    domainName: 'workforcesoftware.com',
+    domainNamePrimaryLinkUrl: 'workforcesoftware.com',
     addressAddressCity: 'Livonia',
     employees: 721,
     linkedinLinkPrimaryLinkUrl:
@@ -8314,7 +8314,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_535,
     name: 'HPE Security - Data Security',
-    domainName: 'voltage.com',
+    domainNamePrimaryLinkUrl: 'voltage.com',
     addressAddressCity: 'Sunnyvale',
     employees: 713,
     linkedinLinkPrimaryLinkUrl:
@@ -8327,7 +8327,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_536,
     name: 'DDN Storage',
-    domainName: 'ddn.com',
+    domainNamePrimaryLinkUrl: 'ddn.com',
     addressAddressCity: 'Chatsworth',
     employees: 712,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ddn-storage',
@@ -8339,7 +8339,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_537,
     name: 'KPA',
-    domainName: 'kpa.io',
+    domainNamePrimaryLinkUrl: 'kpa.io',
     addressAddressCity: 'Broomfield',
     employees: 709,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/kpa-llc',
@@ -8351,7 +8351,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_538,
     name: 'Lohika',
-    domainName: 'lohika.com',
+    domainNamePrimaryLinkUrl: 'lohika.com',
     addressAddressCity: 'San Mateo',
     employees: 705,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/lohika',
@@ -8363,7 +8363,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_539,
     name: 'Qualifacts',
-    domainName: 'qualifacts.com',
+    domainNamePrimaryLinkUrl: 'qualifacts.com',
     addressAddressCity: 'Nashville',
     employees: 705,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/qualifacts',
@@ -8375,7 +8375,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_540,
     name: 'Centric Software',
-    domainName: 'centricsoftware.com',
+    domainNamePrimaryLinkUrl: 'centricsoftware.com',
     addressAddressCity: 'Campbell',
     employees: 705,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/centric-software',
@@ -8387,7 +8387,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_541,
     name: 'Omdena',
-    domainName: 'omdena.com',
+    domainNamePrimaryLinkUrl: 'omdena.com',
     addressAddressCity: 'New York',
     employees: 704,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/omdena',
@@ -8399,7 +8399,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_542,
     name: 'AccountantsWorld',
-    domainName: 'accountantsworld.com',
+    domainNamePrimaryLinkUrl: 'accountantsworld.com',
     addressAddressCity: 'Hauppauge',
     employees: 704,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/accountantsworld',
@@ -8411,7 +8411,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_543,
     name: 'Aderant',
-    domainName: 'aderant.com',
+    domainNamePrimaryLinkUrl: 'aderant.com',
     addressAddressCity: 'Atlanta',
     employees: 704,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/aderant',
@@ -8423,7 +8423,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_544,
     name: 'Python Software Foundation',
-    domainName: 'python.org',
+    domainNamePrimaryLinkUrl: 'python.org',
     addressAddressCity: 'Beaverton',
     employees: 704,
     linkedinLinkPrimaryLinkUrl:
@@ -8436,7 +8436,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_545,
     name: 'OpenGov Inc.',
-    domainName: 'opengov.com',
+    domainNamePrimaryLinkUrl: 'opengov.com',
     addressAddressCity: 'San Jose',
     employees: 703,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/opengov-inc',
@@ -8448,7 +8448,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_546,
     name: 'Denodo',
-    domainName: 'denodo.com',
+    domainNamePrimaryLinkUrl: 'denodo.com',
     addressAddressCity: 'Palo Alto',
     employees: 702,
     linkedinLinkPrimaryLinkUrl:
@@ -8461,7 +8461,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_547,
     name: 'NEOGOV',
-    domainName: 'neogov.com',
+    domainNamePrimaryLinkUrl: 'neogov.com',
     addressAddressCity: 'El Segundo',
     employees: 698,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/neogov',
@@ -8473,7 +8473,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_548,
     name: 'VertexOne',
-    domainName: 'vertexone.net',
+    domainNamePrimaryLinkUrl: 'vertexone.net',
     addressAddressCity: 'Dallas',
     employees: 696,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/vertex-one',
@@ -8485,7 +8485,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_549,
     name: 'The Linux Foundation',
-    domainName: 'linuxfoundation.org',
+    domainNamePrimaryLinkUrl: 'linuxfoundation.org',
     addressAddressCity: 'San Francisco',
     employees: 694,
     linkedinLinkPrimaryLinkUrl:
@@ -8498,7 +8498,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_550,
     name: 'Reputation',
-    domainName: 'reputation.com',
+    domainNamePrimaryLinkUrl: 'reputation.com',
     addressAddressCity: 'San Ramon',
     employees: 694,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/reputation-com',
@@ -8510,7 +8510,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_551,
     name: 'Relevantz ',
-    domainName: 'relevantz.com',
+    domainNamePrimaryLinkUrl: 'relevantz.com',
     addressAddressCity: 'Alpharetta',
     employees: 691,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/relevantz',
@@ -8522,7 +8522,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_552,
     name: 'M-Files',
-    domainName: 'm-files.com',
+    domainNamePrimaryLinkUrl: 'm-files.com',
     addressAddressCity: 'Austin',
     employees: 691,
     linkedinLinkPrimaryLinkUrl:
@@ -8535,7 +8535,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_553,
     name: 'Homebase',
-    domainName: 'joinhomebase.com',
+    domainNamePrimaryLinkUrl: 'joinhomebase.com',
     addressAddressCity: 'San Francisco',
     employees: 688,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/homebase-app',
@@ -8547,7 +8547,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_554,
     name: 'Calypso Technology',
-    domainName: 'calypso.com',
+    domainNamePrimaryLinkUrl: 'calypso.com',
     addressAddressCity: 'San Francisco',
     employees: 688,
     linkedinLinkPrimaryLinkUrl:
@@ -8560,7 +8560,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_555,
     name: 'Viewpoint',
-    domainName: 'viewpoint.com',
+    domainNamePrimaryLinkUrl: 'viewpoint.com',
     addressAddressCity: 'Broomfield',
     employees: 686,
     linkedinLinkPrimaryLinkUrl:
@@ -8573,7 +8573,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_556,
     name: 'Devo',
-    domainName: 'devo.com',
+    domainNamePrimaryLinkUrl: 'devo.com',
     addressAddressCity: 'Cambridge',
     employees: 685,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/devoinc',
@@ -8585,7 +8585,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_557,
     name: 'WebPT',
-    domainName: 'webpt.com',
+    domainNamePrimaryLinkUrl: 'webpt.com',
     addressAddressCity: 'Phoenix',
     employees: 685,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/webpt',
@@ -8597,7 +8597,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_558,
     name: 'MatrixCare',
-    domainName: 'matrixcare.com',
+    domainNamePrimaryLinkUrl: 'matrixcare.com',
     addressAddressCity: 'Minneapolis',
     employees: 683,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/matrixcare',
@@ -8609,7 +8609,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_559,
     name: 'Sisense',
-    domainName: 'sisense.com',
+    domainNamePrimaryLinkUrl: 'sisense.com',
     addressAddressCity: 'New York',
     employees: 683,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sisense',
@@ -8621,7 +8621,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_560,
     name: 'Calendly',
-    domainName: 'calendly.com',
+    domainNamePrimaryLinkUrl: 'calendly.com',
     addressAddressCity: 'Atlanta',
     employees: 681,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/calendly',
@@ -8633,7 +8633,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_561,
     name: 'Placer.ai',
-    domainName: 'placer.io',
+    domainNamePrimaryLinkUrl: 'placer.io',
     addressAddressCity: 'Los Altos',
     employees: 677,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/placer',
@@ -8645,7 +8645,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_562,
     name: 'MResult',
-    domainName: 'mresult.com',
+    domainNamePrimaryLinkUrl: 'mresult.com',
     addressAddressCity: 'Mystic',
     employees: 674,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mresult',
@@ -8657,7 +8657,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_563,
     name: 'Coherent Solutions',
-    domainName: 'coherentsolutions.com',
+    domainNamePrimaryLinkUrl: 'coherentsolutions.com',
     addressAddressCity: 'Minneapolis',
     employees: 672,
     linkedinLinkPrimaryLinkUrl:
@@ -8670,7 +8670,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_564,
     name: 'Mirantis',
-    domainName: 'mirantis.com',
+    domainNamePrimaryLinkUrl: 'mirantis.com',
     addressAddressCity: 'Campbell',
     employees: 671,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mirantis',
@@ -8682,7 +8682,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_565,
     name: 'Simplify Healthcare',
-    domainName: 'simplifyhealthcare.com',
+    domainNamePrimaryLinkUrl: 'simplifyhealthcare.com',
     addressAddressCity: 'Aurora',
     employees: 671,
     linkedinLinkPrimaryLinkUrl:
@@ -8695,7 +8695,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_566,
     name: 'JumpCloud',
-    domainName: 'jumpcloud.com',
+    domainNamePrimaryLinkUrl: 'jumpcloud.com',
     addressAddressCity: 'Louisville',
     employees: 671,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/jumpcloud',
@@ -8707,7 +8707,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_567,
     name: 'ASAP',
-    domainName: 'asap.com',
+    domainNamePrimaryLinkUrl: 'asap.com',
     addressAddressCity: 'Lafayette',
     employees: 667,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/asap',
@@ -8719,7 +8719,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_568,
     name: 'Xoxoday',
-    domainName: 'xoxoday.com',
+    domainNamePrimaryLinkUrl: 'xoxoday.com',
     addressAddressCity: 'Redwood City',
     employees: 666,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/xoxoday',
@@ -8731,7 +8731,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_569,
     name: 'DataStax',
-    domainName: 'datastax.com',
+    domainNamePrimaryLinkUrl: 'datastax.com',
     addressAddressCity: 'Santa Clara',
     employees: 666,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/datastax',
@@ -8743,7 +8743,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_570,
     name: 'Foursquare',
-    domainName: 'foursquare.com',
+    domainNamePrimaryLinkUrl: 'foursquare.com',
     addressAddressCity: 'New York',
     employees: 665,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/foursquare',
@@ -8755,7 +8755,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_571,
     name: 'LastPass',
-    domainName: 'lastpass.com',
+    domainNamePrimaryLinkUrl: 'lastpass.com',
     addressAddressCity: 'Boston',
     employees: 664,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/lastpass',
@@ -8767,7 +8767,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_572,
     name: 'SOCi, Inc.',
-    domainName: 'meetsoci.com',
+    domainNamePrimaryLinkUrl: 'meetsoci.com',
     addressAddressCity: 'San Diego',
     employees: 664,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/soci-inc-',
@@ -8779,7 +8779,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_573,
     name: 'Stratus Technologies',
-    domainName: 'stratus.com',
+    domainNamePrimaryLinkUrl: 'stratus.com',
     addressAddressCity: 'Maynard',
     employees: 662,
     linkedinLinkPrimaryLinkUrl:
@@ -8792,7 +8792,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_574,
     name: 'AdvancedMD',
-    domainName: 'advancedmd.com',
+    domainNamePrimaryLinkUrl: 'advancedmd.com',
     addressAddressCity: 'South Jordan',
     employees: 661,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/advancedmd',
@@ -8804,7 +8804,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_575,
     name: 'Matterport',
-    domainName: 'matterport.com',
+    domainNamePrimaryLinkUrl: 'matterport.com',
     addressAddressCity: 'Sunnyvale',
     employees: 660,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/matterport',
@@ -8816,7 +8816,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_576,
     name: 'Samsung Research America (SRA)',
-    domainName: 'sra.samsung.com',
+    domainNamePrimaryLinkUrl: 'sra.samsung.com',
     addressAddressCity: 'Mountain View',
     employees: 658,
     linkedinLinkPrimaryLinkUrl:
@@ -8829,7 +8829,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_577,
     name: 'Creatio',
-    domainName: 'creatio.com',
+    domainNamePrimaryLinkUrl: 'creatio.com',
     addressAddressCity: 'Boston',
     employees: 657,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/creatioglobal',
@@ -8841,7 +8841,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_578,
     name: 'Branch',
-    domainName: 'branch.io',
+    domainNamePrimaryLinkUrl: 'branch.io',
     addressAddressCity: 'Palo Alto',
     employees: 657,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/branch-metrics',
@@ -8853,7 +8853,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_579,
     name: 'Versa Networks',
-    domainName: 'versa-networks.com',
+    domainNamePrimaryLinkUrl: 'versa-networks.com',
     addressAddressCity: 'Alviso',
     employees: 655,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/versa-networks',
@@ -8865,7 +8865,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_580,
     name: 'Mitek Systems',
-    domainName: 'miteksystems.com',
+    domainNamePrimaryLinkUrl: 'miteksystems.com',
     addressAddressCity: 'San Diego',
     employees: 653,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/miteksystems',
@@ -8877,7 +8877,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_581,
     name: 'PDF Solutions',
-    domainName: 'pdf.com',
+    domainNamePrimaryLinkUrl: 'pdf.com',
     addressAddressCity: 'Santa Clara',
     employees: 653,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/pdf-solutions',
@@ -8889,7 +8889,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_582,
     name: 'ESO',
-    domainName: 'eso.com',
+    domainNamePrimaryLinkUrl: 'eso.com',
     addressAddressCity: 'Austin',
     employees: 652,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/eso-solutions',
@@ -8901,7 +8901,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_583,
     name: 'Mural',
-    domainName: 'mural.co',
+    domainNamePrimaryLinkUrl: 'mural.co',
     addressAddressCity: 'San Francisco',
     employees: 650,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mural.co',
@@ -8913,7 +8913,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_584,
     name: 'FourKites, Inc.',
-    domainName: 'fourkites.com',
+    domainNamePrimaryLinkUrl: 'fourkites.com',
     addressAddressCity: 'Chicago',
     employees: 650,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/fourkites-inc',
@@ -8925,7 +8925,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_585,
     name: 'Aras Corporation',
-    domainName: 'aras.com',
+    domainNamePrimaryLinkUrl: 'aras.com',
     addressAddressCity: 'Andover',
     employees: 648,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/aras-corporation',
@@ -8937,7 +8937,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_586,
     name: 'Delphix',
-    domainName: 'delphix.com',
+    domainNamePrimaryLinkUrl: 'delphix.com',
     addressAddressCity: 'Redwood City',
     employees: 648,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/delphix',
@@ -8949,7 +8949,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_587,
     name: 'Wolfram',
-    domainName: 'wolfram.com',
+    domainNamePrimaryLinkUrl: 'wolfram.com',
     addressAddressCity: 'Champaign',
     employees: 644,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/wolfram-research',
@@ -8961,7 +8961,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_588,
     name: 'Eightfold',
-    domainName: 'eightfold.ai',
+    domainNamePrimaryLinkUrl: 'eightfold.ai',
     addressAddressCity: 'Santa Clara',
     employees: 643,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/eightfoldai',
@@ -8973,7 +8973,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_589,
     name: 'Quark Software Inc.',
-    domainName: 'quark.com',
+    domainNamePrimaryLinkUrl: 'quark.com',
     addressAddressCity: 'Grand Rapids',
     employees: 641,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/quark',
@@ -8985,7 +8985,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_590,
     name: 'connectRN',
-    domainName: 'connectrn.com',
+    domainNamePrimaryLinkUrl: 'connectrn.com',
     addressAddressCity: 'Waltham',
     employees: 640,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/connectrn',
@@ -8997,7 +8997,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_591,
     name: 'RSI',
-    domainName: 'rsidelivers.com',
+    domainNamePrimaryLinkUrl: 'rsidelivers.com',
     addressAddressCity: 'Pembroke',
     employees: 638,
     linkedinLinkPrimaryLinkUrl:
@@ -9010,7 +9010,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_592,
     name: 'Macrosoft',
-    domainName: 'macrosoftinc.com',
+    domainNamePrimaryLinkUrl: 'macrosoftinc.com',
     addressAddressCity: 'Parsippany',
     employees: 638,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/macrosoft',
@@ -9022,7 +9022,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_593,
     name: 'Paradox',
-    domainName: 'paradox.ai',
+    domainNamePrimaryLinkUrl: 'paradox.ai',
     addressAddressCity: 'Scottsdale',
     employees: 637,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/paradoxolivia',
@@ -9034,7 +9034,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_594,
     name: 'SmartRecruiters',
-    domainName: 'smartrecruiters.com',
+    domainNamePrimaryLinkUrl: 'smartrecruiters.com',
     addressAddressCity: 'San Francisco',
     employees: 637,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/smartrecruiters',
@@ -9046,7 +9046,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_595,
     name: 'Tealium',
-    domainName: 'tealium.com',
+    domainNamePrimaryLinkUrl: 'tealium.com',
     addressAddressCity: 'San Diego',
     employees: 635,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tealium',
@@ -9058,7 +9058,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_596,
     name: 'Securiti',
-    domainName: 'securiti.ai',
+    domainNamePrimaryLinkUrl: 'securiti.ai',
     addressAddressCity: 'San Jose',
     employees: 634,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/securitiai',
@@ -9070,7 +9070,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_597,
     name: 'Lattice',
-    domainName: 'lattice.com',
+    domainNamePrimaryLinkUrl: 'lattice.com',
     addressAddressCity: 'San Francisco',
     employees: 634,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/lattice-hq',
@@ -9082,7 +9082,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_598,
     name: 'TuSimple',
-    domainName: 'tusimple.com',
+    domainNamePrimaryLinkUrl: 'tusimple.com',
     addressAddressCity: 'San Diego',
     employees: 633,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tusimple',
@@ -9094,7 +9094,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_599,
     name: 'Ceipal',
-    domainName: 'ceipal.com',
+    domainNamePrimaryLinkUrl: 'ceipal.com',
     addressAddressCity: 'Rochester',
     employees: 633,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ceipal',
@@ -9106,7 +9106,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_600,
     name: 'RSD',
-    domainName: 'rocketsoftware.com',
+    domainNamePrimaryLinkUrl: 'rocketsoftware.com',
     addressAddressCity: 'Waltham',
     employees: 633,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/rsd',
