@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
-import { HttpResponse, graphql } from 'msw';
 
 import {
   PageDecorator,
@@ -18,27 +17,7 @@ const meta: Meta<PageDecoratorArgs> = {
     routeParams: { ':webhookId': '1234' },
   },
   parameters: {
-    msw: {
-      handlers: [
-        graphql.query('FindOneWebhook', () => {
-          return HttpResponse.json({
-            data: {
-              webhook: {
-                id: '1234',
-                createdAt: '2021-08-27T12:00:00Z',
-                targetUrl: 'https://example.com/webhook',
-                description: 'A Sample Description',
-                updatedAt: '2021-08-27T12:00:00Z',
-                operations: ['*.created', '*.updated'],
-                secret: 'sample-secret-key',
-                __typename: 'Webhook',
-              },
-            },
-          });
-        }),
-        ...graphqlMocks.handlers,
-      ],
-    },
+    msw: graphqlMocks,
   },
 };
 
