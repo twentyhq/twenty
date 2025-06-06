@@ -79,7 +79,7 @@ describe('AuthService', () => {
         },
         {
           provide: WorkspaceAgnosticTokenService,
-          useValue: {}
+          useValue: {},
         },
         {
           provide: GuardRedirectService,
