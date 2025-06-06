@@ -9,6 +9,7 @@ export type AuthContext = {
   workspaceMemberId?: string;
   workspace?: Workspace;
   userWorkspaceId?: string;
+  authProvider?: AuthProviderEnum;
 };
 
 export enum JwtTokenTypeEnum {

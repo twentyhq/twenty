@@ -36,6 +36,7 @@ import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { isWorkEmail } from 'src/utils/is-work-email';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -391,12 +392,13 @@ export class SignInUpService {
     );
   }
 
-  async setLoginTokenToAvailableWorkspaces(
+  async setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
     availableWorkspaces: {
       availableWorkspacesForSignUp: Array<Workspace>;
       availableWorkspacesForSignIn: Array<Workspace>;
     },
     user: User,
+    authProvider: AuthProviderEnum,
   ) {
     return {
       availableWorkspacesForSignUp:
@@ -410,7 +412,10 @@ export class SignInUpService {
               ...this.userWorkspaceService.castWorkspaceToAvailableWorkspace(
                 workspace,
               ),
-              loginToken: workspace.isPasswordAuthEnabled
+              loginToken: workspaceValidator.isAuthEnabled(
+                authProvider,
+                workspace,
+              )
                 ? (
                     await this.loginTokenService.generateLoginToken(
                       user.email,

@@ -158,6 +158,7 @@ export class MiddlewareService {
     request.workspaceMetadataVersion = metadataVersion;
     request.workspaceMemberId = data.workspaceMemberId;
     request.userWorkspaceId = data.userWorkspaceId;
+    request.authProvider = data.authProvider;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

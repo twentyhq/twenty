@@ -57,6 +57,9 @@ import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/acc
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { AvailableWorkspaces } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -77,6 +80,7 @@ export class UserResolver {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly fileUploadService: FileUploadService,
     private readonly onboardingService: OnboardingService,
+    private readonly signInUpService: SignInUpService,
     private readonly userVarService: UserVarsService,
     private readonly fileService: FileService,
     @InjectRepository(UserWorkspace, 'core')
@@ -416,10 +420,15 @@ export class UserResolver {
 
   @ResolveField(() => AvailableWorkspaces)
   async availableWorkspaces(
-    @AuthUser() { email }: User,
+    @AuthUser() user: User,
+    @AuthProvider() authProvider: AuthProviderEnum,
   ): Promise<AvailableWorkspaces> {
-    return this.userWorkspaceService.listAvailableWorkspacesForAuthentication(
-      email,
+    return this.signInUpService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
+      await this.userWorkspaceService.findAvailableWorkspacesByEmail(
+        user.email,
+      ),
+      user,
+      authProvider,
     );
   }
 }

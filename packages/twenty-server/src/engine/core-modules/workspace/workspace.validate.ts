@@ -44,10 +44,25 @@ const isAuthEnabledOrThrow = (
   throw exceptionToThrowCustom;
 };
 
+const isAuthEnabled = (provider: AuthProviderEnum, workspace: Workspace) => {
+  if (provider === AuthProviderEnum.Google && workspace.isGoogleAuthEnabled)
+    return true;
+  if (
+    provider === AuthProviderEnum.Microsoft &&
+    workspace.isMicrosoftAuthEnabled
+  )
+    return true;
+  if (provider === AuthProviderEnum.Password && workspace.isPasswordAuthEnabled)
+    return true;
+  return false;
+};
+
 export const workspaceValidator: {
   assertIsDefinedOrThrow: typeof assertIsDefinedOrThrow;
   isAuthEnabledOrThrow: typeof isAuthEnabledOrThrow;
+  isAuthEnabled: typeof isAuthEnabled;
 } = {
   assertIsDefinedOrThrow: assertIsDefinedOrThrow,
   isAuthEnabledOrThrow: isAuthEnabledOrThrow,
+  isAuthEnabled: isAuthEnabled,
 };

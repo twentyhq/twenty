@@ -187,9 +187,10 @@ export class AuthResolver {
 
     return {
       availableWorkspaces:
-        await this.signInUpService.setLoginTokenToAvailableWorkspaces(
+        await this.signInUpService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
           availableWorkspaces,
           user,
+          AuthProviderEnum.Password
         ),
       tokens: {
         accessToken:
@@ -258,9 +259,10 @@ export class AuthResolver {
 
     return {
       availableWorkspaces:
-        await this.signInUpService.setLoginTokenToAvailableWorkspaces(
+        await this.signInUpService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
           availableWorkspaces,
           user,
+          AuthProviderEnum.Password,
         ),
       tokens: {
         accessToken:

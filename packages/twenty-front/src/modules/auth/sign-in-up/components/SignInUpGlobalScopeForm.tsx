@@ -36,6 +36,7 @@ import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 import { AppPath } from '@/types/AppPath';
+import { AvailableWorkspace } from '~/generated/graphql';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -166,6 +167,20 @@ export const SignInUpGlobalScopeForm = () => {
     }
   };
 
+  const getAvailableWorkspaceUrl = (availableWorkspace: AvailableWorkspace) => {
+    return buildWorkspaceUrl(
+      getWorkspaceUrl(availableWorkspace.workspaceUrls),
+      availableWorkspace.loginToken ? AppPath.Verify : AppPath.SignInUp,
+      isDefined(availableWorkspace.loginToken)
+        ? {
+            loginToken: availableWorkspace.loginToken,
+          }
+        : {
+            email: form.getValues('email'),
+          },
+    );
+  };
+
   return (
     <>
       {signInUpStep === SignInUpStep.WorkspaceSelection && (
@@ -173,32 +188,29 @@ export const SignInUpGlobalScopeForm = () => {
           {[
             ...availableWorkspaces.availableWorkspacesForSignIn,
             ...availableWorkspaces.availableWorkspacesForSignUp,
-          ].map((workspace) => (
+          ].map((availableWorkspace) => (
             <UndecoratedLink
-              key={workspace.id}
-              to={buildWorkspaceUrl(
-                getWorkspaceUrl(workspace.workspaceUrls),
-                AppPath.SignInUp,
-                {
-                  email: form.getValues('email'),
-                },
-              )}
+              key={availableWorkspace.id}
+              to={getAvailableWorkspaceUrl(availableWorkspace)}
             >
               <StyledWorkspaceItem>
                 <StyledWorkspaceContent>
                   <Avatar
-                    placeholder={workspace.displayName || ''}
-                    avatarUrl={workspace.logo ?? DEFAULT_WORKSPACE_LOGO}
+                    placeholder={availableWorkspace.displayName || ''}
+                    avatarUrl={
+                      availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO
+                    }
                     size="lg"
                   />
                   <StyledWorkspaceTextContainer>
                     <StyledWorkspaceName>
-                      {workspace.displayName || workspace.id}
+                      {availableWorkspace.displayName || availableWorkspace.id}
                     </StyledWorkspaceName>
                     <StyledWorkspaceUrl>
                       {
-                        new URL(getWorkspaceUrl(workspace.workspaceUrls))
-                          .hostname
+                        new URL(
+                          getWorkspaceUrl(availableWorkspace.workspaceUrls),
+                        ).hostname
                       }
                     </StyledWorkspaceUrl>
                   </StyledWorkspaceTextContainer>
