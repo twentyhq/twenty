@@ -49,6 +49,7 @@ const StyledToolbar = styled.div`
   width: 400px;
   padding: ${({ theme }) => theme.spacing(3)};
   z-index: 1;
+  box-shadow: ${({ theme }) => theme.boxShadow.strong};
 `;
 
 const StyledButton = styled(Button)`
