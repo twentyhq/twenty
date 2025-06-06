@@ -43,13 +43,12 @@ export class CheckExpiredSubscriptionsJob {
     });
 
     for (const workspace of workspaces) {
-      const subscription =
-        await this.billingSubscriptionRepository.findOneOrFail({
-          where: {
-            workspaceId: workspace.id,
-          },
-          relations: ['billingSubscriptionItems'],
-        });
+      const subscription = await this.billingSubscriptionRepository.findOne({
+        where: {
+          workspaceId: workspace.id,
+        },
+        relations: ['billingSubscriptionItems'],
+      });
 
       if (!subscription) continue;
 
