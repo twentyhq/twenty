@@ -9,17 +9,34 @@ import {
 import { buildCompositeFieldWhereCondition } from 'src/engine/api/utils/build-composite-field-where-condition.utils';
 
 describe('buildCompositeFieldWhereCondition', () => {
-  describe('empty properties', () => {
-    it('should return empty object when compositeFieldProperties is empty', () => {
+  describe('eq operator cases', () => {
+    it('should handle eq operator', () => {
       const result = buildCompositeFieldWhereCondition({
-        fieldType: FieldMetadataType.TEXT,
-        fieldKey: 'person',
-        orderBy: [],
-        cursorValue: { name: 'John' },
+        fieldType: FieldMetadataType.FULL_NAME,
+        fieldKey: 'name',
+        orderBy: [
+          {
+            name: {
+              firstName: OrderByDirection.AscNullsLast,
+              lastName: OrderByDirection.AscNullsLast,
+            },
+          },
+        ],
+        cursorValue: { firstName: 'John', lastName: 'Doe' },
         isForwardPagination: true,
+        operator: 'eq',
       });
 
-      expect(result).toEqual({});
+      expect(result).toEqual({
+        name: {
+          firstName: {
+            eq: 'John',
+          },
+          lastName: {
+            eq: 'Doe',
+          },
+        },
+      });
     });
   });
 
@@ -38,7 +55,7 @@ describe('buildCompositeFieldWhereCondition', () => {
         title: 'ascending order with forward pagination',
         context: {
           description: 'ascending order with forward pagination',
-          fieldType: FieldMetadataType.TEXT,
+          fieldType: FieldMetadataType.FULL_NAME,
           fieldKey: 'person',
           orderBy: [{ person: { firstName: OrderByDirection.AscNullsLast } }],
           value: { firstName: 'John' },
@@ -51,7 +68,7 @@ describe('buildCompositeFieldWhereCondition', () => {
         title: 'ascending order with backward pagination',
         context: {
           description: 'ascending order with backward pagination',
-          fieldType: FieldMetadataType.TEXT,
+          fieldType: FieldMetadataType.FULL_NAME,
           fieldKey: 'person',
           orderBy: [{ person: { firstName: OrderByDirection.AscNullsLast } }],
           value: { firstName: 'John' },
@@ -64,7 +81,7 @@ describe('buildCompositeFieldWhereCondition', () => {
         title: 'descending order with forward pagination',
         context: {
           description: 'descending order with forward pagination',
-          fieldType: FieldMetadataType.TEXT,
+          fieldType: FieldMetadataType.FULL_NAME,
           fieldKey: 'person',
           orderBy: [{ person: { firstName: OrderByDirection.DescNullsLast } }],
           value: { firstName: 'John' },
@@ -77,7 +94,7 @@ describe('buildCompositeFieldWhereCondition', () => {
         title: 'descending order with backward pagination',
         context: {
           description: 'descending order with backward pagination',
-          fieldType: FieldMetadataType.TEXT,
+          fieldType: FieldMetadataType.FULL_NAME,
           fieldKey: 'person',
           orderBy: [{ person: { firstName: OrderByDirection.DescNullsLast } }],
           value: { firstName: 'John' },
@@ -112,8 +129,8 @@ describe('buildCompositeFieldWhereCondition', () => {
 
         expect(result).toEqual({
           [fieldKey]: {
-            [fieldKey]: {
-              [expectedOperator]: value[fieldKey as keyof typeof value],
+            firstName: {
+              [expectedOperator]: value.firstName,
             },
           },
         });
@@ -158,11 +175,11 @@ describe('buildCompositeFieldWhereCondition', () => {
         title: 'two properties - both ascending, forward pagination',
         context: {
           description: 'two properties - both ascending, forward pagination',
-          fieldType: FieldMetadataType.TEXT,
-          fieldKey: 'person',
+          fieldType: FieldMetadataType.FULL_NAME,
+          fieldKey: 'name',
           orderBy: [
             {
-              person: {
+              name: {
                 firstName: OrderByDirection.AscNullsLast,
                 lastName: OrderByDirection.AscNullsLast,
               },
@@ -176,11 +193,11 @@ describe('buildCompositeFieldWhereCondition', () => {
         title: 'two properties - both ascending, backward pagination',
         context: {
           description: 'two properties - both ascending, backward pagination',
-          fieldType: FieldMetadataType.TEXT,
-          fieldKey: 'person',
+          fieldType: FieldMetadataType.FULL_NAME,
+          fieldKey: 'name',
           orderBy: [
             {
-              person: {
+              name: {
                 firstName: OrderByDirection.AscNullsLast,
                 lastName: OrderByDirection.AscNullsLast,
               },
@@ -194,36 +211,65 @@ describe('buildCompositeFieldWhereCondition', () => {
         title: 'two properties - mixed ordering, forward pagination',
         context: {
           description: 'two properties - mixed ordering, forward pagination',
-          fieldType: FieldMetadataType.TEXT,
-          fieldKey: 'person',
+          fieldType: FieldMetadataType.FULL_NAME,
+          fieldKey: 'name',
           orderBy: [
             {
-              person: {
+              name: {
                 firstName: OrderByDirection.AscNullsLast,
-                age: OrderByDirection.DescNullsLast,
+                lastName: OrderByDirection.DescNullsLast,
               },
             },
           ],
-          value: { firstName: 'Alice', age: 25 },
+          value: { firstName: 'John', lastName: 'Doe' },
           isForwardPagination: true,
         },
       },
       {
-        title: 'three properties - all ascending, forward pagination',
+        title: 'two properties - both descending, forward pagination',
         context: {
-          description: 'three properties - all ascending, forward pagination',
-          fieldType: FieldMetadataType.TEXT,
-          fieldKey: 'employee',
+          description: 'two properties - both descending, forward pagination',
+          fieldType: FieldMetadataType.FULL_NAME,
+          fieldKey: 'name',
           orderBy: [
             {
-              employee: {
-                city: OrderByDirection.AscNullsLast,
-                firstName: OrderByDirection.AscNullsLast,
-                id: OrderByDirection.AscNullsLast,
+              name: {
+                firstName: OrderByDirection.DescNullsLast,
+                lastName: OrderByDirection.DescNullsLast,
               },
             },
           ],
-          value: { city: 'New York', firstName: 'Bob', id: 'uuid-123' },
+          value: { firstName: 'John', lastName: 'Doe' },
+          isForwardPagination: true,
+        },
+      },
+      {
+        title: 'address composite field - both ascending, forward pagination',
+        context: {
+          description:
+            'address composite field - both ascending, forward pagination',
+          fieldType: FieldMetadataType.ADDRESS,
+          fieldKey: 'address',
+          orderBy: [
+            {
+              address: {
+                addressStreet1: OrderByDirection.AscNullsLast,
+                addressStreet2: OrderByDirection.AscNullsLast,
+                addressCity: OrderByDirection.AscNullsLast,
+                addressState: OrderByDirection.AscNullsLast,
+                addressCountry: OrderByDirection.AscNullsLast,
+                addressPostcode: OrderByDirection.AscNullsLast,
+              },
+            },
+          ],
+          value: {
+            addressStreet1: '123 Main St',
+            addressStreet2: 'Apt 4B',
+            addressCity: 'New York',
+            addressState: 'NY',
+            addressCountry: 'USA',
+            addressPostcode: '10001',
+          },
           isForwardPagination: true,
         },
       },
@@ -246,7 +292,10 @@ describe('buildCompositeFieldWhereCondition', () => {
         const orConditions = result.or;
 
         expect(Array.isArray(orConditions)).toBe(true);
-        expect(orConditions).toHaveLength(orderBy.length);
+
+        const propertiesWithValues = Object.keys(value).length;
+
+        expect(orConditions).toHaveLength(propertiesWithValues);
 
         expect(orConditions[0]).toHaveProperty(fieldKey);
 
@@ -281,5 +330,31 @@ describe('buildCompositeFieldWhereCondition', () => {
         expect(result).toMatchSnapshot(`multiple properties - ${description}`);
       },
     );
+  });
+
+  describe('error cases', () => {
+    it('should throw error for invalid composite type', () => {
+      expect(() =>
+        buildCompositeFieldWhereCondition({
+          fieldType: FieldMetadataType.TEXT,
+          fieldKey: 'person',
+          orderBy: [{ person: { firstName: OrderByDirection.AscNullsLast } }],
+          cursorValue: { firstName: 'John' },
+          isForwardPagination: true,
+        }),
+      ).toThrow('Composite type definition not found for type: TEXT');
+    });
+
+    it('should throw error for invalid cursor with missing order by', () => {
+      expect(() =>
+        buildCompositeFieldWhereCondition({
+          fieldType: FieldMetadataType.FULL_NAME,
+          fieldKey: 'person',
+          orderBy: [],
+          cursorValue: { firstName: 'John' },
+          isForwardPagination: true,
+        }),
+      ).toThrow('Invalid cursor');
+    });
   });
 });
