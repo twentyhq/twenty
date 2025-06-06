@@ -683,7 +683,7 @@ export const graphqlMocks = {
               updatedAt: '2021-08-27T12:00:00Z',
               deletedAt: null,
               targetUrl: 'https://example.com/webhook',
-              description: 'Sample webhook description',
+              description: 'A Sample Description',
               operations: ['*.created', '*.updated'],
               secret: 'sample-secret',
             },
