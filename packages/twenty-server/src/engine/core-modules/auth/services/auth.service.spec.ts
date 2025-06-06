@@ -25,6 +25,7 @@ import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/l
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 import { AuthService } from './auth.service';
 
@@ -73,7 +74,11 @@ describe('AuthService', () => {
           useValue: {},
         },
         {
-          provider: WorkspaceAgnosticTokenService,
+          provide: DomainManagerService,
+          useValue: {},
+        },
+        {
+          provide: WorkspaceAgnosticTokenService,
           useValue: {}
         },
         {
