@@ -1,4 +1,6 @@
 import { useUploadFileToBucket } from '@/chat/hooks/useUploadFileToBucket';
+import { ChatbotFlowEventContainerForm } from '@/chatbot/components/actions/ChatbotFlowEventContainerForm';
+import { useDeleteSelectedNode } from '@/chatbot/hooks/useDeleteSelectedNode';
 import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
 import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
 import { chatbotFlowState } from '@/chatbot/state/chatbotFlowState';
@@ -98,6 +100,7 @@ export const ChatbotFlowImageEventForm = ({
 
   const { updateFlow } = useUpdateChatbotFlow();
   const { uploadFileToBucket } = useUploadFileToBucket();
+  const { deleteSelectedNode } = useDeleteSelectedNode();
 
   const chatbotFlow = useRecoilValue(chatbotFlowState);
   const setChatbotFlowSelectedNode = useSetRecoilState(
@@ -227,17 +230,21 @@ export const ChatbotFlowImageEventForm = ({
           </StyledHeaderType>
         </StyledHeaderInfo>
       </StyledHeader>
-      <StyledStepBody>
-        <StyledDiv>
-          <Label>File</Label>
-          <ImageInput
-            picture={image}
-            onUpload={handleSendFile}
-            onRemove={handleRemoveFile}
-            maxSize="5"
-          />
-        </StyledDiv>
-      </StyledStepBody>
+      <ChatbotFlowEventContainerForm
+        onClick={() => deleteSelectedNode(selectedNode.id)}
+      >
+        <StyledStepBody>
+          <StyledDiv>
+            <Label>File</Label>
+            <ImageInput
+              picture={image}
+              onUpload={handleSendFile}
+              onRemove={handleRemoveFile}
+              maxSize="5"
+            />
+          </StyledDiv>
+        </StyledStepBody>
+      </ChatbotFlowEventContainerForm>
     </>
   );
 };

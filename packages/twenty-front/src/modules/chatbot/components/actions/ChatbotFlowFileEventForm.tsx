@@ -1,4 +1,6 @@
 import { useUploadFileToBucket } from '@/chat/hooks/useUploadFileToBucket';
+import { ChatbotFlowEventContainerForm } from '@/chatbot/components/actions/ChatbotFlowEventContainerForm';
+import { useDeleteSelectedNode } from '@/chatbot/hooks/useDeleteSelectedNode';
 import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
 import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
 import { chatbotFlowState } from '@/chatbot/state/chatbotFlowState';
@@ -104,6 +106,7 @@ export const ChatbotFlowFileEventForm = ({
 
   const { updateFlow } = useUpdateChatbotFlow();
   const { uploadFileToBucket } = useUploadFileToBucket();
+  const { deleteSelectedNode } = useDeleteSelectedNode();
 
   const chatbotFlow = useRecoilValue(chatbotFlowState);
   const setChatbotFlowSelectedNode = useSetRecoilState(
@@ -202,39 +205,43 @@ export const ChatbotFlowFileEventForm = ({
           </StyledHeaderType>
         </StyledHeaderInfo>
       </StyledHeader>
-      <StyledStepBody>
-        <StyledDiv>
-          <Label>File</Label>
-          {file && (
-            <StyledLink href={file} target="_blank" rel="noreferrer">
-              <H3Title title={renameFile(file)} />
-            </StyledLink>
-          )}
+      <ChatbotFlowEventContainerForm
+        onClick={() => deleteSelectedNode(selectedNode.id)}
+      >
+        <StyledStepBody>
+          <StyledDiv>
+            <Label>File</Label>
+            {file && (
+              <StyledLink href={file} target="_blank" rel="noreferrer">
+                <H3Title title={renameFile(file)} />
+              </StyledLink>
+            )}
 
-          <StyledButton
-            title="Upload file"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            Upload file
-          </StyledButton>
+            <StyledButton
+              title="Upload file"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              Upload file
+            </StyledButton>
 
-          <StyledInput
-            ref={fileInputRef}
-            type="file"
-            accept=".pdf, .doc, .docx, .txt"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
-              if (file) {
-                handleSendFile(file);
-              }
-            }}
-            style={{ display: 'none' }}
-          />
+            <StyledInput
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf, .doc, .docx, .txt"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
+                if (file) {
+                  handleSendFile(file);
+                }
+              }}
+              style={{ display: 'none' }}
+            />
 
-          <Label>Upload a file up to 5mb</Label>
-        </StyledDiv>
-      </StyledStepBody>
+            <Label>Upload a file up to 5mb</Label>
+          </StyledDiv>
+        </StyledStepBody>
+      </ChatbotFlowEventContainerForm>
     </>
   );
 };
