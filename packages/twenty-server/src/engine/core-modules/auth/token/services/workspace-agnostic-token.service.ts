@@ -29,10 +29,13 @@ export class WorkspaceAgnosticTokenService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async generateWorkspaceAgnosticToken(
-    userId: string,
-    authProvider: WorkspaceAgnosticTokenJwtPayload['authProvider'],
-  ): Promise<AuthToken> {
+  async generateWorkspaceAgnosticToken({
+    userId,
+    authProvider,
+  }: {
+    userId: string;
+    authProvider: WorkspaceAgnosticTokenJwtPayload['authProvider'];
+  }): Promise<AuthToken> {
     const expiresIn = this.twentyConfigService.get(
       'WORKSPACE_AGNOSTIC_TOKEN_EXPIRES_IN',
     );

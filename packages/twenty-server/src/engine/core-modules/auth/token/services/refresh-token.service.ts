@@ -106,7 +106,7 @@ export class RefreshTokenService {
       );
     }
 
-    return { user, token };
+    return { user, token, authProvider: jwtPayload.authProvider };
   }
 
   async generateRefreshToken(

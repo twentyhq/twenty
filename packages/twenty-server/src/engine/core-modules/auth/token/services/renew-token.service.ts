@@ -35,6 +35,7 @@ export class RenewTokenService {
     const {
       user,
       token: { id, workspaceId },
+      authProvider,
     } = await this.refreshTokenService.verifyRefreshToken(token);
 
     // Revoke old refresh token
@@ -50,10 +51,12 @@ export class RenewTokenService {
     const accessToken = await this.accessTokenService.generateAccessToken({
       userId: user.id,
       workspaceId,
+      authProvider,
     });
     const refreshToken = await this.refreshTokenService.generateRefreshToken({
       userId: user.id,
       workspaceId,
+      authProvider,
     });
 
     return {

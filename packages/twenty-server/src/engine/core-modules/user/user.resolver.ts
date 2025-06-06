@@ -59,7 +59,6 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { AvailableWorkspaces } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;

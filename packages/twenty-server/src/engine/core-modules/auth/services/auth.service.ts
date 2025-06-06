@@ -255,7 +255,11 @@ export class AuthService {
     });
   }
 
-  async verify(email: string, workspaceId: string): Promise<AuthTokens> {
+  async verify(
+    email: string,
+    workspaceId: string,
+    authProvider: AuthProviderEnum,
+  ): Promise<AuthTokens> {
     if (!email) {
       throw new AuthException(
         'Email is required',
@@ -278,10 +282,12 @@ export class AuthService {
     const accessToken = await this.accessTokenService.generateAccessToken({
       userId: user.id,
       workspaceId,
+      authProvider,
     });
     const refreshToken = await this.refreshTokenService.generateRefreshToken({
       userId: user.id,
       workspaceId,
+      authProvider,
     });
 
     return {
@@ -712,11 +718,14 @@ export class AuthService {
           tokenPair: JSON.stringify({
             accessToken:
               await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
-                user.id,
-                authProvider,
+                {
+                  userId: user.id,
+                  authProvider,
+                },
               ),
             refreshToken: await this.refreshTokenService.generateRefreshToken({
               userId: user.id,
+              authProvider,
             }),
           }),
         },
@@ -775,6 +784,7 @@ export class AuthService {
       const loginToken = await this.loginTokenService.generateLoginToken(
         user.email,
         workspace.id,
+        authProvider,
       );
 
       return this.computeRedirectURI({

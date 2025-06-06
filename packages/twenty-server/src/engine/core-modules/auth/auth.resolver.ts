@@ -58,6 +58,7 @@ import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/toke
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { AvailableWorkspacesAndAccessTokensOutput } from 'src/engine/core-modules/auth/dto/available-workspaces-and-access-tokens.output';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { UserCredentialsInput } from './dto/user-credentials.input';
@@ -166,6 +167,8 @@ export class AuthResolver {
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
       workspace.id,
+      // email validation is active only for password flow
+      AuthProviderEnum.Password,
     );
 
     return { loginToken };
@@ -195,11 +198,14 @@ export class AuthResolver {
       tokens: {
         accessToken:
           await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
-            user.id,
-            AuthProviderEnum.Password,
+            {
+              userId: user.id,
+              authProvider: AuthProviderEnum.Password,
+            },
           ),
         refreshToken: await this.refreshTokenService.generateRefreshToken({
           userId: user.id,
+          authProvider: AuthProviderEnum.Password,
         }),
       },
     };
@@ -210,6 +216,7 @@ export class AuthResolver {
     @Args()
     getLoginTokenFromEmailVerificationTokenInput: GetLoginTokenFromEmailVerificationTokenInput,
     @Args('origin') origin: string,
+    @AuthProvider() authProvider: AuthProviderEnum,
   ) {
     const appToken =
       await this.emailVerificationTokenService.validateEmailVerificationTokenOrThrow(
@@ -230,6 +237,7 @@ export class AuthResolver {
     const loginToken = await this.loginTokenService.generateLoginToken(
       appToken.user.email,
       workspace.id,
+      authProvider,
     );
 
     const workspaceUrls = this.domainManagerService.getWorkspaceUrls(workspace);
@@ -267,11 +275,14 @@ export class AuthResolver {
       tokens: {
         accessToken:
           await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
-            user.id,
-            AuthProviderEnum.Password,
+            {
+              userId: user.id,
+              authProvider: AuthProviderEnum.Password,
+            },
           ),
         refreshToken: await this.refreshTokenService.generateRefreshToken({
           userId: user.id,
+          authProvider: AuthProviderEnum.Password,
         }),
       },
     };
@@ -281,6 +292,7 @@ export class AuthResolver {
   @Mutation(() => SignUpOutput)
   async signUpInWorkspace(
     @Args() signUpInput: SignUpInput,
+    @AuthProvider() authProvider: AuthProviderEnum,
   ): Promise<SignUpOutput> {
     const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
       workspaceInviteHash: signUpInput.workspaceInviteHash,
@@ -339,6 +351,7 @@ export class AuthResolver {
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
       workspace.id,
+      authProvider,
     );
 
     return {
@@ -353,6 +366,7 @@ export class AuthResolver {
   @Mutation(() => SignUpOutput)
   async signUpInNewWorkspace(
     @AuthUser() currentUser: User,
+    @AuthProvider() authProvider: AuthProviderEnum,
   ): Promise<SignUpOutput> {
     const { user, workspace } = await this.signInUpService.signUpOnNewWorkspace(
       { type: 'existingUser', existingUser: currentUser },
@@ -361,6 +375,7 @@ export class AuthResolver {
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
       workspace.id,
+      authProvider,
     );
 
     return {
@@ -409,6 +424,7 @@ export class AuthResolver {
   async getAuthTokensFromLoginToken(
     @Args() getAuthTokensFromLoginTokenInput: GetAuthTokensFromLoginTokenInput,
     @Args('origin') origin: string,
+    @AuthProvider() authProvider: AuthProviderEnum,
   ): Promise<AuthTokens> {
     const { sub: email, workspaceId } =
       await this.loginTokenService.verifyLoginToken(
@@ -429,7 +445,7 @@ export class AuthResolver {
       );
     }
 
-    return await this.authService.verify(email, workspace.id);
+    return await this.authService.verify(email, workspace.id, authProvider);
   }
 
   @Mutation(() => AuthorizeApp)

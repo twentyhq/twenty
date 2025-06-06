@@ -10,6 +10,7 @@ import {
   LoginTokenJwtPayload,
   JwtTokenTypeEnum,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 @Injectable()
 export class LoginTokenService {
@@ -21,11 +22,13 @@ export class LoginTokenService {
   async generateLoginToken(
     email: string,
     workspaceId: string,
+    authProvider: AuthProviderEnum,
   ): Promise<AuthToken> {
     const jwtPayload: LoginTokenJwtPayload = {
       type: JwtTokenTypeEnum.LOGIN,
       sub: email,
       workspaceId,
+      authProvider,
     };
 
     const secret = this.jwtWrapperService.generateAppSecret(
