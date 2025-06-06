@@ -49,12 +49,14 @@ export const DropdownMenuItemsContainer = ({
   className,
   scrollable = true,
   width = 'auto',
+  scrollWrapperHeightAuto,
 }: {
   children: React.ReactNode;
   hasMaxHeight?: boolean;
   className?: string;
   scrollable?: boolean;
   width?: number | 'auto' | '100%';
+  scrollWrapperHeightAuto?: boolean;
 }) => {
   const id = useId();
 
@@ -68,6 +70,7 @@ export const DropdownMenuItemsContainer = ({
       {hasMaxHeight ? (
         <StyledScrollWrapper
           componentInstanceId={`scroll-wrapper-dropdown-menu-${id}`}
+          heightAuto={scrollWrapperHeightAuto}
         >
           <StyledDropdownMenuItemsInternalContainer>
             {children}
@@ -80,7 +83,10 @@ export const DropdownMenuItemsContainer = ({
       )}
     </StyledDropdownMenuItemsExternalContainer>
   ) : (
-    <ScrollWrapper componentInstanceId={`scroll-wrapper-dropdown-menu-${id}`}>
+    <ScrollWrapper
+      componentInstanceId={`scroll-wrapper-dropdown-menu-${id}`}
+      heightAuto={scrollWrapperHeightAuto}
+    >
       <StyledDropdownMenuItemsExternalContainer
         hasMaxHeight={hasMaxHeight}
         className={className}

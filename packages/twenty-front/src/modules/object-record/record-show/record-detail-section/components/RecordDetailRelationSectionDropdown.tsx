@@ -144,6 +144,7 @@ export const RecordDetailRelationSectionDropdown = ({
 
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId,
+    objectMetadataId: relationObjectMetadataItem.id,
   });
 
   const isFieldReadOnly = useIsFieldValueReadOnly({

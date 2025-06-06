@@ -82,6 +82,7 @@ const RelationToOneFieldInputWithContext = ({
               relationObjectMetadataNamePlural: 'companies',
               relationObjectMetadataNameSingular:
                 CoreObjectNameSingular.Company,
+              relationObjectMetadataId: '20202020-8c37-4163-ba06-1dada334ce3e',
               objectMetadataNameSingular: 'person',
               relationFieldMetadataId: '20202020-8c37-4163-ba06-1dada334ce3e',
             },

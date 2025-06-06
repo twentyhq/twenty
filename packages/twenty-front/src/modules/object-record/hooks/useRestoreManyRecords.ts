@@ -9,12 +9,13 @@ import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMutationBatchSize';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRestoreManyRecordsMutation } from '@/object-record/hooks/useRestoreManyRecordsMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getRestoreManyRecordsMutationResponseField } from '@/object-record/utils/getRestoreManyRecordsMutationResponseField';
 import { useRecoilValue } from 'recoil';
-import { sleep } from '~/utils/sleep';
 import { capitalize, isDefined } from 'twenty-shared/utils';
+import { sleep } from '~/utils/sleep';
 
 type useRestoreManyRecordProps = {
   objectNameSingular: string;
@@ -50,7 +51,7 @@ export const useRestoreManyRecords = ({
   });
 
   const { objectMetadataItems } = useObjectMetadataItems();
-
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const mutationResponseField = getRestoreManyRecordsMutationResponseField(
     objectMetadataItem.namePlural,
   );
@@ -111,6 +112,7 @@ export const useRestoreManyRecords = ({
               cache: apolloClient.cache,
               record: computedOptimisticRecord,
               recordGqlFields,
+              objectPermissionsByObjectMetadataId,
             });
             triggerUpdateRecordOptimisticEffect({
               cache: apolloClient.cache,
@@ -169,6 +171,7 @@ export const useRestoreManyRecords = ({
                 cache: apolloClient.cache,
                 record: cachedRecord,
                 recordGqlFields,
+                objectPermissionsByObjectMetadataId,
               });
 
               triggerUpdateRecordOptimisticEffect({

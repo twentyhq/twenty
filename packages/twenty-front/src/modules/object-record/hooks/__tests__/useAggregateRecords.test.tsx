@@ -8,6 +8,7 @@ import { useAggregateRecordsQuery } from '@/object-record/hooks/useAggregateReco
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useQuery } from '@apollo/client';
 import { renderHook } from '@testing-library/react';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 // Mocks
 jest.mock('@apollo/client');
@@ -24,6 +25,10 @@ const mockGqlFieldToFieldMap = {
   avgAmount: ['amount', AggregateOperations.AVG],
   totalCount: ['name', AggregateOperations.COUNT],
 };
+
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: [],
+});
 
 describe('useAggregateRecords', () => {
   beforeEach(() => {
@@ -44,14 +49,18 @@ describe('useAggregateRecords', () => {
   });
 
   it('should format data correctly', () => {
-    const { result } = renderHook(() =>
-      useAggregateRecords({
-        objectNameSingular: 'opportunity',
-        recordGqlFieldsAggregate: {
-          amount: [AggregateOperations.SUM, AggregateOperations.AVG],
-          name: [AggregateOperations.COUNT],
-        },
-      }),
+    const { result } = renderHook(
+      () =>
+        useAggregateRecords({
+          objectNameSingular: 'opportunity',
+          recordGqlFieldsAggregate: {
+            amount: [AggregateOperations.SUM, AggregateOperations.AVG],
+            name: [AggregateOperations.COUNT],
+          },
+        }),
+      {
+        wrapper: Wrapper,
+      },
     );
 
     expect(result.current.data).toEqual({
@@ -74,13 +83,17 @@ describe('useAggregateRecords', () => {
       error: undefined,
     });
 
-    const { result } = renderHook(() =>
-      useAggregateRecords({
-        objectNameSingular: 'opportunity',
-        recordGqlFieldsAggregate: {
-          amount: [AggregateOperations.SUM],
-        },
-      }),
+    const { result } = renderHook(
+      () =>
+        useAggregateRecords({
+          objectNameSingular: 'opportunity',
+          recordGqlFieldsAggregate: {
+            amount: [AggregateOperations.SUM],
+          },
+        }),
+      {
+        wrapper: Wrapper,
+      },
     );
 
     expect(result.current.data).toEqual({});
@@ -95,13 +108,17 @@ describe('useAggregateRecords', () => {
       error: mockError,
     });
 
-    const { result } = renderHook(() =>
-      useAggregateRecords({
-        objectNameSingular: 'opportunity',
-        recordGqlFieldsAggregate: {
-          amount: [AggregateOperations.SUM],
-        },
-      }),
+    const { result } = renderHook(
+      () =>
+        useAggregateRecords({
+          objectNameSingular: 'opportunity',
+          recordGqlFieldsAggregate: {
+            amount: [AggregateOperations.SUM],
+          },
+        }),
+      {
+        wrapper: Wrapper,
+      },
     );
 
     expect(result.current.data).toEqual({});
@@ -109,14 +126,18 @@ describe('useAggregateRecords', () => {
   });
 
   it('should skip query when specified', () => {
-    renderHook(() =>
-      useAggregateRecords({
-        objectNameSingular: 'opportunity',
-        recordGqlFieldsAggregate: {
-          amount: [AggregateOperations.SUM],
-        },
-        skip: true,
-      }),
+    renderHook(
+      () =>
+        useAggregateRecords({
+          objectNameSingular: 'opportunity',
+          recordGqlFieldsAggregate: {
+            amount: [AggregateOperations.SUM],
+          },
+          skip: true,
+        }),
+      {
+        wrapper: Wrapper,
+      },
     );
 
     expect(useQuery).toHaveBeenCalledWith(
