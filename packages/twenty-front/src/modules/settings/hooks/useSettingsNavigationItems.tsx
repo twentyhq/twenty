@@ -155,15 +155,16 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Billing`,
           path: SettingsPath.Billing,
           Icon: IconCurrencyDollar,
-          isHidden: true,
-          // !isBillingEnabled ||
-          // !permissionMap[SettingPermissionType.WORKSPACE],
+          isHidden:
+            !isBillingEnabled ||
+            !permissionMap[SettingPermissionType.WORKSPACE],
         },
         {
+          // TODO: remove this once we will use the twenty billing page
           label: 'Billing',
           path: SettingsPath.BillingPlan,
           Icon: IconCreditCard,
-          isHidden: true, // !isBillingEnabled,
+          isHidden: false, // !isBillingEnabled,
         },
         {
           label: t`Roles`,

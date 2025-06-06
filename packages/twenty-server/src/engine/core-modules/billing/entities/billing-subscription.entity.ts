@@ -24,9 +24,14 @@ import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entitie
 import { BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/billing/enums/billing-subscription-collection-method.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
+import { ChargeType } from 'src/engine/core-modules/billing/enums/billint-charge-type.enum';
 
 registerEnumType(SubscriptionStatus, { name: 'SubscriptionStatus' });
 registerEnumType(SubscriptionInterval, { name: 'SubscriptionInterval' });
+registerEnumType(ChargeType, {
+  name: 'ChargeType',
+  description: 'The type diffent type of charge for the subscription',
+});
 
 @Entity({ name: 'billingSubscription', schema: 'core' })
 @Index('IndexOnActiveSubscriptionPerWorkspace', ['workspaceId'], {
@@ -75,6 +80,15 @@ export class BillingSubscription {
     nullable: true,
   })
   interval: Stripe.Price.Recurring.Interval;
+
+  @Field(() => ChargeType, { nullable: true })
+  @Column({
+    type: 'enum',
+    enum: Object.values(ChargeType),
+    nullable: true,
+    default: ChargeType.ONE_TIME,
+  })
+  chargeType: ChargeType;
 
   @Field(() => [BillingSubscriptionItemDTO], { nullable: true })
   @OneToMany(
