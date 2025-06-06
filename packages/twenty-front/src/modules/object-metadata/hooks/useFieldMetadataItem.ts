@@ -1,4 +1,3 @@
-import { useDeleteOneRelationMetadataItem } from '@/object-metadata/hooks/useDeleteOneRelationMetadataItem';
 import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
@@ -13,7 +12,6 @@ export const useFieldMetadataItem = () => {
   const { createOneFieldMetadataItem } = useCreateOneFieldMetadataItem();
   const { updateOneFieldMetadataItem } = useUpdateOneFieldMetadataItem();
   const { deleteOneFieldMetadataItem } = useDeleteOneFieldMetadataItem();
-  const { deleteOneRelationMetadataItem } = useDeleteOneRelationMetadataItem();
 
   const createMetadataField = (
     input: Pick<
@@ -62,6 +60,11 @@ export const useFieldMetadataItem = () => {
       fieldMetadataIdToUpdate: fieldMetadataId,
       updatePayload: { isActive: false },
     });
+
+  const deleteOneRelationMetadataItem = async (fieldMetadataId: string) => {
+    // TODO: Charles fix
+    return deleteOneFieldMetadataItem(fieldMetadataId);
+  };
 
   const deleteMetadataField = (metadataField: FieldMetadataItem) => {
     return metadataField.type === FieldMetadataType.RELATION &&
