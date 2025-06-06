@@ -27,8 +27,7 @@ export const buildCompositeFieldWhereCondition = ({
   fieldType: FieldMetadataType;
   fieldKey: keyof ObjectRecord;
   orderBy: ObjectRecordOrderBy;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  cursorValue: { [key: string]: any };
+  cursorValue: Record<string, unknown>;
   isForwardPagination: boolean;
   operator?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

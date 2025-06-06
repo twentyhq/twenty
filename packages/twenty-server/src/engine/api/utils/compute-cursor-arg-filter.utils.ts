@@ -7,8 +7,7 @@ import { buildWhereCondition } from 'src/engine/api/utils/build-where-condition.
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 
 export const computeCursorArgFilter = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  cursor: Record<string, any>,
+  cursor: Record<string, unknown>,
   orderBy: ObjectRecordOrderBy,
   fieldMetadataMapByName: FieldMetadataMap,
   isForwardPagination = true,
@@ -30,26 +29,26 @@ export const computeCursorArgFilter = (
     ) {
       whereCondition = {
         ...whereCondition,
-        ...buildWhereCondition(
-          cursorKeys[subConditionIndex],
-          cursorValues[subConditionIndex],
+        ...buildWhereCondition({
+          key: cursorKeys[subConditionIndex],
+          cursorValue: cursorValues[subConditionIndex],
           fieldMetadataMapByName,
           orderBy,
-          isForwardPagination,
-          'eq',
-        ),
+          isForwardPagination: true,
+          operator: 'eq',
+        }),
       };
     }
 
     return {
       ...whereCondition,
-      ...buildWhereCondition(
+      ...buildWhereCondition({
         key,
-        value,
+        cursorValue: value,
         fieldMetadataMapByName,
         orderBy,
         isForwardPagination,
-      ),
+      }),
     } as ObjectRecordFilter;
   });
 };

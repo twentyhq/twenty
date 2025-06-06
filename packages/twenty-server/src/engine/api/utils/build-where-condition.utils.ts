@@ -16,16 +16,21 @@ import { validateAndGetOrderByForNonCompositeFields } from 'src/engine/api/utils
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 
-export const buildWhereCondition = (
-  key: keyof ObjectRecord,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  value: any,
-  fieldMetadataMapByName: FieldMetadataMap,
-  orderBy: ObjectRecordOrderBy,
-  isForwardPagination: boolean,
-  operator?: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): Record<string, any> => {
+export const buildWhereCondition = ({
+  key,
+  cursorValue,
+  fieldMetadataMapByName,
+  orderBy,
+  isForwardPagination,
+  operator,
+}: {
+  key: keyof ObjectRecord;
+  cursorValue: unknown;
+  fieldMetadataMapByName: FieldMetadataMap;
+  orderBy: ObjectRecordOrderBy;
+  isForwardPagination: boolean;
+  operator?: string;
+}): Record<string, unknown> => {
   const fieldMetadata = fieldMetadataMapByName[key];
 
   if (!fieldMetadata) {
@@ -40,7 +45,7 @@ export const buildWhereCondition = (
       fieldType: fieldMetadata.type,
       fieldKey: key,
       orderBy,
-      cursorValue: value,
+      cursorValue: cursorValue as Record<string, unknown>,
       isForwardPagination,
       operator,
     });
@@ -63,5 +68,5 @@ export const buildWhereCondition = (
     operator,
   );
 
-  return { [key]: { [computedOperator]: value } };
+  return { [key]: { [computedOperator]: cursorValue } };
 };
