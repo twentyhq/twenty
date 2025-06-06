@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { ServerBlockNoteEditor } from '@blocknote/server-util';
 import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -100,6 +99,8 @@ export class RecordInputTransformerService {
     richTextValue: any,
   ): Promise<RichTextV2Metadata> {
     const parsedValue = richTextV2ValueSchema.parse(richTextValue);
+
+    const { ServerBlockNoteEditor } = await import('@blocknote/server-util');
 
     const serverBlockNoteEditor = ServerBlockNoteEditor.create();
 
