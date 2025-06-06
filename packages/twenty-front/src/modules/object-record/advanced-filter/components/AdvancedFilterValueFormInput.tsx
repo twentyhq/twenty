@@ -1,10 +1,13 @@
+import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { AdvancedFilterValueFormCompositeFieldInput } from '@/object-record/advanced-filter/components/AdvancedFilterValueFormCompositeFieldInput';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
+import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -15,11 +18,13 @@ export const AdvancedFilterValueFormInput = ({
   VariablePicker,
 }: {
   recordFilterId: string;
-  VariablePicker: VariablePickerComponent;
+  VariablePicker?: VariablePickerComponent;
 }) => {
   const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );
+
+  const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const subFieldNameUsedInDropdown = useRecoilComponentValueV2(
     subFieldNameUsedInDropdownComponentState,
@@ -37,6 +42,17 @@ export const AdvancedFilterValueFormInput = ({
   const handleChange = (newValue: JsonValue) => {
     applyObjectFilterDropdownFilterValue(newValue as string);
   };
+
+  const fieldMetadataItemUsedInDropdown = useRecoilComponentValueV2(
+    fieldMetadataItemUsedInDropdownComponentSelector,
+  );
+
+  const fieldDefinition = fieldMetadataItemUsedInDropdown
+    ? formatFieldMetadataItemAsFieldDefinition({
+        field: fieldMetadataItemUsedInDropdown,
+        objectMetadataItem: objectMetadataItem,
+      })
+    : null;
 
   if (isDisabled) {
     return null;
@@ -57,7 +73,7 @@ export const AdvancedFilterValueFormInput = ({
       field={{
         type: recordFilter.type as FieldMetadataType,
         label: '',
-        metadata: {} as FieldMetadata,
+        metadata: fieldDefinition?.metadata as FieldMetadata,
       }}
       defaultValue={recordFilter.value}
       onChange={handleChange}

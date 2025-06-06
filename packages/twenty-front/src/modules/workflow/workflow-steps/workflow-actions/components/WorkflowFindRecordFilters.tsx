@@ -1,8 +1,8 @@
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { AdvancedFilterAddFilterRuleSelect } from '@/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect';
-import { AdvancedFilterRecordFilterGroupRow } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupRow';
-import { AdvancedFilterRecordFilterRow } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterRow';
+import { AdvancedFilterRecordFilterColumn } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterColumn';
+import { AdvancedFilterRecordFilterGroupColumn } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupColumn';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
@@ -30,8 +30,14 @@ const StyledContainer = styled.div`
   align-items: start;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledChildContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(6)};
+  width: 100%;
 `;
 
 export const WorkflowFindRecordFilters = ({
@@ -142,32 +148,35 @@ export const WorkflowFindRecordFilters = ({
     <AdvancedFilterContext.Provider
       value={{
         onUpdate,
+        isColumn: true,
       }}
     >
       {isDefined(rootRecordFilterGroup) ? (
         <StyledContainer>
-          {childRecordFiltersAndRecordFilterGroups.map(
-            (recordFilterGroupChild, recordFilterGroupChildIndex) =>
-              isRecordFilterGroupChildARecordFilterGroup(
-                recordFilterGroupChild,
-              ) ? (
-                <AdvancedFilterRecordFilterGroupRow
-                  key={recordFilterGroupChild.id}
-                  parentRecordFilterGroup={rootRecordFilterGroup}
-                  recordFilterGroup={recordFilterGroupChild}
-                  recordFilterGroupIndex={recordFilterGroupChildIndex}
-                  VariablePicker={WorkflowVariablePicker}
-                />
-              ) : (
-                <AdvancedFilterRecordFilterRow
-                  key={recordFilterGroupChild.id}
-                  recordFilterGroup={rootRecordFilterGroup}
-                  recordFilter={recordFilterGroupChild}
-                  recordFilterIndex={recordFilterGroupChildIndex}
-                  VariablePicker={WorkflowVariablePicker}
-                />
-              ),
-          )}
+          <StyledChildContainer>
+            {childRecordFiltersAndRecordFilterGroups.map(
+              (recordFilterGroupChild, recordFilterGroupChildIndex) =>
+                isRecordFilterGroupChildARecordFilterGroup(
+                  recordFilterGroupChild,
+                ) ? (
+                  <AdvancedFilterRecordFilterGroupColumn
+                    key={recordFilterGroupChild.id}
+                    parentRecordFilterGroup={rootRecordFilterGroup}
+                    recordFilterGroup={recordFilterGroupChild}
+                    recordFilterGroupIndex={recordFilterGroupChildIndex}
+                    VariablePicker={WorkflowVariablePicker}
+                  />
+                ) : (
+                  <AdvancedFilterRecordFilterColumn
+                    key={recordFilterGroupChild.id}
+                    recordFilterGroup={rootRecordFilterGroup}
+                    recordFilter={recordFilterGroupChild}
+                    recordFilterIndex={recordFilterGroupChildIndex}
+                    VariablePicker={WorkflowVariablePicker}
+                  />
+                ),
+            )}
+          </StyledChildContainer>
           <AdvancedFilterAddFilterRuleSelect
             recordFilterGroup={rootRecordFilterGroup}
           />
