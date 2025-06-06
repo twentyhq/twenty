@@ -7,6 +7,7 @@ import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLo
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
 import { useWebhookForm } from '@/settings/developers/hooks/useWebhookForm';
 import { SettingsPath } from '@/types/SettingsPath';
+import { InputHint } from '@/ui/input/components/InputHint';
 import { Select } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -17,17 +18,17 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import {
-    getUrlHostnameOrThrow,
-    isDefined,
-    isValidUrl,
+  getUrlHostnameOrThrow,
+  isDefined,
+  isValidUrl,
 } from 'twenty-shared/utils';
 import {
-    H2Title,
-    IconBox,
-    IconNorthStar,
-    IconPlus,
-    IconTrash,
-    useIcons,
+  H2Title,
+  IconBox,
+  IconNorthStar,
+  IconPlus,
+  IconTrash,
+  useIcons,
 } from 'twenty-ui/display';
 import { Button, IconButton, SelectOption } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -72,7 +73,6 @@ export const SettingsDevelopersWebhookForm = ({
   const isMobile = useIsMobile();
   const { getIcon } = useIcons();
   const { openModal } = useModal();
-
   const {
     formConfig,
     loading,
@@ -82,6 +82,7 @@ export const SettingsDevelopersWebhookForm = ({
     removeOperation,
     deleteWebhook,
     isCreationMode,
+    error,
   } = useWebhookForm({ webhookId, mode });
 
   const getTitle = () => {
@@ -90,14 +91,12 @@ export const SettingsDevelopersWebhookForm = ({
     }
 
     const targetUrl = formConfig.watch('targetUrl');
-    if (isDefined(targetUrl) && isValidUrl(targetUrl.trim())) {
-      return getUrlHostnameOrThrow(targetUrl) || 'Edit Webhook';
+    if (!!isDefined(targetUrl) && !!isValidUrl(targetUrl.trim())) {
+      return getUrlHostnameOrThrow(targetUrl);
     }
-
-    return 'Edit Webhook';
   };
 
-  if (loading && !isCreationMode) {
+  if ((loading && !isCreationMode) || isDefined(error)) {
     return <SettingsSkeletonLoader />;
   }
 
@@ -155,16 +154,37 @@ export const SettingsDevelopersWebhookForm = ({
               render={({
                 field: { onChange, value },
                 fieldState: { error },
-              }) => (
-                <TextInput
-                  placeholder={t`URL`}
-                  value={value}
-                  onChange={onChange}
-                  error={error?.message}
-                  fullWidth
-                  autoFocus={isCreationMode}
-                />
-              )}
+              }) => {
+                const trimmedValue = value?.trim() || '';
+                const isTypingProtocol =
+                  /^(h|ht|htt|http|https|http:|https:|http:\/|https:\/)$/i.test(
+                    trimmedValue,
+                  );
+                const hasValidProtocol =
+                  trimmedValue.startsWith('http://') ||
+                  trimmedValue.startsWith('https://');
+
+                const showHttpsHint =
+                  trimmedValue && !hasValidProtocol && !isTypingProtocol;
+
+                return (
+                  <>
+                    <TextInput
+                      placeholder={t`https://example.com/webhook`}
+                      value={value}
+                      onChange={onChange}
+                      error={error?.message}
+                      fullWidth
+                      autoFocus={isCreationMode}
+                    />
+                    {showHttpsHint && (
+                      <InputHint>
+                        {t`Will be saved as:`} https://{trimmedValue}
+                      </InputHint>
+                    )}
+                  </>
+                );
+              }}
             />
           </Section>
           <Section>

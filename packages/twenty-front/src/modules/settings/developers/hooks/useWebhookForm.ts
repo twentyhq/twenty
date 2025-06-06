@@ -9,8 +9,8 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
 import { Webhook } from '@/settings/developers/types/webhook/Webhook';
 import {
-    webhookFormSchema,
-    WebhookFormValues,
+  webhookFormSchema,
+  WebhookFormValues,
 } from '@/settings/developers/validation-schemas/webhookFormSchema';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -82,7 +82,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
     );
   };
 
-  const { loading } = useFindOneRecord({
+  const { loading, error } = useFindOneRecord({
     skip: isCreationMode,
     objectNameSingular: CoreObjectNameSingular.Webhook,
     objectRecordId: webhookId || '',
@@ -251,5 +251,6 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
     removeOperation,
     deleteWebhook,
     isCreationMode,
+    error,
   };
 };

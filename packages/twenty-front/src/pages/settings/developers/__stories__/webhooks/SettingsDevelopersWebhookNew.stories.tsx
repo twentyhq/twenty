@@ -3,8 +3,8 @@ import { within } from '@storybook/test';
 
 import { SettingsDevelopersWebhookNew } from '~/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookNew';
 import {
-    PageDecorator,
-    PageDecoratorArgs,
+  PageDecorator,
+  PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
@@ -31,6 +31,6 @@ export const Default: Story = {
     await canvas.findByText(
       'We will send POST requests to this endpoint for every new event',
     );
-    await canvas.findByPlaceholderText('URL');
+    await canvas.findByPlaceholderText('https://example.com/webhook');
   },
 };

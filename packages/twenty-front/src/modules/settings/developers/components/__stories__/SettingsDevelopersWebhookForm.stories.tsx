@@ -37,7 +37,7 @@ export const CreateMode: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByText('New Webhook', undefined, { timeout: 10000 });
-    await canvas.findByPlaceholderText('URL');
+    await canvas.findByPlaceholderText('https://example.com/webhook');
     await canvas.findByPlaceholderText('Write a description');
 
     expect(canvas.queryByText('Danger zone')).not.toBeInTheDocument();
