@@ -2,16 +2,16 @@ import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 import { HttpResponse, graphql } from 'msw';
 
-import { SettingsDevelopersWebhooksDetail } from '~/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail';
 import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { SettingsDevelopersWebhookDetail } from '../../webhooks/components/SettingsDevelopersWebhookDetail';
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/Webhooks/SettingsDevelopersWebhooksDetail',
-  component: SettingsDevelopersWebhooksDetail,
+  title: 'Pages/Settings/Webhooks/SettingsDevelopersWebhookDetail',
+  component: SettingsDevelopersWebhookDetail,
   decorators: [PageDecorator],
   args: {
     routePath: '/settings/webhooks/:webhookId',
@@ -24,18 +24,19 @@ const meta: Meta<PageDecoratorArgs> = {
           return HttpResponse.json({
             data: {
               webhook: {
-                id: '1',
+                id: '1234',
                 createdAt: '2021-08-27T12:00:00Z',
                 targetUrl: 'https://example.com/webhook',
                 description: 'A Sample Description',
                 updatedAt: '2021-08-27T12:00:00Z',
-                operation: 'created',
+                operations: ['*.created', '*.updated'],
+                secret: 'sample-secret-key',
                 __typename: 'Webhook',
               },
             },
           });
         }),
-        graphqlMocks.handlers,
+        ...graphqlMocks.handlers,
       ],
     },
   },
@@ -43,7 +44,7 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
-export type Story = StoryObj<typeof SettingsDevelopersWebhooksDetail>;
+export type Story = StoryObj<typeof SettingsDevelopersWebhookDetail>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {
@@ -53,6 +54,6 @@ export const Default: Story = {
       undefined,
       { timeout: 10000 },
     );
-    await canvas.findByText('Delete this integration');
+    await canvas.findByText('Delete this webhook');
   },
 };
