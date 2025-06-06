@@ -57,6 +57,7 @@ import { GetLoginTokenFromEmailVerificationTokenOutput } from 'src/engine/core-m
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { AvailableWorkspacesAndAccessTokensOutput } from 'src/engine/core-modules/auth/dto/available-workspaces-and-access-tokens.output';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { UserCredentialsInput } from './dto/user-credentials.input';
@@ -68,7 +69,6 @@ import { EmailAndCaptchaInput } from './dto/user-exists.input';
 import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.entity';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
-import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 @Resolver()
 @UseFilters(
