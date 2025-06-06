@@ -91,7 +91,7 @@ export const SettingsDevelopersWebhookForm = ({
     }
 
     const targetUrl = formConfig.watch('targetUrl');
-    if (!!isDefined(targetUrl) && !!isValidUrl(targetUrl.trim())) {
+    if (isDefined(targetUrl) && isValidUrl(targetUrl.trim())) {
       return getUrlHostnameOrThrow(targetUrl);
     }
   };
