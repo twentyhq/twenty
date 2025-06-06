@@ -2,6 +2,7 @@
 import { ChatbotFlowInput } from '@/chatbot/types/chatbotFlow.type';
 import { Node } from '@xyflow/react';
 
+import { SendMessageType } from '@/chat/call-center/hooks/useSendWhatsappMessages';
 import { NodeType } from '@/chatbot/constants/NodeTypes';
 import { CondicionalInputHandler } from '@/chatbot/engine/handlers/CondicionalInputHandler';
 import { FileInputHandler } from '@/chatbot/engine/handlers/FileInputHandler';
@@ -9,7 +10,6 @@ import { ImageInputHandler } from '@/chatbot/engine/handlers/ImageInputHandler';
 import { NewConditionalState } from '@/chatbot/types/LogicNodeDataType';
 import { NodeHandler } from './handlers/NodeHandler';
 import { TextInputHandler } from './handlers/TextInputHandler';
-import { SendMessageType } from '@/chat/call-center/hooks/useSendWhatsappMessages';
 
 export class ExecuteFlow {
   private nodes: Node[];
@@ -95,10 +95,10 @@ export class ExecuteFlow {
         incomingMessage: this.incomingMessage,
       });
 
-      if (currentNode.type === NodeType.CONDITION && nextNodeId) {
+      if (currentNode.type === NodeType.CONDITION) {
         const logic = currentNode.data?.logic as NewConditionalState;
 
-        if (logic?.logicNodeData) {
+        if (logic?.logicNodeData && nextNodeId) {
           const matchedCondition = logic.logicNodeData.find(
             (condition) => condition.outgoingNodeId === nextNodeId,
           );
@@ -106,6 +106,10 @@ export class ExecuteFlow {
           if (matchedCondition) {
             this.chosenInput = matchedCondition.sectorId;
           }
+        }
+
+        if (!nextNodeId) {
+          return;
         }
       }
 
@@ -153,10 +157,10 @@ export class ExecuteFlow {
         incomingMessage: this.incomingMessage,
       });
 
-      if (currentNode.type === NodeType.CONDITION && handlerNextNodeId) {
+      if (currentNode.type === NodeType.CONDITION) {
         const logic = currentNode.data?.logic as NewConditionalState;
 
-        if (logic?.logicNodeData) {
+        if (logic?.logicNodeData && handlerNextNodeId) {
           const matchedCondition = logic.logicNodeData.find(
             (condition) => condition.outgoingNodeId === handlerNextNodeId,
           );
@@ -165,6 +169,10 @@ export class ExecuteFlow {
             this.chosenInput = matchedCondition.sectorId;
             trace.push(`Conditional matched: ${matchedCondition}`);
           }
+        }
+
+        if (!handlerNextNodeId) {
+          return;
         }
       }
 
