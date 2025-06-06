@@ -85,8 +85,6 @@ export class WorkspaceMetadataCacheService {
         where: { workspaceId },
         relations: [
           'fields',
-          'fields.fromRelationMetadata',
-          'fields.toRelationMetadata',
           'indexMetadatas',
           'indexMetadatas.indexFieldMetadatas',
         ],
