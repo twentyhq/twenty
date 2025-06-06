@@ -4,7 +4,7 @@ import { userLookupResultState } from '@/settings/admin-panel/states/userLookupR
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { TabList } from '@/ui/layout/tab/components/TabList';
+import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -18,10 +18,9 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components/SettingsAdminVersionContainer';
 import { SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminUserLookupWorkspaceTabsId';
-import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
 import {
   H2Title,
   IconId,
@@ -29,6 +28,7 @@ import {
   IconSearch,
   IconUser,
 } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 
 const StyledContainer = styled.div`

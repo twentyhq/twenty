@@ -67,7 +67,10 @@ export const ActivityRichTextEditor = ({
       objectNameSingular: activityObjectNameSingular,
     });
 
-  const isRecordReadOnly = useIsRecordReadOnly({ recordId: activityId });
+  const isRecordReadOnly = useIsRecordReadOnly({
+    recordId: activityId,
+    objectMetadataId: objectMetadataItemActivity.id,
+  });
 
   const isReadOnly = isFieldValueReadOnly({
     objectNameSingular: activityObjectNameSingular,

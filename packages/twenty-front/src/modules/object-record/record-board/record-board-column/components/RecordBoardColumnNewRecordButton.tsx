@@ -1,7 +1,7 @@
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
-import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
@@ -32,13 +32,17 @@ export const RecordBoardColumnNewRecordButton = () => {
 
   const { columnDefinition } = useContext(RecordBoardColumnContext);
 
-  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
+
+  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
   const { createNewIndexRecord } = useCreateNewIndexRecord({
     objectMetadataItem: objectMetadataItem,
   });
 
-  if (hasObjectReadOnlyPermission) {
+  if (!hasObjectUpdatePermissions) {
     return null;
   }
 

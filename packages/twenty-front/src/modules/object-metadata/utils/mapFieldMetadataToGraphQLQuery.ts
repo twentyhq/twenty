@@ -2,12 +2,15 @@ import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObje
 import { isUndefined } from '@sniptt/guards';
 import {
   FieldMetadataType,
+  ObjectPermission,
   RelationDefinitionType,
 } from '~/generated-metadata/graphql';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { isNonCompositeField } from '@/object-record/object-filter-dropdown/utils/isNonCompositeField';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
 
 type MapFieldMetadataToGraphQLQueryArgs = {
@@ -19,6 +22,7 @@ type MapFieldMetadataToGraphQLQueryArgs = {
   >;
   relationRecordGqlFields?: RecordGqlFields;
   computeReferences?: boolean;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>;
 };
 // TODO: change ObjectMetadataItems mock before refactoring with relationDefinition computed field
 export const mapFieldMetadataToGraphQLQuery = ({
@@ -27,10 +31,16 @@ export const mapFieldMetadataToGraphQLQuery = ({
   fieldMetadata,
   relationRecordGqlFields,
   computeReferences = false,
+  objectPermissionsByObjectMetadataId,
 }: MapFieldMetadataToGraphQLQueryArgs): string => {
   const fieldType = fieldMetadata.type;
 
   const fieldIsNonCompositeField = isNonCompositeField(fieldType);
+
+  const objectPermission = getObjectPermissionsForObject(
+    objectPermissionsByObjectMetadataId,
+    fieldMetadata.relationDefinition?.targetObjectMetadata.id,
+  );
 
   if (fieldIsNonCompositeField) {
     return gqlField;
@@ -51,6 +61,15 @@ export const mapFieldMetadataToGraphQLQuery = ({
       return '';
     }
 
+    if (
+      isDefined(objectPermissionsByObjectMetadataId) &&
+      isDefined(relationMetadataItem.id)
+    ) {
+      if (!objectPermission.canReadObjectRecords) {
+        return '';
+      }
+    }
+
     if (gqlField === fieldMetadata.settings?.joinColumnName) {
       return `${gqlField}`;
     }
@@ -62,6 +81,7 @@ ${mapObjectMetadataToGraphQLQuery({
   recordGqlFields: relationRecordGqlFields,
   computeReferences: computeReferences,
   isRootLevel: false,
+  objectPermissionsByObjectMetadataId,
 })}`;
   }
 
@@ -80,6 +100,15 @@ ${mapObjectMetadataToGraphQLQuery({
       return '';
     }
 
+    if (
+      isDefined(objectPermissionsByObjectMetadataId) &&
+      isDefined(relationMetadataItem.id)
+    ) {
+      if (!objectPermission.canReadObjectRecords) {
+        return '';
+      }
+    }
+
     return `${gqlField}
 {
   edges {
@@ -89,6 +118,7 @@ ${mapObjectMetadataToGraphQLQuery({
       recordGqlFields: relationRecordGqlFields,
       computeReferences,
       isRootLevel: false,
+      objectPermissionsByObjectMetadataId,
     })}
   }
 }`;

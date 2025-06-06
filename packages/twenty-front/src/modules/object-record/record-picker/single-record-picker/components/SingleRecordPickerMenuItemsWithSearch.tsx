@@ -1,3 +1,5 @@
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import {
   SingleRecordPickerMenuItems,
   SingleRecordPickerMenuItemsProps,
@@ -7,7 +9,6 @@ import { useSingleRecordPickerSearch } from '@/object-record/record-picker/singl
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
 import { RecordPickerLayoutDirection } from '@/object-record/record-picker/types/RecordPickerLayoutDirection';
-import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -48,8 +49,6 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
     SingleRecordPickerComponentInstanceContext,
   );
 
-  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
-
   const recordPickerSearchFilter = useRecoilComponentValueV2(
     singleRecordPickerSearchFilterComponentState,
     recordPickerInstanceId,
@@ -59,6 +58,16 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
     objectNameSingular,
     excludedRecordIds,
   });
+
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
+
+  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
   const createNewButton = isDefined(onCreate) && (
     <CreateNewButton
@@ -72,7 +81,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
     <>
       {layoutDirection === 'search-bar-on-bottom' && (
         <>
-          {isDefined(onCreate) && !hasObjectReadOnlyPermission && (
+          {isDefined(onCreate) && !hasObjectUpdatePermissions && (
             <DropdownMenuItemsContainer scrollable={false}>
               {createNewButton}
             </DropdownMenuItemsContainer>
@@ -116,7 +125,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
           {records.recordsToSelect.length > 0 && isDefined(onCreate) && (
             <DropdownMenuSeparator />
           )}
-          {isDefined(onCreate) && !hasObjectReadOnlyPermission && (
+          {isDefined(onCreate) && !hasObjectUpdatePermissions && (
             <DropdownMenuItemsContainer scrollable={false}>
               {createNewButton}
             </DropdownMenuItemsContainer>

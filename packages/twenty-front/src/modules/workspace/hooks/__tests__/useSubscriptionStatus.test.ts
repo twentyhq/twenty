@@ -50,6 +50,7 @@ describe('useSubscriptionStatus', () => {
           currentBillingSubscription: {
             id: v4(),
             status: subscriptionStatus,
+            metadata: {},
           },
         });
       });

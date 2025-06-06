@@ -3,6 +3,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
@@ -14,7 +15,6 @@ import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
@@ -223,7 +223,11 @@ export const RecordTableHeaderCell = ({
 
   const isReadOnly = isObjectMetadataReadOnly(objectMetadataItem);
 
-  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
+
+  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
   const isFirstRowActive = useRecoilComponentFamilyValueV2(
     isRecordTableRowActiveComponentFamilyState,
@@ -256,7 +260,7 @@ export const RecordTableHeaderCell = ({
         {(useIsMobile() || iconVisibility) &&
           !!column.isLabelIdentifier &&
           !isReadOnly &&
-          !hasObjectReadOnlyPermission && (
+          hasObjectUpdatePermissions && (
             <StyledHeaderIcon>
               <LightIconButton
                 Icon={IconPlus}

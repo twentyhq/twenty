@@ -9,8 +9,8 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import { SettingsNewAccountSection } from '@/settings/accounts/components/SettingsNewAccountSection';
 import { SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID } from '@/settings/accounts/constants/SettingsAccountMessageChannelsTabListComponentId';
-import { TabList } from '@/ui/layout/tab/components/TabList';
-import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import React from 'react';
 

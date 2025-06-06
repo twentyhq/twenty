@@ -66,7 +66,7 @@ export class BillingPlanService {
       where: {
         active: true,
       },
-      relations: ['billingPrices'],
+      relations: ['billingPrices.billingProduct'],
     });
 
     return planKeys.map((planKey) => {

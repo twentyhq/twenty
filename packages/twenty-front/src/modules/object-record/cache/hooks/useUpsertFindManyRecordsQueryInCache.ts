@@ -5,6 +5,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getRecordConnectionFromRecords';
 import { RecordGqlOperationVariables } from '@/object-record/graphql/types/RecordGqlOperationVariables';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 
@@ -16,6 +17,7 @@ export const useUpsertFindManyRecordsQueryInCache = ({
   const apolloClient = useApolloClient();
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const upsertFindManyRecordsQueryInCache = <
     T extends ObjectRecord = ObjectRecord,
@@ -35,6 +37,7 @@ export const useUpsertFindManyRecordsQueryInCache = ({
       objectMetadataItems,
       recordGqlFields,
       computeReferences,
+      objectPermissionsByObjectMetadataId,
     });
 
     const newObjectRecordConnection = getRecordConnectionFromRecords({
