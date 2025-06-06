@@ -24,6 +24,7 @@ import { EmailVerificationTokenService } from './token/services/email-verificati
 import { LoginTokenService } from './token/services/login-token.service';
 import { RenewTokenService } from './token/services/renew-token.service';
 import { TransientTokenService } from './token/services/transient-token.service';
+import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 
 describe('AuthResolver', () => {
   let resolver: AuthResolver;
@@ -79,6 +80,10 @@ describe('AuthResolver', () => {
         },
         {
           provide: LoginTokenService,
+          useValue: {},
+        },
+        {
+          provide: WorkspaceAgnosticTokenService,
           useValue: {},
         },
         {

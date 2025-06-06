@@ -90,6 +90,7 @@ describe('WorkspaceAgnosticToken', () => {
       });
       expect(jwtWrapperService.sign).toHaveBeenCalledWith(
         {
+          authProvider: AuthProviderEnum.Password,
           sub: userId,
           userId: userId,
           type: 'WORKSPACE_AGNOSTIC',
