@@ -15,6 +15,49 @@ import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerSt
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+const groupStepsByLevel = (steps: WorkflowStep[]): WorkflowStep[][] => {
+  const stepMap = new Map<string, WorkflowStep>();
+
+  const childIds = new Set<string>();
+
+  for (const node of steps) {
+    stepMap.set(node.id, node);
+    node.nextStepIds?.forEach((id) => childIds.add(id));
+  }
+
+  const roots = steps.filter((node) => !childIds.has(node.id));
+
+  const levels: WorkflowStep[][] = [];
+
+  const visited = new Set<string>();
+
+  const queue: [WorkflowStep, number][] = roots.map((root) => [root, 0]);
+
+  while (queue.length) {
+    const [node, level] = queue.shift()!;
+
+    if (visited.has(node.id)) {
+      continue;
+    }
+
+    visited.add(node.id);
+
+    if (!levels[level]) levels[level] = [];
+
+    levels[level].push(node);
+
+    node.nextStepIds?.forEach((childId) => {
+      const child = stepMap.get(childId);
+
+      if (isDefined(child)) {
+        queue.push([child, level + 1]);
+      }
+    });
+  }
+
+  return levels;
+};
+
 export const generateWorkflowDiagram = ({
   trigger,
   steps,
@@ -23,6 +66,7 @@ export const generateWorkflowDiagram = ({
   steps: Array<WorkflowStep>;
 }): WorkflowDiagram => {
   const nodes: Array<WorkflowDiagramNode> = [];
+
   const edges: Array<WorkflowDiagramEdge> = [];
 
   if (isDefined(trigger)) {
@@ -31,58 +75,54 @@ export const generateWorkflowDiagram = ({
     nodes.push(WORKFLOW_DIAGRAM_EMPTY_TRIGGER_NODE_DEFINITION);
   }
 
-  const processNode = ({
-    stepIndex,
-    parentNodeId,
-    xPos,
-    yPos,
-  }: {
-    stepIndex: number;
-    parentNodeId: string;
-    xPos: number;
-    yPos: number;
-  }) => {
-    const step = steps.at(stepIndex);
-    if (!isDefined(step)) {
-      return;
+  const stepsGroupedByLevel = groupStepsByLevel(steps);
+
+  let levelYPos = FIRST_NODE_POSITION.y;
+
+  const xPos = FIRST_NODE_POSITION.x;
+
+  for (const stepsByLevel of stepsGroupedByLevel) {
+    levelYPos += VERTICAL_DISTANCE_BETWEEN_TWO_NODES;
+
+    for (const step of stepsByLevel) {
+      nodes.push({
+        id: step.id,
+        data: {
+          nodeType: 'action',
+          actionType: step.type,
+          name: step.name,
+        } satisfies WorkflowDiagramStepNodeData,
+        position: {
+          x: xPos,
+          y: levelYPos,
+        },
+      });
     }
+  }
 
-    const nodeId = step.id;
-
-    nodes.push({
-      id: nodeId,
-      data: {
-        nodeType: 'action',
-        actionType: step.type,
-        name: step.name,
-      } satisfies WorkflowDiagramStepNodeData,
-      position: {
-        x: xPos,
-        y: yPos + VERTICAL_DISTANCE_BETWEEN_TWO_NODES,
-      },
-    });
-
+  for (const firstLevelStep of stepsGroupedByLevel[0] || []) {
     edges.push({
       ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
       id: v4(),
-      source: parentNodeId,
-      target: nodeId,
+      source: TRIGGER_STEP_ID,
+      target: firstLevelStep.id,
     });
+  }
 
-    processNode({
-      stepIndex: stepIndex + 1,
-      parentNodeId: nodeId,
-      xPos,
-      yPos: yPos + VERTICAL_DISTANCE_BETWEEN_TWO_NODES,
-    });
-  };
+  for (const step of steps) {
+    if (!isDefined(step.nextStepIds)) {
+      continue;
+    }
 
-  processNode({
-    stepIndex: 0,
-    parentNodeId: TRIGGER_STEP_ID,
-    xPos: FIRST_NODE_POSITION.x,
-    yPos: FIRST_NODE_POSITION.y,
-  });
+    for (const child of step.nextStepIds) {
+      edges.push({
+        ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
+        id: v4(),
+        source: step.id,
+        target: child,
+      });
+    }
+  }
 
   return {
     nodes,
