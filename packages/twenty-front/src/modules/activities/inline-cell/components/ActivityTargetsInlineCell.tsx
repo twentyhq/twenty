@@ -13,8 +13,6 @@ import { RecordInlineCellContainer } from '@/object-record/record-inline-cell/co
 import { RecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
-
-import { useIsInRightDrawerOrThrow } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import { IconArrowUpRight, IconPencil } from 'twenty-ui/display';
 
 type ActivityTargetsInlineCellProps = {
@@ -32,16 +30,10 @@ export const ActivityTargetsInlineCell = ({
   showLabel = true,
   maxWidth,
   activityObjectNameSingular,
-  componentInstanceId: originalComponentInstanceId,
+  componentInstanceId,
 }: ActivityTargetsInlineCellProps) => {
   const { activityTargetObjectRecords } =
     useActivityTargetObjectRecords(activityRecordId);
-
-  const { isInRightDrawer } = useIsInRightDrawerOrThrow();
-
-  const componentInstanceId = isInRightDrawer
-    ? `${originalComponentInstanceId}-right-drawer`
-    : originalComponentInstanceId;
 
   const { closeInlineCell } = useInlineCell(componentInstanceId);
 
