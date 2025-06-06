@@ -123,6 +123,7 @@ export class BillingUsageService {
 
     return Promise.all(
       meteredSubscriptionItemDetails.map(async (item) => {
+        // TODO: If the subscription was created with inter as payment provider, we wont have meterEvents here, we need to get the usage from manual inserting it in a new field in the `billingProduct` entity
         const meterEventsSum =
           await this.stripeBillingMeterEventService.sumMeterEvents(
             item.stripeMeterId,
