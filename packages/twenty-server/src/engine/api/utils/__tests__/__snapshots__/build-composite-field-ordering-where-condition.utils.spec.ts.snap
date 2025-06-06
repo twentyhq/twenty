@@ -1,0 +1,343 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`buildCompositeFieldWhereCondition multiple properties cases should match snapshots for address composite field - both ascending, forward pagination: multiple properties - address composite field - both ascending, forward pagination 1`] = `
+{
+  "or": [
+    {
+      "address": {
+        "addressStreet1": {
+          "gt": "123 Main St",
+        },
+      },
+    },
+    {
+      "and": [
+        {
+          "address": {
+            "addressStreet1": {
+              "eq": "123 Main St",
+            },
+          },
+        },
+        {
+          "address": {
+            "addressStreet2": {
+              "gt": "Apt 4B",
+            },
+          },
+        },
+      ],
+    },
+    {
+      "and": [
+        {
+          "address": {
+            "addressStreet1": {
+              "eq": "123 Main St",
+            },
+          },
+        },
+        {
+          "address": {
+            "addressStreet2": {
+              "eq": "Apt 4B",
+            },
+          },
+        },
+        {
+          "address": {
+            "addressCity": {
+              "gt": "New York",
+            },
+          },
+        },
+      ],
+    },
+    {
+      "and": [
+        {
+          "address": {
+            "addressStreet1": {
+              "eq": "123 Main St",
+            },
+          },
+        },
+        {
+          "address": {
+            "addressStreet2": {
+              "eq": "Apt 4B",
+            },
+          },
+        },
+        {
+          "address": {
+            "addressCity": {
+              "eq": "New York",
+            },
+          },
+        },
+        {
+          "address": {
+            "addressPostcode": {
+              "gt": "10001",
+            },
+          },
+        },
+      ],
+    },
+    {
+      "and": [
+        {
+          "address": {
+            "addressStreet1": {
+              "eq": "123 Main St",
+            },
+          },
+        },
+        {
+          "address": {
+            "addressStreet2": {
+              "eq": "Apt 4B",
+            },
+          },
+        },
+        {
+          "address": {
+            "addressCity": {
+              "eq": "New York",
+            },
+          },
+        },
+        {
+          "address": {
+            "addressPostcode": {
+              "eq": "10001",
+            },
+          },
+        },
+        {
+          "address": {
+            "addressState": {
+              "gt": "NY",
+            },
+          },
+        },
+      ],
+    },
+    {
+      "and": [
+        {
+          "address": {
+            "addressStreet1": {
+              "eq": "123 Main St",
+            },
+          },
+        },
+        {
+          "address": {
+            "addressStreet2": {
+              "eq": "Apt 4B",
+            },
+          },
+        },
+        {
+          "address": {
+            "addressCity": {
+              "eq": "New York",
+            },
+          },
+        },
+        {
+          "address": {
+            "addressPostcode": {
+              "eq": "10001",
+            },
+          },
+        },
+        {
+          "address": {
+            "addressState": {
+              "eq": "NY",
+            },
+          },
+        },
+        {
+          "address": {
+            "addressCountry": {
+              "gt": "USA",
+            },
+          },
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`buildCompositeFieldWhereCondition multiple properties cases should match snapshots for two properties - both ascending, backward pagination: multiple properties - two properties - both ascending, backward pagination 1`] = `
+{
+  "or": [
+    {
+      "name": {
+        "firstName": {
+          "lt": "John",
+        },
+      },
+    },
+    {
+      "and": [
+        {
+          "name": {
+            "firstName": {
+              "eq": "John",
+            },
+          },
+        },
+        {
+          "name": {
+            "lastName": {
+              "lt": "Doe",
+            },
+          },
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`buildCompositeFieldWhereCondition multiple properties cases should match snapshots for two properties - both ascending, forward pagination: multiple properties - two properties - both ascending, forward pagination 1`] = `
+{
+  "or": [
+    {
+      "name": {
+        "firstName": {
+          "gt": "John",
+        },
+      },
+    },
+    {
+      "and": [
+        {
+          "name": {
+            "firstName": {
+              "eq": "John",
+            },
+          },
+        },
+        {
+          "name": {
+            "lastName": {
+              "gt": "Doe",
+            },
+          },
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`buildCompositeFieldWhereCondition multiple properties cases should match snapshots for two properties - both descending, forward pagination: multiple properties - two properties - both descending, forward pagination 1`] = `
+{
+  "or": [
+    {
+      "name": {
+        "firstName": {
+          "lt": "John",
+        },
+      },
+    },
+    {
+      "and": [
+        {
+          "name": {
+            "firstName": {
+              "eq": "John",
+            },
+          },
+        },
+        {
+          "name": {
+            "lastName": {
+              "lt": "Doe",
+            },
+          },
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`buildCompositeFieldWhereCondition multiple properties cases should match snapshots for two properties - mixed ordering, forward pagination: multiple properties - two properties - mixed ordering, forward pagination 1`] = `
+{
+  "or": [
+    {
+      "name": {
+        "firstName": {
+          "gt": "John",
+        },
+      },
+    },
+    {
+      "and": [
+        {
+          "name": {
+            "firstName": {
+              "eq": "John",
+            },
+          },
+        },
+        {
+          "name": {
+            "lastName": {
+              "lt": "Doe",
+            },
+          },
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`buildCompositeFieldWhereCondition single property cases should match snapshot for ascending order with backward pagination: single property - ascending order with backward pagination 1`] = `
+{
+  "person": {
+    "firstName": {
+      "lt": "John",
+    },
+  },
+}
+`;
+
+exports[`buildCompositeFieldWhereCondition single property cases should match snapshot for ascending order with forward pagination: single property - ascending order with forward pagination 1`] = `
+{
+  "person": {
+    "firstName": {
+      "gt": "John",
+    },
+  },
+}
+`;
+
+exports[`buildCompositeFieldWhereCondition single property cases should match snapshot for descending order with backward pagination: single property - descending order with backward pagination 1`] = `
+{
+  "person": {
+    "firstName": {
+      "gt": "John",
+    },
+  },
+}
+`;
+
+exports[`buildCompositeFieldWhereCondition single property cases should match snapshot for descending order with forward pagination: single property - descending order with forward pagination 1`] = `
+{
+  "person": {
+    "firstName": {
+      "lt": "John",
+    },
+  },
+}
+`;

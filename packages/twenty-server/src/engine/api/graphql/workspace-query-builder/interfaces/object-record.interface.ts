@@ -25,6 +25,14 @@ export type ObjectRecordOrderBy = Array<{
     | Record<string, OrderByDirection>;
 }>;
 
+export type ObjectRecordOrderByLeafForNonCompositeFields = {
+  [Property in keyof ObjectRecord]?: OrderByDirection;
+};
+
+export type ObjectRecordOrderByLeafForCompositeFields = {
+  [Property in keyof ObjectRecord]?: Record<string, OrderByDirection>;
+};
+
 export interface ObjectRecordDuplicateCriteria {
   objectName: string;
   columnNames: string[];
