@@ -82,7 +82,6 @@ export const SettingsDevelopersWebhookForm = ({
     removeOperation,
     deleteWebhook,
     isCreationMode,
-    error,
   } = useWebhookForm({ webhookId, mode });
 
   const getTitle = () => {
@@ -96,7 +95,7 @@ export const SettingsDevelopersWebhookForm = ({
     }
   };
 
-  if ((loading && !isCreationMode) || isDefined(error)) {
+  if (loading && !isCreationMode) {
     return <SettingsSkeletonLoader />;
   }
 
