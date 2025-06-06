@@ -8,6 +8,7 @@ import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrap
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 describe('WorkspaceAgnosticToken', () => {
   let service: WorkspaceAgnosticTokenService;
@@ -72,7 +73,10 @@ describe('WorkspaceAgnosticToken', () => {
       jest.spyOn(jwtWrapperService, 'sign').mockReturnValue(mockToken);
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(mockUser as User);
 
-      const result = await service.generateWorkspaceAgnosticToken(userId);
+      const result = await service.generateWorkspaceAgnosticToken(
+        userId,
+        AuthProviderEnum.Password,
+      );
 
       expect(result).toEqual({
         token: mockToken,
@@ -110,7 +114,7 @@ describe('WorkspaceAgnosticToken', () => {
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
       await expect(
-        service.generateWorkspaceAgnosticToken(userId),
+        service.generateWorkspaceAgnosticToken(userId, AuthProviderEnum.Password),
       ).rejects.toThrow(AuthException);
     });
   });

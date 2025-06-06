@@ -53,7 +53,7 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
-import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { CheckUserExistOutput } from 'src/engine/core-modules/auth/dto/user-exists.entity';
@@ -189,7 +189,7 @@ export class AuthService {
     userData: ExistingUserOrNewUser['userData'],
     authParams: Extract<
       AuthProviderWithPasswordType['authParams'],
-      { provider: 'password' }
+      { provider: AuthProviderEnum.Password }
     >,
   ) {
     if (userData.type === 'newUser') {
@@ -210,7 +210,7 @@ export class AuthService {
     authParams: AuthProviderWithPasswordType['authParams'],
     workspace: Workspace | undefined | null,
   ) {
-    if (authParams.provider === 'password') {
+    if (authParams.provider === AuthProviderEnum.Password) {
       await this.validatePassword(userData, authParams);
     }
 
@@ -544,10 +544,10 @@ export class AuthService {
       workspaceInviteHash?: string;
     } & (
       | {
-          authProvider: Exclude<WorkspaceAuthProvider, 'password'>;
+          authProvider: Exclude<AuthProviderEnum, AuthProviderEnum.Password>;
           email: string;
         }
-      | { authProvider: Extract<WorkspaceAuthProvider, 'password'> }
+      | { authProvider: Extract<AuthProviderEnum, AuthProviderEnum.Password> }
     ),
   ) {
     if (params.workspaceInviteHash) {
@@ -561,7 +561,7 @@ export class AuthService {
       );
     }
 
-    if (params.authProvider !== 'password') {
+    if (params.authProvider !== AuthProviderEnum.Password) {
       return (
         (await this.authSsoService.findWorkspaceFromWorkspaceIdOrAuthProvider(
           {
@@ -673,7 +673,7 @@ export class AuthService {
       action,
       locale,
     }: MicrosoftRequest['user'] | GoogleRequest['user'],
-    authProvider: 'google' | 'microsoft',
+    authProvider: AuthProviderEnum.Google | AuthProviderEnum.Microsoft,
   ): Promise<string> {
     const email = rawEmail.toLowerCase();
 
@@ -713,6 +713,7 @@ export class AuthService {
             accessToken:
               await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
                 user.id,
+                authProvider
               ),
             refreshToken: await this.refreshTokenService.generateRefreshToken({
               userId: user.id,
@@ -766,7 +767,7 @@ export class AuthService {
         workspace: currentWorkspace,
         userData,
         authParams: {
-          provider: 'google',
+          provider: AuthProviderEnum.Google,
         },
         billingCheckoutSessionState,
       });

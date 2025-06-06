@@ -16,6 +16,7 @@ import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.aut
 import {
   AccessTokenJwtPayload,
   AuthContext,
+  JwtTokenTypeEnum
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -111,12 +112,12 @@ export class AccessTokenService {
       workspaceId,
       workspaceMemberId: tokenWorkspaceMemberId,
       userWorkspaceId: userWorkspace.id,
-      type: 'ACCESS',
+      type: JwtTokenTypeEnum.ACCESS,
     };
 
     return {
       token: this.jwtWrapperService.sign(jwtPayload, {
-        secret: this.jwtWrapperService.generateAppSecret('ACCESS', workspaceId),
+        secret: this.jwtWrapperService.generateAppSecret(JwtTokenTypeEnum.ACCESS, workspaceId),
         expiresIn,
       }),
       expiresAt,
@@ -124,7 +125,7 @@ export class AccessTokenService {
   }
 
   async validateToken(token: string): Promise<AuthContext> {
-    await this.jwtWrapperService.verifyJwtToken(token, 'ACCESS');
+    await this.jwtWrapperService.verifyJwtToken(token, JwtTokenTypeEnum.ACCESS);
 
     const decoded = this.jwtWrapperService.decode<AccessTokenJwtPayload>(token);
 

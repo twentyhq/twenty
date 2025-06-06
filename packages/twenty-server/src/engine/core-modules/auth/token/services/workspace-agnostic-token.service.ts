@@ -12,6 +12,7 @@ import {
 import { AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
 import {
   AuthContext,
+  JwtTokenTypeEnum,
   WorkspaceAgnosticTokenJwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
@@ -28,7 +29,10 @@ export class WorkspaceAgnosticTokenService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async generateWorkspaceAgnosticToken(userId: string): Promise<AuthToken> {
+  async generateWorkspaceAgnosticToken(
+    userId: string,
+    authProvider: WorkspaceAgnosticTokenJwtPayload['authProvider'],
+  ): Promise<AuthToken> {
     const expiresIn = this.twentyConfigService.get(
       'WORKSPACE_AGNOSTIC_TOKEN_EXPIRES_IN',
     );
@@ -47,13 +51,14 @@ export class WorkspaceAgnosticTokenService {
     const jwtPayload: WorkspaceAgnosticTokenJwtPayload = {
       sub: user.id,
       userId: user.id,
-      type: 'WORKSPACE_AGNOSTIC',
+      authProvider,
+      type: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
     };
 
     return {
       token: this.jwtWrapperService.sign(jwtPayload, {
         secret: this.jwtWrapperService.generateAppSecret(
-          'WORKSPACE_AGNOSTIC',
+          JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
           user.id,
         ),
         expiresIn,
@@ -69,7 +74,7 @@ export class WorkspaceAgnosticTokenService {
 
       this.jwtWrapperService.verify(token, {
         secret: this.jwtWrapperService.generateAppSecret(
-          'WORKSPACE_AGNOSTIC',
+          JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
           decoded.userId,
         ),
       });

@@ -7,6 +7,7 @@ import { AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TransientTokenJwtPayload } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @Injectable()
 export class TransientTokenService {
@@ -25,7 +26,7 @@ export class TransientTokenService {
       userId: userId,
       workspaceId: workspaceId,
       workspaceMemberId: workspaceMemberId,
-      type: 'LOGIN',
+      type: JwtTokenTypeEnum.LOGIN
     };
 
     const secret = this.jwtWrapperService.generateAppSecret(
@@ -50,7 +51,7 @@ export class TransientTokenService {
   async verifyTransientToken(
     transientToken: string,
   ): Promise<Omit<TransientTokenJwtPayload, 'type' | 'sub'>> {
-    await this.jwtWrapperService.verifyJwtToken(transientToken, 'LOGIN');
+    await this.jwtWrapperService.verifyJwtToken(transientToken, JwtTokenTypeEnum.LOGIN);
 
     const { type: _type, ...payload } =
       this.jwtWrapperService.decode<TransientTokenJwtPayload>(transientToken);

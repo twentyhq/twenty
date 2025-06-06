@@ -14,6 +14,7 @@ import { MicrosoftOAuthGuard } from 'src/engine/core-modules/auth/guards/microso
 import { MicrosoftProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/microsoft-provider-enabled.guard';
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 @Controller('auth/microsoft')
 @UseFilters(AuthRestApiExceptionFilter)

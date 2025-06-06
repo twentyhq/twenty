@@ -1,6 +1,7 @@
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 export type AuthContext = {
   user?: User | null | undefined;
@@ -10,12 +11,23 @@ export type AuthContext = {
   userWorkspaceId?: string;
 };
 
+export enum JwtTokenTypeEnum {
+  ACCESS = 'ACCESS',
+  REFRESH = 'REFRESH',
+  WORKSPACE_AGNOSTIC = 'WORKSPACE_AGNOSTIC',
+  LOGIN = 'LOGIN',
+  FILE = 'FILE',
+  API_KEY = 'API_KEY',
+  POSTGRES_PROXY = 'POSTGRES_PROXY',
+  REMOTE_SERVER = 'REMOTE_SERVER',
+}
+
 type CommonPropertiesJwtPayload = {
   sub: string;
 };
 
 export type FileTokenJwtPayload = CommonPropertiesJwtPayload & {
-  type: 'FILE';
+  type: JwtTokenTypeEnum.FILE;
   workspaceId: string;
   filename: string;
   workspaceMemberId?: string;
@@ -25,38 +37,39 @@ export type FileTokenJwtPayload = CommonPropertiesJwtPayload & {
 };
 
 export type LoginTokenJwtPayload = CommonPropertiesJwtPayload & {
-  type: 'LOGIN';
+  type: JwtTokenTypeEnum.LOGIN;
   workspaceId: string;
 };
 
 export type TransientTokenJwtPayload = CommonPropertiesJwtPayload & {
-  type: 'LOGIN';
+  type: JwtTokenTypeEnum.LOGIN;
   workspaceId: string;
   userId: string;
   workspaceMemberId: string;
 };
 
 export type RefreshTokenJwtPayload = CommonPropertiesJwtPayload & {
-  type: 'REFRESH';
+  type: JwtTokenTypeEnum.REFRESH;
   workspaceId?: string;
   userId: string;
   jti?: string;
 };
 
 export type WorkspaceAgnosticTokenJwtPayload = CommonPropertiesJwtPayload & {
-  type: 'WORKSPACE_AGNOSTIC';
+  type: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC;
   userId: string;
+  authProvider: AuthProviderEnum;
 };
 
 export type ApiKeyTokenJwtPayload = CommonPropertiesJwtPayload & {
-  type: 'API_KEY';
+  type: JwtTokenTypeEnum.API_KEY;
   workspaceId: string;
   workspaceMemberId?: string;
   jti?: string;
 };
 
 export type AccessTokenJwtPayload = CommonPropertiesJwtPayload & {
-  type: 'ACCESS';
+  type: JwtTokenTypeEnum.ACCESS;
   workspaceId: string;
   userId: string;
   workspaceMemberId?: string;
@@ -64,11 +77,11 @@ export type AccessTokenJwtPayload = CommonPropertiesJwtPayload & {
 };
 
 export type PostgresProxyTokenJwtPayload = CommonPropertiesJwtPayload & {
-  type: 'POSTGRES_PROXY';
+  type: JwtTokenTypeEnum.POSTGRES_PROXY;
 };
 
 export type RemoteServerTokenJwtPayload = CommonPropertiesJwtPayload & {
-  type: 'REMOTE_SERVER';
+  type: JwtTokenTypeEnum.REMOTE_SERVER;
 };
 
 export type JwtPayload =
@@ -81,5 +94,3 @@ export type JwtPayload =
   | FileTokenJwtPayload
   | PostgresProxyTokenJwtPayload
   | RemoteServerTokenJwtPayload;
-
-export type JwtAuthTokenType = JwtPayload['type'];

@@ -17,7 +17,7 @@ import { AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { RefreshTokenJwtPayload } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { RefreshTokenJwtPayload, JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @Injectable()
 export class RefreshTokenService {
@@ -33,7 +33,7 @@ export class RefreshTokenService {
   async verifyRefreshToken(refreshToken: string) {
     const coolDown = this.twentyConfigService.get('REFRESH_TOKEN_COOL_DOWN');
 
-    await this.jwtWrapperService.verifyJwtToken(refreshToken, 'REFRESH');
+    await this.jwtWrapperService.verifyJwtToken(refreshToken, JwtTokenTypeEnum.REFRESH);
     const jwtPayload =
       this.jwtWrapperService.decode<RefreshTokenJwtPayload>(refreshToken);
 
@@ -107,7 +107,7 @@ export class RefreshTokenService {
     payload: Omit<RefreshTokenJwtPayload, 'type' | 'sub' | 'jti'>,
   ): Promise<AuthToken> {
     const secret = this.jwtWrapperService.generateAppSecret(
-      'REFRESH',
+      JwtTokenTypeEnum.REFRESH,
       payload.workspaceId ?? payload.userId,
     );
     const expiresIn = this.twentyConfigService.get('REFRESH_TOKEN_EXPIRES_IN');
@@ -134,7 +134,7 @@ export class RefreshTokenService {
         {
           ...payload,
           sub: payload.userId,
-          type: 'REFRESH',
+          type: JwtTokenTypeEnum.REFRESH,
         },
         {
           secret,

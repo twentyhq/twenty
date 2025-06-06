@@ -56,7 +56,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 import { GetLoginTokenFromEmailVerificationTokenOutput } from 'src/engine/core-modules/auth/dto/get-login-token-from-email-verification-token.output';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
-import { SignInOutput } from 'src/engine/core-modules/auth/dto/sign-in.output';
+import { AvailableWorkspacesAndAccessTokensOutput } from 'src/engine/core-modules/auth/dto/available-workspaces-and-access-tokens.output';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { UserCredentialsInput } from './dto/user-credentials.input';
@@ -68,6 +68,7 @@ import { EmailAndCaptchaInput } from './dto/user-exists.input';
 import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.entity';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 @Resolver()
 @UseFilters(
@@ -171,11 +172,11 @@ export class AuthResolver {
   }
 
   @UseGuards(CaptchaGuard)
-  @Mutation(() => SignInOutput)
+  @Mutation(() => AvailableWorkspacesAndAccessTokensOutput)
   async signIn(
     @Args()
     userCredentials: UserCredentialsInput,
-  ): Promise<SignInOutput> {
+  ): Promise<AvailableWorkspacesAndAccessTokensOutput> {
     const user =
       await this.authService.validateLoginWithPassword(userCredentials);
 
@@ -185,35 +186,16 @@ export class AuthResolver {
       );
 
     return {
-      availableWorkspaces: {
-        availableWorkspacesForSignUp:
-          this.userWorkspaceService.castWorkspacesToAvailableWorkspaces(
-            availableWorkspaces.availableWorkspacesForSignUp,
-          ),
-        availableWorkspacesForSignIn: await Promise.all(
-          availableWorkspaces.availableWorkspacesForSignIn.map(
-            async (workspace) => {
-              return {
-                ...this.userWorkspaceService.castWorkspaceToAvailableWorkspace(
-                  workspace,
-                ),
-                loginToken: workspace.isPasswordAuthEnabled
-                  ? (
-                      await this.loginTokenService.generateLoginToken(
-                        user.email,
-                        workspace.id,
-                      )
-                    ).token
-                  : undefined,
-              };
-            },
-          ),
+      availableWorkspaces:
+        await this.signInUpService.setLoginTokenToAvailableWorkspaces(
+          availableWorkspaces,
+          user,
         ),
-      },
       tokens: {
         accessToken:
           await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
             user.id,
+            AuthProviderEnum.Password,
           ),
         refreshToken: await this.refreshTokenService.generateRefreshToken({
           userId: user.id,
@@ -255,11 +237,52 @@ export class AuthResolver {
   }
 
   @UseGuards(CaptchaGuard)
+  @Mutation(() => AvailableWorkspacesAndAccessTokensOutput)
+  async signUp(
+    @Args() signUpInput: UserCredentialsInput,
+  ): Promise<AvailableWorkspacesAndAccessTokensOutput> {
+    const user = await this.signInUpService.signUpWithoutWorkspace(
+      {
+        email: signUpInput.email,
+      },
+      {
+        provider: AuthProviderEnum.Password,
+        password: signUpInput.password,
+      },
+    );
+
+    const availableWorkspaces =
+      await this.userWorkspaceService.findAvailableWorkspacesByEmail(
+        user.email,
+      );
+
+    return {
+      availableWorkspaces:
+        await this.signInUpService.setLoginTokenToAvailableWorkspaces(
+          availableWorkspaces,
+          user,
+        ),
+      tokens: {
+        accessToken:
+          await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
+            user.id,
+            AuthProviderEnum.Password
+          ),
+        refreshToken: await this.refreshTokenService.generateRefreshToken({
+          userId: user.id,
+        }),
+      },
+    };
+  }
+
+  @UseGuards(CaptchaGuard)
   @Mutation(() => SignUpOutput)
-  async signUp(@Args() signUpInput: SignUpInput): Promise<SignUpOutput> {
+  async signUpInWorkspace(
+    @Args() signUpInput: SignUpInput,
+  ): Promise<SignUpOutput> {
     const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
       workspaceInviteHash: signUpInput.workspaceInviteHash,
-      authProvider: 'password',
+      authProvider: AuthProviderEnum.Password,
       workspaceId: signUpInput.workspaceId,
     });
 
@@ -298,7 +321,7 @@ export class AuthResolver {
       workspace: currentWorkspace,
       invitation,
       authParams: {
-        provider: 'password',
+        provider: AuthProviderEnum.Password,
         password: signUpInput.password,
       },
     });

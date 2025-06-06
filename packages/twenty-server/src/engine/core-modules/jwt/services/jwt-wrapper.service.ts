@@ -15,11 +15,12 @@ import {
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   JwtPayload,
-  JwtAuthTokenType,
+  JwtTokenTypeEnum,
   TransientTokenJwtPayload,
   RefreshTokenJwtPayload,
   WorkspaceAgnosticTokenJwtPayload,
-  AccessTokenJwtPayload, FileTokenJwtPayload,
+  AccessTokenJwtPayload,
+  FileTokenJwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @Injectable()
@@ -50,7 +51,7 @@ export class JwtWrapperService {
   verifyJwtToken(
     token: string,
     // @deprecated - use type from decoded payload
-    type: JwtAuthTokenType,
+    type: JwtTokenTypeEnum,
     options?: JwtVerifyOptions,
   ) {
     const payload = this.decode<
@@ -88,7 +89,7 @@ export class JwtWrapperService {
       }
 
       const appSecretBody =
-        payload.type === 'WORKSPACE_AGNOSTIC'
+        payload.type === JwtTokenTypeEnum.WORKSPACE_AGNOSTIC
           ? payload.userId
           : payload.workspaceId;
 
@@ -123,7 +124,7 @@ export class JwtWrapperService {
     }
   }
 
-  generateAppSecret(type: JwtAuthTokenType, appSecretBody: string): string {
+  generateAppSecret(type: JwtTokenTypeEnum, appSecretBody: string): string {
     const appSecret = this.twentyConfigService.get('APP_SECRET');
 
     if (!appSecret) {

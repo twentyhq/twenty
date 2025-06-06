@@ -15,6 +15,7 @@ import { GoogleOauthGuard } from 'src/engine/core-modules/auth/guards/google-oau
 import { GoogleProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/google-provider-enabled.guard';
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 @Controller('auth/google')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -33,7 +34,7 @@ export class GoogleAuthController {
   @UseFilters(AuthOAuthExceptionFilter)
   async googleAuthRedirect(@Req() req: GoogleRequest, @Res() res: Response) {
     return res.redirect(
-      await this.authService.signInUpWithSocialSSO(req.user, 'google'),
+      await this.authService.signInUpWithSocialSSO(req.user, AuthProviderEnum.Google),
     );
   }
 }

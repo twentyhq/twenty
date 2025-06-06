@@ -5,7 +5,7 @@ import { AvailableWorkspaces } from 'src/engine/core-modules/auth/dto/available-
 import { AuthTokenPair } from './token.entity';
 
 @ObjectType()
-export class SignInOutput {
+export class AvailableWorkspacesAndAccessTokensOutput {
   @Field(() => AuthTokenPair)
   tokens: AuthTokenPair;
 

@@ -25,7 +25,6 @@ import {
   SignInUpNewUserPayload,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -35,6 +34,8 @@ import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-in
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { isWorkEmail } from 'src/utils/is-work-email';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -47,6 +48,7 @@ export class SignInUpService {
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly onboardingService: OnboardingService,
+    private readonly loginTokenService: LoginTokenService,
     private readonly httpService: HttpService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly domainManagerService: DomainManagerService,
@@ -67,7 +69,7 @@ export class SignInUpService {
       );
     }
 
-    if (authParams.provider === 'password') {
+    if (authParams.provider === AuthProviderEnum.Password) {
       newUserParams.passwordHash = await this.generateHash(authParams.password);
     }
 
@@ -387,5 +389,39 @@ export class SignInUpService {
       await this.computeParamsForNewUser(newUserParams, authParams),
       await this.setDefaultImpersonateAndAccessFullAdminPanel(),
     );
+  }
+
+  async setLoginTokenToAvailableWorkspaces(
+    availableWorkspaces: {
+      availableWorkspacesForSignUp: Array<Workspace>;
+      availableWorkspacesForSignIn: Array<Workspace>;
+    },
+    user: User,
+  ) {
+    return {
+      availableWorkspacesForSignUp:
+        this.userWorkspaceService.castWorkspacesToAvailableWorkspaces(
+          availableWorkspaces.availableWorkspacesForSignUp,
+        ),
+      availableWorkspacesForSignIn: await Promise.all(
+        availableWorkspaces.availableWorkspacesForSignIn.map(
+          async (workspace) => {
+            return {
+              ...this.userWorkspaceService.castWorkspaceToAvailableWorkspace(
+                workspace,
+              ),
+              loginToken: workspace.isPasswordAuthEnabled
+                ? (
+                    await this.loginTokenService.generateLoginToken(
+                      user.email,
+                      workspace.id,
+                    )
+                  ).token
+                : undefined,
+            };
+          },
+        ),
+      ),
+    };
   }
 }

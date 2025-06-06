@@ -4,7 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
-
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
   AuthException,
@@ -155,7 +155,7 @@ describe('SignInUpService', () => {
         id: 'workspaceId',
         activationStatus: WorkspaceActivationStatus.ACTIVE,
       } as Workspace,
-      authParams: { provider: 'password', password: 'validPassword' },
+      authParams: { provider: AuthProviderEnum.Password, password: 'validPassword' },
       userData: {
         type: 'existingUser',
         existingUser: { email: 'test@example.com' } as User,
@@ -206,7 +206,7 @@ describe('SignInUpService', () => {
         id: 'workspaceId',
         activationStatus: WorkspaceActivationStatus.ACTIVE,
       } as Workspace,
-      authParams: { provider: 'password', password: 'validPassword' },
+      authParams: { provider: AuthProviderEnum.Password, password: 'validPassword' },
       userData: {
         type: 'existingUser',
         existingUser: { email: 'test@example.com' } as User,
@@ -230,7 +230,7 @@ describe('SignInUpService', () => {
     const params: SignInUpBaseParams &
       ExistingUserOrPartialUserWithPicture &
       AuthProviderWithPasswordType = {
-      authParams: { provider: 'password', password: 'validPassword' },
+      authParams: { provider: AuthProviderEnum.Password, password: 'validPassword' },
       userData: {
         type: 'newUserWithPicture',
         newUserWithPicture: {
@@ -283,7 +283,7 @@ describe('SignInUpService', () => {
         id: 'workspaceId',
         activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
       } as Workspace,
-      authParams: { provider: 'password', password: 'validPassword' },
+      authParams: { provider: AuthProviderEnum.Password, password: 'validPassword' },
       userData: {
         type: 'existingUser',
         existingUser: { email: 'test@example.com' } as User,
@@ -315,7 +315,7 @@ describe('SignInUpService', () => {
         id: 'workspaceId',
         activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
       } as Workspace,
-      authParams: { provider: 'password', password: 'validPassword' },
+      authParams: { provider: AuthProviderEnum.Password, password: 'validPassword' },
       userData: {
         type: 'existingUser',
         existingUser: { email: 'test@example.com' } as User,
@@ -340,7 +340,7 @@ describe('SignInUpService', () => {
       ExistingUserOrPartialUserWithPicture &
       AuthProviderWithPasswordType = {
       workspace: null,
-      authParams: { provider: 'password', password: 'validPassword' },
+      authParams: { provider: AuthProviderEnum.Password, password: 'validPassword' },
       userData: {
         type: 'existingUser',
         existingUser: { email: 'existinguser@example.com' } as User,

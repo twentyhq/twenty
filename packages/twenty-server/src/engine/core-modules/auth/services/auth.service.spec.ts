@@ -24,6 +24,7 @@ import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-in
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 import { AuthService } from './auth.service';
 
@@ -443,7 +444,7 @@ describe('AuthService', () => {
       );
 
       const result = await service.findWorkspaceForSignInUp({
-        authProvider: 'password',
+        authProvider: AuthProviderEnum.Password,
         workspaceId: 'workspaceId',
       });
 
@@ -463,7 +464,7 @@ describe('AuthService', () => {
       );
 
       const result = await service.findWorkspaceForSignInUp({
-        authProvider: 'password',
+        authProvider: AuthProviderEnum.Password,
         workspaceId: 'workspaceId',
         workspaceInviteHash: 'workspaceInviteHash',
       });
@@ -484,7 +485,7 @@ describe('AuthService', () => {
       );
 
       const result = await service.findWorkspaceForSignInUp({
-        authProvider: 'password',
+        authProvider: AuthProviderEnum.Password,
         workspaceId: 'workspaceId',
         workspaceInviteHash: 'workspaceInviteHash',
       });
@@ -501,7 +502,7 @@ describe('AuthService', () => {
         .mockResolvedValue({} as Workspace);
 
       const result = await service.findWorkspaceForSignInUp({
-        authProvider: 'google',
+        authProvider: AuthProviderEnum.Google,
         workspaceId: 'workspaceId',
         email: 'email',
       });
@@ -518,7 +519,7 @@ describe('AuthService', () => {
         .mockResolvedValue({} as Workspace);
 
       const result = await service.findWorkspaceForSignInUp({
-        authProvider: 'sso',
+        authProvider: AuthProviderEnum.SSO,
         workspaceId: 'workspaceId',
         email: 'email',
       });

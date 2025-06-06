@@ -42,6 +42,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   const {
     signInWithCredentialsInWorkspace,
     signInWithCredentials,
+    signUpWithCredentialsInWorkspace,
     signUpWithCredentials,
     checkUserExists: { checkUserExistsQuery },
   } = useAuth();
@@ -120,12 +121,20 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           );
         }
 
+        if (signInUpMode === SignInUpMode.SignUp && !isOnAWorkspace) {
+          return await signUpWithCredentials(
+            data.email.toLowerCase().trim(),
+            data.password,
+            token,
+          );
+        }
+
         const verifyEmailNextPath = buildAppPathWithQueryParams(
           AppPath.PlanRequired,
           await buildSearchParamsFromUrlSyncedStates(),
         );
 
-        await signUpWithCredentials({
+        await signUpWithCredentialsInWorkspace({
           email: data.email.toLowerCase().trim(),
           password: data.password,
           workspaceInviteHash,
@@ -147,7 +156,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       isInviteMode,
       signInWithCredentialsInWorkspace,
       signInWithCredentials,
-      signUpWithCredentials,
+      signUpWithCredentialsInWorkspace,
       workspaceInviteHash,
       workspacePersonalInviteToken,
       enqueueSnackBar,

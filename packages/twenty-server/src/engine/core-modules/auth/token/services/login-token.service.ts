@@ -7,6 +7,7 @@ import { AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { LoginTokenJwtPayload } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @Injectable()
 export class LoginTokenService {
@@ -20,7 +21,7 @@ export class LoginTokenService {
     workspaceId: string,
   ): Promise<AuthToken> {
     const jwtPayload: LoginTokenJwtPayload = {
-      type: 'LOGIN',
+      type: JwtTokenTypeEnum.LOGIN,
       sub: email,
       workspaceId,
     };
@@ -46,7 +47,10 @@ export class LoginTokenService {
   async verifyLoginToken(
     loginToken: string,
   ): Promise<{ sub: string; workspaceId: string }> {
-    await this.jwtWrapperService.verifyJwtToken(loginToken, 'LOGIN');
+    await this.jwtWrapperService.verifyJwtToken(
+      loginToken,
+      JwtTokenTypeEnum.LOGIN,
+    );
 
     return this.jwtWrapperService.decode(loginToken, {
       json: true,
