@@ -1,20 +1,23 @@
 import { EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { OrderByDirection } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import {
+  ObjectRecordOrderBy,
+  OrderByDirection,
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { buildLexicographicOrderingWhereCondition } from 'src/engine/api/utils/build-lexicographic-ordering-where-condition.utils';
+import { buildCompositeFieldWhereCondition } from 'src/engine/api/utils/build-composite-field-where-condition.utils';
 
-describe('buildLexicographicOrderingWhereCondition', () => {
+describe('buildCompositeFieldWhereCondition', () => {
   describe('empty properties', () => {
-    it('should return empty object when filteredProperties is empty', () => {
-      const result = buildLexicographicOrderingWhereCondition(
-        [],
-        'person',
-        { person: { name: OrderByDirection.AscNullsLast } },
-        { name: 'John' },
-        true,
-      );
+    it('should return empty object when compositeFieldProperties is empty', () => {
+      const result = buildCompositeFieldWhereCondition({
+        fieldType: FieldMetadataType.TEXT,
+        fieldKey: 'person',
+        orderBy: [],
+        cursorValue: { name: 'John' },
+        isForwardPagination: true,
+      });
 
       expect(result).toEqual({});
     });
@@ -23,9 +26,9 @@ describe('buildLexicographicOrderingWhereCondition', () => {
   describe('single property cases', () => {
     const singlePropertyTestCases: EachTestingContext<{
       description: string;
-      filteredProperties: { name: string; type: FieldMetadataType }[];
-      key: string;
-      keyOrderBy: Record<string, any>;
+      fieldType: FieldMetadataType;
+      fieldKey: string;
+      orderBy: ObjectRecordOrderBy;
       value: { [key: string]: any };
       isForwardPagination: boolean;
       operator?: string;
@@ -35,11 +38,9 @@ describe('buildLexicographicOrderingWhereCondition', () => {
         title: 'ascending order with forward pagination',
         context: {
           description: 'ascending order with forward pagination',
-          filteredProperties: [
-            { name: 'firstName', type: FieldMetadataType.TEXT },
-          ],
-          key: 'person',
-          keyOrderBy: { person: { firstName: OrderByDirection.AscNullsLast } },
+          fieldType: FieldMetadataType.TEXT,
+          fieldKey: 'person',
+          orderBy: [{ person: { firstName: OrderByDirection.AscNullsLast } }],
           value: { firstName: 'John' },
           isForwardPagination: true,
           operator: undefined,
@@ -50,11 +51,9 @@ describe('buildLexicographicOrderingWhereCondition', () => {
         title: 'ascending order with backward pagination',
         context: {
           description: 'ascending order with backward pagination',
-          filteredProperties: [
-            { name: 'firstName', type: FieldMetadataType.TEXT },
-          ],
-          key: 'person',
-          keyOrderBy: { person: { firstName: OrderByDirection.AscNullsLast } },
+          fieldType: FieldMetadataType.TEXT,
+          fieldKey: 'person',
+          orderBy: [{ person: { firstName: OrderByDirection.AscNullsLast } }],
           value: { firstName: 'John' },
           isForwardPagination: false,
           operator: undefined,
@@ -65,11 +64,9 @@ describe('buildLexicographicOrderingWhereCondition', () => {
         title: 'descending order with forward pagination',
         context: {
           description: 'descending order with forward pagination',
-          filteredProperties: [
-            { name: 'firstName', type: FieldMetadataType.TEXT },
-          ],
-          key: 'person',
-          keyOrderBy: { person: { firstName: OrderByDirection.DescNullsLast } },
+          fieldType: FieldMetadataType.TEXT,
+          fieldKey: 'person',
+          orderBy: [{ person: { firstName: OrderByDirection.DescNullsLast } }],
           value: { firstName: 'John' },
           isForwardPagination: true,
           operator: undefined,
@@ -80,11 +77,9 @@ describe('buildLexicographicOrderingWhereCondition', () => {
         title: 'descending order with backward pagination',
         context: {
           description: 'descending order with backward pagination',
-          filteredProperties: [
-            { name: 'firstName', type: FieldMetadataType.TEXT },
-          ],
-          key: 'person',
-          keyOrderBy: { person: { firstName: OrderByDirection.DescNullsLast } },
+          fieldType: FieldMetadataType.TEXT,
+          fieldKey: 'person',
+          orderBy: [{ person: { firstName: OrderByDirection.DescNullsLast } }],
           value: { firstName: 'John' },
           isForwardPagination: false,
           operator: undefined,
@@ -97,29 +92,28 @@ describe('buildLexicographicOrderingWhereCondition', () => {
       'should handle $description',
       ({ context }) => {
         const {
-          filteredProperties,
-          key,
-          keyOrderBy,
+          fieldType,
+          fieldKey,
+          orderBy,
           value,
           isForwardPagination,
           operator,
           expectedOperator,
         } = context;
 
-        const result = buildLexicographicOrderingWhereCondition(
-          filteredProperties,
-          key,
-          keyOrderBy,
-          value,
+        const result = buildCompositeFieldWhereCondition({
+          fieldType,
+          fieldKey,
+          orderBy,
+          cursorValue: value,
           isForwardPagination,
           operator,
-        );
+        });
 
         expect(result).toEqual({
-          [key]: {
-            [filteredProperties[0].name]: {
-              [expectedOperator]:
-                value[filteredProperties[0].name as keyof typeof value],
+          [fieldKey]: {
+            [fieldKey]: {
+              [expectedOperator]: value[fieldKey as keyof typeof value],
             },
           },
         });
@@ -130,21 +124,21 @@ describe('buildLexicographicOrderingWhereCondition', () => {
       'should match snapshot for $title',
       ({ context }) => {
         const {
-          filteredProperties,
-          key,
-          keyOrderBy,
+          fieldType,
+          fieldKey,
+          orderBy,
           value,
           isForwardPagination,
           description,
         } = context;
 
-        const result = buildLexicographicOrderingWhereCondition(
-          filteredProperties,
-          key,
-          keyOrderBy,
-          value,
+        const result = buildCompositeFieldWhereCondition({
+          fieldType,
+          fieldKey,
+          orderBy,
+          cursorValue: value,
           isForwardPagination,
-        );
+        });
 
         expect(result).toMatchSnapshot(`single property - ${description}`);
       },
@@ -154,9 +148,9 @@ describe('buildLexicographicOrderingWhereCondition', () => {
   describe('multiple properties cases', () => {
     const multiplePropertiesTestCases: EachTestingContext<{
       description: string;
-      filteredProperties: { name: string; type: FieldMetadataType }[];
-      key: string;
-      keyOrderBy: Record<string, any>;
+      fieldType: FieldMetadataType;
+      fieldKey: string;
+      orderBy: ObjectRecordOrderBy;
       value: { [key: string]: any };
       isForwardPagination: boolean;
     }>[] = [
@@ -164,17 +158,16 @@ describe('buildLexicographicOrderingWhereCondition', () => {
         title: 'two properties - both ascending, forward pagination',
         context: {
           description: 'two properties - both ascending, forward pagination',
-          filteredProperties: [
-            { name: 'firstName', type: FieldMetadataType.TEXT },
-            { name: 'lastName', type: FieldMetadataType.TEXT },
-          ],
-          key: 'person',
-          keyOrderBy: {
-            person: {
-              firstName: OrderByDirection.AscNullsLast,
-              lastName: OrderByDirection.AscNullsLast,
+          fieldType: FieldMetadataType.TEXT,
+          fieldKey: 'person',
+          orderBy: [
+            {
+              person: {
+                firstName: OrderByDirection.AscNullsLast,
+                lastName: OrderByDirection.AscNullsLast,
+              },
             },
-          },
+          ],
           value: { firstName: 'John', lastName: 'Doe' },
           isForwardPagination: true,
         },
@@ -183,17 +176,16 @@ describe('buildLexicographicOrderingWhereCondition', () => {
         title: 'two properties - both ascending, backward pagination',
         context: {
           description: 'two properties - both ascending, backward pagination',
-          filteredProperties: [
-            { name: 'firstName', type: FieldMetadataType.TEXT },
-            { name: 'lastName', type: FieldMetadataType.TEXT },
-          ],
-          key: 'person',
-          keyOrderBy: {
-            person: {
-              firstName: OrderByDirection.AscNullsLast,
-              lastName: OrderByDirection.AscNullsLast,
+          fieldType: FieldMetadataType.TEXT,
+          fieldKey: 'person',
+          orderBy: [
+            {
+              person: {
+                firstName: OrderByDirection.AscNullsLast,
+                lastName: OrderByDirection.AscNullsLast,
+              },
             },
-          },
+          ],
           value: { firstName: 'John', lastName: 'Doe' },
           isForwardPagination: false,
         },
@@ -202,17 +194,16 @@ describe('buildLexicographicOrderingWhereCondition', () => {
         title: 'two properties - mixed ordering, forward pagination',
         context: {
           description: 'two properties - mixed ordering, forward pagination',
-          filteredProperties: [
-            { name: 'firstName', type: FieldMetadataType.TEXT },
-            { name: 'age', type: FieldMetadataType.NUMBER },
-          ],
-          key: 'person',
-          keyOrderBy: {
-            person: {
-              firstName: OrderByDirection.AscNullsLast,
-              age: OrderByDirection.DescNullsLast,
+          fieldType: FieldMetadataType.TEXT,
+          fieldKey: 'person',
+          orderBy: [
+            {
+              person: {
+                firstName: OrderByDirection.AscNullsLast,
+                age: OrderByDirection.DescNullsLast,
+              },
             },
-          },
+          ],
           value: { firstName: 'Alice', age: 25 },
           isForwardPagination: true,
         },
@@ -221,19 +212,17 @@ describe('buildLexicographicOrderingWhereCondition', () => {
         title: 'three properties - all ascending, forward pagination',
         context: {
           description: 'three properties - all ascending, forward pagination',
-          filteredProperties: [
-            { name: 'city', type: FieldMetadataType.TEXT },
-            { name: 'firstName', type: FieldMetadataType.TEXT },
-            { name: 'id', type: FieldMetadataType.UUID },
-          ],
-          key: 'employee',
-          keyOrderBy: {
-            employee: {
-              city: OrderByDirection.AscNullsLast,
-              firstName: OrderByDirection.AscNullsLast,
-              id: OrderByDirection.AscNullsLast,
+          fieldType: FieldMetadataType.TEXT,
+          fieldKey: 'employee',
+          orderBy: [
+            {
+              employee: {
+                city: OrderByDirection.AscNullsLast,
+                firstName: OrderByDirection.AscNullsLast,
+                id: OrderByDirection.AscNullsLast,
+              },
             },
-          },
+          ],
           value: { city: 'New York', firstName: 'Bob', id: 'uuid-123' },
           isForwardPagination: true,
         },
@@ -243,28 +232,23 @@ describe('buildLexicographicOrderingWhereCondition', () => {
     test.each(multiplePropertiesTestCases)(
       'should handle $title',
       ({ context }) => {
-        const {
-          filteredProperties,
-          key,
-          keyOrderBy,
-          value,
+        const { fieldType, fieldKey, orderBy, value, isForwardPagination } =
+          context;
+        const result = buildCompositeFieldWhereCondition({
+          fieldType,
+          fieldKey,
+          orderBy,
+          cursorValue: value,
           isForwardPagination,
-        } = context;
-        const result = buildLexicographicOrderingWhereCondition(
-          filteredProperties,
-          key,
-          keyOrderBy,
-          value,
-          isForwardPagination,
-        );
+        });
 
         expect(result).toHaveProperty('or');
         const orConditions = result.or;
 
         expect(Array.isArray(orConditions)).toBe(true);
-        expect(orConditions).toHaveLength(filteredProperties.length);
+        expect(orConditions).toHaveLength(orderBy.length);
 
-        expect(orConditions[0]).toHaveProperty(key);
+        expect(orConditions[0]).toHaveProperty(fieldKey);
 
         for (const [index, orCondition] of orConditions.slice(1).entries()) {
           expect(orCondition).toHaveProperty('and');
@@ -278,21 +262,21 @@ describe('buildLexicographicOrderingWhereCondition', () => {
       'should match snapshots for $title',
       ({ context }) => {
         const {
-          filteredProperties,
-          key,
-          keyOrderBy,
+          fieldType,
+          fieldKey,
+          orderBy,
           value,
           isForwardPagination,
           description,
         } = context;
 
-        const result = buildLexicographicOrderingWhereCondition(
-          filteredProperties,
-          key,
-          keyOrderBy,
-          value,
+        const result = buildCompositeFieldWhereCondition({
+          fieldType,
+          fieldKey,
+          orderBy,
+          cursorValue: value,
           isForwardPagination,
-        );
+        });
 
         expect(result).toMatchSnapshot(`multiple properties - ${description}`);
       },

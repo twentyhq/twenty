@@ -89,7 +89,7 @@ describe('computeCursorArgFilter', () => {
   });
 
   describe('composite field handling', () => {
-    it('should handle fullName composite field with lexicographic ordering', () => {
+    it('should handle fullName composite field with proper ordering', () => {
       const cursor = {
         fullName: { firstName: 'John', lastName: 'Doe' },
       };
