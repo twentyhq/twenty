@@ -24,6 +24,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 
 import { AuthService } from './auth.service';
 
@@ -70,6 +71,10 @@ describe('AuthService', () => {
         {
           provide: LoginTokenService,
           useValue: {},
+        },
+        {
+          provider: WorkspaceAgnosticTokenService,
+          useValue: {}
         },
         {
           provide: GuardRedirectService,
