@@ -72,6 +72,7 @@ export class InterService {
     userEmail: string;
   }) {
     try {
+      // TODO: Create a new entity `BillinChargeIntentMetadata` to upsert inter related metadata to be used in inter payment envents
       await this.workspaceRepository.update(workspaceId, {
         interBillingChargeId: workspaceId.slice(0, 15),
       });

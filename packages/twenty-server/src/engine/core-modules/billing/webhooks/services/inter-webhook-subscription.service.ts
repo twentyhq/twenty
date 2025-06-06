@@ -68,6 +68,7 @@ export class InterWebhookSubscriptionService {
       },
     );
 
+    // TODO: We also need to upsert subscriptionProduct items
     await this.billingSubscriptionRepository.upsert(
       {
         workspaceId: workspace.id,
