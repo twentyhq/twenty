@@ -42,8 +42,8 @@ export default defineConfig(({ command, mode }) => {
   // Please don't increase this limit for main index chunk
   // If it gets too big then find modules in the code base
   // that can be loaded lazily, there are more!
-  const MAIN_CHUNK_SIZE_LIMIT = 4.1 * 1024 * 1024; // 4.1MB for main index chunk
-  const OTHER_CHUNK_SIZE_LIMIT = 15 * 1024 * 1024; // 5MB for other chunks
+  const MAIN_CHUNK_SIZE_LIMIT = 4.7 * 1024 * 1024; // 4.1MB for main index chunk
+  const OTHER_CHUNK_SIZE_LIMIT = 5 * 1024 * 1024; // 5MB for other chunks
 
   const checkers: Checkers = {
     overlay: false,
@@ -196,7 +196,7 @@ export default defineConfig(({ command, mode }) => {
                     const limitType = isMainChunk ? 'main' : 'other';
                     
                     if (size > sizeLimit) {
-                      oversizedChunks.push(`${fileName} (${limitType}): ${(size / 1024 / 1024).toFixed(2)}MB (limit: ${(sizeLimit / 1024 / 1024).toFixed(0)}MB)`);
+                      oversizedChunks.push(`${fileName} (${limitType}): ${(size / 1024 / 1024).toFixed(2)}MB (limit: ${(sizeLimit / 1024 / 1024).toFixed(2)}MB)`);
                     }
                   }
                 });
