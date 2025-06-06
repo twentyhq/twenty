@@ -30,6 +30,7 @@ import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/worksp
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
 import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 
 describe('UserWorkspaceService', () => {
   let service: UserWorkspaceService;
@@ -129,6 +130,10 @@ describe('UserWorkspaceService', () => {
           useValue: {
             copy: jest.fn(),
           },
+        },
+        {
+          provide: LoginTokenService,
+          useValue: {},
         },
         {
           provide: FileUploadService,
