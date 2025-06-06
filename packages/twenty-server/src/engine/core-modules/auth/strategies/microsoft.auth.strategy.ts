@@ -10,6 +10,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { SocialSSOSignInUpActionType } from 'src/engine/core-modules/auth/types/signInUp.type';
 
 export type MicrosoftRequest = Omit<
   Request,
@@ -25,6 +26,7 @@ export type MicrosoftRequest = Omit<
     workspacePersonalInviteToken?: string;
     workspaceId?: string;
     billingCheckoutSessionState?: string;
+    action: SocialSSOSignInUpActionType;
   };
 };
 
@@ -50,6 +52,7 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
         locale: req.query.locale,
         billingCheckoutSessionState: req.query.billingCheckoutSessionState,
         workspacePersonalInviteToken: req.query.workspacePersonalInviteToken,
+        action: req.query.action,
       }),
     };
 
@@ -58,8 +61,8 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
 
   async validate(
     request: MicrosoftRequest,
-    accessToken: string,
-    refreshToken: string,
+    _accessToken: string,
+    _refreshToken: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     profile: any,
     done: VerifyCallback,
@@ -90,6 +93,7 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
       workspaceId: state.workspaceId,
       billingCheckoutSessionState: state.billingCheckoutSessionState,
       locale: state.locale,
+      action: state.action,
     };
 
     done(null, user);

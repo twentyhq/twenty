@@ -24,7 +24,6 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
@@ -56,6 +55,10 @@ import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { AvailableWorkspaces } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -65,7 +68,6 @@ const getHMACKey = (email?: string, key?: string | null) => {
   return hmac.update(email).digest('hex');
 };
 
-@UseGuards(WorkspaceAuthGuard)
 @Resolver(() => User)
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
 export class UserResolver {
@@ -73,12 +75,12 @@ export class UserResolver {
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
     private readonly userService: UserService,
+    private readonly userWorkspaceService: UserWorkspaceService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly fileUploadService: FileUploadService,
     private readonly onboardingService: OnboardingService,
     private readonly userVarService: UserVarsService,
     private readonly fileService: FileService,
-    private readonly domainManagerService: DomainManagerService,
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly userRoleService: UserRoleService,
@@ -104,6 +106,10 @@ export class UserResolver {
       new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
     );
 
+    if (!workspace) {
+      return user;
+    }
+
     const currentUserWorkspace = user.workspaces.find(
       (userWorkspace) => userWorkspace.workspace.id === workspace.id,
     );
@@ -111,6 +117,7 @@ export class UserResolver {
     if (!currentUserWorkspace) {
       throw new Error('Current user workspace not found');
     }
+
     let settingsPermissions = {};
     let objectRecordsPermissions = {};
     let objectPermissions: ObjectPermissionDTO[] = [];
@@ -181,12 +188,16 @@ export class UserResolver {
     };
   }
 
-  @ResolveField(() => GraphQLJSONObject)
+  @ResolveField(() => GraphQLJSONObject, {
+    nullable: true,
+  })
   async userVars(
     @Parent() user: User,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: Workspace | undefined,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<Record<string, any>> {
+    if (!workspace) return {};
+
     const userVars = await this.userVarService.getAll({
       userId: user.id,
       workspaceId: workspace.id,
@@ -210,8 +221,10 @@ export class UserResolver {
   })
   async workspaceMember(
     @Parent() user: User,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: Workspace | undefined,
   ): Promise<WorkspaceMember | null> {
+    if (!workspace) return null;
+
     const workspaceMember = await this.userService.loadWorkspaceMember(
       user,
       workspace,
@@ -233,8 +246,10 @@ export class UserResolver {
   })
   async workspaceMembers(
     @Parent() _user: User,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: Workspace | undefined,
   ): Promise<WorkspaceMember[]> {
+    if (!workspace) return [];
+
     const workspaceMemberEntities = await this.userService.loadWorkspaceMembers(
       workspace,
       false,
@@ -318,8 +333,10 @@ export class UserResolver {
   })
   async deletedWorkspaceMembers(
     @Parent() _user: User,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: Workspace | undefined,
   ): Promise<DeletedWorkspaceMember[]> {
+    if (!workspace) return [];
+
     const workspaceMemberEntities =
       await this.userService.loadDeletedWorkspaceMembersOnly(workspace);
 
@@ -344,6 +361,7 @@ export class UserResolver {
   }
 
   @Mutation(() => SignedFileDTO)
+  @UseGuards(WorkspaceAuthGuard)
   async uploadProfilePicture(
     @AuthUser() { id }: User,
     @AuthWorkspace() { id: workspaceId }: Workspace,
@@ -379,16 +397,36 @@ export class UserResolver {
     return this.userService.deleteUser(userId);
   }
 
-  @ResolveField(() => OnboardingStatus)
+  @ResolveField(() => OnboardingStatus, {
+    nullable: true,
+  })
   async onboardingStatus(
     @Parent() user: User,
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<OnboardingStatus> {
+    @AuthWorkspace() workspace: Workspace | undefined,
+  ): Promise<OnboardingStatus | null> {
+    if (!workspace) return null;
+
     return this.onboardingService.getOnboardingStatus(user, workspace);
   }
 
-  @ResolveField(() => Workspace)
+  @ResolveField(() => Workspace, {
+    nullable: true,
+  })
   async currentWorkspace(@AuthWorkspace() workspace: Workspace) {
     return workspace;
+  }
+
+  @ResolveField(() => AvailableWorkspaces)
+  async availableWorkspaces(
+    @AuthUser() user: User,
+    @AuthProvider() authProvider: AuthProviderEnum,
+  ): Promise<AvailableWorkspaces> {
+    return this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
+      await this.userWorkspaceService.findAvailableWorkspacesByEmail(
+        user.email,
+      ),
+      user,
+      authProvider,
+    );
   }
 }

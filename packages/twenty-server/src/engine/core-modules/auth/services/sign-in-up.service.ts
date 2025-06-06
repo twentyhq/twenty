@@ -25,8 +25,6 @@ import {
   SignInUpNewUserPayload,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -34,9 +32,10 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { isWorkEmail } from 'src/utils/is-work-email';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -46,16 +45,14 @@ export class SignInUpService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    private readonly fileUploadService: FileUploadService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly onboardingService: OnboardingService,
+    private readonly loginTokenService: LoginTokenService,
     private readonly httpService: HttpService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly domainManagerService: DomainManagerService,
     private readonly userService: UserService,
-    private readonly userRoleService: UserRoleService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async computeParamsForNewUser(
@@ -72,7 +69,7 @@ export class SignInUpService {
       );
     }
 
-    if (authParams.provider === 'password') {
+    if (authParams.provider === AuthProviderEnum.Password) {
       newUserParams.passwordHash = await this.generateHash(authParams.password);
     }
 
@@ -293,11 +290,27 @@ export class SignInUpService {
     return await this.userRepository.save(userCreated);
   }
 
+  private async setDefaultImpersonateAndAccessFullAdminPanel() {
+    if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
+      const workspacesCount = await this.workspaceRepository.count();
+
+      // let the creation of the first workspace
+      if (workspacesCount > 0) {
+        throw new AuthException(
+          'New workspace setup is disabled',
+          AuthExceptionCode.SIGNUP_DISABLED,
+        );
+      }
+
+      return { canImpersonate: true, canAccessFullAdminPanel: true };
+    }
+
+    return { canImpersonate: false, canAccessFullAdminPanel: false };
+  }
+
   async signUpOnNewWorkspace(
     userData: ExistingUserOrPartialUserWithPicture['userData'],
   ) {
-    let canImpersonate = false;
-    let canAccessFullAdminPanel = false;
     const email =
       userData.type === 'newUserWithPicture'
         ? userData.newUserWithPicture.email
@@ -310,21 +323,8 @@ export class SignInUpService {
       );
     }
 
-    if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
-      const workspacesCount = await this.workspaceRepository.count();
-
-      // if the workspace doesn't exist it means it's the first user of the workspace
-      canImpersonate = true;
-      canAccessFullAdminPanel = true;
-
-      // let the creation of the first workspace
-      if (workspacesCount > 0) {
-        throw new AuthException(
-          'New workspace setup is disabled',
-          AuthExceptionCode.SIGNUP_DISABLED,
-        );
-      }
-    }
+    const { canImpersonate, canAccessFullAdminPanel } =
+      await this.setDefaultImpersonateAndAccessFullAdminPanel();
 
     const logoUrl = `${TWENTY_ICONS_BASE_URL}/${getDomainNameByEmail(email)}`;
     const isLogoUrlValid = async () => {
@@ -379,5 +379,15 @@ export class SignInUpService {
     });
 
     return { user, workspace };
+  }
+
+  async signUpWithoutWorkspace(
+    newUserParams: SignInUpNewUserPayload,
+    authParams: AuthProviderWithPasswordType['authParams'],
+  ) {
+    return this.saveNewUser(
+      await this.computeParamsForNewUser(newUserParams, authParams),
+      await this.setDefaultImpersonateAndAccessFullAdminPanel(),
+    );
   }
 }

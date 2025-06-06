@@ -124,7 +124,7 @@ export const PasswordReset = () => {
   const [updatePasswordViaToken, { loading: isUpdatingPassword }] =
     useUpdatePasswordViaResetTokenMutation();
 
-  const { signInWithCredentials } = useAuth();
+  const { signInWithCredentialsInWorkspace } = useAuth();
   const { readCaptchaToken } = useReadCaptchaToken();
 
   const onSubmit = async (formData: Form) => {
@@ -153,7 +153,11 @@ export const PasswordReset = () => {
 
       const token = await readCaptchaToken();
 
-      await signInWithCredentials(email || '', formData.newPassword, token);
+      await signInWithCredentialsInWorkspace(
+        email || '',
+        formData.newPassword,
+        token,
+      );
       navigate(AppPath.Index);
     } catch (err) {
       logError(err);

@@ -41,3 +41,9 @@ export class PasswordResetToken {
   @Field(() => String)
   workspaceId: string;
 }
+
+@ObjectType()
+export class WorkspaceAgnosticToken {
+  @Field(() => AuthToken)
+  token: AuthToken;
+}

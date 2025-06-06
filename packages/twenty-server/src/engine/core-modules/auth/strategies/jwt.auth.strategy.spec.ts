@@ -155,12 +155,12 @@ describe('JwtAuthStrategy', () => {
     );
 
     await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
-      new AuthException('User not found', expect.any(String)),
+      new AuthException('UserWorkspace not found', expect.any(String)),
     );
     try {
       await strategy.validate(payload as JwtPayload);
     } catch (e) {
-      expect(e.code).toBe(AuthExceptionCode.USER_NOT_FOUND);
+      expect(e.code).toBe(AuthExceptionCode.USER_WORKSPACE_NOT_FOUND);
     }
   });
 

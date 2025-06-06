@@ -9,11 +9,10 @@ import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/renew-token.service';
-import { EmailModule } from 'src/engine/core-modules/email/email.module';
+import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -27,9 +26,7 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
     ),
     TypeORMModule,
     DataSourceModule,
-    EmailModule,
     WorkspaceSSOModule,
-    UserWorkspaceModule,
   ],
   providers: [
     RenewTokenService,
@@ -37,12 +34,14 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
     AccessTokenService,
     LoginTokenService,
     RefreshTokenService,
+    WorkspaceAgnosticTokenService,
   ],
   exports: [
     RenewTokenService,
     AccessTokenService,
     LoginTokenService,
     RefreshTokenService,
+    WorkspaceAgnosticTokenService,
   ],
 })
 export class TokenModule {}

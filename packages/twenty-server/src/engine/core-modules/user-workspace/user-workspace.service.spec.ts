@@ -28,6 +28,9 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
+import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 
 describe('UserWorkspaceService', () => {
   let service: UserWorkspaceService;
@@ -38,6 +41,7 @@ describe('UserWorkspaceService', () => {
   let workspaceInvitationService: WorkspaceInvitationService;
   let workspaceEventEmitter: WorkspaceEventEmitter;
   let domainManagerService: DomainManagerService;
+  let approvedAccessDomainService: ApprovedAccessDomainService;
   let twentyORMGlobalManager: TwentyORMGlobalManager;
   let userRoleService: UserRoleService;
   let fileService: FileService;
@@ -103,6 +107,13 @@ describe('UserWorkspaceService', () => {
           },
         },
         {
+          provide: ApprovedAccessDomainService,
+          useValue: {
+            findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain:
+              jest.fn().mockResolvedValue([]),
+          },
+        },
+        {
           provide: TwentyORMGlobalManager,
           useValue: {
             getRepositoryForWorkspace: jest.fn(),
@@ -119,6 +130,10 @@ describe('UserWorkspaceService', () => {
           useValue: {
             copy: jest.fn(),
           },
+        },
+        {
+          provide: LoginTokenService,
+          useValue: {},
         },
         {
           provide: FileUploadService,
@@ -153,6 +168,9 @@ describe('UserWorkspaceService', () => {
     );
     domainManagerService =
       module.get<DomainManagerService>(DomainManagerService);
+    approvedAccessDomainService = module.get<ApprovedAccessDomainService>(
+      ApprovedAccessDomainService,
+    );
     twentyORMGlobalManager = module.get<TwentyORMGlobalManager>(
       TwentyORMGlobalManager,
     );
@@ -657,15 +675,11 @@ describe('UserWorkspaceService', () => {
 
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(user);
       jest
-        .spyOn(domainManagerService, 'getWorkspaceUrls')
-        .mockReturnValueOnce({
-          customUrl: 'https://crm.custom1.com',
-          subdomainUrl: 'https://workspace1.twenty.com',
-        })
-        .mockReturnValueOnce({
-          customUrl: 'https://crm.custom2.com',
-          subdomainUrl: 'https://workspace2.twenty.com',
-        });
+        .spyOn(
+          approvedAccessDomainService,
+          'findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain',
+        )
+        .mockResolvedValue([]);
 
       const result = await service.findAvailableWorkspacesByEmail(email);
 
@@ -677,18 +691,23 @@ describe('UserWorkspaceService', () => {
           'workspaces',
           'workspaces.workspace',
           'workspaces.workspace.workspaceSSOIdentityProviders',
+          'workspaces.workspace.approvedAccessDomains',
         ],
       });
-      expect(result).toHaveLength(2);
-      expect(result[0]).toEqual({
-        id: workspace1.id,
-        displayName: workspace1.displayName,
-        workspaceUrls: {
-          customUrl: 'https://crm.custom1.com',
-          subdomainUrl: 'https://workspace1.twenty.com',
-        },
-        logo: workspace1.logo,
-        sso: [
+
+      expect(result).toEqual({
+        availableWorkspacesForSignIn: [workspace1, workspace2],
+        availableWorkspacesForSignUp: [],
+      });
+    });
+
+    it('should find available workspaces including approved domain workspace for an email', async () => {
+      const email = 'test@example.com';
+      const workspace1 = {
+        id: 'workspace-id-1',
+        displayName: 'Workspace 1',
+        logo: 'logo1.png',
+        workspaceSSOIdentityProviders: [
           {
             id: 'sso-id-1',
             name: 'SSO Provider 1',
@@ -696,28 +715,98 @@ describe('UserWorkspaceService', () => {
             type: 'type1',
             status: 'Active',
           },
+          {
+            id: 'sso-id-2',
+            name: 'SSO Provider 2',
+            issuer: 'issuer2',
+            type: 'type2',
+            status: 'Inactive',
+          },
+        ],
+      } as unknown as Workspace;
+      const workspace2 = {
+        id: 'workspace-id-2',
+        displayName: 'Workspace 2',
+        logo: 'logo2.png',
+        workspaceSSOIdentityProviders: [],
+      } as unknown as Workspace;
+
+      const user = {
+        email,
+        workspaces: [
+          {
+            workspaceId: workspace1.id,
+            workspace: workspace1,
+          },
+        ],
+      } as User;
+
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(user);
+      jest
+        .spyOn(
+          approvedAccessDomainService,
+          'findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain',
+        )
+        .mockResolvedValueOnce([
+          {
+            id: 'domain-id-2',
+            workspaceId: workspace2.id,
+            workspace: workspace2,
+            isValidated: true,
+          } as unknown as ApprovedAccessDomain,
+        ]);
+
+      const result = await service.findAvailableWorkspacesByEmail(email);
+
+      expect(userRepository.findOne).toHaveBeenCalledWith({
+        where: {
+          email,
+        },
+        relations: [
+          'workspaces',
+          'workspaces.workspace',
+          'workspaces.workspace.workspaceSSOIdentityProviders',
+          'workspaces.workspace.approvedAccessDomains',
         ],
       });
-      expect(result[1]).toEqual({
-        id: workspace2.id,
-        displayName: workspace2.displayName,
-        workspaceUrls: {
-          customUrl: 'https://crm.custom2.com',
-          subdomainUrl: 'https://workspace2.twenty.com',
-        },
-        logo: workspace2.logo,
-        sso: [],
+
+      expect(result).toEqual({
+        availableWorkspacesForSignIn: [workspace1],
+        availableWorkspacesForSignUp: [workspace2],
       });
     });
 
-    it('should throw an exception if user is not found', async () => {
+    it('should return workspace with approved access domain if user is not found', async () => {
       const email = 'nonexistent@example.com';
+      const workspace1 = {
+        id: 'workspace-id-1',
+        displayName: 'Workspace 1',
+        logo: 'logo1.png',
+        workspaceSSOIdentityProviders: [],
+      } as unknown as Workspace;
 
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
-      await expect(
-        service.findAvailableWorkspacesByEmail(email),
-      ).rejects.toThrow(AuthException);
+      jest
+        .spyOn(
+          approvedAccessDomainService,
+          'findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain',
+        )
+        .mockResolvedValueOnce([
+          {
+            id: 'domain-id-1',
+            workspaceId: workspace1.id,
+            workspace: workspace1,
+            isValidated: true,
+          } as unknown as ApprovedAccessDomain,
+        ]);
+
+      const result = await service.findAvailableWorkspacesByEmail(email);
+
+      expect(result).toEqual({
+        availableWorkspacesForSignIn: [],
+        availableWorkspacesForSignUp: [workspace1],
+      });
     });
   });
 
@@ -853,6 +942,94 @@ describe('UserWorkspaceService', () => {
       await expect(
         service.getWorkspaceMemberOrThrow({ workspaceMemberId, workspaceId }),
       ).rejects.toThrow('Workspace member not found');
+    });
+  });
+
+  describe('listAvailableWorkspacesForAuthentication', () => {
+    it('should return formatted workspace data for available workspaces matching the given email', async () => {
+      const workspace1 = {
+        id: 'workspace-id-1',
+        displayName: 'Workspace 1',
+        logo: 'logo1.png',
+        workspaceSSOIdentityProviders: [
+          {
+            id: 'sso-id-1',
+            name: 'SSO Provider 1',
+            issuer: 'issuer1',
+            type: 'type1',
+            status: 'Active',
+          },
+          {
+            id: 'sso-id-2',
+            name: 'SSO Provider 2',
+            issuer: 'issuer2',
+            type: 'type2',
+            status: 'Inactive',
+          },
+        ],
+      } as unknown as Workspace;
+
+      const workspace2 = {
+        id: 'workspace-id-2',
+        displayName: 'Workspace 2',
+        logo: 'logo2.png',
+        workspaceSSOIdentityProviders: [],
+      } as unknown as Workspace;
+
+      jest.spyOn(service, 'findAvailableWorkspacesByEmail').mockResolvedValue({
+        availableWorkspacesForSignIn: [workspace1],
+        availableWorkspacesForSignUp: [workspace2],
+      });
+
+      jest
+        .spyOn(domainManagerService, 'getWorkspaceUrls')
+        .mockReturnValueOnce({
+          customUrl: 'https://crm.custom1.com',
+          subdomainUrl: 'https://workspace1.twenty.com',
+        })
+        .mockReturnValueOnce({
+          customUrl: 'https://crm.custom2.com',
+          subdomainUrl: 'https://workspace2.twenty.com',
+        });
+
+      const email = 'test@example.com';
+      const result =
+        await service.listAvailableWorkspacesForAuthentication(email);
+
+      expect(result).toEqual({
+        availableWorkspacesForSignIn: [
+          {
+            id: workspace1.id,
+            displayName: workspace1.displayName,
+            workspaceUrls: {
+              customUrl: 'https://crm.custom1.com',
+              subdomainUrl: 'https://workspace1.twenty.com',
+            },
+            logo: workspace1.logo,
+            sso: [
+              {
+                id: 'sso-id-1',
+                name: 'SSO Provider 1',
+                issuer: 'issuer1',
+                type: 'type1',
+                status: 'Active',
+              },
+            ],
+          },
+        ],
+        availableWorkspacesForSignUp: [
+          {
+            id: workspace2.id,
+            displayName: workspace2.displayName,
+            workspaceUrls: {
+              customUrl: 'https://crm.custom2.com',
+              subdomainUrl: 'https://workspace2.twenty.com',
+            },
+            logo: workspace2.logo,
+            sso: [],
+          },
+        ],
+      });
     });
   });
 });

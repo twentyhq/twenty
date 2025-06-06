@@ -23,6 +23,7 @@ import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metada
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 type ArgPositionBackfillInput = {
   argIndex?: number;
@@ -171,7 +172,10 @@ export class QueryRunnerArgsFactory {
       return Promise.resolve({});
     }
 
-    const workspaceId = options.authContext.workspace.id;
+    const workspace = options.authContext.workspace;
+
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
+
     let isFieldPositionPresent = false;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -192,7 +196,7 @@ export class QueryRunnerArgsFactory {
           const newValue = await this.recordPositionService.buildRecordPosition(
             {
               value,
-              workspaceId,
+              workspaceId: workspace.id,
               objectMetadata: {
                 isCustom: options.objectMetadataItemWithFieldMaps.isCustom,
                 nameSingular:
@@ -234,7 +238,7 @@ export class QueryRunnerArgsFactory {
           'position',
           await this.recordPositionService.buildRecordPosition({
             value: 'first',
-            workspaceId,
+            workspaceId: workspace.id,
             objectMetadata: {
               isCustom: options.objectMetadataItemWithFieldMaps.isCustom,
               nameSingular:

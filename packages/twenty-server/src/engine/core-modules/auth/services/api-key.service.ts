@@ -2,14 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { ApiKeyToken } from 'src/engine/core-modules/auth/dto/token.entity';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @Injectable()
 export class ApiKeyService {
-  constructor(
-    private readonly jwtWrapperService: JwtWrapperService,
-    private readonly twentyConfigService: TwentyConfigService,
-  ) {}
+  constructor(private readonly jwtWrapperService: JwtWrapperService) {}
 
   async generateApiKeyToken(
     workspaceId: string,
@@ -19,13 +16,8 @@ export class ApiKeyService {
     if (!apiKeyId) {
       return;
     }
-    const jwtPayload = {
-      sub: workspaceId,
-      type: 'API_KEY',
-      workspaceId,
-    };
     const secret = this.jwtWrapperService.generateAppSecret(
-      'ACCESS',
+      JwtTokenTypeEnum.ACCESS,
       workspaceId,
     );
     let expiresIn: string | number;
@@ -37,11 +29,18 @@ export class ApiKeyService {
     } else {
       expiresIn = '100y';
     }
-    const token = this.jwtWrapperService.sign(jwtPayload, {
-      secret,
-      expiresIn,
-      jwtid: apiKeyId,
-    });
+    const token = this.jwtWrapperService.sign(
+      {
+        sub: workspaceId,
+        type: JwtTokenTypeEnum.API_KEY,
+        workspaceId,
+      },
+      {
+        secret,
+        expiresIn,
+        jwtid: apiKeyId,
+      },
+    );
 
     return { token };
   }

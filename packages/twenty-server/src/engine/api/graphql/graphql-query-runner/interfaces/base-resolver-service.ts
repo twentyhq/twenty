@@ -37,6 +37,7 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 export type GraphqlQueryResolverExecutionArgs<Input extends ResolverArgs> = {
   args: Input;
@@ -83,11 +84,15 @@ export abstract class GraphqlQueryBaseResolverService<
     try {
       const { authContext, objectMetadataItemWithFieldMaps } = options;
 
+      const workspace = authContext.workspace;
+
+      workspaceValidator.assertIsDefinedOrThrow(workspace);
+
       await this.validate(args, options);
 
       const workspaceDataSource =
         await this.twentyORMGlobalManager.getDataSourceForWorkspace({
-          workspaceId: authContext.workspace.id,
+          workspaceId: workspace.id,
           shouldFailIfMetadataNotFound: false,
         });
 
@@ -123,7 +128,7 @@ export abstract class GraphqlQueryBaseResolverService<
 
       const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
         userWorkspaceId: authContext.userWorkspaceId,
-        workspaceId: authContext.workspace.id,
+        workspaceId: workspace.id,
       });
 
       const executedByApiKey = isDefined(authContext.apiKey);
@@ -168,7 +173,7 @@ export abstract class GraphqlQueryBaseResolverService<
       const resultWithGetters = await this.queryResultGettersFactory.create(
         results,
         objectMetadataItemWithFieldMaps,
-        authContext.workspace.id,
+        workspace.id,
         options.objectMetadataMaps,
       );
 
@@ -190,6 +195,10 @@ export abstract class GraphqlQueryBaseResolverService<
   ) {
     const { authContext, objectMetadataItemWithFieldMaps } = options;
 
+    const workspace = authContext.workspace;
+
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
+
     if (
       Object.keys(SYSTEM_OBJECTS_PERMISSIONS_REQUIREMENTS).includes(
         objectMetadataItemWithFieldMaps.nameSingular,
@@ -205,7 +214,7 @@ export abstract class GraphqlQueryBaseResolverService<
         await this.permissionsService.userHasWorkspaceSettingPermission({
           userWorkspaceId: authContext.userWorkspaceId,
           setting: permissionRequired,
-          workspaceId: authContext.workspace.id,
+          workspaceId: workspace.id,
           isExecutedByApiKey: isDefined(authContext.apiKey),
         });
 
@@ -228,11 +237,15 @@ export abstract class GraphqlQueryBaseResolverService<
     const requiredPermission =
       this.getRequiredPermissionForMethod(operationName);
 
+    const workspace = options.authContext.workspace;
+
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
+
     const userHasPermission =
       await this.permissionsService.userHasObjectRecordsPermission({
         userWorkspaceId: options.authContext.userWorkspaceId,
         requiredPermission,
-        workspaceId: options.authContext.workspace.id,
+        workspaceId: workspace.id,
         isExecutedByApiKey: isDefined(options.authContext.apiKey),
       });
 

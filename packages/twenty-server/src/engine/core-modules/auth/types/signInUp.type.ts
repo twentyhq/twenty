@@ -2,8 +2,13 @@ import { APP_LOCALES } from 'twenty-shared/translations';
 
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+
+export type SocialSSOSignInUpActionType =
+  | 'create-new-workspace'
+  | 'list-available-workspaces'
+  | 'join-workspace';
 
 export type SignInUpBaseParams = {
   invitation?: AppToken;
@@ -45,10 +50,10 @@ export type ExistingUserOrPartialUserWithPicture = {
 export type AuthProviderWithPasswordType = {
   authParams:
     | {
-        provider: Extract<WorkspaceAuthProvider, 'password'>;
+        provider: Extract<AuthProviderEnum, AuthProviderEnum.Password>;
         password: string;
       }
     | {
-        provider: Exclude<WorkspaceAuthProvider, 'password'>;
+        provider: Exclude<AuthProviderEnum, AuthProviderEnum.Password>;
       };
 };

@@ -19,6 +19,8 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
+import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
+import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 
 @Module({
   imports: [
@@ -32,12 +34,14 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
         TypeORMModule,
         DataSourceModule,
         WorkspaceDataSourceModule,
+        ApprovedAccessDomainModule,
         WorkspaceInvitationModule,
         DomainManagerModule,
         TwentyORMModule,
         UserRoleModule,
         FileUploadModule,
         FileModule,
+        TokenModule,
       ],
       services: [UserWorkspaceService],
     }),

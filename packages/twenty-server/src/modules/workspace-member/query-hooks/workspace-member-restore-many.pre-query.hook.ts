@@ -4,6 +4,7 @@ import { RestoreManyResolverArgs } from 'src/engine/api/graphql/workspace-resolv
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceMemberPreQueryHookService } from 'src/modules/workspace-member/query-hooks/workspace-member-pre-query-hook.service';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @WorkspaceQueryHook(`workspaceMember.restoreMany`)
 export class WorkspaceMemberRestoreManyPreQueryHook
@@ -18,10 +19,14 @@ export class WorkspaceMemberRestoreManyPreQueryHook
     objectName: string,
     payload: RestoreManyResolverArgs,
   ): Promise<RestoreManyResolverArgs> {
+    const workspace = authContext.workspace;
+
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
+
     await this.workspaceMemberPreQueryHookService.validateWorkspaceMemberUpdatePermissionOrThrow(
       {
         userWorkspaceId: authContext.userWorkspaceId,
-        workspaceId: authContext.workspace.id,
+        workspaceId: workspace.id,
         apiKey: authContext.apiKey,
         workspaceMemberId: authContext.workspaceMemberId,
       },

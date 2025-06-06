@@ -6,6 +6,7 @@ import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.typ
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { WorkspaceMemberPreQueryHookService } from 'src/modules/workspace-member/query-hooks/workspace-member-pre-query-hook.service';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @WorkspaceQueryHook(`workspaceMember.deleteOne`)
 export class WorkspaceMemberDeleteOnePreQueryHook
@@ -23,12 +24,16 @@ export class WorkspaceMemberDeleteOnePreQueryHook
   ): Promise<DeleteOneResolverArgs> {
     const targettedWorkspaceMemberId = payload.id;
 
+    const workspace = authContext.workspace;
+
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
+
     await this.workspaceMemberPreQueryHookService.validateWorkspaceMemberUpdatePermissionOrThrow(
       {
         userWorkspaceId: authContext.userWorkspaceId,
         workspaceMemberId: authContext.workspaceMemberId,
         targettedWorkspaceMemberId,
-        workspaceId: authContext.workspace.id,
+        workspaceId: workspace.id,
         apiKey: authContext.apiKey,
       },
     );

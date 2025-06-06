@@ -26,7 +26,6 @@ export enum AppTokenType {
   AuthorizationCode = 'AUTHORIZATION_CODE',
   PasswordResetToken = 'PASSWORD_RESET_TOKEN',
   InvitationToken = 'INVITATION_TOKEN',
-  OIDCCodeVerifier = 'OIDC_CODE_VERIFIER',
   EmailVerificationToken = 'EMAIL_VERIFICATION_TOKEN',
 }
 

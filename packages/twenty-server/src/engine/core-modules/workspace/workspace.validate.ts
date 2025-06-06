@@ -2,7 +2,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceException,
@@ -23,25 +23,47 @@ const assertIsDefinedOrThrow = (
 };
 
 const isAuthEnabledOrThrow = (
-  provider: WorkspaceAuthProvider,
+  provider: AuthProviderEnum,
   workspace: Workspace,
   exceptionToThrowCustom: AuthException = new AuthException(
     `${provider} auth is not enabled for this workspace`,
     AuthExceptionCode.OAUTH_ACCESS_DENIED,
   ),
 ) => {
-  if (provider === 'google' && workspace.isGoogleAuthEnabled) return true;
-  if (provider === 'microsoft' && workspace.isMicrosoftAuthEnabled) return true;
-  if (provider === 'password' && workspace.isPasswordAuthEnabled) return true;
-  if (provider === 'sso') return true;
+  if (provider === AuthProviderEnum.Google && workspace.isGoogleAuthEnabled)
+    return true;
+  if (
+    provider === AuthProviderEnum.Microsoft &&
+    workspace.isMicrosoftAuthEnabled
+  )
+    return true;
+  if (provider === AuthProviderEnum.Password && workspace.isPasswordAuthEnabled)
+    return true;
+  if (provider === AuthProviderEnum.SSO) return true;
 
   throw exceptionToThrowCustom;
+};
+
+const isAuthEnabled = (provider: AuthProviderEnum, workspace: Workspace) => {
+  if (provider === AuthProviderEnum.Google && workspace.isGoogleAuthEnabled)
+    return true;
+  if (
+    provider === AuthProviderEnum.Microsoft &&
+    workspace.isMicrosoftAuthEnabled
+  )
+    return true;
+  if (provider === AuthProviderEnum.Password && workspace.isPasswordAuthEnabled)
+    return true;
+
+  return false;
 };
 
 export const workspaceValidator: {
   assertIsDefinedOrThrow: typeof assertIsDefinedOrThrow;
   isAuthEnabledOrThrow: typeof isAuthEnabledOrThrow;
+  isAuthEnabled: typeof isAuthEnabled;
 } = {
   assertIsDefinedOrThrow: assertIsDefinedOrThrow,
   isAuthEnabledOrThrow: isAuthEnabledOrThrow,
+  isAuthEnabled: isAuthEnabled,
 };

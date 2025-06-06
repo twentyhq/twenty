@@ -6,6 +6,7 @@ import { Strategy, VerifyCallback } from 'passport-google-oauth20';
 import { APP_LOCALES } from 'twenty-shared/translations';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { SocialSSOSignInUpActionType } from 'src/engine/core-modules/auth/types/signInUp.type';
 
 export type GoogleRequest = Omit<
   Request,
@@ -19,6 +20,7 @@ export type GoogleRequest = Omit<
     locale?: keyof typeof APP_LOCALES | null;
     workspaceInviteHash?: string;
     workspacePersonalInviteToken?: string;
+    action: SocialSSOSignInUpActionType;
     workspaceId?: string;
     billingCheckoutSessionState?: string;
   };
@@ -45,6 +47,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         workspaceId: req.params.workspaceId,
         billingCheckoutSessionState: req.query.billingCheckoutSessionState,
         workspacePersonalInviteToken: req.query.workspacePersonalInviteToken,
+        action: req.query.action,
       }),
     };
 
@@ -53,8 +56,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
 
   async validate(
     request: GoogleRequest,
-    accessToken: string,
-    refreshToken: string,
+    _accessToken: string,
+    _refreshToken: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     profile: any,
     done: VerifyCallback,
@@ -74,6 +77,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       workspacePersonalInviteToken: state.workspacePersonalInviteToken,
       workspaceId: state.workspaceId,
       billingCheckoutSessionState: state.billingCheckoutSessionState,
+      action: state.action,
       locale: state.locale,
     };
 

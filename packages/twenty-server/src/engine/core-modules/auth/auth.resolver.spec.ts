@@ -13,6 +13,8 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
+import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -43,6 +45,10 @@ describe('AuthResolver', () => {
         },
         {
           provide: AuthService,
+          useValue: {},
+        },
+        {
+          provide: RefreshTokenService,
           useValue: {},
         },
         {
@@ -79,6 +85,10 @@ describe('AuthResolver', () => {
         },
         {
           provide: LoginTokenService,
+          useValue: {},
+        },
+        {
+          provide: WorkspaceAgnosticTokenService,
           useValue: {},
         },
         {

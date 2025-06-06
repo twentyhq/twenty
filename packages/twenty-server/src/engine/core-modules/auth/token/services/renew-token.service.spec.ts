@@ -77,6 +77,7 @@ describe('RenewTokenService', () => {
       jest.spyOn(refreshTokenService, 'verifyRefreshToken').mockResolvedValue({
         user: mockUser,
         token: mockAppToken as AppToken,
+        authProvider: undefined,
       });
       jest.spyOn(appTokenRepository, 'update').mockResolvedValue({} as any);
       jest
@@ -100,14 +101,14 @@ describe('RenewTokenService', () => {
         { id: mockTokenId },
         { revokedAt: expect.any(Date) },
       );
-      expect(accessTokenService.generateAccessToken).toHaveBeenCalledWith(
-        mockUser.id,
-        mockWorkspaceId,
-      );
-      expect(refreshTokenService.generateRefreshToken).toHaveBeenCalledWith(
-        mockUser.id,
-        mockWorkspaceId,
-      );
+      expect(accessTokenService.generateAccessToken).toHaveBeenCalledWith({
+        userId: mockUser.id,
+        workspaceId: mockWorkspaceId,
+      });
+      expect(refreshTokenService.generateRefreshToken).toHaveBeenCalledWith({
+        userId: mockUser.id,
+        workspaceId: mockWorkspaceId,
+      });
     });
 
     it('should throw an error if refresh token is not provided', async () => {

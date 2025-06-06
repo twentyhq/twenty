@@ -28,12 +28,15 @@ class SSOConnection {
 }
 
 @ObjectType()
-export class AvailableWorkspaceOutput {
+export class AvailableWorkspace {
   @Field(() => String)
   id: string;
 
   @Field(() => String, { nullable: true })
   displayName?: string;
+
+  @Field(() => String, { nullable: true })
+  loginToken?: string;
 
   @Field(() => WorkspaceUrls)
   workspaceUrls: WorkspaceUrls;
@@ -43,4 +46,13 @@ export class AvailableWorkspaceOutput {
 
   @Field(() => [SSOConnection])
   sso: SSOConnection[];
+}
+
+@ObjectType()
+export class AvailableWorkspaces {
+  @Field(() => [AvailableWorkspace])
+  availableWorkspacesForSignIn: Array<AvailableWorkspace>;
+
+  @Field(() => [AvailableWorkspace])
+  availableWorkspacesForSignUp: Array<AvailableWorkspace>;
 }

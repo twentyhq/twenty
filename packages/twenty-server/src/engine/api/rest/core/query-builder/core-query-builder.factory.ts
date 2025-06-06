@@ -18,6 +18,7 @@ import { getObjectMetadataMapItemByNamePlural } from 'src/engine/metadata-module
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @Injectable()
 export class CoreQueryBuilderFactory {
@@ -41,6 +42,8 @@ export class CoreQueryBuilderFactory {
   }> {
     const { workspace } =
       await this.accessTokenService.validateTokenByRequest(request);
+
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
 
     const currentCacheVersion =
       await this.workspaceCacheStorageService.getMetadataVersion(workspace.id);

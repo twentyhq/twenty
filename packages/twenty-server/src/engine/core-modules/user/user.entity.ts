@@ -118,7 +118,7 @@ export class User {
   onboardingStatus: OnboardingStatus;
 
   @Field(() => Workspace, { nullable: true })
-  currentWorkspace: Relation<Workspace>;
+  currentWorkspace?: Relation<Workspace>;
 
   @Field(() => UserWorkspace, { nullable: true })
   currentUserWorkspace?: Relation<UserWorkspace>;

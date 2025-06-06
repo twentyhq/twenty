@@ -11,6 +11,7 @@ import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/compos
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type CreateInput = Record<string, any>;
@@ -30,6 +31,10 @@ export class CreatedByFromAuthContextService {
     objectMetadataNameSingular: string,
     authContext: AuthContext,
   ): Promise<CreateInput[]> {
+    const workspace = authContext.workspace;
+
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
+
     // TODO: Once all objects have it, we can remove this check
     const createdByFieldMetadata = await this.fieldMetadataRepository.findOne({
       where: {
@@ -37,7 +42,7 @@ export class CreatedByFromAuthContextService {
           nameSingular: objectMetadataNameSingular,
         },
         name: 'createdBy',
-        workspaceId: authContext.workspace.id,
+        workspaceId: workspace.id,
       },
     });
 
@@ -77,6 +82,8 @@ export class CreatedByFromAuthContextService {
     authContext: AuthContext,
   ): Promise<ActorMetadata> {
     const { workspace, workspaceMemberId, user, apiKey } = authContext;
+
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
 
     // TODO: remove that code once we have the workspace member id in all tokens
     if (isDefined(workspaceMemberId) && isDefined(user)) {

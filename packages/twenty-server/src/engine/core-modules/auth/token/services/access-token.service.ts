@@ -14,8 +14,9 @@ import {
 import { AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
 import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
 import {
+  AccessTokenJwtPayload,
   AuthContext,
-  JwtPayload,
+  JwtTokenTypeEnum,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -26,6 +27,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { userWorkspaceValidator } from 'src/engine/core-modules/user-workspace/user-workspace.validate';
 
 @Injectable()
 export class AccessTokenService {
@@ -42,10 +44,14 @@ export class AccessTokenService {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
   ) {}
 
-  async generateAccessToken(
-    userId: string,
-    workspaceId: string,
-  ): Promise<AuthToken> {
+  async generateAccessToken({
+    userId,
+    workspaceId,
+    authProvider,
+  }: Omit<
+    AccessTokenJwtPayload,
+    'type' | 'workspaceMemberId' | 'userWorkspaceId' | 'sub'
+  >): Promise<AuthToken> {
     const expiresIn = this.twentyConfigService.get('ACCESS_TOKEN_EXPIRES_IN');
 
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
@@ -99,16 +105,24 @@ export class AccessTokenService {
       },
     });
 
-    const jwtPayload: JwtPayload = {
+    userWorkspaceValidator.assertIsDefinedOrThrow(userWorkspace);
+
+    const jwtPayload: AccessTokenJwtPayload = {
       sub: user.id,
+      userId: user.id,
       workspaceId,
       workspaceMemberId: tokenWorkspaceMemberId,
-      userWorkspaceId: userWorkspace?.id,
+      userWorkspaceId: userWorkspace.id,
+      type: JwtTokenTypeEnum.ACCESS,
+      authProvider,
     };
 
     return {
       token: this.jwtWrapperService.sign(jwtPayload, {
-        secret: this.jwtWrapperService.generateAppSecret('ACCESS', workspaceId),
+        secret: this.jwtWrapperService.generateAppSecret(
+          JwtTokenTypeEnum.ACCESS,
+          workspaceId,
+        ),
         expiresIn,
       }),
       expiresAt,
@@ -116,14 +130,27 @@ export class AccessTokenService {
   }
 
   async validateToken(token: string): Promise<AuthContext> {
-    await this.jwtWrapperService.verifyWorkspaceToken(token, 'ACCESS');
+    await this.jwtWrapperService.verifyJwtToken(token, JwtTokenTypeEnum.ACCESS);
 
-    const decoded = await this.jwtWrapperService.decode(token);
+    const decoded = this.jwtWrapperService.decode<AccessTokenJwtPayload>(token);
 
-    const { user, apiKey, workspace, workspaceMemberId, userWorkspaceId } =
-      await this.jwtStrategy.validate(decoded as JwtPayload);
+    const {
+      user,
+      apiKey,
+      workspace,
+      workspaceMemberId,
+      userWorkspaceId,
+      authProvider,
+    } = await this.jwtStrategy.validate(decoded);
 
-    return { user, apiKey, workspace, workspaceMemberId, userWorkspaceId };
+    return {
+      user,
+      apiKey,
+      workspace,
+      workspaceMemberId,
+      userWorkspaceId,
+      authProvider,
+    };
   }
 
   async validateTokenByRequest(request: Request): Promise<AuthContext> {
