@@ -14,7 +14,7 @@ import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-w
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
-import { SeederModule } from 'src/engine/workspace-manager/seed-dev/seeder.module';
+import { DevSeederModule } from 'src/engine/workspace-manager/dev-seeder/dev-seeder.module';
 import { WorkspaceHealthModule } from 'src/engine/workspace-manager/workspace-health/workspace-health.module';
 import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.module';
 
@@ -25,7 +25,7 @@ import { WorkspaceManagerService } from './workspace-manager.service';
     WorkspaceDataSourceModule,
     WorkspaceMigrationModule,
     ObjectMetadataModule,
-    SeederModule,
+    DevSeederModule,
     DataSourceModule,
     WorkspaceSyncMetadataModule,
     WorkspaceHealthModule,

@@ -6,11 +6,11 @@ import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-
 import { createOneObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata-query-factory.util';
 import { deleteOneObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata-query-factory.util';
 
-import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
-import { DEV_SEED_WORKSPACE_MEMBER_IDS } from 'src/database/typeorm-seeds/workspace/workspace-members';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -103,7 +103,7 @@ describe('Granular settings permissions', () => {
       query: `
         mutation UpdateWorkspaceMemberRole {
           updateWorkspaceMemberRole(
-            workspaceMemberId: "${DEV_SEED_WORKSPACE_MEMBER_IDS.JONY}"
+            workspaceMemberId: "${WORKSPACE_MEMBER_DATA_SEED_IDS.JONY}"
             roleId: "${customRoleId}"
           ) {
             id
@@ -128,7 +128,7 @@ describe('Granular settings permissions', () => {
       query: `
         mutation UpdateWorkspaceMemberRole {
           updateWorkspaceMemberRole(
-            workspaceMemberId: "${DEV_SEED_WORKSPACE_MEMBER_IDS.JONY}"
+            workspaceMemberId: "${WORKSPACE_MEMBER_DATA_SEED_IDS.JONY}"
             roleId: "${originalMemberRoleId}"
           ) {
             id

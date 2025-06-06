@@ -38,7 +38,7 @@ export const MESSAGE_PARTICIPANT_DATA_SEED_IDS = {
   ID_6: '20202020-7e4a-489a-ba6b-1ae6b7d721ac',
 };
 
-export const MESSAGE_PARTICIPANT_DATA_SEEDS = [
+export const MESSAGE_PARTICIPANT_DATA_SEEDS: MessageParticipantDataSeed[] = [
   {
     id: MESSAGE_PARTICIPANT_DATA_SEED_IDS.ID_1,
     createdAt: new Date(),
