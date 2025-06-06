@@ -30,8 +30,7 @@ export const buildCompositeFieldWhereCondition = ({
   cursorValue: Record<string, unknown>;
   isForwardPagination: boolean;
   operator?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-}): { [key: string]: any } => {
+}): Record<string, Partial<ObjectRecordFilter>> => {
   const compositeType = compositeTypeDefinitions.get(fieldType);
 
   if (!compositeType) {
@@ -53,7 +52,7 @@ export const buildCompositeFieldWhereCondition = ({
   );
 
   if (operator === 'eq') {
-    const result: Record<string, object> = {};
+    const result: Record<string, Partial<ObjectRecordFilter>> = {};
 
     compositeFieldProperties.forEach((property) => {
       result[fieldKey] = {
