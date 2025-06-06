@@ -1,14 +1,17 @@
+import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 export const useUpsertRecordFilterGroup = () => {
   const currentRecordFilterGroupsCallbackState =
     useRecoilComponentCallbackStateV2(currentRecordFilterGroupsComponentState);
+  const { onUpdate } = useContext(AdvancedFilterContext);
 
-  const upsertRecordFilterGroup = useRecoilCallback(
+  const upsertRecordFilterGroupCallback = useRecoilCallback(
     ({ set, snapshot }) =>
       (recordFilterGroupToSet: RecordFilterGroup) => {
         const currentRecordFilterGroups = getSnapshotValue(
@@ -56,6 +59,13 @@ export const useUpsertRecordFilterGroup = () => {
       },
     [currentRecordFilterGroupsCallbackState],
   );
+
+  const upsertRecordFilterGroup = (
+    recordFilterGroupToSet: RecordFilterGroup,
+  ) => {
+    upsertRecordFilterGroupCallback(recordFilterGroupToSet);
+    onUpdate?.();
+  };
 
   return {
     upsertRecordFilterGroup,
