@@ -29,6 +29,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 
 jest.mock('src/utils/image', () => {
   return {
@@ -95,6 +96,10 @@ describe('SignInUpService', () => {
         },
         {
           provide: HttpService,
+          useValue: {},
+        },
+        {
+          provide: LoginTokenService,
           useValue: {},
         },
         {
