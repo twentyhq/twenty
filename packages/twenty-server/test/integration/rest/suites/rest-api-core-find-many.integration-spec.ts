@@ -267,11 +267,36 @@ describe('Core REST API Find Many endpoint', () => {
     await deleteAllRecords('person');
 
     const testPeople = [
-      { id: TEST_PERSON_1_ID, firstName: 'Alice', lastName: 'Brown' },
-      { id: TEST_PERSON_2_ID, firstName: 'Alice', lastName: 'Smith' },
-      { id: TEST_PERSON_3_ID, firstName: 'Bob', lastName: 'Johnson' },
-      { id: TEST_PERSON_4_ID, firstName: 'Bob', lastName: 'Williams' },
-      { id: TEST_PERSON_5_ID, firstName: 'Charlie', lastName: 'Davis' },
+      {
+        id: TEST_PERSON_1_ID,
+        firstName: 'Alice',
+        lastName: 'Brown',
+        position: 0,
+      },
+      {
+        id: TEST_PERSON_2_ID,
+        firstName: 'Alice',
+        lastName: 'Smith',
+        position: 1,
+      },
+      {
+        id: TEST_PERSON_3_ID,
+        firstName: 'Bob',
+        lastName: 'Johnson',
+        position: 2,
+      },
+      {
+        id: TEST_PERSON_4_ID,
+        firstName: 'Bob',
+        lastName: 'Williams',
+        position: 3,
+      },
+      {
+        id: TEST_PERSON_5_ID,
+        firstName: 'Charlie',
+        lastName: 'Davis',
+        position: 4,
+      },
     ];
 
     for (const person of testPeople) {
