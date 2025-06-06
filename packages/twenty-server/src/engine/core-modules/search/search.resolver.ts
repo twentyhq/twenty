@@ -1,12 +1,13 @@
-import { UseFilters } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 
 import { SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
+import { SearchResultConnectionDTO } from 'src/engine/core-modules/search/dtos/search-result-connection.dto';
 import { SearchApiExceptionFilter } from 'src/engine/core-modules/search/filters/search-api-exception.filter';
 import { SearchService } from 'src/engine/core-modules/search/services/search.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SearchResultConnectionDTO } from 'src/engine/core-modules/search/dtos/search-result-connection.dto';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @Resolver()
 @UseFilters(SearchApiExceptionFilter)
@@ -14,6 +15,7 @@ export class SearchResolver {
   constructor(private readonly searchService: SearchService) {}
 
   @Query(() => SearchResultConnectionDTO)
+  @UseGuards(WorkspaceAuthGuard)
   async search(
     @AuthWorkspace() workspace: Workspace,
     @Args()

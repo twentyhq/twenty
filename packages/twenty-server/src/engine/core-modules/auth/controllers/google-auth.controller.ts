@@ -21,6 +21,7 @@ import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/l
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller('auth/google')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -35,14 +36,14 @@ export class GoogleAuthController {
   ) {}
 
   @Get()
-  @UseGuards(GoogleProviderEnabledGuard, GoogleOauthGuard)
+  @UseGuards(GoogleProviderEnabledGuard, GoogleOauthGuard, PublicEndpointGuard)
   async googleAuth() {
     // As this method is protected by Google Auth guard, it will trigger Google SSO flow
     return;
   }
 
   @Get('redirect')
-  @UseGuards(GoogleProviderEnabledGuard, GoogleOauthGuard)
+  @UseGuards(GoogleProviderEnabledGuard, GoogleOauthGuard, PublicEndpointGuard)
   @UseFilters(AuthOAuthExceptionFilter)
   async googleAuthRedirect(@Req() req: GoogleRequest, @Res() res: Response) {
     const {

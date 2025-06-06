@@ -11,12 +11,8 @@ export class GraphQLHydrateRequestFromTokenMiddleware
   constructor(private readonly middlewareService: MiddlewareService) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
-    if (this.middlewareService.checkUnauthenticatedAccess(req)) {
-      return next();
-    }
-
     try {
-      await this.middlewareService.authenticateGraphqlRequest(req);
+      await this.middlewareService.hydrateGraphqlRequest(req);
     } catch (error) {
       this.middlewareService.writeGraphqlResponseOnExceptionCaught(res, error);
 
