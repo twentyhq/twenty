@@ -11,7 +11,6 @@ import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args
 export const getJoinColumn = (
   joinColumnsMetadataArgsCollection: WorkspaceJoinColumnsMetadataArgs[],
   relationMetadataArgs: WorkspaceRelationMetadataArgs,
-  opposite = false,
 ): string | null => {
   if (relationMetadataArgs.type === RelationType.ONE_TO_MANY) {
     return null;
