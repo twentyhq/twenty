@@ -16,9 +16,7 @@ export class AuthSsoService {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  private getAuthProviderColumnNameByProvider(
-    authProvider: AuthProviderEnum,
-  ) {
+  private getAuthProviderColumnNameByProvider(authProvider: AuthProviderEnum) {
     if (authProvider === AuthProviderEnum.Google) {
       return 'isGoogleAuthEnabled';
     }
@@ -35,10 +33,7 @@ export class AuthSsoService {
   }
 
   async findWorkspaceFromWorkspaceIdOrAuthProvider(
-    {
-      authProvider,
-      email,
-    }: { authProvider: AuthProviderEnum; email: string },
+    { authProvider, email }: { authProvider: AuthProviderEnum; email: string },
     workspaceId?: string,
   ) {
     if (

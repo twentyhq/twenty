@@ -378,7 +378,6 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     const { availableWorkspacesForSignIn, availableWorkspacesForSignUp } =
       await this.findAvailableWorkspacesByEmail(email);
 
-
     return {
       availableWorkspacesForSignIn: this.castWorkspacesToAvailableWorkspaces(
         availableWorkspacesForSignIn,

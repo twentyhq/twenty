@@ -102,8 +102,8 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         }
 
         if (
-          signInUpMode === SignInUpMode.SignIn &&
           !isInviteMode &&
+          signInUpMode === SignInUpMode.SignIn &&
           isOnAWorkspace
         ) {
           return await signInWithCredentialsInWorkspace(
@@ -113,7 +113,11 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           );
         }
 
-        if (signInUpMode === SignInUpMode.SignIn && !isOnAWorkspace) {
+        if (
+          !isInviteMode &&
+          signInUpMode === SignInUpMode.SignIn &&
+          !isOnAWorkspace
+        ) {
           return await signInWithCredentials(
             data.email.toLowerCase().trim(),
             data.password,
@@ -121,7 +125,11 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           );
         }
 
-        if (signInUpMode === SignInUpMode.SignUp && !isOnAWorkspace) {
+        if (
+          !isInviteMode &&
+          signInUpMode === SignInUpMode.SignUp &&
+          !isOnAWorkspace
+        ) {
           return await signUpWithCredentials(
             data.email.toLowerCase().trim(),
             data.password,
@@ -156,6 +164,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       isInviteMode,
       signInWithCredentialsInWorkspace,
       signInWithCredentials,
+      signUpWithCredentials,
       signUpWithCredentialsInWorkspace,
       workspaceInviteHash,
       workspacePersonalInviteToken,
