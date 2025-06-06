@@ -33,6 +33,7 @@ export enum SettingsPath {
   NewSSOIdentityProvider = 'security/sso/new',
   NewApprovedAccessDomain = 'security/approved-access-domain/new',
   Webhooks = 'webhooks',
+  NewWebhook = 'webhooks/new',
   WebhookDetail = 'webhooks/:webhookId',
   Releases = 'releases',
   AdminPanel = 'admin-panel',

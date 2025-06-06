@@ -1,13 +1,6 @@
+import { getAbsoluteUrl } from '@/utils/url/getAbsoluteUrl';
 import { isValidHostname } from '@/utils/url/isValidHostname';
 import { z } from 'zod';
-
-const getAbsoluteUrl = (value: string): string => {
-  if (value.startsWith('http://') || value.startsWith('https://')) {
-    return value;
-  }
-
-  return `https://${value}`;
-};
 
 export const absoluteUrlSchema = z.string().transform((value, ctx) => {
   const trimmedValue = value.trim();

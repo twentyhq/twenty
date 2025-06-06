@@ -3,6 +3,8 @@ import { Logger } from '@nestjs/common';
 
 import crypto from 'crypto';
 
+import { getAbsoluteUrl } from 'twenty-shared/utils';
+
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { WEBHOOK_RESPONSE_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/webhook/webhook-response';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -72,7 +74,7 @@ export class CallWebhookJob {
       }
 
       const response = await this.httpService.axiosRef.post(
-        data.targetUrl,
+        getAbsoluteUrl(data.targetUrl),
         payloadWithoutSecret,
         { headers },
       );

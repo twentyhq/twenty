@@ -182,11 +182,19 @@ const SettingsObjects = lazy(() =>
   })),
 );
 
-const SettingsDevelopersWebhooksDetail = lazy(() =>
+const SettingsDevelopersWebhookNew = lazy(() =>
+  import(
+    '~/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookNew'
+  ).then((module) => ({
+    default: module.SettingsDevelopersWebhookNew,
+  })),
+);
+
+const SettingsDevelopersWebhookDetail = lazy(() =>
   import(
     '~/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail'
   ).then((module) => ({
-    default: module.SettingsDevelopersWebhooksDetail,
+    default: module.SettingsDevelopersWebhookDetail,
   })),
 );
 
@@ -439,8 +447,12 @@ export const SettingsRoutes = ({
           element={<SettingsDevelopersApiKeyDetail />}
         />
         <Route
+          path={SettingsPath.NewWebhook}
+          element={<SettingsDevelopersWebhookNew />}
+        />
+        <Route
           path={SettingsPath.WebhookDetail}
-          element={<SettingsDevelopersWebhooksDetail />}
+          element={<SettingsDevelopersWebhookDetail />}
         />
         <Route
           path={SettingsPath.Integrations}
