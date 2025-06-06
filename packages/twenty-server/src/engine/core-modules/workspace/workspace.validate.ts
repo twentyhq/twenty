@@ -54,6 +54,7 @@ const isAuthEnabled = (provider: AuthProviderEnum, workspace: Workspace) => {
     return true;
   if (provider === AuthProviderEnum.Password && workspace.isPasswordAuthEnabled)
     return true;
+
   return false;
 };
 

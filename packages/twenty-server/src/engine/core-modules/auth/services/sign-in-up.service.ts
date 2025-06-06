@@ -36,7 +36,6 @@ import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { isWorkEmail } from 'src/utils/is-work-email';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository

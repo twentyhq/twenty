@@ -40,7 +40,7 @@ export type FileTokenJwtPayload = CommonPropertiesJwtPayload & {
 export type LoginTokenJwtPayload = CommonPropertiesJwtPayload & {
   type: JwtTokenTypeEnum.LOGIN;
   workspaceId: string;
-  authProvider: AuthProviderEnum;
+  authProvider?: AuthProviderEnum;
 };
 
 export type TransientTokenJwtPayload = CommonPropertiesJwtPayload & {
@@ -55,7 +55,7 @@ export type RefreshTokenJwtPayload = CommonPropertiesJwtPayload & {
   workspaceId?: string;
   userId: string;
   jti?: string;
-  authProvider: AuthProviderEnum;
+  authProvider?: AuthProviderEnum;
 };
 
 export type WorkspaceAgnosticTokenJwtPayload = CommonPropertiesJwtPayload & {
@@ -77,7 +77,7 @@ export type AccessTokenJwtPayload = CommonPropertiesJwtPayload & {
   userId: string;
   workspaceMemberId?: string;
   userWorkspaceId: string;
-  authProvider: AuthProviderEnum;
+  authProvider?: AuthProviderEnum;
 };
 
 export type PostgresProxyTokenJwtPayload = CommonPropertiesJwtPayload & {

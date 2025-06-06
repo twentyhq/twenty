@@ -14,6 +14,7 @@ import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
+import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -25,7 +26,6 @@ import { EmailVerificationTokenService } from './token/services/email-verificati
 import { LoginTokenService } from './token/services/login-token.service';
 import { RenewTokenService } from './token/services/renew-token.service';
 import { TransientTokenService } from './token/services/transient-token.service';
-import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 
 describe('AuthResolver', () => {
   let resolver: AuthResolver;
