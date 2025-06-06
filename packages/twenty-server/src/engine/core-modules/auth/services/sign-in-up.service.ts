@@ -391,42 +391,4 @@ export class SignInUpService {
       await this.setDefaultImpersonateAndAccessFullAdminPanel(),
     );
   }
-
-  async setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
-    availableWorkspaces: {
-      availableWorkspacesForSignUp: Array<Workspace>;
-      availableWorkspacesForSignIn: Array<Workspace>;
-    },
-    user: User,
-    authProvider: AuthProviderEnum,
-  ) {
-    return {
-      availableWorkspacesForSignUp:
-        this.userWorkspaceService.castWorkspacesToAvailableWorkspaces(
-          availableWorkspaces.availableWorkspacesForSignUp,
-        ),
-      availableWorkspacesForSignIn: await Promise.all(
-        availableWorkspaces.availableWorkspacesForSignIn.map(
-          async (workspace) => {
-            return {
-              ...this.userWorkspaceService.castWorkspaceToAvailableWorkspace(
-                workspace,
-              ),
-              loginToken: workspaceValidator.isAuthEnabled(
-                authProvider,
-                workspace,
-              )
-                ? (
-                    await this.loginTokenService.generateLoginToken(
-                      user.email,
-                      workspace.id,
-                    )
-                  ).token
-                : undefined,
-            };
-          },
-        ),
-      ),
-    };
-  }
 }

@@ -36,6 +36,8 @@ import { assert } from 'src/utils/assert';
 import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { AvailableWorkspace } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   constructor(
@@ -49,6 +51,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly domainManagerService: DomainManagerService,
+    private readonly loginTokenService: LoginTokenService,
     private readonly approvedAccessDomainService: ApprovedAccessDomainService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly userRoleService: UserRoleService,
@@ -418,5 +421,40 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     return workspaces.map<AvailableWorkspace>(
       this.castWorkspaceToAvailableWorkspace.bind(this),
     );
+  }
+
+  async setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
+    availableWorkspaces: {
+      availableWorkspacesForSignUp: Array<Workspace>;
+      availableWorkspacesForSignIn: Array<Workspace>;
+    },
+    user: User,
+    authProvider: AuthProviderEnum,
+  ) {
+    return {
+      availableWorkspacesForSignUp: this.castWorkspacesToAvailableWorkspaces(
+        availableWorkspaces.availableWorkspacesForSignUp,
+      ),
+      availableWorkspacesForSignIn: await Promise.all(
+        availableWorkspaces.availableWorkspacesForSignIn.map(
+          async (workspace) => {
+            return {
+              ...this.castWorkspaceToAvailableWorkspace(workspace),
+              loginToken: workspaceValidator.isAuthEnabled(
+                authProvider,
+                workspace,
+              )
+                ? (
+                    await this.loginTokenService.generateLoginToken(
+                      user.email,
+                      workspace.id,
+                    )
+                  ).token
+                : undefined,
+            };
+          },
+        ),
+      ),
+    };
   }
 }

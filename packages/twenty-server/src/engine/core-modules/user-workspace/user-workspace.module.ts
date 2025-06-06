@@ -20,6 +20,7 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
+import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-acc
         UserRoleModule,
         FileUploadModule,
         FileModule,
+        TokenModule,
       ],
       services: [UserWorkspaceService],
     }),

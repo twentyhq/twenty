@@ -80,7 +80,6 @@ export class UserResolver {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly fileUploadService: FileUploadService,
     private readonly onboardingService: OnboardingService,
-    private readonly signInUpService: SignInUpService,
     private readonly userVarService: UserVarsService,
     private readonly fileService: FileService,
     @InjectRepository(UserWorkspace, 'core')
@@ -423,7 +422,7 @@ export class UserResolver {
     @AuthUser() user: User,
     @AuthProvider() authProvider: AuthProviderEnum,
   ): Promise<AvailableWorkspaces> {
-    return this.signInUpService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
+    return this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
       await this.userWorkspaceService.findAvailableWorkspacesByEmail(
         user.email,
       ),
