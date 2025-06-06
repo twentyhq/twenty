@@ -1,15 +1,17 @@
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseIsRecordReadOnlyParams = {
   recordId: string;
+  objectMetadataId: string;
 };
 
 export const useIsRecordReadOnly = ({
   recordId,
+  objectMetadataId,
 }: UseIsRecordReadOnlyParams) => {
   const recordDeletedAt = useRecoilValue<ObjectRecord | null>(
     recordStoreFamilySelector({
@@ -18,7 +20,9 @@ export const useIsRecordReadOnly = ({
     }),
   );
 
-  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
+  const objectPermissions = useObjectPermissionsForObject(objectMetadataId);
 
-  return hasObjectReadOnlyPermission || isDefined(recordDeletedAt);
+  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
+
+  return !hasObjectUpdatePermissions || isDefined(recordDeletedAt);
 };

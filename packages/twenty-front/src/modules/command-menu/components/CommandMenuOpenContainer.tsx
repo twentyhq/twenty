@@ -3,6 +3,7 @@ import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandM
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
 import { CommandMenuHotkeyScope } from '@/command-menu/types/CommandMenuHotkeyScope';
+import { RECORD_CHIP_CLICK_OUTSIDE_ID } from '@/object-record/record-table/constants/RecordChipClickOutsideId';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderCommandMenuButtonClickOutsideId';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
@@ -68,6 +69,7 @@ export const CommandMenuOpenContainer = ({
     excludedClickOutsideIds: [
       PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID,
       LINK_CHIP_CLICK_OUTSIDE_ID,
+      RECORD_CHIP_CLICK_OUTSIDE_ID,
     ],
   });
 

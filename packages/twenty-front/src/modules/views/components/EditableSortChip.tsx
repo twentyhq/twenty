@@ -39,6 +39,7 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
       Icon={recordSort.direction === 'desc' ? IconArrowDown : IconArrowUp}
       onRemove={handleRemoveClick}
       onClick={handleClick}
+      type="sort"
     />
   );
 };

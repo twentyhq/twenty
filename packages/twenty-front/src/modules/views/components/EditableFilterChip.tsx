@@ -50,8 +50,8 @@ export const EditableFilterChip = ({
 
   const recordFilterIsEmpty = isRecordFilterConsideredEmpty(recordFilter);
 
-  const labelKey = `${fieldNameLabel}${!operandIsEmptiness && !recordFilterIsEmpty ? operandLabelShort : operandIsEmptiness ? ` ${operandLabelShort}` : ''}`;
-  const labelValue = operandIsEmptiness ? '' : recordFilter.displayValue;
+  const labelKey = `${fieldNameLabel}`;
+  const labelValue = `${!operandIsEmptiness && !recordFilterIsEmpty ? operandLabelShort : operandIsEmptiness ? ` ${operandLabelShort}` : ''} ${operandIsEmptiness ? '' : recordFilter.displayValue}`;
 
   return (
     <SortOrFilterChip
@@ -62,6 +62,7 @@ export const EditableFilterChip = ({
       Icon={FieldMetadataItemIcon}
       onRemove={onRemove}
       onClick={onClick}
+      type="filter"
     />
   );
 };

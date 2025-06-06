@@ -7,6 +7,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useDestroyOneRecordMutation } from '@/object-record/hooks/useDestroyOneRecordMutation';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getDestroyOneRecordMutationResponseField } from '@/object-record/utils/getDestroyOneRecordMutationResponseField';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
@@ -31,7 +32,7 @@ export const useDestroyOneRecord = ({
   });
 
   const { objectMetadataItems } = useObjectMetadataItems();
-
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const mutationResponseField =
     getDestroyOneRecordMutationResponseField(objectNameSingular);
 
@@ -73,6 +74,7 @@ export const useDestroyOneRecord = ({
               objectMetadataItem,
               recordsToCreate: [originalRecord],
               objectMetadataItems,
+              objectPermissionsByObjectMetadataId,
             });
           }
 
@@ -89,6 +91,7 @@ export const useDestroyOneRecord = ({
       objectMetadataItem,
       objectNameSingular,
       objectMetadataItems,
+      objectPermissionsByObjectMetadataId,
     ],
   );
 

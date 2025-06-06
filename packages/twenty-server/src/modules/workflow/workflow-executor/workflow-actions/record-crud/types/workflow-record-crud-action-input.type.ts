@@ -25,7 +25,14 @@ export type WorkflowDeleteRecordActionInput = {
 
 export type WorkflowFindRecordsActionInput = {
   objectName: string;
-  filter?: Partial<ObjectRecordFilter>;
+  // TODO: migrate gql computation and record filter groups to twenty-shared
+  filter?: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    recordFilterGroups?: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    recordFilters?: any;
+    gqlOperationFilter?: Partial<ObjectRecordFilter>[];
+  };
   orderBy?: Partial<ObjectRecordOrderBy>;
   limit?: number;
 };
