@@ -7,6 +7,7 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { AuditJobModule } from 'src/engine/core-modules/audit/jobs/audit-job.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
+import { CheckExpiredSubscriptionsJob } from 'src/engine/core-modules/billing/crons/jobs/billing-check-expired-subscriptions.job';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { UpdateSubscriptionQuantityJob } from 'src/engine/core-modules/billing/jobs/update-subscription-quantity.job';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
@@ -70,6 +71,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     UpdateSubscriptionQuantityJob,
     HandleWorkspaceMemberDeletedJob,
     CleanWorkspaceDeletionWarningUserVarsJob,
+    CheckExpiredSubscriptionsJob,
   ],
 })
 export class JobsModule {
