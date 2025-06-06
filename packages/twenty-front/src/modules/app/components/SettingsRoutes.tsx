@@ -148,6 +148,18 @@ const SettingsProfile = lazy(() =>
   })),
 );
 
+const SettingsImport = lazy(() =>
+  import('~/pages/settings/import/SettingsImport').then((module) => ({
+    default: module.SettingsImport,
+  })),
+);
+
+const SettingsExport = lazy(() =>
+  import('~/pages/settings/export/SettingsExport').then((module) => ({
+    default: module.SettingsExport,
+  })),
+);
+
 const SettingsExperience = lazy(() =>
   import(
     '~/pages/settings/profile/appearance/components/SettingsExperience'
@@ -334,6 +346,8 @@ export const SettingsRoutes = ({
       <Route path={SettingsPath.Experience} element={<SettingsExperience />} />
       <Route path={SettingsPath.Accounts} element={<SettingsAccounts />} />
       <Route path={SettingsPath.NewAccount} element={<SettingsNewAccount />} />
+      <Route path={SettingsPath.Import} element={<SettingsImport />} />
+      <Route path={SettingsPath.Export} element={<SettingsExport />} />
       <Route
         path={SettingsPath.AccountsCalendars}
         element={<SettingsAccountsCalendars />}

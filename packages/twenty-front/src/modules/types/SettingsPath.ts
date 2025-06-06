@@ -18,6 +18,8 @@ export enum SettingsPath {
   ServerlessFunctionDetail = 'functions/:serverlessFunctionId',
   WorkspaceMembersPage = 'members',
   Workspace = 'general',
+  Import = 'workspace-import',
+  Export = 'workspace-export',
   Domain = 'general/domain',
   APIs = 'apis',
   RestPlayground = 'playground/rest/:schema',

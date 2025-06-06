@@ -17,6 +17,8 @@ import {
   IconComponent,
   IconCurrencyDollar,
   IconDoorEnter,
+  IconFileExport,
+  IconFileImport,
   IconFlask,
   IconFunction,
   IconHierarchy2,
@@ -108,6 +110,22 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           path: SettingsPath.Workspace,
           Icon: IconSettings,
           isHidden: !permissionMap[SettingPermissionType.WORKSPACE],
+          subItems: [
+            {
+              label: t`Import`,
+              path: SettingsPath.Import,
+              Icon: IconFileImport,
+              isHidden: !permissionMap[SettingPermissionType.WORKSPACE],
+              indentationLevel: 2,
+            },
+            {
+              label: t`Export`,
+              path: SettingsPath.Export,
+              Icon: IconFileExport,
+              isHidden: !permissionMap[SettingPermissionType.WORKSPACE],
+              indentationLevel: 2,
+            },
+          ],
         },
         {
           label: t`Members`,
