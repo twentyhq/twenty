@@ -424,7 +424,7 @@ export class WorkspaceEntityManager extends EntityManager {
 
   override increment<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
-    criteria: string,
+    criteria: object,
     propertyPath: string,
     value: number | string,
     permissionOptions?: PermissionOptions,
@@ -1246,7 +1246,7 @@ export class WorkspaceEntityManager extends EntityManager {
 
   override decrement<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
-    criteria: string,
+    criteria: object,
     propertyPath: string,
     value: number | string,
     permissionOptions?: PermissionOptions,
