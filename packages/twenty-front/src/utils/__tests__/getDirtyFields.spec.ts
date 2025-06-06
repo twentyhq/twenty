@@ -1,4 +1,4 @@
-import { getDirtyFields } from './getDirtyFields';
+import { getDirtyFields } from '~/utils/getDirtyFields';
 
 describe('getDirtyFields', () => {
   it('should return all defined fields from draft when persisted is null', () => {
