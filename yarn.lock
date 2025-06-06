@@ -29771,7 +29771,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"canvas@npm:^3.0.0-rc2":
+"canvas@npm:3.1.0":
   version: 3.1.0
   resolution: "canvas@npm:3.1.0"
   dependencies:
