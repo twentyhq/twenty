@@ -24,9 +24,9 @@ export const RECORD_ACTIONS: Array<{
     icon: 'IconTrash',
   },
   // TODO: Add search records action
-  {
-    label: 'Search Records',
-    type: 'FIND_RECORDS',
-    icon: 'IconSearch',
-  },
+  // {
+  //   label: 'Search Records',
+  //   type: 'FIND_RECORDS',
+  //   icon: 'IconSearch',
+  // },
 ];
