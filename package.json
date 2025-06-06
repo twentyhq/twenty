@@ -313,7 +313,7 @@
     "eslint-plugin-unused-imports": "^3.0.0",
     "http-server": "^14.1.1",
     "jest": "29.7.0",
-    "jest-environment-jsdom": "29.7.0",
+    "jest-environment-jsdom": "30.0.0-beta.3",
     "jest-environment-node": "^29.4.1",
     "jest-fetch-mock": "^3.0.3",
     "jsdom": "~22.1.0",
@@ -355,8 +355,7 @@
     "type-fest": "4.10.1",
     "typescript": "5.3.3",
     "graphql-redis-subscriptions/ioredis": "^5.6.0",
-    "prosemirror-view": "1.40.0",
-    "canvas": "3.1.0"
+    "prosemirror-view": "1.40.0"
   },
   "version": "0.2.1",
   "nx": {},
