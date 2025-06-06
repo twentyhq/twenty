@@ -2,6 +2,7 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { billingState } from '@/client-config/states/billingState';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { supportChatState } from '@/client-config/states/supportChatState';
+import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useApolloClient } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
@@ -30,9 +31,13 @@ jest.mock('@/object-metadata/hooks/useRefreshObjectMetadataItem', () => ({
 }));
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <MockedProvider mocks={mocks} addTypename={false}>
+  <MockedProvider mocks={Object.values(mocks)} addTypename={false}>
     <RecoilRoot>
-      <MemoryRouter>{children}</MemoryRouter>
+      <MemoryRouter>
+        <SnackBarProviderScope snackBarManagerScopeId="test-scope-id">
+          {children}
+        </SnackBarProviderScope>
+      </MemoryRouter>
     </RecoilRoot>
   </MockedProvider>
 );
@@ -63,7 +68,7 @@ describe('useAuth', () => {
       ).toStrictEqual(results.getLoginTokenFromCredentials);
     });
 
-    expect(mocks[0].result).toHaveBeenCalled();
+    expect(mocks.getLoginTokenFromCredentials.result).toHaveBeenCalled();
   });
 
   it('should verify user', async () => {
@@ -73,8 +78,8 @@ describe('useAuth', () => {
       await result.current.getAuthTokensFromLoginToken(token);
     });
 
-    expect(mocks[1].result).toHaveBeenCalled();
-    expect(mocks[3].result).toHaveBeenCalled();
+    expect(mocks.getAuthTokensFromLoginToken.result).toHaveBeenCalled();
+    expect(mocks.getCurrentUser.result).toHaveBeenCalled();
   });
 
   it('should handle credential sign-in', async () => {
@@ -84,8 +89,8 @@ describe('useAuth', () => {
       await result.current.signInWithCredentialsInWorkspace(email, password);
     });
 
-    expect(mocks[0].result).toHaveBeenCalled();
-    expect(mocks[1].result).toHaveBeenCalled();
+    expect(mocks.getLoginTokenFromCredentials.result).toHaveBeenCalled();
+    expect(mocks.getAuthTokensFromLoginToken.result).toHaveBeenCalled();
   });
 
   it('should handle google sign-in', async () => {
@@ -170,6 +175,6 @@ describe('useAuth', () => {
       });
     });
 
-    expect(mocks[2].result).toHaveBeenCalled();
+    expect(mocks.signUpInWorkspace.result).toHaveBeenCalled();
   });
 });
