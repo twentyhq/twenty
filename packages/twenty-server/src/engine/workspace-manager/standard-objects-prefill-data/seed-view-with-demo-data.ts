@@ -19,7 +19,7 @@ export const seedViewWithDemoData = async (
   schemaName: string,
   objectMetadataStandardIdToIdMap: ObjectMetadataStandardIdToIdMap,
 ) => {
-  const viewDefinitions = [
+  const views = [
     companiesAllView(objectMetadataStandardIdToIdMap),
     peopleAllView(objectMetadataStandardIdToIdMap),
     opportunitiesAllView(objectMetadataStandardIdToIdMap),
@@ -33,5 +33,5 @@ export const seedViewWithDemoData = async (
     workflowRunsAllView(objectMetadataStandardIdToIdMap),
   ];
 
-  return createWorkspaceViews(entityManager, schemaName, viewDefinitions);
+  return createWorkspaceViews(entityManager, schemaName, views);
 };

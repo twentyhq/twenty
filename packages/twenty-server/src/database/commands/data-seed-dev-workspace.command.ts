@@ -39,10 +39,10 @@ import { PETS_DATA_SEEDS } from 'src/engine/seeder/data-seeds/pets-data-seeds';
 import { SURVEY_RESULTS_DATA_SEEDS } from 'src/engine/seeder/data-seeds/survey-results-data-seeds';
 import { PETS_METADATA_SEEDS } from 'src/engine/seeder/metadata-seeds/pets-metadata-seeds';
 import { SURVEY_RESULTS_METADATA_SEEDS } from 'src/engine/seeder/metadata-seeds/survey-results-metadata-seeds';
-import { SeederService } from 'src/engine/seeder/seeder.service';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { SeederService } from 'src/engine/workspace-manager/seed-dev/dev-seeder.service';
 import { createWorkspaceViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/create-workspace-views';
 import { seedViewWithDemoData } from 'src/engine/workspace-manager/standard-objects-prefill-data/seed-view-with-demo-data';
 import { opportunitiesTableByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view';
@@ -110,7 +110,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
 
     await rawDataSource.destroy();
 
-    await this.workspaceManagerService.initDev(workspaceId);
+    await this.workspaceManagerService.seedDev(workspaceId);
   }
 
   async seedWorkspace(workspaceId: string) {

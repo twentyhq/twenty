@@ -64,7 +64,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Title",
               description: "Title"
             },
@@ -85,7 +84,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Is canceled",
               description: "Is canceled"
             },
@@ -106,7 +104,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Is Full Day",
               description: "Is Full Day"
             },
@@ -127,7 +124,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Start Date",
               description: "Start Date"
             },
@@ -148,7 +144,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "End Date",
               description: "End Date"
             },
@@ -169,7 +164,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation DateTime",
               description: "Creation DateTime"
             },
@@ -190,7 +184,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Update DateTime",
               description: "Update DateTime"
             },
@@ -211,7 +204,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Description",
               description: "Description"
             },
@@ -232,7 +224,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Location",
               description: "Location"
             },
@@ -253,7 +244,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "iCal UID",
               description: "iCal UID"
             },
@@ -274,7 +264,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Conference Solution",
               description: "Conference Solution"
             },
@@ -299,7 +288,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Meet Link",
               description: "Meet Link"
             },
@@ -320,7 +308,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -343,7 +330,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -366,7 +352,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -389,7 +374,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -531,7 +515,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Event name",
               description: "Event name/type"
             },
@@ -552,7 +535,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Event details",
               description: "Json value for event details"
             },
@@ -573,7 +555,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Event context",
               description: "Json object to provide context (user, device, workspace, etc.)"
             },
@@ -594,7 +575,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Object name",
               description: "Object name"
             },
@@ -615,7 +595,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Object metadata id",
               description: "Object metadata id"
             },
@@ -636,7 +615,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Record id",
               description: "Record id"
             },
@@ -657,7 +635,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -680,7 +657,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -703,7 +679,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -726,7 +701,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -747,7 +721,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workspace Member id (foreign key)",
               description: "Event workspace member id foreign key"
             },
@@ -887,7 +860,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -910,7 +882,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -933,7 +904,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -956,7 +926,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -977,7 +946,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Note id (foreign key)",
               description: "NoteTarget note id foreign key"
             },
@@ -1045,7 +1013,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Person id (foreign key)",
               description: "NoteTarget person id foreign key"
             },
@@ -1113,7 +1080,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Company id (foreign key)",
               description: "NoteTarget company id foreign key"
             },
@@ -1181,7 +1147,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Opportunity id (foreign key)",
               description: "NoteTarget opportunity id foreign key"
             },
@@ -1298,7 +1263,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 isForeignKey: true
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Pet ID (foreign key)",
               description: "Note Target Pet id foreign key"
             },
@@ -1368,7 +1332,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 isForeignKey: true
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Survey result ID (foreign key)",
               description: "Note Target Survey result id foreign key"
             }
@@ -1554,7 +1517,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -1622,7 +1584,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "View name"
             },
@@ -1643,7 +1604,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Object Metadata Id",
               description: "View target object"
             },
@@ -1664,7 +1624,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Type",
               description: "View type"
             },
@@ -1693,7 +1652,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Key",
               description: "View key"
             },
@@ -1714,7 +1672,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Icon",
               description: "View icon"
             },
@@ -1735,7 +1692,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "kanbanfieldMetadataId",
               description: "View Kanban column field"
             },
@@ -1756,7 +1712,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "View position"
             },
@@ -1777,7 +1732,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Compact View",
               description: "Describes if the view is in compact mode"
             },
@@ -1869,7 +1823,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Aggregate operation",
               description: "Optional aggregate operation"
             },
@@ -1890,7 +1843,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Field metadata used for aggregate operation",
               description: "Field metadata used for aggregate operation"
             },
@@ -1911,7 +1863,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -1934,7 +1885,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -1957,7 +1907,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -2240,7 +2189,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Event ID id (foreign key)",
               description: "Event ID id foreign key"
             },
@@ -2308,7 +2256,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Handle",
               description: "Handle"
             },
@@ -2329,7 +2276,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Display Name",
               description: "Display Name"
             },
@@ -2350,7 +2296,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Is Organizer",
               description: "Is Organizer"
             },
@@ -2400,7 +2345,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Response Status",
               description: "Response Status"
             },
@@ -2421,7 +2365,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -2444,7 +2387,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -2467,7 +2409,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -2490,7 +2431,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -2511,7 +2451,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Person id (foreign key)",
               description: "Person id foreign key"
             },
@@ -2579,7 +2518,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workspace Member id (foreign key)",
               description: "Workspace Member id foreign key"
             },
@@ -2787,7 +2725,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "Folder name"
             },
@@ -2808,7 +2745,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Sync Cursor",
               description: "Sync Cursor"
             },
@@ -2829,7 +2765,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -2852,7 +2787,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -2875,7 +2809,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -2898,7 +2831,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -2919,7 +2851,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Message Channel id (foreign key)",
               description: "Message Channel id foreign key"
             },
@@ -3059,7 +2990,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "The company name"
             },
@@ -3084,7 +3014,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Domain Name",
               description: "The company website URL. We use this url to fetch the company icon"
             },
@@ -3105,7 +3034,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Employees",
               description: "Number of employees in the company"
             },
@@ -3130,7 +3058,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Linkedin",
               description: "The company Linkedin account"
             },
@@ -3155,7 +3082,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "X",
               description: "The company Twitter/X account"
             },
@@ -3179,7 +3105,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "ARR",
               description: "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
             },
@@ -3209,7 +3134,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Address",
               description: "Address of the company"
             },
@@ -3230,7 +3154,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "ICP",
               description: "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
             },
@@ -3251,7 +3174,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "Company record position"
             },
@@ -3276,7 +3198,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Created by",
               description: "The creator of the record"
             },
@@ -3297,7 +3218,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Search vector",
               description: "Field used for full-text search"
             },
@@ -3318,7 +3238,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -3341,7 +3260,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -3364,7 +3282,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -3387,7 +3304,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -3455,7 +3371,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Account Owner id (foreign key)",
               description: "Your team member responsible for managing the company account id foreign key"
             },
@@ -3805,7 +3720,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Tagline",
               description: "Company's Tagline"
             },
@@ -3830,7 +3744,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Intro Video",
               description: "Company's Intro Video"
             },
@@ -3873,7 +3786,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Work Policy",
               description: "Company's Work Policy"
             },
@@ -3909,7 +3821,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Internal competitions",
               description: "Internal competitions"
             },
@@ -3930,7 +3841,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Visa Sponsorship",
               description: "Company's Visa Sponsorship Policy"
             }
@@ -4058,7 +3968,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "Note record position"
             },
@@ -4079,7 +3988,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Title",
               description: "Note title"
             },
@@ -4100,7 +4008,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Body",
               description: "Note body"
             },
@@ -4125,7 +4032,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Created by",
               description: "The creator of the record"
             },
@@ -4146,7 +4052,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Search vector",
               description: "Field used for full-text search"
             },
@@ -4167,7 +4072,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -4190,7 +4094,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -4213,7 +4116,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -4236,7 +4138,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -4506,7 +4407,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "handle",
               description: "The account handle (email, username, phone number, etc.)"
             },
@@ -4527,7 +4427,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "provider",
               description: "The account provider"
             },
@@ -4548,7 +4447,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Access Token",
               description: "Messaging provider access token"
             },
@@ -4569,7 +4467,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Refresh Token",
               description: "Messaging provider refresh token"
             },
@@ -4590,7 +4487,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last sync history ID",
               description: "Last sync history ID"
             },
@@ -4611,7 +4507,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Auth failed at",
               description: "Auth failed at"
             },
@@ -4632,7 +4527,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Handle Aliases",
               description: "Handle Aliases"
             },
@@ -4653,7 +4547,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Scopes",
               description: "Scopes"
             },
@@ -4674,7 +4567,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -4697,7 +4589,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -4720,7 +4611,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -4743,7 +4633,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -4764,7 +4653,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Account Owner id (foreign key)",
               description: "Account Owner id foreign key"
             },
@@ -5001,7 +4889,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "Workspace member name"
             },
@@ -5022,7 +4909,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Color Scheme",
               description: "Preferred color scheme"
             },
@@ -5043,7 +4929,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Language",
               description: "Preferred language"
             },
@@ -5064,7 +4949,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Avatar Url",
               description: "Workspace member avatar"
             },
@@ -5085,7 +4969,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "User Email",
               description: "Related user email address"
             },
@@ -5106,7 +4989,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "User Id",
               description: "Associated User Id"
             },
@@ -5127,7 +5009,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Time zone",
               description: "User time zone"
             },
@@ -5177,7 +5058,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Date format",
               description: "User's preferred date format"
             },
@@ -5220,7 +5100,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Time format",
               description: "User's preferred time format"
             },
@@ -5241,7 +5120,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Search vector",
               description: "Field used for full-text search"
             },
@@ -5262,7 +5140,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -5285,7 +5162,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -5308,7 +5184,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -5331,7 +5206,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -5887,7 +5761,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -5910,7 +5783,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -5933,7 +5805,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -5956,7 +5827,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -6051,7 +5921,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Header message Id",
               description: "Message id from the message header"
             },
@@ -6072,7 +5941,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Subject",
               description: "Subject"
             },
@@ -6093,7 +5961,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Text",
               description: "Text"
             },
@@ -6114,7 +5981,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Received At",
               description: "The date the message was received"
             },
@@ -6135,7 +6001,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -6158,7 +6023,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -6181,7 +6045,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -6204,7 +6067,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -6225,7 +6087,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Message Thread Id id (foreign key)",
               description: "Message Thread Id id foreign key"
             },
@@ -6448,7 +6309,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Parent View Filter Group Id",
               description: "Parent View Filter Group"
             },
@@ -6491,7 +6351,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Logical Operator",
               description: "Logical operator for the filter group"
             },
@@ -6512,7 +6371,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position in view filter group",
               description: "Position in the parent view filter group"
             },
@@ -6533,7 +6391,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -6556,7 +6413,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -6579,7 +6435,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -6602,7 +6457,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -6623,7 +6477,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "View id (foreign key)",
               description: "View id foreign key"
             },
@@ -6763,7 +6616,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "Attachment name"
             },
@@ -6784,7 +6636,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Full path",
               description: "Attachment full path"
             },
@@ -6805,7 +6656,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Type",
               description: "Attachment type"
             },
@@ -6826,7 +6676,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -6849,7 +6698,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -6872,7 +6720,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -6895,7 +6742,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -6916,7 +6762,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Author id (foreign key)",
               description: "Attachment author id foreign key"
             },
@@ -6984,7 +6829,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Task id (foreign key)",
               description: "Attachment task id foreign key"
             },
@@ -7052,7 +6896,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Note id (foreign key)",
               description: "Attachment note id foreign key"
             },
@@ -7120,7 +6963,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Person id (foreign key)",
               description: "Attachment person id foreign key"
             },
@@ -7188,7 +7030,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Company id (foreign key)",
               description: "Attachment company id foreign key"
             },
@@ -7256,7 +7097,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Opportunity id (foreign key)",
               description: "Attachment opportunity id foreign key"
             },
@@ -7373,7 +7213,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 isForeignKey: true
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Pet ID (foreign key)",
               description: "Attachment Pet id foreign key"
             },
@@ -7443,7 +7282,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 isForeignKey: true
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Survey result ID (foreign key)",
               description: "Attachment Survey result id foreign key"
             }
@@ -7679,7 +7517,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Target Url",
               description: "Webhook target url"
             },
@@ -7702,7 +7539,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Operations",
               description: "Webhook operations"
             },
@@ -7723,7 +7559,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Description",
               description: ""
             },
@@ -7744,7 +7579,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Secret",
               description: "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests."
             },
@@ -7765,7 +7599,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -7788,7 +7621,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -7811,7 +7643,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -7834,7 +7665,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             }
@@ -7886,7 +7716,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "The workflow version name"
             },
@@ -7907,7 +7736,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Version trigger",
               description: "Json object to provide trigger"
             },
@@ -7928,7 +7756,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Version steps",
               description: "Json object to provide steps"
             },
@@ -7978,7 +7805,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Version status",
               description: "The workflow version status"
             },
@@ -7999,7 +7825,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "Workflow version position"
             },
@@ -8020,7 +7845,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -8043,7 +7867,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -8066,7 +7889,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -8089,7 +7911,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -8110,7 +7931,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workflow id (foreign key)",
               description: "WorkflowVersion workflow id foreign key"
             },
@@ -8368,7 +8188,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Handle",
               description: "Handle"
             },
@@ -8389,7 +8208,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -8412,7 +8230,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -8435,7 +8252,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -8458,7 +8274,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -8479,7 +8294,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "WorkspaceMember id (foreign key)",
               description: "WorkspaceMember id foreign key"
             },
@@ -8619,7 +8433,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Event external ID",
               description: "Event external ID"
             },
@@ -8640,7 +8453,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Recurring Event ID",
               description: "Recurring Event ID"
             },
@@ -8661,7 +8473,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -8684,7 +8495,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -8707,7 +8517,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -8730,7 +8539,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -8751,7 +8559,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Channel ID id (foreign key)",
               description: "Channel ID id foreign key"
             },
@@ -8819,7 +8626,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Event ID id (foreign key)",
               description: "Event ID id foreign key"
             },
@@ -8992,7 +8798,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "Favorite folder position"
             },
@@ -9013,7 +8818,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "Name of the favorite folder"
             },
@@ -9034,7 +8838,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -9057,7 +8860,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -9080,7 +8882,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -9103,7 +8904,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -9198,7 +8998,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "Favorite position"
             },
@@ -9219,7 +9018,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -9242,7 +9040,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -9265,7 +9062,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -9288,7 +9084,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -9309,7 +9104,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workspace Member id (foreign key)",
               description: "Favorite workspace member id foreign key"
             },
@@ -9377,7 +9171,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Person id (foreign key)",
               description: "Favorite person id foreign key"
             },
@@ -9445,7 +9238,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Company id (foreign key)",
               description: "Favorite company id foreign key"
             },
@@ -9513,7 +9305,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Favorite Folder id (foreign key)",
               description: "The folder this favorite belongs to id foreign key"
             },
@@ -9581,7 +9372,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Opportunity id (foreign key)",
               description: "Favorite opportunity id foreign key"
             },
@@ -9649,7 +9439,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workflow id (foreign key)",
               description: "Favorite workflow id foreign key"
             },
@@ -9717,7 +9506,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workflow id (foreign key)",
               description: "Favorite workflow version id foreign key"
             },
@@ -9785,7 +9573,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workflow id (foreign key)",
               description: "Favorite workflow run id foreign key"
             },
@@ -9853,7 +9640,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Task id (foreign key)",
               description: "Favorite task id foreign key"
             },
@@ -9921,7 +9707,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Note id (foreign key)",
               description: "Favorite note id foreign key"
             },
@@ -9989,7 +9774,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "View id (foreign key)",
               description: "Favorite view id foreign key"
             },
@@ -10106,7 +9890,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 isForeignKey: true
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Survey result ID (foreign key)",
               description: "Favorite Survey result id foreign key"
             },
@@ -10176,7 +9959,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 isForeignKey: true
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Pet ID (foreign key)",
               description: "Favorite Pet id foreign key"
             }
@@ -10591,7 +10373,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Field Metadata Id",
               description: "View Group target field"
             },
@@ -10612,7 +10393,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Visible",
               description: "View Group visibility"
             },
@@ -10633,7 +10413,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Field Value",
               description: "Group by this field value"
             },
@@ -10654,7 +10433,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "View Field position"
             },
@@ -10675,7 +10453,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -10698,7 +10475,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -10721,7 +10497,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -10744,7 +10519,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -10765,7 +10539,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "View id (foreign key)",
               description: "View Group related view id foreign key"
             },
@@ -10920,7 +10693,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Automated Trigger Type",
               description: "The workflow automated trigger type"
             },
@@ -10941,7 +10713,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Settings",
               description: "The workflow automated trigger settings"
             },
@@ -10962,7 +10733,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -10985,7 +10755,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -11008,7 +10777,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -11031,7 +10799,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -11052,7 +10819,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workflow id (foreign key)",
               description: "WorkflowAutomatedTrigger workflow id foreign key"
             },
@@ -11181,7 +10947,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -11204,7 +10969,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -11227,7 +10991,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -11250,7 +11013,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -11271,7 +11033,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Task id (foreign key)",
               description: "TaskTarget task id foreign key"
             },
@@ -11339,7 +11100,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Person id (foreign key)",
               description: "TaskTarget person id foreign key"
             },
@@ -11407,7 +11167,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Company id (foreign key)",
               description: "TaskTarget company id foreign key"
             },
@@ -11475,7 +11234,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Opportunity id (foreign key)",
               description: "TaskTarget opportunity id foreign key"
             },
@@ -11592,7 +11350,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 isForeignKey: true
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Pet ID (foreign key)",
               description: "Task Target Pet id foreign key"
             },
@@ -11662,7 +11419,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 isForeignKey: true
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Survey result ID (foreign key)",
               description: "Task Target Survey result id foreign key"
             }
@@ -11842,7 +11598,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Field Metadata Id",
               description: "View Filter target field"
             },
@@ -11863,7 +11618,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Operand",
               description: "View Filter operand"
             },
@@ -11884,7 +11638,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Value",
               description: "View Filter value"
             },
@@ -11905,7 +11658,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Display Value",
               description: "View Filter Display Value"
             },
@@ -11926,7 +11678,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "View Filter Group Id",
               description: "View Filter Group"
             },
@@ -11947,7 +11698,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position in view filter group",
               description: "Position in the view filter group"
             },
@@ -11968,7 +11718,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -11991,7 +11740,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -12014,7 +11762,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -12037,7 +11784,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -12058,7 +11804,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "View id (foreign key)",
               description: "View Filter related view id foreign key"
             },
@@ -12209,7 +11954,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Visibility",
               description: "Visibility"
             },
@@ -12230,7 +11974,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Handle",
               description: "Handle"
             },
@@ -12266,7 +12009,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Type",
               description: "Channel Type"
             },
@@ -12287,7 +12029,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Is Contact Auto Creation Enabled",
               description: "Is Contact Auto Creation Enabled"
             },
@@ -12330,7 +12071,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Contact auto creation policy",
               description: "Automatically create People records when receiving or sending emails"
             },
@@ -12351,7 +12091,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Exclude non professional emails",
               description: "Exclude non professional emails"
             },
@@ -12372,7 +12111,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Exclude group emails",
               description: "Exclude group emails"
             },
@@ -12393,7 +12131,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Is Sync Enabled",
               description: "Is Sync Enabled"
             },
@@ -12414,7 +12151,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last sync cursor",
               description: "Last sync cursor"
             },
@@ -12435,7 +12171,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last sync date",
               description: "Last sync date"
             },
@@ -12492,7 +12227,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Sync status",
               description: "Sync status"
             },
@@ -12556,7 +12290,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Sync stage",
               description: "Sync stage"
             },
@@ -12577,7 +12310,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Sync stage started at",
               description: "Sync stage started at"
             },
@@ -12598,7 +12330,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Throttle Failure Count",
               description: "Throttle Failure Count"
             },
@@ -12619,7 +12350,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -12642,7 +12372,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -12665,7 +12394,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -12688,7 +12416,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -12709,7 +12436,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Connected Account id (foreign key)",
               description: "Connected Account id foreign key"
             },
@@ -12932,7 +12658,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Handle",
               description: "Handle"
             },
@@ -12989,7 +12714,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Sync status",
               description: "Sync status"
             },
@@ -13053,7 +12777,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Sync stage",
               description: "Sync stage"
             },
@@ -13089,7 +12812,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Visibility",
               description: "Visibility"
             },
@@ -13110,7 +12832,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Is Contact Auto Creation Enabled",
               description: "Is Contact Auto Creation Enabled"
             },
@@ -13160,7 +12881,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Contact auto creation policy",
               description: "Automatically create records for people you participated with in an event."
             },
@@ -13181,7 +12901,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Is Sync Enabled",
               description: "Is Sync Enabled"
             },
@@ -13202,7 +12921,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Sync Cursor",
               description: "Sync Cursor. Used for syncing events from the calendar provider"
             },
@@ -13223,7 +12941,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last sync date",
               description: "Last sync date"
             },
@@ -13244,7 +12961,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Sync stage started at",
               description: "Sync stage started at"
             },
@@ -13265,7 +12981,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Throttle Failure Count",
               description: "Throttle Failure Count"
             },
@@ -13286,7 +13001,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -13309,7 +13023,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -13332,7 +13045,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -13355,7 +13067,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -13376,7 +13087,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Connected Account id (foreign key)",
               description: "Connected Account id foreign key"
             },
@@ -13552,7 +13262,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "The opportunity name"
             },
@@ -13576,7 +13285,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Amount",
               description: "Opportunity amount"
             },
@@ -13597,7 +13305,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Close date",
               description: "Opportunity close date"
             },
@@ -13654,7 +13361,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Stage",
               description: "Opportunity stage"
             },
@@ -13675,7 +13381,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "Opportunity record position"
             },
@@ -13700,7 +13405,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Created by",
               description: "The creator of the record"
             },
@@ -13721,7 +13425,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Search vector",
               description: "Field used for full-text search"
             },
@@ -13742,7 +13445,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -13765,7 +13467,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -13788,7 +13489,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -13811,7 +13511,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -13832,7 +13531,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Point of Contact id (foreign key)",
               description: "Opportunity point of contact id foreign key"
             },
@@ -13900,7 +13598,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Company id (foreign key)",
               description: "Opportunity company id foreign key"
             },
@@ -14412,7 +14109,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "Contact’s name"
             },
@@ -14436,7 +14132,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Emails",
               description: "Contact’s Emails"
             },
@@ -14461,7 +14156,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Linkedin",
               description: "Contact’s Linkedin account"
             },
@@ -14486,7 +14180,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "X",
               description: "Contact’s X/Twitter account"
             },
@@ -14507,7 +14200,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Job Title",
               description: "Contact’s job title"
             },
@@ -14533,7 +14225,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Phones",
               description: "Contact’s phone numbers"
             },
@@ -14554,7 +14245,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "City",
               description: "Contact’s city"
             },
@@ -14575,7 +14265,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Avatar",
               description: "Contact’s avatar"
             },
@@ -14596,7 +14285,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "Person record Position"
             },
@@ -14621,7 +14309,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Created by",
               description: "The creator of the record"
             },
@@ -14642,7 +14329,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Search vector",
               description: "Field used for full-text search"
             },
@@ -14663,7 +14349,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -14686,7 +14371,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -14709,7 +14393,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -14732,7 +14415,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -14753,7 +14435,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Company id (foreign key)",
               description: "Contact’s company id foreign key"
             },
@@ -15150,7 +14831,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Intro",
               description: "Contact's Intro"
             },
@@ -15176,7 +14856,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Whatsapp",
               description: "Contact's Whatsapp Number"
             },
@@ -15219,7 +14898,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Work Preference",
               description: "Person's Work Preference"
             },
@@ -15271,7 +14949,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Performance Rating",
               description: "Person's Performance Rating"
             }
@@ -15410,7 +15087,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -15431,7 +15107,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Event name",
               description: "Event name"
             },
@@ -15452,7 +15127,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Event details",
               description: "Json value for event details"
             },
@@ -15473,7 +15147,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Linked Record cached name",
               description: "Cached record name"
             },
@@ -15494,7 +15167,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Linked Record id",
               description: "Linked Record id"
             },
@@ -15515,7 +15187,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Linked Object Metadata Id",
               description: "Linked Object Metadata Id"
             },
@@ -15536,7 +15207,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -15559,7 +15229,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -15582,7 +15251,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -15605,7 +15273,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -15626,7 +15293,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workspace Member id (foreign key)",
               description: "Event workspace member id foreign key"
             },
@@ -15694,7 +15360,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Person id (foreign key)",
               description: "Event person id foreign key"
             },
@@ -15762,7 +15427,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Company id (foreign key)",
               description: "Event company id foreign key"
             },
@@ -15830,7 +15494,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Opportunity id (foreign key)",
               description: "Event opportunity id foreign key"
             },
@@ -15898,7 +15561,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Note id (foreign key)",
               description: "Event note id foreign key"
             },
@@ -15966,7 +15628,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Task id (foreign key)",
               description: "Event task id foreign key"
             },
@@ -16034,7 +15695,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workflow id (foreign key)",
               description: "Event workflow id foreign key"
             },
@@ -16102,7 +15762,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "WorkflowVersion id (foreign key)",
               description: "Event workflow version id foreign key"
             },
@@ -16170,7 +15829,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workflow Run id (foreign key)",
               description: "Event workflow run id foreign key"
             },
@@ -16287,7 +15945,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 isForeignKey: true
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Pet ID (foreign key)",
               description: "Timeline Activity Pet id foreign key"
             },
@@ -16357,7 +16014,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 isForeignKey: true
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Survey result ID (foreign key)",
               description: "Timeline Activity Survey result id foreign key"
             }
@@ -16744,7 +16400,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Role",
               description: "Role"
             },
@@ -16765,7 +16420,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Handle",
               description: "Handle"
             },
@@ -16786,7 +16440,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Display Name",
               description: "Display Name"
             },
@@ -16807,7 +16460,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -16830,7 +16482,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -16853,7 +16504,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -16876,7 +16526,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -16897,7 +16546,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Message id (foreign key)",
               description: "Message id foreign key"
             },
@@ -16965,7 +16613,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Person id (foreign key)",
               description: "Person id foreign key"
             },
@@ -17033,7 +16680,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workspace Member id (foreign key)",
               description: "Workspace member id foreign key"
             },
@@ -17336,7 +16982,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Search vector",
               description: "Field used for full-text search"
             },
@@ -17361,7 +17006,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 decimals: 3
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Score (Float 3 decimals)",
               description: ""
             },
@@ -17386,7 +17030,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 decimals: 6
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Percentage of completion (Float 3 decimals + percentage)",
               description: ""
             },
@@ -17410,7 +17053,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 dataType: "int"
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Participants (Int)",
               description: ""
             },
@@ -17434,7 +17076,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 dataType: "bigint"
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Average estimated number of atoms in the universe (BigInt)",
               description: ""
             },
@@ -17457,7 +17098,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayedMaxRows: 5
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Comments (Max 5 rows)",
               description: ""
             },
@@ -17480,7 +17120,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayedMaxRows: 1
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Short notes (Max 1 row)",
               description: ""
             },
@@ -17501,7 +17140,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -17522,7 +17160,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "Name"
             },
@@ -17543,7 +17180,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -17564,7 +17200,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -17585,7 +17220,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Deletion date"
             },
@@ -17609,7 +17243,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Created by",
               description: "The creator of the record"
             },
@@ -17630,7 +17263,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "Position"
             },
@@ -17853,7 +17485,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -17874,7 +17505,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "ApiKey name"
             },
@@ -17895,7 +17525,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Expiration date",
               description: "ApiKey expiration date"
             },
@@ -17916,7 +17545,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Revocation date",
               description: "ApiKey revocation date"
             },
@@ -17939,7 +17567,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -17962,7 +17589,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -17985,7 +17611,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             }
@@ -18037,7 +17662,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Field Metadata Id",
               description: "View Field target field"
             },
@@ -18058,7 +17682,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Visible",
               description: "View Field visibility"
             },
@@ -18079,7 +17702,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Size",
               description: "View Field size"
             },
@@ -18100,7 +17722,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "View Field position"
             },
@@ -18192,7 +17813,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Aggregate operation",
               description: "Optional aggregate operation"
             },
@@ -18213,7 +17833,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -18236,7 +17855,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -18259,7 +17877,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -18282,7 +17899,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -18303,7 +17919,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "View id (foreign key)",
               description: "View Field related view id foreign key"
             },
@@ -18449,7 +18064,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "Task record position"
             },
@@ -18470,7 +18084,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Title",
               description: "Task title"
             },
@@ -18491,7 +18104,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Body",
               description: "Task body"
             },
@@ -18512,7 +18124,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Due Date",
               description: "Task due date"
             },
@@ -18555,7 +18166,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Status",
               description: "Task status"
             },
@@ -18580,7 +18190,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Created by",
               description: "The creator of the record"
             },
@@ -18601,7 +18210,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Search vector",
               description: "Field used for full-text search"
             },
@@ -18622,7 +18230,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -18645,7 +18252,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -18668,7 +18274,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -18691,7 +18296,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -18806,7 +18410,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Assignee id (foreign key)",
               description: "Task assignee id foreign key"
             },
@@ -19073,7 +18676,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "The workflow name"
             },
@@ -19094,7 +18696,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last published Version Id",
               description: "The workflow last published version id"
             },
@@ -19134,7 +18735,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Statuses",
               description: "The current statuses of the workflow versions"
             },
@@ -19155,7 +18755,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "Workflow record position"
             },
@@ -19180,7 +18779,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Created by",
               description: "The creator of the record"
             },
@@ -19201,7 +18799,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -19224,7 +18821,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -19247,7 +18843,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -19270,7 +18865,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -19553,7 +19147,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "Name of the workflow run"
             },
@@ -19574,7 +19167,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workflow run started at",
               description: "Workflow run started at"
             },
@@ -19595,7 +19187,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workflow run ended at",
               description: "Workflow run ended at"
             },
@@ -19645,7 +19236,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workflow run status",
               description: "Workflow run status"
             },
@@ -19670,7 +19260,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Executed by",
               description: "The executor of the workflow"
             },
@@ -19691,7 +19280,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Output",
               description: "Json object to provide output of the workflow run"
             },
@@ -19712,7 +19300,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Context",
               description: "Context"
             },
@@ -19733,7 +19320,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "Workflow run position"
             },
@@ -19754,7 +19340,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -19777,7 +19362,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -19800,7 +19384,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -19823,7 +19406,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -19844,7 +19426,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workflow version id (foreign key)",
               description: "Workflow version linked to the run. id foreign key"
             },
@@ -19912,7 +19493,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Workflow id (foreign key)",
               description: "Workflow linked to the run. id foreign key"
             },
@@ -20163,7 +19743,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Field Metadata Id",
               description: "View Sort target field"
             },
@@ -20184,7 +19763,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Direction",
               description: "View Sort direction"
             },
@@ -20205,7 +19783,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -20228,7 +19805,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -20251,7 +19827,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -20274,7 +19849,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -20295,7 +19869,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "View id (foreign key)",
               description: "View Sort related view id foreign key"
             },
@@ -20640,7 +20213,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Search vector",
               description: "Field used for full-text search"
             },
@@ -20704,7 +20276,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Species",
               description: ""
             },
@@ -20768,7 +20339,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Traits",
               description: ""
             },
@@ -20789,7 +20359,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Comments",
               description: ""
             },
@@ -20810,7 +20379,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Age",
               description: ""
             },
@@ -20840,7 +20408,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Location",
               description: ""
             },
@@ -20866,7 +20433,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Vet phone",
               description: ""
             },
@@ -20890,7 +20456,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Vet email",
               description: ""
             },
@@ -20911,7 +20476,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Birthday",
               description: ""
             },
@@ -20932,7 +20496,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Is good with kids",
               description: ""
             },
@@ -20957,7 +20520,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Pictures",
               description: ""
             },
@@ -20981,7 +20543,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Average cost of kibble per month",
               description: ""
             },
@@ -21005,7 +20566,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Makes its owner think of",
               description: ""
             },
@@ -21057,7 +20617,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Sound swag (bark style, meow style, etc.)",
               description: ""
             },
@@ -21078,7 +20637,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Bio",
               description: ""
             },
@@ -21099,7 +20657,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Interesting facts",
               description: ""
             },
@@ -21120,7 +20677,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Extra data",
               description: ""
             },
@@ -21141,7 +20697,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -21162,7 +20717,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Name",
               description: "Name"
             },
@@ -21183,7 +20737,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -21204,7 +20757,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -21225,7 +20777,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Deletion date"
             },
@@ -21249,7 +20800,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Created by",
               description: "The creator of the record"
             },
@@ -21270,7 +20820,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Position",
               description: "Position"
             },
@@ -21399,7 +20948,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Message External Id",
               description: "Message id from the messaging provider"
             },
@@ -21420,7 +20968,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Thread External Id",
               description: "Thread id from the messaging provider"
             },
@@ -21456,7 +21003,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               ],
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Direction",
               description: "Message Direction"
             },
@@ -21477,7 +21023,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Id",
               description: "Id"
             },
@@ -21500,7 +21045,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Creation date",
               description: "Creation date"
             },
@@ -21523,7 +21067,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Last update",
               description: "Last time the record was changed"
             },
@@ -21546,7 +21089,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Deleted at",
               description: "Date when the record was deleted"
             },
@@ -21567,7 +21109,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Message Channel Id id (foreign key)",
               description: "Message Channel Id id foreign key"
             },
@@ -21635,7 +21176,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              relationDefinition: null,
               label: "Message Id id (foreign key)",
               description: "Message Id id foreign key"
             },

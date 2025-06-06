@@ -13,8 +13,8 @@ import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
-import { SeederModule } from 'src/engine/seeder/seeder.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
+import { SeederModule } from 'src/engine/workspace-manager/seed-dev/seeder.module';
 import { WorkspaceHealthModule } from 'src/engine/workspace-manager/workspace-health/workspace-health.module';
 import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.module';
 
