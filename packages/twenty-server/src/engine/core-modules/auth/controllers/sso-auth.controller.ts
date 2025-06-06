@@ -215,7 +215,7 @@ export class SSOAuthController {
       loginToken: await this.loginTokenService.generateLoginToken(
         user.email,
         workspace.id,
-        AuthProviderEnum.SSO
+        AuthProviderEnum.SSO,
       ),
     };
   }

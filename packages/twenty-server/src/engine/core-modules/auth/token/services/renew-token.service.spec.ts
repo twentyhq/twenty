@@ -77,6 +77,7 @@ describe('RenewTokenService', () => {
       jest.spyOn(refreshTokenService, 'verifyRefreshToken').mockResolvedValue({
         user: mockUser,
         token: mockAppToken as AppToken,
+        authProvider: undefined,
       });
       jest.spyOn(appTokenRepository, 'update').mockResolvedValue({} as any);
       jest

@@ -73,10 +73,10 @@ describe('WorkspaceAgnosticToken', () => {
       jest.spyOn(jwtWrapperService, 'sign').mockReturnValue(mockToken);
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(mockUser as User);
 
-      const result = await service.generateWorkspaceAgnosticToken(
+      const result = await service.generateWorkspaceAgnosticToken({
         userId,
-        AuthProviderEnum.Password,
-      );
+        authProvider: AuthProviderEnum.Password,
+      });
 
       expect(result).toEqual({
         token: mockToken,
@@ -115,10 +115,10 @@ describe('WorkspaceAgnosticToken', () => {
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
       await expect(
-        service.generateWorkspaceAgnosticToken(
+        service.generateWorkspaceAgnosticToken({
           userId,
-          AuthProviderEnum.Password,
-        ),
+          authProvider: AuthProviderEnum.Password,
+        }),
       ).rejects.toThrow(AuthException);
     });
   });
