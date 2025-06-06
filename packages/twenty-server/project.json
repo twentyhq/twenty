@@ -18,7 +18,7 @@
       "options": {
         "cwd": "packages/twenty-server",
         "commands": [
-          "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=8192 --expose-gc --optimize-for-size\" nx jest --config ./jest-integration.config.ts"
+          "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=8192\" nx jest --config ./jest-integration.config.ts"
         ]
       },
       "parallel": false,
@@ -26,7 +26,7 @@
         "with-db-reset": {
           "cwd": "packages/twenty-server",
           "commands": [
-            "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=8192 --expose-gc --optimize-for-size\" nx database:reset > reset-logs.log && NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=8192 --expose-gc --optimize-for-size\" nx jest --config ./jest-integration.config.ts"
+            "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=8192\" nx database:reset > reset-logs.log && NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=8192 --expose-gc --optimize-for-size\" nx jest --config ./jest-integration.config.ts"
           ]
         }
       }
