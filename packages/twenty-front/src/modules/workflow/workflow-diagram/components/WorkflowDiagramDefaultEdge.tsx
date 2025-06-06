@@ -35,6 +35,7 @@ const StyledContainer = styled.div<{
 
 export const WorkflowDiagramDefaultEdge = ({
   source,
+  target,
   sourceY,
   targetY,
   markerStart,
@@ -68,7 +69,7 @@ export const WorkflowDiagramDefaultEdge = ({
             ariaLabel="Insert a step"
             iconSize={theme.icon.size.sm}
             onClick={() => {
-              startNodeCreation(source);
+              startNodeCreation({ parentStepId: source, nextStepId: target });
             }}
           />
         </StyledContainer>
