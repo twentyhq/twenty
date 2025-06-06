@@ -35,7 +35,10 @@ export class MicrosoftAuthController {
     @Res() res: Response,
   ) {
     return res.redirect(
-      await this.authService.signInUpWithSocialSSO(req.user, AuthProviderEnum.Microsoft),
+      await this.authService.signInUpWithSocialSSO(
+        req.user,
+        AuthProviderEnum.Microsoft,
+      ),
     );
   }
 }
