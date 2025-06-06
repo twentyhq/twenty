@@ -69,7 +69,7 @@ export const sortFavorites = (
           const relationObject = favorite[relationField.name];
 
           const objectNameSingular =
-            relationField.relationDefinition?.targetObjectMetadata
+            relationField.relation?.targetObjectMetadata
               .nameSingular ?? '';
 
           const objectRecordIdentifier =

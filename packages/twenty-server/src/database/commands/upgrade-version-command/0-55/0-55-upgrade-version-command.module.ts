@@ -15,7 +15,14 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
 @Module({
   imports: [
     TypeOrmModule.forFeature(
-      [Workspace, AppToken, User, UserWorkspace, FieldMetadataEntity, ObjectMetadataEntity],
+      [
+        Workspace,
+        AppToken,
+        User,
+        UserWorkspace,
+        FieldMetadataEntity,
+        ObjectMetadataEntity,
+      ],
       'core',
     ),
     WorkspaceDataSourceModule,

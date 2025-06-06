@@ -41,36 +41,6 @@ export const getJoinColumn = (
     );
   }
 
-  // If we're in a ONE_TO_ONE relation and there are no join columns, we need to find the join column on the inverse side
-  if (
-    relationMetadataArgs.type === RelationType.ONE_TO_ONE &&
-    filteredJoinColumnsMetadataArgsCollection.length === 0 &&
-    !opposite
-  ) {
-    const inverseSideRelationMetadataArgsCollection =
-      metadataArgsStorage.filterRelations(inverseSideTarget);
-    const inverseSideRelationMetadataArgs =
-      inverseSideRelationMetadataArgsCollection.find(
-        (inverseSideRelationMetadataArgs) =>
-          inverseSideRelationMetadataArgs.inverseSideFieldKey ===
-          relationMetadataArgs.name,
-      );
-
-    if (!inverseSideRelationMetadataArgs) {
-      throw new RelationException(
-        `Inverse side join column of relation ${relationMetadataArgs.name} is missing`,
-        RelationExceptionCode.MISSING_RELATION_JOIN_COLUMN,
-      );
-    }
-
-    return getJoinColumn(
-      inverseSideJoinColumnsMetadataArgsCollection,
-      inverseSideRelationMetadataArgs,
-      // Avoid infinite recursion
-      true,
-    );
-  }
-
   // Check if there are multiple join columns for the relation
   if (filteredJoinColumnsMetadataArgsCollection.length > 1) {
     throw new RelationException(

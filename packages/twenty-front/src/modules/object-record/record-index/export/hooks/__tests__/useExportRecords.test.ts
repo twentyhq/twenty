@@ -3,7 +3,7 @@ import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefin
 
 import {
   FieldMetadataType,
-  RelationDefinitionType,
+  RelationType,
 } from '~/generated-metadata/graphql';
 import { displayedExportProgress, generateCsv } from '../useExportRecords';
 
@@ -23,7 +23,7 @@ describe('generateCsv', () => {
         label: 'Relation',
         metadata: {
           fieldName: 'relation',
-          relationType: RelationDefinitionType.MANY_TO_ONE,
+          relationType: RelationType.MANY_TO_ONE,
         },
       },
     ] as ColumnDefinition<FieldMetadata>[];
