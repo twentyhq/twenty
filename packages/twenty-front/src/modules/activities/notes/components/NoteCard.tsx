@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
+import { useActivityTargetsComponentInstanceId } from '@/activities/inline-cell/hooks/useActivityTargetsComponentInstanceId';
 import { Note } from '@/activities/types/Note';
 import { getActivityPreview } from '@/activities/utils/getActivityPreview';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
@@ -72,6 +73,11 @@ export const NoteCard = ({
 
   const body = getActivityPreview(note?.bodyV2?.blocknote ?? null);
 
+  const baseComponentInstanceId = `note-card-${note.id}-targets`;
+  const componentInstanceId = useActivityTargetsComponentInstanceId(
+    baseComponentInstanceId,
+  );
+
   return (
     <StyledCard isSingleNote={isSingleNote}>
       <StyledCardDetailsContainer
@@ -93,7 +99,7 @@ export const NoteCard = ({
           fieldPosition={0}
         >
           <ActivityTargetsInlineCell
-            componentInstanceId={`note-card-${note.id}-targets`}
+            componentInstanceId={componentInstanceId}
             activityRecordId={note.id}
             activityObjectNameSingular={CoreObjectNameSingular.Note}
           />

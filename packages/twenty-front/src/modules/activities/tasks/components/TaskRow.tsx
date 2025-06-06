@@ -6,6 +6,7 @@ import { getActivitySummary } from '@/activities/utils/getActivitySummary';
 import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
 import { ActivityRow } from '@/activities/components/ActivityRow';
+import { useActivityTargetsComponentInstanceId } from '@/activities/inline-cell/hooks/useActivityTargetsComponentInstanceId';
 import { Task } from '@/activities/types/Task';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -81,6 +82,11 @@ export const TaskRow = ({ task }: { task: Task }) => {
 
   const { completeTask } = useCompleteTask(task);
 
+  const baseComponentInstanceId = `task-row-targets-${task.id}`;
+  const componentInstanceId = useActivityTargetsComponentInstanceId(
+    baseComponentInstanceId,
+  );
+
   return (
     <ActivityRow
       onClick={() => {
@@ -131,7 +137,7 @@ export const TaskRow = ({ task }: { task: Task }) => {
                 activityRecordId={task.id}
                 showLabel={false}
                 maxWidth={200}
-                componentInstanceId={`task-row-targets-${task.id}`}
+                componentInstanceId={componentInstanceId}
               />
             </StopPropagationContainer>
           </FieldContextProvider>
