@@ -22995,15 +22995,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/better-sqlite3@npm:^7.6.8":
-  version: 7.6.11
-  resolution: "@types/better-sqlite3@npm:7.6.11"
-  dependencies:
-    "@types/node": "npm:*"
-  checksum: 10c0/6a7b8e5765f872404242ff9626edf4b4dd7974047144ba7254a59f4f1c196d05f8001323d0b526e8bbb3842bf541e341d74ca0164e50bd38fceaf3ef5d2a673d
-  languageName: node
-  linkType: hard
-
 "@types/body-parser@npm:*":
   version: 1.19.5
   resolution: "@types/body-parser@npm:1.19.5"
@@ -28909,17 +28900,6 @@ __metadata:
   dependencies:
     open: "npm:^8.0.4"
   checksum: 10c0/911ef25d44da75aabfd2444ce7a4294a8000ebcac73068c04a60298b0f7c7506b60421aa4cd02ac82502fb42baaff7e4892234b51e6923eded44c5a11185f2f5
-  languageName: node
-  linkType: hard
-
-"better-sqlite3@npm:^11.10.0":
-  version: 11.10.0
-  resolution: "better-sqlite3@npm:11.10.0"
-  dependencies:
-    bindings: "npm:^1.5.0"
-    node-gyp: "npm:latest"
-    prebuild-install: "npm:^7.1.1"
-  checksum: 10c0/1fffbf9e5fc9d24847a3ecf09491bceab1c294b46ba41df1c449dc20b6f5c5d9d94ff24becd0b1632ee282bd21278b7fea53a5a6215bb99209ded0ae05eda3b0
   languageName: node
   linkType: hard
 
@@ -56875,7 +56855,6 @@ __metadata:
     "@types/addressparser": "npm:^1.0.3"
     "@types/apollo-upload-client": "npm:^17.0.2"
     "@types/bcrypt": "npm:^5.0.0"
-    "@types/better-sqlite3": "npm:^7.6.8"
     "@types/bytes": "npm:^3.1.1"
     "@types/chrome": "npm:^0.0.267"
     "@types/deep-equal": "npm:^1.0.1"
@@ -56936,7 +56915,6 @@ __metadata:
     archiver: "npm:^7.0.1"
     axios: "npm:^1.6.2"
     bcrypt: "npm:^5.1.1"
-    better-sqlite3: "npm:^11.10.0"
     body-parser: "npm:^1.20.2"
     bullmq: "npm:^5.40.0"
     bytes: "npm:^3.1.2"
