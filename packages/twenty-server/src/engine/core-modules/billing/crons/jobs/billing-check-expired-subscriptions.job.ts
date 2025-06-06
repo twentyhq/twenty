@@ -40,7 +40,6 @@ export class CheckExpiredSubscriptionsJob {
       where: {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
       },
-      relations: ['billingSubscriptions'],
     });
 
     for (const workspace of workspaces) {
