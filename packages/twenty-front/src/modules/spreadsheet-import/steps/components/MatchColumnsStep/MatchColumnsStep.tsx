@@ -272,6 +272,13 @@ export const MatchColumnsStep = <T extends string>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const hasMatchedColumns = columns.some(
+    (column) =>
+      ![SpreadsheetColumnType.ignored, SpreadsheetColumnType.empty].includes(
+        column.type,
+      ),
+  );
+
   return (
     <>
       <StyledContent>
@@ -311,6 +318,7 @@ export const MatchColumnsStep = <T extends string>({
           onBack?.();
           setColumns([]);
         }}
+        isNextDisabled={!hasMatchedColumns}
       />
     </>
   );

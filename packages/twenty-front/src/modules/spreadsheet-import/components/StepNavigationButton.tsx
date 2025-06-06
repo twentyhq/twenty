@@ -19,6 +19,7 @@ type StepNavigationButtonProps = {
   title: string;
   isLoading?: boolean;
   onBack?: () => void;
+  isNextDisabled?: boolean;
 };
 
 export const StepNavigationButton = ({
@@ -26,6 +27,7 @@ export const StepNavigationButton = ({
   title,
   isLoading,
   onBack,
+  isNextDisabled = false,
 }: StepNavigationButtonProps) => {
   return (
     <StyledFooter>
@@ -42,6 +44,7 @@ export const StepNavigationButton = ({
         title={title}
         onClick={!isLoading ? onClick : undefined}
         variant="primary"
+        disabled={isNextDisabled}
       />
     </StyledFooter>
   );
