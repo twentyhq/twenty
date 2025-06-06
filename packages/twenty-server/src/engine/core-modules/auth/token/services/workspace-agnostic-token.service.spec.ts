@@ -114,7 +114,10 @@ describe('WorkspaceAgnosticToken', () => {
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
       await expect(
-        service.generateWorkspaceAgnosticToken(userId, AuthProviderEnum.Password),
+        service.generateWorkspaceAgnosticToken(
+          userId,
+          AuthProviderEnum.Password,
+        ),
       ).rejects.toThrow(AuthException);
     });
   });

@@ -2,9 +2,7 @@ import { APP_LOCALES } from 'twenty-shared/translations';
 
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import {
-  AuthProviderEnum,
-} from 'src/engine/core-modules/workspace/types/workspace.type';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export type SocialSSOSignInUpActionType =

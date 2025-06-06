@@ -670,7 +670,10 @@ describe('UserWorkspaceService', () => {
 
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(user);
       jest
-        .spyOn(approvedAccessDomainService, 'findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain')
+        .spyOn(
+          approvedAccessDomainService,
+          'findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain',
+        )
         .mockResolvedValue([]);
 
       const result = await service.findAvailableWorkspacesByEmail(email);
@@ -968,14 +971,13 @@ describe('UserWorkspaceService', () => {
         workspaceSSOIdentityProviders: [],
       } as unknown as Workspace;
 
-      jest
-        .spyOn(service, 'findAvailableWorkspacesByEmail')
-        .mockResolvedValue({
-          availableWorkspacesForSignIn: [workspace1],
-          availableWorkspacesForSignUp: [workspace2],
-        });
+      jest.spyOn(service, 'findAvailableWorkspacesByEmail').mockResolvedValue({
+        availableWorkspacesForSignIn: [workspace1],
+        availableWorkspacesForSignUp: [workspace2],
+      });
 
-      jest.spyOn(domainManagerService, 'getWorkspaceUrls')
+      jest
+        .spyOn(domainManagerService, 'getWorkspaceUrls')
         .mockReturnValueOnce({
           customUrl: 'https://crm.custom1.com',
           subdomainUrl: 'https://workspace1.twenty.com',

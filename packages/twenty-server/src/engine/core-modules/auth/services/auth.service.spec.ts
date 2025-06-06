@@ -14,7 +14,6 @@ import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-u
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { ExistingUserOrNewUser } from 'src/engine/core-modules/auth/types/signInUp.type';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -39,7 +38,6 @@ describe('AuthService', () => {
   let userRepository: Repository<User>;
   let authSsoService: AuthSsoService;
   let userWorkspaceService: UserWorkspaceService;
-  let domainManagerService: DomainManagerService;
   let workspaceInvitationService: WorkspaceInvitationService;
 
   beforeEach(async () => {
@@ -85,12 +83,6 @@ describe('AuthService', () => {
           provide: TwentyConfigService,
           useValue: {
             get: twentyConfigServiceGetMock,
-          },
-        },
-        {
-          provide: DomainManagerService,
-          useValue: {
-            getWorkspaceUrls: jest.fn(),
           },
         },
         {
@@ -143,8 +135,6 @@ describe('AuthService', () => {
     authSsoService = module.get<AuthSsoService>(AuthSsoService);
     userWorkspaceService =
       module.get<UserWorkspaceService>(UserWorkspaceService);
-    domainManagerService =
-      module.get<DomainManagerService>(DomainManagerService);
     workspaceRepository = module.get<Repository<Workspace>>(
       getRepositoryToken(Workspace, 'core'),
     );

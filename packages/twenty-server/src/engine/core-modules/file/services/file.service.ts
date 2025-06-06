@@ -11,8 +11,10 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { extractFilenameFromPath } from 'src/engine/core-modules/file/utils/extract-file-id-from-path.utils';
-import { FileTokenJwtPayload } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
+import {
+  FileTokenJwtPayload,
+  JwtTokenTypeEnum,
+} from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @Injectable()
 export class FileService {

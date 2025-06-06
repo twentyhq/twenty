@@ -266,7 +266,7 @@ export class AuthResolver {
         accessToken:
           await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
             user.id,
-            AuthProviderEnum.Password
+            AuthProviderEnum.Password,
           ),
         refreshToken: await this.refreshTokenService.generateRefreshToken({
           userId: user.id,

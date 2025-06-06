@@ -17,7 +17,10 @@ import { AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { RefreshTokenJwtPayload, JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
+import {
+  RefreshTokenJwtPayload,
+  JwtTokenTypeEnum,
+} from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @Injectable()
 export class RefreshTokenService {
@@ -33,7 +36,10 @@ export class RefreshTokenService {
   async verifyRefreshToken(refreshToken: string) {
     const coolDown = this.twentyConfigService.get('REFRESH_TOKEN_COOL_DOWN');
 
-    await this.jwtWrapperService.verifyJwtToken(refreshToken, JwtTokenTypeEnum.REFRESH);
+    await this.jwtWrapperService.verifyJwtToken(
+      refreshToken,
+      JwtTokenTypeEnum.REFRESH,
+    );
     const jwtPayload =
       this.jwtWrapperService.decode<RefreshTokenJwtPayload>(refreshToken);
 

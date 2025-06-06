@@ -713,7 +713,7 @@ export class AuthService {
             accessToken:
               await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
                 user.id,
-                authProvider
+                authProvider,
               ),
             refreshToken: await this.refreshTokenService.generateRefreshToken({
               userId: user.id,
