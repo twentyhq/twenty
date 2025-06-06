@@ -15,6 +15,7 @@ const DEFAULT_SERVERLESS_TIMEOUT_SECONDS = 300; // 5 minutes
 
 export enum ServerlessFunctionRuntime {
   NODE18 = 'nodejs18.x',
+  NODE22 = 'nodejs22.x',
 }
 
 @Entity('serverlessFunction')
@@ -38,7 +39,7 @@ export class ServerlessFunctionEntity {
   @Column({ nullable: true, type: 'jsonb' })
   latestVersionInputSchema: InputSchema;
 
-  @Column({ nullable: false, default: ServerlessFunctionRuntime.NODE18 })
+  @Column({ nullable: false, default: ServerlessFunctionRuntime.NODE22 })
   runtime: ServerlessFunctionRuntime;
 
   @Column({ nullable: false, default: DEFAULT_SERVERLESS_TIMEOUT_SECONDS })
