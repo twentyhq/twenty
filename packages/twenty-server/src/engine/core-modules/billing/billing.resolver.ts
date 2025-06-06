@@ -160,7 +160,14 @@ export class BillingResolver {
   async getMeteredProductsUsage(
     @AuthWorkspace() workspace: Workspace,
   ): Promise<BillingMeteredProductUsageOutput[]> {
-    return await this.billingUsageService.getMeteredProductsUsage(workspace);
+    const result =
+      await this.billingUsageService.getMeteredProductsUsage(workspace);
+
+    result.map((item) => {
+      console.log(typeof item.periodEnd);
+    });
+
+    return result;
   }
 
   private async validateCanCheckoutSessionPermissionOrThrow({

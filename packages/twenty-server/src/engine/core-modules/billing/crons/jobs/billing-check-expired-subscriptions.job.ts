@@ -6,6 +6,7 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -42,6 +43,10 @@ export class CheckExpiredSubscriptionsJob {
       },
     });
 
+    const workspacesCount = workspaces.length;
+
+    this.logger.log(`Found ${workspacesCount} active workspaces`);
+
     for (const workspace of workspaces) {
       const subscription = await this.billingSubscriptionRepository.findOne({
         where: {
@@ -60,8 +65,12 @@ export class CheckExpiredSubscriptionsJob {
           activationStatus: WorkspaceActivationStatus.SUSPENDED,
         });
 
+        await this.billingSubscriptionRepository.update(subscription.id, {
+          status: SubscriptionStatus.PastDue,
+        });
+
         this.logger.log(
-          `Suspended workspace ${workspace.id} due to expired Inter payment`,
+          `Suspended workspace ${workspace.id} due to expired subscription`,
         );
       }
     }
