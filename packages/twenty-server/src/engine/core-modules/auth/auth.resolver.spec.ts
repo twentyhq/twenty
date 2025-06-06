@@ -25,6 +25,7 @@ import { EmailVerificationTokenService } from './token/services/email-verificati
 import { LoginTokenService } from './token/services/login-token.service';
 import { RenewTokenService } from './token/services/renew-token.service';
 import { TransientTokenService } from './token/services/transient-token.service';
+import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 
 describe('AuthResolver', () => {
   let resolver: AuthResolver;
@@ -44,6 +45,10 @@ describe('AuthResolver', () => {
         },
         {
           provide: AuthService,
+          useValue: {},
+        },
+        {
+          provide: RefreshTokenService,
           useValue: {},
         },
         {
