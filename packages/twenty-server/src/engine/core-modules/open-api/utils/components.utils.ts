@@ -531,6 +531,7 @@ export const computeMetadataSchemaComponents = (
           return schemas;
         }
         case 'field': {
+          // TODO: Charles fix
           const baseFieldProperties = ({
             withImmutableFields,
             withRequiredFields,
@@ -609,50 +610,6 @@ export const computeMetadataSchemaComponents = (
               isSystem: { type: 'boolean' },
               createdAt: { type: 'string', format: 'date-time' },
               updatedAt: { type: 'string', format: 'date-time' },
-              fromRelationMetadata: {
-                type: 'object',
-                properties: {
-                  id: { type: 'string', format: 'uuid' },
-                  relationType: {
-                    type: 'string',
-                    enum: Object.keys(RelationMetadataType),
-                  },
-                  toObjectMetadata: {
-                    type: 'object',
-                    properties: {
-                      id: { type: 'string', format: 'uuid' },
-                      dataSourceId: { type: 'string', format: 'uuid' },
-                      nameSingular: { type: 'string' },
-                      namePlural: { type: 'string' },
-                      isSystem: { type: 'boolean' },
-                      isRemote: { type: 'boolean' },
-                    },
-                  },
-                  toFieldMetadataId: { type: 'string', format: 'uuid' },
-                },
-              },
-              toRelationMetadata: {
-                type: 'object',
-                properties: {
-                  id: { type: 'string', format: 'uuid' },
-                  relationType: {
-                    type: 'string',
-                    enum: Object.keys(RelationMetadataType),
-                  },
-                  fromObjectMetadata: {
-                    type: 'object',
-                    properties: {
-                      id: { type: 'string', format: 'uuid' },
-                      dataSourceId: { type: 'string', format: 'uuid' },
-                      nameSingular: { type: 'string' },
-                      namePlural: { type: 'string' },
-                      isSystem: { type: 'boolean' },
-                      isRemote: { type: 'boolean' },
-                    },
-                  },
-                  fromFieldMetadataId: { type: 'string', format: 'uuid' },
-                },
-              },
             },
           };
           schemas[`${capitalize(item.namePlural)} for Response`] = {
