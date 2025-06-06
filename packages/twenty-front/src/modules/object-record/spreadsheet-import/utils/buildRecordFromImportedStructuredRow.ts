@@ -274,10 +274,11 @@ export const buildRecordFromImportedStructuredRow = ({
         }
         break;
       }
+      case FieldMetadataType.UUID:
       case FieldMetadataType.RELATION:
         if (
           isDefined(importedFieldValue) &&
-          (isNonEmptyString(importedFieldValue) || importedFieldValue !== false)
+          isNonEmptyString(importedFieldValue)
         ) {
           recordToBuild[field.name + 'Id'] = importedFieldValue;
         }
