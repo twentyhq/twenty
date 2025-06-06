@@ -43,8 +43,7 @@ export const sanitizeRecordInput = ({
         if (
           isDefined(fieldMetadataItem) &&
           fieldMetadataItem.type === FieldMetadataType.RELATION &&
-          fieldMetadataItem.relation?.type ===
-            RelationType.MANY_TO_ONE
+          fieldMetadataItem.relation?.type === RelationType.MANY_TO_ONE
         ) {
           const relationIdFieldName = `${fieldMetadataItem.name}Id`;
           const relationIdFieldMetadataItem = objectMetadataItem.fields.find(
@@ -61,8 +60,7 @@ export const sanitizeRecordInput = ({
         if (
           isDefined(fieldMetadataItem) &&
           fieldMetadataItem.type === FieldMetadataType.RELATION &&
-          fieldMetadataItem.relation?.type ===
-            RelationType.ONE_TO_MANY
+          fieldMetadataItem.relation?.type === RelationType.ONE_TO_MANY
         ) {
           return undefined;
         }

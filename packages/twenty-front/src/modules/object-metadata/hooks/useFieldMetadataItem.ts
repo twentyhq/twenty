@@ -60,11 +60,6 @@ export const useFieldMetadataItem = () => {
       updatePayload: { isActive: false },
     });
 
-  const deleteOneRelationMetadataItem = async (fieldMetadataId: string) => {
-    // TODO: Charles fix
-    return deleteOneFieldMetadataItem(fieldMetadataId);
-  };
-
   const deleteMetadataField = (metadataField: FieldMetadataItem) => {
     return deleteOneFieldMetadataItem(metadataField.id);
   };

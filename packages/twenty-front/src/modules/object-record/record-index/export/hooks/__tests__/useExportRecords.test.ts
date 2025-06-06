@@ -1,10 +1,7 @@
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 
-import {
-  FieldMetadataType,
-  RelationType,
-} from '~/generated-metadata/graphql';
+import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 import { displayedExportProgress, generateCsv } from '../useExportRecords';
 
 jest.useFakeTimers();

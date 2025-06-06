@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';
 
 // This file is not designed to be manually edited.
@@ -5,7 +6,6 @@ import { ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';
 // TODO: automate the generation of this file
 // ⚠️ WARNING ⚠️: Be sure to activate the workflow feature flag (IsWorkflowEnabled) before updating that mock.
 
-/* eslint-disable */
 // prettier-ignore
 export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
 {
