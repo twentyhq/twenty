@@ -15,7 +15,7 @@ import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workf
     ServerlessFunctionModule,
     WorkflowRunnerModule,
     WorkflowRunModule,
-    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
+    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
   ],
   providers: [WorkflowVersionStepWorkspaceService],
   exports: [WorkflowVersionStepWorkspaceService],

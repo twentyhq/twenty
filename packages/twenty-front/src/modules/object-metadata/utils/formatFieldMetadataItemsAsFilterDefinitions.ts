@@ -8,7 +8,7 @@ export const getRelationObjectMetadataNameSingular = ({
 }: {
   field: ObjectMetadataItem['fields'][0];
 }): string | undefined => {
-  return field.relationDefinition?.targetObjectMetadata.nameSingular;
+  return field.relation?.targetObjectMetadata.nameSingular;
 };
 
 export const getFilterTypeFromFieldType = (

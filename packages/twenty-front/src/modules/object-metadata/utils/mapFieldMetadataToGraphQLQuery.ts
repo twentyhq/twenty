@@ -3,7 +3,7 @@ import { isUndefined } from '@sniptt/guards';
 import {
   FieldMetadataType,
   ObjectPermission,
-  RelationDefinitionType,
+  RelationType,
 } from '~/generated-metadata/graphql';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -18,13 +18,13 @@ type MapFieldMetadataToGraphQLQueryArgs = {
   gqlField: string;
   fieldMetadata: Pick<
     FieldMetadataItem,
-    'name' | 'type' | 'relationDefinition' | 'settings'
+    'name' | 'type' | 'relation' | 'settings'
   >;
   relationRecordGqlFields?: RecordGqlFields;
   computeReferences?: boolean;
   objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>;
 };
-// TODO: change ObjectMetadataItems mock before refactoring with relationDefinition computed field
+// TODO: change ObjectMetadataItems mock before refactoring with relation computed field
 export const mapFieldMetadataToGraphQLQuery = ({
   objectMetadataItems,
   gqlField,
@@ -39,7 +39,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
 
   const objectPermission = getObjectPermissionsForObject(
     objectPermissionsByObjectMetadataId,
-    fieldMetadata.relationDefinition?.targetObjectMetadata.id,
+    fieldMetadata.relation?.targetObjectMetadata.id,
   );
 
   if (fieldIsNonCompositeField) {
@@ -48,13 +48,12 @@ export const mapFieldMetadataToGraphQLQuery = ({
 
   if (
     fieldType === FieldMetadataType.RELATION &&
-    fieldMetadata.relationDefinition?.direction ===
-      RelationDefinitionType.MANY_TO_ONE
+    fieldMetadata.relation?.type === RelationType.MANY_TO_ONE
   ) {
     const relationMetadataItem = objectMetadataItems.find(
       (objectMetadataItem) =>
         objectMetadataItem.id ===
-        fieldMetadata.relationDefinition?.targetObjectMetadata.id,
+        fieldMetadata.relation?.targetObjectMetadata.id,
     );
 
     if (isUndefined(relationMetadataItem)) {
@@ -87,13 +86,12 @@ ${mapObjectMetadataToGraphQLQuery({
 
   if (
     fieldType === FieldMetadataType.RELATION &&
-    fieldMetadata.relationDefinition?.direction ===
-      RelationDefinitionType.ONE_TO_MANY
+    fieldMetadata.relation?.type === RelationType.ONE_TO_MANY
   ) {
     const relationMetadataItem = objectMetadataItems.find(
       (objectMetadataItem) =>
         objectMetadataItem.id ===
-        fieldMetadata.relationDefinition?.targetObjectMetadata.id,
+        fieldMetadata.relation?.targetObjectMetadata.id,
     );
 
     if (isUndefined(relationMetadataItem)) {

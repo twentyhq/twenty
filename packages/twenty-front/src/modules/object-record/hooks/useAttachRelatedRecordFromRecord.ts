@@ -30,7 +30,7 @@ export const useAttachRelatedRecordFromRecord = ({
   });
 
   const relatedRecordObjectNameSingular =
-    fieldOnObject?.relationDefinition?.targetObjectMetadata.nameSingular;
+    fieldOnObject?.relation?.targetObjectMetadata.nameSingular;
 
   if (!relatedRecordObjectNameSingular) {
     throw new Error(
@@ -43,7 +43,7 @@ export const useAttachRelatedRecordFromRecord = ({
     });
 
   const fieldOnRelatedObject =
-    fieldOnObject?.relationDefinition?.targetFieldMetadata.name;
+    fieldOnObject?.relation?.targetFieldMetadata.name;
 
   if (!fieldOnRelatedObject) {
     throw new Error(`Missing target field for ${fieldNameOnRecordObject}`);

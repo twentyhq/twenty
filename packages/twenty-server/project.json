@@ -150,7 +150,6 @@
       "options": {
         "cwd": "packages/twenty-server",
         "commands": [
-          "nx typeorm -- migration:run -d src/database/typeorm/metadata/metadata.datasource",
           "nx typeorm -- migration:run -d src/database/typeorm/core/core.datasource"
         ]
       }
@@ -161,7 +160,6 @@
       "options": {
         "cwd": "packages/twenty-server",
         "commands": [
-          "nx typeorm -- migration:revert -d src/database/typeorm/metadata/metadata.datasource",
           "nx typeorm -- migration:revert -d src/database/typeorm/core/core.datasource"
         ]
       }

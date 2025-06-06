@@ -16,7 +16,7 @@ import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/ser
     MessagingCommonModule,
     BillingModule,
     TypeOrmModule.forFeature([Workspace], 'core'),
-    TypeOrmModule.forFeature([DataSourceEntity], 'metadata'),
+    TypeOrmModule.forFeature([DataSourceEntity], 'core'),
   ],
   providers: [
     MessagingMessageChannelSyncStatusMonitoringCronCommand,

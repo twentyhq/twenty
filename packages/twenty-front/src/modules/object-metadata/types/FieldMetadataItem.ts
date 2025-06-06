@@ -1,12 +1,8 @@
+import { FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { FieldDateMetadataSettings } from '@/object-record/record-field/types/FieldMetadata';
 
 import { ThemeColor } from 'twenty-ui/theme';
-import {
-  Field,
-  Object as MetadataObject,
-  RelationDefinition,
-  RelationDefinitionType,
-} from '~/generated-metadata/graphql';
+import { Field } from '~/generated-metadata/graphql';
 
 export type FieldMetadataItemOption = {
   color: ThemeColor;
@@ -18,25 +14,12 @@ export type FieldMetadataItemOption = {
 
 export type FieldMetadataItem = Omit<
   Field,
-  '__typename' | 'defaultValue' | 'options' | 'relationDefinition'
+  '__typename' | 'defaultValue' | 'options' | 'relation'
 > & {
   __typename?: string;
   defaultValue?: any;
   options?: FieldMetadataItemOption[] | null;
-  relationDefinition?: {
-    relationId: RelationDefinition['relationId'];
-    direction: RelationDefinitionType;
-    sourceFieldMetadata: Pick<Field, 'id' | 'name'>;
-    sourceObjectMetadata: Pick<
-      MetadataObject,
-      'id' | 'nameSingular' | 'namePlural'
-    >;
-    targetFieldMetadata: Pick<Field, 'id' | 'name'>;
-    targetObjectMetadata: Pick<
-      MetadataObject,
-      'id' | 'nameSingular' | 'namePlural'
-    >;
-  } | null;
+  relation?: FieldMetadataItemRelation | null;
   settings?: FieldDateMetadataSettings;
   isLabelSyncedWithName?: boolean | null;
 };

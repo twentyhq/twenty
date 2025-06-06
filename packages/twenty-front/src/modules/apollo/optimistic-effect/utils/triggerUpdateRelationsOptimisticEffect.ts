@@ -9,9 +9,9 @@ import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConn
 import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { ApolloCache } from '@apollo/client';
 import { isArray } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { isDefined } from 'twenty-shared/utils';
 
 type triggerUpdateRelationsOptimisticEffectArgs = {
   cache: ApolloCache<unknown>;
@@ -48,14 +48,13 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         return;
       }
 
-      const relationDefinition =
-        fieldMetadataItemOnSourceRecord.relationDefinition;
+      const relation = fieldMetadataItemOnSourceRecord.relation;
 
-      if (!relationDefinition) {
+      if (!relation) {
         return;
       }
 
-      const { targetObjectMetadata, targetFieldMetadata } = relationDefinition;
+      const { targetObjectMetadata, targetFieldMetadata } = relation;
 
       const fullTargetObjectMetadataItem = objectMetadataItems.find(
         ({ nameSingular }) =>
@@ -94,7 +93,7 @@ export const triggerUpdateRelationsOptimisticEffect = ({
           return [];
         }
 
-        if (isObjectRecordConnection(relationDefinition, value)) {
+        if (isObjectRecordConnection(relation, value)) {
           return value.edges.map(({ node }) => node);
         }
 

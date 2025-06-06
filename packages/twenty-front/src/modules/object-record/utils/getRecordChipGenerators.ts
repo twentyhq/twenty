@@ -48,8 +48,8 @@ export const getRecordChipGenerators = (
 
           const currentObjectNameSingular = objectMetadataItem.nameSingular;
           const fieldObjectNameSingular =
-            fieldMetadataItem.relationDefinition?.targetObjectMetadata
-              .nameSingular ?? undefined;
+            fieldMetadataItem.relation?.targetObjectMetadata.nameSingular ??
+            undefined;
 
           const objectNameSingularToFind = isLabelIdentifier
             ? currentObjectNameSingular

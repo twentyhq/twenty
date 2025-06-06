@@ -6,7 +6,7 @@ import {
 } from 'typeorm';
 
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.type';
 
 export enum WorkspaceMigrationColumnActionType {
   CREATE = 'CREATE',

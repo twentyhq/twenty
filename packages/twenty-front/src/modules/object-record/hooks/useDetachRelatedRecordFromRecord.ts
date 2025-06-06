@@ -25,10 +25,10 @@ export const useDetachRelatedRecordFromRecord = ({
   });
 
   const relatedRecordObjectNameSingular =
-    fieldOnObject?.relationDefinition?.targetObjectMetadata.nameSingular;
+    fieldOnObject?.relation?.targetObjectMetadata.nameSingular;
 
   const fieldOnRelatedObject =
-    fieldOnObject?.relationDefinition?.targetFieldMetadata.name;
+    fieldOnObject?.relation?.targetFieldMetadata.name;
 
   if (!relatedRecordObjectNameSingular) {
     throw new Error(

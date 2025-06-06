@@ -8,7 +8,7 @@ import { WorkspaceMigrationEntity } from './workspace-migration.entity';
 import { WorkspaceMigrationService } from './workspace-migration.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([WorkspaceMigrationEntity], 'metadata')],
+  imports: [TypeOrmModule.forFeature([WorkspaceMigrationEntity], 'core')],
   providers: [
     ...workspaceColumnActionFactories,
     WorkspaceMigrationFactory,

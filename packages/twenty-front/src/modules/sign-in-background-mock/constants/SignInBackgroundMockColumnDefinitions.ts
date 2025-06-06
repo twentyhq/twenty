@@ -1,10 +1,7 @@
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
-import {
-  FieldMetadataType,
-  RelationDefinitionType,
-} from '~/generated-metadata/graphql';
+import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
   [
@@ -67,7 +64,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       type: FieldMetadataType.RELATION,
       metadata: {
         fieldName: 'favorites',
-        relationType: RelationDefinitionType.ONE_TO_MANY,
+        relationType: RelationType.ONE_TO_MANY,
         relationObjectMetadataNameSingular: '',
         relationObjectMetadataNamePlural: '',
         objectMetadataNameSingular: 'company',
@@ -101,7 +98,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       type: FieldMetadataType.RELATION,
       metadata: {
         fieldName: 'accountOwner',
-        relationType: RelationDefinitionType.MANY_TO_ONE,
+        relationType: RelationType.MANY_TO_ONE,
         relationObjectMetadataNameSingular: 'workspaceMember',
         relationObjectMetadataNamePlural: 'workspaceMembers',
         objectMetadataNameSingular: 'company',
@@ -118,7 +115,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       type: FieldMetadataType.RELATION,
       metadata: {
         fieldName: 'people',
-        relationType: RelationDefinitionType.ONE_TO_MANY,
+        relationType: RelationType.ONE_TO_MANY,
         relationObjectMetadataNameSingular: '',
         relationObjectMetadataNamePlural: '',
         objectMetadataNameSingular: 'company',
@@ -135,7 +132,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       type: FieldMetadataType.RELATION,
       metadata: {
         fieldName: 'attachments',
-        relationType: RelationDefinitionType.ONE_TO_MANY,
+        relationType: RelationType.ONE_TO_MANY,
         relationObjectMetadataNameSingular: '',
         relationObjectMetadataNamePlural: '',
         objectMetadataNameSingular: 'company',
@@ -203,7 +200,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       type: FieldMetadataType.RELATION,
       metadata: {
         fieldName: 'opportunities',
-        relationType: RelationDefinitionType.ONE_TO_MANY,
+        relationType: RelationType.ONE_TO_MANY,
         relationObjectMetadataNameSingular: '',
         relationObjectMetadataNamePlural: '',
         objectMetadataNameSingular: 'company',
@@ -237,7 +234,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       type: FieldMetadataType.RELATION,
       metadata: {
         fieldName: 'activityTargets',
-        relationType: RelationDefinitionType.ONE_TO_MANY,
+        relationType: RelationType.ONE_TO_MANY,
         relationObjectMetadataNameSingular: '',
         relationObjectMetadataNamePlural: '',
         objectMetadataNameSingular: 'company',

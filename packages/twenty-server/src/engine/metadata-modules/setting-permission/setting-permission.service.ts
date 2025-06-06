@@ -15,12 +15,12 @@ import { SettingPermissionEntity } from 'src/engine/metadata-modules/setting-per
 
 export class SettingPermissionService {
   constructor(
-    @InjectRepository(SettingPermissionEntity, 'metadata')
+    @InjectRepository(SettingPermissionEntity, 'core')
     private readonly settingPermissionRepository: Repository<SettingPermissionEntity>,
-    @InjectRepository(RoleEntity, 'metadata')
+    @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectDataSource('metadata')
-    private readonly metadataDataSource: DataSource,
+    @InjectDataSource('core')
+    private readonly coreDataSource: DataSource,
   ) {}
 
   public async upsertSettingPermissions({
@@ -46,7 +46,7 @@ export class SettingPermissionService {
       );
     }
 
-    const queryRunner = this.metadataDataSource.createQueryRunner();
+    const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();

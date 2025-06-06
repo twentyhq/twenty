@@ -23,6 +23,7 @@ export const fetchMetadataFields = (objectNamePlural: string) => {
           fromFieldMetadataId
         `;
 
+  // TODO: Charles fix
   const fields = `
           type
           name
@@ -35,16 +36,6 @@ export const fetchMetadataFields = (objectNamePlural: string) => {
           isNullable
           createdAt
           updatedAt
-          fromRelationMetadata {
-            id
-            relationType
-            ${fromRelations}
-          }
-          toRelationMetadata {
-            id
-            relationType
-            ${toRelations}
-          }
           defaultValue
           options
         `;

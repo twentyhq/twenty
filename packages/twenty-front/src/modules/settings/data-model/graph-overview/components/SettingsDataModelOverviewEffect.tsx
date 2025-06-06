@@ -43,25 +43,22 @@ export const SettingsDataModelOverviewEffect = ({
 
         for (const field of object.fields) {
           if (
-            isDefined(field.relationDefinition) &&
+            isDefined(field.relation) &&
             isDefined(
               items.find(
-                (x) =>
-                  x.id === field.relationDefinition?.targetObjectMetadata.id,
+                (x) => x.id === field.relation?.targetObjectMetadata.id,
               ),
             )
           ) {
-            const sourceObj =
-              field.relationDefinition?.sourceObjectMetadata.namePlural;
-            const targetObj =
-              field.relationDefinition?.targetObjectMetadata.namePlural;
+            const sourceObj = field.relation?.sourceObjectMetadata.namePlural;
+            const targetObj = field.relation?.targetObjectMetadata.namePlural;
 
             edges.push({
               id: `${sourceObj}-${targetObj}`,
               source: object.namePlural,
               sourceHandle: `${field.id}-right`,
-              target: field.relationDefinition.targetObjectMetadata.namePlural,
-              targetHandle: `${field.relationDefinition.targetObjectMetadata}-left`,
+              target: field.relation.targetObjectMetadata.namePlural,
+              targetHandle: `${field.relation.targetObjectMetadata}-left`,
               type: 'smoothstep',
               style: {
                 strokeWidth: 1,
@@ -71,8 +68,8 @@ export const SettingsDataModelOverviewEffect = ({
               markerStart: 'marker',
               data: {
                 sourceField: field.id,
-                targetField: field.relationDefinition.targetFieldMetadata.id,
-                relation: field.relationDefinition.direction,
+                targetField: field.relation.targetFieldMetadata.id,
+                relation: field.relation.type,
                 sourceObject: sourceObj,
                 targetObject: targetObj,
               },

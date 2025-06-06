@@ -10,8 +10,6 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/relation/field-metadata-relation.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { RelationMetadataService } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.service';
 
 export type RelationMetadataLoaderPayload = {
   workspaceId: string;
@@ -41,41 +39,18 @@ export type FieldMetadataLoaderPayload = {
 @Injectable()
 export class DataloaderService {
   constructor(
-    private readonly relationMetadataService: RelationMetadataService,
     private readonly fieldMetadataRelationService: FieldMetadataRelationService,
     private readonly fieldMetadataService: FieldMetadataService,
   ) {}
 
   createLoaders(): IDataloaders {
-    const relationMetadataLoader = this.createRelationMetadataLoader();
     const relationLoader = this.createRelationLoader();
     const fieldMetadataLoader = this.createFieldMetadataLoader();
 
     return {
-      relationMetadataLoader,
       relationLoader,
       fieldMetadataLoader,
     };
-  }
-
-  private createRelationMetadataLoader() {
-    return new DataLoader<
-      RelationMetadataLoaderPayload,
-      RelationMetadataEntity
-    >(async (dataLoaderParams: RelationMetadataLoaderPayload[]) => {
-      const workspaceId = dataLoaderParams[0].workspaceId;
-      const fieldMetadataItems = dataLoaderParams.map(
-        (dataLoaderParam) => dataLoaderParam.fieldMetadata,
-      );
-
-      const relationsMetadataCollection =
-        await this.relationMetadataService.findManyRelationMetadataByFieldMetadataIds(
-          fieldMetadataItems,
-          workspaceId,
-        );
-
-      return relationsMetadataCollection;
-    });
   }
 
   private createRelationLoader() {

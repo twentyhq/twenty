@@ -36,8 +36,8 @@ export const mockPerformance = {
         updatedAt: '2024-05-16T10:54:27.788Z',
         defaultValue: null,
         options: null,
-        relationDefinition: {
-          __typename: 'RelationDefinition',
+        relation: {
+          __typename: 'Relation',
           relationId: '0cf72416-3d94-4d94-abf3-7dc9d734435b',
           direction: 'MANY_TO_ONE',
           sourceObjectMetadata: {
@@ -80,7 +80,7 @@ export const mockPerformance = {
         updatedAt: '2024-05-16T10:54:27.788Z',
         defaultValue: "''",
         options: null,
-        relationDefinition: null,
+        relation: null,
       },
       {
         __typename: 'field',
@@ -98,7 +98,7 @@ export const mockPerformance = {
         updatedAt: '2024-05-16T10:54:27.788Z',
         defaultValue: "''",
         options: null,
-        relationDefinition: null,
+        relation: null,
       },
       {
         __typename: 'field',
@@ -116,8 +116,8 @@ export const mockPerformance = {
         updatedAt: '2024-05-16T10:54:27.788Z',
         defaultValue: null,
         options: null,
-        relationDefinition: {
-          __typename: 'RelationDefinition',
+        relation: {
+          __typename: 'Relation',
           relationId: 'd76f949d-023d-4b45-a71e-f39e3b1562ba',
           direction: 'ONE_TO_MANY',
           sourceObjectMetadata: {
@@ -160,8 +160,8 @@ export const mockPerformance = {
         updatedAt: '2024-05-16T10:54:27.788Z',
         defaultValue: null,
         options: null,
-        relationDefinition: {
-          __typename: 'RelationDefinition',
+        relation: {
+          __typename: 'Relation',
           relationId: 'a5a61d23-8ac9-4014-9441-ec3a1781a661',
           direction: 'ONE_TO_MANY',
           sourceObjectMetadata: {
@@ -204,8 +204,8 @@ export const mockPerformance = {
         updatedAt: '2024-05-16T10:54:27.788Z',
         defaultValue: null,
         options: null,
-        relationDefinition: {
-          __typename: 'RelationDefinition',
+        relation: {
+          __typename: 'Relation',
           relationId: '456f7875-b48c-4795-a0c7-a69d7339afee',
           direction: 'ONE_TO_MANY',
           sourceObjectMetadata: {
@@ -248,7 +248,7 @@ export const mockPerformance = {
         updatedAt: '2024-05-16T10:54:27.788Z',
         defaultValue: 'now',
         options: null,
-        relationDefinition: null,
+        relation: null,
       },
       {
         __typename: 'field',
@@ -266,8 +266,8 @@ export const mockPerformance = {
         updatedAt: '2024-05-16T10:54:27.788Z',
         defaultValue: null,
         options: null,
-        relationDefinition: {
-          __typename: 'RelationDefinition',
+        relation: {
+          __typename: 'Relation',
           relationId: '31542774-fb15-4d01-b00b-8fc94887f458',
           direction: 'ONE_TO_MANY',
           sourceObjectMetadata: {
@@ -313,7 +313,7 @@ export const mockPerformance = {
           primaryLinkLabel: "''",
         },
         options: null,
-        relationDefinition: null,
+        relation: null,
       },
       {
         __typename: 'field',
@@ -331,8 +331,8 @@ export const mockPerformance = {
         updatedAt: '2024-05-16T10:54:27.788Z',
         defaultValue: null,
         options: null,
-        relationDefinition: {
-          __typename: 'RelationDefinition',
+        relation: {
+          __typename: 'Relation',
           relationId: 'c0cc3456-afa4-46e0-820d-2db0b63a8273',
           direction: 'ONE_TO_MANY',
           sourceObjectMetadata: {
@@ -375,7 +375,7 @@ export const mockPerformance = {
         updatedAt: '2024-05-16T10:54:27.788Z',
         defaultValue: "''",
         options: null,
-        relationDefinition: null,
+        relation: null,
       },
       {
         __typename: 'field',
@@ -393,7 +393,7 @@ export const mockPerformance = {
         updatedAt: '2024-05-16T10:54:27.788Z',
         defaultValue: null,
         options: null,
-        relationDefinition: null,
+        relation: null,
       },
       {
         __typename: 'field',
@@ -411,7 +411,7 @@ export const mockPerformance = {
         updatedAt: '2024-05-16T10:54:27.788Z',
         defaultValue: "''",
         options: null,
-        relationDefinition: null,
+        relation: null,
       },
       {
         __typename: 'field',
@@ -429,7 +429,7 @@ export const mockPerformance = {
         updatedAt: '2024-05-16T10:54:27.788Z',
         defaultValue: "''",
         options: null,
-        relationDefinition: null,
+        relation: null,
       },
       {
         __typename: 'field',
@@ -447,7 +447,7 @@ export const mockPerformance = {
         updatedAt: '2024-05-16T10:54:27.788Z',
         defaultValue: 'now',
         options: null,
-        relationDefinition: null,
+        relation: null,
       },
       {
         __typename: 'field',
@@ -465,7 +465,7 @@ export const mockPerformance = {
         updatedAt: '2024-05-16T10:54:27.788Z',
         defaultValue: null,
         options: null,
-        relationDefinition: null,
+        relation: null,
       },
       {
         __typename: 'field',
@@ -483,8 +483,8 @@ export const mockPerformance = {
         updatedAt: '2024-05-16T10:54:27.788Z',
         defaultValue: null,
         options: null,
-        relationDefinition: {
-          __typename: 'RelationDefinition',
+        relation: {
+          __typename: 'Relation',
           relationId: '25150feb-fcd7-407e-b5fa-ffe58a0450ac',
           direction: 'ONE_TO_MANY',
           sourceObjectMetadata: {
@@ -530,7 +530,7 @@ export const mockPerformance = {
           firstName: "''",
         },
         options: null,
-        relationDefinition: null,
+        relation: null,
       },
       {
         __typename: 'field',
@@ -551,7 +551,7 @@ export const mockPerformance = {
           primaryLinkLabel: "''",
         },
         options: null,
-        relationDefinition: null,
+        relation: null,
       },
       {
         __typename: 'field',
@@ -569,8 +569,8 @@ export const mockPerformance = {
         updatedAt: '2024-05-16T10:54:27.788Z',
         defaultValue: null,
         options: null,
-        relationDefinition: {
-          __typename: 'RelationDefinition',
+        relation: {
+          __typename: 'Relation',
           relationId: 'e2eb7156-6e65-4bf8-922b-670179744f27',
           direction: 'ONE_TO_MANY',
           sourceObjectMetadata: {
@@ -613,7 +613,7 @@ export const mockPerformance = {
         updatedAt: '2024-05-16T10:54:27.788Z',
         defaultValue: 'uuid',
         options: null,
-        relationDefinition: null,
+        relation: null,
       },
     ],
   },

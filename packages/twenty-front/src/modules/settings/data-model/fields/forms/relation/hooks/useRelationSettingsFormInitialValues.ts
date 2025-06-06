@@ -6,13 +6,13 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { SettingsDataModelFieldPreviewCardProps } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 import { isDefined } from 'twenty-shared/utils';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { RelationType } from '~/generated-metadata/graphql';
 
 export const useRelationSettingsFormInitialValues = ({
   fieldMetadataItem,
   objectMetadataItem,
 }: {
-  fieldMetadataItem?: Pick<FieldMetadataItem, 'type' | 'relationDefinition'>;
+  fieldMetadataItem?: Pick<FieldMetadataItem, 'type' | 'relation'>;
   objectMetadataItem?: SettingsDataModelFieldPreviewCardProps['objectMetadataItem'];
 }) => {
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
@@ -49,7 +49,7 @@ export const useRelationSettingsFormInitialValues = ({
   ]);
 
   const initialRelationType =
-    relationTypeFromFieldMetadata ?? RelationDefinitionType.ONE_TO_MANY;
+    relationTypeFromFieldMetadata ?? RelationType.ONE_TO_MANY;
 
   return {
     disableFieldEdition:
@@ -57,10 +57,7 @@ export const useRelationSettingsFormInitialValues = ({
     disableRelationEdition: !!relationFieldMetadataItem,
     initialRelationFieldMetadataItem: relationFieldMetadataItem ?? {
       icon: initialRelationObjectMetadataItem.icon ?? 'IconUsers',
-      label: [
-        RelationDefinitionType.MANY_TO_MANY,
-        RelationDefinitionType.MANY_TO_ONE,
-      ].includes(initialRelationType)
+      label: [RelationType.MANY_TO_ONE].includes(initialRelationType)
         ? initialRelationObjectMetadataItem.labelPlural
         : initialRelationObjectMetadataItem.labelSingular,
     },

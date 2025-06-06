@@ -7,7 +7,6 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationBuilderModule } from 'src/engine/workspace-manager/workspace-migration-builder/workspace-migration-builder.module';
@@ -22,7 +21,6 @@ import { WorkspaceSyncFieldMetadataService } from 'src/engine/workspace-manager/
 import { WorkspaceSyncIndexMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-index-metadata.service';
 import { WorkspaceSyncObjectMetadataIdentifiersService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-object-metadata-identifiers.service';
 import { WorkspaceSyncObjectMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-object-metadata.service';
-import { WorkspaceSyncRelationMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-relation-metadata.service';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
 @Module({
@@ -31,13 +29,8 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
     WorkspaceMigrationBuilderModule,
     WorkspaceMigrationRunnerModule,
     TypeOrmModule.forFeature(
-      [
-        FieldMetadataEntity,
-        ObjectMetadataEntity,
-        RelationMetadataEntity,
-        WorkspaceMigrationEntity,
-      ],
-      'metadata',
+      [FieldMetadataEntity, ObjectMetadataEntity, WorkspaceMigrationEntity],
+      'core',
     ),
     DataSourceModule,
     TypeOrmModule.forFeature([Workspace, FeatureFlag], 'core'),
@@ -49,7 +42,6 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
     WorkspaceMetadataUpdaterService,
     WorkspaceSyncObjectMetadataService,
     WorkspaceSyncObjectMetadataIdentifiersService,
-    WorkspaceSyncRelationMetadataService,
     WorkspaceSyncFieldMetadataService,
     WorkspaceSyncFieldMetadataRelationService,
     WorkspaceSyncMetadataService,

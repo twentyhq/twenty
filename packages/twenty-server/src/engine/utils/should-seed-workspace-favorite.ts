@@ -1,11 +1,15 @@
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 export const shouldSeedWorkspaceFavorite = (
-  // @ts-expect-error legacy noImplicitAny
-  objectMetadataId,
-  // @ts-expect-error legacy noImplicitAny
-  objectMetadataMap,
+  objectMetadataId: string,
+  objectMetadataItems: ObjectMetadataEntity[],
 ): boolean =>
   objectMetadataId !==
-    objectMetadataMap[STANDARD_OBJECT_IDS.workflowVersion]?.id &&
-  objectMetadataId !== objectMetadataMap[STANDARD_OBJECT_IDS.workflowRun]?.id;
+    objectMetadataItems.find(
+      (item) => item.standardId === STANDARD_OBJECT_IDS.workflowVersion,
+    )?.id &&
+  objectMetadataId !==
+    objectMetadataItems.find(
+      (item) => item.standardId === STANDARD_OBJECT_IDS.workflowRun,
+    )?.id;

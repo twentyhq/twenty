@@ -15,7 +15,7 @@ import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constant
 import { t } from '@lingui/core/macro';
 import { saveAs } from 'file-saver';
 import { isDefined } from 'twenty-shared/utils';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { RelationType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from '~/generated/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -39,7 +39,7 @@ export const generateCsv: GenerateExport = ({
   const columnsToExport = columns.filter(
     (col) =>
       !('relationType' in col.metadata && col.metadata.relationType) ||
-      col.metadata.relationType === RelationDefinitionType.MANY_TO_ONE,
+      col.metadata.relationType === RelationType.MANY_TO_ONE,
   );
 
   const objectIdColumn: ColumnDefinition<FieldMetadata> = {

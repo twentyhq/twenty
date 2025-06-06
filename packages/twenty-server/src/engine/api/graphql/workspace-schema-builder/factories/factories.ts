@@ -11,7 +11,6 @@ import { ConnectionTypeDefinitionFactory } from './connection-type-definition.fa
 import { ConnectionTypeFactory } from './connection-type.factory';
 import { EdgeTypeDefinitionFactory } from './edge-type-definition.factory';
 import { EdgeTypeFactory } from './edge-type.factory';
-import { ExtendObjectTypeDefinitionFactory } from './extend-object-type-definition.factory';
 import { InputTypeDefinitionFactory } from './input-type-definition.factory';
 import { InputTypeFactory } from './input-type.factory';
 import { MutationTypeFactory } from './mutation-type.factory';
@@ -19,7 +18,6 @@ import { ObjectTypeDefinitionFactory } from './object-type-definition.factory';
 import { OrphanedTypesFactory } from './orphaned-types.factory';
 import { OutputTypeFactory } from './output-type.factory';
 import { QueryTypeFactory } from './query-type.factory';
-import { RelationTypeFactory } from './relation-type.factory';
 import { RootTypeFactory } from './root-type.factory';
 
 export const workspaceSchemaBuilderFactories = [
@@ -32,9 +30,7 @@ export const workspaceSchemaBuilderFactories = [
   CompositeObjectTypeDefinitionFactory,
   EnumTypeDefinitionFactory,
   CompositeEnumTypeDefinitionFactory,
-  RelationTypeFactory,
   RelationTypeV2Factory,
-  ExtendObjectTypeDefinitionFactory,
   ExtendObjectTypeDefinitionV2Factory,
   ConnectionTypeFactory,
   ConnectionTypeDefinitionFactory,

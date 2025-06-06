@@ -1,5 +1,4 @@
-import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-standard-id-to-id-map';
-
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
   TASK_STANDARD_FIELD_IDS,
@@ -7,12 +6,19 @@ import {
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 export const tasksAssignedToMeView = (
-  objectMetadataStandardIdToIdMap: ObjectMetadataStandardIdToIdMap,
+  objectMetadataItems: ObjectMetadataEntity[],
 ) => {
+  const taskObjectMetadata = objectMetadataItems.find(
+    (object) => object.standardId === STANDARD_OBJECT_IDS.task,
+  );
+
+  if (!taskObjectMetadata) {
+    throw new Error('Task object metadata not found');
+  }
+
   return {
     name: 'Assigned to Me',
-    objectMetadataId:
-      objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].id,
+    objectMetadataId: taskObjectMetadata.id,
     type: 'table',
     key: null,
     position: 2,
@@ -21,9 +27,9 @@ export const tasksAssignedToMeView = (
     filters: [
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[
-            TASK_STANDARD_FIELD_IDS.assignee
-          ],
+          taskObjectMetadata.fields.find(
+            (field) => field.standardId === TASK_STANDARD_FIELD_IDS.assignee,
+          )?.id ?? '',
         displayValue: 'Me',
         operand: 'is',
         value: JSON.stringify({
@@ -35,9 +41,9 @@ export const tasksAssignedToMeView = (
     fields: [
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[
-            TASK_STANDARD_FIELD_IDS.title
-          ],
+          taskObjectMetadata.fields.find(
+            (field) => field.standardId === TASK_STANDARD_FIELD_IDS.title,
+          )?.id ?? '',
         position: 0,
         isVisible: true,
         size: 210,
@@ -53,54 +59,55 @@ export const tasksAssignedToMeView = (
       },*/
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[
-            TASK_STANDARD_FIELD_IDS.taskTargets
-          ],
+          taskObjectMetadata.fields.find(
+            (field) => field.standardId === TASK_STANDARD_FIELD_IDS.taskTargets,
+          )?.id ?? '',
         position: 3,
         isVisible: true,
         size: 150,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[
-            TASK_STANDARD_FIELD_IDS.createdBy
-          ],
+          taskObjectMetadata.fields.find(
+            (field) => field.standardId === TASK_STANDARD_FIELD_IDS.createdBy,
+          )?.id ?? '',
         position: 4,
         isVisible: true,
         size: 150,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[
-            TASK_STANDARD_FIELD_IDS.dueAt
-          ],
+          taskObjectMetadata.fields.find(
+            (field) => field.standardId === TASK_STANDARD_FIELD_IDS.dueAt,
+          )?.id ?? '',
         position: 5,
         isVisible: true,
         size: 150,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[
-            TASK_STANDARD_FIELD_IDS.assignee
-          ],
+          taskObjectMetadata.fields.find(
+            (field) => field.standardId === TASK_STANDARD_FIELD_IDS.assignee,
+          )?.id ?? '',
         position: 6,
         isVisible: true,
         size: 150,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[
-            TASK_STANDARD_FIELD_IDS.body
-          ],
+          taskObjectMetadata.fields.find(
+            (field) => field.standardId === TASK_STANDARD_FIELD_IDS.body,
+          )?.id ?? '',
         position: 7,
         isVisible: true,
         size: 150,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[
-            BASE_OBJECT_STANDARD_FIELD_IDS.createdAt
-          ],
+          taskObjectMetadata.fields.find(
+            (field) =>
+              field.standardId === BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
+          )?.id ?? '',
         position: 8,
         isVisible: true,
         size: 150,
@@ -109,36 +116,36 @@ export const tasksAssignedToMeView = (
     groups: [
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[
-            TASK_STANDARD_FIELD_IDS.status
-          ],
+          taskObjectMetadata.fields.find(
+            (field) => field.standardId === TASK_STANDARD_FIELD_IDS.status,
+          )?.id ?? '',
         isVisible: true,
         fieldValue: 'TODO',
         position: 0,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[
-            TASK_STANDARD_FIELD_IDS.status
-          ],
+          taskObjectMetadata.fields.find(
+            (field) => field.standardId === TASK_STANDARD_FIELD_IDS.status,
+          )?.id ?? '',
         isVisible: true,
         fieldValue: 'IN_PROGRESS',
         position: 1,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[
-            TASK_STANDARD_FIELD_IDS.status
-          ],
+          taskObjectMetadata.fields.find(
+            (field) => field.standardId === TASK_STANDARD_FIELD_IDS.status,
+          )?.id ?? '',
         isVisible: true,
         fieldValue: 'DONE',
         position: 2,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.task].fields[
-            TASK_STANDARD_FIELD_IDS.status
-          ],
+          taskObjectMetadata.fields.find(
+            (field) => field.standardId === TASK_STANDARD_FIELD_IDS.status,
+          )?.id ?? '',
         isVisible: true,
         fieldValue: '',
         position: 3,

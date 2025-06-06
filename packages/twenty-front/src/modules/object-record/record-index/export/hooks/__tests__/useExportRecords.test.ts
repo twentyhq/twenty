@@ -1,10 +1,7 @@
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 
-import {
-  FieldMetadataType,
-  RelationDefinitionType,
-} from '~/generated-metadata/graphql';
+import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 import { displayedExportProgress, generateCsv } from '../useExportRecords';
 
 jest.useFakeTimers();
@@ -23,7 +20,7 @@ describe('generateCsv', () => {
         label: 'Relation',
         metadata: {
           fieldName: 'relation',
-          relationType: RelationDefinitionType.MANY_TO_ONE,
+          relationType: RelationType.MANY_TO_ONE,
         },
       },
     ] as ColumnDefinition<FieldMetadata>[];

@@ -16,7 +16,7 @@ import { WorkspacePermissionsCacheService } from './workspace-permissions-cache.
     TypeOrmModule.forFeature([Workspace], 'core'),
     TypeOrmModule.forFeature(
       [ObjectMetadataEntity, RoleEntity, UserWorkspaceRoleEntity],
-      'metadata',
+      'core',
     ),
     WorkspaceCacheStorageModule,
     FeatureFlagModule,

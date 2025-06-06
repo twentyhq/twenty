@@ -11,8 +11,6 @@ const mockObjectMetadata: ObjectMetadataInterface = {
   description: 'Test object metadata',
   targetTableName: 'test_table',
   workspaceId: '1',
-  fromRelations: [],
-  toRelations: [],
   fields: [],
   indexMetadatas: [],
   isSystem: false,

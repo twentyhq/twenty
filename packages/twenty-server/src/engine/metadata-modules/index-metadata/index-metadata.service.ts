@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import isEmpty from 'lodash.isempty';
-import { Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
@@ -25,7 +25,7 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 @Injectable()
 export class IndexMetadataService {
   constructor(
-    @InjectRepository(IndexMetadataEntity, 'metadata')
+    @InjectRepository(IndexMetadataEntity, 'core')
     private readonly indexMetadataRepository: Repository<IndexMetadataEntity>,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
   ) {}

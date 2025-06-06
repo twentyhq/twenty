@@ -17,8 +17,8 @@ import {
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import {
   FieldMetadataType,
-  RelationDefinition,
-  RelationDefinitionType,
+  Relation,
+  RelationType,
 } from '~/generated-metadata/graphql';
 type SettingsDataModelFieldRelationSettingsFormCardProps = {
   fieldMetadataItem: Pick<FieldMetadataItem, 'icon' | 'label' | 'type'> &
@@ -78,13 +78,16 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
 
   if (!relationObjectMetadataItem) return null;
 
-  const relationType = watchFormValue('relation.type', initialRelationType);
+  const relationType: RelationType = watchFormValue(
+    'relation.type',
+    initialRelationType,
+  );
   const relationTypeConfig = RELATION_TYPES[relationType];
 
   const oppositeRelationType =
-    relationType === RelationDefinitionType.MANY_TO_ONE
-      ? RelationDefinitionType.ONE_TO_MANY
-      : RelationDefinitionType.MANY_TO_ONE;
+    relationType === RelationType.MANY_TO_ONE
+      ? RelationType.ONE_TO_MANY
+      : RelationType.MANY_TO_ONE;
 
   return (
     <SettingsDataModelPreviewFormCard
@@ -93,16 +96,15 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
           <StyledFieldPreviewCard
             fieldMetadataItem={{
               ...fieldMetadataItem,
-              relationDefinition: {
-                direction: relationType,
-              } as RelationDefinition,
+              relation: {
+                type: relationType,
+              } as Relation,
             }}
             shrink
             objectMetadataItem={objectMetadataItem}
             relationObjectMetadataItem={relationObjectMetadataItem}
             pluralizeLabel={
-              watchFormValue('relation.type') ===
-              RelationDefinitionType.MANY_TO_ONE
+              watchFormValue('relation.type') === RelationType.MANY_TO_ONE
             }
           />
           <StyledRelationImage
@@ -124,16 +126,15 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
                   initialRelationFieldMetadataItem.label,
                 ) || 'Field name',
               type: FieldMetadataType.RELATION,
-              relationDefinition: {
-                direction: oppositeRelationType,
-              } as RelationDefinition,
+              relation: {
+                type: oppositeRelationType,
+              } as Relation,
             }}
             shrink
             objectMetadataItem={relationObjectMetadataItem}
             relationObjectMetadataItem={objectMetadataItem}
             pluralizeLabel={
-              watchFormValue('relation.type') !==
-              RelationDefinitionType.MANY_TO_ONE
+              watchFormValue('relation.type') !== RelationType.MANY_TO_ONE
             }
           />
         </StyledPreviewContent>

@@ -6,7 +6,6 @@ import { ComputedPartialWorkspaceEntity } from 'src/engine/workspace-manager/wor
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 export class WorkspaceSyncStorage {
   // Object metadata
@@ -41,14 +40,6 @@ export class WorkspaceSyncStorage {
     id: string;
   })[] = [];
   private readonly _fieldRelationMetadataDeleteCollection: FieldMetadataEntity<FieldMetadataType.RELATION>[] =
-    [];
-
-  // Relation metadata
-  private readonly _relationMetadataCreateCollection: Partial<RelationMetadataEntity>[] =
-    [];
-  private readonly _relationMetadataUpdateCollection: Partial<RelationMetadataEntity>[] =
-    [];
-  private readonly _relationMetadataDeleteCollection: RelationMetadataEntity[] =
     [];
 
   // Index metadata
@@ -94,18 +85,6 @@ export class WorkspaceSyncStorage {
 
   get fieldRelationMetadataDeleteCollection() {
     return this._fieldRelationMetadataDeleteCollection;
-  }
-
-  get relationMetadataCreateCollection() {
-    return this._relationMetadataCreateCollection;
-  }
-
-  get relationMetadataUpdateCollection() {
-    return this._relationMetadataUpdateCollection;
-  }
-
-  get relationMetadataDeleteCollection() {
-    return this._relationMetadataDeleteCollection;
   }
 
   get indexMetadataCreateCollection() {
@@ -166,18 +145,6 @@ export class WorkspaceSyncStorage {
     field: FieldMetadataEntity<FieldMetadataType.RELATION>,
   ) {
     this._fieldRelationMetadataDeleteCollection.push(field);
-  }
-
-  addCreateRelationMetadata(relation: Partial<RelationMetadataEntity>) {
-    this._relationMetadataCreateCollection.push(relation);
-  }
-
-  addUpdateRelationMetadata(relation: Partial<RelationMetadataEntity>) {
-    this._relationMetadataUpdateCollection.push(relation);
-  }
-
-  addDeleteRelationMetadata(relation: RelationMetadataEntity) {
-    this._relationMetadataDeleteCollection.push(relation);
   }
 
   addCreateIndexMetadata(index: Partial<IndexMetadataEntity>) {

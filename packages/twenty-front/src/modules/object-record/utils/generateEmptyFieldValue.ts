@@ -1,13 +1,10 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
-import {
-  FieldMetadataType,
-  RelationDefinitionType,
-} from '~/generated-metadata/graphql';
+import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 export type GenerateEmptyFieldValueArgs = {
-  fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'relationDefinition'>;
+  fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'relation'>;
 };
 // TODO strictly type each fieldValue following their FieldMetadataType
 export const generateEmptyFieldValue = ({
@@ -60,10 +57,7 @@ export const generateEmptyFieldValue = ({
       return true;
     }
     case FieldMetadataType.RELATION: {
-      if (
-        fieldMetadataItem.relationDefinition?.direction ===
-        RelationDefinitionType.MANY_TO_ONE
-      ) {
+      if (fieldMetadataItem.relation?.type === RelationType.MANY_TO_ONE) {
         return null;
       }
 

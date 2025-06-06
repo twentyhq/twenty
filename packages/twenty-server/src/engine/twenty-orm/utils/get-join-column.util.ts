@@ -11,7 +11,6 @@ import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args
 export const getJoinColumn = (
   joinColumnsMetadataArgsCollection: WorkspaceJoinColumnsMetadataArgs[],
   relationMetadataArgs: WorkspaceRelationMetadataArgs,
-  opposite = false,
 ): string | null => {
   if (relationMetadataArgs.type === RelationType.ONE_TO_MANY) {
     return null;
@@ -38,36 +37,6 @@ export const getJoinColumn = (
     throw new RelationException(
       `Join column for ${relationMetadataArgs.name} relation is present on both sides`,
       RelationExceptionCode.RELATION_JOIN_COLUMN_ON_BOTH_SIDES,
-    );
-  }
-
-  // If we're in a ONE_TO_ONE relation and there are no join columns, we need to find the join column on the inverse side
-  if (
-    relationMetadataArgs.type === RelationType.ONE_TO_ONE &&
-    filteredJoinColumnsMetadataArgsCollection.length === 0 &&
-    !opposite
-  ) {
-    const inverseSideRelationMetadataArgsCollection =
-      metadataArgsStorage.filterRelations(inverseSideTarget);
-    const inverseSideRelationMetadataArgs =
-      inverseSideRelationMetadataArgsCollection.find(
-        (inverseSideRelationMetadataArgs) =>
-          inverseSideRelationMetadataArgs.inverseSideFieldKey ===
-          relationMetadataArgs.name,
-      );
-
-    if (!inverseSideRelationMetadataArgs) {
-      throw new RelationException(
-        `Inverse side join column of relation ${relationMetadataArgs.name} is missing`,
-        RelationExceptionCode.MISSING_RELATION_JOIN_COLUMN,
-      );
-    }
-
-    return getJoinColumn(
-      inverseSideJoinColumnsMetadataArgsCollection,
-      inverseSideRelationMetadataArgs,
-      // Avoid infinite recursion
-      true,
     );
   }
 

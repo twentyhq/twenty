@@ -87,11 +87,12 @@ export const fieldRelationMock = {
   id: 'fieldRelationId',
   name: 'fieldRelation',
   type: FieldMetadataType.RELATION,
-  fromRelationMetadata: {
-    toObjectMetadata: {
-      nameSingular: 'toObjectMetadataName',
-    },
-  },
+  // TODO: Charles fix
+  // fromRelationMetadata: {
+  //   toObjectMetadata: {
+  //     nameSingular: 'toObjectMetadataName',
+  //   },
+  // },
   isNullable: true,
   defaultValue: null,
 };

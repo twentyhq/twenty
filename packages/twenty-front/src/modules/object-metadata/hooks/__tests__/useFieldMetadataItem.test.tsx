@@ -3,7 +3,7 @@ import { act } from 'react';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { FieldMetadataType, RelationDefinitionType } from '~/generated/graphql';
+import { FieldMetadataType, RelationType } from '~/generated/graphql';
 
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import {
@@ -11,7 +11,6 @@ import {
   FIELD_RELATION_METADATA_ID,
   objectMetadataId,
   queries,
-  RELATION_METADATA_ID,
   responseData,
   variables,
 } from '../__mocks__/useFieldMetadataItem';
@@ -49,9 +48,8 @@ const fieldRelationMetadataItem: FieldMetadataItem = {
   type: FieldMetadataType.RELATION,
   updatedAt: '',
   isLabelSyncedWithName: true,
-  relationDefinition: {
-    relationId: RELATION_METADATA_ID,
-    direction: RelationDefinitionType.ONE_TO_MANY,
+  relation: {
+    type: RelationType.ONE_TO_MANY,
     sourceFieldMetadata: {
       id: 'e5903d91-9b10-4f3e-b761-35c36e93b7c1',
       name: 'sourceField',

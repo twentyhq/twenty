@@ -26,7 +26,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     ),
     TypeOrmModule.forFeature(
       [FieldMetadataEntity, ObjectMetadataEntity],
-      'metadata',
+      'core',
     ),
     WorkspaceDataSourceModule,
     WorkspaceMigrationRunnerModule,

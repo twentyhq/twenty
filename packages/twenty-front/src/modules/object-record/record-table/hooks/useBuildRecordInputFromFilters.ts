@@ -35,7 +35,7 @@ export const useBuildRecordInputFromFilters = ({
         const value = buildValueFromFilter({
           filter,
           options: fieldMetadataItem.options ?? undefined,
-          relationType: fieldMetadataItem.relationDefinition?.direction,
+          relationType: fieldMetadataItem.relation?.type,
           currentWorkspaceMember: currentWorkspaceMember ?? undefined,
           label: filter.label,
         });

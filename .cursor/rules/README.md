@@ -52,7 +52,7 @@ npx nx run twenty-server:test              # Run unit tests
 npx nx run twenty-server:test:integration:with-db-reset # Run integration tests
 
 # Migrations
-npx nx run twenty-server:typeorm migration:generate src/database/typeorm/metadata/migrations/[name] -d src/database/typeorm/metadata/metadata.datasource.ts
+npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/[name] -d src/database/typeorm/core/core.datasource.ts
 
 # Workspace
 npx nx run twenty-server:command workspace:sync-metadata -f  # Sync metadata

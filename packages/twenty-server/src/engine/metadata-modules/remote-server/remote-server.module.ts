@@ -13,7 +13,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 @Module({
   imports: [
     JwtModule,
-    TypeOrmModule.forFeature([RemoteServerEntity], 'metadata'),
+    TypeOrmModule.forFeature([RemoteServerEntity], 'core'),
     RemoteTableModule,
     WorkspaceDataSourceModule,
     TypeOrmModule.forFeature([FeatureFlag], 'core'),

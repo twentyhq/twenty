@@ -18,13 +18,13 @@ import { ServerlessFunctionExecutionResultDTO } from 'src/engine/metadata-module
 import { ServerlessFunctionIdInput } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-id.input';
 import { ServerlessFunctionDTO } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function.dto';
 import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
+import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { serverlessFunctionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-graphql-api-exception-handler.utils';
-import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 @UseGuards(WorkspaceAuthGuard)
 @Resolver()
@@ -33,7 +33,7 @@ export class ServerlessFunctionResolver {
     private readonly serverlessFunctionService: ServerlessFunctionService,
     @InjectRepository(FeatureFlag, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlag>,
-    @InjectRepository(ServerlessFunctionEntity, 'metadata')
+    @InjectRepository(ServerlessFunctionEntity, 'core')
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
   ) {}
 

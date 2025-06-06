@@ -28,7 +28,7 @@ export class WorkflowCreateOnePostQueryHook
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly recordPositionService: RecordPositionService,
   ) {}

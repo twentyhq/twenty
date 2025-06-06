@@ -67,10 +67,14 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
             options
             settings
             isLabelSyncedWithName
-            relationDefinition {
-              relationId
-              direction
+            relation {
+              type
               sourceObjectMetadata {
+                id
+                nameSingular
+                namePlural
+              }
+              targetObjectMetadata {
                 id
                 nameSingular
                 namePlural
@@ -78,11 +82,6 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
               sourceFieldMetadata {
                 id
                 name
-              }
-              targetObjectMetadata {
-                id
-                nameSingular
-                namePlural
               }
               targetFieldMetadata {
                 id

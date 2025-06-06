@@ -25,7 +25,7 @@ export const variables = {
       fromLabel: 'label',
       fromName: 'name',
       fromObjectMetadataId: 'objectMetadataId',
-      relationType: 'ONE_TO_ONE',
+      relationType: 'MANY_TO_ONE',
       toDescription: null,
       toIcon: undefined,
       toLabel: 'Another label',
@@ -37,7 +37,7 @@ export const variables = {
 
 export const responseData = {
   id: '',
-  relationType: 'ONE_TO_ONE',
+  relationType: 'MANY_TO_ONE',
   fromObjectMetadataId: 'objectMetadataId',
   toObjectMetadataId: 'objectMetadataId1',
   fromFieldMetadataId: '',

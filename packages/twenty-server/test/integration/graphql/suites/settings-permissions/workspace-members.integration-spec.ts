@@ -5,9 +5,9 @@ import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graph
 import { restoreOneOperationFactory } from 'test/integration/graphql/utils/restore-one-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 
-import { DEV_SEED_WORKSPACE_MEMBER_IDS } from 'src/database/typeorm-seeds/workspace/workspace-members';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const WORKSPACE_MEMBER_GQL_FIELDS = `
     id
@@ -22,7 +22,7 @@ describe('workspace members permissions', () => {
       const graphqlOperation = updateOneOperationFactory({
         objectMetadataSingularName: 'workspaceMember',
         gqlFields: WORKSPACE_MEMBER_GQL_FIELDS,
-        recordId: DEV_SEED_WORKSPACE_MEMBER_IDS.JONY,
+        recordId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
         data: {
           name: {
             firstName: 'Jony',
@@ -35,7 +35,7 @@ describe('workspace members permissions', () => {
 
       expect(response.body.data).toStrictEqual({
         updateWorkspaceMember: {
-          id: DEV_SEED_WORKSPACE_MEMBER_IDS.JONY,
+          id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
           name: {
             firstName: 'Jony',
           },
@@ -47,7 +47,7 @@ describe('workspace members permissions', () => {
       const graphqlOperation = updateOneOperationFactory({
         objectMetadataSingularName: 'workspaceMember',
         gqlFields: WORKSPACE_MEMBER_GQL_FIELDS,
-        recordId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        recordId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
         data: {
           name: {
             firstName: 'Not Tim',
@@ -73,7 +73,7 @@ describe('workspace members permissions', () => {
       const restoreOperation = restoreOneOperationFactory({
         objectMetadataSingularName: 'workspaceMember',
         gqlFields: WORKSPACE_MEMBER_GQL_FIELDS,
-        recordId: DEV_SEED_WORKSPACE_MEMBER_IDS.JONY,
+        recordId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       });
 
       await makeGraphqlAPIRequest(restoreOperation);
@@ -82,7 +82,7 @@ describe('workspace members permissions', () => {
       const deleteOperation = deleteOneOperationFactory({
         objectMetadataSingularName: 'workspaceMember',
         gqlFields: WORKSPACE_MEMBER_GQL_FIELDS,
-        recordId: DEV_SEED_WORKSPACE_MEMBER_IDS.JONY,
+        recordId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       });
 
       const deleteResponse =
@@ -90,7 +90,7 @@ describe('workspace members permissions', () => {
 
       expect(deleteResponse.body.data).toStrictEqual({
         deleteWorkspaceMember: {
-          id: DEV_SEED_WORKSPACE_MEMBER_IDS.JONY,
+          id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
           name: {
             firstName: 'Jony',
           },
@@ -103,7 +103,7 @@ describe('workspace members permissions', () => {
       const graphqlOperation = deleteOneOperationFactory({
         objectMetadataSingularName: 'workspaceMember',
         gqlFields: WORKSPACE_MEMBER_GQL_FIELDS,
-        recordId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        recordId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
       });
 
       const response =
@@ -123,7 +123,7 @@ describe('workspace members permissions', () => {
       const restoreOperation = restoreOneOperationFactory({
         objectMetadataSingularName: 'workspaceMember',
         gqlFields: WORKSPACE_MEMBER_GQL_FIELDS,
-        recordId: DEV_SEED_WORKSPACE_MEMBER_IDS.JONY,
+        recordId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       });
 
       const response =
@@ -131,7 +131,7 @@ describe('workspace members permissions', () => {
 
       expect(response.body.data).toStrictEqual({
         restoreWorkspaceMember: {
-          id: DEV_SEED_WORKSPACE_MEMBER_IDS.JONY,
+          id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
           name: {
             firstName: 'Jony',
           },
@@ -144,7 +144,7 @@ describe('workspace members permissions', () => {
       const restoreOperation = restoreOneOperationFactory({
         objectMetadataSingularName: 'workspaceMember',
         gqlFields: WORKSPACE_MEMBER_GQL_FIELDS,
-        recordId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        recordId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
       });
 
       const response =

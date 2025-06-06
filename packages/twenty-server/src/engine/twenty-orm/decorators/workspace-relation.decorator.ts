@@ -24,7 +24,7 @@ interface WorkspaceRelationBaseOptions<TClass> {
 
 interface WorkspaceOtherRelationOptions<TClass>
   extends WorkspaceRelationBaseOptions<TClass> {
-  type: RelationType.ONE_TO_MANY | RelationType.ONE_TO_ONE;
+  type: RelationType.ONE_TO_MANY;
 }
 
 interface WorkspaceManyToOneRelationOptions<TClass extends object>

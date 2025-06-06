@@ -22,7 +22,7 @@ export class FixStandardSelectFieldsPositionCommand extends ActiveOrSuspendedWor
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectRepository(FieldMetadataEntity, 'metadata')
+    @InjectRepository(FieldMetadataEntity, 'core')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
   ) {

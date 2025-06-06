@@ -22,7 +22,7 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { RelationType } from '~/generated-metadata/graphql';
 
 const RelationWorkspaceSetterEffect = () => {
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
@@ -49,7 +49,7 @@ const RelationManyFieldInputWithContext = () => {
       iconName: 'IconLink',
       metadata: {
         fieldName: 'people',
-        relationType: RelationDefinitionType.ONE_TO_MANY,
+        relationType: RelationType.ONE_TO_MANY,
         relationObjectMetadataNamePlural: 'companies',
         relationObjectMetadataNameSingular: CoreObjectNameSingular.Company,
         objectMetadataNameSingular: 'company',

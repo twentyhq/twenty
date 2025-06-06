@@ -22,7 +22,7 @@ const isNameAvailable = async (
   // TO DO workspaceDataSource.query method is not allowed, this will throw
   const numberOfTablesWithSameName = +(
     await workspaceDataSource.query(
-      `SELECT count(table_name) FROM information_schema.tables WHERE table_name LIKE '${tableName}' AND table_schema IN ('core', 'metadata', '${workspaceSchemaName}')`,
+      `SELECT count(table_name) FROM information_schema.tables WHERE table_name LIKE '${tableName}' AND table_schema IN ('core', '${workspaceSchemaName}')`,
     )
   )[0].count;
 
