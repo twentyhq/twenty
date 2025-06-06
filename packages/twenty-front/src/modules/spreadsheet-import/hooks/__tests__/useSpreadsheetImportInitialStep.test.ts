@@ -12,7 +12,7 @@ describe('useSpreadsheetImportInitialStep', () => {
       return { initialStep, setStep };
     });
 
-    expect(result.current.initialStep).toBe(-1);
+    expect(result.current.initialStep).toBe(0);
 
     act(() => {
       result.current.setStep(SpreadsheetImportStepType.upload);

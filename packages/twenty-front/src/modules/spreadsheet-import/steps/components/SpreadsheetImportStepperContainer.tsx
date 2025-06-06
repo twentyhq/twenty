@@ -8,16 +8,15 @@ import { useStepBar } from '@/ui/navigation/step-bar/hooks/useStepBar';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useLingui } from '@lingui/react/macro';
-import { SpreadsheetImportStepper } from './SpreadsheetImportStepper';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { SpreadsheetImportStepper } from './SpreadsheetImportStepper';
 
 const StyledHeader = styled(Modal.Header)`
   background-color: ${({ theme }) => theme.background.secondary};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
+  padding: 0px ${({ theme }) => theme.spacing(30)};
   height: 60px;
-  padding: 0px;
-  padding-left: ${({ theme }) => theme.spacing(30)};
-  padding-right: ${({ theme }) => theme.spacing(30)};
+  flex-shrink: 0;
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     padding-left: ${({ theme }) => theme.spacing(4)};
     padding-right: ${({ theme }) => theme.spacing(4)};
@@ -28,9 +27,9 @@ export const SpreadsheetImportStepperContainer = () => {
   const { t } = useLingui();
 
   const stepTitles = {
-    uploadStep: t`Upload file`,
-    matchColumnsStep: t`Match columns`,
-    validationStep: t`Validate data`,
+    uploadStep: t`Upload File`,
+    matchColumnsStep: t`Match Columns`,
+    validationStep: t`Validate Data`,
   };
 
   const { initialStepState } = useSpreadsheetImportInternal();

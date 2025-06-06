@@ -1,10 +1,10 @@
-import React from 'react';
 import styled from '@emotion/styled';
+import React from 'react';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-import { Step, StepProps } from './Step';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { Step, StepProps } from './Step';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -48,8 +48,8 @@ export const StepBar = ({ activeStep, children }: StepBarProps) => {
 
         return React.cloneElement<StepProps>(child as any, {
           index,
-          isActive: index <= activeStep,
           isLast: index === React.Children.count(children) - 1,
+          activeStep,
         });
       })}
     </StyledContainer>

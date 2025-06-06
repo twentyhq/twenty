@@ -1,14 +1,17 @@
 import styled from '@emotion/styled';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { CircularProgressBar } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const StyledFooter = styled(Modal.Footer)`
+  border-top: 1px solid ${({ theme }) => theme.border.color.medium};
+  box-shadow: ${({ theme }) => theme.boxShadow.strong};
   gap: ${({ theme }) => theme.spacing(2.5)};
   justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(6)} ${({ theme }) => theme.spacing(8)};
+  padding: ${({ theme }) => theme.spacing(4)};
+  height: auto;
 `;
 
 type StepNavigationButtonProps = {
@@ -16,6 +19,7 @@ type StepNavigationButtonProps = {
   title: string;
   isLoading?: boolean;
   onBack?: () => void;
+  isNextDisabled?: boolean;
 };
 
 export const StepNavigationButton = ({
@@ -23,6 +27,7 @@ export const StepNavigationButton = ({
   title,
   isLoading,
   onBack,
+  isNextDisabled = false,
 }: StepNavigationButtonProps) => {
   return (
     <StyledFooter>
@@ -39,6 +44,7 @@ export const StepNavigationButton = ({
         title={title}
         onClick={!isLoading ? onClick : undefined}
         variant="primary"
+        disabled={isNextDisabled}
       />
     </StyledFooter>
   );

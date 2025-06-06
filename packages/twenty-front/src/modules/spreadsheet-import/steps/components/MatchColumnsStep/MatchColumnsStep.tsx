@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Heading } from '@/spreadsheet-import/components/Heading';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { ImportedRow, ImportedStructuredRow } from '@/spreadsheet-import/types';
@@ -17,7 +16,10 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 
 import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';
+import { ColumnGrid } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/ColumnGrid';
+import { TemplateColumn } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/TemplateColumn';
 import { UnmatchColumn } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumn';
+import { UserTableColumn } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn';
 import { initialComputedColumnsSelector } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/states/initialComputedColumnsState';
 import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
@@ -29,14 +31,10 @@ import { getMatchedColumnsWithFuse } from '@/spreadsheet-import/utils/getMatched
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
-import { ColumnGrid } from './components/ColumnGrid';
-import { TemplateColumn } from './components/TemplateColumn';
-import { UserTableColumn } from './components/UserTableColumn';
 
 const StyledContent = styled(Modal.Content)`
   align-items: center;
-  padding-left: ${({ theme }) => theme.spacing(6)};
-  padding-right: ${({ theme }) => theme.spacing(6)};
+  padding: 0px;
 `;
 
 const StyledColumnsContainer = styled.div`
@@ -274,14 +272,17 @@ export const MatchColumnsStep = <T extends string>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const hasMatchedColumns = columns.some(
+    (column) =>
+      ![SpreadsheetColumnType.ignored, SpreadsheetColumnType.empty].includes(
+        column.type,
+      ),
+  );
+
   return (
     <>
-      <ScrollWrapper componentInstanceId="scroll-wrapper-modal-content">
-        <StyledContent>
-          <Heading
-            title={t`Match Columns`}
-            description={t`⚠️ Please verify the auto mapping of the columns. You can also ignore or change the mapping of the columns.`}
-          />
+      <StyledContent>
+        <ScrollWrapper componentInstanceId="scroll-wrapper-modal-content">
           <ColumnGrid
             columns={columns}
             renderUserColumn={(columns, columnIndex) => (
@@ -307,8 +308,8 @@ export const MatchColumnsStep = <T extends string>({
               />
             )}
           />
-        </StyledContent>
-      </ScrollWrapper>
+        </ScrollWrapper>
+      </StyledContent>
       <StepNavigationButton
         onClick={handleOnContinue}
         isLoading={isLoading}
@@ -317,6 +318,7 @@ export const MatchColumnsStep = <T extends string>({
           onBack?.();
           setColumns([]);
         }}
+        isNextDisabled={!hasMatchedColumns}
       />
     </>
   );

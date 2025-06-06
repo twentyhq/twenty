@@ -28,18 +28,17 @@ const StyledDataGrid = styled(DataGrid)`
   --row-selected-hover-background-color: ${({ theme }) =>
     theme.background.secondary};
 
+  border: none;
   block-size: 100%;
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
   width: 100%;
 
   .rdg-header-row .rdg-cell {
     box-shadow: none;
     color: ${({ theme }) => theme.font.color.tertiary};
+    background-color: ${({ theme }) => theme.background.secondary};
     font-size: ${({ theme }) => theme.font.size.sm};
     font-weight: ${({ theme }) => theme.font.weight.semiBold};
     letter-spacing: wider;
-    text-transform: uppercase;
     ${({ headerRowHeight }) => {
       if (headerRowHeight === 0) {
         return `
@@ -67,8 +66,9 @@ const StyledDataGrid = styled(DataGrid)`
     outline: none;
   }
 
+  /* TODODO: check with tcf exact color */
   .rdg-cell-error {
-    background-color: ${({ theme }) => RGBA(theme.color.red, 0.08)};
+    background-color: ${({ theme }) => RGBA(theme.color.yellow, 0.08)};
   }
 
   .rdg-cell-warning {
@@ -134,7 +134,7 @@ export const SpreadsheetImportTable = <Data,>({
   return (
     <StyledDataGrid
       direction={rtl ? 'rtl' : 'ltr'}
-      rowHeight={52}
+      rowHeight={40}
       {...{
         className: `${className || ''} ${themeClassName}`,
         columns,
