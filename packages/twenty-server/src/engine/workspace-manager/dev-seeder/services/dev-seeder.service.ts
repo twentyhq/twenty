@@ -36,8 +36,6 @@ export class DevSeederService {
       throw new Error('Could not connect to workspace data source');
     }
 
-    await this.workspaceCacheStorageService.flush(workspaceId, undefined);
-
     const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
     const appVersion = this.twentyConfigService.get('APP_VERSION');
 
@@ -79,5 +77,7 @@ export class DevSeederService {
       schemaName: dataSourceMetadata.schema,
       workspaceId,
     });
+
+    await this.workspaceCacheStorageService.flush(workspaceId, undefined);
   }
 }

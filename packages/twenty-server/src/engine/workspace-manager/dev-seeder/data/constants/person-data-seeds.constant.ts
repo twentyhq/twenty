@@ -1,4 +1,5 @@
 /* eslint-disable */
+// @ts-nocheck
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 type PersonDataSeed = {
