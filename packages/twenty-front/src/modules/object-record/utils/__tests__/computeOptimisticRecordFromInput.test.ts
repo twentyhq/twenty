@@ -24,6 +24,7 @@ describe('computeOptimisticRecordFromInput', () => {
         city: 'Paris',
       },
       cache,
+      objectPermissionsByObjectMetadataId: {},
     });
 
     expect(result).toEqual({
@@ -47,6 +48,7 @@ describe('computeOptimisticRecordFromInput', () => {
         createdBy: actorFieldValueForInput,
       },
       cache,
+      objectPermissionsByObjectMetadataId: {},
     });
 
     expect(result).toEqual({
@@ -75,6 +77,7 @@ describe('computeOptimisticRecordFromInput', () => {
         } satisfies FieldActorForInputValue,
       },
       cache,
+      objectPermissionsByObjectMetadataId: {},
     });
 
     expect(result).toEqual({
@@ -100,6 +103,7 @@ describe('computeOptimisticRecordFromInput', () => {
         companyId: '123',
       },
       cache,
+      objectPermissionsByObjectMetadataId: {},
     });
 
     expect(result).toEqual({
@@ -133,6 +137,7 @@ describe('computeOptimisticRecordFromInput', () => {
       cache,
       record: companyRecord,
       recordGqlFields,
+      objectPermissionsByObjectMetadataId: {},
     });
 
     const result = computeOptimisticRecordFromInput({
@@ -144,6 +149,7 @@ describe('computeOptimisticRecordFromInput', () => {
         __typename: 'test',
       },
       cache,
+      objectPermissionsByObjectMetadataId: {},
     });
 
     expect(result).toStrictEqual({
@@ -178,6 +184,7 @@ describe('computeOptimisticRecordFromInput', () => {
       cache,
       record: companyRecord,
       recordGqlFields,
+      objectPermissionsByObjectMetadataId: {},
     });
 
     const result = computeOptimisticRecordFromInput({
@@ -188,6 +195,7 @@ describe('computeOptimisticRecordFromInput', () => {
         companyId: '123',
       },
       cache,
+      objectPermissionsByObjectMetadataId: {},
     });
 
     expect(result).toEqual({
@@ -208,6 +216,7 @@ describe('computeOptimisticRecordFromInput', () => {
         companyId: null,
       },
       cache,
+      objectPermissionsByObjectMetadataId: {},
     });
 
     expect(result).toEqual({
@@ -232,6 +241,7 @@ describe('computeOptimisticRecordFromInput', () => {
           city: 'Paris',
         },
         cache,
+        objectPermissionsByObjectMetadataId: {},
       }),
     ).toThrowErrorMatchingInlineSnapshot(
       `"Should never occur, encountered unknown fields unknwon, foo, bar in objectMetadataItem person"`,
@@ -252,6 +262,7 @@ describe('computeOptimisticRecordFromInput', () => {
           company: {},
         },
         cache,
+        objectPermissionsByObjectMetadataId: {},
       }),
     ).toThrowErrorMatchingInlineSnapshot(
       `"Should never provide relation mutation through anything else than the fieldId e.g companyId and not company, encountered: company"`,
@@ -272,6 +283,7 @@ describe('computeOptimisticRecordFromInput', () => {
           company: null,
         },
         cache,
+        objectPermissionsByObjectMetadataId: {},
       }),
     ).toThrowErrorMatchingInlineSnapshot(
       `"Should never provide relation mutation through anything else than the fieldId e.g companyId and not company, encountered: company"`,

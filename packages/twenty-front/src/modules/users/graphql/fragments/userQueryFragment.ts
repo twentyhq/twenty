@@ -1,3 +1,4 @@
+import { OBJECT_PERMISSION_FRAGMENT } from '@/settings/roles/graphql/fragments/objectPermissionFragment';
 import { ROLE_FRAGMENT } from '@/settings/roles/graphql/fragments/roleFragment';
 import { DELETED_WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/deletedWorkspaceMemberQueryFragment';
 import { WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/workspaceMemberQueryFragment';
@@ -6,6 +7,7 @@ import { AVAILABLE_WORKSPACES_FOR_AUTH_FRAGMENT } from '@/auth/graphql/fragments
 
 export const USER_QUERY_FRAGMENT = gql`
   ${ROLE_FRAGMENT}
+  ${OBJECT_PERMISSION_FRAGMENT}
   fragment UserQueryFragment on User {
     id
     firstName
@@ -27,6 +29,9 @@ export const USER_QUERY_FRAGMENT = gql`
     currentUserWorkspace {
       settingsPermissions
       objectRecordsPermissions
+      objectPermissions {
+        ...ObjectPermissionFragment
+      }
     }
     currentWorkspace {
       id
@@ -56,9 +61,11 @@ export const USER_QUERY_FRAGMENT = gql`
         id
         status
         interval
+        metadata
         billingSubscriptionItems {
           id
           hasReachedCurrentPeriodCap
+          quantity
           billingProduct {
             name
             description
@@ -73,6 +80,7 @@ export const USER_QUERY_FRAGMENT = gql`
       billingSubscriptions {
         id
         status
+        metadata
       }
       workspaceMembersCount
       defaultRole {

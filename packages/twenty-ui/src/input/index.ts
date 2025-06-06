@@ -65,6 +65,7 @@ export { LightIconButtonGroup } from './button/components/LightIconButtonGroup';
 export type { MainButtonVariant } from './button/components/MainButton';
 export { MainButton } from './button/components/MainButton';
 export { RoundedIconButton } from './button/components/RoundedIconButton';
+export { TabButton } from './button/components/TabButton';
 export { CodeEditor } from './code-editor/components/CodeEditor';
 export type { CoreEditorHeaderProps } from './code-editor/components/CodeEditorHeader';
 export { CoreEditorHeader } from './code-editor/components/CodeEditorHeader';

@@ -1,10 +1,10 @@
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
-import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
@@ -23,8 +23,6 @@ export const RecordTableRecordGroupSectionAddNew = () => {
     recordGroupDefinitionFamilyState(currentRecordGroupId),
   );
 
-  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
-
   const { createNewIndexRecord } = useCreateNewIndexRecord({
     objectMetadataItem,
   });
@@ -33,7 +31,13 @@ export const RecordTableRecordGroupSectionAddNew = () => {
     (field) => field.id === recordGroup?.fieldMetadataId,
   );
 
-  if (hasObjectReadOnlyPermission) {
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
+
+  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
+
+  if (!hasObjectUpdatePermissions) {
     return null;
   }
 

@@ -92,6 +92,7 @@ const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
       return (
         <RecordIndexContextProvider
           value={{
+            objectPermissionsByObjectMetadataId: {},
             indexIdentifierUrl: () => '',
             onIndexRecordsLoaded: () => {},
             objectNamePlural: 'companies',
