@@ -60,7 +60,6 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
     },
   });
 
-  // Helper functions
   const addEmptyOperationIfNecessary = (
     newOperations: WebhookOperationType[],
   ): WebhookOperationType[] => {
@@ -83,7 +82,6 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
     );
   };
 
-  // Load existing webhook data for edit mode
   const { loading } = useFindOneRecord({
     skip: isCreationMode,
     objectNameSingular: CoreObjectNameSingular.Webhook,
@@ -235,6 +233,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
       enqueueSnackBar('Webhook deleted successfully', {
         variant: SnackBarVariant.Success,
       });
+
       navigate(SettingsPath.Webhooks);
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
