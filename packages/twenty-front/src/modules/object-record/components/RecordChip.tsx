@@ -3,9 +3,10 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
+import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { MouseEvent } from 'react';
+import { MouseEvent, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
   AvatarChip,
@@ -49,6 +50,7 @@ export const RecordChip = ({
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
+  const { handleActivateRecordTableRow } = useContext(RecordTableCellContext);
 
   const isSidePanelViewOpenRecordInType =
     recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL;
@@ -59,6 +61,7 @@ export const RecordChip = ({
           recordId: record.id,
           objectNameSingular,
         });
+        handleActivateRecordTableRow?.();
       }
     : undefined;
 
