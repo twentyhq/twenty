@@ -34,19 +34,19 @@ export const RecordTableCellPortalWrapper = ({
     visibleTableColumnsComponentSelector,
   );
 
-  const recordId = allRecordIds.at(position.row);
-  if (!isDefined(anchorElement) || !isDefined(recordId)) {
-    return null;
-  }
   const { recordTableId } = useRecordTableContextOrThrow();
   const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
 
   const { activateRecordTableRow } = useActiveRecordTableRow(recordTableId);
-
+  const recordId = allRecordIds.at(position.row);
   const handleActivateRecordTableRow = () => {
     activateRecordTableRow(position.row);
     unfocusRecordTableRow();
   };
+  if (!isDefined(anchorElement) || !isDefined(recordId)) {
+    return null;
+  }
+
   return ReactDOM.createPortal(
     <RecordTableRowContextProvider
       value={{
