@@ -79,7 +79,9 @@ describe('permissionsOnRelations', () => {
       const response = await makeGraphqlAPIRequestWithJony(graphqlOperation);
 
       // The query should fail when trying to access company relation without permission
+      // eslint-disable-next-line no-console
       console.log(response.body.errors);
+      // eslint-disable-next-line no-console
       console.log(response.body.data);
       expect(response.body.errors).toBe('remove me');
       expect(response.body.errors[0].message).toBe(
