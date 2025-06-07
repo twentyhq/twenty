@@ -217,7 +217,9 @@ export class WorkspaceEntityManager extends EntityManager {
     } else {
       options = conflictPathsOrOptions;
     }
-    let entities;
+    let entities:
+      | QueryDeepPartialEntity<Entity>
+      | QueryDeepPartialEntity<Entity>[];
 
     if (!Array.isArray(entityOrEntities)) {
       entities = [entityOrEntities];
