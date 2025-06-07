@@ -3,6 +3,7 @@ import request from 'supertest';
 import { deleteOneRoleOperationFactory } from 'test/integration/graphql/utils/delete-one-role-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
+import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
 import { createOneObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata-query-factory.util';
 import { deleteOneObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata-query-factory.util';
 
@@ -99,27 +100,11 @@ describe('Granular settings permissions', () => {
       .send(upsertSettingPermissionsQuery);
 
     // Assign the custom role to JONY (who uses MEMBER_ACCESS_TOKEN)
-    const updateMemberRoleQuery = {
-      query: `
-        mutation UpdateWorkspaceMemberRole {
-          updateWorkspaceMemberRole(
-            workspaceMemberId: "${DEV_SEED_WORKSPACE_MEMBER_IDS.JONY}"
-            roleId: "${customRoleId}"
-          ) {
-            id
-            roles {
-              id
-              label
-            }
-          }
-        }
-      `,
-    };
-
-    await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
-      .send(updateMemberRoleQuery);
+    await updateWorkspaceMemberRole({
+      client,
+      roleId: customRoleId,
+      workspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.JONY,
+    });
   });
 
   afterAll(async () => {
