@@ -123,7 +123,7 @@ export const DropdownInternalContainer = ({
       }
     },
     hotkeyScope?.scope,
-    [closeDropdown, isDropdownOpen, onClickOutside],
+    [closeDropdown, isDropdownOpen],
   );
 
   const dropdownMenuStyles = {
