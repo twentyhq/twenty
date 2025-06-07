@@ -563,6 +563,14 @@ export class WorkspaceEntityManager extends EntityManager {
       .getMany();
   }
 
+  override findByIds<Entity extends ObjectLiteral>(
+    _entityClass: EntityTarget<Entity>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    _ids: any[],
+  ): Promise<Entity[]> {
+    throw new Error('Method is deprecated.');
+  }
+
   override findOne<Entity extends ObjectLiteral>(
     entityClass: EntityTarget<Entity>,
     options: FindOneOptions<Entity>,
@@ -614,6 +622,13 @@ export class WorkspaceEntityManager extends EntityManager {
         take: 1,
       })
       .getOne();
+  }
+
+  override findOneById<Entity extends ObjectLiteral>(
+    _entityClass: EntityTarget<Entity>,
+    _id: number | string | Date | ObjectId,
+  ): Promise<Entity | null> {
+    throw new Error('Method is deprecated.');
   }
 
   override findAndCount<Entity extends ObjectLiteral>(
