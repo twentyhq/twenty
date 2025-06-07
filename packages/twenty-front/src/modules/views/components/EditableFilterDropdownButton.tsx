@@ -30,7 +30,7 @@ export const EditableFilterDropdownButton = ({
     removeRecordFilter({ recordFilterId: recordFilter.id });
   };
 
-  const handleDropdownClickOutside = useCallback(() => {
+  const onFilterDropdownClose = useCallback(() => {
     const recordFilterIsEmpty = isRecordFilterConsideredEmpty(recordFilter);
 
     if (recordFilterIsEmpty) {
@@ -62,7 +62,7 @@ export const EditableFilterDropdownButton = ({
         dropdownHotkeyScope={hotkeyScope}
         dropdownOffset={{ y: 8, x: 0 }}
         dropdownPlacement="bottom-start"
-        onClickOutside={handleDropdownClickOutside}
+        onClose={onFilterDropdownClose}
       />
     </>
   );
