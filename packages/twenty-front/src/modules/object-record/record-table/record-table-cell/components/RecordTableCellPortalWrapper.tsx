@@ -2,7 +2,10 @@ import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
+import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
@@ -35,7 +38,15 @@ export const RecordTableCellPortalWrapper = ({
   if (!isDefined(anchorElement) || !isDefined(recordId)) {
     return null;
   }
+  const { recordTableId } = useRecordTableContextOrThrow();
+  const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
 
+  const { activateRecordTableRow } = useActiveRecordTableRow(recordTableId);
+
+  const handleActivateRecordTableRow = () => {
+    activateRecordTableRow(position.row);
+    unfocusRecordTableRow();
+  };
   return ReactDOM.createPortal(
     <RecordTableRowContextProvider
       value={{
@@ -54,6 +65,7 @@ export const RecordTableCellPortalWrapper = ({
         value={{
           columnDefinition: visibleTableColumns[position.column],
           cellPosition: position,
+          handleActivateRecordTableRow: handleActivateRecordTableRow,
         }}
       >
         <RecordTableCellFieldContextWrapper>
