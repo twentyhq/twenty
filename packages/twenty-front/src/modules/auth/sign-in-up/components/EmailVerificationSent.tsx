@@ -112,11 +112,17 @@ export const EmailVerificationSent = ({
     useHandleResendEmailVerificationToken();
 
   const handleOpenGmail = () => {
-    window.open('https://mail.google.com/', '_blank');
+    const gmailUrl = email
+      ? `https://mail.google.com/mail/u/${email}/`
+      : 'https://mail.google.com/';
+    window.open(gmailUrl, '_blank');
   };
 
   const handleOpenOutlook = () => {
-    window.open('https://outlook.live.com/', '_blank');
+    const outlookUrl = email
+      ? `https://outlook.live.com/mail/${email}/`
+      : 'https://outlook.live.com/';
+    window.open(outlookUrl, '_blank');
   };
 
   const handleChangeEmail = () => {
