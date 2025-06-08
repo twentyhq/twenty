@@ -27,13 +27,13 @@
   },
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.js"
     }
   },
   "engines": {
-    "node": "^18.17.1",
+    "node": "^22.12.0",
     "npm": "please-use-yarn",
     "yarn": "^4.0.2"
   }
