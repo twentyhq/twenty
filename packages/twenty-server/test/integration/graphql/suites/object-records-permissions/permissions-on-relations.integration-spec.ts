@@ -125,6 +125,7 @@ describe('permissionsOnRelations', () => {
 
       // The query should succeed
       expect(response.body.data).toBeDefined();
+      // eslint-disable-next-line no-console
       console.log(response.body.data.people);
       expect(response.body.data.people).toBe('remove me');
       expect(response.body.data.people).toBeDefined();
