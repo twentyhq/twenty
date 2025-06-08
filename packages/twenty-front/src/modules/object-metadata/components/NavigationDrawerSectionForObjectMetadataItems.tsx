@@ -11,6 +11,7 @@ import { useRecoilValue } from 'recoil';
 const ORDERED_STANDARD_OBJECTS = [
   'person',
   'company',
+  'carrier',
   'opportunity',
   'task',
   'note',

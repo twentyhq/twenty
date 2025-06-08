@@ -494,6 +494,31 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     ),
     hotKeys: ['G', 'C'],
   },
+  [NoSelectionRecordActionKeys.GO_TO_CARRIERS]: {
+    type: ActionType.Navigation,
+    scope: ActionScope.Global,
+    key: NoSelectionRecordActionKeys.GO_TO_CARRIERS,
+    label: msg`Go to Carriers`,
+    shortLabel: msg`Carriers`,
+    position: 21,
+    Icon: IconBuildingSkyscraper,
+    isPinned: false,
+    availableOn: [
+      ActionViewType.INDEX_PAGE_NO_SELECTION,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.INDEX_PAGE_BULK_SELECTION,
+      ActionViewType.SHOW_PAGE,
+    ],
+    shouldBeRegistered: ({ objectMetadataItem, viewType }) =>      objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Carrier ||
+      viewType === ActionViewType.SHOW_PAGE,
+    component: (
+      <ActionLink
+        to={AppPath.RecordIndexPage}
+        params={{ objectNamePlural: CoreObjectNamePlural.Carrier }}
+      />
+    ),
+    hotKeys: ['G', 'I'],
+  },
   [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
     type: ActionType.Navigation,
     scope: ActionScope.Global,

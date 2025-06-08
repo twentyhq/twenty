@@ -461,6 +461,7 @@ export type CreateObjectInput = {
   icon?: InputMaybe<Scalars['String']['input']>;
   isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']['input']>;
   isRemote?: InputMaybe<Scalars['Boolean']['input']>;
+  labelIdentifierStandardId?: InputMaybe<Scalars['String']['input']>;
   labelPlural: Scalars['String']['input'];
   labelSingular: Scalars['String']['input'];
   namePlural: Scalars['String']['input'];

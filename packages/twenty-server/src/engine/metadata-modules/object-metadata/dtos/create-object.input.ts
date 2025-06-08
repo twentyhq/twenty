@@ -73,4 +73,9 @@ export class CreateObjectInput {
   @IsOptional()
   @Field({ nullable: true })
   isLabelSyncedWithName?: boolean;
+
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  labelIdentifierStandardId?: string;
 }

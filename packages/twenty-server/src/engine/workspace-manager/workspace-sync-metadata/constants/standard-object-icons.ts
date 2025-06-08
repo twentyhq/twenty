@@ -9,6 +9,7 @@ export const STANDARD_OBJECT_ICONS = {
   calendarChannel: 'IconCalendar',
   calendarEventParticipant: 'IconCalendar',
   calendarEvent: 'IconCalendar',
+  carrier: 'IconBuildingSkyscraper',
   comment: 'IconMessageCircle',
   company: 'IconBuildingSkyscraper',
   connectedAccount: 'IconAt',

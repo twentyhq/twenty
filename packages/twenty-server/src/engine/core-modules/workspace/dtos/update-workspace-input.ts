@@ -19,6 +19,7 @@ export class UpdateWorkspaceInput {
     'demo',
     'api',
     't',
+    'carriers',
     'companies',
     'telemetry',
     'logs',

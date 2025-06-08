@@ -32,4 +32,8 @@ export interface ViewDefinition {
     fieldValue: string;
     position: number;
   }[];
+  viewSorts?: {
+    fieldMetadataId: string;
+    direction: string;
+  }[];
 }

@@ -5,6 +5,7 @@ export enum NoSelectionRecordActionKeys {
   HIDE_DELETED_RECORDS = 'hide-deleted-records',
   IMPORT_RECORDS = 'import-records',
   GO_TO_WORKFLOWS = 'go-to-workflows',
+  GO_TO_CARRIERS = 'go-to-carriers',
   GO_TO_PEOPLE = 'go-to-people',
   GO_TO_COMPANIES = 'go-to-companies',
   GO_TO_OPPORTUNITIES = 'go-to-opportunities',
