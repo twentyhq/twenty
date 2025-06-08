@@ -26,9 +26,12 @@ export const RecordTableCellCheckbox = () => {
 
   const { setCurrentRowSelected } = useSetCurrentRowSelected();
 
-  const handleClick = useCallback(() => {
-    setCurrentRowSelected(!isSelected);
-  }, [isSelected, setCurrentRowSelected]);
+  const handleClick = useCallback(
+    (event?: React.MouseEvent | React.KeyboardEvent) => {
+      setCurrentRowSelected(!isSelected, event);
+    },
+    [isSelected, setCurrentRowSelected],
+  );
 
   return (
     <StyledRecordTableTd isSelected={isSelected} hasRightBorder={false}>
