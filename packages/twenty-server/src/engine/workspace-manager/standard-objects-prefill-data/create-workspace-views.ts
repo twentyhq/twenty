@@ -146,6 +146,27 @@ export const createWorkspaceViews = async (
         )
         .execute();
     }
+
+    if (viewDefinition.viewSorts && viewDefinition.viewSorts.length > 0) {
+      await entityManager
+        .createQueryBuilder(undefined, undefined, undefined, {
+          shouldBypassPermissionChecks: true,
+        })
+        .insert()
+        .into(`${schemaName}.viewSort`, [
+          'fieldMetadataId',
+          'direction',
+          'viewId',
+        ])
+        .values(
+          viewDefinition.viewSorts.map((sort) => ({
+            fieldMetadataId: sort.fieldMetadataId,
+            direction: sort.direction,
+            viewId: viewDefinition.id,
+          })),
+        )
+        .execute();
+    }
   }
 
   return viewDefinitionsWithId;

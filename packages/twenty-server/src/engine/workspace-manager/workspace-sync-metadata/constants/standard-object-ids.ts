@@ -17,6 +17,7 @@ export const STANDARD_OBJECT_IDS = {
   calendarChannel: '20202020-e8f2-40e1-a39c-c0e0039c5034',
   calendarEventParticipant: '20202020-a1c3-47a6-9732-27e5b1e8436d',
   calendarEvent: '20202020-8f1d-4eef-9f85-0d1965e27221',
+  carrier: '20202020-b374-4779-a561-70086cb2e17f',
   comment: '20202020-435f-4de9-89b5-97e32233bf5f',
   company: '20202020-b374-4779-a561-80086cb2e17f',
   connectedAccount: '20202020-977e-46b2-890b-c3002ddfd5c5',

@@ -4,8 +4,8 @@ import { ReadFieldFunction } from '@apollo/client/cache/core/types/common';
 import { RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
 import { RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
 import { OrderBy } from '@/types/OrderBy';
-import { sortAsc, sortDesc, sortNullsFirst, sortNullsLast } from '~/utils/sort';
 import { isDefined } from 'twenty-shared/utils';
+import { sortAsc, sortDesc, sortNullsFirst, sortNullsLast } from '~/utils/sort';
 
 export const sortCachedObjectEdges = ({
   edges,
