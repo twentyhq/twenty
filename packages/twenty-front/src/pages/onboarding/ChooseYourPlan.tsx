@@ -3,10 +3,8 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
 import { useBillingPaymentProvidersMap } from '@/billing/hooks/useBillingPaymentProvidersMap';
 import { useHandleCheckoutSession } from '@/billing/hooks/useHandleCheckoutSession';
-import { isBillingPriceLicensed } from '@/billing/utils/isBillingPriceLicensed';
 import { billingState } from '@/client-config/states/billingState';
 import { OnboardingInterChargeDataForm } from '@/onboarding/components/OnboardingInterChargeDataForm';
-import { OnboardingPlanCard } from '@/onboarding/components/OnboardingPlanCard';
 import { useInterChargeDataForm } from '@/onboarding/hooks/useInterChargeDataForm';
 import {
   OnboardingPlanStep,
@@ -22,16 +20,16 @@ import { Loader } from 'twenty-ui/feedback';
 import { CardPicker, MainButton } from 'twenty-ui/input';
 import { CAL_LINK, ClickToActionLink } from 'twenty-ui/navigation';
 import { Entries } from 'type-fest';
-import { ArrayElement } from 'type-fest/source/internal';
 import {
-  BillingBaseProductPricesQuery,
   BillingPaymentProviders,
   BillingPlanKey,
-  BillingPriceLicensedDto,
   useBillingBaseProductPricesQuery,
 } from '~/generated/graphql';
 
-import { IconCheck } from 'twenty-ui/display';
+import { BillingPlanCardPicker } from '@/billing/components/BillingPlanCardPicker';
+import { BillingPlansBenefitsCard } from '@/billing/components/BillingPlansBenefitsCard';
+import { PlansQueryBillingBaseProduct } from '@/billing/types/planQueryBillingBaseProduct';
+import { getProductFromPlanByKey } from '@/billing/utils/getProductFromPlanKey';
 
 const StyledChoosePlanCardContainer = styled.div`
   display: flex;
@@ -84,30 +82,6 @@ const StyledChooseYourPlanPlaceholder = styled.div`
   height: 566px;
 `;
 
-const StyledBenefitsContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(3)};
-  width: 100%;
-`;
-
-const StyledBenefitCard = styled.div`
-  box-sizing: border-box;
-  display: flex;
-  width: 100%;
-  gap: 16px;
-`;
-
-type PlansQueryBillingBaseProduct = ArrayElement<
-  BillingBaseProductPricesQuery['plans']
->['baseProduct'];
-
 export const ChooseYourPlan = () => {
   const billing = useRecoilValue(billingState);
   const { t } = useLingui();
@@ -130,33 +104,6 @@ export const ChooseYourPlan = () => {
     )?.baseProduct;
 
     return plan;
-  };
-
-  const getPlanBenefits = (
-    planKey: BillingPlanKey,
-    product: PlansQueryBillingBaseProduct,
-  ) => {
-    if (isDefined(product.marketingFeatures)) return product.marketingFeatures;
-    if (planKey === BillingPlanKey.ENTERPRISE) {
-      return [
-        t`Full access`,
-        t`Unlimited contacts`,
-        t`Email integration`,
-        t`Custom objects`,
-        t`API & Webhooks`,
-        t`20,000 workflow node executions`,
-        t`SSO (SAML / OIDC)`,
-      ];
-    }
-
-    return [
-      t`Full access`,
-      t`Unlimited contacts`,
-      t`Email integration`,
-      t`Custom objects`,
-      t`API & Webhooks`,
-      t`10,000 workflow node executions`,
-    ];
   };
 
   const hasWithoutCreditCardTrialPeriod = billing?.trialPeriods.some(
@@ -188,12 +135,10 @@ export const ChooseYourPlan = () => {
   };
 
   const handleChangePlanChange = (plan: BillingPlanKey) => {
-    return () => {
-      setBillingCheckoutSession({
-        ...billingCheckoutSession,
-        plan,
-      });
-    };
+    setBillingCheckoutSession({
+      ...billingCheckoutSession,
+      plan,
+    });
   };
 
   const { signOut } = useAuth();
@@ -213,53 +158,31 @@ export const ChooseYourPlan = () => {
                       ? t`Choose your Trial`
                       : t`Choose your plan`}
                   </Title>
-                  <StyledChoosePlanCardContainer>
-                    {plans?.plans.map(({ baseProduct, planKey }, index) => (
-                      <>
-                        <CardPicker
-                          checked={billingCheckoutSession.plan === planKey}
-                          handleChange={handleChangePlanChange(planKey)}
-                          key={`payment-plan-${index}`}
-                          name="payment-plan"
-                        >
-                          <OnboardingPlanCard
-                            productPrice={baseProduct?.prices?.find(
-                              (price): price is BillingPriceLicensedDto =>
-                                isBillingPriceLicensed(price) &&
-                                price.recurringInterval ===
-                                  billingCheckoutSession.interval,
-                            )}
-                            planName={baseProduct.name}
-                            withCreditCardTrialPeriod={
-                              !!withCreditCardTrialPeriod
-                            }
-                            withCreditCardTrialPeriodDuration={
-                              withCreditCardTrialPeriodDuration
-                            }
-                            hasWithoutCreditCardTrialPeriod={
-                              hasWithoutCreditCardTrialPeriod
-                            }
-                          />
-                        </CardPicker>
-                      </>
-                    ))}
-                  </StyledChoosePlanCardContainer>
+                  <BillingPlanCardPicker
+                    handleChange={handleChangePlanChange}
+                    value={billingCheckoutSession.plan}
+                    plans={plans?.plans ?? []}
+                    interval={billingCheckoutSession.interval}
+                    withCreditCardTrialPeriod={!!withCreditCardTrialPeriod}
+                    withCreditCardTrialPeriodDuration={
+                      withCreditCardTrialPeriodDuration
+                    }
+                    hasWithoutCreditCardTrialPeriod={
+                      hasWithoutCreditCardTrialPeriod
+                    }
+                  />
                   {isDefined(
                     getCurrentSelectedPlan(billingCheckoutSession.plan),
                   ) && (
-                    <StyledBenefitsContainer>
-                      {getPlanBenefits(
-                        billingCheckoutSession.plan,
-                        getCurrentSelectedPlan(
+                    <BillingPlansBenefitsCard
+                      plan={billingCheckoutSession.plan}
+                      product={
+                        getProductFromPlanByKey(
                           billingCheckoutSession.plan,
-                        ) as PlansQueryBillingBaseProduct,
-                      ).map((benefit) => (
-                        <StyledBenefitCard key={benefit}>
-                          <IconCheck size={16} />
-                          {benefit}
-                        </StyledBenefitCard>
-                      ))}
-                    </StyledBenefitsContainer>
+                          plans?.plans,
+                        ) as PlansQueryBillingBaseProduct
+                      }
+                    />
                   )}
                   <Title noMarginTop>{t`Choose your payment method`}</Title>
                   <StyledChooseProviderContainer>

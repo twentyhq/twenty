@@ -2,8 +2,10 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { SettingsBillingMonthlyCreditsSection } from '@/billing/components/SettingsBillingMonthlyCreditsSection';
+import { billingState } from '@/client-config/states/billingState';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
+import { SettingsBillingSwitchSubscriptionModal } from '@/settings/billing/components/SettingsBillingSwitchSubscriptonModal';
+import { SWITCH_PLAN_MODAL_ID } from '@/settings/billing/constants/ChangeSubscriptionModalId';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -30,6 +32,8 @@ import {
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const SWITCH_BILLING_INTERVAL_MODAL_ID = 'switch-billing-interval-modal';
+const SWITCH_SUBSCRIPTION_CONFIRMATION_MODAL_ID =
+  'switch-subscription-confirmation-modal';
 
 export const SettingsBilling = () => {
   const { t } = useLingui();
@@ -38,6 +42,7 @@ export const SettingsBilling = () => {
 
   const { enqueueSnackBar } = useSnackBar();
 
+  const billing = useRecoilValue(billingState);
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const subscriptions = currentWorkspace?.billingSubscriptions;
   const hasSubscriptions = (subscriptions?.length ?? 0) > 0;
@@ -104,9 +109,9 @@ export const SettingsBilling = () => {
       ]}
     >
       <SettingsPageContainer>
-        {hasNotCanceledCurrentSubscription && (
+        {/* {hasNotCanceledCurrentSubscription && (
           <SettingsBillingMonthlyCreditsSection />
-        )}
+        )} */}
         <Section>
           <H2Title
             title={t`Manage your subscription`}
@@ -120,8 +125,23 @@ export const SettingsBilling = () => {
             disabled={billingPortalButtonDisabled}
           />
         </Section>
-        {currentWorkspace?.currentBillingSubscription?.interval ===
-          SubscriptionInterval.Month && (
+        <Section>
+          <H2Title
+            title={t`Change subscription plan`}
+            description={t`Allows you to change your current subscription plan`}
+          />
+          <Button
+            Icon={IconCreditCard}
+            title={t`Change plan`}
+            variant="secondary"
+            onClick={() => openModal(SWITCH_SUBSCRIPTION_CONFIRMATION_MODAL_ID)}
+          />
+        </Section>
+        {![
+          currentWorkspace?.currentBillingSubscription?.interval ===
+            SubscriptionInterval.Month,
+          !!billing?.isBillingSwitchPlanIntervalEnabled,
+        ].includes(false) && (
           <Section>
             <H2Title
               title={t`Edit billing interval`}
@@ -159,6 +179,15 @@ export const SettingsBilling = () => {
         confirmButtonText={t`Change to yearly`}
         confirmButtonAccent={'blue'}
       />
+      <ConfirmationModal
+        modalId={SWITCH_SUBSCRIPTION_CONFIRMATION_MODAL_ID}
+        title={t`Change subscription plan`}
+        subtitle={t`Are you sure you want to change your subscripion plan? Your invoice amount will change at the end of the curent period.`}
+        onConfirmClick={() => openModal(SWITCH_PLAN_MODAL_ID)}
+        confirmButtonText={t`Change`}
+        confirmButtonAccent={'blue'}
+      />
+      <SettingsBillingSwitchSubscriptionModal />
     </SubMenuTopBarContainer>
   );
 };
