@@ -13,11 +13,9 @@ export const useSetCurrentRowSelected = () => {
     isRowSelectedComponentFamilyState,
   );
 
-const recordIndexAllRecordIdsState = useRecoilComponentCallbackStateV2(
+  const recordIndexAllRecordIdsState = useRecoilComponentCallbackStateV2(
     recordIndexAllRecordIdsComponentSelector,
   );
-
- 
 
   const setCurrentRowSelected = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -54,17 +52,23 @@ const recordIndexAllRecordIdsState = useRecoilComponentCallbackStateV2(
 
             if (!isRowSelected) {
               set(isRowSelectedFamilyState(allRecordIds[startIndex]), true);
+              set(viewableRecordIdSelectedState, allRecordIds[startIndex]);
             }
             startIndex++;
           }
         } else {
           if (isRowSelected !== newSelectedState) {
             set(isRowSelectedFamilyState(recordId), newSelectedState);
+            set(viewableRecordIdSelectedState, isRowSelected ? null : recordId);
           }
         }
-        set(viewableRecordIdSelectedState, recordId);
       },
-    [recordId, isRowSelectedFamilyState, rowIndex,recordIndexAllRecordIdsState],
+    [
+      recordId,
+      isRowSelectedFamilyState,
+      rowIndex,
+      recordIndexAllRecordIdsState,
+    ],
   );
 
   return {
