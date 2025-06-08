@@ -15,7 +15,6 @@ import {
   IconCalendarEvent,
   IconColorSwatch,
   IconComponent,
-  IconCreditCard,
   IconCurrencyDollar,
   IconDoorEnter,
   IconFlask,
@@ -158,13 +157,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           isHidden:
             !isBillingEnabled ||
             !permissionMap[SettingPermissionType.WORKSPACE],
-        },
-        {
-          // TODO: remove this once we will use the twenty billing page
-          label: 'Billing',
-          path: SettingsPath.BillingPlan,
-          Icon: IconCreditCard,
-          isHidden: false, // !isBillingEnabled,
         },
         {
           label: t`Roles`,
