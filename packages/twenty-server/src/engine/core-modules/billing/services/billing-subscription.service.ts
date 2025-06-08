@@ -69,11 +69,6 @@ export class BillingSubscriptionService {
       `More than one not canceled subscription for workspace ${criteria.workspaceId}`,
     );
 
-    assert(
-      isDefined(notCanceledSubscriptions?.[0]),
-      `No subscription found for workspace ${criteria.workspaceId}`,
-    );
-
     return notCanceledSubscriptions?.[0];
   }
 
