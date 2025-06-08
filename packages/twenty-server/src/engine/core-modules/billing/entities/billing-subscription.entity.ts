@@ -17,6 +17,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import GraphQLJSON from 'graphql-type-json';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { BillingSubscriptionItemDTO } from 'src/engine/core-modules/billing/dtos/outputs/billing-subscription-item.output';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
@@ -132,6 +133,7 @@ export class BillingSubscription {
   })
   currentPeriodStart: Date;
 
+  @Field(() => GraphQLJSON, { nullable: true })
   @Column({ nullable: false, type: 'jsonb', default: {} })
   metadata: Stripe.Metadata;
 
