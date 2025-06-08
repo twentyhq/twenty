@@ -50,6 +50,11 @@ export class TimelineActivityRepository {
         properties,
       );
 
+      console.log(
+        "New Props: ",
+        JSON.stringify(newProps, null, 2),
+      )
+
       return this.updateTimelineActivity(
         recentTimelineActivity[0].id,
         newProps,
