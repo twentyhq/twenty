@@ -14,6 +14,9 @@ class Billing {
   @Field(() => Boolean)
   isBillingEnabled: boolean;
 
+  @Field(() => Boolean)
+  isBillingSwitchPlanIntervalEnabled: boolean;
+
   @Field(() => String, { nullable: true })
   billingUrl?: string;
 
