@@ -5,6 +5,7 @@ import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/cale
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
+import { CarrierWorkspaceEntity } from 'src/modules/carrier/standard-objects/carrier.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { FavoriteFolderWorkspaceEntity } from 'src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity';
@@ -40,6 +41,7 @@ export const standardObjectMetadataDefinitions = [
   ApiKeyWorkspaceEntity,
   AttachmentWorkspaceEntity,
   BlocklistWorkspaceEntity,
+  CarrierWorkspaceEntity,
   CalendarEventWorkspaceEntity,
   CalendarChannelWorkspaceEntity,
   CalendarChannelEventAssociationWorkspaceEntity,

@@ -17,21 +17,21 @@ import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import {
-  UpdateObjectPayload,
-  UpdateOneObjectInput,
+    UpdateObjectPayload,
+    UpdateOneObjectInput,
 } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
-  ObjectMetadataException,
-  ObjectMetadataExceptionCode,
+    ObjectMetadataException,
+    ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { ObjectMetadataFieldRelationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-field-relation.service';
 import { ObjectMetadataMigrationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-migration.service';
 import { ObjectMetadataRelatedRecordsService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-related-records.service';
 import { buildDefaultFieldsForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-fields-for-custom-object.util';
 import {
-  validateLowerCasedAndTrimmedStringsAreDifferentOrThrow,
-  validateObjectMetadataInputLabelsOrThrow,
-  validateObjectMetadataInputNamesOrThrow,
+    validateLowerCasedAndTrimmedStringsAreDifferentOrThrow,
+    validateObjectMetadataInputLabelsOrThrow,
+    validateObjectMetadataInputNamesOrThrow,
 } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
 import { RemoteTableRelationsService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.service';
 import { SearchVectorService } from 'src/engine/metadata-modules/search-vector/search-vector.service';
@@ -152,7 +152,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     });
 
     const labelIdentifierFieldMetadata = createdObjectMetadata.fields.find(
-      (field) => field.standardId === CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
+      (field) =>
+        field.standardId ===
+        (objectMetadataInput.isRemote
+          ? objectMetadataInput.labelIdentifierStandardId
+          : CUSTOM_OBJECT_STANDARD_FIELD_IDS.name),
     );
 
     if (!labelIdentifierFieldMetadata) {

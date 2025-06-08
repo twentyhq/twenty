@@ -9,6 +9,7 @@
 export const ACTIVITY_TARGET_STANDARD_FIELD_IDS = {
   activity: '20202020-ca58-478c-a4f5-ae825671c30e',
   person: '20202020-4afd-4ae7-99c2-de57d795a93f',
+  carrier: '20202020-5afd-4ae7-99c2-de57d795a93f',
   company: '20202020-7cc0-44a1-8068-f11171fdd02e',
   opportunity: '20202020-1fc2-4af1-8c91-7901ee0fd38b',
   custom: '20202020-7f21-442f-94be-32462281b1ca',
@@ -44,6 +45,7 @@ export const ATTACHMENT_STANDARD_FIELD_IDS = {
   task: '20202020-51e5-4621-9cf8-215487951c4b',
   note: '20202020-4f4b-4503-a6fc-6b982f3dffb5',
   person: '20202020-0158-4aa2-965c-5cdafe21ffa2',
+  carrier: '20202020-7c21-442f-94be-32462281b1ca',
   company: '20202020-ceab-4a28-b546-73b06b4c08d5',
   opportunity: '20202020-7374-499d-bea3-9354890755b5',
   custom: '20202020-302d-43b3-9aea-aa4f89282a9f',
@@ -143,6 +145,17 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   searchVector: '85c71601-72f9-4b7b-b343-d46100b2c74d',
 };
 
+export const CARRIER_STANDARD_FIELD_IDS = {
+  name: '20202020-4d99-4e2e-a84c-4a27837b1ece',
+  domainName: '20202020-0c28-43d8-8ba5-3659924d3489',
+  location: '20202020-5243-4ffb-afc5-2c675da41346',
+  position: '20202020-9b5b-562b-991d-a0ee33326454',
+  createdBy: '20202020-fabc-451d-ab7d-412170916baa',
+  favorites: '20202020-4d1d-41ac-b13b-621631298d55',
+  timelineActivities: '20202020-0414-4daf-9c0d-64fe7b27f89f',
+  searchVector: '20202020-b8b3-41c2-bc38-41c7e77a84c8',
+};
+
 export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {
   handle: '20202020-c804-4a50-bb05-b3a9e24f1dec',
   provider: '20202020-ebb0-4516-befc-a9e95935efd5',
@@ -161,6 +174,7 @@ export const EVENT_STANDARD_FIELD_IDS = {
   properties: '20202020-f142-4b04-b91b-6a2b4af3bf10',
   workspaceMember: '20202020-af23-4479-9a30-868edc474b35',
   person: '20202020-c414-45b9-a60a-ac27aa96229e',
+  carrier: '20202020-42f2-442f-94be-32462281b1ca',
   company: '20202020-04ad-4221-a744-7a8278a5ce20',
   opportunity: '20202020-7664-4a35-a3df-580d389fd5f0',
   custom: '20202020-4a71-41b0-9f83-9cdcca3f8b14',
@@ -191,6 +205,7 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   properties: '20202020-f142-4b04-b91b-6a2b4af3bf11',
   workspaceMember: '20202020-af23-4479-9a30-868edc474b36',
   person: '20202020-c414-45b9-a60a-ac27aa96229f',
+  carrier: '20202020-4d1d-41ac-b13b-621631298d56',
   company: '20202020-04ad-4221-a744-7a8278a5ce21',
   opportunity: '20202020-7664-4a35-a3df-580d389fd527',
   task: '20202020-b2f5-415c-9135-a31dfe49501b',
@@ -208,6 +223,7 @@ export const FAVORITE_STANDARD_FIELD_IDS = {
   position: '20202020-dd26-42c6-8c3c-2a7598c204f6',
   forWorkspaceMember: '20202020-ce63-49cb-9676-fdc0c45892cd',
   person: '20202020-c428-4f40-b6f3-86091511c41c',
+  carrier: '20202020-4d1d-41ac-b13b-821631298d56',
   company: '20202020-cff5-4682-8bf9-069169e08279',
   opportunity: '20202020-dabc-48e1-8318-2781a2b32aa2',
   workflow: '20202020-b11b-4dc8-999a-6bd0a947b463',
@@ -307,6 +323,7 @@ export const NOTE_STANDARD_FIELD_IDS = {
 export const NOTE_TARGET_STANDARD_FIELD_IDS = {
   note: '20202020-57f3-4f50-9599-fc0f671df003',
   person: '20202020-38ca-4aab-92f5-8a605ca2e4c5',
+  carrier: '20202020-4d1d-41ac-b13b-621631898d56',
   company: 'c500fbc0-d6f2-4982-a959-5a755431696c',
   opportunity: '20202020-4e42-417a-a705-76581c9ade79',
   custom: '20202020-3d12-4579-94ee-7117c1bad492',
@@ -321,6 +338,7 @@ export const OPPORTUNITY_STANDARD_FIELD_IDS = {
   position: '20202020-806d-493a-bbc6-6313e62958e2',
   createdBy: '20202020-a63e-4a62-8e63-42a51828f831',
   pointOfContact: '20202020-8dfb-42fc-92b6-01afb759ed16',
+  carrier: '20202020-4d1d-41ac-b13b-621631898d59',
   company: '20202020-cbac-457e-b565-adece5fc815f',
   favorites: '20202020-a1c2-4500-aaae-83ba8a0e827a',
   // TODO: check if activityTargets field can be deleted
@@ -554,6 +572,7 @@ export const STANDARD_OBJECT_FIELD_IDS = {
   calendarChannel: CALENDAR_CHANNEL_STANDARD_FIELD_IDS,
   calendarEventParticipant: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS,
   calendarEvent: CALENDAR_EVENT_STANDARD_FIELD_IDS,
+  carrier: CARRIER_STANDARD_FIELD_IDS,
   comment: COMMENT_STANDARD_FIELD_IDS,
   company: COMPANY_STANDARD_FIELD_IDS,
   connectedAccount: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS,

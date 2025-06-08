@@ -4,6 +4,7 @@ import { seedWorkspaceFavorites } from 'src/database/typeorm-seeds/workspace/fav
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
+import { seedCarrierWithDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/seed-carrier-with-demo-data';
 import { seedCompanyWithDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/seed-company-with-demo-data';
 import { seedOpportunityWithDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/seed-opportunity-with-demo-data';
 import { seedPersonWithDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/seed-person-with-demo-data';
@@ -32,6 +33,7 @@ export const seedWorkspaceWithDemoData = async (
 
   await workspaceDataSource.transaction(
     async (entityManager: WorkspaceEntityManager) => {
+      await seedCarrierWithDemoData(entityManager, schemaName);
       await seedCompanyWithDemoData(entityManager, schemaName);
       await seedPersonWithDemoData(entityManager, schemaName);
       await seedOpportunityWithDemoData(entityManager, schemaName);
