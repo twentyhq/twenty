@@ -522,10 +522,10 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BillingConfig,
     description: 'Enabled or disable switch plan interval',
-    type: ConfigVariableType.STRING,
+    type: ConfigVariableType.BOOLEAN,
   })
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
-  IS_BILLING_SWICH_PLAN_INTERVAL_ENABLED = true;
+  IS_BILLING_SWICH_PLAN_INTERVAL_ENABLED = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BillingConfig,
