@@ -6,7 +6,6 @@ import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/
 import { viewableRecordIdSelectedState } from '@/object-record/record-table/record-table-row/states/viewableRecordIdSelectedState';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const useSetCurrentRowSelected = () => {
   const { recordId, rowIndex } = useRecordTableRowContextOrThrow();
@@ -14,9 +13,11 @@ export const useSetCurrentRowSelected = () => {
     isRowSelectedComponentFamilyState,
   );
 
-  const allRecordIds = useRecoilComponentValueV2(
+const recordIndexAllRecordIdsState = useRecoilComponentCallbackStateV2(
     recordIndexAllRecordIdsComponentSelector,
   );
+
+ 
 
   const setCurrentRowSelected = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -26,6 +27,10 @@ export const useSetCurrentRowSelected = () => {
           | React.MouseEvent<HTMLDivElement>
           | React.KeyboardEvent<HTMLDivElement>,
       ) => {
+        const allRecordIds = getSnapshotValue(
+          snapshot,
+          recordIndexAllRecordIdsState,
+        );
         const isRowSelected = getSnapshotValue(
           snapshot,
           isRowSelectedFamilyState(recordId),
@@ -59,7 +64,7 @@ export const useSetCurrentRowSelected = () => {
         }
         set(viewableRecordIdSelectedState, recordId);
       },
-    [recordId, isRowSelectedFamilyState, rowIndex],
+    [recordId, isRowSelectedFamilyState, rowIndex,recordIndexAllRecordIdsState],
   );
 
   return {
