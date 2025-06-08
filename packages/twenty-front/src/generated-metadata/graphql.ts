@@ -162,6 +162,7 @@ export type Billing = {
   __typename?: 'Billing';
   billingUrl?: Maybe<Scalars['String']['output']>;
   isBillingEnabled: Scalars['Boolean']['output'];
+  isBillingSwitchPlanIntervalEnabled: Scalars['Boolean']['output'];
   trialPeriods: Array<BillingTrialPeriodDto>;
 };
 
@@ -249,6 +250,7 @@ export type BillingProduct = {
   __typename?: 'BillingProduct';
   description: Scalars['String']['output'];
   images?: Maybe<Array<Scalars['String']['output']>>;
+  marketingFeatures?: Maybe<Array<Scalars['String']['output']>>;
   metadata: BillingProductMetadata;
   name: Scalars['String']['output'];
   prices?: Maybe<Array<BillingPriceUnionDto>>;
@@ -275,6 +277,7 @@ export type BillingSessionOutput = {
 export type BillingSubscription = {
   __typename?: 'BillingSubscription';
   billingSubscriptionItems?: Maybe<Array<BillingSubscriptionItem>>;
+  chargeType?: Maybe<ChargeType>;
   id: Scalars['UUID']['output'];
   interval?: Maybe<SubscriptionInterval>;
   status: SubscriptionStatus;
@@ -285,6 +288,13 @@ export type BillingSubscriptionItem = {
   billingProduct?: Maybe<BillingProduct>;
   hasReachedCurrentPeriodCap: Scalars['Boolean']['output'];
   id: Scalars['UUID']['output'];
+};
+
+export type BillingSwitchPlanOutput = {
+  __typename?: 'BillingSwitchPlanOutput';
+  baseProduct: BillingProduct;
+  planKey: BillingPlanKey;
+  subscription: BillingSubscription;
 };
 
 export type BillingTrialPeriodDto = {
@@ -330,6 +340,13 @@ export type Captcha = {
 export enum CaptchaDriverType {
   GoogleRecaptcha = 'GoogleRecaptcha',
   Turnstile = 'Turnstile'
+}
+
+/** The type diffent type of charge for the subscription */
+export enum ChargeType {
+  ONE_TIME = 'ONE_TIME',
+  PER_SEAT = 'PER_SEAT',
+  PRE_PAID = 'PRE_PAID'
 }
 
 export type ChatbotFlow = {
@@ -485,6 +502,13 @@ export type CreateBillingPlansInput = {
   workspaceId: Scalars['ID']['input'];
 };
 
+export type CreateDialingPlanInput = {
+  cliente_id: Scalars['Int']['input'];
+  nome: Scalars['String']['input'];
+  plano_discagem_id: Scalars['Int']['input'];
+  workspaceId: Scalars['ID']['input'];
+};
+
 export type CreateDraftFromWorkflowVersionInput = {
   /** Workflow ID */
   workflowId: Scalars['String']['input'];
@@ -577,6 +601,65 @@ export type CreateOneObjectInput = {
 export type CreateOneRelationMetadataInput = {
   /** The record to create */
   relationMetadata: CreateRelationInput;
+};
+
+export type CreatePabxCompanyInput = {
+  acao_limite_espaco: Scalars['Int']['input'];
+  aviso_disco_email_alerta?: InputMaybe<Scalars['Int']['input']>;
+  aviso_disco_email_urgente?: InputMaybe<Scalars['Int']['input']>;
+  bairro?: InputMaybe<Scalars['String']['input']>;
+  cel?: InputMaybe<Scalars['String']['input']>;
+  cep?: InputMaybe<Scalars['String']['input']>;
+  cidade?: InputMaybe<Scalars['String']['input']>;
+  cliente_bloqueado?: InputMaybe<Scalars['Int']['input']>;
+  cnpj?: InputMaybe<Scalars['String']['input']>;
+  compl?: InputMaybe<Scalars['String']['input']>;
+  cortar_prefixo_ramal?: InputMaybe<Scalars['Int']['input']>;
+  dias_aviso_remocao_mailings?: InputMaybe<Scalars['Int']['input']>;
+  dias_remocao_mailings?: InputMaybe<Scalars['Int']['input']>;
+  email_cliente?: InputMaybe<Scalars['String']['input']>;
+  end?: InputMaybe<Scalars['String']['input']>;
+  espaco_disco?: InputMaybe<Scalars['Int']['input']>;
+  estado?: InputMaybe<Scalars['String']['input']>;
+  faixa_max?: InputMaybe<Scalars['Int']['input']>;
+  faixa_min?: InputMaybe<Scalars['Int']['input']>;
+  forma_arredondamento?: InputMaybe<Scalars['Int']['input']>;
+  formato_numeros_contatos?: InputMaybe<Scalars['Int']['input']>;
+  habilita_prefixo_sainte?: InputMaybe<Scalars['Int']['input']>;
+  habilitar_aviso_disco_email?: InputMaybe<Scalars['Int']['input']>;
+  login: Scalars['String']['input'];
+  max_chamadas_simultaneas?: InputMaybe<Scalars['Int']['input']>;
+  modulos?: InputMaybe<Scalars['String']['input']>;
+  nome: Scalars['String']['input'];
+  prefixo?: InputMaybe<Scalars['String']['input']>;
+  prefixo_sainte?: InputMaybe<Scalars['Int']['input']>;
+  qtd_ramais_max_pa: Scalars['Int']['input'];
+  qtd_ramais_max_pabx: Scalars['Int']['input'];
+  ramal_resp?: InputMaybe<Scalars['String']['input']>;
+  razao_social?: InputMaybe<Scalars['String']['input']>;
+  remover_mailings?: InputMaybe<Scalars['Int']['input']>;
+  resp?: InputMaybe<Scalars['String']['input']>;
+  salas_conf_num_max: Scalars['Int']['input'];
+  senha: Scalars['String']['input'];
+  tel?: InputMaybe<Scalars['String']['input']>;
+  tipo: Scalars['Int']['input'];
+  usuario_padrao_id?: InputMaybe<Scalars['Int']['input']>;
+  workspaceId: Scalars['ID']['input'];
+};
+
+export type CreatePabxTrunkInput = {
+  autentica_user_pass?: InputMaybe<Scalars['Int']['input']>;
+  cliente_id: Scalars['Int']['input'];
+  endereco: Scalars['String']['input'];
+  host_dinamico?: InputMaybe<Scalars['Int']['input']>;
+  insere_digitos?: InputMaybe<Scalars['String']['input']>;
+  nome: Scalars['String']['input'];
+  qtd_digitos_cortados?: InputMaybe<Scalars['Int']['input']>;
+  senha?: InputMaybe<Scalars['String']['input']>;
+  tarifas?: InputMaybe<Array<TarifaTroncoInput>>;
+  tronco_id: Scalars['Int']['input'];
+  usuario?: InputMaybe<Scalars['String']['input']>;
+  workspaceId: Scalars['ID']['input'];
 };
 
 export type CreateRelationInput = {
@@ -935,6 +1018,7 @@ export enum FieldMetadataType {
 
 export enum FileFolder {
   Attachment = 'Attachment',
+  InterCharge = 'InterCharge',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
   ServerlessFunction = 'ServerlessFunction',
@@ -1278,6 +1362,7 @@ export type Mutation = {
   createApprovedAccessDomain: ApprovedAccessDomain;
   createBillingPlans: BillingPlans;
   createDatabaseConfigVariable: Scalars['Boolean']['output'];
+  createDialingPlan: PabxDialingPlanResponseType;
   createDraftFromWorkflowVersion: WorkflowVersion;
   createFocusNfeIntegration: FocusNfeIntegrationPublicDto;
   createInterIntegration: InterIntegration;
@@ -1291,6 +1376,8 @@ export type Mutation = {
   createOneRemoteServer: RemoteServer;
   createOneRole: Role;
   createOneServerlessFunction: ServerlessFunction;
+  createPabxCompany: PabxCompanyResponseType;
+  createPabxTrunk: PabxTrunkResponseType;
   createSAMLIdentityProvider: SetupSsoOutput;
   createSector: Sector;
   createStripeIntegration: StripeIntegration;
@@ -1342,10 +1429,12 @@ export type Mutation = {
   sendInvitations: SendInvitationsOutput;
   sendMessage: Scalars['Boolean']['output'];
   sendTemplate: Scalars['Boolean']['output'];
+  setupPabxEnvironment: SetupPabxEnvironmentResponseType;
   signUp: SignUpOutput;
   signUpInNewWorkspace: SignUpOutput;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   submitFormStep: Scalars['Boolean']['output'];
+  switchPlan: BillingSwitchPlanOutput;
   switchToYearlyInterval: BillingUpdateOutput;
   syncInterData: Scalars['Boolean']['output'];
   syncRemoteTable: RemoteTable;
@@ -1370,6 +1459,7 @@ export type Mutation = {
   updateOneRole: Role;
   updateOneServerlessFunction: ServerlessFunction;
   updatePasswordViaResetToken: InvalidatePassword;
+  updateRoutingRules: UpdateRoutingRulesResponseType;
   updateSector: Sector;
   updateStripeIntegration: StripeIntegration;
   updateTelephony: Telephony;
@@ -1446,6 +1536,11 @@ export type MutationCreateDatabaseConfigVariableArgs = {
 };
 
 
+export type MutationCreateDialingPlanArgs = {
+  input: CreateDialingPlanInput;
+};
+
+
 export type MutationCreateDraftFromWorkflowVersionArgs = {
   input: CreateDraftFromWorkflowVersionInput;
 };
@@ -1511,6 +1606,16 @@ export type MutationCreateOneRoleArgs = {
 
 export type MutationCreateOneServerlessFunctionArgs = {
   input: CreateServerlessFunctionInput;
+};
+
+
+export type MutationCreatePabxCompanyArgs = {
+  input: CreatePabxCompanyInput;
+};
+
+
+export type MutationCreatePabxTrunkArgs = {
+  input: CreatePabxTrunkInput;
 };
 
 
@@ -1752,6 +1857,11 @@ export type MutationSendTemplateArgs = {
 };
 
 
+export type MutationSetupPabxEnvironmentArgs = {
+  input: SetupPabxEnvironmentInput;
+};
+
+
 export type MutationSignUpArgs = {
   captchaToken?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
@@ -1765,6 +1875,11 @@ export type MutationSignUpArgs = {
 
 export type MutationSubmitFormStepArgs = {
   input: SubmitFormStepInput;
+};
+
+
+export type MutationSwitchPlanArgs = {
+  plan: BillingPlanKey;
 };
 
 
@@ -1886,6 +2001,11 @@ export type MutationUpdateOneServerlessFunctionArgs = {
 export type MutationUpdatePasswordViaResetTokenArgs = {
   newPassword: Scalars['String']['input'];
   passwordResetToken: Scalars['String']['input'];
+};
+
+
+export type MutationUpdateRoutingRulesArgs = {
+  input: UpdateRoutingRulesInput;
 };
 
 
@@ -2150,6 +2270,85 @@ export type OnboardingStepSuccess = {
   success: Scalars['Boolean']['output'];
 };
 
+export type PabxCompanyCreationDetailsInput = {
+  acao_limite_espaco: Scalars['Int']['input'];
+  aviso_disco_email_alerta?: InputMaybe<Scalars['Int']['input']>;
+  aviso_disco_email_urgente?: InputMaybe<Scalars['Int']['input']>;
+  bairro?: InputMaybe<Scalars['String']['input']>;
+  cel?: InputMaybe<Scalars['String']['input']>;
+  cep?: InputMaybe<Scalars['String']['input']>;
+  cidade?: InputMaybe<Scalars['String']['input']>;
+  cliente_bloqueado?: InputMaybe<Scalars['Int']['input']>;
+  cnpj?: InputMaybe<Scalars['String']['input']>;
+  compl?: InputMaybe<Scalars['String']['input']>;
+  cortar_prefixo_ramal?: InputMaybe<Scalars['Int']['input']>;
+  dias_aviso_remocao_mailings?: InputMaybe<Scalars['Int']['input']>;
+  dias_remocao_mailings?: InputMaybe<Scalars['Int']['input']>;
+  email_cliente?: InputMaybe<Scalars['String']['input']>;
+  end?: InputMaybe<Scalars['String']['input']>;
+  espaco_disco?: InputMaybe<Scalars['Int']['input']>;
+  estado?: InputMaybe<Scalars['String']['input']>;
+  faixa_max?: InputMaybe<Scalars['Int']['input']>;
+  faixa_min?: InputMaybe<Scalars['Int']['input']>;
+  forma_arredondamento?: InputMaybe<Scalars['Int']['input']>;
+  formato_numeros_contatos?: InputMaybe<Scalars['Int']['input']>;
+  habilita_prefixo_sainte?: InputMaybe<Scalars['Int']['input']>;
+  habilitar_aviso_disco_email?: InputMaybe<Scalars['Int']['input']>;
+  login: Scalars['String']['input'];
+  max_chamadas_simultaneas?: InputMaybe<Scalars['Int']['input']>;
+  modulos?: InputMaybe<Scalars['String']['input']>;
+  nome: Scalars['String']['input'];
+  prefixo?: InputMaybe<Scalars['String']['input']>;
+  prefixo_sainte?: InputMaybe<Scalars['Int']['input']>;
+  qtd_ramais_max_pa: Scalars['Int']['input'];
+  qtd_ramais_max_pabx: Scalars['Int']['input'];
+  ramal_resp?: InputMaybe<Scalars['String']['input']>;
+  razao_social?: InputMaybe<Scalars['String']['input']>;
+  remover_mailings?: InputMaybe<Scalars['Int']['input']>;
+  resp?: InputMaybe<Scalars['String']['input']>;
+  salas_conf_num_max: Scalars['Int']['input'];
+  senha: Scalars['String']['input'];
+  tel?: InputMaybe<Scalars['String']['input']>;
+  tipo: Scalars['Int']['input'];
+  usuario_padrao_id?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type PabxCompanyResponseType = {
+  __typename?: 'PabxCompanyResponseType';
+  message?: Maybe<Scalars['String']['output']>;
+  success: Scalars['Boolean']['output'];
+};
+
+export type PabxDialingPlanCreationDetailsInput = {
+  nome: Scalars['String']['input'];
+  plano_discagem_id: Scalars['Int']['input'];
+};
+
+export type PabxDialingPlanResponseType = {
+  __typename?: 'PabxDialingPlanResponseType';
+  message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
+};
+
+export type PabxTrunkCreationDetailsInput = {
+  autentica_user_pass?: InputMaybe<Scalars['Int']['input']>;
+  endereco: Scalars['String']['input'];
+  host_dinamico?: InputMaybe<Scalars['Int']['input']>;
+  insere_digitos?: InputMaybe<Scalars['String']['input']>;
+  nome: Scalars['String']['input'];
+  qtd_digitos_cortados?: InputMaybe<Scalars['Int']['input']>;
+  senha?: InputMaybe<Scalars['String']['input']>;
+  tarifas?: InputMaybe<Array<TarifaTroncoInput>>;
+  tronco_id: Scalars['Int']['input'];
+  usuario?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type PabxTrunkResponseType = {
+  __typename?: 'PabxTrunkResponseType';
+  message?: Maybe<Scalars['String']['output']>;
+  success: Scalars['Boolean']['output'];
+};
+
 export type PageInfo = {
   __typename?: 'PageInfo';
   /** The cursor of the last returned record. */
@@ -2359,6 +2558,11 @@ export type QueryGetAllBillingPlansArgs = {
 };
 
 
+export type QueryGetAllExtensionsArgs = {
+  workspaceId: Scalars['ID']['input'];
+};
+
+
 export type QueryGetAllStripeIntegrationsArgs = {
   workspaceId: Scalars['String']['input'];
 };
@@ -2430,6 +2634,26 @@ export type QueryGetStripeIntegrationByIdArgs = {
 };
 
 
+export type QueryGetTelephonyCallFlowsArgs = {
+  workspaceId: Scalars['ID']['input'];
+};
+
+
+export type QueryGetTelephonyDidsArgs = {
+  workspaceId: Scalars['ID']['input'];
+};
+
+
+export type QueryGetTelephonyPlansArgs = {
+  workspaceId: Scalars['ID']['input'];
+};
+
+
+export type QueryGetTelephonyUrAsArgs = {
+  workspaceId: Scalars['ID']['input'];
+};
+
+
 export type QueryGetTimelineCalendarEventsFromCompanyIdArgs = {
   companyId: Scalars['UUID']['input'];
   page: Scalars['Int']['input'];
@@ -2460,6 +2684,7 @@ export type QueryGetTimelineThreadsFromPersonIdArgs = {
 
 export type QueryGetUserSoftfoneArgs = {
   extNum: Scalars['String']['input'];
+  workspaceId: Scalars['ID']['input'];
 };
 
 
@@ -2567,6 +2792,12 @@ export enum QueueMetricsTimeRange {
   SevenDays = 'SevenDays',
   TwelveHours = 'TwelveHours'
 }
+
+export type RegionInput = {
+  regiao_id: Scalars['Int']['input'];
+  regiao_nome: Scalars['String']['input'];
+  roteamentos: Array<RoutingRuleInput>;
+};
 
 export type Relation = {
   __typename?: 'Relation';
@@ -2704,6 +2935,12 @@ export type Role = {
   workspaceMembers: Array<WorkspaceMember>;
 };
 
+export type RoutingRuleInput = {
+  prioridade: Scalars['Int']['input'];
+  tronco_id?: InputMaybe<Scalars['Int']['input']>;
+  tronco_nome: Scalars['String']['input'];
+};
+
 export type RunWorkflowVersionInput = {
   /** Execution result in JSON format */
   payload?: InputMaybe<Scalars['JSON']['input']>;
@@ -2806,6 +3043,7 @@ export type SendMessageInput = {
 
 export type SendTemplateInput = {
   agent?: InputMaybe<MessageAgent>;
+  from: Scalars['String']['input'];
   integrationId: Scalars['String']['input'];
   language: Scalars['String']['input'];
   message: Scalars['String']['input'];
@@ -2890,6 +3128,23 @@ export type SetupOidcSsoInput = {
   clientSecret: Scalars['String']['input'];
   issuer: Scalars['String']['input'];
   name: Scalars['String']['input'];
+};
+
+export type SetupPabxEnvironmentInput = {
+  companyDetails: PabxCompanyCreationDetailsInput;
+  dialingPlanDetails: PabxDialingPlanCreationDetailsInput;
+  routingRulesData: UpdateRoutingRulesDataInput;
+  trunkDetails: PabxTrunkCreationDetailsInput;
+  workspaceId: Scalars['ID']['input'];
+};
+
+export type SetupPabxEnvironmentResponseType = {
+  __typename?: 'SetupPabxEnvironmentResponseType';
+  companyId?: Maybe<Scalars['ID']['output']>;
+  dialingPlanId?: Maybe<Scalars['ID']['output']>;
+  message?: Maybe<Scalars['String']['output']>;
+  success: Scalars['Boolean']['output'];
+  trunkId?: Maybe<Scalars['ID']['output']>;
 };
 
 export type SetupSamlSsoInput = {
@@ -2984,6 +3239,12 @@ export type SystemHealthService = {
   id: HealthIndicatorId;
   label: Scalars['String']['output'];
   status: AdminPanelHealthServiceStatus;
+};
+
+export type TarifaTroncoInput = {
+  fracionamento: Scalars['String']['input'];
+  regiao_id: Scalars['Int']['input'];
+  tarifa: Scalars['Int']['input'];
 };
 
 export type Telephony = {
@@ -3328,6 +3589,22 @@ export type UpdateRolePayload = {
   label?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type UpdateRoutingRulesDataInput = {
+  regioes: Array<RegionInput>;
+};
+
+export type UpdateRoutingRulesInput = {
+  cliente_id: Scalars['Int']['input'];
+  dados: UpdateRoutingRulesDataInput;
+  plano_discagem_id: Scalars['Int']['input'];
+};
+
+export type UpdateRoutingRulesResponseType = {
+  __typename?: 'UpdateRoutingRulesResponseType';
+  message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
+};
+
 export type UpdateSectorInput = {
   icon?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
@@ -3600,7 +3877,6 @@ export type Workspace = {
   __typename?: 'Workspace';
   activationStatus: WorkspaceActivationStatus;
   allowImpersonation: Scalars['Boolean']['output'];
-  billingPlans: Array<BillingPlans>;
   billingSubscriptions: Array<BillingSubscription>;
   createdAt: Scalars['DateTime']['output'];
   creatorEmail?: Maybe<Scalars['String']['output']>;
@@ -3622,6 +3898,9 @@ export type Workspace = {
   isPublicInviteLinkEnabled: Scalars['Boolean']['output'];
   logo?: Maybe<Scalars['String']['output']>;
   metadataVersion: Scalars['Float']['output'];
+  pabxCompanyId?: Maybe<Scalars['Float']['output']>;
+  pabxDialingPlanId?: Maybe<Scalars['Float']['output']>;
+  pabxTrunkId?: Maybe<Scalars['Float']['output']>;
   stripeIntegrations: Array<StripeIntegration>;
   subdomain: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
