@@ -1,5 +1,5 @@
 import { createState } from 'twenty-ui/utilities';
 export const viewableRecordIdSelectedState = createState<string | null>({
-  key: 'activities/viewable-record-id-selected',
+  key: 'record-table/viewable-record-id-selected',
   defaultValue: null,
 });

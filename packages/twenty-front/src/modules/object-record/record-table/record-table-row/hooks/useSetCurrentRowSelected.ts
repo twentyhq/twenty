@@ -22,7 +22,9 @@ export const useSetCurrentRowSelected = () => {
     ({ set, snapshot }) =>
       (
         newSelectedState: boolean,
-        event?: React.MouseEvent | React.KeyboardEvent,
+        event?:
+          | React.MouseEvent<HTMLDivElement>
+          | React.KeyboardEvent<HTMLDivElement>,
       ) => {
         const isRowSelected = getSnapshotValue(
           snapshot,
@@ -35,9 +37,9 @@ export const useSetCurrentRowSelected = () => {
         const lastRowIndex = allRecordIds.findIndex(
           (recordId) => recordId === lastRecordSelectedId,
         );
-        if (event?.shiftKey && lastRowIndex !== -1 && !isRowSelected) {
+        if (Boolean(event?.shiftKey) && lastRowIndex !== -1 && !isRowSelected) {
           let startIndex = Math.min(lastRowIndex, rowIndex);
-          let endIndex = Math.max(lastRowIndex, rowIndex);
+          const endIndex = Math.max(lastRowIndex, rowIndex);
 
           while (startIndex <= endIndex) {
             const isRowSelected = getSnapshotValue(
@@ -57,7 +59,7 @@ export const useSetCurrentRowSelected = () => {
         }
         set(viewableRecordIdSelectedState, recordId);
       },
-    [recordId, isRowSelectedFamilyState],
+    [recordId, isRowSelectedFamilyState, rowIndex],
   );
 
   return {
