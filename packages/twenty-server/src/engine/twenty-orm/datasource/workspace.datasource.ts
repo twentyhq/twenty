@@ -3,6 +3,7 @@ import { ObjectRecordsPermissionsByRoleId } from 'twenty-shared/types';
 import {
   DataSource,
   DataSourceOptions,
+  EntityManager,
   EntityTarget,
   ObjectLiteral,
   QueryRunner,
@@ -88,6 +89,28 @@ export class WorkspaceDataSource extends DataSource {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return queryRunner as any as WorkspaceQueryRunner;
+  }
+
+  createQueryRunnerForEntityPersistExecutor(
+    mode = 'master' as ReplicationMode,
+  ) {
+    const dataSourceWithCreateQueryBuilder = Object.assign(
+      Object.create(Object.getPrototypeOf(this)),
+      this,
+      {
+        createQueryBuilder: (queryRunner: QueryRunner) => {
+          return this.createQueryBuilder(queryRunner, {
+            calledByWorkspaceEntityManager: true,
+          });
+        },
+      },
+    );
+    const queryRunner = this.driver.createQueryRunner(mode);
+    const manager = new EntityManager(dataSourceWithCreateQueryBuilder);
+
+    Object.assign(queryRunner, { manager: manager });
+
+    return queryRunner;
   }
 
   override createQueryBuilder<Entity extends ObjectLiteral>(

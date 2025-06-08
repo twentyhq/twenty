@@ -23,8 +23,11 @@ import { DeepPartial } from 'typeorm/common/DeepPartial';
 import { PickKeysByType } from 'typeorm/common/PickKeysByType';
 import { EntityNotFoundError } from 'typeorm/error/EntityNotFoundError';
 import { FindOptionsUtils } from 'typeorm/find-options/FindOptionsUtils';
+import { EntityPersistExecutor } from 'typeorm/persistence/EntityPersistExecutor';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { PlainObjectToDatabaseEntityTransformer } from 'typeorm/query-builder/transformer/PlainObjectToDatabaseEntityTransformer';
 import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
+import { InstanceChecker } from 'typeorm/util/InstanceChecker';
 
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
@@ -319,109 +322,6 @@ export class WorkspaceEntityManager extends EntityManager {
     }
   }
 
-  override save<Entity extends ObjectLiteral>(
-    entities: Entity[],
-    options?: SaveOptions,
-    permissionOptions?: PermissionOptions,
-  ): Promise<Entity[]>;
-
-  override save<Entity extends ObjectLiteral>(
-    entity: Entity,
-    options?: SaveOptions,
-    permissionOptions?: PermissionOptions,
-  ): Promise<Entity>;
-
-  override save<Entity, T extends DeepPartial<Entity>>(
-    targetOrEntity: EntityTarget<Entity>,
-    entities: T[],
-    options: SaveOptions & {
-      reload: false;
-    },
-    permissionOptions?: PermissionOptions,
-  ): Promise<T[]>;
-
-  override save<Entity, T extends DeepPartial<Entity>>(
-    targetOrEntity: EntityTarget<Entity>,
-    entities: T[],
-    options?: SaveOptions,
-    permissionOptions?: PermissionOptions,
-  ): Promise<(T & Entity)[]>;
-
-  override save<Entity, T extends DeepPartial<Entity>>(
-    targetOrEntity: EntityTarget<Entity>,
-    entity: T,
-    options: SaveOptions & {
-      reload: false;
-    },
-    permissionOptions?: PermissionOptions,
-  ): Promise<T>;
-
-  override save<Entity, T extends DeepPartial<Entity>>(
-    targetOrEntity: EntityTarget<Entity>,
-    entity: T,
-    options?: SaveOptions,
-    permissionOptions?: PermissionOptions,
-  ): Promise<T>;
-
-  override save<Entity extends ObjectLiteral, T extends DeepPartial<Entity>>(
-    targetOrEntity: EntityTarget<Entity> | Entity | Entity[],
-    entityOrMaybeOptions:
-      | T
-      | T[]
-      | SaveOptions
-      | (SaveOptions & { reload: false }),
-    maybeOptionsOrMaybePermissionOptions?:
-      | PermissionOptions
-      | SaveOptions
-      | (SaveOptions & { reload: false }),
-    permissionOptions?: PermissionOptions,
-  ): Promise<(T & Entity) | (T & Entity)[] | Entity | Entity[]> {
-    const permissionOptionsFromArgs =
-      maybeOptionsOrMaybePermissionOptions &&
-      ('shouldBypassPermissionChecks' in maybeOptionsOrMaybePermissionOptions ||
-        'objectRecordsPermissions' in maybeOptionsOrMaybePermissionOptions)
-        ? maybeOptionsOrMaybePermissionOptions
-        : permissionOptions;
-
-    this.validatePermissions(
-      targetOrEntity,
-      'update',
-      permissionOptionsFromArgs,
-    );
-
-    const target =
-      arguments.length > 1 &&
-      (typeof targetOrEntity === 'function' ||
-        typeof targetOrEntity === 'string')
-        ? (targetOrEntity as EntityTarget<Entity>)
-        : undefined;
-
-    const entityOrEntities = target
-      ? (entityOrMaybeOptions as T | T[])
-      : (targetOrEntity as Entity | Entity[]);
-
-    const options = target
-      ? (maybeOptionsOrMaybePermissionOptions as SaveOptions | undefined)
-      : (entityOrMaybeOptions as SaveOptions | undefined);
-
-    if (isDefined(target)) {
-      let entity: T | undefined;
-      let entities: T[] | undefined;
-
-      if (Array.isArray(entityOrEntities)) {
-        entities = entityOrEntities as T[];
-
-        return super.save(target, entities, options);
-      } else {
-        entity = entityOrEntities as T;
-
-        return super.save(target, entity, options);
-      }
-    } else {
-      return super.save(entityOrEntities as Entity | Entity[], options);
-    }
-  }
-
   override increment<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
     criteria: object,
@@ -563,14 +463,6 @@ export class WorkspaceEntityManager extends EntityManager {
       .getMany();
   }
 
-  override findByIds<Entity extends ObjectLiteral>(
-    _entityClass: EntityTarget<Entity>,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    _ids: any[],
-  ): Promise<Entity[]> {
-    throw new Error('Method is deprecated.');
-  }
-
   override findOne<Entity extends ObjectLiteral>(
     entityClass: EntityTarget<Entity>,
     options: FindOneOptions<Entity>,
@@ -622,13 +514,6 @@ export class WorkspaceEntityManager extends EntityManager {
         take: 1,
       })
       .getOne();
-  }
-
-  override findOneById<Entity extends ObjectLiteral>(
-    _entityClass: EntityTarget<Entity>,
-    _id: number | string | Date | ObjectId,
-  ): Promise<Entity | null> {
-    throw new Error('Method is deprecated.');
   }
 
   override findAndCount<Entity extends ObjectLiteral>(
@@ -744,75 +629,6 @@ export class WorkspaceEntityManager extends EntityManager {
     }
   }
 
-  override remove<Entity>(
-    entity: Entity,
-    options?: RemoveOptions,
-    permissionOptions?: PermissionOptions,
-  ): Promise<Entity>;
-
-  override remove<Entity>(
-    targetOrEntity: EntityTarget<Entity>,
-    entity: Entity,
-    options?: RemoveOptions,
-    permissionOptions?: PermissionOptions,
-  ): Promise<Entity>;
-
-  override remove<Entity>(
-    entity: Entity[],
-    options?: RemoveOptions,
-    permissionOptions?: PermissionOptions,
-  ): Promise<Entity>;
-
-  override remove<Entity>(
-    targetOrEntity: EntityTarget<Entity>,
-    entity: Entity[],
-    options?: RemoveOptions,
-    permissionOptions?: PermissionOptions,
-  ): Promise<Entity[]>;
-
-  override remove<Entity extends ObjectLiteral>(
-    targetOrEntity: EntityTarget<Entity> | Entity[] | Entity,
-    entityOrMaybeOptions: Entity | Entity[] | RemoveOptions,
-    maybeOptionsOrMaybePermissionOptions?: RemoveOptions | PermissionOptions,
-    permissionOptions?: PermissionOptions,
-  ): Promise<Entity | Entity[]> {
-    const permissionOptionsFromArgs =
-      maybeOptionsOrMaybePermissionOptions &&
-      ('shouldBypassPermissionChecks' in maybeOptionsOrMaybePermissionOptions ||
-        'objectRecordsPermissions' in maybeOptionsOrMaybePermissionOptions)
-        ? (maybeOptionsOrMaybePermissionOptions as PermissionOptions)
-        : permissionOptions;
-
-    this.validatePermissions(
-      targetOrEntity,
-      'delete',
-      permissionOptionsFromArgs,
-    );
-
-    const target =
-      typeof targetOrEntity === 'function' || typeof targetOrEntity === 'string'
-        ? (targetOrEntity as EntityTarget<Entity>)
-        : undefined;
-
-    const entityOrEntities = target
-      ? (entityOrMaybeOptions as Entity | Entity[])
-      : (targetOrEntity as Entity | Entity[]);
-
-    const options = target
-      ? (maybeOptionsOrMaybePermissionOptions as RemoveOptions | undefined)
-      : (entityOrMaybeOptions as RemoveOptions);
-
-    if (isDefined(target)) {
-      if (Array.isArray(entityOrEntities)) {
-        return super.remove(target, entityOrEntities as Entity[], options);
-      } else {
-        return super.remove(target, entityOrEntities as Entity, options);
-      }
-    } else {
-      return super.remove(entityOrEntities as Entity | Entity[], options);
-    }
-  }
-
   override softDelete<Entity extends ObjectLiteral>(
     targetOrEntity: EntityTarget<Entity>,
     criteria: unknown,
@@ -858,170 +674,6 @@ export class WorkspaceEntityManager extends EntityManager {
         .from(targetOrEntity)
         .where(criteria)
         .execute();
-    }
-  }
-
-  override softRemove<Entity extends ObjectLiteral>(
-    entities: Entity[],
-    options?: SaveOptions,
-    permissionOptions?: PermissionOptions,
-  ): Promise<Entity[]>;
-
-  override softRemove<Entity extends ObjectLiteral>(
-    entities: Entity,
-    options?: SaveOptions,
-    permissionOptions?: PermissionOptions,
-  ): Promise<Entity>;
-
-  override softRemove<
-    Entity extends ObjectLiteral,
-    T extends DeepPartial<Entity>,
-  >(
-    targetOrEntity: EntityTarget<Entity>,
-    entities: T[],
-    options?: SaveOptions,
-    permissionOptions?: PermissionOptions,
-  ): Promise<T[]>;
-
-  override softRemove<
-    Entity extends ObjectLiteral,
-    T extends DeepPartial<Entity>,
-  >(
-    targetOrEntity: EntityTarget<Entity>,
-    entities: T,
-    options?: SaveOptions,
-    permissionOptions?: PermissionOptions,
-  ): Promise<T>;
-
-  override async softRemove<
-    Entity extends ObjectLiteral,
-    T extends DeepPartial<Entity>,
-  >(
-    targetOrEntityOrEntities: Entity | Entity[] | EntityTarget<Entity>,
-    entitiesOrMaybeOptions: T | T[] | SaveOptions,
-    maybeOptionsOrMaybePermissionOptions?: SaveOptions | PermissionOptions,
-    permissionOptions?: PermissionOptions,
-  ): Promise<Entity | Entity[] | T | T[]> {
-    const permissionOptionsFromArgs =
-      maybeOptionsOrMaybePermissionOptions &&
-      ('shouldBypassPermissionChecks' in maybeOptionsOrMaybePermissionOptions ||
-        'objectRecordsPermissions' in maybeOptionsOrMaybePermissionOptions)
-        ? (maybeOptionsOrMaybePermissionOptions as PermissionOptions)
-        : permissionOptions;
-
-    this.validatePermissions(
-      targetOrEntityOrEntities,
-      'soft-delete',
-      permissionOptionsFromArgs,
-    );
-
-    const target =
-      typeof targetOrEntityOrEntities === 'function' ||
-      typeof targetOrEntityOrEntities === 'string'
-        ? (targetOrEntityOrEntities as EntityTarget<Entity>)
-        : undefined;
-
-    const entityOrEntities = target
-      ? (entitiesOrMaybeOptions as T | T[])
-      : (targetOrEntityOrEntities as Entity | Entity[]);
-
-    const options = target
-      ? (maybeOptionsOrMaybePermissionOptions as SaveOptions | undefined)
-      : (entitiesOrMaybeOptions as SaveOptions);
-
-    if (isDefined(target)) {
-      if (Array.isArray(entityOrEntities)) {
-        return super.softRemove(target, entityOrEntities as T[], options);
-      } else {
-        return super.softRemove(target, entityOrEntities as T, options);
-      }
-    } else {
-      if (Array.isArray(entityOrEntities)) {
-        return super.softRemove(entityOrEntities as Entity | Entity[], options);
-      } else {
-        return super.softRemove(entityOrEntities as Entity, options);
-      }
-    }
-  }
-
-  override recover<Entity>(
-    entities: Entity[],
-    options?: SaveOptions,
-    permissionOptions?: PermissionOptions,
-  ): Promise<Entity[]>;
-
-  override recover<Entity>(
-    entity: Entity,
-    options?: SaveOptions,
-    permissionOptions?: PermissionOptions,
-  ): Promise<Entity>;
-
-  override recover<Entity, T extends DeepPartial<Entity>>(
-    targetOrEntity: EntityTarget<Entity>,
-    entities: T[],
-    options?: SaveOptions,
-    permissionOptions?: PermissionOptions,
-  ): Promise<T[]>;
-
-  override recover<Entity, T extends DeepPartial<Entity>>(
-    targetOrEntity: EntityTarget<Entity>,
-    entity: T,
-    options?: SaveOptions,
-    permissionOptions?: PermissionOptions,
-  ): Promise<T>;
-
-  override recover<Entity extends ObjectLiteral, T extends DeepPartial<Entity>>(
-    targetOrEntityOrEntities: EntityTarget<Entity> | Entity | Entity[],
-    entityOrEntitiesOrMaybeOptions: T | T[] | SaveOptions,
-    maybeOptionsOrMaybePermissionOptions?: SaveOptions | PermissionOptions,
-    permissionOptions?: PermissionOptions,
-  ): Promise<Entity | Entity[] | T | T[]> {
-    const permissionOptionsFromArgs =
-      maybeOptionsOrMaybePermissionOptions &&
-      ('shouldBypassPermissionChecks' in maybeOptionsOrMaybePermissionOptions ||
-        'objectRecordsPermissions' in maybeOptionsOrMaybePermissionOptions)
-        ? (maybeOptionsOrMaybePermissionOptions as PermissionOptions)
-        : permissionOptions;
-
-    this.validatePermissions(
-      targetOrEntityOrEntities,
-      'restore',
-      permissionOptionsFromArgs,
-    );
-
-    const target =
-      typeof targetOrEntityOrEntities === 'function' ||
-      typeof targetOrEntityOrEntities === 'string'
-        ? (targetOrEntityOrEntities as EntityTarget<Entity>)
-        : undefined;
-
-    const options = target
-      ? (maybeOptionsOrMaybePermissionOptions as SaveOptions | undefined)
-      : (entityOrEntitiesOrMaybeOptions as SaveOptions);
-
-    if (target) {
-      if (Array.isArray(entityOrEntitiesOrMaybeOptions)) {
-        return super.recover(
-          target,
-          entityOrEntitiesOrMaybeOptions as T[],
-          options,
-        );
-      } else {
-        return super.recover(
-          target,
-          entityOrEntitiesOrMaybeOptions as T,
-          options,
-        );
-      }
-    } else {
-      if (Array.isArray(entityOrEntitiesOrMaybeOptions)) {
-        return super.recover(
-          entityOrEntitiesOrMaybeOptions as Entity | Entity[],
-          options,
-        );
-      } else {
-        return super.recover(entityOrEntitiesOrMaybeOptions as Entity, options);
-      }
     }
   }
 
@@ -1249,14 +901,34 @@ export class WorkspaceEntityManager extends EntityManager {
     return super.clear(entityClass);
   }
 
-  override preload<Entity extends ObjectLiteral>(
+  override async preload<Entity extends ObjectLiteral>(
     entityClass: EntityTarget<Entity>,
     entityLike: DeepPartial<Entity>,
     permissionOptions?: PermissionOptions,
   ): Promise<Entity | undefined> {
-    this.validatePermissions(entityClass, 'select', permissionOptions);
+    const managerWithPermissionOptions = Object.assign(
+      Object.create(Object.getPrototypeOf(this)),
+      this,
+      {
+        findByIds: (entityClass: EntityTarget<Entity>, ids: string[]) => {
+          return this.findByIds(entityClass, ids, permissionOptions);
+        },
+      },
+    );
 
-    return super.preload(entityClass, entityLike);
+    const metadata = this.connection.getMetadata(entityClass);
+    const plainObjectToDatabaseEntityTransformer =
+      new PlainObjectToDatabaseEntityTransformer(managerWithPermissionOptions);
+    const transformedEntity =
+      await plainObjectToDatabaseEntityTransformer.transform(
+        entityLike,
+        metadata,
+      );
+
+    if (transformedEntity)
+      return this.merge(entityClass, transformedEntity, entityLike) as Entity;
+
+    return undefined;
   }
 
   override decrement<Entity extends ObjectLiteral>(
@@ -1291,6 +963,369 @@ export class WorkspaceEntityManager extends EntityManager {
       .set(values)
       .where(criteria)
       .execute();
+  }
+
+  override findByIds<Entity extends ObjectLiteral>(
+    entityClass: EntityTarget<Entity>,
+    ids: string[],
+    permissionOptions?: PermissionOptions,
+  ): Promise<Entity[]> {
+    if (!ids.length) return Promise.resolve([]);
+    const metadata = this.connection.getMetadata(entityClass);
+
+    return this.createQueryBuilder(
+      entityClass,
+      metadata.name,
+      undefined,
+      permissionOptions,
+    )
+      .andWhereInIds(ids)
+      .getMany();
+  }
+
+  /**
+   * Functions duplicated from EntityManager but with a queryRunner that will bypass permissions
+   * because permissions cannot be passed on to the call to createQueryBuilder() done in SubjectExecutor called by EntityPersistExecutor
+   * queryBuilder checks are replaced by validatePermissions()
+   */
+
+  override save<Entity extends ObjectLiteral>(
+    entities: Entity[],
+    options?: SaveOptions,
+    permissionOptions?: PermissionOptions,
+  ): Promise<Entity[]>;
+
+  override save<Entity extends ObjectLiteral>(
+    entity: Entity,
+    options?: SaveOptions,
+    permissionOptions?: PermissionOptions,
+  ): Promise<Entity>;
+
+  override save<Entity, T extends DeepPartial<Entity>>(
+    targetOrEntity: EntityTarget<Entity>,
+    entities: T[],
+    options: SaveOptions & {
+      reload: false;
+    },
+    permissionOptions?: PermissionOptions,
+  ): Promise<T[]>;
+
+  override save<Entity, T extends DeepPartial<Entity>>(
+    targetOrEntity: EntityTarget<Entity>,
+    entities: T[],
+    options?: SaveOptions,
+    permissionOptions?: PermissionOptions,
+  ): Promise<(T & Entity)[]>;
+
+  override save<Entity, T extends DeepPartial<Entity>>(
+    targetOrEntity: EntityTarget<Entity>,
+    entity: T,
+    options: SaveOptions & {
+      reload: false;
+    },
+    permissionOptions?: PermissionOptions,
+  ): Promise<T>;
+
+  override save<Entity, T extends DeepPartial<Entity>>(
+    targetOrEntity: EntityTarget<Entity>,
+    entity: T,
+    options?: SaveOptions,
+    permissionOptions?: PermissionOptions,
+  ): Promise<T>;
+
+  override save<Entity extends ObjectLiteral, T extends DeepPartial<Entity>>(
+    targetOrEntity: EntityTarget<Entity> | Entity | Entity[],
+    entityOrMaybeOptions:
+      | T
+      | T[]
+      | SaveOptions
+      | (SaveOptions & { reload: false }),
+    maybeOptionsOrMaybePermissionOptions?:
+      | PermissionOptions
+      | SaveOptions
+      | (SaveOptions & { reload: false }),
+    permissionOptions?: PermissionOptions,
+  ): Promise<(T & Entity) | (T & Entity)[] | Entity | Entity[]> {
+    const permissionOptionsFromArgs =
+      maybeOptionsOrMaybePermissionOptions &&
+      ('shouldBypassPermissionChecks' in maybeOptionsOrMaybePermissionOptions ||
+        'objectRecordsPermissions' in maybeOptionsOrMaybePermissionOptions)
+        ? maybeOptionsOrMaybePermissionOptions
+        : permissionOptions;
+
+    this.validatePermissions(
+      targetOrEntity,
+      'update',
+      permissionOptionsFromArgs,
+    );
+
+    let target =
+      arguments.length > 1 &&
+      (typeof targetOrEntity === 'function' ||
+        InstanceChecker.isEntitySchema(targetOrEntity) ||
+        typeof targetOrEntity === 'string')
+        ? targetOrEntity
+        : undefined;
+    const entity = target ? entityOrMaybeOptions : targetOrEntity;
+    const options = target
+      ? maybeOptionsOrMaybePermissionOptions
+      : entityOrMaybeOptions;
+
+    if (InstanceChecker.isEntitySchema(target)) target = target.options.name;
+    if (Array.isArray(entity) && entity.length === 0)
+      return Promise.resolve(entity as Entity[]);
+
+    const queryRunnerForEntityPersistExecutor =
+      this.connection.createQueryRunnerForEntityPersistExecutor();
+
+    return new EntityPersistExecutor(
+      this.connection,
+      queryRunnerForEntityPersistExecutor,
+      'save',
+      target,
+      entity as ObjectLiteral,
+      options as SaveOptions | (SaveOptions & { reload: false }),
+    )
+      .execute()
+      .then(() => entity as Entity);
+  }
+
+  override remove<Entity>(
+    entity: Entity,
+    options?: RemoveOptions,
+    permissionOptions?: PermissionOptions,
+  ): Promise<Entity>;
+
+  override remove<Entity>(
+    targetOrEntity: EntityTarget<Entity>,
+    entity: Entity,
+    options?: RemoveOptions,
+    permissionOptions?: PermissionOptions,
+  ): Promise<Entity>;
+
+  override remove<Entity>(
+    entity: Entity[],
+    options?: RemoveOptions,
+    permissionOptions?: PermissionOptions,
+  ): Promise<Entity>;
+
+  override remove<Entity>(
+    targetOrEntity: EntityTarget<Entity>,
+    entity: Entity[],
+    options?: RemoveOptions,
+    permissionOptions?: PermissionOptions,
+  ): Promise<Entity[]>;
+
+  override remove<Entity extends ObjectLiteral>(
+    targetOrEntity: EntityTarget<Entity> | Entity[] | Entity,
+    entityOrMaybeOptions: Entity | Entity[] | RemoveOptions,
+    maybeOptionsOrMaybePermissionOptions?: RemoveOptions | PermissionOptions,
+    permissionOptions?: PermissionOptions,
+  ): Promise<Entity | Entity[]> {
+    const permissionOptionsFromArgs =
+      maybeOptionsOrMaybePermissionOptions &&
+      ('shouldBypassPermissionChecks' in maybeOptionsOrMaybePermissionOptions ||
+        'objectRecordsPermissions' in maybeOptionsOrMaybePermissionOptions)
+        ? (maybeOptionsOrMaybePermissionOptions as PermissionOptions)
+        : permissionOptions;
+
+    this.validatePermissions(
+      targetOrEntity,
+      'delete',
+      permissionOptionsFromArgs,
+    );
+
+    const target =
+      arguments.length > 1 &&
+      (typeof targetOrEntity === 'function' ||
+        InstanceChecker.isEntitySchema(targetOrEntity) ||
+        typeof targetOrEntity === 'string')
+        ? targetOrEntity
+        : undefined;
+    const entity = target ? entityOrMaybeOptions : targetOrEntity;
+    const options = target
+      ? maybeOptionsOrMaybePermissionOptions
+      : entityOrMaybeOptions;
+
+    if (Array.isArray(entity) && entity.length === 0)
+      return Promise.resolve(entity);
+
+    const queryRunnerForEntityPersistExecutor =
+      this.connection.createQueryRunnerForEntityPersistExecutor();
+
+    return new EntityPersistExecutor(
+      this.connection,
+      queryRunnerForEntityPersistExecutor,
+      'remove',
+      target as string | undefined,
+      entity as ObjectLiteral,
+      options as RemoveOptions,
+    )
+      .execute()
+      .then(() => entity as Entity | Entity[]);
+  }
+
+  override softRemove<Entity extends ObjectLiteral>(
+    entities: Entity[],
+    options?: SaveOptions,
+    permissionOptions?: PermissionOptions,
+  ): Promise<Entity[]>;
+
+  override softRemove<Entity extends ObjectLiteral>(
+    entities: Entity,
+    options?: SaveOptions,
+    permissionOptions?: PermissionOptions,
+  ): Promise<Entity>;
+
+  override softRemove<
+    Entity extends ObjectLiteral,
+    T extends DeepPartial<Entity>,
+  >(
+    targetOrEntity: EntityTarget<Entity>,
+    entities: T[],
+    options?: SaveOptions,
+    permissionOptions?: PermissionOptions,
+  ): Promise<T[]>;
+
+  override softRemove<
+    Entity extends ObjectLiteral,
+    T extends DeepPartial<Entity>,
+  >(
+    targetOrEntity: EntityTarget<Entity>,
+    entities: T,
+    options?: SaveOptions,
+    permissionOptions?: PermissionOptions,
+  ): Promise<T>;
+
+  override async softRemove<
+    Entity extends ObjectLiteral,
+    T extends DeepPartial<Entity>,
+  >(
+    targetOrEntityOrEntities: Entity | Entity[] | EntityTarget<Entity>,
+    entitiesOrMaybeOptions: T | T[] | SaveOptions,
+    maybeOptionsOrMaybePermissionOptions?: SaveOptions | PermissionOptions,
+    permissionOptions?: PermissionOptions,
+  ): Promise<Entity | Entity[] | T | T[]> {
+    const permissionOptionsFromArgs =
+      maybeOptionsOrMaybePermissionOptions &&
+      ('shouldBypassPermissionChecks' in maybeOptionsOrMaybePermissionOptions ||
+        'objectRecordsPermissions' in maybeOptionsOrMaybePermissionOptions)
+        ? (maybeOptionsOrMaybePermissionOptions as PermissionOptions)
+        : permissionOptions;
+
+    this.validatePermissions(
+      targetOrEntityOrEntities,
+      'soft-delete',
+      permissionOptionsFromArgs,
+    );
+
+    let target =
+      arguments.length > 1 &&
+      (typeof targetOrEntityOrEntities === 'function' ||
+        InstanceChecker.isEntitySchema(targetOrEntityOrEntities) ||
+        typeof targetOrEntityOrEntities === 'string')
+        ? targetOrEntityOrEntities
+        : undefined;
+    const entity = target ? entitiesOrMaybeOptions : targetOrEntityOrEntities;
+    const options = target
+      ? maybeOptionsOrMaybePermissionOptions
+      : entitiesOrMaybeOptions;
+
+    if (InstanceChecker.isEntitySchema(target)) target = target.options.name;
+    if (Array.isArray(entity) && entity.length === 0)
+      return Promise.resolve(entity);
+
+    const queryRunnerForEntityPersistExecutor =
+      this.connection.createQueryRunnerForEntityPersistExecutor();
+
+    return new EntityPersistExecutor(
+      this.connection,
+      queryRunnerForEntityPersistExecutor,
+      'soft-remove',
+      target,
+      entity as ObjectLiteral,
+      options as SaveOptions,
+    )
+      .execute()
+      .then(() => entity as Entity);
+  }
+
+  override recover<Entity>(
+    entities: Entity[],
+    options?: SaveOptions,
+    permissionOptions?: PermissionOptions,
+  ): Promise<Entity[]>;
+
+  override recover<Entity>(
+    entity: Entity,
+    options?: SaveOptions,
+    permissionOptions?: PermissionOptions,
+  ): Promise<Entity>;
+
+  override recover<Entity, T extends DeepPartial<Entity>>(
+    targetOrEntity: EntityTarget<Entity>,
+    entities: T[],
+    options?: SaveOptions,
+    permissionOptions?: PermissionOptions,
+  ): Promise<T[]>;
+
+  override recover<Entity, T extends DeepPartial<Entity>>(
+    targetOrEntity: EntityTarget<Entity>,
+    entity: T,
+    options?: SaveOptions,
+    permissionOptions?: PermissionOptions,
+  ): Promise<T>;
+
+  override recover<Entity extends ObjectLiteral, T extends DeepPartial<Entity>>(
+    targetOrEntityOrEntities: EntityTarget<Entity> | Entity | Entity[],
+    entityOrEntitiesOrMaybeOptions: T | T[] | SaveOptions,
+    maybeOptionsOrMaybePermissionOptions?: SaveOptions | PermissionOptions,
+    permissionOptions?: PermissionOptions,
+  ): Promise<Entity | Entity[] | T | T[]> {
+    const permissionOptionsFromArgs =
+      maybeOptionsOrMaybePermissionOptions &&
+      ('shouldBypassPermissionChecks' in maybeOptionsOrMaybePermissionOptions ||
+        'objectRecordsPermissions' in maybeOptionsOrMaybePermissionOptions)
+        ? (maybeOptionsOrMaybePermissionOptions as PermissionOptions)
+        : permissionOptions;
+
+    this.validatePermissions(
+      targetOrEntityOrEntities,
+      'restore',
+      permissionOptionsFromArgs,
+    );
+
+    let target =
+      arguments.length > 1 &&
+      (typeof targetOrEntityOrEntities === 'function' ||
+        InstanceChecker.isEntitySchema(targetOrEntityOrEntities) ||
+        typeof targetOrEntityOrEntities === 'string')
+        ? targetOrEntityOrEntities
+        : undefined;
+    const entity = target
+      ? entityOrEntitiesOrMaybeOptions
+      : targetOrEntityOrEntities;
+    const options = target
+      ? maybeOptionsOrMaybePermissionOptions
+      : entityOrEntitiesOrMaybeOptions;
+
+    if (InstanceChecker.isEntitySchema(target)) target = target.options.name;
+    if (Array.isArray(entity) && entity.length === 0)
+      return Promise.resolve(entity);
+
+    const queryRunnerForEntityPersistExecutor =
+      this.connection.createQueryRunnerForEntityPersistExecutor();
+
+    return new EntityPersistExecutor(
+      this.connection,
+      queryRunnerForEntityPersistExecutor,
+      'recover',
+      target,
+      entity as ObjectLiteral,
+      options as SaveOptions,
+    )
+      .execute()
+      .then(() => entity as Entity);
   }
 
   // Forbidden methods
