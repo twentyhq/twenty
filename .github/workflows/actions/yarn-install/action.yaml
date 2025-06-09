@@ -2,7 +2,7 @@ name: Yarn Install
 inputs:
   node-version:
     required: false
-    default: '18'
+    default: '22'
 
 runs:
   using: "composite"
