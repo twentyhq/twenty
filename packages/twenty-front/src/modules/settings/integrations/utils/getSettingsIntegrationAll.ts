@@ -46,5 +46,14 @@ export const getSettingsIntegrationAll = ({
       text: 'Stripe',
       link: '/settings/integrations/stripe',
     },
+    {
+      from: {
+        key: 'rabbit-sign',
+        image: '/images/integrations/rabbit-sign-logo.svg',
+      },
+      type: 'Add',
+      text: 'RabbitSign',
+      link: 'https://rabbitsign.com/',
+    },
   ].filter(Boolean) as SettingsIntegration[],
 });
