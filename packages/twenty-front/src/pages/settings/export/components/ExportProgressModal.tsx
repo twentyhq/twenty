@@ -9,13 +9,15 @@ import {
   StyledProgressText,
 } from './SettingsExport.styles';
 
+type ExportProgressModalProps = {
+  isVisible: boolean;
+  progress: ExportProgress;
+};
+
 export const ExportProgressModal = ({
   isVisible,
   progress,
-}: {
-  isVisible: boolean;
-  progress: ExportProgress;
-}) => {
+}: ExportProgressModalProps) => {
   const { t } = useLingui();
 
   if (!isVisible) return null;
