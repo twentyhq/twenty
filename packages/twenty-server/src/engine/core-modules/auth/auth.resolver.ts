@@ -49,6 +49,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -94,7 +95,7 @@ export class AuthResolver {
     private sSOService: SSOService,
   ) {}
 
-  @UseGuards(CaptchaGuard)
+  @UseGuards(CaptchaGuard, PublicEndpointGuard)
   @Query(() => UserExistsOutput)
   async checkUserExists(
     @Args() checkUserExistsInput: CheckUserExistsInput,
@@ -105,6 +106,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => GetAuthorizationUrlForSSOOutput)
+  @UseGuards(PublicEndpointGuard)
   async getAuthorizationUrlForSSO(
     @Args('input') params: GetAuthorizationUrlForSSOInput,
   ) {
@@ -115,6 +117,7 @@ export class AuthResolver {
   }
 
   @Query(() => WorkspaceInviteHashValid)
+  @UseGuards(PublicEndpointGuard)
   async checkWorkspaceInviteHashIsValid(
     @Args() workspaceInviteHashValidInput: WorkspaceInviteHashValidInput,
   ): Promise<WorkspaceInviteHashValid> {
@@ -124,6 +127,7 @@ export class AuthResolver {
   }
 
   @Query(() => Workspace)
+  @UseGuards(PublicEndpointGuard)
   async findWorkspaceFromInviteHash(
     @Args() workspaceInviteHashValidInput: WorkspaceInviteHashValidInput,
   ): Promise<Workspace> {
@@ -132,7 +136,7 @@ export class AuthResolver {
     );
   }
 
-  @UseGuards(CaptchaGuard)
+  @UseGuards(CaptchaGuard, PublicEndpointGuard)
   @Mutation(() => LoginToken)
   async getLoginTokenFromCredentials(
     @Args()
@@ -166,6 +170,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => GetLoginTokenFromEmailVerificationTokenOutput)
+  @UseGuards(PublicEndpointGuard)
   async getLoginTokenFromEmailVerificationToken(
     @Args()
     getLoginTokenFromEmailVerificationTokenInput: GetLoginTokenFromEmailVerificationTokenInput,
@@ -197,7 +202,7 @@ export class AuthResolver {
     return { loginToken, workspaceUrls };
   }
 
-  @UseGuards(CaptchaGuard)
+  @UseGuards(CaptchaGuard, PublicEndpointGuard)
   @Mutation(() => SignUpOutput)
   async signUp(@Args() signUpInput: SignUpInput): Promise<SignUpOutput> {
     const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
@@ -269,6 +274,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => SignUpOutput)
+  @UseGuards(UserAuthGuard)
   async signUpInNewWorkspace(
     @AuthUser() currentUser: User,
   ): Promise<SignUpOutput> {
@@ -300,7 +306,7 @@ export class AuthResolver {
   // }
 
   @Mutation(() => TransientToken)
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  @UseGuards(UserAuthGuard)
   async generateTransientToken(
     @AuthUser() user: User,
     @AuthWorkspace() workspace: Workspace,
@@ -324,6 +330,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthTokens)
+  @UseGuards(PublicEndpointGuard)
   async getAuthTokensFromLoginToken(
     @Args() getAuthTokensFromLoginTokenInput: GetAuthTokensFromLoginTokenInput,
     @Args('origin') origin: string,
@@ -351,7 +358,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthorizeApp)
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  @UseGuards(UserAuthGuard)
   async authorizeApp(
     @Args() authorizeAppInput: AuthorizeAppInput,
     @AuthUser() user: User,
@@ -365,6 +372,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthTokens)
+  @UseGuards(PublicEndpointGuard)
   async renewToken(@Args() args: AppTokenInput): Promise<AuthTokens> {
     const tokens = await this.renewTokenService.generateTokensFromRefreshToken(
       args.appToken,
@@ -390,6 +398,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => EmailPasswordResetLink)
+  @UseGuards(PublicEndpointGuard)
   async emailPasswordResetLink(
     @Args() emailPasswordResetInput: EmailPasswordResetLinkInput,
     @Context() context: I18nContext,
@@ -408,6 +417,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => InvalidatePassword)
+  @UseGuards(PublicEndpointGuard)
   async updatePasswordViaResetToken(
     @Args()
     { passwordResetToken, newPassword }: UpdatePasswordViaResetTokenInput,
@@ -428,6 +438,7 @@ export class AuthResolver {
   }
 
   @Query(() => ValidatePasswordResetToken)
+  @UseGuards(PublicEndpointGuard)
   async validatePasswordResetToken(
     @Args() args: ValidatePasswordResetTokenInput,
   ): Promise<ValidatePasswordResetToken> {
