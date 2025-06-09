@@ -92,7 +92,6 @@ export const useListenClickOutside = <T extends Element>({
 
         while (currentElement) {
           const currentDataAttributes = currentElement.dataset;
-
           const isGloballyExcluded =
             currentDataAttributes?.globallyPreventClickOutside === 'true';
 
