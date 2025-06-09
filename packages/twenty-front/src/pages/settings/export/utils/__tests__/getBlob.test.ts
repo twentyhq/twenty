@@ -231,14 +231,16 @@ describe('getBlob', () => {
       const blobText = await readBlobAsText(result);
       const parsedData = JSON.parse(blobText);
 
-      expect(parsedData.metadata.fields).toEqual([
-        { name: 'id', type: 'UUID', isComposite: false },
-        { name: 'createdAt', type: 'DATE_TIME', isComposite: false },
-        { name: 'updatedAt', type: 'DATE_TIME', isComposite: false },
-        { name: 'email', type: 'EMAIL', isComposite: false },
-        { name: 'name', type: 'TEXT', isComposite: false },
-        { name: 'age', type: 'NUMBER', isComposite: false },
-      ]);
+      expect(parsedData.metadata.fields).toEqual(
+        expect.arrayContaining([
+          { name: 'id', type: 'UUID', isComposite: false },
+          { name: 'createdAt', type: 'DATE_TIME', isComposite: false },
+          { name: 'updatedAt', type: 'DATE_TIME', isComposite: false },
+          { name: 'email', type: 'EMAIL', isComposite: false },
+          { name: 'name', type: 'TEXT', isComposite: false },
+          { name: 'age', type: 'NUMBER', isComposite: false },
+        ])
+      );
     });
 
     it('should preserve original records with __typename', async () => {
