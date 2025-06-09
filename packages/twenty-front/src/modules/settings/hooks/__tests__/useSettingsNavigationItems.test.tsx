@@ -27,6 +27,7 @@ const mockCurrentUser = {
 
 const mockBilling: Billing = {
   isBillingEnabled: false,
+  isBillingSwitchPlanIntervalEnabled: true,
   billingUrl: '',
   trialPeriods: [],
   __typename: 'Billing',

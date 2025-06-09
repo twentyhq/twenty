@@ -29,8 +29,6 @@ import { SettingsServiceCenterServiceLevel } from '~/pages/settings/service-cent
 import { SettingsServiceCenterTelephony } from '~/pages/settings/service-center/SettingsServiceCenterTelephony';
 import { SettingsTelephonyEdit } from '~/pages/settings/service-center/SettingsServiceCenterTelephonyEdit';
 
-import { SettingsBillingPlan } from '~/pages/settings/billing/SettingsBilling';
-
 const SettingsApiKeys = lazy(() =>
   import('~/pages/settings/developers/api-keys/SettingsApiKeys').then(
     (module) => ({
@@ -391,10 +389,6 @@ export const SettingsRoutes = ({
         />
       </Route>
 
-      <Route
-        path={SettingsPath.BillingPlan}
-        element={<SettingsBillingPlan />}
-      />
       <Route
         path={SettingsPath.ServiceCenter}
         element={<SettingsServiceCenter />}

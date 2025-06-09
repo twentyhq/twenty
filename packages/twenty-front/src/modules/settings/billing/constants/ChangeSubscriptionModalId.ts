@@ -1,1 +1,1 @@
-export const CHANGE_SUBSCRIPTION_MODAL_ID = 'change-subscription-modal';
+export const SWITCH_PLAN_MODAL_ID = 'switch-subscription-modal';

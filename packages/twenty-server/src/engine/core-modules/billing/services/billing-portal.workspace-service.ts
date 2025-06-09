@@ -19,6 +19,7 @@ import {
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingPaymentProviders } from 'src/engine/core-modules/billing/enums/billing-payment-providers.enum';
+import { ChargeType } from 'src/engine/core-modules/billing/enums/billint-charge-type.enum';
 import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
 import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/services/stripe-checkout.service';
 import { BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
@@ -56,6 +57,7 @@ export class BillingPortalWorkspaceService {
     paymentProvider,
     locale,
     interChargeData: interChargeInput,
+    chargeType = ChargeType.ONE_TIME,
   }: BillingPortalCheckoutSessionParameters): Promise<string> {
     const frontBaseUrl = this.domainManagerService.buildWorkspaceURL({
       workspace,
@@ -94,7 +96,7 @@ export class BillingPortalWorkspaceService {
     });
 
     const stripeSubscriptionLineItems = this.getStripeSubscriptionLineItems({
-      quantity,
+      quantity: chargeType === ChargeType.PER_SEAT ? quantity : 1,
       billingPricesPerPlan,
     });
 

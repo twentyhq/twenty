@@ -19,6 +19,7 @@ import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-p
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
@@ -59,6 +60,7 @@ export class BillingSubscriptionService {
         relations: [
           'billingSubscriptionItems',
           'billingSubscriptionItems.billingProduct',
+          'billingSubscriptionItems.billingProduct.billingPrices',
         ],
       });
 
@@ -300,6 +302,102 @@ export class BillingSubscriptionService {
         },
       },
     );
+  }
+
+  async switchSubscriptionPlan(
+    subscription: BillingSubscription,
+    plan: BillingPlanKey,
+  ) {
+    await this.billingSubscriptionRepository.save({
+      id: subscription.id,
+      metadata: {
+        ...subscription.metadata,
+        plan,
+      } as Stripe.Metadata,
+    });
+
+    const updatedSubscription =
+      await this.billingSubscriptionRepository.findOneOrFail({
+        where: {
+          id: subscription.id,
+        },
+        relations: {
+          billingSubscriptionItems: true,
+        },
+      });
+
+    assert(
+      updatedSubscription.metadata.plan === plan,
+      `Failed to switch subscription plan from ${subscription.metadata?.plan} to ${plan}`,
+    );
+
+    // TODO: Skip this block if the subscription was created from Inter as a payment provider
+    {
+      const billingProductsByPlan =
+        await this.billingProductService.getProductsByPlan(plan);
+
+      const baseProduct = billingProductsByPlan.find(
+        (product) => product.metadata.planKey === plan,
+      );
+
+      if (!baseProduct)
+        throw new BillingException(
+          `Cannot find base product for ${plan} plan`,
+          BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND,
+        );
+
+      for (const subscriptionItem of updatedSubscription.billingSubscriptionItems) {
+        const baseProductPrice = baseProduct.billingPrices.filter(
+          (price) => price.interval === subscription.interval && price.active,
+        );
+
+        if (!baseProductPrice || baseProductPrice.length === 0)
+          throw new BillingException(
+            `Cannot find base product price for ${plan} plan`,
+            BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
+          );
+
+        await this.stripeSubscriptionItemService.updateSubscriptionItem(
+          subscriptionItem.stripeSubscriptionItemId,
+          {
+            price: baseProductPrice[0].stripePriceId,
+          },
+        );
+
+        await this.billingSubscriptionItemRepository.save({
+          id: subscriptionItem.id,
+          stripePriceId: baseProductPrice[0].stripePriceId,
+          stripeProductId: baseProduct.stripeProductId,
+        });
+      }
+
+      const updatedStripeSubscription =
+        await this.stripeSubscriptionService.updateSubscription(
+          updatedSubscription.stripeSubscriptionId,
+          {
+            metadata: {
+              ...updatedSubscription.metadata,
+              plan,
+            },
+          },
+        );
+
+      assert(
+        updatedStripeSubscription.metadata.plan === plan,
+        `Failed to switch stripe subscription plan from ${updatedStripeSubscription.metadata.plan} to ${plan}`,
+      );
+    }
+
+    const baseProduct =
+      await this.getBaseProductCurrentBillingSubscriptionItemOrThrow(
+        subscription.workspaceId as string,
+      );
+
+    return {
+      baseProduct,
+      subscription: updatedSubscription,
+      planKey: updatedSubscription.metadata.plan as BillingPlanKey,
+    };
   }
 
   private getTrialPeriodFreeWorkflowCredits(

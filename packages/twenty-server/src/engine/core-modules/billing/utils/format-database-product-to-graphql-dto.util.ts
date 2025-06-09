@@ -1,7 +1,5 @@
 /* @license Enterprise */
 
-import Stripe from 'stripe';
-
 import { BillingPriceLicensedDTO } from 'src/engine/core-modules/billing/dtos/billing-price-licensed.dto';
 import { BillingPriceMeteredDTO } from 'src/engine/core-modules/billing/dtos/billing-price-metered.dto';
 import { BillingPlanOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-plan.output';
@@ -10,13 +8,7 @@ import { BillingPriceTiersMode } from 'src/engine/core-modules/billing/enums/bil
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { BillingGetPlanResult } from 'src/engine/core-modules/billing/types/billing-get-plan-result.type';
-
-const getMarketingFeaturesList = (
-  featers?: Stripe.Product.MarketingFeature[],
-) =>
-  featers && featers.length > 0
-    ? featers.map((feat) => feat?.name || null)
-    : null;
+import { getMarketingFeaturesList } from 'src/engine/core-modules/billing/utils/get-product-marketing-features-list.util';
 
 export const formatBillingDatabaseProductToGraphqlDTO = (
   plan: BillingGetPlanResult,
@@ -89,7 +81,7 @@ const formatBillingDatabasePriceToMeteredPriceDTO = (
   };
 };
 
-const formatBillingDatabasePriceToLicensedPriceDTO = (
+export const formatBillingDatabasePriceToLicensedPriceDTO = (
   billingPrice: BillingPrice,
 ): BillingPriceLicensedDTO => {
   return {

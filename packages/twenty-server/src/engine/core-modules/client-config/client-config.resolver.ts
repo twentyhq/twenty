@@ -20,6 +20,9 @@ export class ClientConfigResolver {
     const clientConfig: ClientConfig = {
       billing: {
         isBillingEnabled: this.twentyConfigService.get('IS_BILLING_ENABLED'),
+        isBillingSwitchPlanIntervalEnabled: this.twentyConfigService.get(
+          'IS_BILLING_SWICH_PLAN_INTERVAL_ENABLED',
+        ),
         billingUrl: this.twentyConfigService.get('BILLING_PLAN_REQUIRED_LINK'),
         trialPeriods: [
           {

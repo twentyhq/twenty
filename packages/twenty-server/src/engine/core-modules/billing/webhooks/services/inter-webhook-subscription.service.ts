@@ -10,6 +10,7 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingPaymentProviders } from 'src/engine/core-modules/billing/enums/billing-payment-providers.enum';
 import { interToSubscriptionStatusMap } from 'src/engine/core-modules/billing/webhooks/utils/inter-to-subsciption-status.mapper';
 import { InterChargeStatus } from 'src/engine/core-modules/inter/enums/InterChargeStatus.enum';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -68,11 +69,13 @@ export class InterWebhookSubscriptionService {
       },
     );
 
+    // TODO: We also need to upsert subscriptionProduct items
     await this.billingSubscriptionRepository.upsert(
       {
         workspaceId: workspace.id,
         interBillingChargeId: seuNumero,
         status: interToSubscriptionStatusMap[situacao],
+        provider: BillingPaymentProviders.Inter,
       },
       {
         conflictPaths: ['interBillingChargeId'],

@@ -8,10 +8,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
+import { BillingSwitchPlanInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-switch-plan.input';
 import { BillingEndTrialPeriodOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-end-trial-period.output';
 import { BillingMeteredProductUsageOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-metered-product-usage.output';
 import { BillingPlanOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-plan.output';
 import { BillingSessionOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-session.output';
+import { BillingSwitchPlanOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-switch-plan.output';
 import { BillingUpdateOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-update.output';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
@@ -20,6 +22,7 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
+import { formatBillingDatabaseProductToBaseProductDTO } from 'src/engine/core-modules/billing/utils/format-database-product-to-base-product-dto.util';
 import { formatBillingDatabaseProductToGraphqlDTO } from 'src/engine/core-modules/billing/utils/format-database-product-to-graphql-dto.util';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -133,6 +136,40 @@ export class BillingResolver {
     return { success: true };
   }
 
+  @Mutation(() => BillingSwitchPlanOutput)
+  async switchPlan(
+    @AuthWorkspace() workspace: Workspace,
+    @AuthUser() user: User,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Args() { plan }: BillingSwitchPlanInput,
+    @AuthApiKey() apiKey?: string,
+  ): Promise<BillingSwitchPlanOutput> {
+    await this.validateCanCheckoutSessionPermissionOrThrow({
+      workspaceId: workspace.id,
+      userWorkspaceId,
+      isExecutedByApiKey: isDefined(apiKey),
+    });
+
+    const billingSubscription =
+      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+        {
+          workspaceId: workspace.id,
+        },
+      );
+
+    const { baseProduct, planKey, subscription } =
+      await this.billingSubscriptionService.switchSubscriptionPlan(
+        billingSubscription,
+        plan,
+      );
+
+    return {
+      planKey,
+      subscription,
+      baseProduct: formatBillingDatabaseProductToBaseProductDTO(baseProduct),
+    };
+  }
+
   @Query(() => [BillingPlanOutput])
   @UseGuards(WorkspaceAuthGuard)
   async plans(): Promise<BillingPlanOutput[]> {
@@ -160,7 +197,14 @@ export class BillingResolver {
   async getMeteredProductsUsage(
     @AuthWorkspace() workspace: Workspace,
   ): Promise<BillingMeteredProductUsageOutput[]> {
-    return await this.billingUsageService.getMeteredProductsUsage(workspace);
+    const result =
+      await this.billingUsageService.getMeteredProductsUsage(workspace);
+
+    result.map((item) => {
+      console.log(typeof item.periodEnd);
+    });
+
+    return result;
   }
 
   private async validateCanCheckoutSessionPermissionOrThrow({

@@ -131,7 +131,7 @@ msgstr "1. Type"
 #~ msgstr "10 000 workflow node executions"
 
 #. js-lingui-id: 7IIx+y
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "10,000 workflow node executions"
 msgstr "10,000 workflow node executions"
 
@@ -157,7 +157,7 @@ msgstr "2. Configure field"
 #~ msgstr "20 000 workflow node executions"
 
 #. js-lingui-id: YfwnsU
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "20,000 workflow node executions"
 msgstr "20,000 workflow node executions"
 
@@ -488,6 +488,11 @@ msgstr "Allow the invitation of new users by sharing an invite link."
 msgid "Allow users to sign in with an email and password."
 msgstr "Allow users to sign in with an email and password."
 
+#. js-lingui-id: wgwm72
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Allows you to change your current subscription plan"
+msgstr "Allows you to change your current subscription plan"
+
 #. js-lingui-id: LG4K0m
 #: src/pages/auth/PasswordReset.tsx
 msgid "An error occurred while updating password"
@@ -519,8 +524,8 @@ msgid "API"
 msgstr "API"
 
 #. js-lingui-id: 0RqpZr
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "API & Webhooks"
 msgstr "API & Webhooks"
 
@@ -614,8 +619,13 @@ msgstr "Are you sure that you want to change your billing interval? You will be 
 
 #. js-lingui-id: mupq7U
 #: src/pages/settings/billing/CancelSubscriptionPlan.tsx
-msgid "Are you sure you want to cancel?"
-msgstr "Are you sure you want to cancel?"
+#~ msgid "Are you sure you want to cancel?"
+#~ msgstr "Are you sure you want to cancel?"
+
+#. js-lingui-id: QRW/xV
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Are you sure you want to change your subscripion plan? Your invoice amount will change at the end of the curent period."
+msgstr "Are you sure you want to change your subscripion plan? Your invoice amount will change at the end of the curent period."
 
 #. js-lingui-id: 8Y3Jbl
 #: src/modules/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction.tsx
@@ -827,6 +837,7 @@ msgstr "Can't change API names for standard objects"
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
+#: src/modules/settings/billing/components/SettingsBillingSwitchSubscriptonModal.tsx
 msgid "Cancel"
 msgstr "Cancel"
 
@@ -860,6 +871,11 @@ msgstr "Catalan"
 msgid "CEP"
 msgstr "CEP"
 
+#. js-lingui-id: o+XJ9D
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Change"
+msgstr "Change"
+
 #. js-lingui-id: OfzMnb
 #: src/pages/settings/SettingsBilling.tsx
 #~ msgid "Change {to}"
@@ -872,10 +888,15 @@ msgstr "CEP"
 msgid "Change Password"
 msgstr "Change Password"
 
+#. js-lingui-id: /A54X+
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Change plan"
+msgstr "Change plan"
+
 #. js-lingui-id: wRtBJP
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "Change Plan"
-msgstr "Change Plan"
+#~ msgid "Change Plan"
+#~ msgstr "Change Plan"
 
 #. js-lingui-id: EYSFEW
 #: src/pages/settings/workspace/SettingsDomain.tsx
@@ -883,7 +904,8 @@ msgid "Change subdomain?"
 msgstr "Change subdomain?"
 
 #. js-lingui-id: tGRbQa
-#: src/pages/settings/billing/ConfirmChangeSubscriptionPlan.tsx
+#: src/pages/settings/SettingsBilling.tsx
+#: src/pages/settings/SettingsBilling.tsx
 msgid "Change subscription plan"
 msgstr "Change subscription plan"
 
@@ -927,13 +949,17 @@ msgstr "Choose the fields that will identify your records"
 msgid "Choose the format used to display date value"
 msgstr "Choose the format used to display date value"
 
+#. js-lingui-id: cnKeIQ
+#: src/modules/settings/billing/components/SettingsBillingSwitchSubscriptonModal.tsx
+msgid "Choose your new Plan"
+msgstr "Choose your new Plan"
+
 #. js-lingui-id: tjXxZj
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Choose your payment method"
 msgstr "Choose your payment method"
 
 #. js-lingui-id: y1elF1
-#: src/pages/settings/billing/ChangeSubscriptionPlan.tsx
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Choose your plan"
 msgstr "Choose your plan"
@@ -1352,8 +1378,8 @@ msgid "Custom domain updated"
 msgstr "Custom domain updated"
 
 #. js-lingui-id: 8skTDV
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "Custom objects"
 msgstr "Custom objects"
 
@@ -1867,8 +1893,8 @@ msgid "Email cannot be empty"
 msgstr "Email cannot be empty"
 
 #. js-lingui-id: lfQsvW
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "Email integration"
 msgstr "Email integration"
 
@@ -2390,8 +2416,8 @@ msgstr "French"
 #~ msgstr "from yearly to monthly"
 
 #. js-lingui-id: scmRyR
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "Full access"
 msgstr "Full access"
 
@@ -4188,9 +4214,9 @@ msgid "Russian"
 msgstr "Russian"
 
 #. js-lingui-id: tfDRzk
-#: src/pages/settings/billing/ChangeSubscriptionPlan.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
+#: src/modules/settings/billing/components/SettingsBillingSwitchSubscriptonModal.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 msgid "Save"
 msgstr "Save"
@@ -4640,7 +4666,7 @@ msgid "SSO"
 msgstr "SSO"
 
 #. js-lingui-id: vlvAkg
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "SSO (SAML / OIDC)"
 msgstr "SSO (SAML / OIDC)"
 
@@ -5162,8 +5188,8 @@ msgid "Unknown error"
 msgstr "Unknown error"
 
 #. js-lingui-id: GQCXQS
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "Unlimited contacts"
 msgstr "Unlimited contacts"
 
