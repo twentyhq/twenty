@@ -200,7 +200,8 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       return await this.validateWorkspaceAgnosticToken(payload);
     }
 
-    if (payload.type === 'ACCESS') {
+    // `!payload.type` is here to support legacy token
+    if (payload.type === 'ACCESS' || !payload.type) {
       return await this.validateAccessToken(payload);
     }
 

@@ -50,7 +50,6 @@ export class JwtWrapperService {
 
   verifyJwtToken(
     token: string,
-    // @deprecated - use type from decoded payload
     type: JwtTokenTypeEnum,
     options?: JwtVerifyOptions,
   ) {
@@ -68,8 +67,8 @@ export class JwtWrapperService {
       throw new AuthException('No payload', AuthExceptionCode.UNAUTHENTICATED);
     }
 
-    // support legacy token that doesn't include type in payload
-    type = payload.type ?? type;
+    // @TODO: Migrate to use type from payload instead of parameter
+    type = payload.type === JwtTokenTypeEnum.WORKSPACE_AGNOSTIC ? JwtTokenTypeEnum.WORKSPACE_AGNOSTIC : type;
 
     // TODO: check if this is really needed
     if (type !== 'FILE' && !payload.sub) {
