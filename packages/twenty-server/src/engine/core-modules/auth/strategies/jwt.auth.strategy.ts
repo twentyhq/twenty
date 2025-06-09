@@ -164,6 +164,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     return {
       user,
       workspace,
+      authProvider: payload.authProvider,
       userWorkspaceId: userWorkspace.id,
       workspaceMemberId: payload.workspaceMemberId,
     };
@@ -181,7 +182,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
     );
 
-    return { user };
+    return { user, authProvider: payload.authProvider };
   }
 
   private isLegacyApiKeyPayload(

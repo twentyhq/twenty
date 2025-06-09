@@ -94,7 +94,7 @@ export class UserResolver {
   @UseGuards(UserAuthGuard)
   async currentUser(
     @AuthUser() { id: userId }: User,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace,
   ): Promise<User> {
     const user = await this.userRepository.findOne({
       where: {
@@ -195,7 +195,7 @@ export class UserResolver {
   })
   async userVars(
     @Parent() user: User,
-    @AuthWorkspace() workspace: Workspace | undefined,
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<Record<string, any>> {
     if (!workspace) return {};
@@ -223,7 +223,7 @@ export class UserResolver {
   })
   async workspaceMember(
     @Parent() user: User,
-    @AuthWorkspace() workspace: Workspace | undefined,
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
   ): Promise<WorkspaceMember | null> {
     if (!workspace) return null;
 
@@ -248,7 +248,7 @@ export class UserResolver {
   })
   async workspaceMembers(
     @Parent() _user: User,
-    @AuthWorkspace() workspace: Workspace | undefined,
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
   ): Promise<WorkspaceMember[]> {
     if (!workspace) return [];
 
@@ -335,7 +335,7 @@ export class UserResolver {
   })
   async deletedWorkspaceMembers(
     @Parent() _user: User,
-    @AuthWorkspace() workspace: Workspace | undefined,
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
   ): Promise<DeletedWorkspaceMember[]> {
     if (!workspace) return [];
 
@@ -366,7 +366,7 @@ export class UserResolver {
   @UseGuards(WorkspaceAuthGuard)
   async uploadProfilePicture(
     @AuthUser() { id }: User,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace({ allowUndefined: true }) { id: workspaceId }: Workspace,
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename, mimetype }: FileUpload,
   ): Promise<SignedFileDTO> {
@@ -405,7 +405,7 @@ export class UserResolver {
   })
   async onboardingStatus(
     @Parent() user: User,
-    @AuthWorkspace() workspace: Workspace | undefined,
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
   ): Promise<OnboardingStatus | null> {
     if (!workspace) return null;
 
@@ -415,7 +415,9 @@ export class UserResolver {
   @ResolveField(() => Workspace, {
     nullable: true,
   })
-  async currentWorkspace(@AuthWorkspace() workspace: Workspace) {
+  async currentWorkspace(
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
+  ) {
     return workspace;
   }
 

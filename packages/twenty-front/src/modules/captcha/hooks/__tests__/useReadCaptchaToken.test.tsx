@@ -6,12 +6,9 @@ import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 
 describe('useReadCaptchaToken', () => {
   it('should return undefined when no token exists', async () => {
-    const { result } = renderHook(
-      () => useReadCaptchaToken(),
-      {
-        wrapper: RecoilRoot,
-      },
-    );
+    const { result } = renderHook(() => useReadCaptchaToken(), {
+      wrapper: RecoilRoot,
+    });
 
     await act(async () => {
       const token = await result.current.readCaptchaToken();

@@ -439,7 +439,7 @@ export const useAuth = () => {
             );
             return await redirectToWorkspaceDomain(
               getWorkspaceUrl(targetWorkspace.workspaceUrls),
-              AppPath.SignInUp,
+              targetWorkspace.loginToken ? AppPath.Verify : AppPath.SignInUp,
               {
                 ...(targetWorkspace.loginToken && {
                   loginToken: targetWorkspace.loginToken,

@@ -2,12 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 import * as ReactRouterDom from 'react-router-dom';
 
-import { captchaTokenState } from '@/captcha/states/captchaTokenState';
-import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
-import { captchaState } from '@/client-config/states/captchaState';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
-import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
-import { CaptchaDriverType } from '~/generated-metadata/graphql';
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -23,7 +18,7 @@ describe('useRequestFreshCaptchaToken', () => {
 
     // Mock window.grecaptcha
     window.grecaptcha = {
-      execute: jest.fn().mockImplementation((siteKey, options) => {
+      execute: jest.fn().mockImplementation(() => {
         return Promise.resolve('google-recaptcha-token');
       }),
     };
@@ -32,9 +27,7 @@ describe('useRequestFreshCaptchaToken', () => {
     window.turnstile = {
       render: jest.fn().mockReturnValue('turnstile-widget-id'),
       execute: jest.fn().mockImplementation((widgetId, options) => {
-        if (options && options.callback) {
-          options.callback('turnstile-token');
-        }
+        return options?.callback('turnstile-token');
       }),
     };
   });
@@ -46,13 +39,9 @@ describe('useRequestFreshCaptchaToken', () => {
   });
 
   it('should not request a token if captcha is not required for the path', async () => {
-
-    const { result } = renderHook(
-      () => useRequestFreshCaptchaToken(),
-      {
-        wrapper: RecoilRoot,
-      },
-    );
+    const { result } = renderHook(() => useRequestFreshCaptchaToken(), {
+      wrapper: RecoilRoot,
+    });
 
     await act(async () => {
       await result.current.requestFreshCaptchaToken();
@@ -63,12 +52,9 @@ describe('useRequestFreshCaptchaToken', () => {
   });
 
   it('should not request a token if captcha provider is not defined', async () => {
-    const { result } = renderHook(
-      () => useRequestFreshCaptchaToken(),
-      {
-        wrapper: RecoilRoot,
-      },
-    );
+    const { result } = renderHook(() => useRequestFreshCaptchaToken(), {
+      wrapper: RecoilRoot,
+    });
 
     await act(async () => {
       await result.current.requestFreshCaptchaToken();
