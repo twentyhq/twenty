@@ -6,6 +6,7 @@ import {
   FieldMetadataSettings,
   NumberDataType,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import {
   computeDepthParameters,
@@ -18,7 +19,7 @@ import {
 } from 'src/engine/core-modules/open-api/utils/parameters.utils';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.type';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 type Property = OpenAPIV3_1.SchemaObject;
 
@@ -329,19 +330,31 @@ const getSchemaComponentsRelationProperties = (
       return node;
     }
 
-    const itemProperty = {} as Property;
+    let itemProperty = {} as Property;
 
-    // TODO: Charles fix
-    // if (field.fromRelationMetadata?.toObjectMetadata.nameSingular) {
-    //   itemProperty = {
-    //     type: 'array',
-    //     items: {
-    //       $ref: `#/components/schemas/${capitalize(
-    //         field.fromRelationMetadata?.toObjectMetadata.nameSingular,
-    //       )} for Response`,
-    //     },
-    //   };
-    // }
+    if (isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION)) {
+      if (field.settings?.relationType === RelationType.MANY_TO_ONE) {
+        itemProperty = {
+          type: 'object',
+          oneOf: [
+            {
+              $ref: `#/components/schemas/${capitalize(
+                field.relationTargetObjectMetadata.nameSingular,
+              )} for Response`,
+            },
+          ],
+        };
+      } else if (field.settings?.relationType === RelationType.ONE_TO_MANY) {
+        itemProperty = {
+          type: 'array',
+          items: {
+            $ref: `#/components/schemas/${capitalize(
+              field.relationTargetObjectMetadata.nameSingular,
+            )} for Response`,
+          },
+        };
+      }
+    }
 
     if (field.description) {
       itemProperty.description = field.description;
@@ -531,7 +544,6 @@ export const computeMetadataSchemaComponents = (
           return schemas;
         }
         case 'field': {
-          // TODO: Charles fix
           const baseFieldProperties = ({
             withImmutableFields,
             withRequiredFields,
@@ -621,72 +633,6 @@ export const computeMetadataSchemaComponents = (
           };
 
           return schemas;
-        }
-        case 'relation': {
-          schemas[`${capitalize(item.nameSingular)}`] = {
-            type: 'object',
-            description: 'A relation',
-            properties: {
-              relationType: {
-                type: 'string',
-                enum: Object.keys(RelationMetadataType),
-              },
-              fromObjectMetadataId: { type: 'string', format: 'uuid' },
-              toObjectMetadataId: { type: 'string', format: 'uuid' },
-              fromName: { type: 'string' },
-              fromLabel: { type: 'string' },
-              toName: { type: 'string' },
-              toLabel: { type: 'string' },
-            },
-          };
-          schemas[`${capitalize(item.namePlural)}`] = {
-            type: 'array',
-            description: `A list of ${item.namePlural}`,
-            items: {
-              $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
-            },
-          };
-          schemas[`${capitalize(item.nameSingular)} for Response`] = {
-            ...schemas[`${capitalize(item.nameSingular)}`],
-            properties: {
-              relationType: {
-                type: 'string',
-                enum: Object.keys(RelationMetadataType),
-              },
-              id: { type: 'string', format: 'uuid' },
-              fromFieldMetadataId: { type: 'string', format: 'uuid' },
-              toFieldMetadataId: { type: 'string', format: 'uuid' },
-              fromObjectMetadata: {
-                type: 'object',
-                properties: {
-                  id: { type: 'string', format: 'uuid' },
-                  dataSourceId: { type: 'string', format: 'uuid' },
-                  nameSingular: { type: 'string' },
-                  namePlural: { type: 'string' },
-                  isSystem: { type: 'boolean' },
-                  isRemote: { type: 'boolean' },
-                },
-              },
-              toObjectMetadata: {
-                type: 'object',
-                properties: {
-                  id: { type: 'string', format: 'uuid' },
-                  dataSourceId: { type: 'string', format: 'uuid' },
-                  nameSingular: { type: 'string' },
-                  namePlural: { type: 'string' },
-                  isSystem: { type: 'boolean' },
-                  isRemote: { type: 'boolean' },
-                },
-              },
-            },
-          };
-          schemas[`${capitalize(item.namePlural)} for Response`] = {
-            type: 'array',
-            description: `A list of ${item.namePlural}`,
-            items: {
-              $ref: `#/components/schemas/${capitalize(item.nameSingular)} for Response`,
-            },
-          };
         }
       }
 

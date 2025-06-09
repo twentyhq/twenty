@@ -428,7 +428,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     options?: FindManyOptions<ObjectMetadataEntity>,
   ) {
     return this.objectMetadataRepository.find({
-      relations: ['fields.object', 'fields'],
+      relations: [
+        'fields.object',
+        'fields',
+        'fields.relationTargetObjectMetadata',
+      ],
       ...options,
       where: {
         ...options?.where,

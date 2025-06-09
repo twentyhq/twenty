@@ -256,12 +256,11 @@ export class TimelineActivityService {
 
     if (!isDefined(activity)) return;
 
-    // TODO: Charles fix
     const activityObjectMetadataId = event.objectMetadata.fields.find(
       (field) => field.name === activityType,
     )?.relationTargetObjectMetadataId;
 
-    const targetColumn: string[] = Object.entries(activityTarget[0])
+    const targetColumn: string[] = Object.entries(activityTarget)
       .map(([columnName, columnValue]: [string, string]) => {
         if (columnName === activityType + 'Id' || !columnName.endsWith('Id'))
           return;
@@ -279,9 +278,9 @@ export class TimelineActivityService {
         name: 'linked-' + eventName,
         properties: {},
         objectName: targetColumn[0].replace(/Id$/, ''),
-        recordId: activityTarget[0][targetColumn[0]],
-        linkedRecordCachedName: activity[0].title,
-        linkedRecordId: activity[0].id,
+        recordId: activityTarget[targetColumn[0]],
+        linkedRecordCachedName: activity.title,
+        linkedRecordId: activity.id,
         linkedObjectMetadataId: activityObjectMetadataId,
       } satisfies TimelineActivity,
     ];
