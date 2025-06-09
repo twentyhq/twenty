@@ -3,6 +3,7 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
+import GraphQLJSON from 'graphql-type-json';
 import Stripe from 'stripe';
 import {
   Column,
@@ -17,11 +18,11 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import GraphQLJSON from 'graphql-type-json';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { BillingSubscriptionItemDTO } from 'src/engine/core-modules/billing/dtos/outputs/billing-subscription-item.output';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { BillingPaymentProviders } from 'src/engine/core-modules/billing/enums/billing-payment-providers.enum';
 import { BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/billing/enums/billing-subscription-collection-method.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
@@ -65,6 +66,15 @@ export class BillingSubscription {
 
   @Column({ nullable: true, unique: true })
   interBillingChargeId: string;
+
+  @Field(() => BillingPaymentProviders)
+  @Column({
+    nullable: false,
+    type: 'enum',
+    enum: Object.values(BillingPaymentProviders),
+    default: BillingPaymentProviders.Stripe,
+  })
+  provider: BillingPaymentProviders;
 
   @Field(() => SubscriptionStatus)
   @Column({
