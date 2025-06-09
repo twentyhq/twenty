@@ -24,7 +24,7 @@ export const ImportSummaryStep = ({
   const { t } = useLingui();
   const successCount = summaries.filter((s) => s.status === 'success').length;
   const failedCount = summaries.filter((s) => s.status === 'failed').length;
-  const sumariesLength = summaries.length;
+  const summariesLength = summaries.length;
   return (
     <StyledSummaryContainer>
       <Heading
