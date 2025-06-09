@@ -333,18 +333,17 @@ export class BillingSubscriptionService {
 
     // TODO: Skip this block if the subscription was created from Inter as a payment provider
     {
-      const billingProductsByPlan =
-        await this.billingProductService.getProductsByPlan(plan);
+      const planKey = getPlanKeyFromSubscription(updatedSubscription);
 
-      const baseProduct = billingProductsByPlan.find(
-        (product) => product.metadata.planKey === plan,
-      );
+      const baseProduct =
+        await this.billingPlanService.getPlanBaseProduct(planKey);
 
-      if (!baseProduct)
+      if (!baseProduct) {
         throw new BillingException(
-          `Cannot find base product for ${plan} plan`,
+          'Base product not found',
           BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND,
         );
+      }
 
       for (const subscriptionItem of updatedSubscription.billingSubscriptionItems) {
         const baseProductPrice = baseProduct.billingPrices.filter(
