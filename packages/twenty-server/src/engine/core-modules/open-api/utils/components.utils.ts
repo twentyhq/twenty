@@ -96,9 +96,20 @@ const getSchemaComponentsProperties = ({
   return item.fields.reduce((node, field) => {
     if (
       !isFieldAvailable(field, forResponse) ||
-      field.type === FieldMetadataType.RELATION ||
       field.type === FieldMetadataType.TS_VECTOR
     ) {
+      return node;
+    }
+
+    if (
+      isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) &&
+      field.settings?.relationType === RelationType.MANY_TO_ONE
+    ) {
+      node[`${field.name}Id`] = {
+        type: 'string',
+        format: 'uuid',
+      };
+
       return node;
     }
 

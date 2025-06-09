@@ -1,8 +1,10 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 const DEFAULT_DEPTH_VALUE = 1;
 
@@ -40,63 +42,65 @@ export const mapFieldMetadataToGraphqlQuery = (
     return field.name;
   } else if (
     maxDepthForRelations > 0 &&
-    fieldType === FieldMetadataType.RELATION
-    // field.toRelationMetadata?.relationType === RelationMetadataType.ONE_TO_MANY
+    isFieldMetadataInterfaceOfType(field, FieldMetadataType.RELATION) &&
+    field.settings?.relationType === RelationType.MANY_TO_ONE
   ) {
-    // TODO: Charles fix
-    // const fromObjectMetadataId = field.toRelationMetadata?.fromObjectMetadataId;
-    // if (!fromObjectMetadataId) {
-    //   return '';
-    // }
-    // const relationMetadataItem = objectMetadataMaps.byId[fromObjectMetadataId];
-    // if (!relationMetadataItem) {
-    //   return '';
-    // }
-    // return `${field.name}
-    // {
-    //   id
-    //   ${Object.values(relationMetadataItem.fieldsById)
-    //     .map((field) =>
-    //       mapFieldMetadataToGraphqlQuery(
-    //         objectMetadataMaps,
-    //         field,
-    //         maxDepthForRelations - 1,
-    //       ),
-    //     )
-    //     .join('\n')}
-    // }`;
-    // } else if (
-    //   maxDepthForRelations > 0 &&
-    //   fieldType === FieldMetadataType.RELATION
-    //   // field.fromRelationMetadata?.relationType ===
-    //   //   RelationMetadataType.ONE_TO_MANY
-    //   // TODO: Charles fix
-    // ) {
-    // const toObjectMetadataId = field.fromRelationMetadata?.toObjectMetadataId;
-    // if (!toObjectMetadataId) {
-    //   return '';
-    // }
-    // const relationMetadataItem = objectMetadataMaps.byId[toObjectMetadataId];
-    // if (!relationMetadataItem) {
-    //   return '';
-    // }
-    // return `${field.name}
-    //   {
-    //     edges {
-    //       node {
-    //         id
-    //         ${Object.values(relationMetadataItem.fieldsById)
-    //           .map((field) =>
-    //             mapFieldMetadataToGraphqlQuery(
-    //               objectMetadataMaps,
-    //               field,
-    //               maxDepthForRelations - 1,
-    //             ),
-    //           )
-    //           .join('\n')}
-    //       }
-    //     }
-    //   }`;
+    const targetObjectMetadataId = field.relationTargetObjectMetadataId;
+
+    if (!targetObjectMetadataId) {
+      return '';
+    }
+
+    const relationMetadataItem =
+      objectMetadataMaps.byId[targetObjectMetadataId];
+
+    return `${field.name}
+    {
+      id
+      ${Object.values(relationMetadataItem.fieldsById)
+        .map((field) =>
+          mapFieldMetadataToGraphqlQuery(
+            objectMetadataMaps,
+            field,
+            maxDepthForRelations - 1,
+          ),
+        )
+        .join('\n')}
+    }`;
+  } else if (
+    maxDepthForRelations > 0 &&
+    isFieldMetadataInterfaceOfType(field, FieldMetadataType.RELATION) &&
+    field.settings?.relationType === RelationType.ONE_TO_MANY
+  ) {
+    const targetObjectMetadataId = field.relationTargetObjectMetadataId;
+
+    if (!targetObjectMetadataId) {
+      return '';
+    }
+    const relationMetadataItem =
+      objectMetadataMaps.byId[targetObjectMetadataId];
+
+    if (!relationMetadataItem) {
+      return '';
+    }
+
+    return `${field.name}
+      {
+        edges {
+          node {
+            id
+            ${Object.values(relationMetadataItem.fieldsById)
+              .map((field) =>
+                mapFieldMetadataToGraphqlQuery(
+                  objectMetadataMaps,
+                  field,
+                  maxDepthForRelations - 1,
+                ),
+              )
+              .join('\n')}
+          }
+        }
+      }`;
   } else if (fieldType === FieldMetadataType.LINKS) {
     return `
       ${field.name}
