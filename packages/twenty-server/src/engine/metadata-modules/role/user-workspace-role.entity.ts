@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -13,7 +14,14 @@ import {
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
 @Entity('userWorkspaceRole')
-@Unique('IndexOnUserWorkspaceRoleUnique', ['userWorkspaceId', 'roleId'])
+@Unique('IDX_USER_WORKSPACE_ROLE_USER_WORKSPACE_ID_ROLE_ID_UNIQUE', [
+  'userWorkspaceId',
+  'roleId',
+])
+@Index('IDX_USER_WORKSPACE_ROLE_USER_WORKSPACE_ID_WORKSPACE_ID', [
+  'userWorkspaceId',
+  'workspaceId',
+])
 export class UserWorkspaceRoleEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

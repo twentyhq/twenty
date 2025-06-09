@@ -1,33 +1,13 @@
-import { Field, ObjectType, createUnionType } from '@nestjs/graphql';
-
-import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class UserExists {
+export class CheckUserExistOutput {
   @Field(() => Boolean)
-  exists: true;
+  exists: boolean;
 
-  @Field(() => [AvailableWorkspaceOutput])
-  availableWorkspaces: Array<AvailableWorkspaceOutput>;
+  @Field(() => Number)
+  availableWorkspacesCount: number;
 
   @Field(() => Boolean)
   isEmailVerified: boolean;
 }
-
-@ObjectType()
-export class UserNotExists {
-  @Field(() => Boolean)
-  exists: false;
-}
-
-export const UserExistsOutput = createUnionType({
-  name: 'UserExistsOutput',
-  types: () => [UserExists, UserNotExists] as const,
-  resolveType(value) {
-    if (value.exists === true) {
-      return UserExists;
-    }
-
-    return UserNotExists;
-  },
-});

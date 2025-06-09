@@ -153,7 +153,7 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
         aggregate: executionArgs.graphqlQuerySelectedFieldsResult.aggregate,
         limit: QUERY_MAX_RECORDS,
         authContext,
-        dataSource: executionArgs.dataSource,
+        workspaceDataSource: executionArgs.workspaceDataSource,
         roleId,
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });

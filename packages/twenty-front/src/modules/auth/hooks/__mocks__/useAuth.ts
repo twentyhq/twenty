@@ -3,6 +3,7 @@ import {
   GetCurrentUserDocument,
   GetLoginTokenFromCredentialsDocument,
   SignUpDocument,
+  SignUpInWorkspaceDocument,
 } from '~/generated/graphql';
 
 export const queries = {
@@ -10,6 +11,7 @@ export const queries = {
   getAuthTokensFromLoginToken: GetAuthTokensFromLoginTokenDocument,
   signup: SignUpDocument,
   getCurrentUser: GetCurrentUserDocument,
+  signUpInWorkspace: SignUpInWorkspaceDocument,
 };
 
 export const email = 'test@test.com';
@@ -29,7 +31,13 @@ export const variables = {
     email,
     password,
     workspacePersonalInviteToken: null,
-    locale: "",
+    locale: '',
+  },
+  signUpInWorkspace: {
+    email,
+    password,
+    workspacePersonalInviteToken: null,
+    locale: '',
   },
   getCurrentUser: {},
 };
@@ -48,6 +56,16 @@ export const results = {
     },
   },
   signUp: { loginToken: { token, expiresAt: 'expiresAt' } },
+  signUpInWorkspace: {
+    loginToken: { token, expiresAt: 'expiresAt' },
+    workspace: {
+      id: 'workspace-id',
+      workspaceUrls: {
+        subdomainUrl: 'https://subdomain.twenty.com',
+        customUrl: 'https://custom.twenty.com',
+      },
+    },
+  },
   getCurrentUser: {
     currentUser: {
       id: 'id',
@@ -91,8 +109,8 @@ export const results = {
   },
 };
 
-export const mocks = [
-  {
+export const mocks = {
+  getLoginTokenFromCredentials: {
     request: {
       query: queries.getLoginTokenFromCredentials,
       variables: variables.getLoginTokenFromCredentials,
@@ -103,7 +121,7 @@ export const mocks = [
       },
     })),
   },
-  {
+  getAuthTokensFromLoginToken: {
     request: {
       query: queries.getAuthTokensFromLoginToken,
       variables: variables.getAuthTokensFromLoginToken,
@@ -114,7 +132,7 @@ export const mocks = [
       },
     })),
   },
-  {
+  signup: {
     request: {
       query: queries.signup,
       variables: variables.signup,
@@ -125,7 +143,7 @@ export const mocks = [
       },
     })),
   },
-  {
+  getCurrentUser: {
     request: {
       query: queries.getCurrentUser,
       variables: variables.getCurrentUser,
@@ -134,4 +152,15 @@ export const mocks = [
       data: results.getCurrentUser,
     })),
   },
-];
+  signUpInWorkspace: {
+    request: {
+      query: queries.signUpInWorkspace,
+      variables: variables.signUpInWorkspace,
+    },
+    result: jest.fn(() => ({
+      data: {
+        signUpInWorkspace: results.signUpInWorkspace,
+      },
+    })),
+  },
+};

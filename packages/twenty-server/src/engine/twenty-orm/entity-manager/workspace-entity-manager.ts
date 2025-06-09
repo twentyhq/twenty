@@ -145,14 +145,20 @@ export class WorkspaceEntityManager extends EntityManager {
     let queryBuilder: SelectQueryBuilder<Entity>;
 
     if (alias) {
-      queryBuilder = super.createQueryBuilder(
+      queryBuilder = this.connection.createQueryBuilder(
         entityClassOrQueryRunner as EntityTarget<Entity>,
         alias as string,
         queryRunner as QueryRunner | undefined,
+        {
+          calledByWorkspaceEntityManager: true,
+        },
       );
     } else {
-      queryBuilder = super.createQueryBuilder(
+      queryBuilder = this.connection.createQueryBuilder(
         entityClassOrQueryRunner as QueryRunner,
+        {
+          calledByWorkspaceEntityManager: true,
+        },
       );
     }
 
@@ -405,15 +411,6 @@ export class WorkspaceEntityManager extends EntityManager {
   private extractTargetNameSingularFromEntity(entity: any): string {
     return this.connection.getMetadata(entity.constructor).name;
   }
-
-  // Forbidden methods
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  override query<T = any>(_query: string, _parameters?: any[]): Promise<T> {
-    throw new Error('Method not allowed.');
-  }
-
-  // Not in use methods - duplicated from TypeORM's EntityManager to use our createQueryBuilder
 
   override find<Entity extends ObjectLiteral>(
     entityClass: EntityTarget<Entity>,
@@ -921,7 +918,10 @@ export class WorkspaceEntityManager extends EntityManager {
       permissionOptions,
     )
       .setFindOptions(options || {})
-      .getExists();
+      .select('1')
+      .limit(1)
+      .getRawOne()
+      .then((result) => isDefined(result));
   }
 
   override existsBy<Entity extends ObjectLiteral>(
@@ -938,7 +938,10 @@ export class WorkspaceEntityManager extends EntityManager {
       permissionOptions,
     )
       .setFindOptions({ where })
-      .getExists();
+      .select('1')
+      .limit(1)
+      .getRawOne()
+      .then((result) => isDefined(result));
   }
 
   override count<Entity extends ObjectLiteral>(
@@ -1097,5 +1100,15 @@ export class WorkspaceEntityManager extends EntityManager {
     this.validatePermissions(target, 'update', permissionOptions);
 
     return super.decrement(target, criteria, propertyPath, value);
+  }
+
+  // Forbidden methods
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  override query<T = any>(_query: string, _parameters?: any[]): Promise<T> {
+    throw new PermissionsException(
+      'Method not allowed.',
+      PermissionsExceptionCode.RAW_SQL_NOT_ALLOWED,
+    );
   }
 }

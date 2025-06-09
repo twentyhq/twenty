@@ -170,3 +170,29 @@ export const DisabledWithEmptyValues: Story = {
     expect(addFieldButton).not.toBeInTheDocument();
   },
 };
+
+export const EmptyForm: Story = {
+  args: {
+    actionOptions: {
+      onActionUpdate: fn(),
+    },
+    action: {
+      ...DEFAULT_ACTION,
+      settings: {
+        ...DEFAULT_ACTION.settings,
+        input: [],
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const messageContainer = await canvas.findByTestId(
+      'empty-form-message-title',
+    );
+
+    expect(messageContainer).toBeVisible();
+
+    const addFieldButton = await canvas.findByText('Add Field');
+    expect(addFieldButton).toBeVisible();
+  },
+};

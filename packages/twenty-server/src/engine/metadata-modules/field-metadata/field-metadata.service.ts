@@ -68,6 +68,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { ViewService } from 'src/modules/view/services/view.service';
+import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'src/utils/trim-and-remove-duplicated-whitespaces-from-object-string-properties';
 
 import { FieldMetadataValidationService } from './field-metadata-validation.service';
@@ -662,13 +663,15 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       }
     }
 
-    await this.fieldMetadataEnumValidationService.validateEnumFieldMetadataInput(
-      {
-        fieldMetadataInput,
-        fieldMetadataType,
-        existingFieldMetadata,
-      },
-    );
+    if (isEnumFieldMetadataType(fieldMetadataType)) {
+      await this.fieldMetadataEnumValidationService.validateEnumFieldMetadataInput(
+        {
+          fieldMetadataInput,
+          fieldMetadataType,
+          existingFieldMetadata,
+        },
+      );
+    }
 
     if (fieldMetadataInput.settings) {
       await this.fieldMetadataValidationService.validateSettingsOrThrow({
@@ -732,7 +735,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     };
   }
 
-  private prepareCustomFieldMetadata(fieldMetadataInput: CreateFieldInput) {
+  private prepareCustomFieldMetadataForCreation(
+    fieldMetadataInput: CreateFieldInput,
+  ) {
     const options = fieldMetadataInput.options
       ? this.prepareCustomFieldMetadataOptions(fieldMetadataInput.options)
       : undefined;
@@ -787,7 +792,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     const fieldMetadataForCreate =
-      this.prepareCustomFieldMetadata(fieldMetadataInput);
+      this.prepareCustomFieldMetadataForCreation(fieldMetadataInput);
 
     await this.validateFieldMetadata({
       fieldMetadataType: fieldMetadataForCreate.type,

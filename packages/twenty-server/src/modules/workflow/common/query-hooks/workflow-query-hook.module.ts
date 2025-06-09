@@ -4,6 +4,7 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkflowCreateManyPostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-create-many.post-query.hook';
@@ -28,6 +29,10 @@ import { WorkflowVersionUpdateManyPreQueryHook } from 'src/modules/workflow/comm
 import { WorkflowVersionUpdateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-update-one.pre-query.hook';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service';
+import { WorkflowRestoreOnePostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-restore-one.post-query.hook';
+import { WorkflowRestoreManyPostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-restore-many.post-query.hook';
+import { WorkflowDestroyOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-destroy-one.pre-query.hook';
+import { WorkflowDestroyManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-destroy-many.pre-query.hook';
 
 @Module({
   imports: [
@@ -35,6 +40,7 @@ import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/
     ServerlessFunctionModule,
     RecordPositionModule,
     WorkspaceCacheStorageModule,
+    ObjectMetadataModule,
   ],
   providers: [
     WorkflowCreateOnePreQueryHook,
@@ -47,6 +53,8 @@ import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/
     WorkflowRunUpdateManyPreQueryHook,
     WorkflowRunDeleteOnePreQueryHook,
     WorkflowRunDeleteManyPreQueryHook,
+    WorkflowRestoreOnePostQueryHook,
+    WorkflowRestoreManyPostQueryHook,
     WorkflowVersionCreateOnePreQueryHook,
     WorkflowVersionCreateManyPreQueryHook,
     WorkflowVersionUpdateOnePreQueryHook,
@@ -59,6 +67,8 @@ import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/
     WorkflowCommonWorkspaceService,
     WorkflowDeleteManyPostQueryHook,
     WorkflowDeleteOnePostQueryHook,
+    WorkflowDestroyOnePreQueryHook,
+    WorkflowDestroyManyPreQueryHook,
   ],
 })
 export class WorkflowQueryHookModule {}

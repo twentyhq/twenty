@@ -47,7 +47,7 @@ export const useServerlessFunctionUpdateFormState = ({
   const { loading } = useGetOneServerlessFunctionSourceCode({
     id: serverlessFunctionId,
     version: serverlessFunctionVersion,
-    onCompleted: (data: FindOneServerlessFunctionSourceCodeQuery) => {
+    onCompleted: async (data: FindOneServerlessFunctionSourceCodeQuery) => {
       const newState = {
         code: data?.getServerlessFunctionSourceCode || undefined,
         name: serverlessFunction?.name || '',
@@ -63,9 +63,11 @@ export const useServerlessFunctionUpdateFormState = ({
         const sourceCode =
           data?.getServerlessFunctionSourceCode?.[INDEX_FILE_PATH];
 
+        const functionInput = await getFunctionInputFromSourceCode(sourceCode);
+
         setServerlessFunctionTestData((prev) => ({
           ...prev,
-          input: getFunctionInputFromSourceCode(sourceCode),
+          input: functionInput,
           shouldInitInput: false,
         }));
       }

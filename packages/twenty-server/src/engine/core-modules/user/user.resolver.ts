@@ -13,11 +13,20 @@ import crypto from 'crypto';
 
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
+import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
@@ -33,16 +42,24 @@ import { DeletedWorkspaceMemberTranspiler } from 'src/engine/core-modules/user/s
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
-import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { AvailableWorkspaces } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -52,12 +69,14 @@ const getHMACKey = (email?: string, key?: string | null) => {
   return hmac.update(email).digest('hex');
 };
 
-@UseGuards(WorkspaceAuthGuard)
 @Resolver(() => User)
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
 export class UserResolver {
   constructor(
+    @InjectRepository(User, 'core')
+    private readonly userRepository: Repository<User>,
     private readonly userService: UserService,
+    private readonly userWorkspaceService: UserWorkspaceService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly fileUploadService: FileUploadService,
     private readonly onboardingService: OnboardingService,
@@ -66,23 +85,121 @@ export class UserResolver {
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly userRoleService: UserRoleService,
+    private readonly permissionsService: PermissionsService,
     private readonly deletedWorkspaceMemberTranspiler: DeletedWorkspaceMemberTranspiler,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @Query(() => User)
+  @UseGuards(UserAuthGuard)
   async currentUser(
     @AuthUser() { id: userId }: User,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace,
   ): Promise<User> {
-    return this.userService.getCurrentUser(userId, workspace);
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+      relations: ['workspaces', 'workspaces.workspace'],
+    });
+
+    userValidator.assertIsDefinedOrThrow(
+      user,
+      new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
+    );
+
+    if (!workspace) {
+      return user;
+    }
+
+    const currentUserWorkspace = user.workspaces.find(
+      (userWorkspace) => userWorkspace.workspace.id === workspace.id,
+    );
+
+    if (!currentUserWorkspace) {
+      throw new Error('Current user workspace not found');
+    }
+
+    let settingsPermissions = {};
+    let objectRecordsPermissions = {};
+    let objectPermissions: ObjectPermissionDTO[] = [];
+
+    if (
+      ![
+        WorkspaceActivationStatus.PENDING_CREATION,
+        WorkspaceActivationStatus.ONGOING_CREATION,
+      ].includes(workspace.activationStatus)
+    ) {
+      const isPermissionsV2Enabled =
+        await this.featureFlagService.isFeatureEnabled(
+          FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
+          workspace.id,
+        );
+
+      if (isPermissionsV2Enabled) {
+        const permissions =
+          await this.permissionsService.getUserWorkspacePermissionsV2({
+            userWorkspaceId: currentUserWorkspace.id,
+            workspaceId: workspace.id,
+          });
+
+        settingsPermissions = permissions.settingsPermissions;
+        objectPermissions = Object.entries(permissions.objectPermissions).map(
+          ([objectMetadataId, permissions]) => ({
+            objectMetadataId,
+            canReadObjectRecords: permissions.canRead,
+            canUpdateObjectRecords: permissions.canUpdate,
+            canSoftDeleteObjectRecords: permissions.canSoftDelete,
+            canDestroyObjectRecords: permissions.canDestroy,
+          }),
+        );
+        objectRecordsPermissions = permissions.objectRecordsPermissions;
+      } else {
+        const permissions =
+          await this.permissionsService.getUserWorkspacePermissions({
+            userWorkspaceId: currentUserWorkspace.id,
+            workspaceId: workspace.id,
+          });
+
+        settingsPermissions = permissions.settingsPermissions;
+        objectRecordsPermissions = permissions.objectRecordsPermissions;
+      }
+    }
+
+    const grantedSettingsPermissions: SettingPermissionType[] = (
+      Object.keys(settingsPermissions) as SettingPermissionType[]
+    )
+      // @ts-expect-error legacy noImplicitAny
+      .filter((feature) => settingsPermissions[feature] === true);
+
+    const grantedObjectRecordsPermissions = (
+      Object.keys(objectRecordsPermissions) as PermissionsOnAllObjectRecords[]
+    )
+      // @ts-expect-error legacy noImplicitAny
+      .filter((permission) => objectRecordsPermissions[permission] === true);
+
+    currentUserWorkspace.settingsPermissions = grantedSettingsPermissions;
+    currentUserWorkspace.objectRecordsPermissions =
+      grantedObjectRecordsPermissions;
+    currentUserWorkspace.objectPermissions = objectPermissions;
+    user.currentUserWorkspace = currentUserWorkspace;
+
+    return {
+      ...user,
+      currentWorkspace: workspace,
+    };
   }
 
-  @ResolveField(() => GraphQLJSONObject)
+  @ResolveField(() => GraphQLJSONObject, {
+    nullable: true,
+  })
   async userVars(
     @Parent() user: User,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<Record<string, any>> {
+    if (!workspace) return {};
+
     const userVars = await this.userVarService.getAll({
       userId: user.id,
       workspaceId: workspace.id,
@@ -106,8 +223,10 @@ export class UserResolver {
   })
   async workspaceMember(
     @Parent() user: User,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
   ): Promise<WorkspaceMember | null> {
+    if (!workspace) return null;
+
     const workspaceMember = await this.userService.loadWorkspaceMember(
       user,
       workspace,
@@ -129,8 +248,10 @@ export class UserResolver {
   })
   async workspaceMembers(
     @Parent() _user: User,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
   ): Promise<WorkspaceMember[]> {
+    if (!workspace) return [];
+
     const workspaceMemberEntities = await this.userService.loadWorkspaceMembers(
       workspace,
       false,
@@ -214,8 +335,10 @@ export class UserResolver {
   })
   async deletedWorkspaceMembers(
     @Parent() _user: User,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
   ): Promise<DeletedWorkspaceMember[]> {
+    if (!workspace) return [];
+
     const workspaceMemberEntities =
       await this.userService.loadDeletedWorkspaceMembersOnly(workspace);
 
@@ -240,9 +363,10 @@ export class UserResolver {
   }
 
   @Mutation(() => SignedFileDTO)
+  @UseGuards(WorkspaceAuthGuard)
   async uploadProfilePicture(
     @AuthUser() { id }: User,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace({ allowUndefined: true }) { id: workspaceId }: Workspace,
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename, mimetype }: FileUpload,
   ): Promise<SignedFileDTO> {
@@ -270,21 +394,44 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
+  @UseGuards(UserAuthGuard)
   async deleteUser(@AuthUser() { id: userId }: User) {
     // Proceed with user deletion
     return this.userService.deleteUser(userId);
   }
 
-  @ResolveField(() => OnboardingStatus)
+  @ResolveField(() => OnboardingStatus, {
+    nullable: true,
+  })
   async onboardingStatus(
     @Parent() user: User,
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<OnboardingStatus> {
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
+  ): Promise<OnboardingStatus | null> {
+    if (!workspace) return null;
+
     return this.onboardingService.getOnboardingStatus(user, workspace);
   }
 
-  @ResolveField(() => Workspace)
-  async currentWorkspace(@AuthWorkspace() workspace: Workspace) {
+  @ResolveField(() => Workspace, {
+    nullable: true,
+  })
+  async currentWorkspace(
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
+  ) {
     return workspace;
+  }
+
+  @ResolveField(() => AvailableWorkspaces)
+  async availableWorkspaces(
+    @AuthUser() user: User,
+    @AuthProvider() authProvider: AuthProviderEnum,
+  ): Promise<AvailableWorkspaces> {
+    return this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
+      await this.userWorkspaceService.findAvailableWorkspacesByEmail(
+        user.email,
+      ),
+      user,
+      authProvider,
+    );
   }
 }

@@ -204,9 +204,15 @@ export class ApprovedAccessDomainService {
     });
   }
 
-  async findValidatedApprovedAccessDomainWithWorkspaceByDomain(domain: string) {
+  async findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain(
+    domain: string,
+  ) {
     return await this.approvedAccessDomainRepository.find({
-      relations: ['workspace'],
+      relations: [
+        'workspace',
+        'workspace.workspaceSSOIdentityProviders',
+        'workspace.approvedAccessDomains',
+      ],
       where: {
         domain,
         isValidated: true,

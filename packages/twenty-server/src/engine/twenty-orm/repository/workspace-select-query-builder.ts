@@ -4,6 +4,10 @@ import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { validateQueryIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-delete-query-builder';
 import { WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-soft-delete-query-builder';
@@ -83,9 +87,10 @@ export class WorkspaceSelectQueryBuilder<
   }
 
   override getExists(): Promise<boolean> {
-    this.validatePermissions();
-
-    return super.getExists();
+    throw new PermissionsException(
+      'getExists is not supported because it calls dataSource.createQueryBuilder()',
+      PermissionsExceptionCode.METHOD_NOT_ALLOWED,
+    );
   }
 
   override getManyAndCount(): Promise<[T[], number]> {
@@ -145,6 +150,13 @@ export class WorkspaceSelectQueryBuilder<
       this.objectRecordsPermissions,
       this.internalContext,
       this.shouldBypassPermissionChecks,
+    );
+  }
+
+  override executeExistsQuery(): Promise<boolean> {
+    throw new PermissionsException(
+      'executeExistsQuery is not supported because it calls dataSource.createQueryBuilder()',
+      PermissionsExceptionCode.METHOD_NOT_ALLOWED,
     );
   }
 

@@ -1,36 +1,33 @@
-import addressparser from 'addressparser';
+import { isDefined } from 'twenty-shared/utils';
 
 import { Participant } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message.type';
-
-const formatAddressObjectAsArray = (
-  addressObject: addressparser.EmailAddress | addressparser.EmailAddress[],
-): addressparser.EmailAddress[] => {
-  return Array.isArray(addressObject) ? addressObject : [addressObject];
-};
+import { EmailAddress } from 'src/modules/messaging/message-import-manager/types/email-address';
 
 const removeSpacesAndLowerCase = (email: string): string => {
   return email.replace(/\s/g, '').toLowerCase();
 };
 
 export const formatAddressObjectAsParticipants = (
-  addressObject:
-    | addressparser.EmailAddress
-    | addressparser.EmailAddress[]
-    | undefined,
+  addressObjects: EmailAddress[],
   role: 'from' | 'to' | 'cc' | 'bcc',
 ): Participant[] => {
-  if (!addressObject) return [];
-  const addressObjects = formatAddressObjectAsArray(addressObject);
-
   const participants = addressObjects.map((addressObject) => {
     const address = addressObject.address;
 
+    if (!isDefined(address)) {
+      return null;
+    }
+
+    if (!address.includes('@')) {
+      return null;
+    }
+
     return {
       role,
-      handle: address ? removeSpacesAndLowerCase(address) : '',
+      handle: removeSpacesAndLowerCase(address),
       displayName: addressObject.name || '',
     };
   });
 
-  return participants.flat();
+  return participants.filter(isDefined) as Participant[];
 };

@@ -13,7 +13,7 @@ import styled from '@emotion/styled';
 import { id } from 'date-fns/locale';
 import { isDefined } from 'twenty-shared/utils';
 
-const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
+const StyledContainer = styled.div`
   align-items: start;
   display: flex;
   flex: 1;

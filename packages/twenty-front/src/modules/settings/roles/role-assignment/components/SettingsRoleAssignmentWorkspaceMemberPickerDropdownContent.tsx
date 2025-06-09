@@ -1,4 +1,8 @@
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
+import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { t } from '@lingui/core/macro';
+import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { MenuItem, MenuItemAvatar } from 'twenty-ui/navigation';
 import { SearchRecord } from '~/generated-metadata/graphql';
 
@@ -6,7 +10,7 @@ type SettingsRoleAssignmentWorkspaceMemberPickerDropdownContentProps = {
   loading: boolean;
   searchFilter: string;
   filteredWorkspaceMembers: SearchRecord[];
-  onSelect: (workspaceMemberSearchRecord: SearchRecord) => void;
+  onSelect: (workspaceMember: CurrentWorkspaceMember) => void;
 };
 
 export const SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent = ({
@@ -15,6 +19,8 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent = ({
   filteredWorkspaceMembers,
   onSelect,
 }: SettingsRoleAssignmentWorkspaceMemberPickerDropdownContentProps) => {
+  const currentWorkspaceMembers = useRecoilValue(currentWorkspaceMembersState);
+
   if (loading) {
     return null;
   }
@@ -23,20 +29,28 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdownContent = ({
     return <MenuItem disabled text={t`No Results`} />;
   }
 
+  const enrichedWorkspaceMembers = filteredWorkspaceMembers
+    .map((workspaceMember) =>
+      currentWorkspaceMembers.find(
+        (member) => member.id === workspaceMember.recordId,
+      ),
+    )
+    .filter(isDefined);
+
   return (
     <>
-      {filteredWorkspaceMembers.map((workspaceMember) => (
+      {enrichedWorkspaceMembers.map((workspaceMember) => (
         <MenuItemAvatar
-          key={workspaceMember.recordId}
+          key={workspaceMember.id}
           onClick={() => onSelect(workspaceMember)}
           avatar={{
             type: 'rounded',
             size: 'md',
-            placeholder: workspaceMember.label ?? '',
-            placeholderColorSeed: workspaceMember.recordId,
-            avatarUrl: workspaceMember.imageUrl,
+            placeholder: workspaceMember?.name.firstName ?? '',
+            placeholderColorSeed: workspaceMember?.id,
+            avatarUrl: workspaceMember?.avatarUrl,
           }}
-          text={workspaceMember.label}
+          text={workspaceMember?.name.firstName ?? ''}
         />
       ))}
     </>

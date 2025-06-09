@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { ClientConfig } from '~/generated/graphql';
 import { clientConfigApiStatusState } from '../states/clientConfigApiStatusState';
@@ -17,7 +18,7 @@ export const useClientConfig = (): UseClientConfigResult => {
     clientConfigApiStatusState,
   );
 
-  const fetchClientConfig = async () => {
+  const fetchClientConfig = useCallback(async () => {
     setClientConfigApiStatus((prev) => ({
       ...prev,
       isLoading: true,
@@ -39,11 +40,12 @@ export const useClientConfig = (): UseClientConfigResult => {
       setClientConfigApiStatus((prev) => ({
         ...prev,
         isLoading: false,
+        isLoadedOnce: true,
         isErrored: true,
         error,
       }));
     }
-  };
+  }, [setClientConfigApiStatus]);
 
   return {
     data: clientConfigApiStatus.data,
