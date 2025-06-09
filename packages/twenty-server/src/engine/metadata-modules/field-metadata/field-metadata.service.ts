@@ -606,21 +606,23 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       });
     }
 
-    if (fieldMetadataType === FieldMetadataType.RELATION) {
+    // TODO: clean typings, we should try to validate both update and create inputs in the same function
+    if (
+      fieldMetadataType === FieldMetadataType.RELATION &&
+      isDefined(
+        (fieldMetadataInput as unknown as CreateFieldInput)
+          .relationCreationPayload,
+      )
+    ) {
       const relationCreationPayload = (
         fieldMetadataInput as unknown as CreateFieldInput
       ).relationCreationPayload;
 
-      if (!isDefined(relationCreationPayload)) {
-        throw new FieldMetadataException(
-          'Relation creation payload is not defined',
-          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      if (isDefined(relationCreationPayload)) {
+        await this.fieldMetadataValidationService.validateRelationCreationPayloadOrThrow(
+          relationCreationPayload,
         );
       }
-
-      await this.fieldMetadataValidationService.validateRelationCreationPayloadOrThrow(
-        relationCreationPayload,
-      );
     }
 
     return fieldMetadataInput;
@@ -795,7 +797,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     if (!isDefined(relationCreationPayload)) {
       throw new FieldMetadataException(
         'Relation creation payload is not defined',
-        FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
+        FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
       );
     }
 
