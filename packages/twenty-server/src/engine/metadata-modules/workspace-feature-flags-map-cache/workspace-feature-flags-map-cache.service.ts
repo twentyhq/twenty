@@ -6,7 +6,6 @@ import { Repository } from 'typeorm';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMExceptionCode } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { getFromCacheWithRecompute } from 'src/engine/utils/get-data-from-cache-with-recompute.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
@@ -19,7 +18,6 @@ export class WorkspaceFeatureFlagsMapCacheService {
 
   constructor(
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
-    private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     @InjectRepository(FeatureFlag, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlag>,
   ) {}
@@ -96,11 +94,6 @@ export class WorkspaceFeatureFlagsMapCacheService {
     await this.workspaceCacheStorageService.removeFeatureFlagsMapOngoingCachingLock(
       workspaceId,
     );
-
-    await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
-      workspaceId,
-      ignoreLock: true,
-    });
   }
 
   private async getFeatureFlagsMapFromDatabase(workspaceId: string) {
