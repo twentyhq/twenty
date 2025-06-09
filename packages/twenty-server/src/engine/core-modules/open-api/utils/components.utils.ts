@@ -113,6 +113,13 @@ const getSchemaComponentsProperties = ({
       return node;
     }
 
+    if (
+      isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) &&
+      field.settings?.relationType === RelationType.ONE_TO_MANY
+    ) {
+      return node;
+    }
+
     let itemProperty = {} as Property;
 
     switch (field.type) {
