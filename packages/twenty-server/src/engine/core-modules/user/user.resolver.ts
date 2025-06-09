@@ -59,6 +59,7 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { AvailableWorkspaces } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -90,6 +91,7 @@ export class UserResolver {
   ) {}
 
   @Query(() => User)
+  @UseGuards(UserAuthGuard)
   async currentUser(
     @AuthUser() { id: userId }: User,
     @AuthWorkspace() workspace: Workspace,
@@ -392,6 +394,7 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
+  @UseGuards(UserAuthGuard)
   async deleteUser(@AuthUser() { id: userId }: User) {
     // Proceed with user deletion
     return this.userService.deleteUser(userId);

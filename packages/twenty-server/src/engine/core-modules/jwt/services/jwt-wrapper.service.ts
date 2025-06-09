@@ -68,7 +68,10 @@ export class JwtWrapperService {
     }
 
     // @TODO: Migrate to use type from payload instead of parameter
-    type = payload.type === JwtTokenTypeEnum.WORKSPACE_AGNOSTIC ? JwtTokenTypeEnum.WORKSPACE_AGNOSTIC : type;
+    type =
+      payload.type === JwtTokenTypeEnum.WORKSPACE_AGNOSTIC
+        ? JwtTokenTypeEnum.WORKSPACE_AGNOSTIC
+        : type;
 
     // TODO: check if this is really needed
     if (type !== 'FILE' && !payload.sub) {
