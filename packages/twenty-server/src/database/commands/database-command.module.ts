@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CronRegisterAllCommand } from 'src/database/commands/cron-register-all.command';
 import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-workspace.command';
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
 import { UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/upgrade-version-command.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
@@ -32,6 +34,8 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     WorkspaceManagerModule,
     DataSourceModule,
     WorkspaceCacheStorageModule,
+    // Add TypeOrmModule with Workspace entity
+    TypeOrmModule.forFeature([Workspace], 'core'),
   ],
   providers: [
     DataSeedWorkspaceCommand,
