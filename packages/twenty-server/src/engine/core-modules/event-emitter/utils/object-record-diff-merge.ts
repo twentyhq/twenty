@@ -19,9 +19,9 @@ export function objectRecordDiffMerge(
   // to ensure that they are treated as equal when they are effectively the same.
   const normalize = (val: any): any => {
     if (val === null || val === '') return '__empty__';
-    if (Array.isArray(val) && val.length === 0) return '__empty_array__';
+    if (Array.isArray(val) && val.length === 0) return '__empty__';
     if (typeof val === 'object' && val !== null && Object.keys(val).length === 0)
-      return '__empty_object__';
+      return '__empty__';
 
     // recursively normalize nested objects
     if (typeof val === 'object' && val !== null) {
