@@ -25,8 +25,8 @@ import { CustomDomainService } from 'src/engine/core-modules/domain-manager/serv
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { handleException } from 'src/engine/utils/global-exception-handler.util';
-
 @Controller()
 @UseFilters(AuthRestApiExceptionFilter)
 export class CloudflareController {
@@ -40,7 +40,7 @@ export class CloudflareController {
   ) {}
 
   @Post(['cloudflare/custom-hostname-webhooks', 'webhooks/cloudflare'])
-  @UseGuards(CloudflareSecretMatchGuard)
+  @UseGuards(CloudflareSecretMatchGuard, PublicEndpointGuard)
   async customHostnameWebhooks(@Req() req: Request, @Res() res: Response) {
     if (!req.body?.data?.data?.hostname) {
       handleException({
