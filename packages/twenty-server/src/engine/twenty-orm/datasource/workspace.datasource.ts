@@ -106,7 +106,10 @@ export class WorkspaceDataSource extends DataSource {
       },
     );
     const queryRunner = this.driver.createQueryRunner(mode);
-    const manager = new EntityManager(dataSourceWithCreateQueryBuilder);
+    const manager = new EntityManager(
+      dataSourceWithCreateQueryBuilder,
+      queryRunner,
+    );
 
     Object.assign(queryRunner, { manager: manager });
 
