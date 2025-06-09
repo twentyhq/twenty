@@ -143,8 +143,8 @@ export class AuthResolver {
     );
   }
 
-  @UseGuards(CaptchaGuard, PublicEndpointGuard)
   @Mutation(() => LoginToken)
+  @UseGuards(CaptchaGuard, PublicEndpointGuard)
   async getLoginTokenFromCredentials(
     @Args()
     getLoginTokenFromCredentialsInput: UserCredentialsInput,
@@ -178,8 +178,8 @@ export class AuthResolver {
     return { loginToken };
   }
 
-  @UseGuards(CaptchaGuard)
   @Mutation(() => AvailableWorkspacesAndAccessTokensOutput)
+  @UseGuards(CaptchaGuard, PublicEndpointGuard)
   async signIn(
     @Args()
     userCredentials: UserCredentialsInput,
@@ -250,8 +250,8 @@ export class AuthResolver {
     return { loginToken, workspaceUrls };
   }
 
-  @UseGuards(CaptchaGuard, PublicEndpointGuard)
   @Mutation(() => AvailableWorkspacesAndAccessTokensOutput)
+  @UseGuards(CaptchaGuard, PublicEndpointGuard)
   async signUp(
     @Args() signUpInput: UserCredentialsInput,
   ): Promise<AvailableWorkspacesAndAccessTokensOutput> {
@@ -293,8 +293,8 @@ export class AuthResolver {
     };
   }
 
-  @UseGuards(CaptchaGuard)
   @Mutation(() => SignUpOutput)
+  @UseGuards(CaptchaGuard, PublicEndpointGuard)
   async signUpInWorkspace(
     @Args() signUpInput: SignUpInput,
     @AuthProvider() authProvider: AuthProviderEnum,
