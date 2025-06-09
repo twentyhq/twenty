@@ -56,7 +56,7 @@ export class TimelineActivityRepository {
         return this.deletedTimelineActivity(
           recentTimelineActivity[0].id,
           workspaceId,
-        )
+        );
       }
 
       return this.updateTimelineActivity(
@@ -119,10 +119,7 @@ export class TimelineActivityRepository {
     });
   }
 
-  private async deletedTimelineActivity(
-    id: string,
-    workspaceId: string,
-  ) {
+  private async deletedTimelineActivity(id: string, workspaceId: string) {
     const timelineActivityTypeORMRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
@@ -132,9 +129,7 @@ export class TimelineActivityRepository {
         },
       );
 
-    return timelineActivityTypeORMRepository.delete(
-      id,
-    );
+    return timelineActivityTypeORMRepository.delete(id);
   }
 
   private async updateTimelineActivity(
