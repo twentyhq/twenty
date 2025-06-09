@@ -16,7 +16,6 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS = `
         additionalEmails
       }
       id
-      intro
       jobTitle
       linkedinLink {
         primaryLinkUrl
@@ -27,7 +26,6 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS = `
         firstName
         lastName
       }
-      performanceRating
       phones {
         primaryPhoneNumber
         primaryPhoneCountryCode
@@ -36,13 +34,6 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS = `
       }
       position
       updatedAt
-      whatsapp {
-        primaryPhoneNumber
-        primaryPhoneCountryCode
-        primaryPhoneCallingCode
-        additionalPhones
-      }
-      workPreference
       xLink {
         primaryLinkUrl
         primaryLinkLabel
@@ -234,7 +225,6 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
           }
         }
       }
-      performanceRating
       phones {
         primaryPhoneNumber
         primaryPhoneCountryCode
