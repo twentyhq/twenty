@@ -15,6 +15,7 @@ import { MicrosoftProviderEnabledGuard } from 'src/engine/core-modules/auth/guar
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller('auth/microsoft')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -22,14 +23,22 @@ export class MicrosoftAuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Get()
-  @UseGuards(MicrosoftProviderEnabledGuard, MicrosoftOAuthGuard)
+  @UseGuards(
+    MicrosoftProviderEnabledGuard,
+    MicrosoftOAuthGuard,
+    PublicEndpointGuard,
+  )
   async microsoftAuth() {
     // As this method is protected by Microsoft Auth guard, it will trigger Microsoft SSO flow
     return;
   }
 
   @Get('redirect')
-  @UseGuards(MicrosoftProviderEnabledGuard, MicrosoftOAuthGuard)
+  @UseGuards(
+    MicrosoftProviderEnabledGuard,
+    MicrosoftOAuthGuard,
+    PublicEndpointGuard,
+  )
   async microsoftAuthRedirect(
     @Req() req: MicrosoftRequest,
     @Res() res: Response,
