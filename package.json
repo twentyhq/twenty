@@ -374,5 +374,8 @@
       "packages/twenty-shared",
       "tools/eslint-rules"
     ]
+  },
+  "volta": {
+    "node": "22.16.0"
   }
 }

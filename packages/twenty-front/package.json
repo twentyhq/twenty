@@ -87,5 +87,8 @@
     "eslint-plugin-unused-imports": "^3.0.0",
     "optionator": "^0.9.1",
     "rollup-plugin-visualizer": "^5.14.0"
+  },
+  "volta": {
+    "node": "22.16.0"
   }
 }

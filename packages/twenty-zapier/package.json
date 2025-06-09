@@ -31,5 +31,8 @@
   },
   "installConfig": {
     "hoistingLimits": "dependencies"
+  },
+  "volta": {
+    "node": "22.16.0"
   }
 }

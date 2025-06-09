@@ -93,5 +93,8 @@
     "node": "^22.12.0",
     "npm": "please-use-yarn",
     "yarn": "^4.0.2"
+  },
+  "volta": {
+    "node": "22.16.0"
   }
 }
