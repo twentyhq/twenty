@@ -1,7 +1,10 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-// eslint-disable-next-line prettier/prettier
-import { convertCsvValueToFieldType, parseCsvColumns, parseCsvRows, } from '../csv.utils';
+import {
+  convertCsvValueToFieldType,
+  parseCsvColumns,
+  parseCsvRows,
+} from '../csv.utils';
 
 describe('CSV Utils', () => {
   describe('parseCsvColumns', () => {
