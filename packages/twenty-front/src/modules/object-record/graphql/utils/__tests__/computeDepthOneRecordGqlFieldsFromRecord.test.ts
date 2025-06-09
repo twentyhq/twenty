@@ -26,11 +26,13 @@ describe('computeDepthOneRecordGqlFieldsFromRecord', () => {
   "emails": false,
   "favorites": false,
   "id": true,
+  "intro": false,
   "jobTitle": true,
   "linkedinLink": true,
   "messageParticipants": false,
   "name": true,
   "noteTargets": true,
+  "performanceRating": false,
   "phones": true,
   "pointOfContactForOpportunities": false,
   "position": true,
@@ -38,6 +40,8 @@ describe('computeDepthOneRecordGqlFieldsFromRecord', () => {
   "taskTargets": true,
   "timelineActivities": false,
   "updatedAt": false,
+  "whatsapp": false,
+  "workPreference": false,
   "xLink": true,
 }
 `);
