@@ -1087,7 +1087,8 @@ export class WorkspaceEntityManager extends EntityManager {
       options as SaveOptions | (SaveOptions & { reload: false }),
     )
       .execute()
-      .then(() => entity as Entity);
+      .then(() => entity as Entity)
+      .finally(() => queryRunnerForEntityPersistExecutor.release());
   }
 
   override remove<Entity>(
@@ -1162,7 +1163,8 @@ export class WorkspaceEntityManager extends EntityManager {
       options as RemoveOptions,
     )
       .execute()
-      .then(() => entity as Entity | Entity[]);
+      .then(() => entity as Entity | Entity[])
+      .finally(() => queryRunnerForEntityPersistExecutor.release());
   }
 
   override softRemove<Entity extends ObjectLiteral>(
@@ -1247,7 +1249,8 @@ export class WorkspaceEntityManager extends EntityManager {
       options as SaveOptions,
     )
       .execute()
-      .then(() => entity as Entity);
+      .then(() => entity as Entity)
+      .finally(() => queryRunnerForEntityPersistExecutor.release());
   }
 
   override recover<Entity>(
@@ -1325,7 +1328,8 @@ export class WorkspaceEntityManager extends EntityManager {
       options as SaveOptions,
     )
       .execute()
-      .then(() => entity as Entity);
+      .then(() => entity as Entity)
+      .finally(() => queryRunnerForEntityPersistExecutor.release());
   }
 
   // Forbidden methods
