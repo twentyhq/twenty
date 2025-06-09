@@ -144,6 +144,7 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   timelineActivities: '20202020-0414-4daf-9c0d-64fe7b27f89f',
   searchVector: '85c71601-72f9-4b7b-b343-d46100b2c74d',
   charge: '20202020-e674-48e5-a542-72570eee7216',
+  support: '9ee2b3f5-0824-4f8b-be4e-750ac95c98d5',
   CPF_CNPJ: 'c1581b5a-6ad0-4b68-b316-1ab24c2c47ba',
   INSCRICAO_ESTADUAL: '00edc84c-4d61-460f-8ea8-807b18cc5815',
   PERCENT_NFE: '993c99ca-4e7b-4224-a498-f1dc482fe18a',
@@ -174,6 +175,19 @@ export const CHARGE_STANDARD_FIELD_IDS = {
   timelineActivities: '20202020-0416-4cac-4c0c-34ae7b25f89b',
   integration: '20202020-6b3b-4b3b-8b3b-7f8d6a1d7c5a',
   searchVector: '85c71601-72f9-4b7b-b343-d46100b2a56b',
+};
+
+export const SUPPORT_STANDARD_FIELD_IDS = {
+  name: '5217e7f5-bd7a-4af5-8bbd-ec21c5f7d3af',
+  statuses: '885031ad-d3e8-47c5-8d56-ce9759e96a45',
+  stage: 'a7b70e6e-6f17-4ad4-81a6-1783d9bd09bc',
+  emails: 'a4f41a54-293b-40f0-879f-68e706ad1328',
+  phones: '852115fc-0aa4-4b90-bc28-d2f33778e33b',
+  noteTargets: 'a4ad3074-5c0b-4448-93ed-53faf5762988',
+  position: 'ad171f33-970a-4efc-b628-b54295fb2e84',
+  person: '918887f8-37c5-4747-abe4-dd0e9491a1d5',
+  timelineActivities: '4c8bf8da-92c4-421c-b267-6229095245f3',
+  searchVector: '78a63bbb-83d8-472b-bd90-162c43f4f414',
 };
 
 export const PRODUCT_STANDARD_FIELD_IDS = {
@@ -304,6 +318,7 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   integration: '20000000-4b3a-4b3b-8b3b-7f8d6a1d7d5b',
   chatbot: '6f02d62b-3423-4e16-9312-830133ec9861',
   traceable: '20202020-1e7e-42bc-82fe-24fd43cfbb2a',
+  support: '14bb59ff-1726-46fe-b8cd-bb16f7b23855',
 };
 
 export const FAVORITE_STANDARD_FIELD_IDS = {
@@ -412,6 +427,7 @@ export const NOTE_TARGET_STANDARD_FIELD_IDS = {
   person: '20202020-38ca-4aab-92f5-8a605ca2e4c5',
   company: 'c500fbc0-d6f2-4982-a959-5a755431696c',
   opportunity: '20202020-4e42-417a-a705-76581c9ade79',
+  support: 'ddb83ecc-e243-4842-8190-ba15dceddcd6',
   custom: '20202020-3d12-4579-94ee-7117c1bad492',
 };
 
@@ -461,6 +477,7 @@ export const PERSON_STANDARD_FIELD_IDS = {
   timelineActivities: '20202020-a43e-4873-9c23-e522de906ce5',
   searchVector: '57d1d7ad-fa10-44fc-82f3-ad0959ec2534',
   charge: '20202020-e674-48e5-a542-72570eec4216',
+  support: '5f6feac9-d0f3-4c7e-8923-9989d199e998',
 };
 
 export const TASK_STANDARD_FIELD_IDS = {

@@ -1,12 +1,15 @@
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
+import { serviceActionsState } from '@/chat/call-center/state/serviceActionsState';
 import { SectorPill } from '@/chat/internal/components/SectorPill';
 import { SelectServiceStatus } from '@/chat/internal/components/SelectServiceStatus';
 import { statusEnum } from '@/chat/types/WhatsappDocument';
 import { formatStatusLabel } from '@/chat/utils/formatStatusLabel';
 import { useFindAllSectors } from '@/settings/service-center/sectors/hooks/useFindAllSectors';
+import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { IconComponent } from 'twenty-ui/display';
 
 interface ServiceStatusPillProps {
@@ -81,20 +84,18 @@ export type InfoSectionProps = {
   title: string;
   data?: string;
   type: 'text' | 'select';
+  value: string;
+  onTextChange?: (newText: string) => void;
 };
 
-export const InfoSection = ({ Icon, title, data, type }: InfoSectionProps) => {
-  const [text, setText] = useState('Clique para editar');
-  const [isEditing, setIsEditing] = useState(false);
-
-  const handleBlur = () => {
-    setIsEditing(false);
-  };
-
-  const handleChange = (e: any) => {
-    setText(e.target.innerText);
-  };
-
+export const InfoSection = ({
+  Icon,
+  title,
+  data,
+  type,
+  value,
+  onTextChange,
+}: InfoSectionProps) => {
   const [statusOpen, setStatusOpen] = useState<boolean>(false);
   const [status, setStatus] = useState<statusEnum>(
     data ? (data as statusEnum) : statusEnum.Pending,
@@ -103,9 +104,7 @@ export const InfoSection = ({ Icon, title, data, type }: InfoSectionProps) => {
   const { sectors } = useFindAllSectors();
   const [selectedSector, setSelectedSector] = useState<string | null>(null);
 
-  // const { startService, finalizeService, holdService } = useContext(
-  //   CallCenterContext,
-  // ) as CallCenterContextType;
+  const serviceActions = useRecoilValue(serviceActionsState);
 
   useEffect(() => {
     if (data) {
@@ -119,6 +118,16 @@ export const InfoSection = ({ Icon, title, data, type }: InfoSectionProps) => {
     }
   }, [data]);
 
+  if (!serviceActions) return null;
+
+  const { startService, finalizeService, holdService } = serviceActions;
+
+  const handleChange = (newText: string) => {
+    if (onTextChange) {
+      onTextChange(newText);
+    }
+  };
+
   const handleCloseStatusModal = () => {
     setStatusOpen(false);
   };
@@ -126,19 +135,19 @@ export const InfoSection = ({ Icon, title, data, type }: InfoSectionProps) => {
   const handleStatusChange = (newStatus: statusEnum) => {
     setStatus(newStatus);
 
-    // switch (newStatus) {
-    //   case statusEnum.InProgress:
-    //     startService();
-    //     break;
-    //   case statusEnum.Resolved:
-    //     finalizeService();
-    //     break;
-    //   case statusEnum.OnHold:
-    //     holdService();
-    //     break;
-    //   default:
-    //     break;
-    // }
+    switch (newStatus) {
+      case statusEnum.InProgress:
+        startService();
+        break;
+      case statusEnum.Resolved:
+        finalizeService();
+        break;
+      case statusEnum.OnHold:
+        holdService();
+        break;
+      default:
+        break;
+    }
   };
 
   return (
@@ -149,15 +158,7 @@ export const InfoSection = ({ Icon, title, data, type }: InfoSectionProps) => {
             {Icon && <Icon size={16} color="#999" />}
             {title}
           </StyledIconLabel>
-          <div
-            contentEditable={isEditing}
-            suppressContentEditableWarning={true}
-            onClick={() => setIsEditing(true)}
-            onBlur={handleBlur}
-            onInput={handleChange}
-          >
-            {data}
-          </div>
+          <TextInput value={value} onChange={handleChange} />
         </StyledDataSection>
       ) : (
         <StyledDataSection>

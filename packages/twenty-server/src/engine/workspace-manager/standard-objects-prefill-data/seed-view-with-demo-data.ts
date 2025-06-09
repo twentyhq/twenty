@@ -9,6 +9,7 @@ import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-obje
 import { opportunitiesByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view';
 import { peopleAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view';
 import { productsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/products-all-views';
+import { supportAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/support-all-views';
 import { tasksAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view';
 import { tasksAssignedToMeView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-assigned-to-me';
 import { tasksByStatusView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view';
@@ -42,6 +43,7 @@ export const seedViewWithDemoData = async (
     workflowVersionsAllView(objectMetadataStandardIdToIdMap),
     workflowRunsAllView(objectMetadataStandardIdToIdMap),
     chatbotsAllView(objectMetadataStandardIdToIdMap),
+    supportAllView(objectMetadataStandardIdToIdMap),
   ];
 
   return createWorkspaceViews(entityManager, schemaName, viewDefinitions);
