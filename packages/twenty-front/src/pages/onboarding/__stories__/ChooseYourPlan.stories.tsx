@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/testing-library';
 import { HttpResponse, graphql } from 'msw';
 
-import { BILLING_BASE_PRODUCT_PRICES } from '@/billing/graphql/billingBaseProductPrices';
+import { BILLING_BASE_PRODUCT_PRICES } from '@/billing/graphql/queries/billingBaseProductPrices';
 import { AppPath } from '@/types/AppPath';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import {

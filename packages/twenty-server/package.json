@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.3.22",
+    "@blocknote/server-util": "^0.31.1",
     "@clickhouse/client": "^1.11.0",
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
     "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch",
@@ -89,7 +90,7 @@
     "typescript": "5.3.3"
   },
   "engines": {
-    "node": "^18.17.1",
+    "node": "^22.12.0",
     "npm": "please-use-yarn",
     "yarn": "^4.0.2"
   }
