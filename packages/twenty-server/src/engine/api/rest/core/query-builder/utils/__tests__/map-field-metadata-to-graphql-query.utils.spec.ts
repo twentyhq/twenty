@@ -1,6 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import {
   fieldCurrencyMock,
@@ -12,6 +13,7 @@ import { mapFieldMetadataToGraphqlQuery } from 'src/engine/api/rest/core/query-b
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { FieldMetadataDefaultSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 describe('mapFieldMetadataToGraphqlQuery', () => {
   const typedFieldNumberMock: FieldMetadataInterface = {
@@ -109,6 +111,12 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
           label: 'Test Field',
           objectMetadataId: 'object-metadata-id',
         };
+
+        if (fieldMetadataType === FieldMetadataType.RELATION) {
+          field.settings = {
+            relationType: RelationType.MANY_TO_ONE,
+          } as FieldMetadataDefaultSettings;
+        }
 
         expect(
           mapFieldMetadataToGraphqlQuery(objectMetadataMapsMock, field),

@@ -94,6 +94,15 @@ export const fieldRelationMock = {
     joinColumnName: 'fieldRelationId',
     onDelete: 'CASCADE',
   },
+  relationTargetObjectMetadata: {
+    id: 'relationTargetObjectId',
+    nameSingular: 'relationTargetObject',
+    namePlural: 'relationTargetObjects',
+  },
+  relationTargetFieldMetadata: {
+    id: 'relationTargetFieldId',
+    name: 'relationTargetField',
+  },
   isNullable: true,
   defaultValue: null,
 };
