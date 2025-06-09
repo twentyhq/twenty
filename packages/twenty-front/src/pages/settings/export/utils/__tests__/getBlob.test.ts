@@ -85,6 +85,7 @@ describe('getBlob', () => {
 
       expect(result).toBeInstanceOf(Blob);
       expect(result.type).toBe('text/csv;charset=utf-8');
+      expect(mockJson2csv).toHaveBeenCalledTimes(1);
       expect(mockJson2csv).toHaveBeenCalledWith(
         expect.arrayContaining([
           expect.objectContaining({
