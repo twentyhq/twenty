@@ -4,6 +4,7 @@ import { Request, Response } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { getAuthExceptionRestStatus } from 'src/engine/core-modules/auth/utils/get-auth-exception-rest-status.util';
@@ -62,12 +63,24 @@ export class MiddlewareService {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public writeGraphqlResponseOnExceptionCaught(res: Response, error: any) {
-    const errors = [
-      handleExceptionAndConvertToGraphQLError(
-        error as Error,
-        this.exceptionHandlerService,
-      ),
-    ];
+    let errors;
+
+    if (error instanceof AuthException) {
+      try {
+        const authFilter = new AuthGraphqlApiExceptionFilter();
+
+        authFilter.catch(error);
+      } catch (transformedError) {
+        errors = [transformedError];
+      }
+    } else {
+      errors = [
+        handleExceptionAndConvertToGraphQLError(
+          error as Error,
+          this.exceptionHandlerService,
+        ),
+      ];
+    }
 
     const statusCode = 200;
 
