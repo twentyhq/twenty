@@ -31,13 +31,6 @@ import { BillingPlansBenefitsCard } from '@/billing/components/BillingPlansBenef
 import { PlansQueryBillingBaseProduct } from '@/billing/types/planQueryBillingBaseProduct';
 import { getProductFromPlanByKey } from '@/billing/utils/getProductFromPlanKey';
 
-const StyledChoosePlanCardContainer = styled.div`
-  display: flex;
-  width: 500px;
-  gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
-`;
-
 const StyledChooseProviderContainer = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
