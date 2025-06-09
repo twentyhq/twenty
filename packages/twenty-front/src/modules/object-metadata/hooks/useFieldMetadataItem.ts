@@ -1,4 +1,4 @@
-import { Field } from '~/generated-metadata/graphql';
+import { Field, RelationType } from '~/generated-metadata/graphql';
 
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
 import { formatFieldMetadataItemInput } from '../utils/formatFieldMetadataItemInput';
@@ -26,6 +26,12 @@ export const useFieldMetadataItem = () => {
       | 'isLabelSyncedWithName'
     > & {
       objectMetadataId: string;
+      relationCreationPayload?: {
+        type: RelationType;
+        targetObjectMetadataId: string;
+        targetFieldLabel: string;
+        targetFieldIcon: string;
+      };
     },
   ) => {
     const formattedInput = formatFieldMetadataItemInput(input);
@@ -37,6 +43,7 @@ export const useFieldMetadataItem = () => {
       label: formattedInput.label ?? '',
       name: formattedInput.name ?? '',
       isLabelSyncedWithName: formattedInput.isLabelSyncedWithName ?? true,
+      relationCreationPayload: input.relationCreationPayload,
     });
   };
 

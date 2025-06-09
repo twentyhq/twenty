@@ -1,4 +1,4 @@
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.type';
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 
 export const convertOnDeleteActionToOnDelete = (
   onDeleteAction: RelationOnDeleteAction | undefined,

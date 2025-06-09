@@ -409,6 +409,7 @@ export type CreateFieldInput = {
   name: Scalars['String'];
   objectMetadataId: Scalars['String'];
   options?: InputMaybe<Scalars['JSON']>;
+  relationCreationPayload?: InputMaybe<Scalars['JSON']>;
   settings?: InputMaybe<Scalars['JSON']>;
   type: FieldMetadataType;
 };

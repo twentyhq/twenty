@@ -140,30 +140,17 @@ export const SettingsObjectNewFieldConfigure = () => {
         formValues.type === FieldMetadataType.RELATION &&
         'relation' in formValues
       ) {
-        // const { relation: relationFormValues, ...fieldFormValues } = formValues;
-        // TODO: Charles fix
-        // await createOneRelationMetadata({
-        //   relationType: relationFormValues.type,
-        //   field: pick(fieldFormValues, [
-        //     'icon',
-        //     'label',
-        //     'description',
-        //     'name',
-        //     'isLabelSyncedWithName',
-        //   ]),
-        //   objectMetadataId: activeObjectMetadataItem.id,
-        //   connect: {
-        //     field: {
-        //       icon: relationFormValues.field.icon,
-        //       label: relationFormValues.field.label,
-        //       name:
-        //         (relationFormValues.field.isLabelSyncedWithName ?? true)
-        //           ? computeMetadataNameFromLabel(relationFormValues.field.label)
-        //           : relationFormValues.field.name,
-        //     },
-        //     objectMetadataId: relationFormValues.objectMetadataId,
-        //   },
-        // });
+        const { relation: relationFormValues, ...fieldFormValues } = formValues;
+        await createMetadataField({
+          ...fieldFormValues,
+          objectMetadataId: activeObjectMetadataItem.id,
+          relationCreationPayload: {
+            type: relationFormValues.type,
+            targetObjectMetadataId: relationFormValues.objectMetadataId,
+            targetFieldLabel: relationFormValues.field.label,
+            targetFieldIcon: relationFormValues.field.icon,
+          },
+        });
       } else {
         await createMetadataField({
           ...formValues,

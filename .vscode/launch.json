@@ -37,13 +37,11 @@
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "npx",
-      "runtimeVersion": "^22.12.0",
       "runtimeArgs": [
         "nx",
         "run",
         "twenty-server:command",
-        "my-command",
-        "--my-parameter value"
+        "workspace:seed:dev",
       ],
       "outputCapture": "std",
       "internalConsoleOptions": "openOnSessionStart",

@@ -42,10 +42,14 @@ import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metad
 import { isSelectOrMultiSelectFieldMetadata } from 'src/engine/metadata-modules/field-metadata/utils/is-select-or-multi-select-field-metadata.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
-import { validateNameAndLabelAreSyncOrThrow } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
+import {
+  computeMetadataNameFromLabel,
+  validateNameAndLabelAreSyncOrThrow,
+} from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
@@ -59,6 +63,7 @@ import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { ViewService } from 'src/modules/view/services/view.service';
 import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'src/utils/trim-and-remove-duplicated-whitespaces-from-object-string-properties';
@@ -601,6 +606,23 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       });
     }
 
+    if (fieldMetadataType === FieldMetadataType.RELATION) {
+      const relationCreationPayload = (
+        fieldMetadataInput as unknown as CreateFieldInput
+      ).relationCreationPayload;
+
+      if (!isDefined(relationCreationPayload)) {
+        throw new FieldMetadataException(
+          'Relation creation payload is not defined',
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        );
+      }
+
+      await this.fieldMetadataValidationService.validateRelationCreationPayloadOrThrow(
+        relationCreationPayload,
+      );
+    }
+
     return fieldMetadataInput;
   }
 
@@ -666,20 +688,49 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       fieldMetadataInput.defaultValue ??
       generateDefaultValue(fieldMetadataInput.type);
 
+    const relationCreationPayload = fieldMetadataInput.relationCreationPayload;
+
     return {
       id: v4(),
       createdAt: new Date(),
       updatedAt: new Date(),
-      ...fieldMetadataInput,
+      name: fieldMetadataInput.name,
+      label: fieldMetadataInput.label,
+      icon: fieldMetadataInput.icon,
+      type: fieldMetadataInput.type,
+      isLabelSyncedWithName: fieldMetadataInput.isLabelSyncedWithName,
+      objectMetadataId: fieldMetadataInput.objectMetadataId,
+      workspaceId: fieldMetadataInput.workspaceId,
       isNullable: generateNullable(
         fieldMetadataInput.type,
         fieldMetadataInput.isNullable,
         fieldMetadataInput.isRemoteCreation,
       ),
+      relationTargetObjectMetadataId:
+        relationCreationPayload?.targetObjectMetadataId,
       defaultValue,
       ...options,
       isActive: true,
       isCustom: true,
+      settings: {
+        ...fieldMetadataInput.settings,
+        ...(fieldMetadataInput.type === FieldMetadataType.RELATION &&
+        relationCreationPayload &&
+        relationCreationPayload.type === RelationType.ONE_TO_MANY
+          ? {
+              relationType: RelationType.ONE_TO_MANY,
+            }
+          : {}),
+        ...(fieldMetadataInput.type === FieldMetadataType.RELATION &&
+        relationCreationPayload &&
+        relationCreationPayload.type === RelationType.MANY_TO_ONE
+          ? {
+              relationType: RelationType.MANY_TO_ONE,
+              onDelete: RelationOnDeleteAction.SET_NULL,
+              joinColumnName: `${fieldMetadataInput.name}Id`,
+            }
+          : {}),
+      },
     };
   }
 
@@ -699,11 +750,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     );
   }
 
-  private async validateAndCreateFieldMetadata(
+  private async validateAndCreateFieldMetadataItems(
     fieldMetadataInput: CreateFieldInput,
     objectMetadata: ObjectMetadataEntity,
     fieldMetadataRepository: Repository<FieldMetadataEntity>,
-  ): Promise<FieldMetadataEntity> {
+  ): Promise<FieldMetadataEntity[]> {
     if (!fieldMetadataInput.isRemoteCreation) {
       assertMutationNotOnRemoteObject(objectMetadata);
     }
@@ -717,7 +768,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     await this.validateFieldMetadata({
       fieldMetadataType: fieldMetadataForCreate.type,
-      fieldMetadataInput: fieldMetadataForCreate,
+      fieldMetadataInput: {
+        ...fieldMetadataForCreate,
+        relationCreationPayload: fieldMetadataInput.relationCreationPayload,
+      },
       objectMetadata,
     });
 
@@ -728,26 +782,99 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       );
     }
 
-    return await fieldMetadataRepository.save(fieldMetadataForCreate);
-  }
+    const createdFieldMetadataItem = await fieldMetadataRepository.save(
+      fieldMetadataForCreate,
+    );
 
-  private async createMigrationActions(
-    createdFieldMetadata: FieldMetadataEntity,
-    objectMetadata: ObjectMetadataEntity,
-    isRemoteCreation: boolean,
-  ): Promise<WorkspaceMigrationTableAction | null> {
-    if (isRemoteCreation) {
-      return null;
+    if (fieldMetadataForCreate.type !== FieldMetadataType.RELATION) {
+      return [createdFieldMetadataItem];
     }
 
-    return {
-      name: computeObjectTargetTable(objectMetadata),
-      action: WorkspaceMigrationTableActionType.ALTER,
-      columns: this.workspaceMigrationFactory.createColumnActions(
-        WorkspaceMigrationColumnActionType.CREATE,
-        createdFieldMetadata,
-      ),
-    };
+    const relationCreationPayload = fieldMetadataInput.relationCreationPayload;
+
+    if (!isDefined(relationCreationPayload)) {
+      throw new FieldMetadataException(
+        'Relation creation payload is not defined',
+        FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    const targetFieldMetadataToCreate =
+      this.prepareCustomFieldMetadataForCreation({
+        objectMetadataId: relationCreationPayload.targetObjectMetadataId,
+        type: FieldMetadataType.RELATION,
+        name: computeMetadataNameFromLabel(
+          relationCreationPayload.targetFieldLabel,
+        ),
+        label: relationCreationPayload.targetFieldLabel,
+        icon: relationCreationPayload.targetFieldIcon,
+        workspaceId: fieldMetadataForCreate.workspaceId,
+        relationCreationPayload: {
+          targetObjectMetadataId: objectMetadata.id,
+          targetFieldLabel: fieldMetadataInput.label,
+          targetFieldIcon: fieldMetadataInput.icon ?? 'Icon123',
+          type:
+            relationCreationPayload.type === RelationType.ONE_TO_MANY
+              ? RelationType.MANY_TO_ONE
+              : RelationType.ONE_TO_MANY,
+        },
+      });
+
+    const targetFieldMetadata = await fieldMetadataRepository.save({
+      ...targetFieldMetadataToCreate,
+      relationTargetFieldMetadataId: createdFieldMetadataItem.id,
+    });
+
+    const createdFieldMetadataItemUpdated = await fieldMetadataRepository.save({
+      ...createdFieldMetadataItem,
+      relationTargetFieldMetadataId: targetFieldMetadata.id,
+    });
+
+    return [createdFieldMetadataItemUpdated, targetFieldMetadata];
+  }
+
+  private async createMigrationActions({
+    createdFieldMetadataItems,
+    objectMetadataMap,
+    isRemoteCreation,
+  }: {
+    createdFieldMetadataItems: FieldMetadataEntity[];
+    objectMetadataMap: Record<string, ObjectMetadataEntity>;
+    isRemoteCreation: boolean;
+  }): Promise<WorkspaceMigrationTableAction[]> {
+    if (isRemoteCreation) {
+      return [];
+    }
+
+    const migrationActions: WorkspaceMigrationTableAction[] = [];
+
+    for (const createdFieldMetadata of createdFieldMetadataItems) {
+      if (
+        isFieldMetadataEntityOfType(
+          createdFieldMetadata,
+          FieldMetadataType.RELATION,
+        )
+      ) {
+        const relationType = createdFieldMetadata.settings?.relationType;
+
+        if (relationType === RelationType.ONE_TO_MANY) {
+          continue;
+        }
+      }
+
+      migrationActions.push({
+        name: computeObjectTargetTable(
+          objectMetadataMap[createdFieldMetadata.objectMetadataId],
+        ),
+        action: WorkspaceMigrationTableActionType.ALTER,
+        columns: this.workspaceMigrationFactory.createColumnActions(
+          WorkspaceMigrationColumnActionType.CREATE,
+          createdFieldMetadata,
+        ),
+      });
+    }
+
+    return migrationActions;
   }
 
   async createMany(
@@ -775,7 +902,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
       const objectMetadatas = await this.objectMetadataRepository.find({
         where: {
-          id: In(objectMetadataIds),
           workspaceId,
         },
         relations: ['fields'],
@@ -802,24 +928,22 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         const inputs = inputsByObjectId[objectMetadataId];
 
         for (const fieldMetadataInput of inputs) {
-          const createdFieldMetadata =
-            await this.validateAndCreateFieldMetadata(
+          const createdFieldMetadataItems =
+            await this.validateAndCreateFieldMetadataItems(
               fieldMetadataInput,
               objectMetadata,
               fieldMetadataRepository,
             );
 
-          createdFieldMetadatas.push(createdFieldMetadata);
+          createdFieldMetadatas.push(...createdFieldMetadataItems);
 
-          const migrationAction = await this.createMigrationActions(
-            createdFieldMetadata,
-            objectMetadata,
-            fieldMetadataInput.isRemoteCreation ?? false,
-          );
+          const fieldMigrationActions = await this.createMigrationActions({
+            createdFieldMetadataItems,
+            objectMetadataMap,
+            isRemoteCreation: fieldMetadataInput.isRemoteCreation ?? false,
+          });
 
-          if (isDefined(migrationAction)) {
-            migrationActions.push(migrationAction);
-          }
+          migrationActions.push(...fieldMigrationActions);
         }
       }
 

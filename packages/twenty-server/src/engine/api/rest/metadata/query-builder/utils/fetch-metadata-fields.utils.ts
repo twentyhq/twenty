@@ -23,7 +23,6 @@ export const fetchMetadataFields = (objectNamePlural: string) => {
           fromFieldMetadataId
         `;
 
-  // TODO: Charles fix
   const fields = `
           type
           name

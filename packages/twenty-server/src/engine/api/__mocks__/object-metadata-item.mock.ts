@@ -1,5 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -87,12 +89,11 @@ export const fieldRelationMock = {
   id: 'fieldRelationId',
   name: 'fieldRelation',
   type: FieldMetadataType.RELATION,
-  // TODO: Charles fix
-  // fromRelationMetadata: {
-  //   toObjectMetadata: {
-  //     nameSingular: 'toObjectMetadataName',
-  //   },
-  // },
+  settings: {
+    relationType: RelationType.MANY_TO_ONE,
+    joinColumnName: 'fieldRelationId',
+    onDelete: 'CASCADE',
+  },
   isNullable: true,
   defaultValue: null,
 };
