@@ -68,12 +68,12 @@ export class BillingPortalWorkspaceService {
       if (!isDefined(billingPricesPerPlan?.baseProductPrice.unitAmountDecimal))
         throw new InternalServerErrorException('Plan price not found');
 
-      await this.interService.createBolepixBilling({
+      await this.interService.createBolepixCharge({
         planPrice: billingPricesPerPlan.baseProductPrice.unitAmountDecimal,
         workspaceId: workspace.id,
-        ...(interChargeInput as InterCreateChargeDto),
         locale: locale || SOURCE_LOCALE,
         userEmail: user.email,
+        ...(interChargeInput as InterCreateChargeDto),
       });
 
       return `${frontBaseUrl.toString()}plan-required/payment-success`;

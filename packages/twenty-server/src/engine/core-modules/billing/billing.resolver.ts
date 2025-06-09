@@ -6,6 +6,10 @@ import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
 import { BillingSwitchPlanInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-switch-plan.input';
@@ -122,6 +126,39 @@ export class BillingResolver {
 
     return {
       url: checkoutSessionURL,
+    };
+  }
+
+  @Mutation(() => BillingUpdateOutput)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  async updateOneTimePaidSubscription(
+    @AuthWorkspace() workspace: Workspace,
+    @AuthUser() user: User,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Context() context: I18nContext,
+    @AuthApiKey() apiKey?: string,
+  ) {
+    await this.validateCanCheckoutSessionPermissionOrThrow({
+      workspaceId: workspace.id,
+      userWorkspaceId,
+      isExecutedByApiKey: isDefined(apiKey),
+    });
+
+    const currentSubscription =
+      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+        {
+          workspaceId: workspace.id,
+        },
+      );
+
+    if (!currentSubscription)
+      throw new BillingException(
+        ``,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
+      );
+
+    return {
+      success: true,
     };
   }
 

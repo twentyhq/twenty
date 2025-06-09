@@ -7,8 +7,14 @@ import assert from 'assert';
 
 import { differenceInDays } from 'date-fns';
 import Stripe from 'stripe';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { Not, Repository } from 'typeorm';
+
+import {
+  InterCustomerType,
+  InterCustomerUf,
+} from 'src/engine/core-modules/inter/interfaces/charge.interface';
 
 import {
   BillingException,
@@ -30,7 +36,9 @@ import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/s
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
 import { getSubscriptionStatus } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-subscription.util';
+import { InterService } from 'src/engine/core-modules/inter/services/inter.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 @Injectable()
 export class BillingSubscriptionService {
@@ -48,6 +56,7 @@ export class BillingSubscriptionService {
     private readonly stripeSubscriptionItemService: StripeSubscriptionItemService,
     @InjectRepository(BillingSubscriptionItem, 'core')
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
+    private readonly interService: InterService,
   ) {}
 
   async getCurrentBillingSubscriptionOrThrow(criteria: {
@@ -397,6 +406,44 @@ export class BillingSubscriptionService {
       subscription: updatedSubscription,
       planKey: updatedSubscription.metadata.plan as BillingPlanKey,
     };
+  }
+
+  async updateOneTimePaymentSubscription({
+    subscription,
+    user,
+    locale,
+  }: {
+    subscription: BillingSubscription;
+    user: User;
+    locale?: keyof typeof APP_LOCALES;
+  }) {
+    const billingPricesPerPlan = await this.billingPlanService.getPricesPerPlan(
+      {
+        planKey: subscription.metadata.plan as BillingPlanKey,
+        interval: subscription.interval as SubscriptionInterval,
+      },
+    );
+
+    if (!isDefined(billingPricesPerPlan?.baseProductPrice.unitAmountDecimal))
+      throw new BillingException(
+        `Plan price not found`,
+        BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
+      );
+
+    await this.interService.createBolepixCharge({
+      planPrice: billingPricesPerPlan.baseProductPrice.unitAmountDecimal,
+      workspaceId: subscription.workspaceId as string,
+      userEmail: user.email,
+      locale: locale || SOURCE_LOCALE,
+      // TODO: Get this ifo from subscription customer
+      address: 'Rua São Paulo',
+      cep: '36401042',
+      stateUnity: InterCustomerUf.SP,
+      city: 'Belo Horizonte',
+      cpfCnpj: '08951851648',
+      legalEntity: InterCustomerType.FISICA,
+      name: user.firstName + user.lastName,
+    });
   }
 
   private getTrialPeriodFreeWorkflowCredits(

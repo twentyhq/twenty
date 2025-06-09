@@ -53,7 +53,7 @@ export class InterService {
     this.interInstance = this.interInstanceService.getInterAxiosInstance();
   }
 
-  async createBolepixBilling({
+  async createBolepixCharge({
     planPrice,
     cpfCnpj,
     legalEntity,
