@@ -9,7 +9,8 @@ import { BillingPlanKey } from '~/generated/graphql';
 
 const StyledChoosePlanCardContainer = styled.div`
   display: flex;
-  width: 500px;
+  width: 100%;
+  min-width: 300px;
   gap: ${({ theme }) => theme.spacing(2)};
   margin-bottom: ${({ theme }) => theme.spacing(4)};
 `;
