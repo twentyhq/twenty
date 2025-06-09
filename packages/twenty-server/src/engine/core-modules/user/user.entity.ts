@@ -123,7 +123,4 @@ export class User {
 
   @Field(() => UserWorkspace, { nullable: true })
   currentUserWorkspace?: Relation<UserWorkspace>;
-
-  @Field(() => [AvailableWorkspacesToJoin])
-  availableWorkspaces: Array<AvailableWorkspacesToJoin>;
 }

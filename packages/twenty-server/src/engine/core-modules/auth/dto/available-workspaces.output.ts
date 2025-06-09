@@ -38,6 +38,12 @@ export class AvailableWorkspace {
   @Field(() => String, { nullable: true })
   loginToken?: string;
 
+  @Field(() => String, { nullable: true })
+  personalInviteToken?: string;
+
+  @Field(() => String, { nullable: true })
+  inviteHash?: string;
+
   @Field(() => WorkspaceUrls)
   workspaceUrls: WorkspaceUrls;
 

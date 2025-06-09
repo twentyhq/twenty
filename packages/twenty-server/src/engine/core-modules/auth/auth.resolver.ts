@@ -431,9 +431,8 @@ export class AuthResolver {
   async getAuthTokensFromLoginToken(
     @Args() getAuthTokensFromLoginTokenInput: GetAuthTokensFromLoginTokenInput,
     @Args('origin') origin: string,
-    @AuthProvider() authProvider: AuthProviderEnum,
   ): Promise<AuthTokens> {
-    const { sub: email, workspaceId } =
+    const { sub: email, workspaceId, authProvider } =
       await this.loginTokenService.verifyLoginToken(
         getAuthTokensFromLoginTokenInput.loginToken,
       );

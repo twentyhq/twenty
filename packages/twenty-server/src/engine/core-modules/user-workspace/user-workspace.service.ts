@@ -38,6 +38,7 @@ import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { AvailableWorkspace } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   constructor(
@@ -267,22 +268,44 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       ],
     });
 
-    const alreadyMemberWorkspaces: Array<Workspace> = user
-      ? user.workspaces.map(({ workspace }) => workspace)
-      : [];
+    const alreadyMemberWorkspaces = user ? user.workspaces : [];
 
-    const approvedAccessDomains =
+    const alreadyMemberWorkspacesIds = alreadyMemberWorkspaces.map(
+      ({ id }) => id,
+    );
+
+    const workspacesFromApprovedAccessDomain = (
       await this.approvedAccessDomainService.findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain(
         getDomainNameByEmail(email),
-      );
+      )
+    ).filter(
+      ({ workspace }) => !alreadyMemberWorkspacesIds.includes(workspace.id),
+    );
+
+    const workspacesFromApprovedAccessDomainIds =
+      workspacesFromApprovedAccessDomain.map(({ id }) => id);
+
+    const workspacesFromInvitations = (
+      await this.workspaceInvitationService.findInvitationsByEmail(email)
+    )
+      .filter(
+        ({ workspaceId }) =>
+          ![
+            ...alreadyMemberWorkspacesIds,
+            ...workspacesFromApprovedAccessDomainIds,
+          ].includes(workspaceId),
+      )
+      .map((appToken) => ({
+        workspace: appToken.workspace,
+        appToken,
+      }));
 
     return {
       availableWorkspacesForSignIn: alreadyMemberWorkspaces,
-      availableWorkspacesForSignUp: approvedAccessDomains
-        .filter(({ workspace }) =>
-          alreadyMemberWorkspaces.every(({ id }) => id !== workspace.id),
-        )
-        .map(({ workspace }) => workspace),
+      availableWorkspacesForSignUp: [
+        ...workspacesFromApprovedAccessDomain,
+        ...workspacesFromInvitations,
+      ],
     };
   }
 
@@ -377,20 +400,6 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     return files[0].path;
   }
 
-  async listAvailableWorkspacesForAuthentication(email: string) {
-    const { availableWorkspacesForSignIn, availableWorkspacesForSignUp } =
-      await this.findAvailableWorkspacesByEmail(email);
-
-    return {
-      availableWorkspacesForSignIn: this.castWorkspacesToAvailableWorkspaces(
-        availableWorkspacesForSignIn,
-      ),
-      availableWorkspacesForSignUp: this.castWorkspacesToAvailableWorkspaces(
-        availableWorkspacesForSignUp,
-      ),
-    };
-  }
-
   castWorkspaceToAvailableWorkspace(workspace: Workspace) {
     return {
       id: workspace.id,
@@ -417,27 +426,33 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     };
   }
 
-  castWorkspacesToAvailableWorkspaces(workspaces: Array<Workspace>) {
-    return workspaces.map<AvailableWorkspace>(
-      this.castWorkspaceToAvailableWorkspace.bind(this),
-    );
-  }
-
   async setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
     availableWorkspaces: {
-      availableWorkspacesForSignUp: Array<Workspace>;
-      availableWorkspacesForSignIn: Array<Workspace>;
+      availableWorkspacesForSignUp: Array<{
+        workspace: Workspace;
+        appToken?: AppToken;
+      }>;
+      availableWorkspacesForSignIn: Array<{
+        workspace: Workspace;
+        appToken?: AppToken;
+      }>;
     },
     user: User,
     authProvider: AuthProviderEnum,
   ) {
     return {
-      availableWorkspacesForSignUp: this.castWorkspacesToAvailableWorkspaces(
-        availableWorkspaces.availableWorkspacesForSignUp,
-      ),
+      availableWorkspacesForSignUp:
+        availableWorkspaces.availableWorkspacesForSignUp.map(
+          ({ workspace, appToken }) => {
+            return {
+              ...this.castWorkspaceToAvailableWorkspace(workspace),
+              ...(appToken ? { personalInviteToken: appToken.value } : {}),
+            };
+          },
+        ),
       availableWorkspacesForSignIn: await Promise.all(
         availableWorkspaces.availableWorkspacesForSignIn.map(
-          async (workspace) => {
+          async ({ workspace }) => {
             return {
               ...this.castWorkspaceToAvailableWorkspace(workspace),
               loginToken: workspaceValidator.isAuthEnabled(

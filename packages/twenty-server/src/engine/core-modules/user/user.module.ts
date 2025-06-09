@@ -24,8 +24,6 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { DeletedWorkspaceMemberTranspiler } from 'src/engine/core-modules/user/services/deleted-workspace-member-transpiler.service';
-import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
-import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
 
 import { userAutoResolverOpts } from './user.auto-resolver-opts';
 
@@ -54,8 +52,6 @@ import { UserService } from './services/user.service';
     FeatureFlagModule,
     PermissionsModule,
     UserWorkspaceModule,
-    WorkspaceInvitationModule,
-    ApprovedAccessDomainModule,
   ],
   exports: [UserService, DeletedWorkspaceMemberTranspiler],
   providers: [

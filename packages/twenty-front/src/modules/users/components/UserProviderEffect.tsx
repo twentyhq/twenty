@@ -30,7 +30,7 @@ import { useGetCurrentUserQuery } from '~/generated/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
-import { currentUserAvailableWorkspacesState } from '@/auth/states/currentUserAvailableWorkspaces';
+import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 
 export const UserProviderEffect = () => {
   const location = useLocation();
@@ -42,6 +42,7 @@ export const UserProviderEffect = () => {
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
   const setWorkspaces = useSetRecoilState(workspacesState);
+  const setAvailableWorkspaces = useSetRecoilState(availableWorkspacesState);
   const setDateTimeFormat = useSetRecoilState(dateTimeFormatState);
   const isLoggedIn = useIsLogged();
 
@@ -69,9 +70,6 @@ export const UserProviderEffect = () => {
   );
   const setCurrentWorkspaceMembersWithDeleted = useSetRecoilState(
     currentWorkspaceDeletedMembersState,
-  );
-  const setCurrentUserAvailableWorkspaces = useSetRecoilState(
-    currentUserAvailableWorkspacesState,
   );
 
   const { data: queryData, loading: queryLoading } = useGetCurrentUserQuery({
@@ -102,17 +100,12 @@ export const UserProviderEffect = () => {
       setCurrentUserWorkspace(queryData.currentUser.currentUserWorkspace);
     }
 
-    if (isDefined(queryData.currentUser.availableWorkspaces)) {
-      setCurrentUserAvailableWorkspaces(
-        queryData.currentUser.availableWorkspaces,
-      );
-    }
-
     const {
       workspaceMember,
       workspaceMembers,
       deletedWorkspaceMembers,
       workspaces: userWorkspaces,
+      availableWorkspaces,
     } = queryData.currentUser;
 
     const affectDefaultValuesOnEmptyWorkspaceMemberFields = (
@@ -170,13 +163,17 @@ export const UserProviderEffect = () => {
 
       setWorkspaces(workspaces);
     }
+
+    if (isDefined(availableWorkspaces)) {
+      setAvailableWorkspaces(availableWorkspaces);
+    }
   }, [
     queryLoading,
     queryData?.currentUser,
     setCurrentUser,
     setCurrentUserWorkspace,
     setCurrentWorkspaceMembers,
-    setCurrentUserAvailableWorkspaces,
+    setAvailableWorkspaces,
     setCurrentWorkspace,
     setCurrentWorkspaceMember,
     setWorkspaces,

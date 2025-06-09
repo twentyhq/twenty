@@ -8,17 +8,15 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconChevronLeft } from 'twenty-ui/display';
-import { currentUserAvailableWorkspacesState } from '@/auth/states/currentUserAvailableWorkspaces';
 
-import { MemberWorkspaces } from './components/MemberWorkspaces';
-import { InvitationWorkspaces } from './components/InvitationWorkspaces';
+import { WorkspacesForSignIn } from './components/WorkspacesForSignIn';
+import { WorkspacesForSignUp } from './components/WorkspacesForSignUp';
+import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 
 export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
   const { t } = useLingui();
 
-  const currentUserAvailableWorkspaces = useRecoilValue(
-    currentUserAvailableWorkspacesState,
-  );
+  const availableWorkspaces = useRecoilValue(availableWorkspacesState);
 
   const setMultiWorkspaceDropdownState = useSetRecoilState(
     multiWorkspaceDropdownState,
@@ -45,9 +43,9 @@ export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
         }}
       />
       <DropdownMenuSeparator />
-      <MemberWorkspaces searchValue={searchValue} />
-      {currentUserAvailableWorkspaces.length > 0 && (
-        <InvitationWorkspaces searchValue={searchValue} />
+      <WorkspacesForSignIn searchValue={searchValue} />
+      {availableWorkspaces.availableWorkspacesForSignUp.length > 0 && (
+        <WorkspacesForSignUp searchValue={searchValue} />
       )}
     </DropdownContent>
   );

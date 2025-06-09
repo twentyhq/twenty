@@ -105,11 +105,14 @@ export class WorkspaceInvitationService {
   async findInvitationsByEmail(email: string) {
     return await this.appTokenRepository
       .createQueryBuilder('appToken')
-      .where('"appToken".context->>\'email\' = :email', { email })
-      .andWhere('"appToken".type = :type', {
+      .where('"appToken".type = :type', {
         type: AppTokenType.InvitationToken,
       })
+      .andWhere('"appToken".context->>\'email\' = :email', { email })
       .andWhere('appToken.deletedAt IS NULL')
+      .andWhere('appToken.expiresAt > :now', {
+        now: new Date(),
+      })
       .leftJoinAndSelect('appToken.workspace', 'workspace')
       .getMany();
   }

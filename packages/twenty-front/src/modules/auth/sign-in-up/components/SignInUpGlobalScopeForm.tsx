@@ -20,6 +20,7 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
+import { getAvailableWorkspacePathAndSearchParams } from '@/auth/utils/availableWorkspacesUtils';
 import { SignInUpMode } from '@/auth/types/signInUpMode';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
@@ -35,7 +36,6 @@ import { MainButton } from 'twenty-ui/input';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
-import { AppPath } from '@/types/AppPath';
 import { AvailableWorkspace } from '~/generated/graphql';
 
 const StyledContentContainer = styled(motion.div)`
@@ -168,16 +168,15 @@ export const SignInUpGlobalScopeForm = () => {
   };
 
   const getAvailableWorkspaceUrl = (availableWorkspace: AvailableWorkspace) => {
+    const { pathname, searchParams } = getAvailableWorkspacePathAndSearchParams(
+      availableWorkspace,
+      { email: form.getValues('email') },
+    );
+
     return buildWorkspaceUrl(
       getWorkspaceUrl(availableWorkspace.workspaceUrls),
-      availableWorkspace.loginToken ? AppPath.Verify : AppPath.SignInUp,
-      isDefined(availableWorkspace.loginToken)
-        ? {
-            loginToken: availableWorkspace.loginToken,
-          }
-        : {
-            email: form.getValues('email'),
-          },
+      pathname,
+      searchParams,
     );
   };
 
