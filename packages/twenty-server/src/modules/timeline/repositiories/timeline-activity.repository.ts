@@ -50,9 +50,13 @@ export class TimelineActivityRepository {
         properties,
       );
 
-      // What to do when the newProps.diff is empty? - This essentially means that the timeline activity is not changed from the base records. So, we should just delete this timeline activity.
+      // This essentially means that the timeline activity is not changed from the base records.
+      // So, we should just delete this timeline activity.
       if (newProps.diff === null || Object.keys(newProps.diff).length === 0) {
-        //need to do something here, maybe delete the activity?
+        return this.deletedTimelineActivity(
+          recentTimelineActivity[0].id,
+          workspaceId,
+        )
       }
 
       return this.updateTimelineActivity(
@@ -113,6 +117,24 @@ export class TimelineActivityRepository {
       order: { createdAt: 'DESC' },
       take: 1,
     });
+  }
+
+  private async deletedTimelineActivity(
+    id: string,
+    workspaceId: string,
+  ) {
+    const timelineActivityTypeORMRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        'timelineActivity',
+        {
+          shouldBypassPermissionChecks: true,
+        },
+      );
+
+    return timelineActivityTypeORMRepository.delete(
+      id,
+    );
   }
 
   private async updateTimelineActivity(

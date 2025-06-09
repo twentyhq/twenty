@@ -5,17 +5,11 @@ export function objectRecordDiffMerge(
   newRecord: Record<string, any>,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Record<string, any> {
-  console.log(
-    'Merging object record diffs',
-    `oldRecord: ${JSON.stringify(oldRecord, null, 2)}`,
-    `newRecord: ${JSON.stringify(newRecord, null, 2)}`,
-  );
-
   const result: Record<string, any> = { diff: {} };
   const skippedKeys: Set<string> = new Set();
 
   // Normalize values to sort the keys and compare meaningfully
-  // This function replaces null, empty strings, empty arrays, and empty objects with specific placeholders
+  // This function replaces null, empty strings, empty arrays, and empty objects with placeholders
   // to ensure that they are treated as equal when they are effectively the same.
   const normalize = (val: any): any => {
     if (val === null || val === '') return '__empty__';
@@ -39,20 +33,8 @@ export function objectRecordDiffMerge(
 
   const isEffectivelyEqual = (a: any, b: any): boolean =>
     {
-      console.log(
-        "Comparing values for equality",
-        `a: ${JSON.stringify(a, null, 2)}`,
-        `b: ${JSON.stringify(b, null, 2)}`,
-      )
-
       const normalizedA = JSON.stringify(normalize(a));
       const normalizedB = JSON.stringify(normalize(b));
-
-      console.log(
-        "Normalized values for equality",
-        `normalizedA: ${normalizedA}`,
-        `normalizedB: ${normalizedB}`,
-      )
 
       return normalizedA === normalizedB;
 
