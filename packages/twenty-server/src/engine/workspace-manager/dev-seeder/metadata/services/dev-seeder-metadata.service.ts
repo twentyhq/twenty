@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { COMPANY_CUSTOM_FIELD_SEEDS } from 'src/engine/workspace-manager/dev-seeder/metadata/custom-fields/constants/company-custom-field-seeds.constant';
+import { PERSON_CUSTOM_FIELD_SEEDS } from 'src/engine/workspace-manager/dev-seeder/metadata/custom-fields/constants/person-custom-field-seeds.constant';
 import { PET_CUSTOM_FIELD_SEEDS } from 'src/engine/workspace-manager/dev-seeder/metadata/custom-fields/constants/pet-custom-field-seeds.constant';
 import { SURVEY_RESULT_CUSTOM_FIELD_SEEDS } from 'src/engine/workspace-manager/dev-seeder/metadata/custom-fields/constants/survey-results-field-seeds.constant';
 import { PET_CUSTOM_OBJECT_SEED } from 'src/engine/workspace-manager/dev-seeder/metadata/custom-objects/constants/pet-custom-field-seed.constant';
@@ -53,6 +55,18 @@ export class DevSeederMetadataService {
       workspaceId,
       objectMetadataNameSingular: SURVEY_RESULT_CUSTOM_OBJECT_SEED.nameSingular,
       fieldMetadataSeeds: SURVEY_RESULT_CUSTOM_FIELD_SEEDS,
+    });
+
+    await this.seedCustomFields({
+      workspaceId,
+      objectMetadataNameSingular: 'company',
+      fieldMetadataSeeds: COMPANY_CUSTOM_FIELD_SEEDS,
+    });
+
+    await this.seedCustomFields({
+      workspaceId,
+      objectMetadataNameSingular: 'person',
+      fieldMetadataSeeds: PERSON_CUSTOM_FIELD_SEEDS,
     });
   }
 
