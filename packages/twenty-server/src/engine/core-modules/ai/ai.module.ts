@@ -9,7 +9,9 @@ import { AI_DRIVER } from 'src/engine/core-modules/ai/ai.constants';
 import { AiService } from 'src/engine/core-modules/ai/ai.service';
 import { AiController } from 'src/engine/core-modules/ai/controllers/ai.controller';
 import { OpenAIDriver } from 'src/engine/core-modules/ai/drivers/openai.driver';
+import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
 @Global()
 export class AiModule {
@@ -31,7 +33,7 @@ export class AiModule {
 
     return {
       module: AiModule,
-      imports: [FeatureFlagModule],
+      imports: [FeatureFlagModule, TokenModule, WorkspaceCacheStorageModule],
       controllers: [AiController],
       providers: [AiService, provider],
       exports: [AiService],

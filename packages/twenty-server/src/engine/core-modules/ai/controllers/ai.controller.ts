@@ -8,33 +8,30 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { CoreMessage } from 'ai';
 import { Response } from 'express';
 
-import { AiService } from 'src/engine/core-modules/ai/ai.service';
+import {
+  AiService,
+  ChatCompletionRequest,
+} from 'src/engine/core-modules/ai/ai.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
-export interface ChatRequest {
-  messages: CoreMessage[];
-  temperature?: number;
-  maxTokens?: number;
-}
-
-@Controller('chat')
-@UseGuards(WorkspaceAuthGuard)
+@Controller('ai')
+@UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
 export class AiController {
   constructor(
     private readonly aiService: AiService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
-  @Post()
+  @Post('chat/completions')
   async chat(
-    @Body() request: ChatRequest,
+    @Body() request: ChatCompletionRequest,
     @AuthWorkspace() workspace: Workspace,
     @Res() res: Response,
   ) {
@@ -50,7 +47,7 @@ export class AiController {
       );
     }
 
-    const { messages, temperature, maxTokens } = request;
+    const { messages, temperature, max_tokens, tools, tool_choice } = request;
 
     if (!messages || messages.length === 0) {
       throw new HttpException(
@@ -60,12 +57,31 @@ export class AiController {
     }
 
     try {
+      const convertedTools =
+        this.aiService.convertOpenAICompatibleToolsToAISDK(tools);
+      const convertedToolChoice =
+        this.aiService.convertOpenAICompatibleToolChoiceToAISDK(tool_choice);
+
       const result = this.aiService.streamText(messages, {
         temperature,
-        maxTokens,
+        maxTokens: max_tokens,
+        tools: convertedTools,
+        toolChoice: convertedToolChoice,
       });
 
-      result.pipeDataStreamToResponse(res);
+      if (!result || typeof result.pipeDataStreamToResponse !== 'function') {
+        throw new Error('Invalid stream result');
+      }
+
+      result.pipeDataStreamToResponse(res, {
+        getErrorMessage: (error: unknown) => {
+          if (error instanceof Error) {
+            return error.message;
+          }
+
+          return 'Unknown error occurred';
+        },
+      });
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error occurred';

@@ -2,7 +2,7 @@ import { getDefaultReactSlashMenuItems } from '@blocknote/react';
 
 import { SuggestionItem } from '@/ui/input/editor/components/CustomSlashMenu';
 
-import { BLOCK_SCHEMA } from '../constants/Schema';
+import { getAISlashMenuItems } from '@blocknote/xl-ai';
 import {
   IconCode,
   IconComponent,
@@ -17,9 +17,11 @@ import {
   IconMoodSmile,
   IconPhoto,
   IconPilcrow,
+  IconSparkles,
   IconTable,
   IconVideo,
 } from 'twenty-ui/display';
+import { BLOCK_SCHEMA } from '../constants/Schema';
 
 const Icons: Record<string, IconComponent> = {
   'Heading 1': IconH1,
@@ -35,11 +37,16 @@ const Icons: Record<string, IconComponent> = {
   Video: IconVideo,
   Audio: IconHeadphones,
   Emoji: IconMoodSmile,
+  AI: IconSparkles,
 };
 
 export const getSlashMenu = (editor: typeof BLOCK_SCHEMA.BlockNoteEditor) => {
   const items: SuggestionItem[] = [
     ...getDefaultReactSlashMenuItems(editor).map((x) => ({
+      ...x,
+      Icon: Icons[x.title],
+    })),
+    ...getAISlashMenuItems(editor).map((x) => ({
       ...x,
       Icon: Icons[x.title],
     })),

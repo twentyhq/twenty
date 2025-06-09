@@ -39,8 +39,17 @@ import '@blocknote/core/fonts/inter.css';
 import '@blocknote/mantine/style.css';
 import { useCreateBlockNote } from '@blocknote/react';
 import '@blocknote/react/style.css';
+import '@blocknote/xl-ai/style.css';
 import { isArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+
+import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
+import { createAIExtension } from '@blocknote/xl-ai';
+
+import { tokenPairState } from '@/auth/states/tokenPairState';
+import { en } from '@blocknote/core/locales';
+import { en as aiEn } from '@blocknote/xl-ai/locales';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 type ActivityRichTextEditorProps = {
   activityId: string;
@@ -293,11 +302,31 @@ export const ActivityRichTextEditor = ({
     return attachmentAbsoluteURL;
   };
 
+  const tokenPair = useRecoilValue(tokenPairState);
+
+  const provider = createOpenAICompatible({
+    name: 'Twenty AI',
+    apiKey: tokenPair?.accessToken.token,
+    baseURL: REACT_APP_SERVER_BASE_URL + '/ai/',
+  });
+
+  const model = provider('default');
+
   const editor = useCreateBlockNote({
     initialContent: initialBody,
     domAttributes: { editor: { class: 'editor' } },
     schema: BLOCK_SCHEMA,
     uploadFile: handleEditorBuiltInUploadFile,
+    dictionary: {
+      ...en,
+      ai: aiEn, // add default translations for the AI extension
+    },
+    extensions: [
+      createAIExtension({
+        stream: true,
+        model,
+      }),
+    ],
   });
 
   const commandMenuPage = useRecoilValue(commandMenuPageState);

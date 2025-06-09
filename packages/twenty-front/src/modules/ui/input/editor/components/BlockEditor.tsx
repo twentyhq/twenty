@@ -12,6 +12,8 @@ import {
   CustomSlashMenu,
   SuggestionItem,
 } from '@/ui/input/editor/components/CustomSlashMenu';
+import { FormattingToolbarWithAI } from '@/ui/input/editor/components/FormattingToolbarWithAI';
+import { AIMenuController } from '@blocknote/xl-ai';
 
 interface BlockEditorProps {
   editor: typeof BLOCK_SCHEMA.BlockNoteEditor;
@@ -170,7 +172,10 @@ export const BlockEditor = ({
         slashMenu={false}
         sideMenu={false}
         editable={!readonly}
+        formattingToolbar={false}
       >
+        <AIMenuController />
+        <FormattingToolbarWithAI />
         <CustomSideMenu editor={editor} />
         <SuggestionMenuController
           triggerCharacter={'/'}
