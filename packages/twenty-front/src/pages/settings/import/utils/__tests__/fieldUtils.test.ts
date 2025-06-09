@@ -1,7 +1,7 @@
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 import * as reservedFields from '~/pages/settings/import/constants/reservedFieldNames';
 import * as reservedPrefixes from '~/pages/settings/import/constants/reservedFieldPrefixes';
-import { isReservedFieldName } from '../field.utils';
+import { generateUniqueFieldName, isReservedFieldName } from '../field.utils';
 import { capitalizeFirst, formatFileSize } from '../format.utils';
 
 jest.mock(
@@ -44,8 +44,37 @@ describe('Field Utils', () => {
       Object.defineProperty(reservedPrefixes, 'RESERVED_FIELD_PREFIXES', {
         get: () => ['__'],
       });
+      // Mock the implementation for consistent test results
       mockComputeMetadataNameFromLabel.mockImplementation((label) =>
         label.toLowerCase().replace(/\s/g, ''),
+      );
+    });
+
+    // FIX: Added test cases to the describe block
+    it('should generate a simple field name when there are no conflicts', () => {
+      const existingFields: string[] = [];
+      expect(generateUniqueFieldName('My Field', existingFields)).toBe(
+        'myfield',
+      );
+    });
+
+    it('should generate a unique name when the name is a reserved field', () => {
+      const existingFields: string[] = [];
+      // 'id' is a reserved field name in the mock setup
+      expect(generateUniqueFieldName('ID', existingFields)).toBe('id1');
+    });
+
+    it('should generate a unique name when the name already exists', () => {
+      const existingFields = ['myfield'];
+      expect(generateUniqueFieldName('My Field', existingFields)).toBe(
+        'myfield1',
+      );
+    });
+
+    it('should increment suffix until a unique name is found', () => {
+      const existingFields = ['myfield', 'myfield1'];
+      expect(generateUniqueFieldName('My Field', existingFields)).toBe(
+        'myfield2',
       );
     });
   });
