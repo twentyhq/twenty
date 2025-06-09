@@ -15,11 +15,6 @@ import {
   UpgradeCommandRunner,
   VersionCommands,
 } from 'src/database/commands/command-runners/upgrade.command-runner';
-import { AddTasksAssignedToMeViewCommand } from 'src/database/commands/upgrade-version-command/0-43/0-43-add-tasks-assigned-to-me-view.command';
-import { MigrateIsSearchableForCustomObjectMetadataCommand } from 'src/database/commands/upgrade-version-command/0-43/0-43-migrate-is-searchable-for-custom-object-metadata.command';
-import { MigrateRichTextContentPatchCommand } from 'src/database/commands/upgrade-version-command/0-43/0-43-migrate-rich-text-content-patch.command';
-import { MigrateSearchVectorOnNoteAndTaskEntitiesCommand } from 'src/database/commands/upgrade-version-command/0-43/0-43-migrate-search-vector-on-note-and-task-entities.command';
-import { UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand } from 'src/database/commands/upgrade-version-command/0-43/0-43-update-default-view-record-opening-on-workflow-objects.command';
 import { InitializePermissionsCommand } from 'src/database/commands/upgrade-version-command/0-44/0-44-initialize-permissions.command';
 import { UpdateViewAggregateOperationsCommand } from 'src/database/commands/upgrade-version-command/0-44/0-44-update-view-aggregate-operations.command';
 import { UpgradeCreatedByEnumCommand } from 'src/database/commands/upgrade-version-command/0-51/0-51-update-workflow-trigger-type-enum.command';
@@ -152,13 +147,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     private readonly databaseMigrationService: DatabaseMigrationService,
 
-    // 0.43 Commands
-    protected readonly migrateRichTextContentPatchCommand: MigrateRichTextContentPatchCommand,
-    protected readonly addTasksAssignedToMeViewCommand: AddTasksAssignedToMeViewCommand,
-    protected readonly migrateIsSearchableForCustomObjectMetadataCommand: MigrateIsSearchableForCustomObjectMetadataCommand,
-    protected readonly updateDefaultViewRecordOpeningOnWorkflowObjectsCommand: UpdateDefaultViewRecordOpeningOnWorkflowObjectsCommand,
-    protected readonly migrateSearchVectorOnNoteAndTaskEntitiesCommand: MigrateSearchVectorOnNoteAndTaskEntitiesCommand,
-
     // 0.44 Commands
     protected readonly initializePermissionsCommand: InitializePermissionsCommand,
     protected readonly updateViewAggregateOperationsCommand: UpdateViewAggregateOperationsCommand,
@@ -191,18 +179,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       syncWorkspaceMetadataCommand,
     );
 
-    const commands_043: VersionCommands = {
-      beforeSyncMetadata: [
-        this.migrateRichTextContentPatchCommand,
-        this.migrateIsSearchableForCustomObjectMetadataCommand,
-        this.migrateSearchVectorOnNoteAndTaskEntitiesCommand,
-        this.migrateIsSearchableForCustomObjectMetadataCommand,
-      ],
-      afterSyncMetadata: [
-        this.updateDefaultViewRecordOpeningOnWorkflowObjectsCommand,
-        this.addTasksAssignedToMeViewCommand,
-      ],
-    };
     const commands_044: VersionCommands = {
       beforeSyncMetadata: [
         this.initializePermissionsCommand,
@@ -251,7 +227,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     };
 
     this.allCommands = {
-      '0.43.0': commands_043,
       '0.44.0': commands_044,
       '0.50.0': commands_050,
       '0.51.0': commands_051,

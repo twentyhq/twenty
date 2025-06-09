@@ -3,7 +3,7 @@ import { contextStoreRecordShowParentViewComponentState } from '@/context-store/
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { getQueryVariablesFromView } from '@/views/utils/getQueryVariablesFromView';
+import { getQueryVariablesFromView } from './useQueryVariablesFromView';
 
 export const useQueryVariablesFromActiveFieldsOfViewOrDefaultView = ({
   objectMetadataItem,

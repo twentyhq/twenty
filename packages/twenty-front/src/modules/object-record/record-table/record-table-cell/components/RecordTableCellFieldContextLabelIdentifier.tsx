@@ -1,9 +1,11 @@
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { RecordUpdateContext } from '@/object-record/record-table/contexts/EntityUpdateMutationHookContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -17,11 +19,13 @@ type RecordTableCellFieldContextLabelIdentifierProps = {
 export const RecordTableCellFieldContextLabelIdentifier = ({
   children,
 }: RecordTableCellFieldContextLabelIdentifierProps) => {
-  const { indexIdentifierUrl } = useRecordIndexContextOrThrow();
+  const { indexIdentifierUrl, objectPermissionsByObjectMetadataId } =
+    useRecordIndexContextOrThrow();
   const { recordId, isReadOnly: isTableRowReadOnly } =
     useRecordTableRowContextOrThrow();
 
   const { columnDefinition } = useContext(RecordTableCellContext);
+  const { objectMetadataItem } = useRecordTableContextOrThrow();
 
   const isMobile = useIsMobile();
   const isRecordTableScrolledLeftComponent = useRecoilComponentValueV2(
@@ -32,6 +36,13 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
     fieldDefinition: columnDefinition,
     isRecordReadOnly: isTableRowReadOnly ?? false,
   });
+
+  const objectPermissions = getObjectPermissionsForObject(
+    objectPermissionsByObjectMetadataId,
+    objectMetadataItem.id,
+  );
+
+  const hasObjectReadPermissions = objectPermissions.canReadObjectRecords;
 
   const updateRecord = useContext(RecordUpdateContext);
 
@@ -55,6 +66,7 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
         onRecordChipClick: () => {
           openRecordFromIndexView({ recordId });
         },
+        isForbidden: !hasObjectReadPermissions,
       }}
     >
       {children}

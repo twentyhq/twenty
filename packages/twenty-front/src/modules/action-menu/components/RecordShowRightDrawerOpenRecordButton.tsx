@@ -5,13 +5,12 @@ import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/c
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { AppPath } from '@/types/AppPath';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
-import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -19,17 +18,12 @@ import { useComponentInstanceStateContext } from '@/ui/utilities/state/component
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import styled from '@emotion/styled';
-import { Link } from 'react-router-dom';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconBrowserMaximize } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-const StyledLink = styled(Link)`
-  text-decoration: none;
-`;
 
 type RecordShowRightDrawerOpenRecordButtonProps = {
   objectNameSingular: string;
@@ -135,18 +129,15 @@ export const RecordShowRightDrawerOpenRecordButton = ({
     return null;
   }
 
-  const to = getLinkToShowPage(objectNameSingular, record);
-
   return (
-    <StyledLink to={to} onClick={closeCommandMenu}>
-      <Button
-        title="Open"
-        variant="primary"
-        accent="blue"
-        size="medium"
-        Icon={IconBrowserMaximize}
-        hotkeys={[getOsControlSymbol(), '⏎']}
-      />
-    </StyledLink>
+    <Button
+      title="Open"
+      variant="primary"
+      accent="blue"
+      size="medium"
+      Icon={IconBrowserMaximize}
+      hotkeys={[getOsControlSymbol(), '⏎']}
+      onClick={handleOpenRecord}
+    />
   );
 };

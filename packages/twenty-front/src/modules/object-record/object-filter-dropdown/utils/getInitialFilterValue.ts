@@ -1,10 +1,10 @@
-import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
+import { FilterableAndTSVectorFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { z } from 'zod';
 
 export const getInitialFilterValue = (
-  newType: FilterableFieldType,
+  newType: FilterableAndTSVectorFieldType,
   newOperand: RecordFilterOperand,
   oldValue?: string,
   oldDisplayValue?: string,

@@ -5,6 +5,8 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
@@ -18,6 +20,7 @@ import { RecordDetailDuplicatesSection } from '@/object-record/record-show/recor
 import { RecordDetailRelationSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSection';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
+import { useIsInRightDrawerOrThrow } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import { FieldMetadataType } from '~/generated/graphql';
 
 type FieldsCardProps = {
@@ -39,11 +42,14 @@ export const FieldsCard = ({
     objectNameSingular,
   });
   const { objectMetadataItems } = useObjectMetadataItems();
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
     objectNameSingular,
     objectRecordId,
   });
+
+  const { isInRightDrawer } = useIsInRightDrawerOrThrow();
 
   const availableFieldMetadataItems = objectMetadataItem.fields
     .filter(
@@ -87,11 +93,16 @@ export const FieldsCard = ({
           fieldMetadataItem.name === 'noteTargets') ||
         (objectNameSingular === CoreObjectNameSingular.Task &&
           fieldMetadataItem.name === 'taskTargets')
-      ),
+      ) &&
+      getObjectPermissionsForObject(
+        objectPermissionsByObjectMetadataId,
+        fieldMetadataItem.relationDefinition?.targetObjectMetadata.id,
+      ).canReadObjectRecords,
   );
 
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId: objectRecordId,
+    objectMetadataId: objectMetadataItem.id,
   });
 
   return (
@@ -131,7 +142,9 @@ export const FieldsCard = ({
                     componentInstanceId={getRecordFieldInputId(
                       objectRecordId,
                       fieldMetadataItem.name,
-                      'fields-card',
+                      isInRightDrawer
+                        ? 'right-drawer-fields-card'
+                        : 'fields-card',
                     )}
                     activityObjectNameSingular={
                       objectNameSingular as

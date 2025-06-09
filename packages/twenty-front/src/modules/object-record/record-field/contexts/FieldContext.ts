@@ -39,6 +39,7 @@ export type GenericFieldContextType = {
   onOpenEditMode?: () => void;
   onCloseEditMode?: () => void;
   triggerEvent?: TriggerEventType;
+  isForbidden?: boolean;
 };
 
 export const FieldContext = createContext<GenericFieldContextType>(
