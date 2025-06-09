@@ -11,29 +11,35 @@ import { seedPersonWithDemoData } from 'src/engine/workspace-manager/demo-object
 import { seedWorkspaceMemberWithDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/seed-workspace-member-with-demo-data';
 import { seedViewWithDemoData } from 'src/engine/workspace-manager/standard-objects-prefill-data/seed-view-with-demo-data';
 
+interface ObjectMetadataMap {
+  [key: string]: {
+    id: string;
+    fields: {
+      [key: string]: string;
+    };
+  };
+}
+
 export const seedWorkspaceWithDemoData = async (
   workspaceDataSource: DataSource,
   schemaName: string,
   objectMetadata: ObjectMetadataEntity[],
 ) => {
-  const objectMetadataMap = objectMetadata.reduce((acc, object) => {
-// @ts-expect-error legacy noImplicitAny
+  const objectMetadataMap: ObjectMetadataMap = objectMetadata.reduce((acc, object) => {
     acc[object.standardId ?? ''] = {
       id: object.id,
       fields: object.fields.reduce((acc, field) => {
-// @ts-expect-error legacy noImplicitAny
         acc[field.standardId ?? ''] = field.id;
-
         return acc;
-      }, {}),
+      }, {} as { [key: string]: string }),
     };
-
     return acc;
-  }, {});
+  }, {} as ObjectMetadataMap);
 
   await workspaceDataSource.transaction(
     async (entityManager: WorkspaceEntityManager) => {
-      await seedCarrierWithDemoData(entityManager, schemaName);
+      // Only seed carrier records and view, assuming object metadata exists
+      await seedCarrierWithDemoData(entityManager, schemaName, objectMetadataMap);
       await seedCompanyWithDemoData(entityManager, schemaName);
       await seedPersonWithDemoData(entityManager, schemaName);
       await seedOpportunityWithDemoData(entityManager, schemaName);

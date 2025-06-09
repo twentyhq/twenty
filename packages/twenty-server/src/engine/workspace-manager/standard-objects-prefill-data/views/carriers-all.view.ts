@@ -48,14 +48,5 @@ export const carriersAllView = (
         size: 210,
       },
     ],
-    viewSorts: [
-      {
-        fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.carrier].fields[
-            CARRIER_STANDARD_FIELD_IDS.name
-          ],
-        direction: 'asc',
-      },
-    ],
   };
 };
