@@ -37,7 +37,7 @@ export const fieldMetadataItemSchema = (existingLabels?: string[]) => {
     settings: z.any().optional(),
     relation: z
       .object({
-        __typename: z.literal('relation').optional(),
+        __typename: z.literal('Relation').optional(),
         type: z.nativeEnum(RelationType),
         sourceFieldMetadata: z.object({
           __typename: z.literal('Field').optional(),

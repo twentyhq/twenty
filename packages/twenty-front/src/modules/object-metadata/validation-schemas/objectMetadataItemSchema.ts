@@ -15,6 +15,7 @@ export const objectMetadataItemSchema = z.object({
   indexMetadatas: z.array(indexMetadataItemSchema),
   icon: z.string().startsWith('Icon').trim(),
   id: z.string().uuid(),
+  duplicateCriteria: z.array(z.array(z.string())),
   imageIdentifierFieldMetadataId: z.string().uuid().nullable(),
   isActive: z.boolean(),
   isCustom: z.boolean(),

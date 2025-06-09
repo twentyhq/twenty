@@ -21,13 +21,11 @@ describe('generateDepthOneRecordGqlFields', () => {
   "emails": true,
   "favorites": true,
   "id": true,
-  "intro": true,
   "jobTitle": true,
   "linkedinLink": true,
   "messageParticipants": true,
   "name": true,
   "noteTargets": true,
-  "performanceRating": true,
   "phones": true,
   "pointOfContactForOpportunities": true,
   "position": true,
@@ -35,8 +33,6 @@ describe('generateDepthOneRecordGqlFields', () => {
   "taskTargets": true,
   "timelineActivities": true,
   "updatedAt": true,
-  "whatsapp": true,
-  "workPreference": true,
   "xLink": true,
 }
 `);
