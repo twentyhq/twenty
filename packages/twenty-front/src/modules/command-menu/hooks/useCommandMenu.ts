@@ -37,13 +37,14 @@ export const useCommandMenu = () => {
   );
 
   const openCommandMenu = useCallback(() => {
+    closeAnyOpenDropdown();
     navigateCommandMenu({
       page: CommandMenuPages.Root,
       pageTitle: 'Command Menu',
       pageIcon: IconDotsVertical,
       resetNavigationStack: true,
     });
-  }, [navigateCommandMenu]);
+  }, [closeAnyOpenDropdown, navigateCommandMenu]);
 
   const toggleCommandMenu = useRecoilCallback(
     ({ snapshot, set }) =>
