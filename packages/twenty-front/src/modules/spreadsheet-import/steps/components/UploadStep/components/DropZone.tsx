@@ -94,6 +94,7 @@ const StyledFooterText = styled.span`
   bottom: ${({ theme }) => theme.spacing(4)};
   left: 50%;
   transform: translateX(-50%);
+  width: 100%;
 `;
 
 const StyledTextAction = styled.span`

@@ -15,23 +15,29 @@ export const useDownloadFakeRecords = () => {
 
   const buildTableWithFakeRecords = () => {
     const headerRow: string[] = [];
-    const row: string[] = [];
+    const bodyRows: string[][] = [[], [], []];
 
     availableFieldMetadataItems.forEach((field) => {
       switch (field.type) {
         case FieldMetadataType.RATING:
         case FieldMetadataType.ARRAY:
+        case FieldMetadataType.RAW_JSON:
         case FieldMetadataType.UUID:
         case FieldMetadataType.DATE_TIME:
         case FieldMetadataType.DATE:
         case FieldMetadataType.BOOLEAN:
-        case FieldMetadataType.TEXT:
+        case FieldMetadataType.NUMBER:
+        case FieldMetadataType.TEXT: {
           headerRow.push(field.label);
-          row.push(
-            SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS[field.type]
-              .exampleValue || '',
-          );
+          const exampleValues =
+            SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS[field.type].exampleValues;
+
+          bodyRows.forEach((_, index) => {
+            bodyRows[index].push(exampleValues?.[index] || '');
+          });
+
           break;
+        }
         case FieldMetadataType.ACTOR:
         case FieldMetadataType.EMAILS:
         case FieldMetadataType.CURRENCY:
@@ -46,47 +52,70 @@ export const useDownloadFakeRecords = () => {
               ? compositeFieldSettings.importableSubFields
               : compositeFieldSettings.subFields;
 
+          const exampleValues =
+            SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[field.type].exampleValues;
+
           headerRow.push(
             ...subFields.map(
               (subField: string) =>
                 `${field.label} / ${compositeFieldSettings.labelBySubField[subField as keyof typeof compositeFieldSettings.labelBySubField]}`,
             ),
           );
-          row.push(
-            ...subFields.map((subField: string) => {
-              const value =
-                compositeFieldSettings.exampleValue[
-                  subField as keyof typeof compositeFieldSettings.exampleValue
-                ];
-              return value || '';
-            }),
-          );
+
+          bodyRows.forEach((_, index) => {
+            subFields.forEach((subField: string) => {
+              bodyRows[index].push(
+                exampleValues?.[index]?.[
+                  subField as keyof (typeof exampleValues)[typeof index]
+                ] || '',
+              );
+            });
+          });
 
           break;
         }
 
-        case FieldMetadataType.RELATION:
-          headerRow.push(`${field.label} Id`);
-          row.push('00000000-0000-0000-0000-000000000000');
+        case FieldMetadataType.RELATION: {
+          headerRow.push(`${field.label} (ID)`);
+
+          const exampleValues =
+            SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS[FieldMetadataType.UUID]
+              .exampleValues;
+
+          bodyRows.forEach((_, index) => {
+            bodyRows[index].push(exampleValues?.[index] || '');
+          });
+
           break;
+        }
 
         case FieldMetadataType.MULTI_SELECT:
           headerRow.push(field.label);
-          row.push(
-            JSON.stringify(
-              field?.options?.map((option) => option?.value) || [],
-            ),
-          );
+
+          bodyRows.forEach((_, index) => {
+            bodyRows[index].push(
+              JSON.stringify(
+                field?.options
+                  ?.map((option) => option?.value)
+                  .slice(0, index) || [],
+              ),
+            );
+          });
+
           break;
 
         case FieldMetadataType.SELECT:
           headerRow.push(field.label);
-          row.push(field?.options?.[0]?.value || '');
+
+          bodyRows.forEach((_, index) => {
+            bodyRows[index].push(field?.options?.[index]?.value || '');
+          });
+
           break;
       }
     });
 
-    return { headerRow, bodyRows: [row] };
+    return { headerRow, bodyRows };
   };
 
   const formatToCsvContent = (rows: string[][]) => {

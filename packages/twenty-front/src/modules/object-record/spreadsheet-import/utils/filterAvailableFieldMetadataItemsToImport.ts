@@ -1,6 +1,6 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { RelationType } from '~/generated-metadata/graphql';
 
 export const filterAvailableFieldMetadataItemsToImport = (
   fields: FieldMetadataItem[],
@@ -14,8 +14,7 @@ export const filterAvailableFieldMetadataItemsToImport = (
         fieldMetadataItem.name !== 'updatedAt' &&
         fieldMetadataItem.type !== FieldMetadataType.ACTOR &&
         (fieldMetadataItem.type !== FieldMetadataType.RELATION ||
-          fieldMetadataItem.relationDefinition?.direction ===
-            RelationDefinitionType.MANY_TO_ONE),
+          fieldMetadataItem.relation?.type === RelationType.MANY_TO_ONE),
     )
     .sort((fieldMetadataItemA, fieldMetadataItemB) =>
       fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
