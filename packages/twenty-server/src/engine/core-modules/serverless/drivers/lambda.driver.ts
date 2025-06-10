@@ -1,10 +1,9 @@
 import * as fs from 'fs/promises';
 import { join } from 'path';
 
-import ts, { transpileModule } from 'typescript';
 import {
-  CreateFunctionCommandInput,
   CreateFunctionCommand,
+  CreateFunctionCommandInput,
   DeleteFunctionCommand,
   GetFunctionCommand,
   InvokeCommand,
@@ -13,14 +12,15 @@ import {
   LambdaClientConfig,
   ListLayerVersionsCommand,
   ListLayerVersionsCommandInput,
+  LogType,
   PublishLayerVersionCommand,
   PublishLayerVersionCommandInput,
   ResourceNotFoundException,
   waitUntilFunctionUpdatedV2,
-  LogType,
 } from '@aws-sdk/client-lambda';
 import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
 import { isDefined } from 'twenty-shared/utils';
+import ts, { transpileModule } from 'typescript';
 
 import {
   ServerlessDriver,
@@ -28,8 +28,11 @@ import {
 } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
 import { COMMON_LAYER_NAME } from 'src/engine/core-modules/serverless/drivers/constants/common-layer-name';
+import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
 import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
+import { copyExecutor } from 'src/engine/core-modules/serverless/drivers/utils/copy-executor';
 import { createZipFile } from 'src/engine/core-modules/serverless/drivers/utils/create-zip-file';
 import {
   LambdaBuildDirectoryManager,
@@ -45,9 +48,6 @@ import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
-import { copyExecutor } from 'src/engine/core-modules/serverless/drivers/utils/copy-executor';
-import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
-import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
@@ -172,7 +172,10 @@ export class LambdaDriver implements ServerlessDriver {
       Content: {
         ZipFile: await fs.readFile(lambdaZipPath),
       },
-      CompatibleRuntimes: [ServerlessFunctionRuntime.NODE18],
+      CompatibleRuntimes: [
+        ServerlessFunctionRuntime.NODE18,
+        ServerlessFunctionRuntime.NODE22,
+      ],
       Description: `${version}`,
     };
 
