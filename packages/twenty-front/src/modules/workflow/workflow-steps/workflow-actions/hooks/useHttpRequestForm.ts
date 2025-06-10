@@ -29,13 +29,17 @@ export const useHttpRequestForm = ({
   const [formData, setFormData] = useState<HttpRequestFormData>({
     url: action.settings.input.url,
     method: action.settings.input.method,
-    headers: action.settings.input.headers
-      ? JSON.stringify(action.settings.input.headers, null, 2)
-      : null,
+    headers:
+      action.settings.input.headers &&
+      Object.keys(action.settings.input.headers).length > 0
+        ? JSON.stringify(action.settings.input.headers, null, 2)
+        : null,
     body: action.settings.input.body
       ? typeof action.settings.input.body === 'string'
         ? action.settings.input.body
-        : JSON.stringify(action.settings.input.body, null, 2)
+        : Object.keys(action.settings.input.body).length > 0
+          ? JSON.stringify(action.settings.input.body, null, 2)
+          : null
       : null,
   });
 
@@ -104,19 +108,16 @@ export const useHttpRequestForm = ({
     const newFormData = { ...formData, [field]: value ?? '' };
     setFormData(newFormData);
 
-    if (field === 'headers') {
-      if (!validateJson(value, 'headers')) {
-        return;
-      }
+    if (field === 'headers' && !validateJson(value, 'headers')) {
+      return;
     }
 
     if (
       field === 'body' &&
-      ['POST', 'PUT', 'PATCH'].includes(formData.method)
+      ['POST', 'PUT', 'PATCH'].includes(formData.method) &&
+      !validateJson(value, 'body')
     ) {
-      if (!validateJson(value, 'body')) {
-        return;
-      }
+      return;
     }
 
     saveAction(newFormData);
