@@ -4,7 +4,7 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { ThemeColor } from 'twenty-ui/theme';
 import { z } from 'zod';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { RelationType } from '~/generated-metadata/graphql';
 import { CurrencyCode } from './CurrencyCode';
 
 type BaseFieldMetadata = {
@@ -132,7 +132,7 @@ export type FieldRelationMetadata = BaseFieldMetadata & {
   relationObjectMetadataNamePlural: string;
   relationObjectMetadataNameSingular: string;
   relationObjectMetadataId: string;
-  relationType?: RelationDefinitionType;
+  relationType?: RelationType;
   targetFieldMetadataName?: string;
   useEditButton?: boolean;
   settings?: null;

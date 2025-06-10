@@ -50,7 +50,7 @@ export class WorkflowVersionStepWorkspaceService {
     private readonly twentyORMManager: TwentyORMManager,
     private readonly workflowSchemaWorkspaceService: WorkflowSchemaWorkspaceService,
     private readonly serverlessFunctionService: ServerlessFunctionService,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,

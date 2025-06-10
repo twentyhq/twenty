@@ -7,7 +7,7 @@ import { SettingPermissionService } from 'src/engine/metadata-modules/setting-pe
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([SettingPermissionEntity, RoleEntity], 'metadata'),
+    TypeOrmModule.forFeature([SettingPermissionEntity, RoleEntity], 'core'),
   ],
   providers: [SettingPermissionService],
   exports: [SettingPermissionService],

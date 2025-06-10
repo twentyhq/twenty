@@ -1,6 +1,7 @@
 import { BadRequestException, Inject } from '@nestjs/common';
 
 import { Request } from 'express';
+import chunk from 'lodash.chunk';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { In, ObjectLiteral } from 'typeorm';
@@ -212,14 +213,31 @@ export abstract class RestApiBaseHandler {
       depth: depth,
     });
 
-    const unorderedRecords = await repository.find({
+    const relationsChunk = chunk(relations, 50);
+
+    const recordsWithoutRelations = await repository.find({
       where: { id: In(recordIds) },
-      relations,
     });
 
-    const recordMap = new Map(unorderedRecords.map((r) => [r.id, r]));
+    const recordsMap = new Map(
+      recordsWithoutRelations.map((record) => [record.id, record]),
+    );
 
-    const orderedRecords = recordIds.map((id) => recordMap.get(id));
+    for (const relationChunk of relationsChunk) {
+      const records = await repository.find({
+        where: { id: In(recordIds) },
+        relations: relationChunk,
+      });
+
+      records.map((record) => {
+        recordsMap.set(record.id, {
+          ...recordsMap.get(record.id),
+          ...record,
+        });
+      });
+    }
+
+    const orderedRecords = recordIds.map((id) => recordsMap.get(id));
 
     return orderedRecords;
   }
