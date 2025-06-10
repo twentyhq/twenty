@@ -17,6 +17,7 @@ const client = request(`http://localhost:${APP_PORT}`);
 
 describe('permissionsOnRelations', () => {
   describe('permissions V2 enabled', () => {
+    let originalMemberRoleId: string;
     let customRoleId: string;
 
     beforeAll(async () => {
@@ -28,9 +29,48 @@ describe('permissionsOnRelations', () => {
       );
 
       await makeGraphqlAPIRequest(enablePermissionsQuery);
+
+      // Get the original Member role ID for restoration later
+      const getRolesQuery = {
+        query: `
+        query GetRoles {
+          getRoles {
+            id
+            label
+          }
+        }
+      `,
+      };
+
+      const rolesResponse = await client
+        .post('/graphql')
+        .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
+        .send(getRolesQuery);
+
+      originalMemberRoleId = rolesResponse.body.data.getRoles.find(
+        (role: any) => role.label === 'Member',
+      ).id;
     });
 
     afterAll(async () => {
+      const restoreMemberRoleQuery = {
+        query: `
+          mutation UpdateWorkspaceMemberRole {
+            updateWorkspaceMemberRole(
+              workspaceMemberId: "${DEV_SEED_WORKSPACE_MEMBER_IDS.JONY}"
+              roleId: "${originalMemberRoleId}"
+            ) {
+              id
+            }
+          }
+        `,
+      };
+
+      await client
+        .post('/graphql')
+        .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
+        .send(restoreMemberRoleQuery);
+
       // Disable Permissions V2
       const disablePermissionsQuery = updateFeatureFlagFactory(
         SEED_APPLE_WORKSPACE_ID,
@@ -79,10 +119,6 @@ describe('permissionsOnRelations', () => {
       const response = await makeGraphqlAPIRequestWithJony(graphqlOperation);
 
       // The query should fail when trying to access company relation without permission
-      // eslint-disable-next-line no-console
-      console.log(response.body.errors);
-      // eslint-disable-next-line no-console
-      console.log(response.body.data);
       expect(response.body.errors).toBe('remove me');
       expect(response.body.errors[0].message).toBe(
         PermissionsExceptionMessage.PERMISSION_DENIED,
@@ -125,8 +161,6 @@ describe('permissionsOnRelations', () => {
 
       // The query should succeed
       expect(response.body.data).toBeDefined();
-      // eslint-disable-next-line no-console
-      console.log(response.body.data.people);
       expect(response.body.data.people).toBe('remove me');
       expect(response.body.data.people).toBeDefined();
       const person = response.body.data.people.edges[0].node;

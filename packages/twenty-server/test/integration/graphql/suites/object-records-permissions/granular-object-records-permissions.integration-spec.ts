@@ -16,6 +16,7 @@ const client = request(`http://localhost:${APP_PORT}`);
 
 describe('granularObjectRecordsPermissions', () => {
   describe('permissions V2 enabled', () => {
+    let originalMemberRoleId: string;
     let customRoleId: string;
 
     beforeAll(async () => {
@@ -27,9 +28,48 @@ describe('granularObjectRecordsPermissions', () => {
       );
 
       await makeGraphqlAPIRequest(enablePermissionsQuery);
+
+      // Get the original Member role ID for restoration later
+      const getRolesQuery = {
+        query: `
+        query GetRoles {
+          getRoles {
+            id
+            label
+          }
+        }
+      `,
+      };
+
+      const rolesResponse = await client
+        .post('/graphql')
+        .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
+        .send(getRolesQuery);
+
+      originalMemberRoleId = rolesResponse.body.data.getRoles.find(
+        (role: any) => role.label === 'Member',
+      ).id;
     });
 
     afterAll(async () => {
+      const restoreMemberRoleQuery = {
+        query: `
+          mutation UpdateWorkspaceMemberRole {
+            updateWorkspaceMemberRole(
+              workspaceMemberId: "${DEV_SEED_WORKSPACE_MEMBER_IDS.JONY}"
+              roleId: "${originalMemberRoleId}"
+            ) {
+              id
+            }
+          }
+        `,
+      };
+
+      await client
+        .post('/graphql')
+        .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
+        .send(restoreMemberRoleQuery);
+
       // Disable Permissions V2
       const disablePermissionsQuery = updateFeatureFlagFactory(
         SEED_APPLE_WORKSPACE_ID,
