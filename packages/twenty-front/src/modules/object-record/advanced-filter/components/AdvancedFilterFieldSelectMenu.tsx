@@ -106,17 +106,17 @@ export const AdvancedFilterFieldSelectMenu = ({
       selectedFieldMetadataItem.type,
     );
 
+    selectFieldUsedInAdvancedFilterDropdown({
+      fieldMetadataItemId: selectedFieldMetadataItem.id,
+      recordFilterId,
+    });
+
     if (isCompositeFieldType(filterType)) {
       setObjectFilterDropdownSubMenuFieldType(filterType);
 
       setFieldMetadataItemIdUsedInDropdown(selectedFieldMetadataItem.id);
       setObjectFilterDropdownIsSelectingCompositeField(true);
     } else {
-      selectFieldUsedInAdvancedFilterDropdown({
-        fieldMetadataItemId: selectedFieldMetadataItem.id,
-        recordFilterId,
-      });
-
       closeAdvancedFilterFieldSelectDropdown();
     }
   };
