@@ -11,7 +11,6 @@ import { WorkflowVersionWorkspaceService } from 'src/modules/workflow/workflow-b
 
 @Module({
   imports: [
-    WorkflowVersionStepModule,
     WorkflowSchemaModule,
     ServerlessFunctionModule,
     WorkflowVersionStepModule,
