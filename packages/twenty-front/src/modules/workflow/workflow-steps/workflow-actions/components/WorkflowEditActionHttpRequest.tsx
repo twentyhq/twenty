@@ -5,6 +5,7 @@ import { WorkflowHttpRequestAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
+import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useEffect } from 'react';
 import { useIcons } from 'twenty-ui/display';
 import {
@@ -76,6 +77,7 @@ export const WorkflowEditActionHttpRequest = ({
           readonly={actionOptions.readonly}
           defaultValue={formData.url}
           onChange={(value) => handleFieldChange('url', value)}
+          VariablePicker={WorkflowVariablePicker}
         />
         <Select
           dropdownId="select-http-method"
@@ -93,6 +95,7 @@ export const WorkflowEditActionHttpRequest = ({
           error={errorMessagesVisible ? errorMessages.headers : undefined}
           onBlur={onBlur}
           onChange={(value) => handleFieldChange('headers', value)}
+          VariablePicker={WorkflowVariablePicker}
         />
         {METHODS_WITH_BODY.includes(
           formData.method as (typeof METHODS_WITH_BODY)[number],
@@ -105,6 +108,7 @@ export const WorkflowEditActionHttpRequest = ({
             error={errorMessagesVisible ? errorMessages.body : undefined}
             onBlur={onBlur}
             onChange={(value) => handleFieldChange('body', value)}
+            VariablePicker={WorkflowVariablePicker}
           />
         )}
       </WorkflowStepBody>
