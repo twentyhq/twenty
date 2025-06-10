@@ -1,6 +1,10 @@
 import { AuthModalMountEffect } from '@/auth/components/AuthModalMountEffect';
 import { AUTH_MODAL_ID } from '@/auth/constants/AuthModalId';
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import {
+  Modal,
+  ModalSize,
+  ModalVariants,
+} from '@/ui/layout/modal/components/Modal';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import React from 'react';
@@ -12,12 +16,23 @@ const StyledContent = styled.div`
 
 type AuthModalProps = {
   children: React.ReactNode;
+  size?: ModalSize;
+  modalVariant?: ModalVariants;
 };
 
-export const AuthModal = ({ children }: AuthModalProps) => (
+export const AuthModal = ({
+  children,
+  size = 'medium',
+  modalVariant,
+}: AuthModalProps) => (
   <>
     <AuthModalMountEffect />
-    <Modal modalId={AUTH_MODAL_ID} padding={'none'} modalVariant="primary">
+    <Modal
+      modalId={AUTH_MODAL_ID}
+      padding={'none'}
+      modalVariant={modalVariant}
+      size={size}
+    >
       <ScrollWrapper componentInstanceId="scroll-wrapper-modal-content">
         <StyledContent>{children}</StyledContent>
       </ScrollWrapper>

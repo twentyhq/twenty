@@ -26,7 +26,8 @@ const StyledModalDiv = styled(motion.div)<{
     modalVariant === 'primary'
       ? theme.boxShadow.superHeavy
       : theme.boxShadow.strong};
-  background: ${({ theme }) => theme.background.primary};
+  background: ${({ theme, modalVariant }) =>
+    modalVariant === 'transparent' ? 'transparent' : theme.background.primary};
   color: ${({ theme }) => theme.font.color.primary};
   border-radius: ${({ theme, isMobile }) => {
     if (isMobile) return `0`;
@@ -45,6 +46,8 @@ const StyledModalDiv = styled(motion.div)<{
         return theme.modal.size.md;
       case 'large':
         return theme.modal.size.lg;
+      case 'xl':
+        return theme.modal.size.xl;
       default:
         return 'auto';
     }
@@ -113,7 +116,7 @@ const StyledBackDrop = styled(motion.div)<{
 }>`
   align-items: center;
   background: ${({ theme, modalVariant }) =>
-    modalVariant === 'primary'
+    modalVariant === 'primary' || modalVariant === 'transparent'
       ? theme.background.overlayPrimary
       : modalVariant === 'secondary'
         ? theme.background.overlaySecondary
@@ -165,9 +168,13 @@ const ModalFooter = ({ children, className }: ModalFooterProps) => (
   <StyledFooter className={className}>{children}</StyledFooter>
 );
 
-export type ModalSize = 'small' | 'medium' | 'large';
+export type ModalSize = 'small' | 'medium' | 'large' | 'xl';
 export type ModalPadding = 'none' | 'small' | 'medium' | 'large';
-export type ModalVariants = 'primary' | 'secondary' | 'tertiary';
+export type ModalVariants =
+  | 'primary'
+  | 'secondary'
+  | 'tertiary'
+  | 'transparent';
 
 export type ModalProps = React.PropsWithChildren & {
   modalId: string;

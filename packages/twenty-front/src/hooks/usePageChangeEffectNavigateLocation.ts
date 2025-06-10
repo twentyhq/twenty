@@ -1,5 +1,6 @@
 import { verifyEmailNextPathState } from '@/app/states/verifyEmailNextPathState';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
@@ -21,6 +22,10 @@ export const usePageChangeEffectNavigateLocation = () => {
   );
   const { defaultHomePagePath } = useDefaultHomePagePath();
   const location = useLocation();
+  const { data: clientConfigData } = useClientConfig();
+
+  const calendarBookingPageId =
+    clientConfigData?.clientConfig?.calendarBookingPageId;
 
   const someMatchingLocationOf = (appPaths: AppPath[]): boolean =>
     appPaths.some((appPath) => isMatchingLocation(location, appPath));
@@ -37,6 +42,8 @@ export const usePageChangeEffectNavigateLocation = () => {
     AppPath.InviteTeam,
     AppPath.PlanRequired,
     AppPath.PlanRequiredSuccess,
+    AppPath.BookCallDecision,
+    AppPath.BookCall,
   ];
 
   const objectNamePlural = useParams().objectNamePlural ?? '';
@@ -58,7 +65,12 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (
     onboardingStatus === OnboardingStatus.PLAN_REQUIRED &&
-    !someMatchingLocationOf([AppPath.PlanRequired, AppPath.PlanRequiredSuccess])
+    !someMatchingLocationOf([
+      AppPath.PlanRequired,
+      AppPath.PlanRequiredSuccess,
+      AppPath.BookCall,
+      AppPath.BookCallDecision,
+    ])
   ) {
     if (
       isMatchingLocation(location, AppPath.VerifyEmail) &&
@@ -83,8 +95,13 @@ export const usePageChangeEffectNavigateLocation = () => {
     !someMatchingLocationOf([
       AppPath.CreateWorkspace,
       AppPath.PlanRequiredSuccess,
+      AppPath.BookCallDecision,
+      AppPath.BookCall,
     ])
   ) {
+    if (isDefined(calendarBookingPageId)) {
+      return AppPath.BookCallDecision;
+    }
     return AppPath.CreateWorkspace;
   }
 

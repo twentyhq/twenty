@@ -10,15 +10,24 @@ import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
 import { SignInAppNavigationDrawerMock } from '@/sign-in-background-mock/components/SignInAppNavigationDrawerMock';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
+import { AppPath } from '@/types/AppPath';
 import { useShowFullscreen } from '@/ui/layout/fullscreen/hooks/useShowFullscreen';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
+import { ModalSize, ModalVariants } from '@/ui/layout/modal/components/Modal';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { Global, css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { useScreenSize } from 'twenty-ui/utilities';
+
+const AUTH_MODAL_SIZES_AND_VARIANTS: Record<
+  string,
+  { size: ModalSize; variant: ModalVariants }
+> = {
+  [AppPath.BookCall]: { size: 'xl', variant: 'transparent' },
+};
 
 const StyledLayout = styled.div`
   background: ${({ theme }) => theme.background.noisy};
@@ -63,6 +72,14 @@ export const DefaultLayout = () => {
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
   const useShowFullScreen = useShowFullscreen();
+  const location = useLocation();
+
+  const authModalSizeAndVariant = AUTH_MODAL_SIZES_AND_VARIANTS[
+    location.pathname
+  ] || {
+    size: 'medium',
+    variant: 'primary',
+  };
 
   return (
     <>
@@ -108,7 +125,10 @@ export const DefaultLayout = () => {
                 </StyledMainContainer>
                 <AnimatePresence mode="wait">
                   <LayoutGroup>
-                    <AuthModal>
+                    <AuthModal
+                      size={authModalSizeAndVariant.size}
+                      modalVariant={authModalSizeAndVariant.variant}
+                    >
                       <Outlet />
                     </AuthModal>
                   </LayoutGroup>
