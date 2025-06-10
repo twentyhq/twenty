@@ -5,8 +5,6 @@ import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
 import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeRecordGqlOperationFilter';
 import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
-import { view } from 'framer-motion';
-import { isDefined } from 'twenty-shared/utils';
 
 export const getQueryVariablesFromView = ({
   recordFilterGroups,
@@ -21,13 +19,6 @@ export const getQueryVariablesFromView = ({
   objectMetadataItem: ObjectMetadataItem;
   filterValueDependencies: RecordFilterValueDependencies;
 }) => {
-  if (!isDefined(view)) {
-    return {
-      filter: undefined,
-      orderBy: undefined,
-    };
-  }
-
   const filter = computeRecordGqlOperationFilter({
     fields: objectMetadataItem?.fields ?? [],
     filterValueDependencies,
