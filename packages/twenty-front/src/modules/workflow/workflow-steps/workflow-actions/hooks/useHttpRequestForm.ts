@@ -122,7 +122,7 @@ export const useHttpRequestForm = ({
   };
 
   const onBlur = () => {
-    setErrorMessagesVisible(true);
+    setErrorMessagesVisible(Boolean(formData.body || formData.headers));
   };
 
   return {
