@@ -48,6 +48,7 @@ export const WorkflowDiagramEffect = ({
         );
 
         let mergedWorkflowDiagram = nextWorkflowDiagram;
+
         if (isDefined(previousWorkflowDiagram)) {
           mergedWorkflowDiagram = mergeWorkflowDiagrams(
             previousWorkflowDiagram,
@@ -59,6 +60,7 @@ export const WorkflowDiagramEffect = ({
           snapshot,
           workflowLastCreatedStepIdState,
         );
+
         if (isDefined(lastCreatedStepId)) {
           mergedWorkflowDiagram.nodes = mergedWorkflowDiagram.nodes.map(
             (node) => {
@@ -79,6 +81,7 @@ export const WorkflowDiagramEffect = ({
   );
 
   const currentVersion = workflowWithCurrentVersion?.currentVersion;
+
   useEffect(() => {
     if (!isDefined(currentVersion)) {
       setFlow(undefined);
