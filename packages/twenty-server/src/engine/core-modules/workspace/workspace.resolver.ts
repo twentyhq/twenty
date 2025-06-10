@@ -286,7 +286,7 @@ export class WorkspaceResolver {
   @Query(() => PublicWorkspaceDataOutput)
   @UseGuards(PublicEndpointGuard)
   async getPublicWorkspaceDataByDomain(
-    @Args('origin', { nullable: false }) origin?: string,
+    @Args('origin', { nullable: true }) origin?: string,
   ): Promise<PublicWorkspaceDataOutput | undefined> {
     try {
       const systemEnabledProviders: AuthProviders = {
