@@ -76,6 +76,8 @@ export const WorkflowEditActionHttpRequest = ({
           placeholder="Enter request URL"
           readonly={actionOptions.readonly}
           defaultValue={formData.url}
+          error={errorMessagesVisible.url ? errorMessages.url : undefined}
+          onBlur={() => onBlur('url')}
           onChange={(value) => handleFieldChange('url', value)}
           VariablePicker={WorkflowVariablePicker}
         />

@@ -1,6 +1,6 @@
 import { WorkflowHttpRequestAction } from '@/workflow/types/Workflow';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isValidUrl } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 import { METHODS_WITH_BODY } from '../constants/HttpRequest';
 
@@ -12,11 +12,13 @@ export type HttpRequestFormData = {
 };
 
 export type ErrorMessages = {
+  url?: string;
   headers?: string;
   body?: string;
 };
 
 export type ErrorMessagesVisible = {
+  url: boolean;
   headers: boolean;
   body: boolean;
 };
@@ -33,6 +35,7 @@ export const useHttpRequestForm = ({
   const [errorMessages, setErrorMessages] = useState<ErrorMessages>({});
   const [errorMessagesVisible, setErrorMessagesVisible] =
     useState<ErrorMessagesVisible>({
+      url: false,
       headers: false,
       body: false,
     });
@@ -66,6 +69,32 @@ export const useHttpRequestForm = ({
       setErrorMessages((prev) => ({ ...prev, [field]: String(e) }));
       return false;
     }
+  };
+
+  const validateUrl = (url: string): boolean => {
+    if (!url) {
+      setErrorMessages((prev) => ({ ...prev, url: 'URL is required' }));
+      return false;
+    }
+
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      setErrorMessages((prev) => ({
+        ...prev,
+        url: 'URL must start with http:// or https://',
+      }));
+      return false;
+    }
+
+    if (!isValidUrl(url)) {
+      setErrorMessages((prev) => ({
+        ...prev,
+        url: 'Invalid URL',
+      }));
+      return false;
+    }
+
+    setErrorMessages((prev) => ({ ...prev, url: undefined }));
+    return true;
   };
 
   const saveAction = useDebouncedCallback((formData: HttpRequestFormData) => {
@@ -115,6 +144,10 @@ export const useHttpRequestForm = ({
   ) => {
     let newFormData = { ...formData, [field]: value ?? '' };
 
+    if (field === 'url' && !validateUrl(value ?? '')) {
+      return;
+    }
+
     if (
       field === 'method' &&
       !METHODS_WITH_BODY.includes(value as (typeof METHODS_WITH_BODY)[number])
@@ -139,7 +172,7 @@ export const useHttpRequestForm = ({
     saveAction(newFormData);
   };
 
-  const onBlur = (field: 'headers' | 'body') => {
+  const onBlur = (field: 'url' | 'headers' | 'body') => {
     setErrorMessagesVisible((prev) => ({
       ...prev,
       [field]: Boolean(formData[field]),
