@@ -4,9 +4,9 @@ import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import { ExpandedListDropdown } from '@/ui/layout/expandable-list/components/ExpandedListDropdown';
 import { isFirstOverflowingChildElement } from '@/ui/layout/expandable-list/utils/isFirstOverflowingChildElement';
 import { isDefined } from 'twenty-shared/utils';
-import { AnimatedContainer } from 'twenty-ui/utilities';
 import { ChipSize } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { AnimatedContainer } from 'twenty-ui/utilities';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -37,6 +37,7 @@ const StyledChildContainer = styled.div`
 `;
 
 const StyledUnShrinkableContainer = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
   flex-shrink: 0;
 `;
 

@@ -198,66 +198,67 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
             }
             dropdownComponents={
               <>
-                {isSystemObjectsOpen ? (
-                  <DropdownContent>
-                    <DropdownMenuHeader
-                      StartComponent={
-                        <DropdownMenuHeaderLeftComponent
-                          onClick={handleBack}
-                          Icon={IconChevronLeft}
-                        />
-                      }
-                    >
-                      <Trans>Advanced</Trans>
-                    </DropdownMenuHeader>
-                    <DropdownMenuSearchInput
-                      autoFocus
-                      value={searchInputValue}
-                      onChange={handleSearchInputChange}
-                    />
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItemsContainer hasMaxHeight>
-                      {filteredSystemObjects.map((option) => (
-                        <MenuItem
-                          key={option.value}
-                          LeftIcon={option.Icon}
-                          text={option.label}
-                          onClick={() => handleOptionClick(option.value)}
-                        />
-                      ))}
-                    </DropdownMenuItemsContainer>
-                  </DropdownContent>
-                ) : (
-                  <DropdownContent>
-                    <DropdownMenuSearchInput
-                      autoFocus
-                      value={searchInputValue}
-                      onChange={handleSearchInputChange}
-                    />
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItemsContainer hasMaxHeight>
-                      {filteredRegularObjects.map((option) => (
-                        <MenuItem
-                          key={option.value}
-                          LeftIcon={option.Icon}
-                          text={option.label}
-                          onClick={() => handleOptionClick(option.value)}
-                        />
-                      ))}
-                      {(!searchInputValue ||
-                        'advanced'.includes(
-                          searchInputValue.toLowerCase(),
-                        )) && (
-                        <MenuItem
-                          text="Advanced"
-                          LeftIcon={IconSettings}
-                          onClick={handleSystemObjectsClick}
-                          hasSubMenu
-                        />
-                      )}
-                    </DropdownMenuItemsContainer>
-                  </DropdownContent>
-                )}
+                {!triggerOptions.readonly &&
+                  (isSystemObjectsOpen ? (
+                    <DropdownContent>
+                      <DropdownMenuHeader
+                        StartComponent={
+                          <DropdownMenuHeaderLeftComponent
+                            onClick={handleBack}
+                            Icon={IconChevronLeft}
+                          />
+                        }
+                      >
+                        <Trans>Advanced</Trans>
+                      </DropdownMenuHeader>
+                      <DropdownMenuSearchInput
+                        autoFocus
+                        value={searchInputValue}
+                        onChange={handleSearchInputChange}
+                      />
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItemsContainer hasMaxHeight>
+                        {filteredSystemObjects.map((option) => (
+                          <MenuItem
+                            key={option.value}
+                            LeftIcon={option.Icon}
+                            text={option.label}
+                            onClick={() => handleOptionClick(option.value)}
+                          />
+                        ))}
+                      </DropdownMenuItemsContainer>
+                    </DropdownContent>
+                  ) : (
+                    <DropdownContent>
+                      <DropdownMenuSearchInput
+                        autoFocus
+                        value={searchInputValue}
+                        onChange={handleSearchInputChange}
+                      />
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItemsContainer hasMaxHeight>
+                        {filteredRegularObjects.map((option) => (
+                          <MenuItem
+                            key={option.value}
+                            LeftIcon={option.Icon}
+                            text={option.label}
+                            onClick={() => handleOptionClick(option.value)}
+                          />
+                        ))}
+                        {(!searchInputValue ||
+                          'advanced'.includes(
+                            searchInputValue.toLowerCase(),
+                          )) && (
+                          <MenuItem
+                            text="Advanced"
+                            LeftIcon={IconSettings}
+                            onClick={handleSystemObjectsClick}
+                            hasSubMenu
+                          />
+                        )}
+                      </DropdownMenuItemsContainer>
+                    </DropdownContent>
+                  ))}
               </>
             }
             dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
