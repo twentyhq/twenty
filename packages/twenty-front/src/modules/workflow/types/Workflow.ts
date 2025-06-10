@@ -13,6 +13,7 @@ import {
   workflowFindRecordsActionSettingsSchema,
   workflowFormActionSchema,
   workflowFormActionSettingsSchema,
+  workflowHttpRequestActionSchema,
   workflowManualTriggerSchema,
   workflowRunContextSchema,
   workflowRunOutputSchema,
@@ -138,3 +139,7 @@ export type Workflow = {
 export type WorkflowWithCurrentVersion = Workflow & {
   currentVersion: WorkflowVersion;
 };
+
+export type WorkflowHttpRequestAction = z.infer<
+  typeof workflowHttpRequestActionSchema
+>;

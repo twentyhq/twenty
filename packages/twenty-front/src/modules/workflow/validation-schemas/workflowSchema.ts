@@ -103,6 +103,16 @@ export const workflowFormActionSettingsSchema =
     ),
   });
 
+export const workflowHttpRequestActionSettingsSchema =
+  baseWorkflowActionSettingsSchema.extend({
+    input: z.object({
+      url: z.string(),
+      method: z.enum(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']),
+      headers: z.record(z.string()).optional(),
+      body: z.union([z.record(z.any()), z.string()]).optional(),
+    }),
+  });
+
 // Action schemas
 export const workflowCodeActionSchema = baseWorkflowActionSchema.extend({
   type: z.literal('CODE'),
@@ -145,6 +155,11 @@ export const workflowFormActionSchema = baseWorkflowActionSchema.extend({
   settings: workflowFormActionSettingsSchema,
 });
 
+export const workflowHttpRequestActionSchema = baseWorkflowActionSchema.extend({
+  type: z.literal('HTTP_REQUEST'),
+  settings: workflowHttpRequestActionSettingsSchema,
+});
+
 // Combined action schema
 export const workflowActionSchema = z.discriminatedUnion('type', [
   workflowCodeActionSchema,
@@ -154,6 +169,7 @@ export const workflowActionSchema = z.discriminatedUnion('type', [
   workflowDeleteRecordActionSchema,
   workflowFindRecordsActionSchema,
   workflowFormActionSchema,
+  workflowHttpRequestActionSchema,
 ]);
 
 // Trigger schemas
