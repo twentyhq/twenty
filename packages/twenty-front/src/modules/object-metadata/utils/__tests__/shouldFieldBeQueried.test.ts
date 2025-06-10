@@ -33,14 +33,14 @@ describe('shouldFieldBeQueried', () => {
           type: FieldMetadataType.RELATION,
           settings: {
             relationType: RelationType.MANY_TO_ONE,
-            joinColumn: 'fieldNameId',
+            joinColumnName: 'fieldNameId',
           },
         },
       });
       expect(res).toBe(false);
     });
 
-    it('should not be queried if the field is a relation MANY_TO_ONE and is the joinColumn', () => {
+    it('should be queried if the field is a relation MANY_TO_ONE and is the joinColumnName', () => {
       const res = shouldFieldBeQueried({
         gqlField: 'fieldNameId',
         fieldMetadata: {
@@ -48,11 +48,11 @@ describe('shouldFieldBeQueried', () => {
           type: FieldMetadataType.RELATION,
           settings: {
             relationType: RelationType.MANY_TO_ONE,
-            joinColumn: 'fieldNameId',
+            joinColumnName: 'fieldNameId',
           },
         },
       });
-      expect(res).toBe(false);
+      expect(res).toBe(true);
     });
   });
 

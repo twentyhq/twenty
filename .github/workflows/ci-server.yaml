@@ -97,7 +97,7 @@ jobs:
             echo "::error::Unexpected migration files were generated. Please create a proper migration manually."
             echo "$CORE_MIGRATION_OUTPUT"
 
-            rm -f packages/twenty-server/*metadata-migration-check.ts packages/twenty-server/*core-migration-check.ts
+            rm -f packages/twenty-server/*core-migration-check.ts
             
             exit 1
           fi
