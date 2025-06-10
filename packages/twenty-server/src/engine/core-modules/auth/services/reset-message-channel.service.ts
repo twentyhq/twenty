@@ -25,7 +25,7 @@ export class ResetMessageChannelService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
 

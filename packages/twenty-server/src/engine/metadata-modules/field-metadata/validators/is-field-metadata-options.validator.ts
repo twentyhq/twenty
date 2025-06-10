@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { ValidationArguments, ValidatorConstraint } from 'class-validator';
-import { Repository } from 'typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { Repository } from 'typeorm';
 
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 
@@ -16,7 +16,7 @@ export class IsFieldMetadataOptions {
   private validationErrors: string[] = [];
 
   constructor(
-    @InjectRepository(FieldMetadataEntity, 'metadata')
+    @InjectRepository(FieldMetadataEntity, 'core')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
   ) {}
 

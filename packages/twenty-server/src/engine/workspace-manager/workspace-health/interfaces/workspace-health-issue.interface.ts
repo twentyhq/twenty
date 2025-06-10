@@ -2,7 +2,6 @@ import { WorkspaceTableStructure } from 'src/engine/workspace-manager/workspace-
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 export enum WorkspaceHealthIssueType {
   MISSING_TABLE = 'MISSING_TABLE',
@@ -88,17 +87,6 @@ export type WorkspaceRelationIssueTypes =
   | WorkspaceHealthIssueType.RELATION_FOREIGN_KEY_ON_DELETE_ACTION_CONFLICT
   | WorkspaceHealthIssueType.RELATION_TYPE_NOT_VALID;
 
-export interface WorkspaceHealthRelationIssue<
-  T extends WorkspaceRelationIssueTypes,
-> {
-  type: T;
-  fromFieldMetadata?: FieldMetadataEntity | undefined;
-  toFieldMetadata?: FieldMetadataEntity | undefined;
-  relationMetadata?: RelationMetadataEntity;
-  columnStructure?: WorkspaceTableStructure;
-  message: string;
-}
-
 /**
  * Get the interface for the issue type
  */
@@ -107,9 +95,7 @@ export type WorkspaceIssueTypeToInterface<T extends WorkspaceHealthIssueType> =
     ? WorkspaceHealthTableIssue<T>
     : T extends WorkspaceColumnIssueTypes
       ? WorkspaceHealthColumnIssue<T>
-      : T extends WorkspaceRelationIssueTypes
-        ? WorkspaceHealthRelationIssue<T>
-        : never;
+      : never;
 
 /**
  * Union of all issues

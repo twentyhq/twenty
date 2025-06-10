@@ -25,7 +25,7 @@ describe('parseMetadataPath', () => {
     const request: any = { path: '/rest/metadata/INVALID' };
 
     expect(() => parseMetadataPath(request)).toThrow(
-      'Query path \'/rest/metadata/INVALID\' invalid. Metadata path "INVALID" does not exist. Valid examples: /rest/metadata/fields or /rest/metadata/objects or /rest/metadata/relations',
+      'Query path \'/rest/metadata/INVALID\' invalid. Metadata path "INVALID" does not exist. Valid examples: /rest/metadata/fields or /rest/metadata/objects',
     );
   });
 

@@ -1,12 +1,10 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isObjectRecordConnection } from '@/object-record/cache/utils/isObjectRecordConnection';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { RelationType } from '~/generated-metadata/graphql';
 describe('isObjectRecordConnection', () => {
-  const relationDefinitionMap: { [K in RelationDefinitionType]: boolean } = {
-    [RelationDefinitionType.MANY_TO_MANY]: true,
-    [RelationDefinitionType.ONE_TO_MANY]: true,
-    [RelationDefinitionType.MANY_TO_ONE]: false,
-    [RelationDefinitionType.ONE_TO_ONE]: false,
+  const relationDefinitionMap: { [K in RelationType]: boolean } = {
+    [RelationType.ONE_TO_MANY]: true,
+    [RelationType.MANY_TO_ONE]: false,
   };
 
   it.each(Object.entries(relationDefinitionMap))(
@@ -15,8 +13,8 @@ describe('isObjectRecordConnection', () => {
       const emptyRecord = {};
       const result = isObjectRecordConnection(
         {
-          direction: relation,
-        } as NonNullable<FieldMetadataItem['relationDefinition']>,
+          type: relation,
+        } as NonNullable<FieldMetadataItem['relation']>,
         emptyRecord,
       );
 
