@@ -24,7 +24,7 @@ You can create multiple webhooks if you need to send different events to differe
 Once a webhook is set up, Twenty will send an HTTP POST request to your specified URL whenever a trigger event occurs in your CRM data. Common events that trigger webhooks include:
 
 * **Record Created:** e.g. a new person is added (`person.created`), a new company is created (`company.created`), a note is created (`note.created`), etc.
-* **Record Updated:** e.g. an existing person’s information is updated (`person.updated`), a company record is edited (`company.updated`), etc.
+* **Record Updated:** e.g. an existing person's information is updated (`person.updated`), a company record is edited (`company.updated`), etc.
 * **Record Deleted:** e.g. a person or company is deleted (`person.deleted`, `company.deleted`).
 * **Other Events:** If applicable, other object events or custom triggers (for instance, if tasks or other objects are updated, similar event types would be used like `task.created`, `note.updated`, etc.).
 
@@ -48,17 +48,33 @@ The webhook POST request contains a JSON payload in its body. The payload will g
 In this example:
  
 * `"event"` specifies what happened (`person.created`).
-* `"data"` contains the new record’s details (the same information you would get if you requested that person via the API).
+* `"data"` contains the new record's details (the same information you would get if you requested that person via the API).
 * `"timestamp"` is when the event occurred (in UTC).
 
-Your endpoint should be prepared to receive such JSON data via POST. Typically, you’ll parse the JSON, look at the `"event"` type to understand what happened, and then use the `"data"` accordingly (e.g., create a new contact in your system, or update an existing one).
+Your endpoint should be prepared to receive such JSON data via POST. Typically, you'll parse the JSON, look at the `"event"` type to understand what happened, and then use the `"data"` accordingly (e.g., create a new contact in your system, or update an existing one).
  
-**Note:** It’s important to respond with a **2xx HTTP status** from your webhook endpoint to acknowledge successful receipt. If the Twenty webhook sender does not get a 2xx response, it may consider the delivery failed. (In the future, retry logic might attempt to resend failed webhooks, so always strive to return a 200 OK as quickly as possible after processing the data.)
+**Note:** It's important to respond with a **2xx HTTP status** from your webhook endpoint to acknowledge successful receipt. If the Twenty webhook sender does not get a 2xx response, it may consider the delivery failed. (In the future, retry logic might attempt to resend failed webhooks, so always strive to return a 200 OK as quickly as possible after processing the data.)
 
-## Security and Best Practices
-When using webhooks, you should secure your endpoint since it will be accepting incoming requests:
+## Webhook Validation
 
-* **Validate Source:** Since the requests come from Twenty’s servers, you may want to verify the request truly originated from Twenty. Currently, Twenty’s webhook requests do not include a built-in signature or secret (no shared secret token was set during creation in the current version). A common practice is to use a secret token in the URL itself or as a header that only you and the Twenty system know, to validate the call. For example, when setting the webhook URL in settings, you might include a query param like `?token=YOUR_SECRET`. Your endpoint can then check that token on each request.
-* **HTTPS:** Make sure your webhook URL is using HTTPS. This ensures the data in transit is encrypted. The Twenty webhook sender will require a secure endpoint for production.
-* **Respond Quickly:** As mentioned, respond with a 200 OK as fast as possible. If you have complex processing to do, consider queuing the work in your system after acknowledging the webhook, so that the HTTP response is not delayed. This prevents timeouts on Twenty’s side.
-* **Logging:** It’s a good idea to log received webhook events on your server (at least during development), so you can audit or debug if you think you missed an event. This can help verify that your endpoint is receiving calls as expected.
+To ensure the security of your webhook endpoints, Twenty includes a signature in the `X-Twenty-Webhook-Signature` header. 
+
+This signature is an HMAC SHA256 hash of the request payload, computed using your webhook secret. 
+
+To validate the signature, you'll need to:
+1. Concatenate the timestamp (from `X-Twenty-Webhook-Timestamp` header), a colon, and the JSON string of the payload
+2. Compute the HMAC SHA256 hash using your webhook secret as the key ()
+3. Compare the resulting hex digest with the signature header
+
+Here's an example in Node.js:
+
+```javascript
+const crypto = require("crypto");
+const timestamp = "1735066639761";
+const payload = JSON.stringify({...});
+const secret = "your-secret";
+const stringToSign = `${timestamp}:${JSON.stringify(payload)}`;
+const signature = crypto.createHmac("sha256", secret)
+  .update(stringToSign)
+  .digest("hex");
+```
