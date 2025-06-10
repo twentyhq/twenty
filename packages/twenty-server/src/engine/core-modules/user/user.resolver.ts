@@ -13,7 +13,6 @@ import crypto from 'crypto';
 
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
@@ -25,6 +24,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
@@ -50,12 +50,13 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { fromUserWorkspacePermissionsToUserWorkspacePermissionsDto } from 'src/engine/metadata-modules/role/utils/fromUserWorkspacePermissionsToUserWorkspacePermissionsDto';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { UserWorkspacePermissions } from 'twenty-shared/types';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -86,6 +87,48 @@ export class UserResolver {
     private readonly userWorkspaceService: UserWorkspaceService,
   ) {}
 
+  private async getUserWorkspacePermissions({
+    currentUserWorkspace,
+    workspace,
+  }: {
+    workspace: Workspace;
+    currentUserWorkspace: UserWorkspace;
+  }): Promise<UserWorkspacePermissions> {
+    const workspaceIsPendingOrOngoingCreation = [
+      WorkspaceActivationStatus.PENDING_CREATION,
+      WorkspaceActivationStatus.ONGOING_CREATION,
+    ].includes(workspace.activationStatus);
+
+    if (workspaceIsPendingOrOngoingCreation) {
+      return this.permissionsService.getDefaultUserWorkspacePermissions();
+    }
+
+    const isPermissionsV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
+        workspace.id,
+      );
+
+    if (!isPermissionsV2Enabled) {
+      return await this.permissionsService.getUserWorkspacePermissions({
+        userWorkspaceId: currentUserWorkspace.id,
+        workspaceId: workspace.id,
+      });
+    }
+
+    const { objectPermissions, objectRecordsPermissions, settingsPermissions } =
+      await this.permissionsService.getUserWorkspacePermissionsV2({
+        userWorkspaceId: currentUserWorkspace.id,
+        workspaceId: workspace.id,
+      });
+
+    return {
+      objectPermissions,
+      objectRecordsPermissions,
+      settingsPermissions,
+    };
+  }
+
   @Query(() => User)
   async currentUser(
     @AuthUser() { id: userId }: User,
@@ -111,33 +154,19 @@ export class UserResolver {
       throw new Error('Current user workspace not found');
     }
 
-    const workspaceIsPendingOrOngoingCreation = [
-      WorkspaceActivationStatus.PENDING_CREATION,
-      WorkspaceActivationStatus.ONGOING_CREATION,
-    ].includes(workspace.activationStatus);
-
-    const { objectRecordsPermissions, settingsPermissions } =
-      !workspaceIsPendingOrOngoingCreation
-        ? await this.permissionsService.getUserWorkspacePermissions({
-            userWorkspaceId: currentUserWorkspace.id,
-            workspaceId: workspace.id,
-          })
-        : this.permissionsService.getDefaultUserWorkspacePermissions();
-
-    const grantedSettingsPermissions = (
-      Object.keys(settingsPermissions) as SettingPermissionType[]
-    ).filter((feature) => settingsPermissions[feature] === true);
-
-    const grantedObjectRecordsPermissions = (
-      Object.keys(objectRecordsPermissions) as PermissionsOnAllObjectRecords[]
-    ).filter((feature) => objectRecordsPermissions[feature] === true);
+    const userWorkspacePermissions =
+      fromUserWorkspacePermissionsToUserWorkspacePermissionsDto(
+        await this.getUserWorkspacePermissions({
+          currentUserWorkspace,
+          workspace,
+        }),
+      );
 
     return {
       ...user,
       currentUserWorkspace: {
         ...currentUserWorkspace,
-        objectRecordsPermissions: grantedObjectRecordsPermissions,
-        settingsPermissions: grantedSettingsPermissions,
+        ...userWorkspacePermissions,
       },
       currentWorkspace: workspace,
     };

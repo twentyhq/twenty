@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
-import { ObjectRecordsPermissions } from 'twenty-shared/types';
+import {
+  PermissionsOnAllObjectRecords,
+  SettingPermissionType,
+} from 'twenty-shared/constants';
+import { UserWorkspacePermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -10,7 +13,6 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -18,11 +20,6 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
-
-export type UserWorkspacePermissions = {
-  settingsPermissions: Record<SettingPermissionType, boolean>;
-  objectRecordsPermissions: Record<PermissionsOnAllObjectRecords, boolean>;
-};
 
 @Injectable()
 export class PermissionsService {
@@ -38,11 +35,7 @@ export class PermissionsService {
   }: {
     userWorkspaceId: string;
     workspaceId: string;
-  }): Promise<{
-    settingsPermissions: Record<SettingPermissionType, boolean>;
-    objectRecordsPermissions: Record<PermissionsOnAllObjectRecords, boolean>;
-    objectPermissions: ObjectRecordsPermissions;
-  }> {
+  }): Promise<UserWorkspacePermissions> {
     const [roleOfUserWorkspace] = await this.userRoleService
       .getRolesByUserWorkspaces({
         userWorkspaceIds: [userWorkspaceId],
@@ -65,6 +58,8 @@ export class PermissionsService {
 
     const settingPermissions = roleOfUserWorkspace.settingPermissions ?? [];
 
+    const initialAcc =
+      this.getDefaultUserWorkspacePermissions().settingsPermissions;
     const settingsPermissionsMap = Object.keys(SettingPermissionType).reduce(
       (acc, feature) => ({
         ...acc,
@@ -74,7 +69,7 @@ export class PermissionsService {
             (settingPermission) => settingPermission.setting === feature,
           ),
       }),
-      {} as Record<SettingPermissionType, boolean>,
+      initialAcc,
     );
 
     const { data: rolesPermissions } =
@@ -84,10 +79,7 @@ export class PermissionsService {
 
     const objectPermissions = rolesPermissions[roleOfUserWorkspace.id] ?? {};
 
-    const objectRecordsPermissionsMap: Record<
-      PermissionsOnAllObjectRecords,
-      boolean
-    > = {
+    const objectRecordsPermissionsMap = {
       [PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS]:
         roleOfUserWorkspace.canReadAllObjectRecords ?? false,
       [PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS]:
@@ -96,7 +88,7 @@ export class PermissionsService {
         roleOfUserWorkspace.canSoftDeleteAllObjectRecords ?? false,
       [PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS]:
         roleOfUserWorkspace.canDestroyAllObjectRecords ?? false,
-    };
+    } as const satisfies UserWorkspacePermissions['objectRecordsPermissions'];
 
     return {
       settingsPermissions: settingsPermissionsMap,
@@ -122,6 +114,7 @@ export class PermissionsService {
         [SettingPermissionType.ADMIN_PANEL]: false,
         [SettingPermissionType.SECURITY]: false,
       },
+      objectPermissions: {},
     }) as const satisfies UserWorkspacePermissions;
 
   public async getUserWorkspacePermissions({
@@ -182,6 +175,7 @@ export class PermissionsService {
     return {
       settingsPermissions: settingsPermissionsMap,
       objectRecordsPermissions: objectRecordsPermissionsMap,
+      objectPermissions: {},
     };
   }
 

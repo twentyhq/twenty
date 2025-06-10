@@ -1,7 +1,7 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
-import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
+import { PermissionsOnAllObjectRecords, SettingPermissionType } from 'twenty-shared/constants';
 import {
   Column,
   CreateDateColumn,
@@ -22,7 +22,6 @@ import { TwoFactorMethod } from 'src/engine/core-modules/two-factor-method/two-f
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
-import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 
 registerEnumType(SettingPermissionType, {
   name: 'SettingPermissionType',
