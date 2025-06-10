@@ -23,12 +23,13 @@ export const useSetCurrentRowSelected = () => {
 
   const setCurrentRowSelected = useRecoilCallback(
     ({ set, snapshot }) =>
-      (
-        newSelectedState: boolean,
-        event?:
-          | React.MouseEvent<HTMLDivElement>
-          | React.KeyboardEvent<HTMLDivElement>,
-      ) => {
+      ({
+        newSelectedState,
+        shouldSelectRange = false,
+      }: {
+        newSelectedState: boolean;
+        shouldSelectRange?: boolean;
+      }) => {
         const allRecordIds = getSnapshotValue(
           snapshot,
           recordIndexAllRecordIdsState,
@@ -43,11 +44,7 @@ export const useSetCurrentRowSelected = () => {
           .getLoadable(lastSelectedRowIndexComponentCallbackState)
           .getValue();
 
-        if (
-          isDefined(event?.shiftKey) &&
-          event.shiftKey &&
-          isDefined(lastSelectedIndex)
-        ) {
+        if (shouldSelectRange && isDefined(lastSelectedIndex)) {
           const startIndex = Math.min(lastSelectedIndex, rowIndex);
           const endIndex = Math.max(lastSelectedIndex, rowIndex);
 
