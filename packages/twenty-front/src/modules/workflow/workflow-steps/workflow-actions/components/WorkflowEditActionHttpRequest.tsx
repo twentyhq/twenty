@@ -4,9 +4,7 @@ import { Select } from '@/ui/input/components/Select';
 import { WorkflowHttpRequestAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
-import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
-import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
-import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
+import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { useEffect } from 'react';
 import { useIcons } from 'twenty-ui/display';
 import {
@@ -32,10 +30,11 @@ export const WorkflowEditActionHttpRequest = ({
   actionOptions,
 }: WorkflowEditActionHttpRequestProps) => {
   const { getIcon } = useIcons();
-  const headerTitle = action.name || 'HTTP Request';
-  const headerIcon = getActionIcon(action.type);
-  const headerIconColor = useActionIconColorOrThrow(action.type);
-  const headerType = useActionHeaderTypeOrThrow(action.type);
+  const { headerTitle, headerIcon, headerIconColor, headerType } =
+    useWorkflowActionHeader({
+      action,
+      defaultTitle: 'HTTP Request',
+    });
 
   const {
     formData,

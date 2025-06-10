@@ -6,10 +6,7 @@ import { useEffect, useState } from 'react';
 
 import { FormNumberFieldInput } from '@/object-record/record-field/form-types/components/FormNumberFieldInput';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
-import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
-import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
-import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
-import { isDefined } from 'twenty-shared/utils';
+import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
 import { useDebouncedCallback } from 'use-debounce';
@@ -86,10 +83,11 @@ export const WorkflowEditActionFindRecords = ({
     };
   }, [saveAction]);
 
-  const headerTitle = isDefined(action.name) ? action.name : `Search Records`;
-  const headerIcon = getActionIcon(action.type);
-  const headerIconColor = useActionIconColorOrThrow(action.type);
-  const headerType = useActionHeaderTypeOrThrow(action.type);
+  const { headerTitle, headerIcon, headerIconColor, headerType } =
+    useWorkflowActionHeader({
+      action,
+      defaultTitle: 'Search Records',
+    });
 
   return (
     <>
