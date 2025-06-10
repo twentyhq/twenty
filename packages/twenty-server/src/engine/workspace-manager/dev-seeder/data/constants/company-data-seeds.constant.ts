@@ -26,6 +26,7 @@ export const COMPANY_DATA_SEED_COLUMNS: (keyof CompanyDataSeed)[] = [
   'createdByName',
 ];
 
+// prettier-ignore
 export const COMPANY_DATA_SEED_IDS = {
   ID_1: '20202020-a305-41e7-8c72-ba44072a4c58',
   ID_2: '20202020-a225-4b3d-a89c-7f6c30df998a',
@@ -628,6 +629,7 @@ export const COMPANY_DATA_SEED_IDS = {
   ID_599: '20202020-afff-49b1-99b9-26924b60bd56',
 };
 
+// prettier-ignore
 export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_1,

@@ -30,7 +30,7 @@ export const PERSON_DATA_SEED_COLUMNS: (keyof PersonDataSeed)[] = [
   'createdByName',
 ];
 
-
+// prettier-ignore
 export const PERSON_DATA_SEED_IDS = {
   ID_1: '20202020-b305-41e7-8c72-ba44072a4c58',
   ID_2: '20202020-b225-4b3d-a89c-7f6c30df998a',
@@ -1234,6 +1234,7 @@ export const PERSON_DATA_SEED_IDS = {
   ID_1200: '20202020-b2b8-40da-a9aa-ca338a841af5',
 };
 
+// prettier-ignore
 export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
   {
     id: PERSON_DATA_SEED_IDS.ID_1,
@@ -2836,7 +2837,7 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     nameFirstName: 'Jeffrey',
     nameLastName: 'Hunt',
     city: 'South Victoria',
-    emailsPrimaryEmail: 'jeffrey.hunt@example.com',
+    emailsPrimaryEmail: 'jeffrey.hunt2@example.com',
     avatarUrl:
       'https://twentyhq.github.io/placeholder-images/people/image-15.png',
     linkedinLinkPrimaryLinkUrl: '/in/jeffrey-hunt-c364e07096',
@@ -4908,7 +4909,7 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     nameFirstName: 'Carrie',
     nameLastName: 'Taylor',
     city: 'North Paul',
-    emailsPrimaryEmail: 'carrie.taylor@example.com',
+    emailsPrimaryEmail: 'carrie.taylor2@example.com',
     avatarUrl:
       'https://twentyhq.github.io/placeholder-images/people/image-63.png',
     linkedinLinkPrimaryLinkUrl: '/in/carrie-taylor-33e1df2a16',
@@ -6826,7 +6827,7 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     nameFirstName: 'Kevin',
     nameLastName: 'Williams',
     city: 'New Kelly',
-    emailsPrimaryEmail: 'kevin.williams@example.com',
+    emailsPrimaryEmail: 'kevin.williams2@example.com',
     avatarUrl:
       'https://twentyhq.github.io/placeholder-images/people/image-100.png',
     linkedinLinkPrimaryLinkUrl: '/in/kevin-williams-41633df75d',
@@ -8982,7 +8983,7 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     nameFirstName: 'Christopher',
     nameLastName: 'Wilson',
     city: 'West Amyborough',
-    emailsPrimaryEmail: 'christopher.wilson@example.com',
+    emailsPrimaryEmail: 'christopher.wilson2@example.com',
     avatarUrl:
       'https://twentyhq.github.io/placeholder-images/people/image-54.png',
     linkedinLinkPrimaryLinkUrl: '/in/christopher-wilson-f6db69b44e',
@@ -9206,7 +9207,7 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     nameFirstName: 'Eric',
     nameLastName: 'Hunter',
     city: 'Rodriguezstad',
-    emailsPrimaryEmail: 'eric.hunter@example.com',
+    emailsPrimaryEmail: 'eric.hunter2@example.com',
     avatarUrl:
       'https://twentyhq.github.io/placeholder-images/people/image-70.png',
     linkedinLinkPrimaryLinkUrl: '/in/eric-hunter-5944420676',
@@ -11152,7 +11153,7 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     nameFirstName: 'Michael',
     nameLastName: 'Johnson',
     city: 'North Ryan',
-    emailsPrimaryEmail: 'michael.johnson@example.com',
+    emailsPrimaryEmail: 'michael.johnson2@example.com',
     avatarUrl:
       'https://twentyhq.github.io/placeholder-images/people/image-9.png',
     linkedinLinkPrimaryLinkUrl: '/in/michael-johnson-442bf8f6cc',
@@ -12874,7 +12875,7 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     nameFirstName: 'James',
     nameLastName: 'Ward',
     city: 'Oliviaside',
-    emailsPrimaryEmail: 'james.ward@example.com',
+    emailsPrimaryEmail: 'james.ward2@example.com',
     avatarUrl:
       'https://twentyhq.github.io/placeholder-images/people/image-32.png',
     linkedinLinkPrimaryLinkUrl: '/in/james-ward-bd728eec7b',
@@ -15772,7 +15773,7 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     nameFirstName: 'Michael',
     nameLastName: 'Johnson',
     city: 'Hodgesfort',
-    emailsPrimaryEmail: 'michael.johnson@example.com',
+    emailsPrimaryEmail: 'michael.johnson3@example.com',
     avatarUrl:
       'https://twentyhq.github.io/placeholder-images/people/image-39.png',
     linkedinLinkPrimaryLinkUrl: '/in/michael-johnson-67b413c0fb',
@@ -15912,7 +15913,7 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     nameFirstName: 'Matthew',
     nameLastName: 'Gomez',
     city: 'West Luis',
-    emailsPrimaryEmail: 'matthew.gomez@example.com',
+    emailsPrimaryEmail: 'matthew.gomez2@example.com',
     avatarUrl:
       'https://twentyhq.github.io/placeholder-images/people/image-49.png',
     linkedinLinkPrimaryLinkUrl: '/in/matthew-gomez-138bea0818',
@@ -17844,7 +17845,7 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     nameFirstName: 'Samantha',
     nameLastName: 'Hicks',
     city: 'Richardberg',
-    emailsPrimaryEmail: 'samantha.hicks@example.com',
+    emailsPrimaryEmail: 'samantha.hicks2@example.com',
     avatarUrl:
       'https://twentyhq.github.io/placeholder-images/people/image-87.png',
     linkedinLinkPrimaryLinkUrl: '/in/samantha-hicks-16b4d5470f',
