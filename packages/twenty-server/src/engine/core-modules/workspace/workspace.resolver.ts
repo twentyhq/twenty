@@ -1,4 +1,9 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import {
+  ExecutionContext,
+  UseFilters,
+  UseGuards,
+  createParamDecorator,
+} from '@nestjs/common';
 import {
   Args,
   Mutation,
@@ -53,11 +58,20 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation-exception.filter';
+import { getRequest } from 'src/utils/extract-request';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 import { Workspace } from './workspace.entity';
 
 import { WorkspaceService } from './services/workspace.service';
+
+const OriginHeader = createParamDecorator(
+  (data: unknown, ctx: ExecutionContext) => {
+    const request = getRequest(ctx);
+
+    return request.headers['origin'];
+  },
+);
 
 @Resolver(() => Workspace)
 @UseFilters(
@@ -286,6 +300,7 @@ export class WorkspaceResolver {
   @Query(() => PublicWorkspaceDataOutput)
   @UseGuards(PublicEndpointGuard)
   async getPublicWorkspaceDataByDomain(
+    @OriginHeader() originHeader: string,
     @Args('origin', { nullable: true }) origin?: string,
   ): Promise<PublicWorkspaceDataOutput | undefined> {
     try {
@@ -303,8 +318,8 @@ export class WorkspaceResolver {
           logo: '',
           displayName: 'Default Workspace',
           workspaceUrls: {
-            subdomainUrl: 'https://app.twenty.com',
-            customUrl: 'https://app.twenty.com',
+            subdomainUrl: originHeader,
+            customUrl: originHeader,
           },
           authProviders: systemEnabledProviders,
         };
