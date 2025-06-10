@@ -42,9 +42,15 @@ export class InterWebhookSubscriptionService {
   ) {}
 
   async processInterEvent(seuNumero: string, situacao: InterChargeStatus) {
-    const billingCharge = await this.billingChargeRepository.findOneByOrFail({
+    const billingCharge = await this.billingChargeRepository.findOneBy({
       chargeCode: seuNumero,
     });
+
+    if (!billingCharge)
+      throw new BillingException(
+        `Billing charge not found`,
+        BillingExceptionCode.BILLING_CHARGE_NOT_FOUND,
+      );
 
     const workspace = await this.workspaceRepository.findOne({
       where: { id: billingCharge.metadata.workspaceId },
@@ -88,12 +94,6 @@ export class InterWebhookSubscriptionService {
         skipUpdateIfNoValuesChanged: true,
       },
     );
-
-    // TODO: Relate the subscription to the charge
-    if (situacao === InterChargeStatus.RECEBIDO)
-      await this.billingChargeRepository.update(billingCharge.id, {
-        status: ChargeStatus.PAID,
-      });
 
     const billingSubscriptions = await this.billingSubscriptionRepository.find({
       where: { workspaceId: workspace.id },

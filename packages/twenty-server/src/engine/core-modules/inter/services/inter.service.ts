@@ -95,6 +95,8 @@ export class InterService {
 
       const chargeCode = randomUUID().replace(/-/g, '').slice(0, 15);
 
+      const dueDate = getNextBusinessDays(5);
+
       // TODO: Check if there aready a pending payment for the curent workspace before creating another charge since it will fail anyways if that's the case.
       const response = await this.interInstance.post<
         InterChargeResponse,
@@ -106,7 +108,7 @@ export class InterService {
           seuNumero: chargeCode,
           // TODO: Add a number prop in the billing price entity
           valorNominal: getPriceFromStripeDecimal(planPrice).toString(),
-          dataVencimento: getNextBusinessDays(5),
+          dataVencimento: dueDate,
           numDiasAgenda: '5',
           pagador: {
             cpfCnpj: document,
@@ -141,6 +143,7 @@ export class InterService {
           {
             chargeCode,
             interBillingChargeFilePath: bolepixFilePath,
+            dueDate,
             metadata: {
               planKey,
               workspaceId,

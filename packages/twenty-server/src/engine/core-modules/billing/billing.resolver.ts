@@ -154,7 +154,7 @@ export class BillingResolver {
 
     if (!currentSubscription)
       throw new BillingException(
-        ``,
+        `Billing charge not found`,
         BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
       );
 
@@ -237,10 +237,6 @@ export class BillingResolver {
   ): Promise<BillingMeteredProductUsageOutput[]> {
     const result =
       await this.billingUsageService.getMeteredProductsUsage(workspace);
-
-    result.map((item) => {
-      console.log(typeof item.periodEnd);
-    });
 
     return result;
   }
