@@ -5,7 +5,7 @@ import { read, WorkBook } from 'xlsx-ugnis';
 
 import { MAX_RECORDS_IMPORT_CAPACITY } from '@/spreadsheet-import/constants/MaxRecordImportCapacity';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { useDowloadFakeRecords } from '@/spreadsheet-import/steps/components/UploadStep/hooks/useDowloadFakeRecords';
+import { useDownloadFakeRecords } from '@/spreadsheet-import/steps/components/UploadStep/hooks/useDownloadFakeRecords';
 import { readFileAsync } from '@/spreadsheet-import/utils/readFilesAsync';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -113,7 +113,7 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
 
   const { enqueueSnackBar } = useSnackBar();
 
-  const { downloadSample } = useDowloadFakeRecords();
+  const { downloadSample } = useDownloadFakeRecords();
 
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     noClick: true,
@@ -178,7 +178,7 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
           </StyledText>
           <MainButton onClick={open} title={t`Select file`} />
           <StyledFooterText>
-            {t`Max import capacity: ${MAX_RECORDS_IMPORT_CAPACITY} records. Over consider splitting your file or using the API.`}{' '}
+            {t`Max import capacity: ${MAX_RECORDS_IMPORT_CAPACITY} records. Otherwise, consider splitting your file or using the API.`}{' '}
             <StyledTextAction onClick={downloadSample}>
               {t`Download sample file.`}
             </StyledTextAction>

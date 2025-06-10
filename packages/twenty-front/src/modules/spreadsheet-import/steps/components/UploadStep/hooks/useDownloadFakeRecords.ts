@@ -6,7 +6,7 @@ import { isString } from '@sniptt/guards';
 import { saveAs } from 'file-saver';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-export const useDowloadFakeRecords = () => {
+export const useDownloadFakeRecords = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
   const availableFieldMetadataItems = filterAvailableFieldMetadataItemsToImport(
