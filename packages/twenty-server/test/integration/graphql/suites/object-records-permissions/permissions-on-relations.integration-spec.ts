@@ -119,7 +119,6 @@ describe('permissionsOnRelations', () => {
       const response = await makeGraphqlAPIRequestWithJony(graphqlOperation);
 
       // The query should fail when trying to access company relation without permission
-      expect(response.body.errors).toBe('remove me');
       expect(response.body.errors[0].message).toBe(
         PermissionsExceptionMessage.PERMISSION_DENIED,
       );
@@ -161,7 +160,6 @@ describe('permissionsOnRelations', () => {
 
       // The query should succeed
       expect(response.body.data).toBeDefined();
-      expect(response.body.data.people).toBe('remove me');
       expect(response.body.data.people).toBeDefined();
       const person = response.body.data.people.edges[0].node;
 
