@@ -1,4 +1,3 @@
-import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -22,7 +21,6 @@ import { ViewType } from '@/views/types/ViewType';
 import { useApolloClient } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
-import pick from 'lodash.pick';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams, useSearchParams } from 'react-router-dom';
@@ -33,7 +31,6 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { DEFAULT_ICONS_BY_FIELD_TYPE } from '~/pages/settings/data-model/constants/DefaultIconsByFieldType';
-import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -119,8 +116,6 @@ export const SettingsObjectNewFieldConfigure = () => {
       setRelationObjectViews(views);
     },
   });
-  const { createOneRelationMetadataItem: createOneRelationMetadata } =
-    useCreateOneRelationMetadataItem();
 
   useEffect(() => {
     if (!activeObjectMetadataItem) {
@@ -146,27 +141,14 @@ export const SettingsObjectNewFieldConfigure = () => {
         'relation' in formValues
       ) {
         const { relation: relationFormValues, ...fieldFormValues } = formValues;
-
-        await createOneRelationMetadata({
-          relationType: relationFormValues.type,
-          field: pick(fieldFormValues, [
-            'icon',
-            'label',
-            'description',
-            'name',
-            'isLabelSyncedWithName',
-          ]),
+        await createMetadataField({
+          ...fieldFormValues,
           objectMetadataId: activeObjectMetadataItem.id,
-          connect: {
-            field: {
-              icon: relationFormValues.field.icon,
-              label: relationFormValues.field.label,
-              name:
-                (relationFormValues.field.isLabelSyncedWithName ?? true)
-                  ? computeMetadataNameFromLabel(relationFormValues.field.label)
-                  : relationFormValues.field.name,
-            },
-            objectMetadataId: relationFormValues.objectMetadataId,
+          relationCreationPayload: {
+            type: relationFormValues.type,
+            targetObjectMetadataId: relationFormValues.objectMetadataId,
+            targetFieldLabel: relationFormValues.field.label,
+            targetFieldIcon: relationFormValues.field.icon,
           },
         });
       } else {

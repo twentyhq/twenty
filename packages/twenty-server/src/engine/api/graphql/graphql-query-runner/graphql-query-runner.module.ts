@@ -45,7 +45,7 @@ const graphqlQueryResolvers = [
     WorkspaceQueryHookModule,
     WorkspaceQueryRunnerModule,
     PermissionsModule,
-    TypeOrmModule.forFeature([UserWorkspaceRoleEntity], 'metadata'),
+    TypeOrmModule.forFeature([UserWorkspaceRoleEntity], 'core'),
     UserRoleModule,
   ],
   providers: [

@@ -43,6 +43,7 @@ const mocks: MockedResponse[] = [
                 firstName
                 lastName
               }
+              position
               timeFormat
               timeZone
               updatedAt
@@ -65,6 +66,7 @@ const mocks: MockedResponse[] = [
                   opportunityId
                   personId
                   petId
+                  rocketId
                   surveyResultId
                   taskId
                   type
@@ -73,6 +75,10 @@ const mocks: MockedResponse[] = [
               }
             }
             body
+            bodyV2 {
+              blocknote
+              markdown
+            }
             createdAt
             createdBy {
               source
@@ -97,6 +103,7 @@ const mocks: MockedResponse[] = [
                   personId
                   petId
                   position
+                  rocketId
                   surveyResultId
                   taskId
                   updatedAt
@@ -121,6 +128,7 @@ const mocks: MockedResponse[] = [
                   opportunityId
                   personId
                   petId
+                  rocketId
                   surveyResultId
                   taskId
                   updatedAt
@@ -145,6 +153,7 @@ const mocks: MockedResponse[] = [
                   personId
                   petId
                   properties
+                  rocketId
                   surveyResultId
                   taskId
                   updatedAt
