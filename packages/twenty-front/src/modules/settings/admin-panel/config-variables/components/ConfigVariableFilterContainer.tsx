@@ -35,6 +35,7 @@ export const ConfigVariableFilterContainer = ({
               onRemove={chip.onRemove}
               labelValue={chip.source ?? ''}
               variant={chip.variant}
+              type="filter"
             />
           ))}
         </StyledChipContainer>

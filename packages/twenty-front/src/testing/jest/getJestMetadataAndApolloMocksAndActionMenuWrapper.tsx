@@ -7,13 +7,13 @@ import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort
 import { MockedResponse } from '@apollo/client/testing';
 import { ReactNode } from 'react';
 import { MutableSnapshot } from 'recoil';
-import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { isDefined } from 'twenty-shared/utils';
 import {
   JestContextStoreSetter,
   JestContextStoreSetterMocks,
 } from '~/testing/jest/JestContextStoreSetter';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-import { isDefined } from 'twenty-shared/utils';
 
 export type GetJestMetadataAndApolloMocksAndActionMenuWrapperProps = {
   apolloMocks:
@@ -74,6 +74,7 @@ export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
               >
                 <RecordIndexContextProvider
                   value={{
+                    objectPermissionsByObjectMetadataId: {},
                     indexIdentifierUrl: () => 'indexIdentifierUrl',
                     onIndexRecordsLoaded: () => {},
                     objectNamePlural: mockObjectMetadataItem.namePlural,

@@ -37,7 +37,7 @@
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "npx",
-      "runtimeVersion": "18",
+      "runtimeVersion": "^22.12.0",
       "runtimeArgs": [
         "nx",
         "run",

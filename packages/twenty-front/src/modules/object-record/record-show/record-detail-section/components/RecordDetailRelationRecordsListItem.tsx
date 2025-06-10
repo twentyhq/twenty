@@ -10,6 +10,7 @@ import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/uti
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
   FieldContext,
@@ -124,6 +125,10 @@ export const RecordDetailRelationRecordsListItem = ({
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
+  const relationObjectPermissions = useObjectPermissionsForObject(
+    relationObjectMetadataItem.id,
+  );
+
   const persistField = usePersistField();
 
   const { updateOneRecord: updateOneRelationRecord } = useUpdateOneRecord({
@@ -213,6 +218,7 @@ export const RecordDetailRelationRecordsListItem = ({
 
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId: relationRecord.id,
+    objectMetadataId: relationObjectMetadataItem.id,
   });
 
   const isFieldReadOnly = useIsFieldValueReadOnly({
@@ -254,14 +260,15 @@ export const RecordDetailRelationRecordsListItem = ({
                       text="Detach"
                       onClick={handleDetach}
                     />
-                    {!isAccountOwnerRelation && (
-                      <MenuItem
-                        LeftIcon={IconTrash}
-                        text="Delete"
-                        accent="danger"
-                        onClick={handleDelete}
-                      />
-                    )}
+                    {!isAccountOwnerRelation &&
+                      relationObjectPermissions.canSoftDeleteObjectRecords && (
+                        <MenuItem
+                          LeftIcon={IconTrash}
+                          text="Delete"
+                          accent="danger"
+                          onClick={handleDelete}
+                        />
+                      )}
                   </DropdownMenuItemsContainer>
                 </DropdownContent>
               }

@@ -248,6 +248,7 @@ export type BillingSubscription = {
   billingSubscriptionItems?: Maybe<Array<BillingSubscriptionItem>>;
   id: Scalars['UUID']['output'];
   interval?: Maybe<SubscriptionInterval>;
+  metadata: Scalars['JSON']['output'];
   status: SubscriptionStatus;
 };
 
@@ -256,6 +257,7 @@ export type BillingSubscriptionItem = {
   billingProduct?: Maybe<BillingProduct>;
   hasReachedCurrentPeriodCap: Scalars['Boolean']['output'];
   id: Scalars['UUID']['output'];
+  quantity?: Maybe<Scalars['Float']['output']>;
 };
 
 export type BillingTrialPeriodDto = {
@@ -653,7 +655,7 @@ export type FeatureFlagDto = {
 
 export enum FeatureFlagKey {
   IS_AIRTABLE_INTEGRATION_ENABLED = 'IS_AIRTABLE_INTEGRATION_ENABLED',
-  IS_COPILOT_ENABLED = 'IS_COPILOT_ENABLED',
+  IS_AI_ENABLED = 'IS_AI_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_PERMISSIONS_V2_ENABLED = 'IS_PERMISSIONS_V2_ENABLED',
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
@@ -1006,6 +1008,7 @@ export type Mutation = {
   signUpInNewWorkspace: SignUpOutput;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   submitFormStep: Scalars['Boolean']['output'];
+  switchToEnterprisePlan: BillingUpdateOutput;
   switchToYearlyInterval: BillingUpdateOutput;
   syncRemoteTable: RemoteTable;
   syncRemoteTableSchemaChanges: RemoteTable;

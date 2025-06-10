@@ -7,6 +7,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 export const useGetRecordFromCache = ({
@@ -24,6 +25,7 @@ export const useGetRecordFromCache = ({
     recordGqlFields ?? generateDepthOneRecordGqlFields({ objectMetadataItem });
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const apolloClient = useApolloClient();
 
@@ -38,6 +40,7 @@ export const useGetRecordFromCache = ({
         objectMetadataItems,
         objectMetadataItem,
         recordGqlFields: appliedRecordGqlFields,
+        objectPermissionsByObjectMetadataId,
       });
     },
     [
@@ -45,6 +48,7 @@ export const useGetRecordFromCache = ({
       objectMetadataItems,
       objectMetadataItem,
       appliedRecordGqlFields,
+      objectPermissionsByObjectMetadataId,
     ],
   );
 };
