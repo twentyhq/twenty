@@ -1,5 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
+import { RightDrawerProvider } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 
 import { InformationBannerDeletedRecord } from '@/information-banner/components/deleted-record/InformationBannerDeletedRecord';
 
@@ -49,7 +50,7 @@ export const RecordShowContainer = ({
   );
 
   return (
-    <>
+    <RightDrawerProvider value={{ isInRightDrawer }}>
       <RecordShowContainerContextStoreTargetedRecordsEffect
         recordId={objectRecordId}
       />
@@ -71,6 +72,6 @@ export const RecordShowContainer = ({
           loading={isPrefetchLoading || loading || recordLoading}
         />
       </ShowPageContainer>
-    </>
+    </RightDrawerProvider>
   );
 };
