@@ -21,7 +21,7 @@ const DEFAULT_ACTION: WorkflowHttpRequestAction = {
       url: '',
       method: 'GET',
       headers: {},
-      body: '',
+      body: {},
     },
     outputSchema: {},
     errorHandlingOptions: {
@@ -48,14 +48,10 @@ const CONFIGURED_ACTION: WorkflowHttpRequestAction = {
         'Content-Type': 'application/json',
         Authorization: 'Bearer token123',
       },
-      body: JSON.stringify(
-        {
-          name: 'Test',
-          value: 123,
-        },
-        null,
-        2,
-      ),
+      body: {
+        name: 'Test',
+        value: 123,
+      },
     },
     outputSchema: {},
     errorHandlingOptions: {

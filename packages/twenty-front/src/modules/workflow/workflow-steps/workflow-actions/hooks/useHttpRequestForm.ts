@@ -35,11 +35,9 @@ export const useHttpRequestForm = ({
         ? JSON.stringify(action.settings.input.headers, null, 2)
         : null,
     body: action.settings.input.body
-      ? typeof action.settings.input.body === 'string'
-        ? action.settings.input.body
-        : Object.keys(action.settings.input.body).length > 0
-          ? JSON.stringify(action.settings.input.body, null, 2)
-          : null
+      ? Object.keys(action.settings.input.body).length > 0
+        ? JSON.stringify(action.settings.input.body, null, 2)
+        : null
       : null,
   });
 
@@ -66,7 +64,7 @@ export const useHttpRequestForm = ({
     }
 
     let parsedHeaders: Record<string, string> | undefined = undefined;
-    let parsedBody: Record<string, unknown> | string | undefined = undefined;
+    let parsedBody: Record<string, unknown> | undefined = undefined;
 
     if (isDefined(formData.headers)) {
       try {
@@ -83,7 +81,7 @@ export const useHttpRequestForm = ({
       try {
         parsedBody = JSON.parse(formData.body);
       } catch {
-        parsedBody = formData.body;
+        parsedBody = undefined;
       }
     }
 
