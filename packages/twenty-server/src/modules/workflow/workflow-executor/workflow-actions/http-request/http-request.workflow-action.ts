@@ -10,14 +10,17 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowExecutorInput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
 import { WorkflowExecutorOutput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-output.type';
+import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
 
 import { isWorkflowHttpRequestAction } from './guards/is-workflow-http-request-action.guard';
+import { WorkflowHttpRequestActionInput } from './types/workflow-http-request-action-input.type';
 
 @Injectable()
 export class HttpRequestWorkflowAction implements WorkflowExecutor {
   async execute({
     currentStepId,
     steps,
+    context,
   }: WorkflowExecutorInput): Promise<WorkflowExecutorOutput> {
     const step = steps.find((step) => step.id === currentStepId);
 
@@ -33,7 +36,13 @@ export class HttpRequestWorkflowAction implements WorkflowExecutor {
         WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
       );
     }
-    const { url, method, headers, body } = step.settings.input;
+
+    const workflowActionInput = resolveInput(
+      step.settings.input,
+      context,
+    ) as WorkflowHttpRequestActionInput;
+
+    const { url, method, headers, body } = workflowActionInput;
 
     try {
       const axiosConfig: AxiosRequestConfig = {
