@@ -44,7 +44,7 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
   const lastSelectedRowIndexComponentCallbackState =
     useRecoilComponentCallbackStateV2(
       lastSelectedRowIndexComponentState,
-      recordTableId,
+      recordTableIdFromContext,
     );
 
   return useRecoilCallback(
