@@ -15,53 +15,56 @@ import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerSt
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+/**
+ * Groups workflow steps into levels based on their distance from root nodes.
+ *
+ * A root node is one that is not referenced as a `nextStepId` by any other step.
+ * The function performs a breadth-first traversal from all roots and assigns
+ * each step to a level indicating its depth in the graph.
+ *
+ * Returns an array where each sub-array contains all steps at the same level.
+ */
 const groupStepsByLevel = (steps: WorkflowStep[]): WorkflowStep[][] => {
   const stepMap = new Map<string, WorkflowStep>();
 
   const childIds = new Set<string>();
 
-  for (const node of steps) {
-    stepMap.set(node.id, node);
-    node.nextStepIds?.forEach((id) => childIds.add(id));
+  for (const step of steps) {
+    stepMap.set(step.id, step);
+    step.nextStepIds?.forEach((id) => childIds.add(id));
   }
 
-  const roots = steps.filter((node) => !childIds.has(node.id));
+  const rootSteps = steps.filter((step) => !childIds.has(step.id));
 
-  const levels: WorkflowStep[][] = [];
+  const stepsByLevel: WorkflowStep[][] = [];
 
   const visited = new Set<string>();
 
-  const queue: [WorkflowStep, number][] = roots.map((root) => [root, 0]);
-
-  while (queue.length) {
-    const firstElement = queue.shift();
-
-    if (!isDefined(firstElement)) {
-      continue;
+  const visit = ({ step, level }: { step: WorkflowStep; level: number }) => {
+    if (visited.has(step.id)) {
+      return;
     }
 
-    const [node, level] = firstElement;
+    visited.add(step.id);
 
-    if (visited.has(node.id)) {
-      continue;
+    if (!isDefined(stepsByLevel[level])) {
+      stepsByLevel[level] = [];
     }
 
-    visited.add(node.id);
+    stepsByLevel[level].push(step);
 
-    if (!levels[level]) levels[level] = [];
-
-    levels[level].push(node);
-
-    node.nextStepIds?.forEach((childId) => {
+    step.nextStepIds?.forEach((childId) => {
       const child = stepMap.get(childId);
 
       if (isDefined(child)) {
-        queue.push([child, level + 1]);
+        visit({ step: child, level: level + 1 });
       }
     });
-  }
+  };
 
-  return levels;
+  rootSteps.forEach((root) => visit({ step: root, level: 0 }));
+
+  return stepsByLevel;
 };
 
 export const generateWorkflowDiagram = ({
