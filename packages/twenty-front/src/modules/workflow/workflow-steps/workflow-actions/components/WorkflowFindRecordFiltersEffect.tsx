@@ -52,8 +52,8 @@ export const WorkflowFindRecordFiltersEffect = ({
       isDefined(defaultValue?.recordFilters)
     ) {
       setCurrentRecordFilters(defaultValue.recordFilters ?? []);
-      setHasInitializedCurrentRecordFilters(true);
       setShouldSetAdvancedFilterDropdownStates(true);
+      setHasInitializedCurrentRecordFilters(true);
     }
   }, [
     setCurrentRecordFilters,
@@ -65,10 +65,10 @@ export const WorkflowFindRecordFiltersEffect = ({
   useEffect(() => {
     if (
       !hasInitializedCurrentRecordFilterGroups &&
-      isDefined(defaultValue?.recordFilterGroups)
+      isDefined(defaultValue?.recordFilterGroups) &&
+      defaultValue.recordFilterGroups.length > 0
     ) {
       setCurrentRecordFilterGroups(defaultValue.recordFilterGroups ?? []);
-
       setHasInitializedCurrentRecordFilterGroups(true);
     }
   }, [

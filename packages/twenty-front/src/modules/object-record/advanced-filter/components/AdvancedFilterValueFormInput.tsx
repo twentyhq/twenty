@@ -40,7 +40,7 @@ export const AdvancedFilterValueFormInput = ({
     useApplyObjectFilterDropdownFilterValue();
 
   const handleChange = (newValue: JsonValue) => {
-    applyObjectFilterDropdownFilterValue(newValue as string);
+    applyObjectFilterDropdownFilterValue(String(newValue));
   };
 
   const fieldMetadataItemUsedInDropdown = useRecoilComponentValueV2(

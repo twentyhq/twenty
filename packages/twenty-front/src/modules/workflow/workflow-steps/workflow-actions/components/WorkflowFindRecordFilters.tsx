@@ -1,4 +1,5 @@
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
+import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { AdvancedFilterAddFilterRuleSelect } from '@/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect';
 import { AdvancedFilterRecordFilterColumn } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterColumn';
@@ -17,6 +18,8 @@ import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/u
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyStateV2';
+import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
 import { FindRecordsActionFilter } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionFindRecords';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import styled from '@emotion/styled';
@@ -40,21 +43,14 @@ const StyledChildContainer = styled.div`
   width: 100%;
 `;
 
-export const WorkflowFindRecordFilters = ({
-  objectMetadataItem,
-  onChange,
+const AddFilterButton = ({
+  defaultFieldMetadataItem,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
-  onChange: (filter: FindRecordsActionFilter) => void;
+  defaultFieldMetadataItem: FieldMetadataItem;
 }) => {
   const rootRecordFilterGroup = useRecoilComponentValueV2(
     rootLevelRecordFilterGroupComponentSelector,
   );
-
-  const { childRecordFiltersAndRecordFilterGroups } =
-    useChildRecordFiltersAndRecordFilterGroups({
-      recordFilterGroupId: rootRecordFilterGroup?.id,
-    });
 
   const { upsertRecordFilterGroup } = useUpsertRecordFilterGroup();
 
@@ -63,23 +59,18 @@ export const WorkflowFindRecordFilters = ({
   const { createEmptyRecordFilterFromFieldMetadataItem } =
     useCreateEmptyRecordFilterFromFieldMetadataItem();
 
-  const availableFieldMetadataItemsForFilter = useRecoilValue(
-    availableFieldMetadataItemsForFilterFamilySelector({
-      objectMetadataItemId: objectMetadataItem.id,
-    }),
-  );
-
-  const defaultFieldMetadataItem =
-    availableFieldMetadataItemsForFilter.find(
-      (fieldMetadataItem) =>
-        fieldMetadataItem.id ===
-        objectMetadataItem?.labelIdentifierFieldMetadataId,
-    ) ?? availableFieldMetadataItemsForFilter[0];
+  const setHasInitializedCurrentRecordFilters =
+    useSetRecoilComponentFamilyStateV2(
+      hasInitializedCurrentRecordFiltersComponentFamilyState,
+      {},
+    );
 
   const addRootRecordFilterGroup = () => {
     const alreadyHasAdvancedFilterGroup = isDefined(rootRecordFilterGroup);
 
     if (!alreadyHasAdvancedFilterGroup) {
+      setHasInitializedCurrentRecordFilters(false);
+
       const newRecordFilterGroup = {
         id: v4(),
         logicalOperator: RecordFilterGroupLogicalOperator.AND,
@@ -100,6 +91,48 @@ export const WorkflowFindRecordFilters = ({
       upsertRecordFilter(newRecordFilter);
     }
   };
+
+  return (
+    <Button
+      Icon={IconFilter}
+      size="small"
+      variant="secondary"
+      accent="default"
+      onClick={addRootRecordFilterGroup}
+      ariaLabel="Add filter"
+      title="Add filter"
+    />
+  );
+};
+
+export const WorkflowFindRecordFilters = ({
+  objectMetadataItem,
+  onChange,
+}: {
+  objectMetadataItem: ObjectMetadataItem;
+  onChange: (filter: FindRecordsActionFilter) => void;
+}) => {
+  const rootRecordFilterGroup = useRecoilComponentValueV2(
+    rootLevelRecordFilterGroupComponentSelector,
+  );
+
+  const { childRecordFiltersAndRecordFilterGroups } =
+    useChildRecordFiltersAndRecordFilterGroups({
+      recordFilterGroupId: rootRecordFilterGroup?.id,
+    });
+
+  const availableFieldMetadataItemsForFilter = useRecoilValue(
+    availableFieldMetadataItemsForFilterFamilySelector({
+      objectMetadataItemId: objectMetadataItem.id,
+    }),
+  );
+
+  const defaultFieldMetadataItem =
+    availableFieldMetadataItemsForFilter.find(
+      (fieldMetadataItem) =>
+        fieldMetadataItem.id ===
+        objectMetadataItem?.labelIdentifierFieldMetadataId,
+    ) ?? availableFieldMetadataItemsForFilter[0];
 
   const currentRecordFilterGroupsCallbackState =
     useRecoilComponentCallbackStateV2(currentRecordFilterGroupsComponentState);
@@ -182,15 +215,7 @@ export const WorkflowFindRecordFilters = ({
           />
         </StyledContainer>
       ) : (
-        <Button
-          Icon={IconFilter}
-          size="small"
-          variant="secondary"
-          accent="default"
-          onClick={addRootRecordFilterGroup}
-          ariaLabel="Add filter"
-          title="Add filter"
-        />
+        <AddFilterButton defaultFieldMetadataItem={defaultFieldMetadataItem} />
       )}
     </AdvancedFilterContext.Provider>
   );
