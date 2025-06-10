@@ -2,6 +2,7 @@ import { WorkflowHttpRequestAction } from '@/workflow/types/Workflow';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
+import { METHODS_WITH_BODY } from '../constants/HttpRequest';
 
 export type HttpRequestFormData = {
   url: string;
@@ -112,7 +113,15 @@ export const useHttpRequestForm = ({
     field: keyof HttpRequestFormData,
     value: string | null,
   ) => {
-    const newFormData = { ...formData, [field]: value ?? '' };
+    let newFormData = { ...formData, [field]: value ?? '' };
+
+    if (
+      field === 'method' &&
+      !METHODS_WITH_BODY.includes(value as (typeof METHODS_WITH_BODY)[number])
+    ) {
+      newFormData = { ...newFormData, body: null };
+    }
+
     setFormData(newFormData);
 
     if (field === 'headers' && !validateJson(value, 'headers')) {
