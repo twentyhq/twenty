@@ -36,6 +36,17 @@ export const RecordTableRowHotkeyEffect = () => {
   );
 
   useScopedHotkeys(
+    `${Key.Shift}+x`,
+    () => {
+      setCurrentRowSelected({
+        newSelectedState: !isSelected,
+        shouldSelectRange: true,
+      });
+    },
+    TableHotkeyScope.TableFocus,
+  );
+
+  useScopedHotkeys(
     [`${Key.Control}+${Key.Enter}`, `${Key.Meta}+${Key.Enter}`],
     () => {
       openRecordInCommandMenu({
