@@ -75,14 +75,14 @@ export const WorkflowEditActionHttpRequest = ({
           placeholder="Enter request URL"
           readonly={actionOptions.readonly}
           defaultValue={formData.url}
-          onChange={(v) => handleFieldChange('url', v)}
+          onChange={(value) => handleFieldChange('url', value)}
         />
         <Select
           dropdownId="select-http-method"
           label="HTTP method"
           options={HTTP_METHODS}
           value={formData.method}
-          onChange={(v) => handleFieldChange('method', v as string)}
+          onChange={(value) => handleFieldChange('method', value)}
           disabled={actionOptions.readonly}
         />
         <FormRawJsonFieldInput
@@ -92,9 +92,11 @@ export const WorkflowEditActionHttpRequest = ({
           defaultValue={formData.headers}
           error={errorMessagesVisible ? errorMessages.headers : undefined}
           onBlur={onBlur}
-          onChange={(v) => handleFieldChange('headers', v)}
+          onChange={(value) => handleFieldChange('headers', value)}
         />
-        {METHODS_WITH_BODY.includes(formData.method as any) && (
+        {METHODS_WITH_BODY.includes(
+          formData.method as (typeof METHODS_WITH_BODY)[number],
+        ) && (
           <FormRawJsonFieldInput
             label="Body"
             placeholder={DEFAULT_BODY_PLACEHOLDER}
@@ -102,7 +104,7 @@ export const WorkflowEditActionHttpRequest = ({
             defaultValue={formData.body}
             error={errorMessagesVisible ? errorMessages.body : undefined}
             onBlur={onBlur}
-            onChange={(v) => handleFieldChange('body', v)}
+            onChange={(value) => handleFieldChange('body', value)}
           />
         )}
       </WorkflowStepBody>
