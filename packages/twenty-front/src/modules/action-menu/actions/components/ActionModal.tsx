@@ -18,6 +18,7 @@ export type ActionModalProps = {
   confirmButtonText?: string;
   confirmButtonAccent?: ButtonAccent;
   isLoading?: boolean;
+  forceCommandMenuClosing?: boolean;
 };
 
 export const ActionModal = ({
@@ -27,10 +28,13 @@ export const ActionModal = ({
   confirmButtonText = 'Confirm',
   confirmButtonAccent = 'danger',
   isLoading = false,
+  forceCommandMenuClosing = false,
 }: ActionModalProps) => {
   const { openModal } = useModal();
 
-  const { closeActionMenu } = useCloseActionMenu();
+  const { closeActionMenu } = useCloseActionMenu({
+    forceCommandMenuClosing,
+  });
 
   const handleConfirmClick = () => {
     onConfirmClick();

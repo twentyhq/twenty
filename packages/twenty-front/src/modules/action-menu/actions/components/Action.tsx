@@ -12,7 +12,7 @@ export const Action = ({
 }) => {
   const actionConfig = useContext(ActionConfigContext);
 
-  const { closeActionMenu } = useCloseActionMenu(preventCommandMenuClosing);
+  const { closeActionMenu } = useCloseActionMenu({ preventCommandMenuClosing });
 
   if (!actionConfig) {
     return null;

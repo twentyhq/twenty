@@ -8,7 +8,13 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useCloseActionMenu = (preventCommandMenuClosing?: boolean) => {
+export const useCloseActionMenu = ({
+  preventCommandMenuClosing = false,
+  forceCommandMenuClosing = false,
+}: {
+  preventCommandMenuClosing?: boolean;
+  forceCommandMenuClosing?: boolean;
+} = {}) => {
   const { actionMenuType, isInRightDrawer } = useContext(ActionMenuContext);
 
   const { closeCommandMenu } = useCommandMenu();
@@ -36,6 +42,14 @@ export const useCloseActionMenu = (preventCommandMenuClosing?: boolean) => {
       actionMenuType === 'command-menu-show-page-action-menu-dropdown'
     ) {
       closeDropdown(dropdownId);
+    }
+
+    if (
+      actionMenuType === 'command-menu-show-page-action-menu-dropdown' &&
+      isDefined(forceCommandMenuClosing) &&
+      forceCommandMenuClosing
+    ) {
+      closeCommandMenu();
     }
   };
 
