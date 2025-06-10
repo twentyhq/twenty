@@ -6,6 +6,7 @@ import { WorkflowActionServerlessFunction } from '@/workflow/workflow-steps/work
 import { WorkflowEditActionCreateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord';
 import { WorkflowEditActionDeleteRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord';
 import { WorkflowEditActionFindRecords } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionFindRecords';
+import { WorkflowEditActionHttpRequest } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionHttpRequest';
 import { WorkflowEditActionSendEmail } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail';
 import { WorkflowEditActionUpdateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord';
 import { WorkflowEditActionFormFiller } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFiller';
@@ -171,6 +172,18 @@ export const WorkflowRunStepNodeDetail = ({
               action={stepDefinition.definition}
               actionOptions={{
                 readonly: stepExecutionStatus !== 'running',
+              }}
+            />
+          );
+        }
+
+        case 'HTTP_REQUEST': {
+          return (
+            <WorkflowEditActionHttpRequest
+              key={stepId}
+              action={stepDefinition.definition}
+              actionOptions={{
+                readonly: true,
               }}
             />
           );
