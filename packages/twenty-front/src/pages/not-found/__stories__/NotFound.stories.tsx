@@ -1,7 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
-import { mockedApolloClient } from '~/testing/mockedApolloClient';
-import { mockedMetadataApolloClient } from '~/testing/mockedMetadataApolloClient';
 
 import {
   PageDecorator,
