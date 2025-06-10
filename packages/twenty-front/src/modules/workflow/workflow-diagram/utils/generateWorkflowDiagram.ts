@@ -34,7 +34,13 @@ const groupStepsByLevel = (steps: WorkflowStep[]): WorkflowStep[][] => {
   const queue: [WorkflowStep, number][] = roots.map((root) => [root, 0]);
 
   while (queue.length) {
-    const [node, level] = queue.shift()!;
+    const firstElement = queue.shift();
+
+    if (!isDefined(firstElement)) {
+      continue;
+    }
+
+    const [node, level] = firstElement;
 
     if (visited.has(node.id)) {
       continue;
