@@ -8,8 +8,8 @@ const COMPOSITE_TYPES_NON_FILTERABLE_WITH_ANY = [
 type CompositeTypeNonFilterableWithAny =
   (typeof COMPOSITE_TYPES_NON_FILTERABLE_WITH_ANY)[number];
 
-export const isCompositeTypeFilterableByAnySubField = (
+export const isCompositeTypeNonFilterableByAnySubField = (
   fieldType: FieldType,
 ): fieldType is CompositeTypeNonFilterableWithAny => {
-  return !COMPOSITE_TYPES_NON_FILTERABLE_WITH_ANY.includes(fieldType as any);
+  return COMPOSITE_TYPES_NON_FILTERABLE_WITH_ANY.includes(fieldType as any);
 };
