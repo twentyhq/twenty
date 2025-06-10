@@ -177,6 +177,7 @@ export type ModalProps = React.PropsWithChildren & {
   hotkeyScope?: ModalHotkeyScope;
   onEnter?: () => void;
   modalVariant?: ModalVariants;
+  dataGloballyPreventClickOutside?: boolean;
 } & (
     | { isClosable: true; onClose?: () => void }
     | { isClosable?: false; onClose?: never }
@@ -198,6 +199,7 @@ export const Modal = ({
   isClosable = false,
   onClose,
   modalVariant = 'primary',
+  dataGloballyPreventClickOutside = false,
 }: ModalProps) => {
   const isMobile = useIsMobile();
   const modalRef = useRef<HTMLDivElement>(null);
@@ -259,6 +261,9 @@ export const Modal = ({
                 transition={{ duration: theme.animation.duration.normal }}
                 className={className}
                 isMobile={isMobile}
+                data-globally-prevent-click-outside={
+                  dataGloballyPreventClickOutside
+                }
               >
                 {children}
               </StyledModalDiv>
