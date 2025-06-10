@@ -286,9 +286,30 @@ export class WorkspaceResolver {
   @Query(() => PublicWorkspaceDataOutput)
   @UseGuards(PublicEndpointGuard)
   async getPublicWorkspaceDataByDomain(
-    @Args('origin') origin: string,
+    @Args('origin', { nullable: false }) origin?: string,
   ): Promise<PublicWorkspaceDataOutput | undefined> {
     try {
+      const systemEnabledProviders: AuthProviders = {
+        google: this.twentyConfigService.get('AUTH_GOOGLE_ENABLED'),
+        magicLink: false,
+        password: this.twentyConfigService.get('AUTH_PASSWORD_ENABLED'),
+        microsoft: this.twentyConfigService.get('AUTH_MICROSOFT_ENABLED'),
+        sso: [],
+      };
+
+      if (!origin) {
+        return {
+          id: 'default-workspace',
+          logo: '',
+          displayName: 'Default Workspace',
+          workspaceUrls: {
+            subdomainUrl: 'https://app.twenty.com',
+            customUrl: 'https://app.twenty.com',
+          },
+          authProviders: systemEnabledProviders,
+        };
+      }
+
       const workspace =
         await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
           origin,
@@ -308,14 +329,6 @@ export class WorkspaceResolver {
           workspaceLogoWithToken = workspace.logo;
         }
       }
-
-      const systemEnabledProviders: AuthProviders = {
-        google: this.twentyConfigService.get('AUTH_GOOGLE_ENABLED'),
-        magicLink: false,
-        password: this.twentyConfigService.get('AUTH_PASSWORD_ENABLED'),
-        microsoft: this.twentyConfigService.get('AUTH_MICROSOFT_ENABLED'),
-        sso: [],
-      };
 
       return {
         id: workspace.id,
