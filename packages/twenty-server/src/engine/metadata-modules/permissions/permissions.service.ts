@@ -226,11 +226,13 @@ export class PermissionsService {
     workspaceId,
     requiredPermission,
     isExecutedByApiKey,
+    objectMetadataId,
   }: {
     userWorkspaceId?: string;
     workspaceId: string;
     requiredPermission: PermissionsOnAllObjectRecords;
     isExecutedByApiKey: boolean;
+    objectMetadataId: string;
   }): Promise<boolean> {
     const isPermissionsV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
@@ -279,11 +281,10 @@ export class PermissionsService {
     const objectPermissionKey =
       this.getObjectPermissionKeyForRequiredPermission(requiredPermission);
 
-    // until permissions V2 is enabled all objects have the same permission values deriving from role, ex role.canReadAllObjectRecords
     const objectPermissionValue =
-      rolePermissionsForUserWorkspaceRole[
-        Object.keys(rolePermissionsForUserWorkspaceRole)[0]
-      ]?.[objectPermissionKey];
+      rolePermissionsForUserWorkspaceRole[objectMetadataId]?.[
+        objectPermissionKey
+      ];
 
     return objectPermissionValue === true;
   }

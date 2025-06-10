@@ -61,23 +61,5 @@ export class SyncWorkspaceLoggerService {
       `${workspaceId}/field-metadata-delete-collection`,
       storage.fieldMetadataDeleteCollection,
     );
-
-    // Save relation metadata create collection
-    await this.commandLogger.writeLog(
-      `${workspaceId}/relation-metadata-create-collection`,
-      storage.relationMetadataCreateCollection,
-    );
-
-    // Save relation metadata update collection
-    await this.commandLogger.writeLog(
-      `${workspaceId}/relation-metadata-update-collection`,
-      storage.relationMetadataUpdateCollection,
-    );
-
-    // Save relation metadata delete collection
-    await this.commandLogger.writeLog(
-      `${workspaceId}/relation-metadata-delete-collection`,
-      storage.relationMetadataDeleteCollection,
-    );
   }
 }

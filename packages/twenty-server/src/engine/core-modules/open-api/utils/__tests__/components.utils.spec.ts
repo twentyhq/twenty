@@ -1,5 +1,5 @@
-import { FieldMetadataType } from 'twenty-shared/types';
 import { EachTestingContext } from 'twenty-shared/testing';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { NumberDataType } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
@@ -195,6 +195,10 @@ describe('computeSchemaComponents', () => {
       },
       "fieldRawJson": {
         "type": "object",
+      },
+      "fieldRelationId": {
+        "format": "uuid",
+        "type": "string",
       },
       "fieldRichText": {
         "type": "string",
@@ -407,10 +411,16 @@ describe('computeSchemaComponents', () => {
         "type": "object",
       },
       "fieldRelation": {
-        "items": {
-          "$ref": "#/components/schemas/ToObjectMetadataName for Response",
-        },
-        "type": "array",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/RelationTargetObject for Response",
+          },
+        ],
+        "type": "object",
+      },
+      "fieldRelationId": {
+        "format": "uuid",
+        "type": "string",
       },
       "fieldRichText": {
         "type": "string",
@@ -611,6 +621,10 @@ describe('computeSchemaComponents', () => {
       },
       "fieldRawJson": {
         "type": "object",
+      },
+      "fieldRelationId": {
+        "format": "uuid",
+        "type": "string",
       },
       "fieldRichText": {
         "type": "string",
