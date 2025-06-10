@@ -134,50 +134,7 @@ describe('Custom object renaming', () => {
     });
   });
 
-  const relationFieldMetadataOnPersonId = '';
-  const RELATION_FROM_NAME = 'guest';
-
-  it('2. should create a custom relation with the custom object', async () => {
-    // // Arrange
-    // const standardObjects = await makeMetadataAPIRequest(
-    //   standardObjectsGraphqlOperation,
-    // );
-    // const personObjectId = standardObjects.body.data.objects.edges.find(
-    //   // @ts-expect-error legacy noImplicitAny
-    //   (object) => object.node.nameSingular === 'person',
-    // ).node.id;
-    // Act
-    // TODO: fix test Charles
-    // const createRelationGraphqlOperation = createOneRelationMetadataFactory({
-    //   input: {
-    //     relationMetadata: {
-    //       fromDescription: '',
-    //       fromIcon: 'IconRelationOneToMany',
-    //       fromLabel: 'Guest',
-    //       fromName: RELATION_FROM_NAME,
-    //       fromObjectMetadataId: listingObjectId,
-    //       relationType: RelationMetadataType.ONE_TO_MANY,
-    //       toDescription: undefined,
-    //       toIcon: 'IconListNumbers',
-    //       toLabel: 'Property',
-    //       toName: 'property',
-    //       toObjectMetadataId: personObjectId,
-    //     },
-    //   },
-    //   gqlFields: `
-    //     id
-    //     fromFieldMetadataId
-    //   `,
-    // });
-    // const relationResponse = await makeMetadataAPIRequest(
-    //   createRelationGraphqlOperation,
-    // );
-    // // Assert
-    // relationFieldMetadataOnPersonId =
-    //   relationResponse.body.data.createOneRelationMetadata.fromFieldMetadataId;
-  });
-
-  it('3. should rename custom object', async () => {
+  it('2. should rename custom object', async () => {
     // Arrange
     const HOUSE_NAME_SINGULAR = 'house';
     const HOUSE_NAME_PLURAL = 'houses';
@@ -223,25 +180,17 @@ describe('Custom object renaming', () => {
         // @ts-expect-error legacy noImplicitAny
         standardObjectRelationsMap[relation].relationFieldMetadataId;
 
-      const updatedRelationFieldMetadataId = fieldsMetadata.find(
+      const updatedRelationFieldMetadata = fieldsMetadata.find(
         // @ts-expect-error legacy noImplicitAny
         (field) => field.id === relationFieldMetadataId,
       );
 
-      expect(updatedRelationFieldMetadataId.name).toBe(HOUSE_NAME_SINGULAR);
-      expect(updatedRelationFieldMetadataId.label).toBe(HOUSE_LABEL_SINGULAR);
+      expect(updatedRelationFieldMetadata.name).toBe(HOUSE_NAME_SINGULAR);
+      expect(updatedRelationFieldMetadata.label).toBe(HOUSE_LABEL_SINGULAR);
     });
-
-    // custom relation are unchanged
-    const updatedRelationFieldMetadata = fieldsMetadata.find(
-      // @ts-expect-error legacy noImplicitAny
-      (field) => field.id === relationFieldMetadataOnPersonId,
-    );
-
-    expect(updatedRelationFieldMetadata.name).toBe(RELATION_FROM_NAME);
   });
 
-  it('4. should delete custom object', async () => {
+  it('3. should delete custom object', async () => {
     const { data } = await deleteOneObjectMetadata({
       input: {
         idToDelete: listingObjectId,
