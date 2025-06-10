@@ -3,13 +3,13 @@ import { ObjectRecordsPermissionsByRoleId } from 'twenty-shared/types';
 import {
   DataSource,
   DataSourceOptions,
-  EntityManager,
   EntityTarget,
   ObjectLiteral,
   QueryRunner,
   ReplicationMode,
   SelectQueryBuilder,
 } from 'typeorm';
+import { EntityManagerFactory } from 'typeorm/entity-manager/EntityManagerFactory';
 
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
@@ -106,7 +106,7 @@ export class WorkspaceDataSource extends DataSource {
       },
     );
     const queryRunner = this.driver.createQueryRunner(mode);
-    const manager = new EntityManager(
+    const manager = new EntityManagerFactory().create(
       dataSourceWithCreateQueryBuilder,
       queryRunner,
     );
