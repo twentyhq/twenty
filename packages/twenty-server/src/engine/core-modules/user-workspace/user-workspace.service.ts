@@ -48,7 +48,6 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     private readonly userRepository: Repository<User>,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly domainManagerService: DomainManagerService,
@@ -268,7 +267,9 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       ],
     });
 
-    const alreadyMemberWorkspaces = user ? user.workspaces : [];
+    const alreadyMemberWorkspaces = user
+      ? user.workspaces.map(({ workspace }) => ({ workspace }))
+      : [];
 
     const alreadyMemberWorkspacesIds = alreadyMemberWorkspaces.map(
       ({ id }) => id,
@@ -280,7 +281,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       )
     ).filter(
       ({ workspace }) => !alreadyMemberWorkspacesIds.includes(workspace.id),
-    );
+    ).map(({ workspace }) => ({ workspace }))
 
     const workspacesFromApprovedAccessDomainIds =
       workspacesFromApprovedAccessDomain.map(({ id }) => id);

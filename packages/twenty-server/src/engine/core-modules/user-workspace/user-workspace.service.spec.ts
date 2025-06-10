@@ -90,6 +90,7 @@ describe('UserWorkspaceService', () => {
           provide: WorkspaceInvitationService,
           useValue: {
             invalidateWorkspaceInvitation: jest.fn(),
+            findInvitationsByEmail: jest.fn(),
           },
         },
         {
@@ -678,6 +679,10 @@ describe('UserWorkspaceService', () => {
         )
         .mockResolvedValue([]);
 
+      jest
+        .spyOn(workspaceInvitationService, 'findInvitationsByEmail')
+        .mockResolvedValue([]);
+
       const result = await service.findAvailableWorkspacesByEmail(email);
 
       expect(userRepository.findOne).toHaveBeenCalledWith({
@@ -693,7 +698,10 @@ describe('UserWorkspaceService', () => {
       });
 
       expect(result).toEqual({
-        availableWorkspacesForSignIn: [workspace1, workspace2],
+        availableWorkspacesForSignIn: [
+          { workspace: workspace1 },
+          { workspace: workspace2 },
+        ],
         availableWorkspacesForSignUp: [],
       });
     });
@@ -753,6 +761,10 @@ describe('UserWorkspaceService', () => {
           } as unknown as ApprovedAccessDomain,
         ]);
 
+      jest
+        .spyOn(workspaceInvitationService, 'findInvitationsByEmail')
+        .mockResolvedValue([]);
+
       const result = await service.findAvailableWorkspacesByEmail(email);
 
       expect(userRepository.findOne).toHaveBeenCalledWith({
@@ -768,8 +780,8 @@ describe('UserWorkspaceService', () => {
       });
 
       expect(result).toEqual({
-        availableWorkspacesForSignIn: [workspace1],
-        availableWorkspacesForSignUp: [workspace2],
+        availableWorkspacesForSignIn: [{ workspace: workspace1 }],
+        availableWorkspacesForSignUp: [{ workspace: workspace2 }],
       });
     });
 
@@ -798,11 +810,15 @@ describe('UserWorkspaceService', () => {
           } as unknown as ApprovedAccessDomain,
         ]);
 
+      jest
+        .spyOn(workspaceInvitationService, 'findInvitationsByEmail')
+        .mockResolvedValue([]);
+
       const result = await service.findAvailableWorkspacesByEmail(email);
 
       expect(result).toEqual({
         availableWorkspacesForSignIn: [],
-        availableWorkspacesForSignUp: [workspace1],
+        availableWorkspacesForSignUp: [{ workspace: workspace1 }],
       });
     });
   });
