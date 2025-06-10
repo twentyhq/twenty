@@ -83,7 +83,13 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
     const firstOperand = getRecordFilterOperands({
       filterType,
       subFieldName,
-    })[0];
+    })?.[0];
+
+    if (!isDefined(firstOperand)) {
+      throw new Error(
+        `No valid operand found for filter type: ${filterType} and subFieldName: ${subFieldName}`,
+      );
+    }
 
     setSelectedOperandInDropdown(firstOperand);
 
