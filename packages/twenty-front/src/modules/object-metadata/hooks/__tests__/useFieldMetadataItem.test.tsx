@@ -110,12 +110,12 @@ const mocks = [
   },
   {
     request: {
-      query: queries.deleteMetadataFieldRelation,
+      query: queries.deleteMetadataField,
       variables: variables.deleteMetadataFieldRelation,
     },
     result: jest.fn(() => ({
       data: {
-        deleteOneRelation: responseData.fieldRelation,
+        deleteOneField: responseData.fieldRelation,
       },
     })),
   },
@@ -234,7 +234,7 @@ describe('useFieldMetadataItem', () => {
       );
 
       expect(res.data).toEqual({
-        deleteOneRelation: responseData.fieldRelation,
+        deleteOneField: responseData.fieldRelation,
       });
     });
   });

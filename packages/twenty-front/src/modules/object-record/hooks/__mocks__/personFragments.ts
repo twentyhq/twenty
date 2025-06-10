@@ -16,6 +16,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS = `
         additionalEmails
       }
       id
+      intro
       jobTitle
       linkedinLink {
         primaryLinkUrl
@@ -26,6 +27,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS = `
         firstName
         lastName
       }
+      performanceRating
       phones {
         primaryPhoneNumber
         primaryPhoneCountryCode
@@ -34,6 +36,13 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS = `
       }
       position
       updatedAt
+      whatsapp {
+        primaryPhoneNumber
+        primaryPhoneCountryCode
+        primaryPhoneCallingCode
+        additionalPhones
+      }
+      workPreference
       xLink {
         primaryLinkUrl
         primaryLinkLabel
@@ -58,6 +67,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             opportunityId
             personId
             petId
+            rocketId
             surveyResultId
             taskId
             type
@@ -118,7 +128,6 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
         employees
         id
         idealCustomerProfile
-        internalCompetitions
         introVideo {
           primaryLinkUrl
           primaryLinkLabel
@@ -169,6 +178,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             personId
             petId
             position
+            rocketId
             surveyResultId
             taskId
             updatedAt
@@ -220,11 +230,13 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             opportunityId
             personId
             petId
+            rocketId
             surveyResultId
             updatedAt
           }
         }
       }
+      performanceRating
       phones {
         primaryPhoneNumber
         primaryPhoneCountryCode
@@ -270,6 +282,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             opportunityId
             personId
             petId
+            rocketId
             surveyResultId
             taskId
             updatedAt
@@ -294,6 +307,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             personId
             petId
             properties
+            rocketId
             surveyResultId
             taskId
             updatedAt
