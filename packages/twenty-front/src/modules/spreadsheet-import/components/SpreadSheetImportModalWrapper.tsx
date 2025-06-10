@@ -7,12 +7,10 @@ import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { SpreadSheetImportModalCloseButton } from './SpreadSheetImportModalCloseButton';
 
 const StyledModal = styled(Modal)`
-  height: 61%;
   min-height: 600px;
   min-width: 800px;
   padding: 0;
   position: relative;
-  width: 63%;
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     min-width: auto;
     min-height: auto;

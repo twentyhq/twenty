@@ -50,7 +50,7 @@ const StyledModalDiv = styled(motion.div)<{
       default:
         return 'auto';
     }
-  }} !important;
+  }};
 
   padding: ${({ padding, theme }) => {
     switch (padding) {
@@ -75,7 +75,7 @@ const StyledModalDiv = styled(motion.div)<{
       default:
         return 'auto';
     }
-  }} !important;
+  }};
   max-height: ${({ isMobile }) => (isMobile ? 'none' : '90dvh')};
 `;
 
