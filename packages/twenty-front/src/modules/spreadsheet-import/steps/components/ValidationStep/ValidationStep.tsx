@@ -314,7 +314,7 @@ export const ValidationStep = <T extends string>({
           <StyledButton
             Icon={IconTrash}
             title={t`Remove`}
-            accent={'default'}
+            accent="default"
             onClick={deleteSelectedRows}
             disabled={selectedRows.size === 0}
           />

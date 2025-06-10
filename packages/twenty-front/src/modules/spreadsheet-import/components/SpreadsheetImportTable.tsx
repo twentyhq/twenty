@@ -66,9 +66,8 @@ const StyledDataGrid = styled(DataGrid)`
     outline: none;
   }
 
-  /* TODODO: check with tcf exact color */
   .rdg-cell-error {
-    background-color: ${({ theme }) => RGBA(theme.color.yellow, 0.08)};
+    background-color: ${({ theme }) => theme.adaptiveColors.yellow1};
   }
 
   .rdg-cell-warning {
