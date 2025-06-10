@@ -8,7 +8,6 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
-import { workspacesState } from '@/auth/states/workspaces';
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
@@ -41,7 +40,6 @@ export const UserProviderEffect = () => {
   const setCurrentUser = useSetRecoilState(currentUserState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
-  const setWorkspaces = useSetRecoilState(workspacesState);
   const setAvailableWorkspaces = useSetRecoilState(availableWorkspacesState);
   const setDateTimeFormat = useSetRecoilState(dateTimeFormatState);
   const isLoggedIn = useIsLogged();
@@ -104,7 +102,6 @@ export const UserProviderEffect = () => {
       workspaceMember,
       workspaceMembers,
       deletedWorkspaceMembers,
-      workspaces: userWorkspaces,
       availableWorkspaces,
     } = queryData.currentUser;
 
@@ -156,14 +153,6 @@ export const UserProviderEffect = () => {
       setCurrentWorkspaceMembersWithDeleted(deletedWorkspaceMembers);
     }
 
-    if (isDefined(userWorkspaces)) {
-      const workspaces = userWorkspaces
-        .map(({ workspace }) => workspace)
-        .filter(isDefined);
-
-      setWorkspaces(workspaces);
-    }
-
     if (isDefined(availableWorkspaces)) {
       setAvailableWorkspaces(availableWorkspaces);
     }
@@ -176,7 +165,6 @@ export const UserProviderEffect = () => {
     setAvailableWorkspaces,
     setCurrentWorkspace,
     setCurrentWorkspaceMember,
-    setWorkspaces,
     setIsCurrentUserLoaded,
     setDateTimeFormat,
     setCurrentWorkspaceMembersWithDeleted,

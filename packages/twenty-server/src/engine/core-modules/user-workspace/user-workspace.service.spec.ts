@@ -40,7 +40,6 @@ describe('UserWorkspaceService', () => {
   let typeORMService: TypeORMService;
   let workspaceInvitationService: WorkspaceInvitationService;
   let workspaceEventEmitter: WorkspaceEventEmitter;
-  let domainManagerService: DomainManagerService;
   let approvedAccessDomainService: ApprovedAccessDomainService;
   let twentyORMGlobalManager: TwentyORMGlobalManager;
   let userRoleService: UserRoleService;
@@ -166,8 +165,6 @@ describe('UserWorkspaceService', () => {
     workspaceEventEmitter = module.get<WorkspaceEventEmitter>(
       WorkspaceEventEmitter,
     );
-    domainManagerService =
-      module.get<DomainManagerService>(DomainManagerService);
     approvedAccessDomainService = module.get<ApprovedAccessDomainService>(
       ApprovedAccessDomainService,
     );

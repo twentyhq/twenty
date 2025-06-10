@@ -432,10 +432,13 @@ export class AuthResolver {
     @Args() getAuthTokensFromLoginTokenInput: GetAuthTokensFromLoginTokenInput,
     @Args('origin') origin: string,
   ): Promise<AuthTokens> {
-    const { sub: email, workspaceId, authProvider } =
-      await this.loginTokenService.verifyLoginToken(
-        getAuthTokensFromLoginTokenInput.loginToken,
-      );
+    const {
+      sub: email,
+      workspaceId,
+      authProvider,
+    } = await this.loginTokenService.verifyLoginToken(
+      getAuthTokensFromLoginTokenInput.loginToken,
+    );
 
     const workspace =
       await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(

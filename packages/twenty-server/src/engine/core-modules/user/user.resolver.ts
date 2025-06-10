@@ -100,7 +100,7 @@ export class UserResolver {
       where: {
         id: userId,
       },
-      relations: ['workspaces', 'workspaces.workspace'],
+      relations: ['workspaces'],
     });
 
     userValidator.assertIsDefinedOrThrow(
@@ -113,7 +113,7 @@ export class UserResolver {
     }
 
     const currentUserWorkspace = user.workspaces.find(
-      (userWorkspace) => userWorkspace.workspace.id === workspace.id,
+      (userWorkspace) => userWorkspace.workspaceId === workspace.id,
     );
 
     if (!currentUserWorkspace) {

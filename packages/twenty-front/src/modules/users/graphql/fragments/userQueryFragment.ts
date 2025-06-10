@@ -86,18 +86,6 @@ export const USER_QUERY_FRAGMENT = gql`
         ...RoleFragment
       }
     }
-    workspaces {
-      workspace {
-        id
-        logo
-        displayName
-        subdomain
-        customDomain
-        workspaceUrls {
-          ...WorkspaceUrlsFragment
-        }
-      }
-    }
     availableWorkspaces {
       ...AvailableWorkspacesFragment
     }
