@@ -1,16 +1,13 @@
 import { EdgeLabelRenderer } from '@xyflow/react';
 import { STEP_ICON_WIDTH } from '@/workflow/workflow-diagram/constants/CreateStepNodeWidth';
 import styled from '@emotion/styled';
-import { IconButton } from 'twenty-ui/input';
+import { IconButtonGroup } from 'twenty-ui/input';
 import { IconPlus } from 'twenty-ui/display';
-import { useTheme } from '@emotion/react';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 
 const EDGE_OPTION_BUTTON_LEFT_MARGIN = 8;
 
-const StyledEdgeOptionButton = styled(IconButton)`
-  border: none;
-  color: ${({ theme }) => theme.font.color.tertiary};
+const StyledIconButtonGroup = styled(IconButtonGroup)`
   pointer-events: all;
 `;
 
@@ -36,22 +33,22 @@ export const WorkflowDiagramEdgeOptions = ({
   parentStepId,
   nextStepId,
 }: WorkflowDiagramEdgeOptionsProps) => {
-  const theme = useTheme();
-
   const { startNodeCreation } = useStartNodeCreation();
 
   return (
     <EdgeLabelRenderer>
       <StyledContainer labelX={labelX} labelY={labelY}>
-        <StyledEdgeOptionButton
-          className="nodrag nopan"
-          Icon={IconPlus}
+        <StyledIconButtonGroup
           size="small"
-          ariaLabel="Insert a step"
-          iconSize={theme.icon.size.sm}
-          onClick={() => {
-            startNodeCreation({ parentStepId, nextStepId });
-          }}
+          className="nodrag nopan"
+          iconButtons={[
+            {
+              Icon: IconPlus,
+              onClick: () => {
+                startNodeCreation({ parentStepId, nextStepId });
+              },
+            },
+          ]}
         />
       </StyledContainer>
     </EdgeLabelRenderer>

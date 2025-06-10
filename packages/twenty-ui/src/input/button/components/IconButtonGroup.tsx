@@ -2,16 +2,27 @@ import styled from '@emotion/styled';
 import { IconComponent } from '@ui/display';
 import { MouseEvent } from 'react';
 
-import { IconButton, IconButtonPosition, IconButtonProps } from './IconButton';
+import { IconButtonProps } from '@ui/input';
+import { InsideButton } from '@ui/input/button/components/InsideButton';
 
-const StyledIconButtonGroupContainer = styled.div`
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  display: flex;
+const StyledIconButtonGroupContainer = styled.div<{ disabled?: boolean }>`
+  display: inline-flex;
+  align-items: flex-start;
+  background-color: ${({ disabled, theme }) =>
+    disabled ? 'inherit' : theme.background.transparent.lighter};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  gap: 2px;
+  padding: 2px;
+  backdrop-filter: blur(20px);
+
+  &:hover {
+    box-shadow: ${({ theme }) => theme.boxShadow.light};
+  }
 `;
 
 export type IconButtonGroupProps = Pick<
   IconButtonProps,
-  'accent' | 'size' | 'variant'
+  'accent' | 'size' | 'variant' | 'disabled'
 > & {
   iconButtons: {
     Icon: IconComponent;
@@ -21,30 +32,18 @@ export type IconButtonGroupProps = Pick<
 };
 
 export const IconButtonGroup = ({
-  accent,
   iconButtons,
-  size,
-  variant,
+  disabled,
   className,
 }: IconButtonGroupProps) => (
-  <StyledIconButtonGroupContainer className={className}>
+  <StyledIconButtonGroupContainer className={className} disabled={disabled}>
     {iconButtons.map(({ Icon, onClick }, index) => {
-      const position: IconButtonPosition =
-        index === 0
-          ? 'left'
-          : index === iconButtons.length - 1
-            ? 'right'
-            : 'middle';
-
       return (
-        <IconButton
+        <InsideButton
           key={index}
-          accent={accent}
           Icon={Icon}
           onClick={onClick}
-          position={position}
-          size={size}
-          variant={variant}
+          disabled={disabled}
         />
       );
     })}
