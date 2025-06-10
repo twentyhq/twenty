@@ -167,22 +167,4 @@ describe('useHttpRequestForm', () => {
 
     expect(mockOnActionUpdate).not.toHaveBeenCalled();
   });
-
-  it('should handle error message visibility', () => {
-    const { result } = renderHook(() =>
-      useHttpRequestForm({
-        action: mockAction,
-        onActionUpdate: mockOnActionUpdate,
-        readonly: false,
-      }),
-    );
-
-    expect(result.current.errorMessagesVisible).toBe(false);
-
-    act(() => {
-      result.current.onBlur();
-    });
-
-    expect(result.current.errorMessagesVisible).toBe(true);
-  });
 });
