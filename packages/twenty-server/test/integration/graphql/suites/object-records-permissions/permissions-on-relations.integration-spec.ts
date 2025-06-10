@@ -1,8 +1,11 @@
+import { randomUUID } from 'crypto';
+
 import { default as request } from 'supertest';
+import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createCustomRoleWithObjectPermissions } from 'test/integration/graphql/utils/create-custom-role-with-object-permissions.util';
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { deleteRole } from 'test/integration/graphql/utils/delete-one-role.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlAPIRequestWithMemberRole as makeGraphqlAPIRequestWithJony } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
@@ -50,6 +53,36 @@ describe('permissionsOnRelations', () => {
       originalMemberRoleId = rolesResponse.body.data.getRoles.find(
         (role: any) => role.label === 'Member',
       ).id;
+
+      // Create a person record
+      const companyId = randomUUID();
+      const graphqlOperationForCompanyCreation = createOneOperationFactory({
+        objectMetadataSingularName: 'company',
+        gqlFields: `
+          name
+        `,
+        data: {
+          id: companyId,
+          name: 'Twenty',
+        },
+      });
+
+      await makeGraphqlAPIRequest(graphqlOperationForCompanyCreation);
+
+      const graphqlOperationForPersonCreation = createOneOperationFactory({
+        objectMetadataSingularName: 'person',
+        gqlFields: PERSON_GQL_FIELDS,
+        data: {
+          id: randomUUID(),
+          name: {
+            firstName: 'Marie',
+          },
+          city: 'Paris',
+          companyId,
+        },
+      });
+
+      await makeGraphqlAPIRequest(graphqlOperationForPersonCreation);
     });
 
     afterAll(async () => {
@@ -186,20 +219,25 @@ describe('permissionsOnRelations', () => {
       });
 
       // Create a query with nested relations
-      const graphqlOperation = findOneOperationFactory({
+      const graphqlOperation = findManyOperationFactory({
         objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
         gqlFields: `
           id
           city
+          jobTitle
           company {
             id
             name
             opportunities {
-              countEmptyAmount
+              edges {
+                node {
+                  name
+                }
+              }
             }
           }
         `,
-        filter: { name: { lastName: { eq: 'Voulzy' } } },
       });
 
       const response = await makeGraphqlAPIRequestWithJony(graphqlOperation);
