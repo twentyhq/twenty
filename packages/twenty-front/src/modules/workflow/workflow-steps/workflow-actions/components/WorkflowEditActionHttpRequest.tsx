@@ -7,18 +7,15 @@ import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/Workflo
 import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
 import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
-import { useEffect, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { useEffect } from 'react';
 import { useIcons } from 'twenty-ui/display';
-import { useDebouncedCallback } from 'use-debounce';
-
-const HTTP_METHODS = [
-  { label: 'GET', value: 'GET' },
-  { label: 'POST', value: 'POST' },
-  { label: 'PUT', value: 'PUT' },
-  { label: 'PATCH', value: 'PATCH' },
-  { label: 'DELETE', value: 'DELETE' },
-];
+import {
+  DEFAULT_BODY_PLACEHOLDER,
+  DEFAULT_HEADERS_PLACEHOLDER,
+  HTTP_METHODS,
+  METHODS_WITH_BODY,
+} from '../constants/HttpRequest';
+import { useHttpRequestForm } from '../hooks/useHttpRequestForm';
 
 type WorkflowEditActionHttpRequestProps = {
   action: WorkflowHttpRequestAction;
@@ -28,18 +25,6 @@ type WorkflowEditActionHttpRequestProps = {
         readonly?: false;
         onActionUpdate: (action: WorkflowHttpRequestAction) => void;
       };
-};
-
-type HttpRequestFormData = {
-  url: string;
-  method: string;
-  headers: string | null;
-  body: string | null;
-};
-
-type ErrorMessages = {
-  headers?: string;
-  body?: string;
 };
 
 export const WorkflowEditActionHttpRequest = ({
@@ -52,103 +37,23 @@ export const WorkflowEditActionHttpRequest = ({
   const headerIconColor = useActionIconColorOrThrow(action.type);
   const headerType = useActionHeaderTypeOrThrow(action.type);
 
-  const [errorMessages, setErrorMessages] = useState<ErrorMessages>({});
-  const [errorMessagesVisible, setErrorMessagesVisible] = useState(false);
-
-  const [formData, setFormData] = useState<HttpRequestFormData>({
-    url: action.settings.input.url,
-    method: action.settings.input.method,
-    headers: action.settings.input.headers
-      ? JSON.stringify(action.settings.input.headers, null, 2)
-      : null,
-    body: action.settings.input.body
-      ? typeof action.settings.input.body === 'string'
-        ? action.settings.input.body
-        : JSON.stringify(action.settings.input.body, null, 2)
-      : null,
+  const {
+    formData,
+    errorMessages,
+    errorMessagesVisible,
+    handleFieldChange,
+    onBlur,
+    saveAction,
+  } = useHttpRequestForm({
+    action,
+    onActionUpdate:
+      actionOptions.readonly === true
+        ? undefined
+        : actionOptions.onActionUpdate,
+    readonly: actionOptions.readonly === true,
   });
 
-  const saveAction = useDebouncedCallback((formData: HttpRequestFormData) => {
-    if (actionOptions.readonly === true) {
-      return;
-    }
-
-    let parsedHeaders: Record<string, string> | undefined = undefined;
-    let parsedBody: Record<string, unknown> | string | undefined = undefined;
-
-    if (isDefined(formData.headers)) {
-      try {
-        parsedHeaders = JSON.parse(formData.headers);
-      } catch {
-        return;
-      }
-    }
-
-    if (
-      ['POST', 'PUT', 'PATCH'].includes(formData.method) &&
-      isDefined(formData.body)
-    ) {
-      try {
-        parsedBody = JSON.parse(formData.body);
-      } catch {
-        parsedBody = formData.body;
-      }
-    }
-
-    actionOptions.onActionUpdate?.({
-      ...action,
-      settings: {
-        ...action.settings,
-        input: {
-          url: formData.url,
-          method: formData.method as any,
-          headers: parsedHeaders,
-          body: parsedBody,
-        },
-      },
-    });
-  }, 500);
-
   useEffect(() => () => saveAction.flush(), [saveAction]);
-
-  const handleFieldChange = (
-    field: keyof HttpRequestFormData,
-    value: string | null,
-  ) => {
-    const newFormData = { ...formData, [field]: value ?? '' };
-    setFormData(newFormData);
-
-    if (field === 'headers' && value !== null && value !== '') {
-      try {
-        JSON.parse(value);
-        setErrorMessages((prev) => ({ ...prev, headers: undefined }));
-      } catch (e) {
-        setErrorMessages((prev) => ({ ...prev, headers: String(e) }));
-        return;
-      }
-    }
-
-    if (
-      field === 'body' &&
-      value !== null &&
-      value !== '' &&
-      ['POST', 'PUT', 'PATCH'].includes(formData.method)
-    ) {
-      try {
-        JSON.parse(value);
-        setErrorMessages((prev) => ({ ...prev, body: undefined }));
-      } catch (e) {
-        setErrorMessages((prev) => ({ ...prev, body: String(e) }));
-        return;
-      }
-    }
-
-    saveAction(newFormData);
-  };
-
-  const onBlur = () => {
-    setErrorMessagesVisible(true);
-  };
 
   return (
     <>
@@ -183,17 +88,17 @@ export const WorkflowEditActionHttpRequest = ({
         />
         <FormRawJsonFieldInput
           label="Headers"
-          placeholder={'{\n  "Authorization": "Bearer ..."\n}'}
+          placeholder={DEFAULT_HEADERS_PLACEHOLDER}
           readonly={actionOptions.readonly}
           defaultValue={formData.headers}
           error={errorMessagesVisible ? errorMessages.headers : undefined}
           onBlur={onBlur}
           onChange={(v) => handleFieldChange('headers', v)}
         />
-        {['POST', 'PUT', 'PATCH'].includes(formData.method) && (
+        {METHODS_WITH_BODY.includes(formData.method as any) && (
           <FormRawJsonFieldInput
             label="Body"
-            placeholder={'{\n  "key": "value"\n}'}
+            placeholder={DEFAULT_BODY_PLACEHOLDER}
             readonly={actionOptions.readonly}
             defaultValue={formData.body}
             error={errorMessagesVisible ? errorMessages.body : undefined}
