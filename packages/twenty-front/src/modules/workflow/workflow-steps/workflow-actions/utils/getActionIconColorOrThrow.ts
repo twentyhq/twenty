@@ -20,6 +20,8 @@ export const getActionIconColorOrThrow = ({
       return theme.font.color.tertiary;
     case 'SEND_EMAIL':
       return theme.color.blue;
+    case 'HTTP_REQUEST':
+      return theme.color.purple;
     default:
       assertUnreachable(actionType, `Unsupported action type: ${actionType}`);
   }

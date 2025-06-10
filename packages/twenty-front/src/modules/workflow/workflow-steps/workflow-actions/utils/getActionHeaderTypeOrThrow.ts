@@ -14,6 +14,8 @@ export const getActionHeaderTypeOrThrow = (actionType: WorkflowActionType) => {
       return msg`Action`;
     case 'SEND_EMAIL':
       return msg`Email`;
+    case 'HTTP_REQUEST':
+      return msg`HTTP Request`;
     default:
       assertUnreachable(actionType, `Unsupported action type: ${actionType}`);
   }
