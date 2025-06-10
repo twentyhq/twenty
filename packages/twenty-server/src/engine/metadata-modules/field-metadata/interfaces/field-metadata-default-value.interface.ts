@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType, IsExactly } from 'twenty-shared/types';
 
 import {
   FieldMetadataDefaultActor,
@@ -16,6 +16,7 @@ import {
   FieldMetadataDefaultValueRawJson,
   FieldMetadataDefaultValueRichText,
   FieldMetadataDefaultValueString,
+  FieldMetadataDefaultValueStringArray,
   FieldMetadataDefaultValueUuidFunction,
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 
@@ -46,7 +47,7 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.ADDRESS]: FieldMetadataDefaultValueAddress;
   [FieldMetadataType.RATING]: FieldMetadataDefaultValueString;
   [FieldMetadataType.SELECT]: FieldMetadataDefaultValueString;
-  [FieldMetadataType.MULTI_SELECT]: FieldMetadataDefaultValueString;
+  [FieldMetadataType.MULTI_SELECT]: FieldMetadataDefaultValueStringArray;
   [FieldMetadataType.RAW_JSON]: FieldMetadataDefaultValueRawJson;
   [FieldMetadataType.RICH_TEXT]: FieldMetadataDefaultValueRichText;
   [FieldMetadataType.ACTOR]: FieldMetadataDefaultActor;
@@ -60,17 +61,22 @@ export type FieldMetadataFunctionDefaultValue = ExtractValueType<
   FieldMetadataDefaultValueUuidFunction | FieldMetadataDefaultValueNowFunction
 >;
 
-type DefaultValueByFieldMetadata<T extends FieldMetadataType | 'default'> = [
-  T,
-] extends [keyof FieldMetadataDefaultValueMapping]
-  ? ExtractValueType<FieldMetadataDefaultValueMapping[T]> | null
-  : T extends 'default'
-    ? ExtractValueType<UnionOfValues<FieldMetadataDefaultValueMapping>> | null
-    : never;
+export type FieldMetadataDefaultValueForType<
+  T extends keyof FieldMetadataDefaultValueMapping,
+> = ExtractValueType<FieldMetadataDefaultValueMapping[T]> | null;
+
+export type FieldMetadataDefaultValueForAnyType = ExtractValueType<
+  UnionOfValues<FieldMetadataDefaultValueMapping>
+> | null;
 
 export type FieldMetadataDefaultValue<
-  T extends FieldMetadataType | 'default' = 'default',
-> = DefaultValueByFieldMetadata<T>;
+  T extends FieldMetadataType = FieldMetadataType,
+> =
+  IsExactly<T, FieldMetadataType> extends true
+    ? FieldMetadataDefaultValueForAnyType
+    : T extends keyof FieldMetadataDefaultValueMapping
+      ? FieldMetadataDefaultValueForType<T>
+      : never;
 
 type FieldMetadataDefaultValueExtractedTypes = {
   [K in keyof FieldMetadataDefaultValueMapping]: ExtractValueType<

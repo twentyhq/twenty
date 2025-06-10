@@ -1,6 +1,3 @@
-import { IconDoorEnter } from 'twenty-ui';
-
-import { useAuth } from '@/auth/hooks/useAuth';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
 import {
@@ -8,19 +5,14 @@ import {
   SettingsNavigationSection,
   useSettingsNavigationItems,
 } from '@/settings/hooks/useSettingsNavigationItems';
-import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
-import { useLingui } from '@lingui/react/macro';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsNavigationDrawerItems = () => {
-  const { signOut } = useAuth();
-  const { t } = useLingui();
-
   const settingsNavigationItems: SettingsNavigationSection[] =
     useSettingsNavigationItems();
 
@@ -28,7 +20,7 @@ export const SettingsNavigationDrawerItems = () => {
 
   const getSelectedIndexForSubItems = (subItems: SettingsNavigationItem[]) => {
     return subItems.findIndex((subItem) => {
-      const href = getSettingsPath(subItem.path);
+      const href = subItem.path ? getSettingsPath(subItem.path) : '';
       const pathName = resolvePath(href).pathname;
 
       return matchPath(
@@ -52,7 +44,7 @@ export const SettingsNavigationDrawerItems = () => {
         return (
           <NavigationDrawerSection key={section.label}>
             {section.isAdvanced ? (
-              <AdvancedSettingsWrapper hideIcon>
+              <AdvancedSettingsWrapper hideDot>
                 <NavigationDrawerSectionTitle label={section.label} />
               </AdvancedSettingsWrapper>
             ) : (
@@ -65,7 +57,9 @@ export const SettingsNavigationDrawerItems = () => {
                   getSelectedIndexForSubItems(subItems);
 
                 return (
-                  <NavigationDrawerItemGroup key={item.path}>
+                  <NavigationDrawerItemGroup
+                    key={item.path || `group-${index}`}
+                  >
                     <SettingsNavigationDrawerItem
                       item={item}
                       subItemState={
@@ -80,7 +74,7 @@ export const SettingsNavigationDrawerItems = () => {
                     />
                     {subItems.map((subItem, subIndex) => (
                       <SettingsNavigationDrawerItem
-                        key={subItem.path}
+                        key={subItem.path || `subitem-${subIndex}`}
                         item={subItem}
                         subItemState={
                           subItem.indentationLevel
@@ -98,7 +92,7 @@ export const SettingsNavigationDrawerItems = () => {
               }
               return (
                 <SettingsNavigationDrawerItem
-                  key={item.path}
+                  key={item.path || `item-${index}`}
                   item={item}
                   subItemState={
                     item.indentationLevel
@@ -115,13 +109,6 @@ export const SettingsNavigationDrawerItems = () => {
           </NavigationDrawerSection>
         );
       })}
-      <NavigationDrawerSection>
-        <NavigationDrawerItem
-          label={t`Logout`}
-          onClick={signOut}
-          Icon={IconDoorEnter}
-        />
-      </NavigationDrawerSection>
     </>
   );
 };

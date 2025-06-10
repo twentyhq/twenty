@@ -1,8 +1,8 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useIcons } from 'twenty-ui';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { useIcons } from 'twenty-ui/display';
 
 type ObjectFieldRowWithoutRelationProps = {
   field: FieldMetadataItem;

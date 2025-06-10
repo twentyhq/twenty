@@ -105,6 +105,7 @@ const companyMocks = [
                   createdAt
                   deletedAt
                   favoriteFolderId
+                  forWorkspaceMemberId
                   id
                   noteId
                   opportunityId
@@ -118,12 +119,12 @@ const companyMocks = [
                   workflowId
                   workflowRunId
                   workflowVersionId
-                  workspaceMemberId
                 }
               }
             }
             id
             idealCustomerProfile
+            internalCompetitions
             introVideo {
               primaryLinkUrl
               primaryLinkLabel
@@ -345,7 +346,7 @@ describe('useSpreadsheetCompanyImport', () => {
           spreadsheetImportDialogState,
         );
         const {
-          openObjectRecordsSpreasheetImportDialog: openRecordSpreadsheetImport,
+          openObjectRecordsSpreadsheetImportDialog: openRecordSpreadsheetImport,
         } = useOpenObjectRecordsSpreadsheetImportDialog(
           CoreObjectNameSingular.Company,
         );

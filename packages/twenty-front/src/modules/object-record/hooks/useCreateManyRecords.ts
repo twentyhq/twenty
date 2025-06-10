@@ -6,7 +6,7 @@ import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effec
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { checkObjectMetadataItemHasFieldCreatedBy } from '@/object-metadata/utils/checkObjectMetadataItemHasFieldCreatedBy';
+import { hasObjectMetadataItemFieldCreatedBy } from '@/object-metadata/utils/hasObjectMetadataItemFieldCreatedBy';
 import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreateOneRecordInCache';
 import { deleteRecordFromCache } from '@/object-record/cache/utils/deleteRecordFromCache';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
@@ -14,6 +14,7 @@ import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNo
 import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useCreateManyRecordsMutation } from '@/object-record/hooks/useCreateManyRecordsMutation';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { FieldActorForInputValue } from '@/object-record/record-field/types/FieldMetadata';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -21,10 +22,14 @@ import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeO
 import { getCreateManyRecordsMutationResponseField } from '@/object-record/utils/getCreateManyRecordsMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 type PartialObjectRecordWithId = Partial<ObjectRecord> & {
   id: string;
+};
+
+type PartialObjectRecordWithOptionalId = Partial<ObjectRecord> & {
+  id?: string;
 };
 
 type useCreateManyRecordsProps = {
@@ -49,7 +54,7 @@ export const useCreateManyRecords = <
   });
 
   const objectMetadataHasCreatedByField =
-    checkObjectMetadataItemHasFieldCreatedBy(objectMetadataItem);
+    hasObjectMetadataItemFieldCreatedBy(objectMetadataItem);
 
   const computedRecordGqlFields =
     recordGqlFields ?? generateDepthOneRecordGqlFields({ objectMetadataItem });
@@ -66,7 +71,7 @@ export const useCreateManyRecords = <
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { objectMetadataItems } = useObjectMetadataItems();
-
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { refetchAggregateQueries } = useRefetchAggregateQueries({
     objectMetadataNamePlural: objectMetadataItem.namePlural,
   });
@@ -75,16 +80,20 @@ export const useCreateManyRecords = <
     recordsToCreate: Partial<CreatedObjectRecord>[],
     upsert?: boolean,
   ) => {
-    const sanitizedCreateManyRecordsInput: PartialObjectRecordWithId[] = [];
+    const sanitizedCreateManyRecordsInput: PartialObjectRecordWithOptionalId[] =
+      [];
     const recordOptimisticRecordsInput: PartialObjectRecordWithId[] = [];
     recordsToCreate.forEach((recordToCreate) => {
-      const idForCreation = recordToCreate?.id ?? v4();
+      const shouldDoOptimisticEffect = upsert !== true;
+      const idForCreation = shouldDoOptimisticEffect
+        ? (recordToCreate?.id ?? v4())
+        : undefined;
       const sanitizedRecord = {
         ...sanitizeRecordInput({
           objectMetadataItem,
           recordInput: recordToCreate,
         }),
-        id: idForCreation,
+        ...(isDefined(idForCreation) ? { id: idForCreation } : {}),
       };
       const baseOptimisticRecordInputCreatedBy:
         | { createdBy: FieldActorForInputValue }
@@ -96,22 +105,26 @@ export const useCreateManyRecords = <
             },
           }
         : undefined;
-      const optimisticRecordInput = {
-        ...computeOptimisticRecordFromInput({
-          cache: apolloClient.cache,
-          objectMetadataItem,
-          objectMetadataItems,
-          currentWorkspaceMember: currentWorkspaceMember,
-          recordInput: {
-            ...baseOptimisticRecordInputCreatedBy,
-            ...recordToCreate,
-          },
-        }),
-        id: idForCreation,
-      };
 
       sanitizedCreateManyRecordsInput.push(sanitizedRecord);
-      recordOptimisticRecordsInput.push(optimisticRecordInput);
+
+      if (shouldDoOptimisticEffect) {
+        const optimisticRecordInput = {
+          ...computeOptimisticRecordFromInput({
+            cache: apolloClient.cache,
+            objectMetadataItem,
+            objectMetadataItems,
+            currentWorkspaceMember: currentWorkspaceMember,
+            recordInput: {
+              ...baseOptimisticRecordInputCreatedBy,
+              ...recordToCreate,
+            },
+            objectPermissionsByObjectMetadataId,
+          }),
+          id: idForCreation as string,
+        };
+        recordOptimisticRecordsInput.push(optimisticRecordInput);
+      }
     });
 
     const recordsCreatedInCache = recordOptimisticRecordsInput
@@ -141,6 +154,7 @@ export const useCreateManyRecords = <
         recordsToCreate: recordNodeCreatedInCache,
         objectMetadataItems,
         shouldMatchRootQueryFilter,
+        objectPermissionsByObjectMetadataId,
       });
     }
 
@@ -167,6 +181,7 @@ export const useCreateManyRecords = <
             objectMetadataItems,
             shouldMatchRootQueryFilter,
             checkForRecordInCache: true,
+            objectPermissionsByObjectMetadataId,
           });
         },
       })

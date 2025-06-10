@@ -37,6 +37,11 @@ export function WorkspaceEntity(
       'workspace:duplicate-criteria-metadata-args',
       target,
     );
+    const isSearchable =
+      TypedReflect.getMetadata(
+        'workspace:is-searchable-metadata-args',
+        target,
+      ) ?? false;
 
     const objectName = convertClassNameToObjectMetadataName(target.name);
 
@@ -57,6 +62,7 @@ export function WorkspaceEntity(
       isSystem,
       gate,
       duplicateCriteria,
+      isSearchable,
     });
   };
 }

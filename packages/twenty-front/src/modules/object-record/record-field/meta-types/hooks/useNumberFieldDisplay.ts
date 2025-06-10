@@ -8,7 +8,7 @@ import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldNumber } from '../../types/guards/isFieldNumber';
 
 export const useNumberFieldDisplay = () => {
-  const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
+  const { recordId, fieldDefinition } = useContext(FieldContext);
 
   assertFieldMetadata(FieldMetadataType.NUMBER, isFieldNumber, fieldDefinition);
 
@@ -18,6 +18,5 @@ export const useNumberFieldDisplay = () => {
   return {
     fieldDefinition,
     fieldValue,
-    hotkeyScope,
   };
 };

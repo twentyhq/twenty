@@ -1,10 +1,11 @@
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
-import { IconTwentyStarFilled, THEME_COMMON, ThemeContext } from 'twenty-ui';
 
 import { useClearField } from '@/object-record/record-field/hooks/useClearField';
 import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
 import { FieldRatingValue } from '@/object-record/record-field/types/FieldMetadata';
+import { IconTwentyStarFilled } from 'twenty-ui/display';
+import { THEME_COMMON, ThemeContext } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   align-items: center;

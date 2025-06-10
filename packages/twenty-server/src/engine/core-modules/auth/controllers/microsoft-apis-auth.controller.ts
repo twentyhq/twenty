@@ -22,10 +22,11 @@ import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/micr
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { MicrosoftAPIsRequest } from 'src/engine/core-modules/auth/types/microsoft-api-request.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller('auth/microsoft-apis')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -33,7 +34,7 @@ export class MicrosoftAPIsAuthController {
   constructor(
     private readonly microsoftAPIsService: MicrosoftAPIsService,
     private readonly transientTokenService: TransientTokenService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly domainManagerService: DomainManagerService,
     private readonly onboardingService: OnboardingService,
     private readonly guardRedirectService: GuardRedirectService,
@@ -42,14 +43,14 @@ export class MicrosoftAPIsAuthController {
   ) {}
 
   @Get()
-  @UseGuards(MicrosoftAPIsOauthRequestCodeGuard)
+  @UseGuards(MicrosoftAPIsOauthRequestCodeGuard, PublicEndpointGuard)
   async MicrosoftAuth() {
     // As this method is protected by Microsoft Auth guard, it will trigger Microsoft SSO flow
     return;
   }
 
   @Get('get-access-token')
-  @UseGuards(MicrosoftAPIsOauthExchangeCodeForTokenGuard)
+  @UseGuards(MicrosoftAPIsOauthExchangeCodeForTokenGuard, PublicEndpointGuard)
   async MicrosoftAuthGetAccessToken(
     @Req() req: MicrosoftAPIsRequest,
     @Res() res: Response,
@@ -125,15 +126,16 @@ export class MicrosoftAPIsAuthController {
           })
           .toString(),
       );
-    } catch (err) {
+    } catch (error) {
       return res.redirect(
-        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
-          err,
-          workspace ?? {
-            subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
+          error,
+          workspace: workspace ?? {
+            subdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
             customDomain: null,
           },
-        ),
+          pathname: '/verify',
+        }),
       );
     }
   }

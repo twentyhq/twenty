@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkspaceActivationStatus } from 'twenty-shared';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';

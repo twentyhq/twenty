@@ -4,7 +4,6 @@ import { DateTime } from 'luxon';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
-import { Button, H2Title, IconRepeat, IconTrash, Section } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -22,8 +21,12 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { H2Title, IconRepeat, IconTrash } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -42,12 +45,13 @@ const StyledInputContainer = styled.div`
   width: 100%;
 `;
 
+const DELETE_API_KEY_MODAL_ID = 'delete-api-key-modal';
+const REGENERATE_API_KEY_MODAL_ID = 'regenerate-api-key-modal';
+
 export const SettingsDevelopersApiKeyDetail = () => {
   const { t } = useLingui();
   const { enqueueSnackBar } = useSnackBar();
-  const [isRegenerateKeyModalOpen, setIsRegenerateKeyModalOpen] =
-    useState(false);
-  const [isDeleteApiKeyModalOpen, setIsDeleteApiKeyModalOpen] = useState(false);
+  const { openModal } = useModal();
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigateSettings();
@@ -90,7 +94,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         updateOneRecordInput: { revokedAt: DateTime.now().toString() },
       });
       if (redirect) {
-        navigate(SettingsPath.Developers);
+        navigate(SettingsPath.APIs);
       }
     } catch (err) {
       enqueueSnackBar(t`Error deleting api key: ${err}`, {
@@ -139,7 +143,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
 
         if (isNonEmptyString(apiKey?.token)) {
           setApiKeyTokenCallback(apiKey.id, apiKey.token);
-          navigate(SettingsPath.DevelopersApiKeyDetail, {
+          navigate(SettingsPath.ApiKeyDetail, {
             apiKeyId: apiKey.id,
           });
         }
@@ -166,10 +170,10 @@ export const SettingsDevelopersApiKeyDetail = () => {
               href: getSettingsPath(SettingsPath.Workspace),
             },
             {
-              children: t`Developers`,
-              href: getSettingsPath(SettingsPath.Developers),
+              children: t`APIs`,
+              href: getSettingsPath(SettingsPath.APIs),
             },
-            { children: t`${apiKeyName} API Key` },
+            { children: t`${apiKeyName}` },
           ]}
         >
           <SettingsPageContainer>
@@ -192,7 +196,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
                     <Button
                       title={t`Regenerate Key`}
                       Icon={IconRepeat}
-                      onClick={() => setIsRegenerateKeyModalOpen(true)}
+                      onClick={() => openModal(REGENERATE_API_KEY_MODAL_ID)}
                     />
                     <StyledInfo>
                       {formatExpiration(
@@ -240,7 +244,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 variant="secondary"
                 title={t`Delete`}
                 Icon={IconTrash}
-                onClick={() => setIsDeleteApiKeyModalOpen(true)}
+                onClick={() => openModal(DELETE_API_KEY_MODAL_ID)}
               />
             </Section>
           </SettingsPageContainer>
@@ -249,8 +253,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
       <ConfirmationModal
         confirmationPlaceholder={confirmationValue}
         confirmationValue={confirmationValue}
-        isOpen={isDeleteApiKeyModalOpen}
-        setIsOpen={setIsDeleteApiKeyModalOpen}
+        modalId={DELETE_API_KEY_MODAL_ID}
         title={t`Delete API key`}
         subtitle={
           <Trans>
@@ -260,14 +263,13 @@ export const SettingsDevelopersApiKeyDetail = () => {
           </Trans>
         }
         onConfirmClick={deleteIntegration}
-        deleteButtonText="Delete"
+        confirmButtonText={t`Delete`}
         loading={isLoading}
       />
       <ConfirmationModal
         confirmationPlaceholder={confirmationValue}
         confirmationValue={confirmationValue}
-        isOpen={isRegenerateKeyModalOpen}
-        setIsOpen={setIsRegenerateKeyModalOpen}
+        modalId={REGENERATE_API_KEY_MODAL_ID}
         title={t`Regenerate an API key`}
         subtitle={
           <Trans>
@@ -277,7 +279,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
           </Trans>
         }
         onConfirmClick={regenerateApiKey}
-        deleteButtonText={t`Regenerate key`}
+        confirmButtonText={t`Regenerate key`}
         loading={isLoading}
       />
     </>

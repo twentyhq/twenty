@@ -30,10 +30,6 @@ jobs:
           yq eval '.services.server.build.dockerfile = "./packages/twenty-docker/twenty/Dockerfile"' -i docker-compose.yml
           yq eval '.services.server.restart = "no"' -i docker-compose.yml
 
-          yq eval 'del(.services.db.image)' -i docker-compose.yml
-          yq eval '.services.db.build.context = "../../"' -i docker-compose.yml
-          yq eval '.services.db.build.dockerfile = "./packages/twenty-docker/twenty-postgres-spilo/Dockerfile"' -i docker-compose.yml
-
           echo "Setting up .env file..."
           cp .env.example .env
           echo "Generating secrets..."
@@ -88,7 +84,7 @@ jobs:
         working-directory: ./packages/twenty-docker/
   ci-test-docker-compose-status-check:
     if: always() && !cancelled()
-    timeout-minutes: 1
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     needs: [changed-files-check, test]
     steps:

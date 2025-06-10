@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
+import { FieldMetadataType } from 'twenty-shared/types';
 import { EntitySchemaRelationOptions } from 'typeorm';
 
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { determineRelationDetails } from 'src/engine/twenty-orm/utils/determine-relation-details.util';
-import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { determineSchemaRelationDetails } from 'src/engine/twenty-orm/utils/determine-schema-relation-details.util';
+import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 type EntitySchemaRelationMap = {
   [key: string]: EntitySchemaRelationOptions;
@@ -24,30 +25,31 @@ export class EntitySchemaRelationFactory {
     const fieldMetadataCollection = Object.values(fieldMetadataMapByName);
 
     for (const fieldMetadata of fieldMetadataCollection) {
-      if (!isRelationFieldMetadataType(fieldMetadata.type)) {
+      if (
+        !isFieldMetadataInterfaceOfType(
+          fieldMetadata,
+          FieldMetadataType.RELATION,
+        )
+      ) {
         continue;
       }
 
-      const relationMetadata =
-        fieldMetadata.fromRelationMetadata ?? fieldMetadata.toRelationMetadata;
-
-      if (!relationMetadata) {
+      if (!fieldMetadata.settings) {
         throw new Error(
-          `Relation metadata is missing for field ${fieldMetadata.name}`,
+          `Field metadata settings are missing for field ${fieldMetadata.name}`,
         );
       }
 
-      const relationDetails = await determineRelationDetails(
+      const schemaRelationDetails = await determineSchemaRelationDetails(
         fieldMetadata,
-        relationMetadata,
         objectMetadataMaps,
       );
 
       entitySchemaRelationMap[fieldMetadata.name] = {
-        type: relationDetails.relationType,
-        target: relationDetails.target,
-        inverseSide: relationDetails.inverseSide,
-        joinColumn: relationDetails.joinColumn,
+        type: schemaRelationDetails.relationType,
+        target: schemaRelationDetails.target,
+        inverseSide: schemaRelationDetails.inverseSide,
+        joinColumn: schemaRelationDetails.joinColumn,
       } satisfies EntitySchemaRelationOptions;
     }
 

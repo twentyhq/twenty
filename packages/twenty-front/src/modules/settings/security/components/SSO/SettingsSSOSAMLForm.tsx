@@ -6,20 +6,21 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { ChangeEvent, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { isDefined } from 'twenty-shared';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { isDefined } from 'twenty-shared/utils';
+import { Button } from 'twenty-ui/input';
 import {
-  Button,
   H2Title,
   HorizontalSeparator,
   IconCheck,
   IconCopy,
   IconDownload,
   IconUpload,
-  Section,
-} from 'twenty-ui';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
+} from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 const StyledUploadFileContainer = styled.div`
   align-items: center;
@@ -51,12 +52,14 @@ const StyledLinkContainer = styled.div`
 const StyledButtonCopy = styled.div`
   align-items: end;
   display: flex;
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
 export const SettingsSSOSAMLForm = () => {
   const { enqueueSnackBar } = useSnackBar();
   const theme = useTheme();
   const { setValue, getValues, watch, trigger } = useFormContext();
+  const { t } = useLingui();
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (isDefined(e.target.files)) {
@@ -64,7 +67,7 @@ export const SettingsSSOSAMLForm = () => {
       const samlMetadataParsed = parseSAMLMetadataFromXMLFile(text);
       e.target.value = '';
       if (!samlMetadataParsed.success) {
-        return enqueueSnackBar('Invalid File', {
+        return enqueueSnackBar(t`Invalid File`, {
           variant: SnackBarVariant.Error,
           duration: 2000,
         });
@@ -100,7 +103,7 @@ export const SettingsSSOSAMLForm = () => {
       `${REACT_APP_SERVER_BASE_URL}/auth/saml/metadata/${getValues('id')}`,
     );
     if (!response.ok) {
-      return enqueueSnackBar('Metadata file generation failed', {
+      return enqueueSnackBar(t`Metadata file generation failed`, {
         variant: SnackBarVariant.Error,
         duration: 2000,
       });
@@ -120,8 +123,8 @@ export const SettingsSSOSAMLForm = () => {
     <>
       <Section>
         <H2Title
-          title="Identity Provider Metadata XML"
-          description="Upload the XML file with your connection infos"
+          title={t`Identity Provider Metadata XML`}
+          description={t`Upload the XML file with your connection infos`}
         />
         <StyledUploadFileContainer>
           <StyledFileInput
@@ -133,7 +136,8 @@ export const SettingsSSOSAMLForm = () => {
           <Button
             Icon={IconUpload}
             onClick={handleUploadFileClick}
-            title="Upload file"
+            title={t`Upload file`}
+            type="button"
           ></Button>
           {isXMLMetadataValid() && (
             <IconCheck
@@ -146,16 +150,17 @@ export const SettingsSSOSAMLForm = () => {
       </Section>
       <Section>
         <H2Title
-          title="Service Provider Details"
-          description="Enter the infos to set the connection"
+          title={t`Service Provider Details`}
+          description={t`Enter the infos to set the connection`}
         />
         <StyledInputsContainer>
           <StyledContainer>
             <Button
               Icon={IconDownload}
               onClick={downloadMetadata}
-              title="Download file"
-            ></Button>
+              title={t`Download file`}
+              type="button"
+            />
           </StyledContainer>
           <HorizontalSeparator text={'Or'} />
           <StyledContainer>
@@ -179,6 +184,7 @@ export const SettingsSSOSAMLForm = () => {
                   });
                   navigator.clipboard.writeText(acsUrl);
                 }}
+                type="button"
               />
             </StyledButtonCopy>
           </StyledContainer>
@@ -194,15 +200,16 @@ export const SettingsSSOSAMLForm = () => {
             <StyledButtonCopy>
               <Button
                 Icon={IconCopy}
-                title="Copy"
+                title={t`Copy`}
                 onClick={() => {
-                  enqueueSnackBar('Entity ID copied to clipboard', {
+                  enqueueSnackBar(t`Entity ID copied to clipboard`, {
                     variant: SnackBarVariant.Success,
                     icon: <IconCopy size={theme.icon.size.md} />,
                     duration: 2000,
                   });
                   navigator.clipboard.writeText(entityID);
                 }}
+                type="button"
               />
             </StyledButtonCopy>
           </StyledContainer>

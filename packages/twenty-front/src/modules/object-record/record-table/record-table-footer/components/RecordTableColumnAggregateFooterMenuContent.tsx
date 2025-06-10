@@ -1,18 +1,20 @@
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
 import { NON_STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/nonStandardAggregateOperationsOptions';
 import { useViewFieldAggregateOperation } from '@/object-record/record-table/record-table-footer/hooks/useViewFieldAggregateOperation';
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { t } from '@lingui/core/macro';
 import { useContext, useMemo } from 'react';
 import { Key } from 'ts-key-enum';
-import { isDefined, isFieldMetadataDateKind } from 'twenty-shared';
-import { IconCheck, MenuItem } from 'twenty-ui';
+import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
+import { IconCheck } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const RecordTableColumnAggregateFooterMenuContent = () => {
@@ -49,7 +51,7 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
   const nonStandardAvailableAggregateOperation =
     availableAggregateOperation.filter((aggregateOperation) =>
       NON_STANDARD_AGGREGATE_OPERATION_OPTIONS.includes(
-        aggregateOperation as AGGREGATE_OPERATIONS,
+        aggregateOperation as AggregateOperations,
       ),
     );
 
@@ -63,13 +65,13 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
   } = useViewFieldAggregateOperation();
 
   return (
-    <>
+    <DropdownContent>
       <DropdownMenuItemsContainer>
         <MenuItem
           onClick={() => {
             onContentChange('countAggregateOperationsOptions');
           }}
-          text={'Count'}
+          text={t`Count`}
           hasSubMenu
         />
         {!fieldIsRelation && (
@@ -77,7 +79,7 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
             onClick={() => {
               onContentChange('percentAggregateOperationsOptions');
             }}
-            text={'Percent'}
+            text={t`Percent`}
             hasSubMenu
           />
         )}
@@ -95,7 +97,7 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
             onClick={() => {
               onContentChange('moreAggregateOperationOptions');
             }}
-            text={'More options'}
+            text={t`More options`}
             hasSubMenu
           />
         ) : null}
@@ -106,7 +108,7 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
             resetContent();
             closeDropdown();
           }}
-          text={'None'}
+          text={t`None`}
           RightIcon={
             !isDefined(currentViewFieldAggregateOperation)
               ? IconCheck
@@ -115,6 +117,6 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
           aria-selected={!isDefined(currentViewFieldAggregateOperation)}
         />
       </DropdownMenuItemsContainer>
-    </>
+    </DropdownContent>
   );
 };

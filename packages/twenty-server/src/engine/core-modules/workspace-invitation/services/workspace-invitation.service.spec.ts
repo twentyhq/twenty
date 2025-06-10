@@ -7,15 +7,15 @@ import {
   AppToken,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationException } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { WorkspaceInvitationService } from './workspace-invitation.service';
 
@@ -26,7 +26,7 @@ describe('WorkspaceInvitationService', () => {
   let service: WorkspaceInvitationService;
   let appTokenRepository: Repository<AppToken>;
   let userWorkspaceRepository: Repository<UserWorkspace>;
-  let environmentService: EnvironmentService;
+  let twentyConfigService: TwentyConfigService;
   let emailService: EmailService;
   let onboardingService: OnboardingService;
 
@@ -55,7 +55,7 @@ describe('WorkspaceInvitationService', () => {
           },
         },
         {
-          provide: EnvironmentService,
+          provide: TwentyConfigService,
           useValue: {
             get: jest.fn(),
           },
@@ -94,7 +94,7 @@ describe('WorkspaceInvitationService', () => {
     userWorkspaceRepository = module.get<Repository<UserWorkspace>>(
       getRepositoryToken(UserWorkspace, 'core'),
     );
-    environmentService = module.get<EnvironmentService>(EnvironmentService);
+    twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
     emailService = module.get<EmailService>(EmailService);
     onboardingService = module.get<OnboardingService>(OnboardingService);
   });
@@ -156,7 +156,7 @@ describe('WorkspaceInvitationService', () => {
         type: AppTokenType.InvitationToken,
       } as AppToken);
       jest
-        .spyOn(environmentService, 'get')
+        .spyOn(twentyConfigService, 'get')
         .mockReturnValue('http://localhost:3000');
       jest.spyOn(emailService, 'send').mockResolvedValue({} as any);
       jest

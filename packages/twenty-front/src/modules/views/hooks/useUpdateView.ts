@@ -2,7 +2,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useUpdateView = () => {
   const { updateOneRecord } = useUpdateOneRecord({

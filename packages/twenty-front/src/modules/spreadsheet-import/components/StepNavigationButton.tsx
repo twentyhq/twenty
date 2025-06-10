@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 
-import { CircularProgressBar, MainButton } from 'twenty-ui';
-
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { CircularProgressBar } from 'twenty-ui/feedback';
+import { MainButton } from 'twenty-ui/input';
 
 const StyledFooter = styled(Modal.Footer)`
   gap: ${({ theme }) => theme.spacing(2.5)};

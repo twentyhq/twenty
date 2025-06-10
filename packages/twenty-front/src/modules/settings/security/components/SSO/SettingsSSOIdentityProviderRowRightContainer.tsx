@@ -3,9 +3,9 @@
 import { SettingsSecuritySSORowDropdownMenu } from '@/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 import { getColorBySSOIdentityProviderStatus } from '@/settings/security/utils/getColorBySSOIdentityProviderStatus';
-import { Status } from 'twenty-ui';
 import styled from '@emotion/styled';
 import { UnwrapRecoilValue } from 'recoil';
+import { Status } from 'twenty-ui/display';
 
 const StyledRowRightContainer = styled.div`
   align-items: center;

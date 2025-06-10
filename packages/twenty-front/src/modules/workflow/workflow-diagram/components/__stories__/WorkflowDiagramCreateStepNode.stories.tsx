@@ -2,8 +2,8 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { ComponentDecorator } from 'twenty-ui';
 import { WorkflowDiagramCreateStepNode } from '../WorkflowDiagramCreateStepNode';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof WorkflowDiagramCreateStepNode> = {
   title: 'Modules/Workflow/WorkflowDiagramCreateStepNode',

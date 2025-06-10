@@ -1,11 +1,12 @@
 import { Decorator } from '@storybook/react';
 import { useEffect, useState } from 'react';
 
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { isUndefined } from '@sniptt/guards';
-import { getCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
+import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
 
 export const ContextStoreDecorator: Decorator = (Story, context) => {
   const { contextStore } = context.parameters;
@@ -13,22 +14,22 @@ export const ContextStoreDecorator: Decorator = (Story, context) => {
   let componentInstanceId = contextStore?.componentInstanceId;
 
   if (isUndefined(componentInstanceId)) {
-    componentInstanceId = 'main-context-store';
+    componentInstanceId = MAIN_CONTEXT_STORE_INSTANCE_ID;
   }
 
-  const setCurrentObjectMetadataItem = useSetRecoilComponentStateV2(
-    contextStoreCurrentObjectMetadataItemComponentState,
+  const setCurrentObjectMetadataItemId = useSetRecoilComponentStateV2(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
     componentInstanceId,
   );
 
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const objectMetadataItem = getCompanyObjectMetadataItem();
+  const objectMetadataItem = getMockCompanyObjectMetadataItem();
 
   useEffect(() => {
-    setCurrentObjectMetadataItem(objectMetadataItem);
+    setCurrentObjectMetadataItemId(objectMetadataItem.id);
     setIsLoaded(true);
-  }, [setCurrentObjectMetadataItem, objectMetadataItem]);
+  }, [setCurrentObjectMetadataItemId, objectMetadataItem]);
 
   return (
     <ContextStoreComponentInstanceContext.Provider

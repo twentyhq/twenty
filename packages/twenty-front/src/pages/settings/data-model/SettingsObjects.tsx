@@ -24,14 +24,14 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
 import {
-  Button,
   H2Title,
   IconChevronRight,
   IconPlus,
   IconSearch,
-  Section,
-  UndecoratedLink,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
 import { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -52,21 +52,23 @@ export const SettingsObjects = () => {
   const { deleteOneObjectMetadataItem } = useDeleteOneObjectMetadataItem();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
 
-  const { activeObjectMetadataItems, inactiveObjectMetadataItems } =
-    useFilteredObjectMetadataItems();
+  const {
+    activeNonSystemObjectMetadataItems,
+    inactiveNonSystemObjectMetadataItems,
+  } = useFilteredObjectMetadataItems();
 
   const { totalCountByObjectMetadataItemNamePlural } = useCombinedGetTotalCount(
     {
       objectMetadataItems: [
-        ...activeObjectMetadataItems,
-        ...inactiveObjectMetadataItems,
+        ...activeNonSystemObjectMetadataItems,
+        ...inactiveNonSystemObjectMetadataItems,
       ],
     },
   );
 
   const activeObjectSettingsArray = useMemo(
     () =>
-      activeObjectMetadataItems.map(
+      activeNonSystemObjectMetadataItems.map(
         (objectMetadataItem) =>
           ({
             objectMetadataItem,
@@ -81,12 +83,15 @@ export const SettingsObjects = () => {
               ] ?? 0,
           }) satisfies SettingsObjectTableItem,
       ),
-    [activeObjectMetadataItems, totalCountByObjectMetadataItemNamePlural],
+    [
+      activeNonSystemObjectMetadataItems,
+      totalCountByObjectMetadataItemNamePlural,
+    ],
   );
 
   const inactiveObjectSettingsArray = useMemo(
     () =>
-      inactiveObjectMetadataItems.map(
+      inactiveNonSystemObjectMetadataItems.map(
         (objectMetadataItem) =>
           ({
             objectMetadataItem,
@@ -101,7 +106,10 @@ export const SettingsObjects = () => {
               ] ?? 0,
           }) satisfies SettingsObjectTableItem,
       ),
-    [inactiveObjectMetadataItems, totalCountByObjectMetadataItemNamePlural],
+    [
+      inactiveNonSystemObjectMetadataItems,
+      totalCountByObjectMetadataItemNamePlural,
+    ],
   );
 
   const sortedActiveObjectSettingsItems = useSortedArray(
@@ -211,7 +219,7 @@ export const SettingsObjects = () => {
                   )}
                 </TableSection>
               )}
-              {isNonEmptyArray(inactiveObjectMetadataItems) && (
+              {isNonEmptyArray(inactiveNonSystemObjectMetadataItems) && (
                 <TableSection title={t`Inactive`}>
                   {filteredInactiveObjectSettingsItems.map(
                     (objectSettingsItem) => (

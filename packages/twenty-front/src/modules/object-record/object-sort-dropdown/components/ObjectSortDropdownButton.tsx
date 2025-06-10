@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { IconChevronDown, MenuItem, useIcons } from 'twenty-ui';
 
 import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -10,9 +9,9 @@ import { useResetSortDropdown } from '@/object-record/object-sort-dropdown/hooks
 import { useToggleSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useToggleSortDropdown';
 import { isRecordSortDirectionDropdownMenuUnfoldedComponentState } from '@/object-record/object-sort-dropdown/states/isRecordSortDirectionDropdownMenuUnfoldedComponentState';
 import { objectSortDropdownSearchInputComponentState } from '@/object-record/object-sort-dropdown/states/objectSortDropdownSearchInputComponentState';
-import { onSortSelectComponentState } from '@/object-record/object-sort-dropdown/states/onSortSelectScopedState';
 import { selectedRecordSortDirectionComponentState } from '@/object-record/object-sort-dropdown/states/selectedRecordSortDirectionComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
 import {
   RECORD_SORT_DIRECTIONS,
   RecordSortDirection,
@@ -20,17 +19,25 @@ import {
 import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useTheme } from '@emotion/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
+import { IconChevronDown, useIcons } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 import { v4 } from 'uuid';
 
 export const StyledInput = styled.input`
@@ -66,6 +73,12 @@ const StyledSelectedSortDirectionContainer = styled.div`
   top: 32px;
   width: 100%;
   z-index: 1000;
+`;
+
+const StyledDropdownMenuHeaderEndComponent = styled.div`
+  padding: ${({ theme }) => theme.spacing(1)};
+  display: flex;
+  align-items: center;
 `;
 
 export type ObjectSortDropdownButtonProps = {
@@ -159,12 +172,12 @@ export const ObjectSortDropdownButton = ({
 
   const { closeSortDropdown } = useCloseSortDropdown();
 
-  const onSortSelect = useRecoilComponentValueV2(onSortSelectComponentState);
+  const { upsertRecordSort } = useUpsertRecordSort();
 
   const handleAddSort = (fieldMetadataItem: FieldMetadataItem) => {
     setObjectSortDropdownSearchInput('');
     closeSortDropdown();
-    onSortSelect?.({
+    upsertRecordSort({
       id: v4(),
       fieldMetadataId: fieldMetadataItem.id,
       direction: selectedRecordSortDirection,
@@ -187,6 +200,26 @@ export const ObjectSortDropdownButton = ({
 
   const { t } = useLingui();
 
+  const theme = useTheme();
+
+  const selectableItemIdArray = [
+    ...visibleFieldMetadataItems.map((item) => item.id),
+    ...hiddenFieldMetadataItems.map((item) => item.id),
+  ];
+
+  const selectedItemId = useRecoilComponentValueV2(
+    selectedItemIdComponentState,
+    OBJECT_SORT_DROPDOWN_ID,
+  );
+
+  const setSelectedItemId = useSetRecoilComponentStateV2(
+    selectedItemIdComponentState,
+    OBJECT_SORT_DROPDOWN_ID,
+  );
+
+  const shouldShowHiddenFields = hiddenFieldMetadataItems.length > 0;
+  const shouldShowVisibleFields = visibleFieldMetadataItems.length > 0;
+
   return (
     <Dropdown
       dropdownId={OBJECT_SORT_DROPDOWN_ID}
@@ -194,73 +227,119 @@ export const ObjectSortDropdownButton = ({
       dropdownOffset={{ y: 8 }}
       clickableComponent={
         <StyledHeaderDropdownButton
-          onClick={handleButtonClick}
+          onClick={() => {
+            handleButtonClick();
+            setSelectedItemId(selectableItemIdArray[0]);
+          }}
           isUnfolded={isDropdownOpen}
         >
           <Trans>Sort</Trans>
         </StyledHeaderDropdownButton>
       }
       dropdownComponents={
-        <>
-          {isRecordSortDirectionMenuUnfolded && (
-            <StyledSelectedSortDirectionContainer>
-              <DropdownMenuItemsContainer>
-                {RECORD_SORT_DIRECTIONS.map((sortDirection, index) => (
-                  <MenuItem
-                    key={index}
-                    onClick={() => handleSortDirectionClick(sortDirection)}
-                    text={
-                      sortDirection === 'asc' ? t`Ascending` : t`Descending`
-                    }
-                  />
-                ))}
-              </DropdownMenuItemsContainer>
-            </StyledSelectedSortDirectionContainer>
-          )}
-          <DropdownMenuHeader
-            EndIcon={IconChevronDown}
-            onClick={() =>
-              setIsRecordSortDirectionMenuUnfolded(
-                !isRecordSortDirectionMenuUnfolded,
-              )
-            }
+        <DropdownContent>
+          <SelectableList
+            selectableListInstanceId={OBJECT_SORT_DROPDOWN_ID}
+            hotkeyScope={hotkeyScope.scope}
+            selectableItemIdArray={selectableItemIdArray}
           >
-            {selectedRecordSortDirection === 'asc'
-              ? t`Ascending`
-              : t`Descending`}
-          </DropdownMenuHeader>
-          <StyledInput
-            autoFocus
-            value={objectSortDropdownSearchInput}
-            placeholder={t`Search fields`}
-            onChange={(event) =>
-              setObjectSortDropdownSearchInput(event.target.value)
-            }
-          />
-          <DropdownMenuItemsContainer>
-            {visibleFieldMetadataItems.map(
-              (visibleFieldMetadataItem, index) => (
-                <MenuItem
-                  testId={`visible-select-sort-${index}`}
-                  key={index}
-                  onClick={() => handleAddSort(visibleFieldMetadataItem)}
-                  LeftIcon={getIcon(visibleFieldMetadataItem.icon)}
-                  text={visibleFieldMetadataItem.label}
-                />
-              ),
+            {isRecordSortDirectionMenuUnfolded && (
+              <StyledSelectedSortDirectionContainer>
+                <DropdownMenuItemsContainer>
+                  {RECORD_SORT_DIRECTIONS.map((sortDirection, index) => (
+                    <MenuItem
+                      key={index}
+                      focused={selectedItemId === sortDirection}
+                      onClick={() => handleSortDirectionClick(sortDirection)}
+                      text={
+                        sortDirection === 'asc' ? t`Ascending` : t`Descending`
+                      }
+                    />
+                  ))}
+                </DropdownMenuItemsContainer>
+              </StyledSelectedSortDirectionContainer>
+            )}
+            <DropdownMenuHeader
+              onClick={() =>
+                setIsRecordSortDirectionMenuUnfolded(
+                  !isRecordSortDirectionMenuUnfolded,
+                )
+              }
+              EndComponent={
+                <StyledDropdownMenuHeaderEndComponent>
+                  <IconChevronDown size={theme.icon.size.md} />
+                </StyledDropdownMenuHeaderEndComponent>
+              }
+            >
+              {selectedRecordSortDirection === 'asc'
+                ? t`Ascending`
+                : t`Descending`}
+            </DropdownMenuHeader>
+            <StyledInput
+              autoFocus
+              value={objectSortDropdownSearchInput}
+              placeholder={t`Search fields`}
+              onChange={(event) =>
+                setObjectSortDropdownSearchInput(event.target.value)
+              }
+            />
+            {shouldShowVisibleFields && (
+              <>
+                <DropdownMenuSectionLabel label={t`Visible fields`} />
+                <DropdownMenuItemsContainer scrollWrapperHeightAuto>
+                  {visibleFieldMetadataItems.map(
+                    (visibleFieldMetadataItem, index) => (
+                      <SelectableListItem
+                        key={visibleFieldMetadataItem.id}
+                        itemId={visibleFieldMetadataItem.id}
+                        onEnter={() => handleAddSort(visibleFieldMetadataItem)}
+                      >
+                        <MenuItem
+                          focused={
+                            selectedItemId === visibleFieldMetadataItem.id
+                          }
+                          testId={`visible-select-sort-${index}`}
+                          onClick={() =>
+                            handleAddSort(visibleFieldMetadataItem)
+                          }
+                          LeftIcon={getIcon(visibleFieldMetadataItem.icon)}
+                          text={visibleFieldMetadataItem.label}
+                        />
+                      </SelectableListItem>
+                    ),
+                  )}
+                </DropdownMenuItemsContainer>
+              </>
             )}
             {shouldShowSeparator && <DropdownMenuSeparator />}
-            {hiddenFieldMetadataItems.map((hiddenFieldMetadataItem, index) => (
-              <MenuItem
-                testId={`hidden-select-sort-${index}`}
-                key={index}
-                onClick={() => handleAddSort(hiddenFieldMetadataItem)}
-                LeftIcon={getIcon(hiddenFieldMetadataItem.icon)}
-                text={hiddenFieldMetadataItem.label}
-              />
-            ))}
-          </DropdownMenuItemsContainer>
-        </>
+            {shouldShowHiddenFields && (
+              <>
+                <DropdownMenuSectionLabel label={t`Hidden fields`} />
+                <DropdownMenuItemsContainer scrollWrapperHeightAuto>
+                  {hiddenFieldMetadataItems.map(
+                    (hiddenFieldMetadataItem, index) => (
+                      <SelectableListItem
+                        key={hiddenFieldMetadataItem.id}
+                        itemId={hiddenFieldMetadataItem.id}
+                        onEnter={() => handleAddSort(hiddenFieldMetadataItem)}
+                      >
+                        <MenuItem
+                          focused={
+                            selectedItemId === hiddenFieldMetadataItem.id
+                          }
+                          testId={`hidden-select-sort-${index}`}
+                          onClick={() => handleAddSort(hiddenFieldMetadataItem)}
+                          LeftIcon={getIcon(hiddenFieldMetadataItem.icon)}
+                          text={hiddenFieldMetadataItem.label}
+                        />
+                      </SelectableListItem>
+                    ),
+                  )}
+                </DropdownMenuItemsContainer>
+              </>
+            )}
+          </SelectableList>
+        </DropdownContent>
       }
       onClose={handleDropdownButtonClose}
     />

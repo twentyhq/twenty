@@ -12,17 +12,17 @@ const StyledContainer = styled.div`
   overflow: auto;
 `;
 
-export const ObjectTasks = ({
-  targetableObject,
-}: {
+type ObjectTasksProps = {
   targetableObject: ActivityTargetableObject;
-}) => {
+};
+
+export const ObjectTasks = ({ targetableObject }: ObjectTasksProps) => {
   return (
     <StyledContainer>
       <ObjectFilterDropdownComponentInstanceContext.Provider
         value={{ instanceId: 'entity-tasks-filter-scope' }}
       >
-        <TaskGroups targetableObjects={[targetableObject]} />
+        <TaskGroups targetableObject={targetableObject} />
       </ObjectFilterDropdownComponentInstanceContext.Provider>
     </StyledContainer>
   );

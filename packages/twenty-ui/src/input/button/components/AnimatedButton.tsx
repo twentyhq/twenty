@@ -1,12 +1,17 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Pill } from '@ui/components/Pill/Pill';
 import { useIsMobile } from '@ui/utilities';
 import { getOsShortcutSeparator } from '@ui/utilities/device/getOsShortcutSeparator';
 import { MotionProps, motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
-import { ButtonAccent, ButtonProps, ButtonSize, ButtonVariant } from './Button';
+import { Pill } from '@ui/components/Pill/Pill';
+import {
+  ButtonAccent,
+  ButtonProps,
+  ButtonSize,
+  ButtonVariant,
+} from './Button/Button';
 
 export type AnimatedButtonProps = ButtonProps &
   Pick<MotionProps, 'animate' | 'transition'> & {
@@ -26,6 +31,8 @@ const StyledButton = styled.button<
     | 'justify'
     | 'to'
     | 'target'
+    | 'dataClickOutsideId'
+    | 'dataGloballyPreventClickOutside'
   >
 >`
   align-items: center;
@@ -399,6 +406,8 @@ export const AnimatedButton = ({
   ariaLabel,
   animate,
   transition,
+  dataClickOutsideId,
+  dataGloballyPreventClickOutside,
 }: AnimatedButtonProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -423,6 +432,8 @@ export const AnimatedButton = ({
       target={target}
       data-testid={dataTestId}
       aria-label={ariaLabel}
+      data-click-outside-id={dataClickOutsideId}
+      data-globally-prevent-click-outside={dataGloballyPreventClickOutside}
     >
       {Icon && (
         <StyledIconContainer animate={animate} transition={transition}>

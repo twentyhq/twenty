@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 const StyledLoaderContainer = styled.div<{
   color?: ThemeColor;
 }>`
+  box-sizing: border-box;
   justify-content: center;
   align-items: center;
   display: flex;

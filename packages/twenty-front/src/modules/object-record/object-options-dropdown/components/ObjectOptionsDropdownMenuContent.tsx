@@ -1,59 +1,44 @@
 import { Key } from 'ts-key-enum';
-import {
-  AppTooltip,
-  IconFileExport,
-  IconFileImport,
-  IconLayout,
-  IconLayoutList,
-  IconList,
-  IconRotate2,
-  IconTag,
-  MenuItem,
-  useIcons,
-} from 'twenty-ui';
 
-import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
-import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
-
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { ObjectOptionsDropdownMenuViewName } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuViewName';
+import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
-import {
-  displayedExportProgress,
-  useExportRecords,
-} from '@/object-record/record-index/export/hooks/useExportRecords';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
-import { useOpenObjectRecordsSpreadsheetImportDialog } from '@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { ViewType } from '@/views/types/ViewType';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { isDefined } from 'twenty-shared';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
+import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDeleteViewFromCurrentState';
+import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
+import { useTheme } from '@emotion/react';
+import { useLingui } from '@lingui/react/macro';
+import { capitalize, isDefined } from 'twenty-shared/utils';
+import {
+  AppTooltip,
+  IconCopy,
+  IconLayoutList,
+  IconListDetails,
+  IconTrash,
+} from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownMenuContent = () => {
-  const {
-    recordIndexId,
-    objectMetadataItem,
-    viewType,
-    onContentChange,
-    closeDropdown,
-  } = useOptionsDropdown();
+  const { t } = useLingui();
+  const { recordIndexId, objectMetadataItem, onContentChange, closeDropdown } =
+    useOptionsDropdown();
 
-  const { getIcon } = useIcons();
-  const { currentViewWithCombinedFiltersAndSorts: currentView } =
-    useGetCurrentView();
-
-  const CurrentViewIcon = currentView?.icon ? getIcon(currentView.icon) : null;
-
-  const { objectNamePlural } = useObjectNamePluralFromSingular({
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
+  const { currentView } = useGetCurrentViewOnly();
 
   const recordGroupFieldMetadata = useRecoilComponentValueV2(
     recordGroupFieldMetadataComponentState,
@@ -71,126 +56,176 @@ export const ObjectOptionsDropdownMenuContent = () => {
     TableOptionsHotkeyScope.Dropdown,
   );
 
-  const { handleToggleTrashColumnFilter, toggleSoftDeleteFilterState } =
-    useHandleToggleTrashColumnFilter({
-      objectNameSingular: objectMetadataItem.nameSingular,
-      viewBarId: recordIndexId,
-    });
-
   const { visibleBoardFields } = useObjectOptionsForBoard({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordBoardId: recordIndexId,
     viewBarId: recordIndexId,
   });
 
-  const { openObjectRecordsSpreasheetImportDialog } =
-    useOpenObjectRecordsSpreadsheetImportDialog(
-      objectMetadataItem.nameSingular,
-    );
+  const { deleteViewFromCurrentState } = useDeleteViewFromCurrentState();
+  const setViewPickerReferenceViewId = useSetRecoilComponentStateV2(
+    viewPickerReferenceViewIdComponentState,
+  );
+  const handleDelete = () => {
+    if (!currentView?.id) {
+      return;
+    }
+    setViewPickerReferenceViewId(currentView?.id);
+    deleteViewFromCurrentState();
+    closeDropdown();
+  };
 
-  const { progress, download } = useExportRecords({
-    delayMs: 100,
-    filename: `${objectMetadataItem.nameSingular}.csv`,
-    objectMetadataItem,
-    recordIndexId,
-    viewType,
-  });
+  const theme = useTheme();
+  const { enqueueSnackBar } = useSnackBar();
 
-  // TODO: Remove this once we have implemented Rich Text v2 and removed the old rich text
-  const canImportOrExport =
-    objectMetadataItem.nameSingular !== CoreObjectNameSingular.Note &&
-    objectMetadataItem.nameSingular !== CoreObjectNameSingular.Task;
+  const isDefaultView = currentView?.key === 'INDEX';
 
-  const isCommandMenuV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCommandMenuV2Enabled,
+  const selectableItemIdArray = [
+    'Layout',
+    'Fields',
+    ...(isDefaultView ? [] : ['Group']),
+    'Copy link to view',
+    ...(isDefaultView ? [] : ['Delete view']),
+  ];
+
+  const selectedItemId = useRecoilComponentValueV2(
+    selectedItemIdComponentState,
+    OBJECT_OPTIONS_DROPDOWN_ID,
   );
 
   return (
-    <>
-      <DropdownMenuHeader StartIcon={CurrentViewIcon ?? IconList}>
-        {currentView?.name}
-      </DropdownMenuHeader>
-
-      {(isCommandMenuV2Enabled || viewType === ViewType.Kanban) && (
-        <>
-          <DropdownMenuItemsContainer scrollable={false}>
+    <DropdownContent>
+      {currentView && (
+        <ObjectOptionsDropdownMenuViewName currentView={currentView} />
+      )}
+      <DropdownMenuSeparator />
+      <SelectableList
+        selectableListInstanceId={OBJECT_OPTIONS_DROPDOWN_ID}
+        hotkeyScope={TableOptionsHotkeyScope.Dropdown}
+        selectableItemIdArray={selectableItemIdArray}
+      >
+        <DropdownMenuItemsContainer scrollable={false}>
+          <SelectableListItem
+            itemId="Layout"
+            onEnter={() => onContentChange('layout')}
+          >
             <MenuItem
-              onClick={() => onContentChange('viewSettings')}
-              LeftIcon={IconLayout}
-              text="View settings"
+              focused={selectedItemId === 'Layout'}
+              onClick={() => onContentChange('layout')}
+              LeftIcon={viewTypeIconMapping(
+                currentView?.type ?? ViewType.Table,
+              )}
+              text={t`Layout`}
+              contextualText={`${capitalize(currentView?.type ?? '')}`}
               hasSubMenu
             />
-          </DropdownMenuItemsContainer>
+          </SelectableListItem>
+        </DropdownMenuItemsContainer>
+        <DropdownMenuSeparator />
+        <DropdownMenuItemsContainer scrollable={false}>
+          <SelectableListItem
+            itemId="Fields"
+            onEnter={() => onContentChange('fields')}
+          >
+            <MenuItem
+              focused={selectedItemId === 'Fields'}
+              onClick={() => onContentChange('fields')}
+              LeftIcon={IconListDetails}
+              text={t`Fields`}
+              contextualText={`${visibleBoardFields.length} shown`}
+              hasSubMenu
+            />
+          </SelectableListItem>
+          <div id="group-by-menu-item">
+            <SelectableListItem
+              itemId="Group"
+              onEnter={() =>
+                isDefined(recordGroupFieldMetadata)
+                  ? onContentChange('recordGroups')
+                  : onContentChange('recordGroupFields')
+              }
+            >
+              <MenuItem
+                focused={selectedItemId === 'Group'}
+                onClick={() =>
+                  isDefined(recordGroupFieldMetadata)
+                    ? onContentChange('recordGroups')
+                    : onContentChange('recordGroupFields')
+                }
+                LeftIcon={IconLayoutList}
+                text={t`Group`}
+                contextualText={
+                  isDefaultView
+                    ? t`Not available on Default View`
+                    : recordGroupFieldMetadata?.label
+                }
+                hasSubMenu
+                disabled={isDefaultView}
+              />
+            </SelectableListItem>
+          </div>
+          {!isGroupByEnabled && (
+            <AppTooltip
+              anchorSelect={`#group-by-menu-item`}
+              content={t`Not available on Default View`}
+              noArrow
+              place="bottom"
+              width="100%"
+            />
+          )}
           <DropdownMenuSeparator />
-        </>
-      )}
-
-      <DropdownMenuItemsContainer scrollable={false}>
-        <MenuItem
-          onClick={() => onContentChange('fields')}
-          LeftIcon={IconTag}
-          text="Fields"
-          contextualText={`${visibleBoardFields.length} shown`}
-          hasSubMenu
-        />
-
-        <div id="group-by-menu-item">
-          <MenuItem
-            onClick={() =>
-              isDefined(recordGroupFieldMetadata)
-                ? onContentChange('recordGroups')
-                : onContentChange('recordGroupFields')
-            }
-            LeftIcon={IconLayoutList}
-            text="Group by"
-            contextualText={
-              !isGroupByEnabled
-                ? 'Not available on Default View'
-                : recordGroupFieldMetadata?.label
-            }
-            hasSubMenu
-            disabled={!isGroupByEnabled}
-          />
-        </div>
-        {!isGroupByEnabled && (
-          <AppTooltip
-            anchorSelect={`#group-by-menu-item`}
-            content="Not available on Default View"
-            noArrow
-            place="bottom"
-            width="100%"
-          />
-        )}
-      </DropdownMenuItemsContainer>
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer>
-        {canImportOrExport && (
-          <>
+          <SelectableListItem
+            itemId="Copy link to view"
+            onEnter={() => {
+              const currentUrl = window.location.href;
+              navigator.clipboard.writeText(currentUrl);
+              enqueueSnackBar('Link copied to clipboard', {
+                variant: SnackBarVariant.Success,
+                icon: <IconCopy size={theme.icon.size.md} />,
+                duration: 2000,
+              });
+            }}
+          >
             <MenuItem
-              onClick={download}
-              LeftIcon={IconFileExport}
-              text={displayedExportProgress(progress)}
-            />
-            <MenuItem
+              focused={selectedItemId === 'Copy link to view'}
               onClick={() => {
-                closeDropdown();
-                openObjectRecordsSpreasheetImportDialog();
+                const currentUrl = window.location.href;
+                navigator.clipboard.writeText(currentUrl);
+                enqueueSnackBar('Link copied to clipboard', {
+                  variant: SnackBarVariant.Success,
+                  icon: <IconCopy size={theme.icon.size.md} />,
+                  duration: 2000,
+                });
               }}
-              LeftIcon={IconFileImport}
-              text="Import"
+              LeftIcon={IconCopy}
+              text={t`Copy link to view`}
             />
-          </>
-        )}
-        <MenuItem
-          onClick={() => {
-            handleToggleTrashColumnFilter();
-            toggleSoftDeleteFilterState(true);
-            closeDropdown();
-          }}
-          LeftIcon={IconRotate2}
-          text={`Deleted ${objectNamePlural}`}
-        />
-      </DropdownMenuItemsContainer>
-    </>
+          </SelectableListItem>
+          <div id="delete-view-menu-item">
+            <SelectableListItem
+              itemId="Delete view"
+              onEnter={() => handleDelete()}
+            >
+              <MenuItem
+                focused={selectedItemId === 'Delete view'}
+                onClick={() => handleDelete()}
+                LeftIcon={IconTrash}
+                text={t`Delete view`}
+                disabled={currentView?.key === 'INDEX'}
+              />
+            </SelectableListItem>
+          </div>
+          {currentView?.key === 'INDEX' && (
+            <AppTooltip
+              anchorSelect={`#delete-view-menu-item`}
+              content={t`Not available on Default View`}
+              noArrow
+              place="bottom"
+              width="100%"
+            />
+          )}
+        </DropdownMenuItemsContainer>
+      </SelectableList>
+    </DropdownContent>
   );
 };

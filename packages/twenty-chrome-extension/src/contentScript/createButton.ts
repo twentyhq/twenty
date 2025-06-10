@@ -1,5 +1,4 @@
-import { isDefined } from 'twenty-shared';
-
+import { isDefined } from 'twenty-shared/utils';
 interface CustomDiv extends HTMLDivElement {
   onClickHandler: (newHandler: () => void) => void;
 }

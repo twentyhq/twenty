@@ -1,3 +1,4 @@
+import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 
@@ -14,7 +15,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/SettingsWorkspaceMembers',
   component: SettingsWorkspaceMembers,
   decorators: [PageDecorator],
-  args: { routePath: '/settings/workspace-members' },
+  args: { routePath: '/settings/members' },
   parameters: {
     msw: graphqlMocks,
   },
@@ -30,6 +31,10 @@ export const Default: Story = {
 
     await sleep(1000);
 
-    await canvas.getByRole('button', { name: 'Copy link' });
+    const buttons = await canvas.getAllByRole('button');
+
+    expect(
+      buttons.findIndex((button) => button.outerHTML.includes('Copy link')),
+    ).toBeGreaterThan(-1);
   },
 };

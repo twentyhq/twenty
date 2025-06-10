@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { capitalize } from 'twenty-shared';
+import { capitalize } from 'twenty-shared/utils';
 
 type CreateOneOperationFactoryParams = {
   objectMetadataSingularName: string;
@@ -13,13 +13,13 @@ export const createOneOperationFactory = ({
   data = {},
 }: CreateOneOperationFactoryParams) => ({
   query: gql`
-    mutation Create${capitalize(objectMetadataSingularName)}($data: ${capitalize(objectMetadataSingularName)}CreateInput) {
-    create${capitalize(objectMetadataSingularName)}(data: $data) {
+    mutation CreateOne${capitalize(objectMetadataSingularName)}($input: ${capitalize(objectMetadataSingularName)}CreateInput!) {
+    create${capitalize(objectMetadataSingularName)}(data: $input) {
       ${gqlFields}
     }
   }
   `,
   variables: {
-    data,
+    input: data,
   },
 });

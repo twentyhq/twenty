@@ -22,10 +22,11 @@ import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { GoogleAPIsRequest } from 'src/engine/core-modules/auth/types/google-api-request.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller('auth/google-apis')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -33,7 +34,7 @@ export class GoogleAPIsAuthController {
   constructor(
     private readonly googleAPIsService: GoogleAPIsService,
     private readonly transientTokenService: TransientTokenService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly onboardingService: OnboardingService,
     private readonly domainManagerService: DomainManagerService,
     private readonly guardRedirectService: GuardRedirectService,
@@ -42,14 +43,14 @@ export class GoogleAPIsAuthController {
   ) {}
 
   @Get()
-  @UseGuards(GoogleAPIsOauthRequestCodeGuard)
+  @UseGuards(GoogleAPIsOauthRequestCodeGuard, PublicEndpointGuard)
   async googleAuth() {
     // As this method is protected by Google Auth guard, it will trigger Google SSO flow
     return;
   }
 
   @Get('get-access-token')
-  @UseGuards(GoogleAPIsOauthExchangeCodeForTokenGuard)
+  @UseGuards(GoogleAPIsOauthExchangeCodeForTokenGuard, PublicEndpointGuard)
   async googleAuthGetAccessToken(
     @Req() req: GoogleAPIsRequest,
     @Res() res: Response,
@@ -118,15 +119,16 @@ export class GoogleAPIsAuthController {
           })
           .toString(),
       );
-    } catch (err) {
+    } catch (error) {
       return res.redirect(
-        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
-          err,
-          workspace ?? {
-            subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
+          error,
+          workspace: workspace ?? {
+            subdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
             customDomain: null,
           },
-        ),
+          pathname: '/settings/accounts',
+        }),
       );
     }
   }

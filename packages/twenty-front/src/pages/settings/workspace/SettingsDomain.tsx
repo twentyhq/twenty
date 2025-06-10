@@ -1,31 +1,31 @@
-import { ApolloError } from '@apollo/client';
 import {
   CurrentWorkspace,
   currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
-import { useRecoilState } from 'recoil';
+import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import {
-  FeatureFlagKey,
-  useUpdateWorkspaceMutation,
-} from '~/generated/graphql';
-import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { ApolloError } from '@apollo/client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
+import { z } from 'zod';
+import { useUpdateWorkspaceMutation } from '~/generated/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsCustomDomain } from '~/pages/settings/workspace/SettingsCustomDomain';
 import { SettingsSubdomain } from '~/pages/settings/workspace/SettingsSubdomain';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { Trans, useLingui } from '@lingui/react/macro';
-import { z } from 'zod';
-import { FormProvider, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { SettingsPath } from '@/types/SettingsPath';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsCustomDomainEffect } from '~/pages/settings/workspace/SettingsCustomDomainEffect';
-import { isDefined } from 'twenty-shared';
+
+export const SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID =
+  'subdomain-change-confirmation-modal';
 
 export const SettingsDomain = () => {
   const navigate = useNavigateSettings();
@@ -43,6 +43,12 @@ export const SettingsDomain = () => {
       customDomain: z
         .string()
         .regex(
+          /^([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z0-9][a-zA-Z0-9-]*\.[a-zA-Z]{2,}$/,
+          {
+            message: t`Invalid custom domain. Please include at least one subdomain (e.g., sub.example.com).`,
+          },
+        )
+        .regex(
           /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/,
           {
             message: t`Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~\`!@#$%^*()=+{}[]|\\;:'",<>/? and cannot begin or end with a '-' character.`,
@@ -58,19 +64,17 @@ export const SettingsDomain = () => {
   const [updateWorkspace] = useUpdateWorkspaceMutation();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
-  const isCustomDomainEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCustomDomainEnabled,
-  );
-
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
+
+  const { openModal } = useModal();
 
   const form = useForm<{
     subdomain: string;
     customDomain: string | null;
   }>({
-    mode: 'onChange',
+    mode: 'onSubmit',
     delayError: 500,
     defaultValues: {
       subdomain: currentWorkspace?.subdomain ?? '',
@@ -100,6 +104,9 @@ export const SettingsDomain = () => {
           ...currentWorkspace,
           customDomain:
             customDomain && customDomain.length > 0 ? customDomain : null,
+        });
+        enqueueSnackBar(t`Custom domain updated`, {
+          variant: SnackBarVariant.Success,
         });
       },
       onError: (error) => {
@@ -143,7 +150,7 @@ export const SettingsDomain = () => {
           variant: SnackBarVariant.Error,
         });
       },
-      onCompleted: () => {
+      onCompleted: async () => {
         const currentUrl = new URL(window.location.href);
 
         currentUrl.hostname = new URL(
@@ -155,7 +162,11 @@ export const SettingsDomain = () => {
           subdomain,
         });
 
-        redirectToWorkspaceDomain(currentUrl.toString());
+        enqueueSnackBar(t`Subdomain updated`, {
+          variant: SnackBarVariant.Success,
+        });
+
+        await redirectToWorkspaceDomain(currentUrl.toString());
       },
     });
   };
@@ -163,7 +174,16 @@ export const SettingsDomain = () => {
   const handleSave = async () => {
     const values = form.getValues();
 
-    if (!values || !form.formState.isValid || !currentWorkspace) {
+    if (
+      subdomainValue === currentWorkspace?.subdomain &&
+      customDomainValue === currentWorkspace?.customDomain
+    ) {
+      return enqueueSnackBar(t`No change detected`, {
+        variant: SnackBarVariant.Error,
+      });
+    }
+
+    if (!values || !currentWorkspace) {
       return enqueueSnackBar(t`Invalid form values`, {
         variant: SnackBarVariant.Error,
       });
@@ -173,7 +193,8 @@ export const SettingsDomain = () => {
       isDefined(values.subdomain) &&
       values.subdomain !== currentWorkspace.subdomain
     ) {
-      return updateSubdomain(values.subdomain, currentWorkspace);
+      openModal(SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID);
+      return;
     }
 
     if (values.customDomain !== currentWorkspace.customDomain) {
@@ -182,43 +203,45 @@ export const SettingsDomain = () => {
   };
 
   return (
-    <SubMenuTopBarContainer
-      title={t`Domain`}
-      links={[
-        {
-          children: <Trans>Workspace</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
-        },
-        {
-          children: <Trans>General</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
-        },
-        { children: <Trans>Domain</Trans> },
-      ]}
-      actionButton={
-        <SaveAndCancelButtons
-          isSaveDisabled={
-            !form.formState.isValid ||
-            (subdomainValue === currentWorkspace?.subdomain &&
-              customDomainValue === currentWorkspace?.customDomain)
+    <form onSubmit={form.handleSubmit(handleSave)}>
+      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+      <FormProvider {...form}>
+        <SubMenuTopBarContainer
+          title={t`Domain`}
+          links={[
+            {
+              children: <Trans>Workspace</Trans>,
+              href: getSettingsPath(SettingsPath.Workspace),
+            },
+            {
+              children: <Trans>General</Trans>,
+              href: getSettingsPath(SettingsPath.Workspace),
+            },
+            { children: <Trans>Domain</Trans> },
+          ]}
+          actionButton={
+            <SaveAndCancelButtons
+              onCancel={() => navigate(SettingsPath.Workspace)}
+              isSaveDisabled={form.formState.isSubmitting}
+            />
           }
-          onCancel={() => navigate(SettingsPath.Workspace)}
-          onSave={handleSave}
+        >
+          <SettingsPageContainer>
+            <SettingsSubdomain />
+            <SettingsCustomDomain />
+          </SettingsPageContainer>
+        </SubMenuTopBarContainer>
+        <ConfirmationModal
+          modalId={SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID}
+          title={t`Change subdomain?`}
+          subtitle={t`You're about to change your workspace subdomain. This action will log out all users.`}
+          onConfirmClick={() => {
+            const values = form.getValues();
+            currentWorkspace &&
+              updateSubdomain(values.subdomain, currentWorkspace);
+          }}
         />
-      }
-    >
-      <SettingsPageContainer>
-        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-        <FormProvider {...form}>
-          <SettingsSubdomain />
-          {isCustomDomainEnabled && (
-            <>
-              <SettingsCustomDomainEffect />
-              <SettingsCustomDomain />
-            </>
-          )}
-        </FormProvider>
-      </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+      </FormProvider>
+    </form>
   );
 };

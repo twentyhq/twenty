@@ -51,18 +51,4 @@ describe('useDropdown', () => {
 
     expect(result.current.isDropdownOpen).toBe(false);
   });
-
-  it('should change dropdownWidth', async () => {
-    const { result } = renderHook(() => useDropdown(dropdownId), {
-      wrapper: Wrapper,
-    });
-
-    expect(result.current.dropdownWidth).toBe(200);
-
-    await act(async () => {
-      result.current.setDropdownWidth(220);
-    });
-
-    expect(result.current.dropdownWidth).toEqual(220);
-  });
 });

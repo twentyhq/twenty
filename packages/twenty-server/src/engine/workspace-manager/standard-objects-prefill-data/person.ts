@@ -1,21 +1,22 @@
-import { EntityManager } from 'typeorm';
-
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import {
   AIRBNB_ID,
+  ANTHROPIC_ID,
   FIGMA_ID,
   NOTION_ID,
-  QONTO_ID,
   STRIPE_ID,
 } from 'src/engine/workspace-manager/standard-objects-prefill-data/company';
 
 // FixMe: Is this file a duplicate of src/database/typeorm-seeds/workspace/people.ts
 export const personPrefillData = async (
-  entityManager: EntityManager,
+  entityManager: WorkspaceEntityManager,
   schemaName: string,
 ) => {
   await entityManager
-    .createQueryBuilder()
+    .createQueryBuilder(undefined, undefined, undefined, {
+      shouldBypassPermissionChecks: true,
+    })
     .insert()
     .into(`${schemaName}.person`, [
       'nameFirstName',
@@ -49,19 +50,19 @@ export const personPrefillData = async (
         companyId: AIRBNB_ID,
       },
       {
-        nameFirstName: 'Alexandre',
-        nameLastName: 'Prot',
-        city: 'Paris',
-        emailsPrimaryEmail: 'prot@qonto.com',
+        nameFirstName: 'Dario',
+        nameLastName: 'Amodei',
+        city: 'San Francisco',
+        emailsPrimaryEmail: 'amodei@anthropic.com',
         avatarUrl:
           'https://twentyhq.github.io/placeholder-images/people/image-89.png',
         position: 2,
         createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
-        phonesPrimaryPhoneNumber: '677118822',
-        phonesPrimaryPhoneCountryCode: '+33',
-        companyId: QONTO_ID,
+        phonesPrimaryPhoneNumber: '5551234567',
+        phonesPrimaryPhoneCountryCode: '+1',
+        companyId: ANTHROPIC_ID,
       },
       {
         nameFirstName: 'Patrick',

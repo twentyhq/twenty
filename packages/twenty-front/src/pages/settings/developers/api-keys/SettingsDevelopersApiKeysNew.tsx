@@ -1,6 +1,5 @@
 import { DateTime } from 'luxon';
 import { useState } from 'react';
-import { H2Title, Section } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -16,7 +15,9 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
+import { H2Title } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -71,7 +72,7 @@ export const SettingsDevelopersApiKeysNew = () => {
         newApiKey.id,
         tokenData.data.generateApiKeyToken.token,
       );
-      navigateSettings(SettingsPath.DevelopersApiKeyDetail, {
+      navigateSettings(SettingsPath.ApiKeyDetail, {
         apiKeyId: newApiKey.id,
       });
     }
@@ -86,8 +87,8 @@ export const SettingsDevelopersApiKeysNew = () => {
           href: getSettingsPath(SettingsPath.Workspace),
         },
         {
-          children: t`Developers`,
-          href: getSettingsPath(SettingsPath.Developers),
+          children: t`APIs`,
+          href: getSettingsPath(SettingsPath.APIs),
         },
         { children: t`New Key` },
       ]}
@@ -95,7 +96,7 @@ export const SettingsDevelopersApiKeysNew = () => {
         <SaveAndCancelButtons
           isSaveDisabled={!canSave}
           onCancel={() => {
-            navigateSettings(SettingsPath.Developers);
+            navigateSettings(SettingsPath.APIs);
           }}
           onSave={handleSave}
         />

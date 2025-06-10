@@ -7,8 +7,10 @@ import { Separator } from '@/settings/components/Separator';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { Select } from '@/ui/input/components/Select';
-import { IconDecimal, IconEye, IconNumber9, IconPercentage } from 'twenty-ui';
+import { useLingui } from '@lingui/react/macro';
+import { IconDecimal, IconEye } from 'twenty-ui/display';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/number';
+import { NUMBER_DATA_MODEL_SELECT_OPTIONS } from '@/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions';
 
 export const settingsDataModelFieldNumberFormSchema = z.object({
   settings: numberFieldDefaultValueSchema,
@@ -30,6 +32,7 @@ export const SettingsDataModelFieldNumberForm = ({
   disabled,
   fieldMetadataItem,
 }: SettingsDataModelFieldNumberFormProps) => {
+  const { t } = useLingui();
   const { control } = useFormContext<SettingsDataModelFieldNumberFormValues>();
 
   return (
@@ -49,8 +52,8 @@ export const SettingsDataModelFieldNumberForm = ({
           <>
             <SettingsOptionCardContentSelect
               Icon={IconEye}
-              title="Number type"
-              description="Display as a plain number or a percentage"
+              title={t`Number type`}
+              description={t`Display as a plain number or a percentage`}
             >
               <Select<string>
                 selectSizeVariant="small"
@@ -60,24 +63,16 @@ export const SettingsDataModelFieldNumberForm = ({
                 onChange={(value) => onChange({ type: value, decimals: count })}
                 disabled={disabled}
                 needIconCheck={false}
-                options={[
-                  {
-                    Icon: IconNumber9,
-                    label: 'Number',
-                    value: 'number',
-                  },
-                  {
-                    Icon: IconPercentage,
-                    label: 'Percentage',
-                    value: 'percentage',
-                  },
-                ]}
+                options={NUMBER_DATA_MODEL_SELECT_OPTIONS.map((option) => ({
+                  ...option,
+                  label: t(option.label),
+                }))}
               />
             </SettingsOptionCardContentSelect>
             <Separator />
             <SettingsOptionCardContentCounter
               Icon={IconDecimal}
-              title="Number of decimals"
+              title={t`Number of decimals`}
               description={`E.g. ${(type === 'percentage' ? 99 : 1000).toFixed(count)}${type === 'percentage' ? '%' : ''} for ${count} decimal${count > 1 ? 's' : ''}`}
               value={count}
               onChange={(value) => onChange({ type: type, decimals: value })}

@@ -13,14 +13,10 @@ Good first issues are a great way to start contributing and get familiar with th
 
 ## Issue assignment
 
-Having multiple contributors address the same issue can cause frustration.
-
 To avoid conflicts, we follow these guidelines:
-1. If a core team member assigned you the issue within the last three days, your PR takes priority.
-2. Otherwise, the first submitted PR is prioritized.
-3. For "size: long" PRs, the assignment period extends to one week.
 
-Please ensure you're assigned to an issue before starting work.
+1. For `Good First Issue` and `Experienced Contributor` issues without `size: long` labels, we'll merge the first PRs that meet our [code quality standards](https://twenty.com/developers). **We don't assign contributors to these issues**. For `priority: high` issues, our core team will step in within days if no adequate contributions are received.
+2. For `size: long` Issues, assigned contributors have one week to submit their first draft PR.
 
 ## How to Contribute
 

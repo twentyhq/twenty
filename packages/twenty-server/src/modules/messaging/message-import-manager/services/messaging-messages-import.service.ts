@@ -8,8 +8,8 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
-import { RefreshAccessTokenExceptionCode } from 'src/modules/connected-account/refresh-access-token-manager/exceptions/refresh-access-token.exception';
-import { RefreshAccessTokenService } from 'src/modules/connected-account/refresh-access-token-manager/services/refresh-access-token.service';
+import { ConnectedAccountRefreshAccessTokenExceptionCode } from 'src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception';
+import { ConnectedAccountRefreshTokensService } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
@@ -19,15 +19,14 @@ import {
 import { MessageImportDriverExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-get-batch-size.constant';
 import { MessageImportExceptionCode } from 'src/modules/messaging/message-import-manager/exceptions/message-import.exception';
+import { MessagingGetMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-get-messages.service';
 import {
   MessageImportExceptionHandlerService,
   MessageImportSyncStep,
-} from 'src/modules/messaging/message-import-manager/services/message-import-exception-handler.service';
-import { MessagingGetMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-get-messages.service';
+} from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { filterEmails } from 'src/modules/messaging/message-import-manager/utils/filter-emails.util';
-import { MessagingTelemetryService } from 'src/modules/messaging/monitoring/services/messaging-telemetry.service';
-
+import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
 @Injectable()
 export class MessagingMessagesImportService {
   private readonly logger = new Logger(MessagingMessagesImportService.name);
@@ -37,8 +36,8 @@ export class MessagingMessagesImportService {
     private readonly cacheStorage: CacheStorageService,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly saveMessagesAndEnqueueContactCreationService: MessagingSaveMessagesAndEnqueueContactCreationService,
-    private readonly refreshAccessTokenService: RefreshAccessTokenService,
-    private readonly messagingTelemetryService: MessagingTelemetryService,
+    private readonly connectedAccountRefreshTokensService: ConnectedAccountRefreshTokensService,
+    private readonly messagingMonitoringService: MessagingMonitoringService,
     @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
     private readonly emailAliasManagerService: EmailAliasManagerService,
@@ -62,16 +61,12 @@ export class MessagingMessagesImportService {
         return;
       }
 
-      await this.messagingTelemetryService.track({
+      await this.messagingMonitoringService.track({
         eventName: 'messages_import.started',
         workspaceId,
         connectedAccountId: messageChannel.connectedAccountId,
         messageChannelId: messageChannel.id,
       });
-
-      this.logger.log(
-        `Messaging import for workspace ${workspaceId} and account ${connectedAccount.id} starting...`,
-      );
 
       await this.messageChannelSyncStatusService.markAsMessagesImportOngoing([
         messageChannel.id,
@@ -79,15 +74,15 @@ export class MessagingMessagesImportService {
 
       try {
         connectedAccount.accessToken =
-          await this.refreshAccessTokenService.refreshAndSaveAccessToken(
+          await this.connectedAccountRefreshTokensService.refreshAndSaveTokens(
             connectedAccount,
             workspaceId,
           );
       } catch (error) {
         switch (error.code) {
-          case RefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED:
-          case RefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
-            await this.messagingTelemetryService.track({
+          case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED:
+          case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
+            await this.messagingMonitoringService.track({
               eventName: `refresh_token.error.insufficient_permissions`,
               workspaceId,
               connectedAccountId: messageChannel.connectedAccountId,
@@ -98,12 +93,16 @@ export class MessagingMessagesImportService {
               code: MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
               message: error.message,
             };
-          case RefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED:
+          case ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED:
             throw {
               code: MessageImportExceptionCode.PROVIDER_NOT_SUPPORTED,
               message: error.message,
             };
           default:
+            this.logger.error(
+              `Error (${error.code}) refreshing access token for account ${connectedAccount.id}`,
+            );
+            this.logger.log(error);
             throw error;
         }
       }
@@ -131,7 +130,6 @@ export class MessagingMessagesImportService {
       const allMessages = await this.messagingGetMessagesService.getMessages(
         messageIdsToFetch,
         connectedAccount,
-        workspaceId,
       );
 
       const blocklist = await this.blocklistRepository.getByWorkspaceMemberId(
@@ -146,7 +144,7 @@ export class MessagingMessagesImportService {
         blocklist.map((blocklistItem) => blocklistItem.handle),
       );
 
-      await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreationJob(
+      await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreation(
         messagesToSave,
         messageChannel,
         connectedAccount,
@@ -185,6 +183,10 @@ export class MessagingMessagesImportService {
         workspaceId,
       );
     } catch (error) {
+      // TODO: remove this log once we catch better the error codes
+      this.logger.error(
+        `Error (${error.code}) importing messages for workspace ${workspaceId.slice(0, 8)} and account ${connectedAccount.id.slice(0, 8)}: ${error.message} - ${error.body}`,
+      );
       await this.cacheStorage.setAdd(
         `messages-to-import:${workspaceId}:${messageChannel.id}`,
         messageIdsToFetch,
@@ -192,7 +194,7 @@ export class MessagingMessagesImportService {
 
       await this.messageImportErrorHandlerService.handleDriverException(
         error,
-        MessageImportSyncStep.MESSAGES_IMPORT,
+        MessageImportSyncStep.MESSAGES_IMPORT_ONGOING,
         messageChannel,
         workspaceId,
       );
@@ -208,7 +210,7 @@ export class MessagingMessagesImportService {
     messageChannel: MessageChannelWorkspaceEntity,
     workspaceId: string,
   ) {
-    await this.messagingTelemetryService.track({
+    await this.messagingMonitoringService.track({
       eventName: 'messages_import.completed',
       workspaceId,
       connectedAccountId: messageChannel.connectedAccountId,

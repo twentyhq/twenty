@@ -1,9 +1,7 @@
 import styled from '@emotion/styled';
-import {
-  AnimatedContainer,
-  FloatingIconButton,
-  IconComponent,
-} from 'twenty-ui';
+import { AnimatedContainer } from 'twenty-ui/utilities';
+import { FloatingIconButton } from 'twenty-ui/input';
+import { IconComponent } from 'twenty-ui/display';
 
 const StyledInlineCellButtonContainer = styled.div`
   align-items: center;

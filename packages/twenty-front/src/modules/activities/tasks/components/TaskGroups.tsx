@@ -1,25 +1,26 @@
 import styled from '@emotion/styled';
+
+import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
+import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
+import { useTasks } from '@/activities/tasks/hooks/useTasks';
+import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { Task } from '@/activities/types/Task';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import groupBy from 'lodash.groupby';
+import { IconPlus } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-  Button,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-  IconPlus,
-} from 'twenty-ui';
-
-import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
-import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
-import { TASKS_TAB_LIST_COMPONENT_ID } from '@/activities/tasks/constants/TasksTabListComponentId';
-import { useTasks } from '@/activities/tasks/hooks/useTasks';
-import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { Task } from '@/activities/types/Task';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
-import groupBy from 'lodash.groupby';
+} from 'twenty-ui/layout';
 import { AddTaskButton } from './AddTaskButton';
 import { TaskList } from './TaskList';
 
@@ -31,21 +32,29 @@ const StyledContainer = styled.div`
 
 type TaskGroupsProps = {
   filterDropdownId?: string;
-  targetableObjects?: ActivityTargetableObject[];
+  targetableObject: ActivityTargetableObject;
 };
 
-export const TaskGroups = ({ targetableObjects }: TaskGroupsProps) => {
+export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
   const { tasks, tasksLoading } = useTasks({
-    targetableObjects: targetableObjects ?? [],
+    targetableObjects: [targetableObject],
   });
 
-  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: targetableObject.targetObjectNameSingular,
+  });
+
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
+
+  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
   const openCreateActivity = useOpenCreateActivityDrawer({
     activityObjectNameSingular: CoreObjectNameSingular.Task,
   });
 
-  const { activeTabId } = useTabList(TASKS_TAB_LIST_COMPONENT_ID);
+  const activeTabId = useRecoilComponentValueV2(activeTabIdComponentState);
 
   const isLoading =
     (activeTabId !== 'done' && tasksLoading) ||
@@ -74,14 +83,14 @@ export const TaskGroups = ({ targetableObjects }: TaskGroupsProps) => {
             All tasks addressed. Maintain the momentum.
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
-        {!hasObjectReadOnlyPermission && (
+        {hasObjectUpdatePermissions && (
           <Button
             Icon={IconPlus}
             title="New task"
             variant={'secondary'}
             onClick={() =>
               openCreateActivity({
-                targetableObjects: targetableObjects ?? [],
+                targetableObjects: [targetableObject],
               })
             }
           />
@@ -107,7 +116,7 @@ export const TaskGroups = ({ targetableObjects }: TaskGroupsProps) => {
           tasks={tasksByStatus}
           button={
             (status === 'TODO' || !hasTodoStatus) && (
-              <AddTaskButton activityTargetableObjects={targetableObjects} />
+              <AddTaskButton activityTargetableObject={targetableObject} />
             )
           }
         />

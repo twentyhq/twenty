@@ -1,8 +1,15 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import {
   WorkflowVersionStatus,
   WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import { WorkflowFormActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
+import {
+  WorkflowAction,
+  WorkflowActionType,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
@@ -58,10 +65,15 @@ function assertVersionIsValid(workflowVersion: WorkflowVersionWorkspaceEntity) {
     workflowVersion.trigger.type,
     workflowVersion.trigger.settings,
   );
+
+  workflowVersion.steps.forEach((step) => {
+    assertStepIsValid(step);
+  });
 }
 
 function assertTriggerSettingsAreValid(
   triggerType: WorkflowTriggerType,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   settings: any,
 ) {
   switch (triggerType) {
@@ -69,6 +81,7 @@ function assertTriggerSettingsAreValid(
       assertDatabaseEventTriggerSettingsAreValid(settings);
       break;
     case WorkflowTriggerType.MANUAL:
+    case WorkflowTriggerType.WEBHOOK:
       break;
     case WorkflowTriggerType.CRON:
       assertCronTriggerSettingsAreValid(settings);
@@ -81,6 +94,7 @@ function assertTriggerSettingsAreValid(
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function assertCronTriggerSettingsAreValid(settings: any) {
   if (!settings?.type) {
     throw new WorkflowTriggerException(
@@ -93,6 +107,35 @@ function assertCronTriggerSettingsAreValid(settings: any) {
       if (!settings.pattern) {
         throw new WorkflowTriggerException(
           'No pattern provided in CUSTOM cron trigger',
+          WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
+        );
+      }
+
+      return;
+    }
+
+    case 'DAYS': {
+      if (!settings.schedule) {
+        throw new WorkflowTriggerException(
+          'No schedule provided in cron trigger',
+          WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
+        );
+      }
+      if (settings.schedule.day <= 0) {
+        throw new WorkflowTriggerException(
+          'Invalid day value. Should be integer greater than 1',
+          WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
+        );
+      }
+      if (settings.schedule.hour < 0 || settings.schedule.hour > 23) {
+        throw new WorkflowTriggerException(
+          'Invalid hour value. Should be integer between 0 and 23',
+          WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
+        );
+      }
+      if (settings.schedule.minute < 0 || settings.schedule.minute > 59) {
+        throw new WorkflowTriggerException(
+          'Invalid minute value. Should be integer between 0 and 59',
           WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
         );
       }
@@ -150,6 +193,7 @@ function assertCronTriggerSettingsAreValid(settings: any) {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function assertDatabaseEventTriggerSettingsAreValid(settings: any) {
   if (!settings?.eventName) {
     throw new WorkflowTriggerException(
@@ -157,4 +201,47 @@ function assertDatabaseEventTriggerSettingsAreValid(settings: any) {
       WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
     );
   }
+}
+
+function assertStepIsValid(step: WorkflowAction) {
+  switch (step.type) {
+    case WorkflowActionType.FORM:
+      assertFormStepIsValid(step.settings);
+      break;
+    default:
+      break;
+  }
+}
+
+function assertFormStepIsValid(settings: WorkflowFormActionSettings) {
+  if (!settings.input) {
+    throw new WorkflowTriggerException(
+      'No input provided in form step',
+      WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
+    );
+  }
+
+  // Check all fields have unique and defined names
+  const fieldNames = settings.input.map((fieldMetadata) => fieldMetadata.name);
+  const uniqueFieldNames = new Set(fieldNames);
+
+  if (fieldNames.length !== uniqueFieldNames.size) {
+    throw new WorkflowTriggerException(
+      'Form action fields must have unique names',
+      WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
+    );
+  }
+
+  // Check all fields have defined labels and types
+  settings.input.forEach((fieldMetadata) => {
+    if (
+      !isNonEmptyString(fieldMetadata.label) ||
+      !isNonEmptyString(fieldMetadata.type)
+    ) {
+      throw new WorkflowTriggerException(
+        'Form action fields must have a defined label and type',
+        WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
+      );
+    }
+  });
 }

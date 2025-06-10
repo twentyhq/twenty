@@ -1,11 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator } from 'twenty-ui';
 
 import { Table } from '../Table';
 import { TableCell } from '../TableCell';
 import { TableHeader } from '../TableHeader';
 import { TableRow } from '../TableRow';
 import { TableSection } from '../TableSection';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof Table> = {
   title: 'UI/Layout/Table/Table',

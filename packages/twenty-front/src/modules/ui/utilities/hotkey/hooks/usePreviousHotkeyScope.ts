@@ -1,10 +1,10 @@
 import { useRecoilCallback } from 'recoil';
 
-import { DEBUG_HOTKEY_SCOPE } from '@/ui/utilities/hotkey/hooks/useScopedHotkeyCallback';
 import { logDebug } from '~/utils/logDebug';
+import { DEBUG_HOTKEY_SCOPE } from '../constants/DebugHotkeyScope';
 
 import { currentHotkeyScopeState } from '../states/internal/currentHotkeyScopeState';
-import { previousHotkeyScopeState } from '../states/internal/previousHotkeyScopeState';
+import { previousHotkeyScopeFamilyState } from '../states/internal/previousHotkeyScopeFamilyState';
 import { CustomHotkeyScopes } from '../types/CustomHotkeyScope';
 
 import { useSetHotkeyScope } from './useSetHotkeyScope';
@@ -14,17 +14,24 @@ export const usePreviousHotkeyScope = () => {
 
   const goBackToPreviousHotkeyScope = useRecoilCallback(
     ({ snapshot, set }) =>
-      () => {
+      (memoizeKey = 'global') => {
         const previousHotkeyScope = snapshot
-          .getLoadable(previousHotkeyScopeState)
+          .getLoadable(previousHotkeyScopeFamilyState(memoizeKey as string))
           .getValue();
 
         if (!previousHotkeyScope) {
+          if (DEBUG_HOTKEY_SCOPE) {
+            logDebug(`DEBUG: no previous hotkey scope ${memoizeKey}`);
+          }
+
           return;
         }
 
         if (DEBUG_HOTKEY_SCOPE) {
-          logDebug('DEBUG: goBackToPreviousHotkeyScope', previousHotkeyScope);
+          logDebug(
+            `DEBUG: goBackToPreviousHotkeyScope ${previousHotkeyScope.scope}`,
+            previousHotkeyScope,
+          );
         }
 
         setHotkeyScope(
@@ -32,14 +39,22 @@ export const usePreviousHotkeyScope = () => {
           previousHotkeyScope.customScopes,
         );
 
-        set(previousHotkeyScopeState, null);
+        set(previousHotkeyScopeFamilyState(memoizeKey as string), null);
       },
     [setHotkeyScope],
   );
 
   const setHotkeyScopeAndMemorizePreviousScope = useRecoilCallback(
     ({ snapshot, set }) =>
-      (scope: string, customScopes?: CustomHotkeyScopes) => {
+      ({
+        scope,
+        customScopes,
+        memoizeKey = 'global',
+      }: {
+        scope: string;
+        customScopes?: CustomHotkeyScopes;
+        memoizeKey?: string;
+      }) => {
         const currentHotkeyScope = snapshot
           .getLoadable(currentHotkeyScopeState)
           .getValue();
@@ -53,7 +68,8 @@ export const usePreviousHotkeyScope = () => {
         }
 
         setHotkeyScope(scope, customScopes);
-        set(previousHotkeyScopeState, currentHotkeyScope);
+
+        set(previousHotkeyScopeFamilyState(memoizeKey), currentHotkeyScope);
       },
     [setHotkeyScope],
   );

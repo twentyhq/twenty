@@ -1,72 +1,8 @@
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-
-export const getPeopleMock = (): ObjectRecord[] => {
-  const peopleMock = peopleQueryResult.people.edges.map((edge) => edge.node);
-
-  return peopleMock;
-};
-
-export const getPersonObjectMetadataItem = () => {
-  const personObjectMetadataItem = generatedMockObjectMetadataItems.find(
-    (item) => item.nameSingular === 'person',
-  );
-
-  if (!personObjectMetadataItem) {
-    throw new Error('Person object metadata item not found');
-  }
-
-  return personObjectMetadataItem;
-};
-
-export const getPersonFieldMetadataItem = (
-  fieldMetadataType: FieldMetadataType,
-  objectMetadataItem = getPersonObjectMetadataItem(),
-) => {
-  const result = objectMetadataItem.fields.find(
-    (field) => field.type === fieldMetadataType,
-  );
-  if (!result) {
-    throw new Error(
-      `Person fieldmetadata item type ${fieldMetadataType} not found`,
-    );
-  }
-
-  return result;
-};
-
-export const getPersonRecord = (
-  overrides?: Partial<ObjectRecord>,
-  index = 0,
-) => {
-  const personRecords = getPeopleMock();
-  return {
-    ...personRecords[index],
-    ...overrides,
-  };
-};
-
-export const mockedEmptyPersonData = {
-  id: 'ce7f0a37-88d7-4cd8-8b41-6721c57195b5',
-  firstName: '',
-  lastName: '',
-  phone: null,
-  email: null,
-  city: null,
-  createdBy: null,
-  displayName: null,
-  avatarUrl: null,
-  createdAt: null,
-  jobTitle: null,
-  linkedinUrl: null,
-  xUrl: null,
-  _activityCount: null,
-  company: null,
-  deletedAt: null,
-  __typename: 'Person',
-};
 
 export const peopleQueryResult = {
   people: {
@@ -87,7 +23,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:52:46.814Z',
+          createdAt: '2025-01-02T09:52:46.814Z',
           city: 'ASd',
           phones: {
             primaryPhoneNumber: '781234562',
@@ -135,10 +71,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 1,
             id: '20202020-3ec3-4fe3-8997-b76aa0bfa408',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Linkedin',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: 'Eutaw Street',
@@ -219,7 +155,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-01T09:50:00.000Z',
+          createdAt: '2025-01-01T09:50:00.000Z',
           city: 'Seattle',
           phones: {
             primaryPhoneNumber: '781234562',
@@ -267,10 +203,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 1,
             id: '20202020-3ec3-4fe3-8997-b76aa0bfa408',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Linkedin',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: 'Eutaw Street',
@@ -351,7 +287,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:48:36.193Z',
+          createdAt: '2025-01-02T09:48:36.193Z',
           city: 'Los Angeles',
           phones: {
             primaryPhoneNumber: '781234576',
@@ -399,10 +335,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 1,
             id: '20202020-3ec3-4fe3-8997-b76aa0bfa408',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Linkedin',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: 'Eutaw Street',
@@ -452,7 +388,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:48:36.193Z',
+          createdAt: '2025-01-02T09:48:36.193Z',
           city: 'Seattle',
           phones: {
             primaryPhoneNumber: '781234545',
@@ -462,7 +398,7 @@ export const peopleQueryResult = {
           id: '20202020-f517-42fd-80ae-14173b3b70ae',
           jobTitle: '',
           position: 3,
-          email: 'christopher.gonzalez@qonto.com',
+          email: 'christopher.gonzalez@anthropic.com',
           name: {
             __typename: 'FullName',
             firstName: 'Christopher',
@@ -500,18 +436,18 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 3,
             id: '20202020-0713-40a5-8216-82802401d33e',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
-            name: 'Qonto',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            name: 'Anthropic',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
-              addressStreet1: '18 rue de navarrin',
+              addressStreet1: '548 Market Street',
               addressStreet2: null,
-              addressCity: 'Paris',
+              addressCity: 'San Francisco',
               addressState: null,
-              addressCountry: 'France',
-              addressPostcode: '75009',
+              addressCountry: 'United States',
+              addressPostcode: '94104',
               addressLat: null,
               addressLng: null,
             },
@@ -522,7 +458,7 @@ export const peopleQueryResult = {
             },
             domainName: {
               __typename: 'Links',
-              primaryLinkUrl: 'https://qonto.com',
+              primaryLinkUrl: 'https://anthropic.com',
               primaryLinkLabel: '',
               secondaryLinks: [],
             },
@@ -553,7 +489,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:48:36.193Z',
+          createdAt: '2025-01-02T09:48:36.193Z',
           city: 'Los Angeles',
           phones: {
             primaryPhoneNumber: '781234587',
@@ -563,7 +499,7 @@ export const peopleQueryResult = {
           id: '20202020-eee1-4690-ad2c-8619e5b56a2e',
           jobTitle: '',
           position: 4,
-          email: 'ashley.parker@qonto.com',
+          email: 'ashley.parker@anthropic.com',
           name: {
             __typename: 'FullName',
             firstName: 'Ashley',
@@ -601,18 +537,18 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 3,
             id: '20202020-0713-40a5-8216-82802401d33e',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
-            name: 'Qonto',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            name: 'Anthropic',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
-              addressStreet1: '18 rue de navarrin',
+              addressStreet1: '548 Market Street',
               addressStreet2: null,
-              addressCity: 'Paris',
+              addressCity: 'San Francisco',
               addressState: null,
-              addressCountry: 'France',
-              addressPostcode: '75009',
+              addressCountry: 'United States',
+              addressPostcode: '94104',
               addressLat: null,
               addressLng: null,
             },
@@ -623,7 +559,7 @@ export const peopleQueryResult = {
             },
             domainName: {
               __typename: 'Links',
-              primaryLinkUrl: 'https://qonto.com',
+              primaryLinkUrl: 'https://anthropic.com',
               primaryLinkLabel: '',
               secondaryLinks: [],
             },
@@ -654,7 +590,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:48:36.193Z',
+          createdAt: '2025-01-02T09:48:36.193Z',
           city: 'Seattle',
           phones: {
             primaryPhoneNumber: '781234599',
@@ -702,10 +638,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 4,
             id: '20202020-ed89-413a-b31a-962986e67bb4',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Microsoft',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: null,
@@ -755,7 +691,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:48:36.193Z',
+          createdAt: '2025-01-02T09:48:36.193Z',
           city: 'New York',
           phones: {
             primaryPhoneNumber: '781234572',
@@ -803,10 +739,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 4,
             id: '20202020-ed89-413a-b31a-962986e67bb4',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Microsoft',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: null,
@@ -856,7 +792,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:48:36.193Z',
+          createdAt: '2025-01-02T09:48:36.193Z',
           city: 'Seattle',
           phones: {
             primaryPhoneNumber: '781234582',
@@ -904,10 +840,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 4,
             id: '20202020-ed89-413a-b31a-962986e67bb4',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Microsoft',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: null,
@@ -957,7 +893,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:48:36.193Z',
+          createdAt: '2025-01-02T09:48:36.193Z',
           city: 'New York',
           phones: {
             primaryPhoneNumber: '781234569',
@@ -1005,10 +941,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 5,
             id: '20202020-171e-4bcc-9cf7-43448d6fb278',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Airbnb',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: '888 Brannan St',
@@ -1058,7 +994,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:48:36.193Z',
+          createdAt: '2025-01-02T09:48:36.193Z',
           city: 'San Francisco',
           phones: {
             primaryPhoneNumber: '781234962',
@@ -1106,10 +1042,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 5,
             id: '20202020-171e-4bcc-9cf7-43448d6fb278',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Airbnb',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: '888 Brannan St',
@@ -1159,7 +1095,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:48:36.193Z',
+          createdAt: '2025-01-02T09:48:36.193Z',
           city: 'New York',
           phones: {
             primaryPhoneNumber: '781234502',
@@ -1207,10 +1143,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 5,
             id: '20202020-171e-4bcc-9cf7-43448d6fb278',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Airbnb',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: '888 Brannan St',
@@ -1260,7 +1196,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:48:36.193Z',
+          createdAt: '2025-01-02T09:48:36.193Z',
           city: 'Los Angeles',
           phones: {
             primaryPhoneNumber: '781234563',
@@ -1308,10 +1244,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 6,
             id: '20202020-c21e-4ec2-873b-de4264d89025',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Google',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: '760 Market St',
@@ -1361,7 +1297,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:48:36.193Z',
+          createdAt: '2025-01-02T09:48:36.193Z',
           city: 'Seattle',
           phones: {
             primaryPhoneNumber: '781234542',
@@ -1409,10 +1345,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 6,
             id: '20202020-c21e-4ec2-873b-de4264d89025',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Google',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: '760 Market St',
@@ -1462,7 +1398,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:48:36.193Z',
+          createdAt: '2025-01-02T09:48:36.193Z',
           city: 'Seattle',
           phones: {
             primaryPhoneNumber: '782234562',
@@ -1510,10 +1446,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 6,
             id: '20202020-c21e-4ec2-873b-de4264d89025',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Google',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: '760 Market St',
@@ -1563,7 +1499,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:48:36.193Z',
+          createdAt: '2025-01-02T09:48:36.193Z',
           city: 'Seattle',
           phones: {
             primaryPhoneNumber: '781274562',
@@ -1611,10 +1547,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 6,
             id: '20202020-c21e-4ec2-873b-de4264d89025',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Google',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: '760 Market St',
@@ -1664,7 +1600,7 @@ export const peopleQueryResult = {
         node: {
           __typename: 'Person',
           deletedAt: null,
-          createdAt: '2024-08-02T09:48:36.193Z',
+          createdAt: '2025-01-02T09:48:36.193Z',
           city: 'Seattle',
           phones: {
             primaryPhoneNumber: '781239562',
@@ -1712,10 +1648,10 @@ export const peopleQueryResult = {
             idealCustomerProfile: false,
             position: 6,
             id: '20202020-c21e-4ec2-873b-de4264d89025',
-            updatedAt: '2024-08-02T09:48:36.193Z',
+            updatedAt: '2025-01-02T10:48:36.193Z',
             accountOwnerId: null,
             name: 'Google',
-            createdAt: '2024-08-02T09:48:36.193Z',
+            createdAt: '2025-01-02T09:48:36.193Z',
             address: {
               __typename: 'Address',
               addressStreet1: '760 Market St',
@@ -1762,3 +1698,71 @@ export const peopleQueryResult = {
     ],
   },
 } satisfies { people: RecordGqlConnection };
+
+export const allMockPersonRecords = peopleQueryResult.people.edges.map((edge) =>
+  getRecordFromRecordNode({ recordNode: edge.node }),
+);
+
+export const getPeopleRecordConnectionMock = () => {
+  const peopleMock = peopleQueryResult.people.edges.map((edge) => edge.node);
+
+  return peopleMock;
+};
+
+export const getMockPersonObjectMetadataItem = () => {
+  const personObjectMetadataItem = generatedMockObjectMetadataItems.find(
+    (item) => item.nameSingular === 'person',
+  );
+
+  if (!personObjectMetadataItem) {
+    throw new Error('Person object metadata item not found');
+  }
+
+  return personObjectMetadataItem;
+};
+
+export const getMockPersonFieldMetadataItem = (
+  fieldMetadataType: FieldMetadataType,
+  objectMetadataItem = getMockPersonObjectMetadataItem(),
+) => {
+  const result = objectMetadataItem.fields.find(
+    (field) => field.type === fieldMetadataType,
+  );
+  if (!result) {
+    throw new Error(
+      `Person fieldmetadata item type ${fieldMetadataType} not found`,
+    );
+  }
+
+  return result;
+};
+
+export const getMockPersonRecord = (
+  overrides?: Partial<ObjectRecord>,
+  index = 0,
+) => {
+  return {
+    ...allMockPersonRecords[index],
+    ...overrides,
+  };
+};
+
+export const mockedEmptyPersonData = {
+  id: 'ce7f0a37-88d7-4cd8-8b41-6721c57195b5',
+  firstName: '',
+  lastName: '',
+  phone: null,
+  email: null,
+  city: null,
+  createdBy: null,
+  displayName: null,
+  avatarUrl: null,
+  createdAt: null,
+  jobTitle: null,
+  linkedinUrl: null,
+  xUrl: null,
+  _activityCount: null,
+  company: null,
+  deletedAt: null,
+  __typename: 'Person',
+};

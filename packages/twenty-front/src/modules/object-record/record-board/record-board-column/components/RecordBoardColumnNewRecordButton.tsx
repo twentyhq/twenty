@@ -1,8 +1,11 @@
-import { useColumnNewCardActions } from '@/object-record/record-board/record-board-column/hooks/useColumnNewCardActions';
-import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
+import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconPlus } from 'twenty-ui';
+import { useContext } from 'react';
+import { IconPlus } from 'twenty-ui/display';
 
 const StyledNewButton = styled.button`
   align-items: center;
@@ -21,23 +24,37 @@ const StyledNewButton = styled.button`
   }
 `;
 
-export const RecordBoardColumnNewRecordButton = ({
-  columnId,
-}: {
-  columnId: string;
-}) => {
+export const RecordBoardColumnNewRecordButton = () => {
   const theme = useTheme();
 
-  const { handleNewButtonClick } = useColumnNewCardActions(columnId);
+  const { objectMetadataItem, selectFieldMetadataItem } =
+    useContext(RecordBoardContext);
 
-  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
+  const { columnDefinition } = useContext(RecordBoardColumnContext);
 
-  if (hasObjectReadOnlyPermission) {
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
+
+  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
+
+  const { createNewIndexRecord } = useCreateNewIndexRecord({
+    objectMetadataItem: objectMetadataItem,
+  });
+
+  if (!hasObjectUpdatePermissions) {
     return null;
   }
 
   return (
-    <StyledNewButton onClick={() => handleNewButtonClick('last', false)}>
+    <StyledNewButton
+      onClick={() => {
+        createNewIndexRecord({
+          position: 'last',
+          [selectFieldMetadataItem.name]: columnDefinition.value,
+        });
+      }}
+    >
       <IconPlus size={theme.icon.size.md} />
       New
     </StyledNewButton>

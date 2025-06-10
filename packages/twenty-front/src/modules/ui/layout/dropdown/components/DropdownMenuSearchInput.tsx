@@ -1,7 +1,7 @@
 import { useInputFocusWithoutScrollOnMount } from '@/ui/input/hooks/useInputFocusWithoutScrollOnMount';
 import styled from '@emotion/styled';
 import { forwardRef, InputHTMLAttributes } from 'react';
-import { TEXT_INPUT_STYLE } from 'twenty-ui';
+import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 
 const StyledDropdownMenuSearchInputContainer = styled.div`
   align-items: center;

@@ -1,5 +1,4 @@
-import { AvatarType } from 'twenty-ui';
-
+import { AvatarType } from 'twenty-ui/display';
 export type RecordChipData = {
   recordId: string;
   name: string;

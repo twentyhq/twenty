@@ -2,7 +2,6 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useToggleScrollWrapper } from '@/ui/utilities/scroll/hooks/useToggleScrollWrapper';
-import styled from '@emotion/styled';
 import { useCallback } from 'react';
 import { RecordTableColumnHead } from './RecordTableColumnHead';
 import { RecordTableColumnHeadDropdownMenu } from './RecordTableColumnHeadDropdownMenu';
@@ -10,12 +9,6 @@ import { RecordTableColumnHeadDropdownMenu } from './RecordTableColumnHeadDropdo
 type RecordTableColumnHeadWithDropdownProps = {
   column: ColumnDefinition<FieldMetadata>;
 };
-
-const StyledDropdown = styled(Dropdown)`
-  display: flex;
-  flex: 1;
-  z-index: ${({ theme }) => theme.lastLayerZIndex};
-`;
 
 export const RecordTableColumnHeadWithDropdown = ({
   column,
@@ -34,7 +27,7 @@ export const RecordTableColumnHeadWithDropdown = ({
   }, [toggleScrollXWrapper, toggleScrollYWrapper]);
 
   return (
-    <StyledDropdown
+    <Dropdown
       onOpen={handleDropdownOpen}
       onClose={handleDropdownClose}
       dropdownId={column.fieldMetadataId + '-header'}

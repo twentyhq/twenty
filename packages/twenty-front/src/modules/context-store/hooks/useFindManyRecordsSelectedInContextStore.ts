@@ -1,10 +1,14 @@
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
+import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
+import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilValue } from 'recoil';
 
 export const useFindManyRecordsSelectedInContextStore = ({
   instanceId,
@@ -13,10 +17,14 @@ export const useFindManyRecordsSelectedInContextStore = ({
   instanceId?: string;
   limit?: number;
 }) => {
-  const objectMetadataItem = useRecoilComponentValueV2(
-    contextStoreCurrentObjectMetadataItemComponentState,
+  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
     instanceId,
   );
+
+  const { objectMetadataItem } = useObjectMetadataItemById({
+    objectId: contextStoreCurrentObjectMetadataItemId ?? '',
+  });
 
   const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
     contextStoreTargetedRecordsRuleComponentState,
@@ -30,6 +38,23 @@ export const useFindManyRecordsSelectedInContextStore = ({
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+
+  const allFieldMetadataItems = objectMetadataItems.flatMap(
+    (objectMetadataItem) => objectMetadataItem.fields,
+  );
+
+  const isSoftDeleteFilterActive = contextStoreFilters.some((filter) => {
+    const foundFieldMetadataItem = allFieldMetadataItems.find(
+      (fieldMetadataItem) => fieldMetadataItem.id === filter.fieldMetadataId,
+    );
+
+    return (
+      foundFieldMetadataItem?.name === 'deletedAt' &&
+      filter.operand === RecordFilterOperand.IsNotEmpty
+    );
+  });
+
   const queryFilter = computeContextStoreFilters(
     contextStoreTargetedRecordsRule,
     contextStoreFilters,
@@ -41,7 +66,7 @@ export const useFindManyRecordsSelectedInContextStore = ({
   const { records, loading, totalCount } = useFindManyRecords({
     objectNameSingular: objectMetadataItem?.nameSingular ?? '',
     filter: queryFilter,
-    withSoftDeleted: true,
+    withSoftDeleted: isSoftDeleteFilterActive,
     orderBy: [
       {
         position: 'AscNullsFirst',

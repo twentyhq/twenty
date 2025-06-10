@@ -1,6 +1,5 @@
-import { createState } from '@ui/utilities/state/utils/createState';
-
 import { Captcha } from '~/generated/graphql';
+import { createState } from 'twenty-ui/utilities';
 
 export const captchaState = createState<Captcha | null>({
   key: 'captchaState',

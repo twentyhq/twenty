@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
+import { currentWorkspaceDeletedMembersState } from '@/auth/states/currentWorkspaceDeletedMembersStates';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
+import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { workspacesState } from '@/auth/states/workspaces';
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
@@ -16,14 +17,22 @@ import { detectTimeFormat } from '@/localization/utils/detectTimeFormat';
 import { detectTimeZone } from '@/localization/utils/detectTimeZone';
 import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/getDateFormatFromWorkspaceDateFormat';
 import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTimeFormatFromWorkspaceTimeFormat';
+import { AppPath } from '@/types/AppPath';
+import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
-import { APP_LOCALES, isDefined, SOURCE_LOCALE } from 'twenty-shared';
+import { enUS } from 'date-fns/locale';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceMember } from '~/generated-metadata/graphql';
 import { useGetCurrentUserQuery } from '~/generated/graphql';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 export const UserProviderEffect = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  const location = useLocation();
 
   const [isCurrentUserLoaded, setIsCurrentUserLoaded] = useRecoilState(
     isCurrentUserLoadedState,
@@ -32,8 +41,24 @@ export const UserProviderEffect = () => {
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
   const setWorkspaces = useSetRecoilState(workspacesState);
-
   const setDateTimeFormat = useSetRecoilState(dateTimeFormatState);
+  const isLoggedIn = useIsLogged();
+
+  const updateLocaleCatalog = useRecoilCallback(
+    ({ snapshot, set }) =>
+      async (newLocale: keyof typeof APP_LOCALES) => {
+        const localeValue = snapshot.getLoadable(dateLocaleState).getValue();
+        if (localeValue.locale !== newLocale) {
+          getDateFnsLocale(newLocale).then((localeCatalog) => {
+            set(dateLocaleState, {
+              locale: newLocale,
+              localeCatalog: localeCatalog || enUS,
+            });
+          });
+        }
+      },
+    [],
+  );
 
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
@@ -41,14 +66,20 @@ export const UserProviderEffect = () => {
   const setCurrentWorkspaceMembers = useSetRecoilState(
     currentWorkspaceMembersState,
   );
+  const setCurrentWorkspaceMembersWithDeleted = useSetRecoilState(
+    currentWorkspaceDeletedMembersState,
+  );
 
-  const { loading: queryLoading, data: queryData } = useGetCurrentUserQuery({
-    skip: isCurrentUserLoaded,
+  const { data: queryData, loading: queryLoading } = useGetCurrentUserQuery({
+    skip:
+      !isLoggedIn ||
+      isCurrentUserLoaded ||
+      isMatchingLocation(location, AppPath.Verify) ||
+      isMatchingLocation(location, AppPath.VerifyEmail),
   });
 
   useEffect(() => {
     if (!queryLoading) {
-      setIsLoading(false);
       setIsCurrentUserLoaded(true);
     }
 
@@ -57,7 +88,10 @@ export const UserProviderEffect = () => {
     setCurrentUser(queryData.currentUser);
 
     if (isDefined(queryData.currentUser.currentWorkspace)) {
-      setCurrentWorkspace(queryData.currentUser.currentWorkspace);
+      setCurrentWorkspace({
+        ...queryData.currentUser.currentWorkspace,
+        defaultRole: queryData.currentUser.currentWorkspace.defaultRole ?? null,
+      });
     }
 
     if (isDefined(queryData.currentUser.currentUserWorkspace)) {
@@ -67,6 +101,7 @@ export const UserProviderEffect = () => {
     const {
       workspaceMember,
       workspaceMembers,
+      deletedWorkspaceMembers,
       workspaces: userWorkspaces,
     } = queryData.currentUser;
 
@@ -82,9 +117,11 @@ export const UserProviderEffect = () => {
     };
 
     if (isDefined(workspaceMember)) {
-      setCurrentWorkspaceMember(
-        affectDefaultValuesOnEmptyWorkspaceMemberFields(workspaceMember),
-      );
+      const updatedWorkspaceMember =
+        affectDefaultValuesOnEmptyWorkspaceMemberFields(workspaceMember);
+      setCurrentWorkspaceMember(updatedWorkspaceMember);
+
+      updateLocaleCatalog(updatedWorkspaceMember.locale);
 
       // TODO: factorize
       setDateTimeFormat({
@@ -112,6 +149,10 @@ export const UserProviderEffect = () => {
       );
     }
 
+    if (isDefined(deletedWorkspaceMembers)) {
+      setCurrentWorkspaceMembersWithDeleted(deletedWorkspaceMembers);
+    }
+
     if (isDefined(userWorkspaces)) {
       const workspaces = userWorkspaces
         .map(({ workspace }) => workspace)
@@ -120,17 +161,18 @@ export const UserProviderEffect = () => {
       setWorkspaces(workspaces);
     }
   }, [
+    queryLoading,
+    queryData?.currentUser,
     setCurrentUser,
     setCurrentUserWorkspace,
     setCurrentWorkspaceMembers,
-    isLoading,
-    queryLoading,
     setCurrentWorkspace,
     setCurrentWorkspaceMember,
     setWorkspaces,
-    queryData?.currentUser,
     setIsCurrentUserLoaded,
     setDateTimeFormat,
+    setCurrentWorkspaceMembersWithDeleted,
+    updateLocaleCatalog,
   ]);
 
   return <></>;

@@ -1,6 +1,6 @@
 import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 
@@ -59,6 +59,7 @@ export const validateOptionsForType = (
   const isValid = options.every((option) => {
     return validators.some((validator) => {
       const optionsInstance = plainToInstance<
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         any,
         FieldMetadataDefaultOption | FieldMetadataComplexOption
       >(validator, option);

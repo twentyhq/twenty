@@ -1,13 +1,13 @@
 'use client';
 
-import { JSXElementConstructor, ReactElement } from 'react';
 import styled from '@emotion/styled';
 import { Gabarito } from 'next/font/google';
+import { JSXElementConstructor, ReactElement } from 'react';
 
+import { ReleaseNote } from '@/app/(public)/releases/api/route';
 import { ArticleContent } from '@/app/_components/ui/layout/articles/ArticleContent';
 import MotionContainer from '@/app/_components/ui/layout/LoaderAnimation';
 import { Theme } from '@/app/_components/ui/theme/theme';
-import { ReleaseNote } from '@/app/releases/api/route';
 
 const StyledContainer = styled.div`
   width: 810px;

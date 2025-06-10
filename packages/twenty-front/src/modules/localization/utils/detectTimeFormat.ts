@@ -1,5 +1,5 @@
 import { TimeFormat } from '@/localization/constants/TimeFormat';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const detectTimeFormat = (): keyof typeof TimeFormat => {
   const isHour12 = Intl.DateTimeFormat(navigator.language, {

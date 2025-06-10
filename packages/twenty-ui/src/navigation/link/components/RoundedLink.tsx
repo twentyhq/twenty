@@ -7,6 +7,7 @@ type RoundedLinkProps = {
   href: string;
   label?: string;
   onClick?: (event: React.MouseEvent<HTMLElement>) => void;
+  className?: string;
 };
 
 const fontSizeMd = FONT_COMMON.size.md;
@@ -59,7 +60,12 @@ const StyledLink = styled.a<{
   }
 `;
 
-export const RoundedLink = ({ label, href, onClick }: RoundedLinkProps) => {
+export const RoundedLink = ({
+  label,
+  href,
+  onClick,
+  className,
+}: RoundedLinkProps) => {
   const { theme } = useContext(ThemeContext);
 
   const background = theme.background.transparent.lighter;
@@ -89,6 +95,7 @@ export const RoundedLink = ({ label, href, onClick }: RoundedLinkProps) => {
       backgroundHover={backgroundHover}
       backgroundActive={backgroundActive}
       border={border}
+      className={className}
     >
       {label}
     </StyledLink>

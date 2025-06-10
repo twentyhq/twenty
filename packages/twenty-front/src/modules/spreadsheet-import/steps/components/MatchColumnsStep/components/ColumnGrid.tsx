@@ -1,7 +1,6 @@
+import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import styled from '@emotion/styled';
 import React from 'react';
-
-import { Columns } from '../MatchColumnsStep';
 
 const StyledGridContainer = styled.div`
   align-items: center;
@@ -93,17 +92,17 @@ const StyledGridHeader = styled.div<PositionProps>`
 `;
 
 type ColumnGridProps<T extends string> = {
-  columns: Columns<T>;
+  columns: SpreadsheetColumns<T>;
   renderUserColumn: (
-    columns: Columns<T>,
+    columns: SpreadsheetColumns<T>,
     columnIndex: number,
   ) => React.ReactNode;
   renderTemplateColumn: (
-    columns: Columns<T>,
+    columns: SpreadsheetColumns<T>,
     columnIndex: number,
   ) => React.ReactNode;
   renderUnmatchedColumn: (
-    columns: Columns<T>,
+    columns: SpreadsheetColumns<T>,
     columnIndex: number,
   ) => React.ReactNode;
 };

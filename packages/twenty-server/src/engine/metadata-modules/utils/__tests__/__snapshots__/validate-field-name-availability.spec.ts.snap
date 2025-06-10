@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`validateFieldNameAvailabilityOrThrow throws error with ACTOR suffixes 1`] = `"Name "fieldActorName" is not available"`;
+
+exports[`validateFieldNameAvailabilityOrThrow throws error with ADDRESS suffixes 1`] = `"Name "fieldAddressAddressStreet1" is not available"`;
+
+exports[`validateFieldNameAvailabilityOrThrow throws error with CURRENCY suffixes 1`] = `"Name "fieldCurrencyAmountMicros" is not available"`;
+
+exports[`validateFieldNameAvailabilityOrThrow throws error with FULL_NAME suffixes 1`] = `"Name "fieldFullNameFirstName" is not available"`;
+
+exports[`validateFieldNameAvailabilityOrThrow throws error with LINKS suffixes 1`] = `"Name "fieldLinksPrimaryLinkLabel" is not available"`;

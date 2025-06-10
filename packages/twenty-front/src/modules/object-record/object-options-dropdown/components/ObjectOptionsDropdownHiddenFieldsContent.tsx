@@ -1,11 +1,5 @@
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import {
-  IconChevronLeft,
-  IconSettings,
-  MenuItem,
-  UndecoratedLink,
-} from 'twenty-ui';
 
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
 
@@ -13,15 +7,21 @@ import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdow
 import { useObjectOptionsForTable } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForTable';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { SettingsPath } from '@/types/SettingsPath';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { ViewType } from '@/views/types/ViewType';
+import { useLingui } from '@lingui/react/macro';
+import { IconChevronLeft, IconSettings } from 'twenty-ui/display';
+import { MenuItem, UndecoratedLink } from 'twenty-ui/navigation';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const ObjectOptionsDropdownHiddenFieldsContent = () => {
+  const { t } = useLingui();
   const {
     viewType,
     recordIndexId,
@@ -62,16 +62,20 @@ export const ObjectOptionsDropdownHiddenFieldsContent = () => {
   );
 
   return (
-    <>
+    <DropdownContent>
       <DropdownMenuHeader
-        StartIcon={IconChevronLeft}
-        onClick={() => onContentChange('fields')}
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent
+            onClick={() => onContentChange('fields')}
+            Icon={IconChevronLeft}
+          />
+        }
       >
-        Hidden Fields
+        {t`Hidden Fields`}
       </DropdownMenuHeader>
       {hiddenRecordFields.length > 0 && (
         <ViewFieldsVisibilityDropdownSection
-          title="Hidden"
+          title={t`Hidden`}
           fields={hiddenRecordFields}
           isDraggable={false}
           onVisibilityChange={handleChangeFieldVisibility}
@@ -88,9 +92,9 @@ export const ObjectOptionsDropdownHiddenFieldsContent = () => {
         }}
       >
         <DropdownMenuItemsContainer scrollable={false}>
-          <MenuItem LeftIcon={IconSettings} text="Edit Fields" />
+          <MenuItem LeftIcon={IconSettings} text={t`Edit Fields`} />
         </DropdownMenuItemsContainer>
       </UndecoratedLink>
-    </>
+    </DropdownContent>
   );
 };

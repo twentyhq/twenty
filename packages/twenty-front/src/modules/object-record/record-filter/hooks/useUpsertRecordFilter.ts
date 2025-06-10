@@ -1,7 +1,9 @@
+import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 export const useUpsertRecordFilter = () => {
@@ -9,7 +11,9 @@ export const useUpsertRecordFilter = () => {
     currentRecordFiltersComponentState,
   );
 
-  const upsertRecordFilter = useRecoilCallback(
+  const { onUpdate } = useContext(AdvancedFilterContext);
+
+  const upsertRecordFilterCallback = useRecoilCallback(
     ({ set, snapshot }) =>
       (recordFilterToSet: RecordFilter) => {
         const currentRecordFilters = getSnapshotValue(
@@ -19,9 +23,7 @@ export const useUpsertRecordFilter = () => {
 
         const foundRecordFilterInCurrentRecordFilters =
           currentRecordFilters.some(
-            (existingFilter) =>
-              existingFilter.fieldMetadataId ===
-              recordFilterToSet.fieldMetadataId,
+            (existingFilter) => existingFilter.id === recordFilterToSet.id,
           );
 
         if (!foundRecordFilterInCurrentRecordFilters) {
@@ -34,9 +36,7 @@ export const useUpsertRecordFilter = () => {
             const newCurrentRecordFilters = [...currentRecordFilters];
 
             const indexOfFilterToUpdate = newCurrentRecordFilters.findIndex(
-              (existingFilter) =>
-                existingFilter.fieldMetadataId ===
-                recordFilterToSet.fieldMetadataId,
+              (existingFilter) => existingFilter.id === recordFilterToSet.id,
             );
 
             newCurrentRecordFilters[indexOfFilterToUpdate] = {
@@ -49,6 +49,11 @@ export const useUpsertRecordFilter = () => {
       },
     [currentRecordFiltersCallbackState],
   );
+
+  const upsertRecordFilter = (recordFilterToSet: RecordFilter) => {
+    upsertRecordFilterCallback(recordFilterToSet);
+    onUpdate?.();
+  };
 
   return {
     upsertRecordFilter,

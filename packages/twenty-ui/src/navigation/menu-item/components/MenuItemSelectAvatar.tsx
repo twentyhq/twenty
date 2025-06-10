@@ -17,7 +17,7 @@ type MenuItemSelectAvatarProps = {
   className?: string;
   onClick?: (event?: React.MouseEvent) => void;
   disabled?: boolean;
-  hovered?: boolean;
+  focused?: boolean;
   testId?: string;
 };
 
@@ -28,7 +28,7 @@ export const MenuItemSelectAvatar = ({
   className,
   onClick,
   disabled,
-  hovered,
+  focused,
   testId,
 }: MenuItemSelectAvatarProps) => {
   const theme = useTheme();
@@ -37,9 +37,8 @@ export const MenuItemSelectAvatar = ({
     <StyledMenuItemSelect
       onClick={onClick}
       className={className}
-      selected={selected}
       disabled={disabled}
-      hovered={hovered}
+      focused={focused}
       data-testid={testId}
       role="option"
       aria-selected={selected}

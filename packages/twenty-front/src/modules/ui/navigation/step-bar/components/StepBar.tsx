@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { Step, StepProps } from './Step';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   display: flex;

@@ -2,7 +2,8 @@ import { WorkflowDiagramStepNodeBase } from '@/workflow/workflow-diagram/compone
 import { WorkflowDiagramStepNodeIcon } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeIcon';
 import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
-import { FloatingIconButton, IconTrash } from 'twenty-ui';
+import { FloatingIconButton } from 'twenty-ui/input';
+import { IconTrash } from 'twenty-ui/display';
 
 export const WorkflowDiagramStepNodeEditableContent = ({
   data,
@@ -30,7 +31,6 @@ export const WorkflowDiagramStepNodeEditableContent = ({
           />
         ) : undefined
       }
-      isLeafNode={data.isLeafNode}
     />
   );
 };

@@ -1,11 +1,10 @@
-import { EntityManager } from 'typeorm';
-
+import { DEV_SEED_USER_IDS } from 'src/database/typeorm-seeds/core/users';
 import {
-  SEED_APPLE_WORKSPACE_ID,
   SEED_ACME_WORKSPACE_ID,
+  SEED_APPLE_WORKSPACE_ID,
 } from 'src/database/typeorm-seeds/core/workspaces';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
-import { DEV_SEED_USER_IDS } from 'src/database/typeorm-seeds/core/users';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 
 const tableName = 'workspaceMember';
 
@@ -26,7 +25,7 @@ type WorkspaceMembers = Pick<
 };
 
 export const seedWorkspaceMember = async (
-  entityManager: EntityManager,
+  entityManager: WorkspaceEntityManager,
   schemaName: string,
   workspaceId: string,
 ) => {
@@ -78,7 +77,9 @@ export const seedWorkspaceMember = async (
     ];
   }
   await entityManager
-    .createQueryBuilder()
+    .createQueryBuilder(undefined, undefined, undefined, {
+      shouldBypassPermissionChecks: true,
+    })
     .insert()
     .into(`${schemaName}.${tableName}`, [
       'id',

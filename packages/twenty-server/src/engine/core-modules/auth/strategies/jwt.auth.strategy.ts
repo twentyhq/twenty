@@ -2,10 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { ExtractJwt, Strategy } from 'passport-jwt';
+import { Strategy } from 'passport-jwt';
 import { Repository } from 'typeorm';
 
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -14,21 +13,18 @@ import {
   AuthContext,
   JwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
 
 @Injectable()
 export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
-    private readonly environmentService: EnvironmentService,
     private readonly jwtWrapperService: JwtWrapperService,
-    private readonly typeORMService: TypeORMService,
-    private readonly dataSourceService: DataSourceService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(User, 'core')
@@ -36,25 +32,29 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
   ) {
-    super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ignoreExpiration: false,
-      secretOrKeyProvider: async (request, rawJwtToken, done) => {
-        try {
-          const decodedToken = this.jwtWrapperService.decode(
-            rawJwtToken,
-          ) as JwtPayload;
-          const workspaceId = decodedToken.workspaceId;
-          const secret = this.jwtWrapperService.generateAppSecret(
-            'ACCESS',
-            workspaceId,
-          );
+    const jwtFromRequestFunction = jwtWrapperService.extractJwtFromRequest();
+    // @ts-expect-error legacy noImplicitAny
+    const secretOrKeyProviderFunction = async (_request, rawJwtToken, done) => {
+      try {
+        const decodedToken = jwtWrapperService.decode(
+          rawJwtToken,
+        ) as JwtPayload;
+        const workspaceId = decodedToken.workspaceId;
+        const secret = jwtWrapperService.generateAppSecret(
+          'ACCESS',
+          workspaceId,
+        );
 
-          done(null, secret);
-        } catch (error) {
-          done(error, null);
-        }
-      },
+        done(null, secret);
+      } catch (error) {
+        done(error, null);
+      }
+    };
+
+    super({
+      jwtFromRequest: jwtFromRequestFunction,
+      ignoreExpiration: false,
+      secretOrKeyProvider: secretOrKeyProviderFunction,
     });
   }
 
@@ -72,20 +72,20 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       );
     }
 
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+    const apiKeyRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ApiKeyWorkspaceEntity>(
         workspace.id,
+        'apiKey',
+        {
+          shouldBypassPermissionChecks: true,
+        },
       );
 
-    const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
-
-    const res = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."apiKey" WHERE id = $1`,
-      [payload.jti],
-    );
-
-    apiKey = res?.[0];
+    apiKey = await apiKeyRepository.findOne({
+      where: {
+        id: payload.jti,
+      },
+    });
 
     if (!apiKey || apiKey.revokedAt) {
       throw new AuthException(

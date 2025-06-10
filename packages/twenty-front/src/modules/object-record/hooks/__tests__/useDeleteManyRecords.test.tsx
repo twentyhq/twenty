@@ -2,7 +2,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
 import {
   personIds,
   personRecords,
@@ -17,7 +17,7 @@ import { InMemoryCache } from '@apollo/client';
 import { MockedResponse } from '@apollo/client/testing';
 import { act } from 'react';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { getPersonObjectMetadataItem } from '~/testing/mock-data/people';
+import { getMockPersonObjectMetadataItem } from '~/testing/mock-data/people';
 const getDefaultMocks = (
   overrides?: Partial<MockedResponse>,
 ): MockedResponse[] => [
@@ -40,7 +40,7 @@ const mockRefetchAggregateQueries = jest.fn();
 (useRefetchAggregateQueries as jest.Mock).mockReturnValue({
   refetchAggregateQueries: mockRefetchAggregateQueries,
 });
-const objectMetadataItem = getPersonObjectMetadataItem();
+const objectMetadataItem = getMockPersonObjectMetadataItem();
 const objectMetadataItems = [objectMetadataItem];
 const expectedCachedRecordsWithDeletedAt = personRecords.map(
   (personRecord) => ({
@@ -57,6 +57,7 @@ describe('useDeleteManyRecords', () => {
         objectMetadataItem,
         objectMetadataItems,
         recordId: expectedRecord.id,
+        objectPermissionsByObjectMetadataId: {},
       });
       expect(cachedRecord).not.toBeNull();
       if (cachedRecord === null) throw new Error('Should never occur');
@@ -72,6 +73,7 @@ describe('useDeleteManyRecords', () => {
           objectMetadataItem,
           objectMetadataItems,
           recordId,
+          objectPermissionsByObjectMetadataId: {},
         }),
       ).toBeNull(),
     );
@@ -115,10 +117,11 @@ describe('useDeleteManyRecords', () => {
           objectMetadataItem,
           objectMetadataItems,
           record,
-          recordGqlFields: generateDepthOneRecordGqlFields({
+          recordGqlFields: computeDepthOneRecordGqlFieldsFromRecord({
             objectMetadataItem,
             record,
           }),
+          objectPermissionsByObjectMetadataId: {},
         }),
       );
     });

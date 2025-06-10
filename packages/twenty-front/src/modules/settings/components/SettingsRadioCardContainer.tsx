@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
-import { IconComponent } from 'twenty-ui';
 import { SettingsRadioCard } from '@/settings/components/SettingsRadioCard';
+import { IconComponent } from 'twenty-ui/display';
 
 const StyledRadioCardContainer = styled.div`
   display: flex;
@@ -25,16 +25,18 @@ export const SettingsRadioCardContainer = ({
   onChange,
 }: SettingsRadioCardContainerProps) => {
   return (
-    <StyledRadioCardContainer>
+    <StyledRadioCardContainer role="radiogroup">
       {options.map((option) => (
         <SettingsRadioCard
           key={option.value}
+          role="radio"
           value={option.value}
           isSelected={value === option.value}
-          handleClick={onChange}
+          handleSelect={onChange}
           title={option.title}
           description={option.description}
           Icon={option.Icon}
+          ariaChecked={value === option.value}
         />
       ))}
     </StyledRadioCardContainer>

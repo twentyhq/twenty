@@ -3,10 +3,11 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { CREATE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/createWorkflowVersionStep';
 import { WorkflowVersion } from '@/workflow/types/Workflow';
 import { useApolloClient, useMutation } from '@apollo/client';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import {
   CreateWorkflowVersionStepInput,
   CreateWorkflowVersionStepMutation,
@@ -16,6 +17,7 @@ import {
 export const useCreateWorkflowVersionStep = () => {
   const apolloClient = useApolloClient();
   const { objectMetadataItems } = useObjectMetadataItems();
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
   });
@@ -34,6 +36,7 @@ export const useCreateWorkflowVersionStep = () => {
     const result = await mutate({
       variables: { input },
     });
+
     const createdStep = result?.data?.createWorkflowVersionStep;
     if (!isDefined(createdStep)) {
       return;
@@ -42,24 +45,38 @@ export const useCreateWorkflowVersionStep = () => {
     const cachedRecord = getRecordFromCache<WorkflowVersion>(
       input.workflowVersionId,
     );
+
     if (!isDefined(cachedRecord)) {
       return;
     }
 
+    const updatedExistingSteps =
+      cachedRecord.steps?.map((step) => {
+        if (step.id === input.parentStepId) {
+          return {
+            ...step,
+            nextStepIds: [...(step.nextStepIds || []), createdStep.id],
+          };
+        }
+        return step;
+      }) ?? [];
+
     const newCachedRecord = {
       ...cachedRecord,
-      steps: [...(cachedRecord.steps || []), createdStep],
+      steps: [...updatedExistingSteps, createdStep],
     };
 
     const recordGqlFields = {
       steps: true,
     };
+
     updateRecordFromCache({
       objectMetadataItems,
       objectMetadataItem,
       cache: apolloClient.cache,
       record: newCachedRecord,
       recordGqlFields,
+      objectPermissionsByObjectMetadataId,
     });
     return result;
   };

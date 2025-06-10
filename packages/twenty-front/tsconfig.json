@@ -22,9 +22,7 @@
     "outDir": "../../.cache/tsc",
     "paths": {
       "@/*": ["./src/modules/*"],
-      "~/*": ["./src/*"],
-      "twenty-ui": ["../twenty-ui/src/index.ts"],
-      "@ui/*": ["../twenty-ui/src/*"]
+      "~/*": ["./src/*"]
     }
   },
   "files": [],

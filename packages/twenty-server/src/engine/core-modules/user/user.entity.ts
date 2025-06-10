@@ -2,6 +2,8 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
+  BeforeInsert,
+  BeforeUpdate,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -45,6 +47,12 @@ export class User {
   @Column({ default: '' })
   lastName: string;
 
+  @BeforeInsert()
+  @BeforeUpdate()
+  formatEmail?() {
+    this.email = this.email.toLowerCase();
+  }
+
   @Field()
   @Column()
   email: string;
@@ -68,6 +76,10 @@ export class User {
   @Field()
   @Column({ default: false })
   canImpersonate: boolean;
+
+  @Field()
+  @Column({ default: false })
+  canAccessFullAdminPanel: boolean;
 
   @Field()
   @CreateDateColumn({ type: 'timestamptz' })

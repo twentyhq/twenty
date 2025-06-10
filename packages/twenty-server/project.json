@@ -18,7 +18,7 @@
       "options": {
         "cwd": "packages/twenty-server",
         "commands": [
-          "NODE_ENV=test nx jest --config ./jest-integration.config.ts"
+          "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=8192\" nx jest --config ./jest-integration.config.ts"
         ]
       },
       "parallel": false,
@@ -26,7 +26,7 @@
         "with-db-reset": {
           "cwd": "packages/twenty-server",
           "commands": [
-            "NODE_ENV=test nx database:reset > reset-logs.log && NODE_ENV=test nx jest --config ./jest-integration.config.ts"
+            "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=8192\" nx database:reset > reset-logs.log && NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=8192\" nx jest --config ./jest-integration.config.ts"
           ]
         }
       }
@@ -203,6 +203,20 @@
         }
       },
       "defaultConfiguration": "seed"
+    },
+    "clickhouse:migrate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "nx ts-node-no-deps -- src/database/clickHouse/migrations/run-migrations.ts"
+      }
+    },
+    "clickhouse:seed": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "nx ts-node-no-deps -- src/database/clickHouse/seeds/run-seeds.ts"
+      }
     },
     "lingui:extract": {
       "executor": "nx:run-commands",

@@ -3,7 +3,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { getFilterFilterableFieldMetadataItems } from '@/object-metadata/utils/getFilterFilterableFieldMetadataItems';
 import { checkIfFeatureFlagIsEnabledOnWorkspace } from '@/workspace/utils/checkIfFeatureFlagIsEnabledOnWorkspace';
 import { selectorFamily } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const availableFieldMetadataItemsForFilterFamilySelector =
@@ -24,7 +24,7 @@ export const availableFieldMetadataItemsForFilterFamilySelector =
         }
 
         const isJsonFeatureFlagEnabled = checkIfFeatureFlagIsEnabledOnWorkspace(
-          FeatureFlagKey.IsJsonFilterEnabled,
+          FeatureFlagKey.IS_JSON_FILTER_ENABLED,
           currentWorkspace,
         );
 

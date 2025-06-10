@@ -11,26 +11,27 @@ import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLab
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { TabList } from '@/ui/layout/tab/components/TabList';
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
+import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import {
-  Button,
   H3Title,
   IconCodeCircle,
   IconListDetails,
   IconPlus,
   IconPoint,
   IconSettings,
-  MAIN_COLORS,
-  UndecoratedLink,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { UndecoratedLink } from 'twenty-ui/navigation';
+import { MAIN_COLORS } from 'twenty-ui/theme';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
@@ -68,13 +69,14 @@ export const SettingsObjectDetailPage = () => {
     findActiveObjectMetadataItemByNamePlural(objectNamePlural) ??
     findActiveObjectMetadataItemByNamePlural(updatedObjectNamePlural);
 
-  const { activeTabId } = useTabList(
+  const activeTabId = useRecoilComponentValueV2(
+    activeTabIdComponentState,
     SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID,
   );
 
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
   const isUniqueIndexesEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsUniqueIndexesEnabled,
+    FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED,
   );
 
   useEffect(() => {
@@ -169,11 +171,10 @@ export const SettingsObjectDetailPage = () => {
       >
         <SettingsPageContainer>
           <TabList
-            tabListInstanceId={
+            tabs={tabs}
+            componentInstanceId={
               SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID
             }
-            tabs={tabs}
-            className="tab-list"
           />
           <StyledContentContainer>
             {renderActiveTabContent()}

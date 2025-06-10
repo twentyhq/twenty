@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { ClientConfigService } from 'src/engine/core-modules/client-config/services/client-config.service';
 
 import { ClientConfigResolver } from './client-config.resolver';
 
@@ -13,12 +12,10 @@ describe('ClientConfigResolver', () => {
       providers: [
         ClientConfigResolver,
         {
-          provide: EnvironmentService,
-          useValue: {},
-        },
-        {
-          provide: DomainManagerService,
-          useValue: {},
+          provide: ClientConfigService,
+          useValue: {
+            getClientConfig: jest.fn(),
+          },
         },
       ],
     }).compile();

@@ -1,56 +1,64 @@
-import { ThemeColor } from 'twenty-ui';
-
 import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
 import { ZodHelperLiteral } from '@/object-record/record-field/types/ZodHelperLiteral';
-import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
-import { ConnectedAccountProvider } from 'twenty-shared';
-import * as z from 'zod';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { ThemeColor } from 'twenty-ui/theme';
+import { z } from 'zod';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { CurrencyCode } from './CurrencyCode';
-export type FieldUuidMetadata = {
-  objectMetadataNameSingular?: string;
+
+type BaseFieldMetadata = {
   fieldName: string;
+  objectMetadataNameSingular?: string;
+  isCustom?: boolean;
+};
+
+export type FieldUuidMetadata = BaseFieldMetadata & {
   settings?: null;
 };
 
-export type FieldBooleanMetadata = {
-  objectMetadataNameSingular?: string;
-  fieldName: string;
+export type FieldBooleanMetadata = BaseFieldMetadata & {
   settings?: null;
 };
 
-export type FieldTextMetadata = {
-  objectMetadataNameSingular?: string;
+export type FieldTextMetadata = BaseFieldMetadata & {
   placeHolder: string;
-  fieldName: string;
   settings?: {
     displayedMaxRows?: number;
   };
 };
 
-export type FieldDateTimeMetadata = {
-  objectMetadataNameSingular?: string;
+export enum FieldDateDisplayFormat {
+  RELATIVE = 'RELATIVE',
+  USER_SETTINGS = 'USER_SETTINGS',
+  CUSTOM = 'CUSTOM',
+}
+
+export type FieldDateMetadataSettings =
+  | {
+      displayFormat?: FieldDateDisplayFormat.CUSTOM;
+      customUnicodeDateFormat: string;
+    }
+  | {
+      displayFormat?: Exclude<
+        FieldDateDisplayFormat,
+        FieldDateDisplayFormat.CUSTOM
+      >;
+    };
+
+export type FieldDateTimeMetadata = BaseFieldMetadata & {
   placeHolder: string;
-  fieldName: string;
-  settings?: {
-    displayAsRelativeDate?: boolean;
-  };
+  settings?: FieldDateMetadataSettings;
 };
 
-export type FieldDateMetadata = {
-  objectMetadataNameSingular?: string;
+export type FieldDateMetadata = BaseFieldMetadata & {
   placeHolder: string;
-  fieldName: string;
-  settings?: {
-    displayAsRelativeDate?: boolean;
-  };
+  settings?: FieldDateMetadataSettings;
 };
 
 export type FieldNumberVariant = 'number' | 'percentage';
 
-export type FieldNumberMetadata = {
-  objectMetadataNameSingular?: string;
-  fieldName: string;
+export type FieldNumberMetadata = BaseFieldMetadata & {
   placeHolder: string;
   isPositive?: boolean;
   settings?: {
@@ -59,141 +67,102 @@ export type FieldNumberMetadata = {
   };
 };
 
-export type FieldLinkMetadata = {
-  objectMetadataNameSingular?: string;
+export type FieldLinkMetadata = BaseFieldMetadata & {
   placeHolder: string;
-  fieldName: string;
   settings?: null;
 };
 
-export type FieldLinksMetadata = {
-  objectMetadataNameSingular?: string;
-  fieldName: string;
+export type FieldLinksMetadata = BaseFieldMetadata & {
   settings?: null;
 };
 
-export type FieldCurrencyMetadata = {
-  objectMetadataNameSingular?: string;
-  fieldName: string;
+export type FieldCurrencyMetadata = BaseFieldMetadata & {
   placeHolder: string;
   isPositive?: boolean;
   settings?: null;
 };
 
-export type FieldFullNameMetadata = {
-  objectMetadataNameSingular?: string;
-  placeHolder: string;
-  fieldName: string;
-  settings?: null;
-};
-
-export type FieldEmailMetadata = {
-  objectMetadataNameSingular?: string;
-  placeHolder: string;
-  fieldName: string;
-  settings?: null;
-};
-
-export type FieldEmailsMetadata = {
-  objectMetadataNameSingular?: string;
-  fieldName: string;
-  settings?: null;
-};
-
-export type FieldPhoneMetadata = {
-  objectMetadataNameSingular?: string;
-  placeHolder: string;
-  fieldName: string;
-  settings?: null;
-};
-
-export type FieldRatingMetadata = {
-  objectMetadataNameSingular?: string;
-  fieldName: string;
-  settings?: null;
-};
-
-export type FieldAddressMetadata = {
-  objectMetadataNameSingular?: string;
-  placeHolder: string;
-  fieldName: string;
-  settings?: null;
-};
-
-export type FieldRawJsonMetadata = {
-  objectMetadataNameSingular?: string;
-  fieldName: string;
+export type FieldFullNameMetadata = BaseFieldMetadata & {
   placeHolder: string;
   settings?: null;
 };
 
-export type FieldRichTextV2Metadata = {
-  objectMetadataNameSingular?: string;
-  fieldName: string;
+export type FieldEmailMetadata = BaseFieldMetadata & {
+  placeHolder: string;
   settings?: null;
 };
 
-export type FieldRichTextMetadata = {
-  objectMetadataNameSingular?: string;
-  fieldName: string;
+export type FieldEmailsMetadata = BaseFieldMetadata & {
   settings?: null;
 };
 
-export type FieldPositionMetadata = {
-  objectMetadataNameSingular?: string;
-  fieldName: string;
+export type FieldPhoneMetadata = BaseFieldMetadata & {
+  placeHolder: string;
   settings?: null;
 };
 
-export type FieldRelationMetadata = {
-  fieldName: string;
-  objectMetadataNameSingular?: string;
+export type FieldRatingMetadata = BaseFieldMetadata & {
+  settings?: null;
+};
+
+export type FieldAddressMetadata = BaseFieldMetadata & {
+  placeHolder: string;
+  settings?: null;
+};
+
+export type FieldRawJsonMetadata = BaseFieldMetadata & {
+  placeHolder: string;
+  settings?: null;
+};
+
+export type FieldRichTextV2Metadata = BaseFieldMetadata & {
+  settings?: null;
+};
+
+export type FieldRichTextMetadata = BaseFieldMetadata & {
+  settings?: null;
+};
+
+export type FieldPositionMetadata = BaseFieldMetadata & {
+  settings?: null;
+};
+
+export type FieldRelationMetadata = BaseFieldMetadata & {
   relationFieldMetadataId: string;
   relationObjectMetadataNamePlural: string;
   relationObjectMetadataNameSingular: string;
+  relationObjectMetadataId: string;
   relationType?: RelationDefinitionType;
   targetFieldMetadataName?: string;
   useEditButton?: boolean;
   settings?: null;
 };
 
-export type FieldSelectMetadata = {
-  objectMetadataNameSingular?: string;
-  fieldName: string;
+export type FieldSelectMetadata = BaseFieldMetadata & {
   options: { label: string; color: ThemeColor; value: string }[];
   isNullable: boolean;
   settings?: null;
 };
 
-export type FieldMultiSelectMetadata = {
-  objectMetadataNameSingular?: string;
-  fieldName: string;
+export type FieldMultiSelectMetadata = BaseFieldMetadata & {
   options: { label: string; color: ThemeColor; value: string }[];
   settings?: null;
 };
 
-export type FieldActorMetadata = {
-  objectMetadataNameSingular?: string;
-  fieldName: string;
+export type FieldActorMetadata = BaseFieldMetadata & {
   settings?: null;
 };
 
-export type FieldArrayMetadata = {
-  objectMetadataNameSingular?: string;
-  fieldName: string;
+export type FieldArrayMetadata = BaseFieldMetadata & {
   values: { label: string; value: string }[];
   settings?: null;
 };
 
-export type FieldPhonesMetadata = {
-  objectMetadataNameSingular?: string;
-  fieldName: string;
+export type FieldPhonesMetadata = BaseFieldMetadata & {
   settings?: null;
 };
 
-export type FieldTsVectorMetadata = {
-  objectMetadataNameSingular?: string;
-  fieldName: string;
+export type FieldTsVectorMetadata = BaseFieldMetadata & {
   settings?: null;
 };
 
@@ -233,9 +202,9 @@ export type FieldEmailsValue = {
   additionalEmails: string[] | null;
 };
 export type FieldLinksValue = {
-  primaryLinkLabel: string;
-  primaryLinkUrl: string;
-  secondaryLinks?: { label: string; url: string }[] | null;
+  primaryLinkLabel: string | null;
+  primaryLinkUrl: string | null;
+  secondaryLinks?: { label: string | null; url: string | null }[] | null;
 };
 export type FieldCurrencyValue = {
   currencyCode: CurrencyCode;
@@ -260,9 +229,9 @@ export type FieldRatingValue = (typeof RATING_VALUES)[number] | null;
 export type FieldSelectValue = string | null;
 export type FieldMultiSelectValue = string[] | null;
 
-export type FieldRelationToOneValue = RecordForSelect | null;
+export type FieldRelationToOneValue = ObjectRecord | null;
 
-export type FieldRelationFromManyValue = RecordForSelect[] | [];
+export type FieldRelationFromManyValue = ObjectRecord[];
 
 export type FieldRelationValue<
   T extends FieldRelationToOneValue | FieldRelationFromManyValue,
@@ -286,15 +255,18 @@ const FieldActorSourceSchema = z.union([
   z.literal('MANUAL'),
   z.literal('SYSTEM'),
   z.literal('WORKFLOW'),
+  z.literal('WEBHOOK'),
 ]);
 
 export const FieldActorValueSchema = z.object({
   source: FieldActorSourceSchema,
   workspaceMemberId: z.string().nullable(),
   name: z.string(),
-  context: z.object({
-    provider: z.nativeEnum(ConnectedAccountProvider).optional(),
-  }),
+  context: z
+    .object({
+      provider: z.nativeEnum(ConnectedAccountProvider).optional(),
+    })
+    .nullable(),
 });
 export type FieldActorValue = z.infer<typeof FieldActorValueSchema>;
 

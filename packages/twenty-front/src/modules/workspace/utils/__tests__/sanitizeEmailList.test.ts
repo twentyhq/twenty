@@ -21,4 +21,11 @@ describe('sanitizeEmailList', () => {
       'toto@toto.com',
     ]);
   });
+
+  it('should lowercase emails', () => {
+    expect(sanitizeEmailList(['TOTO@toto.com', 'TOTO2@toto.com'])).toEqual([
+      'toto@toto.com',
+      'toto2@toto.com',
+    ]);
+  });
 });

@@ -14,6 +14,7 @@ export interface EventRowDynamicComponentProps {
   mainObjectMetadataItem: ObjectMetadataItem;
   linkedObjectMetadataItem: ObjectMetadataItem | null;
   authorFullName: string;
+  createdAt?: string;
 }
 
 export const StyledEventRowItemColumn = styled.div`
@@ -34,6 +35,7 @@ export const EventRowDynamicComponent = ({
   mainObjectMetadataItem,
   linkedObjectMetadataItem,
   authorFullName,
+  createdAt,
 }: EventRowDynamicComponentProps) => {
   switch (linkedObjectMetadataItem?.nameSingular) {
     case 'calendarEvent':
@@ -65,6 +67,7 @@ export const EventRowDynamicComponent = ({
           linkedObjectMetadataItem={linkedObjectMetadataItem}
           authorFullName={authorFullName}
           objectNameSingular={CoreObjectNameSingular.Task}
+          createdAt={createdAt}
         />
       );
     case 'note':
@@ -76,6 +79,7 @@ export const EventRowDynamicComponent = ({
           linkedObjectMetadataItem={linkedObjectMetadataItem}
           authorFullName={authorFullName}
           objectNameSingular={CoreObjectNameSingular.Note}
+          createdAt={createdAt}
         />
       );
     default:
@@ -86,6 +90,7 @@ export const EventRowDynamicComponent = ({
           mainObjectMetadataItem={mainObjectMetadataItem}
           linkedObjectMetadataItem={linkedObjectMetadataItem}
           authorFullName={authorFullName}
+          createdAt={createdAt}
         />
       );
   }

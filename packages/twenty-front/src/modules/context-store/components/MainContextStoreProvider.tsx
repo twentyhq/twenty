@@ -1,12 +1,14 @@
 import { MainContextStoreProviderEffect } from '@/context-store/components/MainContextStoreProviderEffect';
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { prefetchIndexViewIdFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchIndexViewIdFromObjectMetadataItemFamilySelector';
 import { AppPath } from '@/types/AppPath';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
+import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
-import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
+import { isDefined } from 'twenty-shared/utils';
+import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 const getViewId = (
   viewIdFromQueryParams: string | null,
@@ -29,15 +31,13 @@ const getViewId = (
 };
 
 export const MainContextStoreProvider = () => {
-  const { isMatchingLocation } = useIsMatchingLocation();
-  const isRecordIndexPage = isMatchingLocation(AppPath.RecordIndexPage);
-  const isRecordShowPage = isMatchingLocation(AppPath.RecordShowPage);
-
-  const pageName = isRecordIndexPage
-    ? 'record-index'
-    : isRecordShowPage
-      ? 'record-show'
-      : undefined;
+  const location = useLocation();
+  const isRecordIndexPage = isMatchingLocation(
+    location,
+    AppPath.RecordIndexPage,
+  );
+  const isRecordShowPage = isMatchingLocation(location, AppPath.RecordShowPage);
+  const isSettingsPage = useIsSettingsPage();
 
   const objectNamePlural = useParams().objectNamePlural ?? '';
   const objectNameSingular = useParams().objectNameSingular ?? '';
@@ -66,17 +66,22 @@ export const MainContextStoreProvider = () => {
   );
 
   const viewId = getViewId(viewIdQueryParam, indexViewId, lastVisitedViewId);
+  const showAuthModal = useShowAuthModal();
 
-  if (!isDefined(pageName) || !isDefined(objectMetadataItem)) {
+  const shouldComputeContextStore =
+    (isRecordIndexPage || isRecordShowPage || isSettingsPage) && !showAuthModal;
+
+  if (!shouldComputeContextStore) {
     return null;
   }
 
   return (
     <MainContextStoreProviderEffect
-      mainContextStoreComponentInstanceIdToSet={'main-context-store'}
       viewId={viewId}
       objectMetadataItem={objectMetadataItem}
-      pageName={pageName}
+      isRecordIndexPage={isRecordIndexPage}
+      isRecordShowPage={isRecordShowPage}
+      isSettingsPage={isSettingsPage}
     />
   );
 };

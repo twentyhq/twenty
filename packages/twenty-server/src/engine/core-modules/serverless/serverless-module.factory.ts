@@ -1,42 +1,42 @@
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import {
   ServerlessDriverType,
   ServerlessModuleOptions,
 } from 'src/engine/core-modules/serverless/serverless.interface';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export const serverlessModuleFactory = async (
-  environmentService: EnvironmentService,
+  twentyConfigService: TwentyConfigService,
   fileStorageService: FileStorageService,
 ): Promise<ServerlessModuleOptions> => {
-  const driverType = environmentService.get('SERVERLESS_TYPE');
+  const driverType = twentyConfigService.get('SERVERLESS_TYPE');
   const options = { fileStorageService };
 
   switch (driverType) {
-    case ServerlessDriverType.Local: {
+    case ServerlessDriverType.LOCAL: {
       return {
-        type: ServerlessDriverType.Local,
+        type: ServerlessDriverType.LOCAL,
         options,
       };
     }
-    case ServerlessDriverType.Lambda: {
-      const region = environmentService.get('SERVERLESS_LAMBDA_REGION');
-      const accessKeyId = environmentService.get(
+    case ServerlessDriverType.LAMBDA: {
+      const region = twentyConfigService.get('SERVERLESS_LAMBDA_REGION');
+      const accessKeyId = twentyConfigService.get(
         'SERVERLESS_LAMBDA_ACCESS_KEY_ID',
       );
-      const secretAccessKey = environmentService.get(
+      const secretAccessKey = twentyConfigService.get(
         'SERVERLESS_LAMBDA_SECRET_ACCESS_KEY',
       );
-      const lambdaRole = environmentService.get('SERVERLESS_LAMBDA_ROLE');
+      const lambdaRole = twentyConfigService.get('SERVERLESS_LAMBDA_ROLE');
 
-      const subhostingRole = environmentService.get(
+      const subhostingRole = twentyConfigService.get(
         'SERVERLESS_LAMBDA_SUBHOSTING_ROLE',
       );
 
       return {
-        type: ServerlessDriverType.Lambda,
+        type: ServerlessDriverType.LAMBDA,
         options: {
           ...options,
           credentials: accessKeyId

@@ -5,9 +5,12 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
-import { Button, H2Title, IconCopy, Section } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { Button } from 'twenty-ui/input';
+import { H2Title, IconCopy } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -29,12 +32,14 @@ const StyledLinkContainer = styled.div`
 const StyledButtonCopy = styled.div`
   align-items: end;
   display: flex;
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
 export const SettingsSSOOIDCForm = () => {
   const { control } = useFormContext();
   const { enqueueSnackBar } = useSnackBar();
   const theme = useTheme();
+  const { t } = useLingui();
 
   const authorizedUrl = window.location.origin;
   const redirectionUrl = `${REACT_APP_SERVER_BASE_URL}/auth/oidc/callback`;
@@ -43,15 +48,15 @@ export const SettingsSSOOIDCForm = () => {
     <>
       <Section>
         <H2Title
-          title="Client Settings"
-          description="Provide your OIDC provider details"
+          title={t`Client Settings`}
+          description={t`Provide your OIDC provider details`}
         />
         <StyledInputsContainer>
           <StyledContainer>
             <StyledLinkContainer>
               <TextInput
                 readOnly={true}
-                label="Authorized URI"
+                label={t`Authorized URI`}
                 value={authorizedUrl}
                 fullWidth
               />
@@ -59,15 +64,16 @@ export const SettingsSSOOIDCForm = () => {
             <StyledButtonCopy>
               <Button
                 Icon={IconCopy}
-                title="Copy"
+                title={t`Copy`}
                 onClick={() => {
-                  enqueueSnackBar('Authorized Url copied to clipboard', {
+                  enqueueSnackBar(t`Authorized URL copied to clipboard`, {
                     variant: SnackBarVariant.Success,
                     icon: <IconCopy size={theme.icon.size.md} />,
                     duration: 2000,
                   });
                   navigator.clipboard.writeText(authorizedUrl);
                 }}
+                type="button"
               />
             </StyledButtonCopy>
           </StyledContainer>
@@ -75,7 +81,7 @@ export const SettingsSSOOIDCForm = () => {
             <StyledLinkContainer>
               <TextInput
                 readOnly={true}
-                label="Redirection URI"
+                label={t`Redirection URI`}
                 value={redirectionUrl}
                 fullWidth
               />
@@ -83,15 +89,16 @@ export const SettingsSSOOIDCForm = () => {
             <StyledButtonCopy>
               <Button
                 Icon={IconCopy}
-                title="Copy"
+                title={t`Copy`}
                 onClick={() => {
-                  enqueueSnackBar('Redirect Url copied to clipboard', {
+                  enqueueSnackBar(t`Redirect Url copied to clipboard`, {
                     variant: SnackBarVariant.Success,
                     icon: <IconCopy size={theme.icon.size.md} />,
                     duration: 2000,
                   });
                   navigator.clipboard.writeText(redirectionUrl);
                 }}
+                type="button"
               />
             </StyledButtonCopy>
           </StyledContainer>
@@ -99,8 +106,8 @@ export const SettingsSSOOIDCForm = () => {
       </Section>
       <Section>
         <H2Title
-          title="Identity Provider"
-          description="Enter the credentials to set the connection"
+          title={t`Identity Provider`}
+          description={t`Enter the credentials to set the connection`}
         />
         <StyledInputsContainer>
           <Controller
@@ -109,7 +116,7 @@ export const SettingsSSOOIDCForm = () => {
             render={({ field: { onChange, value } }) => (
               <TextInput
                 autoComplete="off"
-                label="Client ID"
+                label={t`Client ID`}
                 value={value}
                 onChange={onChange}
                 fullWidth
@@ -124,7 +131,7 @@ export const SettingsSSOOIDCForm = () => {
               <TextInput
                 autoComplete="off"
                 type="password"
-                label="Client Secret"
+                label={t`Client Secret`}
                 value={value}
                 onChange={onChange}
                 fullWidth
@@ -138,7 +145,7 @@ export const SettingsSSOOIDCForm = () => {
             render={({ field: { onChange, value } }) => (
               <TextInput
                 autoComplete="off"
-                label="Issuer URI"
+                label={t`Issuer URI`}
                 value={value}
                 onChange={onChange}
                 fullWidth

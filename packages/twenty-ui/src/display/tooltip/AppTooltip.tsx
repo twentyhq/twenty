@@ -14,6 +14,7 @@ export enum TooltipDelay {
   noDelay = '0ms',
   shortDelay = '300ms',
   mediumDelay = '500ms',
+  longDelay = '1000ms',
 }
 
 const StyledAppTooltip = styled(Tooltip)<{ width?: string }>`
@@ -68,12 +69,18 @@ export const AppTooltip = ({
   width,
   isOpen,
 }: AppTooltipProps) => {
-  const delayInMs =
-    delay === TooltipDelay.noDelay
-      ? 0
-      : delay === TooltipDelay.shortDelay
-        ? 300
-        : 500;
+  const getDelayInMis = (delay: TooltipDelay) => {
+    switch (delay) {
+      case TooltipDelay.noDelay:
+        return 0;
+      case TooltipDelay.shortDelay:
+        return 300;
+      case TooltipDelay.mediumDelay:
+        return 500;
+      case TooltipDelay.longDelay:
+        return 1000;
+    }
+  };
 
   return (
     <StyledAppTooltip
@@ -81,7 +88,7 @@ export const AppTooltip = ({
         anchorSelect,
         className,
         content,
-        delayShow: delayInMs,
+        delayShow: getDelayInMis(delay),
         delayHide: 20,
         hidden,
         noArrow,

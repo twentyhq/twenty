@@ -1,14 +1,11 @@
-import {
-  IconArchiveOff,
-  IconDotsVertical,
-  IconTrash,
-  LightIconButton,
-  MenuItem,
-} from 'twenty-ui';
-
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { IconArchiveOff, IconDotsVertical, IconTrash } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
 
 type SettingsObjectInactiveMenuDropDownProps = {
   isCustomObject: boolean;
@@ -47,23 +44,24 @@ export const SettingsObjectInactiveMenuDropDown = ({
           accent="tertiary"
         />
       }
-      dropdownMenuWidth={160}
       dropdownComponents={
-        <DropdownMenuItemsContainer>
-          <MenuItem
-            text="Activate"
-            LeftIcon={IconArchiveOff}
-            onClick={handleActivate}
-          />
-          {isCustomObject && (
+        <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
+          <DropdownMenuItemsContainer>
             <MenuItem
-              text="Delete"
-              LeftIcon={IconTrash}
-              accent="danger"
-              onClick={handleDelete}
+              text="Activate"
+              LeftIcon={IconArchiveOff}
+              onClick={handleActivate}
             />
-          )}
-        </DropdownMenuItemsContainer>
+            {isCustomObject && (
+              <MenuItem
+                text="Delete"
+                LeftIcon={IconTrash}
+                accent="danger"
+                onClick={handleDelete}
+              />
+            )}
+          </DropdownMenuItemsContainer>
+        </DropdownContent>
       }
       dropdownHotkeyScope={{ scope: dropdownId }}
     />

@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -29,6 +30,7 @@ export const NameFields = ({
   onFirstNameUpdate,
   onLastNameUpdate,
 }: NameFieldsProps) => {
+  const { t } = useLingui();
   const currentUser = useRecoilValue(currentUserState);
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
     currentWorkspaceMemberState,
@@ -110,14 +112,14 @@ export const NameFields = ({
   return (
     <StyledComboInputContainer>
       <TextInput
-        label="First Name"
+        label={t`First Name`}
         value={firstName}
         onChange={setFirstName}
         placeholder="Tim"
         fullWidth
       />
       <TextInput
-        label="Last Name"
+        label={t`Last Name`}
         value={lastName}
         onChange={setLastName}
         placeholder="Cook"

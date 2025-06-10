@@ -37,28 +37,10 @@ export class FieldMetadataRelationService {
       targetFieldMetadata: FieldMetadataEntity;
     }>
   > {
-    const metadataVersion =
-      await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
-
-    if (!metadataVersion) {
-      throw new FieldMetadataException(
-        `Metadata version not found for workspace ${workspaceId}`,
-        FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
-      );
-    }
-
     const objectMetadataMaps =
-      await this.workspaceCacheStorageService.getObjectMetadataMaps(
+      await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
         workspaceId,
-        metadataVersion,
       );
-
-    if (!objectMetadataMaps) {
-      throw new FieldMetadataException(
-        `Object metadata map not found for workspace ${workspaceId} and metadata version ${metadataVersion}`,
-        FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
-      );
-    }
 
     return fieldMetadataItems.map((fieldMetadataItem) => {
       const {
@@ -78,9 +60,9 @@ export class FieldMetadataRelationService {
       const sourceObjectMetadata = objectMetadataMaps.byId[objectMetadataId];
       const targetObjectMetadata =
         objectMetadataMaps.byId[relationTargetObjectMetadataId];
-      const sourceFieldMetadata = sourceObjectMetadata.fieldsById[id];
+      const sourceFieldMetadata = sourceObjectMetadata?.fieldsById[id];
       const targetFieldMetadata =
-        targetObjectMetadata.fieldsById[relationTargetFieldMetadataId];
+        targetObjectMetadata?.fieldsById[relationTargetFieldMetadataId];
 
       if (
         !sourceObjectMetadata ||

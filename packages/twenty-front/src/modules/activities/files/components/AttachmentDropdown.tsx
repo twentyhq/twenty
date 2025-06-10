@@ -1,15 +1,16 @@
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import {
   IconDotsVertical,
   IconDownload,
   IconPencil,
   IconTrash,
-  LightIconButton,
-  MenuItem,
-} from 'twenty-ui';
-
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+} from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
 
 type AttachmentDropdownProps = {
   onDownload: () => void;
@@ -49,26 +50,27 @@ export const AttachmentDropdown = ({
       clickableComponent={
         <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
       }
-      dropdownMenuWidth={160}
       dropdownComponents={
-        <DropdownMenuItemsContainer>
-          <MenuItem
-            text="Download"
-            LeftIcon={IconDownload}
-            onClick={handleDownload}
-          />
-          <MenuItem
-            text="Rename"
-            LeftIcon={IconPencil}
-            onClick={handleRename}
-          />
-          <MenuItem
-            text="Delete"
-            accent="danger"
-            LeftIcon={IconTrash}
-            onClick={handleDelete}
-          />
-        </DropdownMenuItemsContainer>
+        <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
+          <DropdownMenuItemsContainer>
+            <MenuItem
+              text="Download"
+              LeftIcon={IconDownload}
+              onClick={handleDownload}
+            />
+            <MenuItem
+              text="Rename"
+              LeftIcon={IconPencil}
+              onClick={handleRename}
+            />
+            <MenuItem
+              text="Delete"
+              accent="danger"
+              LeftIcon={IconTrash}
+              onClick={handleDelete}
+            />
+          </DropdownMenuItemsContainer>
+        </DropdownContent>
       }
       dropdownHotkeyScope={{ scope: dropdownId }}
     />

@@ -9,11 +9,12 @@ import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { useDeleteOneRecordMutation } from '@/object-record/hooks/useDeleteOneRecordMutation';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getDeleteOneRecordMutationResponseField } from '@/object-record/utils/getDeleteOneRecordMutationResponseField';
 import { isNull } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 type useDeleteOneRecordProps = {
   objectNameSingular: string;
@@ -37,7 +38,7 @@ export const useDeleteOneRecord = ({
   });
 
   const { objectMetadataItems } = useObjectMetadataItems();
-
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { refetchAggregateQueries } = useRefetchAggregateQueries({
     objectMetadataNamePlural: objectMetadataItem.namePlural,
   });
@@ -84,6 +85,7 @@ export const useDeleteOneRecord = ({
           cache: apolloClient.cache,
           record: computedOptimisticRecord,
           recordGqlFields,
+          objectPermissionsByObjectMetadataId,
         });
 
         triggerUpdateRecordOptimisticEffect({
@@ -133,6 +135,7 @@ export const useDeleteOneRecord = ({
               deletedAt: null,
             },
             recordGqlFields,
+            objectPermissionsByObjectMetadataId,
           });
 
           triggerUpdateRecordOptimisticEffect({
@@ -156,6 +159,7 @@ export const useDeleteOneRecord = ({
       mutationResponseField,
       objectMetadataItem,
       objectMetadataItems,
+      objectPermissionsByObjectMetadataId,
       refetchAggregateQueries,
     ],
   );

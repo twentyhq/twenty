@@ -1,3 +1,4 @@
+import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import {
   IconCoins,
   IconComponent,
@@ -51,9 +52,7 @@ import {
   IconCurrencyYen,
   IconCurrencyYuan,
   IconCurrencyZloty,
-} from 'twenty-ui';
-
-import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
+} from 'twenty-ui/display';
 
 export const SETTINGS_FIELD_CURRENCY_CODES: Record<
   CurrencyCode,
@@ -206,6 +205,7 @@ export const SETTINGS_FIELD_CURRENCY_CODES: Record<
   VND: { label: 'Vietnamese đồng', Icon: IconCurrencyDong },
   VUV: { label: 'Vanuatu vatu', Icon: IconCoins },
   WST: { label: 'Samoan tala', Icon: IconCoins },
+  XOF: { label: 'West African CFA franc', Icon: IconCoins },
   XCD: { label: 'East Caribbean dollar', Icon: IconCurrencyDollar },
   YER: { label: 'Yemeni rial', Icon: IconCoins },
   ZAR: { label: 'South African rand', Icon: IconCoins },

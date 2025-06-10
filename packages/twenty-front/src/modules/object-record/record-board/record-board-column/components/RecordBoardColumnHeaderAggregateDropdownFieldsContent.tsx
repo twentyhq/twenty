@@ -4,19 +4,21 @@ import { aggregateOperationComponentState } from '@/object-record/record-board/r
 import { availableFieldIdsForAggregateOperationComponentState } from '@/object-record/record-board/record-board-column/states/availableFieldIdsForAggregateOperationComponentState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import {
   Icon123,
   IconCheck,
   IconChevronLeft,
-  MenuItem,
   useIcons,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
   const {
@@ -47,13 +49,17 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
 
   if (!isDefined(aggregateOperation)) return <></>;
   return (
-    <>
+    <DropdownContent>
       <DropdownMenuHeader
-        StartIcon={IconChevronLeft}
-        onClick={() =>
-          previousContentId
-            ? onContentChange(previousContentId)
-            : resetContent()
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent
+            onClick={() =>
+              previousContentId
+                ? onContentChange(previousContentId)
+                : resetContent()
+            }
+            Icon={IconChevronLeft}
+          />
         }
       >
         {getAggregateOperationLabel(aggregateOperation)}
@@ -89,6 +95,6 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
           );
         })}
       </DropdownMenuItemsContainer>
-    </>
+    </DropdownContent>
   );
 };

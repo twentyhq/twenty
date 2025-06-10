@@ -1,11 +1,10 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
-import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
-import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { EMPTY_TRIGGER_STEP_ID } from '@/workflow/workflow-diagram/constants/EmptyTriggerStepId';
+import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import { workflowVisualizerWorkflowVersionIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowVersionIdComponentState';
 import { useTriggerNodeSelection } from '@/workflow/workflow-diagram/hooks/useTriggerNodeSelection';
-import { workflowSelectedNodeState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeState';
+import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import {
   WorkflowDiagramNode,
   WorkflowDiagramStepNodeData,
@@ -13,44 +12,56 @@ import {
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
 import { useCallback } from 'react';
-import { useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
-import { useIcons } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { useIcons } from 'twenty-ui/display';
 
 export const WorkflowDiagramCanvasReadonlyEffect = () => {
   const { getIcon } = useIcons();
-  const { openRightDrawer, closeRightDrawer } = useRightDrawer();
-  const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
-  const setHotkeyScope = useSetHotkeyScope();
-  const { closeCommandMenu } = useCommandMenu();
+  const setWorkflowSelectedNode = useSetRecoilComponentStateV2(
+    workflowSelectedNodeComponentState,
+  );
+  const { openWorkflowViewStepInCommandMenu } = useWorkflowCommandMenu();
+
+  const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
+    workflowVisualizerWorkflowIdComponentState,
+  );
+  const workflowVisualizerWorkflowVersionId = useRecoilComponentValueV2(
+    workflowVisualizerWorkflowVersionIdComponentState,
+  );
 
   const handleSelectionChange = useCallback(
     ({ nodes }: OnSelectionChangeParams) => {
-      const selectedNode = nodes[0] as WorkflowDiagramNode;
-      const isClosingStep = isDefined(selectedNode) === false;
+      if (
+        !(
+          isDefined(workflowVisualizerWorkflowId) &&
+          isDefined(workflowVisualizerWorkflowVersionId)
+        )
+      ) {
+        return;
+      }
 
-      if (isClosingStep || selectedNode.type === EMPTY_TRIGGER_STEP_ID) {
-        closeRightDrawer();
-        closeCommandMenu();
+      const selectedNode = nodes[0] as WorkflowDiagramNode | undefined;
+
+      if (!isDefined(selectedNode)) {
         return;
       }
 
       setWorkflowSelectedNode(selectedNode.id);
-      setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
 
       const selectedNodeData = selectedNode.data as WorkflowDiagramStepNodeData;
 
-      openRightDrawer(RightDrawerPages.WorkflowStepView, {
+      openWorkflowViewStepInCommandMenu({
+        workflowId: workflowVisualizerWorkflowId,
+        workflowVersionId: workflowVisualizerWorkflowVersionId,
         title: selectedNodeData.name,
-        Icon: getIcon(getWorkflowNodeIconKey(selectedNodeData)),
+        icon: getIcon(getWorkflowNodeIconKey(selectedNodeData)),
       });
     },
     [
       setWorkflowSelectedNode,
-      setHotkeyScope,
-      openRightDrawer,
-      closeRightDrawer,
-      closeCommandMenu,
+      openWorkflowViewStepInCommandMenu,
+      workflowVisualizerWorkflowId,
+      workflowVisualizerWorkflowVersionId,
       getIcon,
     ],
   );

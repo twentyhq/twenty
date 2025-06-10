@@ -1,10 +1,11 @@
 import { CommandMenuContextChipGroups } from '@/command-menu/components/CommandMenuContextChipGroups';
 import { CommandMenuContextRecordChipAvatars } from '@/command-menu/components/CommandMenuContextRecordChipAvatars';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { getSelectedRecordsContextText } from '@/command-menu/utils/getRecordContextText';
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { isDefined } from 'twenty-shared';
 import { CommandMenuContextChipProps } from './CommandMenuContextChip';
+import { isDefined } from 'twenty-shared/utils';
 
 export const CommandMenuContextChipGroupsWithRecordSelection = ({
   contextChips,
@@ -21,6 +22,8 @@ export const CommandMenuContextChipGroupsWithRecordSelection = ({
     useFindManyRecordsSelectedInContextStore({
       limit: 3,
     });
+
+  const { openCommandMenu } = useCommandMenu();
 
   if (loading) {
     return null;
@@ -43,6 +46,8 @@ export const CommandMenuContextChipGroupsWithRecordSelection = ({
             totalCount,
           ),
           Icons: Avatars,
+          onClick: contextChips.length > 0 ? openCommandMenu : undefined,
+          withIconBackground: false,
         }
       : undefined;
 

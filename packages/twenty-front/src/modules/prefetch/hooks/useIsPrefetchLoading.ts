@@ -2,7 +2,7 @@ import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedF
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useRecoilValue } from 'recoil';
-import { WorkspaceActivationStatus } from 'twenty-shared';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 export const useIsPrefetchLoading = () => {
   const isWorkspaceActive = useIsWorkspaceActivationStatusEqualsTo(

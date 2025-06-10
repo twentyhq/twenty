@@ -1,7 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 type CreateEventInput = {
   action: string;
@@ -13,7 +13,7 @@ export class TelemetryService {
   private readonly logger = new Logger(TelemetryService.name);
 
   constructor(
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly httpService: HttpService,
   ) {}
 
@@ -22,7 +22,7 @@ export class TelemetryService {
     userId: string | null | undefined,
     workspaceId: string | null | undefined,
   ) {
-    if (!this.environmentService.get('TELEMETRY_ENABLED')) {
+    if (!this.twentyConfigService.get('TELEMETRY_ENABLED')) {
       return { success: true };
     }
 

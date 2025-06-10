@@ -4,11 +4,14 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { addressSchema as addressFieldDefaultValueSchema } from '@/object-record/record-field/types/guards/isFieldAddressValue';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
-import { Select, SelectOption } from '@/ui/input/components/Select';
-import { IconCircleOff, IconComponentProps, IconMap } from 'twenty-ui';
+import { Select } from '@/ui/input/components/Select';
+import { useLingui } from '@lingui/react/macro';
 import { z } from 'zod';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
+import { IconCircleOff, IconComponentProps, IconMap } from 'twenty-ui/display';
+import { SelectOption } from 'twenty-ui/input';
+
 type SettingsDataModelFieldAddressFormProps = {
   disabled?: boolean;
   defaultCountry?: string;
@@ -30,6 +33,7 @@ export const SettingsDataModelFieldAddressForm = ({
   disabled,
   fieldMetadataItem,
 }: SettingsDataModelFieldAddressFormProps) => {
+  const { t } = useLingui();
   const { control } = useFormContext<SettingsDataModelFieldTextFormValues>();
   const countries = [
     {
@@ -39,7 +43,7 @@ export const SettingsDataModelFieldAddressForm = ({
     },
     ...useCountries()
       .sort((a, b) => a.countryName.localeCompare(b.countryName))
-      .map<SelectOption<string>>(({ countryName, Flag }) => ({
+      .map<SelectOption>(({ countryName, Flag }) => ({
         label: countryName,
         value: countryName,
         Icon: (props: IconComponentProps) =>
@@ -71,8 +75,8 @@ export const SettingsDataModelFieldAddressForm = ({
         return (
           <SettingsOptionCardContentSelect
             Icon={IconMap}
-            title="Default Country"
-            description="The default country for new addresses"
+            title={t`Default Country`}
+            description={t`The default country for new addresses`}
           >
             <Select<string>
               dropdownWidth={220}

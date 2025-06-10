@@ -1,5 +1,8 @@
-import { ConnectedAccountProvider, FieldMetadataType } from 'twenty-shared';
 import { v4 } from 'uuid';
+import {
+  ConnectedAccountProvider,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 
 import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
@@ -13,6 +16,7 @@ export enum FieldActorSource {
   IMPORT = 'IMPORT',
   MANUAL = 'MANUAL',
   SYSTEM = 'SYSTEM',
+  WEBHOOK = 'WEBHOOK',
 }
 
 export const actorCompositeType: CompositeType = {
@@ -27,6 +31,7 @@ export const actorCompositeType: CompositeType = {
         (key, index) =>
           ({
             id: v4(),
+            // @ts-expect-error legacy noImplicitAny
             label: `${FieldActorSource[key].toLowerCase()}`,
             value: key,
             position: index,

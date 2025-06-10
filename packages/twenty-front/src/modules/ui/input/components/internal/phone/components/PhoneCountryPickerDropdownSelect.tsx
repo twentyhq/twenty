@@ -6,8 +6,9 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import 'react-phone-number-input/style.css';
-import { MenuItem, MenuItemSelectAvatar } from 'twenty-ui';
+import { MenuItem, MenuItemSelectAvatar } from 'twenty-ui/navigation';
 
 const StyledIconContainer = styled.div`
   align-items: center;
@@ -46,7 +47,7 @@ export const PhoneCountryPickerDropdownSelect = ({
   );
 
   return (
-    <>
+    <DropdownContent>
       <DropdownMenuSearchInput
         value={searchFilter}
         onChange={(event) => setSearchFilter(event.currentTarget.value)}
@@ -90,6 +91,6 @@ export const PhoneCountryPickerDropdownSelect = ({
           </>
         )}
       </DropdownMenuItemsContainer>
-    </>
+    </DropdownContent>
   );
 };

@@ -1,7 +1,8 @@
+import { WorkflowActionType } from '@/workflow/types/Workflow';
 import { OTHER_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/OtherActions';
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
 
-export const getActionIcon = (actionType: string) => {
+export const getActionIcon = (actionType: WorkflowActionType) => {
   switch (actionType) {
     case 'CREATE_RECORD':
     case 'UPDATE_RECORD':

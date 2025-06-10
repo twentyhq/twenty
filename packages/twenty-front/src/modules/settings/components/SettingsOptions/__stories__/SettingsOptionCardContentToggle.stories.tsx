@@ -2,13 +2,8 @@ import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsO
 import styled from '@emotion/styled';
 import { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
-import {
-  ComponentDecorator,
-  IconBell,
-  IconLock,
-  IconRobot,
-  IconUsers,
-} from 'twenty-ui';
+import { ComponentDecorator } from 'twenty-ui/testing';
+import { IconBell, IconLock, IconRobot, IconUsers } from 'twenty-ui/display';
 
 const StyledContainer = styled.div`
   width: 480px;

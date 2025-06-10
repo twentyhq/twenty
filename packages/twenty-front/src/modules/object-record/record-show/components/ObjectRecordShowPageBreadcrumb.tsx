@@ -1,11 +1,17 @@
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
+import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
+import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
+import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/useRecordShowPagePagination';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
+import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { FieldMetadataType, capitalize } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { capitalize } from 'twenty-shared/utils';
 
 const StyledEditableTitleContainer = styled.div`
   align-items: center;
@@ -16,18 +22,22 @@ const StyledEditableTitleContainer = styled.div`
 `;
 
 const StyledEditableTitlePrefix = styled.div`
+  align-items: center;
   color: ${({ theme }) => theme.font.color.tertiary};
+  cursor: pointer;
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme }) => theme.spacing(0.75)};
 `;
 
 const StyledTitle = styled.div`
   max-width: 100%;
   overflow: hidden;
-  padding-right: ${({ theme }) => theme.spacing(1)};
   width: fit-content;
+`;
+
+const StyledPaginationInformation = styled.span`
+  color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
 export const ObjectRecordShowPageBreadcrumb = ({
@@ -41,7 +51,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
   objectLabelPlural: string;
   labelIdentifierFieldMetadataItem?: FieldMetadataItem;
 }) => {
-  const { record, loading } = useFindOneRecord({
+  const { loading } = useFindOneRecord({
     objectNameSingular,
     objectRecordId,
     recordGqlFields: {
@@ -49,11 +59,29 @@ export const ObjectRecordShowPageBreadcrumb = ({
     },
   });
 
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
   const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
     objectNameSingular,
     objectRecordId,
-    recordFromStore: record ?? null,
   });
+
+  const isRecordReadOnly = useIsRecordReadOnly({
+    recordId: objectRecordId,
+    objectMetadataId: objectMetadataItem.id,
+  });
+
+  const { navigateToIndexView, rankInView, totalCount } =
+    useRecordShowPagePagination(objectNameSingular, objectRecordId);
+
+  const { headerIcon: HeaderIcon } = useRecordShowPage(
+    objectNameSingular,
+    objectRecordId,
+  );
+
+  const theme = useTheme();
 
   if (loading) {
     return null;
@@ -61,7 +89,12 @@ export const ObjectRecordShowPageBreadcrumb = ({
 
   return (
     <StyledEditableTitleContainer>
-      <StyledEditableTitlePrefix>
+      <StyledEditableTitlePrefix
+        onClick={() => {
+          navigateToIndexView();
+        }}
+      >
+        {HeaderIcon && <HeaderIcon size={theme.icon.size.md} />}
         {capitalize(objectLabelPlural)}
         <span>{' / '}</span>
       </StyledEditableTitlePrefix>
@@ -69,8 +102,6 @@ export const ObjectRecordShowPageBreadcrumb = ({
         <FieldContext.Provider
           value={{
             recordId: objectRecordId,
-            recoilScopeId:
-              objectRecordId + labelIdentifierFieldMetadataItem?.id,
             isLabelIdentifier: false,
             fieldDefinition: {
               type:
@@ -86,14 +117,20 @@ export const ObjectRecordShowPageBreadcrumb = ({
               defaultValue: labelIdentifierFieldMetadataItem?.defaultValue,
             },
             useUpdateRecord: useUpdateOneObjectRecordMutation,
-            hotkeyScope: InlineCellHotkeyScope.InlineCell,
             isCentered: false,
             isDisplayModeFixHeight: true,
+            isReadOnly: isRecordReadOnly,
           }}
         >
-          <RecordTitleCell sizeVariant="sm" />
+          <RecordTitleCell
+            sizeVariant="xs"
+            containerType={RecordTitleCellContainerType.PageHeader}
+          />
         </FieldContext.Provider>
       </StyledTitle>
+      <StyledPaginationInformation>
+        {`(${rankInView + 1}/${totalCount})`}
+      </StyledPaginationInformation>
     </StyledEditableTitleContainer>
   );
 };

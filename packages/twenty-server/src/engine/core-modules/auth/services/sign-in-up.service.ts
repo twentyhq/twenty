@@ -2,15 +2,10 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import FileType from 'file-type';
-import {
-  TWENTY_ICONS_BASE_URL,
-  WorkspaceActivationStatus,
-} from 'twenty-shared';
+import { TWENTY_ICONS_BASE_URL } from 'twenty-shared/constants';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
-
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
@@ -30,16 +25,17 @@ import {
   SignInUpNewUserPayload,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
-import { getImageBufferFromUrl } from 'src/utils/image';
 import { isWorkEmail } from 'src/utils/is-work-email';
 
 @Injectable()
@@ -55,9 +51,11 @@ export class SignInUpService {
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly onboardingService: OnboardingService,
     private readonly httpService: HttpService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly domainManagerService: DomainManagerService,
     private readonly userService: UserService,
+    private readonly userRoleService: UserRoleService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async computeParamsForNewUser(
@@ -86,7 +84,6 @@ export class SignInUpService {
       ExistingUserOrPartialUserWithPicture &
       AuthProviderWithPasswordType,
   ) {
-    // with personal invitation flow
     if (params.workspace && params.invitation) {
       return {
         workspace: params.workspace,
@@ -106,14 +103,7 @@ export class SignInUpService {
       return { user: updatedUser, workspace: params.workspace };
     }
 
-    if (params.userData.type === 'newUserWithPicture') {
-      return await this.signUpOnNewWorkspace(
-        params.userData.newUserWithPicture,
-      );
-    }
-
-    // should never happen.
-    throw new Error('Invalid sign in up params');
+    return await this.signUpOnNewWorkspace(params.userData);
   }
 
   async generateHash(password: string) {
@@ -196,23 +186,6 @@ export class SignInUpService {
     return updatedUser;
   }
 
-  private async persistNewUser(
-    newUser: PartialUserWithPicture,
-    workspace: Workspace,
-  ) {
-    const imagePath = await this.uploadPicture(newUser.picture, workspace.id);
-
-    delete newUser.picture;
-
-    const userToCreate = this.userRepository.create({
-      ...newUser,
-      defaultAvatarUrl: imagePath,
-      canImpersonate: false,
-    } as Partial<User>);
-
-    return await this.userRepository.save(userToCreate);
-  }
-
   private async throwIfWorkspaceIsNotReadyForSignInUp(
     workspace: Workspace,
     user: ExistingUserOrPartialUserWithPicture,
@@ -247,24 +220,40 @@ export class SignInUpService {
   ) {
     await this.throwIfWorkspaceIsNotReadyForSignInUp(params.workspace, params);
 
-    const currentUser =
-      params.userData.type === 'newUserWithPicture'
-        ? await this.persistNewUser(
-            params.userData.newUserWithPicture,
-            params.workspace,
-          )
-        : params.userData.existingUser;
+    const isNewUser = params.userData.type === 'newUserWithPicture';
 
-    const updatedUser = await this.userWorkspaceService.addUserToWorkspace(
-      currentUser,
+    if (isNewUser) {
+      const userData = params.userData as {
+        type: 'newUserWithPicture';
+        newUserWithPicture: PartialUserWithPicture;
+      };
+
+      const user = await this.saveNewUser(userData.newUserWithPicture, {
+        canAccessFullAdminPanel: false,
+        canImpersonate: false,
+      });
+
+      await this.activateOnboardingForUser(user, params.workspace);
+
+      await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
+        user,
+        params.workspace,
+      );
+
+      return user;
+    }
+
+    const userData = params.userData as {
+      type: 'existingUser';
+      existingUser: User;
+    };
+
+    const user = userData.existingUser;
+
+    await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
+      user,
       params.workspace,
     );
-
-    const user = Object.assign(currentUser, updatedUser);
-
-    if (params.userData.type === 'newUserWithPicture') {
-      await this.activateOnboardingForUser(user, params.workspace);
-    }
 
     return user;
   }
@@ -285,24 +274,48 @@ export class SignInUpService {
     }
   }
 
-  async signUpOnNewWorkspace(partialUserWithPicture: PartialUserWithPicture) {
-    const user: PartialUserWithPicture = {
-      ...partialUserWithPicture,
-      canImpersonate: false,
-    };
+  private async saveNewUser(
+    newUserWithPicture: PartialUserWithPicture,
+    {
+      canImpersonate,
+      canAccessFullAdminPanel,
+    }: {
+      canImpersonate: boolean;
+      canAccessFullAdminPanel: boolean;
+    },
+  ) {
+    const userCreated = this.userRepository.create({
+      ...newUserWithPicture,
+      canImpersonate,
+      canAccessFullAdminPanel,
+    });
 
-    if (!user.email) {
+    return await this.userRepository.save(userCreated);
+  }
+
+  async signUpOnNewWorkspace(
+    userData: ExistingUserOrPartialUserWithPicture['userData'],
+  ) {
+    let canImpersonate = false;
+    let canAccessFullAdminPanel = false;
+    const email =
+      userData.type === 'newUserWithPicture'
+        ? userData.newUserWithPicture.email
+        : userData.existingUser.email;
+
+    if (!email) {
       throw new AuthException(
         'Email is required',
         AuthExceptionCode.INVALID_INPUT,
       );
     }
 
-    if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
+    if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
       const workspacesCount = await this.workspaceRepository.count();
 
       // if the workspace doesn't exist it means it's the first user of the workspace
-      user.canImpersonate = true;
+      canImpersonate = true;
+      canAccessFullAdminPanel = true;
 
       // let the creation of the first workspace
       if (workspacesCount > 0) {
@@ -313,7 +326,7 @@ export class SignInUpService {
       }
     }
 
-    const logoUrl = `${TWENTY_ICONS_BASE_URL}/${getDomainNameByEmail(user.email)}`;
+    const logoUrl = `${TWENTY_ICONS_BASE_URL}/${getDomainNameByEmail(email)}`;
     const isLogoUrlValid = async () => {
       try {
         return (
@@ -325,11 +338,14 @@ export class SignInUpService {
       }
     };
 
+    const isWorkEmailFound = isWorkEmail(email);
     const logo =
-      isWorkEmail(user.email) && (await isLogoUrlValid()) ? logoUrl : undefined;
+      isWorkEmailFound && (await isLogoUrlValid()) ? logoUrl : undefined;
 
     const workspaceToCreate = this.workspaceRepository.create({
-      subdomain: await this.domainManagerService.generateSubdomain(),
+      subdomain: await this.domainManagerService.generateSubdomain(
+        isWorkEmailFound ? { email } : {},
+      ),
       displayName: '',
       inviteHash: v4(),
       activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
@@ -338,50 +354,30 @@ export class SignInUpService {
 
     const workspace = await this.workspaceRepository.save(workspaceToCreate);
 
-    user.defaultAvatarUrl = await this.uploadPicture(
-      partialUserWithPicture.picture,
-      workspace.id,
-    );
+    const isExistingUser = userData.type === 'existingUser';
+    const user = isExistingUser
+      ? userData.existingUser
+      : await this.saveNewUser(userData.newUserWithPicture, {
+          canImpersonate,
+          canAccessFullAdminPanel,
+        });
 
-    const userCreated = this.userRepository.create(user);
+    await this.userWorkspaceService.create({
+      userId: user.id,
+      workspaceId: workspace.id,
+      isExistingUser,
+      pictureUrl: isExistingUser
+        ? undefined
+        : userData.newUserWithPicture.picture,
+    });
 
-    const newUser = await this.userRepository.save(userCreated);
-
-    await this.userWorkspaceService.create(newUser.id, workspace.id);
-
-    await this.activateOnboardingForUser(newUser, workspace);
+    await this.activateOnboardingForUser(user, workspace);
 
     await this.onboardingService.setOnboardingInviteTeamPending({
       workspaceId: workspace.id,
       value: true,
     });
 
-    return { user: newUser, workspace };
-  }
-
-  async uploadPicture(
-    picture: string | null | undefined,
-    workspaceId: string,
-  ): Promise<string | undefined> {
-    if (!picture) {
-      return;
-    }
-
-    const buffer = await getImageBufferFromUrl(
-      picture,
-      this.httpService.axiosRef,
-    );
-
-    const type = await FileType.fromBuffer(buffer);
-
-    const { paths } = await this.fileUploadService.uploadImage({
-      file: buffer,
-      filename: `${v4()}.${type?.ext}`,
-      mimeType: type?.mime,
-      fileFolder: FileFolder.ProfilePicture,
-      workspaceId,
-    });
-
-    return paths[0];
+    return { user, workspace };
   }
 }

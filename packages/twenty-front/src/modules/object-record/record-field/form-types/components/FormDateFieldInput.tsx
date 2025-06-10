@@ -4,26 +4,29 @@ import { VariablePickerComponent } from '@/object-record/record-field/form-types
 type FormDateFieldInputProps = {
   label?: string;
   defaultValue: string | undefined;
-  onPersist: (value: string | null) => void;
+  onChange: (value: string | null) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
+  placeholder?: string;
 };
 
 export const FormDateFieldInput = ({
   label,
   defaultValue,
-  onPersist,
+  onChange,
   VariablePicker,
   readonly,
+  placeholder,
 }: FormDateFieldInputProps) => {
   return (
     <FormDateTimeFieldInput
       dateOnly
       label={label}
       defaultValue={defaultValue}
-      onPersist={onPersist}
+      onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
+      placeholder={placeholder}
     />
   );
 };

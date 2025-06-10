@@ -4,6 +4,7 @@ import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
 import { formatFieldMetadataItemInput } from '../utils/formatFieldMetadataItemInput';
 
+import { isDefined } from 'twenty-shared/utils';
 import { useCreateOneFieldMetadataItem } from './useCreateOneFieldMetadataItem';
 import { useDeleteOneFieldMetadataItem } from './useDeleteOneFieldMetadataItem';
 import { useUpdateOneFieldMetadataItem } from './useUpdateOneFieldMetadataItem';
@@ -63,7 +64,8 @@ export const useFieldMetadataItem = () => {
     });
 
   const deleteMetadataField = (metadataField: FieldMetadataItem) => {
-    return metadataField.type === FieldMetadataType.RELATION
+    return metadataField.type === FieldMetadataType.RELATION &&
+      !isDefined(metadataField.settings?.relationType)
       ? deleteOneRelationMetadataItem(
           metadataField.relationDefinition?.relationId,
         )

@@ -1,6 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
-import { ComponentDecorator, IconPlus, THEME_LIGHT } from 'twenty-ui';
+import { IconPlus } from 'twenty-ui/display';
+import { ComponentDecorator } from 'twenty-ui/testing';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 import { WorkflowStepHeader } from '../WorkflowStepHeader';
 
 const meta: Meta<typeof WorkflowStepHeader> = {
@@ -11,6 +13,9 @@ const meta: Meta<typeof WorkflowStepHeader> = {
   },
   argTypes: {},
   decorators: [ComponentDecorator],
+  parameters: {
+    disableHotkeyInitialization: true,
+  },
 };
 
 export default meta;
@@ -27,7 +32,8 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByDisplayValue('Create Record')).toBeVisible();
+    // TitleInput shows text in a div when not being edited
+    expect(await canvas.findByText('Create Record')).toBeVisible();
     expect(await canvas.findByText('Action')).toBeVisible();
   },
 };
@@ -42,25 +48,25 @@ export const EditableTitle: Story = {
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
+    // First find the div with the text, then click it to activate the input
+    const titleText = await canvas.findByText('Create Record');
+    await userEvent.click(titleText);
 
+    // Now find the input that appears after clicking
     const titleInput = await canvas.findByDisplayValue('Create Record');
 
     const NEW_TITLE = 'New Title';
 
     await userEvent.clear(titleInput);
-
-    await waitFor(() => {
-      expect(args.onTitleChange).toHaveBeenCalledWith('');
-    });
-
     await userEvent.type(titleInput, NEW_TITLE);
 
+    // Press Enter to submit the edit
+    await userEvent.keyboard('{Enter}');
+
+    // Wait for the callback to be called
     await waitFor(() => {
       expect(args.onTitleChange).toHaveBeenCalledWith(NEW_TITLE);
     });
-
-    expect(args.onTitleChange).toHaveBeenCalledTimes(2);
-    expect(titleInput).toHaveValue(NEW_TITLE);
   },
 };
 
@@ -76,14 +82,20 @@ export const Disabled: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
-    const titleInput = await canvas.findByDisplayValue('Create Record');
-    expect(titleInput).toBeDisabled();
+    // When disabled, TitleInput just shows text in a div, not an input
+    const titleText = await canvas.findByText('Create Record');
 
-    const NEW_TITLE = 'New Title';
+    // Check if the element has the disabled styling (cursor: default)
+    expect(window.getComputedStyle(titleText).cursor).toBe('default');
 
-    await userEvent.type(titleInput, NEW_TITLE);
+    // Try to click it - nothing should happen
+    await userEvent.click(titleText);
 
+    // Confirm there is no input field
+    const titleInput = canvas.queryByDisplayValue('Create Record');
+    expect(titleInput).not.toBeInTheDocument();
+
+    // Confirm the callback is not called
     expect(args.onTitleChange).not.toHaveBeenCalled();
-    expect(titleInput).toHaveValue('Create Record');
   },
 };

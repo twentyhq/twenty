@@ -1,24 +1,24 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { act } from 'react';
 
-import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
-import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
-import {
-  query,
-  responseData,
-  variables,
-} from '@/object-record/hooks/__mocks__/useDeleteOneRecord';
+import { query } from '@/object-record/hooks/__mocks__/useDeleteOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { InMemoryCache } from '@apollo/client';
 import { MockedResponse } from '@apollo/client/testing';
 import { expect } from '@storybook/jest';
+import { InMemoryTestingCacheInstance } from '~/testing/cache/inMemoryTestingCacheInstance';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
 import {
-  getPersonObjectMetadataItem,
-  getPersonRecord,
+  allMockCompanyRecordsWithRelation,
+  findMockCompanyWithRelationRecord,
+} from '~/testing/mock-data/companiesWithRelations';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import {
+  allMockPersonRecords,
+  getMockPersonObjectMetadataItem,
+  getMockPersonRecord,
 } from '~/testing/mock-data/people';
 
 jest.mock('@/object-record/hooks/useRefetchAggregateQueries');
@@ -27,64 +27,63 @@ const mockRefetchAggregateQueries = jest.fn();
   refetchAggregateQueries: mockRefetchAggregateQueries,
 });
 
-// TODO Should test relation deletion cache hydratation
 describe('useDeleteOneRecord', () => {
-  let cache: InMemoryCache;
+  const personRecord = getMockPersonRecord({
+    deletedAt: null,
+  });
+  const relatedCompanyRecord = findMockCompanyWithRelationRecord({
+    id: personRecord.company.id,
+  });
+  const personObjectMetadataItem = getMockPersonObjectMetadataItem();
+  const companyObjectMetadataItem = getMockCompanyObjectMetadataItem();
+  const objectMetadataItems = generatedMockObjectMetadataItems;
+
   const getDefaultMocks = (
     overrides?: Partial<MockedResponse>,
-  ): MockedResponse[] => [
-    {
+  ): MockedResponse[] => {
+    const deleteOneQueryMock: MockedResponse<
+      Record<string, any>,
+      Record<'idToDelete', string>
+    > = {
       request: {
+        variables: { idToDelete: personRecord.id },
         query,
-        variables,
       },
-      result: jest.fn(() => ({
+      result: jest.fn((variables) => ({
         data: {
-          deletePerson: responseData,
+          deletePerson: {
+            __typename: 'Person',
+            deletedAt: '2024-02-14T09:45:00Z',
+            id: variables.idToDelete,
+          },
         },
       })),
       ...overrides,
-    },
-  ];
-  const defaultMocks = getDefaultMocks();
-  const personRecord = getPersonRecord({
-    id: 'a7286b9a-c039-4a89-9567-2dfa7953cda9',
-    deletedAt: null,
-  });
-  const objectMetadataItem = getPersonObjectMetadataItem();
-  const objectMetadataItems = [objectMetadataItem];
-  const assertCachedRecordMatch = (expectedRecord: ObjectRecord) => {
-    const cachedRecord = getRecordFromCache({
-      cache,
-      objectMetadataItem,
-      objectMetadataItems,
-      recordId: personRecord.id,
-    });
-    expect(cachedRecord).not.toBeNull();
-    if (cachedRecord === null) throw new Error('Should never occur');
-    // Find a way to reverse assertion
-    expect(expectedRecord).toMatchObject(cachedRecord);
+    };
+    return [deleteOneQueryMock];
   };
-  const assertCachedRecordIsNull = () =>
-    expect(
-      getRecordFromCache({
-        cache,
-        objectMetadataItem,
-        objectMetadataItems,
-        recordId: personRecord.id,
-      }),
-    ).toBeNull();
+  const defaultMocks = getDefaultMocks();
+
   beforeEach(() => {
     jest.clearAllMocks();
-    cache = new InMemoryCache();
   });
 
   describe('A. Starting from empty cache', () => {
+    const {
+      cache,
+      assertCachedRecordIsNull,
+      assertCachedRecordMatchSnapshot,
+      restoreCacheToInitialState,
+    } = new InMemoryTestingCacheInstance({
+      objectMetadataItems,
+    });
+    beforeEach(async () => restoreCacheToInitialState());
+
     it('1. Should successfully delete record and update record cache entry', async () => {
       const { result } = renderHook(
         () =>
           useDeleteOneRecord({
-            objectNameSingular: objectMetadataItem.nameSingular,
+            objectNameSingular: personObjectMetadataItem.nameSingular,
           }),
         {
           wrapper: getJestMetadataAndApolloMocksWrapper({
@@ -98,13 +97,22 @@ describe('useDeleteOneRecord', () => {
         const deleteOneResult = await result.current.deleteOneRecord(
           personRecord.id,
         );
-        const expectedResult: ObjectRecord = {
+        expect(deleteOneResult).toStrictEqual<ObjectRecord>({
           __typename: personRecord.__typename,
           deletedAt: expect.any(String),
           id: personRecord.id,
-        };
-        expect(deleteOneResult).toStrictEqual(expectedResult);
-        assertCachedRecordMatch(expectedResult);
+        });
+        assertCachedRecordMatchSnapshot({
+          recordId: personRecord.id,
+          objectMetadataItem: personObjectMetadataItem,
+          matchObject: {
+            deletedAt: expect.any(String),
+          },
+        });
+        assertCachedRecordIsNull({
+          objectMetadataItem: companyObjectMetadataItem,
+          recordId: personRecord.company.id,
+        });
       });
 
       expect(defaultMocks[0].result).toHaveBeenCalled();
@@ -115,10 +123,11 @@ describe('useDeleteOneRecord', () => {
       const apolloMocks: MockedResponse[] = getDefaultMocks({
         delay: Number.POSITIVE_INFINITY,
       });
+      expect(personRecord).toHaveProperty('company');
       const { result } = renderHook(
         () =>
           useDeleteOneRecord({
-            objectNameSingular: objectMetadataItem.nameSingular,
+            objectNameSingular: personObjectMetadataItem.nameSingular,
           }),
         {
           wrapper: getJestMetadataAndApolloMocksWrapper({
@@ -131,7 +140,14 @@ describe('useDeleteOneRecord', () => {
       await act(async () => {
         result.current.deleteOneRecord(personRecord.id);
         await waitFor(() => {
-          assertCachedRecordIsNull();
+          assertCachedRecordIsNull({
+            recordId: personRecord.id,
+            objectMetadataItem: personObjectMetadataItem,
+          });
+          assertCachedRecordIsNull({
+            recordId: personRecord.company.id,
+            objectMetadataItem: companyObjectMetadataItem,
+          });
         });
       });
 
@@ -146,7 +162,7 @@ describe('useDeleteOneRecord', () => {
       const { result } = renderHook(
         () =>
           useDeleteOneRecord({
-            objectNameSingular: objectMetadataItem.nameSingular,
+            objectNameSingular: personObjectMetadataItem.nameSingular,
           }),
         {
           wrapper: getJestMetadataAndApolloMocksWrapper({
@@ -161,32 +177,47 @@ describe('useDeleteOneRecord', () => {
           await result.current.deleteOneRecord(personRecord.id);
           fail('Should have thrown an error');
         } catch (e) {
-          assertCachedRecordIsNull();
+          assertCachedRecordIsNull({
+            recordId: personRecord.id,
+            objectMetadataItem: personObjectMetadataItem,
+          });
+          assertCachedRecordIsNull({
+            recordId: relatedCompanyRecord.id,
+            objectMetadataItem: companyObjectMetadataItem,
+          });
         }
       });
     });
   });
 
   describe('B. Starting from filled cache', () => {
+    const {
+      assertCachedRecordMatchSnapshot,
+      cache,
+      restoreCacheToInitialState,
+    } = new InMemoryTestingCacheInstance({
+      objectMetadataItems,
+      initialRecordsInCache: [
+        {
+          objectMetadataItem: companyObjectMetadataItem,
+          records: allMockCompanyRecordsWithRelation,
+        },
+        {
+          objectMetadataItem: personObjectMetadataItem,
+          records: allMockPersonRecords,
+        },
+      ],
+    });
+
     beforeEach(() => {
-      const recordGqlFields = generateDepthOneRecordGqlFields({
-        objectMetadataItem,
-        record: personRecord,
-      });
-      updateRecordFromCache({
-        cache,
-        objectMetadataItem,
-        objectMetadataItems,
-        record: personRecord,
-        recordGqlFields,
-      });
+      restoreCacheToInitialState();
     });
 
     it('1. Should handle successfull record deletion', async () => {
       const { result } = renderHook(
         () =>
           useDeleteOneRecord({
-            objectNameSingular: objectMetadataItem.nameSingular,
+            objectNameSingular: personObjectMetadataItem.nameSingular,
           }),
         {
           wrapper: getJestMetadataAndApolloMocksWrapper({
@@ -198,15 +229,23 @@ describe('useDeleteOneRecord', () => {
 
       await act(async () => {
         const res = await result.current.deleteOneRecord(personRecord.id);
-        expect(res).toBeDefined();
-        expect(res.deletedAt).toBeDefined();
-        expect(res).toHaveProperty('id', personRecord.id);
-
-        const personRecordWithDeletedAt = {
-          ...personRecord,
+        expect(res).toMatchObject<ObjectRecord>({
+          __typename: 'Person',
+          id: personRecord.id,
           deletedAt: expect.any(String),
-        };
-        assertCachedRecordMatch(personRecordWithDeletedAt);
+        });
+
+        assertCachedRecordMatchSnapshot({
+          recordId: personRecord.id,
+          objectMetadataItem: personObjectMetadataItem,
+          matchObject: {
+            deletedAt: expect.any(String),
+          },
+        });
+        assertCachedRecordMatchSnapshot({
+          objectMetadataItem: companyObjectMetadataItem,
+          recordId: personRecord.company.id,
+        });
       });
 
       expect(defaultMocks[0].result).toHaveBeenCalled();
@@ -221,7 +260,7 @@ describe('useDeleteOneRecord', () => {
       const { result } = renderHook(
         () =>
           useDeleteOneRecord({
-            objectNameSingular: objectMetadataItem.nameSingular,
+            objectNameSingular: personObjectMetadataItem.nameSingular,
           }),
         {
           wrapper: getJestMetadataAndApolloMocksWrapper({
@@ -234,11 +273,21 @@ describe('useDeleteOneRecord', () => {
       await act(async () => {
         result.current.deleteOneRecord(personRecord.id);
         await waitFor(() => {
-          const personRecordWithDeletedAt = {
-            ...personRecord,
-            deletedAt: expect.any(String),
-          };
-          assertCachedRecordMatch(personRecordWithDeletedAt);
+          assertCachedRecordMatchSnapshot({
+            recordId: personRecord.id,
+            objectMetadataItem: personObjectMetadataItem,
+            snapshotPropertyMatchers: {
+              // Request is paused then the cached get filled with optmistic deletedAt
+              deletedAt: expect.any(String),
+            },
+            matchObject: {
+              deletedAt: expect.any(String),
+            },
+          });
+          assertCachedRecordMatchSnapshot({
+            objectMetadataItem: companyObjectMetadataItem,
+            recordId: personRecord.company.id,
+          });
         });
       });
 
@@ -253,7 +302,7 @@ describe('useDeleteOneRecord', () => {
       const { result } = renderHook(
         () =>
           useDeleteOneRecord({
-            objectNameSingular: objectMetadataItem.nameSingular,
+            objectNameSingular: personObjectMetadataItem.nameSingular,
           }),
         {
           wrapper: getJestMetadataAndApolloMocksWrapper({
@@ -268,11 +317,17 @@ describe('useDeleteOneRecord', () => {
           await result.current.deleteOneRecord(personRecord.id);
           fail('Should have thrown an error');
         } catch (e) {
-          const personRecordWithDeletedAt = {
-            ...personRecord,
-            deletedAt: null,
-          };
-          assertCachedRecordMatch(personRecordWithDeletedAt);
+          assertCachedRecordMatchSnapshot({
+            recordId: personRecord.id,
+            objectMetadataItem: personObjectMetadataItem,
+            matchObject: {
+              deletedAt: null,
+            },
+          });
+          assertCachedRecordMatchSnapshot({
+            objectMetadataItem: companyObjectMetadataItem,
+            recordId: personRecord.company.id,
+          });
         }
       });
 

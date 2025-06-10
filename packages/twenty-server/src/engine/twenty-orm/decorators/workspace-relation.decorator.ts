@@ -1,15 +1,14 @@
 import { MessageDescriptor } from '@lingui/core';
 import { ObjectType } from 'typeorm';
 
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import {
-  RelationMetadataType,
-  RelationOnDeleteAction,
-} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
-interface WorkspaceRelationOptions<TClass> {
+interface WorkspaceRelationBaseOptions<TClass> {
   standardId: string;
   label:
     | MessageDescriptor
@@ -18,11 +17,25 @@ interface WorkspaceRelationOptions<TClass> {
     | MessageDescriptor
     | ((objectMetadata: ObjectMetadataEntity) => MessageDescriptor);
   icon?: string;
-  type: RelationMetadataType;
   inverseSideTarget: () => ObjectType<TClass>;
   inverseSideFieldKey?: keyof TClass;
   onDelete?: RelationOnDeleteAction;
 }
+
+interface WorkspaceOtherRelationOptions<TClass>
+  extends WorkspaceRelationBaseOptions<TClass> {
+  type: RelationType.ONE_TO_MANY | RelationType.ONE_TO_ONE;
+}
+
+interface WorkspaceManyToOneRelationOptions<TClass extends object>
+  extends WorkspaceRelationBaseOptions<TClass> {
+  type: RelationType.MANY_TO_ONE;
+  inverseSideFieldKey: keyof TClass;
+}
+
+type WorkspaceRelationOptions<TClass extends object> =
+  | WorkspaceOtherRelationOptions<TClass>
+  | WorkspaceManyToOneRelationOptions<TClass>;
 
 export function WorkspaceRelation<TClass extends object>(
   options: WorkspaceRelationOptions<TClass>,

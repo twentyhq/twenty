@@ -1,8 +1,8 @@
-import { IconFilterOff, MenuItem } from 'twenty-ui';
-
 import { useEmptyRecordFilter } from '@/object-record/object-filter-dropdown/hooks/useEmptyRecordFilter';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { IconFilterOff } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 export const ObjectFilterDropdownRecordRemoveFilterMenuItem = () => {
   const { emptyRecordFilter } = useEmptyRecordFilter();

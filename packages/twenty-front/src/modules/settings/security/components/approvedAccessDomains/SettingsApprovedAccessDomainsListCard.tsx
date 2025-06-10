@@ -8,13 +8,14 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
-import { IconAt, IconMailCog } from 'twenty-ui';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
 import { SettingsSecurityApprovedAccessDomainRowDropdownMenu } from '@/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu';
 import { SettingsSecurityApprovedAccessDomainValidationEffect } from '@/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect';
 import { useGetApprovedAccessDomainsQuery } from '~/generated/graphql';
+import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
+import { IconAt, IconMailCog, Status } from 'twenty-ui/display';
 
 const StyledLink = styled(Link)`
   text-decoration: none;
@@ -41,6 +42,11 @@ export const SettingsApprovedAccessDomainsListCard = () => {
     },
   });
 
+  const getItemDescription = (createdAt: string) => {
+    const beautifyPastDateRelative = beautifyPastDateRelativeToNow(createdAt);
+    return t`Added ${beautifyPastDateRelative}`;
+  };
+
   return loading || !approvedAccessDomains.length ? (
     <StyledLink to={getSettingsPath(SettingsPath.NewApprovedAccessDomain)}>
       <SettingsCard
@@ -53,14 +59,18 @@ export const SettingsApprovedAccessDomainsListCard = () => {
       <SettingsSecurityApprovedAccessDomainValidationEffect />
       <SettingsListCard
         items={approvedAccessDomains}
-        getItemLabel={(approvedAccessDomain) =>
-          `${approvedAccessDomain.domain} - ${approvedAccessDomain.createdAt}`
-        }
+        getItemLabel={({ domain }) => domain}
+        getItemDescription={({ createdAt }) => getItemDescription(createdAt)}
         RowIcon={IconAt}
         RowRightComponent={({ item: approvedAccessDomain }) => (
-          <SettingsSecurityApprovedAccessDomainRowDropdownMenu
-            approvedAccessDomain={approvedAccessDomain}
-          />
+          <>
+            {!approvedAccessDomain.isValidated && (
+              <Status color="orange" text="Pending" />
+            )}
+            <SettingsSecurityApprovedAccessDomainRowDropdownMenu
+              approvedAccessDomain={approvedAccessDomain}
+            />
+          </>
         )}
         hasFooter
         footerButtonLabel="Add Approved Access Domain"

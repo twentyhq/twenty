@@ -1,15 +1,10 @@
-import { useResetUnsavedViewStates } from '@/views/hooks/useResetUnsavedViewStates';
 import { useSetViewInUrl } from '@/views/hooks/useSetViewInUrl';
 
-export const useChangeView = (viewBarComponentId?: string) => {
-  const { resetUnsavedViewStates } =
-    useResetUnsavedViewStates(viewBarComponentId);
-
+export const useChangeView = () => {
   const { setViewInUrl } = useSetViewInUrl();
 
-  const changeView = async (viewId: string) => {
+  const changeView = (viewId: string) => {
     setViewInUrl(viewId);
-    resetUnsavedViewStates(viewId);
   };
 
   return { changeView };

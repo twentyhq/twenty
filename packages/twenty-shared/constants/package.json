@@ -1,0 +1,4 @@
+{
+  "main": "dist/twenty-shared-constants.cjs.js",
+  "module": "dist/twenty-shared-constants.esm.js"
+}

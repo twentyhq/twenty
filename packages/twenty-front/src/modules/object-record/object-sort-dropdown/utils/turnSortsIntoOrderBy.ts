@@ -1,15 +1,15 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
-import { hasPositionField } from '@/object-metadata/utils/hasPositionField';
 import { RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
-import { isDefined } from 'twenty-shared';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getOrderByForFieldMetadataType } from '@/object-metadata/utils/getOrderByForFieldMetadataType';
+import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
 import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { OrderBy } from '@/types/OrderBy';
+import { isDefined } from 'twenty-shared/utils';
 
 export const turnSortsIntoOrderBy = (
   objectMetadataItem: ObjectMetadataItem,
@@ -35,7 +35,10 @@ export const turnSortsIntoOrderBy = (
     })
     .filter(isDefined);
 
-  if (hasPositionField(objectMetadataItem)) {
+  if (
+    !objectMetadataItem.isRemote &&
+    hasObjectMetadataItemPositionField(objectMetadataItem)
+  ) {
     const positionOrderBy = [
       {
         position: 'AscNullsFirst',

@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
-import { EntityManager } from 'typeorm';
+import { MoreThan } from 'typeorm';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { objectRecordDiffMerge } from 'src/engine/core-modules/event-emitter/utils/object-record-diff-merge';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Injectable()
 export class TimelineActivityRepository {
   constructor(
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   async upsertOne(
@@ -24,11 +24,7 @@ export class TimelineActivityRepository {
     linkedRecordId?: string,
     linkedObjectMetadataId?: string,
   ) {
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
     const recentTimelineActivity = await this.findRecentTimelineActivity(
-      dataSourceSchema,
       name,
       objectName,
       recordId,
@@ -55,7 +51,6 @@ export class TimelineActivityRepository {
       );
 
       return this.updateTimelineActivity(
-        dataSourceSchema,
         recentTimelineActivity[0].id,
         newProps,
         workspaceMemberId,
@@ -64,7 +59,6 @@ export class TimelineActivityRepository {
     }
 
     return this.insertTimelineActivity(
-      dataSourceSchema,
       name,
       properties,
       objectName,
@@ -78,7 +72,6 @@ export class TimelineActivityRepository {
   }
 
   private async findRecentTimelineActivity(
-    dataSourceSchema: string,
     name: string,
     objectName: string,
     recordId: string,
@@ -86,40 +79,59 @@ export class TimelineActivityRepository {
     linkedRecordId: string | undefined,
     workspaceId: string,
   ) {
-    return this.workspaceDataSourceService.executeRawQuery(
-      `SELECT * FROM ${dataSourceSchema}."timelineActivity"
-      WHERE "${objectName}Id" = $1
-      AND "name" = $2
-      AND "workspaceMemberId" = $3
-      AND ${
-        linkedRecordId ? `"linkedRecordId" = $4` : `"linkedRecordId" IS NULL`
-      }
-      AND "createdAt" >= NOW() - interval '10 minutes'`,
-      linkedRecordId
-        ? [recordId, name, workspaceMemberId, linkedRecordId]
-        : [recordId, name, workspaceMemberId],
-      workspaceId,
-    );
+    const timelineActivityTypeORMRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        'timelineActivity',
+        {
+          shouldBypassPermissionChecks: true,
+        },
+      );
+
+    const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
+
+    const whereConditions: Record<string, unknown> = {
+      [objectName + 'Id']: recordId,
+      name: name,
+      workspaceMemberId: workspaceMemberId,
+      createdAt: MoreThan(tenMinutesAgo),
+    };
+
+    if (linkedRecordId) {
+      whereConditions.linkedRecordId = linkedRecordId;
+    } else {
+      whereConditions.linkedRecordId = null;
+    }
+
+    return timelineActivityTypeORMRepository.find({
+      where: whereConditions,
+      order: { createdAt: 'DESC' },
+      take: 1,
+    });
   }
 
   private async updateTimelineActivity(
-    dataSourceSchema: string,
     id: string,
     properties: Partial<ObjectRecord>,
     workspaceMemberId: string | undefined,
     workspaceId: string,
   ) {
-    return this.workspaceDataSourceService.executeRawQuery(
-      `UPDATE ${dataSourceSchema}."timelineActivity"
-      SET "properties" = $2, "workspaceMemberId" = $3
-      WHERE "id" = $1`,
-      [id, properties, workspaceMemberId],
-      workspaceId,
-    );
+    const timelineActivityTypeORMRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        'timelineActivity',
+        {
+          shouldBypassPermissionChecks: true,
+        },
+      );
+
+    return timelineActivityTypeORMRepository.update(id, {
+      properties: properties,
+      workspaceMemberId: workspaceMemberId,
+    });
   }
 
   private async insertTimelineActivity(
-    dataSourceSchema: string,
     name: string,
     properties: Partial<ObjectRecord>,
     objectName: string,
@@ -130,21 +142,24 @@ export class TimelineActivityRepository {
     linkedObjectMetadataId: string | undefined,
     workspaceId: string,
   ) {
-    return this.workspaceDataSourceService.executeRawQuery(
-      `INSERT INTO ${dataSourceSchema}."timelineActivity"
-    ("name", "properties", "workspaceMemberId", "${objectName}Id", "linkedRecordCachedName", "linkedRecordId", "linkedObjectMetadataId")
-    VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-      [
-        name,
-        properties,
-        workspaceMemberId,
-        recordId,
-        linkedRecordCachedName ?? '',
-        linkedRecordId,
-        linkedObjectMetadataId,
-      ],
-      workspaceId,
-    );
+    const timelineActivityTypeORMRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        'timelineActivity',
+        {
+          shouldBypassPermissionChecks: true,
+        },
+      );
+
+    return timelineActivityTypeORMRepository.insert({
+      name: name,
+      properties: properties,
+      workspaceMemberId: workspaceMemberId,
+      [objectName + 'Id']: recordId,
+      linkedRecordCachedName: linkedRecordCachedName ?? '',
+      linkedRecordId: linkedRecordId,
+      linkedObjectMetadataId: linkedObjectMetadataId,
+    });
   }
 
   public async insertTimelineActivitiesForObject(
@@ -159,39 +174,29 @@ export class TimelineActivityRepository {
       linkedObjectMetadataId: string | undefined;
     }[],
     workspaceId: string,
-    transactionManager?: EntityManager,
   ) {
     if (activities.length === 0) {
       return;
     }
+    const timelineActivityTypeORMRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        'timelineActivity',
+        {
+          shouldBypassPermissionChecks: true,
+        },
+      );
 
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
-    return this.workspaceDataSourceService.executeRawQuery(
-      `INSERT INTO ${dataSourceSchema}."timelineActivity"
-    ("name", "properties", "workspaceMemberId", "${objectName}Id", "linkedRecordCachedName", "linkedRecordId", "linkedObjectMetadataId")
-    VALUES ${activities
-      .map(
-        (_, index) =>
-          `($${index * 7 + 1}, $${index * 7 + 2}, $${index * 7 + 3}, $${
-            index * 7 + 4
-          }, $${index * 7 + 5}, $${index * 7 + 6}, $${index * 7 + 7})`,
-      )
-      .join(',')}`,
-      activities
-        .map((activity) => [
-          activity.name,
-          activity.properties,
-          activity.workspaceMemberId,
-          activity.recordId,
-          activity.linkedRecordCachedName ?? '',
-          activity.linkedRecordId,
-          activity.linkedObjectMetadataId,
-        ])
-        .flat(),
-      workspaceId,
-      transactionManager,
+    return timelineActivityTypeORMRepository.insert(
+      activities.map((activity) => ({
+        name: activity.name,
+        properties: activity.properties,
+        workspaceMemberId: activity.workspaceMemberId,
+        [objectName + 'Id']: activity.recordId,
+        linkedRecordCachedName: activity.linkedRecordCachedName ?? '',
+        linkedRecordId: activity.linkedRecordId,
+        linkedObjectMetadataId: activity.linkedObjectMetadataId,
+      })),
     );
   }
 }

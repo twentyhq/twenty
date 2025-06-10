@@ -1,7 +1,8 @@
 import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
-import { Button, IconMinus, IconPlus } from 'twenty-ui';
 import { castAsNumberOrNull } from '~/utils/cast-as-number-or-null';
+import { IconButton } from 'twenty-ui/input';
+import { IconMinus, IconPlus } from 'twenty-ui/display';
 
 type SettingsCounterProps = {
   value: number;
@@ -26,17 +27,6 @@ const StyledTextInput = styled(TextInput)`
     height: ${({ theme }) => theme.spacing(6)};
     text-align: center;
     font-weight: ${({ theme }) => theme.font.weight.medium};
-  }
-`;
-
-const StyledControlButton = styled(Button)`
-  height: ${({ theme }) => theme.spacing(6)};
-  width: ${({ theme }) => theme.spacing(6)};
-  padding: 0;
-  justify-content: center;
-  svg {
-    height: ${({ theme }) => theme.spacing(4)};
-    width: ${({ theme }) => theme.spacing(4)};
   }
 `;
 
@@ -79,10 +69,11 @@ export const SettingsCounter = ({
 
   return (
     <StyledCounterContainer>
-      <StyledControlButton
+      <IconButton
+        size="small"
+        Icon={IconMinus}
         variant="secondary"
         onClick={handleDecrementCounter}
-        Icon={IconMinus}
         disabled={disabled}
       />
       <StyledTextInput
@@ -92,10 +83,11 @@ export const SettingsCounter = ({
         onChange={handleTextInputChange}
         disabled={disabled}
       />
-      <StyledControlButton
+      <IconButton
+        size="small"
+        Icon={IconPlus}
         variant="secondary"
         onClick={handleIncrementCounter}
-        Icon={IconPlus}
         disabled={disabled}
       />
     </StyledCounterContainer>

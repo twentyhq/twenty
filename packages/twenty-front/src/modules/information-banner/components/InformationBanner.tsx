@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
-import { Banner, BannerVariant, Button, IconComponent } from 'twenty-ui';
+import { Banner, BannerVariant, IconComponent } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 
 const StyledBanner = styled(Banner)`
   position: absolute;

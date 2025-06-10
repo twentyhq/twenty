@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -9,6 +8,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 
 import { RecordDetailDuplicatesSection } from '../RecordDetailDuplicatesSection';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const companiesMock = getCompaniesMock();
 

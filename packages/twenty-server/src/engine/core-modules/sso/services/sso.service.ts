@@ -8,7 +8,7 @@ import { Repository } from 'typeorm';
 
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import {
   SSOException,
   SSOExceptionCode,
@@ -23,7 +23,7 @@ import {
   OIDCResponseType,
   WorkspaceSSOIdentityProvider,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class SSOService {
@@ -31,7 +31,7 @@ export class SSOService {
   constructor(
     @InjectRepository(WorkspaceSSOIdentityProvider, 'core')
     private readonly workspaceSSOIdentityProviderRepository: Repository<WorkspaceSSOIdentityProvider>,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly billingService: BillingService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
@@ -139,7 +139,7 @@ export class SSOService {
   buildCallbackUrl(
     identityProvider: Pick<WorkspaceSSOIdentityProvider, 'type' | 'id'>,
   ) {
-    const callbackURL = new URL(this.environmentService.get('SERVER_URL'));
+    const callbackURL = new URL(this.twentyConfigService.get('SERVER_URL'));
 
     callbackURL.pathname = `/auth/${identityProvider.type.toLowerCase()}/callback`;
 
@@ -154,7 +154,9 @@ export class SSOService {
     identityProvider: Pick<WorkspaceSSOIdentityProvider, 'id' | 'type'>,
     searchParams?: Record<string, string | boolean>,
   ) {
-    const authorizationUrl = new URL(this.environmentService.get('SERVER_URL'));
+    const authorizationUrl = new URL(
+      this.twentyConfigService.get('SERVER_URL'),
+    );
 
     authorizationUrl.pathname = `/auth/${identityProvider.type.toLowerCase()}/login/${identityProvider.id}`;
 

@@ -1,15 +1,18 @@
 import styled from '@emotion/styled';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
 import { Select } from '@/ui/input/components/Select';
 
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
 import { useLingui } from '@lingui/react/macro';
-import { APP_LOCALES, isDefined } from 'twenty-shared';
+import { enUS } from 'date-fns/locale';
+import { APP_LOCALES } from 'twenty-shared/translations';
+import { isDefined } from 'twenty-shared/utils';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { logError } from '~/utils/logError';
 
@@ -24,7 +27,7 @@ export const LocalePicker = () => {
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
     currentWorkspaceMemberState,
   );
-  const isDebugMode = useRecoilValue(isDebugModeState);
+  const setDateLocale = useSetRecoilState(dateLocaleState);
 
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
@@ -57,11 +60,23 @@ export const LocalePicker = () => {
     });
     await updateWorkspaceMember({ locale: value });
 
+    const dateFnsLocale = await getDateFnsLocale(value);
+    setDateLocale({
+      locale: value,
+      localeCatalog: dateFnsLocale || enUS,
+    });
+
     await dynamicActivate(value);
+    try {
+      localStorage.setItem('locale', value);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log('Failed to save locale to localStorage:', error);
+    }
     await refreshObjectMetadataItems();
   };
 
-  const localeOptions: Array<{
+  const unsortedLocaleOptions: Array<{
     label: string;
     value: (typeof APP_LOCALES)[keyof typeof APP_LOCALES];
   }> = [
@@ -186,12 +201,17 @@ export const LocalePicker = () => {
       value: APP_LOCALES['vi-VN'],
     },
   ];
-  if (isDebugMode) {
-    localeOptions.push({
+
+  if (process.env.NODE_ENV === 'development') {
+    unsortedLocaleOptions.push({
       label: t`Pseudo-English`,
       value: APP_LOCALES['pseudo-en'],
     });
   }
+
+  const localeOptions = [...unsortedLocaleOptions].sort((a, b) =>
+    a.label.localeCompare(b.label),
+  );
 
   return (
     <StyledContainer>

@@ -1,16 +1,16 @@
-import { Footer } from 'src/components/Footer';
+import { i18n } from '@lingui/core';
 import { MainText } from 'src/components/MainText';
 import { SubTitle } from 'src/components/SubTitle';
 
 export const WhatIsTwenty = () => {
   return (
     <>
-      <SubTitle value="What is Twenty?" />
+      <SubTitle value={i18n._('What is Twenty?')} />
       <MainText>
-        It's a CRM, a software to help businesses manage their customer data and
-        relationships efficiently.
+        {i18n._(
+          "It's a CRM, a software to help businesses manage their customer data and relationships efficiently.",
+        )}
       </MainText>
-      <Footer />
     </>
   );
 };

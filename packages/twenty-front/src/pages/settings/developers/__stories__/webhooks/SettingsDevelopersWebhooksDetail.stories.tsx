@@ -10,11 +10,11 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/Developers/Webhooks/SettingsDevelopersWebhooksDetail',
+  title: 'Pages/Settings/Webhooks/SettingsDevelopersWebhooksDetail',
   component: SettingsDevelopersWebhooksDetail,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/developers/webhooks/:webhookId',
+    routePath: '/settings/webhooks/:webhookId',
     routeParams: { ':webhookId': '1234' },
   },
   parameters: {

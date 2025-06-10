@@ -1,13 +1,14 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import * as XLSX from 'xlsx-ugnis';
+import { read, WorkBook } from 'xlsx-ugnis';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { readFileAsync } from '@/spreadsheet-import/utils/readFilesAsync';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { MainButton } from 'twenty-ui';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { MainButton } from 'twenty-ui/input';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -83,7 +84,7 @@ const StyledText = styled.span`
 `;
 
 type DropZoneProps = {
-  onContinue: (data: XLSX.WorkBook, file: File) => void;
+  onContinue: (data: WorkBook, file: File) => void;
   isLoading: boolean;
 };
 
@@ -118,7 +119,7 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
     onDropAccepted: async ([file]) => {
       setLoading(true);
       const arrayBuffer = await readFileAsync(file);
-      const workbook = XLSX.read(arrayBuffer, {
+      const workbook = read(arrayBuffer, {
         cellDates: true,
         codepage: 65001, // UTF-8 codepage
         dateNF: dateFormat,
@@ -129,6 +130,8 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
       onContinue(workbook, file);
     },
   });
+
+  const { t } = useLingui();
 
   return (
     <StyledContainer
@@ -141,13 +144,19 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
         {...getInputProps()}
       />
       {isDragActive ? (
-        <StyledText>Drop file here...</StyledText>
+        <StyledText>
+          <Trans>Drop file here...</Trans>
+        </StyledText>
       ) : loading || isLoading ? (
-        <StyledText>Processing...</StyledText>
+        <StyledText>
+          <Trans>Processing...</Trans>
+        </StyledText>
       ) : (
         <>
-          <StyledText>Upload .xlsx, .xls or .csv file</StyledText>
-          <MainButton onClick={open} title="Select file" />
+          <StyledText>
+            <Trans>Upload .xlsx, .xls or .csv file</Trans>
+          </StyledText>
+          <MainButton onClick={open} title={t`Select file`} />
         </>
       )}
     </StyledContainer>

@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import React from 'react';
 
 const StyledCommandTextContainer = styled.div`
   align-items: center;
@@ -10,10 +11,7 @@ const StyledCommandTextContainer = styled.div`
 
 const StyledCommandText = styled.div`
   color: ${({ theme }) => theme.font.color.light};
-  padding-bottom: ${({ theme }) => theme.spacing(1)};
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(1)};
+  vertical-align: middle;
   white-space: nowrap;
 `;
 
@@ -47,10 +45,10 @@ export const MenuItemCommandHotKeys = ({
       {hotKeys && (
         <StyledCommandTextContainer>
           {hotKeys.map((hotKey, index) => (
-            <>
-              <StyledCommandKey key={index}>{hotKey}</StyledCommandKey>
+            <React.Fragment key={index}>
+              <StyledCommandKey>{hotKey}</StyledCommandKey>
               {index < hotKeys.length - 1 && joinLabel}
-            </>
+            </React.Fragment>
           ))}
         </StyledCommandTextContainer>
       )}

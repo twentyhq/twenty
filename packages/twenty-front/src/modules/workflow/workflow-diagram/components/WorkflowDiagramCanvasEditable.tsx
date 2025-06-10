@@ -5,6 +5,7 @@ import { WorkflowDiagramCreateStepNode } from '@/workflow/workflow-diagram/compo
 import { WorkflowDiagramDefaultEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramDefaultEdge';
 import { WorkflowDiagramEmptyTrigger } from '@/workflow/workflow-diagram/components/WorkflowDiagramEmptyTrigger';
 import { WorkflowDiagramStepNodeEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeEditable';
+import { getWorkflowVersionStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowVersionStatusTagProps';
 import { ReactFlowProvider } from '@xyflow/react';
 
 export const WorkflowDiagramCanvasEditable = ({
@@ -12,10 +13,13 @@ export const WorkflowDiagramCanvasEditable = ({
 }: {
   versionStatus: WorkflowVersionStatus;
 }) => {
+  const tagProps = getWorkflowVersionStatusTagProps({
+    workflowVersionStatus: versionStatus,
+  });
+
   return (
     <ReactFlowProvider>
       <WorkflowDiagramCanvasBase
-        status={versionStatus}
         nodeTypes={{
           default: WorkflowDiagramStepNodeEditable,
           'create-step': WorkflowDiagramCreateStepNode,
@@ -24,7 +28,11 @@ export const WorkflowDiagramCanvasEditable = ({
         edgeTypes={{
           default: WorkflowDiagramDefaultEdge,
         }}
+        tagContainerTestId="workflow-visualizer-status"
+        tagColor={tagProps.color}
+        tagText={tagProps.text}
       />
+
       <WorkflowDiagramCanvasEditableEffect />
     </ReactFlowProvider>
   );

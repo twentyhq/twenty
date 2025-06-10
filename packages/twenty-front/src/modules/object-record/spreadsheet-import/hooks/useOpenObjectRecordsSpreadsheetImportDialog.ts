@@ -27,7 +27,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
 
   const { buildAvailableFieldsForImport } = useBuildAvailableFieldsForImport();
 
-  const openObjectRecordsSpreasheetImportDialog = (
+  const openObjectRecordsSpreadsheetImportDialog = (
     options?: Omit<
       SpreadsheetImportDialogOptions<any>,
       'fields' | 'isOpen' | 'onClose'
@@ -39,6 +39,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
           fieldMetadataItem.isActive &&
           (!fieldMetadataItem.isSystem || fieldMetadataItem.name === 'id') &&
           fieldMetadataItem.name !== 'createdAt' &&
+          fieldMetadataItem.name !== 'updatedAt' &&
           (fieldMetadataItem.type !== FieldMetadataType.RELATION ||
             fieldMetadataItem.relationDefinition?.direction ===
               RelationDefinitionType.MANY_TO_ONE),
@@ -74,10 +75,11 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
         }
       },
       fields: availableFields,
+      availableFieldMetadataItems,
     });
   };
 
   return {
-    openObjectRecordsSpreasheetImportDialog,
+    openObjectRecordsSpreadsheetImportDialog,
   };
 };

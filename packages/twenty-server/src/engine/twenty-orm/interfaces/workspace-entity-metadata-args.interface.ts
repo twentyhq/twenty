@@ -72,4 +72,9 @@ export interface WorkspaceEntityMetadataArgs {
    * Duplicate criteria.
    */
   readonly duplicateCriteria?: WorkspaceEntityDuplicateCriteria[];
+
+  /**
+   * Is searchable object.
+   */
+  readonly isSearchable: boolean;
 }

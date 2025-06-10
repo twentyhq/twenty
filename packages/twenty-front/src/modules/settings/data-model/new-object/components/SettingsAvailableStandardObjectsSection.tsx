@@ -1,5 +1,3 @@
-import { H2Title, Section } from 'twenty-ui';
-
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -9,6 +7,8 @@ import {
   SettingsAvailableStandardObjectItemTableRow,
   StyledAvailableStandardObjectTableRow,
 } from './SettingsAvailableStandardObjectItemTableRow';
+import { H2Title } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 type SettingsAvailableStandardObjectsSectionProps = {
   objectItems: ObjectMetadataItem[];

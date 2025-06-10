@@ -1,12 +1,14 @@
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { WorkspaceDynamicRelationMetadataArgsFactory } from 'src/engine/twenty-orm/interfaces/workspace-dynamic-relation-metadata-args.interface';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
-export type PartialFieldMetadata = Omit<
-  FieldMetadataInterface,
+export type PartialFieldMetadata<
+  T extends FieldMetadataType = FieldMetadataType,
+> = Omit<
+  FieldMetadataInterface<T>,
   'id' | 'label' | 'description' | 'objectMetadataId'
 > & {
   standardId: string;
@@ -31,6 +33,10 @@ export type PartialComputedFieldMetadata = {
   objectMetadataId?: string;
 };
 
-export type ComputedPartialFieldMetadata = {
-  [K in keyof PartialFieldMetadata]: ExcludeFunctions<PartialFieldMetadata[K]>;
+export type ComputedPartialFieldMetadata<
+  T extends FieldMetadataType = FieldMetadataType,
+> = {
+  [K in keyof PartialFieldMetadata<T>]: ExcludeFunctions<
+    PartialFieldMetadata<T>[K]
+  >;
 };

@@ -10,10 +10,11 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
 import { useDestroyOneRecordMutation } from '@/object-record/hooks/useDestroyOneRecordMutation';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const usePersistViewFilterGroupRecords = () => {
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -37,7 +38,7 @@ export const usePersistViewFilterGroupRecords = () => {
   });
 
   const { objectMetadataItems } = useObjectMetadataItems();
-
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const apolloClient = useApolloClient();
 
   const createViewFilterGroupRecord = useCallback(
@@ -65,6 +66,7 @@ export const usePersistViewFilterGroupRecords = () => {
             objectMetadataItem,
             recordsToCreate: [record],
             objectMetadataItems,
+            objectPermissionsByObjectMetadataId,
           });
         },
       });
@@ -80,6 +82,7 @@ export const usePersistViewFilterGroupRecords = () => {
       createOneRecordMutation,
       objectMetadataItem,
       objectMetadataItems,
+      objectPermissionsByObjectMetadataId,
     ],
   );
 

@@ -3,7 +3,7 @@ import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMeta
 import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreateOneRecordInCache';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { prefillRecord } from '@/object-record/utils/prefillRecord';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useCreateManyRecordsInCache = <T extends ObjectRecord>({
   objectNameSingular,

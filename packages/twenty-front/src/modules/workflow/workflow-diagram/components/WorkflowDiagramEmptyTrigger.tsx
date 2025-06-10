@@ -1,5 +1,4 @@
 import { WorkflowDiagramStepNodeBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeBase';
-import { WorkflowDiagramEmptyTriggerNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import styled from '@emotion/styled';
 
 const StyledStepNodeLabelIconContainer = styled.div`
@@ -11,18 +10,13 @@ const StyledStepNodeLabelIconContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(3)};
 `;
 
-export const WorkflowDiagramEmptyTrigger = ({
-  data,
-}: {
-  data: WorkflowDiagramEmptyTriggerNodeData;
-}) => {
+export const WorkflowDiagramEmptyTrigger = () => {
   return (
     <WorkflowDiagramStepNodeBase
       name="Add a Trigger"
       nodeType="trigger"
       variant="empty"
       Icon={<StyledStepNodeLabelIconContainer />}
-      isLeafNode={data.isLeafNode}
     />
   );
 };

@@ -1,5 +1,5 @@
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { DEMO_SEED_WORKSPACE_MEMBER_IDS } from 'src/engine/workspace-manager/demo-objects-prefill-data/seed-workspace-member-with-demo-data';
-import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
 const tableName = 'opportunity';
@@ -16,7 +16,9 @@ const generateRandomAmountMicros = () => {
   return firstDigit * 10000000000;
 };
 
+// @ts-expect-error legacy noImplicitAny
 const generateOpportunities = (companies) => {
+  // @ts-expect-error legacy noImplicitAny
   return companies.map((company) => ({
     id: v4(),
     name: company.name,
@@ -33,7 +35,7 @@ const generateOpportunities = (companies) => {
 };
 
 export const seedOpportunityWithDemoData = async (
-  entityManager: EntityManager,
+  entityManager: WorkspaceEntityManager,
   schemaName: string,
 ) => {
   const companiesWithPeople = await entityManager?.query(
@@ -46,7 +48,9 @@ export const seedOpportunityWithDemoData = async (
   const opportunities = generateOpportunities(companiesWithPeople);
 
   await entityManager
-    .createQueryBuilder()
+    .createQueryBuilder(undefined, undefined, undefined, {
+      shouldBypassPermissionChecks: true,
+    })
     .insert()
     .into(`${schemaName}.${tableName}`, [
       'id',
@@ -64,6 +68,7 @@ export const seedOpportunityWithDemoData = async (
     ])
     .orIgnore()
     .values(
+      // @ts-expect-error legacy noImplicitAny
       opportunities.map((opportunity, index) => ({
         ...opportunity,
         position: index,

@@ -77,7 +77,12 @@ export class MicrosoftGetMessageListService {
       .headers({
         Prefer: `odata.maxpagesize=${MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT}, IdType="ImmutableId"`,
       })
-      .get();
+      .get()
+      .catch((error) => {
+        this.microsoftHandleErrorService.handleMicrosoftGetMessageListError(
+          error,
+        );
+      });
 
     const callback: PageIteratorCallback = (data) => {
       messageExternalIds.push(data.id);
@@ -85,10 +90,16 @@ export class MicrosoftGetMessageListService {
       return true;
     };
 
-    const pageIterator = new PageIterator(microsoftClient, response, callback);
+    const pageIterator = new PageIterator(microsoftClient, response, callback, {
+      headers: {
+        Prefer: `odata.maxpagesize=${MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT}, IdType="ImmutableId"`,
+      },
+    });
 
     await pageIterator.iterate().catch((error) => {
-      this.microsoftHandleErrorService.handleMicrosoftMessageFetchError(error);
+      this.microsoftHandleErrorService.handleMicrosoftGetMessageListError(
+        error,
+      );
     });
 
     return {
@@ -191,7 +202,12 @@ export class MicrosoftGetMessageListService {
       .headers({
         Prefer: `odata.maxpagesize=${MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT}, IdType="ImmutableId"`,
       })
-      .get();
+      .get()
+      .catch((error) => {
+        this.microsoftHandleErrorService.handleMicrosoftGetMessageListError(
+          error,
+        );
+      });
 
     const callback: PageIteratorCallback = (data) => {
       if (data['@removed']) {
@@ -203,10 +219,16 @@ export class MicrosoftGetMessageListService {
       return true;
     };
 
-    const pageIterator = new PageIterator(microsoftClient, response, callback);
+    const pageIterator = new PageIterator(microsoftClient, response, callback, {
+      headers: {
+        Prefer: `odata.maxpagesize=${MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT}, IdType="ImmutableId"`,
+      },
+    });
 
     await pageIterator.iterate().catch((error) => {
-      this.microsoftHandleErrorService.handleMicrosoftMessageFetchError(error);
+      this.microsoftHandleErrorService.handleMicrosoftGetMessageListError(
+        error,
+      );
     });
 
     return {

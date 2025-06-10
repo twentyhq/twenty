@@ -1,4 +1,4 @@
-import { isDefined } from '../isDefined';
+import { isDefined } from '@/utils/validation/isDefined';
 describe('isDefined', () => {
   it('returns true if value is not undefined nor null', () => {
     expect(isDefined('')).toBe(true);

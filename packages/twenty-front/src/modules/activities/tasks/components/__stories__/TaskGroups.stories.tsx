@@ -3,8 +3,10 @@ import { Meta, StoryObj } from '@storybook/react';
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
+import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -15,16 +17,21 @@ const meta: Meta<typeof TaskGroups> = {
   component: TaskGroups,
   decorators: [
     (Story) => (
-      <ObjectFilterDropdownComponentInstanceContext.Provider
+      <TabListComponentInstanceContext.Provider
         value={{ instanceId: 'entity-tasks-filter-scope' }}
       >
-        <Story />
-      </ObjectFilterDropdownComponentInstanceContext.Provider>
+        <ObjectFilterDropdownComponentInstanceContext.Provider
+          value={{ instanceId: 'entity-tasks-filter-scope' }}
+        >
+          <Story />
+        </ObjectFilterDropdownComponentInstanceContext.Provider>
+      </TabListComponentInstanceContext.Provider>
     ),
     ComponentWithRouterDecorator,
     ComponentWithRecoilScopeDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
+    I18nFrontDecorator,
   ],
 };
 
@@ -35,12 +42,10 @@ export const Empty: Story = {};
 
 export const WithTasks: Story = {
   args: {
-    targetableObjects: [
-      {
-        id: mockedTasks[0].taskTargets?.[0].personId,
-        targetObjectNameSingular: 'person',
-      },
-    ] as ActivityTargetableObject[],
+    targetableObject: {
+      id: mockedTasks[0].taskTargets?.[0].personId,
+      targetObjectNameSingular: 'person',
+    } as ActivityTargetableObject,
   },
   parameters: {
     msw: graphqlMocks,

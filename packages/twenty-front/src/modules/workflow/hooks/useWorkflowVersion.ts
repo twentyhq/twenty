@@ -2,7 +2,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { Workflow, WorkflowVersion } from '@/workflow/types/Workflow';
 
-export const useWorkflowVersion = (workflowVersionId: string) => {
+export const useWorkflowVersion = (workflowVersionId?: string) => {
   const { record: workflowVersion } = useFindOneRecord<
     WorkflowVersion & {
       workflow: Omit<Workflow, 'versions'> & {
@@ -30,6 +30,7 @@ export const useWorkflowVersion = (workflowVersionId: string) => {
         },
       },
     },
+    skip: !workflowVersionId,
   });
 
   return workflowVersion;

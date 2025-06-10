@@ -3,16 +3,16 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { DeleteResult, Repository } from 'typeorm';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import {
   ApprovedAccessDomainException,
   ApprovedAccessDomainExceptionCode,
 } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.exception';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { ApprovedAccessDomainService } from './approved-access-domain.service';
 
@@ -20,7 +20,7 @@ describe('ApprovedAccessDomainService', () => {
   let service: ApprovedAccessDomainService;
   let approvedAccessDomainRepository: Repository<ApprovedAccessDomain>;
   let emailService: EmailService;
-  let environmentService: EnvironmentService;
+  let twentyConfigService: TwentyConfigService;
   let domainManagerService: DomainManagerService;
 
   beforeEach(async () => {
@@ -43,7 +43,7 @@ describe('ApprovedAccessDomainService', () => {
           },
         },
         {
-          provide: EnvironmentService,
+          provide: TwentyConfigService,
           useValue: {
             get: jest.fn(),
           },
@@ -64,7 +64,7 @@ describe('ApprovedAccessDomainService', () => {
       getRepositoryToken(ApprovedAccessDomain, 'core'),
     );
     emailService = module.get<EmailService>(EmailService);
-    environmentService = module.get<EnvironmentService>(EnvironmentService);
+    twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
     domainManagerService =
       module.get<DomainManagerService>(DomainManagerService);
   });
@@ -113,6 +113,22 @@ describe('ApprovedAccessDomainService', () => {
       );
       expect(result).toEqual(expectedApprovedAccessDomain);
     });
+    it('should throw an exception if approved access domain is not a company domain', async () => {
+      await expect(
+        service.createApprovedAccessDomain(
+          'gmail.com',
+          { id: 'workspace-id' } as Workspace,
+          { email: 'user@gmail.com', isEmailVerified: true } as User,
+          'user@gmail.com',
+        ),
+      ).rejects.toThrowError(
+        new ApprovedAccessDomainException(
+          'Approved access domain must be a company domain',
+          ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_MUST_BE_A_COMPANY_DOMAIN,
+        ),
+      );
+      expect(approvedAccessDomainRepository.save).not.toHaveBeenCalled();
+    });
   });
 
   describe('deleteApprovedAccessDomain', () => {
@@ -140,9 +156,9 @@ describe('ApprovedAccessDomainService', () => {
         id: approvedAccessDomainId,
         workspaceId: workspace.id,
       });
-      expect(approvedAccessDomainRepository.delete).toHaveBeenCalledWith(
-        approvedAccessDomainEntity,
-      );
+      expect(approvedAccessDomainRepository.delete).toHaveBeenCalledWith({
+        id: approvedAccessDomainEntity.id,
+      });
     });
 
     it('should throw an error if the approved access domain does not exist', async () => {
@@ -251,7 +267,7 @@ describe('ApprovedAccessDomainService', () => {
         .mockReturnValue(new URL('https://sub.twenty.com'));
 
       jest
-        .spyOn(environmentService, 'get')
+        .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
           if (key === 'EMAIL_FROM_ADDRESS') return 'no-reply@example.com';
           if (key === 'SERVER_URL') return 'https://api.example.com';

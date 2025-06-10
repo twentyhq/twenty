@@ -1,7 +1,6 @@
 import {
   ConflictError,
   ForbiddenError,
-  InternalServerError,
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -9,8 +8,13 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 
 export const fieldMetadataGraphqlApiExceptionHandler = (error: Error) => {
+  if (error instanceof InvalidMetadataException) {
+    throw new UserInputError(error.message);
+  }
+
   if (error instanceof FieldMetadataException) {
     switch (error.code) {
       case FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND:
@@ -25,8 +29,13 @@ export const fieldMetadataGraphqlApiExceptionHandler = (error: Error) => {
       case FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR:
       case FieldMetadataExceptionCode.FIELD_METADATA_RELATION_NOT_ENABLED:
       case FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED:
-      default:
-        throw new InternalServerError(error.message);
+      case FieldMetadataExceptionCode.LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND:
+        throw error;
+      default: {
+        const _exhaustiveCheck: never = error.code;
+
+        throw error;
+      }
     }
   }
 

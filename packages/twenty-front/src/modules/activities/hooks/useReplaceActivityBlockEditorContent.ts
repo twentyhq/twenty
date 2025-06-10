@@ -2,7 +2,7 @@ import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useReplaceActivityBlockEditorContent = (
@@ -16,8 +16,8 @@ export const useReplaceActivityBlockEditorContent = (
             .getLoadable(recordStoreFamilyState(activityId))
             .getValue();
 
-          const content = isNonEmptyString(activityInStore?.body)
-            ? JSON.parse(activityInStore?.body)
+          const content = isNonEmptyString(activityInStore?.bodyV2.blocknote)
+            ? JSON.parse(activityInStore?.bodyV2.blocknote)
             : [{ type: 'paragraph', content: '' }];
 
           if (!isDeeplyEqual(editor.document, content)) {

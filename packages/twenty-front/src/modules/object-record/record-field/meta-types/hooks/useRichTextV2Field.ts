@@ -12,14 +12,13 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { isFieldRichTextV2 } from '@/object-record/record-field/types/guards/isFieldRichTextV2';
 import { isFieldRichTextV2Value } from '@/object-record/record-field/types/guards/isFieldRichTextValueV2';
-import { PartialBlock } from '@blocknote/core';
+import type { PartialBlock } from '@blocknote/core';
 import { isNonEmptyString } from '@sniptt/guards';
 import { FieldContext } from '../../contexts/FieldContext';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 
 export const useRichTextV2Field = () => {
-  const { recordId, fieldDefinition, hotkeyScope, maxWidth } =
-    useContext(FieldContext);
+  const { recordId, fieldDefinition, maxWidth } = useContext(FieldContext);
 
   assertFieldMetadata(
     FieldMetadataType.RICH_TEXT_V2,
@@ -40,7 +39,7 @@ export const useRichTextV2Field = () => {
     : ({ blocknote: null, markdown: null } as FieldRichTextV2Value);
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldRichTextValue>(`${recordId}-${fieldName}`);
+    useRecordFieldInput<FieldRichTextValue>();
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 
@@ -67,7 +66,6 @@ export const useRichTextV2Field = () => {
     fieldDefinition,
     fieldValue: fieldRichTextV2Value,
     setFieldValue,
-    hotkeyScope,
     persistRichTextField,
   };
 };

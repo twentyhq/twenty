@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { useContext, useEffect } from 'react';
-import { ComponentDecorator } from 'twenty-ui';
 
 import { FieldFocusContext } from '@/object-record/record-field/contexts/FieldFocusContext';
 import { FieldFocusContextProvider } from '@/object-record/record-field/contexts/FieldFocusContextProvider';
@@ -8,6 +7,7 @@ import { MultiSelectFieldDisplay } from '@/object-record/record-field/meta-types
 import { getFieldDecorator } from '~/testing/decorators/getFieldDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const FieldFocusEffect = () => {
   const { setIsFocused } = useContext(FieldFocusContext);

@@ -5,7 +5,7 @@ import {
   WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { useMemo } from 'react';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useWorkflowWithCurrentVersion = (
   workflowId: string | undefined,
@@ -18,7 +18,17 @@ export const useWorkflowWithCurrentVersion = (
       name: true,
       statuses: true,
       lastPublishedVersionId: true,
-      versions: true,
+      versions: {
+        id: true,
+        status: true,
+        name: true,
+        steps: true,
+        trigger: true,
+        workflowId: true,
+        deletedAt: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     },
     skip: !isDefined(workflowId),
   });

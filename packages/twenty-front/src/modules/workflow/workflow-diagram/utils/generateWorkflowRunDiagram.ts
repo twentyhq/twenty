@@ -12,10 +12,12 @@ import {
   WorkflowRunDiagram,
   WorkflowRunDiagramEdge,
   WorkflowRunDiagramNode,
+  WorkflowRunDiagramNodeData,
+  WorkflowRunDiagramStepNodeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowDiagramTriggerNode } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramTriggerNode';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 export const generateWorkflowRunDiagram = ({
@@ -26,7 +28,22 @@ export const generateWorkflowRunDiagram = ({
   trigger: WorkflowTrigger;
   steps: Array<WorkflowStep>;
   stepsOutput: WorkflowRunOutputStepsOutput | undefined;
-}): WorkflowRunDiagram => {
+}): {
+  diagram: WorkflowRunDiagram;
+  stepToOpenByDefault:
+    | {
+        id: string;
+        data: WorkflowRunDiagramStepNodeData;
+      }
+    | undefined;
+} => {
+  let stepToOpenByDefault:
+    | {
+        id: string;
+        data: WorkflowRunDiagramStepNodeData;
+      }
+    | undefined = undefined;
+
   const triggerBase = getWorkflowDiagramTriggerNode({ trigger });
 
   const nodes: Array<WorkflowRunDiagramNode> = [
@@ -79,39 +96,46 @@ export const generateWorkflowRunDiagram = ({
     }
 
     const runResult = stepsOutput?.[nodeId];
+    const isPendingFormAction =
+      step.type === 'FORM' &&
+      isDefined(runResult?.pendingEvent) &&
+      runResult.pendingEvent;
 
     let runStatus: WorkflowDiagramRunStatus;
     if (skippedExecution) {
       runStatus = 'not-executed';
-    } else if (!isDefined(runResult)) {
+    } else if (!isDefined(runResult) || isPendingFormAction) {
       runStatus = 'running';
     } else {
-      const lastAttempt = runResult.outputs.at(-1);
-
-      if (!isDefined(lastAttempt)) {
-        // Should never happen. Should we throw instead?
-        runStatus = 'failure';
-      } else if (isDefined(lastAttempt.error)) {
+      if (isDefined(runResult.error)) {
         runStatus = 'failure';
       } else {
         runStatus = 'success';
       }
     }
 
+    const nodeData: WorkflowRunDiagramNodeData = {
+      nodeType: 'action',
+      actionType: step.type,
+      name: step.name,
+      runStatus,
+    };
+
     nodes.push({
       id: nodeId,
-      data: {
-        nodeType: 'action',
-        actionType: step.type,
-        name: step.name,
-        isLeafNode: false,
-        runStatus,
-      },
+      data: nodeData,
       position: {
         x: xPos,
         y: yPos,
       },
     });
+
+    if (isPendingFormAction) {
+      stepToOpenByDefault = {
+        id: nodeId,
+        data: nodeData,
+      };
+    }
 
     processNode({
       stepIndex: stepIndex + 1,
@@ -135,7 +159,10 @@ export const generateWorkflowRunDiagram = ({
   });
 
   return {
-    nodes,
-    edges,
+    diagram: {
+      nodes,
+      edges,
+    },
+    stepToOpenByDefault,
   };
 };

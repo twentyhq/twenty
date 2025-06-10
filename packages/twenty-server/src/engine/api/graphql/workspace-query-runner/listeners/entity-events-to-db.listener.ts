@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { CreateAuditLogFromInternalEvent } from 'src/engine/core-modules/audit/jobs/create-audit-log-from-internal-event';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
 import { ObjectRecordDestroyEvent } from 'src/engine/core-modules/event-emitter/types/object-record-destroy.event';
@@ -12,8 +13,8 @@ import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/t
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { SubscriptionsJob } from 'src/engine/subscriptions/subscriptions.job';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
-import { CreateAuditLogFromInternalEvent } from 'src/modules/timeline/jobs/create-audit-log-from-internal-event';
 import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/timeline/jobs/upsert-timeline-activity-from-internal-event.job';
 import { CallWebhookJobsJob } from 'src/modules/webhook/jobs/call-webhook-jobs.job';
 
@@ -24,6 +25,8 @@ export class EntityEventsToDbListener {
     private readonly entityEventsToDbQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly webhookQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.subscriptionsQueue)
+    private readonly subscriptionsQueueService: MessageQueueService,
   ) {}
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
@@ -64,6 +67,11 @@ export class EntityEventsToDbListener {
     );
 
     await Promise.all([
+      this.subscriptionsQueueService.add<WorkspaceEventBatch<T>>(
+        SubscriptionsJob.name,
+        batchEvent,
+        { retryLimit: 3 },
+      ),
       this.webhookQueueService.add<WorkspaceEventBatch<T>>(
         CallWebhookJobsJob.name,
         batchEvent,

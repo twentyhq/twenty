@@ -21,12 +21,17 @@ export class WorkflowRunnerWorkspaceService {
     private readonly billingUsageService: BillingUsageService,
   ) {}
 
-  async run(
-    workspaceId: string,
-    workflowVersionId: string,
-    payload: object,
-    source: ActorMetadata,
-  ) {
+  async run({
+    workspaceId,
+    workflowVersionId,
+    payload,
+    source,
+  }: {
+    workspaceId: string;
+    workflowVersionId: string;
+    payload: object;
+    source: ActorMetadata;
+  }) {
     const canFeatureBeUsed =
       await this.billingUsageService.canFeatureBeUsed(workspaceId);
 
@@ -45,12 +50,30 @@ export class WorkflowRunnerWorkspaceService {
       RunWorkflowJob.name,
       {
         workspaceId,
-        workflowVersionId,
         payload: payload,
         workflowRunId,
       },
     );
 
     return { workflowRunId };
+  }
+
+  async resume({
+    workspaceId,
+    workflowRunId,
+    lastExecutedStepId,
+  }: {
+    workspaceId: string;
+    workflowRunId: string;
+    lastExecutedStepId: string;
+  }) {
+    await this.messageQueueService.add<RunWorkflowJobData>(
+      RunWorkflowJob.name,
+      {
+        workspaceId,
+        workflowRunId,
+        lastExecutedStepId,
+      },
+    );
   }
 }

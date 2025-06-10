@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AnalyticsModule } from 'src/engine/core-modules/analytics/analytics.module';
+import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -22,7 +22,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 @Module({
   imports: [
     TypeOrmModule.forFeature([FeatureFlag, Workspace], 'core'),
-    AnalyticsModule,
+    AuditModule,
     ContactCreationManagerModule,
     WorkspaceDataSourceModule,
     ObjectMetadataRepositoryModule.forFeature([

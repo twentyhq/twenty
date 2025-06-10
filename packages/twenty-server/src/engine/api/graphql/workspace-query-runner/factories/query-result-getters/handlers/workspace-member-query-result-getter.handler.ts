@@ -16,14 +16,14 @@ export class WorkspaceMemberQueryResultGetterHandler
       return workspaceMember;
     }
 
-    const signedPayload = await this.fileService.encodeFileToken({
-      workspaceMemberId: workspaceMember.id,
-      workspaceId: workspaceId,
+    const signedPath = this.fileService.signFileUrl({
+      url: workspaceMember.avatarUrl,
+      workspaceId,
     });
 
     return {
       ...workspaceMember,
-      avatarUrl: `${workspaceMember.avatarUrl}?token=${signedPayload}`,
+      avatarUrl: signedPath,
     };
   }
 }

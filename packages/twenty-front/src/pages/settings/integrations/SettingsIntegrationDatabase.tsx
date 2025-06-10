@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { H2Title, Section } from 'twenty-ui';
 
 import { useGetDatabaseConnections } from '@/databases/hooks/useGetDatabaseConnections';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -13,6 +12,8 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { H2Title } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 export const SettingsIntegrationDatabase = () => {
   const { databaseKey = '' } = useParams();

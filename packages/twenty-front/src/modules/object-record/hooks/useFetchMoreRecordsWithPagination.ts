@@ -23,11 +23,11 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { OnFindManyRecordsCompleted } from '@/object-record/types/OnFindManyRecordsCompleted';
 import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
-import { capitalize, isDefined } from 'twenty-shared';
 
 import { cursorFamilyState } from '../states/cursorFamilyState';
 import { hasNextPageFamilyState } from '../states/hasNextPageFamilyState';
 import { isFetchingMoreRecordsFamilyState } from '../states/isFetchingMoreRecordsFamilyState';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
   RecordGqlOperationVariables & {

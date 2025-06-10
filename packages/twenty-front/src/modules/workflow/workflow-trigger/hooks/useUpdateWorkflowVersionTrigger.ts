@@ -7,7 +7,7 @@ import {
   WorkflowVersion,
   WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useUpdateWorkflowVersionTrigger = ({
   workflow,
@@ -23,23 +23,28 @@ export const useUpdateWorkflowVersionTrigger = ({
 
   const { computeStepOutputSchema } = useComputeStepOutputSchema();
 
-  const updateTrigger = async (updatedTrigger: WorkflowTrigger) => {
+  const updateTrigger = async (
+    updatedTrigger: WorkflowTrigger,
+    options: { computeOutputSchema: boolean } = { computeOutputSchema: true },
+  ) => {
     if (!isDefined(workflow.currentVersion)) {
       throw new Error('Can not update an undefined workflow version.');
     }
 
     const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
 
-    const outputSchema = (
-      await computeStepOutputSchema({
-        step: updatedTrigger,
-      })
-    )?.data?.computeStepOutputSchema;
+    if (options.computeOutputSchema) {
+      const outputSchema = (
+        await computeStepOutputSchema({
+          step: updatedTrigger,
+        })
+      )?.data?.computeStepOutputSchema;
 
-    updatedTrigger.settings = {
-      ...updatedTrigger.settings,
-      outputSchema: outputSchema || {},
-    };
+      updatedTrigger.settings = {
+        ...updatedTrigger.settings,
+        outputSchema: outputSchema || {},
+      };
+    }
 
     await updateOneWorkflowVersion({
       idToUpdate: workflowVersionId,

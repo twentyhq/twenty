@@ -42,13 +42,11 @@ describe('useCommandMenuOnItemClick', () => {
 
     act(() => {
       result.current.onItemClick({
-        shouldCloseCommandMenuOnClick: true,
         onClick: onClickMock,
         to: '/test',
       });
     });
 
-    expect(result.current.isCommandMenuOpened).toBe(true);
     expect(onClickMock).toHaveBeenCalledTimes(1);
   });
 });

@@ -1,12 +1,15 @@
 import { AdvancedFilterLogicalOperatorDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorDropdown';
-import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
+import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
+
 import styled from '@emotion/styled';
-import { capitalize } from 'twenty-shared';
+import { capitalize } from 'twenty-shared/utils';
 
 const StyledText = styled.div`
   height: ${({ theme }) => theme.spacing(8)};
   display: flex;
   align-items: center;
+
+  padding-left: ${({ theme }) => theme.spacing(2.25)};
 `;
 
 const StyledContainer = styled.div`
@@ -18,23 +21,23 @@ const StyledContainer = styled.div`
 
 type AdvancedFilterLogicalOperatorCellProps = {
   index: number;
-  viewFilterGroup: ViewFilterGroup;
+  recordFilterGroup: RecordFilterGroup;
 };
 
 export const AdvancedFilterLogicalOperatorCell = ({
   index,
-  viewFilterGroup,
+  recordFilterGroup,
 }: AdvancedFilterLogicalOperatorCellProps) => (
   <StyledContainer>
     {index === 0 ? (
       <StyledText>Where</StyledText>
     ) : index === 1 ? (
       <AdvancedFilterLogicalOperatorDropdown
-        viewFilterGroup={viewFilterGroup}
+        recordFilterGroup={recordFilterGroup}
       />
     ) : (
       <StyledText>
-        {capitalize(viewFilterGroup.logicalOperator.toLowerCase())}
+        {capitalize(recordFilterGroup.logicalOperator.toLowerCase())}
       </StyledText>
     )}
   </StyledContainer>

@@ -10,13 +10,13 @@ import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/uti
 export const getTriggerDefaultDefinition = ({
   defaultLabel,
   type,
-  activeObjectMetadataItems,
+  activeNonSystemObjectMetadataItems,
 }: {
   defaultLabel: string;
   type: WorkflowTriggerType;
-  activeObjectMetadataItems: ObjectMetadataItem[];
+  activeNonSystemObjectMetadataItems: ObjectMetadataItem[];
 }): WorkflowTrigger => {
-  if (activeObjectMetadataItems.length === 0) {
+  if (activeNonSystemObjectMetadataItems.length === 0) {
     throw new Error(
       'This function need to receive at least one object metadata item to run.',
     );
@@ -26,8 +26,9 @@ export const getTriggerDefaultDefinition = ({
     case 'DATABASE_EVENT': {
       return {
         type,
+        name: defaultLabel,
         settings: {
-          eventName: `${activeObjectMetadataItems[0].nameSingular}.${
+          eventName: `${activeNonSystemObjectMetadataItems[0].nameSingular}.${
             DATABASE_TRIGGER_TYPES.find(
               (availableEvent) => availableEvent.defaultLabel === defaultLabel,
             )?.event
@@ -39,19 +40,32 @@ export const getTriggerDefaultDefinition = ({
     case 'MANUAL': {
       return {
         type,
+        name: defaultLabel,
         settings: getManualTriggerDefaultSettings({
           availability: 'WHEN_RECORD_SELECTED',
-          activeObjectMetadataItems,
+          activeNonSystemObjectMetadataItems,
         }),
       };
     }
     case 'CRON': {
       return {
         type,
+        name: defaultLabel,
         settings: {
-          type: 'HOURS',
-          schedule: { hour: 1, minute: 0 },
+          type: 'DAYS',
+          schedule: { day: 1, hour: 0, minute: 0 },
           outputSchema: {},
+        },
+      };
+    }
+    case 'WEBHOOK': {
+      return {
+        type,
+        name: defaultLabel,
+        settings: {
+          outputSchema: {},
+          httpMethod: 'GET',
+          authentication: null,
         },
       };
     }

@@ -1,40 +1,33 @@
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
+
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
+import { useWebhookUpdateForm } from '@/settings/developers/hooks/useWebhookUpdateForm';
+import { SettingsPath } from '@/types/SettingsPath';
+import { Select } from '@/ui/input/components/Select';
+import { TextArea } from '@/ui/input/components/TextArea';
+import { TextInput } from '@/ui/input/components/TextInput';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import {
-  Button,
   H2Title,
   IconBox,
-  IconButton,
   IconNorthStar,
   IconPlus,
   IconRefresh,
   IconTrash,
-  Section,
   useIcons,
-} from 'twenty-ui';
-
-import { AnalyticsActivityGraph } from '@/analytics/components/AnalyticsActivityGraph';
-import { AnalyticsGraphEffect } from '@/analytics/components/AnalyticsGraphEffect';
-import { AnalyticsGraphDataInstanceContext } from '@/analytics/states/contexts/AnalyticsGraphDataInstanceContext';
-import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsPath } from '@/types/SettingsPath';
-import { Select, SelectOption } from '@/ui/input/components/Select';
-import { TextArea } from '@/ui/input/components/TextArea';
-import { TextInput } from '@/ui/input/components/TextInput';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { Trans, useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
-import { FeatureFlagKey } from '~/generated/graphql';
+} from 'twenty-ui/display';
+import { Button, IconButton, SelectOption } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { useWebhookUpdateForm } from '@/settings/developers/hooks/useWebhookUpdateForm';
-import { isDefined } from 'twenty-shared';
-
 const OBJECT_DROPDOWN_WIDTH = 340;
 const ACTION_DROPDOWN_WIDTH = 140;
 const OBJECT_MOBILE_WIDTH = 150;
@@ -56,12 +49,12 @@ const StyledPlaceholder = styled.div`
   width: ${({ theme }) => theme.spacing(8)};
 `;
 
+const DELETE_WEBHOOK_MODAL_ID = 'delete-webhook-modal';
+
 export const SettingsDevelopersWebhooksDetail = () => {
   const { t } = useLingui();
 
   const { objectMetadataItems } = useObjectMetadataItems();
-
-  const isAnalyticsEnabled = useRecoilValue(isAnalyticsEnabledState);
 
   const isMobile = useIsMobile();
 
@@ -87,34 +80,29 @@ export const SettingsDevelopersWebhooksDetail = () => {
     isCreationMode,
   });
 
-  const [isDeleteWebhookModalOpen, setIsDeleteWebhookModalOpen] =
-    useState(false);
-
-  const isAnalyticsV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsAnalyticsV2Enabled,
-  );
+  const { openModal } = useModal();
 
   const fieldTypeOptions: SelectOption<string>[] = useMemo(
     () => [
-      { value: '*', label: 'All Objects', Icon: IconNorthStar },
+      { value: '*', label: t`All Objects`, Icon: IconNorthStar },
       ...objectMetadataItems.map((item) => ({
         value: item.nameSingular,
         label: item.labelPlural,
         Icon: getIcon(item.icon),
       })),
     ],
-    [objectMetadataItems, getIcon],
+    [objectMetadataItems, getIcon, t],
   );
 
   const actionOptions: SelectOption<string>[] = [
-    { value: '*', label: 'All Actions', Icon: IconNorthStar },
-    { value: 'created', label: 'Created', Icon: IconPlus },
-    { value: 'updated', label: 'Updated', Icon: IconRefresh },
-    { value: 'deleted', label: 'Deleted', Icon: IconTrash },
+    { value: '*', label: t`All Actions`, Icon: IconNorthStar },
+    { value: 'created', label: t`Created`, Icon: IconPlus },
+    { value: 'updated', label: t`Updated`, Icon: IconRefresh },
+    { value: 'deleted', label: t`Deleted`, Icon: IconTrash },
   ];
 
   if (loading || !formData) {
-    return <></>;
+    return <SettingsSkeletonLoader />;
   }
 
   const confirmationText = t`yes`;
@@ -129,10 +117,10 @@ export const SettingsDevelopersWebhooksDetail = () => {
           href: getSettingsPath(SettingsPath.Workspace),
         },
         {
-          children: t`Developers`,
-          href: getSettingsPath(SettingsPath.Developers),
+          children: t`Webhooks`,
+          href: getSettingsPath(SettingsPath.Webhooks),
         },
-        { children: t`Webhook` },
+        { children: title },
       ]}
     >
       <SettingsPageContainer>
@@ -214,12 +202,12 @@ export const SettingsDevelopersWebhooksDetail = () => {
         </Section>
         <Section>
           <H2Title
-            title="Secret"
-            description="Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
+            title={t`Secret`}
+            description={t`Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt.`}
           />
           <TextInput
             type="password"
-            placeholder="Write a secret"
+            placeholder={t`Write a secret`}
             value={formData.secret}
             onChange={(secret: string) => {
               updateWebhook({ secret: secret.trim() });
@@ -227,20 +215,6 @@ export const SettingsDevelopersWebhooksDetail = () => {
             fullWidth
           />
         </Section>
-        {!isCreationMode && isAnalyticsEnabled && isAnalyticsV2Enabled && (
-          <AnalyticsGraphDataInstanceContext.Provider
-            value={{ instanceId: `webhook-${webhookId}-analytics` }}
-          >
-            <AnalyticsGraphEffect
-              recordId={webhookId}
-              endpointName="getWebhookAnalytics"
-            />
-            <AnalyticsActivityGraph
-              recordId={webhookId}
-              endpointName="getWebhookAnalytics"
-            />
-          </AnalyticsGraphDataInstanceContext.Provider>
-        )}
         <Section>
           <H2Title
             title={t`Danger zone`}
@@ -251,13 +225,12 @@ export const SettingsDevelopersWebhooksDetail = () => {
             variant="secondary"
             title={t`Delete`}
             Icon={IconTrash}
-            onClick={() => setIsDeleteWebhookModalOpen(true)}
+            onClick={() => openModal(DELETE_WEBHOOK_MODAL_ID)}
           />
           <ConfirmationModal
             confirmationPlaceholder={confirmationText}
             confirmationValue={confirmationText}
-            isOpen={isDeleteWebhookModalOpen}
-            setIsOpen={setIsDeleteWebhookModalOpen}
+            modalId={DELETE_WEBHOOK_MODAL_ID}
             title={t`Delete webhook`}
             subtitle={
               <Trans>
@@ -266,7 +239,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
               </Trans>
             }
             onConfirmClick={deleteWebhook}
-            deleteButtonText={t`Delete webhook`}
+            confirmButtonText={t`Delete webhook`}
           />
         </Section>
       </SettingsPageContainer>

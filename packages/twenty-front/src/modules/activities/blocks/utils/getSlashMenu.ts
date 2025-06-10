@@ -1,5 +1,10 @@
 import { getDefaultReactSlashMenuItems } from '@blocknote/react';
+
+import { SuggestionItem } from '@/ui/input/editor/components/CustomSlashMenu';
+
+import { BLOCK_SCHEMA } from '../constants/Schema';
 import {
+  IconCode,
   IconComponent,
   IconFile,
   IconH1,
@@ -14,11 +19,7 @@ import {
   IconPilcrow,
   IconTable,
   IconVideo,
-} from 'twenty-ui';
-
-import { SuggestionItem } from '@/ui/input/editor/components/CustomSlashMenu';
-
-import { BLOCK_SCHEMA } from '../constants/Schema';
+} from 'twenty-ui/display';
 
 const Icons: Record<string, IconComponent> = {
   'Heading 1': IconH1,
@@ -27,6 +28,7 @@ const Icons: Record<string, IconComponent> = {
   'Numbered List': IconListNumbers,
   'Bullet List': IconList,
   'Check List': IconListCheck,
+  'Code Block': IconCode,
   Paragraph: IconPilcrow,
   Table: IconTable,
   Image: IconPhoto,

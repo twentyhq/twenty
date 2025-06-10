@@ -1,6 +1,5 @@
-import { isValidLocale } from '../isValidLocale';
-import { APP_LOCALES } from 'src/constants/Locales';
-
+import { APP_LOCALES } from '@/translations';
+import { isValidLocale } from '@/utils/validation/isValidLocale';
 describe('isValidLocale', () => {
   it('should return true for valid locales', () => {
     Object.keys(APP_LOCALES).forEach((locale) => {

@@ -1,11 +1,12 @@
 import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
-import { IconChevronLeft, IconChevronRight, LightIconButton } from 'twenty-ui';
 
 import { Select } from '@/ui/input/components/Select';
 import { DateTimeInput } from '@/ui/input/components/internal/date/components/DateTimeInput';
 
 import { getMonthSelectOptions } from '@/ui/input/components/internal/date/utils/getMonthSelectOptions';
+import { IconChevronLeft, IconChevronRight } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
 import {
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
@@ -37,7 +38,6 @@ type AbsoluteDatePickerHeaderProps = {
   prevMonthButtonDisabled: boolean;
   nextMonthButtonDisabled: boolean;
   isDateTimeInput?: boolean;
-  timeZone: string;
   hideInput?: boolean;
 };
 
@@ -51,7 +51,6 @@ export const AbsoluteDatePickerHeader = ({
   prevMonthButtonDisabled,
   nextMonthButtonDisabled,
   isDateTimeInput,
-  timeZone,
   hideInput = false,
 }: AbsoluteDatePickerHeaderProps) => {
   const endOfDayDateTimeInLocalTimezone = DateTime.now().set({
@@ -73,7 +72,6 @@ export const AbsoluteDatePickerHeader = ({
           date={date}
           isDateTimeInput={isDateTimeInput}
           onChange={onChange}
-          userTimezone={timeZone}
         />
       )}
 

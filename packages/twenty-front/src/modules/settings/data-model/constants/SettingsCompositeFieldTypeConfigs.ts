@@ -9,9 +9,10 @@ import {
   FieldPhonesValue,
   FieldRichTextV2Value,
 } from '@/object-record/record-field/types/FieldMetadata';
+import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constants/CompositeFieldSubFieldLabel';
 import { SettingsFieldTypeConfig } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
 import { CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
-import { ConnectedAccountProvider } from 'twenty-shared';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 import {
   IllustrationIconCurrency,
   IllustrationIconLink,
@@ -21,7 +22,7 @@ import {
   IllustrationIconSetting,
   IllustrationIconText,
   IllustrationIconUser,
-} from 'twenty-ui';
+} from 'twenty-ui/display';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export type SettingsCompositeFieldTypeConfig<T> = SettingsFieldTypeConfig<T> & {
@@ -40,11 +41,15 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
   [FieldMetadataType.CURRENCY]: {
     label: 'Currency',
     Icon: IllustrationIconCurrency,
-    subFields: ['amountMicros'],
-    filterableSubFields: ['amountMicros'],
+    subFields: ['amountMicros', 'currencyCode'],
+    filterableSubFields: ['amountMicros', 'currencyCode'],
     labelBySubField: {
-      amountMicros: 'Amount',
-      currencyCode: 'Currency',
+      amountMicros:
+        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.CURRENCY]
+          .amountMicros,
+      currencyCode:
+        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.CURRENCY]
+          .currencyCode,
     },
     exampleValue: {
       amountMicros: 2000000000,
@@ -56,7 +61,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     label: 'Emails',
     Icon: IllustrationIconMail,
     subFields: ['primaryEmail', 'additionalEmails'],
-    filterableSubFields: ['primaryEmail'],
+    filterableSubFields: ['primaryEmail', 'additionalEmails'],
     labelBySubField: {
       primaryEmail: 'Primary Email',
       additionalEmails: 'Additional Emails',
@@ -81,11 +86,21 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     },
     category: 'Basic',
     subFields: ['primaryLinkUrl', 'primaryLinkLabel', 'secondaryLinks'],
-    filterableSubFields: ['primaryLinkUrl', 'primaryLinkLabel'],
+    filterableSubFields: [
+      'primaryLinkUrl',
+      'primaryLinkLabel',
+      'secondaryLinks',
+    ],
     labelBySubField: {
-      primaryLinkUrl: 'Link URL',
-      primaryLinkLabel: 'Link Label',
-      secondaryLinks: 'Secondary Links',
+      primaryLinkUrl:
+        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.LINKS]
+          .primaryLinkUrl,
+      primaryLinkLabel:
+        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.LINKS]
+          .primaryLinkLabel,
+      secondaryLinks:
+        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.LINKS]
+          .secondaryLinks,
     },
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldLinksValue>,
   [FieldMetadataType.PHONES]: {
@@ -102,14 +117,27 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     subFields: [
       'primaryPhoneNumber',
       'primaryPhoneCountryCode',
+      'primaryPhoneCallingCode',
       'additionalPhones',
     ],
-    filterableSubFields: ['primaryPhoneNumber', 'primaryPhoneCountryCode'],
+    filterableSubFields: [
+      'primaryPhoneNumber',
+      'primaryPhoneCallingCode',
+      'additionalPhones',
+    ],
     labelBySubField: {
-      primaryPhoneNumber: 'Primary Phone Number',
-      primaryPhoneCountryCode: 'Primary Phone Country Code',
-      primaryPhoneCallingCode: 'Primary Phone Calling Code',
-      additionalPhones: 'Additional Phones',
+      primaryPhoneNumber:
+        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.PHONES]
+          .primaryPhoneNumber,
+      primaryPhoneCountryCode:
+        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.PHONES]
+          .primaryPhoneCountryCode,
+      primaryPhoneCallingCode:
+        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.PHONES]
+          .primaryPhoneCallingCode,
+      additionalPhones:
+        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.PHONES]
+          .additionalPhones,
     },
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldPhonesValue>,
@@ -121,8 +149,10 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     subFields: ['firstName', 'lastName'],
     filterableSubFields: ['firstName', 'lastName'],
     labelBySubField: {
-      firstName: 'First Name',
-      lastName: 'Last Name',
+      firstName:
+        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.FULL_NAME].firstName,
+      lastName:
+        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.FULL_NAME].lastName,
     },
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldFullNameValue>,
   [FieldMetadataType.ADDRESS]: {
@@ -147,14 +177,27 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       'addressPostcode',
     ],
     labelBySubField: {
-      addressStreet1: 'Address 1',
-      addressStreet2: 'Address 2',
-      addressCity: 'City',
-      addressState: 'State',
-      addressCountry: 'Country',
-      addressPostcode: 'Post Code',
-      addressLat: 'Latitude',
-      addressLng: 'Longitude',
+      addressStreet1:
+        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
+          .addressStreet1,
+      addressStreet2:
+        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
+          .addressStreet2,
+      addressCity:
+        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS].addressCity,
+      addressState:
+        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
+          .addressState,
+      addressCountry:
+        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
+          .addressCountry,
+      addressPostcode:
+        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
+          .addressPostcode,
+      addressLat:
+        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS].addressLat,
+      addressLng:
+        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS].addressLng,
     },
     exampleValue: {
       addressStreet1: '456 Oak Street',
@@ -172,13 +215,16 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     label: 'Actor',
     Icon: IllustrationIconSetting,
     category: 'Basic',
-    subFields: ['source'],
-    filterableSubFields: ['source'],
+    subFields: ['source', 'name'],
+    filterableSubFields: ['source', 'name'],
     labelBySubField: {
-      source: 'Source',
-      name: 'Name',
-      workspaceMemberId: 'Workspace Member ID',
-      context: 'Context',
+      source: COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ACTOR].source,
+      name: COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ACTOR].name,
+      workspaceMemberId:
+        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ACTOR]
+          .workspaceMemberId,
+      context:
+        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ACTOR].context,
     },
     exampleValue: {
       source: 'IMPORT',
@@ -193,8 +239,12 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     subFields: ['blocknote', 'markdown'],
     filterableSubFields: [],
     labelBySubField: {
-      blocknote: 'BlockNote',
-      markdown: 'Markdown',
+      blocknote:
+        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.RICH_TEXT_V2]
+          .blocknote,
+      markdown:
+        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.RICH_TEXT_V2]
+          .markdown,
     },
     exampleValue: {
       blocknote: '[{"type":"heading","content":"Hello"}]',

@@ -1,8 +1,8 @@
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { RecordTableBodyDroppablePlaceholder } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDroppablePlaceholder';
 import { RecordTableAggregateFooter } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooter';
-import { RecordTablePendingRecordGroupRow } from '@/object-record/record-table/record-table-row/components/RecordTablePendingRecordGroupRow';
 import { RecordTableRow } from '@/object-record/record-table/record-table-row/components/RecordTableRow';
 import { RecordTableRecordGroupSectionAddNew } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew';
 import { RecordTableRecordGroupSectionLoadMore } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionLoadMore';
@@ -10,7 +10,7 @@ import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useMemo } from 'react';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableRecordGroupRows = () => {
   const currentRecordGroupId = useCurrentRecordGroupId();
@@ -53,13 +53,12 @@ export const RecordTableRecordGroupRows = () => {
             recordId={recordId}
             rowIndexForFocus={rowIndex}
             rowIndexForDrag={rowIndexInGroup}
-            isPendingRow={!isRecordGroupTableSectionToggled}
           />
         );
       })}
-      <RecordTablePendingRecordGroupRow />
-      <RecordTableRecordGroupSectionAddNew />
       <RecordTableRecordGroupSectionLoadMore />
+      <RecordTableRecordGroupSectionAddNew />
+      <RecordTableBodyDroppablePlaceholder />
       <RecordTableAggregateFooter
         key={currentRecordGroupId}
         currentRecordGroupId={currentRecordGroupId}

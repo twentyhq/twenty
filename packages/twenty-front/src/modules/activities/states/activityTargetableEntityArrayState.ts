@@ -1,6 +1,5 @@
-import { createState } from '@ui/utilities/state/utils/createState';
-
 import { ActivityTargetableObject } from '../types/ActivityTargetableEntity';
+import { createState } from 'twenty-ui/utilities';
 
 export const activityTargetableEntityArrayState = createState<
   ActivityTargetableObject[]

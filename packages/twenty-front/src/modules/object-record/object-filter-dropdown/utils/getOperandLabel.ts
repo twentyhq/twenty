@@ -1,39 +1,40 @@
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { t } from '@lingui/core/macro';
 
 export const getOperandLabel = (
   operand: ViewFilterOperand | null | undefined,
 ) => {
   switch (operand) {
     case ViewFilterOperand.Contains:
-      return 'Contains';
+      return t`Contains`;
     case ViewFilterOperand.DoesNotContain:
-      return "Doesn't contain";
+      return t`Doesn't contain`;
     case ViewFilterOperand.GreaterThan:
-      return 'Greater than';
+      return t`Greater than`;
     case ViewFilterOperand.LessThan:
-      return 'Less than';
+      return t`Less than`;
     case ViewFilterOperand.IsBefore:
-      return 'Is before';
+      return t`Is before`;
     case ViewFilterOperand.IsAfter:
-      return 'Is after';
+      return t`Is after`;
     case ViewFilterOperand.Is:
-      return 'Is';
+      return t`Is`;
     case ViewFilterOperand.IsNot:
-      return 'Is not';
+      return t`Is not`;
     case ViewFilterOperand.IsNotNull:
-      return 'Is not null';
+      return t`Is not null`;
     case ViewFilterOperand.IsEmpty:
-      return 'Is empty';
+      return t`Is empty`;
     case ViewFilterOperand.IsNotEmpty:
-      return 'Is not empty';
+      return t`Is not empty`;
     case ViewFilterOperand.IsRelative:
-      return 'Is relative';
+      return t`Is relative`;
     case ViewFilterOperand.IsInPast:
-      return 'Is in past';
+      return t`Is in past`;
     case ViewFilterOperand.IsInFuture:
-      return 'Is in future';
+      return t`Is in future`;
     case ViewFilterOperand.IsToday:
-      return 'Is today';
+      return t`Is today`;
     default:
       return '';
   }
@@ -48,13 +49,13 @@ export const getOperandLabelShort = (
       return ': ';
     case ViewFilterOperand.IsNot:
     case ViewFilterOperand.DoesNotContain:
-      return ': Not';
+      return t`: Not`;
     case ViewFilterOperand.IsNotNull:
-      return ': NotNull';
+      return t`: NotNull`;
     case ViewFilterOperand.IsNotEmpty:
-      return ': NotEmpty';
+      return t`: NotEmpty`;
     case ViewFilterOperand.IsEmpty:
-      return ': Empty';
+      return t`: Empty`;
     case ViewFilterOperand.GreaterThan:
       return '\u00A0> ';
     case ViewFilterOperand.LessThan:
@@ -64,11 +65,11 @@ export const getOperandLabelShort = (
     case ViewFilterOperand.IsAfter:
       return '\u00A0> ';
     case ViewFilterOperand.IsInPast:
-      return ': Past';
+      return t`: Past`;
     case ViewFilterOperand.IsInFuture:
-      return ': Future';
+      return t`: Future`;
     case ViewFilterOperand.IsToday:
-      return ': Today';
+      return t`: Today`;
     default:
       return ': ';
   }

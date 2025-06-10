@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Button, IconSend } from 'twenty-ui';
 import { z } from 'zod';
 
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -10,7 +9,9 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { sanitizeEmailList } from '@/workspace/utils/sanitizeEmailList';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
+import { IconSend } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import { useCreateWorkspaceInvitation } from '../../workspace-invitation/hooks/useCreateWorkspaceInvitation';
 
 const StyledContainer = styled.div`

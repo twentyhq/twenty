@@ -7,7 +7,8 @@ import {
   EdgeProps,
   getStraightPath,
 } from '@xyflow/react';
-import { Label } from 'twenty-ui';
+import { Label } from 'twenty-ui/display';
+import { CREATE_STEP_NODE_WIDTH } from '@/workflow/workflow-diagram/constants/CreateStepNodeWidth';
 
 const StyledLabel = styled(Label)`
   color: ${({ theme }) => theme.tag.text.turquoise};
@@ -16,9 +17,7 @@ const StyledLabel = styled(Label)`
 type WorkflowDiagramSuccessEdgeProps = EdgeProps;
 
 export const WorkflowDiagramSuccessEdge = ({
-  sourceX,
   sourceY,
-  targetX,
   targetY,
   markerStart,
   markerEnd,
@@ -27,9 +26,9 @@ export const WorkflowDiagramSuccessEdge = ({
   const theme = useTheme();
 
   const [edgePath, labelX, labelY] = getStraightPath({
-    sourceX,
+    sourceX: CREATE_STEP_NODE_WIDTH,
     sourceY,
-    targetX,
+    targetX: CREATE_STEP_NODE_WIDTH,
     targetY,
   });
 

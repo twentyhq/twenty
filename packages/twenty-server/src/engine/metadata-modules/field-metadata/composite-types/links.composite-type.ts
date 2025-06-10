@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
@@ -36,4 +36,9 @@ export type LinksMetadata = {
   primaryLinkLabel: string;
   primaryLinkUrl: string;
   secondaryLinks: LinkMetadata[] | null;
+};
+
+export type LinkMetadataNullable = {
+  label: string | null;
+  url: string | null;
 };

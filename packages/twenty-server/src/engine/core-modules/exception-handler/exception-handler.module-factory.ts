@@ -1,39 +1,39 @@
 import { HttpAdapterHost } from '@nestjs/core';
 
-import { NodeEnvironment } from 'src/engine/core-modules/environment/interfaces/node-environment.interface';
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { OPTIONS_TYPE } from 'src/engine/core-modules/exception-handler/exception-handler.module-definition';
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 /**
  * ExceptionHandler Module factory
  * @returns ExceptionHandlerModuleOptions
- * @param environmentService
+ * @param twentyConfigService
  * @param adapterHost
  */
 export const exceptionHandlerModuleFactory = async (
-  environmentService: EnvironmentService,
+  twentyConfigService: TwentyConfigService,
   adapterHost: HttpAdapterHost,
 ): Promise<typeof OPTIONS_TYPE> => {
-  const driverType = environmentService.get('EXCEPTION_HANDLER_DRIVER');
+  const driverType = twentyConfigService.get('EXCEPTION_HANDLER_DRIVER');
 
   switch (driverType) {
-    case ExceptionHandlerDriver.Console: {
+    case ExceptionHandlerDriver.CONSOLE: {
       return {
-        type: ExceptionHandlerDriver.Console,
+        type: ExceptionHandlerDriver.CONSOLE,
       };
     }
-    case ExceptionHandlerDriver.Sentry: {
+    case ExceptionHandlerDriver.SENTRY: {
       return {
-        type: ExceptionHandlerDriver.Sentry,
+        type: ExceptionHandlerDriver.SENTRY,
         options: {
-          environment: environmentService.get('SENTRY_ENVIRONMENT'),
-          release: environmentService.get('SENTRY_RELEASE'),
-          dsn: environmentService.get('SENTRY_DSN') ?? '',
+          environment: twentyConfigService.get('SENTRY_ENVIRONMENT'),
+          release: twentyConfigService.get('APP_VERSION'),
+          dsn: twentyConfigService.get('SENTRY_DSN') ?? '',
           serverInstance: adapterHost.httpAdapter?.getInstance(),
           debug:
-            environmentService.get('NODE_ENV') === NodeEnvironment.development,
+            twentyConfigService.get('NODE_ENV') === NodeEnvironment.DEVELOPMENT,
         },
       };
     }

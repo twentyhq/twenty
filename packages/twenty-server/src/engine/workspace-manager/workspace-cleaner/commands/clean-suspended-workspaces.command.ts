@@ -1,13 +1,13 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command, Option } from 'nest-commander';
-import { WorkspaceActivationStatus } from 'twenty-shared';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
 import {
-  BaseCommandOptions,
-  BaseCommandRunner,
-} from 'src/database/commands/base.command';
+  MigrationCommandOptions,
+  MigrationCommandRunner,
+} from 'src/database/commands/command-runners/migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service';
 
@@ -15,7 +15,7 @@ import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-
   name: 'workspace:clean',
   description: 'Clean suspended workspace',
 })
-export class CleanSuspendedWorkspacesCommand extends BaseCommandRunner {
+export class CleanSuspendedWorkspacesCommand extends MigrationCommandRunner {
   private workspaceIds: string[] = [];
 
   constructor(
@@ -50,9 +50,9 @@ export class CleanSuspendedWorkspacesCommand extends BaseCommandRunner {
     return suspendedWorkspaces.map((workspace) => workspace.id);
   }
 
-  override async executeBaseCommand(
+  override async runMigrationCommand(
     _passedParams: string[],
-    options: BaseCommandOptions,
+    options: MigrationCommandOptions,
   ): Promise<void> {
     const { dryRun } = options;
 

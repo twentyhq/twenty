@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
-import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
-import { assert } from 'src/utils/assert';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   RelationMetadataEntity,
   RelationMetadataType,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
+import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
+import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
+import { assert } from 'src/utils/assert';
 
 interface CustomRelationFactory {
   object: ObjectMetadataEntity;
@@ -25,14 +25,12 @@ export class StandardRelationFactory {
     customObjectFactories: CustomRelationFactory[],
     context: WorkspaceSyncContext,
     originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
-    workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Partial<RelationMetadataEntity>[];
 
   create(
     standardObjectMetadataDefinitions: (typeof BaseWorkspaceEntity)[],
     context: WorkspaceSyncContext,
     originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
-    workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Partial<RelationMetadataEntity>[];
 
   create(
@@ -44,7 +42,6 @@ export class StandardRelationFactory {
         }[],
     context: WorkspaceSyncContext,
     originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
-    workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Partial<RelationMetadataEntity>[] {
     return standardObjectMetadataDefinitionsOrCustomObjectFactories.flatMap(
       (
@@ -56,7 +53,6 @@ export class StandardRelationFactory {
           standardObjectMetadata,
           context,
           originalObjectMetadataMap,
-          workspaceFeatureFlagsMap,
         ),
     );
   }
@@ -67,7 +63,6 @@ export class StandardRelationFactory {
       | CustomRelationFactory,
     context: WorkspaceSyncContext,
     originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
-    workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Partial<RelationMetadataEntity>[] {
     const target =
       'metadata' in workspaceEntityOrCustomRelationFactory
@@ -88,7 +83,7 @@ export class StandardRelationFactory {
 
     if (
       !workspaceRelationMetadataArgsCollection ||
-      isGatedAndNotEnabled(workspaceEntity?.gate, workspaceFeatureFlagsMap)
+      isGatedAndNotEnabled(workspaceEntity?.gate, context.featureFlags)
     ) {
       return [];
     }
@@ -96,16 +91,13 @@ export class StandardRelationFactory {
     return workspaceRelationMetadataArgsCollection
       .filter((workspaceRelationMetadataArgs) => {
         // We're not storing many-to-one relations in the DB for the moment
-        if (
-          workspaceRelationMetadataArgs.type ===
-          RelationMetadataType.MANY_TO_ONE
-        ) {
+        if (workspaceRelationMetadataArgs.type === RelationType.MANY_TO_ONE) {
           return false;
         }
 
         return !isGatedAndNotEnabled(
           workspaceRelationMetadataArgs.gate,
-          workspaceFeatureFlagsMap,
+          context.featureFlags,
         );
       })
       .map((workspaceRelationMetadataArgs) => {
@@ -163,7 +155,9 @@ export class StandardRelationFactory {
         );
 
         return {
-          relationType: workspaceRelationMetadataArgs.type,
+          // TODO: Will be removed when we drop RelationMetadata
+          relationType:
+            workspaceRelationMetadataArgs.type as unknown as RelationMetadataType,
           fromObjectMetadataId: fromObjectMetadata?.id,
           toObjectMetadataId: toObjectMetadata?.id,
           fromFieldMetadataId: fromFieldMetadata?.id,

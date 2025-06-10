@@ -7,7 +7,6 @@ import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effec
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { checkObjectMetadataItemHasFieldCreatedBy } from '@/object-metadata/utils/checkObjectMetadataItemHasFieldCreatedBy';
 import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreateOneRecordInCache';
 import { deleteRecordFromCache } from '@/object-record/cache/utils/deleteRecordFromCache';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
@@ -15,14 +14,15 @@ import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNo
 import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
-import { FieldActorForInputValue } from '@/object-record/record-field/types/FieldMetadata';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { computeOptimisticCreateRecordBaseRecordInput } from '@/object-record/utils/computeOptimisticCreateRecordBaseRecordInput';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { getCreateOneRecordMutationResponseField } from '@/object-record/utils/getCreateOneRecordMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 type useCreateOneRecordProps = {
   objectNameSingular: string;
@@ -46,9 +46,6 @@ export const useCreateOneRecord = <
     objectNameSingular,
   });
 
-  const objectMetadataHasCreatedByField =
-    checkObjectMetadataItemHasFieldCreatedBy(objectMetadataItem);
-
   const computedRecordGqlFields =
     recordGqlFields ?? generateDepthOneRecordGqlFields({ objectMetadataItem });
 
@@ -66,6 +63,7 @@ export const useCreateOneRecord = <
   );
 
   const { objectMetadataItems } = useObjectMetadataItems();
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const { refetchAggregateQueries } = useRefetchAggregateQueries({
     objectMetadataNamePlural: objectMetadataItem.namePlural,
@@ -84,26 +82,17 @@ export const useCreateOneRecord = <
       id: idForCreation,
     };
 
-    const baseOptimisticRecordInputCreatedBy:
-      | { createdBy: FieldActorForInputValue }
-      | undefined = objectMetadataHasCreatedByField
-      ? {
-          createdBy: {
-            source: 'MANUAL',
-            context: {},
-          },
-        }
-      : undefined;
     const optimisticRecordInput = computeOptimisticRecordFromInput({
       cache: apolloClient.cache,
       currentWorkspaceMember: currentWorkspaceMember,
       objectMetadataItem,
       objectMetadataItems,
       recordInput: {
-        ...baseOptimisticRecordInputCreatedBy,
+        ...computeOptimisticCreateRecordBaseRecordInput(objectMetadataItem),
         ...recordInput,
         id: idForCreation,
       },
+      objectPermissionsByObjectMetadataId,
     });
     const recordCreatedInCache = createOneRecordInCache({
       ...optimisticRecordInput,
@@ -127,6 +116,7 @@ export const useCreateOneRecord = <
           recordsToCreate: [optimisticRecordNode],
           objectMetadataItems,
           shouldMatchRootQueryFilter,
+          objectPermissionsByObjectMetadataId,
         });
       }
     }
@@ -150,6 +140,7 @@ export const useCreateOneRecord = <
               objectMetadataItems,
               shouldMatchRootQueryFilter,
               checkForRecordInCache: true,
+              objectPermissionsByObjectMetadataId,
             });
           }
 

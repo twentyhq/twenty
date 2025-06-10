@@ -5,20 +5,16 @@ import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/u
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { dropdownHotkeyComponentState } from '@/ui/layout/dropdown/states/dropdownHotkeyComponentState';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
+import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useDropdown = (dropdownId?: string) => {
-  const {
-    scopeId,
-    dropdownWidthState,
-    isDropdownOpenState,
-    dropdownPlacementState,
-  } = useDropdownStates({
-    dropdownScopeId: getScopeIdOrUndefinedFromComponentId(dropdownId),
-  });
+  const { scopeId, isDropdownOpenState, dropdownPlacementState } =
+    useDropdownStates({
+      dropdownScopeId: dropdownId,
+    });
 
   const { setActiveDropdownFocusIdAndMemorizePrevious } =
     useSetActiveDropdownFocusIdAndMemorizePrevious();
@@ -30,8 +26,6 @@ export const useDropdown = (dropdownId?: string) => {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
-
-  const [dropdownWidth, setDropdownWidth] = useRecoilState(dropdownWidthState);
 
   const [dropdownPlacement, setDropdownPlacement] = useRecoilState(
     dropdownPlacementState,
@@ -55,7 +49,7 @@ export const useDropdown = (dropdownId?: string) => {
 
   const openDropdown = useRecoilCallback(
     ({ snapshot }) =>
-      () => {
+      (dropdownHotkeyScopeFromProps?: HotkeyScope) => {
         if (!isDropdownOpen) {
           setIsDropdownOpen(true);
           setActiveDropdownFocusIdAndMemorizePrevious(dropdownId ?? scopeId);
@@ -67,29 +61,32 @@ export const useDropdown = (dropdownId?: string) => {
             }),
           );
 
-          if (isDefined(dropdownHotkeyScope)) {
-            setHotkeyScopeAndMemorizePreviousScope(
-              dropdownHotkeyScope.scope,
-              dropdownHotkeyScope.customScopes,
-            );
+          const dropdownHotkeyScopeForOpening =
+            dropdownHotkeyScopeFromProps ?? dropdownHotkeyScope;
+
+          if (isDefined(dropdownHotkeyScopeForOpening)) {
+            setHotkeyScopeAndMemorizePreviousScope({
+              scope: dropdownHotkeyScopeForOpening.scope,
+              customScopes: dropdownHotkeyScopeForOpening.customScopes,
+            });
           }
         }
       },
     [
-      dropdownId,
       isDropdownOpen,
+      setIsDropdownOpen,
+      setActiveDropdownFocusIdAndMemorizePrevious,
+      dropdownId,
       scopeId,
       setHotkeyScopeAndMemorizePreviousScope,
-      setActiveDropdownFocusIdAndMemorizePrevious,
-      setIsDropdownOpen,
     ],
   );
 
-  const toggleDropdown = () => {
+  const toggleDropdown = (dropdownHotkeyScopeFromProps?: HotkeyScope) => {
     if (isDropdownOpen) {
       closeDropdown();
     } else {
-      openDropdown();
+      openDropdown(dropdownHotkeyScopeFromProps);
     }
   };
 
@@ -99,8 +96,6 @@ export const useDropdown = (dropdownId?: string) => {
     closeDropdown,
     toggleDropdown,
     openDropdown,
-    dropdownWidth,
-    setDropdownWidth,
     dropdownPlacement,
     setDropdownPlacement,
   };

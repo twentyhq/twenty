@@ -8,11 +8,12 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMutationBatchSize';
 import { useDestroyManyRecordsMutation } from '@/object-record/hooks/useDestroyManyRecordsMutation';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getDestroyManyRecordsMutationResponseField } from '@/object-record/utils/getDestroyManyRecordsMutationResponseField';
 import { useRecoilValue } from 'recoil';
-import { capitalize, isDefined } from 'twenty-shared';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import { sleep } from '~/utils/sleep';
 
 type useDestroyManyRecordProps = {
@@ -47,7 +48,7 @@ export const useDestroyManyRecords = ({
   });
 
   const { objectMetadataItems } = useObjectMetadataItems();
-
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { refetchAggregateQueries } = useRefetchAggregateQueries({
     objectMetadataNamePlural: objectMetadataItem.namePlural,
   });
@@ -120,6 +121,7 @@ export const useDestroyManyRecords = ({
               objectMetadataItem,
               recordsToCreate: cachedRecords,
               objectMetadataItems,
+              objectPermissionsByObjectMetadataId,
             });
           }
           throw error;

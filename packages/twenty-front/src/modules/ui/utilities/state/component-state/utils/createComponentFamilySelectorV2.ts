@@ -1,4 +1,3 @@
-/* eslint-disable no-redeclare */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { selectorFamily, SerializableParam } from 'recoil';
 
@@ -9,7 +8,7 @@ import { ComponentInstanceStateContext } from '@/ui/utilities/state/component-st
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import { SelectorGetter } from '@/ui/utilities/state/types/SelectorGetter';
 import { SelectorSetter } from '@/ui/utilities/state/types/SelectorSetter';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export function createComponentFamilySelectorV2<
   ValueType,
@@ -17,6 +16,7 @@ export function createComponentFamilySelectorV2<
 >(options: {
   key: string;
   get: SelectorGetter<ValueType, ComponentFamilyStateKeyV2<FamilyKey>>;
+  set?: never;
   componentInstanceContext: ComponentInstanceStateContext<any> | null;
 }): ComponentFamilyReadOnlySelectorV2<ValueType, FamilyKey>;
 

@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { GraphQLFieldConfigMap, GraphQLObjectType } from 'graphql';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
 import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
@@ -44,7 +44,11 @@ export class CompositeObjectTypeDefinitionFactory {
     compositeType: CompositeType,
     kind: ObjectTypeDefinitionKind,
     options: WorkspaceBuildSchemaOptions,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): GraphQLFieldConfigMap<any, any> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const fields: GraphQLFieldConfigMap<any, any> = {};
 
     for (const property of compositeType.properties) {

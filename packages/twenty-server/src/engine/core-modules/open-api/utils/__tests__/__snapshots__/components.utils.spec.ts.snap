@@ -1,0 +1,106 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`computeSchemaComponents Float without decimals 1`] = `
+{
+  "ObjectName": {
+    "description": undefined,
+    "properties": {
+      "number2": {
+        "type": "number",
+      },
+    },
+    "required": [
+      "number2",
+    ],
+    "type": "object",
+  },
+  "ObjectName for Response": {
+    "description": undefined,
+    "properties": {
+      "number2": {
+        "type": "number",
+      },
+    },
+    "type": "object",
+  },
+  "ObjectName for Update": {
+    "description": undefined,
+    "properties": {
+      "number2": {
+        "type": "number",
+      },
+    },
+    "type": "object",
+  },
+}
+`;
+
+exports[`computeSchemaComponents Integer dataType with decimals 1`] = `
+{
+  "ObjectName": {
+    "description": undefined,
+    "properties": {
+      "number1": {
+        "type": "number",
+      },
+    },
+    "required": [
+      "number1",
+    ],
+    "type": "object",
+  },
+  "ObjectName for Response": {
+    "description": undefined,
+    "properties": {
+      "number1": {
+        "type": "number",
+      },
+    },
+    "type": "object",
+  },
+  "ObjectName for Update": {
+    "description": undefined,
+    "properties": {
+      "number1": {
+        "type": "number",
+      },
+    },
+    "type": "object",
+  },
+}
+`;
+
+exports[`computeSchemaComponents Integer with a 0 decimals 1`] = `
+{
+  "ObjectName": {
+    "description": undefined,
+    "properties": {
+      "number3": {
+        "type": "integer",
+      },
+    },
+    "required": [
+      "number3",
+    ],
+    "type": "object",
+  },
+  "ObjectName for Response": {
+    "description": undefined,
+    "properties": {
+      "number3": {
+        "type": "integer",
+      },
+    },
+    "type": "object",
+  },
+  "ObjectName for Update": {
+    "description": undefined,
+    "properties": {
+      "number3": {
+        "type": "integer",
+      },
+    },
+    "type": "object",
+  },
+}
+`;

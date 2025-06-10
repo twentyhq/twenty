@@ -1,6 +1,5 @@
-import { createState } from '@ui/utilities/state/utils/createState';
-
 import { Support } from '~/generated/graphql';
+import { createState } from 'twenty-ui/utilities';
 
 export const supportChatState = createState<Support>({
   key: 'supportChatState',

@@ -3,8 +3,7 @@ import { FocusEventHandler, useId } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-
-import { RGBA } from 'twenty-ui';
+import { RGBA } from 'twenty-ui/theme';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { InputHotkeyScope } from '../types/InputHotkeyScope';
 
@@ -14,6 +13,7 @@ export type TextAreaProps = {
   label?: string;
   disabled?: boolean;
   minRows?: number;
+  maxRows?: number;
   onChange?: (value: string) => void;
   placeholder?: string;
   value?: string;
@@ -73,12 +73,13 @@ export const TextArea = ({
   disabled,
   placeholder,
   minRows = 1,
+  maxRows = MAX_ROWS,
   value = '',
   className,
   onChange,
   onBlur,
 }: TextAreaProps) => {
-  const computedMinRows = Math.min(minRows, MAX_ROWS);
+  const computedMinRows = Math.min(minRows, maxRows);
 
   const inputId = useId();
 
@@ -88,7 +89,9 @@ export const TextArea = ({
   } = usePreviousHotkeyScope();
 
   const handleFocus: FocusEventHandler<HTMLTextAreaElement> = () => {
-    setHotkeyScopeAndMemorizePreviousScope(InputHotkeyScope.TextInput);
+    setHotkeyScopeAndMemorizePreviousScope({
+      scope: InputHotkeyScope.TextInput,
+    });
   };
 
   const handleBlur: FocusEventHandler<HTMLTextAreaElement> = () => {
@@ -103,7 +106,7 @@ export const TextArea = ({
       <StyledTextArea
         id={inputId}
         placeholder={placeholder}
-        maxRows={MAX_ROWS}
+        maxRows={maxRows}
         minRows={computedMinRows}
         value={value}
         onChange={(event) =>

@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType, IsExactly } from 'twenty-shared/types';
 
 import {
   FieldMetadataComplexOption,
@@ -11,13 +11,11 @@ type FieldMetadataOptionsMapping = {
   [FieldMetadataType.MULTI_SELECT]: FieldMetadataComplexOption[];
 };
 
-type OptionsByFieldMetadata<T extends FieldMetadataType | 'default'> =
-  T extends keyof FieldMetadataOptionsMapping
-    ? FieldMetadataOptionsMapping[T]
-    : T extends 'default'
-      ? FieldMetadataDefaultOption[] | FieldMetadataComplexOption[]
-      : never;
-
 export type FieldMetadataOptions<
-  T extends FieldMetadataType | 'default' = 'default',
-> = OptionsByFieldMetadata<T>;
+  T extends FieldMetadataType = FieldMetadataType,
+> =
+  IsExactly<T, FieldMetadataType> extends true
+    ? FieldMetadataDefaultOption[] | FieldMetadataComplexOption[]
+    : T extends keyof FieldMetadataOptionsMapping
+      ? FieldMetadataOptionsMapping[T]
+      : never;

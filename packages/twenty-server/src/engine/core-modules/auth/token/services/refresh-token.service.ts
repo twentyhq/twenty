@@ -14,15 +14,15 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 
 @Injectable()
 export class RefreshTokenService {
   constructor(
     private readonly jwtWrapperService: JwtWrapperService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(AppToken, 'core')
     private readonly appTokenRepository: Repository<AppToken>,
     @InjectRepository(User, 'core')
@@ -30,7 +30,7 @@ export class RefreshTokenService {
   ) {}
 
   async verifyRefreshToken(refreshToken: string) {
-    const coolDown = this.environmentService.get('REFRESH_TOKEN_COOL_DOWN');
+    const coolDown = this.twentyConfigService.get('REFRESH_TOKEN_COOL_DOWN');
 
     await this.jwtWrapperService.verifyWorkspaceToken(refreshToken, 'REFRESH');
     const jwtPayload = await this.jwtWrapperService.decode(refreshToken);
@@ -109,7 +109,7 @@ export class RefreshTokenService {
       'REFRESH',
       workspaceId,
     );
-    const expiresIn = this.environmentService.get('REFRESH_TOKEN_EXPIRES_IN');
+    const expiresIn = this.twentyConfigService.get('REFRESH_TOKEN_EXPIRES_IN');
 
     if (!expiresIn) {
       throw new AuthException(

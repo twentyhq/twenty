@@ -9,9 +9,5 @@ export const computeOptionValueFromLabel = (label: string): string => {
     allowedChars: 'a-zA-Z0-9_',
   });
 
-  if (formattedString === '') {
-    throw new Error('Invalid label');
-  }
-
   return formattedString.toUpperCase();
 };

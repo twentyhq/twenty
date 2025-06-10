@@ -1,10 +1,10 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
-import { ComponentDecorator } from 'twenty-ui';
 
 import { expect } from '@storybook/jest';
 import { userEvent, within } from '@storybook/test';
 import { TextArea, TextAreaProps } from '../TextArea';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 type RenderProps = TextAreaProps;
 

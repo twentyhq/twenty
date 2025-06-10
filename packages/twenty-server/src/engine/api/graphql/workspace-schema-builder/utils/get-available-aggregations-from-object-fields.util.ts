@@ -1,16 +1,13 @@
 import { GraphQLISODateTime } from '@nestjs/graphql';
 
 import { GraphQLFloat, GraphQLInt, GraphQLScalarType } from 'graphql';
-import {
-  capitalize,
-  FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION,
-  FieldMetadataType,
-  isFieldMetadataDateKind,
-} from 'twenty-shared';
+import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { capitalize, isFieldMetadataDateKind } from 'twenty-shared/utils';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
-import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { getSubfieldsForAggregateOperation } from 'src/engine/twenty-orm/utils/get-subfields-for-aggregate-operation.util';
 
 export type AggregationField = {
@@ -20,7 +17,7 @@ export type AggregationField = {
   fromFieldType: FieldMetadataType;
   fromSubFields?: string[];
   subFieldForNumericOperation?: string;
-  aggregateOperation: AGGREGATE_OPERATIONS;
+  aggregateOperation: AggregateOperations;
 };
 
 export const getAvailableAggregationsFromObjectFields = (
@@ -40,7 +37,7 @@ export const getAvailableAggregationsFromObjectFields = (
         fromField: field.name,
         fromFieldType: field.type,
         fromSubFields,
-        aggregateOperation: AGGREGATE_OPERATIONS.countUniqueValues,
+        aggregateOperation: AggregateOperations.COUNT_UNIQUE_VALUES,
       };
 
       acc[`countEmpty${capitalize(field.name)}`] = {
@@ -49,7 +46,7 @@ export const getAvailableAggregationsFromObjectFields = (
         fromField: field.name,
         fromFieldType: field.type,
         fromSubFields,
-        aggregateOperation: AGGREGATE_OPERATIONS.countEmpty,
+        aggregateOperation: AggregateOperations.COUNT_EMPTY,
       };
 
       acc[`countNotEmpty${capitalize(field.name)}`] = {
@@ -58,7 +55,7 @@ export const getAvailableAggregationsFromObjectFields = (
         fromField: field.name,
         fromFieldType: field.type,
         fromSubFields,
-        aggregateOperation: AGGREGATE_OPERATIONS.countNotEmpty,
+        aggregateOperation: AggregateOperations.COUNT_NOT_EMPTY,
       };
 
       acc[`percentageEmpty${capitalize(field.name)}`] = {
@@ -67,7 +64,7 @@ export const getAvailableAggregationsFromObjectFields = (
         fromField: field.name,
         fromFieldType: field.type,
         fromSubFields,
-        aggregateOperation: AGGREGATE_OPERATIONS.percentageEmpty,
+        aggregateOperation: AggregateOperations.PERCENTAGE_EMPTY,
       };
 
       acc[`percentageNotEmpty${capitalize(field.name)}`] = {
@@ -76,7 +73,7 @@ export const getAvailableAggregationsFromObjectFields = (
         fromField: field.name,
         fromFieldType: field.type,
         fromSubFields,
-        aggregateOperation: AGGREGATE_OPERATIONS.percentageNotEmpty,
+        aggregateOperation: AggregateOperations.PERCENTAGE_NOT_EMPTY,
       };
 
       if (isFieldMetadataDateKind(field.type)) {
@@ -85,7 +82,7 @@ export const getAvailableAggregationsFromObjectFields = (
           description: `Earliest date contained in the field ${field.name}`,
           fromField: field.name,
           fromFieldType: field.type,
-          aggregateOperation: AGGREGATE_OPERATIONS.min,
+          aggregateOperation: AggregateOperations.MIN,
         };
 
         acc[`max${capitalize(field.name)}`] = {
@@ -93,18 +90,36 @@ export const getAvailableAggregationsFromObjectFields = (
           description: `Latest date contained in the field ${field.name}`,
           fromField: field.name,
           fromFieldType: field.type,
-          aggregateOperation: AGGREGATE_OPERATIONS.max,
+          aggregateOperation: AggregateOperations.MAX,
         };
       }
 
       switch (field.type) {
+        case FieldMetadataType.BOOLEAN:
+          acc[`countTrue${capitalize(field.name)}`] = {
+            type: GraphQLInt,
+            description: `Count of true values in the field ${field.name}`,
+            fromField: field.name,
+            fromFieldType: field.type,
+            aggregateOperation: AggregateOperations.COUNT_TRUE,
+          };
+
+          acc[`countFalse${capitalize(field.name)}`] = {
+            type: GraphQLInt,
+            description: `Count of false values in the field ${field.name}`,
+            fromField: field.name,
+            fromFieldType: field.type,
+            aggregateOperation: AggregateOperations.COUNT_FALSE,
+          };
+          break;
+
         case FieldMetadataType.NUMBER:
           acc[`min${capitalize(field.name)}`] = {
             type: GraphQLFloat,
             description: `Minimum amount contained in the field ${field.name}`,
             fromField: field.name,
             fromFieldType: field.type,
-            aggregateOperation: AGGREGATE_OPERATIONS.min,
+            aggregateOperation: AggregateOperations.MIN,
           };
 
           acc[`max${capitalize(field.name)}`] = {
@@ -112,7 +127,7 @@ export const getAvailableAggregationsFromObjectFields = (
             description: `Maximum amount contained in the field ${field.name}`,
             fromField: field.name,
             fromFieldType: field.type,
-            aggregateOperation: AGGREGATE_OPERATIONS.max,
+            aggregateOperation: AggregateOperations.MAX,
           };
 
           acc[`avg${capitalize(field.name)}`] = {
@@ -120,7 +135,7 @@ export const getAvailableAggregationsFromObjectFields = (
             description: `Average amount contained in the field ${field.name}`,
             fromField: field.name,
             fromFieldType: field.type,
-            aggregateOperation: AGGREGATE_OPERATIONS.avg,
+            aggregateOperation: AggregateOperations.AVG,
           };
 
           acc[`sum${capitalize(field.name)}`] = {
@@ -128,7 +143,7 @@ export const getAvailableAggregationsFromObjectFields = (
             description: `Sum of amounts contained in the field ${field.name}`,
             fromField: field.name,
             fromFieldType: field.type,
-            aggregateOperation: AGGREGATE_OPERATIONS.sum,
+            aggregateOperation: AggregateOperations.SUM,
           };
           break;
         case FieldMetadataType.CURRENCY:
@@ -139,7 +154,7 @@ export const getAvailableAggregationsFromObjectFields = (
             fromSubFields: getSubfieldsForAggregateOperation(field.type),
             subFieldForNumericOperation: 'amountMicros',
             fromFieldType: field.type,
-            aggregateOperation: AGGREGATE_OPERATIONS.min,
+            aggregateOperation: AggregateOperations.MIN,
           };
 
           acc[`max${capitalize(field.name)}AmountMicros`] = {
@@ -148,7 +163,7 @@ export const getAvailableAggregationsFromObjectFields = (
             fromField: field.name,
             fromSubFields: getSubfieldsForAggregateOperation(field.type),
             fromFieldType: field.type,
-            aggregateOperation: AGGREGATE_OPERATIONS.max,
+            aggregateOperation: AggregateOperations.MAX,
           };
 
           acc[`sum${capitalize(field.name)}AmountMicros`] = {
@@ -157,7 +172,7 @@ export const getAvailableAggregationsFromObjectFields = (
             fromField: field.name,
             fromSubFields: getSubfieldsForAggregateOperation(field.type),
             fromFieldType: field.type,
-            aggregateOperation: AGGREGATE_OPERATIONS.sum,
+            aggregateOperation: AggregateOperations.SUM,
           };
 
           acc[`avg${capitalize(field.name)}AmountMicros`] = {
@@ -166,7 +181,7 @@ export const getAvailableAggregationsFromObjectFields = (
             fromField: field.name,
             fromSubFields: getSubfieldsForAggregateOperation(field.type),
             fromFieldType: field.type,
-            aggregateOperation: AGGREGATE_OPERATIONS.avg,
+            aggregateOperation: AggregateOperations.AVG,
           };
           break;
       }
@@ -179,7 +194,7 @@ export const getAvailableAggregationsFromObjectFields = (
         description: `Total number of records in the connection`,
         fromField: FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION,
         fromFieldType: FieldMetadataType.UUID,
-        aggregateOperation: AGGREGATE_OPERATIONS.count,
+        aggregateOperation: AggregateOperations.COUNT,
       },
     },
   );

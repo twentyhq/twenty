@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import {
@@ -82,15 +82,9 @@ const getColumnExpression = (
   switch (fieldType) {
     case FieldMetadataType.EMAILS:
       return `
-      COALESCE(
-        replace(
-          ${quotedColumnName},
-          '@',
-          ' '
-        ),
-        ''
-      )
-    `;
+      COALESCE(${quotedColumnName}, '') || ' ' ||
+      COALESCE(SPLIT_PART(${quotedColumnName}, '@', 2), '')`;
+
     default:
       return `COALESCE(${quotedColumnName}, '')`;
   }

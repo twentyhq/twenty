@@ -1,8 +1,8 @@
-import { themeColorSchema } from 'twenty-ui';
 import { z } from 'zod';
 
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/compute-option-value-from-label.utils';
+import { themeColorSchema } from 'twenty-ui/theme';
 
 const selectOptionSchema = z
   .object({

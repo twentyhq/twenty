@@ -1,13 +1,13 @@
 import styled from '@emotion/styled';
 
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
-import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
+import { FormFieldInputInnerContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
+import { FormMultiSelectFieldInputHotKeyScope } from '@/object-record/record-field/form-types/constants/FormMultiSelectFieldInputHotKeyScope';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
+import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/object-record/record-field/meta-types/input/constants/SelectFieldInputSelectableListComponentInstanceId';
 import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
-import { MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID } from '@/object-record/relation-picker/constants/MultiObjectRecordSelectSelectableListId';
-import { SelectOption } from '@/spreadsheet-import/types';
 import { MultiSelectDisplay } from '@/ui/field/display/components/MultiSelectDisplay';
 import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
@@ -16,14 +16,16 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { useTheme } from '@emotion/react';
 import { useId, useState } from 'react';
-import { isDefined } from 'twenty-shared';
-import { IconChevronDown, VisibilityHidden } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { VisibilityHidden } from 'twenty-ui/accessibility';
+import { IconChevronDown } from 'twenty-ui/display';
+import { SelectOption } from 'twenty-ui/input';
 
 type FormMultiSelectFieldInputProps = {
   label?: string;
   defaultValue: FieldMultiSelectValue | string | undefined;
   options: SelectOption[];
-  onPersist: (value: FieldMultiSelectValue | string) => void;
+  onChange: (value: FieldMultiSelectValue | string) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
   placeholder?: string;
@@ -65,7 +67,7 @@ export const FormMultiSelectFieldInput = ({
   label,
   defaultValue,
   options,
-  onPersist,
+  onChange,
   VariablePicker,
   readonly,
   placeholder,
@@ -74,7 +76,8 @@ export const FormMultiSelectFieldInput = ({
   const inputId = useId();
   const theme = useTheme();
 
-  const hotkeyScope = MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID;
+  const hotkeyScope =
+    FormMultiSelectFieldInputHotKeyScope.FormMultiSelectFieldInput;
 
   const {
     setHotkeyScopeAndMemorizePreviousScope,
@@ -116,7 +119,9 @@ export const FormMultiSelectFieldInput = ({
       editingMode: 'edit',
     });
 
-    setHotkeyScopeAndMemorizePreviousScope(hotkeyScope);
+    setHotkeyScopeAndMemorizePreviousScope({
+      scope: hotkeyScope,
+    });
   };
 
   const onOptionSelected = (value: FieldMultiSelectValue) => {
@@ -130,7 +135,7 @@ export const FormMultiSelectFieldInput = ({
       editingMode: 'edit',
     });
 
-    onPersist(value);
+    onChange(value);
   };
 
   const onCancel = () => {
@@ -152,7 +157,7 @@ export const FormMultiSelectFieldInput = ({
       value: variableName,
     });
 
-    onPersist(variableName);
+    onChange(variableName);
   };
 
   const handleUnlinkVariable = () => {
@@ -162,7 +167,7 @@ export const FormMultiSelectFieldInput = ({
       editingMode: 'view',
     });
 
-    onPersist([]);
+    onChange([]);
   };
 
   const selectedNames =
@@ -178,11 +183,11 @@ export const FormMultiSelectFieldInput = ({
   const placeholderText = placeholder ?? label;
 
   return (
-    <FormFieldInputContainer testId={testId}>
+    <FormFieldInputContainer data-testid={testId}>
       {label ? <InputLabel>{label}</InputLabel> : null}
 
       <FormFieldInputRowContainer>
-        <FormFieldInputInputContainer
+        <FormFieldInputInnerContainer
           hasRightElement={isDefined(VariablePicker) && !readonly}
         >
           {draftValue.type === 'static' ? (
@@ -228,12 +233,15 @@ export const FormMultiSelectFieldInput = ({
               onRemove={readonly ? undefined : handleUnlinkVariable}
             />
           )}
-        </FormFieldInputInputContainer>
+        </FormFieldInputInnerContainer>
         <StyledSelectInputContainer>
           {draftValue.type === 'static' &&
             draftValue.editingMode === 'edit' && (
               <OverlayContainer>
                 <MultiSelectInput
+                  selectableListComponentInstanceId={
+                    SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID
+                  }
                   hotkeyScope={hotkeyScope}
                   options={options}
                   onCancel={onCancel}

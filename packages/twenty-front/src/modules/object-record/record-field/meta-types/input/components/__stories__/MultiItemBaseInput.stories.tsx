@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator } from 'twenty-ui';
 
 import { MultiItemBaseInput } from '../MultiItemBaseInput';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof MultiItemBaseInput> = {
   title: 'UI/Data/Field/Input/BaseFieldInput',

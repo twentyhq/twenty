@@ -1,16 +1,12 @@
 import { SettingsSummaryCard } from '@/settings/components/SettingsSummaryCard';
 import { SettingsIntegrationDatabaseConnectionSyncStatus } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionSyncStatus';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import styled from '@emotion/styled';
-import {
-  IconDotsVertical,
-  IconPencil,
-  IconTrash,
-  LightIconButton,
-  MenuItem,
-  UndecoratedLink,
-} from 'twenty-ui';
+import { IconDotsVertical, IconPencil, IconTrash } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { MenuItem, UndecoratedLink } from 'twenty-ui/navigation';
 
 type SettingsIntegrationDatabaseConnectionSummaryCardProps = {
   databaseLogoUrl: string;
@@ -63,16 +59,18 @@ export const SettingsIntegrationDatabaseConnectionSummaryCard = ({
               <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
             }
             dropdownComponents={
-              <DropdownMenuItemsContainer>
-                <MenuItem
-                  LeftIcon={IconTrash}
-                  text="Remove"
-                  onClick={onRemove}
-                />
-                <UndecoratedLink to="./edit">
-                  <MenuItem LeftIcon={IconPencil} text="Edit" />
-                </UndecoratedLink>
-              </DropdownMenuItemsContainer>
+              <DropdownContent>
+                <DropdownMenuItemsContainer>
+                  <MenuItem
+                    LeftIcon={IconTrash}
+                    text="Remove"
+                    onClick={onRemove}
+                  />
+                  <UndecoratedLink to="./edit">
+                    <MenuItem LeftIcon={IconPencil} text="Edit" />
+                  </UndecoratedLink>
+                </DropdownMenuItemsContainer>
+              </DropdownContent>
             }
           />
         </>

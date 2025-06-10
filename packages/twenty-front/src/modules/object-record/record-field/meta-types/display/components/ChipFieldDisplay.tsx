@@ -1,52 +1,33 @@
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useChipFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useChipFieldDisplay';
-import { RecordIdentifierChip } from '@/object-record/record-index/components/RecordIndexRecordChip';
-import { recordIndexOpenRecordInSelector } from '@/object-record/record-index/states/selectors/recordIndexOpenRecordInSelector';
-import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { useRecoilValue } from 'recoil';
-import { ChipSize } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { ChipSize } from 'twenty-ui/components';
 
 export const ChipFieldDisplay = () => {
   const {
     recordValue,
     objectNameSingular,
-    isLabelIdentifier,
     labelIdentifierLink,
+    isLabelIdentifierCompact,
+    disableChipClick,
+    maxWidth,
+    triggerEvent,
   } = useChipFieldDisplay();
 
-  const recordIndexOpenRecordIn = useRecoilValue(
-    recordIndexOpenRecordInSelector,
-  );
-
-  const { openRecordInCommandMenu } = useCommandMenu();
-
-  if (!recordValue) {
+  if (!isDefined(recordValue)) {
     return null;
   }
 
-  return isLabelIdentifier ? (
-    <RecordIdentifierChip
+  return (
+    <RecordChip
+      maxWidth={maxWidth}
       objectNameSingular={objectNameSingular}
       record={recordValue}
       size={ChipSize.Small}
-      to={
-        recordIndexOpenRecordIn === ViewOpenRecordInType.RECORD_PAGE
-          ? labelIdentifierLink
-          : undefined
-      }
-      onClick={
-        recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
-          ? () => {
-              openRecordInCommandMenu({
-                recordId: recordValue.id,
-                objectNameSingular,
-              });
-            }
-          : undefined
-      }
+      to={labelIdentifierLink}
+      isLabelHidden={isLabelIdentifierCompact}
+      forceDisableClick={disableChipClick}
+      triggerEvent={triggerEvent}
     />
-  ) : (
-    <RecordChip objectNameSingular={objectNameSingular} record={recordValue} />
   );
 };

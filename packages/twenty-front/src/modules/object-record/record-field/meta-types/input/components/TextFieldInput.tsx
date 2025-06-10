@@ -3,12 +3,13 @@ import { TextAreaInput } from '@/ui/field/input/components/TextAreaInput';
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useTextField } from '../../hooks/useTextField';
 
-import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
-import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
 import {
   FieldInputClickOutsideEvent,
   FieldInputEvent,
-} from './DateTimeFieldInput';
+} from '@/object-record/record-field/types/FieldInputEvent';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
+import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
+import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
 
 export type TextFieldInputProps = {
   onClickOutside?: FieldInputClickOutsideEvent;
@@ -25,8 +26,7 @@ export const TextFieldInput = ({
   onTab,
   onShiftTab,
 }: TextFieldInputProps) => {
-  const { fieldDefinition, draftValue, hotkeyScope, setDraftValue } =
-    useTextField();
+  const { fieldDefinition, draftValue, setDraftValue } = useTextField();
 
   const persistField = usePersistField();
   const handleEnter = (newText: string) => {
@@ -67,7 +67,7 @@ export const TextFieldInput = ({
         onEscape={handleEscape}
         onShiftTab={handleShiftTab}
         onTab={handleTab}
-        hotkeyScope={hotkeyScope}
+        hotkeyScope={DEFAULT_CELL_SCOPE.scope}
         onChange={handleChange}
       />
     </FieldInputContainer>

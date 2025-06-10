@@ -2,13 +2,17 @@ import styled from '@emotion/styled';
 // @ts-expect-error // Todo: remove usage of react-data-grid
 import { Column, useRowSelection } from 'react-data-grid';
 import { createPortal } from 'react-dom';
-import { AppTooltip, Checkbox, CheckboxVariant, Toggle } from 'twenty-ui';
 
-import { MatchColumnSelect } from '@/spreadsheet-import/components/MatchColumnSelect';
-import { Fields, ImportedStructuredRow } from '@/spreadsheet-import/types';
+import {
+  ImportedStructuredRow,
+  SpreadsheetImportFields,
+} from '@/spreadsheet-import/types';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { isDefined } from 'twenty-shared';
 
+import camelCase from 'lodash.camelcase';
+import { isDefined } from 'twenty-shared/utils';
+import { AppTooltip } from 'twenty-ui/display';
+import { Checkbox, CheckboxVariant, Toggle } from 'twenty-ui/input';
 import { ImportedStructuredRowMetadata } from '../types';
 
 const StyledHeaderContainer = styled.div`
@@ -57,10 +61,18 @@ const StyledDefaultContainer = styled.div`
   text-overflow: ellipsis;
 `;
 
+const StyledSelectReadonlyValueContianer = styled.div`
+  padding-left: ${({ theme }) => theme.spacing(2)};
+`;
+
 const SELECT_COLUMN_KEY = 'select-row';
 
+const formatSafeId = (columnKey: string) => {
+  return camelCase(columnKey.replace('(', '').replace(')', ''));
+};
+
 export const generateColumns = <T extends string>(
-  fields: Fields<T>,
+  fields: SpreadsheetImportFields<T>,
 ): Column<ImportedStructuredRow<T> & ImportedStructuredRowMetadata>[] => [
   {
     key: SELECT_COLUMN_KEY,
@@ -103,13 +115,13 @@ export const generateColumns = <T extends string>(
       resizable: true,
       headerRenderer: () => (
         <StyledHeaderContainer>
-          <StyledHeaderLabel id={`${column.key}`}>
+          <StyledHeaderLabel id={formatSafeId(column.key)}>
             {column.label}
           </StyledHeaderLabel>
           {column.description &&
             createPortal(
               <AppTooltip
-                anchorSelect={`#${column.key}`}
+                anchorSelect={`#${formatSafeId(column.key)}`}
                 place="top"
                 content={column.description}
               />,
@@ -126,25 +138,10 @@ export const generateColumns = <T extends string>(
 
         switch (column.fieldType.type) {
           case 'select': {
-            const value = column.fieldType.options.find(
-              (option) => option.value === (row[columnKey] as string),
-            );
-
             component = (
-              <MatchColumnSelect
-                value={
-                  value
-                    ? ({
-                        icon: undefined,
-                        ...value,
-                      } as const)
-                    : value
-                }
-                onChange={(value) => {
-                  onRowChange({ ...row, [columnKey]: value?.value }, true);
-                }}
-                options={column.fieldType.options}
-              />
+              <StyledSelectReadonlyValueContianer>
+                {row[columnKey]}
+              </StyledSelectReadonlyValueContianer>
             );
             break;
           }
@@ -176,7 +173,7 @@ export const generateColumns = <T extends string>(
           case 'checkbox':
             component = (
               <StyledToggleContainer
-                id={`${columnKey}-${row.__index}`}
+                id={formatSafeId(`${columnKey}-${row.__index}`)}
                 onClick={(event) => {
                   event.stopPropagation();
                 }}
@@ -195,7 +192,9 @@ export const generateColumns = <T extends string>(
             break;
           case 'select':
             component = (
-              <StyledDefaultContainer id={`${columnKey}-${row.__index}`}>
+              <StyledDefaultContainer
+                id={formatSafeId(`${columnKey}-${row.__index}`)}
+              >
                 {column.fieldType.options.find(
                   (option) => option.value === row[columnKey as T],
                 )?.label || null}
@@ -204,7 +203,9 @@ export const generateColumns = <T extends string>(
             break;
           default:
             component = (
-              <StyledDefaultContainer id={`${columnKey}-${row.__index}`}>
+              <StyledDefaultContainer
+                id={formatSafeId(`${columnKey}-${row.__index}`)}
+              >
                 {row[columnKey]}
               </StyledDefaultContainer>
             );
@@ -216,7 +217,7 @@ export const generateColumns = <T extends string>(
               {component}
               {createPortal(
                 <AppTooltip
-                  anchorSelect={`#${columnKey}-${row.__index}`}
+                  anchorSelect={`#${formatSafeId(`${columnKey}-${row.__index}`)}`}
                   place="top"
                   content={row.__errors?.[columnKey]?.message}
                 />,

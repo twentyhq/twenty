@@ -16,7 +16,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Section } from '@react-email/components';
 import pick from 'lodash.pick';
 import { FormProvider, useForm } from 'react-hook-form';
-import { H2Title, Info } from 'twenty-ui';
 import { z } from 'zod';
 import {
   RemoteServer,
@@ -25,6 +24,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { H2Title, Info } from 'twenty-ui/display';
 
 export const SettingsIntegrationEditDatabaseConnectionContent = ({
   connection,

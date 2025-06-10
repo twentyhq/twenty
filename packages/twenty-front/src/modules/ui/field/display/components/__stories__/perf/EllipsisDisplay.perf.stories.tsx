@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator } from 'twenty-ui';
 
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta = {
   title: 'UI/Input/EllipsisDisplay/EllipsisDisplay',

@@ -1,13 +1,36 @@
-import { extractVariableLabel } from '../extractVariableLabel';
+import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/extractRawVariableNamePart';
 
-it('returns the last part of a properly formatted variable', () => {
-  const rawVariable = '{{a.b.c}}';
+describe('extractRawVariableNamePart', () => {
+  it('returns the last part of a properly formatted variable', () => {
+    const rawVariable = '{{a.b.c}}';
 
-  expect(extractVariableLabel(rawVariable)).toBe('c');
-});
+    expect(
+      extractRawVariableNamePart({
+        rawVariableName: rawVariable,
+        part: 'selectedField',
+      }),
+    ).toBe('c');
+  });
 
-it('stops on unclosed variables', () => {
-  const rawVariable = '{{ test {{a.b.c}}';
+  it('returns the first part of a properly formatted variable', () => {
+    const rawVariable = '{{a.b.c}}';
 
-  expect(extractVariableLabel(rawVariable)).toBe('c');
+    expect(
+      extractRawVariableNamePart({
+        rawVariableName: rawVariable,
+        part: 'stepId',
+      }),
+    ).toBe('a');
+  });
+
+  it('stops on unclosed variables', () => {
+    const rawVariable = '{{ test {{a.b.c}}';
+
+    expect(
+      extractRawVariableNamePart({
+        rawVariableName: rawVariable,
+        part: 'selectedField',
+      }),
+    ).toBe('c');
+  });
 });

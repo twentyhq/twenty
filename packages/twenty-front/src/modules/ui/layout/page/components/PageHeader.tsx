@@ -2,23 +2,19 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 import { useRecoilValue } from 'recoil';
-import {
-  IconButton,
-  IconChevronDown,
-  IconChevronUp,
-  IconComponent,
-  IconX,
-  LightIconButton,
-  MOBILE_VIEWPORT,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui';
 
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 
+import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constants/PageActionContainerClickOutsideId';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated/graphql';
+import {
+  IconComponent,
+  IconX,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;
 
@@ -59,9 +55,10 @@ const StyledTitleContainer = styled.div`
   display: flex;
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-left: ${({ theme }) => theme.spacing(1)};
+  margin-right: ${({ theme }) => theme.spacing(1)};
   width: 100%;
   overflow: hidden;
+  align-items: center;
 `;
 
 const StyledTopBarIconStyledTitleContainer = styled.div`
@@ -76,7 +73,7 @@ const StyledTopBarIconStyledTitleContainer = styled.div`
 const StyledPageActionContainer = styled.div`
   display: inline-flex;
   gap: ${({ theme }) => theme.spacing(2)};
-  flex: 1 0 1;
+  flex: 1 0 auto;
 `;
 
 const StyledTopBarButtonContainer = styled.div`
@@ -94,24 +91,18 @@ type PageHeaderProps = {
   title?: ReactNode;
   hasClosePageButton?: boolean;
   onClosePage?: () => void;
-  hasPaginationButtons?: boolean;
-  hasPreviousRecord?: boolean;
-  hasNextRecord?: boolean;
-  navigateToPreviousRecord?: () => void;
-  navigateToNextRecord?: () => void;
   Icon?: IconComponent;
   children?: ReactNode;
+  className?: string;
 };
 
 export const PageHeader = ({
   title,
   hasClosePageButton,
   onClosePage,
-  hasPaginationButtons,
-  navigateToPreviousRecord,
-  navigateToNextRecord,
   Icon,
   children,
+  className,
 }: PageHeaderProps) => {
   const isMobile = useIsMobile();
   const theme = useTheme();
@@ -119,12 +110,8 @@ export const PageHeader = ({
     isNavigationDrawerExpandedState,
   );
 
-  const isCommandMenuV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCommandMenuV2Enabled,
-  );
-
   return (
-    <StyledTopBarContainer>
+    <StyledTopBarContainer className={className}>
       <StyledLeftContainer>
         {!isMobile && !isNavigationDrawerExpanded && (
           <StyledTopBarButtonContainer>
@@ -141,25 +128,11 @@ export const PageHeader = ({
         )}
 
         <StyledTopBarIconStyledTitleContainer>
-          {!isCommandMenuV2Enabled && hasPaginationButtons && (
-            <>
-              <IconButton
-                Icon={IconChevronUp}
-                size="small"
-                variant="secondary"
-                onClick={() => navigateToPreviousRecord?.()}
-              />
-              <IconButton
-                Icon={IconChevronDown}
-                size="small"
-                variant="secondary"
-                onClick={() => navigateToNextRecord?.()}
-              />
-            </>
+          {Icon && (
+            <StyledIconContainer>
+              <Icon size={theme.icon.size.md} />
+            </StyledIconContainer>
           )}
-          <StyledIconContainer>
-            {Icon && <Icon size={theme.icon.size.md} />}
-          </StyledIconContainer>
           {title && (
             <StyledTitleContainer data-testid="top-bar-title">
               {typeof title === 'string' ? (
@@ -172,7 +145,9 @@ export const PageHeader = ({
         </StyledTopBarIconStyledTitleContainer>
       </StyledLeftContainer>
 
-      <StyledPageActionContainer className="page-action-container">
+      <StyledPageActionContainer
+        data-click-outside-id={PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID}
+      >
         {children}
       </StyledPageActionContainer>
     </StyledTopBarContainer>

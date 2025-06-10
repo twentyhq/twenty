@@ -14,7 +14,7 @@ import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUu
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { buildOptimisticActorFieldValueFromCurrentWorkspaceMember } from '@/object-record/utils/buildOptimisticActorFieldValueFromCurrentWorkspaceMember';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from '~/generated/graphql';
 
@@ -22,21 +22,37 @@ type ComputeOptimisticCacheRecordInputArgs = {
   objectMetadataItem: ObjectMetadataItem;
   recordInput: Partial<ObjectRecord>;
   currentWorkspaceMember: CurrentWorkspaceMember | null;
-} & Pick<GetRecordFromCacheArgs, 'cache' | 'objectMetadataItems'>;
+} & Pick<
+  GetRecordFromCacheArgs,
+  'cache' | 'objectMetadataItems' | 'objectPermissionsByObjectMetadataId'
+>;
 export const computeOptimisticRecordFromInput = ({
   objectMetadataItem,
   recordInput,
   cache,
   objectMetadataItems,
   currentWorkspaceMember,
+  objectPermissionsByObjectMetadataId,
 }: ComputeOptimisticCacheRecordInputArgs) => {
   const unknownRecordInputFields = Object.keys(recordInput).filter(
     (recordKey) => {
-      const isUnknownMetadataItemField =
-        objectMetadataItem.fields.find((field) => field.name === recordKey) ===
-        undefined;
+      const correspondingFieldMetadataItem = objectMetadataItem.fields.find(
+        (field) => field.name === recordKey,
+      );
+
+      const potentialJoinColumnNameFieldMetadataItem =
+        objectMetadataItem.fields.find(
+          (field) =>
+            field.type === FieldMetadataType.RELATION &&
+            field.settings?.joinColumnName === recordKey,
+        );
+
+      const isUnknownField =
+        !isDefined(correspondingFieldMetadataItem) &&
+        !isDefined(potentialJoinColumnNameFieldMetadataItem);
+
       const isTypenameField = recordKey === GRAPHQL_TYPENAME_KEY;
-      return isUnknownMetadataItemField && !isTypenameField;
+      return isUnknownField && !isTypenameField;
     },
   );
   if (unknownRecordInputFields.length > 0) {
@@ -122,6 +138,7 @@ export const computeOptimisticRecordFromInput = ({
     const relationFieldIdName = getForeignKeyNameFromRelationFieldName(
       fieldMetadataItem.name,
     );
+
     const recordInputFieldIdValue: string | null | undefined =
       recordInput[relationFieldIdName];
 
@@ -132,7 +149,11 @@ export const computeOptimisticRecordFromInput = ({
     const relationIdFieldMetadataItem = objectMetadataItem.fields.find(
       (field) => field.name === relationFieldIdName,
     );
-    if (!isDefined(relationIdFieldMetadataItem)) {
+
+    if (
+      !isDefined(relationIdFieldMetadataItem) &&
+      !isDefined(fieldMetadataItem.settings?.joinColumnName)
+    ) {
       throw new Error(
         'Should never occur, encountered unknown relationId within relations definitions',
       );
@@ -160,6 +181,7 @@ export const computeOptimisticRecordFromInput = ({
       objectMetadataItem: targetObjectMetataDataItem,
       objectMetadataItems,
       recordId: recordInputFieldIdValue as string,
+      objectPermissionsByObjectMetadataId,
     });
 
     optimisticRecord[relationFieldIdName] = recordInputFieldIdValue;

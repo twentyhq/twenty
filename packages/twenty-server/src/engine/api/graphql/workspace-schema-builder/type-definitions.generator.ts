@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import chalk from 'chalk';
-
 import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
@@ -10,13 +8,10 @@ import { CompositeInputTypeDefinitionFactory } from 'src/engine/api/graphql/work
 import { CompositeObjectTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-object-type-definition.factory';
 import { EnumTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/enum-type-definition.factory';
 import { ExtendObjectTypeDefinitionV2Factory } from 'src/engine/api/graphql/workspace-schema-builder/factories/extend-object-type-definition-v2.factory';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 
 import { ConnectionTypeDefinitionFactory } from './factories/connection-type-definition.factory';
 import { EdgeTypeDefinitionFactory } from './factories/edge-type-definition.factory';
-import { ExtendObjectTypeDefinitionFactory } from './factories/extend-object-type-definition.factory';
 import {
   InputTypeDefinitionFactory,
   InputTypeDefinitionKind,
@@ -43,9 +38,7 @@ export class TypeDefinitionsGenerator {
     private readonly compositeInputTypeDefinitionFactory: CompositeInputTypeDefinitionFactory,
     private readonly edgeTypeDefinitionFactory: EdgeTypeDefinitionFactory,
     private readonly connectionTypeDefinitionFactory: ConnectionTypeDefinitionFactory,
-    private readonly extendObjectTypeDefinitionFactory: ExtendObjectTypeDefinitionFactory,
     private readonly extendObjectTypeDefinitionV2Factory: ExtendObjectTypeDefinitionV2Factory,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async generate(
@@ -179,6 +172,7 @@ export class TypeDefinitionsGenerator {
   ) {
     const objectTypeDefs = objectMetadataCollection.map((objectMetadata) =>
       this.objectTypeDefinitionFactory.create(
+        // @ts-expect-error legacy noImplicitAny
         objectMetadata,
         ObjectTypeDefinitionKind.Plain,
         options,
@@ -279,34 +273,14 @@ export class TypeDefinitionsGenerator {
       throw new Error('Workspace ID not found');
     }
 
-    const isNewRelationEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsNewRelationEnabled,
-      workspaceId,
+    const objectTypeDefs = objectMetadataCollectionWithCompositeFields.map(
+      (objectMetadata) =>
+        this.extendObjectTypeDefinitionV2Factory.create(
+          objectMetadata,
+          options,
+        ),
     );
 
-    if (!isNewRelationEnabled) {
-      const objectTypeDefs = objectMetadataCollectionWithCompositeFields.map(
-        (objectMetadata) =>
-          this.extendObjectTypeDefinitionFactory.create(
-            objectMetadata,
-            options,
-          ),
-      );
-
-      this.typeDefinitionsStorage.addObjectTypes(objectTypeDefs);
-    } else {
-      this.logger.log(
-        chalk.green('Extend object type definition with new relation fields'),
-      );
-      const objectTypeDefsV2 = objectMetadataCollectionWithCompositeFields.map(
-        (objectMetadata) =>
-          this.extendObjectTypeDefinitionV2Factory.create(
-            objectMetadata,
-            options,
-          ),
-      );
-
-      this.typeDefinitionsStorage.addObjectTypes(objectTypeDefsV2);
-    }
+    this.typeDefinitionsStorage.addObjectTypes(objectTypeDefs);
   }
 }

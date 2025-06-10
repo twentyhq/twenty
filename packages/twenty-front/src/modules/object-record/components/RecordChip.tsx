@@ -1,19 +1,32 @@
-import { AvatarChip, AvatarChipVariant } from 'twenty-ui';
-
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
-import { recordIndexOpenRecordInSelector } from '@/object-record/record-index/states/selectors/recordIndexOpenRecordInSelector';
+import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { MouseEvent } from 'react';
 import { useRecoilValue } from 'recoil';
+import {
+  AvatarChip,
+  AvatarChipVariant,
+  ChipSize,
+  ChipVariant,
+  LinkAvatarChip,
+} from 'twenty-ui/components';
+import { TriggerEventType } from 'twenty-ui/utilities';
 
 export type RecordChipProps = {
   objectNameSingular: string;
   record: ObjectRecord;
   className?: string;
   variant?: AvatarChipVariant;
+  forceDisableClick?: boolean;
+  maxWidth?: number;
+  to?: string | undefined;
+  size?: ChipSize;
+  isLabelHidden?: boolean;
+  triggerEvent?: TriggerEventType;
 };
 
 export const RecordChip = ({
@@ -21,42 +34,73 @@ export const RecordChip = ({
   record,
   className,
   variant,
+  maxWidth,
+  to,
+  size,
+  forceDisableClick = false,
+  isLabelHidden = false,
+  triggerEvent = 'MOUSE_DOWN',
 }: RecordChipProps) => {
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
     record,
   });
 
-  const { openRecordInCommandMenu } = useCommandMenu();
+  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
-  const recordIndexOpenRecordIn = useRecoilValue(
-    recordIndexOpenRecordInSelector,
-  );
+  const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
 
-  const handleClick = (e: MouseEvent<Element>) => {
-    e.stopPropagation();
-    if (recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
-      openRecordInCommandMenu({
-        recordId: record.id,
-        objectNameSingular,
-      });
-    }
-  };
+  const isSidePanelViewOpenRecordInType =
+    recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL;
+
+  const handleCustomClick = isSidePanelViewOpenRecordInType
+    ? (_event: MouseEvent<HTMLElement>) => {
+        openRecordInCommandMenu({
+          recordId: record.id,
+          objectNameSingular,
+        });
+      }
+    : undefined;
+
+  // TODO temporary until we create a record show page for Workspaces members
+
+  if (
+    forceDisableClick ||
+    objectNameSingular === CoreObjectNameSingular.WorkspaceMember
+  ) {
+    return (
+      <AvatarChip
+        size={size}
+        maxWidth={maxWidth}
+        placeholderColorSeed={record.id}
+        name={recordChipData.name}
+        avatarType={recordChipData.avatarType}
+        avatarUrl={recordChipData.avatarUrl ?? ''}
+        className={className}
+        variant={ChipVariant.Transparent}
+      />
+    );
+  }
 
   return (
-    <AvatarChip
+    <LinkAvatarChip
+      size={size}
+      maxWidth={maxWidth}
       placeholderColorSeed={record.id}
       name={recordChipData.name}
+      isLabelHidden={isLabelHidden}
       avatarType={recordChipData.avatarType}
       avatarUrl={recordChipData.avatarUrl ?? ''}
       className={className}
-      variant={variant}
-      onClick={handleClick}
-      to={
-        recordIndexOpenRecordIn === ViewOpenRecordInType.RECORD_PAGE
-          ? getLinkToShowPage(objectNameSingular, record)
-          : undefined
+      variant={
+        variant ??
+        (!forceDisableClick
+          ? AvatarChipVariant.Regular
+          : AvatarChipVariant.Transparent)
       }
+      to={to ?? getLinkToShowPage(objectNameSingular, record)}
+      onClick={handleCustomClick}
+      triggerEvent={triggerEvent}
     />
   );
 };

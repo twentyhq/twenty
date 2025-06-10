@@ -7,8 +7,7 @@ import { FieldDateMetadata } from '@/object-record/record-field/types/FieldMetad
 import { FieldContext } from '../../contexts/FieldContext';
 
 export const useDateFieldDisplay = () => {
-  const { recordId, fieldDefinition, hotkeyScope, clearable } =
-    useContext(FieldContext);
+  const { recordId, fieldDefinition, clearable } = useContext(FieldContext);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
@@ -23,7 +22,6 @@ export const useDateFieldDisplay = () => {
     // Maybe a level above ?
     fieldDefinition: fieldDefinition as FieldDefinition<FieldDateMetadata>,
     fieldValue,
-    hotkeyScope,
     clearable,
   };
 };

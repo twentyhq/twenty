@@ -6,6 +6,7 @@ export const EXECUTE_ONE_SERVERLESS_FUNCTION = gql`
   ) {
     executeOneServerlessFunction(input: $input) {
       data
+      logs
       duration
       status
       error

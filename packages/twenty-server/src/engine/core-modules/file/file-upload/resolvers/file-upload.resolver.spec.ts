@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 import { FileUploadResolver } from './file-upload.resolver';
 
@@ -17,7 +17,7 @@ describe('FileUploadResolver', () => {
           useValue: {},
         },
         {
-          provide: EnvironmentService,
+          provide: TwentyConfigService,
           useValue: {},
         },
       ],

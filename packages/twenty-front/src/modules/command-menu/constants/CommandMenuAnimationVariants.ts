@@ -1,5 +1,4 @@
-import { THEME_COMMON } from 'twenty-ui';
-
+import { THEME_COMMON } from 'twenty-ui/theme';
 export const COMMAND_MENU_ANIMATION_VARIANTS = {
   fullScreen: {
     x: '0%',

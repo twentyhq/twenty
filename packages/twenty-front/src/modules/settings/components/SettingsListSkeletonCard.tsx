@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
-
-import { Card } from 'twenty-ui';
+import { Card } from 'twenty-ui/layout';
 
 const StyledCard = styled(Card)`
   background-color: ${({ theme }) => theme.background.secondary};

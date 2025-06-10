@@ -1,11 +1,12 @@
-import {
-  ObjectMetadataItemsQuery,
-} from '~/generated-metadata/graphql';
+import { ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';
 
 // This file is not designed to be manually edited.
 // It's an extract from the dev seeded environment metadata call
 // TODO: automate the generation of this file
 // ⚠️ WARNING ⚠️: Be sure to activate the workflow feature flag (IsWorkflowEnabled) before updating that mock.
+
+/* eslint-disable */
+// prettier-ignore
 export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
 {
   objects: {
@@ -31,6 +32,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: true,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "0171f47e-f1e8-4e28-949e-b0a8e1a17356",
@@ -92,7 +94,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               id: "8047b613-2dc9-4d77-bccc-8a3f54ba3fd4",
               type: "BOOLEAN",
               name: "isFullDay",
-              icon: "Icon24Hours",
+              icon: "IconHours24",
               isCustom: false,
               isActive: true,
               isSystem: false,
@@ -338,7 +340,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -361,7 +363,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -384,7 +386,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -501,6 +503,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: true,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "f8ffb39e-dafb-4b61-b2be-e5b41a548ef0",
@@ -674,7 +677,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -697,7 +700,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -720,7 +723,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -856,6 +859,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: true,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "d1d1ff00-7330-4c8d-b9b6-ae9f713e5c38",
@@ -903,7 +907,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -926,7 +930,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -949,7 +953,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -1516,6 +1520,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: true,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "61946ba1-4743-4ced-a6d7-0d06a8c12f07",
@@ -1546,7 +1551,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -1926,7 +1931,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -1949,7 +1954,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -2207,6 +2212,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: true,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "db996c62-eb44-4381-bcc2-46989d681f3a",
@@ -2435,7 +2441,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -2458,7 +2464,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -2481,7 +2487,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -2843,7 +2849,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -2866,7 +2872,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -2889,7 +2895,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -3025,6 +3031,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: false,
+          isSearchable: true,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "585c1f2f-21d0-49d6-9d63-f830010a79da",
@@ -3331,7 +3338,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -3354,7 +3361,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -3377,7 +3384,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -3872,6 +3879,42 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
             },
             {
               __typename: "Field",
+              id: "c6dfcc2d-dc84-4553-94df-3b75cccee53c",
+              type: "SELECT",
+              name: "internalCompetitions",
+              icon: "IconHome",
+              isCustom: true,
+              isActive: true,
+              isSystem: false,
+              isNullable: true,
+              isUnique: false,
+              createdAt: "2025-02-11T09:14:38.892Z",
+              updatedAt: "2025-02-11T09:14:38.892Z",
+              defaultValue: null,
+              options: [
+                {
+                  id: "ee1b741b-0359-4ffd-b866-506e7b9c0cd9",
+                  color: "green",
+                  label: "Best employy",
+                  value: "BEST_EMPLOYEE",
+                  position: 0
+                },
+                {
+                  id: "3b2ed882-ec07-43fd-96e6-0fca8669c1f5",
+                  color: "turquoise",
+                  label: "Ultimate debugger",
+                  value: "ULTIMATE_DEBUGGER",
+                  position: 1
+                },
+              ],
+              settings: null,
+              isLabelSyncedWithName: false,
+              relationDefinition: null,
+              label: "Internal competitions",
+              description: "Internal competitions"
+            },
+            {
+              __typename: "Field",
               id: "8b1b88c0-a802-4c5d-8632-a4e343f3c8f1",
               type: "BOOLEAN",
               name: "visaSponsorship",
@@ -3987,6 +4030,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: false,
+          isSearchable: true,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "28d93256-a262-422a-8f19-fbe1329fedfb",
@@ -4143,7 +4187,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -4166,7 +4210,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -4189,7 +4233,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -4434,6 +4478,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: true,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "9db27f2b-a332-4017-9f55-142d877b2fee",
@@ -4649,7 +4694,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -4672,7 +4717,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -4695,7 +4740,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -4925,6 +4970,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: true,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "08b10273-9750-4bc6-9f83-8cbad795bf18",
@@ -5236,7 +5282,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -5259,7 +5305,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -5282,7 +5328,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -5809,6 +5855,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: true,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "f14938c3-58cc-4896-85a7-cea1c6fe9d0f",
@@ -5860,7 +5907,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -5883,7 +5930,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -5906,7 +5953,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -5976,6 +6023,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: true,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "029ea2ee-6ffe-45a5-93f2-85cefc83f019",
@@ -6107,7 +6155,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -6130,7 +6178,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -6153,7 +6201,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -6372,6 +6420,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: true,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "6572b4bf-c981-4db9-8f90-309522762cc2",
@@ -6504,7 +6553,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -6527,7 +6576,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -6550,7 +6599,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -6686,6 +6735,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: true,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "dba26a5c-e28a-46cc-b864-6e44ccc75cc7",
@@ -6796,7 +6846,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -6819,7 +6869,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -6842,7 +6892,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -7601,6 +7651,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: true,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "cbf8a777-7bea-4fc6-94e5-a5183bc5567b",
@@ -7734,7 +7785,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -7757,7 +7808,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -7780,7 +7831,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -7807,6 +7858,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: false,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "f5dbede2-acbb-43b9-82a0-c7bff8155a3f",
@@ -7988,7 +8040,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -8011,7 +8063,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -8034,7 +8086,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -8288,6 +8340,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: true,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "1d9070ea-776b-4a86-b5ec-08f57d84a87d",
@@ -8356,7 +8409,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -8379,7 +8432,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -8402,7 +8455,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -8413,7 +8466,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               __typename: "Field",
               id: "dd7abd0e-fb7a-44b5-b445-a886451da34f",
               type: "UUID",
-              name: "workspaceMemberId",
+              name: "forWorkspaceMemberId",
               icon: "IconCircleUser",
               isCustom: false,
               isActive: true,
@@ -8434,7 +8487,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               __typename: "Field",
               id: "b37d7cda-7edd-4fb7-8443-4cb60d16bfa5",
               type: "RELATION",
-              name: "workspaceMember",
+              name: "forWorkspaceMember",
               icon: "IconCircleUser",
               isCustom: false,
               isActive: true,
@@ -8538,6 +8591,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: true,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "c8e0cf61-e509-4019-82a4-41482cb9f875",
@@ -8627,7 +8681,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -8650,7 +8704,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -8673,7 +8727,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -8906,6 +8960,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: true,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "a74894a3-4065-4b87-ab17-3252c709235b",
@@ -8999,7 +9054,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -9022,7 +9077,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -9045,7 +9100,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -9115,6 +9170,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: true,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "7a9d535e-6665-4de0-a301-d3ffaf94e1fb",
@@ -9183,7 +9239,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -9206,7 +9262,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -9229,7 +9285,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -9240,7 +9296,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               __typename: "Field",
               id: "d138fd97-afec-4b74-9f61-5932fde251b4",
               type: "UUID",
-              name: "workspaceMemberId",
+              name: "forWorkspaceMemberId",
               icon: "IconCircleUser",
               isCustom: false,
               isActive: true,
@@ -9261,7 +9317,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               __typename: "Field",
               id: "0447657b-e2a8-4f8b-ad9b-aa9509ac0ac2",
               type: "RELATION",
-              name: "workspaceMember",
+              name: "forWorkspaceMember",
               icon: "IconCircleUser",
               isCustom: false,
               isActive: true,
@@ -9289,7 +9345,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 sourceFieldMetadata: {
                   __typename: "Field",
                   id: "0447657b-e2a8-4f8b-ad9b-aa9509ac0ac2",
-                  name: "workspaceMember"
+                  name: "forWorkspaceMember"
                 },
                 targetObjectMetadata: {
                   __typename: "Object",
@@ -10507,6 +10563,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: true,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "b3df551f-1afb-4a2b-b899-3b49d111b16b",
@@ -10638,7 +10695,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -10661,7 +10718,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -10684,7 +10741,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -10813,28 +10870,29 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           __typename: "Object",
           id: "8a943c8f-aceb-48a6-ac07-a0dca6712059",
           dataSourceId: "f3e5fac0-7791-47d4-a2c2-087e584c67df",
-          nameSingular: "workflowEventListener",
-          namePlural: "workflowEventListeners",
+          nameSingular: "workflowAutomatedTrigger",
+          namePlural: "workflowAutomatedTriggers",
           icon: "IconSettingsAutomation",
           isCustom: false,
           isRemote: false,
           isActive: true,
           isSystem: true,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "7a836cd1-9002-44c6-8ce4-17558bb97a34",
           imageIdentifierFieldMetadataId: null,
           shortcut: null,
           isLabelSyncedWithName: false,
-          labelSingular: "WorkflowEventListener",
-          labelPlural: "WorkflowEventListeners",
-          description: "A workflow event listener",
+          labelSingular: "WorkflowAutomatedTrigger",
+          labelPlural: "WorkflowAutomatedTriggers",
+          description: "A workflow automated trigger",
           fieldsList: [
             {
               __typename: "Field",
-              id: "7a836cd1-9002-44c6-8ce4-17558bb97a34",
-              type: "TEXT",
-              name: "eventName",
+              id: "20202020-3319-4234-a34c-3f92c1ab56e7",
+              type: "SELECT",
+              name: "type",
               icon: null,
               isCustom: false,
               isActive: true,
@@ -10843,13 +10901,49 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isUnique: false,
               createdAt: "2025-02-11T09:14:32.715Z",
               updatedAt: "2025-02-11T09:14:32.715Z",
-              defaultValue: "''",
+              defaultValue: null,
+              options: [
+                {
+                  id: "133a966a-7cc2-480c-8861-e09581893a6d",
+                  color: 'green',
+                  label: 'Database Event',
+                  value: 'DATABASE_EVENT',
+                  position: 0,
+                },
+                {
+                  id: "d3ecf3ce-5064-4d8d-bccb-18a701570b02",
+                  color: 'blue',
+                  label: 'Cron',
+                  value: 'CRON',
+                  position: 1,
+                }
+              ],
+              settings: null,
+              isLabelSyncedWithName: false,
+              relationDefinition: null,
+              label: "Automated Trigger Type",
+              description: "The workflow automated trigger type"
+            },
+            {
+              __typename: "Field",
+              id: "20202020-3319-4234-a34c-bac8f903de12",
+              type: "RAW_JSON",
+              name: "settings",
+              icon: null,
+              isCustom: false,
+              isActive: true,
+              isSystem: false,
+              isNullable: true,
+              isUnique: false,
+              createdAt: "2025-02-11T09:14:32.715Z",
+              updatedAt: "2025-02-11T09:14:32.715Z",
+              defaultValue: null,
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
               relationDefinition: null,
-              label: "Name",
-              description: "The workflow event listener name"
+              label: "Settings",
+              description: "The workflow automated trigger settings"
             },
             {
               __typename: "Field",
@@ -10888,7 +10982,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -10911,7 +11005,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -10934,7 +11028,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -10960,7 +11054,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               isLabelSyncedWithName: false,
               relationDefinition: null,
               label: "Workflow id (foreign key)",
-              description: "WorkflowEventListener workflow id foreign key"
+              description: "WorkflowAutomatedTrigger workflow id foreign key"
             },
             {
               __typename: "Field",
@@ -10980,7 +11074,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               settings: null,
               isLabelSyncedWithName: false,
               label: "Workflow",
-              description: "WorkflowEventListener workflow",
+              description: "WorkflowAutomatedTrigger workflow",
               relationDefinition: {
                 __typename: "RelationDefinition",
                 relationId: "eda58ebf-dc0b-4481-b9a6-dafc80afdceb",
@@ -10988,8 +11082,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 sourceObjectMetadata: {
                   __typename: "Object",
                   id: "8a943c8f-aceb-48a6-ac07-a0dca6712059",
-                  nameSingular: "workflowEventListener",
-                  namePlural: "workflowEventListeners"
+                  nameSingular: "workflowAutomatedTrigger",
+                  namePlural: "workflowAutomatedTriggers"
                 },
                 sourceFieldMetadata: {
                   __typename: "Field",
@@ -11005,7 +11099,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 targetFieldMetadata: {
                   __typename: "Field",
                   id: "a2162b17-505f-4a9d-bf93-cbc06242a14c",
-                  name: "eventListeners"
+                  name: "automatedTriggers"
                 }
               }
             }
@@ -11059,6 +11153,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: true,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "6f4cc8ad-8342-4e36-b689-2474d767885f",
@@ -11106,7 +11201,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -11129,7 +11224,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -11152,7 +11247,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -11719,6 +11814,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: true,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "dafe5e84-56d7-4cb8-a11e-7423e9e1c414",
@@ -11892,7 +11988,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -11915,7 +12011,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -11938,7 +12034,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -12063,6 +12159,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: true,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "002c37a7-caa7-48de-b453-c409528fb789",
@@ -12542,7 +12639,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -12565,7 +12662,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -12588,7 +12685,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -12807,6 +12904,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: true,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "321ef6c3-e01f-4080-9e8e-938810622ed8",
@@ -13208,7 +13306,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -13231,7 +13329,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -13254,7 +13352,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -13426,6 +13524,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: false,
+          isSearchable: true,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "d4ee3d39-1df1-46a4-a9aa-569119458656",
@@ -13663,7 +13762,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -13686,7 +13785,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -13709,7 +13808,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -14235,6 +14334,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: false,
+          isSearchable: true,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "9a08e8f4-4cf2-4586-b188-4542fe24c4e0",
@@ -14583,7 +14683,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -14606,7 +14706,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -14629,7 +14729,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -15282,6 +15382,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: true,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "91acce03-f503-4d7b-99ae-03898590baf6",
@@ -15455,7 +15556,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -15478,7 +15579,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -15501,7 +15602,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -16586,6 +16687,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: true,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "a325a92e-c357-43cd-9a9f-042bbb5f8cd0",
@@ -16725,7 +16827,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -16748,7 +16850,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -16771,7 +16873,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -17112,6 +17214,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: false,
+          isSearchable: true,
           createdAt: "2025-02-11T09:14:40.039Z",
           updatedAt: "2025-02-11T09:14:40.043Z",
           labelIdentifierFieldMetadataId: "5bdf1a3a-986b-48d0-87c4-8fa683f005f3",
@@ -17722,6 +17825,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: true,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "84cc32f8-52cf-4988-873d-43860a6ca370",
@@ -17832,7 +17936,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -17855,7 +17959,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -17878,7 +17982,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -17905,6 +18009,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: true,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "43b566c4-0d50-47c8-818a-b2b0475181a4",
@@ -18128,7 +18233,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -18151,7 +18256,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -18174,7 +18279,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -18316,6 +18421,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: false,
+          isSearchable: true,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "f9ef48ef-c0a1-49cc-ad51-35a4e2a8a6e0",
@@ -18536,7 +18642,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -18559,7 +18665,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -18582,7 +18688,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -18935,6 +19041,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: false,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "ed8938cf-bb8d-46a0-8f8c-1e2132978716",
@@ -19114,7 +19221,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -19137,7 +19244,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -19160,7 +19267,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -19265,7 +19372,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               __typename: "Field",
               id: "a2162b17-505f-4a9d-bf93-cbc06242a14c",
               type: "RELATION",
-              name: "eventListeners",
+              name: "automatedTriggers",
               icon: null,
               isCustom: false,
               isActive: true,
@@ -19278,8 +19385,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               options: null,
               settings: null,
               isLabelSyncedWithName: false,
-              label: "Event Listeners",
-              description: "Workflow event listeners linked to the workflow.",
+              label: "Automated Triggers",
+              description: "Workflow automated triggers linked to the workflow.",
               relationDefinition: {
                 __typename: "RelationDefinition",
                 relationId: "eda58ebf-dc0b-4481-b9a6-dafc80afdceb",
@@ -19293,13 +19400,13 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 sourceFieldMetadata: {
                   __typename: "Field",
                   id: "a2162b17-505f-4a9d-bf93-cbc06242a14c",
-                  name: "eventListeners"
+                  name: "automatedTriggers"
                 },
                 targetObjectMetadata: {
                   __typename: "Object",
                   id: "8a943c8f-aceb-48a6-ac07-a0dca6712059",
-                  nameSingular: "workflowEventListener",
-                  namePlural: "workflowEventListeners"
+                  nameSingular: "workflowAutomatedTrigger",
+                  namePlural: "workflowAutomatedTriggers"
                 },
                 targetFieldMetadata: {
                   __typename: "Field",
@@ -19418,6 +19525,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: false,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "ed2a4301-ae23-41ad-85e7-04e7082c478e",
@@ -19666,7 +19774,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -19689,7 +19797,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -19712,7 +19820,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -20027,6 +20135,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: true,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "2df3fe9d-60af-46a9-917f-dec16c0a9c33",
@@ -20116,7 +20225,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -20139,7 +20248,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -20162,7 +20271,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -20315,6 +20424,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: false,
+          isSearchable: true,
           createdAt: "2025-02-11T09:14:39.321Z",
           updatedAt: "2025-02-11T09:14:39.327Z",
           labelIdentifierFieldMetadataId: "0c3bb20e-2d2d-4c1b-a1aa-5a44d7e55818",
@@ -21261,6 +21371,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           isRemote: false,
           isActive: true,
           isSystem: true,
+          isSearchable: false,
           createdAt: "2025-02-11T09:14:32.715Z",
           updatedAt: "2025-02-11T09:14:32.715Z",
           labelIdentifierFieldMetadataId: "251826b3-199d-44f8-93ce-5165f17701b3",
@@ -21386,7 +21497,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -21409,7 +21520,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: "now",
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,
@@ -21432,7 +21543,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               defaultValue: null,
               options: null,
               settings: {
-                displayAsRelativeDate: true
+                displayFormat: 'RELATIVE'
               },
               isLabelSyncedWithName: false,
               relationDefinition: null,

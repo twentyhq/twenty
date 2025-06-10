@@ -7,10 +7,6 @@ export const useSetActiveDropdownFocusIdAndMemorizePrevious = () => {
   const setActiveDropdownFocusIdAndMemorizePrevious = useRecoilCallback(
     ({ snapshot, set }) =>
       (dropdownId: string | null) => {
-        const focusedDropdownId = snapshot
-          .getLoadable(activeDropdownFocusIdState)
-          .getValue();
-
         const activeDropdownFocusId = snapshot
           .getLoadable(activeDropdownFocusIdState)
           .getValue();
@@ -19,7 +15,7 @@ export const useSetActiveDropdownFocusIdAndMemorizePrevious = () => {
           return;
         }
 
-        set(previousDropdownFocusIdState, focusedDropdownId);
+        set(previousDropdownFocusIdState, activeDropdownFocusId);
         set(activeDropdownFocusIdState, dropdownId);
       },
     [],

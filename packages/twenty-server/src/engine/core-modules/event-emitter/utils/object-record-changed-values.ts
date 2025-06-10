@@ -1,5 +1,5 @@
 import deepEqual from 'deep-equal';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
@@ -29,6 +29,8 @@ export const objectRecordChangedValues = (
 
       return acc;
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     {} as Record<string, { before: any; after: any }>,
   );
 };

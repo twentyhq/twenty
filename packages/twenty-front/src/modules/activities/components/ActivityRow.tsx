@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
-import { CardContent } from 'twenty-ui';
 import React from 'react';
+import { CardContent } from 'twenty-ui/layout';
 
 const StyledRowContent = styled(CardContent)<{
   clickable?: boolean;

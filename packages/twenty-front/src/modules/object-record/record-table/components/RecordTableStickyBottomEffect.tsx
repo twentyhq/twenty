@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { scrollWrapperScrollBottomComponentState } from '@/ui/utilities/scroll/states/scrollWrappeScrollBottomComponentState';
+import { scrollWrapperScrollBottomComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollBottomComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const RecordTableStickyBottomEffect = () => {

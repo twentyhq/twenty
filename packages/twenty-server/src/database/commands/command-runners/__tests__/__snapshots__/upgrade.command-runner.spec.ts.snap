@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UpgradeCommandRunner Workspace upgrade should fail when APP_VERSION is not defined 1`] = `[Error: Cannot run upgrade command when APP_VERSION is not defined, please double check your env variables]`;
+
+exports[`UpgradeCommandRunner Workspace upgrade should fail when all commands contains invalid semver keys 1`] = `[Error: No previous version found for version 2.0.0. Please review the "allCommands" record. Available versions are: invalid, 2.0.0]`;
+
+exports[`UpgradeCommandRunner Workspace upgrade should fail when current version commands are not found 1`] = `[Error: No command found for version 42.0.0. Please check the commands record.]`;
+
+exports[`UpgradeCommandRunner Workspace upgrade should fail when previous version is not found 1`] = `[Error: No previous version found for version 1.0.0. Please review the "allCommands" record. Available versions are: 1.0.0, 2.0.0]`;
+
+exports[`UpgradeCommandRunner Workspace upgrade should fail when workspace version is not defined 1`] = `[Error: WORKSPACE_VERSION_NOT_DEFINED workspace=workspace_0]`;
+
+exports[`UpgradeCommandRunner Workspace upgrade should fail when workspace version is not equal to fromVersion 1`] = `[Error: WORKSPACE_VERSION_MISSMATCH Upgrade for workspace workspace_0 failed as its version is beneath fromWorkspaceVersion=1.0.0]`;
+
+exports[`UpgradeCommandRunner should run upgrade command with failing and successful workspaces 1`] = `[Error: WORKSPACE_VERSION_MISSMATCH Upgrade for workspace outated_version_workspace failed as its version is beneath fromWorkspaceVersion=1.0.0]`;
+
+exports[`UpgradeCommandRunner should run upgrade command with failing and successful workspaces 2`] = `[Error: Received invalid version: invalid 1.0.0]`;
+
+exports[`UpgradeCommandRunner should run upgrade command with failing and successful workspaces 3`] = `[Error: WORKSPACE_VERSION_NOT_DEFINED workspace=null_version_workspace]`;

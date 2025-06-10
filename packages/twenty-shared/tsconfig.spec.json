@@ -1,7 +1,6 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "module": "commonjs",
     "types": ["jest", "node"]
   },
   "include": [
@@ -12,6 +11,5 @@
     "src/**/*.spec.tsx",
     "src/**/*.test.ts",
     "src/**/*.test.tsx",
-    "vite.config.ts"
   ]
 }

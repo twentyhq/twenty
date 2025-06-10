@@ -1,18 +1,10 @@
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
-import { isDefined, PermissionsOnAllObjectRecords } from 'twenty-shared';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useHasObjectReadOnlyPermission = () => {
   const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);
-  const isPermissionEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsPermissionsEnabled,
-  );
-
-  if (!isPermissionEnabled) {
-    return false;
-  }
 
   if (!isDefined(currentUserWorkspace?.objectRecordsPermissions)) {
     return false;

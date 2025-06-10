@@ -2,10 +2,11 @@ import { RecordIndexContextProvider } from '@/object-record/record-index/context
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
+import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContainer } from '@/object-record/record-index/components/RecordIndexContainer';
 import { RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect } from '@/object-record/record-index/components/RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect';
@@ -13,13 +14,17 @@ import { RecordIndexLoadBaseOnContextStoreEffect } from '@/object-record/record-
 import { RecordIndexPageHeader } from '@/object-record/record-index/components/RecordIndexPageHeader';
 import { useHandleIndexIdentifierClick } from '@/object-record/record-index/hooks/useHandleIndexIdentifierClick';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
+import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
+import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import styled from '@emotion/styled';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
-import { capitalize } from 'twenty-shared';
+import { useRecoilCallback } from 'recoil';
+import { capitalize } from 'twenty-shared/utils';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 
 const StyledIndexContainer = styled.div`
   display: flex;
@@ -28,18 +33,17 @@ const StyledIndexContainer = styled.div`
 `;
 
 export const RecordIndexContainerGater = () => {
-  const mainContextStoreComponentInstanceId = useRecoilValue(
-    mainContextStoreComponentInstanceIdState,
-  );
-
   const contextStoreCurrentViewId = useRecoilComponentValueV2(
     contextStoreCurrentViewIdComponentState,
-    mainContextStoreComponentInstanceId,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const recordIndexId = `${objectMetadataItem.namePlural}-${contextStoreCurrentViewId}`;
+  const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
+    objectMetadataItem.namePlural,
+    contextStoreCurrentViewId || '',
+  );
 
   const handleIndexRecordsLoaded = useRecoilCallback(
     ({ set }) =>
@@ -55,10 +59,23 @@ export const RecordIndexContainerGater = () => {
     recordIndexId,
   });
 
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const objectPermissions = getObjectPermissionsForObject(
+    objectPermissionsByObjectMetadataId,
+    objectMetadataItem.id,
+  );
+
+  const hasObjectReadPermissions = objectPermissions.canReadObjectRecords;
+
+  if (!hasObjectReadPermissions) {
+    return <></>;
+  }
+
   return (
     <>
       <RecordIndexContextProvider
         value={{
+          objectPermissionsByObjectMetadataId,
           recordIndexId,
           objectNamePlural: objectMetadataItem.namePlural,
           objectNameSingular: objectMetadataItem.nameSingular,
@@ -70,30 +87,36 @@ export const RecordIndexContainerGater = () => {
         <ViewComponentInstanceContext.Provider
           value={{ instanceId: recordIndexId }}
         >
-          <RecordFiltersComponentInstanceContext.Provider
+          <RecordFilterGroupsComponentInstanceContext.Provider
             value={{ instanceId: recordIndexId }}
           >
-            <RecordSortsComponentInstanceContext.Provider
+            <RecordFiltersComponentInstanceContext.Provider
               value={{ instanceId: recordIndexId }}
             >
-              <ActionMenuComponentInstanceContext.Provider
-                value={{
-                  instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
-                }}
+              <RecordSortsComponentInstanceContext.Provider
+                value={{ instanceId: recordIndexId }}
               >
-                <PageTitle
-                  title={`${capitalize(objectMetadataItem.namePlural)}`}
-                />
-                <RecordIndexPageHeader />
-                <PageBody>
-                  <StyledIndexContainer>
-                    <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
-                    <RecordIndexContainer />
-                  </StyledIndexContainer>
-                </PageBody>
-              </ActionMenuComponentInstanceContext.Provider>
-            </RecordSortsComponentInstanceContext.Provider>
-          </RecordFiltersComponentInstanceContext.Provider>
+                <ActionMenuComponentInstanceContext.Provider
+                  value={{
+                    instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
+                  }}
+                >
+                  <PageTitle
+                    title={`${capitalize(objectMetadataItem.namePlural)}`}
+                  />
+                  <RecordIndexPageHeader />
+                  <PageBody>
+                    <StyledIndexContainer
+                      className={RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS}
+                    >
+                      <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
+                      <RecordIndexContainer />
+                    </StyledIndexContainer>
+                  </PageBody>
+                </ActionMenuComponentInstanceContext.Provider>
+              </RecordSortsComponentInstanceContext.Provider>
+            </RecordFiltersComponentInstanceContext.Provider>
+          </RecordFilterGroupsComponentInstanceContext.Provider>
           <RecordIndexLoadBaseOnContextStoreEffect />
         </ViewComponentInstanceContext.Provider>
       </RecordIndexContextProvider>

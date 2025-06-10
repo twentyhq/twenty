@@ -1,5 +1,7 @@
+import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroupRecords';
 import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
@@ -16,7 +18,11 @@ export const useHandleRecordGroupField = () => {
     contextStoreCurrentViewIdComponentState,
   );
 
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+
   const { getViewFromPrefetchState } = useGetViewFromPrefetchState();
+
+  const { setRecordGroupsFromViewGroups } = useSetRecordGroups();
 
   const handleRecordGroupFieldChange = useRecoilCallback(
     ({ snapshot }) =>
@@ -86,6 +92,19 @@ export const useHandleRecordGroupField = () => {
           (group) => group.fieldMetadataId !== fieldMetadataItem.id,
         );
 
+        const newViewGroupsList = [
+          ...view.viewGroups.filter(
+            (group) => group.fieldMetadataId === fieldMetadataItem.id,
+          ),
+          ...viewGroupsToCreate,
+        ];
+
+        setRecordGroupsFromViewGroups(
+          view.id,
+          newViewGroupsList,
+          objectMetadataItem,
+        );
+
         if (viewGroupsToCreate.length > 0) {
           await createViewGroupRecords({ viewGroupsToCreate, viewId: view.id });
         }
@@ -95,10 +114,12 @@ export const useHandleRecordGroupField = () => {
         }
       },
     [
-      createViewGroupRecords,
-      deleteViewGroupRecords,
+      objectMetadataItem,
       currentViewIdCallbackState,
       getViewFromPrefetchState,
+      setRecordGroupsFromViewGroups,
+      createViewGroupRecords,
+      deleteViewGroupRecords,
     ],
   );
 
@@ -113,7 +134,7 @@ export const useHandleRecordGroupField = () => {
           return;
         }
 
-        const view = await getViewFromPrefetchState(currentViewId);
+        const view = getViewFromPrefetchState(currentViewId);
 
         if (isUndefinedOrNull(view)) {
           return;
@@ -124,11 +145,15 @@ export const useHandleRecordGroupField = () => {
         }
 
         await deleteViewGroupRecords(view.viewGroups);
+
+        setRecordGroupsFromViewGroups(view.id, [], objectMetadataItem);
       },
     [
       deleteViewGroupRecords,
       currentViewIdCallbackState,
       getViewFromPrefetchState,
+      setRecordGroupsFromViewGroups,
+      objectMetadataItem,
     ],
   );
 

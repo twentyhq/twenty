@@ -10,10 +10,11 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
 import { useDestroyOneRecordMutation } from '@/object-record/hooks/useDestroyOneRecordMutation';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { ViewSort } from '@/views/types/ViewSort';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const usePersistViewSortRecords = () => {
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -37,7 +38,7 @@ export const usePersistViewSortRecords = () => {
   });
 
   const { objectMetadataItems } = useObjectMetadataItems();
-
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const apolloClient = useApolloClient();
 
   const createViewSortRecords = useCallback(
@@ -52,6 +53,7 @@ export const usePersistViewSortRecords = () => {
                 fieldMetadataId: viewSort.fieldMetadataId,
                 viewId: view.id,
                 direction: viewSort.direction,
+                id: viewSort.id,
               },
             },
             update: (cache, { data }) => {
@@ -63,6 +65,7 @@ export const usePersistViewSortRecords = () => {
                 objectMetadataItem,
                 recordsToCreate: [record],
                 objectMetadataItems,
+                objectPermissionsByObjectMetadataId,
               });
             },
           }),
@@ -74,6 +77,7 @@ export const usePersistViewSortRecords = () => {
       createOneRecordMutation,
       objectMetadataItem,
       objectMetadataItems,
+      objectPermissionsByObjectMetadataId,
     ],
   );
 

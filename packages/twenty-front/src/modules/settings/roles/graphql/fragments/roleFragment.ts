@@ -5,6 +5,7 @@ export const ROLE_FRAGMENT = gql`
     id
     label
     description
+    icon
     canUpdateAllSettings
     isEditable
     canReadAllObjectRecords

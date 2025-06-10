@@ -1,25 +1,48 @@
-import * as Sentry from '@sentry/react';
+import { AppErrorBoundaryEffect } from '@/error-handler/components/internal/AppErrorBoundaryEffect';
 import { ErrorInfo, ReactNode } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
+import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
 
-import { GenericErrorFallback } from '@/error-handler/components/GenericErrorFallback';
+type AppErrorBoundaryProps = {
+  children: ReactNode;
+  FallbackComponent: React.ComponentType<FallbackProps>;
+  resetOnLocationChange?: boolean;
+};
 
-export const AppErrorBoundary = ({ children }: { children: ReactNode }) => {
-  const handleError = (_error: Error, _info: ErrorInfo) => {
-    Sentry.captureException(_error, (scope) => {
-      scope.setExtras({ _info });
-      return scope;
-    });
+export const AppErrorBoundary = ({
+  children,
+  FallbackComponent,
+  resetOnLocationChange = true,
+}: AppErrorBoundaryProps) => {
+  const handleError = async (error: Error, info: ErrorInfo) => {
+    try {
+      const { captureException } = await import('@sentry/react');
+      captureException(error, (scope) => {
+        scope.setExtras({ info });
+        return scope;
+      });
+    } catch (sentryError) {
+      // eslint-disable-next-line no-console
+      console.error('Failed to capture exception with Sentry:', sentryError);
+    }
   };
 
-  // TODO: Implement a better reset strategy, hard reload for now
   const handleReset = () => {
     window.location.reload();
   };
 
   return (
     <ErrorBoundary
-      FallbackComponent={GenericErrorFallback}
+      FallbackComponent={({ error, resetErrorBoundary }) => (
+        <>
+          {resetOnLocationChange && (
+            <AppErrorBoundaryEffect resetErrorBoundary={resetErrorBoundary} />
+          )}
+          <FallbackComponent
+            error={error}
+            resetErrorBoundary={resetErrorBoundary}
+          />
+        </>
+      )}
       onError={handleError}
       onReset={handleReset}
     >

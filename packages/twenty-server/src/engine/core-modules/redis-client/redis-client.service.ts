@@ -2,17 +2,17 @@ import { Injectable, OnModuleDestroy } from '@nestjs/common';
 
 import IORedis from 'ioredis';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class RedisClientService implements OnModuleDestroy {
   private redisClient: IORedis | null = null;
 
-  constructor(private readonly environmentService: EnvironmentService) {}
+  constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
   getClient() {
     if (!this.redisClient) {
-      const redisUrl = this.environmentService.get('REDIS_URL');
+      const redisUrl = this.twentyConfigService.get('REDIS_URL');
 
       if (!redisUrl) {
         throw new Error('REDIS_URL must be defined');

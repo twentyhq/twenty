@@ -54,6 +54,8 @@ export const Default: Story = {
     const canvas = within(canvasElement);
     const continueWithEmailButton = await canvas.findByText(
       'Continue with Email',
+      {},
+      { timeout: 3000 },
     );
 
     await fireEvent.click(continueWithEmailButton);

@@ -2,7 +2,6 @@ export const RESOLVER_METHOD_NAMES = {
   FIND_MANY: 'findMany',
   FIND_ONE: 'findOne',
   FIND_DUPLICATES: 'findDuplicates',
-  SEARCH: 'search',
   CREATE_MANY: 'createMany',
   CREATE_ONE: 'createOne',
   UPDATE_MANY: 'updateMany',

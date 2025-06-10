@@ -2,9 +2,8 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { HotkeyCallback, Keys, Options } from 'react-hotkeys-hook/dist/types';
 import { useRecoilState } from 'recoil';
 
+import { isDefined } from 'twenty-shared/utils';
 import { pendingHotkeyState } from '../states/internal/pendingHotkeysState';
-
-import { isDefined } from 'twenty-shared';
 import { useScopedHotkeyCallback } from './useScopedHotkeyCallback';
 
 type UseHotkeysOptionsWithoutBuggyOptions = Omit<Options, 'enabled'>;

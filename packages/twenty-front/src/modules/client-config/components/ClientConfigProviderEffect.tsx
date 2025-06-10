@@ -1,3 +1,4 @@
+import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
@@ -7,7 +8,7 @@ import { chromeExtensionIdState } from '@/client-config/states/chromeExtensionId
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
-import { isDebugModeState } from '@/client-config/states/isDebugModeState';
+import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
@@ -21,11 +22,9 @@ import { supportChatState } from '@/client-config/states/supportChatState';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useEffect } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
-import { useGetClientConfigQuery } from '~/generated/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 export const ClientConfigProviderEffect = () => {
-  const setIsDebugMode = useSetRecoilState(isDebugModeState);
   const setIsAnalyticsEnabled = useSetRecoilState(isAnalyticsEnabledState);
   const setDomainConfiguration = useSetRecoilState(domainConfigurationState);
   const setAuthProviders = useSetRecoilState(authProvidersState);
@@ -82,16 +81,27 @@ export const ClientConfigProviderEffect = () => {
     isAttachmentPreviewEnabledState,
   );
 
-  const { data, loading, error } = useGetClientConfigQuery({
-    skip: clientConfigApiStatus.isLoaded,
-  });
+  const setIsConfigVariablesInDbEnabled = useSetRecoilState(
+    isConfigVariablesInDbEnabledState,
+  );
+
+  const { data, loading, error, fetchClientConfig } = useClientConfig();
+
+  useEffect(() => {
+    if (
+      !clientConfigApiStatus.isLoadedOnce &&
+      !clientConfigApiStatus.isLoading
+    ) {
+      fetchClientConfig();
+    }
+  }, [
+    clientConfigApiStatus.isLoadedOnce,
+    clientConfigApiStatus.isLoading,
+    fetchClientConfig,
+  ]);
 
   useEffect(() => {
     if (loading) return;
-    setClientConfigApiStatus((currentStatus) => ({
-      ...currentStatus,
-      isLoaded: true,
-    }));
 
     if (error instanceof Error) {
       setClientConfigApiStatus((currentStatus) => ({
@@ -119,7 +129,6 @@ export const ClientConfigProviderEffect = () => {
       magicLink: false,
       sso: data?.clientConfig.authProviders.sso,
     });
-    setIsDebugMode(data?.clientConfig.debugMode);
     setIsAnalyticsEnabled(data?.clientConfig.analyticsEnabled);
     setIsDeveloperDefaultSignInPrefilled(data?.clientConfig.signInPrefilled);
     setIsMultiWorkspaceEnabled(data?.clientConfig.isMultiWorkspaceEnabled);
@@ -157,22 +166,28 @@ export const ClientConfigProviderEffect = () => {
     setIsAttachmentPreviewEnabled(
       data?.clientConfig?.isAttachmentPreviewEnabled,
     );
+    setIsConfigVariablesInDbEnabled(
+      data?.clientConfig?.isConfigVariablesInDbEnabled,
+    );
+    setClientConfigApiStatus((currentStatus) => ({
+      ...currentStatus,
+      isSaved: true,
+    }));
   }, [
     data,
-    setIsDebugMode,
+    loading,
+    error,
     setIsDeveloperDefaultSignInPrefilled,
     setIsMultiWorkspaceEnabled,
     setIsEmailVerificationRequired,
     setSupportChat,
     setBilling,
     setSentryConfig,
-    loading,
     setClientConfigApiStatus,
     setCaptcha,
     setChromeExtensionId,
     setApiConfig,
     setIsAnalyticsEnabled,
-    error,
     setDomainConfiguration,
     setAuthProviders,
     setCanManageFeatureFlags,
@@ -182,6 +197,7 @@ export const ClientConfigProviderEffect = () => {
     setGoogleMessagingEnabled,
     setGoogleCalendarEnabled,
     setIsAttachmentPreviewEnabled,
+    setIsConfigVariablesInDbEnabled,
   ]);
 
   return <></>;

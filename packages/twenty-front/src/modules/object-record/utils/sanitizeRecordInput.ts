@@ -1,6 +1,7 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isDefined } from 'twenty-shared';
+import { isSystemSearchVectorField } from '@/object-record/utils/isSystemSearchVectorField';
+import { isDefined } from 'twenty-shared/utils';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from '~/generated/graphql';
 
@@ -14,17 +15,33 @@ export const sanitizeRecordInput = ({
   const filteredResultRecord = Object.fromEntries(
     Object.entries(recordInput)
       .map<[string, unknown] | undefined>(([fieldName, fieldValue]) => {
+        if (isSystemSearchVectorField(fieldName)) {
+          return undefined;
+        }
+
         const fieldMetadataItem = objectMetadataItem.fields.find(
           (field) => field.name === fieldName,
         );
+        const potentialJoinColumnNameFieldMetadataItem =
+          objectMetadataItem.fields.find(
+            (field) =>
+              field.type === FieldMetadataType.RELATION &&
+              field.settings?.joinColumnName === fieldName,
+          );
 
-        if (!fieldMetadataItem) return undefined;
+        if (
+          !isDefined(fieldMetadataItem) &&
+          !isDefined(potentialJoinColumnNameFieldMetadataItem)
+        ) {
+          return undefined;
+        }
 
-        if (!fieldMetadataItem.isNullable && fieldValue == null) {
+        if (fieldMetadataItem?.isNullable === false && fieldValue == null) {
           return undefined;
         }
 
         if (
+          isDefined(fieldMetadataItem) &&
           fieldMetadataItem.type === FieldMetadataType.RELATION &&
           fieldMetadataItem.relationDefinition?.direction ===
             RelationDefinitionType.MANY_TO_ONE
@@ -42,6 +59,7 @@ export const sanitizeRecordInput = ({
         }
 
         if (
+          isDefined(fieldMetadataItem) &&
           fieldMetadataItem.type === FieldMetadataType.RELATION &&
           fieldMetadataItem.relationDefinition?.direction ===
             RelationDefinitionType.ONE_TO_MANY

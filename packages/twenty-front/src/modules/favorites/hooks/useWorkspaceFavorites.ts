@@ -26,7 +26,7 @@ export const useWorkspaceFavorites = () => {
       favoriteObjectMetadataItem.fields.filter(
         (fieldMetadataItem) =>
           fieldMetadataItem.type === FieldMetadataType.RELATION &&
-          fieldMetadataItem.name !== 'workspaceMember' &&
+          fieldMetadataItem.name !== 'forWorkspaceMember' &&
           fieldMetadataItem.name !== 'favoriteFolder',
       ),
     [favoriteObjectMetadataItem.fields],
@@ -64,16 +64,17 @@ export const useWorkspaceFavorites = () => {
     }, []),
   );
 
-  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
+  const { activeNonSystemObjectMetadataItems } =
+    useFilteredObjectMetadataItems();
 
-  const activeObjectMetadataItemsInWorkspaceFavorites =
-    activeObjectMetadataItems.filter((item) =>
+  const activeNonSystemObjectMetadataItemsInWorkspaceFavorites =
+    activeNonSystemObjectMetadataItems.filter((item) =>
       favoriteViewObjectMetadataIds.has(item.id),
     );
 
   return {
     workspaceFavorites: sortedWorkspaceFavorites,
     workspaceFavoritesObjectMetadataItems:
-      activeObjectMetadataItemsInWorkspaceFavorites,
+      activeNonSystemObjectMetadataItemsInWorkspaceFavorites,
   };
 };

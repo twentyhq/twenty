@@ -10,7 +10,7 @@ import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permiss
 const client = request(`http://localhost:${APP_PORT}`);
 
 describe('Security permissions', () => {
-  let originalWorkspaceState;
+  let originalWorkspaceState: Record<string, unknown>;
 
   beforeAll(async () => {
     // Store original workspace state
@@ -32,14 +32,6 @@ describe('Security permissions', () => {
     const response = await makeGraphqlAPIRequest({ query });
 
     originalWorkspaceState = response.body.data.currentWorkspace;
-
-    const enablePermissionsQuery = updateFeatureFlagFactory(
-      SEED_APPLE_WORKSPACE_ID,
-      'IsPermissionsEnabled',
-      true,
-    );
-
-    await makeGraphqlAPIRequest(enablePermissionsQuery);
   });
 
   afterAll(async () => {

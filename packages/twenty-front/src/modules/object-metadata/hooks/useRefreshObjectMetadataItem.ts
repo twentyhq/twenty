@@ -4,14 +4,13 @@ import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/state
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapPaginatedObjectMetadataItemsToObjectMetadataItems } from '@/object-metadata/utils/mapPaginatedObjectMetadataItemsToObjectMetadataItems';
+import { FetchPolicy } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 import { ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-type FetchPolicy = 'network-only' | 'cache-first';
-
 export const useRefreshObjectMetadataItems = (
-  fetchPolicy: FetchPolicy = 'cache-first',
+  fetchPolicy: FetchPolicy = 'network-only',
 ) => {
   const client = useApolloMetadataClient();
 
@@ -39,7 +38,8 @@ export const useRefreshObjectMetadataItems = (
           !isDeeplyEqual(
             snapshot.getLoadable(objectMetadataItemsState).getValue(),
             toSetObjectMetadataItems,
-          )
+          ) &&
+          toSetObjectMetadataItems.length > 0
         ) {
           set(objectMetadataItemsState, toSetObjectMetadataItems);
           set(isAppWaitingForFreshObjectMetadataState, false);

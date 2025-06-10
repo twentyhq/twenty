@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 
 import { i18n } from '@lingui/core';
-import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { messages as afMessages } from 'src/engine/core-modules/i18n/locales/generated/af-ZA';
 import { messages as arMessages } from 'src/engine/core-modules/i18n/locales/generated/ar-SA';
@@ -38,6 +38,7 @@ import { messages as zhHantMessages } from 'src/engine/core-modules/i18n/locales
 @Injectable()
 export class I18nService implements OnModuleInit {
   async loadTranslations() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const messages: Record<keyof typeof APP_LOCALES, any> = {
       en: enMessages,
       'pseudo-en': pseudoEnMessages,
@@ -72,6 +73,7 @@ export class I18nService implements OnModuleInit {
       'zh-TW': zhHantMessages,
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (Object.entries(messages) as [keyof typeof APP_LOCALES, any][]).forEach(
       ([locale, message]) => {
         i18n.load(locale, message);

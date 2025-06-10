@@ -1,36 +1,17 @@
 import { CurrencyFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
-export const isMatchingCurrencyFilter = ({
-  currencyFilter,
-  value,
-}: {
-  currencyFilter: CurrencyFilter;
-  value: number;
-}) => {
+const isMatchingCurrencyCodeFilter = (
+  currencyCodeFilter: CurrencyFilter['currencyCode'],
+  value: string | null | undefined,
+) => {
   switch (true) {
-    case currencyFilter.amountMicros?.eq !== undefined: {
-      return value === currencyFilter.amountMicros.eq;
+    case currencyCodeFilter?.in !== undefined: {
+      return isNonEmptyString(value) && currencyCodeFilter.in.includes(value);
     }
-    case currencyFilter.amountMicros?.neq !== undefined: {
-      return value !== currencyFilter.amountMicros.neq;
-    }
-    case currencyFilter.amountMicros?.gt !== undefined: {
-      return value > currencyFilter.amountMicros.gt;
-    }
-    case currencyFilter.amountMicros?.gte !== undefined: {
-      return value >= currencyFilter.amountMicros.gte;
-    }
-    case currencyFilter.amountMicros?.lt !== undefined: {
-      return value < currencyFilter.amountMicros.lt;
-    }
-    case currencyFilter.amountMicros?.lte !== undefined: {
-      return value <= currencyFilter.amountMicros.lte;
-    }
-    case currencyFilter.amountMicros?.in !== undefined: {
-      return currencyFilter.amountMicros.in.includes(value);
-    }
-    case currencyFilter.amountMicros?.is !== undefined: {
-      if (currencyFilter.amountMicros.is === 'NULL') {
+    case currencyCodeFilter?.is !== undefined: {
+      if (currencyCodeFilter.is === 'NULL') {
         return value === null;
       } else {
         return value !== null;
@@ -38,10 +19,91 @@ export const isMatchingCurrencyFilter = ({
     }
     default: {
       throw new Error(
-        `Unexpected amountMicros for currency filter : ${JSON.stringify(
-          currencyFilter.amountMicros,
+        `Unexpected operand for currency code filter : ${JSON.stringify(
+          currencyCodeFilter,
         )}`,
       );
     }
   }
+};
+
+const isMatchingAmountMicrosFilter = (
+  amountMicrosFilter: CurrencyFilter['amountMicros'],
+  value: number | null | undefined,
+) => {
+  switch (true) {
+    case amountMicrosFilter?.eq !== undefined: {
+      return value === amountMicrosFilter.eq;
+    }
+    case amountMicrosFilter?.neq !== undefined: {
+      return value !== amountMicrosFilter.neq;
+    }
+    case amountMicrosFilter?.gt !== undefined: {
+      return isDefined(value) && value > amountMicrosFilter.gt;
+    }
+    case amountMicrosFilter?.gte !== undefined: {
+      return isDefined(value) && value >= amountMicrosFilter.gte;
+    }
+    case amountMicrosFilter?.lt !== undefined: {
+      return isDefined(value) && value < amountMicrosFilter.lt;
+    }
+    case amountMicrosFilter?.lte !== undefined: {
+      return isDefined(value) && value <= amountMicrosFilter.lte;
+    }
+    case amountMicrosFilter?.is !== undefined: {
+      if (amountMicrosFilter.is === 'NULL') {
+        return value === null;
+      } else {
+        return value !== null;
+      }
+    }
+    default: {
+      throw new Error(
+        `Unexpected operand for currency amount micros filter : ${JSON.stringify(
+          amountMicrosFilter,
+        )}`,
+      );
+    }
+  }
+};
+
+export const isMatchingCurrencyFilter = ({
+  currencyFilter,
+  value,
+}: {
+  currencyFilter: CurrencyFilter;
+  value: {
+    amountMicros?: number | null;
+    currencyCode?: string | null;
+  };
+}) => {
+  const shouldMatchCurrencyCodeFilter = isDefined(currencyFilter.currencyCode);
+  const shouldMatchAmountMicrosFilter = isDefined(currencyFilter.amountMicros);
+
+  if (shouldMatchCurrencyCodeFilter && shouldMatchAmountMicrosFilter) {
+    return (
+      isMatchingAmountMicrosFilter(
+        currencyFilter.amountMicros,
+        value.amountMicros,
+      ) &&
+      isMatchingCurrencyCodeFilter(
+        currencyFilter.currencyCode,
+        value.currencyCode,
+      )
+    );
+  } else if (shouldMatchAmountMicrosFilter) {
+    return isMatchingAmountMicrosFilter(
+      currencyFilter.amountMicros,
+      value.amountMicros,
+    );
+  } else if (shouldMatchCurrencyCodeFilter) {
+    return isMatchingCurrencyCodeFilter(
+      currencyFilter.currencyCode,
+      value.currencyCode,
+    );
+  }
+
+  throw new Error(
+    `Unexpected filter for currency : ${JSON.stringify(currencyFilter)}`,
+  );
 };

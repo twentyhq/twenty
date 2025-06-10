@@ -1,5 +1,4 @@
-import { AvatarType } from 'twenty-ui';
-
+import { AvatarType } from 'twenty-ui/display';
 export type Favorite = {
   id: string;
   position: number;
@@ -9,7 +8,7 @@ export type Favorite = {
   avatarType: AvatarType;
   link: string;
   recordId: string;
-  workspaceMemberId: string;
+  forWorkspaceMemberId: string;
   favoriteFolderId?: string;
   __typename: 'Favorite';
 };

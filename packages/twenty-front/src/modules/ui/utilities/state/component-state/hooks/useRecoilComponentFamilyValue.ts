@@ -1,7 +1,6 @@
 import { SerializableParam, useRecoilValue } from 'recoil';
 
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
 import { ComponentFamilyState } from '@/ui/utilities/state/component-state/types/ComponentFamilyState';
 
 export const useRecoilComponentFamilyValue = <
@@ -24,7 +23,7 @@ export const useRecoilComponentFamilyValue = <
 
   const internalComponentId = useAvailableScopeIdOrThrow(
     componentContext,
-    getScopeIdOrUndefinedFromComponentId(componentId),
+    componentId,
   );
 
   return useRecoilValue(

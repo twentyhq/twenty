@@ -55,6 +55,7 @@ describe('mapViewFiltersToFilters', () => {
         operand: ViewFilterOperand.Is,
       },
     ];
+
     const expectedFilters: RecordFilter[] = [
       {
         id: 'id',
@@ -64,8 +65,8 @@ describe('mapViewFiltersToFilters', () => {
         operand: ViewFilterOperand.Is,
         label: baseFieldMetadataItem.label,
         type: FieldMetadataType.FULL_NAME,
-        positionInViewFilterGroup: undefined,
-        viewFilterGroupId: undefined,
+        positionInRecordFilterGroup: undefined,
+        recordFilterGroupId: undefined,
       },
     ];
     expect(

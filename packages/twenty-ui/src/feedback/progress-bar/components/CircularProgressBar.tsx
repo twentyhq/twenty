@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo } from 'react';
 import { motion, useAnimation } from 'framer-motion';
+import { useEffect, useMemo } from 'react';
 
 interface CircularProgressBarProps {
   size?: number;

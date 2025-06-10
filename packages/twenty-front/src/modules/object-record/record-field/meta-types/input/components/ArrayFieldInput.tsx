@@ -1,6 +1,7 @@
 import { useArrayField } from '@/object-record/record-field/meta-types/hooks/useArrayField';
 import { ArrayFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/ArrayFieldMenuItem';
 import { MultiItemFieldInput } from '@/object-record/record-field/meta-types/input/components/MultiItemFieldInput';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { useMemo } from 'react';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -13,7 +14,7 @@ export const ArrayFieldInput = ({
   onCancel,
   onClickOutside,
 }: ArrayFieldInputProps) => {
-  const { persistArrayField, hotkeyScope, fieldValue } = useArrayField();
+  const { persistArrayField, fieldValue, fieldDefinition } = useArrayField();
 
   const arrayItems = useMemo<Array<string>>(
     () => (Array.isArray(fieldValue) ? fieldValue : []),
@@ -22,18 +23,21 @@ export const ArrayFieldInput = ({
 
   return (
     <MultiItemFieldInput
-      hotkeyScope={hotkeyScope}
+      hotkeyScope={DEFAULT_CELL_SCOPE.scope}
       newItemLabel="Add Item"
       items={arrayItems}
       onPersist={persistArrayField}
       onCancel={onCancel}
-      onClickOutside={onClickOutside}
+      onClickOutside={(persist, event) => {
+        onClickOutside?.(event);
+        persist();
+      }}
       placeholder="Enter value"
       fieldMetadataType={FieldMetadataType.ARRAY}
       renderItem={({ value, index, handleEdit, handleDelete }) => (
         <ArrayFieldMenuItem
           key={index}
-          dropdownId={`${hotkeyScope}-array-${index}`}
+          dropdownId={`array-field-input-${fieldDefinition.metadata.fieldName}-${index}`}
           value={value}
           onEdit={handleEdit}
           onDelete={handleDelete}

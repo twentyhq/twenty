@@ -3,26 +3,31 @@ import { NoteTarget } from '@/activities/types/NoteTarget';
 import { TaskTarget } from '@/activities/types/TaskTarget';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordChip } from '@/object-record/components/RecordChip';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useRelationFromManyFieldDisplay';
+
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-import { isNull } from '@sniptt/guards';
+import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 export const RelationFromManyFieldDisplay = () => {
-  const { fieldValue, fieldDefinition } = useRelationFromManyFieldDisplay();
+  const { fieldValue, fieldDefinition, generateRecordChipData } =
+    useRelationFromManyFieldDisplay();
   const { isFocused } = useFieldFocus();
+  const { disableChipClick, triggerEvent } = useContext(FieldContext);
 
   const { fieldName, objectMetadataNameSingular } = fieldDefinition.metadata;
 
-  const objectNameSingular =
+  const relationObjectNameSingular =
     fieldDefinition?.metadata.relationObjectMetadataNameSingular;
 
   const { activityTargetObjectRecords } = useActivityTargetObjectRecords(
-    undefined,
+    '',
     fieldValue as NoteTarget[] | TaskTarget[],
   );
 
-  if (!fieldValue || !objectNameSingular) {
+  if (!fieldValue || !relationObjectNameSingular) {
     return null;
   }
 
@@ -49,42 +54,50 @@ export const RelationFromManyFieldDisplay = () => {
     return (
       <ExpandableList isChipCountDisplayed={isFocused}>
         {fieldValue
-          .filter((record) => !isNull(record[relationFieldName]))
-          .map((record) => (
-            <RecordChip
-              key={record.id}
-              objectNameSingular={objectNameSingular}
-              record={record[relationFieldName]}
-            />
-          ))}
+          .map((record) => {
+            if (!isDefined(record) || !isDefined(record[relationFieldName])) {
+              return undefined;
+            }
+            return (
+              <RecordChip
+                key={record.id}
+                objectNameSingular={objectNameSingular}
+                record={record[relationFieldName]}
+                forceDisableClick={disableChipClick}
+              />
+            );
+          })
+          .filter(isDefined)}
       </ExpandableList>
     );
   } else if (isRelationFromActivityTargets) {
     return (
       <ExpandableList isChipCountDisplayed={isFocused}>
-        {activityTargetObjectRecords
-          .filter((record) => !isNull(record.targetObject))
-          .map((record) => (
-            <RecordChip
-              key={record.targetObject.id}
-              objectNameSingular={record.targetObjectMetadataItem.nameSingular}
-              record={record.targetObject}
-            />
-          ))}
+        {activityTargetObjectRecords.filter(isDefined).map((record) => (
+          <RecordChip
+            key={record.targetObject.id}
+            objectNameSingular={record.targetObjectMetadataItem.nameSingular}
+            record={record.targetObject}
+            forceDisableClick={disableChipClick}
+          />
+        ))}
       </ExpandableList>
     );
   } else {
     return (
       <ExpandableList isChipCountDisplayed={isFocused}>
-        {fieldValue
-          .filter((record) => !isNull(record))
-          .map((record) => (
+        {fieldValue.filter(isDefined).map((record) => {
+          const recordChipData = generateRecordChipData(record);
+          return (
             <RecordChip
-              key={record.id}
-              objectNameSingular={objectNameSingular}
+              key={recordChipData.recordId}
+              objectNameSingular={recordChipData.objectNameSingular}
               record={record}
+              forceDisableClick={disableChipClick}
+              triggerEvent={triggerEvent}
             />
-          ))}
+          );
+        })}
       </ExpandableList>
     );
   }

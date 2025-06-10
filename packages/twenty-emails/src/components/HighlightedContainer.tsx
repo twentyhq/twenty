@@ -1,9 +1,11 @@
 import { Column, Container, Row } from '@react-email/components';
-import React, { PropsWithChildren } from 'react';
+import React from 'react';
 
 import { emailTheme } from 'src/common-style';
 
-type HighlightedContainerProps = PropsWithChildren;
+type HighlightedContainerProps = {
+  children: JSX.Element | JSX.Element[] | string;
+};
 
 const highlightedContainerStyle = {
   background: emailTheme.background.colors.highlight,

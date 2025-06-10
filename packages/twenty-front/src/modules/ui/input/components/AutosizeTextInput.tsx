@@ -3,11 +3,12 @@ import { useRef, useState } from 'react';
 import { HotkeysEvent } from 'react-hotkeys-hook/dist/types';
 import TextareaAutosize from 'react-textarea-autosize';
 import { Key } from 'ts-key-enum';
-import { Button, IconArrowRight, RoundedIconButton } from 'twenty-ui';
 
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
+import { IconArrowRight } from 'twenty-ui/display';
+import { Button, RoundedIconButton } from 'twenty-ui/input';
 import { InputHotkeyScope } from '../types/InputHotkeyScope';
 
 const MAX_ROWS = 5;
@@ -196,7 +197,9 @@ export const AutosizeTextInput = ({
   const handleFocus = () => {
     onFocus?.();
     setIsFocused(true);
-    setHotkeyScopeAndMemorizePreviousScope(InputHotkeyScope.TextInput);
+    setHotkeyScopeAndMemorizePreviousScope({
+      scope: InputHotkeyScope.TextInput,
+    });
   };
 
   const handleBlur = () => {

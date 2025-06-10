@@ -3,14 +3,16 @@ import { JwtService, JwtSignOptions, JwtVerifyOptions } from '@nestjs/jwt';
 
 import { createHash } from 'crypto';
 
+import { Request as ExpressRequest } from 'express';
 import * as jwt from 'jsonwebtoken';
-import { isDefined } from 'twenty-shared';
+import { ExtractJwt, JwtFromRequestFunction } from 'passport-jwt';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type WorkspaceTokenType =
   | 'ACCESS'
@@ -25,7 +27,7 @@ export type WorkspaceTokenType =
 export class JwtWrapperService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   sign(payload: string | object, options?: JwtSignOptions): string {
@@ -37,10 +39,12 @@ export class JwtWrapperService {
     return this.jwtService.sign(payload, options);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   verify<T extends object = any>(token: string, options?: JwtVerifyOptions): T {
     return this.jwtService.verify(token, options);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   decode<T = any>(payload: string, options?: jwt.DecodeOptions): T {
     return this.jwtService.decode(payload, options);
   }
@@ -100,7 +104,7 @@ export class JwtWrapperService {
   }
 
   generateAppSecret(type: WorkspaceTokenType, workspaceId?: string): string {
-    const appSecret = this.environmentService.get('APP_SECRET');
+    const appSecret = this.twentyConfigService.get('APP_SECRET');
 
     if (!appSecret) {
       throw new Error('APP_SECRET is not set');
@@ -112,7 +116,7 @@ export class JwtWrapperService {
   }
 
   generateAppSecretLegacy(): string {
-    const accessTokenSecret = this.environmentService.get(
+    const accessTokenSecret = this.twentyConfigService.get(
       'ACCESS_TOKEN_SECRET',
     );
 
@@ -121,5 +125,21 @@ export class JwtWrapperService {
     }
 
     return accessTokenSecret;
+  }
+
+  extractJwtFromRequest(): JwtFromRequestFunction {
+    return (request: ExpressRequest) => {
+      // First try to extract token from Authorization header
+      const tokenFromHeader = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
+
+      if (tokenFromHeader) {
+        return tokenFromHeader;
+      }
+
+      // If not found in header, try to extract from URL query parameter
+      // This is for edge cases where we don't control the origin request
+      // (e.g. the REST API playground)
+      return ExtractJwt.fromUrlQueryParameter('token')(request);
+    };
   }
 }

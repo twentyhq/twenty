@@ -5,7 +5,8 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
-import { capitalize } from 'twenty-shared';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { capitalize } from 'twenty-shared/utils';
 
 export const useFindOneRecordQuery = ({
   objectNameSingular,
@@ -22,10 +23,12 @@ export const useFindOneRecordQuery = ({
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
   const findOneRecordQuery = gql`
       query FindOne${capitalize(
         objectMetadataItem.nameSingular,
-      )}($objectRecordId: ID!) {
+      )}($objectRecordId: UUID!) {
         ${objectMetadataItem.nameSingular}(filter: {
         ${
           withSoftDeleted
@@ -44,6 +47,7 @@ export const useFindOneRecordQuery = ({
           objectMetadataItems,
           objectMetadataItem,
           recordGqlFields,
+          objectPermissionsByObjectMetadataId,
         })}
       },
   `;

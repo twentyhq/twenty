@@ -4,17 +4,14 @@ import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/u
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
 import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
-import { useUpsertCombinedViewSorts } from '@/views/hooks/useUpsertCombinedViewSorts';
-import { isDefined } from 'twenty-shared';
 import { v4 } from 'uuid';
+import { isDefined } from 'twenty-shared/utils';
 
 type UseHandleToggleColumnSortProps = {
   objectNameSingular: string;
-  viewBarId: string;
 };
 
 export const useHandleToggleColumnSort = ({
-  viewBarId,
   objectNameSingular,
 }: UseHandleToggleColumnSortProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -23,8 +20,6 @@ export const useHandleToggleColumnSort = ({
 
   const { columnDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
-
-  const { upsertCombinedViewSort } = useUpsertCombinedViewSorts(viewBarId);
 
   const { upsertRecordSort } = useUpsertRecordSort();
 
@@ -44,10 +39,8 @@ export const useHandleToggleColumnSort = ({
       };
 
       upsertRecordSort(newSort);
-
-      await upsertCombinedViewSort(newSort);
     },
-    [columnDefinitions, upsertCombinedViewSort, upsertRecordSort],
+    [columnDefinitions, upsertRecordSort],
   );
 
   return handleToggleColumnSort;

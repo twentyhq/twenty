@@ -1,6 +1,8 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { CardContent, IconComponent, Radio } from 'twenty-ui';
+import { CardContent } from 'twenty-ui/layout';
+import { IconComponent } from 'twenty-ui/display';
+import { Radio } from 'twenty-ui/input';
 
 const StyledRadioCardContent = styled(CardContent)`
   display: flex;
@@ -34,16 +36,18 @@ const StyledDescription = styled.div`
 
 type SettingsRadioCardProps = {
   value: string;
-  handleClick: (value: string) => void;
+  handleSelect: (value: string) => void;
   isSelected: boolean;
   title: string;
   description?: string;
   Icon?: IconComponent;
+  role?: string;
+  ariaChecked?: boolean;
 };
 
 export const SettingsRadioCard = ({
   value,
-  handleClick,
+  handleSelect,
   title,
   description,
   isSelected,
@@ -51,8 +55,10 @@ export const SettingsRadioCard = ({
 }: SettingsRadioCardProps) => {
   const theme = useTheme();
 
+  const onClick = () => handleSelect(value);
+
   return (
-    <StyledRadioCardContent onClick={() => handleClick(value)}>
+    <StyledRadioCardContent tabIndex={0} onClick={onClick}>
       {Icon && <Icon size={theme.icon.size.xl} color={theme.color.gray50} />}
       <span>
         {title && <StyledTitle>{title}</StyledTitle>}

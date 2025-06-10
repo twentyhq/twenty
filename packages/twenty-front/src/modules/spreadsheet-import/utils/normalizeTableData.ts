@@ -1,27 +1,24 @@
 import {
-  Columns,
-  ColumnType,
-} from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
-import {
-  Fields,
   ImportedRow,
   ImportedStructuredRow,
+  SpreadsheetImportFields,
 } from '@/spreadsheet-import/types';
-
-import { isDefined } from 'twenty-shared';
+import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
+import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 import { normalizeCheckboxValue } from './normalizeCheckboxValue';
 
 export const normalizeTableData = <T extends string>(
-  columns: Columns<T>,
+  columns: SpreadsheetColumns<T>,
   data: ImportedRow[],
-  fields: Fields<T>,
+  fields: SpreadsheetImportFields<T>,
 ) =>
   data.map((row) =>
     columns.reduce((acc, column, index) => {
       const curr = row[index];
       switch (column.type) {
-        case ColumnType.matchedCheckbox: {
+        case SpreadsheetColumnType.matchedCheckbox: {
           const field = fields.find((field) => field.key === column.value);
 
           if (!field) {
@@ -50,12 +47,12 @@ export const normalizeTableData = <T extends string>(
           }
           return acc;
         }
-        case ColumnType.matched: {
+        case SpreadsheetColumnType.matched: {
           acc[column.value] = curr === '' ? undefined : curr;
           return acc;
         }
-        case ColumnType.matchedSelect:
-        case ColumnType.matchedSelectOptions: {
+        case SpreadsheetColumnType.matchedSelect:
+        case SpreadsheetColumnType.matchedSelectOptions: {
           const field = fields.find((field) => field.key === column.value);
 
           if (!field) {
@@ -97,8 +94,8 @@ export const normalizeTableData = <T extends string>(
           }
           return acc;
         }
-        case ColumnType.empty:
-        case ColumnType.ignored: {
+        case SpreadsheetColumnType.empty:
+        case SpreadsheetColumnType.ignored: {
           return acc;
         }
         default:

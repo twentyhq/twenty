@@ -5,8 +5,9 @@ import { useSearchParams } from 'react-router-dom';
 
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared';
-import { MainButton, UndecoratedLink } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { MainButton } from 'twenty-ui/input';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 import { useAuthorizeAppMutation } from '~/generated/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 

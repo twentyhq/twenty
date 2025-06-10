@@ -1,7 +1,7 @@
 import { ProcessedFavorite } from '@/favorites/utils/sortFavorites';
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
 import { useTheme } from '@emotion/react';
-import { Avatar, useIcons } from 'twenty-ui';
+import { Avatar, useIcons } from 'twenty-ui/display';
 
 export const FavoriteIcon = ({ favorite }: { favorite: ProcessedFavorite }) => {
   const theme = useTheme();

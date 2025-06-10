@@ -4,13 +4,13 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 describe('AuthSsoService', () => {
   let authSsoService: AuthSsoService;
   let workspaceRepository: Repository<Workspace>;
-  let environmentService: EnvironmentService;
+  let twentyConfigService: TwentyConfigService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -23,7 +23,7 @@ describe('AuthSsoService', () => {
           },
         },
         {
-          provide: EnvironmentService,
+          provide: TwentyConfigService,
           useValue: {
             get: jest.fn(),
           },
@@ -35,7 +35,7 @@ describe('AuthSsoService', () => {
     workspaceRepository = module.get<Repository<Workspace>>(
       getRepositoryToken(Workspace, 'core'),
     );
-    environmentService = module.get<EnvironmentService>(EnvironmentService);
+    twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
   });
 
   describe('findWorkspaceFromWorkspaceIdOrAuthProvider', () => {
@@ -67,7 +67,7 @@ describe('AuthSsoService', () => {
       const email = 'test@example.com';
       const mockWorkspace = { id: 'workspace-id-456' } as Workspace;
 
-      jest.spyOn(environmentService, 'get').mockReturnValue(true);
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue(true);
       jest
         .spyOn(workspaceRepository, 'findOne')
         .mockResolvedValue(mockWorkspace);
@@ -97,7 +97,7 @@ describe('AuthSsoService', () => {
     });
 
     it('should return undefined if no workspace is found when multi-workspace mode is enabled', async () => {
-      jest.spyOn(environmentService, 'get').mockReturnValue(true);
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue(true);
       jest.spyOn(workspaceRepository, 'findOne').mockResolvedValue(null);
 
       const result =
@@ -110,7 +110,7 @@ describe('AuthSsoService', () => {
     });
 
     it('should throw an error for an invalid authProvider', async () => {
-      jest.spyOn(environmentService, 'get').mockReturnValue(true);
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue(true);
 
       await expect(
         authSsoService.findWorkspaceFromWorkspaceIdOrAuthProvider({

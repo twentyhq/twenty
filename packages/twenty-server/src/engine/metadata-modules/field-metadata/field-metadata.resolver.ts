@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  UnauthorizedException,
-  UseFilters,
-  UseGuards,
-} from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import {
   Args,
   Context,
@@ -13,10 +8,12 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
-import { FieldMetadataType, SettingsPermissions } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import {
+  ForbiddenError,
+  ValidationError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
@@ -26,18 +23,27 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
-import { RelationDefinitionDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation-definition.dto';
+import {
+  RelationDefinitionDTO,
+  RelationDefinitionType,
+} from 'src/engine/metadata-modules/field-metadata/dtos/relation-definition.dto';
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
-import { UpdateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
+import {
+  UpdateFieldInput,
+  UpdateOneFieldMetadataInput,
+} from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
+import { BeforeUpdateOneField } from 'src/engine/metadata-modules/field-metadata/hooks/before-update-one-field.hook';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { createDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 
 @UseGuards(WorkspaceAuthGuard)
 @Resolver(() => FieldMetadataDTO)
@@ -45,7 +51,7 @@ import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-
 export class FieldMetadataResolver {
   constructor(
     private readonly fieldMetadataService: FieldMetadataService,
-    private readonly featureFlagService: FeatureFlagService,
+    private readonly beforeUpdateOneField: BeforeUpdateOneField<UpdateFieldInput>,
   ) {}
 
   @ResolveField(() => String, { nullable: true })
@@ -53,7 +59,7 @@ export class FieldMetadataResolver {
     @Parent() fieldMetadata: FieldMetadataDTO,
     @Context() context: I18nContext,
   ): Promise<string> {
-    return this.fieldMetadataService.resolveTranslatableString(
+    return this.fieldMetadataService.resolveOverridableString(
       fieldMetadata,
       'label',
       context.req.headers['x-locale'],
@@ -65,14 +71,27 @@ export class FieldMetadataResolver {
     @Parent() fieldMetadata: FieldMetadataDTO,
     @Context() context: I18nContext,
   ): Promise<string> {
-    return this.fieldMetadataService.resolveTranslatableString(
+    return this.fieldMetadataService.resolveOverridableString(
       fieldMetadata,
       'description',
       context.req.headers['x-locale'],
     );
   }
 
-  @UseGuards(SettingsPermissionsGuard(SettingsPermissions.DATA_MODEL))
+  @UseGuards(SettingsPermissionsGuard(SettingPermissionType.DATA_MODEL))
+  @ResolveField(() => String, { nullable: true })
+  async icon(
+    @Parent() fieldMetadata: FieldMetadataDTO,
+    @Context() context: I18nContext,
+  ): Promise<string> {
+    return this.fieldMetadataService.resolveOverridableString(
+      fieldMetadata,
+      'icon',
+      context.req.headers['x-locale'],
+    );
+  }
+
+  @UseGuards(SettingsPermissionsGuard(SettingPermissionType.DATA_MODEL))
   @Mutation(() => FieldMetadataDTO)
   async createOneField(
     @Args('input') input: CreateOneFieldMetadataInput,
@@ -88,15 +107,21 @@ export class FieldMetadataResolver {
     }
   }
 
-  @UseGuards(SettingsPermissionsGuard(SettingsPermissions.DATA_MODEL))
+  @UseGuards(SettingsPermissionsGuard(SettingPermissionType.DATA_MODEL))
   @Mutation(() => FieldMetadataDTO)
   async updateOneField(
     @Args('input') input: UpdateOneFieldMetadataInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
+    @Context() context: I18nContext,
   ) {
     try {
-      return await this.fieldMetadataService.updateOne(input.id, {
-        ...input.update,
+      const updatedInput = (await this.beforeUpdateOneField.run(input, {
+        workspaceId,
+        locale: context.req.headers['x-locale'],
+      })) as UpdateOneFieldMetadataInput;
+
+      return await this.fieldMetadataService.updateOne(updatedInput.id, {
+        ...updatedInput.update,
         workspaceId,
       });
     } catch (error) {
@@ -104,14 +129,14 @@ export class FieldMetadataResolver {
     }
   }
 
-  @UseGuards(SettingsPermissionsGuard(SettingsPermissions.DATA_MODEL))
+  @UseGuards(SettingsPermissionsGuard(SettingPermissionType.DATA_MODEL))
   @Mutation(() => FieldMetadataDTO)
   async deleteOneField(
     @Args('input') input: DeleteOneFieldInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     if (!workspaceId) {
-      throw new UnauthorizedException();
+      throw new ForbiddenError('Could not retrieve workspace ID');
     }
 
     const fieldMetadata =
@@ -122,21 +147,15 @@ export class FieldMetadataResolver {
       });
 
     if (!fieldMetadata) {
-      throw new BadRequestException('Field does not exist');
+      throw new ValidationError('Field does not exist');
     }
 
     if (!fieldMetadata.isCustom) {
-      throw new BadRequestException("Standard Fields can't be deleted");
+      throw new ValidationError("Standard Fields can't be deleted");
     }
 
     if (fieldMetadata.isActive) {
-      throw new BadRequestException("Active fields can't be deleted");
-    }
-
-    if (fieldMetadata.type === FieldMetadataType.RELATION) {
-      throw new BadRequestException(
-        "Relation fields can't be deleted, you need to delete the RelationMetadata instead",
-      );
+      throw new ValidationError("Active fields can't be deleted");
     }
 
     try {
@@ -156,20 +175,28 @@ export class FieldMetadataResolver {
       return null;
     }
 
-    try {
-      const relationMetadataItem =
-        await context.loaders.relationMetadataLoader.load({
-          fieldMetadata,
-          workspaceId: workspace.id,
-        });
+    const relation = await this.relation(
+      workspace,
+      fieldMetadata as FieldMetadataEntity<FieldMetadataType.RELATION>,
+      context,
+    );
 
-      return await this.fieldMetadataService.getRelationDefinitionFromRelationMetadata(
-        fieldMetadata,
-        relationMetadataItem,
-      );
-    } catch (error) {
-      fieldMetadataGraphqlApiExceptionHandler(error);
+    if (!relation) {
+      return null;
     }
+
+    return {
+      // Temporary fix as we don't have relationId in the new relation
+      relationId: createDeterministicUuid([
+        relation.sourceFieldMetadata.id,
+        relation.targetFieldMetadata.id,
+      ]),
+      direction: relation.type as unknown as RelationDefinitionType,
+      sourceObjectMetadata: relation.sourceObjectMetadata,
+      targetObjectMetadata: relation.targetObjectMetadata,
+      sourceFieldMetadata: relation.sourceFieldMetadata,
+      targetFieldMetadata: relation.targetFieldMetadata,
+    };
   }
 
   @ResolveField(() => RelationDTO, { nullable: true })
@@ -183,18 +210,6 @@ export class FieldMetadataResolver {
     }
 
     try {
-      const isNewRelationEnabled =
-        await this.featureFlagService.isFeatureEnabled(
-          FeatureFlagKey.IsNewRelationEnabled,
-          workspace.id,
-        );
-
-      if (!isNewRelationEnabled) {
-        throw new FieldMetadataException(
-          'New relation feature is not enabled for this workspace',
-          FieldMetadataExceptionCode.FIELD_METADATA_RELATION_NOT_ENABLED,
-        );
-      }
       const {
         sourceObjectMetadata,
         targetObjectMetadata,

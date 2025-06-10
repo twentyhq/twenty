@@ -1,10 +1,11 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { Meta, StoryObj } from '@storybook/react';
 import { HttpResponse, graphql } from 'msw';
-import { ComponentDecorator } from 'twenty-ui';
 
 import { Calendar } from '@/activities/calendar/components/Calendar';
 import { getTimelineCalendarEventsFromCompanyId } from '@/activities/calendar/graphql/queries/getTimelineCalendarEventsFromCompanyId';
+import { ComponentDecorator } from 'twenty-ui/testing';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -14,6 +15,7 @@ const meta: Meta<typeof Calendar> = {
   title: 'Modules/Activities/Calendar/Calendar',
   component: Calendar,
   decorators: [
+    I18nFrontDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,

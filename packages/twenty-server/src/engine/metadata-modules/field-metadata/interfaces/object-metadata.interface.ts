@@ -14,6 +14,7 @@ export interface ObjectMetadataInterface {
   labelSingular: string;
   labelPlural: string;
   description?: string;
+  icon?: string;
   targetTableName: string;
   fromRelations: RelationMetadataInterface[];
   toRelations: RelationMetadataInterface[];
@@ -24,6 +25,7 @@ export interface ObjectMetadataInterface {
   isActive: boolean;
   isRemote: boolean;
   isAuditLogged: boolean;
+  isSearchable: boolean;
   duplicateCriteria?: WorkspaceEntityDuplicateCriteria[];
   labelIdentifierFieldMetadataId?: string | null;
   imageIdentifierFieldMetadataId?: string | null;

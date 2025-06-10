@@ -1,13 +1,12 @@
-import { EntityManager } from 'typeorm';
-
 import { DEV_SEED_WORKSPACE_MEMBER_IDS } from 'src/database/typeorm-seeds/workspace/workspace-members';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 
 const tableName = 'company';
 
 export const DEV_SEED_COMPANY_IDS = {
   LINKEDIN: '20202020-3ec3-4fe3-8997-b76aa0bfa408',
   FACEBOOK: '20202020-5d81-46d6-bf83-f7fd33ea6102',
-  QONTO: '20202020-0713-40a5-8216-82802401d33e',
+  ANTHROPIC: '20202020-0713-40a5-8216-82802401d33e',
   MICROSOFT: '20202020-ed89-413a-b31a-962986e67bb4',
   AIRBNB: '20202020-171e-4bcc-9cf7-43448d6fb278',
   GOOGLE: '20202020-c21e-4ec2-873b-de4264d89025',
@@ -21,11 +20,13 @@ export const DEV_SEED_COMPANY_IDS = {
 };
 
 export const seedCompanies = async (
-  entityManager: EntityManager,
+  entityManager: WorkspaceEntityManager,
   schemaName: string,
 ) => {
   await entityManager
-    .createQueryBuilder()
+    .createQueryBuilder(undefined, undefined, undefined, {
+      shouldBypassPermissionChecks: true,
+    })
     .insert()
     .into(`${schemaName}.${tableName}`, [
       'id',
@@ -81,17 +82,17 @@ export const seedCompanies = async (
         createdByName: 'Tim Apple',
       },
       {
-        id: DEV_SEED_COMPANY_IDS.QONTO,
-        name: 'Qonto',
-        domainNamePrimaryLinkUrl: 'https://qonto.com',
-        addressAddressStreet1: '18 rue de navarrin',
+        id: DEV_SEED_COMPANY_IDS.ANTHROPIC,
+        name: 'Anthropic',
+        domainNamePrimaryLinkUrl: 'https://anthropic.com',
+        addressAddressStreet1: '548 Market Street',
         addressAddressStreet2: null,
-        addressAddressCity: 'Paris',
+        addressAddressCity: 'San Francisco',
         addressAddressState: null,
-        addressAddressPostcode: '75009',
-        addressAddressCountry: 'France',
+        addressAddressPostcode: '94104',
+        addressAddressCountry: 'United States',
         position: 3,
-        tagline: "Qonto's tagline",
+        tagline: "Anthropic's tagline",
         workPolicy: ['ON_SITE'],
         createdBySource: 'MANUAL',
         createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,

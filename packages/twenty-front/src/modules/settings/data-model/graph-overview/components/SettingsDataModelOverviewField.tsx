@@ -2,11 +2,11 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Handle, Position } from '@xyflow/react';
 import { useRecoilValue } from 'recoil';
-import { useIcons } from 'twenty-ui';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { useIcons } from 'twenty-ui/display';
 
 type ObjectFieldRowProps = {
   field: FieldMetadataItem;

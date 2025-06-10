@@ -1,9 +1,10 @@
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { isDefined } from 'twenty-shared';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { isSystemSearchVectorField } from '@/object-record/utils/isSystemSearchVectorField';
+import { isDefined } from 'twenty-shared/utils';
 import { ViewFilter } from '../types/ViewFilter';
 
 export const mapViewFiltersToFilters = (
@@ -26,17 +27,22 @@ export const mapViewFiltersToFilters = (
         availableFieldMetadataItem.type,
       );
 
+      const label = isSystemSearchVectorField(availableFieldMetadataItem.name)
+        ? 'Search'
+        : availableFieldMetadataItem.label;
+
       return {
         id: viewFilter.id,
         fieldMetadataId: viewFilter.fieldMetadataId,
         value: viewFilter.value,
         displayValue: viewFilter.displayValue,
         operand: viewFilter.operand,
-        viewFilterGroupId: viewFilter.viewFilterGroupId,
-        positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
-        label: availableFieldMetadataItem.label,
+        recordFilterGroupId: viewFilter.viewFilterGroupId,
+        positionInRecordFilterGroup: viewFilter.positionInViewFilterGroup,
+        label,
         type: filterType,
-      };
+        subFieldName: viewFilter.subFieldName,
+      } satisfies RecordFilter;
     })
     .filter(isDefined);
 };

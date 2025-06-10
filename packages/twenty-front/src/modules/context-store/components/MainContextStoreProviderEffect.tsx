@@ -1,33 +1,31 @@
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
-import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
-import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
+import { getViewType } from '@/context-store/utils/getViewType';
 import { useSetLastVisitedObjectMetadataId } from '@/navigation/hooks/useSetLastVisitedObjectMetadataId';
 import { useSetLastVisitedViewForObjectMetadataNamePlural } from '@/navigation/hooks/useSetLastVisitedViewForObjectMetadataNamePlural';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { ViewType } from '@/views/types/ViewType';
 import { useEffect } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
+
+type MainContextStoreProviderEffectProps = {
+  viewId?: string;
+  objectMetadataItem?: ObjectMetadataItem;
+  isRecordIndexPage: boolean;
+  isRecordShowPage: boolean;
+  isSettingsPage: boolean;
+};
 
 export const MainContextStoreProviderEffect = ({
-  mainContextStoreComponentInstanceIdToSet,
   viewId,
   objectMetadataItem,
-  pageName,
-}: {
-  mainContextStoreComponentInstanceIdToSet: string;
-  viewId?: string;
-  objectMetadataItem: ObjectMetadataItem;
-  pageName: string;
-}) => {
-  const [
-    mainContextStoreComponentInstanceId,
-    setMainContextStoreComponentInstanceId,
-  ] = useRecoilState(mainContextStoreComponentInstanceIdState);
-
+  isRecordIndexPage,
+  isRecordShowPage,
+  isSettingsPage,
+}: MainContextStoreProviderEffectProps) => {
   const { setLastVisitedViewForObjectMetadataNamePlural } =
     useSetLastVisitedViewForObjectMetadataNamePlural();
 
@@ -37,21 +35,21 @@ export const MainContextStoreProviderEffect = ({
   const [contextStoreCurrentViewId, setContextStoreCurrentViewId] =
     useRecoilComponentStateV2(
       contextStoreCurrentViewIdComponentState,
-      mainContextStoreComponentInstanceId,
+      MAIN_CONTEXT_STORE_INSTANCE_ID,
     );
 
   const [contextStoreCurrentViewType, setContextStoreCurrentViewType] =
     useRecoilComponentStateV2(
       contextStoreCurrentViewTypeComponentState,
-      mainContextStoreComponentInstanceId,
+      MAIN_CONTEXT_STORE_INSTANCE_ID,
     );
 
   const [
-    contextStoreCurrentObjectMetadataItem,
-    setContextStoreCurrentObjectMetadataItem,
+    contextStoreCurrentObjectMetadataItemId,
+    setContextStoreCurrentObjectMetadataItemId,
   ] = useRecoilComponentStateV2(
-    contextStoreCurrentObjectMetadataItemComponentState,
-    mainContextStoreComponentInstanceId,
+    contextStoreCurrentObjectMetadataItemIdComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   const view = useRecoilValue(
@@ -61,17 +59,12 @@ export const MainContextStoreProviderEffect = ({
   );
 
   useEffect(() => {
-    if (contextStoreCurrentObjectMetadataItem?.id !== objectMetadataItem.id) {
-      setContextStoreCurrentObjectMetadataItem(objectMetadataItem);
+    if (contextStoreCurrentObjectMetadataItemId !== objectMetadataItem?.id) {
+      setContextStoreCurrentObjectMetadataItemId(objectMetadataItem?.id);
     }
 
-    if (
-      mainContextStoreComponentInstanceIdToSet !==
-      mainContextStoreComponentInstanceId
-    ) {
-      setMainContextStoreComponentInstanceId(
-        mainContextStoreComponentInstanceIdToSet,
-      );
+    if (!objectMetadataItem) {
+      return;
     }
 
     setLastVisitedViewForObjectMetadataNamePlural({
@@ -82,41 +75,49 @@ export const MainContextStoreProviderEffect = ({
     setLastVisitedObjectMetadataId({
       objectMetadataItemId: objectMetadataItem.id,
     });
+  }, [
+    contextStoreCurrentObjectMetadataItemId,
+    objectMetadataItem,
+    setContextStoreCurrentObjectMetadataItemId,
+    setLastVisitedObjectMetadataId,
+    setLastVisitedViewForObjectMetadataNamePlural,
+    viewId,
+  ]);
+
+  useEffect(() => {
+    if (isSettingsPage) {
+      setContextStoreCurrentViewId(undefined);
+      return;
+    }
 
     if (contextStoreCurrentViewId !== viewId) {
       setContextStoreCurrentViewId(viewId);
     }
   }, [
-    contextStoreCurrentObjectMetadataItem,
     contextStoreCurrentViewId,
-    mainContextStoreComponentInstanceId,
-    mainContextStoreComponentInstanceIdToSet,
-    objectMetadataItem,
-    objectMetadataItem.namePlural,
-    setContextStoreCurrentObjectMetadataItem,
+    isSettingsPage,
     setContextStoreCurrentViewId,
-    setLastVisitedObjectMetadataId,
-    setLastVisitedViewForObjectMetadataNamePlural,
-    setMainContextStoreComponentInstanceId,
     viewId,
   ]);
 
   useEffect(() => {
-    const viewType =
-      pageName === 'record-show'
-        ? ContextStoreViewType.ShowPage
-        : view && view.type === ViewType.Kanban
-          ? ContextStoreViewType.Kanban
-          : ContextStoreViewType.Table;
+    const viewType = getViewType({
+      isSettingsPage,
+      isRecordShowPage,
+      isRecordIndexPage,
+      view,
+    });
 
     if (contextStoreCurrentViewType !== viewType) {
       setContextStoreCurrentViewType(viewType);
     }
   }, [
     contextStoreCurrentViewType,
-    pageName,
     setContextStoreCurrentViewType,
     view,
+    isSettingsPage,
+    isRecordShowPage,
+    isRecordIndexPage,
   ]);
 
   return null;

@@ -1,9 +1,8 @@
 import { BooleanInput } from '@/ui/field/input/components/BooleanInput';
 
+import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useBooleanField } from '../../hooks/useBooleanField';
-
-import { FieldInputEvent } from './DateTimeFieldInput';
 
 export type BooleanFieldInputProps = {
   onSubmit?: FieldInputEvent;

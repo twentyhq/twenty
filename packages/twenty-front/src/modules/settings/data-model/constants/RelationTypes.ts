@@ -1,14 +1,13 @@
+import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import OneToManySvg from '../assets/OneToMany.svg';
+import OneToOneSvg from '../assets/OneToOne.svg';
+import { RelationType } from '../types/RelationType';
 import {
   IconComponent,
   IllustrationIconManyToMany,
   IllustrationIconOneToMany,
   IllustrationIconOneToOne,
-} from 'twenty-ui';
-
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
-import OneToManySvg from '../assets/OneToMany.svg';
-import OneToOneSvg from '../assets/OneToOne.svg';
-import { RelationType } from '../types/RelationType';
+} from 'twenty-ui/display';
 
 export const RELATION_TYPES: Record<
   RelationType,

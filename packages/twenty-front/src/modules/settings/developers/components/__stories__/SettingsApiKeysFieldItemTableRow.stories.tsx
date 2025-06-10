@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator } from 'twenty-ui';
 
 import { SettingsApiKeysFieldItemTableRow } from '@/settings/developers/components/SettingsApiKeysFieldItemTableRow';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof SettingsApiKeysFieldItemTableRow> = {
   title: 'Modules/Settings/Developers/ApiKeys/SettingsApiKeysFieldItemTableRow',

@@ -25,6 +25,10 @@
       {
         "include": "**/serverless/drivers/constants/executor/index.mjs",
         "outDir": "dist/assets"
+      },
+      {
+        "include": "**/database/clickHouse/migrations/*.sql",
+        "outDir": "dist/src"
       }
     ],
     "watchAssets": true

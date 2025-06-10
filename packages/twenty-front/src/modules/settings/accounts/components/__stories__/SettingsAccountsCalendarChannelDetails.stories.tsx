@@ -1,10 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator } from 'twenty-ui';
 
 import { SettingsAccountsCalendarChannelDetails } from '@/settings/accounts/components/SettingsAccountsCalendarChannelDetails';
 import { CalendarChannelVisibility } from '~/generated/graphql';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof SettingsAccountsCalendarChannelDetails> = {
   title:
@@ -12,6 +13,7 @@ const meta: Meta<typeof SettingsAccountsCalendarChannelDetails> = {
   component: SettingsAccountsCalendarChannelDetails,
   decorators: [
     ComponentDecorator,
+    I18nFrontDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
   ],

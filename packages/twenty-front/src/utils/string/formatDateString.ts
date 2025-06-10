@@ -1,23 +1,57 @@
 import { DateFormat } from '@/localization/constants/DateFormat';
+import { formatDateISOStringToCustomUnicodeFormat } from '@/localization/utils/formatDateISOStringToCustomUnicodeFormat';
 import { formatDateISOStringToDate } from '@/localization/utils/formatDateISOStringToDate';
 import { formatDateISOStringToRelativeDate } from '@/localization/utils/formatDateISOStringToRelativeDate';
+import {
+  FieldDateDisplayFormat,
+  FieldDateMetadataSettings,
+} from '@/object-record/record-field/types/FieldMetadata';
+import { isDefined } from 'twenty-shared/utils';
 
 export const formatDateString = ({
   value,
   timeZone,
   dateFormat,
-  displayAsRelativeDate,
+  dateFieldSettings,
+  localeCatalog,
 }: {
   timeZone: string;
   dateFormat: DateFormat;
   value?: string | null;
-  displayAsRelativeDate?: boolean;
-}) => {
-  const formattedDate = value
-    ? displayAsRelativeDate
-      ? formatDateISOStringToRelativeDate(value)
-      : formatDateISOStringToDate(value, timeZone, dateFormat)
-    : '';
+  dateFieldSettings?: FieldDateMetadataSettings;
+  localeCatalog: Locale;
+}): string => {
+  if (!isDefined(value)) {
+    return '';
+  }
 
-  return formattedDate;
+  switch (dateFieldSettings?.displayFormat) {
+    case FieldDateDisplayFormat.RELATIVE:
+      return formatDateISOStringToRelativeDate({
+        isoDate: value,
+        isDayMaximumPrecision: true,
+        localeCatalog,
+      });
+    case FieldDateDisplayFormat.USER_SETTINGS:
+      return formatDateISOStringToDate({
+        date: value,
+        timeZone,
+        dateFormat,
+        localeCatalog,
+      });
+    case FieldDateDisplayFormat.CUSTOM:
+      return formatDateISOStringToCustomUnicodeFormat({
+        date: value,
+        timeZone,
+        dateFormat: dateFieldSettings.customUnicodeDateFormat,
+        localeCatalog,
+      });
+    default:
+      return formatDateISOStringToDate({
+        date: value,
+        timeZone,
+        dateFormat,
+        localeCatalog,
+      });
+  }
 };

@@ -2,21 +2,23 @@ import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysEffectsProvider';
 import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
 import { AuthProvider } from '@/auth/components/AuthProvider';
+import { CaptchaProvider } from '@/captcha/components/CaptchaProvider';
 import { ChromeExtensionSidecarEffect } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarEffect';
 import { ChromeExtensionSidecarProvider } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
 import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
+import { ErrorMessageEffect } from '@/error-handler/components/ErrorMessageEffect';
 import { PromiseRejectionEffect } from '@/error-handler/components/PromiseRejectionEffect';
 import { ApolloMetadataClientProvider } from '@/object-metadata/components/ApolloMetadataClientProvider';
-import { ObjectMetadataItemsGater } from '@/object-metadata/components/ObjectMetadataItemsGater';
+import { ObjectMetadataItemsLoadEffect } from '@/object-metadata/components/ObjectMetadataItemsLoadEffect';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
 import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
 import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
-import { UserThemeProviderEffect } from '@/ui/theme/components/AppThemeProvider';
 import { BaseThemeProvider } from '@/ui/theme/components/BaseThemeProvider';
+import { UserThemeProviderEffect } from '@/ui/theme/components/UserThemeProviderEffect';
 import { PageFavicon } from '@/ui/utilities/page-favicon/components/PageFavicon';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { UserProvider } from '@/users/components/UserProvider';
@@ -34,19 +36,21 @@ export const AppRouterProviders = () => {
     <ApolloProvider>
       <BaseThemeProvider>
         <ClientConfigProviderEffect />
+        <UserProviderEffect />
+        <WorkspaceProviderEffect />
         <ClientConfigProvider>
-          <ChromeExtensionSidecarEffect />
-          <ChromeExtensionSidecarProvider>
-            <UserProviderEffect />
-            <WorkspaceProviderEffect />
-            <UserProvider>
-              <AuthProvider>
-                <ApolloMetadataClientProvider>
-                  <ObjectMetadataItemsProvider>
-                    <ObjectMetadataItemsGater>
+          <CaptchaProvider>
+            <ChromeExtensionSidecarEffect />
+            <ChromeExtensionSidecarProvider>
+              <UserProvider>
+                <AuthProvider>
+                  <ApolloMetadataClientProvider>
+                    <ObjectMetadataItemsLoadEffect />
+                    <ObjectMetadataItemsProvider>
                       <PrefetchDataProvider>
                         <UserThemeProviderEffect />
                         <SnackBarProvider>
+                          <ErrorMessageEffect />
                           <DialogManagerScope dialogManagerScopeId="dialog-manager">
                             <DialogManager>
                               <StrictMode>
@@ -62,12 +66,12 @@ export const AppRouterProviders = () => {
                         <MainContextStoreProvider />
                       </PrefetchDataProvider>
                       <PageChangeEffect />
-                    </ObjectMetadataItemsGater>
-                  </ObjectMetadataItemsProvider>
-                </ApolloMetadataClientProvider>
-              </AuthProvider>
-            </UserProvider>
-          </ChromeExtensionSidecarProvider>
+                    </ObjectMetadataItemsProvider>
+                  </ApolloMetadataClientProvider>
+                </AuthProvider>
+              </UserProvider>
+            </ChromeExtensionSidecarProvider>
+          </CaptchaProvider>
         </ClientConfigProvider>
       </BaseThemeProvider>
     </ApolloProvider>

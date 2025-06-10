@@ -3,7 +3,7 @@ import { ExtendedAggregateOperations } from '@/object-record/record-table/types/
 import { AvailableFieldsForAggregateOperation } from '@/object-record/types/AvailableFieldsForAggregateOperation';
 import { getAvailableAggregationsFromObjectFields } from '@/object-record/utils/getAvailableAggregationsFromObjectFields';
 import { initializeAvailableFieldsForAggregateOperationMap } from '@/object-record/utils/initializeAvailableFieldsForAggregateOperationMap';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const getAvailableFieldsIdsForAggregationFromObjectFields = (
   fields: FieldMetadataItem[],

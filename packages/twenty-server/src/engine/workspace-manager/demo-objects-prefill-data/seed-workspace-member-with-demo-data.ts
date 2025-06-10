@@ -1,7 +1,7 @@
-import { EntityManager } from 'typeorm';
 
 import { DEMO_SEED_USER_IDS } from 'src/database/typeorm-seeds/core/demo/users';
-import { SOURCE_LOCALE } from 'twenty-shared';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 export const DEMO_SEED_WORKSPACE_MEMBER_IDS = {
   NOAH: '20202020-0687-4c41-b707-ed1bfca972a2',
@@ -10,11 +10,13 @@ export const DEMO_SEED_WORKSPACE_MEMBER_IDS = {
 };
 
 export const seedWorkspaceMemberWithDemoData = async (
-  entityManager: EntityManager,
+  entityManager: WorkspaceEntityManager,
   schemaName: string,
 ) => {
   await entityManager
-    .createQueryBuilder()
+    .createQueryBuilder(undefined, undefined, undefined, {
+      shouldBypassPermissionChecks: true,
+    })
     .insert()
     .into(`${schemaName}.workspaceMember`, [
       'id',

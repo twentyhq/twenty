@@ -3,7 +3,6 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import {
-  InternalServerError,
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -22,10 +21,18 @@ export const graphqlQueryRunnerExceptionHandler = (
     case GraphqlQueryRunnerExceptionCode.ARGS_CONFLICT:
     case GraphqlQueryRunnerExceptionCode.FIELD_NOT_FOUND:
     case GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT:
+    case GraphqlQueryRunnerExceptionCode.NOT_IMPLEMENTED:
       throw new UserInputError(error.message);
     case GraphqlQueryRunnerExceptionCode.RECORD_NOT_FOUND:
       throw new NotFoundError(error.message);
-    default:
-      throw new InternalServerError(error.message);
+    case GraphqlQueryRunnerExceptionCode.RELATION_SETTINGS_NOT_FOUND:
+    case GraphqlQueryRunnerExceptionCode.RELATION_TARGET_OBJECT_METADATA_NOT_FOUND:
+    case GraphqlQueryRunnerExceptionCode.INVALID_POST_HOOK_PAYLOAD:
+      throw error;
+    default: {
+      const _exhaustiveCheck: never = error.code;
+
+      throw error;
+    }
   }
 };

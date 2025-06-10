@@ -6,9 +6,9 @@ import { usePersistViewFieldRecords } from '@/views/hooks/internal/usePersistVie
 import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
 import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFieldsState';
 import { ViewField } from '@/views/types/ViewField';
-import { isDefined } from 'twenty-shared';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useSaveCurrentViewFields = () => {
   const { createViewFieldRecords, updateViewFieldRecords } =

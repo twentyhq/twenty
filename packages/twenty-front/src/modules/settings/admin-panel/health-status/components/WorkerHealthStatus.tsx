@@ -1,16 +1,9 @@
-import { SettingsAdminQueueExpandableContainer } from '@/settings/admin-panel/health-status/components/SettingsAdminQueueExpandableContainer';
-import { SettingsAdminQueueHealthButtons } from '@/settings/admin-panel/health-status/components/SettingsAdminQueueHealthButtons';
-import { SettingsAdminIndicatorHealthContext } from '@/settings/admin-panel/health-status/contexts/SettingsAdminIndicatorHealthContext';
+import { WorkerQueueMetricsSection } from '@/settings/admin-panel/health-status/components/WorkerQueueMetricsSection';
 import styled from '@emotion/styled';
-import { useContext, useState } from 'react';
-import { H2Title, Section } from 'twenty-ui';
+import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
 import { AdminPanelHealthServiceStatus } from '~/generated/graphql';
-
-const StyledTitleContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-`;
+import { SettingsAdminIndicatorHealthContext } from '../contexts/SettingsAdminIndicatorHealthContext';
 
 const StyledErrorMessage = styled.div`
   color: ${({ theme }) => theme.color.red};
@@ -18,45 +11,23 @@ const StyledErrorMessage = styled.div`
 `;
 
 export const WorkerHealthStatus = () => {
-  const { indicatorHealth, loading } = useContext(
-    SettingsAdminIndicatorHealthContext,
-  );
+  const { indicatorHealth } = useContext(SettingsAdminIndicatorHealthContext);
 
   const isWorkerDown =
     !indicatorHealth.status ||
     indicatorHealth.status === AdminPanelHealthServiceStatus.OUTAGE;
 
-  const [selectedQueue, setSelectedQueue] = useState<string | null>(null);
-
-  const toggleQueueVisibility = (queueName: string) => {
-    setSelectedQueue(selectedQueue === queueName ? null : queueName);
-  };
-
   return (
-    <Section>
-      <StyledTitleContainer>
-        <H2Title
-          title="Queue Status"
-          description="Background job processing status and metrics"
-        />
-      </StyledTitleContainer>
-      {isWorkerDown && !loading ? (
+    <>
+      {isWorkerDown ? (
         <StyledErrorMessage>
-          Queue information is not available because the worker is down
+          {t`Queue information is not available because the worker is down`}
         </StyledErrorMessage>
       ) : (
-        <>
-          <SettingsAdminQueueHealthButtons
-            queues={indicatorHealth.queues ?? []}
-            selectedQueue={selectedQueue}
-            toggleQueueVisibility={toggleQueueVisibility}
-          />
-          <SettingsAdminQueueExpandableContainer
-            queues={indicatorHealth.queues ?? []}
-            selectedQueue={selectedQueue}
-          />
-        </>
+        (indicatorHealth.queues ?? []).map((queue) => (
+          <WorkerQueueMetricsSection key={queue.queueName} queue={queue} />
+        ))
       )}
-    </Section>
+    </>
   );
 };

@@ -1,5 +1,6 @@
 import { isArray, isNonEmptyArray, isString } from '@sniptt/guards';
 
+import { getFieldLinkDefinedLinks } from '@/object-record/record-field/meta-types/input/utils/getFieldLinkDefinedLinks';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldActor';
@@ -36,12 +37,10 @@ import { isFieldSelectValue } from '@/object-record/record-field/types/guards/is
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
 import { isFieldTsVector } from '@/object-record/record-field/types/guards/isFieldTsVectorValue';
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
-import { isDefined } from 'twenty-shared';
-import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
+import { isDefined } from 'twenty-shared/utils';
 
 const isValueEmpty = (value: unknown) =>
-  !isDefined(value) ||
-  (isString(value) && stripSimpleQuotesFromString(value) === '');
+  !isDefined(value) || (isString(value) && value === '');
 
 export const isFieldValueEmpty = ({
   fieldDefinition,
@@ -118,9 +117,14 @@ export const isFieldValueEmpty = ({
   }
 
   if (isFieldLinks(fieldDefinition)) {
-    return (
-      !isFieldLinksValue(fieldValue) || isValueEmpty(fieldValue.primaryLinkUrl)
-    );
+    if (!isFieldLinksValue(fieldValue)) {
+      return true;
+    }
+
+    const definedLinks = getFieldLinkDefinedLinks(fieldValue);
+    const isFieldLinksEmpty = definedLinks.length === 0;
+
+    return isFieldLinksEmpty;
   }
 
   if (isFieldActor(fieldDefinition)) {
@@ -146,9 +150,7 @@ export const isFieldValueEmpty = ({
 
   if (isFieldRichTextV2(fieldDefinition)) {
     return (
-      !isFieldRichTextV2Value(fieldValue) ||
-      (isValueEmpty(fieldValue?.blocknote) &&
-        isValueEmpty(fieldValue?.markdown))
+      !isFieldRichTextV2Value(fieldValue) || isValueEmpty(fieldValue?.markdown)
     );
   }
 

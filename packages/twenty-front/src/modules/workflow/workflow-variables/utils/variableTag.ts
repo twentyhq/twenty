@@ -1,5 +1,5 @@
 import { WorkflowTextEditorVariableChip } from '@/workflow/workflow-variables/components/WorkflowTextEditorVariableChip';
-import { extractVariableLabel } from '@/workflow/workflow-variables/utils/extractVariableLabel';
+import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/extractRawVariableNamePart';
 import { Node } from '@tiptap/core';
 import { mergeAttributes, ReactNodeViewRenderer } from '@tiptap/react';
 
@@ -38,7 +38,10 @@ export const VariableTag = Node.create({
         'data-type': 'variableTag',
         class: 'variable-tag',
       }),
-      extractVariableLabel(variable),
+      extractRawVariableNamePart({
+        rawVariableName: variable,
+        part: 'selectedField',
+      }),
     ];
   },
 

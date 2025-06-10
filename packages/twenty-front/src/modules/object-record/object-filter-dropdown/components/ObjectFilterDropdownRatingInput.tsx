@@ -1,16 +1,15 @@
-import { v4 } from 'uuid';
-
-import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
 import { FieldRatingValue } from '@/object-record/record-field/types/FieldMetadata';
-import { useApplyRecordFilter } from '@/object-record/record-filter/hooks/useApplyRecordFilter';
 import { RatingInput } from '@/ui/field/input/components/RatingInput';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
-import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
-import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
-import { selectedFilterComponentState } from '@/object-record/object-filter-dropdown/states/selectedFilterComponentState';
+import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
+import { useObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useObjectFilterDropdownFilterValue';
+import styled from '@emotion/styled';
+
+const StyledRatingInputContainer = styled.div`
+  padding: ${({ theme }) => theme.spacing(2)};
+`;
+
 const convertFieldRatingValueToNumber = (
   rating: Exclude<FieldRatingValue, null>,
 ): string => {
@@ -30,50 +29,37 @@ export const convertLessThanRatingToArrayOfRatingValues = (
 };
 
 export const convertRatingToRatingValue = (rating: number) => {
-  return `RATING_${rating}`;
+  return `RATING_${rating}` as FieldRatingValue;
 };
 
 export const ObjectFilterDropdownRatingInput = () => {
-  const selectedOperandInDropdown = useRecoilComponentValueV2(
-    selectedOperandInDropdownComponentState,
-  );
+  const { applyObjectFilterDropdownFilterValue } =
+    useApplyObjectFilterDropdownFilterValue();
 
-  const fieldMetadataItemUsedInDropdown = useRecoilComponentValueV2(
-    fieldMetadataItemUsedInDropdownComponentSelector,
-  );
+  const { objectFilterDropdownFilterValue } =
+    useObjectFilterDropdownFilterValue();
 
-  const selectedFilter = useRecoilComponentValueV2(
-    selectedFilterComponentState,
-  );
+  const handleInputChange = (newRatingValue: FieldRatingValue) => {
+    if (!newRatingValue) {
+      return;
+    }
 
-  const { applyRecordFilter } = useApplyRecordFilter();
+    const ratingValueConverted =
+      convertFieldRatingValueToNumber(newRatingValue);
+
+    applyObjectFilterDropdownFilterValue(ratingValueConverted);
+  };
+
+  const currentFilterValueConvertedToRatingValue = convertRatingToRatingValue(
+    Number(objectFilterDropdownFilterValue),
+  );
 
   return (
-    fieldMetadataItemUsedInDropdown &&
-    selectedOperandInDropdown && (
-      <DropdownMenuItemsContainer>
-        <RatingInput
-          value={selectedFilter?.value as FieldRatingValue}
-          onChange={(newValue: FieldRatingValue) => {
-            if (!newValue) {
-              return;
-            }
-
-            applyRecordFilter?.({
-              id: selectedFilter?.id ? selectedFilter.id : v4(),
-              fieldMetadataId: fieldMetadataItemUsedInDropdown.id,
-              value: convertFieldRatingValueToNumber(newValue),
-              operand: selectedOperandInDropdown,
-              displayValue: convertFieldRatingValueToNumber(newValue),
-              viewFilterGroupId: selectedFilter?.viewFilterGroupId,
-              type: getFilterTypeFromFieldType(
-                fieldMetadataItemUsedInDropdown.type,
-              ),
-              label: fieldMetadataItemUsedInDropdown.label,
-            });
-          }}
-        />
-      </DropdownMenuItemsContainer>
-    )
+    <StyledRatingInputContainer>
+      <RatingInput
+        value={currentFilterValueConvertedToRatingValue}
+        onChange={handleInputChange}
+      />
+    </StyledRatingInputContainer>
   );
 };

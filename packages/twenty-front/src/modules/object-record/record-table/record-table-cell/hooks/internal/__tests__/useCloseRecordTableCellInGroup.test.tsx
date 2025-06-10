@@ -16,11 +16,8 @@ import {
   recordTableRowDraggableContextValue,
 } from '@/object-record/record-table/record-table-cell/hooks/__mocks__/cell';
 import { useCloseRecordTableCellInGroup } from '@/object-record/record-table/record-table-cell/hooks/internal/useCloseRecordTableCellInGroup';
-import { currentTableCellInEditModePositionComponentState } from '@/object-record/record-table/states/currentTableCellInEditModePositionComponentState';
-import { isTableCellInEditModeComponentFamilyState } from '@/object-record/record-table/states/isTableCellInEditModeComponentFamilyState';
-import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
+import { recordTableCellEditModePositionComponentState } from '@/object-record/record-table/states/recordTableCellEditModePositionComponentState';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
@@ -32,7 +29,6 @@ jest.mock('@/ui/utilities/hotkey/hooks/useSetHotkeyScope', () => ({
 
 const onColumnsChange = jest.fn();
 const recordTableId = 'scopeId';
-const recordGroupId = 'recordGroupId';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot
@@ -53,8 +49,8 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
           value={{
             fieldDefinition: textfieldDefinition,
             recordId: 'recordId',
-            hotkeyScope: TableHotkeyScope.Table,
             isLabelIdentifier: false,
+            isReadOnly: false,
           }}
         >
           <RecordTableRowContextProvider value={recordTableRowContextValue}>
@@ -62,7 +58,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
               value={recordTableRowDraggableContextValue}
             >
               <RecordTableCellContext.Provider
-                value={{ ...recordTableCellContextValue, columnIndex: 0 }}
+                value={{ ...recordTableCellContextValue }}
               >
                 {children}
               </RecordTableCellContext.Provider>
@@ -79,16 +75,12 @@ describe('useCloseRecordTableCellInGroup', () => {
     const { result } = renderHook(
       () => {
         const currentTableCellInEditModePosition = useRecoilComponentValueV2(
-          currentTableCellInEditModePositionComponentState,
-        );
-        const isTableCellInEditMode = useRecoilComponentFamilyValueV2(
-          isTableCellInEditModeComponentFamilyState,
-          currentTableCellInEditModePosition,
+          recordTableCellEditModePositionComponentState,
         );
         return {
-          ...useCloseRecordTableCellInGroup(recordGroupId),
+          ...useCloseRecordTableCellInGroup(),
           ...useDragSelect(),
-          isTableCellInEditMode,
+          currentTableCellInEditModePosition,
         };
       },
       {
@@ -101,7 +93,7 @@ describe('useCloseRecordTableCellInGroup', () => {
     });
 
     expect(result.current.isDragSelectionStartEnabled()).toBe(true);
-    expect(result.current.isTableCellInEditMode).toBe(false);
-    expect(setHotkeyScope).toHaveBeenCalledWith('table-soft-focus');
+    expect(result.current.currentTableCellInEditModePosition).toBe(null);
+    expect(setHotkeyScope).toHaveBeenCalledWith('table-focus');
   });
 });

@@ -15,7 +15,14 @@ import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dto
 @InputType()
 export class UpdateFieldInput extends OmitType(
   PartialType(FieldMetadataDTO, InputType),
-  ['id', 'type', 'createdAt', 'updatedAt', 'isCustom'] as const,
+  [
+    'id',
+    'type',
+    'createdAt',
+    'updatedAt',
+    'isCustom',
+    'standardOverrides',
+  ] as const,
 ) {
   @HideField()
   id: string;

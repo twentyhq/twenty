@@ -12,67 +12,118 @@ import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 
 describe('destroyOneObjectRecordsPermissions', () => {
-  const personId = randomUUID();
-
-  beforeAll(async () => {
-    const enablePermissionsQuery = updateFeatureFlagFactory(
-      SEED_APPLE_WORKSPACE_ID,
-      'IsPermissionsEnabled',
-      true,
-    );
-
-    await makeGraphqlAPIRequest(enablePermissionsQuery);
-
-    const createGraphqlOperation = createOneOperationFactory({
-      objectMetadataSingularName: 'person',
-      gqlFields: PERSON_GQL_FIELDS,
-      data: {
-        id: personId,
-      },
-    });
-
-    await makeGraphqlAPIRequest(createGraphqlOperation);
-  });
-
-  afterAll(async () => {
-    const disablePermissionsQuery = updateFeatureFlagFactory(
-      SEED_APPLE_WORKSPACE_ID,
-      'IsPermissionsEnabled',
-      false,
-    );
-
-    await makeGraphqlAPIRequest(disablePermissionsQuery);
-  });
-
-  it('should throw a permission error when user does not have permission (guest role)', async () => {
+  describe('permissions V2 disabled', () => {
     const personId = randomUUID();
-    const graphqlOperation = destroyOneOperationFactory({
-      objectMetadataSingularName: 'person',
-      gqlFields: PERSON_GQL_FIELDS,
-      recordId: personId,
+
+    beforeAll(async () => {
+      const createGraphqlOperation = createOneOperationFactory({
+        objectMetadataSingularName: 'person',
+        gqlFields: PERSON_GQL_FIELDS,
+        data: {
+          id: personId,
+        },
+      });
+
+      await makeGraphqlAPIRequest(createGraphqlOperation);
     });
 
-    const response = await makeGraphqlAPIRequestWithGuestRole(graphqlOperation);
+    it('should throw a permission error when user does not have permission (guest role)', async () => {
+      const graphqlOperation = destroyOneOperationFactory({
+        objectMetadataSingularName: 'person',
+        gqlFields: PERSON_GQL_FIELDS,
+        recordId: personId,
+      });
 
-    expect(response.body.data).toStrictEqual({ destroyPerson: null });
-    expect(response.body.errors).toBeDefined();
-    expect(response.body.errors[0].message).toBe(
-      PermissionsExceptionMessage.PERMISSION_DENIED,
-    );
-    expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+      const response =
+        await makeGraphqlAPIRequestWithGuestRole(graphqlOperation);
+
+      expect(response.body.data).toStrictEqual({ destroyPerson: null });
+      expect(response.body.errors).toBeDefined();
+      expect(response.body.errors[0].message).toBe(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+      );
+      expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+    });
+
+    it('should destroy an object record when user has permission (admin role)', async () => {
+      const graphqlOperation = destroyOneOperationFactory({
+        objectMetadataSingularName: 'person',
+        gqlFields: PERSON_GQL_FIELDS,
+        recordId: personId,
+      });
+
+      const response = await makeGraphqlAPIRequest(graphqlOperation);
+
+      expect(response.body.data).toBeDefined();
+      expect(response.body.data.destroyPerson).toBeDefined();
+      expect(response.body.data.destroyPerson.id).toBe(personId);
+    });
   });
 
-  it('should destroy an object record when user has permission (admin role)', async () => {
-    const graphqlOperation = destroyOneOperationFactory({
-      objectMetadataSingularName: 'person',
-      gqlFields: PERSON_GQL_FIELDS,
-      recordId: personId,
+  describe('permissions V2 enabled', () => {
+    const personId = randomUUID();
+
+    beforeAll(async () => {
+      const createGraphqlOperation = createOneOperationFactory({
+        objectMetadataSingularName: 'person',
+        gqlFields: PERSON_GQL_FIELDS,
+        data: {
+          id: personId,
+        },
+      });
+
+      await makeGraphqlAPIRequest(createGraphqlOperation);
+
+      const enablePermissionsQuery = updateFeatureFlagFactory(
+        SEED_APPLE_WORKSPACE_ID,
+        'IS_PERMISSIONS_V2_ENABLED',
+        true,
+      );
+
+      await makeGraphqlAPIRequest(enablePermissionsQuery);
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    afterAll(async () => {
+      const disablePermissionsQuery = updateFeatureFlagFactory(
+        SEED_APPLE_WORKSPACE_ID,
+        'IS_PERMISSIONS_V2_ENABLED',
+        false,
+      );
 
-    expect(response.body.data).toBeDefined();
-    expect(response.body.data.destroyPerson).toBeDefined();
-    expect(response.body.data.destroyPerson.id).toBe(personId);
+      await makeGraphqlAPIRequest(disablePermissionsQuery);
+    });
+
+    it('should throw a permission error when user does not have permission (guest role)', async () => {
+      const personId = randomUUID();
+      const graphqlOperation = destroyOneOperationFactory({
+        objectMetadataSingularName: 'person',
+        gqlFields: PERSON_GQL_FIELDS,
+        recordId: personId,
+      });
+
+      const response =
+        await makeGraphqlAPIRequestWithGuestRole(graphqlOperation);
+
+      expect(response.body.data).toStrictEqual({ destroyPerson: null });
+      expect(response.body.errors).toBeDefined();
+      expect(response.body.errors[0].message).toBe(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+      );
+      expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+    });
+
+    it('should destroy an object record when user has permission (admin role)', async () => {
+      const graphqlOperation = destroyOneOperationFactory({
+        objectMetadataSingularName: 'person',
+        gqlFields: PERSON_GQL_FIELDS,
+        recordId: personId,
+      });
+
+      const response = await makeGraphqlAPIRequest(graphqlOperation);
+
+      expect(response.body.data).toBeDefined();
+      expect(response.body.data.destroyPerson).toBeDefined();
+      expect(response.body.data.destroyPerson.id).toBe(personId);
+    });
   });
 });

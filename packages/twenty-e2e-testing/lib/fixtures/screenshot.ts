@@ -25,7 +25,7 @@ export const test = base.extend<{ screenshotHook: void }>({
         ),
       });
     },
-    { auto: true }, // automatic fixture runs with every test
+    { auto: true },
   ],
 });
 

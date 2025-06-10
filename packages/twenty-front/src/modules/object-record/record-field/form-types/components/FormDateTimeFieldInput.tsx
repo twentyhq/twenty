@@ -1,38 +1,29 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
-import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
+import { FormFieldInputInnerContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import {
   DateTimePicker,
-  MONTH_AND_YEAR_DROPDOWN_ID,
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
 } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
 import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
-import { parseDateToString } from '@/ui/input/components/internal/date/utils/parseDateToString';
-import { parseStringToDate } from '@/ui/input/components/internal/date/utils/parseStringToDate';
+import { useDateParser } from '@/ui/input/components/internal/hooks/useDateParser';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { UserContext } from '@/users/contexts/UserContext';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  ChangeEvent,
-  KeyboardEvent,
-  useContext,
-  useId,
-  useRef,
-  useState,
-} from 'react';
-import { isDefined } from 'twenty-shared';
-import { Nullable, TEXT_INPUT_STYLE } from 'twenty-ui';
+import { ChangeEvent, KeyboardEvent, useId, useRef, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
+import { Nullable } from 'twenty-ui/utilities';
 
-const StyledInputContainer = styled(FormFieldInputInputContainer)`
+const StyledInputContainer = styled(FormFieldInputInnerContainer)`
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr 0px;
@@ -77,9 +68,9 @@ type DraftValue =
 type FormDateTimeFieldInputProps = {
   dateOnly?: boolean;
   label?: string;
-  placeholder?: string;
   defaultValue: string | undefined;
-  onPersist: (value: string | null) => void;
+  onChange: (value: string | null) => void;
+  placeholder?: string;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
 };
@@ -88,11 +79,14 @@ export const FormDateTimeFieldInput = ({
   dateOnly,
   label,
   defaultValue,
-  onPersist,
+  onChange,
   VariablePicker,
   readonly,
+  placeholder,
 }: FormDateTimeFieldInputProps) => {
-  const { timeZone } = useContext(UserContext);
+  const { parseToString, parseToDate } = useDateParser({
+    isDateTimeInput: !dateOnly,
+  });
 
   const inputId = useId();
 
@@ -120,25 +114,20 @@ export const FormDateTimeFieldInput = ({
 
   const [inputDateTime, setInputDateTime] = useState(
     isDefined(draftValueAsDate) && !isStandaloneVariableString(defaultValue)
-      ? parseDateToString({
-          date: draftValueAsDate,
-          isDateTimeInput: !dateOnly,
-          userTimezone: timeZone,
-        })
+      ? parseToString(draftValueAsDate)
       : '',
   );
 
   const persistDate = (newDate: Nullable<Date>) => {
     if (!isDefined(newDate)) {
-      onPersist(null);
+      onChange(null);
     } else {
       const newDateISO = newDate.toISOString();
 
-      onPersist(newDateISO);
+      onChange(newDateISO);
     }
   };
 
-  const { closeDropdown } = useDropdown(MONTH_AND_YEAR_DROPDOWN_ID);
   const { closeDropdown: closeDropdownMonthSelect } = useDropdown(
     MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   );
@@ -149,7 +138,8 @@ export const FormDateTimeFieldInput = ({
   const displayDatePicker =
     draftValue.type === 'static' && draftValue.mode === 'edit';
 
-  const placeholder = dateOnly ? 'mm/dd/yyyy' : 'mm/dd/yyyy hh:mm';
+  const placeholderToDisplay =
+    placeholder ?? (dateOnly ? 'mm/dd/yyyy' : 'mm/dd/yyyy hh:mm');
 
   useListenClickOutside({
     refs: [datePickerWrapperRef],
@@ -159,7 +149,6 @@ export const FormDateTimeFieldInput = ({
 
       closeDropdownYearSelect();
       closeDropdownMonthSelect();
-      closeDropdown();
       handlePickerClickOutside();
     },
     enabled: displayDatePicker,
@@ -172,15 +161,7 @@ export const FormDateTimeFieldInput = ({
       value: newDate?.toDateString() ?? null,
     });
 
-    setInputDateTime(
-      isDefined(newDate)
-        ? parseDateToString({
-            date: newDate,
-            isDateTimeInput: !dateOnly,
-            userTimezone: timeZone,
-          })
-        : '',
-    );
+    setInputDateTime(isDefined(newDate) ? parseToString(newDate) : '');
 
     setPickerDate(newDate);
 
@@ -230,15 +211,7 @@ export const FormDateTimeFieldInput = ({
 
     setPickerDate(newDate);
 
-    setInputDateTime(
-      isDefined(newDate)
-        ? parseDateToString({
-            date: newDate,
-            isDateTimeInput: !dateOnly,
-            userTimezone: timeZone,
-          })
-        : '',
-    );
+    setInputDateTime(isDefined(newDate) ? parseToString(newDate) : '');
 
     persistDate(newDate);
   };
@@ -264,15 +237,10 @@ export const FormDateTimeFieldInput = ({
 
     if (inputDateTimeTrimmed === '') {
       handlePickerClear();
-
       return;
     }
 
-    const parsedInputDateTime = parseStringToDate({
-      dateAsString: inputDateTimeTrimmed,
-      isDateTimeInput: !dateOnly,
-      userTimezone: timeZone,
-    });
+    const parsedInputDateTime = parseToDate(inputDateTimeTrimmed);
 
     if (!isDefined(parsedInputDateTime)) {
       return;
@@ -293,13 +261,7 @@ export const FormDateTimeFieldInput = ({
 
     setPickerDate(validatedDate);
 
-    setInputDateTime(
-      parseDateToString({
-        date: validatedDate,
-        isDateTimeInput: !dateOnly,
-        userTimezone: timeZone,
-      }),
-    );
+    setInputDateTime(parseToString(validatedDate));
 
     persistDate(validatedDate);
   };
@@ -312,7 +274,7 @@ export const FormDateTimeFieldInput = ({
 
     setInputDateTime('');
 
-    onPersist(variableName);
+    onChange(variableName);
   };
 
   const handleUnlinkVariable = () => {
@@ -324,7 +286,7 @@ export const FormDateTimeFieldInput = ({
 
     setPickerDate(null);
 
-    onPersist(null);
+    onChange(null);
   };
 
   return (
@@ -340,7 +302,7 @@ export const FormDateTimeFieldInput = ({
             <>
               <StyledDateInput
                 type="text"
-                placeholder={placeholder}
+                placeholder={placeholderToDisplay}
                 value={inputDateTime}
                 onFocus={handleInputFocus}
                 onChange={handleInputChange}

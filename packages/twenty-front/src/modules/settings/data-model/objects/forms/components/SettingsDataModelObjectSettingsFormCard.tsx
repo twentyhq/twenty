@@ -8,11 +8,10 @@ import { SettingsDataModelFieldPreviewCard } from '@/settings/data-model/fields/
 import { SettingsDataModelObjectSummary } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';
 import { SettingsDataModelObjectIdentifiersForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm';
 import { Trans } from '@lingui/react/macro';
-import { Card, CardContent } from 'twenty-ui';
+import { Card, CardContent } from 'twenty-ui/layout';
 
 type SettingsDataModelObjectSettingsFormCardProps = {
   objectMetadataItem: ObjectMetadataItem;
-  onBlur: () => void;
 };
 
 const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
@@ -35,7 +34,6 @@ const StyledObjectSummaryCardContent = styled(CardContent)`
 
 export const SettingsDataModelObjectSettingsFormCard = ({
   objectMetadataItem,
-  onBlur,
 }: SettingsDataModelObjectSettingsFormCardProps) => {
   const labelIdentifierFieldMetadataItem = useMemo(() => {
     return getLabelIdentifierFieldMetadataItem({
@@ -70,7 +68,6 @@ export const SettingsDataModelObjectSettingsFormCard = ({
       <CardContent>
         <SettingsDataModelObjectIdentifiersForm
           objectMetadataItem={objectMetadataItem}
-          onBlur={onBlur}
         />
       </CardContent>
     </Card>

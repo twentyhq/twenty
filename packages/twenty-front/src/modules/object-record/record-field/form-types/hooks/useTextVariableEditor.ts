@@ -7,13 +7,13 @@ import Paragraph from '@tiptap/extension-paragraph';
 import { default as Placeholder } from '@tiptap/extension-placeholder';
 import Text from '@tiptap/extension-text';
 import { Editor, useEditor } from '@tiptap/react';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 type UseTextVariableEditorProps = {
   placeholder: string | undefined;
   multiline: boolean | undefined;
   readonly: boolean | undefined;
-  defaultValue: string | undefined;
+  defaultValue: string | undefined | null;
   onUpdate: (editor: Editor) => void;
 };
 

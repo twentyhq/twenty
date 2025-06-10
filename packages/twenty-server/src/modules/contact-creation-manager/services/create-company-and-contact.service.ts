@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import compact from 'lodash.compact';
-import { Any, EntityManager, Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
@@ -20,8 +21,8 @@ import { Contact } from 'src/modules/contact-creation-manager/types/contact.type
 import { filterOutSelfAndContactsFromCompanyOrWorkspace } from 'src/modules/contact-creation-manager/utils/filter-out-contacts-from-company-or-workspace.util';
 import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util';
 import { getUniqueContactsAndHandles } from 'src/modules/contact-creation-manager/utils/get-unique-contacts-and-handles.util';
+import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-filters-to-query-builder';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
-import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { isWorkDomain, isWorkEmail } from 'src/utils/is-work-email';
 
@@ -30,12 +31,11 @@ export class CreateCompanyAndContactService {
   constructor(
     private readonly createContactService: CreateContactService,
     private readonly createCompaniesService: CreateCompanyService,
-    @InjectObjectMetadataRepository(WorkspaceMemberWorkspaceEntity)
-    private readonly workspaceMemberRepository: WorkspaceMemberRepository,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   private async createCompaniesAndPeople(
@@ -43,7 +43,6 @@ export class CreateCompanyAndContactService {
     contactsToCreate: Contact[],
     workspaceId: string,
     source: FieldActorSource,
-    transactionManager?: EntityManager,
   ): Promise<DeepPartial<PersonWorkspaceEntity>[]> {
     if (!contactsToCreate || contactsToCreate.length === 0) {
       return [];
@@ -53,13 +52,21 @@ export class CreateCompanyAndContactService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         PersonWorkspaceEntity,
+        {
+          shouldBypassPermissionChecks: true,
+        },
       );
 
-    const workspaceMembers =
-      await this.workspaceMemberRepository.getAllByWorkspaceId(
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
-        transactionManager,
+        WorkspaceMemberWorkspaceEntity,
+        {
+          shouldBypassPermissionChecks: true,
+        },
       );
+
+    const workspaceMembers = await workspaceMemberRepository.find();
 
     const contactsToCreateFromOtherCompanies =
       filterOutSelfAndContactsFromCompanyOrWorkspace(
@@ -76,21 +83,42 @@ export class CreateCompanyAndContactService {
       return [];
     }
 
-    const alreadyCreatedContacts = await personRepository.find({
-      withDeleted: true,
-      where: {
-        emails: { primaryEmail: Any(uniqueHandles) },
-      },
+    const queryBuilder = addPersonEmailFiltersToQueryBuilder({
+      queryBuilder: personRepository.createQueryBuilder('person'),
+      emails: uniqueHandles,
     });
 
-    const alreadyCreatedContactEmails: string[] = alreadyCreatedContacts?.map(
-      ({ emails }) => emails?.primaryEmail,
+    const rawAlreadyCreatedContacts = await queryBuilder
+      .orderBy('person.createdAt', 'ASC')
+      .getMany();
+
+    const alreadyCreatedContacts = await personRepository.formatResult(
+      rawAlreadyCreatedContacts,
     );
+
+    const alreadyCreatedContactEmails: string[] =
+      alreadyCreatedContacts?.reduce<string[]>((acc, { emails }) => {
+        const currentContactEmails: string[] = [];
+
+        if (isNonEmptyString(emails?.primaryEmail)) {
+          currentContactEmails.push(emails.primaryEmail.toLowerCase());
+        }
+        if (Array.isArray(emails?.additionalEmails)) {
+          const additionalEmails = emails.additionalEmails
+            .filter(isNonEmptyString)
+            .map((email) => email.toLowerCase());
+
+          currentContactEmails.push(...additionalEmails);
+        }
+
+        return [...acc, ...currentContactEmails];
+      }, []);
 
     const filteredContactsToCreate = uniqueContacts.filter(
       (participant) =>
-        !alreadyCreatedContactEmails.includes(participant.handle) &&
-        participant.handle.includes('@'),
+        !alreadyCreatedContactEmails.includes(
+          participant.handle.toLowerCase(),
+        ) && participant.handle.includes('@'),
     );
 
     const filteredContactsToCreateWithCompanyDomainNames =
@@ -131,7 +159,6 @@ export class CreateCompanyAndContactService {
     const companiesObject = await this.createCompaniesService.createCompanies(
       workDomainNamesToCreateFormatted,
       workspaceId,
-      transactionManager,
     );
 
     const formattedContactsToCreate =
@@ -152,7 +179,6 @@ export class CreateCompanyAndContactService {
     return this.createContactService.createPeople(
       formattedContactsToCreate,
       workspaceId,
-      transactionManager,
     );
   }
 
@@ -204,26 +230,34 @@ export class CreateCompanyAndContactService {
     }
 
     for (const contactsBatch of contactsBatches) {
-      const createdPeople = await this.createCompaniesAndPeople(
-        connectedAccount,
-        contactsBatch,
-        workspaceId,
-        source,
-      );
+      try {
+        const createdPeople = await this.createCompaniesAndPeople(
+          connectedAccount,
+          contactsBatch,
+          workspaceId,
+          source,
+        );
 
-      this.workspaceEventEmitter.emitDatabaseBatchEvent({
-        objectMetadataNameSingular: 'person',
-        action: DatabaseEventAction.CREATED,
-        events: createdPeople.map((createdPerson) => ({
-          // Fix ' as string': TypeORM typing issue... id is always returned when using save
-          recordId: createdPerson.id as string,
-          objectMetadata,
-          properties: {
-            after: createdPerson,
+        this.workspaceEventEmitter.emitDatabaseBatchEvent({
+          objectMetadataNameSingular: 'person',
+          action: DatabaseEventAction.CREATED,
+          events: createdPeople.map((createdPerson) => ({
+            // Fix ' as string': TypeORM typing issue... id is always returned when using save
+            recordId: createdPerson.id as string,
+            objectMetadata,
+            properties: {
+              after: createdPerson,
+            },
+          })),
+          workspaceId,
+        });
+      } catch (error) {
+        this.exceptionHandlerService.captureExceptions([error], {
+          workspace: {
+            id: workspaceId,
           },
-        })),
-        workspaceId,
-      });
+        });
+      }
     }
   }
 }

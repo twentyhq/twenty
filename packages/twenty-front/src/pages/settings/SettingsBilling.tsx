@@ -1,85 +1,41 @@
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import {
-  Button,
-  H2Title,
-  IconCalendarEvent,
-  IconCircleX,
-  IconCreditCard,
-  Section,
-} from 'twenty-ui';
+import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingCoverImage';
+import { SettingsBillingMonthlyCreditsSection } from '@/billing/components/SettingsBillingMonthlyCreditsSection';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
+import { H2Title, IconCircleX, IconCreditCard } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import {
-  SubscriptionInterval,
   SubscriptionStatus,
   useBillingPortalSessionQuery,
-  useUpdateBillingSubscriptionMutation,
 } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-
-type SwitchInfo = {
-  newInterval: SubscriptionInterval;
-  to: string;
-  from: string;
-  impact: string;
-};
+import { SettingsBillingSubscriptionInfo } from '@/billing/components/SettingsBillingSubscriptionInfo';
 
 export const SettingsBilling = () => {
   const { t } = useLingui();
 
   const { redirect } = useRedirect();
 
-  const MONTHLY_SWITCH_INFO: SwitchInfo = {
-    newInterval: SubscriptionInterval.Year,
-    to: t`to yearly`,
-    from: t`from monthly to yearly`,
-    impact: t`You will be charged immediately for the full year.`,
-  };
-
-  const YEARLY_SWITCH_INFO: SwitchInfo = {
-    newInterval: SubscriptionInterval.Month,
-    to: t`to monthly`,
-    from: t`from yearly to monthly`,
-    impact: t`Your credit balance will be used to pay the monthly bills.`,
-  };
-
-  const SWITCH_INFOS = {
-    year: YEARLY_SWITCH_INFO,
-    month: MONTHLY_SWITCH_INFO,
-  };
-
-  const { enqueueSnackBar } = useSnackBar();
-
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
+
   const subscriptions = currentWorkspace?.billingSubscriptions;
+
   const hasSubscriptions = (subscriptions?.length ?? 0) > 0;
 
   const subscriptionStatus = useSubscriptionStatus();
+
   const hasNotCanceledCurrentSubscription =
     isDefined(subscriptionStatus) &&
     subscriptionStatus !== SubscriptionStatus.Canceled;
 
-  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
-  const switchingInfo =
-    currentWorkspace?.currentBillingSubscription?.interval ===
-    SubscriptionInterval.Year
-      ? SWITCH_INFOS.year
-      : SWITCH_INFOS.month;
-  const [isSwitchingIntervalModalOpen, setIsSwitchingIntervalModalOpen] =
-    useState(false);
-  const [updateBillingSubscription] = useUpdateBillingSubscriptionMutation();
   const { data, loading } = useBillingPortalSessionQuery({
     variables: {
       returnUrlPath: '/settings/billing',
@@ -96,37 +52,6 @@ export const SettingsBilling = () => {
     }
   };
 
-  const openSwitchingIntervalModal = () => {
-    setIsSwitchingIntervalModalOpen(true);
-  };
-
-  const from = switchingInfo.from;
-  const to = switchingInfo.to;
-  const impact = switchingInfo.impact;
-
-  const switchInterval = async () => {
-    try {
-      await updateBillingSubscription();
-      if (isDefined(currentWorkspace?.currentBillingSubscription)) {
-        const newCurrentWorkspace = {
-          ...currentWorkspace,
-          currentBillingSubscription: {
-            ...currentWorkspace?.currentBillingSubscription,
-            interval: switchingInfo.newInterval,
-          },
-        };
-        setCurrentWorkspace(newCurrentWorkspace);
-      }
-      enqueueSnackBar(t`Subscription has been switched ${to}`, {
-        variant: SnackBarVariant.Success,
-      });
-    } catch (error: any) {
-      enqueueSnackBar(t`Error while switching subscription ${to}.`, {
-        variant: SnackBarVariant.Error,
-      });
-    }
-  };
-
   return (
     <SubMenuTopBarContainer
       title={t`Billing`}
@@ -139,10 +64,15 @@ export const SettingsBilling = () => {
       ]}
     >
       <SettingsPageContainer>
-        <SettingsBillingCoverImage />
+        {hasNotCanceledCurrentSubscription && (
+          <SettingsBillingSubscriptionInfo />
+        )}
+        {hasNotCanceledCurrentSubscription && (
+          <SettingsBillingMonthlyCreditsSection />
+        )}
         <Section>
           <H2Title
-            title={t`Manage your subscription`}
+            title={t`Manage billing information`}
             description={t`Edit payment method, see your invoices and more`}
           />
           <Button
@@ -153,46 +83,23 @@ export const SettingsBilling = () => {
             disabled={billingPortalButtonDisabled}
           />
         </Section>
-        <Section>
-          <H2Title
-            title={t`Edit billing interval`}
-            description={t`Switch ${from}`}
-          />
-          <Button
-            Icon={IconCalendarEvent}
-            title={t`Switch ${to}`}
-            variant="secondary"
-            onClick={openSwitchingIntervalModal}
-            disabled={!hasNotCanceledCurrentSubscription}
-          />
-        </Section>
-        <Section>
-          <H2Title
-            title={t`Cancel your subscription`}
-            description={t`Your workspace will be disabled`}
-          />
-          <Button
-            Icon={IconCircleX}
-            title={t`Cancel Plan`}
-            variant="secondary"
-            accent="danger"
-            onClick={openBillingPortal}
-            disabled={!hasNotCanceledCurrentSubscription}
-          />
-        </Section>
+        {hasNotCanceledCurrentSubscription && (
+          <Section>
+            <H2Title
+              title={t`Cancel your subscription`}
+              description={t`Your workspace will be disabled`}
+            />
+            <Button
+              Icon={IconCircleX}
+              title={t`Cancel Plan`}
+              variant="secondary"
+              accent="danger"
+              onClick={openBillingPortal}
+              disabled={billingPortalButtonDisabled}
+            />
+          </Section>
+        )}
       </SettingsPageContainer>
-      <ConfirmationModal
-        isOpen={isSwitchingIntervalModalOpen}
-        setIsOpen={setIsSwitchingIntervalModalOpen}
-        title={t`Switch billing ${to}`}
-        subtitle={
-          t`Are you sure that you want to change your billing interval?` +
-          ` ${impact}`
-        }
-        onConfirmClick={switchInterval}
-        deleteButtonText={t`Change ${to}`}
-        confirmButtonAccent={'blue'}
-      />
     </SubMenuTopBarContainer>
   );
 };

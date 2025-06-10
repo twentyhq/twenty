@@ -8,6 +8,16 @@ export const getCronTriggerDefaultSettings = (
   cronTriggerInterval: CronTriggerInterval,
 ): WorkflowCronTrigger['settings'] => {
   switch (cronTriggerInterval) {
+    case 'DAYS':
+      return {
+        schedule: {
+          day: 1,
+          hour: 0,
+          minute: 0,
+        },
+        type: cronTriggerInterval,
+        outputSchema: {},
+      };
     case 'HOURS':
       return {
         schedule: {

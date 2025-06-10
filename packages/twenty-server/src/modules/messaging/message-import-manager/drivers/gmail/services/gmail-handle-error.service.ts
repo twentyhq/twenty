@@ -8,6 +8,7 @@ import { parseGmailMessagesImportError } from 'src/modules/messaging/message-imp
 export class GmailHandleErrorService {
   constructor() {}
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public handleGmailMessageListFetchError(error: any): void {
     const gaxiosError = parseGaxiosError(error);
 
@@ -19,6 +20,7 @@ export class GmailHandleErrorService {
   }
 
   public handleGmailMessagesImportError(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     error: any,
     messageExternalId: string,
   ): void {

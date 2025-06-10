@@ -5,4 +5,5 @@ import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metada
 export type ObjectMetadataItemWithFieldMaps = ObjectMetadataInterface & {
   fieldsById: FieldMetadataMap;
   fieldsByName: FieldMetadataMap;
+  fieldsByJoinColumnName: FieldMetadataMap;
 };

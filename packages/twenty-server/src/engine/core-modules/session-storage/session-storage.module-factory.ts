@@ -5,16 +5,16 @@ import session from 'express-session';
 import { createClient } from 'redis';
 
 import { CacheStorageType } from 'src/engine/core-modules/cache-storage/types/cache-storage-type.enum';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export const getSessionStorageOptions = (
-  environmentService: EnvironmentService,
+  twentyConfigService: TwentyConfigService,
 ): session.SessionOptions => {
   const cacheStorageType = CacheStorageType.Redis;
 
-  const SERVER_URL = environmentService.get('SERVER_URL');
+  const SERVER_URL = twentyConfigService.get('SERVER_URL');
 
-  const appSecret = environmentService.get('APP_SECRET');
+  const appSecret = twentyConfigService.get('APP_SECRET');
 
   if (!appSecret) {
     throw new Error('APP_SECRET is not set');
@@ -44,7 +44,7 @@ export const getSessionStorageOptions = (
       return sessionStorage;
     }*/
     case CacheStorageType.Redis: {
-      const connectionString = environmentService.get('REDIS_URL');
+      const connectionString = twentyConfigService.get('REDIS_URL');
 
       if (!connectionString) {
         throw new Error(

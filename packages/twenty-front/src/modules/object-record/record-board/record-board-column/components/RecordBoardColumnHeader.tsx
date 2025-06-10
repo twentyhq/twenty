@@ -1,19 +1,19 @@
 import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
 import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { useAggregateRecordsForRecordBoardColumn } from '@/object-record/record-board/record-board-column/hooks/useAggregateRecordsForRecordBoardColumn';
-import { useColumnNewCardActions } from '@/object-record/record-board/record-board-column/hooks/useColumnNewCardActions';
-import { useIsOpportunitiesCompanyFieldDisabled } from '@/object-record/record-board/record-board-column/hooks/useIsOpportunitiesCompanyFieldDisabled';
 import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
+import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { IconDotsVertical, IconPlus, LightIconButton, Tag } from 'twenty-ui';
+import { Tag } from 'twenty-ui/components';
+import { IconDotsVertical, IconPlus } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
 
 const StyledHeader = styled.div`
   align-items: center;
@@ -69,7 +69,8 @@ export const RecordBoardColumnHeader = () => {
   const [isBoardColumnMenuOpen, setIsBoardColumnMenuOpen] = useState(false);
   const [isHeaderHovered, setIsHeaderHovered] = useState(false);
 
-  const { objectMetadataItem } = useContext(RecordBoardContext);
+  const { objectMetadataItem, selectFieldMetadataItem } =
+    useContext(RecordBoardContext);
 
   const {
     setHotkeyScopeAndMemorizePreviousScope,
@@ -78,12 +79,12 @@ export const RecordBoardColumnHeader = () => {
 
   const handleBoardColumnMenuOpen = () => {
     setIsBoardColumnMenuOpen(true);
-    setHotkeyScopeAndMemorizePreviousScope(
-      RecordBoardColumnHotkeyScope.BoardColumn,
-      {
+    setHotkeyScopeAndMemorizePreviousScope({
+      scope: RecordBoardColumnHotkeyScope.BoardColumn,
+      customScopes: {
         goto: false,
       },
-    );
+    });
   };
 
   const handleBoardColumnMenuClose = () => {
@@ -94,18 +95,15 @@ export const RecordBoardColumnHeader = () => {
   const { aggregateValue, aggregateLabel } =
     useAggregateRecordsForRecordBoardColumn();
 
-  const { handleNewButtonClick } = useColumnNewCardActions(
-    columnDefinition.id ?? '',
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
   );
 
-  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
+  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
-  const { isOpportunitiesCompanyFieldDisabled } =
-    useIsOpportunitiesCompanyFieldDisabled();
-
-  const isOpportunity =
-    objectMetadataItem.nameSingular === CoreObjectNameSingular.Opportunity &&
-    !isOpportunitiesCompanyFieldDisabled;
+  const { createNewIndexRecord } = useCreateNewIndexRecord({
+    objectMetadataItem: objectMetadataItem,
+  });
 
   return (
     <StyledColumn>
@@ -149,11 +147,16 @@ export const RecordBoardColumnHeader = () => {
                   Icon={IconDotsVertical}
                   onClick={handleBoardColumnMenuOpen}
                 />
-                {!hasObjectReadOnlyPermission && (
+                {hasObjectUpdatePermissions && (
                   <LightIconButton
                     accent="tertiary"
                     Icon={IconPlus}
-                    onClick={() => handleNewButtonClick('first', isOpportunity)}
+                    onClick={() => {
+                      createNewIndexRecord({
+                        position: 'first',
+                        [selectFieldMetadataItem.name]: columnDefinition.value,
+                      });
+                    }}
                   />
                 )}
               </StyledHeaderActions>

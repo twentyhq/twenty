@@ -12,10 +12,9 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { isDefined } from 'twenty-shared';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
 import { sortByAscString } from '~/utils/array/sortByAscString';
 
 export const usePrepareFindManyActivitiesQuery = ({
@@ -23,10 +22,6 @@ export const usePrepareFindManyActivitiesQuery = ({
 }: {
   activityObjectNameSingular: CoreObjectNameSingular;
 }) => {
-  const isRichTextV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsRichTextV2Enabled,
-  );
-
   const { objectMetadataItem: objectMetadataItemActivity } =
     useObjectMetadataItem({
       objectNameSingular: activityObjectNameSingular,
@@ -38,6 +33,7 @@ export const usePrepareFindManyActivitiesQuery = ({
 
   const cache = useApolloClient().cache;
   const { objectMetadataItems } = useObjectMetadataItems();
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const { upsertFindManyRecordsQueryInCache: upsertFindManyActivitiesInCache } =
     useUpsertFindManyRecordsQueryInCache({
@@ -70,6 +66,7 @@ export const usePrepareFindManyActivitiesQuery = ({
       objectMetadataItem: targetableObjectMetadataItem,
       objectMetadataItems,
       cache,
+      objectPermissionsByObjectMetadataId,
     });
 
     const activityTargets: (TaskTarget | NoteTarget)[] =
@@ -120,7 +117,6 @@ export const usePrepareFindManyActivitiesQuery = ({
       findActivitiesOperationSignatureFactory({
         objectNameSingular: activityObjectNameSingular,
         objectMetadataItems,
-        isRichTextV2Enabled,
       });
 
     upsertFindManyActivitiesInCache({

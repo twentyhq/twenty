@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconComponent, IconX } from 'twenty-ui';
+import { IconComponent, IconX } from 'twenty-ui/display';
 
 const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
   align-items: center;
@@ -33,7 +33,7 @@ const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
         return theme.color.blue;
     }
   }};
-  height: 26px;
+  height: 24px;
   box-sizing: border-box;
   cursor: pointer;
   display: flex;
@@ -46,8 +46,6 @@ const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`
   column-gap: ${({ theme }) => theme.spacing(1)};
   user-select: none;
   white-space: nowrap;
-
-  margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledIcon = styled.div`
@@ -89,7 +87,17 @@ const StyledLabelKey = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
+const StyledFilterValue = styled.span`
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+`;
+
+const StyledSortValue = styled.span`
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+`;
+
 export type SortOrFilterChipVariant = 'default' | 'danger';
+
+export type SortOrFilterChipType = 'sort' | 'filter';
 
 type SortOrFilterChipProps = {
   labelKey?: string;
@@ -99,6 +107,7 @@ type SortOrFilterChipProps = {
   onRemove: () => void;
   onClick?: () => void;
   testId?: string;
+  type: SortOrFilterChipType;
 };
 
 export const SortOrFilterChip = ({
@@ -109,6 +118,7 @@ export const SortOrFilterChip = ({
   onRemove,
   testId,
   onClick,
+  type,
 }: SortOrFilterChipProps) => {
   const theme = useTheme();
 
@@ -125,7 +135,11 @@ export const SortOrFilterChip = ({
         </StyledIcon>
       )}
       {labelKey && <StyledLabelKey>{labelKey}</StyledLabelKey>}
-      {labelValue}
+      {type === 'sort' ? (
+        <StyledSortValue>{labelValue}</StyledSortValue>
+      ) : (
+        <StyledFilterValue>{labelValue}</StyledFilterValue>
+      )}
       <StyledDelete
         variant={variant}
         onClick={handleDeleteClick}

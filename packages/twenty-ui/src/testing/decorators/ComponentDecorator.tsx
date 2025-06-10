@@ -28,6 +28,7 @@ export const ComponentDecorator: Decorator = (Story, context) => {
   return (
     <ComponentStorybookLayout
       width={container?.width}
+      height={container?.height}
       backgroundColor={backgroundColor}
     >
       <Story />

@@ -17,9 +17,10 @@ import { MicrosoftProviderEnabledGuard } from 'src/engine/core-modules/auth/guar
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller('auth/microsoft')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -34,14 +35,22 @@ export class MicrosoftAuthController {
   ) {}
 
   @Get()
-  @UseGuards(MicrosoftProviderEnabledGuard, MicrosoftOAuthGuard)
+  @UseGuards(
+    MicrosoftProviderEnabledGuard,
+    MicrosoftOAuthGuard,
+    PublicEndpointGuard,
+  )
   async microsoftAuth() {
     // As this method is protected by Microsoft Auth guard, it will trigger Microsoft SSO flow
     return;
   }
 
   @Get('redirect')
-  @UseGuards(MicrosoftProviderEnabledGuard, MicrosoftOAuthGuard)
+  @UseGuards(
+    MicrosoftProviderEnabledGuard,
+    MicrosoftOAuthGuard,
+    PublicEndpointGuard,
+  )
   async microsoftAuthRedirect(
     @Req() req: MicrosoftRequest,
     @Res() res: Response,
@@ -49,13 +58,15 @@ export class MicrosoftAuthController {
     const {
       firstName,
       lastName,
-      email,
+      email: rawEmail,
       picture,
       workspaceInviteHash,
       workspaceId,
       billingCheckoutSessionState,
       locale,
     } = req.user;
+
+    const email = rawEmail.toLowerCase();
 
     const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
       workspaceId,
@@ -117,14 +128,16 @@ export class MicrosoftAuthController {
           billingCheckoutSessionState,
         }),
       );
-    } catch (err) {
+    } catch (error) {
       return res.redirect(
-        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
-          err,
-          this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
-            currentWorkspace,
-          ),
-        ),
+        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
+          error,
+          workspace:
+            this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
+              currentWorkspace,
+            ),
+          pathname: '/verify',
+        }),
       );
     }
   }

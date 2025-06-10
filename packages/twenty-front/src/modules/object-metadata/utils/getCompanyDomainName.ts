@@ -1,5 +1,5 @@
 import { Company } from '@/companies/types/Company';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 // temporary, to remove once domainName has been fully migrated to Links type
 export const getCompanyDomainName = (company: Company) => {

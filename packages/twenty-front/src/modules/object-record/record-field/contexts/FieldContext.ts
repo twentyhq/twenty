@@ -1,5 +1,6 @@
 import { createContext } from 'react';
 
+import { TriggerEventType } from 'twenty-ui/utilities';
 import { FieldDefinition } from '../types/FieldDefinition';
 import { FieldMetadata } from '../types/FieldMetadata';
 
@@ -23,9 +24,8 @@ export type GenericFieldContextType = {
   fieldDefinition: FieldDefinition<FieldMetadata>;
   useUpdateRecord?: RecordUpdateHook;
   recordId: string;
-  recoilScopeId?: string;
-  hotkeyScope: string;
   isLabelIdentifier: boolean;
+  isLabelIdentifierCompact?: boolean;
   labelIdentifierLink?: string;
   clearable?: boolean;
   maxWidth?: number;
@@ -33,6 +33,12 @@ export type GenericFieldContextType = {
   overridenIsFieldEmpty?: boolean;
   displayedMaxRows?: number;
   isDisplayModeFixHeight?: boolean;
+  isReadOnly: boolean;
+  disableChipClick?: boolean;
+  onOpenEditMode?: () => void;
+  onCloseEditMode?: () => void;
+  triggerEvent?: TriggerEventType;
+  isForbidden?: boolean;
 };
 
 export const FieldContext = createContext<GenericFieldContextType>(

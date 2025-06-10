@@ -1,7 +1,7 @@
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isDefined } from 'twenty-shared';
 
 import { Buffer } from 'buffer';
+import { isDefined } from 'twenty-shared/utils';
 
 export const encodeCursor = (record: ObjectRecord) => {
   if (!('id' in record) || !isDefined(record.id)) {

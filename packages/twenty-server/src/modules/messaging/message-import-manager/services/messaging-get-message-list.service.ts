@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { ConnectedAccountProvider } from 'twenty-shared/types';
+
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
@@ -46,16 +48,20 @@ export class MessagingGetMessageListService {
     messageChannel: MessageChannelWorkspaceEntity,
   ): Promise<GetFullMessageListForFoldersResponse[]> {
     switch (messageChannel.connectedAccount.provider) {
-      case 'google':
+      case ConnectedAccountProvider.GOOGLE: {
+        const fullMessageList =
+          await this.gmailGetMessageListService.getFullMessageList(
+            messageChannel.connectedAccount,
+          );
+
         return [
           {
-            ...(await this.gmailGetMessageListService.getFullMessageList(
-              messageChannel.connectedAccount,
-            )),
+            ...fullMessageList,
             folderId: undefined,
           },
         ];
-      case 'microsoft': {
+      }
+      case ConnectedAccountProvider.MICROSOFT: {
         const folderRepository =
           await this.twentyORMManager.getRepository<MessageFolderWorkspaceEntity>(
             'messageFolder',
@@ -84,7 +90,7 @@ export class MessagingGetMessageListService {
     messageChannel: MessageChannelWorkspaceEntity,
   ): Promise<GetPartialMessageListForFoldersResponse[]> {
     switch (messageChannel.connectedAccount.provider) {
-      case 'google':
+      case ConnectedAccountProvider.GOOGLE:
         return [
           {
             ...(await this.gmailGetMessageListService.getPartialMessageList(
@@ -94,7 +100,7 @@ export class MessagingGetMessageListService {
             folderId: undefined,
           },
         ];
-      case 'microsoft':
+      case ConnectedAccountProvider.MICROSOFT:
         return this.microsoftGetMessageListService.getPartialMessageListForFolders(
           messageChannel.connectedAccount,
           messageChannel,

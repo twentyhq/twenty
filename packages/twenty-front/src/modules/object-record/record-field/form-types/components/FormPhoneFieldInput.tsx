@@ -13,7 +13,7 @@ import { getCountryCallingCode } from 'libphonenumber-js';
 type FormPhoneFieldInputProps = {
   label?: string;
   defaultValue?: FieldPhonesValue;
-  onPersist: (value: FieldPhonesValue) => void;
+  onChange: (value: FieldPhonesValue) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
 };
@@ -21,7 +21,7 @@ type FormPhoneFieldInputProps = {
 export const FormPhoneFieldInput = ({
   label,
   defaultValue,
-  onPersist,
+  onChange,
   readonly,
   VariablePicker,
 }: FormPhoneFieldInputProps) => {
@@ -35,7 +35,7 @@ export const FormPhoneFieldInput = ({
       newCallingCode = getCountryCallingCode(newCountry);
     }
 
-    onPersist({
+    onChange({
       primaryPhoneCountryCode: newCountry,
       primaryPhoneCallingCode: newCallingCode,
       primaryPhoneNumber: defaultValue?.primaryPhoneNumber ?? '',
@@ -43,7 +43,7 @@ export const FormPhoneFieldInput = ({
   };
 
   const handleNumberChange = (number: string | number | null) => {
-    onPersist({
+    onChange({
       primaryPhoneCountryCode: defaultValue?.primaryPhoneCountryCode ?? '',
       primaryPhoneCallingCode: defaultValue?.primaryPhoneCallingCode ?? '',
       primaryPhoneNumber: number ? `${number}` : '',
@@ -56,13 +56,13 @@ export const FormPhoneFieldInput = ({
       <FormNestedFieldInputContainer>
         <FormCountryCodeSelectInput
           selectedCountryCode={defaultValue?.primaryPhoneCountryCode || ''}
-          onPersist={handleCountryChange}
+          onChange={handleCountryChange}
           readonly={readonly}
         />
         <FormNumberFieldInput
           label="Phone Number"
           defaultValue={defaultValue?.primaryPhoneNumber || ''}
-          onPersist={handleNumberChange}
+          onChange={handleNumberChange}
           VariablePicker={VariablePicker}
           placeholder="Enter phone number"
           hint="Without calling code"

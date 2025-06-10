@@ -5,11 +5,21 @@ import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
+import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
-import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageTitle';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { IconList, IconSearch } from 'twenty-ui';
+import { CommandMenuHotkeyScope } from '@/command-menu/types/CommandMenuHotkeyScope';
+
+const mockGoBackToPreviousHotkeyScope = jest.fn();
+const mockSetHotkeyScopeAndMemorizePreviousScope = jest.fn();
+
+jest.mock('@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope', () => ({
+  usePreviousHotkeyScope: () => ({
+    goBackToPreviousHotkeyScope: mockGoBackToPreviousHotkeyScope,
+    setHotkeyScopeAndMemorizePreviousScope:
+      mockSetHotkeyScopeAndMemorizePreviousScope,
+  }),
+}));
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot>
@@ -49,14 +59,25 @@ const renderHooks = () => {
 };
 
 describe('useCommandMenu', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should open and close the command menu', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.commandMenu.openRootCommandMenu();
+      result.current.commandMenu.openCommandMenu();
     });
 
     expect(result.current.isCommandMenuOpened).toBe(true);
+    expect(mockSetHotkeyScopeAndMemorizePreviousScope).toHaveBeenCalledWith({
+      scope: CommandMenuHotkeyScope.CommandMenuFocused,
+      memoizeKey: 'command-menu',
+      customScopes: {
+        commandMenuOpen: true,
+      },
+    });
 
     act(() => {
       result.current.commandMenu.closeCommandMenu();
@@ -75,6 +96,13 @@ describe('useCommandMenu', () => {
     });
 
     expect(result.current.isCommandMenuOpened).toBe(true);
+    expect(mockSetHotkeyScopeAndMemorizePreviousScope).toHaveBeenCalledWith({
+      scope: CommandMenuHotkeyScope.CommandMenuFocused,
+      memoizeKey: 'command-menu',
+      customScopes: {
+        commandMenuOpen: true,
+      },
+    });
 
     act(() => {
       result.current.commandMenu.toggleCommandMenu();
@@ -83,146 +111,20 @@ describe('useCommandMenu', () => {
     expect(result.current.isCommandMenuOpened).toBe(false);
   });
 
-  it('should navigate to a page', () => {
-    const { result } = renderHooks();
-
-    expect(result.current.commandMenuNavigationStack).toEqual([]);
-    expect(result.current.commandMenuPage).toBe(CommandMenuPages.Root);
-    expect(result.current.commandMenuPageInfo).toEqual({
-      title: undefined,
-      Icon: undefined,
-    });
-
-    act(() => {
-      result.current.commandMenu.navigateCommandMenu({
-        page: CommandMenuPages.SearchRecords,
-        pageTitle: 'Search',
-        pageIcon: IconSearch,
-      });
-    });
-
-    expect(result.current.commandMenuNavigationStack).toEqual([
-      {
-        page: CommandMenuPages.SearchRecords,
-        pageTitle: 'Search',
-        pageIcon: IconSearch,
-      },
-    ]);
-    expect(result.current.commandMenuPage).toBe(CommandMenuPages.SearchRecords);
-    expect(result.current.commandMenuPageInfo).toEqual({
-      title: 'Search',
-      Icon: IconSearch,
-    });
-
-    act(() => {
-      result.current.commandMenu.navigateCommandMenu({
-        page: CommandMenuPages.ViewRecord,
-        pageTitle: 'Company',
-        pageIcon: IconList,
-      });
-    });
-
-    expect(result.current.commandMenuNavigationStack).toEqual([
-      {
-        page: CommandMenuPages.SearchRecords,
-        pageTitle: 'Search',
-        pageIcon: IconSearch,
-      },
-      {
-        page: CommandMenuPages.ViewRecord,
-        pageTitle: 'Company',
-        pageIcon: IconList,
-      },
-    ]);
-    expect(result.current.commandMenuPage).toBe(CommandMenuPages.ViewRecord);
-    expect(result.current.commandMenuPageInfo).toEqual({
-      title: 'Company',
-      Icon: IconList,
-    });
-  });
-
-  it('should go back from a page', () => {
+  it('should call goBackToPreviousHotkeyScope when closing the command menu', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.commandMenu.navigateCommandMenu({
-        page: CommandMenuPages.SearchRecords,
-        pageTitle: 'Search',
-        pageIcon: IconSearch,
-      });
+      result.current.commandMenu.openCommandMenu();
     });
+
+    expect(result.current.isCommandMenuOpened).toBe(true);
+    expect(mockGoBackToPreviousHotkeyScope).not.toHaveBeenCalled();
 
     act(() => {
-      result.current.commandMenu.navigateCommandMenu({
-        page: CommandMenuPages.ViewRecord,
-        pageTitle: 'Company',
-        pageIcon: IconList,
-      });
+      result.current.commandMenu.closeCommandMenu();
     });
 
-    expect(result.current.commandMenuNavigationStack).toEqual([
-      {
-        page: CommandMenuPages.SearchRecords,
-        pageTitle: 'Search',
-        pageIcon: IconSearch,
-      },
-      {
-        page: CommandMenuPages.ViewRecord,
-        pageTitle: 'Company',
-        pageIcon: IconList,
-      },
-    ]);
-
-    act(() => {
-      result.current.commandMenu.goBackFromCommandMenu();
-    });
-
-    expect(result.current.commandMenuNavigationStack).toEqual([
-      {
-        page: CommandMenuPages.SearchRecords,
-        pageTitle: 'Search',
-        pageIcon: IconSearch,
-      },
-    ]);
-    expect(result.current.commandMenuPage).toBe(CommandMenuPages.SearchRecords);
-    expect(result.current.commandMenuPageInfo).toEqual({
-      title: 'Search',
-      Icon: IconSearch,
-    });
-
-    act(() => {
-      result.current.commandMenu.goBackFromCommandMenu();
-      result.current.commandMenu.onCommandMenuCloseAnimationComplete();
-    });
-
-    expect(result.current.commandMenuNavigationStack).toEqual([]);
-    expect(result.current.commandMenuPage).toBe(CommandMenuPages.Root);
-    expect(result.current.commandMenuPageInfo).toEqual({
-      title: undefined,
-      Icon: undefined,
-    });
-    expect(result.current.isCommandMenuOpened).toBe(false);
-  });
-
-  it('should navigate to a page in history', () => {
-    const { result } = renderHooks();
-
-    act(() => {
-      result.current.commandMenu.navigateCommandMenu({
-        page: CommandMenuPages.SearchRecords,
-        pageTitle: 'Search',
-        pageIcon: IconSearch,
-      });
-    });
-
-    act(() => {
-      result.current.commandMenu.navigateCommandMenuHistory(0);
-    });
-
-    expect(result.current.commandMenuPage).toBe(CommandMenuPages.SearchRecords);
-    expect(result.current.commandMenuPageInfo).toEqual({
-      title: 'Search',
-      Icon: IconSearch,
-    });
+    expect(mockGoBackToPreviousHotkeyScope).toHaveBeenCalledTimes(1);
   });
 });

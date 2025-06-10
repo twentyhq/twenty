@@ -10,6 +10,7 @@ import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
+import { useLingui } from '@lingui/react/macro';
 import { SelectHeaderTable } from './components/SelectHeaderTable';
 
 const StyledHeading = styled(Heading)`
@@ -87,10 +88,12 @@ export const SelectHeaderStep = ({
     setIsLoading(false);
   }, [handleContinue, importedRows, selectedRowIndexes]);
 
+  const { t } = useLingui();
+
   return (
     <>
       <Modal.Content>
-        <StyledHeading title="Select header row" />
+        <StyledHeading title={t`Select header row`} />
         <StyledTableContainer>
           <SelectHeaderTable
             importedRows={importedRows}
@@ -102,7 +105,7 @@ export const SelectHeaderStep = ({
       <StepNavigationButton
         onClick={handleOnContinue}
         onBack={onBack}
-        title="Continue"
+        title={t`Continue`}
         isLoading={isLoading}
       />
     </>

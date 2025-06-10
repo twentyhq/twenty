@@ -6,8 +6,9 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getCombinedFindManyRecordsQueryFilteringPart } from '@/object-record/multiple-objects/utils/getCombinedFindManyRecordsQueryFilteringPart';
-import { capitalize } from 'twenty-shared';
+import { capitalize } from 'twenty-shared/utils';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 
 export const useGenerateCombinedFindManyRecordsQuery = ({
@@ -16,6 +17,7 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
   operationSignatures: RecordGqlOperationSignature[];
 }) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   if (!isNonEmptyArray(operationSignatures)) {
     return null;
@@ -92,6 +94,7 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
                 generateDepthOneRecordGqlFields({
                   objectMetadataItem,
                 }),
+              objectPermissionsByObjectMetadataId,
             })}
             cursor
           }

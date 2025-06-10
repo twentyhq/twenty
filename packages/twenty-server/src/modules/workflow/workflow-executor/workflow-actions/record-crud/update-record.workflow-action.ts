@@ -1,39 +1,84 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import deepEqual from 'deep-equal';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
+import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfaces/workflow-executor.interface';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
+import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import {
+  WorkflowStepExecutorException,
+  WorkflowStepExecutorExceptionCode,
+} from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { WorkflowExecutorInput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
+import { WorkflowExecutorOutput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-output.type';
+import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
 import {
   RecordCRUDActionException,
   RecordCRUDActionExceptionCode,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/exceptions/record-crud-action.exception';
+import { isWorkflowUpdateRecordAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-update-record-action.guard';
 import { WorkflowUpdateRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
-import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-result.type';
 
 @Injectable()
-export class UpdateRecordWorkflowAction implements WorkflowAction {
+export class UpdateRecordWorkflowAction implements WorkflowExecutor {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly recordInputTransformerService: RecordInputTransformerService,
   ) {}
 
-  async execute(
-    workflowActionInput: WorkflowUpdateRecordActionInput,
-  ): Promise<WorkflowActionResult> {
+  async execute({
+    currentStepId,
+    steps,
+    context,
+  }: WorkflowExecutorInput): Promise<WorkflowExecutorOutput> {
+    const step = steps.find((step) => step.id === currentStepId);
+
+    if (!step) {
+      throw new WorkflowStepExecutorException(
+        'Step not found',
+        WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND,
+      );
+    }
+
+    if (!isWorkflowUpdateRecordAction(step)) {
+      throw new WorkflowStepExecutorException(
+        'Step is not an update record action',
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
+      );
+    }
+
+    const workflowActionInput = resolveInput(
+      step.settings.input,
+      context,
+    ) as WorkflowUpdateRecordActionInput;
+
+    if (
+      !isDefined(workflowActionInput.objectRecordId) ||
+      !isValidUuid(workflowActionInput.objectRecordId) ||
+      !isDefined(workflowActionInput.objectName)
+    ) {
+      throw new RecordCRUDActionException(
+        'Failed to update: Object record ID and name are required',
+        RecordCRUDActionExceptionCode.INVALID_REQUEST,
+      );
+    }
+
     const repository = await this.twentyORMManager.getRepository(
       workflowActionInput.objectName,
     );
@@ -51,6 +96,7 @@ export class UpdateRecordWorkflowAction implements WorkflowAction {
       where: {
         nameSingular: workflowActionInput.objectName,
       },
+      relations: ['fields'],
     });
 
     if (!objectMetadata) {
@@ -73,47 +119,17 @@ export class UpdateRecordWorkflowAction implements WorkflowAction {
       );
     }
 
-    const currentCacheVersion =
-      await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
-
-    if (currentCacheVersion === undefined) {
-      throw new RecordCRUDActionException(
-        'Failed to read: Metadata cache version not found',
-        RecordCRUDActionExceptionCode.INVALID_REQUEST,
-      );
-    }
-
-    const objectMetadataMaps =
-      await this.workspaceCacheStorageService.getObjectMetadataMaps(
-        workspaceId,
-        currentCacheVersion,
-      );
-
-    if (!objectMetadataMaps) {
-      throw new RecordCRUDActionException(
-        'Failed to read: Object metadata collection not found',
-        RecordCRUDActionExceptionCode.INVALID_REQUEST,
-      );
-    }
-
-    const objectMetadataItemWithFieldsMaps =
-      getObjectMetadataMapItemByNameSingular(
-        objectMetadataMaps,
-        workflowActionInput.objectName,
-      );
-
-    if (!objectMetadataItemWithFieldsMaps) {
-      throw new RecordCRUDActionException(
-        `Failed to read: Object ${workflowActionInput.objectName} not found`,
-        RecordCRUDActionExceptionCode.INVALID_REQUEST,
-      );
-    }
-
     if (workflowActionInput.fieldsToUpdate.length === 0) {
       return {
         result: previousObjectRecord,
       };
     }
+
+    const { objectMetadataItemWithFieldsMaps } =
+      await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+        workflowActionInput.objectName,
+        workspaceId,
+      );
 
     const objectRecordWithFilteredFields = Object.keys(
       workflowActionInput.objectRecord,
@@ -128,35 +144,52 @@ export class UpdateRecordWorkflowAction implements WorkflowAction {
       return acc;
     }, {});
 
+    const transformedObjectRecord =
+      await this.recordInputTransformerService.process({
+        recordInput: objectRecordWithFilteredFields,
+        objectMetadataMapItem: objectMetadataItemWithFieldsMaps,
+      });
+
     const objectRecordFormatted = formatData(
-      objectRecordWithFilteredFields,
+      transformedObjectRecord,
       objectMetadataItemWithFieldsMaps,
     );
-
-    await repository.update(workflowActionInput.objectRecordId, {
-      ...objectRecordFormatted,
-    });
 
     const updatedObjectRecord = {
       ...previousObjectRecord,
       ...objectRecordWithFilteredFields,
     };
 
-    this.workspaceEventEmitter.emitDatabaseBatchEvent({
-      objectMetadataNameSingular: workflowActionInput.objectName,
-      action: DatabaseEventAction.UPDATED,
-      events: [
-        {
-          recordId: previousObjectRecord.id,
-          objectMetadata,
-          properties: {
-            before: previousObjectRecord,
-            after: updatedObjectRecord,
+    if (!deepEqual(updatedObjectRecord, previousObjectRecord)) {
+      await repository.update(workflowActionInput.objectRecordId, {
+        ...objectRecordFormatted,
+      });
+
+      const diff = objectRecordChangedValues(
+        previousObjectRecord,
+        updatedObjectRecord,
+        workflowActionInput.fieldsToUpdate,
+        objectMetadata,
+      );
+
+      this.workspaceEventEmitter.emitDatabaseBatchEvent({
+        objectMetadataNameSingular: workflowActionInput.objectName,
+        action: DatabaseEventAction.UPDATED,
+        events: [
+          {
+            recordId: previousObjectRecord.id,
+            objectMetadata,
+            properties: {
+              before: previousObjectRecord,
+              after: updatedObjectRecord,
+              updatedFields: workflowActionInput.fieldsToUpdate,
+              diff,
+            },
           },
-        },
-      ],
-      workspaceId,
-    });
+        ],
+        workspaceId,
+      });
+    }
 
     return {
       result: updatedObjectRecord,

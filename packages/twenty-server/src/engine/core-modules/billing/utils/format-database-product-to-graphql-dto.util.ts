@@ -16,7 +16,10 @@ export const formatBillingDatabaseProductToGraphqlDTO = (
     planKey: plan.planKey,
     baseProduct: {
       ...plan.baseProduct,
-      type: BillingUsageType.LICENSED,
+      metadata: {
+        ...plan.baseProduct.metadata,
+        priceUsageBased: BillingUsageType.LICENSED,
+      },
       prices: plan.baseProduct.billingPrices.map(
         formatBillingDatabasePriceToLicensedPriceDTO,
       ),
@@ -24,7 +27,10 @@ export const formatBillingDatabaseProductToGraphqlDTO = (
     otherLicensedProducts: plan.otherLicensedProducts.map((product) => {
       return {
         ...product,
-        type: BillingUsageType.LICENSED,
+        metadata: {
+          ...product.metadata,
+          priceUsageBased: BillingUsageType.LICENSED,
+        },
         prices: product.billingPrices.map(
           formatBillingDatabasePriceToLicensedPriceDTO,
         ),
@@ -33,7 +39,10 @@ export const formatBillingDatabaseProductToGraphqlDTO = (
     meteredProducts: plan.meteredProducts.map((product) => {
       return {
         ...product,
-        type: BillingUsageType.METERED,
+        metadata: {
+          ...product.metadata,
+          priceUsageBased: BillingUsageType.METERED,
+        },
         prices: product.billingPrices.map(
           formatBillingDatabasePriceToMeteredPriceDTO,
         ),
@@ -58,6 +67,7 @@ const formatBillingDatabasePriceToMeteredPriceDTO = (
       })) ?? [],
     recurringInterval: billingPrice?.interval ?? SubscriptionInterval.Month,
     stripePriceId: billingPrice?.stripePriceId,
+    priceUsageType: BillingUsageType.METERED,
   };
 };
 
@@ -68,5 +78,6 @@ const formatBillingDatabasePriceToLicensedPriceDTO = (
     recurringInterval: billingPrice?.interval ?? SubscriptionInterval.Month,
     unitAmount: billingPrice?.unitAmount ?? 0,
     stripePriceId: billingPrice?.stripePriceId,
+    priceUsageType: BillingUsageType.LICENSED,
   };
 };

@@ -1,17 +1,19 @@
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { H2Title, IconLock, Section, Tag } from 'twenty-ui';
 
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsReadDocumentationButton } from '@/settings/developers/components/SettingsReadDocumentationButton';
 import { SettingsSSOIdentitiesProvidersListCard } from '@/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard';
 import { SettingsSecurityAuthProvidersOptionsList } from '@/settings/security/components/SettingsSecurityAuthProvidersOptionsList';
+import { SettingsApprovedAccessDomainsListCard } from '@/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard';
+import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImpersonate';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useRecoilValue } from 'recoil';
+import { Tag } from 'twenty-ui/components';
+import { H2Title, IconLock } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { SettingsApprovedAccessDomainsListCard } from '@/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -31,14 +33,11 @@ const StyledSection = styled(Section)`
 export const SettingsSecurity = () => {
   const { t } = useLingui();
 
-  const IsApprovedAccessDomainsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsApprovedAccessDomainsEnabled,
-  );
+  const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
 
   return (
     <SubMenuTopBarContainer
       title={t`Security`}
-      actionButton={<SettingsReadDocumentationButton />}
       links={[
         {
           children: <Trans>Workspace</Trans>,
@@ -64,15 +63,13 @@ export const SettingsSecurity = () => {
             />
             <SettingsSSOIdentitiesProvidersListCard />
           </StyledSection>
-          {IsApprovedAccessDomainsEnabled && (
-            <StyledSection>
-              <H2Title
-                title={t`Approved Email Domain`}
-                description={t`Anyone with an email address at these domains is allowed to sign up for this workspace.`}
-              />
-              <SettingsApprovedAccessDomainsListCard />
-            </StyledSection>
-          )}
+          <StyledSection>
+            <H2Title
+              title={t`Approved Domains`}
+              description={t`Anyone with an email address at these domains is allowed to sign up for this workspace.`}
+            />
+            <SettingsApprovedAccessDomainsListCard />
+          </StyledSection>
           <Section>
             <StyledContainer>
               <H2Title
@@ -82,6 +79,15 @@ export const SettingsSecurity = () => {
               <SettingsSecurityAuthProvidersOptionsList />
             </StyledContainer>
           </Section>
+          {isMultiWorkspaceEnabled && (
+            <Section>
+              <H2Title
+                title={t`Support`}
+                description={t`Manage support access settings`}
+              />
+              <ToggleImpersonate />
+            </Section>
+          )}
         </StyledMainContent>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

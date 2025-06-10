@@ -1,4 +1,5 @@
 import { ViewFilter } from '@/views/types/ViewFilter';
+import { compareStrictlyExceptForNullAndUndefined } from '~/utils/compareStrictlyExceptForNullAndUndefined';
 
 export const areViewFiltersEqual = (
   viewFilterA: ViewFilter,
@@ -11,9 +12,13 @@ export const areViewFiltersEqual = (
     'value',
     'displayValue',
     'operand',
+    'subFieldName',
   ];
 
-  return propertiesToCompare.every(
-    (property) => viewFilterA[property] === viewFilterB[property],
+  return propertiesToCompare.every((property) =>
+    compareStrictlyExceptForNullAndUndefined(
+      viewFilterA[property],
+      viewFilterB[property],
+    ),
   );
 };

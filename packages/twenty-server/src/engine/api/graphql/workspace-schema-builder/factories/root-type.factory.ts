@@ -63,6 +63,8 @@ export class RootTypeFactory {
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private generateFields<T = any, U = any>(
     objectMetadataCollection: ObjectMetadataInterface[],
     workspaceResolverMethodNames: WorkspaceResolverBuilderMethodNames[],
@@ -138,7 +140,6 @@ export class RootTypeFactory {
     switch (methodName) {
       case 'findMany':
       case 'findDuplicates':
-      case 'search':
         return ObjectTypeDefinitionKind.Connection;
       default:
         return ObjectTypeDefinitionKind.Plain;

@@ -7,9 +7,9 @@ import {
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
   AnimatedPlaceholderType,
-  Button,
-  IconComponent,
-} from 'twenty-ui';
+} from 'twenty-ui/layout';
+import { Button } from 'twenty-ui/input';
+import { IconComponent } from 'twenty-ui/display';
 
 type RecordTableEmptyStateDisplayButtonComponentProps = {
   buttonComponent?: React.ReactNode;

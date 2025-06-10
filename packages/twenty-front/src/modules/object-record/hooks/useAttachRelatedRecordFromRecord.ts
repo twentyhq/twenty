@@ -4,10 +4,11 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 type useAttachRelatedRecordFromRecordProps = {
   recordObjectNameSingular: string;
@@ -61,7 +62,7 @@ export const useAttachRelatedRecordFromRecord = ({
   });
 
   const { objectMetadataItems } = useObjectMetadataItems();
-
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const updateOneRecordAndAttachRelations = async ({
     recordId,
     relatedRecordId,
@@ -73,7 +74,7 @@ export const useAttachRelatedRecordFromRecord = ({
       getRelatedRecordFromCache<ObjectRecord>(relatedRecordId);
 
     if (!cachedRelatedRecord) {
-      throw new Error('could not find cached related record');
+      throw new Error('Could not find cached related record');
     }
 
     const previousRecordId = cachedRelatedRecord?.[`${fieldOnRelatedObject}Id`];
@@ -85,7 +86,7 @@ export const useAttachRelatedRecordFromRecord = ({
         ...cachedRelatedRecord,
         [fieldOnRelatedObject]: previousRecord,
       };
-      const gqlFields = generateDepthOneRecordGqlFields({
+      const gqlFields = computeDepthOneRecordGqlFieldsFromRecord({
         objectMetadataItem: relatedObjectMetadataItem,
         record: previousRecordWithRelation,
       });
@@ -98,6 +99,7 @@ export const useAttachRelatedRecordFromRecord = ({
           [fieldOnRelatedObject]: previousRecord,
         },
         recordGqlFields: gqlFields,
+        objectPermissionsByObjectMetadataId,
       });
     }
 

@@ -1,11 +1,11 @@
 import { i18n, Messages } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { Container, Html } from '@react-email/components';
-import { PropsWithChildren } from 'react';
 
 import { BaseHead } from 'src/components/BaseHead';
+import { Footer } from 'src/components/Footer';
 import { Logo } from 'src/components/Logo';
-import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { messages as afMessages } from '../locales/generated/af-ZA';
 import { messages as arMessages } from '../locales/generated/ar-SA';
 import { messages as caMessages } from '../locales/generated/ca-ES';
@@ -38,10 +38,11 @@ import { messages as viMessages } from '../locales/generated/vi-VN';
 import { messages as zhHansMessages } from '../locales/generated/zh-CN';
 import { messages as zhHantMessages } from '../locales/generated/zh-TW';
 
-type BaseEmailProps = PropsWithChildren<{
+type BaseEmailProps = {
+  children: JSX.Element | JSX.Element[] | string;
   width?: number;
   locale: keyof typeof APP_LOCALES;
-}>;
+};
 
 const messages: Record<keyof typeof APP_LOCALES, Messages> = {
   en: enMessages,
@@ -95,6 +96,7 @@ export const BaseEmail = ({ children, width, locale }: BaseEmailProps) => {
         <Container width={width || 290}>
           <Logo />
           {children}
+          <Footer />
         </Container>
       </Html>
     </I18nProvider>

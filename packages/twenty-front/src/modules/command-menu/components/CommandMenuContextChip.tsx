@@ -1,12 +1,15 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Fragment } from 'react/jsx-runtime';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 const StyledChip = styled.button<{
   withText: boolean;
+  maxWidth?: string;
   onClick?: () => void;
 }>`
+  all: unset;
   align-items: center;
   justify-content: center;
   background: ${({ theme }) => theme.background.transparent.light};
@@ -19,6 +22,7 @@ const StyledChip = styled.button<{
   /* If the chip has text, we add extra padding to have a more balanced design */
   padding: 0
     ${({ theme, withText }) => (withText ? theme.spacing(2) : theme.spacing(1))};
+  font-family: inherit;
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
@@ -31,6 +35,7 @@ const StyledChip = styled.button<{
         ? theme.background.transparent.medium
         : theme.background.transparent.light};
   }
+  max-width: ${({ maxWidth }) => maxWidth};
 `;
 
 const StyledIconsContainer = styled.div`
@@ -38,11 +43,17 @@ const StyledIconsContainer = styled.div`
   display: flex;
 `;
 
+const StyledEmptyText = styled.div`
+  color: ${({ theme }) => theme.font.color.tertiary};
+`;
+
 export type CommandMenuContextChipProps = {
   Icons: React.ReactNode[];
   text?: string;
   onClick?: () => void;
   testId?: string;
+  maxWidth?: string;
+  forceEmptyText?: boolean;
 };
 
 export const CommandMenuContextChip = ({
@@ -50,19 +61,28 @@ export const CommandMenuContextChip = ({
   text,
   onClick,
   testId,
+  maxWidth,
+  forceEmptyText = false,
 }: CommandMenuContextChipProps) => {
   return (
     <StyledChip
       withText={isNonEmptyString(text)}
       onClick={onClick}
       data-testid={testId}
+      maxWidth={maxWidth}
     >
       <StyledIconsContainer>
         {Icons.map((Icon, index) => (
           <Fragment key={index}>{Icon}</Fragment>
         ))}
       </StyledIconsContainer>
-      {text && <span>{text}</span>}
+      {text?.trim() ? (
+        <OverflowingTextWithTooltip text={text} />
+      ) : !forceEmptyText ? (
+        <StyledEmptyText>Untitled</StyledEmptyText>
+      ) : (
+        ''
+      )}
     </StyledChip>
   );
 };

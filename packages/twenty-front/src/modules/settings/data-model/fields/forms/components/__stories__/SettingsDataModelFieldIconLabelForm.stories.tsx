@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator } from 'twenty-ui';
 
 import { FormProviderDecorator } from '~/testing/decorators/FormProviderDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
@@ -8,6 +7,7 @@ import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecora
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { SettingsDataModelFieldIconLabelForm } from '../SettingsDataModelFieldIconLabelForm';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const StyledContainer = styled.div`
   flex: 1;
@@ -47,9 +47,7 @@ export const WithFieldMetadataItem: Story = {
 };
 
 export const Disabled: Story = {
-  args: {
-    disabled: true,
-  },
+  args: {},
 };
 
 export const WithMaxLength: Story = {

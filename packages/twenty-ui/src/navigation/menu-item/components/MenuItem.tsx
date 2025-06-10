@@ -25,6 +25,7 @@ export type MenuItemProps = {
   isIconDisplayedOnHoverOnly?: boolean;
   isTooltipOpen?: boolean;
   LeftIcon?: IconComponent | null;
+  LeftComponent?: ReactNode;
   RightIcon?: IconComponent | null;
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
   onMouseEnter?: (event: MouseEvent<HTMLDivElement>) => void;
@@ -34,6 +35,7 @@ export type MenuItemProps = {
   text: ReactNode;
   contextualText?: ReactNode;
   hasSubMenu?: boolean;
+  focused?: boolean;
 };
 
 export const MenuItem = ({
@@ -42,6 +44,7 @@ export const MenuItem = ({
   iconButtons,
   isIconDisplayedOnHoverOnly = true,
   LeftIcon,
+  LeftComponent,
   RightIcon,
   onClick,
   onMouseEnter,
@@ -51,6 +54,7 @@ export const MenuItem = ({
   contextualText,
   hasSubMenu = false,
   disabled = false,
+  focused = false,
 }: MenuItemProps) => {
   const theme = useTheme();
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
@@ -73,10 +77,12 @@ export const MenuItem = ({
       isIconDisplayedOnHoverOnly={isIconDisplayedOnHoverOnly}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
+      focused={focused}
     >
       <StyledMenuItemLeftContent>
         <MenuItemLeftContent
           LeftIcon={LeftIcon ?? undefined}
+          LeftComponent={LeftComponent}
           text={text}
           contextualText={contextualText}
           disabled={disabled}

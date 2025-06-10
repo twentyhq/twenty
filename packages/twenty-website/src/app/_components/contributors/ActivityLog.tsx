@@ -3,9 +3,9 @@
 import styled from '@emotion/styled';
 import { TimeRange } from '@nivo/calendar';
 
+import { getActivityEndDate } from '@/app/(public)/contributors/utils/get-activity-end-date';
 import { CardContainer } from '@/app/_components/contributors/CardContainer';
 import { Title } from '@/app/_components/contributors/Title';
-import { getActivityEndDate } from '@/app/contributors/utils/get-activity-end-date';
 
 const CalendarContentContainer = styled.div`
   @media (max-width: 890px) {

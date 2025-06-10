@@ -1,7 +1,7 @@
 import { WorkflowAction, WorkflowTrigger } from '@/workflow/types/Workflow';
 import { findStepPosition } from '@/workflow/utils/findStepPosition';
 import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const getStepDefinitionOrThrow = ({
   stepId,

@@ -13,7 +13,7 @@ import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldAddress } from '../../types/guards/isFieldAddress';
 
 export const useAddressField = () => {
-  const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
+  const { recordId, fieldDefinition } = useContext(FieldContext);
 
   assertFieldMetadata(
     FieldMetadataType.ADDRESS,
@@ -41,7 +41,7 @@ export const useAddressField = () => {
   };
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldAddressValue>(`${recordId}-${fieldName}`);
+    useRecordFieldInput<FieldAddressValue>();
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 
@@ -51,7 +51,6 @@ export const useAddressField = () => {
     setFieldValue,
     draftValue,
     setDraftValue,
-    hotkeyScope,
     persistAddressField,
   };
 };

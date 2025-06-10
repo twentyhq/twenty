@@ -10,13 +10,12 @@ import { PhonesFieldInput } from '@/object-record/record-field/meta-types/input/
 import { RawJsonFieldInput } from '@/object-record/record-field/meta-types/input/components/RawJsonFieldInput';
 import { RelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/components/RelationFromManyFieldInput';
 import { SelectFieldInput } from '@/object-record/record-field/meta-types/input/components/SelectFieldInput';
-import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
 import { isFieldPhones } from '@/object-record/record-field/types/guards/isFieldPhones';
 import { isFieldRelationFromManyObjects } from '@/object-record/record-field/types/guards/isFieldRelationFromManyObjects';
-import { isFieldRelationToOneObject } from '@/object-record/record-field/types/guards/isFieldRelationToOneObject';
-import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ArrayFieldInput } from '@/object-record/record-field/meta-types/input/components/ArrayFieldInput';
+import { RichTextFieldInput } from '@/object-record/record-field/meta-types/input/components/RichTextFieldInput';
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
 import { isFieldArray } from '@/object-record/record-field/types/guards/isFieldArray';
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
@@ -30,6 +29,8 @@ import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/is
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
 import { isFieldRating } from '@/object-record/record-field/types/guards/isFieldRating';
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
+import { isFieldRelationToOneObject } from '@/object-record/record-field/types/guards/isFieldRelationToOneObject';
+import { isFieldRichTextV2 } from '@/object-record/record-field/types/guards/isFieldRichTextV2';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { FieldContext } from '../contexts/FieldContext';
 import { BooleanFieldInput } from '../meta-types/input/components/BooleanFieldInput';
@@ -40,10 +41,10 @@ import { RatingFieldInput } from '../meta-types/input/components/RatingFieldInpu
 import { RelationToOneFieldInput } from '../meta-types/input/components/RelationToOneFieldInput';
 import { TextFieldInput } from '../meta-types/input/components/TextFieldInput';
 import { FieldInputEvent } from '../types/FieldInputEvent';
+import { FieldRichTextV2Metadata } from '../types/FieldMetadata';
 import { isFieldText } from '../types/guards/isFieldText';
 
 type FieldInputProps = {
-  recordFieldInputdId: string;
   onSubmit?: FieldInputEvent;
   onCancel?: () => void;
   onClickOutside?: (
@@ -58,7 +59,6 @@ type FieldInputProps = {
 };
 
 export const FieldInput = ({
-  recordFieldInputdId,
   onCancel,
   onSubmit,
   onEnter,
@@ -68,21 +68,16 @@ export const FieldInput = ({
   onClickOutside,
   isReadOnly,
 }: FieldInputProps) => {
-  const { fieldDefinition } = useContext(FieldContext);
+  const { fieldDefinition, recordId } = useContext(FieldContext);
 
   return (
-    <RecordFieldInputScope
-      recordFieldInputScopeId={getScopeIdFromComponentId(recordFieldInputdId)}
-    >
+    <>
       {isFieldRelationToOneObject(fieldDefinition) ? (
         <RelationToOneFieldInput onSubmit={onSubmit} onCancel={onCancel} />
       ) : isFieldRelationFromManyObjects(fieldDefinition) ? (
         <RelationFromManyFieldInput onSubmit={onSubmit} />
       ) : isFieldPhones(fieldDefinition) ? (
-        <PhonesFieldInput
-          onCancel={onCancel}
-          onClickOutside={(event) => onClickOutside?.(() => {}, event)}
-        />
+        <PhonesFieldInput onCancel={onCancel} onClickOutside={onClickOutside} />
       ) : isFieldText(fieldDefinition) ? (
         <TextFieldInput
           onEnter={onEnter}
@@ -170,9 +165,25 @@ export const FieldInput = ({
           onCancel={onCancel}
           onClickOutside={(event) => onClickOutside?.(() => {}, event)}
         />
+      ) : isFieldRichTextV2(fieldDefinition) ? (
+        <RichTextFieldInput
+          targetableObject={{
+            id: recordId,
+            targetObjectNameSingular: (
+              fieldDefinition as {
+                metadata: FieldRichTextV2Metadata;
+              }
+            ).metadata.objectMetadataNameSingular as
+              | CoreObjectNameSingular.Note
+              | CoreObjectNameSingular.Task,
+          }}
+          onCancel={onCancel}
+          onClickOutside={onClickOutside}
+          onEscape={onEscape}
+        />
       ) : (
         <></>
       )}
-    </RecordFieldInputScope>
+    </>
   );
 };

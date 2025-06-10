@@ -2,8 +2,8 @@ import { FunctionComponent } from 'react';
 
 export type IconComponentProps = {
   className?: string;
-  size?: number;
-  stroke?: number;
+  size?: number | string;
+  stroke?: number | string;
   color?: string;
 };
 

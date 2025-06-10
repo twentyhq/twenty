@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import diff from 'microdiff';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
   ComparatorAction,
@@ -191,10 +191,12 @@ export class WorkspaceFieldComparator {
           if (
             (fieldPropertiesToStringify as readonly string[]).includes(property)
           ) {
+            // @ts-expect-error legacy noImplicitAny
             fieldPropertiesToUpdateMap[id][property] = this.parseJSONOrString(
               difference.value,
             );
           } else {
+            // @ts-expect-error legacy noImplicitAny
             fieldPropertiesToUpdateMap[id][property] = difference.value;
           }
           break;

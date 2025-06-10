@@ -21,7 +21,7 @@
 
     "moduleFolderRule": {
       "name": "{kebab-case}",
-      "folderRecursionLimit": 6,
+      "folderRecursionLimit": 4,
       "children": [
         { "ruleId": "moduleFolderRule" },
         { "name": "hooks", "ruleId": "hooksLeafFolderRule" },

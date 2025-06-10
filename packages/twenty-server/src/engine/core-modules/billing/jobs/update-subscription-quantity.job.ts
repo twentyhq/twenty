@@ -45,7 +45,7 @@ export class UpdateSubscriptionQuantityJob {
 
       await this.stripeSubscriptionItemService.updateSubscriptionItem(
         billingBaseProductSubscriptionItem.stripeSubscriptionItemId,
-        workspaceMembersCount,
+        { quantity: workspaceMembersCount },
       );
 
       this.logger.log(

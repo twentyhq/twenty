@@ -10,13 +10,13 @@ import { Key } from 'ts-key-enum';
 
 import { FieldDoubleText } from '@/object-record/record-field/types/FieldDoubleText';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { isDefined } from 'twenty-shared';
 
 import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { splitFullName } from '~/utils/format/spiltFullName';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { StyledTextInput } from './TextInput';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   display: flex;

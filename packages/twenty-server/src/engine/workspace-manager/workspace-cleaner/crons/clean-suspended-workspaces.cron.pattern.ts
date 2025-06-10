@@ -1,1 +1,1 @@
-export const cleanSuspendedWorkspaceCronPattern = '0 22 * * *'; // Every day at 10pm
+export const cleanSuspendedWorkspaceCronPattern = '0 * * * *'; // Every hour at minute 0

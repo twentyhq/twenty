@@ -1,13 +1,13 @@
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { ANIMATION } from 'twenty-ui';
 
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useTheme } from '@emotion/react';
 import { MainNavigationDrawerItemsSkeletonLoader } from '~/loading/components/MainNavigationDrawerItemsSkeletonLoader';
+import { ANIMATION } from 'twenty-ui/theme';
 
 const StyledAnimatedContainer = styled(motion.div)`
   align-items: center;

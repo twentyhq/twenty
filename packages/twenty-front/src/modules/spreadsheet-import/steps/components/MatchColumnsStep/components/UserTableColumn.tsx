@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 
 import { ImportedRow } from '@/spreadsheet-import/types';
-import { isDefined } from 'twenty-shared';
 
-import { Column } from '../MatchColumnsStep';
+import { SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -30,7 +30,7 @@ const StyledExample = styled.span`
 `;
 
 type UserTableColumnProps<T extends string> = {
-  column: Column<T>;
+  column: SpreadsheetColumn<T>;
   importedRow: ImportedRow;
 };
 

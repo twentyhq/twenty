@@ -13,10 +13,12 @@ export const CREATE_ONE_OBJECT_METADATA_ITEM = gql`
       icon
       isCustom
       isActive
+      isSearchable
       createdAt
       updatedAt
       labelIdentifierFieldMetadataId
       imageIdentifierFieldMetadataId
+      isLabelSyncedWithName
     }
   }
 `;
@@ -38,6 +40,7 @@ export const CREATE_ONE_FIELD_METADATA_ITEM = gql`
       settings
       defaultValue
       options
+      isLabelSyncedWithName
     }
   }
 `;
@@ -98,10 +101,12 @@ export const UPDATE_ONE_OBJECT_METADATA_ITEM = gql`
       icon
       isCustom
       isActive
+      isSearchable
       createdAt
       updatedAt
       labelIdentifierFieldMetadataId
       imageIdentifierFieldMetadataId
+      isLabelSyncedWithName
     }
   }
 `;
@@ -119,10 +124,12 @@ export const DELETE_ONE_OBJECT_METADATA_ITEM = gql`
       icon
       isCustom
       isActive
+      isSearchable
       createdAt
       updatedAt
       labelIdentifierFieldMetadataId
       imageIdentifierFieldMetadataId
+      isLabelSyncedWithName
     }
   }
 `;

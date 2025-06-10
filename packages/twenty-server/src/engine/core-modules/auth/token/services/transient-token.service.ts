@@ -4,14 +4,14 @@ import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 
 import { AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class TransientTokenService {
   constructor(
     private readonly jwtWrapperService: JwtWrapperService,
-    private readonly environmentService: EnvironmentService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async generateTransientToken(
@@ -23,7 +23,7 @@ export class TransientTokenService {
       'LOGIN',
       workspaceId,
     );
-    const expiresIn = this.environmentService.get(
+    const expiresIn = this.twentyConfigService.get(
       'SHORT_TERM_TOKEN_EXPIRES_IN',
     );
 

@@ -4,12 +4,14 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Workflow, WorkflowVersion } from '@/workflow/types/Workflow';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useActiveWorkflowVersionsWithManualTrigger = ({
   objectMetadataItem,
+  skip,
 }: {
   objectMetadataItem?: ObjectMetadataItem;
+  skip?: boolean;
 }) => {
   const filters = [
     {
@@ -50,6 +52,7 @@ export const useActiveWorkflowVersionsWithManualTrigger = ({
       }),
       workflow: true,
     },
+    skip,
   });
 
   // TODO: refactor when we can use 'not like' in the RawJson filter

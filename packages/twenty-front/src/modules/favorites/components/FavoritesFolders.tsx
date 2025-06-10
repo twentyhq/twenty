@@ -7,7 +7,7 @@ import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigat
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { IconFolder } from 'twenty-ui';
+import { IconFolder } from 'twenty-ui/display';
 
 type FavoriteFoldersProps = {
   isNavigationSectionOpen: boolean;

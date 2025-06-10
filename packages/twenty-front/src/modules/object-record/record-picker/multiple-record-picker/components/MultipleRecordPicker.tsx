@@ -1,0 +1,156 @@
+import { MultipleRecordPickerItemsDisplay } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerItemsDisplay';
+import { MultipleRecordPickerOnClickOutsideEffect } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerOnClickOutsideEffect';
+import { MultipleRecordPickerSearchInput } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerSearchInput';
+import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
+import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
+import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
+import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
+import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
+import { RecordPickerLayoutDirection } from '@/object-record/record-picker/types/RecordPickerLayoutDirection';
+import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
+import { useHasObjectReadOnlyPermission } from '@/settings/roles/hooks/useHasObjectReadOnlyPermission';
+import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import styled from '@emotion/styled';
+import { useRef } from 'react';
+import { useRecoilCallback } from 'recoil';
+import { Key } from 'ts-key-enum';
+import { isDefined } from 'twenty-shared/utils';
+import { IconPlus } from 'twenty-ui/display';
+
+export const StyledSelectableItem = styled(SelectableListItem)`
+  height: 100%;
+  width: 100%;
+`;
+
+type MultipleRecordPickerProps = {
+  onChange?: (morphItem: RecordPickerPickableMorphItem) => void;
+  onSubmit?: () => void;
+  onCreate?: ((searchInput?: string) => void) | (() => void);
+  layoutDirection?: RecordPickerLayoutDirection;
+  componentInstanceId: string;
+  onClickOutside: () => void;
+};
+
+export const MultipleRecordPicker = ({
+  onChange,
+  onSubmit,
+  onCreate,
+  onClickOutside,
+  layoutDirection = 'search-bar-on-bottom',
+  componentInstanceId,
+}: MultipleRecordPickerProps) => {
+  const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
+
+  const selectableListComponentInstanceId =
+    getMultipleRecordPickerSelectableListId(componentInstanceId);
+
+  const { resetSelectedItem } = useSelectableList(
+    selectableListComponentInstanceId,
+  );
+
+  const multipleRecordPickerSearchFilterState =
+    useRecoilComponentCallbackStateV2(
+      multipleRecordPickerSearchFilterComponentState,
+      componentInstanceId,
+    );
+
+  const multipleRecordPickerPickableMorphItemsState =
+    useRecoilComponentCallbackStateV2(
+      multipleRecordPickerPickableMorphItemsComponentState,
+      componentInstanceId,
+    );
+
+  const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
+
+  const resetState = useRecoilCallback(
+    ({ set }) => {
+      return () => {
+        set(multipleRecordPickerPickableMorphItemsState, []);
+        set(multipleRecordPickerSearchFilterState, '');
+      };
+    },
+    [
+      multipleRecordPickerPickableMorphItemsState,
+      multipleRecordPickerSearchFilterState,
+    ],
+  );
+
+  const handleSubmit = () => {
+    onSubmit?.();
+    goBackToPreviousHotkeyScope();
+    resetSelectedItem();
+    resetState();
+  };
+
+  const handleClickOutside = () => {
+    onClickOutside();
+    resetState();
+  };
+
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      handleSubmit();
+    },
+    MultipleRecordPickerHotkeyScope.MultipleRecordPicker,
+    [handleSubmit],
+  );
+
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleCreateNewButtonClick = useRecoilCallback(
+    ({ snapshot }) => {
+      return () => {
+        const recordPickerSearchFilter = snapshot
+          .getLoadable(multipleRecordPickerSearchFilterState)
+          .getValue();
+        onCreate?.(recordPickerSearchFilter);
+      };
+    },
+    [multipleRecordPickerSearchFilterState, onCreate],
+  );
+
+  const createNewButtonSection =
+    isDefined(onCreate) && !hasObjectReadOnlyPermission ? (
+      <DropdownMenuItemsContainer scrollable={false}>
+        <CreateNewButton
+          onClick={handleCreateNewButtonClick}
+          LeftIcon={IconPlus}
+          text="Add New"
+        />
+      </DropdownMenuItemsContainer>
+    ) : null;
+
+  return (
+    <MultipleRecordPickerComponentInstanceContext.Provider
+      value={{ instanceId: componentInstanceId }}
+    >
+      <MultipleRecordPickerOnClickOutsideEffect
+        containerRef={containerRef}
+        onClickOutside={handleClickOutside}
+      />
+      <DropdownContent ref={containerRef}>
+        {layoutDirection === 'search-bar-on-bottom' && (
+          <>
+            {createNewButtonSection}
+            <MultipleRecordPickerItemsDisplay onChange={onChange} />
+          </>
+        )}
+        <MultipleRecordPickerSearchInput />
+        {layoutDirection === 'search-bar-on-top' && (
+          <>
+            <MultipleRecordPickerItemsDisplay onChange={onChange} />
+            {createNewButtonSection}
+          </>
+        )}
+      </DropdownContent>
+    </MultipleRecordPickerComponentInstanceContext.Provider>
+  );
+};

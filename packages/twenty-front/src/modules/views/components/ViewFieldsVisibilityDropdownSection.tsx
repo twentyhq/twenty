@@ -5,14 +5,6 @@ import {
 } from '@hello-pangea/dnd';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import {
-  AppTooltip,
-  IconEye,
-  IconEyeOff,
-  IconInfoCircle,
-  MenuItemDraggable,
-  useIcons,
-} from 'twenty-ui';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
@@ -20,8 +12,16 @@ import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableIt
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownMenuSubheader } from '@/ui/layout/dropdown/components/StyledDropdownMenuSubheader';
-import { isDefined } from 'twenty-shared';
 import { groupArrayItemsBy } from '~/utils/array/groupArrayItemsBy';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  AppTooltip,
+  IconEye,
+  IconEyeOff,
+  IconInfoCircle,
+  useIcons,
+} from 'twenty-ui/display';
+import { MenuItemDraggable } from 'twenty-ui/navigation';
 
 type ViewFieldsVisibilityDropdownSectionProps = {
   fields: Omit<ColumnDefinition<FieldMetadata>, 'size'>[];

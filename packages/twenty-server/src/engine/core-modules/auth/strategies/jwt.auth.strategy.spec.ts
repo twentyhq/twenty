@@ -14,8 +14,7 @@ describe('JwtAuthStrategy', () => {
   let workspaceRepository: any;
   let userWorkspaceRepository: any;
   let userRepository: any;
-  let dataSourceService: any;
-  let typeORMService: any;
+  let twentyORMGlobalManager: any;
   const jwt = {
     sub: 'sub-default',
     jti: 'jti-default',
@@ -33,6 +32,16 @@ describe('JwtAuthStrategy', () => {
     findOne: jest.fn(async () => new UserWorkspace()),
   };
 
+  const jwtWrapperService: any = {
+    extractJwtFromRequest: jest.fn(() => () => 'token'),
+  };
+
+  twentyORMGlobalManager = {
+    getRepositoryForWorkspace: jest.fn(async () => ({
+      findOne: jest.fn(async () => ({ id: 'api-key-id', revokedAt: null })),
+    })),
+  };
+
   // first we test the API_KEY case
   it('should throw AuthException if type is API_KEY and workspace is not found', async () => {
     const payload = {
@@ -45,10 +54,8 @@ describe('JwtAuthStrategy', () => {
     };
 
     strategy = new JwtAuthStrategy(
-      {} as any,
-      {} as any,
-      typeORMService,
-      dataSourceService,
+      jwtWrapperService,
+      twentyORMGlobalManager,
       workspaceRepository,
       {} as any,
       userWorkspaceRepository,
@@ -72,19 +79,15 @@ describe('JwtAuthStrategy', () => {
       findOneBy: jest.fn(async () => new Workspace()),
     };
 
-    dataSourceService = {
-      getLastDataSourceMetadataFromWorkspaceIdOrFail: jest.fn(async () => ({})),
-    };
-
-    typeORMService = {
-      connectToDataSource: jest.fn(async () => {}),
+    twentyORMGlobalManager = {
+      getRepositoryForWorkspace: jest.fn(async () => ({
+        findOne: jest.fn(async () => null),
+      })),
     };
 
     strategy = new JwtAuthStrategy(
-      {} as any,
-      {} as any,
-      typeORMService,
-      dataSourceService,
+      jwtWrapperService,
+      twentyORMGlobalManager,
       workspaceRepository,
       {} as any,
       userWorkspaceRepository,
@@ -108,21 +111,15 @@ describe('JwtAuthStrategy', () => {
       findOneBy: jest.fn(async () => new Workspace()),
     };
 
-    const mockDataSource = {
-      query: jest
-        .fn()
-        .mockResolvedValue([{ id: 'api-key-id', revokedAt: null }]),
+    twentyORMGlobalManager = {
+      getRepositoryForWorkspace: jest.fn(async () => ({
+        findOne: jest.fn(async () => ({ id: 'api-key-id', revokedAt: null })),
+      })),
     };
 
-    jest
-      .spyOn(typeORMService, 'connectToDataSource')
-      .mockResolvedValue(mockDataSource as any);
-
     strategy = new JwtAuthStrategy(
-      {} as any,
-      {} as any,
-      typeORMService,
-      dataSourceService,
+      jwtWrapperService,
+      twentyORMGlobalManager,
       workspaceRepository,
       {} as any,
       userWorkspaceRepository,
@@ -135,7 +132,6 @@ describe('JwtAuthStrategy', () => {
   });
 
   // second we test the ACCESS cases
-
   it('should throw AuthExceptionCode if type is ACCESS, no jti, and user not found', async () => {
     const payload = {
       sub: 'sub-default',
@@ -151,10 +147,8 @@ describe('JwtAuthStrategy', () => {
     };
 
     strategy = new JwtAuthStrategy(
-      {} as any,
-      {} as any,
-      typeORMService,
-      dataSourceService,
+      jwtWrapperService,
+      twentyORMGlobalManager,
       workspaceRepository,
       userRepository,
       userWorkspaceRepository,
@@ -189,10 +183,8 @@ describe('JwtAuthStrategy', () => {
     };
 
     strategy = new JwtAuthStrategy(
-      {} as any,
-      {} as any,
-      typeORMService,
-      dataSourceService,
+      jwtWrapperService,
+      twentyORMGlobalManager,
       workspaceRepository,
       userRepository,
       userWorkspaceRepository,
@@ -230,10 +222,8 @@ describe('JwtAuthStrategy', () => {
     };
 
     strategy = new JwtAuthStrategy(
-      {} as any,
-      {} as any,
-      typeORMService,
-      dataSourceService,
+      jwtWrapperService,
+      twentyORMGlobalManager,
       workspaceRepository,
       userRepository,
       userWorkspaceRepository,

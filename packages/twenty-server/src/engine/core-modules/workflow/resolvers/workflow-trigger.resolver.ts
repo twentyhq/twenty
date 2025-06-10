@@ -10,6 +10,7 @@ import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service';
+import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
 
 @Resolver()
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
@@ -43,11 +44,16 @@ export class WorkflowTriggerResolver {
     @AuthUser() user: User,
     @Args('input') { workflowVersionId, payload }: RunWorkflowVersionInput,
   ) {
-    return await this.workflowTriggerWorkspaceService.runWorkflowVersion(
+    return await this.workflowTriggerWorkspaceService.runWorkflowVersion({
       workflowVersionId,
-      payload ?? {},
-      workspaceMemberId,
-      user,
-    );
+      payload: payload ?? {},
+      createdBy: buildCreatedByFromFullNameMetadata({
+        fullNameMetadata: {
+          firstName: user.firstName,
+          lastName: user.lastName,
+        },
+        workspaceMemberId: workspaceMemberId,
+      }),
+    });
   }
 }

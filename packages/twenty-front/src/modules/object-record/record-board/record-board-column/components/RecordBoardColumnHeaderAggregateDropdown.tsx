@@ -1,5 +1,4 @@
 import { DROPDOWN_OFFSET_Y } from '@/dropdown/constants/DropdownOffsetY';
-import { DROPDOWN_WIDTH } from '@/dropdown/constants/DropdownWidth';
 import { useCurrentContentId } from '@/dropdown/hooks/useCurrentContentId';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordBoardColumnHeaderAggregateDropdownComponentInstanceContext } from '@/object-record/record-board/contexts/RecordBoardColumnHeaderAggregateDropdownComponentInstanceContext';
@@ -46,7 +45,6 @@ export const RecordBoardColumnHeaderAggregateDropdown = ({
           dropdownHotkeyScope={{
             scope: RecordBoardColumnHotkeyScope.ColumnHeader,
           }}
-          dropdownMenuWidth={DROPDOWN_WIDTH}
           dropdownOffset={{ y: DROPDOWN_OFFSET_Y }}
           clickableComponent={
             <RecordBoardColumnHeaderAggregateDropdownButton

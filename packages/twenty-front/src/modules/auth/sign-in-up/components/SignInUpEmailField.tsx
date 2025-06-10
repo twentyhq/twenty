@@ -3,7 +3,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledFullWidthMotionDiv = styled(motion.div)`
   width: 100%;

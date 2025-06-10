@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator } from 'twenty-ui';
 import { Breadcrumb } from '../Breadcrumb';
 
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof Breadcrumb> = {
   title: 'UI/Navigation/Breadcrumb/Breadcrumb',

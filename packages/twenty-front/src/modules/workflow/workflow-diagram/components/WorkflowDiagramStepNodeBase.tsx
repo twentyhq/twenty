@@ -1,16 +1,14 @@
 import { NODE_BORDER_WIDTH } from '@/workflow/workflow-diagram/constants/NodeBorderWidth';
-import { NODE_HANDLE_HEIGHT_PX } from '@/workflow/workflow-diagram/constants/NodeHandleHeightPx';
-import { NODE_HANDLE_WIDTH_PX } from '@/workflow/workflow-diagram/constants/NodeHandleWidthPx';
-import { NODE_ICON_LEFT_MARGIN } from '@/workflow/workflow-diagram/constants/NodeIconLeftMargin';
-import { NODE_ICON_WIDTH } from '@/workflow/workflow-diagram/constants/NodeIconWidth';
 import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Handle, Position } from '@xyflow/react';
+import { Position } from '@xyflow/react';
 import React from 'react';
-import { capitalize, isDefined } from 'twenty-shared';
-import { Label, OverflowingTextWithTooltip } from 'twenty-ui';
+import { capitalize, isDefined } from 'twenty-shared/utils';
+import { Label, OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { Loader } from 'twenty-ui/feedback';
+import { WorkflowDiagramBaseHandle } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseHandle';
 
 const StyledStepNodeContainer = styled.div`
   display: flex;
@@ -24,6 +22,12 @@ const StyledStepNodeType = styled.div<{
 }>`
   ${({ nodeVariant, theme }) => {
     switch (nodeVariant) {
+      case 'running': {
+        return css`
+          background-color: ${theme.tag.background.yellow};
+          color: ${theme.tag.text.yellow};
+        `;
+      }
       case 'success': {
         return css`
           background-color: ${theme.tag.background.turquoise};
@@ -102,6 +106,12 @@ const StyledStepNodeInnerContainer = styled.div<{
     & {
     ${({ theme, variant }) => {
       switch (variant) {
+        case 'running': {
+          return css`
+            background: ${theme.adaptiveColors.yellow1};
+            border-color: ${theme.adaptiveColors.yellow4};
+          `;
+        }
         case 'success': {
           return css`
             background: ${theme.adaptiveColors.turquoise1};
@@ -128,6 +138,7 @@ const StyledStepNodeInnerContainer = styled.div<{
 const StyledStepNodeLabel = styled.div<{
   variant: WorkflowDiagramNodeVariant;
 }>`
+  box-sizing: border-box;
   align-items: center;
   display: flex;
   font-size: 13px;
@@ -143,25 +154,11 @@ const StyledStepNodeLabel = styled.div<{
     }
   }};
   max-width: 200px;
+  height: 24px;
 
   .selectable:is(.selected, :focus, :focus-visible) & {
     color: ${({ theme }) => theme.font.color.primary};
   }
-`;
-
-export const StyledHandle = styled(Handle)`
-  height: ${NODE_HANDLE_HEIGHT_PX}px;
-  width: ${NODE_HANDLE_WIDTH_PX}px;
-`;
-
-const StyledSourceHandle = styled(StyledHandle)`
-  left: ${NODE_ICON_WIDTH + NODE_ICON_LEFT_MARGIN + NODE_BORDER_WIDTH}px;
-  visibility: hidden;
-`;
-
-const StyledTargetHandle = styled(StyledSourceHandle)`
-  left: ${NODE_ICON_WIDTH + NODE_ICON_LEFT_MARGIN + NODE_BORDER_WIDTH}px;
-  visibility: hidden;
 `;
 
 const StyledRightFloatingElementContainer = styled.div`
@@ -180,19 +177,17 @@ export const WorkflowDiagramStepNodeBase = ({
   variant,
   Icon,
   RightFloatingElement,
-  isLeafNode,
 }: {
   nodeType: WorkflowDiagramStepNodeData['nodeType'];
   name: string;
   variant: WorkflowDiagramNodeVariant;
   Icon?: React.ReactNode;
   RightFloatingElement?: React.ReactNode;
-  isLeafNode: boolean;
 }) => {
   return (
     <StyledStepNodeContainer className="workflow-node-container">
       {nodeType !== 'trigger' ? (
-        <StyledTargetHandle type="target" position={Position.Top} />
+        <WorkflowDiagramBaseHandle type="target" position={Position.Top} />
       ) : null}
 
       <StyledStepNodeType variant="small" nodeVariant={variant}>
@@ -201,7 +196,7 @@ export const WorkflowDiagramStepNodeBase = ({
 
       <StyledStepNodeInnerContainer variant={variant}>
         <StyledStepNodeLabel variant={variant}>
-          {Icon}
+          {variant === 'running' ? <Loader /> : Icon}
 
           <OverflowingTextWithTooltip text={name} />
         </StyledStepNodeLabel>
@@ -213,9 +208,7 @@ export const WorkflowDiagramStepNodeBase = ({
         ) : null}
       </StyledStepNodeInnerContainer>
 
-      {!isLeafNode && (
-        <StyledSourceHandle type="source" position={Position.Bottom} />
-      )}
+      <WorkflowDiagramBaseHandle type="source" position={Position.Bottom} />
     </StyledStepNodeContainer>
   );
 };

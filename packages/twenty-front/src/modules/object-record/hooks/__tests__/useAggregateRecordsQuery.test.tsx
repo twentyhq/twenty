@@ -2,7 +2,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useAggregateRecordsQuery } from '@/object-record/hooks/useAggregateRecordsQuery';
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { generateAggregateQuery } from '@/object-record/utils/generateAggregateQuery';
 import { renderHook } from '@testing-library/react';
 import { FieldMetadataType } from '~/generated/graphql';
@@ -17,6 +17,7 @@ const mockObjectMetadataItem: ObjectMetadataItem = {
   labelSingular: 'Company',
   labelPlural: 'Companies',
   isCustom: false,
+  isSearchable: false,
   labelIdentifierFieldMetadataId: '20202020-dd4a-4ea4-bb7b-1c7300491b65',
   isActive: true,
   createdAt: new Date().toISOString(),
@@ -70,7 +71,7 @@ describe('useAggregateRecordsQuery', () => {
       useAggregateRecordsQuery({
         objectNameSingular: 'company',
         recordGqlFieldsAggregate: {
-          name: [AGGREGATE_OPERATIONS.count],
+          name: [AggregateOperations.COUNT],
         },
       }),
     );
@@ -91,7 +92,7 @@ describe('useAggregateRecordsQuery', () => {
       useAggregateRecordsQuery({
         objectNameSingular: 'company',
         recordGqlFieldsAggregate: {
-          amount: [AGGREGATE_OPERATIONS.sum],
+          amount: [AggregateOperations.SUM],
         },
       }),
     );
@@ -114,7 +115,7 @@ describe('useAggregateRecordsQuery', () => {
         useAggregateRecordsQuery({
           objectNameSingular: 'company',
           recordGqlFieldsAggregate: {
-            name: [AGGREGATE_OPERATIONS.sum],
+            name: [AggregateOperations.SUM],
           },
         }),
       ),
@@ -126,8 +127,8 @@ describe('useAggregateRecordsQuery', () => {
       useAggregateRecordsQuery({
         objectNameSingular: 'company',
         recordGqlFieldsAggregate: {
-          amount: [AGGREGATE_OPERATIONS.sum],
-          name: [AGGREGATE_OPERATIONS.count],
+          amount: [AggregateOperations.SUM],
+          name: [AggregateOperations.COUNT],
         },
       }),
     );

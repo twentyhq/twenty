@@ -1,14 +1,8 @@
 import styled from '@emotion/styled';
-import {
-  Button,
-  ButtonGroup,
-  IconChevronDown,
-  IconPlus,
-  MenuItem,
-} from 'twenty-ui';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -16,13 +10,18 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { UPDATE_VIEW_BUTTON_DROPDOWN_ID } from '@/views/constants/UpdateViewButtonDropdownId';
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
+import { useAreViewFilterGroupsDifferentFromRecordFilterGroups } from '@/views/hooks/useAreViewFilterGroupsDifferentFromRecordFilterGroups';
 import { useAreViewFiltersDifferentFromRecordFilters } from '@/views/hooks/useAreViewFiltersDifferentFromRecordFilters';
 import { useAreViewSortsDifferentFromRecordSorts } from '@/views/hooks/useAreViewSortsDifferentFromRecordSorts';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useSaveCurrentViewFiltersAndSorts } from '@/views/hooks/useSaveCurrentViewFiltersAndSorts';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
+import { t } from '@lingui/core/macro';
+import { IconChevronDown, IconPlus } from 'twenty-ui/display';
+import { Button, ButtonGroup, IconButton } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
 
 const StyledContainer = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -30,9 +29,7 @@ const StyledContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(2)};
   position: relative;
 `;
-const StyledButton = styled(Button)`
-  padding: ${({ theme }) => theme.spacing(1)};
-`;
+
 export type UpdateViewButtonGroupProps = {
   hotkeyScope: HotkeyScope;
 };
@@ -54,7 +51,7 @@ export const UpdateViewButtonGroup = ({
   const { openDropdown: openViewPickerDropdown } = useDropdown(
     VIEW_PICKER_DROPDOWN_ID,
   );
-  const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
+  const { currentView } = useGetCurrentViewOnly();
 
   const setViewPickerReferenceViewId = useSetRecoilComponentStateV2(
     viewPickerReferenceViewIdComponentState,
@@ -86,6 +83,9 @@ export const UpdateViewButtonGroup = ({
 
   const { hasFiltersQueryParams } = useViewFromQueryParams();
 
+  const { viewFilterGroupsAreDifferentFromRecordFilterGroups } =
+    useAreViewFilterGroupsDifferentFromRecordFilterGroups();
+
   const { viewFiltersAreDifferentFromRecordFilters } =
     useAreViewFiltersDifferentFromRecordFilters();
 
@@ -94,7 +94,8 @@ export const UpdateViewButtonGroup = ({
 
   const canShowButton =
     (viewFiltersAreDifferentFromRecordFilters ||
-      viewSortsAreDifferentFromRecordSorts) &&
+      viewSortsAreDifferentFromRecordSorts ||
+      viewFilterGroupsAreDifferentFromRecordFilterGroups) &&
     !hasFiltersQueryParams;
 
   if (!canShowButton) {
@@ -103,14 +104,14 @@ export const UpdateViewButtonGroup = ({
 
   return (
     <StyledContainer>
-      {currentViewWithCombinedFiltersAndSorts?.key !== 'INDEX' ? (
+      {currentView?.key !== 'INDEX' ? (
         <ButtonGroup size="small" accent="blue">
           <Button title="Update view" onClick={handleUpdateViewClick} />
           <Dropdown
             dropdownId={UPDATE_VIEW_BUTTON_DROPDOWN_ID}
             dropdownHotkeyScope={hotkeyScope}
             clickableComponent={
-              <StyledButton
+              <IconButton
                 size="small"
                 accent="blue"
                 Icon={IconChevronDown}
@@ -118,19 +119,21 @@ export const UpdateViewButtonGroup = ({
               />
             }
             dropdownComponents={
-              <DropdownMenuItemsContainer>
-                <MenuItem
-                  onClick={handleCreateViewClick}
-                  LeftIcon={IconPlus}
-                  text="Create view"
-                />
-              </DropdownMenuItemsContainer>
+              <DropdownContent>
+                <DropdownMenuItemsContainer>
+                  <MenuItem
+                    onClick={handleCreateViewClick}
+                    LeftIcon={IconPlus}
+                    text={t`Create view`}
+                  />
+                </DropdownMenuItemsContainer>
+              </DropdownContent>
             }
           />
         </ButtonGroup>
       ) : (
         <Button
-          title="Save as new view"
+          title={t`Save as new view`}
           onClick={handleSaveAsNewViewClick}
           accent="blue"
           size="small"

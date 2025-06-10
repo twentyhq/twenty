@@ -6,7 +6,7 @@ import {
   StyledMenuItemLeftContent,
 } from '../internals/components/StyledMenuItemBase';
 
-import { IconComponent } from '@ui/display';
+import { IconComponent, OverflowingTextWithTooltip } from '@ui/display';
 import { useIsMobile } from '@ui/utilities/responsive/hooks/useIsMobile';
 import { ReactNode } from 'react';
 import { MenuItemCommandHotKeys } from './MenuItemCommandHotKeys';
@@ -46,7 +46,9 @@ const StyledMenuItemCommandContainer = styled.div<{ isSelected?: boolean }>`
   transition: all 150ms ease;
   transition-property: none;
   user-select: none;
-  width: calc(100% - 2 * var(--horizontal-padding));
+  width: 100%;
+  box-sizing: border-box;
+  height: 40px;
   &:hover {
     background: ${({ theme }) => theme.background.transparent.lighter};
   }
@@ -75,6 +77,8 @@ const StyledDescription = styled.span`
 const StyledTextContainer = styled.div`
   display: flex;
   flex-direction: row;
+  max-width: calc(100% - 2 * var(--horizontal-padding));
+  overflow: hidden;
 `;
 
 export type MenuItemCommandProps = {
@@ -114,7 +118,9 @@ export const MenuItemCommand = ({
           </StyledBigIconContainer>
         )}
         <StyledTextContainer>
-          <StyledMenuItemLabelText>{text}</StyledMenuItemLabelText>
+          <StyledMenuItemLabelText>
+            <OverflowingTextWithTooltip text={text} />
+          </StyledMenuItemLabelText>
           {description && <StyledDescription>{description}</StyledDescription>}
         </StyledTextContainer>
         {RightComponent}

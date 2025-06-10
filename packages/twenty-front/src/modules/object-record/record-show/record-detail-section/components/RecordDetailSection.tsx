@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
-
-import { Section } from 'twenty-ui';
+import { Section } from 'twenty-ui/layout';
 
 const StyledRecordDetailSection = styled(Section)`
   border-top: 1px solid ${({ theme }) => theme.border.color.light};

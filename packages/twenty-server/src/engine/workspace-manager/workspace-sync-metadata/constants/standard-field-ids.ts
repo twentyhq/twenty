@@ -206,7 +206,7 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
 
 export const FAVORITE_STANDARD_FIELD_IDS = {
   position: '20202020-dd26-42c6-8c3c-2a7598c204f6',
-  workspaceMember: '20202020-ce63-49cb-9676-fdc0c45892cd',
+  forWorkspaceMember: '20202020-ce63-49cb-9676-fdc0c45892cd',
   person: '20202020-c428-4f40-b6f3-86091511c41c',
   company: '20202020-cff5-4682-8bf9-069169e08279',
   opportunity: '20202020-dabc-48e1-8318-2781a2b32aa2',
@@ -408,6 +408,7 @@ export const VIEW_FILTER_STANDARD_FIELD_IDS = {
   view: '20202020-4f5b-487e-829c-3d881c163611',
   viewFilterGroupId: '20202020-2580-420a-8328-cab1635c0296',
   positionInViewFilterGroup: '20202020-3bb0-4f66-a537-a46fe0dc468f',
+  subFieldName: '20202020-3bb0-4f66-a537-a46fe0dc469a',
 };
 
 export const VIEW_FILTER_GROUP_STANDARD_FIELD_IDS = {
@@ -452,9 +453,10 @@ export const WEBHOOK_STANDARD_FIELD_IDS = {
   secret: '20202020-97ce-410f-bff9-e9ccb038fb67',
 };
 
-export const WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS = {
-  eventName: '20202020-7318-4cf8-a6ac-2de75e3fd97d',
-  workflow: '20202020-4082-4641-8569-dc08d5365002',
+export const WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS = {
+  type: '20202020-3319-4234-a34c-3f92c1ab56e7',
+  settings: '20202020-3319-4234-a34c-bac8f903de12',
+  workflow: '20202020-3319-4234-a34c-8e1a4d2f7c03',
 };
 
 export const WORKFLOW_STANDARD_FIELD_IDS = {
@@ -465,6 +467,7 @@ export const WORKFLOW_STANDARD_FIELD_IDS = {
   versions: '20202020-9432-416e-8f3c-27ee3153d099',
   runs: '20202020-759b-4340-b58b-e73595c4df4f',
   eventListeners: '20202020-0229-4c66-832e-035c67579a38',
+  automatedTriggers: '20202020-3319-4234-a34c-117ecad2b8a9',
   favorites: '20202020-c554-4c41-be7a-cf9cd4b0d512',
   timelineActivities: '20202020-906e-486a-a798-131a5f081faf',
   createdBy: '20202020-6007-401a-8aa5-e6f48581a6f3',
@@ -498,6 +501,7 @@ export const WORKFLOW_VERSION_STANDARD_FIELD_IDS = {
 };
 
 export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
+  position: '20202020-1810-4591-a93c-d0df97dca843',
   name: '20202020-e914-43a6-9c26-3603c59065f4',
   colorScheme: '20202020-66bc-47f2-adac-f2ef7c598b63',
   locale: '20202020-402e-4695-b169-794fa015afbe',
@@ -576,7 +580,6 @@ export const STANDARD_OBJECT_FIELD_IDS = {
   view: VIEW_STANDARD_FIELD_IDS,
   webhook: WEBHOOK_STANDARD_FIELD_IDS,
   workflow: WORKFLOW_STANDARD_FIELD_IDS,
-  workflowEventListener: WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS,
   workflowRun: WORKFLOW_RUN_STANDARD_FIELD_IDS,
   workflowVersion: WORKFLOW_VERSION_STANDARD_FIELD_IDS,
   workspaceMember: WORKSPACE_MEMBER_STANDARD_FIELD_IDS,

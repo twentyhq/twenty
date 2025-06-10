@@ -9,13 +9,21 @@ export function filterOutSelfAndContactsFromCompanyOrWorkspace(
   connectedAccount: ConnectedAccountWorkspaceEntity,
   workspaceMembers: WorkspaceMemberWorkspaceEntity[],
 ): Contact[] {
-  const selfDomainName = getDomainNameFromHandle(connectedAccount.handle);
+  const selfDomainName = getDomainNameFromHandle(
+    connectedAccount.handle,
+  ).toLowerCase();
 
-  const handleAliases = connectedAccount.handleAliases?.split(',') || [];
+  const allHandles = [
+    connectedAccount.handle.toLowerCase(),
+    ...(connectedAccount.handleAliases?.split(',') || []).map((handle) =>
+      handle.toLowerCase(),
+    ),
+  ];
 
   const workspaceMembersMap = workspaceMembers.reduce(
     (map, workspaceMember) => {
-      map[workspaceMember.userEmail] = true;
+      // @ts-expect-error legacy noImplicitAny
+      map[workspaceMember.userEmail.toLowerCase()] = true;
 
       return map;
     },
@@ -23,13 +31,14 @@ export function filterOutSelfAndContactsFromCompanyOrWorkspace(
   );
 
   const isDifferentDomain = (contact: Contact, selfDomainName: string) =>
-    getDomainNameFromHandle(contact.handle) !== selfDomainName;
+    getDomainNameFromHandle(contact.handle).toLowerCase() !== selfDomainName;
 
   return contacts.filter(
     (contact) =>
       (isDifferentDomain(contact, selfDomainName) ||
         !isWorkDomain(selfDomainName)) &&
-      !workspaceMembersMap[contact.handle] &&
-      !handleAliases.includes(contact.handle),
+      // @ts-expect-error legacy noImplicitAny
+      !workspaceMembersMap[contact.handle.toLowerCase()] &&
+      !allHandles.includes(contact.handle.toLowerCase()),
   );
 }

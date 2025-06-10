@@ -12,7 +12,6 @@ describe('serverlessFunctionsResolver (e2e)', () => {
             name
             description
             runtime
-            syncStatus
             latestVersion
             publishedVersions
             createdAt
@@ -44,7 +43,6 @@ describe('serverlessFunctionsResolver (e2e)', () => {
           expect(serverlessFunction).toHaveProperty('name');
           expect(serverlessFunction).toHaveProperty('description');
           expect(serverlessFunction).toHaveProperty('runtime');
-          expect(serverlessFunction).toHaveProperty('syncStatus');
           expect(serverlessFunction).toHaveProperty('latestVersion');
           expect(serverlessFunction).toHaveProperty('publishedVersions');
           expect(serverlessFunction).toHaveProperty('createdAt');

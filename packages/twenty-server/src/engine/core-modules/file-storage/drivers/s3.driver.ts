@@ -18,7 +18,7 @@ import {
   S3,
   S3ClientConfig,
 } from '@aws-sdk/client-s3';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 import { StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import {
@@ -67,6 +67,7 @@ export class S3Driver implements StorageDriver {
     await this.s3Client.send(command);
   }
 
+  // @ts-expect-error legacy noImplicitAny
   private async emptyS3Directory(folderPath) {
     const listParams = {
       Bucket: this.bucketName,
@@ -393,5 +394,27 @@ export class S3Driver implements StorageDriver {
     }
 
     return this.s3Client.createBucket(args);
+  }
+
+  async checkFileExists(params: {
+    folderPath: string;
+    filename: string;
+  }): Promise<boolean> {
+    try {
+      await this.s3Client.send(
+        new HeadObjectCommand({
+          Bucket: this.bucketName,
+          Key: `${params.folderPath}/${params.filename}`,
+        }),
+      );
+    } catch (error) {
+      if (error instanceof NotFound) {
+        return false;
+      }
+
+      throw error;
+    }
+
+    return true;
   }
 }

@@ -1,7 +1,7 @@
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { capitalize } from 'twenty-shared';
 
 import { getOperandLabel, getOperandLabelShort } from '../getOperandLabel';
+import { capitalize } from 'twenty-shared/utils';
 
 describe('getOperandLabel', () => {
   const testCases = [

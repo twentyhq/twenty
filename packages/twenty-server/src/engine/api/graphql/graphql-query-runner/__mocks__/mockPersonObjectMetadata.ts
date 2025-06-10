@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -19,6 +19,7 @@ export const mockPersonObjectMetadata = (
   isActive: true,
   isSystem: false,
   isAuditLogged: true,
+  isSearchable: true,
   duplicateCriteria: duplicateCriteria,
   fromRelations: [],
   toRelations: [],
@@ -28,6 +29,7 @@ export const mockPersonObjectMetadata = (
   fields: [],
   indexMetadatas: [],
   fieldsById: {},
+  fieldsByJoinColumnName: {},
   fieldsByName: {
     name: {
       id: '',

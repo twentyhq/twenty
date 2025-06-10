@@ -1,20 +1,21 @@
 import { useRecoilValue } from 'recoil';
 
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
-import { ClientConfigError } from '@/error-handler/components/ClientConfigError';
+import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
 
 export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
-  const { isLoaded, isErrored, error } = useRecoilValue(
-    clientConfigApiStatusState,
-  );
-
-  // TODO: Implement a better loading strategy
-  if (!isLoaded) return null;
+  const { isErrored, error } = useRecoilValue(clientConfigApiStatusState);
 
   return isErrored && error instanceof Error ? (
-    <ClientConfigError error={error} />
+    <AppFullScreenErrorFallback
+      error={error}
+      resetErrorBoundary={() => {
+        window.location.reload();
+      }}
+      title="Unable to Reach Back-end"
+    />
   ) : (
     children
   );

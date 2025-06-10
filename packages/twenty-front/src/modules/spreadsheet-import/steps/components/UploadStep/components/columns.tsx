@@ -1,10 +1,10 @@
+import styled from '@emotion/styled';
 // @ts-expect-error // Todo: remove usage of react-data-grid
 import { Column } from 'react-data-grid';
 import { createPortal } from 'react-dom';
-import styled from '@emotion/styled';
-import { AppTooltip } from 'twenty-ui';
 
-import { Fields } from '@/spreadsheet-import/types';
+import { SpreadsheetImportFields } from '@/spreadsheet-import/types';
+import { AppTooltip } from 'twenty-ui/display';
 
 const StyledHeaderContainer = styled.div`
   align-items: center;
@@ -27,7 +27,9 @@ const StyledDefaultContainer = styled.div`
   text-overflow: ellipsis;
 `;
 
-export const generateColumns = <T extends string>(fields: Fields<T>) =>
+export const generateColumns = <T extends string>(
+  fields: SpreadsheetImportFields<T>,
+) =>
   fields.map(
     (column): Column<any> => ({
       key: column.key,

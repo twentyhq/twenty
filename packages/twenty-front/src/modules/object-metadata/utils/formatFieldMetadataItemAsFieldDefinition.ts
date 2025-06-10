@@ -33,12 +33,14 @@ export const formatFieldMetadataItemAsFieldDefinition = ({
       relationObjectMetadataItem?.nameSingular ?? '',
     relationObjectMetadataNamePlural:
       relationObjectMetadataItem?.namePlural ?? '',
+    relationObjectMetadataId: relationObjectMetadataItem?.id ?? '',
     objectMetadataNameSingular: objectMetadataItem.nameSingular ?? '',
     targetFieldMetadataName:
       field.relationDefinition?.targetFieldMetadata?.name ?? '',
     options: field.options,
     settings: field.settings,
     isNullable: field.isNullable,
+    isCustom: field.isCustom ?? false,
   };
 
   return {

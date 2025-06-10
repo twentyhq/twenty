@@ -2,24 +2,24 @@
 import { Module } from '@nestjs/common';
 import { JwtModule as NestJwtModule } from '@nestjs/jwt';
 
-import { EnvironmentModule } from 'src/engine/core-modules/environment/environment.module';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 const InternalJwtModule = NestJwtModule.registerAsync({
-  useFactory: async (environmentService: EnvironmentService) => {
+  useFactory: async (twentyConfigService: TwentyConfigService) => {
     return {
-      secret: environmentService.get('APP_SECRET'),
+      secret: twentyConfigService.get('APP_SECRET'),
       signOptions: {
-        expiresIn: environmentService.get('ACCESS_TOKEN_EXPIRES_IN'),
+        expiresIn: twentyConfigService.get('ACCESS_TOKEN_EXPIRES_IN'),
       },
     };
   },
-  inject: [EnvironmentService],
+  inject: [TwentyConfigService],
 });
 
 @Module({
-  imports: [InternalJwtModule, EnvironmentModule],
+  imports: [InternalJwtModule, TwentyConfigModule],
   controllers: [],
   providers: [JwtWrapperService],
   exports: [JwtWrapperService],

@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { MainButton } from '@/ui/input/button/MainButton';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledIframe = styled.iframe`
   display: block;

@@ -6,11 +6,11 @@ import {
   Client,
 } from '@microsoft/microsoft-graph-client';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class MicrosoftOAuth2ClientManagerService {
-  constructor(private readonly environmentService: EnvironmentService) {}
+  constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
   public async getOAuth2Client(refreshToken: string): Promise<Client> {
     const authProvider: AuthProvider = async (
@@ -21,13 +21,13 @@ export class MicrosoftOAuth2ClientManagerService {
 
         urlData.append(
           'client_id',
-          this.environmentService.get('AUTH_MICROSOFT_CLIENT_ID'),
+          this.twentyConfigService.get('AUTH_MICROSOFT_CLIENT_ID'),
         );
         urlData.append('scope', 'https://graph.microsoft.com/.default');
         urlData.append('refresh_token', refreshToken);
         urlData.append(
           'client_secret',
-          this.environmentService.get('AUTH_MICROSOFT_CLIENT_SECRET'),
+          this.twentyConfigService.get('AUTH_MICROSOFT_CLIENT_SECRET'),
         );
         urlData.append('grant_type', 'refresh_token');
 

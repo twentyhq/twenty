@@ -1,4 +1,7 @@
 # README
+DISCLAIMER: The k8s and podman deployments are not maintained by the core team.
+These files are provided and maintained by the community. Twenty core team
+maintains support for docker deployment.
 
 ## Overview
 

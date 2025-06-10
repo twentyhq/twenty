@@ -5,6 +5,7 @@ import {
 } from 'src/engine/api/graphql/workspace-query-runner/utils/parse-result.util';
 
 describe('handleSpecialKey', () => {
+  // @ts-expect-error legacy noImplicitAny
   let result;
 
   beforeEach(() => {
@@ -13,10 +14,12 @@ describe('handleSpecialKey', () => {
 
   test('should correctly process a composite key and add it to the result object', () => {
     handleCompositeKey(
+      // @ts-expect-error legacy noImplicitAny
       result,
       createCompositeFieldKey('complexField', 'link'),
       'value1',
     );
+    // @ts-expect-error legacy noImplicitAny
     expect(result).toEqual({
       complexField: {
         link: 'value1',
@@ -26,15 +29,18 @@ describe('handleSpecialKey', () => {
 
   test('should add values under the same newKey if called multiple times', () => {
     handleCompositeKey(
+      // @ts-expect-error legacy noImplicitAny
       result,
       createCompositeFieldKey('complexField', 'link'),
       'value1',
     );
     handleCompositeKey(
+      // @ts-expect-error legacy noImplicitAny
       result,
       createCompositeFieldKey('complexField', 'text'),
       'value2',
     );
+    // @ts-expect-error legacy noImplicitAny
     expect(result).toEqual({
       complexField: {
         link: 'value1',
@@ -44,7 +50,9 @@ describe('handleSpecialKey', () => {
   });
 
   test('should not create a new field if the composite key is not correctly formed', () => {
+    // @ts-expect-error legacy noImplicitAny
     handleCompositeKey(result, 'COMPOSITE___complexField', 'value1');
+    // @ts-expect-error legacy noImplicitAny
     expect(result).toEqual({});
   });
 });

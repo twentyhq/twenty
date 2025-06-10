@@ -1,7 +1,11 @@
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { WorkspaceJoinColumnsMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-join-columns-metadata-args.interface';
 import { WorkspaceRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-relation-metadata-args.interface';
 
-import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import {
+  RelationException,
+  RelationExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/relation.exception';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 
 export const getJoinColumn = (
@@ -9,10 +13,7 @@ export const getJoinColumn = (
   relationMetadataArgs: WorkspaceRelationMetadataArgs,
   opposite = false,
 ): string | null => {
-  if (
-    relationMetadataArgs.type === RelationMetadataType.ONE_TO_MANY ||
-    relationMetadataArgs.type === RelationMetadataType.MANY_TO_MANY
-  ) {
+  if (relationMetadataArgs.type === RelationType.ONE_TO_MANY) {
     return null;
   }
 
@@ -34,14 +35,15 @@ export const getJoinColumn = (
     filteredJoinColumnsMetadataArgsCollection.length > 0 &&
     oppositeFilteredJoinColumnsMetadataArgsCollection.length > 0
   ) {
-    throw new Error(
+    throw new RelationException(
       `Join column for ${relationMetadataArgs.name} relation is present on both sides`,
+      RelationExceptionCode.RELATION_JOIN_COLUMN_ON_BOTH_SIDES,
     );
   }
 
   // If we're in a ONE_TO_ONE relation and there are no join columns, we need to find the join column on the inverse side
   if (
-    relationMetadataArgs.type === RelationMetadataType.ONE_TO_ONE &&
+    relationMetadataArgs.type === RelationType.ONE_TO_ONE &&
     filteredJoinColumnsMetadataArgsCollection.length === 0 &&
     !opposite
   ) {
@@ -55,8 +57,9 @@ export const getJoinColumn = (
       );
 
     if (!inverseSideRelationMetadataArgs) {
-      throw new Error(
+      throw new RelationException(
         `Inverse side join column of relation ${relationMetadataArgs.name} is missing`,
+        RelationExceptionCode.MISSING_RELATION_JOIN_COLUMN,
       );
     }
 
@@ -70,16 +73,18 @@ export const getJoinColumn = (
 
   // Check if there are multiple join columns for the relation
   if (filteredJoinColumnsMetadataArgsCollection.length > 1) {
-    throw new Error(
+    throw new RelationException(
       `Multiple join columns found for relation ${relationMetadataArgs.name}`,
+      RelationExceptionCode.MULTIPLE_JOIN_COLUMNS_FOUND,
     );
   }
 
   const joinColumnsMetadataArgs = filteredJoinColumnsMetadataArgsCollection[0];
 
   if (!joinColumnsMetadataArgs) {
-    throw new Error(
+    throw new RelationException(
       `Join column is missing for relation ${relationMetadataArgs.name}`,
+      RelationExceptionCode.MISSING_RELATION_JOIN_COLUMN,
     );
   }
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { WorkspaceActivationStatus } from 'twenty-shared';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
@@ -23,6 +23,7 @@ import {
   MessageParticipantUnmatchParticipantJobData,
 } from 'src/modules/messaging/message-participant-manager/jobs/message-participant-unmatch-participant.job';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+
 @Injectable()
 export class MessageParticipantWorkspaceMemberListener {
   constructor(
@@ -60,6 +61,7 @@ export class MessageParticipantWorkspaceMemberListener {
           workspaceId: payload.workspaceId,
           email: eventPayload.properties.after.userEmail,
           workspaceMemberId: eventPayload.recordId,
+          isPrimaryEmail: true,
         },
       );
     }
@@ -93,6 +95,7 @@ export class MessageParticipantWorkspaceMemberListener {
             workspaceId: payload.workspaceId,
             email: eventPayload.properties.after.userEmail,
             workspaceMemberId: eventPayload.recordId,
+            isPrimaryEmail: true,
           },
         );
       }

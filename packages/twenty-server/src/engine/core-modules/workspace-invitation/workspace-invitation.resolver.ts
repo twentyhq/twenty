@@ -1,8 +1,6 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { SettingsPermissions } from 'twenty-shared';
-
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { SendInvitationsOutput } from 'src/engine/core-modules/workspace-invitation/dtos/send-invitations.output';
@@ -14,13 +12,14 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 import { SendInvitationsInput } from './dtos/send-invitations.input';
 
 @UseGuards(
   WorkspaceAuthGuard,
-  SettingsPermissionsGuard(SettingsPermissions.WORKSPACE_USERS),
+  SettingsPermissionsGuard(SettingPermissionType.WORKSPACE_MEMBERS),
 )
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
 @Resolver()
@@ -70,11 +69,10 @@ export class WorkspaceInvitationResolver {
     let workspaceLogoWithToken = '';
 
     if (workspace.logo) {
-      const workspaceLogoToken = await this.fileService.encodeFileToken({
+      workspaceLogoWithToken = this.fileService.signFileUrl({
+        url: workspace.logo,
         workspaceId: workspace.id,
       });
-
-      workspaceLogoWithToken = `${workspace.logo}?token=${workspaceLogoToken}`;
     }
 
     return await this.workspaceInvitationService.sendInvitations(

@@ -5,16 +5,13 @@ import { useRecoilCallback } from 'recoil';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import {
-  RecordFieldValueSelectorContextProvider,
-  useSetRecordValue,
-} from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-import { getPeopleMock } from '~/testing/mock-data/people';
+import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
 import { mockedTasks } from '~/testing/mock-data/tasks';
 
 const RecordMockSetterEffect = ({
@@ -26,15 +23,12 @@ const RecordMockSetterEffect = ({
   people: ObjectRecord[];
   tasks: ObjectRecord[];
 }) => {
-  const setRecordValue = useSetRecordValue();
-
   const setRecordInStores = useRecoilCallback(
     ({ set }) =>
       (record: ObjectRecord) => {
         set(recordStoreFamilyState(record.id), record);
-        setRecordValue(record.id, record);
       },
-    [setRecordValue],
+    [],
   );
 
   useEffect(() => {
@@ -71,7 +65,7 @@ export const getFieldDecorator =
           ]
         : companiesMock;
 
-    const peopleMock = getPeopleMock();
+    const peopleMock = getPeopleRecordConnectionMock();
 
     const people =
       objectNameSingular === 'person' && isDefined(fieldValue)
@@ -124,7 +118,11 @@ export const getFieldDecorator =
     });
 
     return (
-      <RecordFieldValueSelectorContextProvider>
+      <RecordFieldComponentInstanceContext.Provider
+        value={{
+          instanceId: 'record-field-component-instance-id',
+        }}
+      >
         <FieldContext.Provider
           value={{
             recordId: record.id,
@@ -134,7 +132,7 @@ export const getFieldDecorator =
               position: 0,
               objectMetadataItem,
             }),
-            hotkeyScope: 'hotkey-scope',
+            isReadOnly: false,
           }}
         >
           <RecordMockSetterEffect
@@ -144,6 +142,6 @@ export const getFieldDecorator =
           />
           <Story />
         </FieldContext.Provider>
-      </RecordFieldValueSelectorContextProvider>
+      </RecordFieldComponentInstanceContext.Provider>
     );
   };

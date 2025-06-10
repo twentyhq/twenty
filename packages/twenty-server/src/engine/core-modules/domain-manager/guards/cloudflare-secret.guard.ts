@@ -4,25 +4,27 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 
 import { timingSafeEqual } from 'crypto';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class CloudflareSecretMatchGuard implements CanActivate {
-  constructor(private readonly environmentService: EnvironmentService) {}
+  constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
   canActivate(context: ExecutionContext): boolean {
     try {
       const request = context.switchToHttp().getRequest<Request>();
 
-      const cloudflareWebhookSecret = this.environmentService.get(
+      const cloudflareWebhookSecret = this.twentyConfigService.get(
         'CLOUDFLARE_WEBHOOK_SECRET',
       );
 
       if (
         !cloudflareWebhookSecret ||
         (cloudflareWebhookSecret &&
+          // @ts-expect-error legacy noImplicitAny
           (typeof request.headers['cf-webhook-auth'] === 'string' ||
             timingSafeEqual(
+              // @ts-expect-error legacy noImplicitAny
               Buffer.from(request.headers['cf-webhook-auth']),
               Buffer.from(cloudflareWebhookSecret),
             )))

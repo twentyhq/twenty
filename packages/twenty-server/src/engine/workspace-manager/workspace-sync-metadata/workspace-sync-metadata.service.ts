@@ -1,15 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
 
-import { DataSource, QueryFailedError, Repository } from 'typeorm';
+import { DataSource, QueryFailedError } from 'typeorm';
 
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
-import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
-import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
+import {
+  WorkspaceMigrationEntity,
+  WorkspaceMigrationTableActionType,
+} from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
+import { WorkspaceSyncFieldMetadataRelationService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-field-metadata-relation.service';
 import { WorkspaceSyncFieldMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-field-metadata.service';
 import { WorkspaceSyncIndexMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-index-metadata.service';
 import { WorkspaceSyncObjectMetadataIdentifiersService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-object-metadata-identifiers.service';
@@ -28,16 +31,15 @@ export class WorkspaceSyncMetadataService {
   constructor(
     @InjectDataSource('metadata')
     private readonly metadataDataSource: DataSource,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceSyncObjectMetadataService: WorkspaceSyncObjectMetadataService,
     private readonly workspaceSyncRelationMetadataService: WorkspaceSyncRelationMetadataService,
     private readonly workspaceSyncFieldMetadataService: WorkspaceSyncFieldMetadataService,
+    private readonly workspaceSyncFieldMetadataRelationService: WorkspaceSyncFieldMetadataRelationService,
     private readonly workspaceSyncIndexMetadataService: WorkspaceSyncIndexMetadataService,
     private readonly workspaceSyncObjectMetadataIdentifiersService: WorkspaceSyncObjectMetadataIdentifiersService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
-    @InjectRepository(FeatureFlag, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlag>,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   /**
@@ -71,12 +73,6 @@ export class WorkspaceSyncMetadataService {
         WorkspaceMigrationEntity,
       );
 
-      // Retrieve feature flags
-      const workspaceFeatureFlagsMap =
-        await this.featureFlagService.getWorkspaceFeatureFlagsMap(
-          context.workspaceId,
-        );
-
       this.logger.log('Syncing standard objects and fields metadata');
 
       // 1 - Sync standard objects
@@ -87,7 +83,6 @@ export class WorkspaceSyncMetadataService {
           context,
           manager,
           storage,
-          workspaceFeatureFlagsMap,
         );
 
       const workspaceObjectMigrationsEnd = performance.now();
@@ -103,7 +98,6 @@ export class WorkspaceSyncMetadataService {
           context,
           manager,
           storage,
-          workspaceFeatureFlagsMap,
         );
 
       const workspaceFieldMigrationsEnd = performance.now();
@@ -112,14 +106,25 @@ export class WorkspaceSyncMetadataService {
         `Workspace field migrations took ${workspaceFieldMigrationsEnd - workspaceFieldMigrationsStart}ms`,
       );
 
+      // Merge object and field migrations during table creation
+      const {
+        objectMigrations: mergedObjectMigrations,
+        fieldMigrations: mergedFieldMigrations,
+      } = this.mergeMigrations({
+        objectMigrations: workspaceObjectMigrations,
+        fieldMigrations: workspaceFieldMigrations,
+      });
+
       // 3 - Sync standard relations on standard and custom objects
       const workspaceRelationMigrationsStart = performance.now();
-      const workspaceRelationMigrations =
-        await this.workspaceSyncRelationMetadataService.synchronize(
+
+      let workspaceRelationMigrations: Partial<WorkspaceMigrationEntity>[] = [];
+
+      workspaceRelationMigrations =
+        await this.workspaceSyncFieldMetadataRelationService.synchronize(
           context,
           manager,
           storage,
-          workspaceFeatureFlagsMap,
         );
 
       const workspaceRelationMigrationsEnd = performance.now();
@@ -130,14 +135,13 @@ export class WorkspaceSyncMetadataService {
 
       // 4 - Sync standard indexes on standard objects
       const workspaceIndexMigrationsStart = performance.now();
+
       const workspaceIndexMigrations =
         await this.workspaceSyncIndexMetadataService.synchronize(
           context,
           manager,
           storage,
-          workspaceFeatureFlagsMap,
         );
-
       const workspaceIndexMigrationsEnd = performance.now();
 
       this.logger.log(
@@ -151,7 +155,6 @@ export class WorkspaceSyncMetadataService {
         context,
         manager,
         storage,
-        workspaceFeatureFlagsMap,
       );
 
       const workspaceObjectMetadataIdentifiersEnd = performance.now();
@@ -164,8 +167,8 @@ export class WorkspaceSyncMetadataService {
 
       // Save workspace migrations into the database
       workspaceMigrations = await workspaceMigrationRepository.save([
-        ...workspaceObjectMigrations,
-        ...workspaceFieldMigrations,
+        ...mergedObjectMigrations,
+        ...mergedFieldMigrations,
         ...workspaceRelationMigrations,
         ...workspaceIndexMigrations,
       ]);
@@ -207,7 +210,9 @@ export class WorkspaceSyncMetadataService {
     } catch (error) {
       this.logger.error('Sync of standard objects failed with:', error);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (error instanceof QueryFailedError && (error as any).detail) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         this.logger.error((error as any).detail);
       }
       await queryRunner.rollbackTransaction();
@@ -221,6 +226,65 @@ export class WorkspaceSyncMetadataService {
     return {
       workspaceMigrations,
       storage,
+    };
+  }
+
+  private mergeMigrations({
+    objectMigrations,
+    fieldMigrations,
+  }: {
+    objectMigrations: Partial<WorkspaceMigrationEntity>[];
+    fieldMigrations: Partial<WorkspaceMigrationEntity>[];
+  }): {
+    objectMigrations: Partial<WorkspaceMigrationEntity>[];
+    fieldMigrations: Partial<WorkspaceMigrationEntity>[];
+  } {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const createMigrationsByTable = new Map<string, any>();
+
+    for (const objectMigration of objectMigrations) {
+      if (
+        !objectMigration.migrations ||
+        objectMigration.migrations.length === 0
+      )
+        continue;
+
+      const tableMigration = objectMigration.migrations[0];
+
+      if (tableMigration.action === WorkspaceMigrationTableActionType.CREATE) {
+        createMigrationsByTable.set(tableMigration.name, tableMigration);
+      }
+    }
+
+    const fieldMigrationsWithoutTableCreation = fieldMigrations.filter(
+      (fieldMigration) => {
+        if (
+          !fieldMigration.migrations ||
+          fieldMigration.migrations.length === 0
+        )
+          return true;
+
+        const tableMigration = fieldMigration.migrations[0];
+        const tableName = tableMigration.name;
+
+        if (createMigrationsByTable.has(tableName)) {
+          const createMigration = createMigrationsByTable.get(tableName);
+
+          if (tableMigration.columns?.length) {
+            createMigration.columns = createMigration.columns || [];
+            createMigration.columns.push(...tableMigration.columns);
+          }
+
+          return false;
+        }
+
+        return true;
+      },
+    );
+
+    return {
+      objectMigrations,
+      fieldMigrations: fieldMigrationsWithoutTableCreation,
     };
   }
 }

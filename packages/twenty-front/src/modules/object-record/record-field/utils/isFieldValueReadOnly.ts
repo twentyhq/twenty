@@ -1,45 +1,41 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { isWorkflowSubObjectMetadata } from '@/object-metadata/utils/isWorkflowSubObjectMetadata';
+import { isWorkflowRunJsonField } from '@/object-record/record-field/meta-types/utils/isWorkflowRunJsonField';
 import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldActor';
 import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
-import { isFieldRichTextV2 } from '@/object-record/record-field/types/guards/isFieldRichTextV2';
-import { isDefined } from 'twenty-shared';
+
+import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type isFieldValueReadOnlyParams = {
   objectNameSingular?: string;
   fieldName?: string;
   fieldType?: FieldMetadataType;
-  isObjectRemote?: boolean;
-  isRecordDeleted?: boolean;
-  hasObjectReadOnlyPermission?: boolean;
+  isRecordReadOnly?: boolean;
+  isCustom?: boolean;
 };
 
 export const isFieldValueReadOnly = ({
   objectNameSingular,
   fieldName,
   fieldType,
-  isObjectRemote = false,
-  isRecordDeleted = false,
-  hasObjectReadOnlyPermission = false,
+  isCustom,
+  isRecordReadOnly = false,
 }: isFieldValueReadOnlyParams) => {
-  if (fieldName === 'noteTargets' || fieldName === 'taskTargets') {
+  if (isRecordReadOnly) {
     return true;
   }
 
-  if (isObjectRemote) {
-    return true;
+  if (
+    isWorkflowRunJsonField({
+      objectMetadataNameSingular: objectNameSingular,
+      fieldName,
+    })
+  ) {
+    return false;
   }
 
-  if (isRecordDeleted) {
-    return true;
-  }
-
-  if (hasObjectReadOnlyPermission) {
-    return true;
-  }
-
-  if (isWorkflowSubObjectMetadata(objectNameSingular)) {
+  if (isWorkflowSubObjectMetadata(objectNameSingular) && !isCustom) {
     return true;
   }
 
@@ -49,16 +45,29 @@ export const isFieldValueReadOnly = ({
 
   if (
     objectNameSingular === CoreObjectNameSingular.Workflow &&
-    fieldName !== 'name'
+    fieldName !== 'name' &&
+    !isCustom
+  ) {
+    return true;
+  }
+
+  if (
+    objectNameSingular !== CoreObjectNameSingular.Note &&
+    fieldName === 'noteTargets'
+  ) {
+    return true;
+  }
+
+  if (
+    objectNameSingular !== CoreObjectNameSingular.Task &&
+    fieldName === 'taskTargets'
   ) {
     return true;
   }
 
   if (
     isDefined(fieldType) &&
-    (isFieldActor({ type: fieldType }) ||
-      isFieldRichText({ type: fieldType }) ||
-      isFieldRichTextV2({ type: fieldType }))
+    (isFieldActor({ type: fieldType }) || isFieldRichText({ type: fieldType }))
   ) {
     return true;
   }

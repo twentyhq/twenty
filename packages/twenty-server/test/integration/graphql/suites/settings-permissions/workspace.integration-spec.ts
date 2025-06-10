@@ -11,7 +11,7 @@ import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permiss
 const client = request(`http://localhost:${APP_PORT}`);
 
 describe('workspace permissions', () => {
-  let originalWorkspaceState;
+  let originalWorkspaceState: Record<string, unknown>;
 
   beforeAll(async () => {
     // Store original workspace state
@@ -25,7 +25,6 @@ describe('workspace permissions', () => {
           logo
           isPublicInviteLinkEnabled
           subdomain
-          isCustomDomainEnabled
         }
       }
     `;
@@ -33,20 +32,12 @@ describe('workspace permissions', () => {
     const response = await makeGraphqlAPIRequest({ query });
 
     originalWorkspaceState = response.body.data.currentWorkspace;
-
-    const enablePermissionsQuery = updateFeatureFlagFactory(
-      SEED_APPLE_WORKSPACE_ID,
-      'IsPermissionsEnabled',
-      true,
-    );
-
-    await makeGraphqlAPIRequest(enablePermissionsQuery);
   });
 
   afterAll(async () => {
     const disablePermissionsQuery = updateFeatureFlagFactory(
       SEED_APPLE_WORKSPACE_ID,
-      'IsPermissionsEnabled',
+      'IS_PERMISSIONS_ENABLED',
       false,
     );
 
@@ -345,12 +336,12 @@ describe('workspace permissions', () => {
   });
 
   describe('billing', () => {
-    describe('updateBillingSubscription', () => {
+    describe('switchToYearlyInterval', () => {
       it('should throw a permission error when user does not have permission (member role)', async () => {
         const queryData = {
           query: `
-            mutation UpdateBillingSubscription {
-              updateBillingSubscription {
+            mutation SwitchToYearlyInterval {
+              switchToYearlyInterval {
                 success
               }
             }
@@ -464,7 +455,6 @@ describe('workspace permissions', () => {
                   $input: UpdateLabPublicFeatureFlagInput!
                 ) {
                   updateLabPublicFeatureFlag(input: $input) {
-                    id
                     key
                     value
                   }
@@ -472,7 +462,7 @@ describe('workspace permissions', () => {
               `,
           variables: {
             input: {
-              publicFeatureFlag: 'TestFeature',
+              publicFeatureFlag: 'IS_STRIPE_INTEGRATION_ENABLED',
               value: true,
             },
           },
@@ -485,7 +475,9 @@ describe('workspace permissions', () => {
           .expect((res) => {
             expect(res.body.data).toBeDefined();
             expect(res.body.errors).toBeDefined();
-            expect(res.body.errors[0].message).toBe('Invalid feature flag key'); // this error shows that update has been attempted after the permission check
+            expect(res.body.errors[0].message).toBe(
+              'Invalid feature flag key, flag is not public',
+            );
           });
       });
 
@@ -496,7 +488,6 @@ describe('workspace permissions', () => {
                 $input: UpdateLabPublicFeatureFlagInput!
               ) {
                 updateLabPublicFeatureFlag(input: $input) {
-                  id
                   key
                   value
                 }

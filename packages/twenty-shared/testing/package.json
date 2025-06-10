@@ -1,0 +1,4 @@
+{
+  "main": "dist/twenty-shared-testing.cjs.js",
+  "module": "dist/twenty-shared-testing.esm.js"
+}

@@ -2,7 +2,8 @@ import { ServerlessFunctionNewFormValues } from '@/settings/serverless-functions
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
-import { H2Title, Section } from 'twenty-ui';
+import { H2Title } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 const StyledInputsContainer = styled.div`
   display: flex;

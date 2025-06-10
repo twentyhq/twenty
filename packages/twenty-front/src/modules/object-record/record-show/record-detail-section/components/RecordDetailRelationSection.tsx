@@ -1,58 +1,46 @@
-import styled from '@emotion/styled';
-import { useCallback, useContext } from 'react';
+import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import { IconForbid, IconPencil, IconPlus, LightIconButton } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
-import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
-import { RelationFromManyFieldInputMultiRecordsEffect } from '@/object-record/record-field/meta-types/input/components/RelationFromManyFieldInputMultiRecordsEffect';
-import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
+import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordDetailRelationRecordsList } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsList';
+import { RecordDetailRelationSectionDropdown } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSectionDropdown';
 import { RecordDetailSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailSection';
 import { RecordDetailSectionHeader } from '@/object-record/record-show/record-detail-section/components/RecordDetailSectionHeader';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { MultiRecordSelect } from '@/object-record/relation-picker/components/MultiRecordSelect';
-import { SingleRecordSelectMenuItemsWithSearch } from '@/object-record/relation-picker/components/SingleRecordSelectMenuItemsWithSearch';
-import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/relation-picker/hooks/useAddNewRecordAndOpenRightDrawer';
-import { useRecordPicker } from '@/object-record/relation-picker/hooks/useRecordPicker';
-import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
-import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { prefetchIndexViewIdFromObjectMetadataItemFamilySelector } from '@/prefetch/states/selector/prefetchIndexViewIdFromObjectMetadataItemFamilySelector';
 import { AppPath } from '@/types/AppPath';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useLingui } from '@lingui/react/macro';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { getAppPath } from '~/utils/navigation/getAppPath';
+
 type RecordDetailRelationSectionProps = {
   loading: boolean;
 };
-
-const StyledAddDropdown = styled(Dropdown)`
-  margin-left: auto;
-`;
 
 export const RecordDetailRelationSection = ({
   loading,
 }: RecordDetailRelationSectionProps) => {
   const { t } = useLingui();
+
   const { recordId, fieldDefinition } = useContext(FieldContext);
+
   const {
     fieldName,
     relationFieldMetadataId,
     relationObjectMetadataNameSingular,
     relationType,
   } = fieldDefinition.metadata as FieldRelationMetadata;
-  const record = useRecoilValue(recordStoreFamilyState(recordId));
 
   const isMobile = useIsMobile();
   const { objectMetadataItem: relationObjectMetadataItem } =
@@ -77,49 +65,9 @@ export const RecordDetailRelationSection = ({
       ? [fieldValue as ObjectRecord]
       : ((fieldValue as ObjectRecord[]) ?? []);
 
-  const relationRecordIds = relationRecords.map(({ id }) => id);
-
   const dropdownId = `record-field-card-relation-picker-${fieldDefinition.fieldMetadataId}-${recordId}`;
 
-  const { closeDropdown, isDropdownOpen, dropdownPlacement } =
-    useDropdown(dropdownId);
-
-  const { setRecordPickerSearchFilter } = useRecordPicker({
-    recordPickerInstanceId: dropdownId,
-  });
-
-  const handleCloseRelationPickerDropdown = useCallback(() => {
-    setRecordPickerSearchFilter('');
-  }, [setRecordPickerSearchFilter]);
-
-  const persistField = usePersistField();
-  const { updateOneRecord: updateOneRelationRecord } = useUpdateOneRecord({
-    objectNameSingular: relationObjectMetadataNameSingular,
-  });
-
-  const handleRelationPickerEntitySelected = (
-    selectedRelationEntity?: RecordForSelect,
-  ) => {
-    closeDropdown();
-
-    if (!selectedRelationEntity?.id || !relationFieldMetadataItem?.name) return;
-
-    if (isToOneObject) {
-      persistField(selectedRelationEntity.record);
-      return;
-    }
-
-    updateOneRelationRecord({
-      idToUpdate: selectedRelationEntity.id,
-      updateOneRecordInput: {
-        [relationFieldMetadataItem.name]: record,
-      },
-    });
-  };
-
-  const { updateRelation } = useUpdateRelationFromManyFieldInput({
-    scopeId: dropdownId,
-  });
+  const { isDropdownOpen } = useDropdown(dropdownId);
 
   const indexViewId = useRecoilValue(
     prefetchIndexViewIdFromObjectMetadataItemFamilySelector({
@@ -146,27 +94,38 @@ export const RecordDetailRelationSection = ({
     filterQueryParams,
   );
 
-  const showContent = () => {
-    return (
-      relationRecords.length > 0 && (
-        <RecordDetailRelationRecordsList relationRecords={relationRecords} />
-      )
-    );
-  };
+  const filtersForAggregate = isToManyObjects
+    ? ({
+        [`${relationFieldMetadataItem?.name}Id`]: {
+          in: [recordId],
+        },
+      } satisfies RecordGqlOperationFilter)
+    : {};
 
-  const { createNewRecordAndOpenRightDrawer } =
-    useAddNewRecordAndOpenRightDrawer({
-      relationObjectMetadataNameSingular,
-      relationObjectMetadataItem,
-      relationFieldMetadataItem,
-      recordId,
-    });
+  const { data: relationAggregateResult } = useAggregateRecords<{
+    id: { COUNT: number };
+  }>({
+    objectNameSingular: relationObjectMetadataItem.nameSingular,
+    filter: filtersForAggregate,
+    skip: !isToManyObjects,
+    recordGqlFieldsAggregate: {
+      id: [AggregateOperations.COUNT],
+    },
+  });
 
-  const isReadOnly = useIsFieldValueReadOnly();
+  const isRecordReadOnly = useIsRecordReadOnly({
+    recordId,
+    objectMetadataId: relationObjectMetadataItem.id,
+  });
 
-  if (loading) return null;
+  const isFieldReadOnly = useIsFieldValueReadOnly({
+    fieldDefinition,
+    isRecordReadOnly,
+  });
 
-  const relationRecordsCount = relationRecords.length;
+  if (loading || isFieldReadOnly) return null;
+
+  const relationRecordsCount = relationAggregateResult?.id?.COUNT ?? 0;
 
   return (
     <RecordDetailSection>
@@ -186,56 +145,12 @@ export const RecordDetailRelationSection = ({
         hideRightAdornmentOnMouseLeave={!isDropdownOpen && !isMobile}
         areRecordsAvailable={relationRecords.length > 0}
         rightAdornment={
-          !isReadOnly && (
-            <DropdownScope dropdownScopeId={dropdownId}>
-              <StyledAddDropdown
-                dropdownId={dropdownId}
-                dropdownPlacement="left-start"
-                onClose={handleCloseRelationPickerDropdown}
-                clickableComponent={
-                  <LightIconButton
-                    className="displayOnHover"
-                    Icon={isToOneObject ? IconPencil : IconPlus}
-                    accent="tertiary"
-                  />
-                }
-                dropdownComponents={
-                  <RecordPickerComponentInstanceContext.Provider
-                    value={{ instanceId: dropdownId }}
-                  >
-                    {isToOneObject ? (
-                      <SingleRecordSelectMenuItemsWithSearch
-                        EmptyIcon={IconForbid}
-                        onRecordSelected={handleRelationPickerEntitySelected}
-                        selectedRecordIds={relationRecordIds}
-                        objectNameSingular={relationObjectMetadataNameSingular}
-                        recordPickerInstanceId={dropdownId}
-                        onCreate={createNewRecordAndOpenRightDrawer}
-                        dropdownPlacement={dropdownPlacement}
-                      />
-                    ) : (
-                      <>
-                        <RelationFromManyFieldInputMultiRecordsEffect />
-                        <MultiRecordSelect
-                          onCreate={() => {
-                            closeDropdown();
-                            createNewRecordAndOpenRightDrawer?.();
-                          }}
-                          onChange={updateRelation}
-                          onSubmit={closeDropdown}
-                          dropdownPlacement={dropdownPlacement}
-                        />
-                      </>
-                    )}
-                  </RecordPickerComponentInstanceContext.Provider>
-                }
-                dropdownHotkeyScope={{ scope: dropdownId }}
-              />
-            </DropdownScope>
-          )
+          <RecordDetailRelationSectionDropdown loading={loading} />
         }
       />
-      {showContent()}
+      {relationRecords.length > 0 && (
+        <RecordDetailRelationRecordsList relationRecords={relationRecords} />
+      )}
     </RecordDetailSection>
   );
 };

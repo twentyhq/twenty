@@ -18,7 +18,7 @@ describe('BillingController (integration)', () => {
     };
 
     await client
-      .post('/billing/webhooks')
+      .post('/webhooks/stripe')
       .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
       .set('stripe-signature', 'correct-signature')
       .set('Content-Type', 'application/json')
@@ -29,7 +29,7 @@ describe('BillingController (integration)', () => {
       });
 
     await client
-      .post('/billing/webhooks')
+      .post('/webhooks/stripe')
       .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
       .set('stripe-signature', 'correct-signature')
       .set('Content-Type', 'application/json')
@@ -51,7 +51,7 @@ describe('BillingController (integration)', () => {
     };
 
     await client
-      .post('/billing/webhooks')
+      .post('/webhooks/stripe')
       .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
       .set('stripe-signature', 'correct-signature')
       .set('Content-Type', 'application/json')
@@ -63,7 +63,7 @@ describe('BillingController (integration)', () => {
       });
 
     await client
-      .post('/billing/webhooks')
+      .post('/webhooks/stripe')
       .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
       .set('stripe-signature', 'correct-signature')
       .set('Content-Type', 'application/json')
@@ -83,7 +83,7 @@ describe('BillingController (integration)', () => {
     };
 
     await client
-      .post('/billing/webhooks')
+      .post('/webhooks/stripe')
       .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
       .set('stripe-signature', 'correct-signature')
       .set('Content-Type', 'application/json')
@@ -102,7 +102,7 @@ describe('BillingController (integration)', () => {
     };
 
     await client
-      .post('/billing/webhooks')
+      .post('/webhooks/stripe')
       .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
       .set('stripe-signature', 'invalid-signature')
       .set('Content-Type', 'application/json')

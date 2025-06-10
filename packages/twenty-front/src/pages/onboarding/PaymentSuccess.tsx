@@ -1,18 +1,18 @@
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared';
-import { AnimatedEaseIn, IconCheck, MainButton, RGBA } from 'twenty-ui';
-import {
-  OnboardingStatus,
-  useGetCurrentUserLazyQuery,
-} from '~/generated/graphql';
+import { isDefined } from 'twenty-shared/utils';
+import { IconCheck } from 'twenty-ui/display';
+import { MainButton } from 'twenty-ui/input';
+import { RGBA } from 'twenty-ui/theme';
+import { AnimatedEaseIn } from 'twenty-ui/utilities';
+import { useGetCurrentUserLazyQuery } from '~/generated/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 const StyledCheckContainer = styled.div`
@@ -36,7 +36,6 @@ export const PaymentSuccess = () => {
   const theme = useTheme();
   const navigate = useNavigateApp();
   const subscriptionStatus = useSubscriptionStatus();
-  const onboardingStatus = useOnboardingStatus();
   const [getCurrentUser] = useGetCurrentUserLazyQuery();
   const setCurrentUser = useSetRecoilState(currentUserState);
   const color =
@@ -65,12 +64,8 @@ export const PaymentSuccess = () => {
     );
   };
 
-  if (onboardingStatus === OnboardingStatus.COMPLETED) {
-    return <></>;
-  }
-
   return (
-    <>
+    <Modal.Content isVerticalCentered isHorizontalCentered>
       <AnimatedEaseIn>
         <StyledCheckContainer color={color}>
           <IconCheck color={color} size={24} stroke={3} />
@@ -85,6 +80,6 @@ export const PaymentSuccess = () => {
           onClick={navigateWithSubscriptionCheck}
         />
       </StyledButtonContainer>
-    </>
+    </Modal.Content>
   );
 };

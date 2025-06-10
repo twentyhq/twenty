@@ -37,7 +37,7 @@ const config: StorybookConfig = {
         '@storybook/addon-docs',
         '@storybook/addon-essentials/docs',
       ],
-    }
+    },
   },
   addons: [
     '@storybook/addon-links',
@@ -48,6 +48,7 @@ const config: StorybookConfig = {
     'storybook-dark-mode',
     'storybook-addon-cookie',
     'storybook-addon-pseudo-states',
+    'storybook-addon-mock-date'
   ],
   framework: {
     name: '@storybook/react-vite',

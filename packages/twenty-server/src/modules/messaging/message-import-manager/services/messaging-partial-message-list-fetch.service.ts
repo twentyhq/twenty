@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { In } from 'typeorm';
 
@@ -11,19 +11,15 @@ import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/se
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
+import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
+import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 import {
   MessageImportExceptionHandlerService,
   MessageImportSyncStep,
-} from 'src/modules/messaging/message-import-manager/services/message-import-exception-handler.service';
-import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
-import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
+} from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 
 @Injectable()
 export class MessagingPartialMessageListFetchService {
-  private readonly logger = new Logger(
-    MessagingPartialMessageListFetchService.name,
-  );
-
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
     private readonly cacheStorage: CacheStorageService,
@@ -79,19 +75,12 @@ export class MessagingPartialMessageListFetchService {
         );
 
         if (isPartialImportFinished) {
-          this.logger.log(
-            `Partial message list import done on message channel ${messageChannel.id} in folder ${folderId} for workspace ${workspaceId} and account ${connectedAccount.id}`,
-          );
           continue;
         }
 
         await this.cacheStorage.setAdd(
           `messages-to-import:${workspaceId}:${messageChannel.id}`,
           messageExternalIds,
-        );
-
-        this.logger.log(
-          `Added ${messageExternalIds.length} messages to import for workspace ${workspaceId} and account ${connectedAccount.id}`,
         );
 
         const messageChannelMessageAssociationRepository =
@@ -110,10 +99,6 @@ export class MessagingPartialMessageListFetchService {
           );
         }
 
-        this.logger.log(
-          `Deleted ${messageExternalIdsToDelete.length} messages for workspace ${workspaceId} and account ${connectedAccount.id}`,
-        );
-
         await this.messagingCursorService.updateCursor(
           messageChannel,
           nextSyncCursor,
@@ -130,10 +115,6 @@ export class MessagingPartialMessageListFetchService {
       );
 
       if (isPartialImportFinishedForAllFolders) {
-        this.logger.log(
-          `Partial message list import done on message channel ${messageChannel.id} entirely for workspace ${workspaceId} and account ${connectedAccount.id}`,
-        );
-
         await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
           [messageChannel.id],
         );

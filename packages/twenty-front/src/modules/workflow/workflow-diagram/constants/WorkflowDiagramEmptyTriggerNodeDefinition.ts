@@ -7,7 +7,6 @@ export const WORKFLOW_DIAGRAM_EMPTY_TRIGGER_NODE_DEFINITION = {
   type: 'empty-trigger',
   data: {
     nodeType: 'empty-trigger',
-    isLeafNode: false,
   } satisfies WorkflowDiagramEmptyTriggerNodeData,
   position: {
     x: 0,

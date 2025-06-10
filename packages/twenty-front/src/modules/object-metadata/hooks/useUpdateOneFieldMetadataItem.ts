@@ -13,6 +13,11 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { useSetRecoilState } from 'recoil';
+
+import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
+import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
+import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
+import { isDefined } from 'twenty-shared/utils';
 import { useApolloMetadataClient } from './useApolloMetadataClient';
 
 export const useUpdateOneFieldMetadataItem = () => {
@@ -20,6 +25,9 @@ export const useUpdateOneFieldMetadataItem = () => {
   const apolloClient = useApolloClient();
   const { refreshObjectMetadataItems } =
     useRefreshObjectMetadataItems('network-only');
+
+  const { setRecordGroupsFromViewGroups } = useSetRecordGroups();
+  const cache = useApolloClient().cache;
 
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
 
@@ -70,12 +78,14 @@ export const useUpdateOneFieldMetadataItem = () => {
       },
     });
 
-    await refreshObjectMetadataItems();
+    const objectMetadataItemsRefreshed = await refreshObjectMetadataItems();
 
     const { data } = await apolloClient.query({ query: GET_CURRENT_USER });
     setCurrentWorkspace(data?.currentUser?.currentWorkspace);
 
-    await apolloClient.query({
+    const { data: viewConnection } = await apolloClient.query<{
+      views: RecordGqlConnection;
+    }>({
       query: findManyViewsQuery,
       variables: {
         filter: {
@@ -86,6 +96,26 @@ export const useUpdateOneFieldMetadataItem = () => {
       },
       fetchPolicy: 'network-only',
     });
+
+    const viewRecords = getRecordsFromRecordConnection({
+      recordConnection: viewConnection?.views,
+    });
+
+    for (const view of viewRecords) {
+      const correspondingObjectMetadataItemRefreshed =
+        objectMetadataItemsRefreshed?.find(
+          (item) => item.id === objectMetadataId,
+        );
+
+      if (isDefined(correspondingObjectMetadataItemRefreshed)) {
+        setRecordGroupsFromViewGroups(
+          view.id,
+          view.viewGroups,
+          correspondingObjectMetadataItemRefreshed,
+        );
+      }
+      cache.evict({ id: `Views:${view.id}` });
+    }
 
     return result;
   };

@@ -141,6 +141,7 @@ export const Radio = ({
         id={optionId}
         name={name}
         data-testid="input-radio"
+        tabIndex={-1}
         checked={checked}
         value={value || label}
         radio-size={size}

@@ -5,7 +5,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
 import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
 import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const triggerDestroyRecordsOptimisticEffect = ({
   cache,

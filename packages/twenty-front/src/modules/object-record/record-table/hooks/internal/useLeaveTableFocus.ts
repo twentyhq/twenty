@@ -1,13 +1,11 @@
-import { useRecoilCallback } from 'recoil';
-
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
-
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
+import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
+import { useSetIsRecordTableFocusActive } from '@/object-record/record-table/record-table-cell/hooks/useSetIsRecordTableFocusActive';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { isSoftFocusActiveComponentState } from '@/object-record/record-table/states/isSoftFocusActiveComponentState';
+import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useDisableSoftFocus } from './useDisableSoftFocus';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
 export const useLeaveTableFocus = (recordTableId?: string) => {
   const recordTableIdFromContext = useAvailableComponentInstanceIdOrThrow(
@@ -15,33 +13,36 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
     recordTableId,
   );
 
-  const disableSoftFocus = useDisableSoftFocus(recordTableIdFromContext);
-
-  const isSoftFocusActiveState = useRecoilComponentCallbackStateV2(
-    isSoftFocusActiveComponentState,
-    recordTableIdFromContext,
-  );
-
   const resetTableRowSelection = useResetTableRowSelection(
     recordTableIdFromContext,
   );
 
-  return useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const isSoftFocusActive = getSnapshotValue(
-          snapshot,
-          isSoftFocusActiveState,
-        );
-
-        resetTableRowSelection();
-
-        if (!isSoftFocusActive) {
-          return;
-        }
-
-        disableSoftFocus();
-      },
-    [disableSoftFocus, isSoftFocusActiveState, resetTableRowSelection],
+  const { setIsFocusActiveForCurrentPosition } = useSetIsRecordTableFocusActive(
+    recordTableIdFromContext,
   );
+
+  const setRecordTableHoverPosition = useSetRecoilComponentStateV2(
+    recordTableHoverPositionComponentState,
+    recordTableIdFromContext,
+  );
+
+  const { unfocusRecordTableRow } = useFocusedRecordTableRow(
+    recordTableIdFromContext,
+  );
+
+  const { deactivateRecordTableRow } = useActiveRecordTableRow(
+    recordTableIdFromContext,
+  );
+
+  return () => {
+    resetTableRowSelection();
+
+    setIsFocusActiveForCurrentPosition(false);
+
+    unfocusRecordTableRow();
+
+    deactivateRecordTableRow();
+
+    setRecordTableHoverPosition(null);
+  };
 };

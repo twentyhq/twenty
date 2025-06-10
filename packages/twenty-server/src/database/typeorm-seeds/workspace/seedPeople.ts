@@ -1,7 +1,6 @@
-import { EntityManager } from 'typeorm';
-
 import { DEV_SEED_COMPANY_IDS } from 'src/database/typeorm-seeds/workspace/companies';
 import { DEV_SEED_WORKSPACE_MEMBER_IDS } from 'src/database/typeorm-seeds/workspace/workspace-members';
+import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 
 const tableName = 'person';
 
@@ -24,11 +23,13 @@ export const DEV_SEED_PERSON_IDS = {
 };
 
 export const seedPeople = async (
-  entityManager: EntityManager,
+  entityManager: WorkspaceEntityManager,
   schemaName: string,
 ) => {
   await entityManager
-    .createQueryBuilder()
+    .createQueryBuilder(undefined, undefined, undefined, {
+      shouldBypassPermissionChecks: true,
+    })
     .insert()
     .into(`${schemaName}.${tableName}`, [
       'id',
@@ -93,9 +94,9 @@ export const seedPeople = async (
         phonesPrimaryPhoneCountryCode: 'FR',
         phonesPrimaryPhoneCallingCode: '+33',
         phonesPrimaryPhoneNumber: '789012345',
-        city: 'Seattle',
-        companyId: DEV_SEED_COMPANY_IDS.QONTO,
-        emailsPrimaryEmail: 'christopher.gonzalez@qonto.com',
+        city: 'San Francisco',
+        companyId: DEV_SEED_COMPANY_IDS.ANTHROPIC,
+        emailsPrimaryEmail: 'christopher.gonzalez@anthropic.com',
         position: 3,
         whatsappPrimaryPhoneCountryCode: 'FR',
         whatsappPrimaryPhoneCallingCode: '+33',
@@ -112,8 +113,8 @@ export const seedPeople = async (
         phonesPrimaryPhoneCallingCode: '+33',
         phonesPrimaryPhoneNumber: '780123456',
         city: 'Los Angeles',
-        companyId: DEV_SEED_COMPANY_IDS.QONTO,
-        emailsPrimaryEmail: 'ashley.parker@qonto.com',
+        companyId: DEV_SEED_COMPANY_IDS.ANTHROPIC,
+        emailsPrimaryEmail: 'ashley.parker@anthropic.com',
         position: 4,
         whatsappPrimaryPhoneCountryCode: 'FR',
         whatsappPrimaryPhoneCallingCode: '+33',

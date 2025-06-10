@@ -1,5 +1,4 @@
-import { getImageAbsoluteURI } from '../getImageAbsoluteURI';
-
+import { getImageAbsoluteURI } from '@/utils/image/getImageAbsoluteURI';
 describe('getImageAbsoluteURI', () => {
   it('should return baseUrl if imageUrl is empty string', () => {
     const imageUrl = '';

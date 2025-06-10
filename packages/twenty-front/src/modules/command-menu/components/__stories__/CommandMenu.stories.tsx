@@ -16,59 +16,52 @@ import { sleep } from '~/utils/sleep';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
+import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
+import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { HttpResponse, graphql } from 'msw';
-import { IconDotsVertical } from 'twenty-ui';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { IconDotsVertical } from 'twenty-ui/display';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
-import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { CommandMenu } from '../CommandMenu';
 
 const openTimeout = 50;
 
-const companiesMock = getCompaniesMock();
-
-// Mock workspace with feature flag enabled
-const mockWorkspaceWithFeatureFlag = {
-  ...mockCurrentWorkspace,
-  featureFlags: [
-    ...(mockCurrentWorkspace.featureFlags || []),
-    {
-      id: 'mock-id',
-      key: FeatureFlagKey.IsCommandMenuV2Enabled,
-      value: true,
-      workspaceId: mockCurrentWorkspace.id,
-    },
-  ],
-};
-
 const ContextStoreDecorator: Decorator = (Story) => {
   return (
-    <RecordFiltersComponentInstanceContext.Provider
-      value={{ instanceId: 'command-menu' }}
+    <RecordFilterGroupsComponentInstanceContext.Provider
+      value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
     >
-      <RecordSortsComponentInstanceContext.Provider
-        value={{ instanceId: 'command-menu' }}
+      <RecordFiltersComponentInstanceContext.Provider
+        value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
       >
-        <ContextStoreComponentInstanceContext.Provider
-          value={{ instanceId: 'command-menu' }}
+        <RecordSortsComponentInstanceContext.Provider
+          value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
         >
-          <ActionMenuComponentInstanceContext.Provider
-            value={{ instanceId: 'command-menu' }}
+          <ContextStoreComponentInstanceContext.Provider
+            value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
           >
-            <JestContextStoreSetter contextStoreCurrentObjectMetadataNameSingular="company">
-              <Story />
-            </JestContextStoreSetter>
-          </ActionMenuComponentInstanceContext.Provider>
-        </ContextStoreComponentInstanceContext.Provider>
-      </RecordSortsComponentInstanceContext.Provider>
-    </RecordFiltersComponentInstanceContext.Provider>
+            <ActionMenuComponentInstanceContext.Provider
+              value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
+            >
+              <JestContextStoreSetter
+                contextStoreCurrentObjectMetadataNameSingular="company"
+                contextStoreCurrentViewId="1"
+                contextStoreCurrentViewType={ContextStoreViewType.Table}
+              >
+                <Story />
+              </JestContextStoreSetter>
+            </ActionMenuComponentInstanceContext.Provider>
+          </ContextStoreComponentInstanceContext.Provider>
+        </RecordSortsComponentInstanceContext.Provider>
+      </RecordFiltersComponentInstanceContext.Provider>
+    </RecordFilterGroupsComponentInstanceContext.Provider>
   );
 };
 
@@ -89,7 +82,7 @@ const meta: Meta<typeof CommandMenu> = {
         commandMenuNavigationStackState,
       );
 
-      setCurrentWorkspace(mockWorkspaceWithFeatureFlag);
+      setCurrentWorkspace(mockCurrentWorkspace);
       setCurrentWorkspaceMember(mockedWorkspaceMemberData);
       setIsCommandMenuOpened(true);
       setCommandMenuNavigationStack([
@@ -97,6 +90,7 @@ const meta: Meta<typeof CommandMenu> = {
           page: CommandMenuPages.Root,
           pageTitle: 'Command Menu',
           pageIcon: IconDotsVertical,
+          pageId: '1',
         },
       ]);
 
@@ -121,10 +115,10 @@ export const DefaultWithoutSearch: Story = {
     const canvas = within(document.body);
 
     expect(await canvas.findByText('Go to People')).toBeVisible();
-    expect(await canvas.findByText('Go to Companies')).toBeVisible();
     expect(await canvas.findByText('Go to Opportunities')).toBeVisible();
     expect(await canvas.findByText('Go to Settings')).toBeVisible();
     expect(await canvas.findByText('Go to Tasks')).toBeVisible();
+    expect(await canvas.findByText('Go to Notes')).toBeVisible();
   },
 };
 
@@ -167,30 +161,21 @@ export const NoResultsSearchFallback: Story = {
     const canvas = within(document.body);
     const searchInput = await canvas.findByPlaceholderText('Type anything');
     await sleep(openTimeout);
-    await userEvent.type(searchInput, 'Linkedin');
+    await userEvent.type(searchInput, 'input without results');
     expect(await canvas.findByText('No results found')).toBeVisible();
     const searchRecordsButton = await canvas.findByText('Search records');
     expect(searchRecordsButton).toBeVisible();
-    await userEvent.click(searchRecordsButton);
-    expect(await canvas.findByText('Linkedin')).toBeVisible();
   },
   parameters: {
     msw: {
       handlers: [
-        graphql.query('CombinedSearchRecords', () => {
+        graphql.query('Search', () => {
           return HttpResponse.json({
             data: {
-              searchCompanies: {
-                edges: [
-                  {
-                    node: companiesMock[0],
-                    cursor: null,
-                  },
-                ],
+              search: {
+                edges: [],
                 pageInfo: {
                   hasNextPage: false,
-                  hasPreviousPage: false,
-                  startCursor: null,
                   endCursor: null,
                 },
               },

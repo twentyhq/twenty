@@ -2,9 +2,12 @@ import { Injectable } from '@nestjs/common';
 
 import { DataSource, EntityManager } from 'typeorm';
 
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 
 @Injectable()
 export class WorkspaceDataSourceService {
@@ -20,11 +23,12 @@ export class WorkspaceDataSourceService {
    * @param workspaceId
    * @returns
    */
-  public async connectToWorkspaceDataSource(
-    workspaceId: string,
-  ): Promise<DataSource> {
-    const { dataSource } =
-      await this.connectedToWorkspaceDataSourceAndReturnMetadata(workspaceId);
+  public async connectToMainDataSource(): Promise<DataSource> {
+    const dataSource = this.typeormService.getMainDataSource();
+
+    if (!dataSource) {
+      throw new Error(`Could not connect to workspace data source`);
+    }
 
     return dataSource;
   }
@@ -36,26 +40,6 @@ export class WorkspaceDataSourceService {
       );
 
     return dataSource.length > 0;
-  }
-
-  public async connectedToWorkspaceDataSourceAndReturnMetadata(
-    workspaceId: string,
-  ): Promise<{ dataSource: DataSource; dataSourceMetadata: DataSourceEntity }> {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-        workspaceId,
-      );
-
-    const dataSource =
-      await this.typeormService.connectToDataSource(dataSourceMetadata);
-
-    if (!dataSource) {
-      throw new Error(
-        `Could not connect to workspace data source for workspace ${workspaceId}`,
-      );
-    }
-
-    return { dataSource, dataSourceMetadata };
   }
 
   /**
@@ -119,23 +103,16 @@ export class WorkspaceDataSourceService {
   }
 
   public async executeRawQuery(
-    query: string,
-    parameters: any[] = [],
-    workspaceId: string,
-    transactionManager?: EntityManager,
+    _query: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    _parameters: any[] = [],
+    _workspaceId: string,
+    _transactionManager?: EntityManager,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
-    try {
-      if (transactionManager) {
-        return await transactionManager.query(query, parameters);
-      }
-      const workspaceDataSource =
-        await this.connectToWorkspaceDataSource(workspaceId);
-
-      return await workspaceDataSource.query(query, parameters);
-    } catch (error) {
-      throw new Error(
-        `Error executing raw query for workspace ${workspaceId}: ${error.message}`,
-      );
-    }
+    throw new PermissionsException(
+      'Method not allowed as permissions are not handled at datasource level.',
+      PermissionsExceptionCode.METHOD_NOT_ALLOWED,
+    );
   }
 }

@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`checkCanDeactivateFieldOrThrow throws if trying to deactivate createdAt field 1`] = `"Cannot deactivate createdAt, updatedAt or deletedAt field"`;
+
+exports[`checkCanDeactivateFieldOrThrow throws if trying to deactivate deletedAt field 1`] = `"Cannot deactivate createdAt, updatedAt or deletedAt field"`;
+
+exports[`checkCanDeactivateFieldOrThrow throws if trying to deactivate label identifier field 1`] = `"Cannot deactivate label identifier field"`;
+
+exports[`checkCanDeactivateFieldOrThrow throws if trying to deactivate system field 1`] = `"Cannot deactivate system field"`;
+
+exports[`checkCanDeactivateFieldOrThrow throws if trying to deactivate updatedAt field 1`] = `"Cannot deactivate createdAt, updatedAt or deletedAt field"`;

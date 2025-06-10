@@ -6,7 +6,7 @@ import { FieldEmailsValue } from '@/object-record/record-field/types/FieldMetada
 import { FieldContext } from '../../contexts/FieldContext';
 
 export const useEmailsFieldDisplay = () => {
-  const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
+  const { recordId, fieldDefinition } = useContext(FieldContext);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
@@ -18,6 +18,5 @@ export const useEmailsFieldDisplay = () => {
   return {
     fieldDefinition,
     fieldValue,
-    hotkeyScope,
   };
 };

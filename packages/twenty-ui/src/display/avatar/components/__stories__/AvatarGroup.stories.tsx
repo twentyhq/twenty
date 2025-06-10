@@ -7,6 +7,7 @@ import {
   AVATAR_URL_MOCK,
   CatalogDecorator,
   ComponentDecorator,
+  RecoilRootDecorator,
 } from '@ui/testing';
 
 import { AvatarGroup, AvatarGroupProps } from '../AvatarGroup';
@@ -38,7 +39,7 @@ export default meta;
 type Story = StoryObj<typeof AvatarGroup>;
 
 export const Default: Story = {
-  decorators: [ComponentDecorator],
+  decorators: [ComponentDecorator, RecoilRootDecorator],
 };
 
 export const Catalog: Story = {
@@ -63,5 +64,5 @@ export const Catalog: Story = {
       ],
     },
   },
-  decorators: [CatalogDecorator],
+  decorators: [CatalogDecorator, RecoilRootDecorator],
 };

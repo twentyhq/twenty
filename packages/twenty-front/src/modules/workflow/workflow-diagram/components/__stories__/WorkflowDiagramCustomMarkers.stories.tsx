@@ -9,11 +9,12 @@ import { WorkflowDiagramStepNodeReadonly } from '@/workflow/workflow-diagram/com
 import { WorkflowDiagramSuccessEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramSuccessEdge';
 import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workflow-diagram/constants/WorkflowVisualizerEdgeDefaultConfiguration';
 import { WORKFLOW_VISUALIZER_EDGE_SUCCESS_CONFIGURATION } from '@/workflow/workflow-diagram/constants/WorkflowVisualizerEdgeSuccessConfiguration';
+import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { workflowDiagramState } from '../../states/workflowDiagramState';
+import { workflowDiagramComponentState } from '../../states/workflowDiagramComponentState';
 import { WorkflowDiagramCanvasBase } from '../WorkflowDiagramCanvasBase';
 
 const StyledContainer = styled.div`
@@ -41,7 +42,6 @@ type Story = StoryObj<typeof WorkflowDiagramCanvasBase>;
 
 export const DefaultEdge: Story = {
   args: {
-    status: 'DRAFT',
     nodeTypes: {
       default: WorkflowDiagramStepNodeReadonly,
       'create-step': WorkflowDiagramCreateStepNode,
@@ -52,71 +52,84 @@ export const DefaultEdge: Story = {
     },
   },
   decorators: [
-    (Story) => (
-      <RecoilRoot
-        initializeState={({ set }) => {
-          set(workflowDiagramState, {
-            nodes: [
+    (Story) => {
+      const workflowVisualizerComponentInstanceId =
+        'workflow-visualizer-test-id';
+
+      return (
+        <RecoilRoot
+          initializeState={({ set }) => {
+            set(
+              workflowDiagramComponentState.atomFamily({
+                instanceId: workflowVisualizerComponentInstanceId,
+              }),
               {
-                id: 'trigger-1',
-                type: 'default',
-                position: { x: 100, y: 100 },
-                data: {
-                  nodeType: 'trigger',
-                  triggerType: 'DATABASE_EVENT',
-                  name: 'When record is created',
-                  isLeafNode: false,
-                },
+                nodes: [
+                  {
+                    id: 'trigger-1',
+                    type: 'default',
+                    position: { x: 100, y: 100 },
+                    data: {
+                      nodeType: 'trigger',
+                      triggerType: 'DATABASE_EVENT',
+                      name: 'When record is created',
+                    },
+                  },
+                  {
+                    id: 'action-1',
+                    type: 'default',
+                    position: { x: 300, y: 100 },
+                    data: {
+                      nodeType: 'action',
+                      actionType: 'CREATE_RECORD',
+                      name: 'Create record',
+                    },
+                  },
+                  {
+                    id: 'create-step-1',
+                    type: 'create-step',
+                    position: { x: 500, y: 100 },
+                    data: {
+                      nodeType: 'create-step',
+                      parentNodeId: 'action-1',
+                    },
+                  },
+                ],
+                edges: [
+                  {
+                    ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
+                    id: 'edge-1',
+                    source: 'trigger-1',
+                    target: 'action-1',
+                  },
+                  {
+                    ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
+                    id: 'edge-2',
+                    source: 'action-1',
+                    target: 'create-step-1',
+                  },
+                ],
               },
-              {
-                id: 'action-1',
-                type: 'default',
-                position: { x: 300, y: 100 },
-                data: {
-                  nodeType: 'action',
-                  actionType: 'CREATE_RECORD',
-                  name: 'Create record',
-                  isLeafNode: false,
-                },
-              },
-              {
-                id: 'create-step-1',
-                type: 'create-step',
-                position: { x: 500, y: 100 },
-                data: {
-                  nodeType: 'create-step',
-                  parentNodeId: 'action-1',
-                },
-              },
-            ],
-            edges: [
-              {
-                ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
-                id: 'edge-1',
-                source: 'trigger-1',
-                target: 'action-1',
-              },
-              {
-                ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
-                id: 'edge-2',
-                source: 'action-1',
-                target: 'create-step-1',
-              },
-            ],
-          });
-        }}
-      >
-        <StyledContainer>
-          <Story />
-        </StyledContainer>
-      </RecoilRoot>
-    ),
+            );
+          }}
+        >
+          <WorkflowVisualizerComponentInstanceContext.Provider
+            value={{
+              instanceId: workflowVisualizerComponentInstanceId,
+            }}
+          >
+            <StyledContainer>
+              <Story />
+            </StyledContainer>
+          </WorkflowVisualizerComponentInstanceContext.Provider>
+        </RecoilRoot>
+      );
+    },
   ],
 };
 
 export const SuccessEdge: Story = {
   args: {
-    status: 'DRAFT',
     nodeTypes: {
       default: WorkflowDiagramStepNodeReadonly,
       'create-step': WorkflowDiagramCreateStepNode,
@@ -128,51 +141,65 @@ export const SuccessEdge: Story = {
     },
   },
   decorators: [
-    (Story) => (
-      <RecoilRoot
-        initializeState={({ set }) => {
-          set(workflowDiagramState, {
-            nodes: [
+    (Story) => {
+      const workflowVisualizerComponentInstanceId =
+        'workflow-visualizer-test-id';
+
+      return (
+        <RecoilRoot
+          initializeState={({ set }) => {
+            set(
+              workflowDiagramComponentState.atomFamily({
+                instanceId: workflowVisualizerComponentInstanceId,
+              }),
               {
-                id: 'trigger-1',
-                type: 'default',
-                position: { x: 100, y: 100 },
-                data: {
-                  nodeType: 'trigger',
-                  triggerType: 'DATABASE_EVENT',
-                  name: 'When record is created',
-                  isLeafNode: false,
-                },
+                nodes: [
+                  {
+                    id: 'trigger-1',
+                    type: 'default',
+                    position: { x: 100, y: 100 },
+                    data: {
+                      nodeType: 'trigger',
+                      triggerType: 'DATABASE_EVENT',
+                      name: 'When record is created',
+                    },
+                  },
+                  {
+                    id: 'action-1',
+                    type: 'default',
+                    position: { x: 300, y: 100 },
+                    data: {
+                      nodeType: 'action',
+                      actionType: 'CREATE_RECORD',
+                      name: 'Create record',
+                    },
+                  },
+                ],
+                edges: [
+                  {
+                    ...WORKFLOW_VISUALIZER_EDGE_SUCCESS_CONFIGURATION,
+                    id: 'edge-1',
+                    source: 'trigger-1',
+                    target: 'action-1',
+                    type: 'success',
+                    label: '1 item',
+                  },
+                ],
               },
-              {
-                id: 'action-1',
-                type: 'default',
-                position: { x: 300, y: 100 },
-                data: {
-                  nodeType: 'action',
-                  actionType: 'CREATE_RECORD',
-                  name: 'Create record',
-                  isLeafNode: false,
-                },
-              },
-            ],
-            edges: [
-              {
-                ...WORKFLOW_VISUALIZER_EDGE_SUCCESS_CONFIGURATION,
-                id: 'edge-1',
-                source: 'trigger-1',
-                target: 'action-1',
-                type: 'success',
-                label: '1 item',
-              },
-            ],
-          });
-        }}
-      >
-        <StyledContainer>
-          <Story />
-        </StyledContainer>
-      </RecoilRoot>
-    ),
+            );
+          }}
+        >
+          <WorkflowVisualizerComponentInstanceContext.Provider
+            value={{
+              instanceId: workflowVisualizerComponentInstanceId,
+            }}
+          >
+            <StyledContainer>
+              <Story />
+            </StyledContainer>
+          </WorkflowVisualizerComponentInstanceContext.Provider>
+        </RecoilRoot>
+      );
+    },
   ],
 };

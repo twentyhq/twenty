@@ -1,13 +1,11 @@
-import {
-  Column,
-  ColumnType,
-} from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
+import { SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
+import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 
 export const setIgnoreColumn = <T extends string>({
   header,
   index,
-}: Column<T>): Column<T> => ({
+}: SpreadsheetColumn<T>): SpreadsheetColumn<T> => ({
   header,
   index,
-  type: ColumnType.ignored,
+  type: SpreadsheetColumnType.ignored,
 });

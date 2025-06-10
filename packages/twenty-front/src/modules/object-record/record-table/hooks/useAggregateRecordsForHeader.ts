@@ -2,15 +2,17 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { buildRecordGqlFieldsAggregateForView } from '@/object-record/record-board/record-board-column/utils/buildRecordGqlFieldsAggregateForView';
 import { computeAggregateValueAndLabel } from '@/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel';
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
-import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
-import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeRecordGqlOperationFilter';
 import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
-import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
 type UseAggregateRecordsProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -22,26 +24,30 @@ export const useAggregateRecordsForHeader = ({
   objectMetadataItem,
   additionalFilters = {},
 }: UseAggregateRecordsProps) => {
-  const recordIndexViewFilterGroups = useRecoilValue(
-    recordIndexViewFilterGroupsState,
+  const currentRecordFilterGroups = useRecoilComponentValueV2(
+    currentRecordFilterGroupsComponentState,
   );
 
-  const recordIndexFilters = useRecoilValue(recordIndexFiltersState);
+  const currentRecordFilters = useRecoilComponentValueV2(
+    currentRecordFiltersComponentState,
+  );
 
   const recordIndexKanbanAggregateOperation = useRecoilValue(
     recordIndexKanbanAggregateOperationState,
   );
 
+  const dateLocale = useRecoilValue(dateLocaleState);
+
   const { filterValueDependencies } = useFilterValueDependencies();
 
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
 
-  const requestFilters = computeViewRecordGqlOperationFilter(
+  const requestFilters = computeRecordGqlOperationFilter({
     filterValueDependencies,
-    recordIndexFilters,
-    objectMetadataItem.fields,
-    recordIndexViewFilterGroups,
-  );
+    recordFilters: currentRecordFilters,
+    recordFilterGroups: currentRecordFilterGroups,
+    fields: objectMetadataItem.fields,
+  });
 
   const recordGqlFieldsAggregate = buildRecordGqlFieldsAggregateForView({
     objectMetadataItem,
@@ -62,6 +68,7 @@ export const useAggregateRecordsForHeader = ({
     dateFormat,
     timeFormat,
     timeZone,
+    localeCatalog: dateLocale.localeCatalog,
   });
 
   return {

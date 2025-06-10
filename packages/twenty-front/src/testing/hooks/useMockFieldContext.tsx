@@ -6,7 +6,6 @@ import {
   FieldContext,
   RecordUpdateHook,
 } from '@/object-record/record-field/contexts/FieldContext';
-import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 
 export const useMockFieldContext = ({
   clearable,
@@ -15,7 +14,6 @@ export const useMockFieldContext = ({
   isLabelIdentifier = false,
   objectNameSingular,
   objectRecordId,
-  customHotkeyScope,
 }: {
   clearable?: boolean;
   fieldMetadataName: string;
@@ -23,7 +21,6 @@ export const useMockFieldContext = ({
   isLabelIdentifier?: boolean;
   objectNameSingular: string;
   objectRecordId: string;
-  customHotkeyScope?: string;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -46,7 +43,6 @@ export const useMockFieldContext = ({
             key={objectRecordId + fieldMetadataItem.id}
             value={{
               recordId: objectRecordId,
-              recoilScopeId: objectRecordId + fieldMetadataItem.id,
               isLabelIdentifier,
               fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
                 field: fieldMetadataItem,
@@ -54,9 +50,8 @@ export const useMockFieldContext = ({
                 objectMetadataItem,
               }),
               useUpdateRecord: useUpdateOneObjectMutation,
-              hotkeyScope:
-                customHotkeyScope ?? InlineCellHotkeyScope.InlineCell,
               clearable,
+              isReadOnly: false,
             }}
           >
             {children}

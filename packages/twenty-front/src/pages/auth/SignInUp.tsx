@@ -18,12 +18,13 @@ import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCu
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
 import { useMemo } from 'react';
-import { isDefined } from 'twenty-shared';
-import { AnimatedEaseIn } from 'twenty-ui';
 
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useLingui } from '@lingui/react/macro';
 import { useSearchParams } from 'react-router-dom';
+import { isDefined } from 'twenty-shared/utils';
+import { AnimatedEaseIn } from 'twenty-ui/utilities';
 import { PublicWorkspaceDataOutput } from '~/generated/graphql';
 
 const StandardContent = ({
@@ -38,14 +39,17 @@ const StandardContent = ({
   title: string;
 }) => {
   return (
-    <>
+    <Modal.Content isVerticalCentered isHorizontalCentered>
       <AnimatedEaseIn>
-        <Logo secondaryLogo={workspacePublicData?.logo} />
+        <Logo
+          secondaryLogo={workspacePublicData?.logo}
+          placeholder={workspacePublicData?.displayName}
+        />
       </AnimatedEaseIn>
       <Title animate>{title}</Title>
       {signInUpForm}
       {signInUpStep !== SignInUpStep.Password && <FooterNote />}
-    </>
+    </Modal.Content>
   );
 };
 
@@ -119,7 +123,11 @@ export const SignInUp = () => {
   ]);
 
   if (signInUpStep === SignInUpStep.EmailVerification) {
-    return <EmailVerificationSent email={searchParams.get('email')} />;
+    return (
+      <Modal.Content isVerticalCentered isHorizontalCentered>
+        <EmailVerificationSent email={searchParams.get('email')} />
+      </Modal.Content>
+    );
   }
 
   return (

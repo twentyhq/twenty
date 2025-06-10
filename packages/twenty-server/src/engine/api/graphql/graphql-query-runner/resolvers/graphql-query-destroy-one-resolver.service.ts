@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+
 import {
   GraphqlQueryBaseResolverService,
   GraphqlQueryResolverExecutionArgs,
@@ -8,13 +10,11 @@ import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/int
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { DestroyOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
@@ -24,10 +24,11 @@ export class GraphqlQueryDestroyOneResolverService extends GraphqlQueryBaseResol
 > {
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<DestroyOneResolverArgs>,
-    featureFlagsMap: Record<FeatureFlagKey, boolean>,
   ): Promise<ObjectRecord> {
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
+
+    const { roleId } = executionArgs;
 
     const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
@@ -52,11 +53,11 @@ export class GraphqlQueryDestroyOneResolverService extends GraphqlQueryBaseResol
       objectMetadataMaps,
     );
 
-    this.apiEventEmitterService.emitDestroyEvents(
-      deletedRecords,
+    this.apiEventEmitterService.emitDestroyEvents({
+      records: structuredClone(deletedRecords),
       authContext,
-      objectMetadataItemWithFieldMaps,
-    );
+      objectMetadataItem: objectMetadataItemWithFieldMaps,
+    });
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
@@ -66,17 +67,14 @@ export class GraphqlQueryDestroyOneResolverService extends GraphqlQueryBaseResol
         relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         limit: QUERY_MAX_RECORDS,
         authContext,
-        dataSource: executionArgs.dataSource,
-        isNewRelationEnabled:
-          featureFlagsMap[FeatureFlagKey.IsNewRelationEnabled],
+        workspaceDataSource: executionArgs.workspaceDataSource,
+        roleId,
+        shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });
     }
 
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionHelper(
-        objectMetadataMaps,
-        featureFlagsMap,
-      );
+      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
     return typeORMObjectRecordsParser.processRecord({
       objectRecord: deletedRecords[0],

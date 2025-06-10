@@ -1,23 +1,19 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  Checkbox,
-  CheckboxShape,
-  IconCalendar,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui';
 
-import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { getActivitySummary } from '@/activities/utils/getActivitySummary';
 import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
 import { ActivityRow } from '@/activities/components/ActivityRow';
+import { useActivityTargetsComponentInstanceId } from '@/activities/inline-cell/hooks/useActivityTargetsComponentInstanceId';
 import { Task } from '@/activities/types/Task';
+import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFieldContext } from '@/object-record/hooks/useFieldContext';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
+import { FieldContextProvider } from '@/object-record/record-field/components/FieldContextProvider';
+import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { Checkbox, CheckboxShape } from 'twenty-ui/input';
 import { useCompleteTask } from '../hooks/useCompleteTask';
 
 const StyledTaskBody = styled.div`
@@ -80,31 +76,24 @@ const StyledCheckboxContainer = styled.div`
 
 export const TaskRow = ({ task }: { task: Task }) => {
   const theme = useTheme();
-  const openActivityRightDrawer = useOpenActivityRightDrawer({
-    objectNameSingular: CoreObjectNameSingular.Task,
-  });
+  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
-  const isRichTextV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsRichTextV2Enabled,
-  );
-
-  const body = getActivitySummary(
-    isRichTextV2Enabled ? (task?.bodyV2?.blocknote ?? null) : task?.body,
-  );
+  const body = getActivitySummary(task?.bodyV2?.blocknote ?? null);
 
   const { completeTask } = useCompleteTask(task);
 
-  const { FieldContextProvider: TaskTargetsContextProvider } = useFieldContext({
-    objectNameSingular: CoreObjectNameSingular.Task,
-    objectRecordId: task.id,
-    fieldMetadataName: 'taskTargets',
-    fieldPosition: 0,
-  });
+  const baseComponentInstanceId = `task-row-targets-${task.id}`;
+  const componentInstanceId = useActivityTargetsComponentInstanceId(
+    baseComponentInstanceId,
+  );
 
   return (
     <ActivityRow
       onClick={() => {
-        openActivityRightDrawer(task.id);
+        openRecordInCommandMenu({
+          recordId: task.id,
+          objectNameSingular: CoreObjectNameSingular.Task,
+        });
       }}
     >
       <StyledLeftSideContainer>
@@ -135,17 +124,24 @@ export const TaskRow = ({ task }: { task: Task }) => {
             {beautifyExactDate(task.dueAt)}
           </StyledDueDate>
         )}
-        {TaskTargetsContextProvider && (
-          <TaskTargetsContextProvider>
-            <ActivityTargetsInlineCell
-              activityObjectNameSingular={CoreObjectNameSingular.Task}
-              activity={task}
-              showLabel={false}
-              maxWidth={200}
-              readonly
-            />
-          </TaskTargetsContextProvider>
-        )}
+        {
+          <FieldContextProvider
+            objectNameSingular={CoreObjectNameSingular.Task}
+            objectRecordId={task.id}
+            fieldMetadataName={'taskTargets'}
+            fieldPosition={0}
+          >
+            <StopPropagationContainer>
+              <ActivityTargetsInlineCell
+                activityObjectNameSingular={CoreObjectNameSingular.Task}
+                activityRecordId={task.id}
+                showLabel={false}
+                maxWidth={200}
+                componentInstanceId={componentInstanceId}
+              />
+            </StopPropagationContainer>
+          </FieldContextProvider>
+        }
       </StyledRightSideContainer>
     </ActivityRow>
   );

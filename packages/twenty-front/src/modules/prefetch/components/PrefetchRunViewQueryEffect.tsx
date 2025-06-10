@@ -10,7 +10,8 @@ import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFieldsState';
 import { View } from '@/views/types/View';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
-import { WorkspaceActivationStatus, isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const PrefetchRunViewQueryEffect = () => {

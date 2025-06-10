@@ -1,6 +1,5 @@
-import { createState } from '@ui/utilities/state/utils/createState';
-
 import { Billing } from '~/generated/graphql';
+import { createState } from 'twenty-ui/utilities';
 
 export const billingState = createState<Billing | null>({
   key: 'billingState',

@@ -1,19 +1,19 @@
 import { useMemo } from 'react';
-import { IconCircleOff, IconComponentProps } from 'twenty-ui';
 
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
-import { SelectOption } from '@/spreadsheet-import/types';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
+import { IconCircleOff, IconComponentProps } from 'twenty-ui/display';
+import { SelectOption } from 'twenty-ui/input';
 
 export const FormCountrySelectInput = ({
   selectedCountryName,
-  onPersist,
+  onChange,
   readonly = false,
   VariablePicker,
 }: {
   selectedCountryName: string;
-  onPersist: (country: string) => void;
+  onChange: (country: string) => void;
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;
 }) => {
@@ -24,8 +24,7 @@ export const FormCountrySelectInput = ({
       ({ countryName, Flag }) => ({
         label: countryName,
         value: countryName,
-        color: 'transparent',
-        icon: (props: IconComponentProps) =>
+        Icon: (props: IconComponentProps) =>
           Flag({ width: props.size, height: props.size }),
       }),
     );
@@ -33,34 +32,32 @@ export const FormCountrySelectInput = ({
       {
         label: 'No country',
         value: '',
-        icon: IconCircleOff,
+        Icon: IconCircleOff,
       },
       ...countryList,
     ];
   }, [countries]);
 
-  const onChange = (country: string | null) => {
+  const onCountryChange = (country: string | null) => {
     if (readonly) {
       return;
     }
 
     if (country === null) {
-      onPersist('');
+      onChange('');
     } else {
-      onPersist(country);
+      onChange(country);
     }
   };
 
   return (
     <FormSelectFieldInput
       label="Country"
-      onPersist={onChange}
+      onChange={onCountryChange}
       options={options}
       defaultValue={selectedCountryName}
       readonly={readonly}
       VariablePicker={VariablePicker}
-      placeholder="Select a country"
-      preventDisplayPadding
     />
   );
 };

@@ -3,12 +3,12 @@ import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedM
 import { getTriggerDefaultDefinition } from '../getTriggerDefaultDefinition';
 
 describe('getTriggerDefaultDefinition', () => {
-  it('throws if the activeObjectMetadataItems list is empty', () => {
+  it('throws if the activeNonSystemObjectMetadataItems list is empty', () => {
     expect(() => {
       getTriggerDefaultDefinition({
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
         type: 'DATABASE_EVENT',
-        activeObjectMetadataItems: [],
+        activeNonSystemObjectMetadataItems: [],
       });
     }).toThrow();
   });
@@ -18,10 +18,11 @@ describe('getTriggerDefaultDefinition', () => {
       getTriggerDefaultDefinition({
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
         type: 'DATABASE_EVENT',
-        activeObjectMetadataItems: generatedMockObjectMetadataItems,
+        activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
+      name: 'Record is Created',
       settings: {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.created`,
         outputSchema: {},
@@ -34,10 +35,11 @@ describe('getTriggerDefaultDefinition', () => {
       getTriggerDefaultDefinition({
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_UPDATED,
         type: 'DATABASE_EVENT',
-        activeObjectMetadataItems: generatedMockObjectMetadataItems,
+        activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
+      name: 'Record is Updated',
       settings: {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.updated`,
         outputSchema: {},
@@ -50,10 +52,11 @@ describe('getTriggerDefaultDefinition', () => {
       getTriggerDefaultDefinition({
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_DELETED,
         type: 'DATABASE_EVENT',
-        activeObjectMetadataItems: generatedMockObjectMetadataItems,
+        activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
+      name: 'Record is Deleted',
       settings: {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.deleted`,
         outputSchema: {},
@@ -66,10 +69,11 @@ describe('getTriggerDefaultDefinition', () => {
       getTriggerDefaultDefinition({
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
         type: 'DATABASE_EVENT',
-        activeObjectMetadataItems: generatedMockObjectMetadataItems,
+        activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
+      name: 'Record is Created',
       settings: {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.created`,
         outputSchema: {},
@@ -82,10 +86,11 @@ describe('getTriggerDefaultDefinition', () => {
       getTriggerDefaultDefinition({
         defaultLabel: 'Launch manually',
         type: 'MANUAL',
-        activeObjectMetadataItems: generatedMockObjectMetadataItems,
+        activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
       }),
     ).toStrictEqual({
       type: 'MANUAL',
+      name: 'Launch manually',
       settings: {
         objectType: generatedMockObjectMetadataItems[0].nameSingular,
         outputSchema: {},
@@ -98,7 +103,7 @@ describe('getTriggerDefaultDefinition', () => {
       getTriggerDefaultDefinition({
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
         type: 'unknown' as any,
-        activeObjectMetadataItems: generatedMockObjectMetadataItems,
+        activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
       });
     }).toThrow('Unknown type: unknown');
   });

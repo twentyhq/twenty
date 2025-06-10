@@ -5,7 +5,7 @@ import {
   GraphQLInputObjectType,
   GraphQLObjectType,
 } from 'graphql';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { EnumTypeDefinition } from 'src/engine/api/graphql/workspace-schema-builder/factories/enum-type-definition.factory';
 import {

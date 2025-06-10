@@ -24,6 +24,7 @@ export const transformStripeSubscriptionEventToDatabaseSubscription = (
     currentPeriodStart: getDateFromTimestamp(data.object.current_period_start),
     metadata: data.object.metadata,
     collectionMethod:
+      // @ts-expect-error legacy noImplicitAny
       BillingSubscriptionCollectionMethod[
         data.object.collection_method.toUpperCase()
       ],
@@ -53,7 +54,7 @@ export const transformStripeSubscriptionEventToDatabaseSubscription = (
   };
 };
 
-const getSubscriptionStatus = (status: Stripe.Subscription.Status) => {
+export const getSubscriptionStatus = (status: Stripe.Subscription.Status) => {
   switch (status) {
     case 'active':
       return SubscriptionStatus.Active;

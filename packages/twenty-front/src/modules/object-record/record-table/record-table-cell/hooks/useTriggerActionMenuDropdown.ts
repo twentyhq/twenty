@@ -2,17 +2,15 @@ import { useRecoilCallback } from 'recoil';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
-import { getActionBarIdFromActionMenuId } from '@/action-menu/utils/getActionBarIdFromActionMenuId';
+import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDropdownHotKeyScope';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
-import { isBottomBarOpenedComponentState } from '@/ui/layout/bottom-bar/states/isBottomBarOpenedComponentState';
-import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
-
 export const useTriggerActionMenuDropdown = ({
   recordTableId,
 }: {
@@ -27,22 +25,17 @@ export const useTriggerActionMenuDropdown = ({
     recordTableId,
   );
 
+  const actionMenuDropdownId =
+    getActionMenuDropdownIdFromActionMenuId(actionMenuInstanceId);
+
   const recordIndexActionMenuDropdownPositionState = extractComponentState(
     recordIndexActionMenuDropdownPositionComponentState,
-    getActionMenuDropdownIdFromActionMenuId(actionMenuInstanceId),
+    actionMenuDropdownId,
   );
 
-  const isActionMenuDropdownOpenState = extractComponentState(
-    isDropdownOpenComponentState,
-    getActionMenuDropdownIdFromActionMenuId(actionMenuInstanceId),
-  );
+  const { openDropdown } = useDropdown(actionMenuDropdownId);
 
-  const isActionBarOpenState = isBottomBarOpenedComponentState.atomFamily({
-    instanceId: getActionBarIdFromActionMenuId(actionMenuInstanceId),
-  });
-
-  const { setActiveDropdownFocusIdAndMemorizePrevious } =
-    useSetActiveDropdownFocusIdAndMemorizePrevious();
+  const { closeCommandMenu } = useCommandMenu();
 
   const triggerActionMenuDropdown = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -63,21 +56,17 @@ export const useTriggerActionMenuDropdown = ({
           set(isRowSelectedFamilyState(recordId), true);
         }
 
-        set(isActionBarOpenState, false);
-        set(isActionMenuDropdownOpenState, true);
+        closeCommandMenu();
 
-        const actionMenuDropdownId =
-          getActionMenuDropdownIdFromActionMenuId(actionMenuInstanceId);
-
-        setActiveDropdownFocusIdAndMemorizePrevious(actionMenuDropdownId);
+        openDropdown({
+          scope: ActionMenuDropdownHotkeyScope.ActionMenuDropdown,
+        });
       },
     [
-      isActionBarOpenState,
-      isActionMenuDropdownOpenState,
-      isRowSelectedFamilyState,
       recordIndexActionMenuDropdownPositionState,
-      setActiveDropdownFocusIdAndMemorizePrevious,
-      actionMenuInstanceId,
+      isRowSelectedFamilyState,
+      closeCommandMenu,
+      openDropdown,
     ],
   );
 

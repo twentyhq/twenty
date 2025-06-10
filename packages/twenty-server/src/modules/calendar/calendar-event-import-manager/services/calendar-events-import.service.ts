@@ -106,13 +106,18 @@ export class CalendarEventsImportService {
         (event) => event.externalId,
       );
 
-      await this.calendarSaveEventsService.saveCalendarEventsAndEnqueueContactCreationJob(
-        filteredEvents,
-        calendarChannel,
-        connectedAccount,
-        workspaceId,
-      );
+      const BATCH_SIZE = 1000;
 
+      for (let i = 0; i < filteredEvents.length; i = i + BATCH_SIZE) {
+        const eventsBatch = filteredEvents.slice(i, i + BATCH_SIZE);
+
+        await this.calendarSaveEventsService.saveCalendarEventsAndEnqueueContactCreationJob(
+          eventsBatch,
+          calendarChannel,
+          connectedAccount,
+          workspaceId,
+        );
+      }
       const calendarChannelEventAssociationRepository =
         await this.twentyORMManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
           'calendarChannelEventAssociation',

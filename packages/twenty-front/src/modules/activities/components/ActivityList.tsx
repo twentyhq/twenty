@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Card } from 'twenty-ui';
+import { Card } from 'twenty-ui/layout';
 
 const StyledList = styled(Card)`
   & > :not(:last-child) {

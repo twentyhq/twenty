@@ -1,15 +1,13 @@
-import {
-  Column,
-  ColumnType,
-} from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
+import { SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
+import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { setSubColumn } from '@/spreadsheet-import/utils/setSubColumn';
 
 describe('setSubColumn', () => {
   it('should return a matchedSelectColumn with updated matchedOptions', () => {
-    const oldColumn: Column<'John' | ''> = {
+    const oldColumn: SpreadsheetColumn<'John' | ''> = {
       index: 0,
       header: 'Name',
-      type: ColumnType.matchedSelect,
+      type: SpreadsheetColumnType.matchedSelect,
       matchedOptions: [
         { entry: 'Name1', value: 'John' },
         { entry: 'Name2', value: '' },
@@ -24,7 +22,7 @@ describe('setSubColumn', () => {
     expect(result).toEqual({
       index: 0,
       header: 'Name',
-      type: ColumnType.matchedSelect,
+      type: SpreadsheetColumnType.matchedSelect,
       matchedOptions: [
         { entry: 'Name1', value: 'John Doe' },
         { entry: 'Name2', value: '' },
@@ -34,10 +32,10 @@ describe('setSubColumn', () => {
   });
 
   it('should return a matchedSelectOptionsColumn with updated matchedOptions', () => {
-    const oldColumn: Column<'John' | 'Jane'> = {
+    const oldColumn: SpreadsheetColumn<'John' | 'Jane'> = {
       index: 0,
       header: 'Name',
-      type: ColumnType.matchedSelectOptions,
+      type: SpreadsheetColumnType.matchedSelectOptions,
       matchedOptions: [
         { entry: 'Name1', value: 'John' },
         { entry: 'Name2', value: 'Jane' },
@@ -52,7 +50,7 @@ describe('setSubColumn', () => {
     expect(result).toEqual({
       index: 0,
       header: 'Name',
-      type: ColumnType.matchedSelectOptions,
+      type: SpreadsheetColumnType.matchedSelectOptions,
       matchedOptions: [
         { entry: 'Name1', value: 'John Doe' },
         { entry: 'Name2', value: 'Jane' },

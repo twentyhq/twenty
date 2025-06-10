@@ -15,4 +15,16 @@ export class CreateWorkflowVersionStepInput {
     nullable: false,
   })
   stepType: WorkflowActionType;
+
+  @Field(() => String, {
+    description: 'Parent step ID',
+    nullable: true,
+  })
+  parentStepId?: string;
+
+  @Field(() => String, {
+    description: 'Next step ID',
+    nullable: true,
+  })
+  nextStepId?: string;
 }

@@ -5,96 +5,56 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 const tableName = 'featureFlag';
 
 export const seedFeatureFlags = async (
-  workspaceDataSource: DataSource,
+  dataSource: DataSource,
   schemaName: string,
   workspaceId: string,
 ) => {
-  await workspaceDataSource
+  await dataSource
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${tableName}`, ['key', 'workspaceId', 'value'])
     .orIgnore()
     .values([
       {
-        key: FeatureFlagKey.IsAirtableIntegrationEnabled,
+        key: FeatureFlagKey.IS_AIRTABLE_INTEGRATION_ENABLED,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: FeatureFlagKey.IsPostgreSQLIntegrationEnabled,
+        key: FeatureFlagKey.IS_POSTGRESQL_INTEGRATION_ENABLED,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: FeatureFlagKey.IsEventObjectEnabled,
+        key: FeatureFlagKey.IS_STRIPE_INTEGRATION_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_WORKFLOW_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED,
         workspaceId: workspaceId,
         value: false,
       },
       {
-        key: FeatureFlagKey.IsStripeIntegrationEnabled,
+        key: FeatureFlagKey.IS_AI_ENABLED,
         workspaceId: workspaceId,
         value: true,
-      },
-      {
-        key: FeatureFlagKey.IsWorkflowEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IsAnalyticsV2Enabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IsCustomDomainEnabled,
-        workspaceId: workspaceId,
-        value: false,
-      },
-      {
-        key: FeatureFlagKey.IsApprovedAccessDomainsEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IsBillingPlansEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IsUniqueIndexesEnabled,
-        workspaceId: workspaceId,
-        value: false,
-      },
-      {
-        key: FeatureFlagKey.IsAdvancedFiltersEnabled,
-        workspaceId: workspaceId,
-        value: false,
-      },
-      {
-        key: FeatureFlagKey.IsCommandMenuV2Enabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IsRichTextV2Enabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IsNewRelationEnabled,
-        workspaceId: workspaceId,
-        value: false,
       },
     ])
     .execute();
 };
 
 export const deleteFeatureFlags = async (
-  workspaceDataSource: DataSource,
+  dataSource: DataSource,
   schemaName: string,
   workspaceId: string,
 ) => {
-  await workspaceDataSource
+  await dataSource
     .createQueryBuilder()
     .delete()
     .from(`${schemaName}.${tableName}`)

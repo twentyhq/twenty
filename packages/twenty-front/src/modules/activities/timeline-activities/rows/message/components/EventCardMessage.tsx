@@ -1,14 +1,15 @@
 import styled from '@emotion/styled';
-import { isUndefined } from '@sniptt/guards';
-import { OverflowingTextWithTooltip } from 'twenty-ui';
 
-import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
 import { EmailThreadMessage } from '@/activities/emails/types/EmailThreadMessage';
-import { EventCardMessageNotShared } from '@/activities/timeline-activities/rows/message/components/EventCardMessageNotShared';
+import { EventCardMessageBodyNotShared } from '@/activities/timeline-activities/rows/message/components/EventCardMessageBodyNotShared';
+import { EventCardMessageForbidden } from '@/activities/timeline-activities/rows/message/components/EventCardMessageForbidden';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { isDefined } from 'twenty-shared';
+import { Trans } from '@lingui/react/macro';
+import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 const StyledEventCardMessageContainer = styled.div`
   display: flex;
@@ -80,15 +81,13 @@ export const EventCardMessage = ({
     },
   });
 
-  const { openEmailThread } = useEmailThread();
-
   if (isDefined(error)) {
     const shouldHideMessageContent = error.graphQLErrors.some(
       (e) => e.extensions?.code === 'FORBIDDEN',
     );
 
     if (shouldHideMessageContent) {
-      return <EventCardMessageNotShared sharedByFullName={authorFullName} />;
+      return <EventCardMessageForbidden notSharedByFullName={authorFullName} />;
     }
 
     const shouldHandleNotFound = error.graphQLErrors.some(
@@ -96,14 +95,26 @@ export const EventCardMessage = ({
     );
 
     if (shouldHandleNotFound) {
-      return <div>Message not found</div>;
+      return (
+        <div>
+          <Trans>Message not found</Trans>
+        </div>
+      );
     }
 
-    return <div>Error loading message</div>;
+    return (
+      <div>
+        <Trans>Error loading message</Trans>
+      </div>
+    );
   }
 
-  if (loading || isUndefined(message)) {
-    return <div>Loading...</div>;
+  if (loading || !isDefined(message)) {
+    return (
+      <div>
+        <Trans>Loading...</Trans>
+      </div>
+    );
   }
 
   const messageParticipantHandles = message.messageParticipants
@@ -115,16 +126,21 @@ export const EventCardMessage = ({
     <StyledEventCardMessageContainer>
       <StyledEmailContent>
         <StyledEmailTop>
-          <StyledEmailTitle>{message.subject}</StyledEmailTitle>
+          <StyledEmailTitle>
+            {message.subject !==
+            FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED
+              ? message.subject
+              : `Subject not shared`}
+          </StyledEmailTitle>
           <StyledEmailParticipants>
             <OverflowingTextWithTooltip text={messageParticipantHandles} />
           </StyledEmailParticipants>
         </StyledEmailTop>
-        <StyledEmailBody
-          onClick={() => openEmailThread(message.messageThreadId)}
-        >
-          {message.text}
-        </StyledEmailBody>
+        {message.text !== FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED ? (
+          <StyledEmailBody>{message.text}</StyledEmailBody>
+        ) : (
+          <EventCardMessageBodyNotShared notSharedByFullName={authorFullName} />
+        )}
       </StyledEmailContent>
     </StyledEventCardMessageContainer>
   );

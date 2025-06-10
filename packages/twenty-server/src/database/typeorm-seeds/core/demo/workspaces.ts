@@ -1,14 +1,14 @@
-import { WorkspaceActivationStatus } from 'twenty-shared';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { DataSource } from 'typeorm';
 
 const tableName = 'workspace';
 
 export const seedWorkspaces = async (
-  workspaceDataSource: DataSource,
+  dataSource: DataSource,
   schemaName: string,
   workspaceId: string,
 ) => {
-  await workspaceDataSource
+  await dataSource
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${tableName}`, [
@@ -36,11 +36,11 @@ export const seedWorkspaces = async (
 };
 
 export const deleteWorkspaces = async (
-  workspaceDataSource: DataSource,
+  dataSource: DataSource,
   schemaName: string,
   workspaceId: string,
 ) => {
-  await workspaceDataSource
+  await dataSource
     .createQueryBuilder()
     .delete()
     .from(`${schemaName}.${tableName}`)

@@ -1,7 +1,5 @@
-import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
-import { contextStoreCurrentObjectMetadataItemComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemComponentState';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -11,7 +9,7 @@ export const useResetContextStoreStates = () => {
   const resetContextStoreStates = useRecoilCallback(({ set }) => {
     return (instanceId: string) => {
       set(
-        contextStoreCurrentObjectMetadataItemComponentState.atomFamily({
+        contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
           instanceId,
         }),
         undefined,
@@ -46,20 +44,6 @@ export const useResetContextStoreStates = () => {
           instanceId,
         }),
         undefined,
-      );
-
-      set(
-        contextStoreCurrentViewTypeComponentState.atomFamily({
-          instanceId,
-        }),
-        null,
-      );
-
-      set(
-        actionMenuEntriesComponentState.atomFamily({
-          instanceId,
-        }),
-        new Map(),
       );
     };
   }, []);

@@ -2,7 +2,7 @@ import { CommandFactory } from 'nest-commander';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
-import { shouldFilterException } from 'src/engine/utils/global-exception-handler.util';
+import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 
 import { CommandModule } from './command.module';
 
@@ -10,11 +10,9 @@ async function bootstrap() {
   const errorHandler = (err: Error) => {
     loggerService.error(err?.message, err?.name);
 
-    if (shouldFilterException(err)) {
-      return;
+    if (shouldCaptureException(err)) {
+      exceptionHandlerService.captureExceptions([err]);
     }
-
-    exceptionHandlerService.captureExceptions([err]);
   };
 
   const app = await CommandFactory.createWithoutRunning(CommandModule, {

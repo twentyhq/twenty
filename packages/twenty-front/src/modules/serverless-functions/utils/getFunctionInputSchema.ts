@@ -1,5 +1,4 @@
 import { InputSchema, InputSchemaProperty } from '@/workflow/types/InputSchema';
-import { isDefined } from 'twenty-shared';
 import {
   ArrayTypeNode,
   ArrowFunction,
@@ -16,6 +15,7 @@ import {
   UnionTypeNode,
   VariableStatement,
 } from 'typescript';
+import { isDefined } from 'twenty-shared/utils';
 
 const getTypeString = (typeNode: TypeNode): InputSchemaProperty => {
   switch (typeNode.kind) {

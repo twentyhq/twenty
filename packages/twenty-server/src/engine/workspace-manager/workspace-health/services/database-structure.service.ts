@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { FieldMetadataType } from 'twenty-shared';
 import { ColumnType } from 'typeorm';
 import { ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
   FieldMetadataDefaultValue,
@@ -250,6 +250,7 @@ export class DatabaseStructureService {
       const typeORMType = fieldMetadataTypeToColumnType(type) as ColumnType;
       const mainDataSource = this.typeORMService.getMainDataSource();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let value: any =
         // Old formart default values
         defaultValue &&
@@ -302,7 +303,8 @@ export class DatabaseStructureService {
         normalizer(
           compositeProperty.type,
           typeof initialDefaultValue === 'object'
-            ? initialDefaultValue?.[compositeProperty.name]
+            ? // @ts-expect-error legacy noImplicitAny
+              initialDefaultValue?.[compositeProperty.name]
             : null,
         ),
       );

@@ -26,19 +26,19 @@ export const parseMetadataPath = (
       case 'fields':
         return {
           objectNameSingular: 'field',
-          objectNamePlural: objectName,
+          objectNamePlural: 'fields',
           id: queryAction[1],
         };
       case 'objects':
         return {
           objectNameSingular: 'object',
-          objectNamePlural: objectName,
+          objectNamePlural: 'objects',
           id: queryAction[1],
         };
       case 'relations':
         return {
-          objectNameSingular: 'relation',
-          objectNamePlural: objectName,
+          objectNameSingular: 'relationMetadata',
+          objectNamePlural: 'relationMetadata',
           id: queryAction[1],
         };
       default:
@@ -47,11 +47,14 @@ export const parseMetadataPath = (
   } else {
     switch (objectName) {
       case 'fields':
-        return { objectNameSingular: 'field', objectNamePlural: objectName };
+        return { objectNameSingular: 'field', objectNamePlural: 'fields' };
       case 'objects':
-        return { objectNameSingular: 'object', objectNamePlural: objectName };
+        return { objectNameSingular: 'object', objectNamePlural: 'objects' };
       case 'relations':
-        return { objectNameSingular: 'relation', objectNamePlural: objectName };
+        return {
+          objectNameSingular: 'relationMetadata',
+          objectNamePlural: 'relationMetadata',
+        };
       default:
         return { objectNameSingular: '', objectNamePlural: '' };
     }

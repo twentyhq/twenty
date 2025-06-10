@@ -10,7 +10,7 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 type FormAddressFieldInputProps = {
   label?: string;
   defaultValue?: FieldAddressDraftValue | null;
-  onPersist: (value: FieldAddressValue) => void;
+  onChange: (value: FieldAddressValue) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
 };
@@ -18,7 +18,7 @@ type FormAddressFieldInputProps = {
 export const FormAddressFieldInput = ({
   label,
   defaultValue,
-  onPersist,
+  onChange,
   readonly,
   VariablePicker,
 }: FormAddressFieldInputProps) => {
@@ -35,7 +35,7 @@ export const FormAddressFieldInput = ({
         addressLng: defaultValue?.addressLng ?? null,
         [field]: updatedAddressPart,
       };
-      onPersist(updatedAddress);
+      onChange(updatedAddress);
     };
 
   return (
@@ -45,7 +45,7 @@ export const FormAddressFieldInput = ({
         <FormTextFieldInput
           label="Address 1"
           defaultValue={defaultValue?.addressStreet1 ?? ''}
-          onPersist={handleChange('addressStreet1')}
+          onChange={handleChange('addressStreet1')}
           readonly={readonly}
           VariablePicker={VariablePicker}
           placeholder="Street address"
@@ -53,7 +53,7 @@ export const FormAddressFieldInput = ({
         <FormTextFieldInput
           label="Address 2"
           defaultValue={defaultValue?.addressStreet2 ?? ''}
-          onPersist={handleChange('addressStreet2')}
+          onChange={handleChange('addressStreet2')}
           readonly={readonly}
           VariablePicker={VariablePicker}
           placeholder="Street address 2"
@@ -61,7 +61,7 @@ export const FormAddressFieldInput = ({
         <FormTextFieldInput
           label="City"
           defaultValue={defaultValue?.addressCity ?? ''}
-          onPersist={handleChange('addressCity')}
+          onChange={handleChange('addressCity')}
           readonly={readonly}
           VariablePicker={VariablePicker}
           placeholder="City"
@@ -69,7 +69,7 @@ export const FormAddressFieldInput = ({
         <FormTextFieldInput
           label="State"
           defaultValue={defaultValue?.addressState ?? ''}
-          onPersist={handleChange('addressState')}
+          onChange={handleChange('addressState')}
           readonly={readonly}
           VariablePicker={VariablePicker}
           placeholder="State"
@@ -77,14 +77,14 @@ export const FormAddressFieldInput = ({
         <FormTextFieldInput
           label="Post Code"
           defaultValue={defaultValue?.addressPostcode ?? ''}
-          onPersist={handleChange('addressPostcode')}
+          onChange={handleChange('addressPostcode')}
           readonly={readonly}
           VariablePicker={VariablePicker}
           placeholder="Post Code"
         />
         <FormCountrySelectInput
           selectedCountryName={defaultValue?.addressCountry ?? ''}
-          onPersist={handleChange('addressCountry')}
+          onChange={handleChange('addressCountry')}
           readonly={readonly}
           VariablePicker={VariablePicker}
         />

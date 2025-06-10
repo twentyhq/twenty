@@ -1,9 +1,12 @@
 import { useLinksField } from '@/object-record/record-field/meta-types/hooks/useLinksField';
 import { LinksFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/LinksFieldMenuItem';
+import { getFieldLinkDefinedLinks } from '@/object-record/record-field/meta-types/input/utils/getFieldLinkDefinedLinks';
+import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/states/recordFieldInputIsFieldInErrorComponentState';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useMemo } from 'react';
-import { isDefined } from 'twenty-shared';
+import { absoluteUrlSchema } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { absoluteUrlSchema } from '~/utils/validation-schemas/absoluteUrlSchema';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
 type LinksFieldInputProps = {
@@ -15,52 +18,54 @@ export const LinksFieldInput = ({
   onCancel,
   onClickOutside,
 }: LinksFieldInputProps) => {
-  const { persistLinksField, hotkeyScope, fieldValue } = useLinksField();
+  const { persistLinksField, fieldValue, fieldDefinition } = useLinksField();
 
-  const links = useMemo<{ url: string; label: string }[]>(
-    () =>
-      [
-        fieldValue.primaryLinkUrl
-          ? {
-              url: fieldValue.primaryLinkUrl,
-              label: fieldValue.primaryLinkLabel,
-            }
-          : null,
-        ...(fieldValue.secondaryLinks ?? []),
-      ].filter(isDefined),
-    [
-      fieldValue.primaryLinkLabel,
-      fieldValue.primaryLinkUrl,
-      fieldValue.secondaryLinks,
-    ],
+  const links = useMemo<{ url: string; label: string | null }[]>(
+    () => getFieldLinkDefinedLinks(fieldValue),
+    [fieldValue],
   );
 
   const handlePersistLinks = (
-    updatedLinks: { url: string; label: string }[],
+    updatedLinks: { url: string | null; label: string | null }[],
   ) => {
-    const [nextPrimaryLink, ...nextSecondaryLinks] = updatedLinks;
+    const nextPrimaryLink = updatedLinks.at(0);
+    const nextSecondaryLinks = updatedLinks.slice(1);
+
     persistLinksField({
-      primaryLinkUrl: nextPrimaryLink?.url ?? '',
-      primaryLinkLabel: nextPrimaryLink?.label ?? '',
+      primaryLinkUrl: nextPrimaryLink?.url ?? null,
+      primaryLinkLabel: nextPrimaryLink?.label ?? null,
       secondaryLinks: nextSecondaryLinks,
     });
   };
 
-  const isPrimaryLink = (index: number) => index === 0 && links?.length > 1;
+  const getShowPrimaryIcon = (index: number) => index === 0 && links.length > 1;
+  const getShowSetAsPrimaryButton = (index: number) => index > 0;
+
+  const setIsFieldInError = useSetRecoilComponentStateV2(
+    recordFieldInputIsFieldInErrorComponentState,
+  );
+
+  const handleError = (hasError: boolean, values: any[]) => {
+    setIsFieldInError(hasError && values.length === 0);
+  };
 
   return (
     <MultiItemFieldInput
       items={links}
       onPersist={handlePersistLinks}
       onCancel={onCancel}
-      onClickOutside={onClickOutside}
+      onClickOutside={(persist, event) => {
+        onClickOutside?.(event);
+        persist();
+      }}
       placeholder="URL"
       fieldMetadataType={FieldMetadataType.LINKS}
       validateInput={(input) => ({
         isValid: absoluteUrlSchema.safeParse(input).success,
         errorMessage: '',
       })}
-      formatInput={(input) => ({ url: input, label: '' })}
+      onError={handleError}
+      formatInput={(input) => ({ url: input, label: null })}
       renderItem={({
         value: link,
         index,
@@ -70,8 +75,9 @@ export const LinksFieldInput = ({
       }) => (
         <LinksFieldMenuItem
           key={index}
-          dropdownId={`${hotkeyScope}-links-${index}`}
-          isPrimary={isPrimaryLink(index)}
+          dropdownId={`links-field-input-${fieldDefinition.metadata.fieldName}-${index}`}
+          showPrimaryIcon={getShowPrimaryIcon(index)}
+          showSetAsPrimaryButton={getShowSetAsPrimaryButton(index)}
           label={link.label}
           onEdit={handleEdit}
           onSetAsPrimary={handleSetPrimary}
@@ -79,7 +85,7 @@ export const LinksFieldInput = ({
           url={link.url}
         />
       )}
-      hotkeyScope={hotkeyScope}
+      hotkeyScope={DEFAULT_CELL_SCOPE.scope}
     />
   );
 };

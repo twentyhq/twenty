@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 
-import IconGmailRaw from '@ui/display/icon/assets/gmail.svg?react';
+import IconGmailRaw from '@assets/icons/gmail.svg?react';
 import { IconComponentProps } from '@ui/display/icon/types/IconComponent';
 
 type IconGmailProps = Pick<IconComponentProps, 'size'>;

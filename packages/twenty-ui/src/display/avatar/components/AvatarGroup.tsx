@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
 import styled from '@emotion/styled';
+import { ReactNode } from 'react';
 
 export type AvatarGroupProps = {
   avatars: ReactNode[];
@@ -12,6 +12,10 @@ const StyledContainer = styled.div`
 
 const StyledItemContainer = styled.div`
   margin-right: -3px;
+
+  &:last-child {
+    margin-right: 0;
+  }
 `;
 
 const MAX_AVATARS_NB = 4;

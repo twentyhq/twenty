@@ -8,15 +8,11 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
 import dotenv from 'dotenv';
 import { useMemo, useState } from 'react';
-import {
-  Button,
-  H2Title,
-  IconPlus,
-  IconSearch,
-  MOBILE_VIEWPORT,
-  Section,
-} from 'twenty-ui';
 import { v4 } from 'uuid';
+import { Button } from 'twenty-ui/input';
+import { H2Title, IconPlus, IconSearch } from 'twenty-ui/display';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { Section } from 'twenty-ui/layout';
 
 const StyledSearchInput = styled(TextInput)`
   padding-bottom: ${({ theme }) => theme.spacing(2)};

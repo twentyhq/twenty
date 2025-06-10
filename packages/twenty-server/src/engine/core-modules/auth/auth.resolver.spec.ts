@@ -9,9 +9,10 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
+import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -33,7 +34,7 @@ describe('AuthResolver', () => {
       providers: [
         AuthResolver,
         {
-          provide: getRepositoryToken(Workspace, 'core'),
+          provide: getRepositoryToken(AppToken, 'core'),
           useValue: {},
         },
         {
@@ -62,6 +63,10 @@ describe('AuthResolver', () => {
         },
         {
           provide: RenewTokenService,
+          useValue: {},
+        },
+        {
+          provide: SignInUpService,
           useValue: {},
         },
         {

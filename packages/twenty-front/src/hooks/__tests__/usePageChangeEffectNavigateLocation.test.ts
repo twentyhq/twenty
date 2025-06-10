@@ -3,14 +3,15 @@ import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePat
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
+import { expect } from '@storybook/test';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
 import { OnboardingStatus } from '~/generated/graphql';
 
-import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
 import { UNTESTED_APP_PATHS } from '~/testing/constants/UntestedAppPaths';
+import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 jest.mock('@/onboarding/hooks/useOnboardingStatus');
 const setupMockOnboardingStatus = (
@@ -28,13 +29,13 @@ const setupMockIsWorkspaceActivationStatusEqualsTo = (
     .mockReturnValueOnce(isWorkspaceSuspended);
 };
 
-jest.mock('~/hooks/useIsMatchingLocation');
-const mockUseIsMatchingLocation = jest.mocked(useIsMatchingLocation);
+jest.mock('~/utils/isMatchingLocation');
+const mockIsMatchingLocation = jest.mocked(isMatchingLocation);
 
 const setupMockIsMatchingLocation = (pathname: string) => {
-  mockUseIsMatchingLocation.mockReturnValueOnce({
-    isMatchingLocation: (path: string) => path === pathname,
-  });
+  mockIsMatchingLocation.mockImplementation(
+    (_location, path) => path === pathname,
+  );
 };
 
 jest.mock('@/auth/hooks/useIsLogged');
@@ -57,10 +58,14 @@ const setupMockUseParams = (objectNamePlural?: string) => {
 };
 
 jest.mock('recoil');
-const setupMockRecoil = (objectNamePlural?: string) => {
+const setupMockRecoil = (
+  objectNamePlural?: string,
+  verifyEmailNextPath?: string,
+) => {
   jest
     .mocked(useRecoilValue)
-    .mockReturnValueOnce([{ namePlural: objectNamePlural ?? '' }]);
+    .mockReturnValueOnce([{ namePlural: objectNamePlural ?? '' }])
+    .mockReturnValueOnce(verifyEmailNextPath);
 };
 
 // prettier-ignore
@@ -72,6 +77,7 @@ const testCases: {
   res: string | undefined;
   objectNamePluralFromParams?: string;
   objectNamePluralFromMetadata?: string;
+  verifyEmailNextPath?: string;
 }[] = [
   { loc: AppPath.Verify, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
   { loc: AppPath.Verify, isLoggedIn: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: '/settings/billing' },
@@ -91,32 +97,34 @@ const testCases: {
   { loc: AppPath.SignInUp, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: AppPath.InviteTeam },
   { loc: AppPath.SignInUp, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: defaultHomePagePath },
 
-  { loc: AppPath.Invite, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: undefined },
-  { loc: AppPath.Invite, isLoggedIn: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined },
+  { loc: AppPath.Invite, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: '/plan-required' },
+  { loc: AppPath.Invite, isLoggedIn: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: '/settings/billing' },
   { loc: AppPath.Invite, isLoggedIn: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: undefined },
-  { loc: AppPath.Invite, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.WORKSPACE_ACTIVATION, res: undefined },
-  { loc: AppPath.Invite, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PROFILE_CREATION, res: undefined },
-  { loc: AppPath.Invite, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.SYNC_EMAIL, res: undefined },
-  { loc: AppPath.Invite, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: undefined },
-  { loc: AppPath.Invite, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined },
+  { loc: AppPath.Invite, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.WORKSPACE_ACTIVATION, res: '/create/workspace' },
+  { loc: AppPath.Invite, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PROFILE_CREATION, res: '/create/profile' },
+  { loc: AppPath.Invite, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.SYNC_EMAIL, res: '/sync/emails' },
+  { loc: AppPath.Invite, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: '/invite-team' },
+  { loc: AppPath.Invite, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: defaultHomePagePath },
 
-  { loc: AppPath.ResetPassword, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: undefined },
-  { loc: AppPath.ResetPassword, isLoggedIn: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined },
+  { loc: AppPath.ResetPassword, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: '/plan-required' },
+  { loc: AppPath.ResetPassword, isLoggedIn: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: '/settings/billing' },
   { loc: AppPath.ResetPassword, isLoggedIn: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: undefined },
-  { loc: AppPath.ResetPassword, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.WORKSPACE_ACTIVATION, res: undefined },
-  { loc: AppPath.ResetPassword, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PROFILE_CREATION, res: undefined },
-  { loc: AppPath.ResetPassword, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.SYNC_EMAIL, res: undefined },
-  { loc: AppPath.ResetPassword, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: undefined },
+  { loc: AppPath.ResetPassword, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.WORKSPACE_ACTIVATION, res: '/create/workspace' },
+  { loc: AppPath.ResetPassword, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PROFILE_CREATION, res: '/create/profile' },
+  { loc: AppPath.ResetPassword, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.SYNC_EMAIL, res: '/sync/emails' },
+  { loc: AppPath.ResetPassword, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: '/invite-team' },
   { loc: AppPath.ResetPassword, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined },
 
-  { loc: AppPath.VerifyEmail, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: undefined },
-  { loc: AppPath.VerifyEmail, isLoggedIn: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined },
+  { loc: AppPath.VerifyEmail, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
+  { loc: AppPath.VerifyEmail, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, verifyEmailNextPath: '/nextPath?key=value', res: '/nextPath?key=value' },
+  { loc: AppPath.VerifyEmail, isLoggedIn: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: '/settings/billing' },
+  { loc: AppPath.VerifyEmail, isLoggedIn: false, isWorkspaceSuspended: false, onboardingStatus: undefined, verifyEmailNextPath: '/nextPath?key=value', res: undefined },
   { loc: AppPath.VerifyEmail, isLoggedIn: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: undefined },
-  { loc: AppPath.VerifyEmail, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.WORKSPACE_ACTIVATION, res: undefined },
-  { loc: AppPath.VerifyEmail, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PROFILE_CREATION, res: undefined },
-  { loc: AppPath.VerifyEmail, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.SYNC_EMAIL, res: undefined },
-  { loc: AppPath.VerifyEmail, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: undefined },
-  { loc: AppPath.VerifyEmail, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined },
+  { loc: AppPath.VerifyEmail, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.WORKSPACE_ACTIVATION, res: AppPath.CreateWorkspace },
+  { loc: AppPath.VerifyEmail, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PROFILE_CREATION, res: AppPath.CreateProfile },
+  { loc: AppPath.VerifyEmail, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.SYNC_EMAIL, res: AppPath.SyncEmails },
+  { loc: AppPath.VerifyEmail, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: AppPath.InviteTeam },
+  { loc: AppPath.VerifyEmail, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: defaultHomePagePath },
 
   { loc: AppPath.CreateWorkspace, isLoggedIn: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
   { loc: AppPath.CreateWorkspace, isLoggedIn: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: '/settings/billing' },
@@ -266,21 +274,28 @@ const testCases: {
 ];
 
 describe('usePageChangeEffectNavigateLocation', () => {
-  testCases.forEach((testCase) => {
-    it(`with location ${testCase.loc} and onboardingStatus ${testCase.onboardingStatus} and isWorkspaceSuspended ${testCase.isWorkspaceSuspended} should return ${testCase.res}`, () => {
-      setupMockIsMatchingLocation(testCase.loc);
-      setupMockOnboardingStatus(testCase.onboardingStatus);
-      setupMockIsWorkspaceActivationStatusEqualsTo(
-        testCase.isWorkspaceSuspended,
-      );
-      setupMockIsLogged(testCase.isLoggedIn);
-      setupMockUseParams(testCase.objectNamePluralFromParams);
-      setupMockRecoil(testCase.objectNamePluralFromMetadata);
+  it.each(testCases)(
+    'with location $loc and onboardingStatus $onboardingStatus and isWorkspaceSuspended $isWorkspaceSuspended should return $res`',
+    ({
+      loc,
+      onboardingStatus,
+      isWorkspaceSuspended,
+      isLoggedIn,
+      objectNamePluralFromParams,
+      objectNamePluralFromMetadata,
+      verifyEmailNextPath,
+      res,
+    }) => {
+      setupMockIsMatchingLocation(loc);
+      setupMockOnboardingStatus(onboardingStatus);
+      setupMockIsWorkspaceActivationStatusEqualsTo(isWorkspaceSuspended);
+      setupMockIsLogged(isLoggedIn);
+      setupMockUseParams(objectNamePluralFromParams);
+      setupMockRecoil(objectNamePluralFromMetadata, verifyEmailNextPath);
 
-      expect(usePageChangeEffectNavigateLocation()).toEqual(testCase.res);
-    });
-  });
-
+      expect(usePageChangeEffectNavigateLocation()).toEqual(res);
+    },
+  );
   describe('tests should be exhaustive', () => {
     it('all location, onboarding status and suspended/not suspended workspace activation status should be tested', () => {
       expect(testCases.length).toEqual(
@@ -288,7 +303,8 @@ describe('usePageChangeEffectNavigateLocation', () => {
           (Object.keys(OnboardingStatus).length +
             ['isWorkspaceSuspended:true', 'isWorkspaceSuspended:false']
               .length) +
-          ['nonExistingObjectInParam', 'existingObjectInParam:false'].length,
+          ['nonExistingObjectInParam', 'existingObjectInParam:false'].length +
+          ['caseWithRedirectionToVerifyEmailNextPath', 'caseWithout'].length,
       );
     });
   });

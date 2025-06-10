@@ -2,6 +2,7 @@ import { HealthCheckService } from '@nestjs/terminus';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { HealthController } from 'src/engine/core-modules/health/controllers/health.controller';
+import { AppHealthIndicator } from 'src/engine/core-modules/health/indicators/app.health';
 import { ConnectedAccountHealth } from 'src/engine/core-modules/health/indicators/connected-account.health';
 import { DatabaseHealthIndicator } from 'src/engine/core-modules/health/indicators/database.health';
 import { RedisHealthIndicator } from 'src/engine/core-modules/health/indicators/redis.health';
@@ -32,6 +33,10 @@ describe('HealthController', () => {
         },
         {
           provide: ConnectedAccountHealth,
+          useValue: { isHealthy: jest.fn() },
+        },
+        {
+          provide: AppHealthIndicator,
           useValue: { isHealthy: jest.fn() },
         },
       ],

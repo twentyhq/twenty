@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { SubmitHandler, UseFormReturn } from 'react-hook-form';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 
 import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { signInUpModeState } from '@/auth/states/signInUpModeState';
@@ -11,11 +11,13 @@ import {
 import { SignInUpMode } from '@/auth/types/signInUpMode';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
+import { useBuildSearchParamsFromUrlSyncedStates } from '@/domain-manager/hooks/useBuildSearchParamsFromUrlSyncedStates';
 import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilState } from 'recoil';
-import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
+import { buildAppPathWithQueryParams } from '~/utils/buildAppPathWithQueryParams';
+import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { useAuth } from '../../hooks/useAuth';
 
 export const useSignInUp = (form: UseFormReturn<Form>) => {
@@ -24,14 +26,16 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   const [signInUpStep, setSignInUpStep] = useRecoilState(signInUpStepState);
   const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
 
-  const { isMatchingLocation } = useIsMatchingLocation();
+  const location = useLocation();
 
   const workspaceInviteHash = useParams().workspaceInviteHash;
   const [searchParams] = useSearchParams();
   const workspacePersonalInviteToken =
     searchParams.get('inviteToken') ?? undefined;
 
-  const [isInviteMode] = useState(() => isMatchingLocation(AppPath.Invite));
+  const [isInviteMode] = useState(() =>
+    isMatchingLocation(location, AppPath.Invite),
+  );
 
   const {
     signInWithCredentials,
@@ -41,6 +45,9 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
 
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
   const { readCaptchaToken } = useReadCaptchaToken();
+
+  const { buildSearchParamsFromUrlSyncedStates } =
+    useBuildSearchParamsFromUrlSyncedStates();
 
   const continueWithEmail = useCallback(() => {
     requestFreshCaptchaToken();
@@ -97,13 +104,19 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
             token,
           );
         } else {
-          await signUpWithCredentials(
-            data.email.toLowerCase().trim(),
-            data.password,
+          const verifyEmailNextPath = buildAppPathWithQueryParams(
+            AppPath.PlanRequired,
+            await buildSearchParamsFromUrlSyncedStates(),
+          );
+
+          await signUpWithCredentials({
+            email: data.email.toLowerCase().trim(),
+            password: data.password,
             workspaceInviteHash,
             workspacePersonalInviteToken,
-            token,
-          );
+            captchaToken: token,
+            verifyEmailNextPath,
+          });
         }
       } catch (err: any) {
         enqueueSnackBar(err?.message, {
@@ -122,6 +135,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       workspacePersonalInviteToken,
       enqueueSnackBar,
       requestFreshCaptchaToken,
+      buildSearchParamsFromUrlSyncedStates,
     ],
   );
 

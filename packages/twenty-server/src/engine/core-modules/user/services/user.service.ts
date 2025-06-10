@@ -3,21 +3,27 @@ import { InjectRepository } from '@nestjs/typeorm';
 import assert from 'assert';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { isWorkspaceActiveOrSuspended } from 'twenty-shared';
-import { Repository } from 'typeorm';
+import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
+import { IsNull, Not, Repository } from 'typeorm';
 
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -30,10 +36,11 @@ export class UserService extends TypeOrmQueryService<User> {
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly dataSourceService: DataSourceService,
-    private readonly typeORMService: TypeORMService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly workspaceService: WorkspaceService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly userRoleService: UserRoleService,
+    private readonly userWorkspaceService: UserWorkspaceService,
   ) {
     super(userRepository);
   }
@@ -56,7 +63,7 @@ export class UserService extends TypeOrmQueryService<User> {
     });
   }
 
-  async loadWorkspaceMembers(workspace: Workspace) {
+  async loadWorkspaceMembers(workspace: Workspace, withDeleted = false) {
     if (!isWorkspaceActiveOrSuspended(workspace)) {
       return [];
     }
@@ -67,7 +74,24 @@ export class UserService extends TypeOrmQueryService<User> {
         'workspaceMember',
       );
 
-    return workspaceMemberRepository.find();
+    return await workspaceMemberRepository.find({ withDeleted: withDeleted });
+  }
+
+  async loadDeletedWorkspaceMembersOnly(workspace: Workspace) {
+    if (!isWorkspaceActiveOrSuspended(workspace)) {
+      return [];
+    }
+
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+        workspace.id,
+        'workspaceMember',
+      );
+
+    return await workspaceMemberRepository.find({
+      where: { deletedAt: Not(IsNull()) },
+      withDeleted: true,
+    });
   }
 
   private async deleteUserFromWorkspace({
@@ -77,26 +101,37 @@ export class UserService extends TypeOrmQueryService<User> {
     userId: string;
     workspaceId: string;
   }) {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspaceId,
+        'workspaceMember',
+        {
+          shouldBypassPermissionChecks: true,
+        },
       );
 
-    const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
+    const workspaceMembers = await workspaceMemberRepository.find();
 
-    const workspaceMembers = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember"`,
-    );
+    if (workspaceMembers.length > 1) {
+      const userWorkspace =
+        await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
+          userId,
+          workspaceId,
+        });
+
+      await this.userRoleService.validateUserWorkspaceIsNotUniqueAdminOrThrow({
+        workspaceId,
+        userWorkspaceId: userWorkspace.id,
+      });
+    }
+
     const workspaceMember = workspaceMembers.filter(
       (member: WorkspaceMemberWorkspaceEntity) => member.userId === userId,
     )?.[0];
 
     assert(workspaceMember, 'WorkspaceMember not found');
 
-    await workspaceDataSource?.query(
-      `DELETE FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "userId" = '${userId}'`,
-    );
+    await workspaceMemberRepository.delete({ userId });
 
     const objectMetadata = await this.objectMetadataRepository.findOneOrFail({
       where: {
@@ -138,7 +173,26 @@ export class UserService extends TypeOrmQueryService<User> {
     userValidator.assertIsDefinedOrThrow(user);
 
     await Promise.all(
-      user.workspaces.map(this.deleteUserFromWorkspace.bind(this)),
+      user.workspaces.map(async (userWorkspace) => {
+        try {
+          await this.deleteUserFromWorkspace({
+            userId,
+            workspaceId: userWorkspace.workspaceId,
+          });
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+          if (
+            error instanceof PermissionsException &&
+            error.code === PermissionsExceptionCode.CANNOT_UNASSIGN_LAST_ADMIN
+          ) {
+            throw new PermissionsException(
+              PermissionsExceptionMessage.CANNOT_DELETE_LAST_ADMIN_USER,
+              PermissionsExceptionCode.CANNOT_DELETE_LAST_ADMIN_USER,
+            );
+          }
+          throw error;
+        }
+      }),
     );
 
     return user;

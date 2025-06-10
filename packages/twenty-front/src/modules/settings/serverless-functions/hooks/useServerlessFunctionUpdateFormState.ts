@@ -1,11 +1,11 @@
+import { INDEX_FILE_PATH } from '@/serverless-functions/constants/IndexFilePath';
+import { getFunctionInputFromSourceCode } from '@/serverless-functions/utils/getFunctionInputFromSourceCode';
 import { useGetOneServerlessFunction } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunction';
 import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode';
-import { Dispatch, SetStateAction, useState } from 'react';
-import { FindOneServerlessFunctionSourceCodeQuery } from '~/generated-metadata/graphql';
 import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
-import { useSetRecoilState } from 'recoil';
-import { getFunctionInputFromSourceCode } from '@/serverless-functions/utils/getFunctionInputFromSourceCode';
-import { INDEX_FILE_PATH } from '@/serverless-functions/constants/IndexFilePath';
+import { Dispatch, SetStateAction, useState } from 'react';
+import { useRecoilState } from 'recoil';
+import { FindOneServerlessFunctionSourceCodeQuery } from '~/generated-metadata/graphql';
 
 export type ServerlessFunctionNewFormValues = {
   name: string;
@@ -37,9 +37,8 @@ export const useServerlessFunctionUpdateFormState = ({
     code: undefined,
   });
 
-  const setServerlessFunctionTestData = useSetRecoilState(
-    serverlessFunctionTestDataFamilyState(serverlessFunctionId),
-  );
+  const [serverlessFunctionTestData, setServerlessFunctionTestData] =
+    useRecoilState(serverlessFunctionTestDataFamilyState(serverlessFunctionId));
 
   const { serverlessFunction } = useGetOneServerlessFunction({
     id: serverlessFunctionId,
@@ -48,22 +47,30 @@ export const useServerlessFunctionUpdateFormState = ({
   const { loading } = useGetOneServerlessFunctionSourceCode({
     id: serverlessFunctionId,
     version: serverlessFunctionVersion,
-    onCompleted: (data: FindOneServerlessFunctionSourceCodeQuery) => {
+    onCompleted: async (data: FindOneServerlessFunctionSourceCodeQuery) => {
       const newState = {
         code: data?.getServerlessFunctionSourceCode || undefined,
         name: serverlessFunction?.name || '',
         description: serverlessFunction?.description || '',
       };
+
       setFormValues((prevState) => ({
         ...prevState,
         ...newState,
       }));
-      const sourceCode =
-        data?.getServerlessFunctionSourceCode?.[INDEX_FILE_PATH];
-      setServerlessFunctionTestData((prev) => ({
-        ...prev,
-        input: getFunctionInputFromSourceCode(sourceCode),
-      }));
+
+      if (serverlessFunctionTestData.shouldInitInput) {
+        const sourceCode =
+          data?.getServerlessFunctionSourceCode?.[INDEX_FILE_PATH];
+
+        const functionInput = await getFunctionInputFromSourceCode(sourceCode);
+
+        setServerlessFunctionTestData((prev) => ({
+          ...prev,
+          input: functionInput,
+          shouldInitInput: false,
+        }));
+      }
     },
   });
 

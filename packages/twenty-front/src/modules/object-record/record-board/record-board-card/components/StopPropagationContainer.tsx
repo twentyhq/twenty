@@ -1,11 +1,10 @@
-import { ReactNode } from 'react';
 import styled from '@emotion/styled';
+import { ReactNode } from 'react';
 
 const StyledFieldContainer = styled.div`
   display: flex;
   flex-direction: row;
-  width: fit-content;
-  max-width: 100%;
+  width: 100%;
 `;
 
 export const StopPropagationContainer = ({

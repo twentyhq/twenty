@@ -1,10 +1,11 @@
 import styled from '@emotion/styled';
-import { Button, IconHelpCircle, LightIconButton } from 'twenty-ui';
 
 import { SupportButtonSkeletonLoader } from '@/support/components/SupportButtonSkeletonLoader';
 import { useSupportChat } from '@/support/hooks/useSupportChat';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useRecoilValue } from 'recoil';
+import { IconHelpCircle } from 'twenty-ui/display';
+import { Button, LightIconButton } from 'twenty-ui/input';
 
 const StyledButtonContainer = styled.div`
   display: flex;

@@ -5,8 +5,8 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { isLoadingTokensFromExtensionState } from '@/chrome-extension-sidecar/states/isLoadingTokensFromExtensionState';
 import { chromeExtensionIdState } from '@/client-config/states/chromeExtensionIdState';
-import { isDefined } from 'twenty-shared';
 import { isInFrame } from '~/utils/isInIframe';
+import { isDefined } from 'twenty-shared/utils';
 
 export const ChromeExtensionSidecarEffect = () => {
   const navigate = useNavigate();

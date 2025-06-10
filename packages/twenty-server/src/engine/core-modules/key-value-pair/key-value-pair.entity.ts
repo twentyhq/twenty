@@ -19,22 +19,34 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export enum KeyValuePairType {
-  USER_VAR = 'USER_VAR',
+  USER_VARIABLE = 'USER_VARIABLE',
   FEATURE_FLAG = 'FEATURE_FLAG',
-  SYSTEM_VAR = 'SYSTEM_VAR',
+  CONFIG_VARIABLE = 'CONFIG_VARIABLE',
 }
 
 @Entity({ name: 'keyValuePair', schema: 'core' })
 @ObjectType()
-@Unique('IndexOnKeyUserIdWorkspaceIdUnique', ['key', 'userId', 'workspaceId'])
-@Index('IndexOnKeyWorkspaceIdAndNullUserIdUnique', ['key', 'workspaceId'], {
-  unique: true,
-  where: '"userId" is NULL',
-})
-@Index('IndexOnKeyUserIdAndNullWorkspaceIdUnique', ['key', 'userId'], {
-  unique: true,
-  where: '"workspaceId" is NULL',
-})
+@Unique('IDX_KEY_VALUE_PAIR_KEY_USER_ID_WORKSPACE_ID_UNIQUE', [
+  'key',
+  'userId',
+  'workspaceId',
+])
+@Index(
+  'IDX_KEY_VALUE_PAIR_KEY_WORKSPACE_ID_NULL_USER_ID_UNIQUE',
+  ['key', 'workspaceId'],
+  {
+    unique: true,
+    where: '"userId" is NULL',
+  },
+)
+@Index(
+  'IDX_KEY_VALUE_PAIR_KEY_USER_ID_NULL_WORKSPACE_ID_UNIQUE',
+  ['key', 'userId'],
+  {
+    unique: true,
+    where: '"workspaceId" is NULL',
+  },
+)
 export class KeyValuePair {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
@@ -75,7 +87,7 @@ export class KeyValuePair {
     type: 'enum',
     enum: Object.values(KeyValuePairType),
     nullable: false,
-    default: KeyValuePairType.USER_VAR,
+    default: KeyValuePairType.USER_VARIABLE,
   })
   type: KeyValuePairType;
 

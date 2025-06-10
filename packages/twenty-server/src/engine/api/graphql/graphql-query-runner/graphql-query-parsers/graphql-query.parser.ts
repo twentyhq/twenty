@@ -1,16 +1,14 @@
-import {
-  FindOptionsWhere,
-  ObjectLiteral,
-  OrderByCondition,
-  SelectQueryBuilder,
-} from 'typeorm';
+import { FindOptionsWhere, ObjectLiteral, OrderByCondition } from 'typeorm';
 
 import {
   ObjectRecordFilter,
   ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
+import {
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
 import { GraphqlQueryOrderFieldParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
 import {
@@ -21,37 +19,39 @@ import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metada
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
+import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 
 export class GraphqlQueryParser {
   private fieldMetadataMapByName: FieldMetadataMap;
+  private fieldMetadataMapByJoinColumnName: FieldMetadataMap;
   private objectMetadataMaps: ObjectMetadataMaps;
   private filterConditionParser: GraphqlQueryFilterConditionParser;
   private orderFieldParser: GraphqlQueryOrderFieldParser;
-  private featureFlagsMap: FeatureFlagMap;
 
   constructor(
     fieldMetadataMapByName: FieldMetadataMap,
+    fieldMetadataMapByJoinColumnName: FieldMetadataMap,
     objectMetadataMaps: ObjectMetadataMaps,
-    featureFlagsMap: FeatureFlagMap,
   ) {
     this.objectMetadataMaps = objectMetadataMaps;
     this.fieldMetadataMapByName = fieldMetadataMapByName;
-    this.featureFlagsMap = featureFlagsMap;
+    this.fieldMetadataMapByJoinColumnName = fieldMetadataMapByJoinColumnName;
     this.filterConditionParser = new GraphqlQueryFilterConditionParser(
       this.fieldMetadataMapByName,
-      featureFlagsMap,
+      this.fieldMetadataMapByJoinColumnName,
     );
     this.orderFieldParser = new GraphqlQueryOrderFieldParser(
       this.fieldMetadataMapByName,
-      featureFlagsMap,
     );
   }
 
   public applyFilterToBuilder(
-    queryBuilder: SelectQueryBuilder<any>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    queryBuilder: WorkspaceSelectQueryBuilder<any>,
     objectNameSingular: string,
     recordFilter: Partial<ObjectRecordFilter>,
-  ): SelectQueryBuilder<any> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): WorkspaceSelectQueryBuilder<any> {
     return this.filterConditionParser.parse(
       queryBuilder,
       objectNameSingular,
@@ -60,9 +60,11 @@ export class GraphqlQueryParser {
   }
 
   public applyDeletedAtToBuilder(
-    queryBuilder: SelectQueryBuilder<any>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    queryBuilder: WorkspaceSelectQueryBuilder<any>,
     recordFilter: Partial<ObjectRecordFilter>,
-  ): SelectQueryBuilder<any> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): WorkspaceSelectQueryBuilder<any> {
     if (this.checkForDeletedAtFilter(recordFilter)) {
       queryBuilder.withDeleted();
     }
@@ -97,11 +99,13 @@ export class GraphqlQueryParser {
   };
 
   public applyOrderToBuilder(
-    queryBuilder: SelectQueryBuilder<any>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    queryBuilder: WorkspaceSelectQueryBuilder<any>,
     orderBy: ObjectRecordOrderBy,
     objectNameSingular: string,
     isForwardPagination = true,
-  ): SelectQueryBuilder<any> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): WorkspaceSelectQueryBuilder<any> {
     const parsedOrderBys = this.orderFieldParser.parse(
       orderBy,
       objectNameSingular,
@@ -113,6 +117,7 @@ export class GraphqlQueryParser {
 
   public parseSelectedFields(
     parentObjectMetadata: ObjectMetadataItemWithFieldMaps,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     graphqlSelectedFields: Partial<Record<string, any>>,
   ): GraphqlQuerySelectedFieldsResult {
     const parentFields = getObjectMetadataMapItemByNameSingular(
@@ -121,14 +126,14 @@ export class GraphqlQueryParser {
     )?.fieldsByName;
 
     if (!parentFields) {
-      throw new Error(
+      throw new GraphqlQueryRunnerException(
         `Could not find object metadata for ${parentObjectMetadata.nameSingular}`,
+        GraphqlQueryRunnerExceptionCode.OBJECT_METADATA_NOT_FOUND,
       );
     }
 
     const selectedFieldsParser = new GraphqlQuerySelectedFieldsParser(
       this.objectMetadataMaps,
-      this.featureFlagsMap,
     );
 
     return selectedFieldsParser.parse(graphqlSelectedFields, parentFields);

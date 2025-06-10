@@ -1,9 +1,4 @@
-import {
-  Field,
-  HideField,
-  ObjectType,
-  registerEnumType,
-} from '@nestjs/graphql';
+import { Field, HideField, ObjectType } from '@nestjs/graphql';
 
 import {
   Authorize,
@@ -13,7 +8,6 @@ import {
 import {
   IsArray,
   IsDateString,
-  IsEnum,
   IsNotEmpty,
   IsNumber,
   IsString,
@@ -22,16 +16,11 @@ import {
 import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ServerlessFunctionSyncStatus } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { InputSchema } from 'src/modules/workflow/workflow-builder/types/input-schema.type';
-
-registerEnumType(ServerlessFunctionSyncStatus, {
-  name: 'ServerlessFunctionSyncStatus',
-  description: 'SyncStatus of the serverlessFunction',
-});
+import { InputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/input-schema.type';
 
 @ObjectType('ServerlessFunction')
 @Authorize({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   authorize: (context: any) => ({
     workspaceId: { eq: context?.req?.workspace?.id },
   }),
@@ -73,11 +62,6 @@ export class ServerlessFunctionDTO {
 
   @Field(() => GraphQLJSON, { nullable: true })
   latestVersionInputSchema: InputSchema;
-
-  @IsEnum(ServerlessFunctionSyncStatus)
-  @IsNotEmpty()
-  @Field(() => ServerlessFunctionSyncStatus)
-  syncStatus: ServerlessFunctionSyncStatus;
 
   @HideField()
   workspaceId: string;

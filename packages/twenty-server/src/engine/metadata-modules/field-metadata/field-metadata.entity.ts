@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 import {
   Column,
   CreateDateColumn,
@@ -19,24 +19,29 @@ import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
+import { FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 @Entity('fieldMetadata')
-@Unique('IndexOnNameObjectMetadataIdAndWorkspaceIdUnique', [
+@Unique('IDX_FIELD_METADATA_NAME_OBJECT_METADATA_ID_WORKSPACE_ID_UNIQUE', [
   'name',
   'objectMetadataId',
   'workspaceId',
 ])
-@Index('IndexOnRelationTargetFieldMetadataId', [
+@Index('IDX_FIELD_METADATA_RELATION_TARGET_FIELD_METADATA_ID', [
   'relationTargetFieldMetadataId',
 ])
-@Index('IndexOnRelationTargetObjectMetadataId', [
+@Index('IDX_FIELD_METADATA_RELATION_TARGET_OBJECT_METADATA_ID', [
   'relationTargetObjectMetadataId',
 ])
+@Index('IDX_FIELD_METADATA_OBJECT_METADATA_ID_WORKSPACE_ID', [
+  'objectMetadataId',
+  'workspaceId',
+])
 export class FieldMetadataEntity<
-  T extends FieldMetadataType | 'default' = 'default',
+  T extends FieldMetadataType = FieldMetadataType,
 > implements FieldMetadataInterface<T>
 {
   @PrimaryGeneratedColumn('uuid')
@@ -52,14 +57,14 @@ export class FieldMetadataEntity<
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'objectMetadataId' })
-  @Index('IndexOnObjectMetadataId')
+  @Index('IDX_FIELD_METADATA_OBJECT_METADATA_ID', ['objectMetadataId'])
   object: Relation<ObjectMetadataEntity>;
 
   @Column({
     nullable: false,
     type: 'varchar',
   })
-  type: FieldMetadataType;
+  type: T;
 
   @Column({ nullable: false })
   name: string;
@@ -75,6 +80,9 @@ export class FieldMetadataEntity<
 
   @Column({ nullable: true })
   icon: string;
+
+  @Column({ type: 'jsonb', nullable: true })
+  standardOverrides?: FieldStandardOverridesDTO;
 
   @Column('jsonb', { nullable: true })
   options: FieldMetadataOptions<T>;
@@ -98,7 +106,7 @@ export class FieldMetadataEntity<
   isUnique: boolean;
 
   @Column({ nullable: false, type: 'uuid' })
-  @Index('IndexOnWorkspaceId')
+  @Index('IDX_FIELD_METADATA_WORKSPACE_ID', ['workspaceId'])
   workspaceId: string;
 
   @Column({ default: false })
@@ -120,6 +128,7 @@ export class FieldMetadataEntity<
     () => ObjectMetadataEntity,
     (objectMetadata: ObjectMetadataEntity) =>
       objectMetadata.targetRelationFields,
+    { onDelete: 'CASCADE' },
   )
   @JoinColumn({ name: 'relationTargetObjectMetadataId' })
   relationTargetObjectMetadata: Relation<ObjectMetadataEntity>;

@@ -1,3 +1,5 @@
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
 import { renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
@@ -7,6 +9,9 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useAuth } from '../useAuth';
 import { useVerifyLogin } from '../useVerifyLogin';
+
+import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 jest.mock('../useAuth', () => ({
   useAuth: jest.fn(),
@@ -20,9 +25,12 @@ jest.mock('~/hooks/useNavigateApp', () => ({
   useNavigateApp: jest.fn(),
 }));
 
+dynamicActivate(SOURCE_LOCALE);
+
 const renderHooks = () => {
   const { result } = renderHook(() => useVerifyLogin(), {
-    wrapper: RecoilRoot,
+    wrapper: ({ children }) =>
+      RecoilRoot({ children: I18nProvider({ i18n, children }) }),
   });
   return { result };
 };

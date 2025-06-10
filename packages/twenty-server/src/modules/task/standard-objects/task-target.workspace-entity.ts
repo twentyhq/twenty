@@ -1,8 +1,9 @@
 import { msg } from '@lingui/core/macro';
 
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 
-import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { WorkspaceDynamicRelation } from 'src/engine/twenty-orm/decorators/workspace-dynamic-relation.decorator';
@@ -31,12 +32,13 @@ import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.work
 export class TaskTargetWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: TASK_TARGET_STANDARD_FIELD_IDS.task,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Task`,
     description: msg`TaskTarget task`,
     icon: 'IconCheckbox',
     inverseSideTarget: () => TaskWorkspaceEntity,
     inverseSideFieldKey: 'taskTargets',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
   task: Relation<TaskWorkspaceEntity> | null;
@@ -46,12 +48,13 @@ export class TaskTargetWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: TASK_TARGET_STANDARD_FIELD_IDS.person,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Person`,
     description: msg`TaskTarget person`,
     icon: 'IconUser',
     inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'taskTargets',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   person: Relation<PersonWorkspaceEntity> | null;
@@ -61,12 +64,13 @@ export class TaskTargetWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: TASK_TARGET_STANDARD_FIELD_IDS.company,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Company`,
     description: msg`TaskTarget company`,
     icon: 'IconBuildingSkyscraper',
     inverseSideTarget: () => CompanyWorkspaceEntity,
     inverseSideFieldKey: 'taskTargets',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   company: Relation<CompanyWorkspaceEntity> | null;
@@ -76,12 +80,13 @@ export class TaskTargetWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceRelation({
     standardId: TASK_TARGET_STANDARD_FIELD_IDS.opportunity,
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Opportunity`,
     description: msg`TaskTarget opportunity`,
     icon: 'IconTargetArrow',
     inverseSideTarget: () => OpportunityWorkspaceEntity,
     inverseSideFieldKey: 'taskTargets',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   opportunity: Relation<OpportunityWorkspaceEntity> | null;
@@ -90,7 +95,7 @@ export class TaskTargetWorkspaceEntity extends BaseWorkspaceEntity {
   opportunityId: string | null;
 
   @WorkspaceDynamicRelation({
-    type: RelationMetadataType.MANY_TO_ONE,
+    type: RelationType.MANY_TO_ONE,
     argsFactory: (oppositeObjectMetadata) => ({
       standardId: TASK_TARGET_STANDARD_FIELD_IDS.custom,
       name: oppositeObjectMetadata.nameSingular,
@@ -101,6 +106,7 @@ export class TaskTargetWorkspaceEntity extends BaseWorkspaceEntity {
     }),
     inverseSideTarget: () => CustomWorkspaceEntity,
     inverseSideFieldKey: 'taskTargets',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   custom: Relation<CustomWorkspaceEntity>;
 }

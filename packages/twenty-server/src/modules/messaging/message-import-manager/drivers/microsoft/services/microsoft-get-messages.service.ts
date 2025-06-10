@@ -1,12 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared';
+import { EmailAddress } from 'addressparser';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
+import { MicrosoftImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/microsoft/exceptions/microsoft-import-driver.exception';
 import { MicrosoftGraphBatchResponse } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.interface';
 import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
+import { safeParseEmailAddress } from 'src/modules/messaging/message-import-manager/utils/safe-parse.util';
 
 import { MicrosoftFetchByBatchService } from './microsoft-fetch-by-batch.service';
 import { MicrosoftHandleErrorService } from './microsoft-handle-error.service';
@@ -28,10 +32,7 @@ export class MicrosoftGetMessagesService {
   async getMessages(
     messageIds: string[],
     connectedAccount: ConnectedAccountType,
-    workspaceId: string,
   ): Promise<MessageWithParticipants[]> {
-    const startTime = Date.now();
-
     try {
       const { batchResponses } =
         await this.microsoftFetchByBatchService.fetchAllByBatches(
@@ -44,17 +45,9 @@ export class MicrosoftGetMessagesService {
         connectedAccount,
       );
 
-      const endTime = Date.now();
-
-      this.logger.log(
-        `Messaging import for workspace ${workspaceId} and account ${
-          connectedAccount.id
-        } fetched ${messages.length} messages in ${endTime - startTime}ms`,
-      );
-
       return messages;
     } catch (error) {
-      this.microsoftHandleErrorService.handleMicrosoftMessageFetchError(error);
+      this.microsoftHandleErrorService.handleMicrosoftGetMessagesError(error);
 
       return [];
     }
@@ -80,28 +73,48 @@ export class MicrosoftGetMessagesService {
 
     const messages = parsedResponses.map((response) => {
       if ('error' in response) {
-        this.microsoftHandleErrorService.handleMicrosoftMessageFetchError(
-          response.error,
+        throw new MicrosoftImportDriverException(
+          response.error.message,
+          response.error.code,
+          response.error.statusCode,
         );
       }
 
+      const safeParseFrom = response?.from?.emailAddress
+        ? [safeParseEmailAddress(response.from.emailAddress)]
+        : [];
+
+      const safeParseTo = response?.toRecipients
+        ?.filter(isDefined)
+        .map((recipient: { emailAddress: EmailAddress }) =>
+          safeParseEmailAddress(recipient.emailAddress),
+        );
+
+      const safeParseCc = response?.ccRecipients
+        ?.filter(isDefined)
+        .map((recipient: { emailAddress: EmailAddress }) =>
+          safeParseEmailAddress(recipient.emailAddress),
+        );
+
+      const safeParseBcc = response?.bccRecipients
+        ?.filter(isDefined)
+        .map((recipient: { emailAddress: EmailAddress }) =>
+          safeParseEmailAddress(recipient.emailAddress),
+        );
+
       const participants = [
-        ...formatAddressObjectAsParticipants(
-          response?.from?.emailAddress,
-          'from',
-        ),
-        ...formatAddressObjectAsParticipants(
-          response?.toRecipients?.map((recipient) => recipient.emailAddress),
-          'to',
-        ),
-        ...formatAddressObjectAsParticipants(
-          response?.ccRecipients?.map((recipient) => recipient.emailAddress),
-          'cc',
-        ),
-        ...formatAddressObjectAsParticipants(
-          response?.bccRecipients?.map((recipient) => recipient.emailAddress),
-          'bcc',
-        ),
+        ...(safeParseFrom
+          ? formatAddressObjectAsParticipants(safeParseFrom, 'from')
+          : []),
+        ...(safeParseTo
+          ? formatAddressObjectAsParticipants(safeParseTo, 'to')
+          : []),
+        ...(safeParseCc
+          ? formatAddressObjectAsParticipants(safeParseCc, 'cc')
+          : []),
+        ...(safeParseBcc
+          ? formatAddressObjectAsParticipants(safeParseBcc, 'bcc')
+          : []),
       ];
 
       return {
@@ -112,11 +125,13 @@ export class MicrosoftGetMessagesService {
           response.body?.contentType === 'text' ? response.body?.content : '',
         headerMessageId: response.internetMessageId,
         messageThreadExternalId: response.conversationId,
-        direction: computeMessageDirection(
-          response.from.emailAddress.address,
-          connectedAccount,
-        ),
-        participants: participants,
+        direction: response.from
+          ? computeMessageDirection(
+              response.from.emailAddress.address,
+              connectedAccount,
+            )
+          : MessageDirection.INCOMING,
+        participants,
         attachments: [],
       };
     });
@@ -129,15 +144,27 @@ export class MicrosoftGetMessagesService {
       return [];
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return batchResponse.responses.map((response: any) => {
       if (response.status === 200) {
         return response.body;
       }
 
+      if (response.status !== 503 && response.status !== 429) {
+        this.logger.error(`Microsoft parseBatchResponse error`, response);
+      }
+
+      const errorParsed = response?.body?.error
+        ? response.body.error
+        : {
+            message:
+              'Microsoft parseBatchResponse error: no response.body.error',
+          };
+
       return {
         error: {
-          ...response.body.error,
-          statusCode: response.status,
+          ...errorParsed,
+          statusCode: response?.status,
         },
       };
     });

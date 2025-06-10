@@ -10,7 +10,7 @@ import { createComponentFamilySelectorV2 } from '@/ui/utilities/state/component-
 
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { ViewType } from '@/views/types/ViewType';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const visibleRecordGroupIdsComponentFamilySelector =
   createComponentFamilySelectorV2<RecordGroupDefinition['id'][], ViewType>({

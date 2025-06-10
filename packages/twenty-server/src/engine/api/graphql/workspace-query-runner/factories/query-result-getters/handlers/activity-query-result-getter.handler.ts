@@ -1,11 +1,11 @@
 import { QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-getter-handler.interface';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type RichTextBlock = Record<string, any>;
 
 type RichTextBody = RichTextBlock[];
@@ -22,14 +22,7 @@ export class ActivityQueryResultGetterHandler
     activity: TaskWorkspaceEntity | NoteWorkspaceEntity,
     workspaceId: string,
   ): Promise<TaskWorkspaceEntity | NoteWorkspaceEntity> {
-    const isRichTextV2Enabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsRichTextV2Enabled,
-      workspaceId,
-    );
-
-    const blocknoteJson = isRichTextV2Enabled
-      ? activity.bodyV2?.blocknote
-      : activity.body;
+    const blocknoteJson = activity.bodyV2?.blocknote;
 
     if (!activity.id || !blocknoteJson) {
       return activity;
@@ -44,7 +37,7 @@ export class ActivityQueryResultGetterHandler
       // TODO: Remove this once we have removed the old rich text
       // eslint-disable-next-line no-console
       console.warn(
-        `Failed to parse body for activity ${activity.id} in workspace ${workspaceId}, for rich text version ${isRichTextV2Enabled ? 'v2' : 'v1'}`,
+        `Failed to parse body for activity ${activity.id} in workspace ${workspaceId}, for rich text version 'v2'`,
       );
       // eslint-disable-next-line no-console
       console.warn(blocknoteJson);
@@ -61,34 +54,27 @@ export class ActivityQueryResultGetterHandler
 
         imageUrl.searchParams.delete('token');
 
-        const signedPayload = await this.fileService.encodeFileToken({
-          noteBlockId: block.id,
-          workspaceId: workspaceId,
+        const signedPath = this.fileService.signFileUrl({
+          url: imageProps.url.toString(),
+          workspaceId,
         });
 
         return {
           ...block,
           props: {
             ...imageProps,
-            url: `${imageUrl.toString()}?token=${signedPayload}`,
+            url: signedPath,
           },
         };
       }),
     );
 
-    if (isRichTextV2Enabled) {
-      return {
-        ...activity,
-        bodyV2: {
-          blocknote: JSON.stringify(blocknoteWithSignedPayload),
-          markdown: activity.bodyV2?.markdown ?? null,
-        },
-      };
-    }
-
     return {
       ...activity,
-      body: JSON.stringify(blocknoteWithSignedPayload),
+      bodyV2: {
+        blocknote: JSON.stringify(blocknoteWithSignedPayload),
+        markdown: activity.bodyV2?.markdown ?? null,
+      },
     };
   }
 }

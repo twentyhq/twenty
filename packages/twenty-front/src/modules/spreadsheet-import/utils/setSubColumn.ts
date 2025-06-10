@@ -1,30 +1,34 @@
 import {
-  ColumnType,
-  MatchedOptions,
-  MatchedSelectColumn,
-  MatchedSelectOptionsColumn,
-} from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
+  SpreadsheetMatchedSelectColumn,
+  SpreadsheetMatchedSelectOptionsColumn,
+} from '@/spreadsheet-import/types/SpreadsheetColumn';
+import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
+import { SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
 
 export const setSubColumn = <T>(
-  oldColumn: MatchedSelectColumn<T> | MatchedSelectOptionsColumn<T>,
+  oldColumn:
+    | SpreadsheetMatchedSelectColumn<T>
+    | SpreadsheetMatchedSelectOptionsColumn<T>,
   entry: string,
   value: string,
-): MatchedSelectColumn<T> | MatchedSelectOptionsColumn<T> => {
+):
+  | SpreadsheetMatchedSelectColumn<T>
+  | SpreadsheetMatchedSelectOptionsColumn<T> => {
   const options = oldColumn.matchedOptions.map((option) =>
     option.entry === entry ? { ...option, value } : option,
   );
-  const allMathced = options.every(({ value }) => !!value);
-  if (allMathced) {
+  const allMatched = options.every(({ value }) => !!value);
+  if (allMatched) {
     return {
       ...oldColumn,
-      matchedOptions: options as MatchedOptions<T>[],
-      type: ColumnType.matchedSelectOptions,
+      matchedOptions: options as SpreadsheetMatchedOptions<T>[],
+      type: SpreadsheetColumnType.matchedSelectOptions,
     };
   } else {
     return {
       ...oldColumn,
-      matchedOptions: options as MatchedOptions<T>[],
-      type: ColumnType.matchedSelect,
+      matchedOptions: options as SpreadsheetMatchedOptions<T>[],
+      type: SpreadsheetColumnType.matchedSelect,
     };
   }
 };

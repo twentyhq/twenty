@@ -7,7 +7,7 @@ const formatMessage = (error: BaseGraphQLError) => {
     ? error.extensions.response?.error ||
       error.extensions.response ||
       error.message
-    : error.error;
+    : error.error || error.message;
 
   formattedMessage = formattedMessage
     .replace(/"/g, "'")

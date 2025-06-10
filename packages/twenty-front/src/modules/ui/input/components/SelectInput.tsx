@@ -1,6 +1,4 @@
-import { SelectOption } from '@/spreadsheet-import/types';
-
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -8,8 +6,10 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { isDefined } from 'twenty-shared';
-import { MenuItemSelectTag, TagColor } from 'twenty-ui';
+import { isDefined } from 'twenty-shared/utils';
+import { TagColor } from 'twenty-ui/components';
+import { SelectOption } from 'twenty-ui/input';
+import { MenuItemSelectTag } from 'twenty-ui/navigation';
 
 interface SelectInputProps {
   onOptionSelected: (selectedOption: SelectOption) => void;
@@ -96,7 +96,7 @@ export const SelectInput = ({
   );
 
   return (
-    <DropdownMenu ref={containerRef} data-select-disable>
+    <DropdownContent ref={containerRef} selectDisabled>
       <DropdownMenuSearchInput
         value={searchFilter}
         onChange={(e) => setSearchFilter(e.target.value)}
@@ -107,7 +107,6 @@ export const SelectInput = ({
         {onClear && clearLabel && (
           <MenuItemSelectTag
             key={`No ${clearLabel}`}
-            selected={false}
             text={`No ${clearLabel}`}
             color="transparent"
             variant={'outline'}
@@ -121,15 +120,15 @@ export const SelectInput = ({
           return (
             <MenuItemSelectTag
               key={option.value}
-              selected={selectedOption?.value === option.value}
+              focused={selectedOption?.value === option.value}
               text={option.label}
               color={(option.color as TagColor) ?? 'transparent'}
               onClick={() => handleOptionChange(option)}
-              LeftIcon={option.icon}
+              LeftIcon={option.Icon}
             />
           );
         })}
       </DropdownMenuItemsContainer>
-    </DropdownMenu>
+    </DropdownContent>
   );
 };

@@ -6,17 +6,16 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
+import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
+import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 import {
   MessageImportExceptionHandlerService,
   MessageImportSyncStep,
-} from 'src/modules/messaging/message-import-manager/services/message-import-exception-handler.service';
-import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
-import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
+} from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 @Injectable()
 export class MessagingFullMessageListFetchService {
   constructor(
@@ -32,7 +31,6 @@ export class MessagingFullMessageListFetchService {
 
   public async processMessageListFetch(
     messageChannel: MessageChannelWorkspaceEntity,
-    connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ) {
     try {
@@ -44,6 +42,19 @@ export class MessagingFullMessageListFetchService {
         await this.messagingGetMessageListService.getFullMessageLists(
           messageChannel,
         );
+
+      const isEmptyMailbox = fullMessageLists.some(
+        (fullMessageList) => fullMessageList.messageExternalIds.length === 0,
+      );
+
+      if (isEmptyMailbox) {
+        await this.messageChannelSyncStatusService.resetAndScheduleFullMessageListFetch(
+          [messageChannel.id],
+          workspaceId,
+        );
+
+        return;
+      }
 
       for (const fullMessageList of fullMessageLists) {
         const { messageExternalIds, nextSyncCursor, folderId } =

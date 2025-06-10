@@ -1,6 +1,7 @@
 import { ApolloError, gql, InMemoryCache } from '@apollo/client';
 import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 
+import { WorkspaceActivationStatus } from '~/generated/graphql';
 import { ApolloFactory, Options } from '../apollo.factory';
 
 enableFetchMocks();
@@ -28,15 +29,35 @@ const mockWorkspaceMember = {
     firstName: 'John',
     lastName: 'Doe',
   },
+  colorScheme: 'Light' as const,
+};
+
+const mockWorkspace = {
+  id: 'workspace-id',
+  metadataVersion: 1,
+  allowImpersonation: false,
+  activationStatus: WorkspaceActivationStatus.ACTIVE,
+  billingSubscriptions: [],
+  currentBillingSubscription: null,
+  workspaceMembersCount: 0,
+  isPublicInviteLinkEnabled: false,
+  isGoogleAuthEnabled: false,
+  isMicrosoftAuthEnabled: false,
+  isPasswordAuthEnabled: false,
+  isCustomDomainEnabled: false,
+  hasValidEnterpriseKey: false,
+  subdomain: 'test',
+  customDomain: 'test.com',
+  workspaceUrls: {
+    subdomainUrl: 'test.com',
+    customUrl: 'test.com',
+  },
 };
 
 const createMockOptions = (): Options<any> => ({
   uri: 'http://localhost:3000',
-  initialTokenPair: {
-    accessToken: { token: 'mockAccessToken', expiresAt: '' },
-    refreshToken: { token: 'mockRefreshToken', expiresAt: '' },
-  },
   currentWorkspaceMember: mockWorkspaceMember,
+  currentWorkspace: mockWorkspace,
   cache: new InMemoryCache(),
   isDebugMode: true,
   onError: mockOnError,
@@ -51,8 +72,18 @@ const makeRequest = async () => {
 
   await client.mutate({
     mutation: gql`
-      mutation Track($action: String!, $payload: JSON!) {
-        track(action: $action, payload: $payload) {
+      mutation TrackAnalytics(
+        $type: AnalyticsType!
+        $event: String
+        $name: String
+        $properties: JSON
+      ) {
+        trackAnalytics(
+          type: $type
+          event: $event
+          name: $name
+          properties: $properties
+        ) {
           success
         }
       }
@@ -168,6 +199,7 @@ describe('ApolloFactory', () => {
         firstName: 'John',
         lastName: 'Doe',
       },
+      colorScheme: 'Light' as const,
     };
 
     apolloFactory.updateWorkspaceMember(newWorkspaceMember);

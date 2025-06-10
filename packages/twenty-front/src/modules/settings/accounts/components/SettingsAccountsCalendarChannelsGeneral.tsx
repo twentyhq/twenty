@@ -3,10 +3,11 @@ import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext'
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { SettingsAccountsCalendarDisplaySettings } from '@/settings/accounts/components/SettingsAccountsCalendarDisplaySettings';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { Section } from '@react-email/components';
 import { addMinutes, endOfDay, min, startOfDay } from 'date-fns';
 import { useRecoilValue } from 'recoil';
-import { H2Title } from 'twenty-ui';
+import { H2Title } from 'twenty-ui/display';
 import {
   CalendarChannelVisibility,
   TimelineCalendarEvent,
@@ -65,24 +66,21 @@ export const SettingsAccountsCalendarChannelsGeneral = () => {
     <StyledGeneralContainer>
       <Section>
         <H2Title
-          title="Display"
-          description="Configure how we should display your events in your calendar"
+          title={t`Display`}
+          description={t`Configure how we should display your events in your calendar`}
         />
         <SettingsAccountsCalendarDisplaySettings />
       </Section>
       <Section>
         <H2Title
-          title="Color code"
-          description="Events you participated in are displayed in red."
+          title={t`Color code`}
+          description={t`Events you participated in are displayed in red.`}
         />
         <CalendarContext.Provider
           value={{
-            currentCalendarEvent: exampleCalendarEvent,
             calendarEventsByDayTime: {
               [exampleDayTime]: [exampleCalendarEvent],
             },
-            getNextCalendarEvent: () => undefined,
-            updateCurrentCalendarEvent: () => {},
           }}
         >
           <CalendarMonthCard dayTimes={[exampleDayTime]} />

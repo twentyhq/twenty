@@ -1,5 +1,4 @@
 import { Link as EmailLink } from '@react-email/components';
-import { ReactNode } from 'react';
 
 import { emailTheme } from 'src/common-style';
 
@@ -8,7 +7,7 @@ const linkStyle = {
 };
 
 type LinkProps = {
-  value: ReactNode;
+  value: JSX.Element | JSX.Element[] | string;
   href: string;
   color?: string;
 };

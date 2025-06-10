@@ -1,20 +1,22 @@
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { computeAggregateValueAndLabel } from '@/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel';
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
-import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeRecordGqlOperationFilter';
 import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
-import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
-import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined, isFieldMetadataDateKind } from 'twenty-shared';
+import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
 export const useAggregateRecordsForRecordTableColumnFooter = (
   fieldMetadataId: string,
@@ -22,20 +24,24 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   const { objectMetadataItem } = useRecordTableContextOrThrow();
   const { recordGroupFilter } = useRecordGroupFilter(objectMetadataItem.fields);
 
-  const recordIndexViewFilterGroups = useRecoilValue(
-    recordIndexViewFilterGroupsState,
+  const currentRecordFilterGroups = useRecoilComponentValueV2(
+    currentRecordFilterGroupsComponentState,
   );
 
-  const recordIndexFilters = useRecoilValue(recordIndexFiltersState);
+  const currentRecordFilters = useRecoilComponentValueV2(
+    currentRecordFiltersComponentState,
+  );
+
+  const dateLocale = useRecoilValue(dateLocaleState);
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
-  const requestFilters = computeViewRecordGqlOperationFilter(
+  const requestFilters = computeRecordGqlOperationFilter({
+    fields: objectMetadataItem.fields,
     filterValueDependencies,
-    recordIndexFilters,
-    objectMetadataItem.fields,
-    recordIndexViewFilterGroups,
-  );
+    recordFilterGroups: currentRecordFilterGroups,
+    recordFilters: currentRecordFilters,
+  });
 
   const { viewFieldId } = useContext(
     RecordTableColumnAggregateFooterCellContext,
@@ -56,9 +62,9 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
     isFieldMetadataDateKind(fieldMetadataItem.type) &&
     isDefined(aggregateOperationForViewFieldWithProbableImpossibleValues) &&
     (aggregateOperationForViewFieldWithProbableImpossibleValues ===
-      AGGREGATE_OPERATIONS.min ||
+      AggregateOperations.MIN ||
       aggregateOperationForViewFieldWithProbableImpossibleValues ===
-        AGGREGATE_OPERATIONS.max);
+        AggregateOperations.MAX);
 
   const aggregateOperationForViewField:
     | ExtendedAggregateOperations
@@ -96,6 +102,7 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
     dateFormat,
     timeFormat,
     timeZone,
+    localeCatalog: dateLocale.localeCatalog,
   });
 
   return {

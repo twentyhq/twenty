@@ -1,0 +1,4 @@
+{
+  "main": "dist/twenty-shared-workspace.cjs.js",
+  "module": "dist/twenty-shared-workspace.esm.js"
+}

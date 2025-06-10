@@ -1,18 +1,21 @@
-import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
-import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
-import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { workflowCreateStepFromParentStepIdState } from '@/workflow/workflow-steps/states/workflowCreateStepFromParentStepIdState';
 import { useCallback } from 'react';
-import { useSetRecoilState } from 'recoil';
-import { IconSettingsAutomation } from 'twenty-ui';
+
+import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import { workflowCreateStepFromParentStepIdComponentState } from '@/workflow/workflow-steps/states/workflowCreateStepFromParentStepIdComponentState';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useStartNodeCreation = () => {
-  const { openRightDrawer } = useRightDrawer();
-  const setWorkflowCreateStepFromParentStepId = useSetRecoilState(
-    workflowCreateStepFromParentStepIdState,
+  const setWorkflowCreateStepFromParentStepId = useSetRecoilComponentStateV2(
+    workflowCreateStepFromParentStepIdComponentState,
   );
-  const setHotkeyScope = useSetHotkeyScope();
+  const { openStepSelectInCommandMenu } = useWorkflowCommandMenu();
+
+  const workflowVisualizerWorkflowId = useRecoilComponentValueV2(
+    workflowVisualizerWorkflowIdComponentState,
+  );
 
   /**
    * This function is used in a context where dependencies shouldn't change much.
@@ -22,13 +25,16 @@ export const useStartNodeCreation = () => {
     (parentNodeId: string) => {
       setWorkflowCreateStepFromParentStepId(parentNodeId);
 
-      setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
-      openRightDrawer(RightDrawerPages.WorkflowStepSelectAction, {
-        title: 'Select Action',
-        Icon: IconSettingsAutomation,
-      });
+      if (isDefined(workflowVisualizerWorkflowId)) {
+        openStepSelectInCommandMenu(workflowVisualizerWorkflowId);
+        return;
+      }
     },
-    [setWorkflowCreateStepFromParentStepId, setHotkeyScope, openRightDrawer],
+    [
+      setWorkflowCreateStepFromParentStepId,
+      workflowVisualizerWorkflowId,
+      openStepSelectInCommandMenu,
+    ],
   );
 
   return {

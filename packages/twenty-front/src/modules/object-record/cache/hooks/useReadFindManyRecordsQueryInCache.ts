@@ -5,9 +5,10 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
 import { RecordGqlOperationVariables } from '@/object-record/graphql/types/RecordGqlOperationVariables';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useReadFindManyRecordsQueryInCache = ({
   objectMetadataItem,
@@ -17,6 +18,8 @@ export const useReadFindManyRecordsQueryInCache = ({
   const apolloClient = useApolloClient();
 
   const { objectMetadataItems } = useObjectMetadataItems();
+
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const readFindManyRecordsQueryInCache = <
     T extends ObjectRecord = ObjectRecord,
@@ -31,6 +34,7 @@ export const useReadFindManyRecordsQueryInCache = ({
       objectMetadataItem,
       objectMetadataItems,
       recordGqlFields,
+      objectPermissionsByObjectMetadataId,
     });
 
     const existingRecordsQueryResult =

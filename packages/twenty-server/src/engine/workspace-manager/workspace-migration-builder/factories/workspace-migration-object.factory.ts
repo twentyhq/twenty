@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 
@@ -109,7 +109,7 @@ export class WorkspaceMigrationObjectFactory {
       workspaceMigrations.push({
         workspaceId: objectMetadata.workspaceId,
         name: generateMigrationName(`create-${objectMetadata.nameSingular}`),
-        isCustom: false,
+        isCustom: objectMetadata.isCustom,
         migrations,
       });
     }
@@ -136,7 +136,7 @@ export class WorkspaceMigrationObjectFactory {
           name: generateMigrationName(
             `rename-${objectMetadataUpdate.current.nameSingular}`,
           ),
-          isCustom: false,
+          isCustom: objectMetadataUpdate.altered.isCustom,
           migrations: [
             {
               name: oldTableName,
@@ -167,7 +167,7 @@ export class WorkspaceMigrationObjectFactory {
       workspaceMigrations.push({
         workspaceId: objectMetadata.workspaceId,
         name: generateMigrationName(`delete-${objectMetadata.nameSingular}`),
-        isCustom: false,
+        isCustom: objectMetadata.isCustom,
         migrations: [
           ...(relationMetadataCollection ?? []).map(
             (relationMetadata) =>

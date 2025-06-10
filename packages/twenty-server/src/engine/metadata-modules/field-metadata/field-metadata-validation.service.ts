@@ -9,7 +9,7 @@ import {
   Min,
   validateOrReject,
 } from 'class-validator';
-import { FieldMetadataType } from 'twenty-shared';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
@@ -44,7 +44,7 @@ class TextSettingsValidation {
 
 @Injectable()
 export class FieldMetadataValidationService<
-  T extends FieldMetadataType | 'default' = 'default',
+  T extends FieldMetadataType = FieldMetadataType,
 > {
   constructor() {}
 
@@ -67,6 +67,8 @@ export class FieldMetadataValidationService<
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async validateSettings(validator: any, settings: any) {
     try {
       const settingsInstance = plainToInstance(validator, settings);
@@ -75,6 +77,7 @@ export class FieldMetadataValidationService<
     } catch (error) {
       const errorMessages = Array.isArray(error)
         ? error
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             .map((err: any) => Object.values(err.constraints))
             .flat()
             .join(', ')

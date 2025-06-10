@@ -9,17 +9,19 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 type FormLinksFieldInputProps = {
   label?: string;
   defaultValue?: FieldLinksValue;
-  onPersist: (value: FieldLinksValue) => void;
+  onChange: (value: FieldLinksValue) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
+  placeholder?: string;
 };
 
 export const FormLinksFieldInput = ({
   label,
   defaultValue,
-  onPersist,
+  onChange,
   readonly,
   VariablePicker,
+  placeholder,
 }: FormLinksFieldInputProps) => {
   const handleChange =
     (field: keyof FieldLinksDraftValue) => (updatedLinksPart: string) => {
@@ -29,7 +31,7 @@ export const FormLinksFieldInput = ({
         [field]: updatedLinksPart,
       };
       // We need to validate the links and display an error message if the links are not valid
-      onPersist(updatedLinks);
+      onChange(updatedLinks);
     };
 
   return (
@@ -39,16 +41,16 @@ export const FormLinksFieldInput = ({
         <FormTextFieldInput
           label="Primary Link Label"
           defaultValue={defaultValue?.primaryLinkLabel}
-          onPersist={handleChange('primaryLinkLabel')}
-          placeholder={'Primary Link Label'}
+          onChange={handleChange('primaryLinkLabel')}
+          placeholder={placeholder ?? 'Primary Link Label'}
           readonly={readonly}
           VariablePicker={VariablePicker}
         />
         <FormTextFieldInput
           label="Primary Link URL"
           defaultValue={defaultValue?.primaryLinkUrl}
-          onPersist={handleChange('primaryLinkUrl')}
-          placeholder={'Primary Link URL'}
+          onChange={handleChange('primaryLinkUrl')}
+          placeholder={placeholder ?? 'Primary Link URL'}
           readonly={readonly}
           VariablePicker={VariablePicker}
         />

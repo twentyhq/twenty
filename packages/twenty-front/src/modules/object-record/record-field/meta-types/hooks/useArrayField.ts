@@ -10,7 +10,7 @@ import { useRecoilState } from 'recoil';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useArrayField = () => {
-  const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
+  const { recordId, fieldDefinition } = useContext(FieldContext);
 
   assertFieldMetadata(FieldMetadataType.ARRAY, isFieldArray, fieldDefinition);
 
@@ -37,8 +37,8 @@ export const useArrayField = () => {
 
   return {
     fieldValue,
+    fieldDefinition,
     setFieldValue,
     persistArrayField,
-    hotkeyScope,
   };
 };

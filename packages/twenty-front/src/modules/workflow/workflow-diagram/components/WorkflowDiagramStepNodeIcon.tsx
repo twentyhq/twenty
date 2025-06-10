@@ -4,7 +4,7 @@ import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/W
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useIcons } from 'twenty-ui';
+import { useIcons } from 'twenty-ui/display';
 
 const StyledStepNodeLabelIconContainer = styled.div`
   align-items: center;
@@ -27,27 +27,10 @@ export const WorkflowDiagramStepNodeIcon = ({
   switch (data.nodeType) {
     case 'trigger': {
       switch (data.triggerType) {
-        case 'DATABASE_EVENT': {
-          return (
-            <StyledStepNodeLabelIconContainer>
-              <Icon
-                size={theme.icon.size.md}
-                color={theme.font.color.tertiary}
-              />
-            </StyledStepNodeLabelIconContainer>
-          );
-        }
-        case 'MANUAL': {
-          return (
-            <StyledStepNodeLabelIconContainer>
-              <Icon
-                size={theme.icon.size.md}
-                color={theme.font.color.tertiary}
-              />
-            </StyledStepNodeLabelIconContainer>
-          );
-        }
-        case 'CRON': {
+        case 'DATABASE_EVENT':
+        case 'MANUAL':
+        case 'CRON':
+        case 'WEBHOOK': {
           return (
             <StyledStepNodeLabelIconContainer>
               <Icon

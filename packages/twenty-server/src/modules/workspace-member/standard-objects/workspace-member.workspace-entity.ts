@@ -1,23 +1,22 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
-import { APP_LOCALES, FieldMetadataType, SOURCE_LOCALE } from 'twenty-shared';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { FieldMetadataType } from 'twenty-shared/types';
 
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
-import {
-  RelationMetadataType,
-  RelationOnDeleteAction,
-} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
-import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { WORKSPACE_MEMBER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
@@ -35,7 +34,6 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
-import { AuditLogWorkspaceEntity } from 'src/modules/timeline/standard-objects/audit-log.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
 export enum WorkspaceMemberDateFormatEnum {
@@ -78,10 +76,22 @@ export const SEARCH_FIELDS_FOR_WORKSPACE_MEMBER: FieldTypeAndNameMetadata[] = [
   description: msg`A workspace member`,
   icon: STANDARD_OBJECT_ICONS.workspaceMember,
   labelIdentifierStandardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.name,
+  imageIdentifierStandardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.avatarUrl,
 })
 @WorkspaceIsSystem()
-@WorkspaceIsNotAuditLogged()
+@WorkspaceIsSearchable()
 export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
+  @WorkspaceField({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.position,
+    type: FieldMetadataType.POSITION,
+    label: msg`Position`,
+    description: msg`Workspace member position`,
+    icon: 'IconHierarchy2',
+    defaultValue: 0,
+  })
+  @WorkspaceIsSystem()
+  position: number;
+
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.FULL_NAME,
@@ -99,6 +109,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconColorSwatch',
     defaultValue: "'System'",
   })
+  @WorkspaceIsSystem()
   colorScheme: string;
 
   @WorkspaceField({
@@ -109,6 +120,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconLanguage',
     defaultValue: `'${SOURCE_LOCALE}'`,
   })
+  @WorkspaceIsSystem()
   locale: keyof typeof APP_LOCALES;
 
   @WorkspaceField({
@@ -118,6 +130,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Workspace member avatar`,
     icon: 'IconFileUpload',
   })
+  @WorkspaceIsSystem()
   avatarUrl: string;
 
   @WorkspaceField({
@@ -127,6 +140,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Related user email address`,
     icon: 'IconMail',
   })
+  @WorkspaceIsSystem()
   userEmail: string;
 
   @WorkspaceField({
@@ -136,131 +150,8 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Associated User Id`,
     icon: 'IconCircleUsers',
   })
+  @WorkspaceIsSystem()
   userId: string;
-
-  // Relations
-  @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.assignedTasks,
-    type: RelationMetadataType.ONE_TO_MANY,
-    label: msg`Assigned tasks`,
-    description: msg`Tasks assigned to the workspace member`,
-    icon: 'IconCheckbox',
-    inverseSideTarget: () => TaskWorkspaceEntity,
-    inverseSideFieldKey: 'assignee',
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  assignedTasks: Relation<TaskWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.favorites,
-    type: RelationMetadataType.ONE_TO_MANY,
-    label: msg`Favorites`,
-    description: msg`Favorites linked to the workspace member`,
-    icon: 'IconHeart',
-    inverseSideTarget: () => FavoriteWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  favorites: Relation<FavoriteWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.accountOwnerForCompanies,
-    type: RelationMetadataType.ONE_TO_MANY,
-    label: msg`Account Owner For Companies`,
-    description: msg`Account owner for companies`,
-    icon: 'IconBriefcase',
-    inverseSideTarget: () => CompanyWorkspaceEntity,
-    inverseSideFieldKey: 'accountOwner',
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  accountOwnerForCompanies: Relation<CompanyWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredAttachments,
-    type: RelationMetadataType.ONE_TO_MANY,
-    label: msg`Authored attachments`,
-    description: msg`Attachments created by the workspace member`,
-    icon: 'IconFileImport',
-    inverseSideTarget: () => AttachmentWorkspaceEntity,
-    inverseSideFieldKey: 'author',
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  authoredAttachments: Relation<AttachmentWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.connectedAccounts,
-    type: RelationMetadataType.ONE_TO_MANY,
-    label: msg`Connected accounts`,
-    description: msg`Connected accounts`,
-    icon: 'IconAt',
-    inverseSideTarget: () => ConnectedAccountWorkspaceEntity,
-    inverseSideFieldKey: 'accountOwner',
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  connectedAccounts: Relation<ConnectedAccountWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.messageParticipants,
-    type: RelationMetadataType.ONE_TO_MANY,
-    label: msg`Message Participants`,
-    description: msg`Message Participants`,
-    icon: 'IconUserCircle',
-    inverseSideTarget: () => MessageParticipantWorkspaceEntity,
-    inverseSideFieldKey: 'workspaceMember',
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  messageParticipants: Relation<MessageParticipantWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.blocklist,
-    type: RelationMetadataType.ONE_TO_MANY,
-    label: msg`Blocklist`,
-    description: msg`Blocklisted handles`,
-    icon: 'IconForbid2',
-    inverseSideTarget: () => BlocklistWorkspaceEntity,
-    inverseSideFieldKey: 'workspaceMember',
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  blocklist: Relation<BlocklistWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.calendarEventParticipants,
-    type: RelationMetadataType.ONE_TO_MANY,
-    label: msg`Calendar Event Participants`,
-    description: msg`Calendar Event Participants`,
-    icon: 'IconCalendar',
-    inverseSideTarget: () => CalendarEventParticipantWorkspaceEntity,
-    inverseSideFieldKey: 'workspaceMember',
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  calendarEventParticipants: Relation<
-    CalendarEventParticipantWorkspaceEntity[]
-  >;
-
-  @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timelineActivities,
-    type: RelationMetadataType.ONE_TO_MANY,
-    label: msg`Events`,
-    description: msg`Events linked to the workspace member`,
-    icon: 'IconTimelineEvent',
-    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @WorkspaceIsNullable()
-  @WorkspaceIsSystem()
-  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.auditLogs,
-    type: RelationMetadataType.ONE_TO_MANY,
-    label: msg`Audit Logs`,
-    description: msg`Audit Logs linked to the workspace member`,
-    icon: 'IconTimelineEvent',
-    inverseSideTarget: () => AuditLogWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  @WorkspaceIsNullable()
-  @WorkspaceIsSystem()
-  auditLogs: Relation<AuditLogWorkspaceEntity[]>;
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeZone,
@@ -270,6 +161,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`User time zone`,
     icon: 'IconTimezone',
   })
+  @WorkspaceIsSystem()
   timeZone: string;
 
   @WorkspaceField({
@@ -306,6 +198,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     ],
     defaultValue: `'${WorkspaceMemberDateFormatEnum.SYSTEM}'`,
   })
+  @WorkspaceIsSystem()
   dateFormat: string;
 
   @WorkspaceField({
@@ -336,7 +229,120 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     ],
     defaultValue: `'${WorkspaceMemberTimeFormatEnum.SYSTEM}'`,
   })
+  @WorkspaceIsSystem()
   timeFormat: string;
+
+  // Relations
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.assignedTasks,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Assigned tasks`,
+    description: msg`Tasks assigned to the workspace member`,
+    icon: 'IconCheckbox',
+    inverseSideTarget: () => TaskWorkspaceEntity,
+    inverseSideFieldKey: 'assignee',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  assignedTasks: Relation<TaskWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.favorites,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Favorites`,
+    description: msg`Favorites linked to the workspace member`,
+    icon: 'IconHeart',
+    inverseSideTarget: () => FavoriteWorkspaceEntity,
+    inverseSideFieldKey: 'forWorkspaceMember',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  favorites: Relation<FavoriteWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.accountOwnerForCompanies,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Account Owner For Companies`,
+    description: msg`Account owner for companies`,
+    icon: 'IconBriefcase',
+    inverseSideTarget: () => CompanyWorkspaceEntity,
+    inverseSideFieldKey: 'accountOwner',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  accountOwnerForCompanies: Relation<CompanyWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredAttachments,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Authored attachments`,
+    description: msg`Attachments created by the workspace member`,
+    icon: 'IconFileImport',
+    inverseSideTarget: () => AttachmentWorkspaceEntity,
+    inverseSideFieldKey: 'author',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  authoredAttachments: Relation<AttachmentWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.connectedAccounts,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Connected accounts`,
+    description: msg`Connected accounts`,
+    icon: 'IconAt',
+    inverseSideTarget: () => ConnectedAccountWorkspaceEntity,
+    inverseSideFieldKey: 'accountOwner',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  connectedAccounts: Relation<ConnectedAccountWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.messageParticipants,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Message Participants`,
+    description: msg`Message Participants`,
+    icon: 'IconUserCircle',
+    inverseSideTarget: () => MessageParticipantWorkspaceEntity,
+    inverseSideFieldKey: 'workspaceMember',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  messageParticipants: Relation<MessageParticipantWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.blocklist,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Blocklist`,
+    description: msg`Blocklisted handles`,
+    icon: 'IconForbid2',
+    inverseSideTarget: () => BlocklistWorkspaceEntity,
+    inverseSideFieldKey: 'workspaceMember',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  blocklist: Relation<BlocklistWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.calendarEventParticipants,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Calendar Event Participants`,
+    description: msg`Calendar Event Participants`,
+    icon: 'IconCalendar',
+    inverseSideTarget: () => CalendarEventParticipantWorkspaceEntity,
+    inverseSideFieldKey: 'workspaceMember',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  calendarEventParticipants: Relation<
+    CalendarEventParticipantWorkspaceEntity[]
+  >;
+
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timelineActivities,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Events`,
+    description: msg`Events linked to the workspace member`,
+    icon: 'IconTimelineEvent',
+    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
+  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.searchVector,
@@ -352,5 +358,5 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
-  searchVector: any;
+  searchVector: string;
 }

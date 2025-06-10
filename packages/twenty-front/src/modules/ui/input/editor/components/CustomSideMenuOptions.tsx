@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconComponent } from 'twenty-ui';
+import { IconComponent } from 'twenty-ui/display';
 
 const StyledContainer = styled.div<{ Variant: Variants }>`
   color: ${({ theme, Variant }) =>

@@ -2,6 +2,7 @@ import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/S
 import { AppPath } from '@/types/AppPath';
 import { Trans, useLingui } from '@lingui/react/macro';
 
+import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import styled from '@emotion/styled';
 import {
@@ -10,9 +11,9 @@ import {
   AnimatedPlaceholderErrorContainer,
   AnimatedPlaceholderErrorSubTitle,
   AnimatedPlaceholderErrorTitle,
-  MainButton,
-  UndecoratedLink,
-} from 'twenty-ui';
+} from 'twenty-ui/layout';
+import { MainButton } from 'twenty-ui/input';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 
 const StyledBackDrop = styled.div`
   align-items: center;
@@ -26,7 +27,7 @@ const StyledBackDrop = styled.div`
   position: fixed;
   top: 0;
   width: 100%;
-  z-index: 10000;
+  z-index: ${RootStackingContextZIndices.NotFound};
 `;
 
 const StyledButtonContainer = styled.div`

@@ -4,8 +4,39 @@ import { Route, Routes } from 'react-router-dom';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SettingsPermissions } from 'twenty-shared';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { SettingPermissionType } from '~/generated/graphql';
+
+const SettingsApiKeys = lazy(() =>
+  import('~/pages/settings/developers/api-keys/SettingsApiKeys').then(
+    (module) => ({
+      default: module.SettingsApiKeys,
+    }),
+  ),
+);
+
+const SettingsGraphQLPlayground = lazy(() =>
+  import(
+    '~/pages/settings/developers/playground/SettingsGraphQLPlayground'
+  ).then((module) => ({
+    default: module.SettingsGraphQLPlayground,
+  })),
+);
+
+const SettingsRestPlayground = lazy(() =>
+  import('~/pages/settings/developers/playground/SettingsRestPlayground').then(
+    (module) => ({
+      default: module.SettingsRestPlayground,
+    }),
+  ),
+);
+
+const SettingsWebhooks = lazy(() =>
+  import(
+    '~/pages/settings/developers/webhooks/components/SettingsWebhooks'
+  ).then((module) => ({
+    default: module.SettingsWebhooks,
+  })),
+);
 
 const SettingsAccountsCalendars = lazy(() =>
   import('~/pages/settings/accounts/SettingsAccountsCalendars').then(
@@ -137,12 +168,6 @@ const SettingsBilling = lazy(() =>
   })),
 );
 
-const SettingsDevelopers = lazy(() =>
-  import('~/pages/settings/developers/SettingsDevelopers').then((module) => ({
-    default: module.SettingsDevelopers,
-  })),
-);
-
 const SettingsIntegrations = lazy(() =>
   import('~/pages/settings/integrations/SettingsIntegrations').then(
     (module) => ({
@@ -248,19 +273,19 @@ const SettingsAdmin = lazy(() =>
   })),
 );
 
-const SettingsAdminContent = lazy(() =>
-  import('@/settings/admin-panel/components/SettingsAdminContent').then(
-    (module) => ({
-      default: module.SettingsAdminContent,
-    }),
-  ),
-);
-
 const SettingsAdminIndicatorHealthStatus = lazy(() =>
   import(
     '~/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus'
   ).then((module) => ({
     default: module.SettingsAdminIndicatorHealthStatus,
+  })),
+);
+
+const SettingsAdminConfigVariableDetails = lazy(() =>
+  import(
+    '~/pages/settings/admin-panel/SettingsAdminConfigVariableDetails'
+  ).then((module) => ({
+    default: module.SettingsAdminConfigVariableDetails,
   })),
 );
 
@@ -276,9 +301,21 @@ const SettingsRoles = lazy(() =>
   })),
 );
 
+const SettingsRoleCreate = lazy(() =>
+  import('~/pages/settings/roles/SettingsRoleCreate').then((module) => ({
+    default: module.SettingsRoleCreate,
+  })),
+);
+
 const SettingsRoleEdit = lazy(() =>
   import('~/pages/settings/roles/SettingsRoleEdit').then((module) => ({
     default: module.SettingsRoleEdit,
+  })),
+);
+
+const SettingsRoleObjectLevel = lazy(() =>
+  import('~/pages/settings/roles/SettingsRoleObjectLevel').then((module) => ({
+    default: module.SettingsRoleObjectLevel,
   })),
 );
 
@@ -308,22 +345,30 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingsPermissions.WORKSPACE}
+            settingsPermission={SettingPermissionType.WORKSPACE}
           />
         }
       >
+        <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
+        <Route path={SettingsPath.Domain} element={<SettingsDomain />} />
       </Route>
-      <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
-      <Route path={SettingsPath.Domain} element={<SettingsDomain />} />
-      <Route
-        path={SettingsPath.WorkspaceMembersPage}
-        element={<SettingsWorkspaceMembers />}
-      />
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingsPermissions.DATA_MODEL}
+            settingsPermission={SettingPermissionType.WORKSPACE_MEMBERS}
+          />
+        }
+      >
+        <Route
+          path={SettingsPath.WorkspaceMembersPage}
+          element={<SettingsWorkspaceMembers />}
+        />
+      </Route>
+      <Route
+        element={
+          <SettingsProtectedRouteWrapper
+            settingsPermission={SettingPermissionType.DATA_MODEL}
           />
         }
       >
@@ -337,31 +382,87 @@ export const SettingsRoutes = ({
           element={<SettingsObjectDetailPage />}
         />
         <Route path={SettingsPath.NewObject} element={<SettingsNewObject />} />
+        <Route
+          path={SettingsPath.ObjectNewFieldSelect}
+          element={<SettingsObjectNewFieldSelect />}
+        />
+        <Route
+          path={SettingsPath.ObjectNewFieldConfigure}
+          element={<SettingsObjectNewFieldConfigure />}
+        />
+        <Route
+          path={SettingsPath.ObjectFieldEdit}
+          element={<SettingsObjectFieldEdit />}
+        />
       </Route>
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingsPermissions.ROLES}
-            requiredFeatureFlag={FeatureFlagKey.IsPermissionsEnabled}
+            settingsPermission={SettingPermissionType.ROLES}
           />
         }
       >
         <Route path={SettingsPath.Roles} element={<SettingsRoles />} />
         <Route path={SettingsPath.RoleDetail} element={<SettingsRoleEdit />} />
+        <Route
+          path={SettingsPath.RoleCreate}
+          element={<SettingsRoleCreate />}
+        />
+        <Route
+          path={SettingsPath.RoleObjectLevel}
+          element={<SettingsRoleObjectLevel />}
+        />
       </Route>
-      <Route path={SettingsPath.Developers} element={<SettingsDevelopers />} />
       <Route
-        path={SettingsPath.DevelopersNewApiKey}
-        element={<SettingsDevelopersApiKeysNew />}
-      />
-      <Route
-        path={SettingsPath.DevelopersApiKeyDetail}
-        element={<SettingsDevelopersApiKeyDetail />}
-      />
-      <Route
-        path={SettingsPath.DevelopersNewWebhookDetail}
-        element={<SettingsDevelopersWebhooksDetail />}
-      />
+        element={
+          <SettingsProtectedRouteWrapper
+            settingsPermission={SettingPermissionType.API_KEYS_AND_WEBHOOKS}
+          />
+        }
+      >
+        <Route path={SettingsPath.APIs} element={<SettingsApiKeys />} />
+        <Route path={SettingsPath.Webhooks} element={<SettingsWebhooks />} />
+        <Route
+          path={`${SettingsPath.GraphQLPlayground}`}
+          element={<SettingsGraphQLPlayground />}
+        />
+        <Route
+          path={`${SettingsPath.RestPlayground}/*`}
+          element={<SettingsRestPlayground />}
+        />
+        <Route
+          path={SettingsPath.NewApiKey}
+          element={<SettingsDevelopersApiKeysNew />}
+        />
+        <Route
+          path={SettingsPath.ApiKeyDetail}
+          element={<SettingsDevelopersApiKeyDetail />}
+        />
+        <Route
+          path={SettingsPath.WebhookDetail}
+          element={<SettingsDevelopersWebhooksDetail />}
+        />
+        <Route
+          path={SettingsPath.Integrations}
+          element={<SettingsIntegrations />}
+        />
+        <Route
+          path={SettingsPath.IntegrationDatabase}
+          element={<SettingsIntegrationDatabase />}
+        />
+        <Route
+          path={SettingsPath.IntegrationNewDatabaseConnection}
+          element={<SettingsIntegrationNewDatabaseConnection />}
+        />
+        <Route
+          path={SettingsPath.IntegrationEditDatabaseConnection}
+          element={<SettingsIntegrationEditDatabaseConnection />}
+        />
+        <Route
+          path={SettingsPath.IntegrationDatabaseConnection}
+          element={<SettingsIntegrationShowDatabaseConnection />}
+        />
+      </Route>
       {isFunctionSettingsEnabled && (
         <>
           <Route
@@ -378,66 +479,43 @@ export const SettingsRoutes = ({
           />
         </>
       )}
-      <Route
-        path={SettingsPath.Integrations}
-        element={<SettingsIntegrations />}
-      />
-      <Route
-        path={SettingsPath.IntegrationDatabase}
-        element={<SettingsIntegrationDatabase />}
-      />
-      <Route
-        path={SettingsPath.IntegrationNewDatabaseConnection}
-        element={<SettingsIntegrationNewDatabaseConnection />}
-      />
-      <Route
-        path={SettingsPath.IntegrationEditDatabaseConnection}
-        element={<SettingsIntegrationEditDatabaseConnection />}
-      />
-      <Route
-        path={SettingsPath.IntegrationDatabaseConnection}
-        element={<SettingsIntegrationShowDatabaseConnection />}
-      />
-      <Route
-        path={SettingsPath.ObjectNewFieldSelect}
-        element={<SettingsObjectNewFieldSelect />}
-      />
-      <Route
-        path={SettingsPath.ObjectNewFieldConfigure}
-        element={<SettingsObjectNewFieldConfigure />}
-      />
-      <Route
-        path={SettingsPath.ObjectFieldEdit}
-        element={<SettingsObjectFieldEdit />}
-      />
       <Route path={SettingsPath.Releases} element={<Releases />} />
-      <Route path={SettingsPath.Security} element={<SettingsSecurity />} />
       <Route
-        path={SettingsPath.NewSSOIdentityProvider}
-        element={<SettingsSecuritySSOIdentifyProvider />}
-      />
-      <Route
-        path={SettingsPath.NewApprovedAccessDomain}
-        element={<SettingsSecurityApprovedAccessDomain />}
-      />
+        element={
+          <SettingsProtectedRouteWrapper
+            settingsPermission={SettingPermissionType.SECURITY}
+          />
+        }
+      >
+        <Route path={SettingsPath.Security} element={<SettingsSecurity />} />
+        <Route
+          path={SettingsPath.NewSSOIdentityProvider}
+          element={<SettingsSecuritySSOIdentifyProvider />}
+        />
+        <Route
+          path={SettingsPath.NewApprovedAccessDomain}
+          element={<SettingsSecurityApprovedAccessDomain />}
+        />
+      </Route>
 
       {isAdminPageEnabled && (
         <>
           <Route path={SettingsPath.AdminPanel} element={<SettingsAdmin />} />
           <Route
-            path={SettingsPath.FeatureFlags}
-            element={<SettingsAdminContent />}
-          />
-          <Route
             path={SettingsPath.AdminPanelIndicatorHealthStatus}
             element={<SettingsAdminIndicatorHealthStatus />}
+          />
+
+          <Route
+            path={SettingsPath.AdminPanelConfigVariableDetails}
+            element={<SettingsAdminConfigVariableDetails />}
           />
         </>
       )}
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingsPermissions.WORKSPACE}
+            settingsPermission={SettingPermissionType.WORKSPACE}
           />
         }
       >

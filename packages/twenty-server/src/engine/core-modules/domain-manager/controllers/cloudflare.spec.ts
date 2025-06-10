@@ -1,22 +1,24 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import { Request, Response } from 'express';
+import { AuditContextMock } from 'test/utils/audit-context.mock';
+import { Repository } from 'typeorm';
 
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { CloudflareController } from 'src/engine/core-modules/domain-manager/controllers/cloudflare.controller';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import { CustomDomainValidRecords } from 'src/engine/core-modules/domain-manager/dtos/custom-domain-valid-records';
 import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 describe('CloudflareController - customHostnameWebhooks', () => {
   let controller: CloudflareController;
   let WorkspaceRepository: Repository<Workspace>;
-  let environmentService: EnvironmentService;
+  let twentyConfigService: TwentyConfigService;
   let domainManagerService: DomainManagerService;
   let customDomainService: CustomDomainService;
 
@@ -56,9 +58,15 @@ describe('CloudflareController - customHostnameWebhooks', () => {
           },
         },
         {
-          provide: EnvironmentService,
+          provide: TwentyConfigService,
           useValue: {
             get: jest.fn(),
+          },
+        },
+        {
+          provide: AuditService,
+          useValue: {
+            createContext: AuditContextMock,
           },
         },
       ],
@@ -66,7 +74,7 @@ describe('CloudflareController - customHostnameWebhooks', () => {
 
     controller = module.get<CloudflareController>(CloudflareController);
     WorkspaceRepository = module.get(getRepositoryToken(Workspace, 'core'));
-    environmentService = module.get<EnvironmentService>(EnvironmentService);
+    twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
     domainManagerService =
       module.get<DomainManagerService>(DomainManagerService);
     customDomainService = module.get<CustomDomainService>(CustomDomainService);
@@ -83,7 +91,7 @@ describe('CloudflareController - customHostnameWebhooks', () => {
       send: sendMock,
     } as unknown as Response;
 
-    jest.spyOn(environmentService, 'get').mockReturnValue('correct-secret');
+    jest.spyOn(twentyConfigService, 'get').mockReturnValue('correct-secret');
 
     await controller.customHostnameWebhooks(req, res);
 
@@ -102,7 +110,7 @@ describe('CloudflareController - customHostnameWebhooks', () => {
       send: sendMock,
     } as unknown as Response;
 
-    jest.spyOn(environmentService, 'get').mockReturnValue('correct-secret');
+    jest.spyOn(twentyConfigService, 'get').mockReturnValue('correct-secret');
     jest
       .spyOn(customDomainService, 'getCustomDomainDetails')
       .mockResolvedValue({
@@ -147,7 +155,7 @@ describe('CloudflareController - customHostnameWebhooks', () => {
       send: sendMock,
     } as unknown as Response;
 
-    jest.spyOn(environmentService, 'get').mockReturnValue('correct-secret');
+    jest.spyOn(twentyConfigService, 'get').mockReturnValue('correct-secret');
     jest.spyOn(WorkspaceRepository, 'findOneBy').mockResolvedValue({
       customDomain: 'notfound.com',
       isCustomDomainEnabled: true,
@@ -180,7 +188,7 @@ describe('CloudflareController - customHostnameWebhooks', () => {
       send: sendMock,
     } as unknown as Response;
 
-    jest.spyOn(environmentService, 'get').mockReturnValue('correct-secret');
+    jest.spyOn(twentyConfigService, 'get').mockReturnValue('correct-secret');
     jest.spyOn(WorkspaceRepository, 'findOneBy').mockResolvedValue({
       customDomain: 'nothing-change.com',
       isCustomDomainEnabled: true,

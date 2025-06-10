@@ -1,5 +1,4 @@
-import { ThemeColor } from 'twenty-ui';
-
+import { ThemeColor } from 'twenty-ui/theme';
 export const enum RecordGroupDefinitionType {
   Value = 'value',
   NoValue = 'no-value',

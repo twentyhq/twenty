@@ -8,11 +8,12 @@ import { Controller, useForm } from 'react-hook-form';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { z } from 'zod';
-import { H2Title, Section } from 'twenty-ui';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useCreateApprovedAccessDomainMutation } from '~/generated/graphql';
+import { H2Title } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
+import { TextInput } from '@/ui/input/components/TextInput';
 
 export const SettingsSecurityApprovedAccessDomain = () => {
   const navigate = useNavigateSettings();
@@ -23,7 +24,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
 
   const [createApprovedAccessDomain] = useCreateApprovedAccessDomainMutation();
 
-  const formConfig = useForm<{ domain: string; email: string }>({
+  const form = useForm<{ domain: string; email: string }>({
     mode: 'onSubmit',
     resolver: zodResolver(
       z
@@ -31,14 +32,14 @@ export const SettingsSecurityApprovedAccessDomain = () => {
           domain: z
             .string()
             .regex(
-              /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/,
+              /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])\.[a-zA-Z]{2,}$/,
               {
-                message: t`Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~\`!@#$%^*()=+{}[]|\\;:'",<>/? and cannot begin or end with a '-' character.`,
+                message: t`Domains have to be smaller than 256 characters, cannot contain spaces and cannot contain any special characters.`,
               },
             )
             .max(256),
           email: z.string().min(1, {
-            message: t`Email can not be empty`,
+            message: t`Email cannot be empty`,
           }),
         })
         .strict(),
@@ -49,21 +50,15 @@ export const SettingsSecurityApprovedAccessDomain = () => {
     },
   });
 
-  const domain = formConfig.watch('domain');
+  const domain = form.watch('domain');
 
   const handleSave = async () => {
     try {
-      if (!formConfig.formState.isValid) {
-        return;
-      }
       createApprovedAccessDomain({
         variables: {
           input: {
-            domain: formConfig.getValues('domain'),
-            email:
-              formConfig.getValues('email') +
-              '@' +
-              formConfig.getValues('domain'),
+            domain: form.getValues('domain'),
+            email: form.getValues('email') + '@' + form.getValues('domain'),
           },
         },
         onCompleted: () => {
@@ -86,67 +81,77 @@ export const SettingsSecurityApprovedAccessDomain = () => {
   };
 
   return (
-    <SubMenuTopBarContainer
-      title="New Approved Access Domain"
-      actionButton={
-        <SaveAndCancelButtons
-          onCancel={() => navigate(SettingsPath.Security)}
-          onSave={formConfig.handleSubmit(handleSave)}
-        />
-      }
-      links={[
-        {
-          children: <Trans>Workspace</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
-        },
-        {
-          children: <Trans>Security</Trans>,
-          href: getSettingsPath(SettingsPath.Security),
-        },
-        { children: <Trans>New Approved Access Domain</Trans> },
-      ]}
-    >
-      <SettingsPageContainer>
-        <Section>
-          <H2Title title="Domain" description="The name of your Domain" />
-          <Controller
-            name="domain"
-            control={formConfig.control}
-            render={({ field: { onChange, value }, fieldState: { error } }) => (
-              <TextInput
-                autoComplete="off"
-                value={value}
-                onChange={(domain: string) => {
-                  onChange(domain);
-                }}
-                fullWidth
-                placeholder="yourdomain.com"
-                error={error?.message}
-              />
-            )}
+    <form onSubmit={form.handleSubmit(handleSave)}>
+      <SubMenuTopBarContainer
+        title="New Approved Access Domain"
+        actionButton={
+          <SaveAndCancelButtons
+            onCancel={() => navigate(SettingsPath.Security)}
+            isSaveDisabled={form.formState.isSubmitting}
           />
-        </Section>
-        <Section>
-          <H2Title
-            title="Email verification"
-            description="We will send your a link to verify domain ownership"
-          />
-          <Controller
-            name="email"
-            control={formConfig.control}
-            render={({ field: { onChange, value }, fieldState: { error } }) => (
-              <TextInput
-                autoComplete="off"
-                value={value.split('@')[0]}
-                onChange={onChange}
-                fullWidth
-                error={error?.message}
-              />
-            )}
-          />
-          {domain}
-        </Section>
-      </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+        }
+        links={[
+          {
+            children: <Trans>Workspace</Trans>,
+            href: getSettingsPath(SettingsPath.Workspace),
+          },
+          {
+            children: <Trans>Security</Trans>,
+            href: getSettingsPath(SettingsPath.Security),
+          },
+          { children: <Trans>New Approved Access Domain</Trans> },
+        ]}
+      >
+        <SettingsPageContainer>
+          <Section>
+            <H2Title
+              title={t`Domain`}
+              description={t`The name of your Domain`}
+            />
+            <Controller
+              name="domain"
+              control={form.control}
+              render={({
+                field: { onChange, value },
+                fieldState: { error },
+              }) => (
+                <TextInput
+                  autoFocus
+                  autoComplete="off"
+                  value={value}
+                  onChange={onChange}
+                  fullWidth
+                  placeholder="yourdomain.com"
+                  error={error?.message}
+                />
+              )}
+            />
+          </Section>
+          <Section>
+            <H2Title
+              title={t`Email verification`}
+              description={t`We will send your a link to verify domain ownership`}
+            />
+            <Controller
+              name="email"
+              control={form.control}
+              render={({
+                field: { onChange, value },
+                fieldState: { error },
+              }) => (
+                <TextInput
+                  autoComplete="off"
+                  value={value.split('@')[0]}
+                  onChange={onChange}
+                  fullWidth
+                  error={error?.message}
+                  rightAdornment={`@${domain.length !== 0 ? domain : 'your-domain.com'}`}
+                />
+              )}
+            />
+          </Section>
+        </SettingsPageContainer>
+      </SubMenuTopBarContainer>
+    </form>
   );
 };

@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
+import { isDefined } from 'twenty-shared/utils';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { Repository } from 'typeorm';
@@ -16,18 +17,21 @@ import {
   EmailVerificationException,
   EmailVerificationExceptionCode,
 } from 'src/engine/core-modules/email-verification/email-verification.exception';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
 
 @Injectable()
 export class EmailVerificationTokenService {
   constructor(
     @InjectRepository(AppToken, 'core')
     private readonly appTokenRepository: Repository<AppToken>,
-    private readonly environmentService: EnvironmentService,
+    @InjectRepository(User, 'core')
+    private readonly userRepository: Repository<User>,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async generateToken(userId: string, email: string): Promise<AuthToken> {
-    const expiresIn = this.environmentService.get(
+    const expiresIn = this.twentyConfigService.get(
       'EMAIL_VERIFICATION_TOKEN_EXPIRES_IN',
     );
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
@@ -54,7 +58,27 @@ export class EmailVerificationTokenService {
     };
   }
 
-  async validateEmailVerificationTokenOrThrow(emailVerificationToken: string) {
+  async validateEmailVerificationTokenOrThrow({
+    emailVerificationToken,
+    email,
+  }: {
+    emailVerificationToken: string;
+    email: string;
+  }) {
+    const user = await this.userRepository.findOne({
+      where: {
+        email,
+        isEmailVerified: true,
+      },
+    });
+
+    if (isDefined(user)) {
+      throw new EmailVerificationException(
+        'Email already verified',
+        EmailVerificationExceptionCode.EMAIL_ALREADY_VERIFIED,
+      );
+    }
+
     const hashedToken = crypto
       .createHash('sha256')
       .update(emailVerificationToken)
@@ -96,8 +120,13 @@ export class EmailVerificationTokenService {
       );
     }
 
-    await this.appTokenRepository.remove(appToken);
+    if (appToken.context?.email !== email) {
+      throw new EmailVerificationException(
+        'Email does not match token',
+        EmailVerificationExceptionCode.INVALID_EMAIL,
+      );
+    }
 
-    return appToken.user;
+    return appToken;
   }
 }

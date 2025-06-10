@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { GaxiosError } from 'gaxios';
 import { calendar_v3 as calendarV3 } from 'googleapis';
@@ -12,6 +12,8 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 
 @Injectable()
 export class GoogleCalendarGetEventsService {
+  private readonly logger = new Logger(GoogleCalendarGetEventsService.name);
+
   constructor(
     private readonly googleCalendarClientProvider: GoogleCalendarClientProvider,
   ) {}
@@ -79,6 +81,10 @@ export class GoogleCalendarGetEventsService {
   }
 
   private handleError(error: GaxiosError) {
+    this.logger.error(
+      `Error in ${GoogleCalendarGetEventsService.name} - getCalendarEvents`,
+      error,
+    );
     if (
       error.code &&
       [
@@ -92,6 +98,10 @@ export class GoogleCalendarGetEventsService {
       throw parseGaxiosError(error);
     }
     if (error.response?.status !== 410) {
+      this.logger.error(
+        `Calendar event import error for Google Calendar. status: ${error.response?.status}`,
+      );
+      this.logger.log(error);
       const googleCalendarError = {
         code: error.response?.status,
         reason:

@@ -1,20 +1,21 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
-import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
+import { FormFieldInputInnerContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { VariableChipStandalone } from '@/object-record/record-field/form-types/components/VariableChipStandalone';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { TextInput } from '@/ui/field/input/components/TextInput';
+import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
+import { InputHint } from '@/ui/input/components/InputHint';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import styled from '@emotion/styled';
+import isEmpty from 'lodash.isempty';
 import { useId, useState } from 'react';
-import { isDefined } from 'twenty-shared';
+import { isDefined } from 'twenty-shared/utils';
 import {
   canBeCastAsNumberOrNull,
   castAsNumberOrNull,
 } from '~/utils/cast-as-number-or-null';
-import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
-import { InputHint } from '@/ui/input/components/InputHint';
 
 const StyledInput = styled(TextInput)`
   padding: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(2)}`};
@@ -22,28 +23,33 @@ const StyledInput = styled(TextInput)`
 
 type FormNumberFieldInputProps = {
   label?: string;
-  error?: string;
-  placeholder: string;
   defaultValue: number | string | undefined;
-  onPersist: (value: number | null | string) => void;
+  onChange: (value: number | null | string) => void;
   onBlur?: () => void;
   VariablePicker?: VariablePickerComponent;
   hint?: string;
   readonly?: boolean;
+  placeholder?: string;
+  error?: string;
+  onError?: (error: string | undefined) => void;
 };
 
 export const FormNumberFieldInput = ({
   label,
-  error,
   placeholder,
   defaultValue,
-  onPersist,
+  onChange,
+  onError,
   onBlur,
   VariablePicker,
   hint,
   readonly,
+  error: errorFromProps,
 }: FormNumberFieldInputProps) => {
   const inputId = useId();
+  const [errorMessage, setErrorMessage] = useState<string | undefined>(
+    undefined,
+  );
 
   const [draftValue, setDraftValue] = useState<
     | {
@@ -68,12 +74,17 @@ export const FormNumberFieldInput = ({
 
   const persistNumber = (newValue: string) => {
     if (!canBeCastAsNumberOrNull(newValue)) {
+      setErrorMessage('Invalid number');
+      onError?.('Invalid number');
       return;
     }
 
+    setErrorMessage(undefined);
+    onError?.(undefined);
+
     const castedValue = castAsNumberOrNull(newValue);
 
-    onPersist(castedValue);
+    onChange(castedValue);
   };
 
   const handleChange = (newText: string) => {
@@ -91,7 +102,7 @@ export const FormNumberFieldInput = ({
       value: '',
     });
 
-    onPersist(null);
+    onChange(null);
   };
 
   const handleVariableTagInsert = (variableName: string) => {
@@ -100,7 +111,7 @@ export const FormNumberFieldInput = ({
       value: variableName,
     });
 
-    onPersist(variableName);
+    onChange(variableName);
   };
 
   return (
@@ -108,14 +119,18 @@ export const FormNumberFieldInput = ({
       {label ? <InputLabel htmlFor={inputId}>{label}</InputLabel> : null}
 
       <FormFieldInputRowContainer>
-        <FormFieldInputInputContainer
+        <FormFieldInputInnerContainer
           hasRightElement={isDefined(VariablePicker) && !readonly}
           onBlur={onBlur}
         >
           {draftValue.type === 'static' ? (
             <StyledInput
               inputId={inputId}
-              placeholder={placeholder}
+              placeholder={
+                isDefined(placeholder) && !isEmpty(placeholder)
+                  ? placeholder
+                  : 'Enter a number'
+              }
               value={draftValue.value}
               copyButton={false}
               hotkeyScope="record-create"
@@ -128,7 +143,7 @@ export const FormNumberFieldInput = ({
               onRemove={readonly ? undefined : handleUnlinkVariable}
             />
           )}
-        </FormFieldInputInputContainer>
+        </FormFieldInputInnerContainer>
 
         {VariablePicker && !readonly ? (
           <VariablePicker
@@ -139,7 +154,7 @@ export const FormNumberFieldInput = ({
       </FormFieldInputRowContainer>
 
       {hint ? <InputHint>{hint}</InputHint> : null}
-      <InputErrorHelper>{error}</InputErrorHelper>
+      <InputErrorHelper>{errorMessage ?? errorFromProps}</InputErrorHelper>
     </FormFieldInputContainer>
   );
 };

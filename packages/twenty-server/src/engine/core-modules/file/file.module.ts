@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FilePathGuard } from 'src/engine/core-modules/file/guards/file-path-guard';
 import { FileDeletionJob } from 'src/engine/core-modules/file/jobs/file-deletion.job';
 import { FileWorkspaceFolderDeletionJob } from 'src/engine/core-modules/file/jobs/file-workspace-folder-deletion.job';
@@ -15,7 +14,6 @@ import { FileService } from './services/file.service';
   imports: [JwtModule],
   providers: [
     FileService,
-    EnvironmentService,
     FilePathGuard,
     FileAttachmentListener,
     FileWorkspaceMemberListener,

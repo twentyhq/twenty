@@ -1,6 +1,6 @@
 export type ObjectOptionsContentId =
-  | 'viewSettings'
-  | 'viewSettingsOpenIn'
+  | 'layout'
+  | 'layoutOpenIn'
   | 'fields'
   | 'hiddenFields'
   | 'recordGroups'

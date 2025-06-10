@@ -1,16 +1,17 @@
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import {
   IconArchive,
   IconDotsVertical,
   IconEye,
   IconPencil,
   IconTextSize,
-  LightIconButton,
-  MenuItem,
-} from 'twenty-ui';
-
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+} from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
 
 type SettingsObjectFieldActiveActionDropdownProps = {
   isCustomField?: boolean;
@@ -56,29 +57,30 @@ export const SettingsObjectFieldActiveActionDropdown = ({
           accent="tertiary"
         />
       }
-      dropdownMenuWidth={160}
       dropdownComponents={
-        <DropdownMenuItemsContainer>
-          <MenuItem
-            text={isCustomField ? 'Edit' : 'View'}
-            LeftIcon={isCustomField ? IconPencil : IconEye}
-            onClick={handleEdit}
-          />
-          {!!onSetAsLabelIdentifier && (
+        <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
+          <DropdownMenuItemsContainer>
             <MenuItem
-              text="Set as record text"
-              LeftIcon={IconTextSize}
-              onClick={handleSetAsLabelIdentifier}
+              text={isCustomField ? 'Edit' : 'View'}
+              LeftIcon={isCustomField ? IconPencil : IconEye}
+              onClick={handleEdit}
             />
-          )}
-          {!!onDeactivate && (
-            <MenuItem
-              text="Deactivate"
-              LeftIcon={IconArchive}
-              onClick={handleDeactivate}
-            />
-          )}
-        </DropdownMenuItemsContainer>
+            {!!onSetAsLabelIdentifier && (
+              <MenuItem
+                text="Set as record text"
+                LeftIcon={IconTextSize}
+                onClick={handleSetAsLabelIdentifier}
+              />
+            )}
+            {!!onDeactivate && (
+              <MenuItem
+                text="Deactivate"
+                LeftIcon={IconArchive}
+                onClick={handleDeactivate}
+              />
+            )}
+          </DropdownMenuItemsContainer>
+        </DropdownContent>
       }
       dropdownHotkeyScope={{ scope: dropdownId }}
     />

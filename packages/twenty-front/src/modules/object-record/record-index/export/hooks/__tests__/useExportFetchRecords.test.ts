@@ -206,7 +206,7 @@ describe('useRecordData', () => {
         result.current.tableData.getTableData();
       });
 
-      await waitFor(async () => {
+      await waitFor(() => {
         expect(callback).toHaveBeenCalledWith(
           [mockPerson],
           [
@@ -223,17 +223,19 @@ describe('useRecordData', () => {
               labelWidth: undefined,
               metadata: {
                 fieldName: 'updatedAt',
+                isCustom: false,
                 isNullable: false,
                 objectMetadataNameSingular: 'person',
                 options: null,
                 placeHolder: 'Last update',
                 relationFieldMetadataId: undefined,
+                relationObjectMetadataId: '',
                 relationObjectMetadataNamePlural: '',
                 relationObjectMetadataNameSingular: '',
                 relationType: undefined,
                 targetFieldMetadataName: '',
                 settings: {
-                  displayAsRelativeDate: true,
+                  displayFormat: 'RELATIVE',
                 },
               },
               position: 10,
@@ -297,7 +299,7 @@ describe('useRecordData', () => {
         result.current.tableData.getTableData();
       });
 
-      await waitFor(async () => {
+      await waitFor(() => {
         expect(callback).toHaveBeenCalledWith([mockPerson], []);
       });
     });

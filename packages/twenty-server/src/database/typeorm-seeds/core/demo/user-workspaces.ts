@@ -11,11 +11,11 @@ export const DEV_SEED_USER_WORKSPACE_IDS = {
 };
 
 export const seedUserWorkspaces = async (
-  workspaceDataSource: DataSource,
+  dataSource: DataSource,
   schemaName: string,
   workspaceId: string,
 ) => {
-  await workspaceDataSource
+  await dataSource
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${tableName}`, ['id', 'userId', 'workspaceId'])
@@ -41,11 +41,11 @@ export const seedUserWorkspaces = async (
 };
 
 export const deleteUserWorkspaces = async (
-  workspaceDataSource: DataSource,
+  dataSource: DataSource,
   schemaName: string,
   workspaceId: string,
 ) => {
-  await workspaceDataSource
+  await dataSource
     .createQueryBuilder()
     .delete()
     .from(`${schemaName}.${tableName}`)

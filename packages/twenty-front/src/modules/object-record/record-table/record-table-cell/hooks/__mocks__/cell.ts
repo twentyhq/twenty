@@ -9,7 +9,6 @@ export const recordTableRowContextValue: RecordTableRowContextValue = {
   recordId: 'recordId',
   pathToShowPage: '/',
   objectNameSingular: 'objectNameSingular',
-  isPendingRow: false,
   inView: true,
 };
 
@@ -19,7 +18,6 @@ export const recordTableRowDraggableContextValue: RecordTableRowDraggableContext
 };
 
 export const recordTableCellContextValue: RecordTableCellContextValue = {
-  columnIndex: 3,
   columnDefinition: {
     size: 1,
     position: 1,
@@ -36,6 +34,4 @@ export const recordTableCellContextValue: RecordTableCellContextValue = {
     row: 2,
     column: 3,
   },
-  hasSoftFocus: false,
-  isInEditMode: false,
 };

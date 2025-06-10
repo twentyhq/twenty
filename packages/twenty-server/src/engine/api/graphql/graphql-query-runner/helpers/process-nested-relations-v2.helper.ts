@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  DataSource,
-  FindOptionsRelations,
-  ObjectLiteral,
-  SelectQueryBuilder,
-} from 'typeorm';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -21,8 +17,10 @@ import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.typ
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
+import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
+import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
-import { isRelationFieldMetadata } from 'src/engine/utils/is-relation-field-metadata.util';
+import { isFieldMetadataInterfaceOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 @Injectable()
 export class ProcessNestedRelationsV2Helper {
@@ -39,17 +37,22 @@ export class ProcessNestedRelationsV2Helper {
     aggregate = {},
     limit,
     authContext,
-    dataSource,
+    workspaceDataSource,
+    roleId,
+    shouldBypassPermissionChecks,
   }: {
     objectMetadataMaps: ObjectMetadataMaps;
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
     parentObjectRecords: T[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     parentObjectRecordsAggregatedValues?: Record<string, any>;
     relations: Record<string, FindOptionsRelations<ObjectLiteral>>;
     aggregate?: Record<string, AggregationField>;
     limit: number;
     authContext: AuthContext;
-    dataSource: DataSource;
+    workspaceDataSource: WorkspaceDataSource;
+    shouldBypassPermissionChecks: boolean;
+    roleId?: string;
   }): Promise<void> {
     const processRelationTasks = Object.entries(relations).map(
       ([sourceFieldName, nestedRelations]) =>
@@ -63,7 +66,9 @@ export class ProcessNestedRelationsV2Helper {
           aggregate,
           limit,
           authContext,
-          dataSource,
+          workspaceDataSource,
+          shouldBypassPermissionChecks,
+          roleId,
         }),
     );
 
@@ -80,23 +85,33 @@ export class ProcessNestedRelationsV2Helper {
     aggregate,
     limit,
     authContext,
-    dataSource,
+    workspaceDataSource,
+    shouldBypassPermissionChecks,
+    roleId,
   }: {
     objectMetadataMaps: ObjectMetadataMaps;
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
     parentObjectRecords: T[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     parentObjectRecordsAggregatedValues: Record<string, any>;
     sourceFieldName: string;
     nestedRelations: FindOptionsRelations<ObjectLiteral>;
     aggregate: Record<string, AggregationField>;
     limit: number;
     authContext: AuthContext;
-    dataSource: DataSource;
+    workspaceDataSource: WorkspaceDataSource;
+    shouldBypassPermissionChecks: boolean;
+    roleId?: string;
   }): Promise<void> {
     const sourceFieldMetadata =
       parentObjectMetadataItem.fieldsByName[sourceFieldName];
 
-    if (!isRelationFieldMetadata(sourceFieldMetadata)) {
+    if (
+      !isFieldMetadataInterfaceOfType(
+        sourceFieldMetadata,
+        FieldMetadataType.RELATION,
+      )
+    ) {
       // TODO: Maybe we should throw an error here ?
       return;
     }
@@ -116,9 +131,12 @@ export class ProcessNestedRelationsV2Helper {
         sourceFieldName,
       });
 
-    const targetObjectRepository = dataSource.getRepository(
+    const targetObjectRepository = workspaceDataSource.getRepository(
       targetObjectMetadata.nameSingular,
+      shouldBypassPermissionChecks,
+      roleId,
     );
+
     const targetObjectQueryBuilder = targetObjectRepository.createQueryBuilder(
       targetObjectMetadata.nameSingular,
     );
@@ -139,7 +157,7 @@ export class ProcessNestedRelationsV2Helper {
             ? `"${targetRelationName}Id"`
             : 'id',
         ids: relationIds,
-        limit,
+        limit: limit * parentObjectRecords.length,
         objectMetadataMaps,
         targetObjectMetadata,
         aggregate,
@@ -185,7 +203,9 @@ export class ProcessNestedRelationsV2Helper {
         aggregate,
         limit,
         authContext,
-        dataSource,
+        workspaceDataSource,
+        shouldBypassPermissionChecks,
+        roleId,
       });
     }
   }
@@ -230,6 +250,7 @@ export class ProcessNestedRelationsV2Helper {
   }: {
     records: ObjectRecord[];
     idField: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   }): any[] {
     return [...new Set(records.map((item) => item[idField]))];
   }
@@ -244,20 +265,26 @@ export class ProcessNestedRelationsV2Helper {
     aggregate,
     sourceFieldName,
   }: {
-    referenceQueryBuilder: SelectQueryBuilder<any>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    referenceQueryBuilder: WorkspaceSelectQueryBuilder<any>;
     column: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ids: any[];
     limit: number;
     objectMetadataMaps: ObjectMetadataMaps;
     targetObjectMetadata: ObjectMetadataItemWithFieldMaps;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     aggregate: Record<string, any>;
     sourceFieldName: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   }): Promise<{ relationResults: any[]; relationAggregatedFieldsResult: any }> {
     if (ids.length === 0) {
       return { relationResults: [], relationAggregatedFieldsResult: {} };
     }
 
     const aggregateForRelation = aggregate[sourceFieldName];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let relationAggregatedFieldsResult: Record<string, any> = {};
 
     if (aggregateForRelation) {
@@ -318,8 +345,11 @@ export class ProcessNestedRelationsV2Helper {
     relationType,
   }: {
     parentRecords: ObjectRecord[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     parentObjectRecordsAggregatedValues: Record<string, any>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     relationResults: any[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     relationAggregatedFieldsResult: Record<string, any>;
     sourceFieldName: string;
     joinField: string;
