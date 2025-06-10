@@ -5,13 +5,13 @@ import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionM
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
-import { viewableRecordIdSelectedState } from '@/object-record/record-table/record-table-row/states/viewableRecordIdSelectedState';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
+import { lastSelectedRowIndexComponentState } from '../../record-table-row/states/lastSelectedRowIndexComponentState';
 
 export const useResetTableRowSelection = (recordTableId?: string) => {
   const recordTableIdFromContext = useAvailableComponentInstanceIdOrThrow(
@@ -41,6 +41,12 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
     ),
   );
 
+  const lastSelectedRowIndexComponentCallbackState =
+    useRecoilComponentCallbackStateV2(
+      lastSelectedRowIndexComponentState,
+      recordTableId,
+    );
+
   return useRecoilCallback(
     ({ set, snapshot }) =>
       () => {
@@ -56,12 +62,13 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
         set(hasUserSelectedAllRowsState, false);
 
         set(isActionMenuDropdownOpenState, false);
-        set(viewableRecordIdSelectedState, null);
+        set(lastSelectedRowIndexComponentCallbackState, null);
       },
     [
       recordIndexAllRecordIdsSelector,
       hasUserSelectedAllRowsState,
       isActionMenuDropdownOpenState,
+      lastSelectedRowIndexComponentCallbackState,
       isRowSelectedFamilyState,
     ],
   );

@@ -3,9 +3,10 @@ import { useRecoilCallback } from 'recoil';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
-import { viewableRecordIdSelectedState } from '@/object-record/record-table/record-table-row/states/viewableRecordIdSelectedState';
+import { lastSelectedRowIndexComponentState } from '@/object-record/record-table/record-table-row/states/lastSelectedRowIndexComponentState';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useSetCurrentRowSelected = () => {
   const { recordId, rowIndex } = useRecordTableRowContextOrThrow();
@@ -16,6 +17,9 @@ export const useSetCurrentRowSelected = () => {
   const recordIndexAllRecordIdsState = useRecoilComponentCallbackStateV2(
     recordIndexAllRecordIdsComponentSelector,
   );
+
+  const lastSelectedRowIndexComponentCallbackState =
+    useRecoilComponentCallbackStateV2(lastSelectedRowIndexComponentState);
 
   const setCurrentRowSelected = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -29,45 +33,49 @@ export const useSetCurrentRowSelected = () => {
           snapshot,
           recordIndexAllRecordIdsState,
         );
-        const isRowSelected = getSnapshotValue(
+
+        const isCurrentRowSelected = getSnapshotValue(
           snapshot,
           isRowSelectedFamilyState(recordId),
         );
-        const lastRecordSelectedId = snapshot
-          .getLoadable(viewableRecordIdSelectedState)
+
+        const lastSelectedIndex = snapshot
+          .getLoadable(lastSelectedRowIndexComponentCallbackState)
           .getValue();
 
-        const lastRowIndex = allRecordIds.findIndex(
-          (recordId) => recordId === lastRecordSelectedId,
-        );
-        if (Boolean(event?.shiftKey) && lastRowIndex !== -1 && !isRowSelected) {
-          let startIndex = Math.min(lastRowIndex, rowIndex);
-          const endIndex = Math.max(lastRowIndex, rowIndex);
+        if (
+          isDefined(event?.shiftKey) &&
+          event.shiftKey &&
+          isDefined(lastSelectedIndex)
+        ) {
+          const startIndex = Math.min(lastSelectedIndex, rowIndex);
+          const endIndex = Math.max(lastSelectedIndex, rowIndex);
 
-          while (startIndex <= endIndex) {
-            const isRowSelected = getSnapshotValue(
-              snapshot,
-              isRowSelectedFamilyState(allRecordIds[startIndex]),
-            );
+          const shouldSelect = !isCurrentRowSelected;
 
-            if (!isRowSelected) {
-              set(isRowSelectedFamilyState(allRecordIds[startIndex]), true);
-              set(viewableRecordIdSelectedState, allRecordIds[startIndex]);
-            }
-            startIndex++;
+          for (let i = startIndex; i <= endIndex; i++) {
+            set(isRowSelectedFamilyState(allRecordIds[i]), shouldSelect);
           }
-        } else {
-          if (isRowSelected !== newSelectedState) {
-            set(isRowSelectedFamilyState(recordId), newSelectedState);
-            set(viewableRecordIdSelectedState, isRowSelected ? null : recordId);
-          }
+
+          set(lastSelectedRowIndexComponentCallbackState, rowIndex);
+          return;
+        }
+
+        if (isCurrentRowSelected !== newSelectedState) {
+          set(isRowSelectedFamilyState(recordId), newSelectedState);
+
+          set(
+            lastSelectedRowIndexComponentCallbackState,
+            newSelectedState ? rowIndex : null,
+          );
         }
       },
     [
-      recordId,
-      isRowSelectedFamilyState,
-      rowIndex,
       recordIndexAllRecordIdsState,
+      isRowSelectedFamilyState,
+      recordId,
+      lastSelectedRowIndexComponentCallbackState,
+      rowIndex,
     ],
   );
 
