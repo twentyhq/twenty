@@ -100,7 +100,7 @@ export class PermissionsService {
     };
   }
 
-  public async getUserWorkspacePermissions({
+  public async getUserWorkspacePermissionsV1({
     userWorkspaceId,
     workspaceId,
   }: {
@@ -109,6 +109,7 @@ export class PermissionsService {
   }): Promise<{
     settingsPermissions: Record<SettingPermissionType, boolean>;
     objectRecordsPermissions: Record<PermissionsOnAllObjectRecords, boolean>;
+    objectPermissions: ObjectRecordsPermissions;
   }> {
     const [roleOfUserWorkspace] = await this.userRoleService
       .getRolesByUserWorkspaces({
@@ -158,9 +159,17 @@ export class PermissionsService {
         roleOfUserWorkspace.canDestroyAllObjectRecords ?? false,
     };
 
+    const { data: rolesPermissions } =
+      await this.workspacePermissionsCacheService.getRolesPermissionsFromCache({
+        workspaceId,
+      });
+
+    const objectPermissions = rolesPermissions[roleOfUserWorkspace.id] ?? {};
+
     return {
       settingsPermissions: settingsPermissionsMap,
       objectRecordsPermissions: objectRecordsPermissionsMap,
+      objectPermissions,
     };
   }
 

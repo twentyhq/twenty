@@ -258,10 +258,12 @@ export class WorkspacePermissionsCacheService {
       for (const objectMetadata of workspaceObjectMetadataCollection) {
         const { id: objectMetadataId, isSystem } = objectMetadata;
 
-        let canRead = role.canReadAllObjectRecords;
-        let canUpdate = role.canUpdateAllObjectRecords;
-        let canSoftDelete = role.canSoftDeleteAllObjectRecords;
-        let canDestroy = role.canDestroyAllObjectRecords;
+        let canRead = isSystem ? true : role.canReadAllObjectRecords;
+        let canUpdate = isSystem ? true : role.canUpdateAllObjectRecords;
+        let canSoftDelete = isSystem
+          ? true
+          : role.canSoftDeleteAllObjectRecords;
+        let canDestroy = isSystem ? true : role.canDestroyAllObjectRecords;
 
         if (isPermissionsV2Enabled) {
           const objectRecordPermissionsOverride = role.objectPermissions.find(

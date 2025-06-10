@@ -147,13 +147,22 @@ export class UserResolver {
         objectRecordsPermissions = permissions.objectRecordsPermissions;
       } else {
         const permissions =
-          await this.permissionsService.getUserWorkspacePermissions({
+          await this.permissionsService.getUserWorkspacePermissionsV1({
             userWorkspaceId: currentUserWorkspace.id,
             workspaceId: workspace.id,
           });
 
         settingsPermissions = permissions.settingsPermissions;
         objectRecordsPermissions = permissions.objectRecordsPermissions;
+        objectPermissions = Object.entries(permissions.objectPermissions).map(
+          ([objectMetadataId, permissions]) => ({
+            objectMetadataId,
+            canReadObjectRecords: permissions.canRead,
+            canUpdateObjectRecords: permissions.canUpdate,
+            canSoftDeleteObjectRecords: permissions.canSoftDelete,
+            canDestroyObjectRecords: permissions.canDestroy,
+          }),
+        );
       }
     }
 
