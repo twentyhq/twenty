@@ -56,7 +56,7 @@ export class BillingPortalWorkspaceService {
     requirePaymentMethod,
     paymentProvider,
     locale,
-    interChargeData: interChargeInput,
+    interChargeData,
     chargeType = ChargeType.ONE_TIME,
   }: BillingPortalCheckoutSessionParameters): Promise<string> {
     const frontBaseUrl = this.domainManagerService.buildWorkspaceURL({
@@ -64,6 +64,37 @@ export class BillingPortalWorkspaceService {
     });
 
     if (paymentProvider === BillingPaymentProviders.Inter) {
+      if (!isDefined(interChargeData))
+        throw new BillingException(
+          'Missing Inter Billing customer data',
+          BillingExceptionCode.BILLING_MISSING_REQUEST_BODY,
+        );
+
+      const { cpfCnpj, legalEntity, name, address, city, stateUnity, cep } =
+        interChargeData;
+
+      await this.billingCustomerRepository.upsert(
+        {
+          workspaceId: workspace.id,
+          document: cpfCnpj,
+          legalEntity,
+          name,
+          address,
+          city,
+          stateUnity,
+          cep,
+          interBillingChargeId: workspace.id.slice(0, 15),
+        },
+        {
+          conflictPaths: ['workspaceId'],
+          skipUpdateIfNoValuesChanged: true,
+        },
+      );
+
+      const customer = await this.billingCustomerRepository.findOneByOrFail({
+        workspaceId: workspace.id,
+      });
+
       //TODO: Call inter method to generate bolepix and sent through email
       if (!isDefined(billingPricesPerPlan?.baseProductPrice.unitAmountDecimal))
         throw new InternalServerErrorException('Plan price not found');
@@ -73,7 +104,9 @@ export class BillingPortalWorkspaceService {
         workspaceId: workspace.id,
         locale: locale || SOURCE_LOCALE,
         userEmail: user.email,
-        ...(interChargeInput as InterCreateChargeDto),
+        ...(interChargeData as InterCreateChargeDto),
+        customer,
+        planKey: plan,
       });
 
       return `${frontBaseUrl.toString()}plan-required/payment-success`;

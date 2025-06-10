@@ -18,6 +18,7 @@ import { BillingMeteredProductUsageOutput } from 'src/engine/core-modules/billin
 import { BillingPlanOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-plan.output';
 import { BillingSessionOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-session.output';
 import { BillingSwitchPlanOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-switch-plan.output';
+import { BillingUpdateOneTimePaidSubscriptionOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-update-onetime-pad-subscription.output';
 import { BillingUpdateOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-update.output';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
@@ -129,7 +130,7 @@ export class BillingResolver {
     };
   }
 
-  @Mutation(() => BillingUpdateOutput)
+  @Mutation(() => BillingUpdateOneTimePaidSubscriptionOutput)
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async updateOneTimePaidSubscription(
     @AuthWorkspace() workspace: Workspace,
@@ -137,7 +138,7 @@ export class BillingResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @Context() context: I18nContext,
     @AuthApiKey() apiKey?: string,
-  ) {
+  ): Promise<BillingUpdateOneTimePaidSubscriptionOutput> {
     await this.validateCanCheckoutSessionPermissionOrThrow({
       workspaceId: workspace.id,
       userWorkspaceId,
@@ -158,7 +159,7 @@ export class BillingResolver {
       );
 
     return {
-      success: true,
+      bankSlipFileUrl: '',
     };
   }
 

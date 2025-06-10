@@ -8,8 +8,10 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { BillingCharge } from 'src/engine/core-modules/billing/entities/billing-charge.tity';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { ChargeStatus } from 'src/engine/core-modules/billing/enums/billing-charge.status.enum';
 import { BillingPaymentProviders } from 'src/engine/core-modules/billing/enums/billing-payment-providers.enum';
 import { interToSubscriptionStatusMap } from 'src/engine/core-modules/billing/webhooks/utils/inter-to-subsciption-status.mapper';
 import { InterChargeStatus } from 'src/engine/core-modules/inter/enums/InterChargeStatus.enum';
@@ -33,13 +35,19 @@ export class InterWebhookSubscriptionService {
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
     @InjectRepository(BillingCustomer, 'core')
     private readonly billingCustomerRepository: Repository<BillingCustomer>,
+    @InjectRepository(BillingCharge, 'core')
+    private readonly billingChargeRepository: Repository<BillingCharge>,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
   async processInterEvent(seuNumero: string, situacao: InterChargeStatus) {
+    const billingCharge = await this.billingChargeRepository.findOneByOrFail({
+      chargeCode: seuNumero,
+    });
+
     const workspace = await this.workspaceRepository.findOne({
-      where: { interBillingChargeId: seuNumero },
+      where: { id: billingCharge.metadata.workspaceId },
       withDeleted: true,
     });
 
@@ -58,16 +66,10 @@ export class InterWebhookSubscriptionService {
       );
     }
 
-    await this.billingCustomerRepository.upsert(
-      {
-        workspaceId: workspace.id,
-        interBillingChargeId: seuNumero,
-      },
-      {
-        conflictPaths: ['workspaceId'],
-        skipUpdateIfNoValuesChanged: true,
-      },
-    );
+    if (situacao === InterChargeStatus.RECEBIDO)
+      await this.billingChargeRepository.update(billingCharge.id, {
+        status: ChargeStatus.PAID,
+      });
 
     // TODO: We also need to upsert subscriptionProduct items
     await this.billingSubscriptionRepository.upsert(
@@ -76,12 +78,22 @@ export class InterWebhookSubscriptionService {
         interBillingChargeId: seuNumero,
         status: interToSubscriptionStatusMap[situacao],
         provider: BillingPaymentProviders.Inter,
+        metadata: {
+          workspaceId: workspace.id,
+          plan: billingCharge.metadata.planKey,
+        },
       },
       {
         conflictPaths: ['interBillingChargeId'],
         skipUpdateIfNoValuesChanged: true,
       },
     );
+
+    // TODO: Relate the subscription to the charge
+    if (situacao === InterChargeStatus.RECEBIDO)
+      await this.billingChargeRepository.update(billingCharge.id, {
+        status: ChargeStatus.PAID,
+      });
 
     const billingSubscriptions = await this.billingSubscriptionRepository.find({
       where: { workspaceId: workspace.id },

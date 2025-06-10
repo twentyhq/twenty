@@ -20,6 +20,7 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { BillingSubscriptionItemDTO } from 'src/engine/core-modules/billing/dtos/outputs/billing-subscription-item.output';
+import { BillingCharge } from 'src/engine/core-modules/billing/entities/billing-charge.tity';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingPaymentProviders } from 'src/engine/core-modules/billing/enums/billing-payment-providers.enum';
@@ -107,6 +108,15 @@ export class BillingSubscription {
     (billingSubscriptionItem) => billingSubscriptionItem.billingSubscription,
   )
   billingSubscriptionItems: Relation<BillingSubscriptionItem[]>;
+
+  @OneToMany(
+    () => BillingCharge,
+    (billingCharge) => billingCharge.billingSubscription,
+    {
+      nullable: true,
+    },
+  )
+  billingSubscriptionCharges: Relation<BillingCharge[]>;
 
   @ManyToOne(
     () => BillingCustomer,

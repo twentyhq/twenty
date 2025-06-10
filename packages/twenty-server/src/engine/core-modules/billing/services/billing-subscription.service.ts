@@ -12,11 +12,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { Not, Repository } from 'typeorm';
 
 import {
-  InterCustomerType,
-  InterCustomerUf,
-} from 'src/engine/core-modules/inter/interfaces/charge.interface';
-
-import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
@@ -67,6 +62,7 @@ export class BillingSubscriptionService {
       await this.billingSubscriptionRepository.find({
         where: { ...criteria, status: Not(SubscriptionStatus.Canceled) },
         relations: [
+          'billingCustomer',
           'billingSubscriptionItems',
           'billingSubscriptionItems.billingProduct',
           'billingSubscriptionItems.billingProduct.billingPrices',
@@ -424,6 +420,33 @@ export class BillingSubscriptionService {
       },
     );
 
+    const { billingCustomer } = subscription;
+
+    if (!isDefined(billingCustomer))
+      throw new BillingException(
+        `Customer not found`,
+        BillingExceptionCode.BILLING_CUSTOMER_NOT_FOUND,
+      );
+
+    const { name, document, legalEntity, address, cep, stateUnity, city } =
+      billingCustomer;
+
+    const chargeDataArray: (string | null | undefined)[] = [
+      name,
+      document,
+      legalEntity,
+      address,
+      cep,
+      stateUnity,
+      city,
+    ];
+
+    if (chargeDataArray.includes(null) || chargeDataArray.includes(undefined))
+      throw new BillingException(
+        `Customer missing inter charge data`,
+        BillingExceptionCode.BILLING_MISSING_REQUEST_BODY,
+      );
+
     if (!isDefined(billingPricesPerPlan?.baseProductPrice.unitAmountDecimal))
       throw new BillingException(
         `Plan price not found`,
@@ -435,14 +458,8 @@ export class BillingSubscriptionService {
       workspaceId: subscription.workspaceId as string,
       userEmail: user.email,
       locale: locale || SOURCE_LOCALE,
-      // TODO: Get this ifo from subscription customer
-      address: 'Rua São Paulo',
-      cep: '36401042',
-      stateUnity: InterCustomerUf.SP,
-      city: 'Belo Horizonte',
-      cpfCnpj: '08951851648',
-      legalEntity: InterCustomerType.FISICA,
-      name: user.firstName + user.lastName,
+      customer: billingCustomer,
+      planKey: subscription.metadata.plan as BillingPlanKey,
     });
   }
 

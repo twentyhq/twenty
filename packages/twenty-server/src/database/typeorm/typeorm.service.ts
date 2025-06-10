@@ -8,6 +8,7 @@ import { Agent } from 'src/engine/core-modules/agent/agent.entity';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { BillingPlans } from 'src/engine/core-modules/billing-plans/billing-plans.entity';
+import { BillingCharge } from 'src/engine/core-modules/billing/entities/billing-charge.tity';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingMeter } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
@@ -52,6 +53,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         AppToken,
         KeyValuePair,
         FeatureFlag,
+        BillingCharge,
         BillingSubscription,
         BillingSubscriptionItem,
         BillingMeter,

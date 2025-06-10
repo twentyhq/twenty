@@ -6,6 +6,8 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { randomUUID } from 'crypto';
+
 import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import { render } from '@react-email/render';
@@ -22,10 +24,16 @@ import {
   InterGetChargePDFResponse,
 } from 'src/engine/core-modules/inter/interfaces/charge.interface';
 
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
+import { BillingCharge } from 'src/engine/core-modules/billing/entities/billing-charge.tity';
+import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
+import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { InterCreateChargeDto } from 'src/engine/core-modules/inter/dtos/inter-create-charge.dto';
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 import { InterIntegrationService } from 'src/engine/core-modules/inter/integration/inter-integration.service';
 import { InterInstanceService } from 'src/engine/core-modules/inter/services/inter-instance.service';
@@ -40,12 +48,16 @@ export class InterService {
   private readonly interInstance: AxiosInstance;
 
   constructor(
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(BillingCustomer, 'core')
+    private readonly billingCustomerRepository: Repository<BillingCustomer>,
+    @InjectRepository(BillingCharge, 'core')
+    private readonly billingChargeRepository: Repository<BillingCharge>,
     // TODO: Check if this breaks anything
     @Optional()
     private readonly interIntegrationService: InterIntegrationService,
     private readonly interInstanceService: InterInstanceService,
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
     private readonly fileUploadService: FileUploadService,
     private readonly emailService: EmailService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -54,30 +66,34 @@ export class InterService {
   }
 
   async createBolepixCharge({
+    customer,
     planPrice,
-    cpfCnpj,
-    legalEntity,
-    name,
-    address,
-    city,
-    stateUnity,
-    cep,
     workspaceId,
     locale,
     userEmail,
-  }: InterCreateChargeDto & {
+    planKey,
+  }: {
+    planKey: BillingPlanKey;
     planPrice: string;
     workspaceId: string;
     locale: keyof typeof APP_LOCALES;
     userEmail: string;
+    customer: BillingCustomer;
   }) {
+    await this.validateCustomerChargeData(customer);
+
+    const { document, legalEntity, name, address, city, stateUnity, cep } =
+      customer;
+
     try {
-      // TODO: Create a new entity `BillinChargeIntentMetadata` to upsert inter related metadata to be used in inter payment envents
+      // TODO: Create a new entity to holde nillin charge intent metadata to be used in inter payment envents
       await this.workspaceRepository.update(workspaceId, {
         interBillingChargeId: workspaceId.slice(0, 15),
       });
 
       const token = await this.interInstanceService.getOauthToken();
+
+      const chargeCode = randomUUID().replace(/-/g, '').slice(0, 15);
 
       // TODO: Check if there aready a pending payment for the curent workspace before creating another charge since it will fail anyways if that's the case.
       const response = await this.interInstance.post<
@@ -87,13 +103,13 @@ export class InterService {
       >(
         '/cobranca/v3/cobrancas',
         {
-          seuNumero: workspaceId.slice(0, 15),
+          seuNumero: chargeCode,
           // TODO: Add a number prop in the billing price entity
           valorNominal: getPriceFromStripeDecimal(planPrice).toString(),
           dataVencimento: getNextBusinessDays(5),
           numDiasAgenda: '5',
           pagador: {
-            cpfCnpj,
+            cpfCnpj: document,
             tipoPessoa: legalEntity,
             nome: name,
             endereco: address,
@@ -112,16 +128,34 @@ export class InterService {
 
       if (response) {
         // TODO: We should move this to the queue system
-        this.logger.log('Bolepix code: ', response.data.codigoSolicitacao);
+        this.logger.log(
+          `Bolepix code for workspace: ${workspaceId}: ${response.data.codigoSolicitacao}`,
+        );
 
         const bolepixFilePath = await this.getChargePdf({
           interChargeId: response.data.codigoSolicitacao,
           workspaceId,
         });
 
-        await this.workspaceRepository.update(workspaceId, {
-          interBillingChargeId: workspaceId.slice(0, 15),
-          interBillingChargeFilePath: bolepixFilePath,
+        await this.billingChargeRepository.upsert(
+          {
+            chargeCode,
+            interBillingChargeFilePath: bolepixFilePath,
+            metadata: {
+              planKey,
+              workspaceId,
+              interChargeCode: response.data.codigoSolicitacao,
+            },
+          },
+          {
+            conflictPaths: ['chargeCode'],
+            skipUpdateIfNoValuesChanged: true,
+          },
+        );
+
+        await this.billingCustomerRepository.update(customer.id, {
+          interBillingChargeId: chargeCode,
+          currentInterBankSlipChargeFilePath: bolepixFilePath,
         });
 
         const baseUrl = this.twentyConfigService.get('SERVER_URL');
@@ -266,6 +300,27 @@ export class InterService {
     } catch (error) {
       throw new InternalServerErrorException('Failed to sync with Inter');
     }
+  }
+
+  async validateCustomerChargeData(customer: BillingCustomer) {
+    const { name, document, legalEntity, address, cep, stateUnity, city } =
+      customer;
+
+    const chargeDataArray: (string | null | undefined)[] = [
+      name,
+      document,
+      legalEntity,
+      address,
+      cep,
+      stateUnity,
+      city,
+    ];
+
+    if (chargeDataArray.includes(null) || chargeDataArray.includes(undefined))
+      throw new BillingException(
+        `Customer missing inter charge data`,
+        BillingExceptionCode.BILLING_MISSING_REQUEST_BODY,
+      );
   }
 
   private getAuthHeaders(integration: InterIntegration) {
