@@ -2,11 +2,11 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useBuildAvailableFieldsForImport } from '@/object-record/spreadsheet-import/hooks/useBuildAvailableFieldsForImport';
 import { buildRecordFromImportedStructuredRow } from '@/object-record/spreadsheet-import/utils/buildRecordFromImportedStructuredRow';
+import { filterAvailableFieldMetadataItemsToImport } from '@/object-record/spreadsheet-import/utils/filterAvailableFieldMetadataItemsToImport';
 import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOpenSpreadsheetImportDialog';
 import { SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 export const useOpenObjectRecordsSpreadsheetImportDialog = (
   objectNameSingular: string,
@@ -30,19 +30,8 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
       'fields' | 'isOpen' | 'onClose'
     >,
   ) => {
-    const availableFieldMetadataItems = objectMetadataItem.fields
-      .filter(
-        (fieldMetadataItem) =>
-          fieldMetadataItem.isActive &&
-          (!fieldMetadataItem.isSystem || fieldMetadataItem.name === 'id') &&
-          fieldMetadataItem.name !== 'createdAt' &&
-          fieldMetadataItem.name !== 'updatedAt' &&
-          (fieldMetadataItem.type !== FieldMetadataType.RELATION ||
-            fieldMetadataItem.relation?.type === RelationType.MANY_TO_ONE),
-      )
-      .sort((fieldMetadataItemA, fieldMetadataItemB) =>
-        fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
-      );
+    const availableFieldMetadataItems =
+      filterAvailableFieldMetadataItemsToImport(objectMetadataItem.fields);
 
     const availableFields = buildAvailableFieldsForImport(
       availableFieldMetadataItems,

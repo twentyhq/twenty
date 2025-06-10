@@ -1,4 +1,5 @@
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { filterAvailableFieldMetadataItemsToImport } from '@/object-record/spreadsheet-import/utils/filterAvailableFieldMetadataItemsToImport';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
 import { isString } from '@sniptt/guards';
@@ -8,11 +9,15 @@ import { FieldMetadataType } from 'twenty-shared/types';
 export const useDowloadSampleFakeRecords = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
+  const availableFieldMetadataItems = filterAvailableFieldMetadataItemsToImport(
+    objectMetadataItem.fields,
+  );
+
   const downloadSample = () => {
     const columns: string[] = [];
     const rows: string[] = [];
 
-    objectMetadataItem.fields.forEach((field) => {
+    availableFieldMetadataItems.forEach((field) => {
       switch (field.type) {
         case FieldMetadataType.RATING:
         case FieldMetadataType.ARRAY:
@@ -37,15 +42,22 @@ export const useDowloadSampleFakeRecords = () => {
           const compositeFieldSettings =
             SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[field.type];
 
+          const subFields = compositeFieldSettings.subFields;
+
           columns.push(
-            ...Object.values(compositeFieldSettings.labelBySubField).map(
-              (label) => `${field.label} / ${label}`,
+            ...subFields.map(
+              (subField) =>
+                `${field.label} / ${compositeFieldSettings.labelBySubField[subField as keyof typeof compositeFieldSettings.labelBySubField]}`,
             ),
           );
           rows.push(
-            ...Object.values(compositeFieldSettings.exampleValue).map(
-              (value) => value || '',
-            ),
+            ...subFields.map((subField) => {
+              const value =
+                compositeFieldSettings.exampleValue[
+                  subField as keyof typeof compositeFieldSettings.exampleValue
+                ];
+              return value || '';
+            }),
           );
 
           break;
