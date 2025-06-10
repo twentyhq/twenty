@@ -83,7 +83,7 @@ describe('computeCursorArgFilter', () => {
 
       expect(result).toEqual([
         { name: { gt: 'John' } },
-        { name: { eq: 'John' }, age: { lt: 30 } },
+        { and: [{ name: { eq: 'John' } }, { age: { lt: 30 } }] },
       ]);
     });
   });

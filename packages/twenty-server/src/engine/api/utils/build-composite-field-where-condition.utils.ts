@@ -11,6 +11,7 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { buildCumulativeConditions } from 'src/engine/api/utils/build-cumulative-conditions.utils';
 import { computeOperator } from 'src/engine/api/utils/compute-operator.utils';
 import { isAscendingOrder } from 'src/engine/api/utils/is-ascending-order.utils';
 import { validateAndGetOrderByForCompositeFields } from 'src/engine/api/utils/validate-and-get-order-by.utils';
@@ -30,7 +31,7 @@ export const buildCompositeFieldWhereCondition = ({
   cursorValue: Record<string, unknown>;
   isForwardPagination: boolean;
   operator?: string;
-}): Record<string, Partial<ObjectRecordFilter>> => {
+}): Record<string, ObjectRecordFilter> => {
   const compositeType = compositeTypeDefinitions.get(fieldType);
 
   if (!compositeType) {
@@ -51,108 +52,63 @@ export const buildCompositeFieldWhereCondition = ({
       cursorValue[property.name] !== undefined,
   );
 
+  if (compositeFieldProperties.length === 0) {
+    return {};
+  }
+
   if (operator === 'eq') {
     const result: Record<string, Partial<ObjectRecordFilter>> = {};
 
-    compositeFieldProperties.forEach((property) => {
+    for (const property of compositeFieldProperties) {
       result[fieldKey] = {
         ...result[fieldKey],
         [property.name]: {
           eq: cursorValue[property.name],
         },
       };
-    });
+    }
 
     return result;
   }
 
-  if (compositeFieldProperties.length === 0) {
-    return {};
-  }
-
-  if (compositeFieldProperties.length === 1) {
-    const property = compositeFieldProperties[0];
-    const fieldOrder = fieldOrderBy[fieldKey];
-
-    const orderByDirection = fieldOrder?.[property.name];
-
-    if (!isDefined(orderByDirection)) {
-      throw new GraphqlQueryRunnerException(
-        'Invalid cursor',
-        GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,
-      );
-    }
-
-    const isAscending = isAscendingOrder(orderByDirection);
-    const computedOperator = computeOperator(
-      isAscending,
-      isForwardPagination,
-      operator,
-    );
-
-    return {
+  const orConditions = buildCumulativeConditions({
+    items: compositeFieldProperties,
+    buildEqualityCondition: (property) => ({
       [fieldKey]: {
         [property.name]: {
-          [computedOperator]: cursorValue[property.name],
+          eq: cursorValue[property.name],
         },
       },
-    };
-  }
+    }),
+    buildMainCondition: (currentProperty) => {
+      const orderByDirection = fieldOrderBy[fieldKey]?.[currentProperty.name];
 
-  const orConditions: Partial<ObjectRecordFilter>[] = [];
-
-  for (const [index, currentProperty] of compositeFieldProperties.entries()) {
-    const orderByDirection = fieldOrderBy[fieldKey]?.[currentProperty.name];
-
-    if (!isDefined(orderByDirection)) {
-      throw new GraphqlQueryRunnerException(
-        'Invalid cursor',
-        GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,
-      );
-    }
-
-    const isAscending = isAscendingOrder(orderByDirection);
-    const computedOperator = computeOperator(
-      isAscending,
-      isForwardPagination,
-      operator,
-    );
-
-    if (index === 0) {
-      orConditions.push({
-        [fieldKey]: {
-          [currentProperty.name]: {
-            [computedOperator]: cursorValue[currentProperty.name],
-          },
-        },
-      });
-    } else {
-      const andConditions: Partial<ObjectRecordFilter>[] = [];
-
-      const previousProperties = compositeFieldProperties.slice(0, index);
-
-      for (const previousProperty of previousProperties) {
-        andConditions.push({
-          [fieldKey]: {
-            [previousProperty.name]: {
-              eq: cursorValue[previousProperty.name],
-            },
-          },
-        });
+      if (!isDefined(orderByDirection)) {
+        throw new GraphqlQueryRunnerException(
+          'Invalid cursor',
+          GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,
+        );
       }
 
-      andConditions.push({
+      const isAscending = isAscendingOrder(orderByDirection);
+      const computedOperator = computeOperator(
+        isAscending,
+        isForwardPagination,
+        operator,
+      );
+
+      return {
         [fieldKey]: {
           [currentProperty.name]: {
             [computedOperator]: cursorValue[currentProperty.name],
           },
         },
-      });
+      };
+    },
+  });
 
-      orConditions.push({
-        and: andConditions,
-      });
-    }
+  if (orConditions.length === 1) {
+    return orConditions[0];
   }
 
   return {

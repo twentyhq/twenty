@@ -7,10 +7,10 @@ export interface ObjectRecord {
   deletedAt: string | null;
 }
 
-export type ObjectRecordFilter = {
+export type ObjectRecordFilter = Partial<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [Property in keyof ObjectRecord]: any;
-};
+}>;
 
 export enum OrderByDirection {
   AscNullsFirst = 'AscNullsFirst',
