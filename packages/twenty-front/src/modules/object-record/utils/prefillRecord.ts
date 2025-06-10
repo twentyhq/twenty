@@ -19,18 +19,26 @@ export const prefillRecord = <T extends ObjectRecord>({
     objectMetadataItem.fields
       .map((fieldMetadataItem) => {
         const inputValue = input[fieldMetadataItem.name];
+        const fieldValue = isUndefined(inputValue)
+          ? generateEmptyFieldValue({ fieldMetadataItem })
+          : inputValue;
         if (
           fieldMetadataItem.type === FieldMetadataType.RELATION &&
           fieldMetadataItem.relation?.type === RelationType.MANY_TO_ONE
         ) {
+          const joinColumnValue =
+            input[fieldMetadataItem.settings?.joinColumnName];
           throwIfInputRelationDataIsInconsistent(input, fieldMetadataItem);
+
+          return [
+            [fieldMetadataItem.name, fieldValue],
+            [fieldMetadataItem.settings?.joinColumnName, joinColumnValue],
+          ];
         }
 
-        const fieldValue = isUndefined(inputValue)
-          ? generateEmptyFieldValue({ fieldMetadataItem })
-          : inputValue;
-        return [fieldMetadataItem.name, fieldValue];
+        return [[fieldMetadataItem.name, fieldValue]];
       })
+      .flat()
       .filter(isDefined),
   ) as T;
 };
