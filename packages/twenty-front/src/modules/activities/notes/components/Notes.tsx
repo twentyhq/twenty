@@ -68,7 +68,7 @@ export const Notes = ({
             There are no associated notes with this record.
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
-        {!hasObjectUpdatePermissions && (
+        {hasObjectUpdatePermissions && (
           <Button
             Icon={IconPlus}
             title="New note"
