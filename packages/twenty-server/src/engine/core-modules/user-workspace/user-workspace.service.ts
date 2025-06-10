@@ -272,19 +272,21 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       : [];
 
     const alreadyMemberWorkspacesIds = alreadyMemberWorkspaces.map(
-      ({ id }) => id,
+      ({ workspace }) => workspace.id,
     );
 
     const workspacesFromApprovedAccessDomain = (
       await this.approvedAccessDomainService.findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain(
         getDomainNameByEmail(email),
       )
-    ).filter(
-      ({ workspace }) => !alreadyMemberWorkspacesIds.includes(workspace.id),
-    ).map(({ workspace }) => ({ workspace }))
+    )
+      .filter(
+        ({ workspace }) => !alreadyMemberWorkspacesIds.includes(workspace.id),
+      )
+      .map(({ workspace }) => ({ workspace }));
 
     const workspacesFromApprovedAccessDomainIds =
-      workspacesFromApprovedAccessDomain.map(({ id }) => id);
+      workspacesFromApprovedAccessDomain.map(({ workspace }) => workspace.id);
 
     const workspacesFromInvitations = (
       await this.workspaceInvitationService.findInvitationsByEmail(email)
