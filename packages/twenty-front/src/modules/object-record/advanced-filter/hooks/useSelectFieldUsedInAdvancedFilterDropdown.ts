@@ -10,6 +10,7 @@ import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/uti
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-record/record-filter/utils/getDefaultSubFieldNameForCompositeFilterableFieldType';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { isCompositeTypeNonFilterableByAnySubField } from '@/object-record/record-filter/utils/isCompositeTypeNonFilterableByAnySubField';
 import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
@@ -116,16 +117,8 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
       isCompositeFilterOnAnySubField &&
       compositeFilterNonFilterableByAnySubField
     ) {
-      switch (filterType) {
-        case 'CURRENCY': {
-          subFieldNameForNonFilterableWithAny = 'amountMicros';
-          break;
-        }
-        case 'ACTOR': {
-          subFieldNameForNonFilterableWithAny = 'name';
-          break;
-        }
-      }
+      subFieldNameForNonFilterableWithAny =
+        getDefaultSubFieldNameForCompositeFilterableFieldType(filterType);
     }
 
     const subFieldNameToUse =
