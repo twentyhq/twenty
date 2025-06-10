@@ -1,4 +1,4 @@
-import { UseFilters } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -9,6 +9,7 @@ import { ResendEmailVerificationTokenOutput } from 'src/engine/core-modules/emai
 import { EmailVerificationExceptionFilter } from 'src/engine/core-modules/email-verification/email-verification-exception-filter.util';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Resolver()
 @UseFilters(EmailVerificationExceptionFilter)
@@ -19,6 +20,7 @@ export class EmailVerificationResolver {
   ) {}
 
   @Mutation(() => ResendEmailVerificationTokenOutput)
+  @UseGuards(PublicEndpointGuard)
   async resendEmailVerificationToken(
     @Args()
     resendEmailVerificationTokenInput: ResendEmailVerificationTokenInput,
