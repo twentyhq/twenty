@@ -28,11 +28,7 @@ export const RecordTableCellCheckbox = () => {
   const { setCurrentRowSelected } = useSetCurrentRowSelected();
 
   const handleClick = useCallback(
-    (
-      event?:
-        | React.MouseEvent<HTMLDivElement>
-        | React.KeyboardEvent<HTMLDivElement>,
-    ) => {
+    (event?: React.MouseEvent<HTMLDivElement>) => {
       setCurrentRowSelected({
         newSelectedState: !isSelected,
         shouldSelectRange: isDefined(event?.shiftKey) && event.shiftKey,
