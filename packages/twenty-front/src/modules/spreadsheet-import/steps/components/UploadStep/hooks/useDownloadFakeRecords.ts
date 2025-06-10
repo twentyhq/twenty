@@ -13,9 +13,9 @@ export const useDownloadFakeRecords = () => {
     objectMetadataItem.fields,
   );
 
-  const downloadSample = () => {
-    const columns: string[] = [];
-    const rows: string[] = [];
+  const buildTableWithFakeRecords = () => {
+    const headerRow: string[] = [];
+    const row: string[] = [];
 
     availableFieldMetadataItems.forEach((field) => {
       switch (field.type) {
@@ -26,8 +26,8 @@ export const useDownloadFakeRecords = () => {
         case FieldMetadataType.DATE:
         case FieldMetadataType.BOOLEAN:
         case FieldMetadataType.TEXT:
-          columns.push(field.label);
-          rows.push(
+          headerRow.push(field.label);
+          row.push(
             SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS[field.type]
               .exampleValue || '',
           );
@@ -46,13 +46,13 @@ export const useDownloadFakeRecords = () => {
               ? compositeFieldSettings.importableSubFields
               : compositeFieldSettings.subFields;
 
-          columns.push(
+          headerRow.push(
             ...subFields.map(
               (subField: string) =>
                 `${field.label} / ${compositeFieldSettings.labelBySubField[subField as keyof typeof compositeFieldSettings.labelBySubField]}`,
             ),
           );
-          rows.push(
+          row.push(
             ...subFields.map((subField: string) => {
               const value =
                 compositeFieldSettings.exampleValue[
@@ -66,13 +66,13 @@ export const useDownloadFakeRecords = () => {
         }
 
         case FieldMetadataType.RELATION:
-          columns.push(`${field.label} Id`);
-          rows.push('00000000-0000-0000-0000-000000000000');
+          headerRow.push(`${field.label} Id`);
+          row.push('00000000-0000-0000-0000-000000000000');
           break;
 
         case FieldMetadataType.MULTI_SELECT:
-          columns.push(field.label);
-          rows.push(
+          headerRow.push(field.label);
+          row.push(
             JSON.stringify(
               field?.options?.map((option) => option?.value) || [],
             ),
@@ -80,31 +80,43 @@ export const useDownloadFakeRecords = () => {
           break;
 
         case FieldMetadataType.SELECT:
-          columns.push(field.label);
-          rows.push(field?.options?.[0]?.value || '');
+          headerRow.push(field.label);
+          row.push(field?.options?.[0]?.value || '');
           break;
       }
     });
 
-    const escapedRows = rows.map((value) => {
-      if (value == null) return '';
+    return { headerRow, bodyRows: [row] };
+  };
 
-      const stringValue = isString(value) ? value : JSON.stringify(value);
+  const formatToCsvContent = (rows: string[][]) => {
+    const escapedRows = rows.map((row) => {
+      return row.map((value) => {
+        if (value == null) return '';
 
-      if (
-        stringValue.includes(',') ||
-        stringValue.includes('"') ||
-        stringValue.includes('\n') ||
-        stringValue.includes('\r')
-      ) {
-        return `"${stringValue.replace(/"/g, '""')}"`;
-      }
+        const stringValue = isString(value) ? value : JSON.stringify(value);
 
-      return stringValue;
+        if (
+          stringValue.includes(',') ||
+          stringValue.includes('"') ||
+          stringValue.includes('\n') ||
+          stringValue.includes('\r')
+        ) {
+          return `"${stringValue.replace(/"/g, '""')}"`;
+        }
+
+        return stringValue;
+      });
     });
 
-    const csvContent = [columns.join(','), escapedRows.join(',')].join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const csvContent = [...escapedRows.map((row) => row.join(','))].join('\n');
+    return [csvContent];
+  };
+
+  const downloadSample = () => {
+    const { headerRow, bodyRows } = buildTableWithFakeRecords();
+    const csvContent = formatToCsvContent([headerRow, ...bodyRows]);
+    const blob = new Blob(csvContent, { type: 'text/csv' });
     saveAs(blob, `${objectMetadataItem.labelPlural.toLowerCase()}-sample.csv`);
   };
 
