@@ -43,7 +43,9 @@ export const useHttpRequestForm = ({
     value: string | null,
     field: 'headers' | 'body',
   ): boolean => {
-    if (!value || value === '') return true;
+    if (!value || value === '') {
+      return true;
+    }
     try {
       JSON.parse(value);
       setErrorMessages((prev) => ({ ...prev, [field]: undefined }));
