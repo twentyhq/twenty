@@ -1,11 +1,10 @@
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import {
   PermissionsOnAllObjectRecords,
   SettingPermissionType,
 } from 'twenty-shared/constants';
-import {
-  UserWorkspacePermissions,
-} from 'twenty-shared/types';
+import { UserWorkspacePermissions } from 'twenty-shared/types';
+
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 
 export type UserWorkspacePermissionsDto = Pick<
   UserWorkspace,
