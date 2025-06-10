@@ -5,7 +5,7 @@ import { read, WorkBook } from 'xlsx-ugnis';
 
 import { MAX_RECORDS_IMPORT_CAPACITY } from '@/spreadsheet-import/constants/MaxRecordImportCapacity';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { useDowloadSampleFakeRecords } from '@/spreadsheet-import/steps/components/UploadStep/hooks/useDowloadSampleRecords';
+import { useDowloadFakeRecords } from '@/spreadsheet-import/steps/components/UploadStep/hooks/useDowloadFakeRecords';
 import { readFileAsync } from '@/spreadsheet-import/utils/readFilesAsync';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -113,7 +113,7 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
 
   const { enqueueSnackBar } = useSnackBar();
 
-  const { downloadSample } = useDowloadSampleFakeRecords();
+  const { downloadSample } = useDowloadFakeRecords();
 
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     noClick: true,
