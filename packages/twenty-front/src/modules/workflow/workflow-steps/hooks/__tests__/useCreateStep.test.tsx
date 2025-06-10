@@ -36,7 +36,7 @@ const wrapper = ({ children }: { children: React.ReactNode }) => {
           workflowInsertStepIdsComponentState.atomFamily({
             instanceId: workflowVisualizerComponentInstanceId,
           }),
-          { parentStepId: 'parent-step-id' },
+          { parentStepId: 'parent-step-id', nextStepId: undefined },
         );
       }}
     >
