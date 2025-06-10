@@ -1,0 +1,1147 @@
+commit 610865be46306caf78119ef05bc7d96f73946d22
+Author: Jordan Chalupka <9794216+jordan-chalupka@users.noreply.github.com>
+Date:   Sat Jun 7 21:02:24 2025 -0400
+
+    InsurOS: adding a standard object for Carriers (#22)
+
+diff --git a/packages/twenty-front/src/generated-metadata/graphql.ts b/packages/twenty-front/src/generated-metadata/graphql.ts
+index 7745e0713..ae923bda0 100644
+--- a/packages/twenty-front/src/generated-metadata/graphql.ts
++++ b/packages/twenty-front/src/generated-metadata/graphql.ts
+@@ -430,6 +430,7 @@ export type CreateObjectInput = {
+   icon?: InputMaybe<Scalars['String']['input']>;
+   isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']['input']>;
+   isRemote?: InputMaybe<Scalars['Boolean']['input']>;
++  labelIdentifierStandardId?: InputMaybe<Scalars['String']['input']>;
+   labelPlural: Scalars['String']['input'];
+   labelSingular: Scalars['String']['input'];
+   namePlural: Scalars['String']['input'];
+diff --git a/packages/twenty-front/src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx b/packages/twenty-front/src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+index 95f137ed0..f7ae5a980 100644
+--- a/packages/twenty-front/src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
++++ b/packages/twenty-front/src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+@@ -465,6 +465,31 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
+     ),
+     hotKeys: ['G', 'C'],
+   },
++  [NoSelectionRecordActionKeys.GO_TO_CARRIERS]: {
++    type: ActionType.Navigation,
++    scope: ActionScope.Global,
++    key: NoSelectionRecordActionKeys.GO_TO_CARRIERS,
++    label: msg`Go to Carriers`,
++    shortLabel: msg`Carriers`,
++    position: 21,
++    Icon: IconBuildingSkyscraper,
++    isPinned: false,
++    availableOn: [
++      ActionViewType.INDEX_PAGE_NO_SELECTION,
++      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
++      ActionViewType.INDEX_PAGE_BULK_SELECTION,
++      ActionViewType.SHOW_PAGE,
++    ],
++    shouldBeRegistered: ({ objectMetadataItem, viewType }) =>      objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Carrier ||
++      viewType === ActionViewType.SHOW_PAGE,
++    component: (
++      <ActionLink
++        to={AppPath.RecordIndexPage}
++        params={{ objectNamePlural: CoreObjectNamePlural.Carrier }}
++      />
++    ),
++    hotKeys: ['G', 'I'],
++  },
+   [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
+     type: ActionType.Navigation,
+     scope: ActionScope.Global,
+diff --git a/packages/twenty-front/src/modules/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys.ts b/packages/twenty-front/src/modules/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys.ts
+index dc34f4edb..3223fe149 100644
+--- a/packages/twenty-front/src/modules/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys.ts
++++ b/packages/twenty-front/src/modules/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys.ts
+@@ -5,6 +5,7 @@ export enum NoSelectionRecordActionKeys {
+   HIDE_DELETED_RECORDS = 'hide-deleted-records',
+   IMPORT_RECORDS = 'import-records',
+   GO_TO_WORKFLOWS = 'go-to-workflows',
++  GO_TO_CARRIERS = 'go-to-carriers',
+   GO_TO_PEOPLE = 'go-to-people',
+   GO_TO_COMPANIES = 'go-to-companies',
+   GO_TO_OPPORTUNITIES = 'go-to-opportunities',
+diff --git a/packages/twenty-front/src/modules/apollo/optimistic-effect/utils/sortCachedObjectEdges.ts b/packages/twenty-front/src/modules/apollo/optimistic-effect/utils/sortCachedObjectEdges.ts
+index 4de55c2ce..52ecf4460 100644
+--- a/packages/twenty-front/src/modules/apollo/optimistic-effect/utils/sortCachedObjectEdges.ts
++++ b/packages/twenty-front/src/modules/apollo/optimistic-effect/utils/sortCachedObjectEdges.ts
+@@ -4,8 +4,8 @@ import { ReadFieldFunction } from '@apollo/client/cache/core/types/common';
+ import { RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
+ import { RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
+ import { OrderBy } from '@/types/OrderBy';
+-import { sortAsc, sortDesc, sortNullsFirst, sortNullsLast } from '~/utils/sort';
+ import { isDefined } from 'twenty-shared/utils';
++import { sortAsc, sortDesc, sortNullsFirst, sortNullsLast } from '~/utils/sort';
+ 
+ export const sortCachedObjectEdges = ({
+   edges,
+diff --git a/packages/twenty-front/src/modules/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect.ts b/packages/twenty-front/src/modules/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect.ts
+index c67c1a510..797601dda 100644
+--- a/packages/twenty-front/src/modules/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect.ts
++++ b/packages/twenty-front/src/modules/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect.ts
+@@ -9,8 +9,8 @@ import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
+ import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
+ import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
+ import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
+-import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
+ import { isDefined } from 'twenty-shared/utils';
++import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
+ 
+ // TODO: add extensive unit tests for this function
+ // That will also serve as documentation
+diff --git a/packages/twenty-front/src/modules/carriers/types/Carrier.ts b/packages/twenty-front/src/modules/carriers/types/Carrier.ts
+new file mode 100644
+index 000000000..cabd88cab
+--- /dev/null
++++ b/packages/twenty-front/src/modules/carriers/types/Carrier.ts
+@@ -0,0 +1,23 @@
++export type Carrier = {
++  __typename: 'Carrier';
++  id: string;
++  createdAt: string;
++  updatedAt?: string;
++  deletedAt?: string | null;
++  name: string;
++  domainName: {
++    __typename?: 'Links';
++    primaryLinkUrl: string;
++    primaryLinkLabel: string;
++    secondaryLinks: never[] | [];
++  };
++  location: string;
++  favorites?: {
++    __typename?: 'Favorite';
++    id: string;
++  }[];
++  timelineActivities?: {
++    __typename?: 'TimelineActivity';
++    id: string;
++  }[];
++};
+\ No newline at end of file
+diff --git a/packages/twenty-front/src/modules/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems.tsx b/packages/twenty-front/src/modules/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems.tsx
+index 2723e374b..a28e9f91c 100644
+--- a/packages/twenty-front/src/modules/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems.tsx
++++ b/packages/twenty-front/src/modules/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems.tsx
+@@ -11,6 +11,7 @@ import { useRecoilValue } from 'recoil';
+ const ORDERED_STANDARD_OBJECTS = [
+   'person',
+   'company',
++  'carrier',
+   'opportunity',
+   'task',
+   'note',
+diff --git a/packages/twenty-front/src/modules/object-metadata/types/CoreObjectNamePlural.ts b/packages/twenty-front/src/modules/object-metadata/types/CoreObjectNamePlural.ts
+index c5a92ed2f..236107070 100644
+--- a/packages/twenty-front/src/modules/object-metadata/types/CoreObjectNamePlural.ts
++++ b/packages/twenty-front/src/modules/object-metadata/types/CoreObjectNamePlural.ts
+@@ -6,6 +6,7 @@ export enum CoreObjectNamePlural {
+   Blocklist = 'blocklists',
+   CalendarChannel = 'calendarChannels',
+   CalendarEvent = 'calendarEvents',
++  Carrier = 'carriers',
+   Comment = 'comments',
+   Company = 'companies',
+   ConnectedAccount = 'connectedAccounts',
+diff --git a/packages/twenty-front/src/modules/object-metadata/types/CoreObjectNameSingular.ts b/packages/twenty-front/src/modules/object-metadata/types/CoreObjectNameSingular.ts
+index cf8e14ad9..ccdb3c509 100644
+--- a/packages/twenty-front/src/modules/object-metadata/types/CoreObjectNameSingular.ts
++++ b/packages/twenty-front/src/modules/object-metadata/types/CoreObjectNameSingular.ts
+@@ -6,6 +6,7 @@ export enum CoreObjectNameSingular {
+   Blocklist = 'blocklist',
+   CalendarChannel = 'calendarChannel',
+   CalendarEvent = 'calendarEvent',
++  Carrier = 'carrier',
+   Comment = 'comment',
+   Company = 'company',
+   ConnectedAccount = 'connectedAccount',
+diff --git a/packages/twenty-front/src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx b/packages/twenty-front/src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
+index dd3bca96d..49b492b08 100644
+--- a/packages/twenty-front/src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
++++ b/packages/twenty-front/src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
+@@ -3,9 +3,9 @@ import { useRecoilValue } from 'recoil';
+ 
+ import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
+ import {
+-  IconDeviceFloppy,
+-  IconPencil,
+-  IconRefreshAlert,
++    IconDeviceFloppy,
++    IconPencil,
++    IconRefreshAlert,
+ } from 'twenty-ui/display';
+ import { Button } from 'twenty-ui/input';
+ import { ConfigSource, ConfigVariable } from '~/generated/graphql';
+diff --git a/packages/twenty-front/src/modules/settings/roles/role/components/SettingsRole.tsx b/packages/twenty-front/src/modules/settings/roles/role/components/SettingsRole.tsx
+index b19f3ae85..eb2c101da 100644
+--- a/packages/twenty-front/src/modules/settings/roles/role/components/SettingsRole.tsx
++++ b/packages/twenty-front/src/modules/settings/roles/role/components/SettingsRole.tsx
+@@ -25,12 +25,12 @@ import { isDefined } from 'twenty-shared/utils';
+ import { IconLockOpen, IconSettings, IconUserPlus } from 'twenty-ui/display';
+ import { v4 } from 'uuid';
+ import {
+-  FeatureFlagKey,
+-  Role,
+-  useCreateOneRoleMutation,
+-  useUpdateOneRoleMutation,
+-  useUpsertObjectPermissionsMutation,
+-  useUpsertSettingPermissionsMutation,
++    FeatureFlagKey,
++    Role,
++    useCreateOneRoleMutation,
++    useUpdateOneRoleMutation,
++    useUpsertObjectPermissionsMutation,
++    useUpsertSettingPermissionsMutation,
+ } from '~/generated/graphql';
+ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+ import { getDirtyFields } from '~/utils/getDirtyFields';
+diff --git a/packages/twenty-front/src/pages/settings/data-model/SettingsObjects.tsx b/packages/twenty-front/src/pages/settings/data-model/SettingsObjects.tsx
+index c22717d21..f4e5d9e79 100644
+--- a/packages/twenty-front/src/pages/settings/data-model/SettingsObjects.tsx
++++ b/packages/twenty-front/src/pages/settings/data-model/SettingsObjects.tsx
+@@ -4,8 +4,8 @@ import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdat
+ import { useCombinedGetTotalCount } from '@/object-record/multiple-objects/hooks/useCombinedGetTotalCount';
+ import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+ import {
+-  SettingsObjectMetadataItemTableRow,
+-  StyledObjectTableRow,
++    SettingsObjectMetadataItemTableRow,
++    StyledObjectTableRow,
+ } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRow';
+ import { SettingsObjectCoverImage } from '@/settings/data-model/objects/components/SettingsObjectCoverImage';
+ import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
+@@ -24,10 +24,10 @@ import { Trans, useLingui } from '@lingui/react/macro';
+ import { isNonEmptyArray } from '@sniptt/guards';
+ import { useMemo, useState } from 'react';
+ import {
+-  H2Title,
+-  IconChevronRight,
+-  IconPlus,
+-  IconSearch,
++    H2Title,
++    IconChevronRight,
++    IconPlus,
++    IconSearch,
+ } from 'twenty-ui/display';
+ import { Button } from 'twenty-ui/input';
+ import { Section } from 'twenty-ui/layout';
+diff --git a/packages/twenty-server/src/database/commands/data-seed-dev-workspace.command.ts b/packages/twenty-server/src/database/commands/data-seed-dev-workspace.command.ts
+index 12f46a3ba..5e53a062c 100644
+--- a/packages/twenty-server/src/database/commands/data-seed-dev-workspace.command.ts
++++ b/packages/twenty-server/src/database/commands/data-seed-dev-workspace.command.ts
+@@ -17,6 +17,7 @@ import { seedCalendarChannels } from 'src/database/typeorm-seeds/workspace/calen
+ import { seedCalendarChannelEventAssociations } from 'src/database/typeorm-seeds/workspace/calendar-channel-event-association';
+ import { seedCalendarEventParticipants } from 'src/database/typeorm-seeds/workspace/calendar-event-participants';
+ import { seedCalendarEvents } from 'src/database/typeorm-seeds/workspace/calendar-events';
++import { seedCarriers } from 'src/database/typeorm-seeds/workspace/carriers';
+ import { seedCompanies } from 'src/database/typeorm-seeds/workspace/companies';
+ import { seedConnectedAccount } from 'src/database/typeorm-seeds/workspace/connected-account';
+ import { seedWorkspaceFavorites } from 'src/database/typeorm-seeds/workspace/favorites';
+@@ -270,6 +271,8 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
+           entityManager,
+           dataSourceMetadata.schema,
+         );
++
++        await seedCarriers(entityManager, dataSourceMetadata.schema);
+       },
+     );
+   }
+diff --git a/packages/twenty-server/src/database/typeorm-seeds/workspace/carriers.ts b/packages/twenty-server/src/database/typeorm-seeds/workspace/carriers.ts
+new file mode 100644
+index 000000000..d2d5224cb
+--- /dev/null
++++ b/packages/twenty-server/src/database/typeorm-seeds/workspace/carriers.ts
+@@ -0,0 +1,68 @@
++import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
++
++const tableName = 'carrier';
++
++export const DEV_SEED_CARRIER_IDS = {
++  PROGRESSIVE: '20202020-1c0e-494c-a1b6-85b1c6fefaa5',
++  STATE_FARM: '20202020-ac73-4797-824e-87a1f5aea9e0',
++  GEICO: '20202020-f517-42fd-80ae-14173b3b70ae',
++  ALLSTATE: '20202020-eee1-4690-ad2c-8619e5b56a2e',
++  LIBERTY_MUTUAL: '20202020-6784-4449-afdf-dc62cb8702f2',
++};
++
++export const seedCarriers = async (
++  entityManager: WorkspaceEntityManager,
++  schemaName: string,
++) => {
++  await entityManager
++    .createQueryBuilder(undefined, undefined, undefined, {
++      shouldBypassPermissionChecks: true,
++    })
++    .insert()
++    .into(`${schemaName}.${tableName}`, [
++      'id',
++      'name',
++      'domainNamePrimaryLinkUrl',
++      'location',
++      'position',
++    ])
++    .orIgnore()
++    .values([
++      {
++        id: DEV_SEED_CARRIER_IDS.PROGRESSIVE,
++        name: 'Progressive Insurance',
++        domainNamePrimaryLinkUrl: 'https://www.progressive.com',
++        location: 'Cleveland, OH',
++        position: 0,
++      },
++      {
++        id: DEV_SEED_CARRIER_IDS.STATE_FARM,
++        name: 'State Farm',
++        domainNamePrimaryLinkUrl: 'https://www.statefarm.com',
++        location: 'Bloomington, IL',
++        position: 1,
++      },
++      {
++        id: DEV_SEED_CARRIER_IDS.GEICO,
++        name: 'GEICO',
++        domainNamePrimaryLinkUrl: 'https://www.geico.com',
++        location: 'Indianapolis, IN',
++        position: 2,
++      },
++      {
++        id: DEV_SEED_CARRIER_IDS.ALLSTATE,
++        name: 'Allstate Insurance',
++        domainNamePrimaryLinkUrl: 'https://www.allstate.com',
++        location: 'Chicago, IL',
++        position: 3,
++      },
++      {
++        id: DEV_SEED_CARRIER_IDS.LIBERTY_MUTUAL,
++        name: 'Liberty Mutual Insurance',
++        domainNamePrimaryLinkUrl: 'https://www.libertymutual.com',
++        location: 'Indianapolis, IN',
++        position: 4,
++      },
++    ])
++    .execute();
++};
+diff --git a/packages/twenty-server/src/engine/core-modules/search/constants/standard-objects-by-priority-rank.ts b/packages/twenty-server/src/engine/core-modules/search/constants/standard-objects-by-priority-rank.ts
+index 8e1691122..a5b715705 100644
+--- a/packages/twenty-server/src/engine/core-modules/search/constants/standard-objects-by-priority-rank.ts
++++ b/packages/twenty-server/src/engine/core-modules/search/constants/standard-objects-by-priority-rank.ts
+@@ -1,5 +1,6 @@
+ //the higher the number, the higher the priority
+ export const STANDARD_OBJECTS_BY_PRIORITY_RANK = {
++  carrier: 6,
+   person: 5,
+   company: 4,
+   opportunity: 3,
+diff --git a/packages/twenty-server/src/engine/core-modules/workspace/dtos/update-workspace-input.ts b/packages/twenty-server/src/engine/core-modules/workspace/dtos/update-workspace-input.ts
+index 87847e832..7e578c2b3 100644
+--- a/packages/twenty-server/src/engine/core-modules/workspace/dtos/update-workspace-input.ts
++++ b/packages/twenty-server/src/engine/core-modules/workspace/dtos/update-workspace-input.ts
+@@ -19,6 +19,7 @@ export class UpdateWorkspaceInput {
+     'demo',
+     'api',
+     't',
++    'carriers',
+     'companies',
+     'telemetry',
+     'logs',
+diff --git a/packages/twenty-server/src/engine/metadata-modules/object-metadata/dtos/create-object.input.ts b/packages/twenty-server/src/engine/metadata-modules/object-metadata/dtos/create-object.input.ts
+index 51f6e2d77..cf9cddb21 100644
+--- a/packages/twenty-server/src/engine/metadata-modules/object-metadata/dtos/create-object.input.ts
++++ b/packages/twenty-server/src/engine/metadata-modules/object-metadata/dtos/create-object.input.ts
+@@ -73,4 +73,9 @@ export class CreateObjectInput {
+   @IsOptional()
+   @Field({ nullable: true })
+   isLabelSyncedWithName?: boolean;
++
++  @IsString()
++  @IsOptional()
++  @Field({ nullable: true })
++  labelIdentifierStandardId?: string;
+ }
+diff --git a/packages/twenty-server/src/engine/metadata-modules/object-metadata/object-metadata.service.ts b/packages/twenty-server/src/engine/metadata-modules/object-metadata/object-metadata.service.ts
+index 4e42a674a..d1ba7d96c 100644
+--- a/packages/twenty-server/src/engine/metadata-modules/object-metadata/object-metadata.service.ts
++++ b/packages/twenty-server/src/engine/metadata-modules/object-metadata/object-metadata.service.ts
+@@ -17,21 +17,21 @@ import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata
+ import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
+ import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
+ import {
+-  UpdateObjectPayload,
+-  UpdateOneObjectInput,
++    UpdateObjectPayload,
++    UpdateOneObjectInput,
+ } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
+ import {
+-  ObjectMetadataException,
+-  ObjectMetadataExceptionCode,
++    ObjectMetadataException,
++    ObjectMetadataExceptionCode,
+ } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
+ import { ObjectMetadataFieldRelationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-field-relation.service';
+ import { ObjectMetadataMigrationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-migration.service';
+ import { ObjectMetadataRelatedRecordsService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-related-records.service';
+ import { buildDefaultFieldsForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-fields-for-custom-object.util';
+ import {
+-  validateLowerCasedAndTrimmedStringsAreDifferentOrThrow,
+-  validateObjectMetadataInputLabelsOrThrow,
+-  validateObjectMetadataInputNamesOrThrow,
++    validateLowerCasedAndTrimmedStringsAreDifferentOrThrow,
++    validateObjectMetadataInputLabelsOrThrow,
++    validateObjectMetadataInputNamesOrThrow,
+ } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
+ import { RemoteTableRelationsService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.service';
+ import { SearchVectorService } from 'src/engine/metadata-modules/search-vector/search-vector.service';
+@@ -152,7 +152,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
+     });
+ 
+     const labelIdentifierFieldMetadata = createdObjectMetadata.fields.find(
+-      (field) => field.standardId === CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
++      (field) =>
++        field.standardId ===
++        (objectMetadataInput.isRemote
++          ? objectMetadataInput.labelIdentifierStandardId
++          : CUSTOM_OBJECT_STANDARD_FIELD_IDS.name),
+     );
+ 
+     if (!labelIdentifierFieldMetadata) {
+diff --git a/packages/twenty-server/src/engine/workspace-manager/demo-objects-prefill-data/carriers-demo.json.ts b/packages/twenty-server/src/engine/workspace-manager/demo-objects-prefill-data/carriers-demo.json.ts
+new file mode 100644
+index 000000000..81347d0a6
+--- /dev/null
++++ b/packages/twenty-server/src/engine/workspace-manager/demo-objects-prefill-data/carriers-demo.json.ts
+@@ -0,0 +1,84 @@
++import { DEMO_SEED_WORKSPACE_MEMBER_IDS } from "src/engine/workspace-manager/demo-objects-prefill-data/seed-workspace-member-with-demo-data";
++
++export const CARRIERS_DEMO = [
++  {
++    name: 'Aetna',
++    domainName: 'aetna.com',
++    location: 'Hartford',
++    createdBySource: 'MANUAL',
++    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
++    createdByName: 'Noah A',
++  },
++  {
++    name: 'Cigna',
++    domainName: 'cigna.com',
++    location: 'Bloomfield',
++    createdBySource: 'MANUAL',
++    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
++    createdByName: 'Noah A',
++  },
++  {
++    name: 'UnitedHealthcare',
++    domainName: 'uhc.com',
++    location: 'Minnetonka',
++    createdBySource: 'MANUAL',
++    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
++    createdByName: 'Noah A',
++  },
++  {
++    name: 'Blue Cross Blue Shield',
++    domainName: 'bcbs.com',
++    location: 'Chicago',
++    createdBySource: 'MANUAL',
++    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
++    createdByName: 'Noah A',
++  },
++  {
++    name: 'Humana',
++    domainName: 'humana.com',
++    location: 'Louisville',
++    createdBySource: 'MANUAL',
++    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
++    createdByName: 'Noah A',
++  },
++  {
++    name: 'Kaiser Permanente',
++    domainName: 'kaiserpermanente.org',
++    location: 'Oakland',
++    createdBySource: 'MANUAL',
++    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
++    createdByName: 'Noah A',
++  },
++  {
++    name: 'Centene',
++    domainName: 'centene.com',
++    location: 'St. Louis',
++    createdBySource: 'MANUAL',
++    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
++    createdByName: 'Noah A',
++  },
++  {
++    name: 'Molina Healthcare',
++    domainName: 'molinahealthcare.com',
++    location: 'Long Beach',
++    createdBySource: 'MANUAL',
++    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
++    createdByName: 'Noah A',
++  },
++  {
++    name: 'WellCare',
++    domainName: 'wellcare.com',
++    location: 'Tampa',
++    createdBySource: 'MANUAL',
++    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
++    createdByName: 'Noah A',
++  },
++  {
++    name: 'Anthem',
++    domainName: 'anthem.com',
++    location: 'Indianapolis',
++    createdBySource: 'MANUAL',
++    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
++    createdByName: 'Noah A',
++  },
++];
+diff --git a/packages/twenty-server/src/engine/workspace-manager/demo-objects-prefill-data/seed-carrier-with-demo-data.ts b/packages/twenty-server/src/engine/workspace-manager/demo-objects-prefill-data/seed-carrier-with-demo-data.ts
+new file mode 100644
+index 000000000..37268a5f0
+--- /dev/null
++++ b/packages/twenty-server/src/engine/workspace-manager/demo-objects-prefill-data/seed-carrier-with-demo-data.ts
+@@ -0,0 +1,31 @@
++import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
++import { CARRIERS_DEMO } from 'src/engine/workspace-manager/demo-objects-prefill-data/carriers-demo.json';
++
++export const seedCarrierWithDemoData = async (
++  entityManager: WorkspaceEntityManager,
++  schemaName: string,
++) => {
++  await entityManager
++    .createQueryBuilder(undefined, undefined, undefined, {
++      shouldBypassPermissionChecks: true,
++    })
++    .insert()
++    .into(`${schemaName}.carrier`, [
++      'name',
++      'domainName',
++      'location',
++      'createdBySource',
++      'createdByWorkspaceMemberId',
++      'createdByName',
++      'position',
++    ])
++    .orIgnore()
++    .values(
++      CARRIERS_DEMO.map((carrier, index) => ({
++        ...carrier,
++        position: index,
++      })),
++    )
++    .returning('*')
++    .execute();
++};
+diff --git a/packages/twenty-server/src/engine/workspace-manager/demo-objects-prefill-data/seed-workspace-with-demo-data.ts b/packages/twenty-server/src/engine/workspace-manager/demo-objects-prefill-data/seed-workspace-with-demo-data.ts
+index 5e5a3a3ac..ef31273ae 100644
+--- a/packages/twenty-server/src/engine/workspace-manager/demo-objects-prefill-data/seed-workspace-with-demo-data.ts
++++ b/packages/twenty-server/src/engine/workspace-manager/demo-objects-prefill-data/seed-workspace-with-demo-data.ts
+@@ -4,6 +4,7 @@ import { seedWorkspaceFavorites } from 'src/database/typeorm-seeds/workspace/fav
+ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+ import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+ import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
++import { seedCarrierWithDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/seed-carrier-with-demo-data';
+ import { seedCompanyWithDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/seed-company-with-demo-data';
+ import { seedOpportunityWithDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/seed-opportunity-with-demo-data';
+ import { seedPersonWithDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/seed-person-with-demo-data';
+@@ -32,6 +33,7 @@ export const seedWorkspaceWithDemoData = async (
+ 
+   await workspaceDataSource.transaction(
+     async (entityManager: WorkspaceEntityManager) => {
++      await seedCarrierWithDemoData(entityManager, schemaName);
+       await seedCompanyWithDemoData(entityManager, schemaName);
+       await seedPersonWithDemoData(entityManager, schemaName);
+       await seedOpportunityWithDemoData(entityManager, schemaName);
+diff --git a/packages/twenty-server/src/engine/workspace-manager/standard-objects-prefill-data/carrier.ts b/packages/twenty-server/src/engine/workspace-manager/standard-objects-prefill-data/carrier.ts
+new file mode 100644
+index 000000000..8676761a9
+--- /dev/null
++++ b/packages/twenty-server/src/engine/workspace-manager/standard-objects-prefill-data/carrier.ts
+@@ -0,0 +1,84 @@
++import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
++import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
++
++export const PROGRESSIVE_ID = 'c776ee49-f608-4a77-8cc8-6fe96ae1e43f';
++export const STATE_FARM_ID = 'f45ee421-8a3e-4aa5-a1cf-7207cc6754e1';
++export const GEICO_ID = '1f70157c-4ea5-4d81-bc49-e1401abfbb94';
++export const ALLSTATE_ID = '9d5bcf43-7d38-4e88-82cb-d6d4ce638bf0';
++export const LIBERTY_MUTUAL_ID = '06290608-8bf0-4806-99ae-a715a6a93fad';
++
++export const carrierPrefillData = async (
++  entityManager: WorkspaceEntityManager,
++  schemaName: string,
++) => {
++  await entityManager
++    .createQueryBuilder(undefined, undefined, undefined, {
++      shouldBypassPermissionChecks: true,
++    })
++    .insert()
++    .into(`${schemaName}.carrier`, [
++      'id',
++      'name',
++      'domainNamePrimaryLinkUrl',
++      'location',
++      'position',
++      'createdBySource',
++      'createdByWorkspaceMemberId',
++      'createdByName',
++    ])
++    .orIgnore()
++    .values([
++      {
++        id: PROGRESSIVE_ID,
++        name: 'Progressive',
++        domainNamePrimaryLinkUrl: 'https://progressive.com',
++        location: 'Mayfield Village, Ohio',
++        position: 0,
++        createdBySource: FieldActorSource.SYSTEM,
++        createdByWorkspaceMemberId: null,
++        createdByName: 'System',
++      },
++      {
++        id: STATE_FARM_ID,
++        name: 'State Farm',
++        domainNamePrimaryLinkUrl: 'https://statefarm.com',
++        location: 'Bloomington, Illinois',
++        position: 1,
++        createdBySource: FieldActorSource.SYSTEM,
++        createdByWorkspaceMemberId: null,
++        createdByName: 'System',
++      },
++      {
++        id: GEICO_ID,
++        name: 'GEICO',
++        domainNamePrimaryLinkUrl: 'https://geico.com',
++        location: 'Chevy Chase, Maryland',
++        position: 2,
++        createdBySource: FieldActorSource.SYSTEM,
++        createdByWorkspaceMemberId: null,
++        createdByName: 'System',
++      },
++      {
++        id: ALLSTATE_ID,
++        name: 'Allstate',
++        domainNamePrimaryLinkUrl: 'https://allstate.com',
++        location: 'Northfield Township, Illinois',
++        position: 3,
++        createdBySource: FieldActorSource.SYSTEM,
++        createdByWorkspaceMemberId: null,
++        createdByName: 'System',
++      },
++      {
++        id: LIBERTY_MUTUAL_ID,
++        name: 'Liberty Mutual',
++        domainNamePrimaryLinkUrl: 'https://libertymutual.com',
++        location: 'Boston, Massachusetts',
++        position: 4,
++        createdBySource: FieldActorSource.SYSTEM,
++        createdByWorkspaceMemberId: null,
++        createdByName: 'System',
++      },
++    ])
++    .returning('*')
++    .execute();
++};
+diff --git a/packages/twenty-server/src/engine/workspace-manager/standard-objects-prefill-data/create-workspace-views.ts b/packages/twenty-server/src/engine/workspace-manager/standard-objects-prefill-data/create-workspace-views.ts
+index 7db31752b..cf61c89fb 100644
+--- a/packages/twenty-server/src/engine/workspace-manager/standard-objects-prefill-data/create-workspace-views.ts
++++ b/packages/twenty-server/src/engine/workspace-manager/standard-objects-prefill-data/create-workspace-views.ts
+@@ -146,6 +146,27 @@ export const createWorkspaceViews = async (
+         )
+         .execute();
+     }
++
++    if (viewDefinition.viewSorts && viewDefinition.viewSorts.length > 0) {
++      await entityManager
++        .createQueryBuilder(undefined, undefined, undefined, {
++          shouldBypassPermissionChecks: true,
++        })
++        .insert()
++        .into(`${schemaName}.viewSort`, [
++          'fieldMetadataId',
++          'direction',
++          'viewId',
++        ])
++        .values(
++          viewDefinition.viewSorts.map((sort) => ({
++            fieldMetadataId: sort.fieldMetadataId,
++            direction: sort.direction,
++            viewId: viewDefinition.id,
++          })),
++        )
++        .execute();
++    }
+   }
+ 
+   return viewDefinitionsWithId;
+diff --git a/packages/twenty-server/src/engine/workspace-manager/standard-objects-prefill-data/seed-view-with-demo-data.ts b/packages/twenty-server/src/engine/workspace-manager/standard-objects-prefill-data/seed-view-with-demo-data.ts
+index abc163b5f..1d05f4e3e 100644
+--- a/packages/twenty-server/src/engine/workspace-manager/standard-objects-prefill-data/seed-view-with-demo-data.ts
++++ b/packages/twenty-server/src/engine/workspace-manager/standard-objects-prefill-data/seed-view-with-demo-data.ts
+@@ -2,6 +2,7 @@ import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/obj
+ 
+ import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+ import { createWorkspaceViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/create-workspace-views';
++import { carriersAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/carriers-all.view';
+ import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
+ import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
+ import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view';
+@@ -20,6 +21,7 @@ export const seedViewWithDemoData = async (
+   objectMetadataStandardIdToIdMap: ObjectMetadataStandardIdToIdMap,
+ ) => {
+   const viewDefinitions = [
++    carriersAllView(objectMetadataStandardIdToIdMap),
+     companiesAllView(objectMetadataStandardIdToIdMap),
+     peopleAllView(objectMetadataStandardIdToIdMap),
+     opportunitiesAllView(objectMetadataStandardIdToIdMap),
+diff --git a/packages/twenty-server/src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data.ts b/packages/twenty-server/src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data.ts
+index 446600c57..6513d6796 100644
+--- a/packages/twenty-server/src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data.ts
++++ b/packages/twenty-server/src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data.ts
+@@ -4,6 +4,7 @@ import { seedWorkspaceFavorites } from 'src/database/typeorm-seeds/workspace/fav
+ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+ import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+ import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
++import { carrierPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/carrier';
+ import { companyPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/company';
+ import { personPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/person';
+ import { seedViewWithDemoData } from 'src/engine/workspace-manager/standard-objects-prefill-data/seed-view-with-demo-data';
+@@ -37,6 +38,7 @@ export const standardObjectsPrefillData = async (
+   }, {});
+ 
+   mainDataSource.transaction(async (entityManager: WorkspaceEntityManager) => {
++    await carrierPrefillData(entityManager, schemaName);
+     await companyPrefillData(entityManager, schemaName);
+     await personPrefillData(entityManager, schemaName);
+     const viewDefinitionsWithId = await seedViewWithDemoData(
+diff --git a/packages/twenty-server/src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface.ts b/packages/twenty-server/src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface.ts
+index b0bf4911e..24d642989 100644
+--- a/packages/twenty-server/src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface.ts
++++ b/packages/twenty-server/src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface.ts
+@@ -32,4 +32,8 @@ export interface ViewDefinition {
+     fieldValue: string;
+     position: number;
+   }[];
++  viewSorts?: {
++    fieldMetadataId: string;
++    direction: string;
++  }[];
+ }
+diff --git a/packages/twenty-server/src/engine/workspace-manager/standard-objects-prefill-data/views/carriers-all.view.ts b/packages/twenty-server/src/engine/workspace-manager/standard-objects-prefill-data/views/carriers-all.view.ts
+new file mode 100644
+index 000000000..798b586cf
+--- /dev/null
++++ b/packages/twenty-server/src/engine/workspace-manager/standard-objects-prefill-data/views/carriers-all.view.ts
+@@ -0,0 +1,61 @@
++import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-standard-id-to-id-map';
++import { ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
++
++import {
++  CARRIER_STANDARD_FIELD_IDS
++} from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
++import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
++
++export const carriersAllView = (
++  objectMetadataStandardIdToIdMap: ObjectMetadataStandardIdToIdMap,
++): ViewDefinition => {
++  return {
++    name: 'All Carriers',
++    objectMetadataId:
++      objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.carrier].id,
++    type: 'table',
++    key: 'INDEX',
++    position: 0,
++    icon: 'IconList',
++    kanbanFieldMetadataId: '',
++    filters: [],
++    fields: [
++      {
++        fieldMetadataId:
++          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.carrier].fields[
++            CARRIER_STANDARD_FIELD_IDS.name
++          ],
++        position: 0,
++        isVisible: true,
++        size: 210,
++      },
++      {
++        fieldMetadataId:
++          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.carrier].fields[
++            CARRIER_STANDARD_FIELD_IDS.domainName
++          ],
++        position: 1,
++        isVisible: true,
++        size: 210,
++      },
++      {
++        fieldMetadataId:
++          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.carrier].fields[
++            CARRIER_STANDARD_FIELD_IDS.location
++          ],
++        position: 2,
++        isVisible: true,
++        size: 210,
++      },
++    ],
++    viewSorts: [
++      {
++        fieldMetadataId:
++          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.carrier].fields[
++            CARRIER_STANDARD_FIELD_IDS.name
++          ],
++        direction: 'asc',
++      },
++    ],
++  };
++};
+diff --git a/packages/twenty-server/src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids.ts b/packages/twenty-server/src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids.ts
+index 09740b417..13c7b4511 100644
+--- a/packages/twenty-server/src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids.ts
++++ b/packages/twenty-server/src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids.ts
+@@ -9,6 +9,7 @@
+ export const ACTIVITY_TARGET_STANDARD_FIELD_IDS = {
+   activity: '20202020-ca58-478c-a4f5-ae825671c30e',
+   person: '20202020-4afd-4ae7-99c2-de57d795a93f',
++  carrier: '20202020-5afd-4ae7-99c2-de57d795a93f',
+   company: '20202020-7cc0-44a1-8068-f11171fdd02e',
+   opportunity: '20202020-1fc2-4af1-8c91-7901ee0fd38b',
+   custom: '20202020-7f21-442f-94be-32462281b1ca',
+@@ -44,6 +45,7 @@ export const ATTACHMENT_STANDARD_FIELD_IDS = {
+   task: '20202020-51e5-4621-9cf8-215487951c4b',
+   note: '20202020-4f4b-4503-a6fc-6b982f3dffb5',
+   person: '20202020-0158-4aa2-965c-5cdafe21ffa2',
++  carrier: '20202020-7c21-442f-94be-32462281b1ca',
+   company: '20202020-ceab-4a28-b546-73b06b4c08d5',
+   opportunity: '20202020-7374-499d-bea3-9354890755b5',
+   custom: '20202020-302d-43b3-9aea-aa4f89282a9f',
+@@ -143,6 +145,17 @@ export const COMPANY_STANDARD_FIELD_IDS = {
+   searchVector: '85c71601-72f9-4b7b-b343-d46100b2c74d',
+ };
+ 
++export const CARRIER_STANDARD_FIELD_IDS = {
++  name: '20202020-4d99-4e2e-a84c-4a27837b1ece',
++  domainName: '20202020-0c28-43d8-8ba5-3659924d3489',
++  location: '20202020-5243-4ffb-afc5-2c675da41346',
++  position: '20202020-9b5b-562b-991d-a0ee33326454',
++  createdBy: '20202020-fabc-451d-ab7d-412170916baa',
++  favorites: '20202020-4d1d-41ac-b13b-621631298d55',
++  timelineActivities: '20202020-0414-4daf-9c0d-64fe7b27f89f',
++  searchVector: '20202020-b8b3-41c2-bc38-41c7e77a84c8',
++};
++
+ export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {
+   handle: '20202020-c804-4a50-bb05-b3a9e24f1dec',
+   provider: '20202020-ebb0-4516-befc-a9e95935efd5',
+@@ -161,6 +174,7 @@ export const EVENT_STANDARD_FIELD_IDS = {
+   properties: '20202020-f142-4b04-b91b-6a2b4af3bf10',
+   workspaceMember: '20202020-af23-4479-9a30-868edc474b35',
+   person: '20202020-c414-45b9-a60a-ac27aa96229e',
++  carrier: '20202020-42f2-442f-94be-32462281b1ca',
+   company: '20202020-04ad-4221-a744-7a8278a5ce20',
+   opportunity: '20202020-7664-4a35-a3df-580d389fd5f0',
+   custom: '20202020-4a71-41b0-9f83-9cdcca3f8b14',
+@@ -191,6 +205,7 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
+   properties: '20202020-f142-4b04-b91b-6a2b4af3bf11',
+   workspaceMember: '20202020-af23-4479-9a30-868edc474b36',
+   person: '20202020-c414-45b9-a60a-ac27aa96229f',
++  carrier: '20202020-4d1d-41ac-b13b-621631298d56',
+   company: '20202020-04ad-4221-a744-7a8278a5ce21',
+   opportunity: '20202020-7664-4a35-a3df-580d389fd527',
+   task: '20202020-b2f5-415c-9135-a31dfe49501b',
+@@ -208,6 +223,7 @@ export const FAVORITE_STANDARD_FIELD_IDS = {
+   position: '20202020-dd26-42c6-8c3c-2a7598c204f6',
+   forWorkspaceMember: '20202020-ce63-49cb-9676-fdc0c45892cd',
+   person: '20202020-c428-4f40-b6f3-86091511c41c',
++  carrier: '20202020-4d1d-41ac-b13b-821631298d56',
+   company: '20202020-cff5-4682-8bf9-069169e08279',
+   opportunity: '20202020-dabc-48e1-8318-2781a2b32aa2',
+   workflow: '20202020-b11b-4dc8-999a-6bd0a947b463',
+@@ -307,6 +323,7 @@ export const NOTE_STANDARD_FIELD_IDS = {
+ export const NOTE_TARGET_STANDARD_FIELD_IDS = {
+   note: '20202020-57f3-4f50-9599-fc0f671df003',
+   person: '20202020-38ca-4aab-92f5-8a605ca2e4c5',
++  carrier: '20202020-4d1d-41ac-b13b-621631898d56',
+   company: 'c500fbc0-d6f2-4982-a959-5a755431696c',
+   opportunity: '20202020-4e42-417a-a705-76581c9ade79',
+   custom: '20202020-3d12-4579-94ee-7117c1bad492',
+@@ -321,6 +338,7 @@ export const OPPORTUNITY_STANDARD_FIELD_IDS = {
+   position: '20202020-806d-493a-bbc6-6313e62958e2',
+   createdBy: '20202020-a63e-4a62-8e63-42a51828f831',
+   pointOfContact: '20202020-8dfb-42fc-92b6-01afb759ed16',
++  carrier: '20202020-4d1d-41ac-b13b-621631898d59',
+   company: '20202020-cbac-457e-b565-adece5fc815f',
+   favorites: '20202020-a1c2-4500-aaae-83ba8a0e827a',
+   // TODO: check if activityTargets field can be deleted
+@@ -554,6 +572,7 @@ export const STANDARD_OBJECT_FIELD_IDS = {
+   calendarChannel: CALENDAR_CHANNEL_STANDARD_FIELD_IDS,
+   calendarEventParticipant: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS,
+   calendarEvent: CALENDAR_EVENT_STANDARD_FIELD_IDS,
++  carrier: CARRIER_STANDARD_FIELD_IDS,
+   comment: COMMENT_STANDARD_FIELD_IDS,
+   company: COMPANY_STANDARD_FIELD_IDS,
+   connectedAccount: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS,
+diff --git a/packages/twenty-server/src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons.ts b/packages/twenty-server/src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons.ts
+index 3df2319a2..1e1288b2b 100644
+--- a/packages/twenty-server/src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons.ts
++++ b/packages/twenty-server/src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons.ts
+@@ -9,6 +9,7 @@ export const STANDARD_OBJECT_ICONS = {
+   calendarChannel: 'IconCalendar',
+   calendarEventParticipant: 'IconCalendar',
+   calendarEvent: 'IconCalendar',
++  carrier: 'IconBuildingSkyscraper',
+   comment: 'IconMessageCircle',
+   company: 'IconBuildingSkyscraper',
+   connectedAccount: 'IconAt',
+diff --git a/packages/twenty-server/src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids.ts b/packages/twenty-server/src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids.ts
+index 056ce5d1d..3f3844437 100644
+--- a/packages/twenty-server/src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids.ts
++++ b/packages/twenty-server/src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids.ts
+@@ -17,6 +17,7 @@ export const STANDARD_OBJECT_IDS = {
+   calendarChannel: '20202020-e8f2-40e1-a39c-c0e0039c5034',
+   calendarEventParticipant: '20202020-a1c3-47a6-9732-27e5b1e8436d',
+   calendarEvent: '20202020-8f1d-4eef-9f85-0d1965e27221',
++  carrier: '20202020-b374-4779-a561-70086cb2e17f',
+   comment: '20202020-435f-4de9-89b5-97e32233bf5f',
+   company: '20202020-b374-4779-a561-80086cb2e17f',
+   connectedAccount: '20202020-977e-46b2-890b-c3002ddfd5c5',
+diff --git a/packages/twenty-server/src/engine/workspace-manager/workspace-sync-metadata/standard-objects/index.ts b/packages/twenty-server/src/engine/workspace-manager/workspace-sync-metadata/standard-objects/index.ts
+index 97abd2d71..7928e99c7 100644
+--- a/packages/twenty-server/src/engine/workspace-manager/workspace-sync-metadata/standard-objects/index.ts
++++ b/packages/twenty-server/src/engine/workspace-manager/workspace-sync-metadata/standard-objects/index.ts
+@@ -5,6 +5,7 @@ import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/cale
+ import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+ import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
+ import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
++import { CarrierWorkspaceEntity } from 'src/modules/carrier/standard-objects/carrier.workspace-entity';
+ import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
+ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+ import { FavoriteFolderWorkspaceEntity } from 'src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity';
+@@ -40,6 +41,7 @@ export const standardObjectMetadataDefinitions = [
+   ApiKeyWorkspaceEntity,
+   AttachmentWorkspaceEntity,
+   BlocklistWorkspaceEntity,
++  CarrierWorkspaceEntity,
+   CalendarEventWorkspaceEntity,
+   CalendarChannelWorkspaceEntity,
+   CalendarChannelEventAssociationWorkspaceEntity,
+diff --git a/packages/twenty-server/src/modules/carrier/standard-objects/carrier.workspace-entity.ts b/packages/twenty-server/src/modules/carrier/standard-objects/carrier.workspace-entity.ts
+new file mode 100644
+index 000000000..b7ecb4242
+--- /dev/null
++++ b/packages/twenty-server/src/modules/carrier/standard-objects/carrier.workspace-entity.ts
+@@ -0,0 +1,135 @@
++import { msg } from '@lingui/core/macro';
++import { FieldMetadataType } from 'twenty-shared/types';
++
++import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
++import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
++import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
++
++import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
++import { LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
++import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
++import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
++import { WorkspaceDuplicateCriteria } from 'src/engine/twenty-orm/decorators/workspace-duplicate-criteria.decorator';
++import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
++import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
++import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
++import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
++import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
++import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
++import { WorkspaceIsUnique } from 'src/engine/twenty-orm/decorators/workspace-is-unique.decorator';
++import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
++import { CARRIER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
++import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
++import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
++import {
++  FieldTypeAndNameMetadata,
++  getTsVectorColumnExpressionFromFields,
++} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
++import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
++import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
++
++const NAME_FIELD_NAME = 'name';
++const DOMAIN_NAME_FIELD_NAME = 'domainName';
++
++export const SEARCH_FIELDS_FOR_CARRIER: FieldTypeAndNameMetadata[] = [
++  { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
++  { name: DOMAIN_NAME_FIELD_NAME, type: FieldMetadataType.LINKS },
++];
++
++@WorkspaceEntity({
++  standardId: STANDARD_OBJECT_IDS.carrier,
++  namePlural: 'carriers',
++  labelSingular: msg`Carrier`,
++  labelPlural: msg`Carriers`,
++  description: msg`A carrier`,
++  icon: STANDARD_OBJECT_ICONS.carrier,
++  shortcut: 'I',
++  labelIdentifierStandardId: CARRIER_STANDARD_FIELD_IDS.name,
++})
++@WorkspaceDuplicateCriteria([['name'], ['domainNamePrimaryLinkUrl']])
++@WorkspaceIsSearchable()
++export class CarrierWorkspaceEntity extends BaseWorkspaceEntity {
++  @WorkspaceField({
++    standardId: CARRIER_STANDARD_FIELD_IDS.name,
++    type: FieldMetadataType.TEXT,
++    label: msg`Name`,
++    description: msg`The carrier name`,
++    icon: 'IconBuildingSkyscraper',
++  })
++  name: string;
++
++  @WorkspaceField({
++    standardId: CARRIER_STANDARD_FIELD_IDS.domainName,
++    type: FieldMetadataType.LINKS,
++    label: msg`Domain Name`,
++    description: msg`The carrier website URL. We use this url to fetch the carrier icon`,
++    icon: 'IconLink',
++  })
++  @WorkspaceIsUnique()
++  domainName: LinksMetadata;
++
++  @WorkspaceField({
++    standardId: CARRIER_STANDARD_FIELD_IDS.location,
++    type: FieldMetadataType.TEXT,
++    label: msg`Location`,
++    description: msg`The carrier's location`,
++    icon: 'IconMapPin',
++  })
++  @WorkspaceIsNullable()
++  location: string;
++
++  @WorkspaceField({
++    standardId: CARRIER_STANDARD_FIELD_IDS.position,
++    type: FieldMetadataType.POSITION,
++    label: msg`Position`,
++    description: msg`Carrier record position`,
++    icon: 'IconHierarchy2',
++    defaultValue: 0,
++  })
++  @WorkspaceIsSystem()
++  position: number;
++
++
++  // Relations
++  @WorkspaceRelation({
++    standardId: CARRIER_STANDARD_FIELD_IDS.favorites,
++    type: RelationType.ONE_TO_MANY,
++    label: msg`Favorites`,
++    description: msg`Favorites linked to the carrier`,
++    icon: 'IconHeart',
++    inverseSideTarget: () => FavoriteWorkspaceEntity,
++    onDelete: RelationOnDeleteAction.CASCADE,
++  })
++  @WorkspaceIsNullable()
++  @WorkspaceIsSystem()
++  favorites: Relation<FavoriteWorkspaceEntity[]>;
++
++  @WorkspaceRelation({
++    standardId: CARRIER_STANDARD_FIELD_IDS.timelineActivities,
++    type: RelationType.ONE_TO_MANY,
++    label: msg`Timeline Activities`,
++    description: msg`Timeline activities linked to the carrier`,
++    icon: 'IconTimeline',
++    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
++    onDelete: RelationOnDeleteAction.CASCADE,
++  })
++  @WorkspaceIsNullable()
++  @WorkspaceIsSystem()
++  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
++
++  @WorkspaceField({
++    standardId: CARRIER_STANDARD_FIELD_IDS.searchVector,
++    type: FieldMetadataType.TS_VECTOR,
++    label: SEARCH_VECTOR_FIELD.label,
++    description: SEARCH_VECTOR_FIELD.description,
++    icon: 'IconUser',
++    generatedType: 'STORED',
++    asExpression: getTsVectorColumnExpressionFromFields(
++      SEARCH_FIELDS_FOR_CARRIER,
++    ),
++  })
++  @WorkspaceIsNullable()
++  @WorkspaceIsSystem()
++  @WorkspaceFieldIndex({ indexType: IndexType.GIN })
++  searchVector: string;
++}
+diff --git a/packages/twenty-server/src/modules/favorite/standard-objects/favorite.workspace-entity.ts b/packages/twenty-server/src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+index e98817003..f77b00676 100644
+--- a/packages/twenty-server/src/modules/favorite/standard-objects/favorite.workspace-entity.ts
++++ b/packages/twenty-server/src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+@@ -17,6 +17,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
+ import { FAVORITE_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+ import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
+ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
++import { CarrierWorkspaceEntity } from 'src/modules/carrier/standard-objects/carrier.workspace-entity';
+ import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
+ import { FavoriteFolderWorkspaceEntity } from 'src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity';
+ import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
+@@ -227,6 +228,22 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
+   @WorkspaceJoinColumn('view')
+   viewId: string;
+ 
++  @WorkspaceRelation({
++    standardId: FAVORITE_STANDARD_FIELD_IDS.carrier,
++    type: RelationType.MANY_TO_ONE,
++    label: msg`Carrier`,
++    description: msg`Favorite carrier`,
++    icon: 'IconBuildingSkyscraper',
++    inverseSideTarget: () => CarrierWorkspaceEntity,
++    inverseSideFieldKey: 'favorites',
++    onDelete: RelationOnDeleteAction.CASCADE,
++  })
++  @WorkspaceIsNullable()
++  carrier: Relation<CarrierWorkspaceEntity> | null;
++
++  @WorkspaceJoinColumn('carrier')
++  carrierId: string;
++
+   @WorkspaceDynamicRelation({
+     type: RelationType.MANY_TO_ONE,
+     argsFactory: (oppositeObjectMetadata) => ({
+diff --git a/packages/twenty-server/src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts b/packages/twenty-server/src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+index d325762f4..64d6ed79b 100644
+--- a/packages/twenty-server/src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
++++ b/packages/twenty-server/src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+@@ -1,9 +1,9 @@
+ import { msg } from '@lingui/core/macro';
+ import { FieldMetadataType } from 'twenty-shared/types';
+ 
++import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
+ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
+ 
+ import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+ import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
+@@ -18,6 +18,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
+ import { TIMELINE_ACTIVITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+ import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
+ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
++import { CarrierWorkspaceEntity } from 'src/modules/carrier/standard-objects/carrier.workspace-entity';
+ import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
+ import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
+ import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
+@@ -258,4 +259,20 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
+     onDelete: RelationOnDeleteAction.CASCADE,
+   })
+   custom: Relation<CustomWorkspaceEntity>;
++
++  @WorkspaceRelation({
++    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.carrier,
++    type: RelationType.MANY_TO_ONE,
++    label: msg`Carrier`,
++    description: msg`Event carrier`,
++    icon: 'IconBuildingSkyscraper',
++    inverseSideTarget: () => CarrierWorkspaceEntity,
++    inverseSideFieldKey: 'timelineActivities',
++    onDelete: RelationOnDeleteAction.CASCADE,
++  })
++  @WorkspaceIsNullable()
++  carrier: Relation<CarrierWorkspaceEntity> | null;
++
++  @WorkspaceJoinColumn('carrier')
++  carrierId: string | null;
+ }
