@@ -7,8 +7,8 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
-import { SeederModule } from 'src/engine/seeder/seeder.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { DevSeederModule } from 'src/engine/workspace-manager/dev-seeder/dev-seeder.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 
 @Module({
@@ -19,7 +19,7 @@ import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-m
     TypeORMModule,
     FieldMetadataModule,
     ObjectMetadataModule,
-    SeederModule,
+    DevSeederModule,
     WorkspaceManagerModule,
     DataSourceModule,
     WorkspaceCacheStorageModule,

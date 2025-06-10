@@ -3,7 +3,7 @@ import { findManyOperationFactory } from 'test/integration/graphql/utils/find-ma
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
-import { DEV_SEED_CALENDAR_EVENT_IDS } from 'src/database/typeorm-seeds/workspace/calendar-events';
+import { CALENDAR_EVENT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-event-data-seeds.constant';
 
 describe('calendarEventsResolver (e2e)', () => {
   it('should find many calendarEvents', async () => {
@@ -37,7 +37,7 @@ describe('calendarEventsResolver (e2e)', () => {
   it('should find one calendarEvent', async () => {
     const graphqlOperation = findOneOperationFactory({
       objectMetadataSingularName: 'calendarEvent',
-      filter: { id: { eq: DEV_SEED_CALENDAR_EVENT_IDS.CALENDAR_EVENT_1 } },
+      filter: { id: { eq: CALENDAR_EVENT_DATA_SEED_IDS.ID_1 } },
       gqlFields: CALENDAR_EVENT_GQL_FIELDS,
     });
 

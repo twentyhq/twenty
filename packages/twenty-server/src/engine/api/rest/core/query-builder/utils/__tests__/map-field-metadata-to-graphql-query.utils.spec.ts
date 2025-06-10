@@ -1,6 +1,8 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { FieldMetadataDefaultSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import {
   fieldCurrencyMock,
@@ -9,7 +11,6 @@ import {
   objectMetadataItemMock,
 } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { mapFieldMetadataToGraphqlQuery } from 'src/engine/api/rest/core/query-builder/utils/map-field-metadata-to-graphql-query.utils';
-import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
@@ -109,11 +110,13 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
           name: 'toObjectMetadataName',
           label: 'Test Field',
           objectMetadataId: 'object-metadata-id',
-          fromRelationMetadata: {
-            relationType: RelationMetadataType.ONE_TO_MANY,
-            toObjectMetadataId: objectMetadataItemMock.id,
-          } as any,
         };
+
+        if (fieldMetadataType === FieldMetadataType.RELATION) {
+          field.settings = {
+            relationType: RelationType.MANY_TO_ONE,
+          } as FieldMetadataDefaultSettings;
+        }
 
         expect(
           mapFieldMetadataToGraphqlQuery(objectMetadataMapsMock, field),
