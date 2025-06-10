@@ -544,6 +544,23 @@ export class WorkflowVersionStepWorkspaceService {
           },
         };
       }
+      case WorkflowActionType.HTTP_REQUEST: {
+        return {
+          id: newStepId,
+          name: 'HTTP Request',
+          type: WorkflowActionType.HTTP_REQUEST,
+          valid: false,
+          settings: {
+            ...BASE_STEP_DEFINITION,
+            input: {
+              url: '',
+              method: 'GET',
+              headers: {},
+              body: {},
+            },
+          },
+        };
+      }
       default:
         throw new WorkflowVersionStepException(
           `WorkflowActionType '${type}' unknown`,
