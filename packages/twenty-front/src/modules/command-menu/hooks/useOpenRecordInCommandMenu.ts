@@ -54,7 +54,7 @@ export const useOpenRecordInCommandMenu = () => {
           const currentRecordId = getSnapshotValue(
             snapshot,
             viewableRecordIdComponentState.atomFamily({
-              instanceId: currentNavigationStackItem?.pageId,
+              instanceId: currentNavigationStackItem.pageId,
             }),
           );
 
