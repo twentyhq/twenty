@@ -38,7 +38,8 @@ describe('insertStep', () => {
       insertedStep: newStep,
     });
 
-    expect(result.updatedInsertedStep).toEqual([step1, step2, newStep]);
+    expect(result.updatedSteps).toEqual([step1, step2, newStep]);
+    expect(result.updatedInsertedStep).toEqual(newStep);
   });
 
   it('should update parent step nextStepIds when inserting a step between two steps', () => {

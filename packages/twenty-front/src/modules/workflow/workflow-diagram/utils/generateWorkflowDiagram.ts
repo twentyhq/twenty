@@ -110,18 +110,14 @@ export const generateWorkflowDiagram = ({
   }
 
   for (const step of steps) {
-    if (!isDefined(step.nextStepIds)) {
-      continue;
-    }
-
-    for (const child of step.nextStepIds) {
+    step.nextStepIds?.forEach((child) => {
       edges.push({
         ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
         id: v4(),
         source: step.id,
         target: child,
       });
-    }
+    });
   }
 
   return {

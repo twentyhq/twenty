@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { IconButtonGroup } from 'twenty-ui/input';
 import { IconPlus } from 'twenty-ui/display';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
+import { isDefined } from 'twenty-shared/utils';
 
 const EDGE_OPTION_BUTTON_LEFT_MARGIN = 8;
 
@@ -17,12 +18,12 @@ const StyledContainer = styled.div<{
 }>`
   position: absolute;
   transform: ${({ labelX, labelY }) =>
-    `translate(${labelX}px, ${(labelY || 0) - STEP_ICON_WIDTH / 2}px) translateX(${EDGE_OPTION_BUTTON_LEFT_MARGIN}px)`};
+    `translate(${labelX || 0}px, ${isDefined(labelY) ? labelY - STEP_ICON_WIDTH / 2 : 0}px) translateX(${EDGE_OPTION_BUTTON_LEFT_MARGIN}px)`};
 `;
 
 type WorkflowDiagramEdgeOptionsProps = {
-  labelX: number;
-  labelY: number;
+  labelX?: number;
+  labelY?: number;
   parentStepId: string;
   nextStepId: string;
 };

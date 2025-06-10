@@ -32,7 +32,9 @@ export const useCreateStep = ({
 
   const createStep = async (newStepType: WorkflowStepType) => {
     if (!isDefined(workflowInsertStepIds.parentStepId)) {
-      throw new Error('Select a step to create a new step from first.');
+      throw new Error(
+        'No parentStepId. Please select a parent step to create from.',
+      );
     }
 
     const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
