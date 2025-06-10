@@ -66,7 +66,7 @@ export const useDowloadSampleFakeRecords = () => {
         }
 
         case FieldMetadataType.RELATION:
-          columns.push(field.label);
+          columns.push(`${field.label} Id`);
           rows.push('00000000-0000-0000-0000-000000000000');
           break;
 
