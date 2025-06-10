@@ -1,3 +1,4 @@
+import { Entity } from '@microsoft/microsoft-graph-types';
 import { isDefined } from 'class-validator';
 import { ObjectRecordsPermissionsByRoleId } from 'twenty-shared/types';
 import {
@@ -98,10 +99,24 @@ export class WorkspaceDataSource extends DataSource {
       Object.create(Object.getPrototypeOf(this)),
       this,
       {
-        createQueryBuilder: (queryRunner: QueryRunner) => {
-          return this.createQueryBuilder(queryRunner, {
-            calledByWorkspaceEntityManager: true,
-          });
+        createQueryBuilder: (
+          entityOrRunner: EntityTarget<Entity> | QueryRunner,
+          alias?: string,
+          queryRunner?: QueryRunner,
+        ) => {
+          if (isDefined(alias) && typeof alias === 'string') {
+            const entity = entityOrRunner as EntityTarget<Entity>;
+
+            return this.createQueryBuilder(entity, alias, queryRunner, {
+              calledByWorkspaceEntityManager: true,
+            });
+          } else {
+            const runner = entityOrRunner as QueryRunner;
+
+            return this.createQueryBuilder(runner, {
+              calledByWorkspaceEntityManager: true,
+            });
+          }
         },
       },
     );
