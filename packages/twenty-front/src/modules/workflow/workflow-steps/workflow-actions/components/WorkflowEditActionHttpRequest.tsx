@@ -92,8 +92,10 @@ export const WorkflowEditActionHttpRequest = ({
           placeholder={DEFAULT_HEADERS_PLACEHOLDER}
           readonly={actionOptions.readonly}
           defaultValue={formData.headers}
-          error={errorMessagesVisible ? errorMessages.headers : undefined}
-          onBlur={onBlur}
+          error={
+            errorMessagesVisible.headers ? errorMessages.headers : undefined
+          }
+          onBlur={() => onBlur('headers')}
           onChange={(value) => handleFieldChange('headers', value)}
           VariablePicker={WorkflowVariablePicker}
         />
@@ -105,8 +107,8 @@ export const WorkflowEditActionHttpRequest = ({
             placeholder={DEFAULT_BODY_PLACEHOLDER}
             readonly={actionOptions.readonly}
             defaultValue={formData.body}
-            error={errorMessagesVisible ? errorMessages.body : undefined}
-            onBlur={onBlur}
+            error={errorMessagesVisible.body ? errorMessages.body : undefined}
+            onBlur={() => onBlur('body')}
             onChange={(value) => handleFieldChange('body', value)}
             VariablePicker={WorkflowVariablePicker}
           />

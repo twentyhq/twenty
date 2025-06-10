@@ -15,6 +15,11 @@ export type ErrorMessages = {
   body?: string;
 };
 
+export type ErrorMessagesVisible = {
+  headers: boolean;
+  body: boolean;
+};
+
 export const useHttpRequestForm = ({
   action,
   onActionUpdate,
@@ -25,7 +30,11 @@ export const useHttpRequestForm = ({
   readonly: boolean;
 }) => {
   const [errorMessages, setErrorMessages] = useState<ErrorMessages>({});
-  const [errorMessagesVisible, setErrorMessagesVisible] = useState(false);
+  const [errorMessagesVisible, setErrorMessagesVisible] =
+    useState<ErrorMessagesVisible>({
+      headers: false,
+      body: false,
+    });
   const [formData, setFormData] = useState<HttpRequestFormData>({
     url: action.settings.input.url,
     method: action.settings.input.method,
@@ -121,8 +130,11 @@ export const useHttpRequestForm = ({
     saveAction(newFormData);
   };
 
-  const onBlur = () => {
-    setErrorMessagesVisible(Boolean(formData.body || formData.headers));
+  const onBlur = (field: 'headers' | 'body') => {
+    setErrorMessagesVisible((prev) => ({
+      ...prev,
+      [field]: Boolean(formData[field]),
+    }));
   };
 
   return {
