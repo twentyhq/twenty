@@ -28,6 +28,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 export type SettingsCompositeFieldTypeConfig<T> = SettingsFieldTypeConfig<T> & {
   subFields: (keyof T)[];
   filterableSubFields: (keyof T)[];
+  importableSubFields?: (keyof T)[];
   labelBySubField: Record<keyof T, string>;
   exampleValue: T;
 };
@@ -169,6 +170,14 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       'addressLng',
     ],
     filterableSubFields: [
+      'addressStreet1',
+      'addressStreet2',
+      'addressCity',
+      'addressState',
+      'addressCountry',
+      'addressPostcode',
+    ],
+    importableSubFields: [
       'addressStreet1',
       'addressStreet2',
       'addressCity',

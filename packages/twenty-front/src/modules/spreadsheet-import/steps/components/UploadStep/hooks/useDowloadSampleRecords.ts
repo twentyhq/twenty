@@ -41,17 +41,19 @@ export const useDowloadSampleFakeRecords = () => {
         case FieldMetadataType.ADDRESS: {
           const compositeFieldSettings =
             SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[field.type];
-
-          const subFields = compositeFieldSettings.subFields;
+          const subFields =
+            'importableSubFields' in compositeFieldSettings
+              ? compositeFieldSettings.importableSubFields
+              : compositeFieldSettings.subFields;
 
           columns.push(
             ...subFields.map(
-              (subField) =>
+              (subField: string) =>
                 `${field.label} / ${compositeFieldSettings.labelBySubField[subField as keyof typeof compositeFieldSettings.labelBySubField]}`,
             ),
           );
           rows.push(
-            ...subFields.map((subField) => {
+            ...subFields.map((subField: string) => {
               const value =
                 compositeFieldSettings.exampleValue[
                   subField as keyof typeof compositeFieldSettings.exampleValue
