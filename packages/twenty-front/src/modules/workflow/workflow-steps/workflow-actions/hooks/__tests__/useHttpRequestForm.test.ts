@@ -1,6 +1,6 @@
 import { WorkflowHttpRequestAction } from '@/workflow/types/Workflow';
 import { act, renderHook } from '@testing-library/react';
-import { useHttpRequestForm } from './useHttpRequestForm';
+import { useHttpRequestForm } from '../useHttpRequestForm';
 
 describe('useHttpRequestForm', () => {
   const mockAction: WorkflowHttpRequestAction = {

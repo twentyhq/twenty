@@ -1,6 +1,6 @@
-import { OTHER_ACTIONS } from '../constants/OtherActions';
-import { RECORD_ACTIONS } from '../constants/RecordActions';
-import { getActionIcon } from './getActionIcon';
+import { OTHER_ACTIONS } from '../../constants/OtherActions';
+import { RECORD_ACTIONS } from '../../constants/RecordActions';
+import { getActionIcon } from '../getActionIcon';
 
 describe('getActionIcon', () => {
   it('should return correct icon for all action types', () => {
