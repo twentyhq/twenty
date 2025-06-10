@@ -72,7 +72,7 @@ export const useHttpRequestForm = ({
       try {
         parsedHeaders = JSON.parse(formData.headers);
       } catch {
-        return;
+        parsedHeaders = undefined;
       }
     }
 
