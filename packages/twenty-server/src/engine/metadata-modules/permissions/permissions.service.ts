@@ -56,9 +56,9 @@ export class PermissionsService {
 
     const settingPermissions = roleOfUserWorkspace.settingPermissions ?? [];
 
-    const initialAcc =
+    const defaultSettingsPermissions =
       this.getDefaultUserWorkspacePermissions().settingsPermissions;
-    const settingsPermissionsMap = Object.keys(SettingPermissionType).reduce(
+    const settingsPermissions = Object.keys(SettingPermissionType).reduce(
       (acc, feature) => ({
         ...acc,
         [feature]:
@@ -67,7 +67,7 @@ export class PermissionsService {
             (settingPermission) => settingPermission.setting === feature,
           ),
       }),
-      initialAcc,
+      defaultSettingsPermissions,
     );
 
     const { data: rolesPermissions } =
@@ -77,20 +77,21 @@ export class PermissionsService {
 
     const objectPermissions = rolesPermissions[roleOfUserWorkspace.id] ?? {};
 
-    const objectRecordsPermissionsMap = {
-      [PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS]:
-        roleOfUserWorkspace.canReadAllObjectRecords ?? false,
-      [PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS]:
-        roleOfUserWorkspace.canUpdateAllObjectRecords ?? false,
-      [PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS]:
-        roleOfUserWorkspace.canSoftDeleteAllObjectRecords ?? false,
-      [PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS]:
-        roleOfUserWorkspace.canDestroyAllObjectRecords ?? false,
-    } as const satisfies UserWorkspacePermissions['objectRecordsPermissions'];
+    const objectRecordsPermissions: UserWorkspacePermissions['objectRecordsPermissions'] =
+      {
+        [PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS]:
+          roleOfUserWorkspace.canReadAllObjectRecords ?? false,
+        [PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS]:
+          roleOfUserWorkspace.canUpdateAllObjectRecords ?? false,
+        [PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS]:
+          roleOfUserWorkspace.canSoftDeleteAllObjectRecords ?? false,
+        [PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS]:
+          roleOfUserWorkspace.canDestroyAllObjectRecords ?? false,
+      };
 
     return {
-      settingsPermissions: settingsPermissionsMap,
-      objectRecordsPermissions: objectRecordsPermissionsMap,
+      settingsPermissions,
+      objectRecordsPermissions,
       objectPermissions,
     };
   }
@@ -144,7 +145,9 @@ export class PermissionsService {
 
     const settingPermissions = roleOfUserWorkspace.settingPermissions ?? [];
 
-    const settingsPermissionsMap = Object.keys(SettingPermissionType).reduce(
+    const defaultSettingsPermissions =
+      this.getDefaultUserWorkspacePermissions().settingsPermissions;
+    const settingsPermissions = Object.keys(SettingPermissionType).reduce(
       (acc, feature) => ({
         ...acc,
         [feature]:
@@ -153,26 +156,24 @@ export class PermissionsService {
             (settingPermission) => settingPermission.setting === feature,
           ),
       }),
-      {} as Record<SettingPermissionType, boolean>,
+      defaultSettingsPermissions,
     );
 
-    const objectRecordsPermissionsMap: Record<
-      PermissionsOnAllObjectRecords,
-      boolean
-    > = {
-      [PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS]:
-        roleOfUserWorkspace.canReadAllObjectRecords ?? false,
-      [PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS]:
-        roleOfUserWorkspace.canUpdateAllObjectRecords ?? false,
-      [PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS]:
-        roleOfUserWorkspace.canSoftDeleteAllObjectRecords ?? false,
-      [PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS]:
-        roleOfUserWorkspace.canDestroyAllObjectRecords ?? false,
-    };
+    const objectRecordsPermissions: UserWorkspacePermissions['objectRecordsPermissions'] =
+      {
+        [PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS]:
+          roleOfUserWorkspace.canReadAllObjectRecords ?? false,
+        [PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS]:
+          roleOfUserWorkspace.canUpdateAllObjectRecords ?? false,
+        [PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS]:
+          roleOfUserWorkspace.canSoftDeleteAllObjectRecords ?? false,
+        [PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS]:
+          roleOfUserWorkspace.canDestroyAllObjectRecords ?? false,
+      };
 
     return {
-      settingsPermissions: settingsPermissionsMap,
-      objectRecordsPermissions: objectRecordsPermissionsMap,
+      settingsPermissions,
+      objectRecordsPermissions,
       objectPermissions: {},
     };
   }
