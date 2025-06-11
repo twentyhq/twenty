@@ -54,9 +54,10 @@ export const useHttpRequestForm = ({
     value: string | null,
     field: 'headers' | 'body',
   ): boolean => {
-    if (!value || value === '') {
+    if (!value?.trim()) {
       return true;
     }
+
     try {
       JSON.parse(value);
       setErrorMessages((prev) => ({ ...prev, [field]: undefined }));
