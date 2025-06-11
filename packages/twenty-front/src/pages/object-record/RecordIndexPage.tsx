@@ -27,6 +27,7 @@ export const RecordIndexPage = () => {
   if (isUndefined(objectMetadataItem)) {
     return <></>;
   }
+
   return (
     <PageContainer>
       <ContextStoreComponentInstanceContext.Provider

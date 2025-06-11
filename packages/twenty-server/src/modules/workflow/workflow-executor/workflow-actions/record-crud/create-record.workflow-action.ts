@@ -32,7 +32,7 @@ import { WorkflowCreateRecordActionInput } from 'src/modules/workflow/workflow-e
 export class CreateRecordWorkflowAction implements WorkflowExecutor {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
@@ -105,9 +105,15 @@ export class CreateRecordWorkflowAction implements WorkflowExecutor {
         workspaceId,
       );
 
+    const validObjectRecord = Object.fromEntries(
+      Object.entries(workflowActionInput.objectRecord).filter(
+        ([key]) => objectMetadataItemWithFieldsMaps.fieldsByName[key],
+      ),
+    );
+
     const transformedObjectRecord =
       await this.recordInputTransformerService.process({
-        recordInput: workflowActionInput.objectRecord,
+        recordInput: validObjectRecord,
         objectMetadataMapItem: objectMetadataItemWithFieldsMaps,
       });
 

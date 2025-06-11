@@ -7,6 +7,7 @@ import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-mo
 export class ObjectMetadataGraphqlApiExceptionInterceptor
   implements NestInterceptor
 {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   intercept(_: ExecutionContext, next: CallHandler): Observable<any> {
     return next
       .handle()

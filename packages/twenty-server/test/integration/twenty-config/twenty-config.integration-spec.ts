@@ -257,24 +257,24 @@ describe('TwentyConfig Integration', () => {
     it('should reject updating config variables with invalid types', async () => {
       await createConfigVariable({
         input: {
-          key: 'NODE_PORT',
-          value: 3000,
+          key: TEST_KEY_DEFAULT,
+          value: true,
         },
       });
 
       const updateResult = await updateConfigVariable({
         input: {
-          key: 'NODE_PORT',
-          value: 'not-a-number',
+          key: TEST_KEY_DEFAULT,
+          value: 'not-a-boolean',
         },
         expectToFail: true,
       });
 
       expect(updateResult.errors).toBeDefined();
-      expect(updateResult.errors[0].message).toContain('Expected number');
+      expect(updateResult.errors[0].message).toContain('Expected boolean');
 
       await deleteConfigVariable({
-        input: { key: 'NODE_PORT' },
+        input: { key: TEST_KEY_DEFAULT },
       });
     });
   });
@@ -342,9 +342,11 @@ describe('TwentyConfig Integration', () => {
       );
 
       const allVariables = result.data.getConfigVariablesGrouped.groups.flatMap(
+        // @ts-expect-error legacy noImplicitAny
         (group) => group.variables,
       );
       const testVariable = allVariables.find(
+        // @ts-expect-error legacy noImplicitAny
         (variable) => variable.name === testKey,
       );
 

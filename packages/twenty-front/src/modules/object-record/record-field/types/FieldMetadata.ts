@@ -3,8 +3,8 @@ import { ZodHelperLiteral } from '@/object-record/record-field/types/ZodHelperLi
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { ThemeColor } from 'twenty-ui/theme';
-import * as z from 'zod';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { z } from 'zod';
+import { RelationType } from '~/generated-metadata/graphql';
 import { CurrencyCode } from './CurrencyCode';
 
 type BaseFieldMetadata = {
@@ -131,7 +131,8 @@ export type FieldRelationMetadata = BaseFieldMetadata & {
   relationFieldMetadataId: string;
   relationObjectMetadataNamePlural: string;
   relationObjectMetadataNameSingular: string;
-  relationType?: RelationDefinitionType;
+  relationObjectMetadataId: string;
+  relationType?: RelationType;
   targetFieldMetadataName?: string;
   useEditButton?: boolean;
   settings?: null;
@@ -201,9 +202,9 @@ export type FieldEmailsValue = {
   additionalEmails: string[] | null;
 };
 export type FieldLinksValue = {
-  primaryLinkLabel: string;
-  primaryLinkUrl: string;
-  secondaryLinks?: { label: string; url: string }[] | null;
+  primaryLinkLabel: string | null;
+  primaryLinkUrl: string | null;
+  secondaryLinks?: { label: string | null; url: string | null }[] | null;
 };
 export type FieldCurrencyValue = {
   currencyCode: CurrencyCode;

@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const sanitizeCalendarEvent = <T extends Record<string, any>>(
   event: T,
   propertiesToSanitize: (keyof T)[],

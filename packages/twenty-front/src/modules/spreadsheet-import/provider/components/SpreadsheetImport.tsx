@@ -1,5 +1,6 @@
-import { ModalWrapper } from '@/spreadsheet-import/components/ModalWrapper';
 import { ReactSpreadsheetImportContextProvider } from '@/spreadsheet-import/components/ReactSpreadsheetImportContextProvider';
+import { SpreadSheetImportModalWrapper } from '@/spreadsheet-import/components/SpreadSheetImportModalWrapper';
+import { SPREADSHEET_IMPORT_MODAL_ID } from '@/spreadsheet-import/constants/SpreadsheetImportModalId';
 import { SpreadsheetImportStepperContainer } from '@/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer';
 import { SpreadsheetImportDialogOptions as SpreadsheetImportProps } from '@/spreadsheet-import/types';
 
@@ -31,9 +32,12 @@ export const SpreadsheetImport = <T extends string>(
 
   return (
     <ReactSpreadsheetImportContextProvider values={mergedProps}>
-      <ModalWrapper isOpen={mergedProps.isOpen} onClose={mergedProps.onClose}>
+      <SpreadSheetImportModalWrapper
+        modalId={SPREADSHEET_IMPORT_MODAL_ID}
+        onClose={mergedProps.onClose}
+      >
         <SpreadsheetImportStepperContainer />
-      </ModalWrapper>
+      </SpreadSheetImportModalWrapper>
     </ReactSpreadsheetImportContextProvider>
   );
 };

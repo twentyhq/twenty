@@ -1,6 +1,6 @@
 import { SETTINGS_ROLE_DETAIL_TABS } from '@/settings/roles/role/constants/SettingsRoleDetailTabs';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { activeTabIdComponentState } from '@/ui/layout/tab/states/activeTabIdComponentState';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useEffect, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
@@ -34,11 +34,11 @@ export const SettingsRoleCreateEffect = ({
       label: '',
       description: '',
       icon: 'IconUser',
-      canUpdateAllSettings: false,
-      canReadAllObjectRecords: false,
-      canUpdateAllObjectRecords: false,
-      canSoftDeleteAllObjectRecords: false,
-      canDestroyAllObjectRecords: false,
+      canUpdateAllSettings: true,
+      canReadAllObjectRecords: true,
+      canUpdateAllObjectRecords: true,
+      canSoftDeleteAllObjectRecords: true,
+      canDestroyAllObjectRecords: true,
       isEditable: true,
       workspaceMembers: [],
     };

@@ -16,7 +16,7 @@ import {
   IconSettings,
   IconUsers,
 } from 'twenty-ui/display';
-import { Card, Section } from 'twenty-ui/layout';
+import { AnimatedExpandableContainer, Card, Section } from 'twenty-ui/layout';
 import {
   FeatureFlagKey,
   SettingPermissionType,
@@ -45,7 +45,7 @@ export const SettingsRolePermissionsSettingsSection = ({
   isEditable,
 }: SettingsRolePermissionsSettingsSectionProps) => {
   const isPermissionsV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsPermissionsV2Enabled,
+    FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
   );
 
   const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
@@ -112,19 +112,30 @@ export const SettingsRolePermissionsSettingsSection = ({
           />
         </StyledCard>
       )}
-      <StyledTable>
-        <SettingsRolePermissionsSettingsTableHeader />
-        <StyledTableRows>
-          {settingsPermissionsConfig.map((permission) => (
-            <SettingsRolePermissionsSettingsTableRow
-              key={permission.key}
-              roleId={roleId}
-              permission={permission}
-              isEditable={isEditable}
-            />
-          ))}
-        </StyledTableRows>
-      </StyledTable>
+      <AnimatedExpandableContainer
+        isExpanded={!settingsDraftRole.canUpdateAllSettings}
+        dimension="height"
+        animationDurations={{
+          opacity: 0.2,
+          size: 0.4,
+        }}
+        mode="scroll-height"
+        containAnimation={false}
+      >
+        <StyledTable>
+          <SettingsRolePermissionsSettingsTableHeader />
+          <StyledTableRows>
+            {settingsPermissionsConfig.map((permission) => (
+              <SettingsRolePermissionsSettingsTableRow
+                key={permission.key}
+                roleId={roleId}
+                permission={permission}
+                isEditable={isEditable}
+              />
+            ))}
+          </StyledTableRows>
+        </StyledTable>
+      </AnimatedExpandableContainer>
     </Section>
   );
 };

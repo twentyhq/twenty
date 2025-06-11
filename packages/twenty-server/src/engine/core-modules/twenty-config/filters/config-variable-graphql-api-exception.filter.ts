@@ -2,7 +2,6 @@ import { Catch, ExceptionFilter } from '@nestjs/common';
 
 import {
   ForbiddenError,
-  InternalServerError,
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -25,8 +24,13 @@ export class ConfigVariableGraphqlApiExceptionFilter
       case ConfigVariableExceptionCode.VALIDATION_FAILED:
         throw new UserInputError(exception.message);
       case ConfigVariableExceptionCode.INTERNAL_ERROR:
-      default:
-        throw new InternalServerError(exception.message);
+      case ConfigVariableExceptionCode.UNSUPPORTED_CONFIG_TYPE:
+        throw exception;
+      default: {
+        const _exhaustiveCheck: never = exception.code;
+
+        throw exception;
+      }
     }
   }
 }

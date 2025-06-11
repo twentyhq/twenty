@@ -1,6 +1,6 @@
 import { useApolloClient } from '@apollo/client';
 import { useCallback, useMemo } from 'react';
-import { useRecoilCallback, useRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
@@ -26,13 +26,15 @@ import { Task } from '@/activities/types/Task';
 import { filterAttachmentsToRestore } from '@/activities/utils/filterAttachmentsToRestore';
 import { getActivityAttachmentIdsToDelete } from '@/activities/utils/getActivityAttachmentIdsToDelete';
 import { getActivityAttachmentPathsToRestore } from '@/activities/utils/getActivityAttachmentPathsToRestore';
+import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { CommandMenuHotkeyScope } from '@/command-menu/types/CommandMenuHotkeyScope';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
-import { PartialBlock } from '@blocknote/core';
+import type { PartialBlock } from '@blocknote/core';
 import '@blocknote/core/fonts/inter.css';
 import '@blocknote/mantine/style.css';
 import { useCreateBlockNote } from '@blocknote/react';
@@ -65,11 +67,15 @@ export const ActivityRichTextEditor = ({
       objectNameSingular: activityObjectNameSingular,
     });
 
-  const isRecordReadOnly = useIsRecordReadOnly({ recordId: activityId });
+  const isRecordReadOnly = useIsRecordReadOnly({
+    recordId: activityId,
+    objectMetadataId: objectMetadataItemActivity.id,
+  });
 
   const isReadOnly = isFieldValueReadOnly({
     objectNameSingular: activityObjectNameSingular,
     isRecordReadOnly,
+    isCustom: objectMetadataItemActivity.isCustom,
   });
 
   const { deleteManyRecords: deleteAttachments } = useDeleteManyRecords({
@@ -294,6 +300,8 @@ export const ActivityRichTextEditor = ({
     uploadFile: handleEditorBuiltInUploadFile,
   });
 
+  const commandMenuPage = useRecoilValue(commandMenuPageState);
+
   useScopedHotkeys(
     Key.Escape,
     () => {
@@ -305,6 +313,11 @@ export const ActivityRichTextEditor = ({
   useScopedHotkeys(
     '*',
     (keyboardEvent) => {
+      // TODO: remove once stacked hotkeys / focusKeys are in place
+      if (commandMenuPage !== CommandMenuPages.EditRichText) {
+        return;
+      }
+
       if (keyboardEvent.key === Key.Escape) {
         return;
       }
@@ -343,9 +356,9 @@ export const ActivityRichTextEditor = ({
   );
 
   const handleBlockEditorFocus = () => {
-    setHotkeyScopeAndMemorizePreviousScope(
-      ActivityEditorHotkeyScope.ActivityBody,
-    );
+    setHotkeyScopeAndMemorizePreviousScope({
+      scope: ActivityEditorHotkeyScope.ActivityBody,
+    });
   };
 
   const handlerBlockEditorBlur = () => {

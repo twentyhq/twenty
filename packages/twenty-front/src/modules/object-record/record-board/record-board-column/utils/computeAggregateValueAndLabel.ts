@@ -4,7 +4,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { AggregateRecordsData } from '@/object-record/hooks/useAggregateRecords';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { getAggregateOperationShortLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel';
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { COUNT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/countAggregateOperationOptions';
 import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/percentAggregateOperationOptions';
 import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
@@ -26,6 +26,7 @@ export const computeAggregateValueAndLabel = ({
   dateFormat,
   timeFormat,
   timeZone,
+  localeCatalog,
 }: {
   data: AggregateRecordsData;
   objectMetadataItem: ObjectMetadataItem;
@@ -34,6 +35,7 @@ export const computeAggregateValueAndLabel = ({
   dateFormat: DateFormat;
   timeFormat: TimeFormat;
   timeZone: string;
+  localeCatalog: Locale;
 }) => {
   if (isEmpty(data)) {
     return {};
@@ -46,12 +48,10 @@ export const computeAggregateValueAndLabel = ({
     return {
       value:
         data?.[FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION]?.[
-          AGGREGATE_OPERATIONS.count
+          AggregateOperations.COUNT
         ],
-      label: getAggregateOperationLabel(AGGREGATE_OPERATIONS.count),
-      labelWithFieldName: getAggregateOperationLabel(
-        AGGREGATE_OPERATIONS.count,
-      ),
+      label: getAggregateOperationLabel(AggregateOperations.COUNT),
+      labelWithFieldName: getAggregateOperationLabel(AggregateOperations.COUNT),
     };
   }
 
@@ -67,7 +67,7 @@ export const computeAggregateValueAndLabel = ({
 
   if (
     COUNT_AGGREGATE_OPERATION_OPTIONS.includes(
-      aggregateOperation as AGGREGATE_OPERATIONS,
+      aggregateOperation as AggregateOperations,
     )
   ) {
     value = aggregateValue;
@@ -75,7 +75,7 @@ export const computeAggregateValueAndLabel = ({
     value = '-';
   } else if (
     PERCENT_AGGREGATE_OPERATION_OPTIONS.includes(
-      aggregateOperation as AGGREGATE_OPERATIONS,
+      aggregateOperation as AggregateOperations,
     )
   ) {
     value = `${formatNumber(Number(aggregateValue) * 100)}%`;
@@ -105,6 +105,7 @@ export const computeAggregateValueAndLabel = ({
           dateFormat,
           timeFormat,
           dateFieldSettings,
+          localeCatalog,
         });
         break;
       }
@@ -116,6 +117,7 @@ export const computeAggregateValueAndLabel = ({
           timeZone,
           dateFormat,
           dateFieldSettings,
+          localeCatalog,
         });
         break;
       }
@@ -124,8 +126,8 @@ export const computeAggregateValueAndLabel = ({
   const aggregateLabel = t(getAggregateOperationShortLabel(aggregateOperation));
   const fieldLabel = field.label;
   const labelWithFieldName =
-    aggregateOperation === AGGREGATE_OPERATIONS.count
-      ? `${getAggregateOperationLabel(AGGREGATE_OPERATIONS.count)}`
+    aggregateOperation === AggregateOperations.COUNT
+      ? `${getAggregateOperationLabel(AggregateOperations.COUNT)}`
       : t`${aggregateLabel} of ${fieldLabel}`;
 
   return {

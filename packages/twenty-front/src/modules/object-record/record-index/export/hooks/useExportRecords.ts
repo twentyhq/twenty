@@ -1,6 +1,7 @@
 import { json2csv } from 'json-2-csv';
 import { useMemo } from 'react';
 
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/object-options-dropdown/constants/ExportTableDataDefaultPageSize';
 import { useExportProcessRecordsForCSV } from '@/object-record/object-options-dropdown/hooks/useExportProcessRecordsForCSV';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
@@ -10,16 +11,17 @@ import {
 } from '@/object-record/record-index/export/hooks/useExportFetchRecords';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constants/CompositeFieldSubFieldLabel';
 import { t } from '@lingui/core/macro';
 import { saveAs } from 'file-saver';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
+import { RelationType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from '~/generated/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { isDefined } from 'twenty-shared/utils';
 
 type GenerateExportOptions = {
   columns: ColumnDefinition<FieldMetadata>[];
-  rows: object[];
+  rows: Record<string, any>[];
 };
 
 type GenerateExport = (data: GenerateExportOptions) => string;
@@ -37,7 +39,7 @@ export const generateCsv: GenerateExport = ({
   const columnsToExport = columns.filter(
     (col) =>
       !('relationType' in col.metadata && col.metadata.relationType) ||
-      col.metadata.relationType === RelationDefinitionType.MANY_TO_ONE,
+      col.metadata.relationType === RelationType.MANY_TO_ONE,
   );
 
   const objectIdColumn: ColumnDefinition<FieldMetadata> = {
@@ -62,31 +64,20 @@ export const generateCsv: GenerateExport = ({
         .join(' '),
     };
 
-    const fieldsWithSubFields = rows.find((row) => {
-      const fieldValue = (row as any)[column.field];
+    const columnType = col.type;
+    if (!isCompositeFieldType(columnType)) return [column];
 
-      const hasSubFields =
-        fieldValue &&
-        typeof fieldValue === 'object' &&
-        !Array.isArray(fieldValue);
-
-      return hasSubFields;
-    });
-
-    if (isDefined(fieldsWithSubFields)) {
-      const nestedFieldsWithoutTypename = Object.keys(
-        (fieldsWithSubFields as any)[column.field],
-      )
-        .filter((key) => key !== '__typename')
-        .map((key) => ({
+    const nestedFieldsWithoutTypename = Object.keys(rows[0][column.field])
+      .filter((key) => key !== '__typename')
+      .map((key) => {
+        const subFieldLabel = COMPOSITE_FIELD_SUB_FIELD_LABELS[columnType][key];
+        return {
           field: `${column.field}.${key}`,
-          title: `${column.title} ${key[0].toUpperCase() + key.slice(1)}`,
-        }));
+          title: `${column.title} / ${subFieldLabel}`,
+        };
+      });
 
-      return nestedFieldsWithoutTypename;
-    }
-
-    return [column];
+    return nestedFieldsWithoutTypename;
   });
 
   return json2csv(rows, {

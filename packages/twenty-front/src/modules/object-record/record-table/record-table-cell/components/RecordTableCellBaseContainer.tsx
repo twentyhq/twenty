@@ -3,6 +3,8 @@ import { ReactNode, useContext } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
+import { isFieldIdentifierDisplay } from '@/object-record/record-field/meta-types/display/utils/isFieldIdentifierDisplay';
+import { RECORD_CHIP_CLICK_OUTSIDE_ID } from '@/object-record/record-table/constants/RecordChipClickOutsideId';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
@@ -31,29 +33,24 @@ const StyledBaseContainer = styled.div<{
   }
 
   &:hover {
-    ${({
-      isReadOnly,
-      fontColorMedium,
-      backgroundColorSecondary,
-      fontColorSecondary,
-    }) =>
-      isReadOnly
-        ? `
-      outline: 1px solid ${fontColorMedium};
-      border-radius: 0px;
-      background-color: ${backgroundColorSecondary};
-      
-      color: ${fontColorSecondary};
-      
-      svg {
-        color: ${fontColorSecondary};
-      }
-      
-      img {
-        opacity: 0.64;
-      }
-    `
-        : ''}
+    ${(props) => {
+      if (!props.isReadOnly) return '';
+
+      return `
+        outline: 1px solid ${props.fontColorMedium};
+        border-radius: 0px;
+        background-color: ${props.backgroundColorSecondary};
+        color: ${props.fontColorSecondary};
+        
+        svg {
+          color: ${props.fontColorSecondary};
+        }
+        
+        img {
+          opacity: 0.64;
+        }
+      `;
+    }}
   }
 `;
 
@@ -62,13 +59,18 @@ export const RecordTableCellBaseContainer = ({
 }: {
   children: ReactNode;
 }) => {
-  const { isReadOnly } = useContext(FieldContext);
+  const { isReadOnly, fieldDefinition, isLabelIdentifier } =
+    useContext(FieldContext);
   const { setIsFocused } = useFieldFocus();
   const { openTableCell } = useOpenRecordTableCellFromCell();
   const { theme } = useContext(ThemeContext);
 
   const { cellPosition } = useContext(RecordTableCellContext);
 
+  const isChipDisplay = isFieldIdentifierDisplay(
+    fieldDefinition,
+    isLabelIdentifier,
+  );
   const { onMoveHoverToCurrentCell, onCellMouseEnter } =
     useRecordTableBodyContextOrThrow();
 
@@ -103,6 +105,9 @@ export const RecordTableCellBaseContainer = ({
       borderColorBlue={theme.adaptiveColors.blue4}
       isReadOnly={isReadOnly ?? false}
       id={`record-table-cell-${cellPosition.column}-${cellPosition.row}`}
+      data-click-outside-id={
+        isChipDisplay ? RECORD_CHIP_CLICK_OUTSIDE_ID : undefined
+      }
     >
       {children}
     </StyledBaseContainer>

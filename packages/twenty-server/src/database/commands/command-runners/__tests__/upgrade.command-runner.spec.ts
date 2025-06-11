@@ -187,9 +187,11 @@ describe('UpgradeCommandRunner', () => {
       workspaces: [higherVersionWorkspace],
       appVersion,
     });
+    // @ts-expect-error legacy noImplicitAny
     const passedParams = [];
     const options = {};
 
+    // @ts-expect-error legacy noImplicitAny
     await upgradeCommandRunner.run(passedParams, options);
 
     const { fail: failReport, success: successReport } =
@@ -239,9 +241,11 @@ describe('UpgradeCommandRunner', () => {
       workspaces: failingWorkspaces,
       appVersion,
     });
+    // @ts-expect-error legacy noImplicitAny
     const passedParams = [];
     const options = {};
 
+    // @ts-expect-error legacy noImplicitAny
     await upgradeCommandRunner.run(passedParams, options);
 
     // Common assertions
@@ -287,9 +291,11 @@ describe('UpgradeCommandRunner', () => {
       numberOfWorkspace,
       appVersion,
     });
+    // @ts-expect-error legacy noImplicitAny
     const passedParams = [];
     const options = {};
 
+    // @ts-expect-error legacy noImplicitAny
     await upgradeCommandRunner.run(passedParams, options);
 
     [
@@ -310,9 +316,11 @@ describe('UpgradeCommandRunner', () => {
 
   it('should run syncMetadataCommand betweensuccessful beforeSyncMetadataUpgradeCommandsToRun and afterSyncMetadataUpgradeCommandsToRun', async () => {
     await buildModuleAndSetupSpies({});
+    // @ts-expect-error legacy noImplicitAny
     const passedParams = [];
     const options = {};
 
+    // @ts-expect-error legacy noImplicitAny
     await upgradeCommandRunner.run(passedParams, options);
 
     [
@@ -380,9 +388,11 @@ describe('UpgradeCommandRunner', () => {
       async ({ context: { input } }) => {
         await buildModuleAndSetupSpies(input);
 
+        // @ts-expect-error legacy noImplicitAny
         const passedParams = [];
         const options = {};
 
+        // @ts-expect-error legacy noImplicitAny
         await upgradeCommandRunner.run(passedParams, options);
 
         const { fail: failReport, success: successReport } =
@@ -461,9 +471,11 @@ describe('UpgradeCommandRunner', () => {
     it.each(failingTestUseCases)('$title', async ({ context: { input } }) => {
       await buildModuleAndSetupSpies(input);
 
+      // @ts-expect-error legacy noImplicitAny
       const passedParams = [];
       const options = {};
 
+      // @ts-expect-error legacy noImplicitAny
       await upgradeCommandRunner.run(passedParams, options);
 
       const { fail: failReport, success: successReport } =

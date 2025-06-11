@@ -78,6 +78,7 @@ export class ConfigValueConverterService {
         return appValue;
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return transformer.toStorage(appValue as any, options);
     } catch (error) {
       if (error instanceof ConfigVariableException) {

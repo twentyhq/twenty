@@ -1,5 +1,5 @@
 # Base image for common dependencies
-FROM node:18.17.1-alpine as common-deps
+FROM node:22-alpine as common-deps
 
 WORKDIR /app
 
@@ -49,7 +49,7 @@ RUN npx nx build twenty-front
 
 
 # Final stage: Run the application
-FROM node:18.17.1-alpine as twenty
+FROM node:22-alpine as twenty
 
 # Used to run healthcheck in docker
 RUN apk add --no-cache curl jq
@@ -77,8 +77,8 @@ COPY --chown=1000 --from=twenty-front-build /app/packages/twenty-front/build /ap
 LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
 LABEL org.opencontainers.image.description="This image provides a consistent and reproducible environment for the backend and frontend, ensuring it deploys faster and runs the same way regardless of the deployment environment."
 
-RUN mkdir /app/.local-storage
-RUN chown -R 1000 /app
+RUN mkdir -p /app/.local-storage /app/packages/twenty-server/.local-storage && \
+    chown -R 1000:1000 /app
 
 # Use non root user with uid 1000
 USER 1000

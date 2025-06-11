@@ -37,7 +37,6 @@ import { FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-me
 import { IsFieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-default-value.validator';
 import { IsFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-options.validator';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
-import { RelationMetadataDTO } from 'src/engine/metadata-modules/relation-metadata/dtos/relation-metadata.dto';
 import { transformEnumValue } from 'src/engine/utils/transform-enum-value';
 
 registerEnumType(FieldMetadataType, {
@@ -47,6 +46,7 @@ registerEnumType(FieldMetadataType, {
 
 @ObjectType('Field')
 @Authorize({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   authorize: (context: any) => ({
     workspaceId: { eq: context?.req?.workspace?.id },
   }),
@@ -55,12 +55,6 @@ registerEnumType(FieldMetadataType, {
   defaultResultSize: 10,
   disableSort: true,
   maxResultsSize: 1000,
-})
-@Relation('toRelationMetadata', () => RelationMetadataDTO, {
-  nullable: true,
-})
-@Relation('fromRelationMetadata', () => RelationMetadataDTO, {
-  nullable: true,
 })
 @Relation('object', () => ObjectMetadataDTO, {
   nullable: true,

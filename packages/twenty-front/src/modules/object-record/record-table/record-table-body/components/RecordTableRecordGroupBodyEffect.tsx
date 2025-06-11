@@ -16,6 +16,8 @@ import { OnboardingStatus } from '~/generated-metadata/graphql';
 export const RecordTableRecordGroupBodyEffect = () => {
   const { objectNameSingular } = useRecordTableContextOrThrow();
 
+  const [hasInitialized, setHasInitialized] = useState(false);
+
   const onboardingStatus = useOnboardingStatus();
 
   const recordGroupId = useCurrentRecordGroupId();
@@ -84,8 +86,11 @@ export const RecordTableRecordGroupBodyEffect = () => {
       return;
     }
 
-    findManyRecords();
-  }, [onboardingStatus, findManyRecords]);
+    if (!hasInitialized) {
+      findManyRecords();
+      setHasInitialized(true);
+    }
+  }, [onboardingStatus, findManyRecords, hasInitialized]);
 
   return <></>;
 };

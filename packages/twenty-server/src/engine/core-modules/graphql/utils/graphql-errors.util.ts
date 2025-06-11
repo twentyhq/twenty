@@ -24,7 +24,6 @@ export enum ErrorCode {
   PERSISTED_QUERY_NOT_SUPPORTED = 'PERSISTED_QUERY_NOT_SUPPORTED',
   BAD_USER_INPUT = 'BAD_USER_INPUT',
   NOT_FOUND = 'NOT_FOUND',
-  EMAIL_NOT_VERIFIED = 'EMAIL_NOT_VERIFIED',
   METHOD_NOT_ALLOWED = 'METHOD_NOT_ALLOWED',
   CONFLICT = 'CONFLICT',
   TIMEOUT = 'TIMEOUT',
@@ -32,6 +31,7 @@ export enum ErrorCode {
 }
 
 export class BaseGraphQLError extends GraphQLError {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public extensions: Record<string, any>;
   override readonly name!: string;
   readonly locations: ReadonlyArray<SourceLocation> | undefined;
@@ -41,11 +41,13 @@ export class BaseGraphQLError extends GraphQLError {
   readonly nodes: ReadonlyArray<ASTNode> | undefined;
   public originalError: Error | undefined;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 
   constructor(
     message: string,
     code?: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     extensions?: Record<string, any>,
   ) {
     super(message);
@@ -107,16 +109,18 @@ export class ValidationError extends BaseGraphQLError {
 }
 
 export class AuthenticationError extends BaseGraphQLError {
-  constructor(message: string) {
-    super(message, ErrorCode.UNAUTHENTICATED);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  constructor(message: string, extensions?: Record<string, any>) {
+    super(message, ErrorCode.UNAUTHENTICATED, extensions);
 
     Object.defineProperty(this, 'name', { value: 'AuthenticationError' });
   }
 }
 
 export class ForbiddenError extends BaseGraphQLError {
-  constructor(message: string) {
-    super(message, ErrorCode.FORBIDDEN);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  constructor(message: string, extensions?: Record<string, any>) {
+    super(message, ErrorCode.FORBIDDEN, extensions);
 
     Object.defineProperty(this, 'name', { value: 'ForbiddenError' });
   }
@@ -146,8 +150,9 @@ export class PersistedQueryNotSupportedError extends BaseGraphQLError {
 }
 
 export class UserInputError extends BaseGraphQLError {
-  constructor(message: string) {
-    super(message, ErrorCode.BAD_USER_INPUT);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  constructor(message: string, extensions?: Record<string, any>) {
+    super(message, ErrorCode.BAD_USER_INPUT, extensions);
 
     Object.defineProperty(this, 'name', { value: 'UserInputError' });
   }
@@ -158,14 +163,6 @@ export class NotFoundError extends BaseGraphQLError {
     super(message, ErrorCode.NOT_FOUND);
 
     Object.defineProperty(this, 'name', { value: 'NotFoundError' });
-  }
-}
-
-export class EmailNotVerifiedError extends BaseGraphQLError {
-  constructor(message: string) {
-    super(message, ErrorCode.EMAIL_NOT_VERIFIED);
-
-    Object.defineProperty(this, 'name', { value: 'EmailNotVerifiedError' });
   }
 }
 
@@ -200,3 +197,51 @@ export class InternalServerError extends BaseGraphQLError {
     Object.defineProperty(this, 'name', { value: 'InternalServerError' });
   }
 }
+
+/**
+ * Converts a GraphQLError to a BaseGraphQLError with the appropriate ErrorCode
+ * based on HTTP status code if present in extensions.
+ */
+export const convertGraphQLErrorToBaseGraphQLError = (
+  error: GraphQLError,
+): BaseGraphQLError => {
+  const httpStatus = error.extensions?.http?.status;
+  let errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
+
+  if (httpStatus && typeof httpStatus === 'number') {
+    switch (httpStatus) {
+      case 400:
+        errorCode = ErrorCode.BAD_USER_INPUT;
+        break;
+      case 401:
+        errorCode = ErrorCode.UNAUTHENTICATED;
+        break;
+      case 403:
+        errorCode = ErrorCode.FORBIDDEN;
+        break;
+      case 404:
+        errorCode = ErrorCode.NOT_FOUND;
+        break;
+      case 405:
+        errorCode = ErrorCode.METHOD_NOT_ALLOWED;
+        break;
+      case 408:
+      case 504:
+        errorCode = ErrorCode.TIMEOUT;
+        break;
+      case 409:
+        errorCode = ErrorCode.CONFLICT;
+        break;
+      default:
+        if (httpStatus >= 400 && httpStatus < 500) {
+          // Other 4xx errors
+          errorCode = ErrorCode.BAD_USER_INPUT;
+        } else {
+          // 5xx errors default to internal server error
+          errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
+        }
+    }
+  }
+
+  return new BaseGraphQLError(error.message, errorCode, error.extensions);
+};

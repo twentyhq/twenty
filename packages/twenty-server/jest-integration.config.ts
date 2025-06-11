@@ -1,6 +1,14 @@
+import dotenv from 'dotenv';
 import { JestConfigWithTsJest, pathsToModuleNameMapper } from 'ts-jest';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
+
+// Load .env vars at jest boot time
+if (process.env.NODE_ENV === 'test') {
+  dotenv.config({ path: '.env.test', override: true });
+} else {
+  dotenv.config({ path: '.env', override: true });
+}
 
 const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
 const isClickhouseEnabled = process.env.CLICKHOUSE_URL !== undefined;
@@ -19,7 +27,7 @@ const jestConfig: JestConfigWithTsJest = {
   testEnvironment: 'node',
   testPathIgnorePatterns: [
     ...(isBillingEnabled ? [] : ['<rootDir>/test/integration/billing']),
-    ...(isClickhouseEnabled ? [] : ['<rootDir>/test/integration/analytics']),
+    ...(isClickhouseEnabled ? [] : ['<rootDir>/test/integration/audit']),
   ],
   testRegex: '\\.integration-spec\\.ts$',
   modulePathIgnorePatterns: ['<rootDir>/dist'],
@@ -65,7 +73,7 @@ const jestConfig: JestConfigWithTsJest = {
   },
   globals: {
     APP_PORT: 4000,
-    NODE_ENV: NodeEnvironment.test,
+    NODE_ENV: NodeEnvironment.TEST,
     ADMIN_ACCESS_TOKEN:
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC05ZTNiLTQ2ZDQtYTU1Ni04OGI5ZGRjMmIwMzQiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtMDY4Ny00YzQxLWI3MDctZWQxYmZjYTk3MmE3IiwidXNlcldvcmtzcGFjZUlkIjoiMjAyMDIwMjAtOWUzYi00NmQ0LWE1NTYtODhiOWRkYzJiMDM1IiwiaWF0IjoxNzM5NTQ3NjYxLCJleHAiOjMzMjk3MTQ3NjYxfQ.fbOM9yhr3jWDicPZ1n771usUURiPGmNdeFApsgrbxOw',
     EXPIRED_ACCESS_TOKEN:

@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -11,6 +10,8 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
+import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useSelectableListListenToEnterHotkeyOnItem } from '@/ui/layout/selectable-list/hooks/useSelectableListListenToEnterHotkeyOnItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -106,6 +107,24 @@ export const IconPicker = ({
     setHotkeyScopeAndMemorizePreviousScope,
   } = usePreviousHotkeyScope();
 
+  const [isMouseInsideIconList, setIsMouseInsideIconList] = useState(false);
+
+  const handleMouseEnter = () => {
+    if (!isMouseInsideIconList) {
+      setIsMouseInsideIconList(true);
+      setHotkeyScopeAndMemorizePreviousScope({
+        scope: IconPickerHotkeyScope.IconPicker,
+      });
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (isMouseInsideIconList) {
+      setIsMouseInsideIconList(false);
+      goBackToPreviousHotkeyScope();
+    }
+  };
+
   const { closeDropdown } = useDropdown(dropdownId);
 
   const { getIcons, getIcon } = useIcons();
@@ -179,14 +198,13 @@ export const IconPicker = ({
             size={size}
           />
         }
-        dropdownWidth={176}
         dropdownComponents={
-          <SelectableList
-            selectableListInstanceId="icon-list"
-            selectableItemIdMatrix={iconKeys2d}
-            hotkeyScope={IconPickerHotkeyScope.IconPicker}
-          >
-            <DropdownMenu width={176}>
+          <DropdownContent widthInPixels={ICON_PICKER_DROPDOWN_CONTENT_WIDTH}>
+            <SelectableList
+              selectableListInstanceId="icon-list"
+              selectableItemIdMatrix={iconKeys2d}
+              hotkeyScope={IconPickerHotkeyScope.IconPicker}
+            >
               <DropdownMenuSearchInput
                 placeholder={t`Search icon`}
                 autoFocus
@@ -196,12 +214,8 @@ export const IconPicker = ({
               />
               <DropdownMenuSeparator />
               <div
-                onMouseEnter={() => {
-                  setHotkeyScopeAndMemorizePreviousScope(
-                    IconPickerHotkeyScope.IconPicker,
-                  );
-                }}
-                onMouseLeave={goBackToPreviousHotkeyScope}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
               >
                 <DropdownMenuItemsContainer>
                   <StyledMenuIconItemsContainer>
@@ -220,8 +234,8 @@ export const IconPicker = ({
                   </StyledMenuIconItemsContainer>
                 </DropdownMenuItemsContainer>
               </div>
-            </DropdownMenu>
-          </SelectableList>
+            </SelectableList>
+          </DropdownContent>
         }
         onClickOutside={onClickOutside}
         onClose={() => {

@@ -3,9 +3,9 @@ import { isUndefined } from '@sniptt/guards';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { generateDefaultFieldValue } from '@/object-record/utils/generateDefaultFieldValue';
-import { FieldMetadataType, RelationDefinitionType } from '~/generated/graphql';
+import { generateEmptyFieldValue } from '@/object-record/utils/generateEmptyFieldValue';
 import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType, RelationType } from '~/generated/graphql';
 
 type PrefillRecordArgs = {
   objectMetadataItem: ObjectMetadataItem;
@@ -19,19 +19,26 @@ export const prefillRecord = <T extends ObjectRecord>({
     objectMetadataItem.fields
       .map((fieldMetadataItem) => {
         const inputValue = input[fieldMetadataItem.name];
+        const fieldValue = isUndefined(inputValue)
+          ? generateEmptyFieldValue({ fieldMetadataItem })
+          : inputValue;
         if (
           fieldMetadataItem.type === FieldMetadataType.RELATION &&
-          fieldMetadataItem.relationDefinition?.direction ===
-            RelationDefinitionType.MANY_TO_ONE
+          fieldMetadataItem.relation?.type === RelationType.MANY_TO_ONE
         ) {
+          const joinColumnValue =
+            input[fieldMetadataItem.settings?.joinColumnName];
           throwIfInputRelationDataIsInconsistent(input, fieldMetadataItem);
+
+          return [
+            [fieldMetadataItem.name, fieldValue],
+            [fieldMetadataItem.settings?.joinColumnName, joinColumnValue],
+          ];
         }
 
-        const fieldValue = isUndefined(inputValue)
-          ? generateDefaultFieldValue({ fieldMetadataItem })
-          : inputValue;
-        return [fieldMetadataItem.name, fieldValue];
+        return [[fieldMetadataItem.name, fieldValue]];
       })
+      .flat()
       .filter(isDefined),
   ) as T;
 };

@@ -1,21 +1,21 @@
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { useWebhookUpdateForm } from '@/settings/developers/hooks/useWebhookUpdateForm';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { Button, IconButton, SelectOption } from 'twenty-ui/input';
 import {
   H2Title,
   IconBox,
@@ -25,8 +25,9 @@ import {
   IconTrash,
   useIcons,
 } from 'twenty-ui/display';
+import { Button, IconButton, SelectOption } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 const OBJECT_DROPDOWN_WIDTH = 340;
 const ACTION_DROPDOWN_WIDTH = 140;
 const OBJECT_MOBILE_WIDTH = 150;
@@ -47,6 +48,8 @@ const StyledPlaceholder = styled.div`
   height: ${({ theme }) => theme.spacing(8)};
   width: ${({ theme }) => theme.spacing(8)};
 `;
+
+const DELETE_WEBHOOK_MODAL_ID = 'delete-webhook-modal';
 
 export const SettingsDevelopersWebhooksDetail = () => {
   const { t } = useLingui();
@@ -77,8 +80,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
     isCreationMode,
   });
 
-  const [isDeleteWebhookModalOpen, setIsDeleteWebhookModalOpen] =
-    useState(false);
+  const { openModal } = useModal();
 
   const fieldTypeOptions: SelectOption<string>[] = useMemo(
     () => [
@@ -100,7 +102,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
   ];
 
   if (loading || !formData) {
-    return <></>;
+    return <SettingsSkeletonLoader />;
   }
 
   const confirmationText = t`yes`;
@@ -114,7 +116,11 @@ export const SettingsDevelopersWebhooksDetail = () => {
           children: t`Workspace`,
           href: getSettingsPath(SettingsPath.Workspace),
         },
-        { children: t`Webhook` },
+        {
+          children: t`Webhooks`,
+          href: getSettingsPath(SettingsPath.Webhooks),
+        },
+        { children: title },
       ]}
     >
       <SettingsPageContainer>
@@ -219,13 +225,12 @@ export const SettingsDevelopersWebhooksDetail = () => {
             variant="secondary"
             title={t`Delete`}
             Icon={IconTrash}
-            onClick={() => setIsDeleteWebhookModalOpen(true)}
+            onClick={() => openModal(DELETE_WEBHOOK_MODAL_ID)}
           />
           <ConfirmationModal
             confirmationPlaceholder={confirmationText}
             confirmationValue={confirmationText}
-            isOpen={isDeleteWebhookModalOpen}
-            setIsOpen={setIsDeleteWebhookModalOpen}
+            modalId={DELETE_WEBHOOK_MODAL_ID}
             title={t`Delete webhook`}
             subtitle={
               <Trans>

@@ -59,6 +59,11 @@ msgstr ": Past"
 msgid ": Today"
 msgstr ": Today"
 
+#. js-lingui-id: nSri0b
+#: src/modules/views/components/ViewBarFilterDropdownVectorSearchButton.tsx
+msgid "· {fieldSearchInputValue}"
+msgstr "· {fieldSearchInputValue}"
+
 #. js-lingui-id: ZBGbuw
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
@@ -78,15 +83,25 @@ msgstr "{0}"
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "{aggregateLabel} of {fieldLabel}"
 
+#. js-lingui-id: z5EvY5
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+msgid "{apiKeyName}"
+msgstr "{apiKeyName}"
+
 #. js-lingui-id: uogEAL
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-msgid "{apiKeyName} API Key"
-msgstr "{apiKeyName} API Key"
+#~ msgid "{apiKeyName} API Key"
+#~ msgstr "{apiKeyName} API Key"
 
 #. js-lingui-id: zi5SHH
 #: src/modules/object-record/record-index/components/RecordIndexPageHeader.tsx
 msgid "{contextStoreNumberOfSelectedRecords} selected"
 msgstr "{contextStoreNumberOfSelectedRecords} selected"
+
+#. js-lingui-id: wapGcj
+#: src/modules/auth/components/VerifyEmailEffect.tsx
+msgid "{message}"
+msgstr "{message}"
 
 #. js-lingui-id: 6j5rE1
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowRecordAgnosticActions.tsx
@@ -98,6 +113,11 @@ msgstr "{name}"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
 msgstr "{workspaceMemberName} will be unassigned from the following role:"
+
+#. js-lingui-id: NNQszp
+#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
+#~ msgid "⚠️ Please verify the auto mapping of the columns. You can also ignore or change the mapping of the columns."
+#~ msgstr "⚠️ Please verify the auto mapping of the columns. You can also ignore or change the mapping of the columns."
 
 #. js-lingui-id: YT0WJ4
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -192,6 +212,11 @@ msgstr "Abort"
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "About"
 msgstr "About"
+
+#. js-lingui-id: NBHoKd
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "About my subscription"
+msgstr "About my subscription"
 
 #. js-lingui-id: DhgC7B
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -288,6 +313,11 @@ msgstr "Add Field"
 #: src/modules/views/components/ViewBarDetailsAddFilterButton.tsx
 msgid "Add filter"
 msgstr "Add filter"
+
+#. js-lingui-id: 7XzAKI
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage.tsx
+msgid "Add inputs to your form"
+msgstr "Add inputs to your form"
 
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
@@ -583,8 +613,8 @@ msgstr "Arabic"
 
 #. js-lingui-id: CWb74a
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Are you sure that you want to change your billing interval? You will be charged immediately for the full year."
-msgstr "Are you sure that you want to change your billing interval? You will be charged immediately for the full year."
+#~ msgid "Are you sure that you want to change your billing interval? You will be charged immediately for the full year."
+#~ msgstr "Are you sure that you want to change your billing interval? You will be charged immediately for the full year."
 
 #. js-lingui-id: 3SRf5B
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
@@ -612,7 +642,7 @@ msgid "Are you sure you want to delete this record? It can be recovered from the
 msgstr "Are you sure you want to delete this record? It can be recovered from the Command menu."
 
 #. js-lingui-id: rnCqBK
-#: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
+#: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
 msgid "Are you sure? Your current information will not be saved."
 msgstr "Are you sure? Your current information will not be saved."
 
@@ -730,6 +760,11 @@ msgstr "Back to content"
 msgid "Billing"
 msgstr "Billing"
 
+#. js-lingui-id: nJGwRf
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Billing interval"
+msgstr "Billing interval"
+
 #. js-lingui-id: K1172m
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Blocklist"
@@ -793,7 +828,7 @@ msgstr "Can't change API names for standard objects"
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
-#: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
+#: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 msgid "Cancel"
 msgstr "Cancel"
@@ -840,10 +875,20 @@ msgstr "Change Plan"
 msgid "Change subdomain?"
 msgstr "Change subdomain?"
 
+#. js-lingui-id: C8G9Mq
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Change to Organization Plan?"
+msgstr "Change to Organization Plan?"
+
 #. js-lingui-id: b0h4XW
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Change to yearly"
-msgstr "Change to yearly"
+#~ msgid "Change to yearly"
+#~ msgstr "Change to yearly"
+
+#. js-lingui-id: N8mUQE
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Change to Yearly?"
+msgstr "Change to Yearly?"
 
 #. js-lingui-id: SviKkE
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -899,6 +944,11 @@ msgstr "Clear"
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Clear the field or \"X\" to revert to environment/default value."
 msgstr "Clear the field or \"X\" to revert to environment/default value."
+
+#. js-lingui-id: HevGC0
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage.tsx
+msgid "Click on \"Add Field\" below to add the first input to your form. The form will pop up on the user's screen when the workflow is launched from a manual trigger. For other types of triggers, it will be displayed in the Workflow run record page."
+msgstr "Click on \"Add Field\" below to add the first input to your form. The form will pop up on the user's screen when the workflow is launched from a manual trigger. For other types of triggers, it will be displayed in the Workflow run record page."
 
 #. js-lingui-id: b8wwse
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -963,6 +1013,11 @@ msgstr "Compact view"
 msgid "Companies"
 msgstr "Companies"
 
+#. js-lingui-id: 0CuAor
+#: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
+msgid "Conditions"
+msgstr "Conditions"
+
 #. js-lingui-id: Vj43Y/
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
@@ -998,6 +1053,8 @@ msgstr "Configure your emails and calendar settings."
 #. js-lingui-id: 7VpPHA
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Confirm"
 msgstr "Confirm"
 
@@ -1115,8 +1172,8 @@ msgstr "Core"
 
 #. js-lingui-id: w5Stxm
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
-msgid "Correct the issues and fill the missing data."
-msgstr "Correct the issues and fill the missing data."
+#~ msgid "Correct the issues and fill the missing data."
+#~ msgstr "Correct the issues and fill the missing data."
 
 #. js-lingui-id: I99Miw
 #: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
@@ -1172,7 +1229,6 @@ msgstr "Count unique values"
 
 #. js-lingui-id: hYgDIe
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
-#: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Create"
 msgstr "Create"
 
@@ -1727,8 +1783,8 @@ msgstr "Edit"
 
 #. js-lingui-id: v+uKyy
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Edit billing interval"
-msgstr "Edit billing interval"
+#~ msgid "Edit billing interval"
+#~ msgstr "Edit billing interval"
 
 #. js-lingui-id: 6vZ75d
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
@@ -1804,8 +1860,8 @@ msgstr "Email verification"
 
 #. js-lingui-id: TBv/iZ
 #: src/modules/auth/components/VerifyEmailEffect.tsx
-msgid "Email verification failed."
-msgstr "Email verification failed."
+#~ msgid "Email verification failed."
+#~ msgstr "Email verification failed."
 
 #. js-lingui-id: svTijF
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
@@ -1978,10 +2034,20 @@ msgstr "Error while ending trial period. Please contact Twenty team."
 #~ msgid "Error while switching subscription {to}."
 #~ msgstr "Error while switching subscription {to}."
 
+#. js-lingui-id: JKNROf
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Error while switching subscription to Organization Plan."
+msgstr "Error while switching subscription to Organization Plan."
+
 #. js-lingui-id: k06M7e
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Error while switching subscription to yearly."
-msgstr "Error while switching subscription to yearly."
+#~ msgid "Error while switching subscription to yearly."
+#~ msgstr "Error while switching subscription to yearly."
+
+#. js-lingui-id: ENV7jU
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Error while switching subscription to Yearly."
+msgstr "Error while switching subscription to Yearly."
 
 #. js-lingui-id: JLxMta
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
@@ -2031,7 +2097,7 @@ msgid "Existing objects"
 msgstr "Existing objects"
 
 #. js-lingui-id: ydzS9x
-#: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
+#: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
 msgid "Exit"
 msgstr "Exit"
 
@@ -2041,7 +2107,7 @@ msgstr "Exit"
 #~ msgstr "Exit Full Screen"
 
 #. js-lingui-id: XB4onr
-#: src/modules/spreadsheet-import/components/ModalCloseButton.tsx
+#: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
 msgid "Exit import flow"
 msgstr "Exit import flow"
 
@@ -2167,8 +2233,13 @@ msgstr "Extra Credits Used"
 
 #. js-lingui-id: bVax4d
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
-msgid "Failed to remove  override"
-msgstr "Failed to remove  override"
+#~ msgid "Failed to remove  override"
+#~ msgstr "Failed to remove  override"
+
+#. js-lingui-id: A/P7PX
+#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
+msgid "Failed to remove override"
+msgstr "Failed to remove override"
 
 #. js-lingui-id: Dzh4a2
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
@@ -2268,6 +2339,11 @@ msgstr "First 5 lines"
 msgid "First Name"
 msgstr "First Name"
 
+#. js-lingui-id: 7JBW66
+#: src/modules/object-record/record-field/meta-types/display/components/ForbiddenFieldDisplay.tsx
+msgid "Forbidden"
+msgstr "Forbidden"
+
 #. js-lingui-id: glx6on
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx
 msgid "Forgot your password?"
@@ -2343,6 +2419,11 @@ msgstr "Global"
 msgid "Go to Companies"
 msgstr "Go to Companies"
 
+#. js-lingui-id: dHvI9O
+#: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
+msgid "Go to Draft"
+msgstr "Go to Draft"
+
 #. js-lingui-id: BQE4ob
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Notes"
@@ -2366,7 +2447,9 @@ msgid "Go to runs"
 msgstr "Go to runs"
 
 #. js-lingui-id: mT57+Q
+#: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Settings"
 msgstr "Go to Settings"
@@ -2440,6 +2523,13 @@ msgstr "Hebrew"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
 msgid "Hidden"
 msgstr "Hidden"
+
+#. js-lingui-id: em+S/U
+#: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectMenu.tsx
+msgid "Hidden fields"
+msgstr "Hidden fields"
 
 #. js-lingui-id: oK+1Wj
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
@@ -2534,6 +2624,11 @@ msgstr "Identity Provider"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Identity Provider Metadata XML"
 msgstr "Identity Provider Metadata XML"
+
+#. js-lingui-id: ZfP/Ap
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
+msgid "If this is unexpected, please verify your settings."
+msgstr "If this is unexpected, please verify your settings."
 
 #. js-lingui-id: j843N3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -2726,6 +2821,41 @@ msgstr "Is in past"
 msgid "Is not"
 msgstr "Is not"
 
+#. js-lingui-id: /2on+O
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid array"
+msgstr "is not a valid array"
+
+#. js-lingui-id: LmaaLR
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid date (format: '2021-12-01')"
+msgstr "is not a valid date (format: '2021-12-01')"
+
+#. js-lingui-id: ntHJJY
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid date time (format: '2021-12-01T00:00:00Z')"
+msgstr "is not a valid date time (format: '2021-12-01T00:00:00Z')"
+
+#. js-lingui-id: M9i8dv
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid email"
+msgstr "is not a valid email"
+
+#. js-lingui-id: 96g038
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid JSON"
+msgstr "is not a valid JSON"
+
+#. js-lingui-id: Ir+3AW
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid URL"
+msgstr "is not a valid URL"
+
+#. js-lingui-id: MgIflq
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "is not a valid UUID"
+msgstr "is not a valid UUID"
+
 #. js-lingui-id: ldI7NO
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Is not empty"
@@ -2760,6 +2890,11 @@ msgstr "Italian"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Japanese"
 msgstr "Japanese"
+
+#. js-lingui-id: VIK/N0
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
+msgid "JSON keys cannot contain spaces"
+msgstr "JSON keys cannot contain spaces"
 
 #. js-lingui-id: OGXtL8
 #: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
@@ -2934,6 +3069,11 @@ msgstr "Look up users to impersonate them."
 msgid "Manage API keys and webhooks"
 msgstr "Manage API keys and webhooks"
 
+#. js-lingui-id: nvgUPq
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Manage billing information"
+msgstr "Manage billing information"
+
 #. js-lingui-id: U8dG4j
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
@@ -2957,8 +3097,13 @@ msgstr "Manage support access settings"
 
 #. js-lingui-id: 4cjU2u
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
-msgid "Manage the members of your space here"
-msgstr "Manage the members of your space here"
+#~ msgid "Manage the members of your space here"
+#~ msgstr "Manage the members of your space here"
+
+#. js-lingui-id: N7fMy9
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+msgid "Manage the members of your workspace here"
+msgstr "Manage the members of your workspace here"
 
 #. js-lingui-id: FyFNsd
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -2967,8 +3112,8 @@ msgstr "Manage your internet accounts."
 
 #. js-lingui-id: 36kYu0
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Manage your subscription"
-msgstr "Manage your subscription"
+#~ msgid "Manage your subscription"
+#~ msgstr "Manage your subscription"
 
 #. js-lingui-id: 3Sdni6
 #: src/modules/action-menu/components/__stories__/RecordIndexActionMenuDropdown.stories.tsx
@@ -2978,11 +3123,11 @@ msgstr "Manage your subscription"
 
 #. js-lingui-id: 7h8ch8
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
-msgid "Match columns"
-msgstr "Match columns"
+#~ msgid "Match columns"
+#~ msgstr "Match columns"
 
 #. js-lingui-id: gDLior
-#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
+#: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
 msgid "Match Columns"
 msgstr "Match Columns"
 
@@ -3044,10 +3189,20 @@ msgstr "Monitor the execution of your calendar events sync job"
 msgid "Monitor the execution of your emails sync job"
 msgstr "Monitor the execution of your emails sync job"
 
+#. js-lingui-id: +8Nek/
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Monthly"
+msgstr "Monthly"
+
 #. js-lingui-id: 1cOZuL
 #: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
 msgid "Monthly Credits"
 msgstr "Monthly Credits"
+
+#. js-lingui-id: 2FYpfJ
+#: src/modules/ui/layout/tab-list/components/TabMoreButton.tsx
+msgid "More"
+msgstr "More"
 
 #. js-lingui-id: 3Siwmw
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -3067,6 +3222,31 @@ msgstr "Move left"
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Move right"
 msgstr "Move right"
+
+#. js-lingui-id: asWVA5
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "must be a number"
+msgstr "must be a number"
+
+#. js-lingui-id: qJVW/e
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "must be an array of object with valid phone, calling code and country code (format: '[{\"number\":\"123456789\", \"callingCode\":\"+33\", \"countryCode\":\"FR\"}]')"
+msgstr "must be an array of object with valid phone, calling code and country code (format: '[{\"number\":\"123456789\", \"callingCode\":\"+33\", \"countryCode\":\"FR\"}]')"
+
+#. js-lingui-id: hTW2Fw
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "must be an array of object with valid url and label (format: '[{\"url\":\"valid.url\", \"label\":\"label value\")}]'"
+msgstr "must be an array of object with valid url and label (format: '[{\"url\":\"valid.url\", \"label\":\"label value\")}]'"
+
+#. js-lingui-id: 5rovyq
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "must be an array of valid emails"
+msgstr "must be an array of valid emails"
+
+#. js-lingui-id: amJfUq
+#: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
+msgid "must contain only numbers"
+msgstr "must contain only numbers"
 
 #. js-lingui-id: 6YtxFj
 #: src/testing/mock-data/tableData.ts
@@ -3200,8 +3380,6 @@ msgid "New Password"
 msgstr "New Password"
 
 #. js-lingui-id: BcCzLv
-#: src/modules/ui/layout/page/components/PageAddButton.tsx
-#: src/modules/ui/layout/page/components/PageAddButton.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "New record"
 msgstr "New record"
@@ -3251,6 +3429,11 @@ msgstr "No connected account"
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "No country"
 msgstr "No country"
+
+#. js-lingui-id: 7tCnBa
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
+msgid "No Data Available for Remote Table"
+msgstr "No Data Available for Remote Table"
 
 #. js-lingui-id: pxvJ9B
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -3320,8 +3503,8 @@ msgstr "No metrics data available"
 
 #. js-lingui-id: DL8pzn
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
-msgid "No more members to assign"
-msgstr "No more members to assign"
+#~ msgid "No more members to assign"
+#~ msgstr "No more members to assign"
 
 #. js-lingui-id: tTItk7
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -3363,6 +3546,11 @@ msgstr "No Results"
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "No roles found"
 msgstr "No roles found"
+
+#. js-lingui-id: mmm8hk
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "No rows with errors"
+msgstr "No rows with errors"
 
 #. js-lingui-id: Hsl+kr
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
@@ -3540,6 +3728,11 @@ msgstr "Options"
 msgid "or"
 msgstr "or"
 
+#. js-lingui-id: ucgZ0o
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Organization"
+msgstr "Organization"
+
 #. js-lingui-id: /IX/7x
 #: src/pages/settings/Releases.tsx
 #: src/pages/settings/lab/SettingsLab.tsx
@@ -3672,6 +3865,11 @@ msgstr "Phone number copied to clipboard"
 msgid "Picture"
 msgstr "Picture"
 
+#. js-lingui-id: GdgCoi
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Plan"
+msgstr "Plan"
+
 #. js-lingui-id: 0LrFTO
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Playground"
@@ -3748,6 +3946,11 @@ msgstr "Preview"
 msgid "Privacy Policy"
 msgstr "Privacy Policy"
 
+#. js-lingui-id: 3fPjUY
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Pro"
+msgstr "Pro"
+
 #. js-lingui-id: k1ifdL
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Processing..."
@@ -3806,6 +4009,8 @@ msgid "Record image"
 msgstr "Record image"
 
 #. js-lingui-id: K6/7kH
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
 msgid "Record label"
 msgstr "Record label"
@@ -3961,8 +4166,8 @@ msgstr "Results"
 
 #. js-lingui-id: BohSvm
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
-msgid "Review your import"
-msgstr "Review your import"
+#~ msgid "Review your import"
+#~ msgstr "Review your import"
 
 #. js-lingui-id: GG37FL
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
@@ -4008,7 +4213,6 @@ msgid "Russian"
 msgstr "Russian"
 
 #. js-lingui-id: tfDRzk
-#: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 msgid "Save"
@@ -4025,6 +4229,8 @@ msgid "Schema"
 msgstr "Schema"
 
 #. js-lingui-id: A1taO8
+#: src/modules/views/components/ViewBarFilterDropdownVectorSearchInput.tsx
+#: src/modules/views/components/ViewBarFilterDropdownVectorSearchButton.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPickerDropdownContent.tsx
@@ -4092,7 +4298,6 @@ msgstr "Search currency"
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput.tsx
-#: src/modules/object-record/advanced-filter/components/AdvancedFilterDropdownFieldSelectMenu.tsx
 msgid "Search fields"
 msgstr "Search fields"
 
@@ -4111,6 +4316,11 @@ msgstr "Search icon"
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 msgid "Search records"
 msgstr "Search records"
+
+#. js-lingui-id: grt0Pu
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Seats"
+msgstr "Seats"
 
 #. js-lingui-id: 8VEDbV
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
@@ -4242,8 +4452,8 @@ msgstr "Select Source"
 
 #. js-lingui-id: mWHn81
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
-msgid "Select the correct field for each column you'd like to import."
-msgstr "Select the correct field for each column you'd like to import."
+#~ msgid "Select the correct field for each column you'd like to import."
+#~ msgstr "Select the correct field for each column you'd like to import."
 
 #. js-lingui-id: pofGCP
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
@@ -4392,8 +4602,8 @@ msgstr "Show only rows with errors"
 
 #. js-lingui-id: MHlGJL
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
-msgid "Show unmatched columns"
-msgstr "Show unmatched columns"
+#~ msgid "Show unmatched columns"
+#~ msgstr "Show unmatched columns"
 
 #. js-lingui-id: uVg8dY
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
@@ -4536,6 +4746,11 @@ msgstr "Submit"
 msgid "Subscribe"
 msgstr "Subscribe"
 
+#. js-lingui-id: WVzGc2
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Subscription"
+msgstr "Subscription"
+
 #. js-lingui-id: uvY7Wk
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "Subscription activated."
@@ -4546,10 +4761,20 @@ msgstr "Subscription activated."
 #~ msgid "Subscription has been switched {to}"
 #~ msgstr "Subscription has been switched {to}"
 
+#. js-lingui-id: KNMVB5
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Subscription has been switched to Organization Plan."
+msgstr "Subscription has been switched to Organization Plan."
+
 #. js-lingui-id: TXH0ad
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Subscription has been switched to yearly."
-msgstr "Subscription has been switched to yearly."
+#~ msgid "Subscription has been switched to yearly."
+#~ msgstr "Subscription has been switched to yearly."
+
+#. js-lingui-id: A5YO8f
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Subscription has been switched to Yearly."
+msgstr "Subscription has been switched to Yearly."
 
 #. js-lingui-id: AxQiPW
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -4584,13 +4809,13 @@ msgstr "Swedish"
 
 #. js-lingui-id: o04bjR
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Switch billing to yearly"
-msgstr "Switch billing to yearly"
+#~ msgid "Switch billing to yearly"
+#~ msgstr "Switch billing to yearly"
 
 #. js-lingui-id: /IYUDq
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Switch from monthly to yearly"
-msgstr "Switch from monthly to yearly"
+#~ msgid "Switch from monthly to yearly"
+#~ msgstr "Switch from monthly to yearly"
 
 #. js-lingui-id: E4rPXj
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -4602,10 +4827,20 @@ msgstr "Switch from monthly to yearly"
 #~ msgid "Switch to {alternatePlanName}"
 #~ msgstr "Switch to {alternatePlanName}"
 
+#. js-lingui-id: GCMizN
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Switch to Organization"
+msgstr "Switch to Organization"
+
 #. js-lingui-id: 1EwZPZ
 #: src/pages/settings/SettingsBilling.tsx
-msgid "Switch to yearly"
-msgstr "Switch to yearly"
+#~ msgid "Switch to yearly"
+#~ msgstr "Switch to yearly"
+
+#. js-lingui-id: eCX1DT
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Switch to Yearly"
+msgstr "Switch to Yearly"
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -4743,6 +4978,11 @@ msgstr "The values of this field must be unique"
 msgid "The whole event details will be shared with your team."
 msgstr "The whole event details will be shared with your team."
 
+#. js-lingui-id: MssRHl
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
+msgid "The workspace needs at least one Admin"
+msgstr "The workspace needs at least one Admin"
+
 #. js-lingui-id: FEr96N
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Theme"
@@ -4866,6 +5106,7 @@ msgstr "Timestamp and participants will be shared with your team."
 
 #. js-lingui-id: ecUA8p
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
+#: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Today"
 msgstr "Today"
 
@@ -4873,6 +5114,11 @@ msgstr "Today"
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 msgid "Toggle all object permissions"
 msgstr "Toggle all object permissions"
+
+#. js-lingui-id: BRMXj0
+#: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
+msgid "Tomorrow"
+msgstr "Tomorrow"
 
 #. js-lingui-id: vb0Q0/
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -4982,10 +5228,14 @@ msgid "Upload .xlsx, .xls or .csv file"
 msgstr "Upload .xlsx, .xls or .csv file"
 
 #. js-lingui-id: 2IXDgU
-#: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Upload file"
 msgstr "Upload file"
+
+#. js-lingui-id: IQ3gAw
+#: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
+msgid "Upload File"
+msgstr "Upload File"
 
 #. js-lingui-id: akDOEO
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -5071,8 +5321,13 @@ msgstr "Using default value. Set a custom value to override."
 
 #. js-lingui-id: MGeZsN
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
-msgid "Validate data"
-msgstr "Validate data"
+#~ msgid "Validate data"
+#~ msgstr "Validate data"
+
+#. js-lingui-id: Clr4qp
+#: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
+msgid "Validate Data"
+msgstr "Validate Data"
 
 #. js-lingui-id: wMHvYH
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
@@ -5092,6 +5347,11 @@ msgstr "Value is set in the server environment, it may be a different value on t
 msgid "Values"
 msgstr "Values"
 
+#. js-lingui-id: rawKOG
+#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
+msgid "Variable deleted successfully."
+msgstr "Variable deleted successfully."
+
 #. js-lingui-id: dY/1ir
 #: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
 msgid "Variable not found"
@@ -5099,8 +5359,13 @@ msgstr "Variable not found"
 
 #. js-lingui-id: N/89ho
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
-msgid "Variable updated successfully"
-msgstr "Variable updated successfully"
+#~ msgid "Variable updated successfully"
+#~ msgstr "Variable updated successfully"
+
+#. js-lingui-id: 2ushgC
+#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
+msgid "Variable updated successfully."
+msgstr "Variable updated successfully."
 
 #. js-lingui-id: IHIWR4
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -5124,8 +5389,8 @@ msgstr "View billing details"
 
 #. js-lingui-id: igR+P/
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "View execution details"
-msgstr "View execution details"
+#~ msgid "View execution details"
+#~ msgstr "View execution details"
 
 #. js-lingui-id: qZmd6a
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent.tsx
@@ -5147,6 +5412,13 @@ msgstr "Visibility"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
 msgid "Visible"
 msgstr "Visible"
+
+#. js-lingui-id: zYTdqe
+#: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
+#: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
+#: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectMenu.tsx
+msgid "Visible fields"
+msgstr "Visible fields"
 
 #. js-lingui-id: JiDDG4
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
@@ -5190,13 +5462,14 @@ msgstr "We will send your a link to verify domain ownership"
 
 #. js-lingui-id: TRDppN
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Webhook"
-msgstr "Webhook"
+#~ msgid "Webhook"
+#~ msgstr "Webhook"
 
 #. js-lingui-id: v1kQyJ
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
+#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Webhooks"
 msgstr "Webhooks"
@@ -5228,13 +5501,13 @@ msgstr "When the key will be disabled"
 
 #. js-lingui-id: GpJjC8
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow is running..."
-msgstr "Workflow is running..."
+#~ msgid "Workflow is running..."
+#~ msgstr "Workflow is running..."
 
 #. js-lingui-id: o0xBLi
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
-msgid "Workflow run failed"
-msgstr "Workflow run failed"
+#~ msgid "Workflow run failed"
+#~ msgstr "Workflow run failed"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -5314,11 +5587,21 @@ msgstr "Write a description"
 msgid "Write a secret"
 msgstr "Write a secret"
 
+#. js-lingui-id: zkWmBh
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Yearly"
+msgstr "Yearly"
+
 #. js-lingui-id: 3d1wCB
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "yes"
 msgstr "yes"
+
+#. js-lingui-id: y/0uwd
+#: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
+msgid "Yesterday"
+msgstr "Yesterday"
 
 #. js-lingui-id: qsAug0
 #: src/modules/spreadsheet-import/components/MatchColumnSelect.tsx
@@ -5339,6 +5622,21 @@ msgstr "You are not allowed to create records for this object"
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #~ msgid "You do not have access to impersonate users."
 #~ msgstr "You do not have access to impersonate users."
+
+#. js-lingui-id: zEM7Ne
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "You will be charged ${enterprisePrice} per user per month billed annually."
+msgstr "You will be charged ${enterprisePrice} per user per month billed annually."
+
+#. js-lingui-id: HM4D8s
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "You will be charged ${enterprisePrice} per user per month."
+msgstr "You will be charged ${enterprisePrice} per user per month."
+
+#. js-lingui-id: o4xIH4
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "You will be charged ${yearlyPrice} per user per month billed annually. A prorata with your current subscription will be applied."
+msgstr "You will be charged ${yearlyPrice} per user per month billed annually. A prorata with your current subscription will be applied."
 
 #. js-lingui-id: zSkMV0
 #: src/pages/settings/SettingsBilling.tsx

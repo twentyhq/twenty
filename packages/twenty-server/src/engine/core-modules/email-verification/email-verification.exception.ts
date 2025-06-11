@@ -1,6 +1,7 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class EmailVerificationException extends CustomException {
+  declare code: EmailVerificationExceptionCode;
   constructor(message: string, code: EmailVerificationExceptionCode) {
     super(message, code);
   }
@@ -13,5 +14,6 @@ export enum EmailVerificationExceptionCode {
   TOKEN_EXPIRED = 'TOKEN_EXPIRED',
   EMAIL_MISSING = 'EMAIL_MISSING',
   EMAIL_ALREADY_VERIFIED = 'EMAIL_ALREADY_VERIFIED',
+  INVALID_EMAIL = 'INVALID_EMAIL',
   RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED',
 }

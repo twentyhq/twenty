@@ -26,6 +26,7 @@ import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/ser
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller('auth/google-apis')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -42,14 +43,14 @@ export class GoogleAPIsAuthController {
   ) {}
 
   @Get()
-  @UseGuards(GoogleAPIsOauthRequestCodeGuard)
+  @UseGuards(GoogleAPIsOauthRequestCodeGuard, PublicEndpointGuard)
   async googleAuth() {
     // As this method is protected by Google Auth guard, it will trigger Google SSO flow
     return;
   }
 
   @Get('get-access-token')
-  @UseGuards(GoogleAPIsOauthExchangeCodeForTokenGuard)
+  @UseGuards(GoogleAPIsOauthExchangeCodeForTokenGuard, PublicEndpointGuard)
   async googleAuthGetAccessToken(
     @Req() req: GoogleAPIsRequest,
     @Res() res: Response,
@@ -118,15 +119,16 @@ export class GoogleAPIsAuthController {
           })
           .toString(),
       );
-    } catch (err) {
+    } catch (error) {
       return res.redirect(
-        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
-          err,
-          workspace ?? {
+        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
+          error,
+          workspace: workspace ?? {
             subdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
             customDomain: null,
           },
-        ),
+          pathname: '/settings/accounts',
+        }),
       );
     }
   }

@@ -26,9 +26,9 @@ export class RoleService {
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(RoleEntity, 'metadata')
+    @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(UserWorkspaceRoleEntity, 'metadata')
+    @InjectRepository(UserWorkspaceRoleEntity, 'core')
     private readonly userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>,
     private readonly userRoleService: UserRoleService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
@@ -85,6 +85,7 @@ export class RoleService {
     await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
       workspaceId,
       roleIds: [role.id],
+      ignoreLock: true,
     });
 
     return role;
@@ -130,6 +131,7 @@ export class RoleService {
     await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
       workspaceId,
       roleIds: [input.id],
+      ignoreLock: true,
     });
 
     return { ...existingRole, ...updatedRole };
@@ -196,6 +198,7 @@ export class RoleService {
 
     await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
       workspaceId,
+      ignoreLock: true,
     });
 
     return roleId;
@@ -215,7 +218,7 @@ export class RoleService {
       canUpdateAllObjectRecords: true,
       canSoftDeleteAllObjectRecords: true,
       canDestroyAllObjectRecords: true,
-      isEditable: false,
+      isEditable: true,
       workspaceId,
     });
   }
@@ -263,6 +266,7 @@ export class RoleService {
         isArgDefinedIfProvidedOrThrow({
           input,
           key,
+          // @ts-expect-error legacy noImplicitAny
           value: input[key],
         });
       } catch (error) {

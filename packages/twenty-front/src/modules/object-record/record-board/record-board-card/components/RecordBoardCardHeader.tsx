@@ -20,8 +20,8 @@ import { Dispatch, SetStateAction, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { AvatarChipVariant } from 'twenty-ui/components';
-import { Checkbox, CheckboxVariant, LightIconButton } from 'twenty-ui/input';
 import { IconEye, IconEyeOff } from 'twenty-ui/display';
+import { Checkbox, CheckboxVariant, LightIconButton } from 'twenty-ui/input';
 
 const StyledCompactIconContainer = styled.div`
   align-items: center;
@@ -84,6 +84,7 @@ export const RecordBoardCardHeader = ({
                 ? indexIdentifierUrl(recordId)
                 : undefined
             }
+            triggerEvent="CLICK"
           />
         )}
       </StopPropagationContainer>

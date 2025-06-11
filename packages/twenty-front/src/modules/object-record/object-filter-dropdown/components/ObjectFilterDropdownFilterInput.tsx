@@ -5,22 +5,21 @@ import { ObjectFilterDropdownRatingInput } from '@/object-record/object-filter-d
 import { ObjectFilterDropdownRecordSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordSelect';
 import { ObjectFilterDropdownSearchInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { ViewBarFilterDropdownVectorSearchInput } from '@/views/components/ViewBarFilterDropdownVectorSearchInput';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { ObjectFilterDropdownBooleanSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect';
-import { ObjectFilterDropdownCurrencySelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect';
-import { ObjectFilterDropdownSourceSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownSourceSelect';
+import { ObjectFilterDropdownOperandDropdown } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownOperandDropdown';
 import { ObjectFilterDropdownTextInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownTextInput';
 import { DATE_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/DateFilterTypes';
+import { DATE_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/object-record/object-filter-dropdown/constants/DatePickerDropdownContentWidth';
 import { NUMBER_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/NumberFilterTypes';
 import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/TextFilterTypes';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
-import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
-import { isExpectedSubFieldName } from '@/object-record/object-filter-dropdown/utils/isExpectedSubFieldName';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 type ObjectFilterDropdownFilterInputProps = {
@@ -34,11 +33,6 @@ export const ObjectFilterDropdownFilterInput = ({
 }: ObjectFilterDropdownFilterInputProps) => {
   const fieldMetadataItemUsedInDropdown = useRecoilComponentValueV2(
     fieldMetadataItemUsedInDropdownComponentSelector,
-    filterDropdownId,
-  );
-
-  const subFieldNameUsedInDropdown = useRecoilComponentValueV2(
-    subFieldNameUsedInDropdownComponentState,
     filterDropdownId,
   );
 
@@ -62,6 +56,17 @@ export const ObjectFilterDropdownFilterInput = ({
       ViewFilterOperand.IsRelative,
     ].includes(selectedOperandInDropdown);
 
+  const isVectorSearchFilter =
+    selectedOperandInDropdown === ViewFilterOperand.VectorSearch;
+
+  if (isVectorSearchFilter && isDefined(filterDropdownId)) {
+    return (
+      <ViewBarFilterDropdownVectorSearchInput
+        filterDropdownId={filterDropdownId}
+      />
+    );
+  }
+
   if (!isDefined(fieldMetadataItemUsedInDropdown)) {
     return null;
   }
@@ -70,74 +75,52 @@ export const ObjectFilterDropdownFilterInput = ({
     fieldMetadataItemUsedInDropdown.type,
   );
 
-  const isNotASubFieldFilter = !isDefined(subFieldNameUsedInDropdown);
+  const isDateFilter = DATE_FILTER_TYPES.includes(filterType);
+  const isOnlyOperand = !isConfigurable;
 
-  return (
-    <>
-      {isConfigurable && selectedOperandInDropdown && (
-        <>
-          {TEXT_FILTER_TYPES.includes(filterType) && (
-            <ObjectFilterDropdownTextInput />
-          )}
-          {NUMBER_FILTER_TYPES.includes(filterType) && (
-            <ObjectFilterDropdownNumberInput />
-          )}
-          {filterType === 'RATING' && <ObjectFilterDropdownRatingInput />}
-          {DATE_FILTER_TYPES.includes(filterType) && (
-            <ObjectFilterDropdownDateInput />
-          )}
-          {filterType === 'RELATION' && (
-            <>
-              <ObjectFilterDropdownSearchInput />
-              <DropdownMenuSeparator />
-              <ObjectFilterDropdownRecordSelect
-                recordFilterId={recordFilterId}
-              />
-            </>
-          )}
-          {filterType === 'ACTOR' && (
-            <>
-              <ObjectFilterDropdownSourceSelect />
-            </>
-          )}
-          {filterType === 'ADDRESS' &&
-            (isNotASubFieldFilter ? (
-              <>
-                <ObjectFilterDropdownTextInput />
-              </>
-            ) : (
-              <></>
-            ))}
-          {filterType === 'CURRENCY' &&
-            (isExpectedSubFieldName(
-              FieldMetadataType.CURRENCY,
-              'currencyCode',
-              subFieldNameUsedInDropdown,
-            ) ? (
-              <>
-                <ObjectFilterDropdownCurrencySelect />
-              </>
-            ) : isExpectedSubFieldName(
-                FieldMetadataType.CURRENCY,
-                'amountMicros',
-                subFieldNameUsedInDropdown,
-              ) ? (
-              <>
-                <ObjectFilterDropdownNumberInput />
-              </>
-            ) : (
-              <ObjectFilterDropdownNumberInput />
-            ))}
-          {['SELECT', 'MULTI_SELECT'].includes(filterType) && (
-            <>
-              <ObjectFilterDropdownSearchInput />
-              <DropdownMenuSeparator />
-              <ObjectFilterDropdownOptionSelect />
-            </>
-          )}
-          {filterType === 'BOOLEAN' && <ObjectFilterDropdownBooleanSelect />}
-        </>
-      )}
-    </>
-  );
+  if (isOnlyOperand) {
+    return (
+      <DropdownContent>
+        <ObjectFilterDropdownOperandDropdown />
+      </DropdownContent>
+    );
+  } else if (isDateFilter) {
+    return (
+      <DropdownContent widthInPixels={DATE_PICKER_DROPDOWN_CONTENT_WIDTH}>
+        <ObjectFilterDropdownOperandDropdown />
+        <ObjectFilterDropdownDateInput />
+      </DropdownContent>
+    );
+  } else {
+    return (
+      <DropdownContent>
+        <ObjectFilterDropdownOperandDropdown />
+        {TEXT_FILTER_TYPES.includes(filterType) && (
+          <ObjectFilterDropdownTextInput />
+        )}
+        {NUMBER_FILTER_TYPES.includes(filterType) && (
+          <ObjectFilterDropdownNumberInput />
+        )}
+        {filterType === 'RATING' && <ObjectFilterDropdownRatingInput />}
+        {filterType === 'RELATION' && (
+          <>
+            <ObjectFilterDropdownSearchInput />
+            <DropdownMenuSeparator />
+            <ObjectFilterDropdownRecordSelect recordFilterId={recordFilterId} />
+          </>
+        )}
+        {filterType === 'ACTOR' && <ObjectFilterDropdownTextInput />}
+        {filterType === 'ADDRESS' && <ObjectFilterDropdownTextInput />}
+        {filterType === 'CURRENCY' && <ObjectFilterDropdownNumberInput />}
+        {['SELECT', 'MULTI_SELECT'].includes(filterType) && (
+          <>
+            <ObjectFilterDropdownSearchInput />
+            <DropdownMenuSeparator />
+            <ObjectFilterDropdownOptionSelect />
+          </>
+        )}
+        {filterType === 'BOOLEAN' && <ObjectFilterDropdownBooleanSelect />}
+      </DropdownContent>
+    );
+  }
 };

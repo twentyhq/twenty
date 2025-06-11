@@ -12,22 +12,24 @@ import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/u
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { useRecordBoardRecordGqlFields } from '@/object-record/record-index/hooks/useRecordBoardRecordGqlFields';
 
+import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
+
+import { combineFilters } from '@/object-record/record-filter/utils/combineFilters';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseLoadRecordIndexBoardProps = {
   objectNameSingular: string;
-  boardFieldMetadataId: string | null;
+  kanbanFieldMetadataItem: FieldMetadataItem;
   recordBoardId: string;
   columnId: string;
 };
 
 export const useLoadRecordIndexBoardColumn = ({
   objectNameSingular,
-  boardFieldMetadataId,
+  kanbanFieldMetadataItem,
   recordBoardId,
   columnId,
 }: UseLoadRecordIndexBoardProps) => {
@@ -69,34 +71,18 @@ export const useLoadRecordIndexBoardColumn = ({
     recordBoardId,
   });
 
-  let recordIndexKanbanFieldMetadataFilter: { [x: string]: any } = {};
+  const recordIndexKanbanFieldMetadataFilterValue = isDefined(
+    recordGroupDefinition?.value,
+  )
+    ? { in: [recordGroupDefinition?.value] }
+    : { is: 'NULL' };
 
-  if (isDefined(boardFieldMetadataId)) {
-    const recordIndexKanbanFieldMetadataItem = objectMetadataItem.fields.find(
-      (field) => field.id === boardFieldMetadataId,
-    );
-
-    if (!isDefined(recordIndexKanbanFieldMetadataItem)) {
-      throw new Error('Record index kanban field metadata item not found');
-    }
-
-    if (!isNonEmptyString(recordIndexKanbanFieldMetadataItem?.name ?? '')) {
-      throw new Error('Record index kanban field metadata item name not found');
-    }
-
-    recordIndexKanbanFieldMetadataFilter = {
-      [recordIndexKanbanFieldMetadataItem.name]: isDefined(
-        recordGroupDefinition?.value,
-      )
-        ? { in: [recordGroupDefinition.value] }
-        : { is: 'NULL' },
-    };
-  }
-
-  const filter = {
-    ...requestFilters,
-    ...recordIndexKanbanFieldMetadataFilter,
-  };
+  const combinedFilters = combineFilters([
+    requestFilters,
+    {
+      [kanbanFieldMetadataItem.name]: recordIndexKanbanFieldMetadataFilterValue,
+    },
+  ]);
 
   const {
     records,
@@ -106,7 +92,7 @@ export const useLoadRecordIndexBoardColumn = ({
     hasNextPage,
   } = useFindManyRecords({
     objectNameSingular,
-    filter,
+    filter: combinedFilters,
     orderBy,
     recordGqlFields,
     limit: 10,

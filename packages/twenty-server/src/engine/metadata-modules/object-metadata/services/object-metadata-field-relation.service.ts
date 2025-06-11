@@ -13,7 +13,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { buildDescriptionForRelationFieldMetadataOnFromField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-from-field.util';
 import { buildDescriptionForRelationFieldMetadataOnToField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-to-field.util';
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import {
   CUSTOM_OBJECT_STANDARD_FIELD_IDS,
   STANDARD_OBJECT_FIELD_IDS,
@@ -33,9 +33,9 @@ const DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS = [
 @Injectable()
 export class ObjectMetadataFieldRelationService {
   constructor(
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(FieldMetadataEntity, 'metadata')
+    @InjectRepository(FieldMetadataEntity, 'core')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
   ) {}
 
@@ -160,6 +160,7 @@ export class ObjectMetadataFieldRelationService {
         standardId: createRelationDeterministicUuid({
           objectId: sourceObjectMetadata.id,
           standardId:
+            // @ts-expect-error legacy noImplicitAny
             STANDARD_OBJECT_FIELD_IDS[targetObjectMetadata.nameSingular].custom,
         }),
         objectMetadataId: targetObjectMetadata.id,
@@ -192,6 +193,7 @@ export class ObjectMetadataFieldRelationService {
     const sourceFieldMetadataToUpdate =
       await this.fieldMetadataRepository.findOneByOrFail({
         standardId:
+          // @ts-expect-error legacy noImplicitAny
           CUSTOM_OBJECT_STANDARD_FIELD_IDS[targetObjectMetadata.namePlural],
         objectMetadataId: sourceObjectMetadata.id,
         workspaceId: workspaceId,
@@ -239,6 +241,7 @@ export class ObjectMetadataFieldRelationService {
     return {
       id: uuidV4(),
       standardId:
+        // @ts-expect-error legacy noImplicitAny
         CUSTOM_OBJECT_STANDARD_FIELD_IDS[relationObjectMetadataNamePlural],
       objectMetadataId: sourceObjectMetadata.id,
       workspaceId: workspaceId,
@@ -250,6 +253,7 @@ export class ObjectMetadataFieldRelationService {
       label: capitalize(relationObjectMetadataNamePlural),
       description,
       icon:
+        // @ts-expect-error legacy noImplicitAny
         STANDARD_OBJECT_ICONS[targetObjectMetadata.nameSingular] ||
         'IconBuildingSkyscraper',
       isNullable: true,
@@ -280,6 +284,7 @@ export class ObjectMetadataFieldRelationService {
     targetObjectMetadata: ObjectMetadataEntity,
   ): Partial<FieldMetadataEntity<FieldMetadataType.RELATION>> {
     const customStandardFieldId =
+      // @ts-expect-error legacy noImplicitAny
       STANDARD_OBJECT_FIELD_IDS[targetObjectMetadata.nameSingular].custom;
 
     if (!customStandardFieldId) {
@@ -318,6 +323,7 @@ export class ObjectMetadataFieldRelationService {
     targetObjectMetadata: ObjectMetadataEntity,
   ) {
     const customStandardFieldId =
+      // @ts-expect-error legacy noImplicitAny
       STANDARD_OBJECT_FIELD_IDS[targetObjectMetadata.nameSingular].custom;
 
     if (!customStandardFieldId) {

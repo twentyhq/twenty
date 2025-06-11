@@ -19,25 +19,26 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { AuthOAuthExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-oauth-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
+import { EnterpriseFeaturesEnabledGuard } from 'src/engine/core-modules/auth/guards/enterprise-features-enabled.guard';
 import { OIDCAuthGuard } from 'src/engine/core-modules/auth/guards/oidc-auth.guard';
 import { SAMLAuthGuard } from 'src/engine/core-modules/auth/guards/saml-auth.guard';
-import { EnterpriseFeaturesEnabledGuard } from 'src/engine/core-modules/auth/guards/enterprise-features-enabled.guard';
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
+import { OIDCRequest } from 'src/engine/core-modules/auth/strategies/oidc.auth.strategy';
+import { SAMLRequest } from 'src/engine/core-modules/auth/strategies/saml.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import {
   IdentityProviderType,
   WorkspaceSSOIdentityProvider,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { AuthOAuthExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-oauth-exception.filter';
-import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
-import { SAMLRequest } from 'src/engine/core-modules/auth/strategies/saml.auth.strategy';
-import { OIDCRequest } from 'src/engine/core-modules/auth/strategies/oidc.auth.strategy';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller('auth')
 export class SSOAuthController {
@@ -55,8 +56,9 @@ export class SSOAuthController {
   ) {}
 
   @Get('saml/metadata/:identityProviderId')
-  @UseGuards(EnterpriseFeaturesEnabledGuard)
+  @UseGuards(EnterpriseFeaturesEnabledGuard, PublicEndpointGuard)
   @UseFilters(AuthRestApiExceptionFilter)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async generateMetadata(@Req() req: any): Promise<string | void> {
     return generateServiceProviderMetadata({
       wantAssertionsSigned: false,
@@ -72,7 +74,7 @@ export class SSOAuthController {
   }
 
   @Get('oidc/login/:identityProviderId')
-  @UseGuards(EnterpriseFeaturesEnabledGuard, OIDCAuthGuard)
+  @UseGuards(EnterpriseFeaturesEnabledGuard, OIDCAuthGuard, PublicEndpointGuard)
   @UseFilters(AuthRestApiExceptionFilter)
   async oidcAuth() {
     // As this method is protected by OIDC Auth guard, it will trigger OIDC SSO flow
@@ -80,7 +82,7 @@ export class SSOAuthController {
   }
 
   @Get('saml/login/:identityProviderId')
-  @UseGuards(EnterpriseFeaturesEnabledGuard, SAMLAuthGuard)
+  @UseGuards(EnterpriseFeaturesEnabledGuard, SAMLAuthGuard, PublicEndpointGuard)
   @UseFilters(AuthRestApiExceptionFilter)
   async samlAuth() {
     // As this method is protected by SAML Auth guard, it will trigger SAML SSO flow
@@ -88,14 +90,14 @@ export class SSOAuthController {
   }
 
   @Get('oidc/callback')
-  @UseGuards(EnterpriseFeaturesEnabledGuard, OIDCAuthGuard)
+  @UseGuards(EnterpriseFeaturesEnabledGuard, OIDCAuthGuard, PublicEndpointGuard)
   @UseFilters(AuthOAuthExceptionFilter)
   async oidcAuthCallback(@Req() req: OIDCRequest, @Res() res: Response) {
     return await this.authCallback(req, res);
   }
 
   @Post('saml/callback/:identityProviderId')
-  @UseGuards(EnterpriseFeaturesEnabledGuard, SAMLAuthGuard)
+  @UseGuards(EnterpriseFeaturesEnabledGuard, SAMLAuthGuard, PublicEndpointGuard)
   @UseFilters(AuthOAuthExceptionFilter)
   async samlAuthCallback(@Req() req: SAMLRequest, @Res() res: Response) {
     try {
@@ -156,14 +158,16 @@ export class SSOAuthController {
           workspace: currentWorkspace,
         }),
       );
-    } catch (err) {
+    } catch (error) {
       return res.redirect(
-        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
-          err,
-          this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
-            workspaceIdentityProvider?.workspace,
-          ),
-        ),
+        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
+          error,
+          workspace:
+            this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
+              workspaceIdentityProvider?.workspace,
+            ),
+          pathname: '/verify',
+        }),
       );
     }
   }

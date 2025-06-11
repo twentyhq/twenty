@@ -39,6 +39,7 @@ export class WorkspaceInsertQueryBuilder<
     ) as this;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   override execute(): Promise<any> {
     validateQueryIsPermittedOrThrow(
       this.expressionMap,

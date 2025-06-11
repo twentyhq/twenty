@@ -17,7 +17,7 @@ import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
-import { FieldMetadataType } from '~/generated/graphql';
+import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 
 type WorkflowEditActionCreateRecordProps = {
   action: WorkflowCreateRecordAction;
@@ -61,10 +61,11 @@ export const WorkflowEditActionCreateRecord = ({
 }: WorkflowEditActionCreateRecordProps) => {
   const { getIcon } = useIcons();
 
-  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
+  const { activeNonSystemObjectMetadataItems } =
+    useFilteredObjectMetadataItems();
 
   const availableMetadata: Array<SelectOption<string>> =
-    activeObjectMetadataItems.map((item) => ({
+    activeNonSystemObjectMetadataItems.map((item) => ({
       Icon: getIcon(item.icon),
       label: item.labelPlural,
       value: item.nameSingular,
@@ -91,11 +92,8 @@ export const WorkflowEditActionCreateRecord = ({
   const viewFields = indexView?.viewFields ?? [];
 
   const inlineFieldMetadataItems = objectMetadataItem?.fields
-    .filter(
-      (fieldMetadataItem) =>
-        fieldMetadataItem.type !== FieldMetadataType.RELATION &&
-        !fieldMetadataItem.isSystem &&
-        fieldMetadataItem.isActive,
+    .filter((fieldMetadataItem) =>
+      shouldDisplayFormField({ fieldMetadataItem, actionType: action.type }),
     )
     .map((fieldMetadataItem) => {
       const viewField = viewFields.find(

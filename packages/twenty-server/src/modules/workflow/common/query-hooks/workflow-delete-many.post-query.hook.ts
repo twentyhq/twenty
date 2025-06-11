@@ -1,4 +1,4 @@
-import { WorkspaceQueryPostHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
+import { WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
@@ -8,10 +8,10 @@ import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/work
 
 @WorkspaceQueryHook({
   key: `workflow.deleteMany`,
-  type: WorkspaceQueryHookType.PostHook,
+  type: WorkspaceQueryHookType.POST_HOOK,
 })
 export class WorkflowDeleteManyPostQueryHook
-  implements WorkspaceQueryPostHookInstance
+  implements WorkspacePostQueryHookInstance
 {
   constructor(
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
@@ -22,9 +22,10 @@ export class WorkflowDeleteManyPostQueryHook
     _objectName: string,
     payload: WorkflowWorkspaceEntity[],
   ): Promise<void> {
-    this.workflowCommonWorkspaceService.cleanWorkflowsSubEntities(
-      payload.map((workflow) => workflow.id),
-      authContext.workspace.id,
-    );
+    this.workflowCommonWorkspaceService.handleWorkflowSubEntities({
+      workflowIds: payload.map((workflow) => workflow.id),
+      workspaceId: authContext.workspace.id,
+      operation: 'delete',
+    });
   }
 }

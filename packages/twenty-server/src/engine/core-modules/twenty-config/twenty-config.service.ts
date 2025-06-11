@@ -1,6 +1,9 @@
 import { Injectable, Logger, Optional } from '@nestjs/common';
 
 import { isString } from 'class-validator';
+import { LoggerOptions } from 'typeorm/logger/LoggerOptions';
+
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { CONFIG_VARIABLES_MASKING_CONFIG } from 'src/engine/core-modules/twenty-config/constants/config-variables-masking-config';
@@ -196,6 +199,17 @@ export class TwentyConfigService {
     }
   }
 
+  getLoggingConfig(): LoggerOptions {
+    switch (this.get('NODE_ENV')) {
+      case NodeEnvironment.DEVELOPMENT:
+        return ['query', 'error'];
+      case NodeEnvironment.TEST:
+        return [];
+      default:
+        return ['error'];
+    }
+  }
+
   private validateNotEnvOnly<T extends keyof ConfigVariables>(
     key: T,
     operation: string,
@@ -237,7 +251,9 @@ export class TwentyConfigService {
 
   private maskSensitiveValue<T extends keyof ConfigVariables>(
     key: T,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): any {
     if (!isString(value) || !(key in CONFIG_VARIABLES_MASKING_CONFIG)) {
       return value;

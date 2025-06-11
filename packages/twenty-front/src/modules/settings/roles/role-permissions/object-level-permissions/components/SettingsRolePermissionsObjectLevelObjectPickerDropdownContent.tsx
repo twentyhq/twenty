@@ -1,5 +1,5 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -19,7 +19,7 @@ export const SettingsRolePermissionsObjectLevelObjectPickerDropdownContent = ({
 }: SettingsRolePermissionsObjectLevelObjectPickerDropdownContentProps) => {
   const [searchFilter, setSearchFilter] = useState('');
 
-  const { alphaSortedActiveObjectMetadataItems: objectMetadataItems } =
+  const { alphaSortedActiveNonSystemObjectMetadataItems: objectMetadataItems } =
     useFilteredObjectMetadataItems();
 
   const { getIcon } = useIcons();
@@ -37,7 +37,7 @@ export const SettingsRolePermissionsObjectLevelObjectPickerDropdownContent = ({
   );
 
   return (
-    <DropdownMenu>
+    <DropdownContent>
       <DropdownMenuSearchInput
         value={searchFilter}
         onChange={handleSearchFilterChange}
@@ -54,6 +54,6 @@ export const SettingsRolePermissionsObjectLevelObjectPickerDropdownContent = ({
           />
         ))}
       </DropdownMenuItemsContainer>
-    </DropdownMenu>
+    </DropdownContent>
   );
 };

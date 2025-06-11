@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'class-validator';
 import isEmpty from 'lodash.isempty';
 
-import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Injectable()
@@ -35,6 +35,7 @@ export class ViewService {
       );
 
     for (const viewId of viewsIds) {
+      // @ts-expect-error legacy noImplicitAny
       const position = positions?.[viewId];
       const newFieldInThisView = await viewFieldRepository.findBy({
         fieldMetadataId: fieldId,
@@ -139,7 +140,7 @@ export class ViewService {
       { kanbanAggregateOperationFieldMetadataId: fieldMetadataId },
       {
         kanbanAggregateOperationFieldMetadataId: null,
-        kanbanAggregateOperation: AGGREGATE_OPERATIONS.count,
+        kanbanAggregateOperation: AggregateOperations.COUNT,
       },
     );
   }

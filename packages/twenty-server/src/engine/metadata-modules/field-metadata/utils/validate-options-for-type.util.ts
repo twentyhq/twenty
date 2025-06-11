@@ -59,6 +59,7 @@ export const validateOptionsForType = (
   const isValid = options.every((option) => {
     return validators.some((validator) => {
       const optionsInstance = plainToInstance<
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         any,
         FieldMetadataDefaultOption | FieldMetadataComplexOption
       >(validator, option);

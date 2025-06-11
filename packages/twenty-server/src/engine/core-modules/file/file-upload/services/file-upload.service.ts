@@ -1,22 +1,34 @@
+import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 
 import DOMPurify from 'dompurify';
+import FileType from 'file-type';
 import { JSDOM } from 'jsdom';
 import sharp from 'sharp';
-import { v4 as uuidV4 } from 'uuid';
+import { v4 } from 'uuid';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { settings } from 'src/engine/constants/settings';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { getCropSize } from 'src/utils/image';
+import { getCropSize, getImageBufferFromUrl } from 'src/utils/image';
+import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
+
+export type SignedFile = { path: string; token: string };
+
+export type SignedFilesResult = {
+  name: string;
+  mimeType: string | undefined;
+  files: SignedFile[];
+};
 
 @Injectable()
 export class FileUploadService {
   constructor(
     private readonly fileStorage: FileStorageService,
     private readonly fileService: FileService,
+    private readonly httpService: HttpService,
   ) {}
 
   private async _uploadFile({
@@ -69,10 +81,8 @@ export class FileUploadService {
     mimeType: string | undefined;
     fileFolder: FileFolder;
     workspaceId: string;
-  }) {
-    const ext = filename.split('.')?.[1];
-    const id = uuidV4();
-    const name = `${id}${ext ? `.${ext}` : ''}`;
+  }): Promise<SignedFilesResult> {
+    const { ext, name } = buildFileInfo(filename);
     const folder = this.getWorkspaceFolderName(workspaceId, fileFolder);
 
     await this._uploadFile({
@@ -82,15 +92,41 @@ export class FileUploadService {
       folder,
     });
 
-    const signedPayload = await this.fileService.encodeFileToken({
+    const signedPayload = this.fileService.encodeFileToken({
+      filename: name,
       workspaceId: workspaceId,
     });
 
     return {
-      id,
+      name,
       mimeType,
-      path: `${fileFolder}/${name}?token=${signedPayload}`,
+      files: [{ path: `${fileFolder}/${name}`, token: signedPayload }],
     };
+  }
+
+  async uploadImageFromUrl({
+    imageUrl,
+    fileFolder,
+    workspaceId,
+  }: {
+    imageUrl: string;
+    fileFolder: FileFolder;
+    workspaceId: string;
+  }) {
+    const buffer = await getImageBufferFromUrl(
+      imageUrl,
+      this.httpService.axiosRef,
+    );
+
+    const type = await FileType.fromBuffer(buffer);
+
+    return await this.uploadImage({
+      file: buffer,
+      filename: `${v4()}.${type?.ext}`,
+      mimeType: type?.mime,
+      fileFolder,
+      workspaceId,
+    });
   }
 
   async uploadImage({
@@ -105,10 +141,8 @@ export class FileUploadService {
     mimeType: string | undefined;
     fileFolder: FileFolder;
     workspaceId: string;
-  }) {
-    const ext = filename.split('.')?.[1];
-    const id = uuidV4();
-    const name = `${id}${ext ? `.${ext}` : ''}`;
+  }): Promise<SignedFilesResult> {
+    const { name } = buildFileInfo(filename);
 
     const cropSizes = settings.storage.imageCropSizes[fileFolder];
 
@@ -125,14 +159,22 @@ export class FileUploadService {
       ),
     );
 
-    const paths: Array<string> = [];
+    const files: Array<SignedFile> = [];
 
     await Promise.all(
       images.map(async (image, index) => {
         const buffer = await image.toBuffer();
         const folder = this.getWorkspaceFolderName(workspaceId, fileFolder);
 
-        paths.push(`${fileFolder}/${cropSizes[index]}/${name}`);
+        const token = this.fileService.encodeFileToken({
+          filename: name,
+          workspaceId: workspaceId,
+        });
+
+        files.push({
+          path: `${fileFolder}/${cropSizes[index]}/${name}`,
+          token,
+        });
 
         return this._uploadFile({
           file: buffer,
@@ -144,9 +186,9 @@ export class FileUploadService {
     );
 
     return {
-      id,
+      name,
       mimeType,
-      paths,
+      files,
     };
   }
 

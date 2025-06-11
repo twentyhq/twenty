@@ -1,28 +1,4 @@
 export const fetchMetadataFields = (objectNamePlural: string) => {
-  const fromRelations = `
-          toObjectMetadata {
-            id
-            dataSourceId
-            nameSingular
-            namePlural
-            isSystem
-            isRemote
-          }
-          toFieldMetadataId
-        `;
-
-  const toRelations = `
-          fromObjectMetadata {
-            id
-            dataSourceId
-            nameSingular
-            namePlural
-            isSystem
-            isRemote
-          }
-          fromFieldMetadataId
-        `;
-
   const fields = `
           type
           name
@@ -35,18 +11,29 @@ export const fetchMetadataFields = (objectNamePlural: string) => {
           isNullable
           createdAt
           updatedAt
-          fromRelationMetadata {
-            id
-            relationType
-            ${fromRelations}
-          }
-          toRelationMetadata {
-            id
-            relationType
-            ${toRelations}
-          }
           defaultValue
           options
+          relation {
+            type
+            targetObjectMetadata {
+              id
+              nameSingular
+              namePlural
+            }
+            targetFieldMetadata {
+              id
+              name
+            }
+            sourceObjectMetadata {
+              id
+              nameSingular
+              namePlural
+            }
+            sourceFieldMetadata {
+              id
+              name
+            }
+          }
         `;
 
   switch (objectNamePlural) {
@@ -77,12 +64,5 @@ export const fetchMetadataFields = (objectNamePlural: string) => {
         `;
     case 'fields':
       return fields;
-    case 'relationMetadata':
-      return `
-          id
-          relationType
-          ${fromRelations}
-          ${toRelations}
-        `;
   }
 };

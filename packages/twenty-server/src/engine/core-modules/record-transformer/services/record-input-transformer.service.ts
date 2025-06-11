@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
-import { ServerBlockNoteEditor } from '@blocknote/server-util';
+import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { lowercaseDomain } from 'src/engine/api/graphql/workspace-query-runner/utils/query-runner-links.util';
+import { removeEmptyLinks } from 'src/engine/core-modules/record-transformer/utils/remove-empty-links';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
-import { LinkMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
+import { LinkMetadataNullable } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import {
   RichTextV2Metadata,
   richTextV2ValueSchema,
@@ -21,8 +22,10 @@ export class RecordInputTransformerService {
     recordInput,
     objectMetadataMapItem,
   }: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     recordInput: Record<string, any>;
     objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   }): Promise<Record<string, any>> {
     if (!recordInput) {
       return recordInput;
@@ -63,7 +66,9 @@ export class RecordInputTransformerService {
 
   async transformFieldValue(
     fieldType: FieldMetadataType,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<any> {
     if (!isDefined(value)) {
       return value;
@@ -90,9 +95,12 @@ export class RecordInputTransformerService {
   }
 
   private async transformRichTextV2Value(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     richTextValue: any,
   ): Promise<RichTextV2Metadata> {
     const parsedValue = richTextV2ValueSchema.parse(richTextValue);
+
+    const { ServerBlockNoteEditor } = await import('@blocknote/server-util');
 
     const serverBlockNoteEditor = ServerBlockNoteEditor.create();
 
@@ -124,39 +132,50 @@ export class RecordInputTransformerService {
     };
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private transformLinksValue(value: any): any {
     if (!value) {
       return value;
     }
 
-    const newPrimaryLinkUrl = lowercaseDomain(value?.primaryLinkUrl);
+    const primaryLinkUrlRaw = value.primaryLinkUrl as string | null;
+    const primaryLinkLabelRaw = value.primaryLinkLabel as string | null;
+    const secondaryLinksRaw = value.secondaryLinks as string | null;
 
-    let secondaryLinks = value?.secondaryLinks;
+    let secondaryLinksArray: LinkMetadataNullable[] | null = null;
 
-    if (secondaryLinks) {
+    if (isNonEmptyString(secondaryLinksRaw)) {
       try {
-        const secondaryLinksArray = JSON.parse(secondaryLinks);
-
-        secondaryLinks = JSON.stringify(
-          secondaryLinksArray.map((link: LinkMetadata) => {
-            return {
-              ...link,
-              url: lowercaseDomain(link.url),
-            };
-          }),
-        );
+        secondaryLinksArray = JSON.parse(secondaryLinksRaw);
       } catch {
         /* empty */
       }
     }
 
+    const { primaryLinkLabel, primaryLinkUrl, secondaryLinks } =
+      removeEmptyLinks({
+        primaryLinkUrl: primaryLinkUrlRaw,
+        primaryLinkLabel: primaryLinkLabelRaw,
+        secondaryLinks: secondaryLinksArray,
+      });
+
     return {
       ...value,
-      primaryLinkUrl: newPrimaryLinkUrl,
-      secondaryLinks,
+      primaryLinkUrl: isDefined(primaryLinkUrl)
+        ? lowercaseDomain(primaryLinkUrl)
+        : primaryLinkUrl,
+      primaryLinkLabel,
+      secondaryLinks: JSON.stringify(
+        secondaryLinks?.map((link) => ({
+          ...link,
+          url: isDefined(link.url) ? lowercaseDomain(link.url) : link.url,
+        })),
+      ),
     };
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private transformEmailsValue(value: any): any {
     if (!value) {
       return value;
@@ -185,6 +204,7 @@ export class RecordInputTransformerService {
     };
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private stringifySubFields(fieldMetadataType: FieldMetadataType, value: any) {
     const compositeType = compositeTypeDefinitions.get(fieldMetadataType);
 
@@ -213,6 +233,7 @@ export class RecordInputTransformerService {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private parseSubFields(fieldMetadataType: FieldMetadataType, value: any) {
     const compositeType = compositeTypeDefinitions.get(fieldMetadataType);
 
@@ -221,6 +242,7 @@ export class RecordInputTransformerService {
     }
 
     return Object.entries(value).reduce(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (acc, [subFieldName, subFieldValue]: [string, any]) => {
         const subFieldType = compositeType.properties.find(
           (property) => property.name === subFieldName,

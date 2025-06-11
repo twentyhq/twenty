@@ -18,9 +18,10 @@ import { GoogleProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller('auth/google')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -35,26 +36,28 @@ export class GoogleAuthController {
   ) {}
 
   @Get()
-  @UseGuards(GoogleProviderEnabledGuard, GoogleOauthGuard)
+  @UseGuards(GoogleProviderEnabledGuard, GoogleOauthGuard, PublicEndpointGuard)
   async googleAuth() {
     // As this method is protected by Google Auth guard, it will trigger Google SSO flow
     return;
   }
 
   @Get('redirect')
-  @UseGuards(GoogleProviderEnabledGuard, GoogleOauthGuard)
+  @UseGuards(GoogleProviderEnabledGuard, GoogleOauthGuard, PublicEndpointGuard)
   @UseFilters(AuthOAuthExceptionFilter)
   async googleAuthRedirect(@Req() req: GoogleRequest, @Res() res: Response) {
     const {
       firstName,
       lastName,
-      email,
+      email: rawEmail,
       picture,
       workspaceInviteHash,
       workspaceId,
       billingCheckoutSessionState,
       locale,
     } = req.user;
+
+    const email = rawEmail.toLowerCase();
 
     const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
       workspaceId,
@@ -116,14 +119,16 @@ export class GoogleAuthController {
           billingCheckoutSessionState,
         }),
       );
-    } catch (err) {
+    } catch (error) {
       return res.redirect(
-        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions(
-          err,
-          this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
-            currentWorkspace,
-          ),
-        ),
+        this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
+          error,
+          workspace:
+            this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
+              currentWorkspace,
+            ),
+          pathname: '/verify',
+        }),
       );
     }
   }

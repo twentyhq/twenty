@@ -13,16 +13,18 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 export class ObjectPermissionService {
   constructor(
-    @InjectRepository(ObjectPermissionEntity, 'metadata')
+    @InjectRepository(ObjectPermissionEntity, 'core')
     private readonly objectPermissionRepository: Repository<ObjectPermissionEntity>,
-    @InjectRepository(RoleEntity, 'metadata')
+    @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
 
   public async upsertObjectPermissions({
@@ -36,6 +38,30 @@ export class ObjectPermissionService {
       await this.validateRoleIsEditableOrThrow({
         roleId: input.roleId,
         workspaceId,
+      });
+
+      const { byId: objectMetadataMapsById } =
+        await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
+          workspaceId,
+        );
+
+      input.objectPermissions.forEach((objectPermission) => {
+        const objectMetadataForObjectPermission =
+          objectMetadataMapsById[objectPermission.objectMetadataId];
+
+        if (!isDefined(objectMetadataForObjectPermission)) {
+          throw new PermissionsException(
+            'Object metadata id not found',
+            PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND,
+          );
+        }
+
+        if (objectMetadataForObjectPermission.isSystem === true) {
+          throw new PermissionsException(
+            PermissionsExceptionMessage.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT,
+            PermissionsExceptionCode.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT,
+          );
+        }
       });
 
       const objectPermissions = input.objectPermissions.map(
@@ -63,6 +89,7 @@ export class ObjectPermissionService {
         {
           workspaceId,
           roleIds: [input.roleId],
+          ignoreLock: true,
         },
       );
 

@@ -25,6 +25,9 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
@@ -42,11 +45,10 @@ import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
@@ -82,6 +84,7 @@ export class UserResolver {
     private readonly userRoleService: UserRoleService,
     private readonly permissionsService: PermissionsService,
     private readonly deletedWorkspaceMemberTranspiler: DeletedWorkspaceMemberTranspiler,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @Query(() => User)
@@ -110,6 +113,7 @@ export class UserResolver {
     }
     let settingsPermissions = {};
     let objectRecordsPermissions = {};
+    let objectPermissions: ObjectPermissionDTO[] = [];
 
     if (
       ![
@@ -117,27 +121,58 @@ export class UserResolver {
         WorkspaceActivationStatus.ONGOING_CREATION,
       ].includes(workspace.activationStatus)
     ) {
-      const permissions =
-        await this.permissionsService.getUserWorkspacePermissions({
-          userWorkspaceId: currentUserWorkspace.id,
-          workspaceId: workspace.id,
-        });
+      const isPermissionsV2Enabled =
+        await this.featureFlagService.isFeatureEnabled(
+          FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
+          workspace.id,
+        );
 
-      settingsPermissions = permissions.settingsPermissions;
-      objectRecordsPermissions = permissions.objectRecordsPermissions;
+      if (isPermissionsV2Enabled) {
+        const permissions =
+          await this.permissionsService.getUserWorkspacePermissionsV2({
+            userWorkspaceId: currentUserWorkspace.id,
+            workspaceId: workspace.id,
+          });
+
+        settingsPermissions = permissions.settingsPermissions;
+        objectPermissions = Object.entries(permissions.objectPermissions).map(
+          ([objectMetadataId, permissions]) => ({
+            objectMetadataId,
+            canReadObjectRecords: permissions.canRead,
+            canUpdateObjectRecords: permissions.canUpdate,
+            canSoftDeleteObjectRecords: permissions.canSoftDelete,
+            canDestroyObjectRecords: permissions.canDestroy,
+          }),
+        );
+        objectRecordsPermissions = permissions.objectRecordsPermissions;
+      } else {
+        const permissions =
+          await this.permissionsService.getUserWorkspacePermissions({
+            userWorkspaceId: currentUserWorkspace.id,
+            workspaceId: workspace.id,
+          });
+
+        settingsPermissions = permissions.settingsPermissions;
+        objectRecordsPermissions = permissions.objectRecordsPermissions;
+      }
     }
 
     const grantedSettingsPermissions: SettingPermissionType[] = (
       Object.keys(settingsPermissions) as SettingPermissionType[]
-    ).filter((feature) => settingsPermissions[feature] === true);
+    )
+      // @ts-expect-error legacy noImplicitAny
+      .filter((feature) => settingsPermissions[feature] === true);
 
     const grantedObjectRecordsPermissions = (
       Object.keys(objectRecordsPermissions) as PermissionsOnAllObjectRecords[]
-    ).filter((permission) => objectRecordsPermissions[permission] === true);
+    )
+      // @ts-expect-error legacy noImplicitAny
+      .filter((permission) => objectRecordsPermissions[permission] === true);
 
     currentUserWorkspace.settingsPermissions = grantedSettingsPermissions;
     currentUserWorkspace.objectRecordsPermissions =
       grantedObjectRecordsPermissions;
+    currentUserWorkspace.objectPermissions = objectPermissions;
     user.currentUserWorkspace = currentUserWorkspace;
 
     return {
@@ -150,6 +185,7 @@ export class UserResolver {
   async userVars(
     @Parent() user: User,
     @AuthWorkspace() workspace: Workspace,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Promise<Record<string, any>> {
     const userVars = await this.userVarService.getAll({
       userId: user.id,
@@ -182,12 +218,10 @@ export class UserResolver {
     );
 
     if (workspaceMember && workspaceMember.avatarUrl) {
-      const avatarUrlToken = this.fileService.encodeFileToken({
-        workspaceMemberId: workspaceMember.id,
+      workspaceMember.avatarUrl = this.fileService.signFileUrl({
+        url: workspaceMember.avatarUrl,
         workspaceId: workspace.id,
       });
-
-      workspaceMember.avatarUrl = `${workspaceMember.avatarUrl}?token=${avatarUrlToken}`;
     }
 
     // TODO Refactor to be transpiled to WorkspaceMember instead
@@ -231,12 +265,10 @@ export class UserResolver {
 
     for (const workspaceMemberEntity of workspaceMemberEntities) {
       if (workspaceMemberEntity.avatarUrl) {
-        const avatarUrlToken = this.fileService.encodeFileToken({
-          workspaceMemberId: workspaceMemberEntity.id,
+        workspaceMemberEntity.avatarUrl = this.fileService.signFileUrl({
+          url: workspaceMemberEntity.avatarUrl,
           workspaceId: workspace.id,
         });
-
-        workspaceMemberEntity.avatarUrl = `${workspaceMemberEntity.avatarUrl}?token=${avatarUrlToken}`;
       }
 
       // TODO Refactor to be transpiled to WorkspaceMember instead
@@ -302,7 +334,7 @@ export class UserResolver {
   })
   supportUserHash(@Parent() parent: User): string | null {
     if (
-      this.twentyConfigService.get('SUPPORT_DRIVER') !== SupportDriver.Front
+      this.twentyConfigService.get('SUPPORT_DRIVER') !== SupportDriver.FRONT
     ) {
       return null;
     }
@@ -311,13 +343,13 @@ export class UserResolver {
     return getHMACKey(parent.email, key);
   }
 
-  @Mutation(() => String)
+  @Mutation(() => SignedFileDTO)
   async uploadProfilePicture(
     @AuthUser() { id }: User,
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename, mimetype }: FileUpload,
-  ): Promise<string> {
+  ): Promise<SignedFileDTO> {
     if (!id) {
       throw new Error('User not found');
     }
@@ -326,7 +358,7 @@ export class UserResolver {
     const buffer = await streamToBuffer(stream);
     const fileFolder = FileFolder.ProfilePicture;
 
-    const { paths } = await this.fileUploadService.uploadImage({
+    const { files } = await this.fileUploadService.uploadImage({
       file: buffer,
       filename,
       mimeType: mimetype,
@@ -334,11 +366,11 @@ export class UserResolver {
       workspaceId,
     });
 
-    const fileToken = this.fileService.encodeFileToken({
-      workspaceId: workspaceId,
-    });
+    if (!files.length) {
+      throw new Error('Failed to upload profile picture');
+    }
 
-    return `${paths[0]}?token=${fileToken}`;
+    return files[0];
   }
 
   @Mutation(() => User)
@@ -350,15 +382,8 @@ export class UserResolver {
   @ResolveField(() => OnboardingStatus)
   async onboardingStatus(
     @Parent() user: User,
-    @OriginHeader() origin: string,
+    @AuthWorkspace() workspace: Workspace,
   ): Promise<OnboardingStatus> {
-    const workspace =
-      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
-        origin,
-      );
-
-    workspaceValidator.assertIsDefinedOrThrow(workspace);
-
     return this.onboardingService.getOnboardingStatus(user, workspace);
   }
 

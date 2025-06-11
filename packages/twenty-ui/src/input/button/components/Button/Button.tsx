@@ -6,6 +6,7 @@ import { ButtonHotkeys } from '@ui/input/button/components/Button/internal/Butto
 import { ButtonIcon } from '@ui/input/button/components/Button/internal/ButtonIcon';
 import { ButtonSoon } from '@ui/input/button/components/Button/internal/ButtonSoon';
 import { useIsMobile } from '@ui/utilities';
+import { ClickOutsideAttributes } from '@ui/utilities/types/ClickOutsideAttributes';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -37,7 +38,8 @@ export type ButtonProps = {
   hotkeys?: string[];
   ariaLabel?: string;
   isLoading?: boolean;
-} & React.ComponentProps<'button'>;
+} & Pick<React.ComponentProps<'button'>, 'type'> &
+  ClickOutsideAttributes;
 
 const StyledButton = styled('button', {
   shouldForwardProp: (prop) =>
@@ -434,6 +436,8 @@ export const Button = ({
   to,
   target,
   dataTestId,
+  dataClickOutsideId,
+  dataGloballyPreventClickOutside,
   hotkeys,
   ariaLabel,
   type,
@@ -467,6 +471,8 @@ export const Button = ({
         as={to ? Link : 'button'}
         target={target}
         data-testid={dataTestId}
+        data-click-outside-id={dataClickOutsideId}
+        data-globally-prevent-click-outside={dataGloballyPreventClickOutside}
         aria-label={ariaLabel}
         type={type}
         isLoading={isLoading}

@@ -4,9 +4,9 @@ import {
 } from 'test/integration/constants/test-person-ids.constants';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
-import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { TEST_COMPANY_1_ID } from 'test/integration/constants/test-company-ids.constants';
 import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
+import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 
 describe('Core REST API Update One endpoint', () => {
   const updatedData = {
@@ -115,6 +115,7 @@ describe('Core REST API Update One endpoint', () => {
         expect(updatedPerson.company.people).toBeDefined();
 
         const depth2Person = updatedPerson.company.people.find(
+          // @ts-expect-error legacy noImplicitAny
           (p) => p.id === updatedPerson.id,
         );
 

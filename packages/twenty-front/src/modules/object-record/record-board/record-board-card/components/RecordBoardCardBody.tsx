@@ -51,6 +51,7 @@ export const RecordBoardCardBody = ({
                 fieldName: fieldDefinition.metadata.fieldName,
                 fieldType: fieldDefinition.type,
                 isRecordReadOnly,
+                isCustom: fieldDefinition.metadata.isCustom,
               }),
               fieldDefinition: {
                 disableTooltip: false,
@@ -67,6 +68,7 @@ export const RecordBoardCardBody = ({
               },
               useUpdateRecord: useUpdateOneRecordHook,
               isDisplayModeFixHeight: true,
+              triggerEvent: 'CLICK',
             }}
           >
             <RecordFieldComponentInstanceContext.Provider

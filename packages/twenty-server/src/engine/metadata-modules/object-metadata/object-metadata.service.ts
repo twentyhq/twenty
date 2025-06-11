@@ -50,10 +50,10 @@ import { CreateObjectInput } from './dtos/create-object.input';
 @Injectable()
 export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEntity> {
   constructor(
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
 
-    @InjectRepository(FieldMetadataEntity, 'metadata')
+    @InjectRepository(FieldMetadataEntity, 'core')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
 
     private readonly remoteTableRelationsService: RemoteTableRelationsService,
@@ -214,6 +214,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
       workspaceId: objectMetadataInput.workspaceId,
+      ignoreLock: true,
     });
 
     return createdObjectMetadata;
@@ -342,14 +343,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         'fields.object',
         'fields.relationTargetFieldMetadata',
         'fields.relationTargetFieldMetadata.object',
-        'fromRelations.fromFieldMetadata',
-        'fromRelations.toFieldMetadata',
-        'toRelations.fromFieldMetadata',
-        'toRelations.toFieldMetadata',
-        'fromRelations.fromObjectMetadata',
-        'fromRelations.toObjectMetadata',
-        'toRelations.fromObjectMetadata',
-        'toRelations.toObjectMetadata',
       ],
       where: {
         id: input.id,
@@ -402,6 +395,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
       workspaceId,
+      ignoreLock: true,
     });
 
     return objectMetadata;
@@ -412,11 +406,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     options: FindOneOptions<ObjectMetadataEntity>,
   ): Promise<ObjectMetadataEntity | null> {
     return this.objectMetadataRepository.findOne({
-      relations: [
-        'fields',
-        'fields.fromRelationMetadata',
-        'fields.toRelationMetadata',
-      ],
+      relations: ['fields'],
       ...options,
       where: {
         ...options.where,
@@ -433,9 +423,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       relations: [
         'fields.object',
         'fields',
-        'fields.fromRelationMetadata',
-        'fields.toRelationMetadata',
-        'fields.fromRelationMetadata.toObjectMetadata',
+        'fields.relationTargetObjectMetadata',
       ],
       ...options,
       where: {
@@ -447,12 +435,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
   public async findMany(options?: FindManyOptions<ObjectMetadataEntity>) {
     return this.objectMetadataRepository.find({
-      relations: [
-        'fields',
-        'fields.fromRelationMetadata',
-        'fields.toRelationMetadata',
-        'fields.fromRelationMetadata.toObjectMetadata',
-      ],
+      relations: ['fields'],
       ...options,
       where: {
         ...options?.where,
@@ -472,6 +455,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         acc[object.standardId ?? ''] = {
           id: object.id,
           fields: object.fields.reduce((acc, field) => {
+            // @ts-expect-error legacy noImplicitAny
             acc[field.standardId ?? ''] = field.id;
 
             return acc;
@@ -606,6 +590,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     }
 
     const translationValue =
+      // @ts-expect-error legacy noImplicitAny
       objectMetadata.standardOverrides?.translations?.[locale]?.[labelKey];
 
     if (isDefined(translationValue)) {

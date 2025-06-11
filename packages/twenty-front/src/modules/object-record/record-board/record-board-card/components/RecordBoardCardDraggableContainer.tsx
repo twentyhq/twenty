@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { Draggable } from '@hello-pangea/dnd';
 import { useContext } from 'react';
 
+import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardCard } from '@/object-record/record-board/record-board-card/components/RecordBoardCard';
 import { RecordBoardCardFocusHotkeyEffect } from '@/object-record/record-board/record-board-card/components/RecordBoardCardFocusHotkeyEffect';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
@@ -23,8 +24,11 @@ export const RecordBoardCardDraggableContainer = ({
   recordId: string;
   rowIndex: number;
 }) => {
+  const { objectMetadataItem } = useContext(RecordBoardContext);
+
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId,
+    objectMetadataId: objectMetadataItem.id,
   });
 
   const { columnIndex } = useContext(RecordBoardColumnContext);
@@ -50,7 +54,6 @@ export const RecordBoardCardDraggableContainer = ({
             {...draggableProvided?.dragHandleProps}
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided?.draggableProps}
-            className="record-board-card"
             data-selectable-id={recordId}
             data-select-disable
           >

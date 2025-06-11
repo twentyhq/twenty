@@ -40,6 +40,7 @@ export const NoRoles: Story = {
             },
           });
         }),
+        ...graphqlMocks.handlers,
       ],
     },
   },

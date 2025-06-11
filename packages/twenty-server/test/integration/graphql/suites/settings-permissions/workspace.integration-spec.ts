@@ -3,15 +3,15 @@ import request from 'supertest';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 
-import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
 describe('workspace permissions', () => {
-  let originalWorkspaceState;
+  let originalWorkspaceState: Record<string, unknown>;
 
   beforeAll(async () => {
     // Store original workspace state
@@ -25,7 +25,6 @@ describe('workspace permissions', () => {
           logo
           isPublicInviteLinkEnabled
           subdomain
-          isCustomDomainEnabled
         }
       }
     `;
@@ -38,7 +37,7 @@ describe('workspace permissions', () => {
   afterAll(async () => {
     const disablePermissionsQuery = updateFeatureFlagFactory(
       SEED_APPLE_WORKSPACE_ID,
-      'IsPermissionsEnabled',
+      'IS_PERMISSIONS_ENABLED',
       false,
     );
 
@@ -463,7 +462,7 @@ describe('workspace permissions', () => {
               `,
           variables: {
             input: {
-              publicFeatureFlag: 'IsStripeIntegrationEnabled',
+              publicFeatureFlag: 'IS_STRIPE_INTEGRATION_ENABLED',
               value: true,
             },
           },

@@ -9,8 +9,6 @@ import { SpreadsheetImportTableHook } from '@/spreadsheet-import/types/Spreadshe
 import { SpreadsheetImportStep } from '../steps/types/SpreadsheetImportStep';
 
 export type SpreadsheetImportDialogOptions<FieldNames extends string> = {
-  // Is modal visible.
-  isOpen: boolean;
   // callback when RSI is closed before final submit
   onClose: () => void;
   // Field description for requested data

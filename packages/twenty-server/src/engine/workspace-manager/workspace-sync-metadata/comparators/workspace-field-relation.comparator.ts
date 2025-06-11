@@ -183,8 +183,10 @@ export class WorkspaceFieldRelationComparator {
             }
           }
 
+          // @ts-expect-error legacy noImplicitAny
           propertiesMap[fieldId][property] = newValue;
         } else {
+          // @ts-expect-error legacy noImplicitAny
           propertiesMap[fieldId][property] = difference.value;
         }
       }

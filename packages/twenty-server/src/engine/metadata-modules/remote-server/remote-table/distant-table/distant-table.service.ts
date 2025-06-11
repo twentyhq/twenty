@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
 import {
@@ -22,10 +21,6 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 export class DistantTableService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    @InjectRepository(RemoteServerEntity, 'metadata')
-    private readonly remoteServerRepository: Repository<
-      RemoteServerEntity<RemoteServerType>
-    >,
   ) {}
 
   public async fetchDistantTables(
@@ -96,6 +91,7 @@ export class DistantTableService {
           await entityManager.query(`DROP SCHEMA "${tmpSchemaName}" CASCADE`);
 
           return createdForeignTableNames.reduce(
+            // @ts-expect-error legacy noImplicitAny
             (acc, { table_name, column_name, data_type, udt_name }) => {
               if (!acc[table_name]) {
                 acc[table_name] = [];

@@ -46,6 +46,7 @@ describe('people resolvers (integration)', () => {
 
     expect(response.body.data.createPeople).toHaveLength(2);
 
+    // @ts-expect-error legacy noImplicitAny
     response.body.data.createPeople.forEach((person) => {
       expect(person).toHaveProperty('city');
       expect([personCity1, personCity2]).toContain(person.city);
@@ -168,6 +169,7 @@ describe('people resolvers (integration)', () => {
 
     expect(updatedPeople).toHaveLength(2);
 
+    // @ts-expect-error legacy noImplicitAny
     updatedPeople.forEach((person) => {
       expect(person.city).toEqual('Updated City');
     });
@@ -241,6 +243,7 @@ describe('people resolvers (integration)', () => {
 
     expect(deletePeople).toHaveLength(2);
 
+    // @ts-expect-error legacy noImplicitAny
     deletePeople.forEach((person) => {
       expect(person.deletedAt).toBeTruthy();
     });

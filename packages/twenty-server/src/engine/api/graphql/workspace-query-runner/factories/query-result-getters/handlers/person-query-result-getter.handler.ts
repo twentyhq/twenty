@@ -16,14 +16,14 @@ export class PersonQueryResultGetterHandler
       return person;
     }
 
-    const signedPayload = this.fileService.encodeFileToken({
-      personId: person.id,
-      workspaceId: workspaceId,
+    const signedPath = this.fileService.signFileUrl({
+      url: person.avatarUrl,
+      workspaceId,
     });
 
     return {
       ...person,
-      avatarUrl: `${person.avatarUrl}?token=${signedPayload}`,
+      avatarUrl: signedPath,
     };
   }
 }

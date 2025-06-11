@@ -1,7 +1,8 @@
 import { AdvancedFilterAddFilterRuleSelect } from '@/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect';
-import { AdvancedFilterRecordFilterRow } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterRow';
+import { AdvancedFilterRecordFilter } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilter';
 
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
+import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -21,10 +22,12 @@ const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
 
 type AdvancedFilterRecordFilterGroupChildrenProps = {
   recordFilterGroupId: string;
+  VariablePicker?: VariablePickerComponent;
 };
 
 export const AdvancedFilterRecordFilterGroupChildren = ({
   recordFilterGroupId,
+  VariablePicker,
 }: AdvancedFilterRecordFilterGroupChildrenProps) => {
   const { currentRecordFilterGroup, childRecordFilters } =
     useChildRecordFiltersAndRecordFilterGroups({
@@ -42,11 +45,12 @@ export const AdvancedFilterRecordFilterGroupChildren = ({
   return (
     <StyledContainer isGrayBackground={hasParentRecordFilterGroup}>
       {childRecordFilters.map((childRecordFilter, childRecordFilterIndex) => (
-        <AdvancedFilterRecordFilterRow
+        <AdvancedFilterRecordFilter
           key={childRecordFilter.id}
           recordFilter={childRecordFilter}
           recordFilterIndex={childRecordFilterIndex}
           recordFilterGroup={currentRecordFilterGroup}
+          VariablePicker={VariablePicker}
         />
       ))}
       <AdvancedFilterAddFilterRuleSelect

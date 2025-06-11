@@ -4,8 +4,8 @@ import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsW
 import { SettingsNavigationItem } from '@/settings/hooks/useSettingsNavigationItems';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { isDefined } from 'twenty-shared/utils';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsNavigationDrawerItemProps = {
   item: SettingsNavigationItem;
@@ -20,7 +20,7 @@ export const SettingsNavigationDrawerItem = ({
   const pathName = useResolvedPath(href).pathname;
   const isActive = !!useMatch({
     path: pathName,
-    end: !item.matchSubPages,
+    end: item.matchSubPages === false,
   });
 
   if (isDefined(item.isHidden) && item.isHidden) {

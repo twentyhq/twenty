@@ -19,7 +19,7 @@ export const deleteWorkflow = async ({
       operationName: 'DeleteOneWorkflow',
       variables: { idToDelete: workflowId },
       query:
-        'mutation DeleteOneWorkflow($idToDelete: ID!) {\n  deleteWorkflow(id: $idToDelete) {\n    __typename\n    deletedAt\n    id\n  }\n}',
+        'mutation DeleteOneWorkflow($idToDelete: UUID!) {\n  deleteWorkflow(id: $idToDelete) {\n    __typename\n    deletedAt\n    id\n  }\n}',
     },
   });
 };

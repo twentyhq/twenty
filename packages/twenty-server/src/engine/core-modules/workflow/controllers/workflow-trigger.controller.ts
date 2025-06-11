@@ -1,9 +1,18 @@
-import { Controller, Get, Param, Post, Req, UseFilters } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseFilters,
+  UseGuards,
+} from '@nestjs/common';
 
 import { Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkflowTriggerRestApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-rest-api-exception.filter';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
@@ -27,24 +36,36 @@ export class WorkflowTriggerController {
   ) {}
 
   @Post('workflows/:workspaceId/:workflowId')
+  @UseGuards(PublicEndpointGuard)
   async runWorkflowByPostRequest(
+    @Param('workspaceId') workspaceId: string,
     @Param('workflowId') workflowId: string,
     @Req() request: Request,
   ) {
-    return await this.runWorkflow({ workflowId, payload: request.body || {} });
+    return await this.runWorkflow({
+      workflowId,
+      payload: request.body || {},
+      workspaceId,
+    });
   }
 
   @Get('workflows/:workspaceId/:workflowId')
-  async runWorkflowByGetRequest(@Param('workflowId') workflowId: string) {
-    return await this.runWorkflow({ workflowId });
+  @UseGuards(PublicEndpointGuard)
+  async runWorkflowByGetRequest(
+    @Param('workspaceId') workspaceId: string,
+    @Param('workflowId') workflowId: string,
+  ) {
+    return await this.runWorkflow({ workflowId, workspaceId });
   }
 
   private async runWorkflow({
     workflowId,
     payload,
+    workspaceId,
   }: {
     workflowId: string;
     payload?: object;
+    workspaceId: string;
   }) {
     const workflowRepository =
       await this.twentyORMManager.getRepository<WorkflowWorkspaceEntity>(
@@ -57,7 +78,7 @@ export class WorkflowTriggerController {
 
     if (!isDefined(workflow)) {
       throw new WorkflowTriggerException(
-        'Workflow not found',
+        `[Webhook trigger] Workflow ${workflowId} not found in workspace ${workspaceId}`,
         WorkflowTriggerExceptionCode.NOT_FOUND,
       );
     }
@@ -67,7 +88,7 @@ export class WorkflowTriggerController {
       workflow.lastPublishedVersionId === ''
     ) {
       throw new WorkflowTriggerException(
-        'Workflow has not been activated',
+        `[Webhook trigger] Workflow ${workflowId} has not been activated in workspace ${workspaceId}`,
         WorkflowTriggerExceptionCode.INVALID_WORKFLOW_STATUS,
       );
     }
@@ -82,21 +103,21 @@ export class WorkflowTriggerController {
 
     if (!isDefined(workflowVersion)) {
       throw new WorkflowTriggerException(
-        'Workflow version not found',
+        `[Webhook trigger] No workflow version activated for workflow ${workflowId} in workspace ${workspaceId}`,
         WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
       );
     }
 
     if (workflowVersion.trigger?.type !== WorkflowTriggerType.WEBHOOK) {
       throw new WorkflowTriggerException(
-        'Workflow does not have a Webhook trigger',
+        `[Webhook trigger] Workflow ${workflowId} does not have a Webhook trigger in workspace ${workspaceId}`,
         WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
       );
     }
 
     if (workflowVersion.status !== WorkflowVersionStatus.ACTIVE) {
       throw new WorkflowTriggerException(
-        'Workflow version is not active',
+        `[Webhook trigger] Workflow version ${workflowVersion.id} is not active in workspace ${workspaceId}`,
         WorkflowTriggerExceptionCode.INVALID_WORKFLOW_STATUS,
       );
     }

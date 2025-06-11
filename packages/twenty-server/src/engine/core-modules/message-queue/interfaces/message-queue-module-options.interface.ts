@@ -19,6 +19,7 @@ export interface BullMQDriverFactoryOptions {
 
 export interface SyncDriverFactoryOptions {
   type: MessageQueueDriverType.Sync;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   options: Record<string, any>;
 }
 

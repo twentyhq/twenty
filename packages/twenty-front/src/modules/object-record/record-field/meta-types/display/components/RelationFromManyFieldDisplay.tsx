@@ -10,17 +10,16 @@ import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/me
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { pascalCase } from '~/utils/string/pascalCase';
 
 export const RelationFromManyFieldDisplay = () => {
   const { fieldValue, fieldDefinition, generateRecordChipData } =
     useRelationFromManyFieldDisplay();
   const { isFocused } = useFieldFocus();
-  const { disableChipClick } = useContext(FieldContext);
+  const { disableChipClick, triggerEvent } = useContext(FieldContext);
 
   const { fieldName, objectMetadataNameSingular } = fieldDefinition.metadata;
 
-  const objectNameSingular =
+  const relationObjectNameSingular =
     fieldDefinition?.metadata.relationObjectMetadataNameSingular;
 
   const { activityTargetObjectRecords } = useActivityTargetObjectRecords(
@@ -28,7 +27,7 @@ export const RelationFromManyFieldDisplay = () => {
     fieldValue as NoteTarget[] | TaskTarget[],
   );
 
-  if (!fieldValue || !objectNameSingular) {
+  if (!fieldValue || !relationObjectNameSingular) {
     return null;
   }
 
@@ -51,27 +50,14 @@ export const RelationFromManyFieldDisplay = () => {
         : CoreObjectNameSingular.Task;
 
     const relationFieldName = fieldName === 'noteTargets' ? 'note' : 'task';
-    const formattedRecords = fieldValue.map((record) => {
-      if (!isDefined(record[relationFieldName])) {
-        return {
-          ...record,
-          [relationFieldName]: {
-            id: 'fallback-id',
-            title: pascalCase(relationFieldName),
-          },
-        };
-      }
 
-      return record;
-    });
     return (
       <ExpandableList isChipCountDisplayed={isFocused}>
-        {formattedRecords
+        {fieldValue
           .map((record) => {
-            if (!isDefined(record)) {
+            if (!isDefined(record) || !isDefined(record[relationFieldName])) {
               return undefined;
             }
-
             return (
               <RecordChip
                 key={record.id}
@@ -108,6 +94,7 @@ export const RelationFromManyFieldDisplay = () => {
               objectNameSingular={recordChipData.objectNameSingular}
               record={record}
               forceDisableClick={disableChipClick}
+              triggerEvent={triggerEvent}
             />
           );
         })}

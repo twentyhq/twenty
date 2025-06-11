@@ -5,12 +5,12 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
-import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { RecordTableBodyContextProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { RecordTableContextProvider } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
@@ -66,6 +66,8 @@ const InternalTableContextProviders = ({
     visibleTableColumnsComponentSelector,
   );
 
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
   return (
     <RecordIndexContextProvider
       value={{
@@ -74,6 +76,7 @@ const InternalTableContextProviders = ({
         objectNamePlural: objectMetadataItem.namePlural,
         objectNameSingular: objectMetadataItem.nameSingular,
         objectMetadataItem: objectMetadataItem,
+        objectPermissionsByObjectMetadataId,
         recordIndexId: 'record-index',
       }}
     >
@@ -126,41 +129,39 @@ export const RecordTableDecorator: Decorator = (Story, context) => {
   );
 
   return (
-    <RecordFieldValueSelectorContextProvider>
-      <RecordTableComponentInstanceContext.Provider
-        value={{ instanceId: recordIndexId, onColumnsChange: () => {} }}
+    <RecordTableComponentInstanceContext.Provider
+      value={{ instanceId: recordIndexId, onColumnsChange: () => {} }}
+    >
+      <ViewComponentInstanceContext.Provider
+        value={{ instanceId: recordIndexId }}
       >
-        <ViewComponentInstanceContext.Provider
+        <RecordFilterGroupsComponentInstanceContext.Provider
           value={{ instanceId: recordIndexId }}
         >
-          <RecordFilterGroupsComponentInstanceContext.Provider
+          <RecordFiltersComponentInstanceContext.Provider
             value={{ instanceId: recordIndexId }}
           >
-            <RecordFiltersComponentInstanceContext.Provider
+            <RecordSortsComponentInstanceContext.Provider
               value={{ instanceId: recordIndexId }}
             >
-              <RecordSortsComponentInstanceContext.Provider
-                value={{ instanceId: recordIndexId }}
+              <ActionMenuComponentInstanceContext.Provider
+                value={{
+                  instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
+                }}
               >
-                <ActionMenuComponentInstanceContext.Provider
-                  value={{
-                    instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
-                  }}
+                <InternalTableStateLoaderEffect
+                  objectMetadataItem={objectMetadataItem}
+                />
+                <InternalTableContextProviders
+                  objectMetadataItem={objectMetadataItem}
                 >
-                  <InternalTableStateLoaderEffect
-                    objectMetadataItem={objectMetadataItem}
-                  />
-                  <InternalTableContextProviders
-                    objectMetadataItem={objectMetadataItem}
-                  >
-                    <Story />
-                  </InternalTableContextProviders>
-                </ActionMenuComponentInstanceContext.Provider>
-              </RecordSortsComponentInstanceContext.Provider>
-            </RecordFiltersComponentInstanceContext.Provider>
-          </RecordFilterGroupsComponentInstanceContext.Provider>
-        </ViewComponentInstanceContext.Provider>
-      </RecordTableComponentInstanceContext.Provider>
-    </RecordFieldValueSelectorContextProvider>
+                  <Story />
+                </InternalTableContextProviders>
+              </ActionMenuComponentInstanceContext.Provider>
+            </RecordSortsComponentInstanceContext.Provider>
+          </RecordFiltersComponentInstanceContext.Provider>
+        </RecordFilterGroupsComponentInstanceContext.Provider>
+      </ViewComponentInstanceContext.Provider>
+    </RecordTableComponentInstanceContext.Provider>
   );
 };

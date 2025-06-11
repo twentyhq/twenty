@@ -2,6 +2,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Workspaces, workspacesState } from '@/auth/states/workspaces';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -32,7 +33,7 @@ export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
   const [searchValue, setSearchValue] = useState('');
 
   return (
-    <DropdownMenuItemsContainer>
+    <DropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -51,35 +52,37 @@ export const MultiWorkspaceDropdownWorkspacesListComponents = () => {
         }}
       />
       <DropdownMenuSeparator />
-      {workspaces
-        .filter(
-          (workspace) =>
-            workspace.id !== currentWorkspace?.id &&
-            workspace.displayName
-              ?.toLowerCase()
-              .includes(searchValue.toLowerCase()),
-        )
-        .map((workspace) => (
-          <UndecoratedLink
-            key={workspace.id}
-            to={buildWorkspaceUrl(getWorkspaceUrl(workspace.workspaceUrls))}
-            onClick={(event) => {
-              event?.preventDefault();
-              handleChange(workspace);
-            }}
-          >
-            <MenuItemSelectAvatar
-              text={workspace.displayName ?? '(No name)'}
-              avatar={
-                <Avatar
-                  placeholder={workspace.displayName || ''}
-                  avatarUrl={workspace.logo ?? DEFAULT_WORKSPACE_LOGO}
-                />
-              }
-              selected={currentWorkspace?.id === workspace.id}
-            />
-          </UndecoratedLink>
-        ))}
-    </DropdownMenuItemsContainer>
+      <DropdownMenuItemsContainer>
+        {workspaces
+          .filter(
+            (workspace) =>
+              workspace.id !== currentWorkspace?.id &&
+              workspace.displayName
+                ?.toLowerCase()
+                .includes(searchValue.toLowerCase()),
+          )
+          .map((workspace) => (
+            <UndecoratedLink
+              key={workspace.id}
+              to={buildWorkspaceUrl(getWorkspaceUrl(workspace.workspaceUrls))}
+              onClick={(event) => {
+                event?.preventDefault();
+                handleChange(workspace);
+              }}
+            >
+              <MenuItemSelectAvatar
+                text={workspace.displayName ?? '(No name)'}
+                avatar={
+                  <Avatar
+                    placeholder={workspace.displayName || ''}
+                    avatarUrl={workspace.logo ?? DEFAULT_WORKSPACE_LOGO}
+                  />
+                }
+                selected={currentWorkspace?.id === workspace.id}
+              />
+            </UndecoratedLink>
+          ))}
+      </DropdownMenuItemsContainer>
+    </DropdownContent>
   );
 };

@@ -1,14 +1,16 @@
 import { isExpectedSubFieldName } from '@/object-record/object-filter-dropdown/utils/isExpectedSubFieldName';
 import { isFilterOnActorSourceSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorSourceSubField';
-import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
+import {
+  FilterableAndTSVectorFieldType,
+  FilterableFieldType,
+} from '@/object-record/record-filter/types/FilterableFieldType';
 import { CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { ViewFilterOperand as RecordFilterOperand } from '@/views/types/ViewFilterOperand';
-import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 export type GetRecordFilterOperandsParams = {
-  filterType: FilterableFieldType;
+  filterType: FilterableAndTSVectorFieldType;
   subFieldName?: string | null | undefined;
 };
 
@@ -23,7 +25,7 @@ const relationOperands = [
 ] as const;
 
 type FilterOperandMap = {
-  [K in FilterableFieldType]: readonly RecordFilterOperand[];
+  [K in FilterableAndTSVectorFieldType]: readonly RecordFilterOperand[];
 };
 
 // TODO: we would need to refactor the typing of SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS first
@@ -125,6 +127,7 @@ export const FILTER_OPERANDS_MAP = {
     ...emptyOperands,
   ],
   BOOLEAN: [RecordFilterOperand.Is],
+  TS_VECTOR: [RecordFilterOperand.VectorSearch],
 } as const satisfies FilterOperandMap;
 
 export const COMPOSITE_FIELD_FILTER_OPERANDS_MAP = {
@@ -148,8 +151,6 @@ export const getRecordFilterOperands = ({
   filterType,
   subFieldName,
 }: GetRecordFilterOperandsParams) => {
-  const isFilterOnSubField = isNonEmptyString(subFieldName);
-
   switch (filterType) {
     case 'TEXT':
     case 'EMAILS':
@@ -187,7 +188,7 @@ export const getRecordFilterOperands = ({
     case 'SELECT':
       return FILTER_OPERANDS_MAP.SELECT;
     case 'ACTOR': {
-      if (isFilterOnActorSourceSubField(subFieldName) || !isFilterOnSubField) {
+      if (isFilterOnActorSourceSubField(subFieldName)) {
         return [
           RecordFilterOperand.Is,
           RecordFilterOperand.IsNot,
@@ -201,6 +202,8 @@ export const getRecordFilterOperands = ({
       return FILTER_OPERANDS_MAP.ARRAY;
     case 'BOOLEAN':
       return FILTER_OPERANDS_MAP.BOOLEAN;
+    case 'TS_VECTOR':
+      return FILTER_OPERANDS_MAP.TS_VECTOR;
     default:
       assertUnreachable(filterType, `Unknown filter type ${filterType}`);
   }

@@ -6,7 +6,7 @@ import {
 } from 'typeorm';
 
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 
 export enum WorkspaceMigrationColumnActionType {
   CREATE = 'CREATE',
@@ -31,6 +31,7 @@ export interface WorkspaceMigrationColumnDefinition {
   isArray?: boolean;
   isNullable: boolean;
   isUnique?: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   defaultValue: any;
   generatedType?: 'STORED' | 'VIRTUAL';
   asExpression?: string;

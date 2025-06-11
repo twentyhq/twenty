@@ -80,6 +80,13 @@ export const workflowFindRecordsActionSettingsSchema =
     input: z.object({
       objectName: z.string(),
       limit: z.number().optional(),
+      filter: z
+        .object({
+          recordFilterGroups: z.array(z.object({})).optional(),
+          recordFilters: z.array(z.object({})).optional(),
+          gqlOperationFilter: z.object({}).optional().nullable(),
+        })
+        .optional(),
     }),
   });
 
@@ -164,6 +171,7 @@ export const workflowDatabaseEventTriggerSchema = baseTriggerSchema.extend({
     input: z.object({}).passthrough().optional(),
     outputSchema: z.object({}).passthrough(),
     objectType: z.string().optional(),
+    fields: z.array(z.string()).optional().nullable(),
   }),
 });
 

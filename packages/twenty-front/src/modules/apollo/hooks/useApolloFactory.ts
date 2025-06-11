@@ -1,7 +1,7 @@
 import { InMemoryCache, NormalizedCacheObject } from '@apollo/client';
 import { useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -9,10 +9,9 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { previousUrlState } from '@/auth/states/previousUrlState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { workspacesState } from '@/auth/states/workspaces';
-import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
+import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { AppPath } from '@/types/AppPath';
@@ -22,19 +21,16 @@ import { ApolloFactory, Options } from '../services/apollo.factory';
 export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   // eslint-disable-next-line @nx/workspace-no-state-useref
   const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
-  const [isDebugMode] = useRecoilState(isDebugModeState);
 
   const navigate = useNavigate();
-  const { isMatchingLocation } = useIsMatchingLocation();
   const setTokenPair = useSetRecoilState(tokenPairState);
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const setCurrentUser = useSetRecoilState(currentUserState);
-  const setCurrentWorkspaceMember = useSetRecoilState(
+  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
     currentWorkspaceMemberState,
   );
+  const setCurrentUser = useSetRecoilState(currentUserState);
   const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
 
   const setWorkspaces = useSetRecoilState(workspacesState);
@@ -51,18 +47,15 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
           },
         },
       }),
-      headers: {
-        ...(currentWorkspace?.metadataVersion && {
-          'X-Schema-Version': `${currentWorkspace.metadataVersion}`,
-        }),
-      },
+
       defaultOptions: {
         watchQuery: {
           fetchPolicy: 'cache-and-network',
         },
       },
-      connectToDevTools: isDebugMode,
+      connectToDevTools: process.env.IS_DEBUG_MODE === 'true',
       currentWorkspaceMember: currentWorkspaceMember,
+      currentWorkspace: currentWorkspace,
       onTokenPairChange: (tokenPair) => {
         setTokenPair(tokenPair);
       },
@@ -74,17 +67,17 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
         setCurrentUserWorkspace(null);
         setWorkspaces([]);
         if (
-          !isMatchingLocation(AppPath.Verify) &&
-          !isMatchingLocation(AppPath.SignInUp) &&
-          !isMatchingLocation(AppPath.Invite) &&
-          !isMatchingLocation(AppPath.ResetPassword)
+          !isMatchingLocation(location, AppPath.Verify) &&
+          !isMatchingLocation(location, AppPath.SignInUp) &&
+          !isMatchingLocation(location, AppPath.Invite) &&
+          !isMatchingLocation(location, AppPath.ResetPassword)
         ) {
           setPreviousUrl(`${location.pathname}${location.search}`);
           navigate(AppPath.SignInUp);
         }
       },
       extraLinks: [],
-      isDebugMode,
+      isDebugMode: process.env.IS_DEBUG_MODE === 'true',
       // Override options
       ...options,
     });
@@ -97,8 +90,6 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
     setCurrentWorkspaceMember,
     setCurrentWorkspace,
     setWorkspaces,
-    isDebugMode,
-    currentWorkspace?.metadataVersion,
     setPreviousUrl,
   ]);
 
@@ -107,6 +98,12 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
       apolloRef.current.updateWorkspaceMember(currentWorkspaceMember);
     }
   }, [currentWorkspaceMember]);
+
+  useUpdateEffect(() => {
+    if (isDefined(apolloRef.current)) {
+      apolloRef.current.updateCurrentWorkspace(currentWorkspace);
+    }
+  }, [currentWorkspace]);
 
   return apolloClient;
 };

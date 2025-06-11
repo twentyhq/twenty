@@ -5,6 +5,7 @@ import { FileService } from 'src/engine/core-modules/file/services/file.service'
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type RichTextBlock = Record<string, any>;
 
 type RichTextBody = RichTextBlock[];
@@ -53,16 +54,16 @@ export class ActivityQueryResultGetterHandler
 
         imageUrl.searchParams.delete('token');
 
-        const signedPayload = this.fileService.encodeFileToken({
-          noteBlockId: block.id,
-          workspaceId: workspaceId,
+        const signedPath = this.fileService.signFileUrl({
+          url: imageProps.url.toString(),
+          workspaceId,
         });
 
         return {
           ...block,
           props: {
             ...imageProps,
-            url: `${imageUrl.toString()}?token=${signedPayload}`,
+            url: signedPath,
           },
         };
       }),

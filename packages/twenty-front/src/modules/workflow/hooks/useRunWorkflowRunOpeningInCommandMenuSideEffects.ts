@@ -2,12 +2,14 @@ import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandM
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowVisualizerWorkflowRunIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowRunIdComponentState';
 import { WorkflowRun } from '@/workflow/types/Workflow';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
+import { workflowRunDiagramAutomaticallyOpenedStepsComponentState } from '@/workflow/workflow-diagram/states/workflowRunDiagramAutomaticallyOpenedStepsComponentState';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
@@ -20,6 +22,8 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
   const apolloClient = useApolloClient();
   const { openWorkflowRunViewStepInCommandMenu } = useWorkflowCommandMenu();
   const { getIcon } = useIcons();
+
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const runWorkflowRunOpeningInCommandMenuSideEffects = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -40,6 +44,7 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
           cache: apolloClient.cache,
           recordId,
           objectMetadataItems,
+          objectPermissionsByObjectMetadataId,
         });
         if (
           !(isDefined(workflowRunRecord) && isDefined(workflowRunRecord.output))
@@ -96,6 +101,14 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
           stepToOpenByDefault.id,
         );
 
+        set(
+          workflowRunDiagramAutomaticallyOpenedStepsComponentState.atomFamily({
+            instanceId: getWorkflowVisualizerComponentInstanceId({
+              recordId,
+            }),
+          }),
+          (steps) => [...steps, stepToOpenByDefault.id],
+        );
         openWorkflowRunViewStepInCommandMenu({
           workflowId: workflowRunRecord.workflowId,
           workflowRunId: workflowRunRecord.id,
@@ -105,7 +118,12 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
           stepExecutionStatus: stepToOpenByDefault.data.runStatus,
         });
       },
-    [apolloClient.cache, getIcon, openWorkflowRunViewStepInCommandMenu],
+    [
+      apolloClient.cache,
+      getIcon,
+      openWorkflowRunViewStepInCommandMenu,
+      objectPermissionsByObjectMetadataId,
+    ],
   );
 
   return {

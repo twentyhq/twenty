@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import isEmpty from 'lodash.isempty';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 
 import {
   GraphqlQueryBaseResolverService,
@@ -10,7 +11,6 @@ import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/int
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { UpdateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
@@ -74,14 +74,6 @@ export class GraphqlQueryUpdateOneResolverService extends GraphqlQueryBaseResolv
       objectMetadataMaps,
     );
 
-    this.apiEventEmitterService.emitUpdateEvents(
-      formattedExistingRecords,
-      formattedUpdatedRecords,
-      Object.keys(executionArgs.args.data),
-      authContext,
-      objectMetadataItemWithFieldMaps,
-    );
-
     if (formattedUpdatedRecords.length === 0) {
       throw new GraphqlQueryRunnerException(
         'Record not found',
@@ -90,16 +82,25 @@ export class GraphqlQueryUpdateOneResolverService extends GraphqlQueryBaseResolv
     }
 
     const updatedRecord = formattedUpdatedRecords[0];
+    const existingRecord = formattedExistingRecords[0];
+
+    this.apiEventEmitterService.emitUpdateEvents({
+      existingRecords: structuredClone(formattedExistingRecords),
+      records: structuredClone(formattedUpdatedRecords),
+      updatedFields: Object.keys(executionArgs.args.data),
+      authContext,
+      objectMetadataItem: objectMetadataItemWithFieldMaps,
+    });
 
     if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-        parentObjectRecords: [updatedRecord],
+        parentObjectRecords: [existingRecord, updatedRecord],
         relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         limit: QUERY_MAX_RECORDS,
         authContext,
-        dataSource: executionArgs.dataSource,
+        workspaceDataSource: executionArgs.workspaceDataSource,
         roleId,
         shouldBypassPermissionChecks: executionArgs.isExecutedByApiKey,
       });

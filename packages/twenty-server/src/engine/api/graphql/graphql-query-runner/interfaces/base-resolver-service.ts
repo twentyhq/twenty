@@ -41,7 +41,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 export type GraphqlQueryResolverExecutionArgs<Input extends ResolverArgs> = {
   args: Input;
   options: WorkspaceQueryRunnerOptions;
-  dataSource: WorkspaceDataSource;
+  workspaceDataSource: WorkspaceDataSource;
   repository: WorkspaceRepository<ObjectLiteral>;
   graphqlQueryParser: GraphqlQueryParser;
   graphqlQuerySelectedFieldsResult: GraphqlQuerySelectedFieldsResult;
@@ -94,13 +94,14 @@ export abstract class GraphqlQueryBaseResolverService<
       const featureFlagsMap = workspaceDataSource.featureFlagMap;
 
       const isPermissionsV2Enabled =
-        featureFlagsMap[FeatureFlagKey.IsPermissionsV2Enabled];
+        featureFlagsMap[FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED];
 
       if (objectMetadataItemWithFieldMaps.isSystem === true) {
         await this.validateSystemObjectPermissionsOrThrow(options);
       } else {
         if (!isPermissionsV2Enabled)
           await this.validateObjectRecordPermissionsOrThrow({
+            objectMetadataId: objectMetadataItemWithFieldMaps.id,
             operationName,
             options,
           });
@@ -117,6 +118,7 @@ export abstract class GraphqlQueryBaseResolverService<
       const computedArgs = (await this.queryRunnerArgsFactory.create(
         hookedArgs,
         options,
+        // @ts-expect-error legacy noImplicitAny
         ResolverArgsType[capitalize(operationName)],
       )) as Input;
 
@@ -151,7 +153,7 @@ export abstract class GraphqlQueryBaseResolverService<
       const graphqlQueryResolverExecutionArgs = {
         args: computedArgs,
         options,
-        dataSource: workspaceDataSource,
+        workspaceDataSource,
         repository,
         graphqlQueryParser,
         graphqlQuerySelectedFieldsResult,
@@ -171,20 +173,14 @@ export abstract class GraphqlQueryBaseResolverService<
         options.objectMetadataMaps,
       );
 
-      const resultWithGettersArray = Array.isArray(resultWithGetters)
-        ? resultWithGetters
-        : [resultWithGetters];
-
       await this.workspaceQueryHookService.executePostQueryHooks(
         authContext,
         objectMetadataItemWithFieldMaps.nameSingular,
         operationName,
-        resultWithGettersArray,
+        resultWithGetters,
       );
 
-      return Array.isArray(resultWithGetters)
-        ? resultWithGettersArray
-        : resultWithGettersArray[0];
+      return resultWithGetters;
     } catch (error) {
       workspaceQueryRunnerGraphqlApiExceptionHandler(error, options);
     }
@@ -201,6 +197,7 @@ export abstract class GraphqlQueryBaseResolverService<
       )
     ) {
       const permissionRequired: SettingPermissionType =
+        // @ts-expect-error legacy noImplicitAny
         SYSTEM_OBJECTS_PERMISSIONS_REQUIREMENTS[
           objectMetadataItemWithFieldMaps.nameSingular
         ];
@@ -223,9 +220,11 @@ export abstract class GraphqlQueryBaseResolverService<
   }
 
   private async validateObjectRecordPermissionsOrThrow({
+    objectMetadataId,
     operationName,
     options,
   }: {
+    objectMetadataId: string;
     operationName: WorkspaceResolverBuilderMethodNames;
     options: WorkspaceQueryRunnerOptions;
   }) {
@@ -238,6 +237,7 @@ export abstract class GraphqlQueryBaseResolverService<
         requiredPermission,
         workspaceId: options.authContext.workspace.id,
         isExecutedByApiKey: isDefined(options.authContext.apiKey),
+        objectMetadataId,
       });
 
     if (!userHasPermission) {

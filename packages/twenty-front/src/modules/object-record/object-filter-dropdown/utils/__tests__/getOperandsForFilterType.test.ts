@@ -59,7 +59,7 @@ describe('getOperandsForFilterType', () => {
     ['LINKS', [...containsOperands, ...emptyOperands], 'secondaryLinks'],
     ['ACTOR', [...containsOperands, ...emptyOperands], 'name'],
     ['ACTOR', [...actorSourceOperands, ...emptyOperands], 'source'],
-    ['ACTOR', [...actorSourceOperands, ...emptyOperands]],
+    ['ACTOR', [...containsOperands, ...emptyOperands]],
     [
       'CURRENCY',
       [...currencyCurrencyCodeOperands, ...emptyOperands],

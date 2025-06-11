@@ -39,10 +39,12 @@ export class JwtWrapperService {
     return this.jwtService.sign(payload, options);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   verify<T extends object = any>(token: string, options?: JwtVerifyOptions): T {
     return this.jwtService.verify(token, options);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   decode<T = any>(payload: string, options?: jwt.DecodeOptions): T {
     return this.jwtService.decode(payload, options);
   }

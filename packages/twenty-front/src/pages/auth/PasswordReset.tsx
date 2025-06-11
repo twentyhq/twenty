@@ -173,7 +173,10 @@ export const PasswordReset = () => {
       <Modal.Content isVerticalCentered isHorizontalCentered>
         <StyledMainContainer>
           <AnimatedEaseIn>
-            <Logo secondaryLogo={workspacePublicData?.logo} />
+            <Logo
+              secondaryLogo={workspacePublicData?.logo}
+              placeholder={workspacePublicData?.displayName}
+            />
           </AnimatedEaseIn>
           <Title animate>
             <Trans>Reset Password</Trans>

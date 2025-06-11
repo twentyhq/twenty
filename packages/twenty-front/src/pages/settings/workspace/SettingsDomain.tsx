@@ -9,24 +9,23 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { ApolloError } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
-import {
-  FeatureFlagKey,
-  useUpdateWorkspaceMutation,
-} from '~/generated/graphql';
+import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsCustomDomain } from '~/pages/settings/workspace/SettingsCustomDomain';
 import { SettingsSubdomain } from '~/pages/settings/workspace/SettingsSubdomain';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+
+export const SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID =
+  'subdomain-change-confirmation-modal';
 
 export const SettingsDomain = () => {
   const navigate = useNavigateSettings();
@@ -65,18 +64,11 @@ export const SettingsDomain = () => {
   const [updateWorkspace] = useUpdateWorkspaceMutation();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
-  const isCustomDomainEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IsCustomDomainEnabled,
-  );
-
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
 
-  const [
-    isSubdomainChangeConfirmationModalOpen,
-    setIsSubdomainChangeConfirmationModalOpen,
-  ] = useState(false);
+  const { openModal } = useModal();
 
   const form = useForm<{
     subdomain: string;
@@ -201,7 +193,7 @@ export const SettingsDomain = () => {
       isDefined(values.subdomain) &&
       values.subdomain !== currentWorkspace.subdomain
     ) {
-      setIsSubdomainChangeConfirmationModalOpen(true);
+      openModal(SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID);
       return;
     }
 
@@ -236,14 +228,13 @@ export const SettingsDomain = () => {
         >
           <SettingsPageContainer>
             <SettingsSubdomain />
-            {isCustomDomainEnabled && <SettingsCustomDomain />}
+            <SettingsCustomDomain />
           </SettingsPageContainer>
         </SubMenuTopBarContainer>
         <ConfirmationModal
-          isOpen={isSubdomainChangeConfirmationModalOpen}
+          modalId={SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID}
           title={t`Change subdomain?`}
           subtitle={t`You're about to change your workspace subdomain. This action will log out all users.`}
-          setIsOpen={setIsSubdomainChangeConfirmationModalOpen}
           onConfirmClick={() => {
             const values = form.getValues();
             currentWorkspace &&

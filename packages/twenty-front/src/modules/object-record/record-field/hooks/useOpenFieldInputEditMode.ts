@@ -31,9 +31,7 @@ export const useOpenFieldInputEditMode = () => {
   const { openActivityTargetCellEditMode } =
     useOpenActivityTargetCellEditMode();
 
-  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope(
-    INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY,
-  );
+  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
 
   const openFieldInput = useRecoilCallback(
     ({ snapshot }) =>
@@ -105,10 +103,11 @@ export const useOpenFieldInputEditMode = () => {
           }
         }
 
-        setHotkeyScopeAndMemorizePreviousScope(
-          DEFAULT_CELL_SCOPE.scope,
-          DEFAULT_CELL_SCOPE.customScopes,
-        );
+        setHotkeyScopeAndMemorizePreviousScope({
+          scope: DEFAULT_CELL_SCOPE.scope,
+          customScopes: DEFAULT_CELL_SCOPE.customScopes,
+          memoizeKey: INLINE_CELL_HOTKEY_SCOPE_MEMOIZE_KEY,
+        });
       },
     [
       openActivityTargetCellEditMode,

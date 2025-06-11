@@ -69,8 +69,7 @@ export const sortFavorites = (
           const relationObject = favorite[relationField.name];
 
           const objectNameSingular =
-            relationField.relationDefinition?.targetObjectMetadata
-              .nameSingular ?? '';
+            relationField.relation?.targetObjectMetadata.nameSingular ?? '';
 
           const objectRecordIdentifier =
             getObjectRecordIdentifierByNameSingular(
@@ -95,9 +94,8 @@ export const sortFavorites = (
           } as ProcessedFavorite;
         }
       }
-      return {
-        ...favorite,
-      } as ProcessedFavorite;
+      return null;
     })
+    .filter(isDefined)
     .sort((a, b) => a.position - b.position);
 };

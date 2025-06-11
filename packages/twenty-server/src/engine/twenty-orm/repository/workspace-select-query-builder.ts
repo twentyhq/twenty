@@ -4,8 +4,13 @@ import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { validateQueryIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-delete-query-builder';
+import { WorkspaceInsertQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-insert-query-builder';
 import { WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-soft-delete-query-builder';
 import { WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-update-query-builder';
 
@@ -50,12 +55,14 @@ export class WorkspaceSelectQueryBuilder<
     return super.getMany();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   override getRawOne<U = any>(): Promise<U | undefined> {
     this.validatePermissions();
 
     return super.getRawOne();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   override getRawMany<U = any>(): Promise<U[]> {
     this.validatePermissions();
 
@@ -81,15 +88,27 @@ export class WorkspaceSelectQueryBuilder<
   }
 
   override getExists(): Promise<boolean> {
-    this.validatePermissions();
-
-    return super.getExists();
+    throw new PermissionsException(
+      'getExists is not supported because it calls dataSource.createQueryBuilder()',
+      PermissionsExceptionCode.METHOD_NOT_ALLOWED,
+    );
   }
 
   override getManyAndCount(): Promise<[T[], number]> {
     this.validatePermissions();
 
     return super.getManyAndCount();
+  }
+
+  override insert(): WorkspaceInsertQueryBuilder<T> {
+    const insertQueryBuilder = super.insert();
+
+    return new WorkspaceInsertQueryBuilder<T>(
+      insertQueryBuilder,
+      this.objectRecordsPermissions,
+      this.internalContext,
+      this.shouldBypassPermissionChecks,
+    );
   }
 
   override update(): WorkspaceUpdateQueryBuilder<T>;
@@ -143,6 +162,13 @@ export class WorkspaceSelectQueryBuilder<
       this.objectRecordsPermissions,
       this.internalContext,
       this.shouldBypassPermissionChecks,
+    );
+  }
+
+  override executeExistsQuery(): Promise<boolean> {
+    throw new PermissionsException(
+      'executeExistsQuery is not supported because it calls dataSource.createQueryBuilder()',
+      PermissionsExceptionCode.METHOD_NOT_ALLOWED,
     );
   }
 

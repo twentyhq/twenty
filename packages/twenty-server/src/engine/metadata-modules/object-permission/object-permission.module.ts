@@ -6,13 +6,15 @@ import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permi
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
+import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature(
       [ObjectPermissionEntity, RoleEntity, ObjectMetadataEntity],
-      'metadata',
+      'core',
     ),
+    WorkspaceCacheStorageModule,
     WorkspacePermissionsCacheModule,
   ],
   providers: [ObjectPermissionService],

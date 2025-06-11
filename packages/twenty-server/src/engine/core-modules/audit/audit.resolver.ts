@@ -1,5 +1,7 @@
+import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
+import { AuditExceptionFilter } from 'src/engine/core-modules/audit/audit-exception-filter';
 import {
   AuditException,
   AuditExceptionCode,
@@ -9,6 +11,8 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 import {
   CreateAnalyticsInputV2,
@@ -19,6 +23,7 @@ import { Analytics } from './entities/analytics.entity';
 import { AuditService } from './services/audit.service';
 
 @Resolver(() => Analytics)
+@UseFilters(AuditExceptionFilter)
 export class AuditResolver {
   constructor(private readonly auditService: AuditService) {}
 
@@ -26,13 +31,14 @@ export class AuditResolver {
   async createPageview(
     @Args()
     createAnalyticsInput: CreateAnalyticsInputV2,
-    @AuthWorkspace() workspace: Workspace | undefined,
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
     @AuthUser({ allowUndefined: true }) user: User | undefined,
   ) {
     return this.trackAnalytics(createAnalyticsInput, workspace, user);
   }
 
   @Mutation(() => Analytics)
+  @UseGuards(WorkspaceAuthGuard)
   async createObjectEvent(
     @Args()
     createObjectEventInput: CreateObjectEventInput,
@@ -60,10 +66,11 @@ export class AuditResolver {
   }
 
   @Mutation(() => Analytics)
+  @UseGuards(PublicEndpointGuard)
   async trackAnalytics(
     @Args()
     createAnalyticsInput: CreateAnalyticsInputV2,
-    @AuthWorkspace() workspace: Workspace | undefined,
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
     @AuthUser({ allowUndefined: true }) user: User | undefined,
   ) {
     const analyticsContext = this.auditService.createContext({

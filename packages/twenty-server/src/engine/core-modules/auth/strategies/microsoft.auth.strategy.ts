@@ -40,6 +40,7 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   authenticate(req: Request, options: any) {
     options = {
       ...options,
@@ -59,6 +60,7 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
     request: MicrosoftRequest,
     accessToken: string,
     refreshToken: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     profile: any,
     done: VerifyCallback,
   ): Promise<void> {

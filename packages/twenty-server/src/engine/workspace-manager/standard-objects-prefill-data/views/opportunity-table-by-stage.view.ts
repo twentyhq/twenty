@@ -1,73 +1,91 @@
-import { ObjectMetadataStandardIdToIdMap } from 'src/engine/metadata-modules/object-metadata/interfaces/object-metadata-standard-id-to-id-map';
-
-import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { OPPORTUNITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 export const opportunitiesTableByStageView = (
-  objectMetadataStandardIdToIdMap: ObjectMetadataStandardIdToIdMap,
+  objectMetadataItems: ObjectMetadataEntity[],
 ) => {
+  const opportunityObjectMetadata = objectMetadataItems.find(
+    (object) => object.standardId === STANDARD_OBJECT_IDS.opportunity,
+  );
+
+  if (!opportunityObjectMetadata) {
+    throw new Error('Opportunity object metadata not found');
+  }
+
   return {
     name: 'By Stage',
-    objectMetadataId:
-      objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.opportunity].id,
+    objectMetadataId: opportunityObjectMetadata.id,
     type: 'table',
     key: null,
     position: 1,
     icon: 'IconList',
     kanbanFieldMetadataId:
-      objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.opportunity].fields[
-        OPPORTUNITY_STANDARD_FIELD_IDS.stage
-      ],
+      opportunityObjectMetadata.fields.find(
+        (field) => field.standardId === OPPORTUNITY_STANDARD_FIELD_IDS.stage,
+      )?.id ?? '',
     filters: [],
     fields: [
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.opportunity]
-            .fields[OPPORTUNITY_STANDARD_FIELD_IDS.name],
+          opportunityObjectMetadata.fields.find(
+            (field) => field.standardId === OPPORTUNITY_STANDARD_FIELD_IDS.name,
+          )?.id ?? '',
         position: 0,
         isVisible: true,
         size: 150,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.opportunity]
-            .fields[OPPORTUNITY_STANDARD_FIELD_IDS.amount],
+          opportunityObjectMetadata.fields.find(
+            (field) =>
+              field.standardId === OPPORTUNITY_STANDARD_FIELD_IDS.amount,
+          )?.id ?? '',
         position: 1,
         isVisible: true,
         size: 150,
-        aggregateOperation: AGGREGATE_OPERATIONS.avg,
+        aggregateOperation: AggregateOperations.AVG,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.opportunity]
-            .fields[OPPORTUNITY_STANDARD_FIELD_IDS.createdBy],
+          opportunityObjectMetadata.fields.find(
+            (field) =>
+              field.standardId === OPPORTUNITY_STANDARD_FIELD_IDS.createdBy,
+          )?.id ?? '',
         position: 2,
         isVisible: true,
         size: 150,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.opportunity]
-            .fields[OPPORTUNITY_STANDARD_FIELD_IDS.closeDate],
+          opportunityObjectMetadata.fields.find(
+            (field) =>
+              field.standardId === OPPORTUNITY_STANDARD_FIELD_IDS.closeDate,
+          )?.id ?? '',
         position: 3,
         isVisible: true,
         size: 150,
-        aggregateOperation: AGGREGATE_OPERATIONS.max,
+        aggregateOperation: AggregateOperations.MAX,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.opportunity]
-            .fields[OPPORTUNITY_STANDARD_FIELD_IDS.company],
+          opportunityObjectMetadata.fields.find(
+            (field) =>
+              field.standardId === OPPORTUNITY_STANDARD_FIELD_IDS.company,
+          )?.id ?? '',
         position: 4,
         isVisible: true,
         size: 150,
-        aggregateOperation: AGGREGATE_OPERATIONS.count,
+        aggregateOperation: AggregateOperations.COUNT,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.opportunity]
-            .fields[OPPORTUNITY_STANDARD_FIELD_IDS.pointOfContact],
+          opportunityObjectMetadata.fields.find(
+            (field) =>
+              field.standardId ===
+              OPPORTUNITY_STANDARD_FIELD_IDS.pointOfContact,
+          )?.id ?? '',
         position: 5,
         isVisible: true,
         size: 150,
@@ -76,40 +94,50 @@ export const opportunitiesTableByStageView = (
     groups: [
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.opportunity]
-            .fields[OPPORTUNITY_STANDARD_FIELD_IDS.stage],
+          opportunityObjectMetadata.fields.find(
+            (field) =>
+              field.standardId === OPPORTUNITY_STANDARD_FIELD_IDS.stage,
+          )?.id ?? '',
         isVisible: true,
         fieldValue: 'NEW',
         position: 0,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.opportunity]
-            .fields[OPPORTUNITY_STANDARD_FIELD_IDS.stage],
+          opportunityObjectMetadata.fields.find(
+            (field) =>
+              field.standardId === OPPORTUNITY_STANDARD_FIELD_IDS.stage,
+          )?.id ?? '',
         isVisible: true,
         fieldValue: 'SCREENING',
         position: 1,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.opportunity]
-            .fields[OPPORTUNITY_STANDARD_FIELD_IDS.stage],
+          opportunityObjectMetadata.fields.find(
+            (field) =>
+              field.standardId === OPPORTUNITY_STANDARD_FIELD_IDS.stage,
+          )?.id ?? '',
         isVisible: true,
         fieldValue: 'MEETING',
         position: 2,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.opportunity]
-            .fields[OPPORTUNITY_STANDARD_FIELD_IDS.stage],
+          opportunityObjectMetadata.fields.find(
+            (field) =>
+              field.standardId === OPPORTUNITY_STANDARD_FIELD_IDS.stage,
+          )?.id ?? '',
         isVisible: true,
         fieldValue: 'PROPOSAL',
         position: 3,
       },
       {
         fieldMetadataId:
-          objectMetadataStandardIdToIdMap[STANDARD_OBJECT_IDS.opportunity]
-            .fields[OPPORTUNITY_STANDARD_FIELD_IDS.stage],
+          opportunityObjectMetadata.fields.find(
+            (field) =>
+              field.standardId === OPPORTUNITY_STANDARD_FIELD_IDS.stage,
+          )?.id ?? '',
         isVisible: true,
         fieldValue: 'CUSTOMER',
         position: 4,

@@ -16,12 +16,15 @@ import { useHandleIndexIdentifierClick } from '@/object-record/record-index/hook
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
+import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import styled from '@emotion/styled';
 import { useRecoilCallback } from 'recoil';
 import { capitalize } from 'twenty-shared/utils';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 
 const StyledIndexContainer = styled.div`
   display: flex;
@@ -56,10 +59,23 @@ export const RecordIndexContainerGater = () => {
     recordIndexId,
   });
 
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const objectPermissions = getObjectPermissionsForObject(
+    objectPermissionsByObjectMetadataId,
+    objectMetadataItem.id,
+  );
+
+  const hasObjectReadPermissions = objectPermissions.canReadObjectRecords;
+
+  if (!hasObjectReadPermissions) {
+    return <></>;
+  }
+
   return (
     <>
       <RecordIndexContextProvider
         value={{
+          objectPermissionsByObjectMetadataId,
           recordIndexId,
           objectNamePlural: objectMetadataItem.namePlural,
           objectNameSingular: objectMetadataItem.nameSingular,
@@ -90,7 +106,9 @@ export const RecordIndexContainerGater = () => {
                   />
                   <RecordIndexPageHeader />
                   <PageBody>
-                    <StyledIndexContainer>
+                    <StyledIndexContainer
+                      className={RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS}
+                    >
                       <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
                       <RecordIndexContainer />
                     </StyledIndexContainer>

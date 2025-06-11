@@ -8,6 +8,7 @@ import { ValidationError } from 'src/engine/core-modules/graphql/utils/graphql-e
 const parseLiteral = (
   ast: ValueNode,
   variables?: Maybe<ObjMap<unknown>>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): any => {
   switch (ast.kind) {
     case Kind.STRING:
@@ -17,8 +18,10 @@ const parseLiteral = (
     case Kind.FLOAT:
       return parseFloat(ast.value);
     case Kind.OBJECT:
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return parseObject(ast as any, variables);
     case Kind.LIST:
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (ast as any).values.map((n: ValueNode) =>
         parseLiteral(n, variables),
       );
@@ -40,6 +43,7 @@ const parseObject = (
   const value = Object.create(null);
 
   if ('fields' in ast) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ast.fields?.forEach((field: any) => {
       value[field.name.value] = parseLiteral(field.value, variables);
     });
@@ -48,6 +52,7 @@ const parseObject = (
   return value;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const stringify = (value: any): string => {
   return JSON.stringify(value);
 };

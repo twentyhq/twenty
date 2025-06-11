@@ -1,0 +1,385 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`addPersonEmailFiltersToQueryBuilder case-insensitive email normalization: should normalize emails to lowercase - query builder calls 1`] = `
+[
+  {
+    "args": [
+      [
+        "person.id",
+        "person.emailsPrimaryEmail",
+        "person.emailsAdditionalEmails",
+      ],
+    ],
+    "method": "select",
+  },
+  {
+    "args": [
+      "LOWER(person.emailsPrimaryEmail) IN (:...emails)",
+      {
+        "emails": [
+          "test@example.com",
+          "contact@company.com",
+        ],
+      },
+    ],
+    "method": "where",
+  },
+  {
+    "args": [
+      "person.emailsAdditionalEmails @> :email0::jsonb",
+      {
+        "email0": "["test@example.com"]",
+      },
+    ],
+    "method": "orWhere",
+  },
+  {
+    "args": [
+      "person.emailsAdditionalEmails @> :email1::jsonb",
+      {
+        "email1": "["contact@company.com"]",
+      },
+    ],
+    "method": "orWhere",
+  },
+  {
+    "args": [],
+    "method": "withDeleted",
+  },
+]
+`;
+
+exports[`addPersonEmailFiltersToQueryBuilder emails with empty exclusion array: should handle empty exclusions array - query builder calls 1`] = `
+[
+  {
+    "args": [
+      [
+        "person.id",
+        "person.emailsPrimaryEmail",
+        "person.emailsAdditionalEmails",
+      ],
+    ],
+    "method": "select",
+  },
+  {
+    "args": [
+      "LOWER(person.emailsPrimaryEmail) IN (:...emails)",
+      {
+        "emails": [
+          "test@example.com",
+        ],
+      },
+    ],
+    "method": "where",
+  },
+  {
+    "args": [
+      "person.emailsAdditionalEmails @> :email0::jsonb",
+      {
+        "email0": "["test@example.com"]",
+      },
+    ],
+    "method": "orWhere",
+  },
+  {
+    "args": [],
+    "method": "withDeleted",
+  },
+]
+`;
+
+exports[`addPersonEmailFiltersToQueryBuilder empty emails array: should handle empty email array gracefully - query builder calls 1`] = `
+[
+  {
+    "args": [
+      [
+        "person.id",
+        "person.emailsPrimaryEmail",
+        "person.emailsAdditionalEmails",
+      ],
+    ],
+    "method": "select",
+  },
+  {
+    "args": [
+      "LOWER(person.emailsPrimaryEmail) IN (:...emails)",
+      {
+        "emails": [],
+      },
+    ],
+    "method": "where",
+  },
+  {
+    "args": [],
+    "method": "withDeleted",
+  },
+]
+`;
+
+exports[`addPersonEmailFiltersToQueryBuilder multiple emails with exclusions: should handle exclusions with multiple emails - query builder calls 1`] = `
+[
+  {
+    "args": [
+      [
+        "person.id",
+        "person.emailsPrimaryEmail",
+        "person.emailsAdditionalEmails",
+      ],
+    ],
+    "method": "select",
+  },
+  {
+    "args": [
+      "LOWER(person.emailsPrimaryEmail) IN (:...emails)",
+      {
+        "emails": [
+          "test@example.com",
+          "contact@company.com",
+        ],
+      },
+    ],
+    "method": "where",
+  },
+  {
+    "args": [
+      "person.id NOT IN (:...excludePersonIds)",
+      {
+        "excludePersonIds": [
+          "person-1",
+        ],
+      },
+    ],
+    "method": "andWhere",
+  },
+  {
+    "args": [
+      "person.id NOT IN (:...excludePersonIds) AND person.emailsAdditionalEmails @> :email0::jsonb",
+      {
+        "email0": "["test@example.com"]",
+        "excludePersonIds": [
+          "person-1",
+        ],
+      },
+    ],
+    "method": "orWhere",
+  },
+  {
+    "args": [
+      "person.id NOT IN (:...excludePersonIds) AND person.emailsAdditionalEmails @> :email1::jsonb",
+      {
+        "email1": "["contact@company.com"]",
+        "excludePersonIds": [
+          "person-1",
+        ],
+      },
+    ],
+    "method": "orWhere",
+  },
+  {
+    "args": [],
+    "method": "withDeleted",
+  },
+]
+`;
+
+exports[`addPersonEmailFiltersToQueryBuilder multiple emails without exclusions: should handle multiple email addresses correctly - query builder calls 1`] = `
+[
+  {
+    "args": [
+      [
+        "person.id",
+        "person.emailsPrimaryEmail",
+        "person.emailsAdditionalEmails",
+      ],
+    ],
+    "method": "select",
+  },
+  {
+    "args": [
+      "LOWER(person.emailsPrimaryEmail) IN (:...emails)",
+      {
+        "emails": [
+          "test@example.com",
+          "contact@company.com",
+        ],
+      },
+    ],
+    "method": "where",
+  },
+  {
+    "args": [
+      "person.emailsAdditionalEmails @> :email0::jsonb",
+      {
+        "email0": "["test@example.com"]",
+      },
+    ],
+    "method": "orWhere",
+  },
+  {
+    "args": [
+      "person.emailsAdditionalEmails @> :email1::jsonb",
+      {
+        "email1": "["contact@company.com"]",
+      },
+    ],
+    "method": "orWhere",
+  },
+  {
+    "args": [],
+    "method": "withDeleted",
+  },
+]
+`;
+
+exports[`addPersonEmailFiltersToQueryBuilder single email with person ID exclusions: should handle exclusions with a single email - query builder calls 1`] = `
+[
+  {
+    "args": [
+      [
+        "person.id",
+        "person.emailsPrimaryEmail",
+        "person.emailsAdditionalEmails",
+      ],
+    ],
+    "method": "select",
+  },
+  {
+    "args": [
+      "LOWER(person.emailsPrimaryEmail) IN (:...emails)",
+      {
+        "emails": [
+          "test@example.com",
+        ],
+      },
+    ],
+    "method": "where",
+  },
+  {
+    "args": [
+      "person.id NOT IN (:...excludePersonIds)",
+      {
+        "excludePersonIds": [
+          "person-1",
+          "person-2",
+        ],
+      },
+    ],
+    "method": "andWhere",
+  },
+  {
+    "args": [
+      "person.id NOT IN (:...excludePersonIds) AND person.emailsAdditionalEmails @> :email0::jsonb",
+      {
+        "email0": "["test@example.com"]",
+        "excludePersonIds": [
+          "person-1",
+          "person-2",
+        ],
+      },
+    ],
+    "method": "orWhere",
+  },
+  {
+    "args": [],
+    "method": "withDeleted",
+  },
+]
+`;
+
+exports[`addPersonEmailFiltersToQueryBuilder single email without exclusions: should handle a single email address correctly - query builder calls 1`] = `
+[
+  {
+    "args": [
+      [
+        "person.id",
+        "person.emailsPrimaryEmail",
+        "person.emailsAdditionalEmails",
+      ],
+    ],
+    "method": "select",
+  },
+  {
+    "args": [
+      "LOWER(person.emailsPrimaryEmail) IN (:...emails)",
+      {
+        "emails": [
+          "test@example.com",
+        ],
+      },
+    ],
+    "method": "where",
+  },
+  {
+    "args": [
+      "person.emailsAdditionalEmails @> :email0::jsonb",
+      {
+        "email0": "["test@example.com"]",
+      },
+    ],
+    "method": "orWhere",
+  },
+  {
+    "args": [],
+    "method": "withDeleted",
+  },
+]
+`;
+
+exports[`addPersonEmailFiltersToQueryBuilder three emails with unique parameter generation: should create unique parameter names for each email - query builder calls 1`] = `
+[
+  {
+    "args": [
+      [
+        "person.id",
+        "person.emailsPrimaryEmail",
+        "person.emailsAdditionalEmails",
+      ],
+    ],
+    "method": "select",
+  },
+  {
+    "args": [
+      "LOWER(person.emailsPrimaryEmail) IN (:...emails)",
+      {
+        "emails": [
+          "email1@example.com",
+          "email2@example.com",
+          "email3@example.com",
+        ],
+      },
+    ],
+    "method": "where",
+  },
+  {
+    "args": [
+      "person.emailsAdditionalEmails @> :email0::jsonb",
+      {
+        "email0": "["email1@example.com"]",
+      },
+    ],
+    "method": "orWhere",
+  },
+  {
+    "args": [
+      "person.emailsAdditionalEmails @> :email1::jsonb",
+      {
+        "email1": "["email2@example.com"]",
+      },
+    ],
+    "method": "orWhere",
+  },
+  {
+    "args": [
+      "person.emailsAdditionalEmails @> :email2::jsonb",
+      {
+        "email2": "["email3@example.com"]",
+      },
+    ],
+    "method": "orWhere",
+  },
+  {
+    "args": [],
+    "method": "withDeleted",
+  },
+]
+`;

@@ -1,4 +1,3 @@
-import styled from '@emotion/styled';
 import { useCallback, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
@@ -29,15 +28,11 @@ import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { IconForbid, IconPencil, IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { RelationType } from '~/generated-metadata/graphql';
 
 type RecordDetailRelationSectionDropdownProps = {
   loading: boolean;
 };
-
-const StyledAddDropdown = styled(Dropdown)`
-  margin-left: auto;
-`;
 
 export const RecordDetailRelationSectionDropdown = ({
   loading,
@@ -66,8 +61,8 @@ export const RecordDetailRelationSectionDropdown = ({
   >(recordStoreFamilySelector({ recordId, fieldName }));
 
   // TODO: use new relation type
-  const isToOneObject = relationType === RelationDefinitionType.MANY_TO_ONE;
-  const isToManyObjects = relationType === RelationDefinitionType.ONE_TO_MANY;
+  const isToOneObject = relationType === RelationType.MANY_TO_ONE;
+  const isToManyObjects = relationType === RelationType.ONE_TO_MANY;
 
   const relationRecords: ObjectRecord[] =
     fieldValue && isToOneObject
@@ -149,6 +144,7 @@ export const RecordDetailRelationSectionDropdown = ({
 
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId,
+    objectMetadataId: relationObjectMetadataItem.id,
   });
 
   const isFieldReadOnly = useIsFieldValueReadOnly({
@@ -196,7 +192,7 @@ export const RecordDetailRelationSectionDropdown = ({
 
   return (
     <DropdownScope dropdownScopeId={dropdownId}>
-      <StyledAddDropdown
+      <Dropdown
         dropdownId={dropdownId}
         dropdownPlacement="left-start"
         onClose={handleCloseRelationPickerDropdown}

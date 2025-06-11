@@ -11,7 +11,6 @@ import { recordIndexViewTypeState } from '@/object-record/record-index/states/re
 
 import { InformationBannerWrapper } from '@/information-banner/components/InformationBannerWrapper';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 
 import { RecordIndexFiltersToContextStoreEffect } from '@/object-record/record-index/components/RecordIndexFiltersToContextStoreEffect';
@@ -48,48 +47,46 @@ export const RecordIndexContainer = () => {
     <>
       <StyledContainer>
         <InformationBannerWrapper />
-        <RecordFieldValueSelectorContextProvider>
-          <SpreadsheetImportProvider>
-            <ViewBar
+        <SpreadsheetImportProvider>
+          <ViewBar
+            viewBarId={recordIndexId}
+            optionsDropdownButton={
+              <ObjectOptionsDropdown
+                recordIndexId={recordIndexId}
+                objectMetadataItem={objectMetadataItem}
+                viewType={recordIndexViewType ?? ViewType.Table}
+              />
+            }
+          />
+          <RecordIndexViewBarEffect
+            objectNamePlural={objectNamePlural}
+            viewBarId={recordIndexId}
+          />
+        </SpreadsheetImportProvider>
+        <RecordIndexFiltersToContextStoreEffect />
+        {recordIndexViewType === ViewType.Table && (
+          <>
+            <RecordIndexTableContainer
+              recordTableId={recordIndexId}
               viewBarId={recordIndexId}
-              optionsDropdownButton={
-                <ObjectOptionsDropdown
-                  recordIndexId={recordIndexId}
-                  objectMetadataItem={objectMetadataItem}
-                  viewType={recordIndexViewType ?? ViewType.Table}
-                />
-              }
             />
-            <RecordIndexViewBarEffect
-              objectNamePlural={objectNamePlural}
+            <RecordIndexTableContainerEffect />
+          </>
+        )}
+        {recordIndexViewType === ViewType.Kanban && (
+          <StyledContainerWithPadding>
+            <RecordIndexBoardContainer
+              recordBoardId={recordIndexId}
               viewBarId={recordIndexId}
+              objectNameSingular={objectNameSingular}
             />
-          </SpreadsheetImportProvider>
-          <RecordIndexFiltersToContextStoreEffect />
-          {recordIndexViewType === ViewType.Table && (
-            <>
-              <RecordIndexTableContainer
-                recordTableId={recordIndexId}
-                viewBarId={recordIndexId}
-              />
-              <RecordIndexTableContainerEffect />
-            </>
-          )}
-          {recordIndexViewType === ViewType.Kanban && (
-            <StyledContainerWithPadding>
-              <RecordIndexBoardContainer
-                recordBoardId={recordIndexId}
-                viewBarId={recordIndexId}
-                objectNameSingular={objectNameSingular}
-              />
-              <RecordIndexBoardDataLoader
-                objectNameSingular={objectNameSingular}
-                recordBoardId={recordIndexId}
-              />
-              <RecordIndexBoardDataLoaderEffect recordBoardId={recordIndexId} />
-            </StyledContainerWithPadding>
-          )}
-        </RecordFieldValueSelectorContextProvider>
+            <RecordIndexBoardDataLoader
+              objectNameSingular={objectNameSingular}
+              recordBoardId={recordIndexId}
+            />
+            <RecordIndexBoardDataLoaderEffect recordBoardId={recordIndexId} />
+          </StyledContainerWithPadding>
+        )}
       </StyledContainer>
     </>
   );

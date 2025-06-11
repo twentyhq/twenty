@@ -1,6 +1,7 @@
 import { FilterCondition } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/types/filter-condition.type';
 import { FilterOperator } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/types/filter-operator.type';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const applyFilter = <T extends Record<string, any>>(
   array: T[],
   filter: FilterCondition,
@@ -9,6 +10,7 @@ export const applyFilter = <T extends Record<string, any>>(
 };
 
 const evaluateFilter = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   item: Record<string, any>,
   filter: FilterCondition,
 ): boolean => {
@@ -73,6 +75,7 @@ const evaluateNestedConditions = (
   }
 
   return Object.entries(conditions).every(([field, nestedConditions]) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const nestedValue = (value as Record<string, any>)[field];
 
     if (isOperator(nestedConditions)) {
@@ -86,6 +89,7 @@ const evaluateNestedConditions = (
   });
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const evaluateCondition = (value: any, condition: FilterOperator): boolean => {
   const [[operator, targetValue]] = Object.entries(condition);
 
@@ -132,6 +136,7 @@ const evaluateCondition = (value: any, condition: FilterOperator): boolean => {
   }
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const matchesLike = (value: any, pattern: string): boolean => {
   if (typeof value !== 'string') {
     return false;
@@ -142,6 +147,7 @@ const matchesLike = (value: any, pattern: string): boolean => {
   return new RegExp(`^${regexPattern}$`).test(value);
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const matchesILike = (value: any, pattern: string): boolean => {
   if (typeof value !== 'string') {
     return false;
@@ -152,6 +158,7 @@ const matchesILike = (value: any, pattern: string): boolean => {
   return new RegExp(`^${regexPattern}$`, 'i').test(value);
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isOperator = (obj: any): boolean => {
   if (typeof obj !== 'object' || obj === null) {
     return false;

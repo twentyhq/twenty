@@ -5,13 +5,11 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { BASE_RECORD_LAYOUT } from '@/object-record/record-show/constants/BaseRecordLayout';
 import { CardType } from '@/object-record/record-show/types/CardType';
 import { RecordLayout } from '@/object-record/record-show/types/RecordLayout';
-import { SingleTabProps } from '@/ui/layout/tab/components/TabList';
-import { RecordLayoutTab } from '@/ui/layout/tab/types/RecordLayoutTab';
+import { RecordLayoutTab } from '@/ui/layout/tab-list/types/RecordLayoutTab';
+import { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { FeatureFlagKey } from '~/generated/graphql';
 import {
   IconCalendarEvent,
   IconHome,
@@ -19,6 +17,8 @@ import {
   IconNotes,
   IconSettings,
 } from 'twenty-ui/display';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useRecordShowContainerTabs = (
   loading: boolean,
@@ -152,7 +152,7 @@ export const useRecordShowContainerTabs = (
               ifMobile: false,
               ifDesktop: false,
               ifInRightDrawer: false,
-              ifFeaturesDisabled: [FeatureFlagKey.IsWorkflowEnabled],
+              ifFeaturesDisabled: [FeatureFlagKey.IS_WORKFLOW_ENABLED],
               ifRequiredObjectsInactive: [],
               ifRelationsMissing: [],
             },
@@ -175,7 +175,7 @@ export const useRecordShowContainerTabs = (
               ifMobile: false,
               ifDesktop: false,
               ifInRightDrawer: false,
-              ifFeaturesDisabled: [FeatureFlagKey.IsWorkflowEnabled],
+              ifFeaturesDisabled: [FeatureFlagKey.IS_WORKFLOW_ENABLED],
               ifRequiredObjectsInactive: [],
               ifRelationsMissing: [],
             },
@@ -197,7 +197,7 @@ export const useRecordShowContainerTabs = (
               ifMobile: false,
               ifDesktop: false,
               ifInRightDrawer: false,
-              ifFeaturesDisabled: [FeatureFlagKey.IsWorkflowEnabled],
+              ifFeaturesDisabled: [FeatureFlagKey.IS_WORKFLOW_ENABLED],
               ifRequiredObjectsInactive: [],
               ifRelationsMissing: [],
             },

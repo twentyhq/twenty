@@ -38,8 +38,6 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
     MESSAGING_MESSAGE_CHANNEL_SYNC_STATUS_MONITORING_CRON_PATTERN,
   )
   async handle(): Promise<void> {
-    this.logger.log('Starting message channel sync status monitoring...');
-
     await this.messagingMonitoringService.track({
       eventName: 'message_channel.monitoring.sync_status.start',
       message: 'Starting message channel sync status monitoring',

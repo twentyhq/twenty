@@ -7,6 +7,7 @@ import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-
 export const getPreviousStepOutput = (
   steps: WorkflowAction[],
   currentStepId: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   context: Record<string, any>,
 ) => {
   const previousSteps = steps.filter((step) =>

@@ -10,12 +10,15 @@ import {
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
 import { UpsertObjectPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-object-permissions.input';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
@@ -37,6 +40,7 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Resolver(() => RoleDTO)
+@UseGuards(WorkspaceAuthGuard)
 @UseGuards(SettingsPermissionsGuard(SettingPermissionType.ROLES))
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
 export class RoleResolver {
@@ -47,6 +51,7 @@ export class RoleResolver {
     private readonly featureFlagService: FeatureFlagService,
     private readonly objectPermissionService: ObjectPermissionService,
     private readonly settingPermissionService: SettingPermissionService,
+    private readonly fileService: FileService,
   ) {}
 
   @Query(() => [RoleDTO])
@@ -55,6 +60,7 @@ export class RoleResolver {
   }
 
   @Mutation(() => WorkspaceMember)
+  @UseGuards(UserAuthGuard)
   async updateWorkspaceMemberRole(
     @AuthWorkspace() workspace: Workspace,
     @Args('workspaceMemberId') workspaceMemberId: string,
@@ -180,16 +186,19 @@ export class RoleResolver {
     @Parent() role: RoleDTO,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<WorkspaceMemberWorkspaceEntity[]> {
-    return this.userRoleService.getWorkspaceMembersAssignedToRole(
-      role.id,
-      workspace.id,
-    );
+    const workspaceMembers =
+      await this.userRoleService.getWorkspaceMembersAssignedToRole(
+        role.id,
+        workspace.id,
+      );
+
+    return workspaceMembers;
   }
 
   private async validatePermissionsV2EnabledOrThrow(workspace: Workspace) {
     const isPermissionsV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsPermissionsV2Enabled,
+        FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
         workspace.id,
       );
 

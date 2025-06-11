@@ -5,11 +5,11 @@ import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 
-import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
-import { DEV_SEED_WORKSPACE_MEMBER_IDS } from 'src/database/typeorm-seeds/workspace/workspace-members';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -40,7 +40,7 @@ describe('roles permissions', () => {
   beforeAll(async () => {
     const enablePermissionsV2Query = updateFeatureFlagFactory(
       SEED_APPLE_WORKSPACE_ID,
-      'IsPermissionsV2Enabled',
+      'IS_PERMISSIONS_V2_ENABLED',
       true,
     );
 
@@ -63,10 +63,12 @@ describe('roles permissions', () => {
       .send(query);
 
     adminRoleId = resp.body.data.getRoles.find(
+      // @ts-expect-error legacy noImplicitAny
       (role) => role.label === 'Admin',
     ).id;
 
     guestRoleId = resp.body.data.getRoles.find(
+      // @ts-expect-error legacy noImplicitAny
       (role) => role.label === 'Guest',
     ).id;
   });
@@ -74,7 +76,7 @@ describe('roles permissions', () => {
   afterAll(async () => {
     const disablePermissionsV2Query = updateFeatureFlagFactory(
       SEED_APPLE_WORKSPACE_ID,
-      'IsPermissionsV2Enabled',
+      'IS_PERMISSIONS_V2_ENABLED',
       false,
     );
 
@@ -190,7 +192,7 @@ describe('roles permissions', () => {
       const query = {
         query: `
             mutation UpdateWorkspaceMemberRole {
-                updateWorkspaceMemberRole(workspaceMemberId: "${DEV_SEED_WORKSPACE_MEMBER_IDS.TIM}", roleId: "test-role-id") {
+                updateWorkspaceMemberRole(workspaceMemberId: "${WORKSPACE_MEMBER_DATA_SEED_IDS.TIM}", roleId: "test-role-id") {
                     id
                 }
             }
@@ -231,17 +233,19 @@ describe('roles permissions', () => {
         .send(getRolesQuery);
 
       const memberRoleId = resp.body.data.getRoles.find(
+        // @ts-expect-error legacy noImplicitAny
         (role) => role.label === 'Member',
       ).id;
 
       const guestRoleId = resp.body.data.getRoles.find(
+        // @ts-expect-error legacy noImplicitAny
         (role) => role.label === 'Guest',
       ).id;
 
       const updateRoleQuery = {
         query: `
           mutation UpdateWorkspaceMemberRole {
-              updateWorkspaceMemberRole(workspaceMemberId: "${DEV_SEED_WORKSPACE_MEMBER_IDS.PHIL}", roleId: "${memberRoleId}") {
+              updateWorkspaceMemberRole(workspaceMemberId: "${WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL}", roleId: "${memberRoleId}") {
                   id
               }
           }
@@ -258,7 +262,7 @@ describe('roles permissions', () => {
           expect(res.body.data).toBeDefined();
           expect(res.body.errors).toBeUndefined();
           expect(res.body.data.updateWorkspaceMemberRole.id).toBe(
-            DEV_SEED_WORKSPACE_MEMBER_IDS.PHIL,
+            WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
           );
         });
 
@@ -266,7 +270,7 @@ describe('roles permissions', () => {
       const rollbackRoleUpdateQuery = {
         query: `
           mutation UpdateWorkspaceMemberRole {
-              updateWorkspaceMemberRole(workspaceMemberId: "${DEV_SEED_WORKSPACE_MEMBER_IDS.PHIL}", roleId: "${guestRoleId}") {
+              updateWorkspaceMemberRole(workspaceMemberId: "${WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL}", roleId: "${guestRoleId}") {
                   id
               }
           }
@@ -282,7 +286,7 @@ describe('roles permissions', () => {
           expect(res.body.data).toBeDefined();
           expect(res.body.errors).toBeUndefined();
           expect(res.body.data.updateWorkspaceMemberRole.id).toBe(
-            DEV_SEED_WORKSPACE_MEMBER_IDS.PHIL,
+            WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
           );
         });
     });
@@ -474,8 +478,6 @@ describe('roles permissions', () => {
       }) => `
       mutation UpsertObjectPermissions {
           upsertObjectPermissions(upsertObjectPermissionsInput: { roleId: "${roleId}", objectPermissions: [{objectMetadataId: "${objectMetadataId}", canUpdateObjectRecords: true}]}) {
-              id
-              roleId
               objectMetadataId
               canUpdateObjectRecords
           }
@@ -537,7 +539,6 @@ describe('roles permissions', () => {
             expect(res.body.data.upsertObjectPermissions).toEqual(
               expect.arrayContaining([
                 expect.objectContaining({
-                  roleId: createdEditableRoleId,
                   objectMetadataId: listingObjectId,
                   canUpdateObjectRecords: true,
                 }),

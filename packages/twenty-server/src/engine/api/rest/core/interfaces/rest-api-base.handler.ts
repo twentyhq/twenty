@@ -1,17 +1,19 @@
 import { BadRequestException, Inject } from '@nestjs/common';
 
 import { Request } from 'express';
+import chunk from 'lodash.chunk';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { In, ObjectLiteral, SelectQueryBuilder } from 'typeorm';
+import { In, ObjectLiteral } from 'typeorm';
 
 import {
   ObjectRecord,
-  OrderByDirection,
+  ObjectRecordFilter,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
+import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
 import { GetVariablesFactory } from 'src/engine/api/rest/core/query-builder/factories/get-variables.factory';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
@@ -21,12 +23,15 @@ import {
   DepthInputFactory,
   MAX_DEPTH,
 } from 'src/engine/api/rest/input-factories/depth-input.factory';
+import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
+import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult as formatGetManyData } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -39,7 +44,13 @@ export interface PageInfo {
 }
 
 interface FormatResultParams<T> {
-  operation: 'delete' | 'create' | 'update' | 'findOne' | 'findMany';
+  operation:
+    | 'delete'
+    | 'create'
+    | 'update'
+    | 'findOne'
+    | 'findMany'
+    | 'findDuplicates';
   objectNameSingular?: string;
   objectNamePlural?: string;
   data: T;
@@ -48,7 +59,7 @@ interface FormatResultParams<T> {
 }
 
 export interface FormatResult {
-  data: {
+  data?: {
     [operation: string]: object;
   };
   pageInfo?: PageInfo;
@@ -70,8 +81,12 @@ export abstract class RestApiBaseHandler {
   protected readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService;
   @Inject()
   protected readonly apiEventEmitterService: ApiEventEmitterService;
+  @Inject()
+  protected readonly createdByFromAuthContextService: CreatedByFromAuthContextService;
 
-  protected abstract handle(request: Request): Promise<FormatResult>;
+  protected abstract handle(
+    request: Request,
+  ): Promise<FormatResult | { data: FormatResult[] }>;
 
   public async getRepositoryAndMetadataOrFail(request: Request) {
     const { workspace, apiKey, userWorkspaceId } = request;
@@ -90,7 +105,7 @@ export abstract class RestApiBaseHandler {
       throw new BadRequestException('Workspace not found');
     }
 
-    const dataSource =
+    const workspaceDataSource =
       await this.twentyORMGlobalManager.getDataSourceForWorkspace({
         workspaceId: workspace.id,
         shouldFailIfMetadataNotFound: false,
@@ -105,7 +120,13 @@ export abstract class RestApiBaseHandler {
         objectMetadataNameSingular,
       );
 
-    const shouldBypassPermissionChecks = !!apiKey;
+    if (!isDefined(objectMetadataItemWithFieldsMaps)) {
+      throw new BadRequestException(
+        `Object metadata item with name singular ${objectMetadataNameSingular} not found`,
+      );
+    }
+
+    const shouldBypassPermissionChecks = isDefined(apiKey);
 
     const roleId =
       await this.workspacePermissionsCacheService.getRoleIdFromUserWorkspaceId({
@@ -113,18 +134,16 @@ export abstract class RestApiBaseHandler {
         userWorkspaceId,
       });
 
-    const repository = dataSource.getRepository<ObjectRecord>(
+    const repository = workspaceDataSource.getRepository<ObjectRecord>(
       objectMetadataNameSingular,
       shouldBypassPermissionChecks,
       roleId,
     );
 
     return {
-      objectMetadataNameSingular,
-      objectMetadataNamePlural: objectMetadata.objectMetadataMapItem.namePlural,
       objectMetadata,
       repository,
-      dataSource,
+      workspaceDataSource,
       objectMetadataItemWithFieldsMaps,
     };
   }
@@ -194,14 +213,31 @@ export abstract class RestApiBaseHandler {
       depth: depth,
     });
 
-    const unorderedRecords = await repository.find({
+    const relationsChunk = chunk(relations, 50);
+
+    const recordsWithoutRelations = await repository.find({
       where: { id: In(recordIds) },
-      relations,
     });
 
-    const recordMap = new Map(unorderedRecords.map((r) => [r.id, r]));
+    const recordsMap = new Map(
+      recordsWithoutRelations.map((record) => [record.id, record]),
+    );
 
-    const orderedRecords = recordIds.map((id) => recordMap.get(id));
+    for (const relationChunk of relationsChunk) {
+      const records = await repository.find({
+        where: { id: In(recordIds) },
+        relations: relationChunk,
+      });
+
+      records.map((record) => {
+        recordsMap.set(record.id, {
+          ...recordsMap.get(record.id),
+          ...record,
+        });
+      });
+    }
+
+    const orderedRecords = recordIds.map((id) => recordsMap.get(id));
 
     return orderedRecords;
   }
@@ -226,56 +262,36 @@ export abstract class RestApiBaseHandler {
   }: FormatResultParams<T>) {
     let prefix: string;
 
+    if (isDefined(objectNameSingular) && isDefined(objectNamePlural)) {
+      throw new Error(
+        'Cannot define both objectNameSingular and objectNamePlural',
+      );
+    }
+
     if (operation === 'findOne') {
       prefix = objectNameSingular || '';
     } else if (operation === 'findMany') {
       prefix = objectNamePlural || '';
+    } else if (operation === 'findDuplicates') {
+      prefix = `${objectNameSingular}Duplicates`;
     } else {
-      prefix = operation + capitalize(objectNameSingular || '');
+      prefix =
+        operation + capitalize(objectNameSingular || objectNamePlural || '');
     }
 
     return {
-      data: {
-        [prefix]: data,
-      },
+      ...(operation === 'findDuplicates'
+        ? {
+            [prefix]: data,
+          }
+        : {
+            data: {
+              [prefix]: data,
+            },
+          }),
       ...(isDefined(pageInfo) ? { pageInfo } : {}),
       ...(isDefined(totalCount) ? { totalCount } : {}),
     };
-  }
-
-  formatPaginatedResult(
-    finalRecords: any[],
-    objectMetadataNamePlural: string,
-    isForwardPagination: boolean,
-    hasMoreRecords: boolean,
-    totalCount: number,
-  ) {
-    const hasPreviousPage = !isForwardPagination && hasMoreRecords;
-
-    return this.formatResult({
-      operation: 'findMany',
-      objectNamePlural: objectMetadataNamePlural,
-      data: isForwardPagination ? finalRecords : finalRecords.reverse(),
-      pageInfo: {
-        hasNextPage: isForwardPagination && hasMoreRecords,
-        ...(hasPreviousPage ? { hasPreviousPage } : {}),
-        startCursor:
-          finalRecords.length > 0
-            ? Buffer.from(JSON.stringify({ id: finalRecords[0].id })).toString(
-                'base64',
-              )
-            : null,
-        endCursor:
-          finalRecords.length > 0
-            ? Buffer.from(
-                JSON.stringify({
-                  id: finalRecords[finalRecords.length - 1].id,
-                }),
-              ).toString('base64')
-            : null,
-      },
-      totalCount,
-    });
   }
 
   async findRecords({
@@ -283,18 +299,24 @@ export abstract class RestApiBaseHandler {
     recordId,
     repository,
     objectMetadata,
-    objectMetadataNameSingular,
     objectMetadataItemWithFieldsMaps,
+    extraFilters,
   }: {
     request: Request;
     recordId?: string;
     repository: WorkspaceRepository<ObjectLiteral>;
-    objectMetadata: any;
-    objectMetadataNameSingular: string;
+    objectMetadata: {
+      objectMetadataMaps: ObjectMetadataMaps;
+      objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
+    };
     objectMetadataItemWithFieldsMaps:
       | ObjectMetadataItemWithFieldMaps
       | undefined;
+    extraFilters?: Partial<ObjectRecordFilter>;
   }) {
+    const objectMetadataNameSingular =
+      objectMetadata.objectMetadataMapItem.nameSingular;
+
     const qb = repository.createQueryBuilder(objectMetadataNameSingular);
 
     const inputs = this.getVariablesFactory.create(
@@ -305,8 +327,11 @@ export abstract class RestApiBaseHandler {
 
     const fieldMetadataMapByName =
       objectMetadataItemWithFieldsMaps?.fieldsByName || {};
+
     const fieldMetadataMapByJoinColumnName =
       objectMetadataItemWithFieldsMaps?.fieldsByJoinColumnName || {};
+
+    const isForwardPagination = !inputs.endingBefore;
 
     const graphqlQueryParser = new GraphqlQueryParser(
       fieldMetadataMapByName,
@@ -314,7 +339,12 @@ export abstract class RestApiBaseHandler {
       objectMetadata.objectMetadataMaps,
     );
 
-    const filters = this.computeFilters(inputs);
+    const filters = this.computeFilters({
+      inputs,
+      objectMetadata,
+      isForwardPagination,
+      extraFilters,
+    });
 
     let selectQueryBuilder = isDefined(filters)
       ? graphqlQueryParser.applyFilterToBuilder(
@@ -326,11 +356,9 @@ export abstract class RestApiBaseHandler {
 
     const totalCount = await this.getTotalCount(selectQueryBuilder);
 
-    const isForwardPagination = !inputs.endingBefore;
-
     selectQueryBuilder = graphqlQueryParser.applyOrderToBuilder(
       selectQueryBuilder,
-      [...(inputs.orderBy || []), { id: OrderByDirection.AscNullsFirst }],
+      inputs.orderBy || [],
       objectMetadataNameSingular,
       isForwardPagination,
     );
@@ -356,45 +384,77 @@ export abstract class RestApiBaseHandler {
 
     const hasMoreRecords = records.length < totalCount;
 
+    const finalRecords = formatGetManyData<ObjectRecord[]>(
+      records,
+      objectMetadataItemWithFieldsMaps,
+      objectMetadata.objectMetadataMaps,
+    );
+
+    const startCursor =
+      finalRecords.length > 0
+        ? encodeCursor(finalRecords[0], inputs.orderBy)
+        : null;
+
+    const endCursor =
+      finalRecords.length > 0
+        ? encodeCursor(finalRecords[finalRecords.length - 1], inputs.orderBy)
+        : null;
+
     return {
-      records: formatGetManyData<ObjectLiteral[]>(
-        records,
-        objectMetadataItemWithFieldsMaps as any,
-        objectMetadata.objectMetadataMaps,
-      ),
+      records: finalRecords,
       totalCount,
       hasMoreRecords,
       isForwardPagination,
+      startCursor,
+      endCursor,
     };
   }
 
   async getTotalCount(
-    query: SelectQueryBuilder<ObjectLiteral>,
+    query: WorkspaceSelectQueryBuilder<ObjectLiteral>,
   ): Promise<number> {
     const countQuery = query.clone();
 
     return await countQuery.getCount();
   }
 
-  computeFilters(inputs: QueryVariables) {
+  computeFilters({
+    inputs,
+    objectMetadata,
+    isForwardPagination,
+    extraFilters,
+  }: {
+    inputs: QueryVariables;
+    objectMetadata: {
+      objectMetadataMaps: ObjectMetadataMaps;
+      objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
+    };
+    isForwardPagination: boolean;
+    extraFilters?: Partial<ObjectRecordFilter>;
+  }) {
     let appliedFilters = inputs.filter;
 
-    if (inputs.startingAfter) {
-      appliedFilters = {
-        and: [
-          appliedFilters || {},
-          { id: { gt: this.parseCursor(inputs.startingAfter).id } },
-        ],
-      };
+    if (extraFilters) {
+      appliedFilters = (appliedFilters
+        ? { and: [appliedFilters, extraFilters] }
+        : extraFilters) as unknown as ObjectRecordFilter;
     }
 
-    if (inputs.endingBefore) {
-      appliedFilters = {
-        and: [
-          appliedFilters || {},
-          { id: { lt: this.parseCursor(inputs.endingBefore).id } },
-        ],
-      };
+    const cursor = inputs.startingAfter || inputs.endingBefore;
+
+    if (cursor) {
+      const cursorArgFilter = computeCursorArgFilter(
+        this.parseCursor(cursor),
+        inputs.orderBy || [],
+        objectMetadata.objectMetadataMapItem.fieldsByName,
+        isForwardPagination,
+      );
+
+      appliedFilters = (appliedFilters
+        ? {
+            and: [appliedFilters, { or: cursorArgFilter }],
+          }
+        : { or: cursorArgFilter }) as unknown as ObjectRecordFilter;
     }
 
     return appliedFilters;

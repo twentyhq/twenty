@@ -32,12 +32,12 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 @Injectable()
 export class RemoteServerService<T extends RemoteServerType> {
   constructor(
-    @InjectRepository(RemoteServerEntity, 'metadata')
+    @InjectRepository(RemoteServerEntity, 'core')
     private readonly remoteServerRepository: Repository<
       RemoteServerEntity<RemoteServerType>
     >,
-    @InjectDataSource('metadata')
-    private readonly metadataDataSource: DataSource,
+    @InjectDataSource('core')
+    private readonly coreDataSource: DataSource,
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly foreignDataWrapperServerQueryFactory: ForeignDataWrapperServerQueryFactory,
     private readonly remoteTableService: RemoteTableService,
@@ -79,7 +79,7 @@ export class RemoteServerService<T extends RemoteServerType> {
       };
     }
 
-    return this.metadataDataSource.transaction(
+    return this.coreDataSource.transaction(
       async (entityManager: WorkspaceEntityManager) => {
         const createdRemoteServer = entityManager.create(
           RemoteServerEntity,
@@ -164,7 +164,7 @@ export class RemoteServerService<T extends RemoteServerType> {
       };
     }
 
-    return this.metadataDataSource.transaction(
+    return this.coreDataSource.transaction(
       async (entityManager: EntityManager) => {
         const updatedRemoteServer = await this.updateRemoteServer(
           partialRemoteServerWithUpdates,
@@ -222,7 +222,7 @@ export class RemoteServerService<T extends RemoteServerType> {
 
     await this.remoteTableService.unsyncAll(workspaceId, remoteServer);
 
-    return this.metadataDataSource.transaction(
+    return this.coreDataSource.transaction(
       async (entityManager: EntityManager) => {
         await entityManager.query(
           `DROP SERVER "${remoteServer.foreignDataWrapperId}" CASCADE`,
@@ -271,6 +271,7 @@ export class RemoteServerService<T extends RemoteServerType> {
     const [parameters, rawQuery] =
       buildUpdateRemoteServerRawQuery(remoteServerToUpdate);
 
+    // TO DO: executeRawQuery is deprecated and will throw
     const updateResult = await this.workspaceDataSourceService.executeRawQuery(
       rawQuery,
       parameters,

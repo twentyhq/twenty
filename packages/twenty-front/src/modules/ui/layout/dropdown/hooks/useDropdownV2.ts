@@ -56,15 +56,15 @@ export const useDropdownV2 = () => {
         );
 
         if (isDefined(customHotkeyScope)) {
-          setHotkeyScopeAndMemorizePreviousScope(
-            customHotkeyScope.scope,
-            customHotkeyScope.customScopes,
-          );
+          setHotkeyScopeAndMemorizePreviousScope({
+            scope: customHotkeyScope.scope,
+            customScopes: customHotkeyScope.customScopes,
+          });
         } else if (isDefined(dropdownHotkeyScope)) {
-          setHotkeyScopeAndMemorizePreviousScope(
-            dropdownHotkeyScope.scope,
-            dropdownHotkeyScope.customScopes,
-          );
+          setHotkeyScopeAndMemorizePreviousScope({
+            scope: dropdownHotkeyScope.scope,
+            customScopes: dropdownHotkeyScope.customScopes,
+          });
         }
       },
     [setHotkeyScopeAndMemorizePreviousScope],

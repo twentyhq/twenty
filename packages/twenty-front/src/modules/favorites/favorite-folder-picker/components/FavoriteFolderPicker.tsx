@@ -6,7 +6,7 @@ import { FavoriteFolderPickerInstanceContext } from '@/favorites/favorite-folder
 import { favoriteFolderSearchFilterComponentState } from '@/favorites/favorite-folder-picker/states/favoriteFoldersSearchFilterComponentState';
 import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -90,7 +90,7 @@ export const FavoriteFolderPicker = ({
   );
 
   return (
-    <DropdownMenu data-select-disable>
+    <DropdownContent>
       <FavoriteFolderPickerSearchInput />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
@@ -101,6 +101,6 @@ export const FavoriteFolderPicker = ({
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
       <FavoriteFolderPickerFooter dropdownId={dropdownId} />
-    </DropdownMenu>
+    </DropdownContent>
   );
 };

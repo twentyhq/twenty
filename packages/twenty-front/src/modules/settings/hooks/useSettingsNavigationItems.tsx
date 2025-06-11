@@ -8,7 +8,6 @@ import { useSettingsPermissionMap } from '@/settings/roles/hooks/useSettingsPerm
 import { NavigationDrawerItemIndentationLevel } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
-import { SettingPermissionType } from '~/generated/graphql';
 import {
   IconApi,
   IconApps,
@@ -31,6 +30,7 @@ import {
   IconUsers,
   IconWebhook,
 } from 'twenty-ui/display';
+import { SettingPermissionType } from '~/generated/graphql';
 
 export type SettingsNavigationSection = {
   label: string;
@@ -203,6 +203,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Logout`,
           onClick: signOut,
           Icon: IconDoorEnter,
+          matchSubPages: false,
         },
       ],
     },

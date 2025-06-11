@@ -119,7 +119,9 @@ export const FormMultiSelectFieldInput = ({
       editingMode: 'edit',
     });
 
-    setHotkeyScopeAndMemorizePreviousScope(hotkeyScope);
+    setHotkeyScopeAndMemorizePreviousScope({
+      scope: hotkeyScope,
+    });
   };
 
   const onOptionSelected = (value: FieldMultiSelectValue) => {
