@@ -3,13 +3,7 @@ import { isMethodWithBody } from '@/workflow/workflow-steps/workflow-actions/htt
 import { useState } from 'react';
 import { isDefined, isValidUrl } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
-
-export type HttpRequestFormData = {
-  url: string;
-  method: string;
-  headers: string | null;
-  body: string | null;
-};
+import { HttpRequestFormData } from '../constants/HttpRequest';
 
 export type ErrorMessages = {
   url?: string;
