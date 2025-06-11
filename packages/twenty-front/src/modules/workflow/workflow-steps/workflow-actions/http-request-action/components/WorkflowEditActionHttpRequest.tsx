@@ -84,7 +84,7 @@ export const WorkflowEditActionHttpRequest = ({
         <Select
           dropdownId="select-http-method"
           label="HTTP method"
-          options={HTTP_METHODS}
+          options={[...HTTP_METHODS]}
           value={formData.method}
           onChange={(value) => handleFieldChange('method', value)}
           disabled={actionOptions.readonly}
