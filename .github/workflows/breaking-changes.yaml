@@ -1,0 +1,295 @@
+name: GraphQL and OpenAPI Breaking Changes Detection
+
+on:
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  MAIN_SERVER_PORT: 3000
+  CURRENT_SERVER_PORT: 3002
+
+jobs:
+  changed-files-check:
+    uses: ./.github/workflows/changed-files.yaml
+    with:
+      files: |
+        package.json
+        packages/twenty-server/**
+        packages/twenty-emails/**
+        packages/twenty-shared/**
+
+  api-breaking-changes:
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
+    timeout-minutes: 45
+    runs-on: depot-ubuntu-24.04-8
+    env:
+      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
+    services:
+      postgres:
+        image: twentycrm/twenty-postgres-spilo
+        env:
+          PGUSER_SUPERUSER: postgres
+          PGPASSWORD_SUPERUSER: postgres
+          ALLOW_NOSSL: 'true'
+          SPILO_PROVIDER: 'local'
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+      clickhouse:
+        image: clickhouse/clickhouse-server:latest
+        env:
+          CLICKHOUSE_PASSWORD: clickhousePassword
+          CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
+        ports:
+          - 8123:8123
+          - 9000:9000
+        options: >-
+          --health-cmd "clickhouse-client --host=localhost --port=9000 --user=default --password=clickhousePassword --query='SELECT 1'" 
+          --health-interval 10s 
+          --health-timeout 5s 
+          --health-retries 5
+
+    steps:
+      - name: Checkout current branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        uses: ./.github/workflows/actions/yarn-install
+
+      - name: Build shared dependencies
+        run: |
+          npx nx build twenty-shared
+          npx nx build twenty-emails
+
+      - name: Build current branch server
+        run: npx nx build twenty-server
+
+      - name: Setup databases
+        run: |
+          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "current_branch";'
+          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "main_branch";'
+
+      - name: Run ClickHouse migrations
+        run: npx nx clickhouse:migrate twenty-server
+
+      - name: Setup current branch database
+        run: |
+          cp .env.example .env
+          echo "DATABASE_URL=postgres://postgres:postgres@localhost:5432/current_branch" >> .env
+          echo "SERVER_PORT=${{ env.CURRENT_SERVER_PORT }}" >> .env
+          npx nx run twenty-server:database:init:prod
+          npx nx run twenty-server:database:migrate:prod
+
+      - name: Start current branch server in background
+        run: |
+          cp .env.example .env.current
+          echo "DATABASE_URL=postgres://postgres:postgres@localhost:5432/current_branch" >> .env.current
+          echo "SERVER_PORT=${{ env.CURRENT_SERVER_PORT }}" >> .env.current
+          echo "REDIS_URL=redis://localhost:6379" >> .env.current
+          echo "CLICKHOUSE_URL=http://default:clickhousePassword@localhost:8123/twenty" >> .env.current
+          echo "CLICKHOUSE_PASSWORD=clickhousePassword" >> .env.current
+          nohup npx nx run twenty-server:start:prod --env-file=.env.current > current-server.log 2>&1 &
+          echo $! > current-server.pid
+
+      - name: Checkout main branch
+        run: |
+          git stash
+          git checkout origin/main
+          git clean -fd
+
+      - name: Install dependencies for main branch
+        uses: ./.github/workflows/actions/yarn-install
+
+      - name: Build main branch dependencies
+        run: |
+          npx nx build twenty-shared
+          npx nx build twenty-emails
+
+      - name: Build main branch server
+        run: npx nx build twenty-server
+
+      - name: Setup main branch database
+        run: |
+          cp .env.example .env.main
+          echo "DATABASE_URL=postgres://postgres:postgres@localhost:5432/main_branch" >> .env.main
+          echo "SERVER_PORT=${{ env.MAIN_SERVER_PORT }}" >> .env.main
+          npx nx run twenty-server:database:init:prod --env-file=.env.main
+          npx nx run twenty-server:database:migrate:prod --env-file=.env.main
+
+      - name: Start main branch server in background
+        run: |
+          echo "REDIS_URL=redis://localhost:6379" >> .env.main
+          echo "CLICKHOUSE_URL=http://default:clickhousePassword@localhost:8123/twenty" >> .env.main
+          echo "CLICKHOUSE_PASSWORD=clickhousePassword" >> .env.main
+          nohup npx nx run twenty-server:start:prod --env-file=.env.main > main-server.log 2>&1 &
+          echo $! > main-server.pid
+
+      - name: Wait for servers to be ready
+        run: |
+          echo "Waiting for servers to start..."
+          timeout=300
+          interval=5
+          elapsed=0
+          
+          while [ $elapsed -lt $timeout ]; do
+            if curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/graphql" > /dev/null 2>&1 && \
+               curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/graphql" > /dev/null 2>&1 && \
+               curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest" > /dev/null 2>&1 && \
+               curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest" > /dev/null 2>&1; then
+              echo "Both servers are ready!"
+              break
+            fi
+            
+            echo "Servers not ready yet, waiting ${interval}s..."
+            sleep $interval
+            elapsed=$((elapsed + interval))
+          done
+          
+          if [ $elapsed -ge $timeout ]; then
+            echo "Timeout waiting for servers to start"
+            echo "Main server log:"
+            cat main-server.log || echo "No main server log found"
+            echo "Current server log:"
+            cat current-server.log || echo "No current server log found"
+            exit 1
+          fi
+
+      - name: Check GraphQL Schema for Breaking Changes
+        uses: graphql-hive/graphql-inspector@master
+        with:
+          name: 'GraphQL Schema Breaking Changes'
+          schema: 'http://localhost:${{ env.CURRENT_SERVER_PORT }}/graphql'
+          endpoint: 'http://localhost:${{ env.MAIN_SERVER_PORT }}/graphql'
+          fail-on-breaking: true
+          annotations: true
+
+      - name: Check GraphQL Metadata Schema for Breaking Changes
+        uses: graphql-hive/graphql-inspector@master
+        with:
+          name: 'GraphQL Metadata Schema Breaking Changes'
+          schema: 'http://localhost:${{ env.CURRENT_SERVER_PORT }}/metadata'
+          endpoint: 'http://localhost:${{ env.MAIN_SERVER_PORT }}/metadata'
+          fail-on-breaking: true
+          annotations: true
+
+      - name: Download OpenAPI specifications
+        run: |
+          # Download current branch OpenAPI specs
+          curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest" > current-rest-api.json
+          curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/metadata" > current-rest-metadata-api.json
+          
+          # Download main branch OpenAPI specs
+          curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest" > main-rest-api.json
+          curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/metadata" > main-rest-metadata-api.json
+          
+          # Verify files were downloaded successfully
+          echo "Downloaded OpenAPI specifications:"
+          ls -la *-api.json
+          
+          # Show file sizes to ensure they're not empty
+          wc -c *-api.json
+
+      - name: Setup Java for OpenAPI Diff
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Check REST API Breaking Changes
+        run: |
+          # Download openapi-diff CLI
+          wget -q https://repo1.maven.org/maven2/org/openapitools/openapi-diff-cli/2.1.2/openapi-diff-cli-2.1.2.jar -O openapi-diff.jar
+          
+          echo "Checking REST API breaking changes..."
+          java -jar openapi-diff.jar --old main-rest-api.json --new current-rest-api.json --output rest-api-diff.md --format markdown
+          
+          # Check if there are breaking changes (exit code 1 means breaking changes found)
+          java -jar openapi-diff.jar --old main-rest-api.json --new current-rest-api.json --fail-on-incompatible || {
+            echo "::error::Breaking changes detected in REST API"
+            echo "::group::REST API Changes"
+            cat rest-api-diff.md || echo "No diff output available"
+            echo "::endgroup::"
+            exit 1
+          }
+
+      - name: Check REST Metadata API Breaking Changes
+        run: |
+          echo "Checking REST Metadata API breaking changes..."
+          java -jar openapi-diff.jar --old main-rest-metadata-api.json --new current-rest-metadata-api.json --output rest-metadata-api-diff.md --format markdown
+          
+          # Check if there are breaking changes
+          java -jar openapi-diff.jar --old main-rest-metadata-api.json --new current-rest-metadata-api.json --fail-on-incompatible || {
+            echo "::error::Breaking changes detected in REST Metadata API"
+            echo "::group::REST Metadata API Changes"
+            cat rest-metadata-api-diff.md || echo "No diff output available"
+            echo "::endgroup::"
+            exit 1
+          }
+
+      - name: Comment API Changes on PR
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let comment = '## 🚨 API Breaking Changes Detected\n\n';
+            
+            try {
+              if (fs.existsSync('rest-api-diff.md')) {
+                const restDiff = fs.readFileSync('rest-api-diff.md', 'utf8');
+                comment += '### REST API Changes\n```markdown\n' + restDiff + '\n```\n\n';
+              }
+              
+              if (fs.existsSync('rest-metadata-api-diff.md')) {
+                const metadataDiff = fs.readFileSync('rest-metadata-api-diff.md', 'utf8');
+                comment += '### REST Metadata API Changes\n```markdown\n' + metadataDiff + '\n```\n\n';
+              }
+              
+              comment += 'Please review these changes carefully before merging.';
+              
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            } catch (error) {
+              console.log('Could not post comment:', error);
+            }
+
+      - name: Cleanup servers
+        if: always()
+        run: |
+          if [ -f current-server.pid ]; then
+            kill $(cat current-server.pid) || true
+          fi
+          if [ -f main-server.pid ]; then
+            kill $(cat main-server.pid) || true
+          fi
+
+      - name: Upload API specifications and diffs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-specifications-and-diffs
+          path: |
+            main-server.log
+            current-server.log
+            *-api.json
+            *-diff.md 
