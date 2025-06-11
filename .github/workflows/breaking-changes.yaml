@@ -187,8 +187,8 @@ jobs:
           while [ $elapsed -lt $timeout ]; do
             if curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/graphql" > /dev/null 2>&1 && \
                curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/graphql" > /dev/null 2>&1 && \
-               curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest" > /dev/null 2>&1 && \
-               curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest" > /dev/null 2>&1; then
+               curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/open-api/core" > /dev/null 2>&1 && \
+               curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/open-api/core" > /dev/null 2>&1; then
               echo "Both servers are ready!"
               break
             fi
@@ -207,48 +207,41 @@ jobs:
             exit 1
           fi
 
-      - name: Debug GraphQL endpoints
+      - name: Create tunnel for main server
+        id: main-tunnel
+        uses: codetalkio/expose-tunnel@v1.5.0
+        with:
+          service: bore.pub
+          port: ${{ env.MAIN_SERVER_PORT }}
+
+      - name: Create tunnel for current server
+        id: current-tunnel
+        uses: codetalkio/expose-tunnel@v1.5.0
+        with:
+          service: bore.pub
+          port: ${{ env.CURRENT_SERVER_PORT }}
+
+      - name: Test tunnel endpoints
         run: |
-          echo "=== Testing GraphQL endpoints with introspection ==="
-          echo "Current server GraphQL endpoint:"
-          curl -X POST "http://localhost:${{ env.CURRENT_SERVER_PORT }}/graphql" \
+          echo "Testing tunnel endpoints..."
+          echo "Main server tunnel: ${{ steps.main-tunnel.outputs.tunnel-url }}"
+          echo "Current server tunnel: ${{ steps.current-tunnel.outputs.tunnel-url }}"
+          
+          # Test GraphQL endpoints via tunnels
+          curl -X POST "${{ steps.current-tunnel.outputs.tunnel-url }}/graphql" \
             -H "Content-Type: application/json" \
-            -d '{"query":"query IntrospectionQuery { __schema { types { name } } }"}' || echo "Current GraphQL endpoint failed"
-          echo ""
-          echo "Main server GraphQL endpoint:"
-          curl -X POST "http://localhost:${{ env.MAIN_SERVER_PORT }}/graphql" \
+            -d '{"query":"query { __typename }"}' || echo "Current GraphQL via tunnel failed"
+          
+          curl -X POST "${{ steps.main-tunnel.outputs.tunnel-url }}/graphql" \
             -H "Content-Type: application/json" \
-            -d '{"query":"query IntrospectionQuery { __schema { types { name } } }"}' || echo "Main GraphQL endpoint failed"
-          echo ""
-          echo "Current server Metadata endpoint:"
-          curl -X POST "http://localhost:${{ env.CURRENT_SERVER_PORT }}/metadata" \
-            -H "Content-Type: application/json" \
-            -d '{"query":"query IntrospectionQuery { __schema { types { name } } }"}' || echo "Current Metadata endpoint failed"
-          echo ""
-          echo "Main server Metadata endpoint:"
-          curl -X POST "http://localhost:${{ env.MAIN_SERVER_PORT }}/metadata" \
-            -H "Content-Type: application/json" \
-            -d '{"query":"query IntrospectionQuery { __schema { types { name } } }"}' || echo "Main Metadata endpoint failed"
-          echo ""
-          echo "=== Testing REST endpoints ==="
-          echo "Current server REST endpoint:"
-          curl -v "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest" || echo "Current REST endpoint failed"
-          echo ""
-          echo "Main server REST endpoint:"
-          curl -v "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest" || echo "Main REST endpoint failed"
-          echo ""
-          echo "Current server REST Metadata endpoint:"
-          curl -v "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/metadata" || echo "Current REST Metadata endpoint failed"
-          echo ""
-          echo "Main server REST Metadata endpoint:"
-          curl -v "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/metadata" || echo "Main REST Metadata endpoint failed"
+            -d '{"query":"query { __typename }"}' || echo "Main GraphQL via tunnel failed"
 
       - name: Check GraphQL Schema for Breaking Changes
         uses: graphql-hive/graphql-inspector@master
         with:
           name: 'GraphQL Schema Breaking Changes'
-          schema: 'http://localhost:${{ env.CURRENT_SERVER_PORT }}/graphql'
-          endpoint: 'http://localhost:${{ env.MAIN_SERVER_PORT }}/graphql'
+          schema: '${{ steps.current-tunnel.outputs.tunnel-url }}/graphql'
+          endpoint: '${{ steps.main-tunnel.outputs.tunnel-url }}/graphql'
           fail-on-breaking: true
           annotations: true
 
@@ -256,20 +249,20 @@ jobs:
         uses: graphql-hive/graphql-inspector@master
         with:
           name: 'GraphQL Metadata Schema Breaking Changes'
-          schema: 'http://localhost:${{ env.CURRENT_SERVER_PORT }}/metadata'
-          endpoint: 'http://localhost:${{ env.MAIN_SERVER_PORT }}/metadata'
+          schema: '${{ steps.current-tunnel.outputs.tunnel-url }}/metadata'
+          endpoint: '${{ steps.main-tunnel.outputs.tunnel-url }}/metadata'
           fail-on-breaking: true
           annotations: true
 
       - name: Download OpenAPI specifications
         run: |
-          # Download current branch OpenAPI specs
-          curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest" > current-rest-api.json
-          curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/metadata" > current-rest-metadata-api.json
+          # Download current branch OpenAPI specs via tunnel
+          curl -s "${{ steps.current-tunnel.outputs.tunnel-url }}/rest/open-api/core" > current-rest-api.json
+          curl -s "${{ steps.current-tunnel.outputs.tunnel-url }}/rest/open-api/metadata" > current-rest-metadata-api.json
           
-          # Download main branch OpenAPI specs
-          curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest" > main-rest-api.json
-          curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/metadata" > main-rest-metadata-api.json
+          # Download main branch OpenAPI specs via tunnel
+          curl -s "${{ steps.main-tunnel.outputs.tunnel-url }}/rest/open-api/core" > main-rest-api.json
+          curl -s "${{ steps.main-tunnel.outputs.tunnel-url }}/rest/open-api/metadata" > main-rest-metadata-api.json
           
           # Verify files were downloaded successfully
           echo "Downloaded OpenAPI specifications:"
