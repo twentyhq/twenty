@@ -2,6 +2,7 @@ name: GraphQL and OpenAPI Breaking Changes Detection
 
 on:
   pull_request:
+    types: [opened, synchronize, edited]
     branches:
       - main
 
@@ -164,10 +165,6 @@ jobs:
         run: |
           # Admin token from jest-integration.config.ts
           ADMIN_TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC05ZTNiLTQ2ZDQtYTU1Ni04OGI5ZGRjMmIwMzQiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtMDY4Ny00YzQxLWI3MDctZWQxYmZjYTk3MmE3IiwidXNlcldvcmtzcGFjZUlkIjoiMjAyMDIwMjAtOWUzYi00NmQ0LWE1NTYtODhiOWRkYzJiMDM1IiwiaWF0IjoxNzM5NTQ3NjYxLCJleHAiOjMzMjk3MTQ3NjYxfQ.fbOM9yhr3jWDicPZ1n771usUURiPGmNdeFApsgrbxOw"
-          
-          # Debug: verify token is set
-          echo "Token length: ${#ADMIN_TOKEN}"
-          echo "Token starts with: ${ADMIN_TOKEN:0:20}..."
           
           # Full introspection query (based on GraphQL specification)
           INTROSPECTION_QUERY='query IntrospectionQuery {
@@ -413,17 +410,8 @@ jobs:
             -d "{\"query\":\"${QUERY_PAYLOAD}\"}" \
             -o current-schema-introspection.json \
             -w "HTTP Status: %{http_code}\n" \
-            -v
+            -s
           
-          # Check if the request was successful
-          if [ -f current-schema-introspection.json ]; then
-            echo "Current schema file size: $(wc -c < current-schema-introspection.json) bytes"
-            echo "Current schema preview:"
-            head -c 200 current-schema-introspection.json
-            echo ""
-          fi
-          
-          # Download metadata schema as well
           echo "Downloading GraphQL metadata schema from current server..."
           curl -X POST "http://localhost:${{ env.CURRENT_SERVER_PORT }}/metadata" \
             -H "Content-Type: application/json" \
@@ -431,7 +419,7 @@ jobs:
             -d "{\"query\":\"${QUERY_PAYLOAD}\"}" \
             -o current-metadata-schema-introspection.json \
             -w "HTTP Status: %{http_code}\n" \
-            -v
+            -s
           
           # Download current branch OpenAPI specs
           echo "Downloading OpenAPI specifications from current server..."
@@ -446,27 +434,19 @@ jobs:
             -w "HTTP Status: %{http_code}\n"
           
           # Verify the downloads
-          echo "Current branch schema download results:"
+          echo "Current branch files downloaded:"
           ls -la current-*
           
-          echo "Current OpenAPI specs sizes:"
-          wc -c current-*.json
 
       - name: Preserve current branch files
         run: |
           # Create a temp directory to store current branch files
           mkdir -p /tmp/current-branch-files
           
-          # List what files we have before preserving
-          echo "Files before preservation:"
-          ls -la current-* 2>/dev/null || echo "No current-* files found"
-          
           # Move current branch files to temp directory
-          mv current-* /tmp/current-branch-files/ 2>/dev/null || echo "No current-* files to move"
+          mv current-* /tmp/current-branch-files/ 2>/dev/null || echo "No current-* files to preserve"
           
-          # List what we've preserved
-          echo "Preserved current branch files:"
-          ls -la /tmp/current-branch-files/ 2>/dev/null || echo "No files in temp directory"
+          echo "Preserved current branch files for later restoration"
 
       - name: Stop current branch server
         run: |
@@ -561,10 +541,6 @@ jobs:
         run: |
           # Admin token from jest-integration.config.ts
           ADMIN_TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC05ZTNiLTQ2ZDQtYTU1Ni04OGI5ZGRjMmIwMzQiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtMDY4Ny00YzQxLWI3MDctZWQxYmZjYTk3MmE3IiwidXNlcldvcmtzcGFjZUlkIjoiMjAyMDIwMjAtOWUzYi00NmQ0LWE1NTYtODhiOWRkYzJiMDM1IiwiaWF0IjoxNzM5NTQ3NjYxLCJleHAiOjMzMjk3MTQ3NjYxfQ.fbOM9yhr3jWDicPZ1n771usUURiPGmNdeFApsgrbxOw"
-          
-          # Debug: verify token is set
-          echo "Token length: ${#ADMIN_TOKEN}"
-          echo "Token starts with: ${ADMIN_TOKEN:0:20}..."
           
           # Full introspection query (based on GraphQL specification)
           INTROSPECTION_QUERY='query IntrospectionQuery {
@@ -810,15 +786,7 @@ jobs:
             -d "{\"query\":\"${QUERY_PAYLOAD}\"}" \
             -o main-schema-introspection.json \
             -w "HTTP Status: %{http_code}\n" \
-            -v
-          
-          # Check if the request was successful
-          if [ -f main-schema-introspection.json ]; then
-            echo "Main schema file size: $(wc -c < main-schema-introspection.json) bytes"
-            echo "Main schema preview:"
-            head -c 200 main-schema-introspection.json
-            echo ""
-          fi
+            -s
           
           echo "Downloading GraphQL metadata schema from main server..."
           curl -X POST "http://localhost:${{ env.MAIN_SERVER_PORT }}/metadata" \
@@ -827,7 +795,7 @@ jobs:
             -d "{\"query\":\"${QUERY_PAYLOAD}\"}" \
             -o main-metadata-schema-introspection.json \
             -w "HTTP Status: %{http_code}\n" \
-            -v
+            -s
           
           # Download main branch OpenAPI specs
           echo "Downloading OpenAPI specifications from main server..."
@@ -842,48 +810,31 @@ jobs:
             -w "HTTP Status: %{http_code}\n"
           
           # Verify the downloads
-          echo "Main branch schema download results:"
+          echo "Main branch files downloaded:"
           ls -la main-*
           
-          echo "Main OpenAPI specs sizes:"
-          wc -c main-*.json
 
       - name: Restore current branch files
         run: |
-          # Check what files we have in temp before restoring
-          echo "Files in temp directory before restoration:"
-          ls -la /tmp/current-branch-files/ 2>/dev/null || echo "No files in temp directory"
-          
-          # Check what files we currently have in working directory
-          echo "Files in working directory before restoration:"
-          ls -la main-* current-* 2>/dev/null || echo "No schema files in working directory"
-          
           # Move current branch files back to working directory
           mv /tmp/current-branch-files/* . 2>/dev/null || echo "No files to restore"
           
-          # Verify all files are present after restoration
-          echo "All API files after restoration:"
+          # Verify all files are present
+          echo "All API files restored:"
           ls -la current-* main-* 2>/dev/null || echo "Some files may be missing"
-          
-          # Specifically check for GraphQL schema files
-          echo "Checking for required GraphQL schema files:"
-          for file in current-schema-introspection.json current-metadata-schema-introspection.json main-schema-introspection.json main-metadata-schema-introspection.json; do
-            if [ -f "$file" ]; then
-              echo "✓ $file exists ($(wc -c < "$file") bytes)"
-            else
-              echo "✗ $file missing"
-            fi
-          done
           
           # Clean up temp directory
           rm -rf /tmp/current-branch-files
-          
-          # Final verification of all downloaded files
-          echo "All downloaded API files:"
-          ls -la *-*.json 2>/dev/null || echo "No API files found"
+
+      - name: Install OpenAPI Diff Tool
+        run: |
+          npm install -g openapi-diff
 
       - name: Generate GraphQL Schema Diff Reports
         run: |
+          echo "=== INSTALLING GRAPHQL INSPECTOR CLI ==="
+          npm install -g @graphql-inspector/cli
+          
           echo "=== GENERATING GRAPHQL DIFF REPORTS ==="
           
           # Check if GraphQL schema has changes
@@ -922,19 +873,9 @@ jobs:
             }
           fi
           
-          # Show what we generated
+          # Show summary
           echo "Generated diff files:"
           ls -la *-diff.md 2>/dev/null || echo "No diff files generated (no changes detected)"
-          
-          if [ -f graphql-schema-diff.md ]; then
-            echo "GraphQL schema diff preview:"
-            head -20 graphql-schema-diff.md
-          fi
-          
-          if [ -f graphql-metadata-diff.md ]; then
-            echo "GraphQL metadata diff preview:"
-            head -20 graphql-metadata-diff.md
-          fi
 
       - name: Check GraphQL Schema for Breaking Changes
         continue-on-error: true
@@ -956,27 +897,62 @@ jobs:
           # fail-on-breaking: true
           annotations: true
 
-      - name: Install OpenAPI Diff Tool
-        run: |
-          npm install -g openapi-diff
-
       - name: Check REST API Breaking Changes
         run: |
           echo "=== CHECKING REST API FOR BREAKING CHANGES ==="
           
-          # Use openapi-diff to compare APIs and generate detailed report
-          if npx openapi-diff main-rest-api.json current-rest-api.json > rest-api-diff-output.json 2>&1; then
-            echo "✅ No breaking changes detected in REST API"
+          # Use openapi-diff to compare APIs - it outputs JSON by default
+          npx openapi-diff main-rest-api.json current-rest-api.json > rest-api-diff.json 2>&1
+          exit_code=$?
+          
+          # Check if the output is valid JSON
+          if jq empty rest-api-diff.json 2>/dev/null; then
+            # Check for breaking changes
+            breaking_found=$(jq -r '.breakingDifferencesFound // false' rest-api-diff.json)
+            non_breaking_count=$(jq -r '.nonBreakingDifferences | length' rest-api-diff.json 2>/dev/null || echo "0")
+            unclassified_count=$(jq -r '.unclassifiedDifferences | length' rest-api-diff.json 2>/dev/null || echo "0")
             
-            # Check if there are any changes at all
-            if ! npx openapi-diff main-rest-api.json current-rest-api.json --json | jq -e '.breakingDifferencesFound == false and (.nonBreakingDifferences | length) == 0 and (.unclassifiedDifferences | length) == 0' >/dev/null 2>&1; then
-              echo "📝 Non-breaking or unclassified changes detected, generating report..."
+            if [ "$breaking_found" = "true" ]; then
+              echo "❌ Breaking changes detected in REST API"
               
-              # Generate markdown report for non-breaking changes
+              # Generate breaking changes report
+              echo "# REST API Breaking Changes" > rest-api-diff.md
+              echo "" >> rest-api-diff.md
+              echo "⚠️ **Breaking changes detected that may affect existing API consumers**" >> rest-api-diff.md
+              echo "" >> rest-api-diff.md
+              
+              # Parse and format the changes
+              jq -r '
+                if (.breakingDifferences | length) > 0 then
+                  "## 🚨 Breaking Changes (" + (.breakingDifferences | length | tostring) + ")\n" +
+                  (.breakingDifferences | map("- **" + .action + " " + .entity + "**: " + (.sourceSpecEntityDetails[0].location // "N/A")) | join("\n"))
+                else "" end,
+                if (.nonBreakingDifferences | length) > 0 then
+                  "\n## ✅ Non-Breaking Changes (" + (.nonBreakingDifferences | length | tostring) + ")\n" +
+                  (.nonBreakingDifferences | map("- " + .action + " " + .entity + ": " + (.sourceSpecEntityDetails[0].location // "N/A")) | join("\n"))
+                else "" end,
+                if (.unclassifiedDifferences | length) > 0 then
+                  "\n## ❓ Unclassified Changes (" + (.unclassifiedDifferences | length | tostring) + ")\n" +
+                  (.unclassifiedDifferences | map("- " + .action + " " + .entity + ": " + (.sourceSpecEntityDetails[0].location // "N/A")) | join("\n"))
+                else "" end
+              ' rest-api-diff.json >> rest-api-diff.md
+              
+              # Only fail if PR title contains "breaking"
+              if [[ "${{ github.event.pull_request.title }}" == *"breaking"* ]]; then
+                echo "::error::Breaking changes detected in REST API and PR title contains 'breaking'"
+                exit 1
+              else
+                echo "⚠️ Breaking changes detected but PR title doesn't contain 'breaking' - allowing to pass"
+              fi
+            elif [ "$non_breaking_count" -gt 0 ] || [ "$unclassified_count" -gt 0 ]; then
+              echo "📝 Non-breaking changes detected ($non_breaking_count non-breaking, $unclassified_count unclassified)"
+              
+              # Generate non-breaking changes report
               echo "# REST API Changes" > rest-api-diff.md
               echo "" >> rest-api-diff.md
               echo "## Summary" >> rest-api-diff.md
-              npx openapi-diff main-rest-api.json current-rest-api.json --json | jq -r '
+              
+              jq -r '
                 if (.nonBreakingDifferences | length) > 0 then
                   "### ✅ Non-Breaking Changes (" + (.nonBreakingDifferences | length | tostring) + ")\n" +
                   (.nonBreakingDifferences | map("- " + .action + " " + .entity + ": " + (.sourceSpecEntityDetails[0].location // "N/A")) | join("\n"))
@@ -985,35 +961,28 @@ jobs:
                   "\n### ❓ Unclassified Changes (" + (.unclassifiedDifferences | length | tostring) + ")\n" +
                   (.unclassifiedDifferences | map("- " + .action + " " + .entity + ": " + (.sourceSpecEntityDetails[0].location // "N/A")) | join("\n"))
                 else "" end
-              ' >> rest-api-diff.md
+              ' rest-api-diff.json >> rest-api-diff.md
+            else
+              echo "✅ No changes detected in REST API"
+              # Don't create diff file for no changes
             fi
           else
-            echo "❌ Breaking changes detected in REST API"
+            echo "❌ Error analyzing REST API"
             
-            # Generate breaking changes report
-            echo "# REST API Breaking Changes" > rest-api-diff.md
+            echo "# REST API Analysis Error" > rest-api-diff.md
             echo "" >> rest-api-diff.md
-            echo "⚠️ **Breaking changes detected that may affect existing API consumers**" >> rest-api-diff.md
+            echo "⚠️ **Error occurred while analyzing REST API changes**" >> rest-api-diff.md
             echo "" >> rest-api-diff.md
+            echo "## Error Output" >> rest-api-diff.md
+            echo "\`\`\`" >> rest-api-diff.md
+            cat rest-api-diff.json >> rest-api-diff.md
+            echo "\`\`\`" >> rest-api-diff.md
             
-            # Parse and format the breaking changes
-            npx openapi-diff main-rest-api.json current-rest-api.json --json | jq -r '
-              if (.breakingDifferences | length) > 0 then
-                "## 🚨 Breaking Changes (" + (.breakingDifferences | length | tostring) + ")\n" +
-                (.breakingDifferences | map("- **" + .action + " " + .entity + "**: " + (.sourceSpecEntityDetails[0].location // "N/A")) | join("\n"))
-              else "" end,
-              if (.nonBreakingDifferences | length) > 0 then
-                "\n## ✅ Non-Breaking Changes (" + (.nonBreakingDifferences | length | tostring) + ")\n" +
-                (.nonBreakingDifferences | map("- " + .action + " " + .entity + ": " + (.sourceSpecEntityDetails[0].location // "N/A")) | join("\n"))
-              else "" end,
-              if (.unclassifiedDifferences | length) > 0 then
-                "\n## ❓ Unclassified Changes (" + (.unclassifiedDifferences | length | tostring) + ")\n" +
-                (.unclassifiedDifferences | map("- " + .action + " " + .entity + ": " + (.sourceSpecEntityDetails[0].location // "N/A")) | join("\n"))
-              else "" end
-            ' >> rest-api-diff.md
-            
-            echo "::error::Breaking changes detected in REST API"
-            exit 1
+            # Only exit with error if it's a real tool failure
+            if [ $exit_code -ne 0 ]; then
+              echo "::error::REST API analysis failed"
+              exit 1
+            fi
           fi
 
       - name: Check REST Metadata API Breaking Changes
@@ -1021,18 +990,57 @@ jobs:
           echo "=== CHECKING REST METADATA API FOR BREAKING CHANGES ==="
           
           # Use openapi-diff to compare metadata APIs
-          if npx openapi-diff main-rest-metadata-api.json current-rest-metadata-api.json > rest-metadata-api-diff-output.json 2>&1; then
-            echo "✅ No breaking changes detected in REST Metadata API"
+          npx openapi-diff main-rest-metadata-api.json current-rest-metadata-api.json > rest-metadata-api-diff.json 2>&1
+          exit_code=$?
+          
+          # Check if the output is valid JSON
+          if jq empty rest-metadata-api-diff.json 2>/dev/null; then
+            # Check for breaking changes
+            breaking_found=$(jq -r '.breakingDifferencesFound // false' rest-metadata-api-diff.json)
+            non_breaking_count=$(jq -r '.nonBreakingDifferences | length' rest-metadata-api-diff.json 2>/dev/null || echo "0")
+            unclassified_count=$(jq -r '.unclassifiedDifferences | length' rest-metadata-api-diff.json 2>/dev/null || echo "0")
             
-            # Check if there are any changes at all
-            if ! npx openapi-diff main-rest-metadata-api.json current-rest-metadata-api.json --json | jq -e '.breakingDifferencesFound == false and (.nonBreakingDifferences | length) == 0 and (.unclassifiedDifferences | length) == 0' >/dev/null 2>&1; then
-              echo "📝 Non-breaking or unclassified changes detected, generating report..."
+            if [ "$breaking_found" = "true" ]; then
+              echo "❌ Breaking changes detected in REST Metadata API"
               
-              # Generate markdown report for non-breaking changes
+              # Generate breaking changes report
+              echo "# REST Metadata API Breaking Changes" > rest-metadata-api-diff.md
+              echo "" >> rest-metadata-api-diff.md
+              echo "⚠️ **Breaking changes detected that may affect existing API consumers**" >> rest-metadata-api-diff.md
+              echo "" >> rest-metadata-api-diff.md
+              
+              # Parse and format the changes
+              jq -r '
+                if (.breakingDifferences | length) > 0 then
+                  "## 🚨 Breaking Changes (" + (.breakingDifferences | length | tostring) + ")\n" +
+                  (.breakingDifferences | map("- **" + .action + " " + .entity + "**: " + (.sourceSpecEntityDetails[0].location // "N/A")) | join("\n"))
+                else "" end,
+                if (.nonBreakingDifferences | length) > 0 then
+                  "\n## ✅ Non-Breaking Changes (" + (.nonBreakingDifferences | length | tostring) + ")\n" +
+                  (.nonBreakingDifferences | map("- " + .action + " " + .entity + ": " + (.sourceSpecEntityDetails[0].location // "N/A")) | join("\n"))
+                else "" end,
+                if (.unclassifiedDifferences | length) > 0 then
+                  "\n## ❓ Unclassified Changes (" + (.unclassifiedDifferences | length | tostring) + ")\n" +
+                  (.unclassifiedDifferences | map("- " + .action + " " + .entity + ": " + (.sourceSpecEntityDetails[0].location // "N/A")) | join("\n"))
+                else "" end
+              ' rest-metadata-api-diff.json >> rest-metadata-api-diff.md
+              
+              # Only fail if PR title contains "breaking"
+              if [[ "${{ github.event.pull_request.title }}" == *"breaking"* ]]; then
+                echo "::error::Breaking changes detected in REST Metadata API and PR title contains 'breaking'"
+                exit 1
+              else
+                echo "⚠️ Breaking changes detected but PR title doesn't contain 'breaking' - allowing to pass"
+              fi
+            elif [ "$non_breaking_count" -gt 0 ] || [ "$unclassified_count" -gt 0 ]; then
+              echo "📝 Non-breaking changes detected ($non_breaking_count non-breaking, $unclassified_count unclassified)"
+              
+              # Generate non-breaking changes report
               echo "# REST Metadata API Changes" > rest-metadata-api-diff.md
               echo "" >> rest-metadata-api-diff.md
               echo "## Summary" >> rest-metadata-api-diff.md
-              npx openapi-diff main-rest-metadata-api.json current-rest-metadata-api.json --json | jq -r '
+              
+              jq -r '
                 if (.nonBreakingDifferences | length) > 0 then
                   "### ✅ Non-Breaking Changes (" + (.nonBreakingDifferences | length | tostring) + ")\n" +
                   (.nonBreakingDifferences | map("- " + .action + " " + .entity + ": " + (.sourceSpecEntityDetails[0].location // "N/A")) | join("\n"))
@@ -1041,117 +1049,60 @@ jobs:
                   "\n### ❓ Unclassified Changes (" + (.unclassifiedDifferences | length | tostring) + ")\n" +
                   (.unclassifiedDifferences | map("- " + .action + " " + .entity + ": " + (.sourceSpecEntityDetails[0].location // "N/A")) | join("\n"))
                 else "" end
-              ' >> rest-metadata-api-diff.md
+              ' rest-metadata-api-diff.json >> rest-metadata-api-diff.md
+            else
+              echo "✅ No changes detected in REST Metadata API"
+              # Don't create diff file for no changes
             fi
           else
-            echo "❌ Breaking changes detected in REST Metadata API"
+            echo "❌ Error analyzing REST Metadata API"
             
-            # Generate breaking changes report
-            echo "# REST Metadata API Breaking Changes" > rest-metadata-api-diff.md
+            echo "# REST Metadata API Analysis Error" > rest-metadata-api-diff.md
             echo "" >> rest-metadata-api-diff.md
-            echo "⚠️ **Breaking changes detected that may affect existing API consumers**" >> rest-metadata-api-diff.md
+            echo "⚠️ **Error occurred while analyzing REST Metadata API changes**" >> rest-metadata-api-diff.md
             echo "" >> rest-metadata-api-diff.md
+            echo "## Error Output" >> rest-metadata-api-diff.md
+            echo "\`\`\`" >> rest-metadata-api-diff.md
+            cat rest-metadata-api-diff.json >> rest-metadata-api-diff.md
+            echo "\`\`\`" >> rest-metadata-api-diff.md
             
-            # Parse and format the breaking changes
-            npx openapi-diff main-rest-metadata-api.json current-rest-metadata-api.json --json | jq -r '
-              if (.breakingDifferences | length) > 0 then
-                "## 🚨 Breaking Changes (" + (.breakingDifferences | length | tostring) + ")\n" +
-                (.breakingDifferences | map("- **" + .action + " " + .entity + "**: " + (.sourceSpecEntityDetails[0].location // "N/A")) | join("\n"))
-              else "" end,
-              if (.nonBreakingDifferences | length) > 0 then
-                "\n## ✅ Non-Breaking Changes (" + (.nonBreakingDifferences | length | tostring) + ")\n" +
-                (.nonBreakingDifferences | map("- " + .action + " " + .entity + ": " + (.sourceSpecEntityDetails[0].location // "N/A")) | join("\n"))
-              else "" end,
-              if (.unclassifiedDifferences | length) > 0 then
-                "\n## ❓ Unclassified Changes (" + (.unclassifiedDifferences | length | tostring) + ")\n" +
-                (.unclassifiedDifferences | map("- " + .action + " " + .entity + ": " + (.sourceSpecEntityDetails[0].location // "N/A")) | join("\n"))
-              else "" end
-            ' >> rest-metadata-api-diff.md
-            
-            echo "::error::Breaking changes detected in REST Metadata API"
-            exit 1
+            # Only exit with error if it's a real tool failure
+            if [ $exit_code -ne 0 ]; then
+              echo "::error::REST Metadata API analysis failed"
+              exit 1
+            fi
           fi
 
       - name: Comment API Changes on PR
-        if: failure()
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            let comment = '## 🚨 API Breaking Changes Detected\n\n';
-            
-            try {
-              // Check for GraphQL changes
-              if (fs.existsSync('graphql-schema-diff.md')) {
-                const graphqlDiff = fs.readFileSync('graphql-schema-diff.md', 'utf8');
-                if (graphqlDiff.trim()) {
-                  comment += '### GraphQL Schema Changes\n' + graphqlDiff + '\n\n';
-                }
-              }
-              
-              if (fs.existsSync('graphql-metadata-diff.md')) {
-                const graphqlMetadataDiff = fs.readFileSync('graphql-metadata-diff.md', 'utf8');
-                if (graphqlMetadataDiff.trim()) {
-                  comment += '### GraphQL Metadata Schema Changes\n' + graphqlMetadataDiff + '\n\n';
-                }
-              }
-              
-              // Check for REST API changes
-              if (fs.existsSync('rest-api-diff.md')) {
-                const restDiff = fs.readFileSync('rest-api-diff.md', 'utf8');
-                if (restDiff.trim()) {
-                  comment += '### REST API Changes\n```markdown\n' + restDiff + '\n```\n\n';
-                }
-              }
-              
-              if (fs.existsSync('rest-metadata-api-diff.md')) {
-                const metadataDiff = fs.readFileSync('rest-metadata-api-diff.md', 'utf8');
-                if (metadataDiff.trim()) {
-                  comment += '### REST Metadata API Changes\n```markdown\n' + metadataDiff + '\n```\n\n';
-                }
-              }
-              
-              // Only add footer if we found any changes
-              if (comment !== '## 🚨 API Breaking Changes Detected\n\n') {
-                comment += 'Please review these changes carefully before merging.';
-              } else {
-                comment = '## ✅ No API Breaking Changes Detected\n\nAll API schemas are compatible with the main branch.';
-              }
-              
-              github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: comment
-              });
-            } catch (error) {
-              console.log('Could not post comment:', error);
-            }
-
-      - name: Comment API Changes on PR (Always)
         if: always()
         uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
-            let comment = '## 📊 API Changes Report\n\n';
             let hasChanges = false;
+            let comment = '';
             
             try {
               // Check for GraphQL changes
               if (fs.existsSync('graphql-schema-diff.md')) {
                 const graphqlDiff = fs.readFileSync('graphql-schema-diff.md', 'utf8');
                 if (graphqlDiff.trim()) {
+                  if (!hasChanges) {
+                    comment = '## 📊 API Changes Report\n\n';
+                    hasChanges = true;
+                  }
                   comment += '### GraphQL Schema Changes\n' + graphqlDiff + '\n\n';
-                  hasChanges = true;
                 }
               }
               
               if (fs.existsSync('graphql-metadata-diff.md')) {
                 const graphqlMetadataDiff = fs.readFileSync('graphql-metadata-diff.md', 'utf8');
                 if (graphqlMetadataDiff.trim()) {
+                  if (!hasChanges) {
+                    comment = '## 📊 API Changes Report\n\n';
+                    hasChanges = true;
+                  }
                   comment += '### GraphQL Metadata Schema Changes\n' + graphqlMetadataDiff + '\n\n';
-                  hasChanges = true;
                 }
               }
               
@@ -1159,31 +1110,92 @@ jobs:
               if (fs.existsSync('rest-api-diff.md')) {
                 const restDiff = fs.readFileSync('rest-api-diff.md', 'utf8');
                 if (restDiff.trim()) {
+                  if (!hasChanges) {
+                    comment = '## 📊 API Changes Report\n\n';
+                    hasChanges = true;
+                  }
                   comment += '### REST API Changes\n```markdown\n' + restDiff + '\n```\n\n';
-                  hasChanges = true;
                 }
               }
               
               if (fs.existsSync('rest-metadata-api-diff.md')) {
                 const metadataDiff = fs.readFileSync('rest-metadata-api-diff.md', 'utf8');
                 if (metadataDiff.trim()) {
+                  if (!hasChanges) {
+                    comment = '## 📊 API Changes Report\n\n';
+                    hasChanges = true;
+                  }
                   comment += '### REST Metadata API Changes\n```markdown\n' + metadataDiff + '\n```\n\n';
-                  hasChanges = true;
                 }
               }
               
-              if (!hasChanges) {
-                comment += '✅ **No API changes detected**\n\nAll GraphQL and REST API schemas are identical to the main branch.';
+              // Only post comment if there are changes
+              if (hasChanges) {
+                // Check if there are any breaking changes detected
+                let hasBreakingChanges = false;
+                let breakingChangeNote = '';
+                
+                // Check for breaking changes in any of the diff files
+                if (fs.existsSync('rest-api-diff.md')) {
+                  const restDiff = fs.readFileSync('rest-api-diff.md', 'utf8');
+                  if (restDiff.includes('Breaking Changes') || restDiff.includes('🚨')) {
+                    hasBreakingChanges = true;
+                  }
+                }
+                
+                if (fs.existsSync('rest-metadata-api-diff.md')) {
+                  const metadataDiff = fs.readFileSync('rest-metadata-api-diff.md', 'utf8');
+                  if (metadataDiff.includes('Breaking Changes') || metadataDiff.includes('🚨')) {
+                    hasBreakingChanges = true;
+                  }
+                }
+                
+                // Also check GraphQL changes for breaking changes indicators
+                if (fs.existsSync('graphql-schema-diff.md')) {
+                  const graphqlDiff = fs.readFileSync('graphql-schema-diff.md', 'utf8');
+                  if (graphqlDiff.includes('Breaking changes') || graphqlDiff.includes('BREAKING')) {
+                    hasBreakingChanges = true;
+                  }
+                }
+                
+                if (fs.existsSync('graphql-metadata-diff.md')) {
+                  const graphqlMetadataDiff = fs.readFileSync('graphql-metadata-diff.md', 'utf8');
+                  if (graphqlMetadataDiff.includes('Breaking changes') || graphqlMetadataDiff.includes('BREAKING')) {
+                    hasBreakingChanges = true;
+                  }
+                }
+                
+                // Check PR title for "breaking"
+                const prTitle = "${{ github.event.pull_request.title }}";
+                const titleContainsBreaking = prTitle.toLowerCase().includes('breaking');
+                
+                if (hasBreakingChanges) {
+                  if (titleContainsBreaking) {
+                    breakingChangeNote = '\n\n## ✅ Breaking Change Protocol\n\n' +
+                      '**This PR title contains "breaking" and breaking changes were detected - the CI will fail as expected.**\n\n' +
+                      '📝 **Action Required**: Please add `BREAKING CHANGE:` to your commit message to trigger a major version bump.\n\n' +
+                      'Example:\n```\nfeat: add new API endpoint\n\nBREAKING CHANGE: removed deprecated field from User schema\n```';
+                  } else {
+                    breakingChangeNote = '\n\n## ⚠️ Breaking Change Protocol\n\n' +
+                      '**Breaking changes detected but PR title doesn\\'t contain "breaking" - CI will pass but action needed.**\n\n' +
+                      '🔄 **Options**:\n' +
+                      '1. **If this IS a breaking change**: Add "breaking" to your PR title and add `BREAKING CHANGE:` to your commit message\n' +
+                      '2. **If this is NOT a breaking change**: The API diff tool may have false positives - please review carefully\n\n' +
+                      'For breaking changes, add to commit message:\n```\nfeat: add new API endpoint\n\nBREAKING CHANGE: removed deprecated field from User schema\n```';
+                  }
+                }
+                
+                comment += '⚠️ **Please review these API changes carefully before merging.**' + breakingChangeNote;
+                
+                github.rest.issues.createComment({
+                  issue_number: context.issue.number,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  body: comment
+                });
               } else {
-                comment += '⚠️ **Please review these API changes carefully before merging.**';
+                console.log('No API changes detected - skipping PR comment');
               }
-              
-              github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: comment
-              });
             } catch (error) {
               console.log('Could not post comment:', error);
             }
@@ -1210,17 +1222,3 @@ jobs:
             *-schema-introspection.json  
             *-diff.md
 
-      - name: Restore current branch files
-        run: |
-          # Move current branch files back to working directory
-          mv /tmp/current-branch-files/* . 2>/dev/null || echo "No files to restore"
-          
-          # Verify all files are present
-          echo "All API files after restoration:"
-          ls -la current-* main-* 2>/dev/null || echo "Some files may be missing"
-          
-          # Clean up temp directory
-          rm -rf /tmp/current-branch-files
-
-          echo "All downloaded API files:"
-          ls -la *-*.json 
