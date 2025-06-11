@@ -23,10 +23,9 @@ export const RECORD_ACTIONS: Array<{
     type: 'DELETE_RECORD',
     icon: 'IconTrash',
   },
-  // TODO: Add search records action
-  // {
-  //   label: 'Search Records',
-  //   type: 'FIND_RECORDS',
-  //   icon: 'IconSearch',
-  // },
+  {
+    label: 'Search Records',
+    type: 'FIND_RECORDS',
+    icon: 'IconSearch',
+  },
 ];
