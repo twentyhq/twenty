@@ -207,6 +207,21 @@ jobs:
             exit 1
           fi
 
+      - name: Debug GraphQL endpoints
+        run: |
+          echo "=== Testing GraphQL endpoints ==="
+          echo "Current server GraphQL endpoint:"
+          curl -v "http://localhost:${{ env.CURRENT_SERVER_PORT }}/graphql" || echo "Current GraphQL endpoint failed"
+          echo ""
+          echo "Main server GraphQL endpoint:"
+          curl -v "http://localhost:${{ env.MAIN_SERVER_PORT }}/graphql" || echo "Main GraphQL endpoint failed"
+          echo ""
+          echo "Current server Metadata endpoint:"
+          curl -v "http://localhost:${{ env.CURRENT_SERVER_PORT }}/metadata" || echo "Current Metadata endpoint failed"
+          echo ""
+          echo "Main server Metadata endpoint:"
+          curl -v "http://localhost:${{ env.MAIN_SERVER_PORT }}/metadata" || echo "Main Metadata endpoint failed"
+
       - name: Check GraphQL Schema for Breaking Changes
         uses: graphql-hive/graphql-inspector@master
         with:
