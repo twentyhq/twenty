@@ -1,7 +1,6 @@
 import { useTheme } from '@emotion/react';
 import { BaseEdge, EdgeProps, getStraightPath } from '@xyflow/react';
 import { CREATE_STEP_NODE_WIDTH } from '@/workflow/workflow-diagram/constants/CreateStepNodeWidth';
-import { CREATE_STEP_STEP_ID } from '@/workflow/workflow-diagram/constants/CreateStepStepId';
 import { WorkflowDiagramEdgeOptions } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeOptions';
 
 type WorkflowDiagramDefaultEdgeProps = EdgeProps;
@@ -13,6 +12,7 @@ export const WorkflowDiagramDefaultEdge = ({
   targetY,
   markerStart,
   markerEnd,
+  data,
 }: WorkflowDiagramDefaultEdgeProps) => {
   const theme = useTheme();
 
@@ -23,8 +23,6 @@ export const WorkflowDiagramDefaultEdge = ({
     targetY,
   });
 
-  const shouldDisplayInsertStepButton = !target.includes(CREATE_STEP_STEP_ID);
-
   return (
     <>
       <BaseEdge
@@ -33,7 +31,7 @@ export const WorkflowDiagramDefaultEdge = ({
         path={edgePath}
         style={{ stroke: theme.border.color.strong }}
       />
-      {shouldDisplayInsertStepButton && (
+      {data?.shouldDisplayEdgeOptions && (
         <WorkflowDiagramEdgeOptions
           labelX={labelX}
           labelY={labelY}
