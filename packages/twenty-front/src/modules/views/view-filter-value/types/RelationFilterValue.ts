@@ -1,4 +1,4 @@
-import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
+import { jsonRelationFilterValueSchema } from 'twenty-shared/types';
 import { z } from 'zod';
 
 export type RelationFilterValue = z.infer<typeof jsonRelationFilterValueSchema>;

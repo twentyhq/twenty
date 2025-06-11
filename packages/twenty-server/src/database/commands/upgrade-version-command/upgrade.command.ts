@@ -151,6 +151,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       ],
     };
 
+    const _commands_054: VersionCommands = {
+      beforeSyncMetadata: [this.standardizeRelationFilterSyntaxCommand],
+      afterSyncMetadata: [],
+    };
+
     this.allCommands = {
       '0.54.0': commands_054,
     };
