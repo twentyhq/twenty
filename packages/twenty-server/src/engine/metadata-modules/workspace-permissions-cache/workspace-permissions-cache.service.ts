@@ -308,14 +308,14 @@ export class WorkspacePermissionsCacheService {
               canDestroy,
             );
           }
-
-          objectRecordsPermissions[objectMetadataId] = {
-            canRead,
-            canUpdate,
-            canSoftDelete,
-            canDestroy,
-          };
         }
+
+        objectRecordsPermissions[objectMetadataId] = {
+          canRead,
+          canUpdate,
+          canSoftDelete,
+          canDestroy,
+        };
 
         permissionsByRoleId[role.id] = objectRecordsPermissions;
       }
