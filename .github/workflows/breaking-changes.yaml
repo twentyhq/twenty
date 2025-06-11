@@ -130,9 +130,9 @@ jobs:
           echo "=== Current branch .env file contents ==="
           cat packages/twenty-server/.env
           echo "=== Starting current branch server ==="
-          nohup npx nx run twenty-server:start:prod > current-server.log 2>&1 &
-          echo $! > current-server.pid
-          echo "Current server PID: $(cat current-server.pid)"
+          nohup npx nx run twenty-server:start:prod > /tmp/current-server.log 2>&1 &
+          echo $! > /tmp/current-server.pid
+          echo "Current server PID: $(cat /tmp/current-server.pid)"
 
       - name: Checkout main branch
         run: |
@@ -181,9 +181,9 @@ jobs:
           echo "=== Main branch .env file contents ==="
           cat packages/twenty-server/.env
           echo "=== Starting main branch server ==="
-          nohup npx nx run twenty-server:start:prod > main-server.log 2>&1 &
-          echo $! > main-server.pid
-          echo "Main server PID: $(cat main-server.pid)"
+          nohup npx nx run twenty-server:start:prod > /tmp/main-server.log 2>&1 &
+          echo $! > /tmp/main-server.pid
+          echo "Main server PID: $(cat /tmp/main-server.pid)"
 
       - name: Wait for servers to be ready
         run: |
@@ -209,75 +209,11 @@ jobs:
           if [ $elapsed -ge $timeout ]; then
             echo "Timeout waiting for servers to start"
             echo "Main server log:"
-            cat main-server.log || echo "No main server log found"
+            cat /tmp/main-server.log || echo "No main server log found"
             echo "Current server log:"
-            cat current-server.log || echo "No current server log found"
+            cat /tmp/current-server.log || echo "No current server log found"
             exit 1
           fi
-
-      - name: Create tunnel for main server
-        id: main-tunnel
-        uses: codetalkio/expose-tunnel@v1.5.0
-        with:
-          service: bore.pub
-          port: ${{ env.MAIN_SERVER_PORT }}
-
-      - name: Create tunnel for current server
-        id: current-tunnel
-        uses: codetalkio/expose-tunnel@v1.5.0
-        with:
-          service: bore.pub
-          port: ${{ env.CURRENT_SERVER_PORT }}
-
-      - name: Test tunnel endpoints
-        run: |
-          echo "Testing tunnel endpoints..."
-          echo "Main server tunnel: ${{ steps.main-tunnel.outputs.tunnel-url }}"
-          echo "Current server tunnel: ${{ steps.current-tunnel.outputs.tunnel-url }}"
-          
-          # Admin token from jest-integration.config.ts
-          ADMIN_TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC05ZTNiLTQ2ZDQtYTU1Ni04OGI5ZGRjMmIwMzQiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtMDY4Ny00YzQxLWI3MDctZWQxYmZjYTk3MmE3IiwidXNlcldvcmtzcGFjZUlkIjoiMjAyMDIwMjAtOWUzYi00NmQ0LWE1NTYtODhiOWRkYzJiMDM1IiwiaWF0IjoxNzM5NTQ3NjYxLCJleHAiOjMzMjk3MTQ3NjYxfQ.fbOM9yhr3jWDicPZ1n771usUURiPGmNdeFApsgrbxOw"
-          
-          # Test simple GraphQL endpoints via tunnels
-          curl -X POST "${{ steps.current-tunnel.outputs.tunnel-url }}/graphql" \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer $ADMIN_TOKEN" \
-            -d '{"query":"query { __typename }"}' || echo "Current GraphQL via tunnel failed"
-          
-          curl -X POST "${{ steps.main-tunnel.outputs.tunnel-url }}/graphql" \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer $ADMIN_TOKEN" \
-            -d '{"query":"query { __typename }"}' || echo "Main GraphQL via tunnel failed"
-          
-          echo ""
-          echo "Testing introspection queries..."
-          
-          # Test introspection query that GraphQL Inspector likely uses
-          echo "Testing current server introspection..."
-          curl -X POST "${{ steps.current-tunnel.outputs.tunnel-url }}/graphql" \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer $ADMIN_TOKEN" \
-            -d '{"query":"query IntrospectionQuery { __schema { queryType { name } mutationType { name } subscriptionType { name } types { kind name description } } }"}' \
-            > current-introspection-test.json || echo "Current introspection failed"
-          
-          echo "Testing main server introspection..."
-          curl -X POST "${{ steps.main-tunnel.outputs.tunnel-url }}/graphql" \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer $ADMIN_TOKEN" \
-            -d '{"query":"query IntrospectionQuery { __schema { queryType { name } mutationType { name } subscriptionType { name } types { kind name description } } }"}' \
-            > main-introspection-test.json || echo "Main introspection failed"
-          
-          echo "Introspection results:"
-          echo "Current server response size: $(wc -c < current-introspection-test.json) bytes"
-          echo "Main server response size: $(wc -c < main-introspection-test.json) bytes"
-          
-          # Show first 200 chars of each response to check for errors
-          echo "Current server response preview:"
-          head -c 200 current-introspection-test.json
-          echo ""
-          echo "Main server response preview:"
-          head -c 200 main-introspection-test.json
-          echo ""
 
       - name: Download GraphQL schemas using introspection
         run: |
@@ -321,10 +257,6 @@ jobs:
                                 ofType {
                                   kind
                                   name
-                                  ofType {
-                                    kind
-                                    name
-                                  }
                                 }
                               }
                             }
@@ -583,13 +515,13 @@ jobs:
 
       - name: Download OpenAPI specifications
         run: |
-          # Download current branch OpenAPI specs via tunnel
-          curl -s "${{ steps.current-tunnel.outputs.tunnel-url }}/rest/open-api/core" > current-rest-api.json
-          curl -s "${{ steps.current-tunnel.outputs.tunnel-url }}/rest/open-api/metadata" > current-rest-metadata-api.json
+          # Download current branch OpenAPI specs
+          curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/open-api/core" > current-rest-api.json
+          curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/open-api/metadata" > current-rest-metadata-api.json
           
-          # Download main branch OpenAPI specs via tunnel
-          curl -s "${{ steps.main-tunnel.outputs.tunnel-url }}/rest/open-api/core" > main-rest-api.json
-          curl -s "${{ steps.main-tunnel.outputs.tunnel-url }}/rest/open-api/metadata" > main-rest-metadata-api.json
+          # Download main branch OpenAPI specs
+          curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/open-api/core" > main-rest-api.json
+          curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/open-api/metadata" > main-rest-metadata-api.json
           
           # Verify files were downloaded successfully
           echo "Downloaded OpenAPI specifications:"
@@ -669,11 +601,11 @@ jobs:
       - name: Cleanup servers
         if: always()
         run: |
-          if [ -f current-server.pid ]; then
-            kill $(cat current-server.pid) || true
+          if [ -f /tmp/current-server.pid ]; then
+            kill $(cat /tmp/current-server.pid) || true
           fi
-          if [ -f main-server.pid ]; then
-            kill $(cat main-server.pid) || true
+          if [ -f /tmp/main-server.pid ]; then
+            kill $(cat /tmp/main-server.pid) || true
           fi
 
       - name: Upload API specifications and diffs
@@ -682,7 +614,7 @@ jobs:
         with:
           name: api-specifications-and-diffs
           path: |
-            main-server.log
-            current-server.log
+            /tmp/main-server.log
+            /tmp/current-server.log
             *-api.json
             *-diff.md 
