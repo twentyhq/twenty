@@ -158,6 +158,7 @@ export const getCreateManyResponse201 = (
 
 export const getUpdateOneResponse200 = (
   item: Pick<ObjectMetadataEntity, 'nameSingular'>,
+  fromMetadata = false,
 ): OpenAPIV3_1.ResponseObject => {
   const schemaRef = `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`;
 
@@ -171,7 +172,9 @@ export const getUpdateOneResponse200 = (
             data: {
               type: 'object',
               properties: {
-                ['update' + capitalize(item.nameSingular)]: {
+                [fromMetadata
+                  ? 'updateOne' + capitalize(item.nameSingular)
+                  : 'update' + capitalize(item.nameSingular)]: {
                   $ref: schemaRef,
                 },
               },
