@@ -100,19 +100,15 @@ jobs:
           npx nx reset:env twenty-server
           echo "DATABASE_URL=postgres://postgres:postgres@localhost:5432/current_branch" >> packages/twenty-server/.env
           echo "SERVER_PORT=${{ env.CURRENT_SERVER_PORT }}" >> packages/twenty-server/.env
+          echo "REDIS_URL=redis://localhost:6379" >> packages/twenty-server/.env
+          echo "CLICKHOUSE_URL=http://default:clickhousePassword@localhost:8123/twenty" >> packages/twenty-server/.env
+          echo "CLICKHOUSE_PASSWORD=clickhousePassword" >> packages/twenty-server/.env
           npx nx run twenty-server:database:init:prod
           npx nx run twenty-server:database:migrate:prod
 
       - name: Start current branch server in background
         run: |
-          npx nx reset:env twenty-server
-          cp packages/twenty-server/.env packages/twenty-server/.env.current
-          echo "DATABASE_URL=postgres://postgres:postgres@localhost:5432/current_branch" >> packages/twenty-server/.env.current
-          echo "SERVER_PORT=${{ env.CURRENT_SERVER_PORT }}" >> packages/twenty-server/.env.current
-          echo "REDIS_URL=redis://localhost:6379" >> packages/twenty-server/.env.current
-          echo "CLICKHOUSE_URL=http://default:clickhousePassword@localhost:8123/twenty" >> packages/twenty-server/.env.current
-          echo "CLICKHOUSE_PASSWORD=clickhousePassword" >> packages/twenty-server/.env.current
-          nohup npx nx run twenty-server:start:prod --env-file=packages/twenty-server/.env.current > current-server.log 2>&1 &
+          nohup npx nx run twenty-server:start:prod > current-server.log 2>&1 &
           echo $! > current-server.pid
 
       - name: Checkout main branch
@@ -134,19 +130,15 @@ jobs:
 
       - name: Setup main branch database
         run: |
-          npx nx reset:env twenty-server
-          cp packages/twenty-server/.env packages/twenty-server/.env.main
-          echo "DATABASE_URL=postgres://postgres:postgres@localhost:5432/main_branch" >> packages/twenty-server/.env.main
-          echo "SERVER_PORT=${{ env.MAIN_SERVER_PORT }}" >> packages/twenty-server/.env.main
-          npx nx run twenty-server:database:init:prod --env-file=packages/twenty-server/.env.main
-          npx nx run twenty-server:database:migrate:prod --env-file=packages/twenty-server/.env.main
+          # Update .env for main branch
+          sed -i 's|DATABASE_URL=.*|DATABASE_URL=postgres://postgres:postgres@localhost:5432/main_branch|' packages/twenty-server/.env
+          sed -i 's|SERVER_PORT=.*|SERVER_PORT=${{ env.MAIN_SERVER_PORT }}|' packages/twenty-server/.env
+          npx nx run twenty-server:database:init:prod
+          npx nx run twenty-server:database:migrate:prod
 
       - name: Start main branch server in background
         run: |
-          echo "REDIS_URL=redis://localhost:6379" >> packages/twenty-server/.env.main
-          echo "CLICKHOUSE_URL=http://default:clickhousePassword@localhost:8123/twenty" >> packages/twenty-server/.env.main
-          echo "CLICKHOUSE_PASSWORD=clickhousePassword" >> packages/twenty-server/.env.main
-          nohup npx nx run twenty-server:start:prod --env-file=packages/twenty-server/.env.main > main-server.log 2>&1 &
+          nohup npx nx run twenty-server:start:prod > main-server.log 2>&1 &
           echo $! > main-server.pid
 
       - name: Wait for servers to be ready
