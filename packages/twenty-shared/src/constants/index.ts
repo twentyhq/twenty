@@ -12,7 +12,6 @@ export { MAX_OPTIONS_TO_DISPLAY } from './FieldMetadataMaxOptionsToDisplay';
 export { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from './FieldRestrictedAdditionalPermissionsRequired';
 export { PermissionsOnAllObjectRecords } from './PermissionsOnAllObjectRecords';
 export { QUERY_MAX_RECORDS } from './QueryMaxRecords';
-export { SettingPermissionType } from './SettingPermissionType';
 export { STANDARD_OBJECT_RECORDS_UNDER_OBJECT_RECORDS_PERMISSIONS } from './StandardObjectRecordsUnderObjectRecordsPermissions';
 export { TWENTY_COMPANIES_BASE_URL } from './TwentyCompaniesBaseUrl';
 export { TWENTY_ICONS_BASE_URL } from './TwentyIconsBaseUrl';
