@@ -6,15 +6,17 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import assert from 'assert';
 import { randomUUID } from 'crypto';
 
 import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import axios, { AxiosInstance, AxiosResponse, isAxiosError } from 'axios';
+import { isDefined } from 'class-validator';
 import { InterBillingChargeFileEmail } from 'twenty-emails';
 import { APP_LOCALES } from 'twenty-shared/translations';
-import { Repository } from 'typeorm';
+import { JsonContains, MoreThanOrEqual, Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import {
@@ -30,6 +32,7 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCharge } from 'src/engine/core-modules/billing/entities/billing-charge.entity';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
+import { ChargeStatus } from 'src/engine/core-modules/billing/enums/billing-charge.status.enum';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
@@ -40,7 +43,6 @@ import { InterInstanceService } from 'src/engine/core-modules/inter/services/int
 import { getNextBusinessDays } from 'src/engine/core-modules/inter/utils/get-next-business-days.util';
 import { getPriceFromStripeDecimal } from 'src/engine/core-modules/inter/utils/get-price-from-stripe-decimal.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class InterService {
@@ -48,8 +50,6 @@ export class InterService {
   private readonly interInstance: AxiosInstance;
 
   constructor(
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(BillingCustomer, 'core')
     private readonly billingCustomerRepository: Repository<BillingCustomer>,
     @InjectRepository(BillingCharge, 'core')
@@ -79,18 +79,41 @@ export class InterService {
     locale: keyof typeof APP_LOCALES;
     userEmail: string;
     customer: BillingCustomer;
-  }) {
+  }): Promise<string> {
     await this.validateCustomerChargeData(customer);
 
     const { document, legalEntity, name, address, city, stateUnity, cep } =
       customer;
 
-    try {
-      // TODO: Create a new entity to holde nillin charge intent metadata to be used in inter payment envents
-      await this.workspaceRepository.update(workspaceId, {
-        interBillingChargeId: workspaceId.slice(0, 15),
+    const pendingCharge = await this.billingChargeRepository.find({
+      where: {
+        metadata: JsonContains({
+          workspaceId,
+        }),
+        dueDate: MoreThanOrEqual(new Date(Date.now())),
+        status: ChargeStatus.UNPAID,
+      },
+    });
+
+    if (pendingCharge.length > 0) {
+      const currentPendinCharge = pendingCharge[0];
+
+      const { interBillingChargeFilePath } = currentPendinCharge;
+
+      const bankSlipFileLink = this.getFileLinkFromPath(
+        interBillingChargeFilePath,
+      );
+
+      await this.sendBankSkipFileEmail({
+        locale,
+        userEmail,
+        fileLink: bankSlipFileLink,
       });
 
+      return bankSlipFileLink;
+    }
+
+    try {
       const token = await this.interInstanceService.getOauthToken();
 
       const chargeCode = randomUUID().replace(/-/g, '').slice(0, 15);
@@ -128,63 +151,52 @@ export class InterService {
         },
       );
 
-      if (response) {
-        // TODO: We should move this to the queue system
-        this.logger.log(
-          `Bolepix code for workspace: ${workspaceId}: ${response.data.codigoSolicitacao}`,
-        );
+      assert(
+        isDefined(response.data.codigoSolicitacao),
+        `Failed to get payment charge id from Inter, got: ${response.data?.codigoSolicitacao}`,
+      );
 
-        const bolepixFilePath = await this.getChargePdf({
-          interChargeId: response.data.codigoSolicitacao,
-          workspaceId,
-        });
+      // TODO: We should move this to the queue system
+      this.logger.log(
+        `Bolepix code for workspace: ${workspaceId}: ${response.data.codigoSolicitacao}`,
+      );
 
-        await this.billingChargeRepository.upsert(
-          {
-            chargeCode,
-            interBillingChargeFilePath: bolepixFilePath,
-            dueDate,
-            metadata: {
-              planKey,
-              workspaceId,
-              interChargeCode: response.data.codigoSolicitacao,
-            },
+      const bolepixFilePath = await this.getChargePdf({
+        interChargeId: response.data.codigoSolicitacao,
+        workspaceId,
+      });
+
+      await this.billingChargeRepository.upsert(
+        {
+          chargeCode,
+          interBillingChargeFilePath: bolepixFilePath,
+          dueDate,
+          metadata: {
+            planKey,
+            workspaceId,
+            interChargeCode: response.data.codigoSolicitacao,
           },
-          {
-            conflictPaths: ['chargeCode'],
-            skipUpdateIfNoValuesChanged: true,
-          },
-        );
+        },
+        {
+          conflictPaths: ['chargeCode'],
+          skipUpdateIfNoValuesChanged: true,
+        },
+      );
 
-        await this.billingCustomerRepository.update(customer.id, {
-          interBillingChargeId: chargeCode,
-          currentInterBankSlipChargeFilePath: bolepixFilePath,
-        });
+      await this.billingCustomerRepository.update(customer.id, {
+        interBillingChargeId: chargeCode,
+        currentInterBankSlipChargeFilePath: bolepixFilePath,
+      });
 
-        const baseUrl = this.twentyConfigService.get('SERVER_URL');
+      const bankSlipFileLink = this.getFileLinkFromPath(bolepixFilePath);
 
-        const emailTemplate = InterBillingChargeFileEmail({
-          duration: '5 Buisiness days',
-          link: `${baseUrl}/files/${bolepixFilePath}`,
-          locale,
-        });
+      await this.sendBankSkipFileEmail({
+        fileLink: bankSlipFileLink,
+        userEmail,
+        locale,
+      });
 
-        const html = await render(emailTemplate, { pretty: true });
-        const text = await render(emailTemplate, { plainText: true });
-
-        i18n.activate(locale);
-
-        this.logger.log(`Sengind email to ${userEmail}`);
-        this.emailService.send({
-          from: `${this.twentyConfigService.get(
-            'EMAIL_FROM_NAME',
-          )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
-          to: userEmail,
-          subject: t`Inter Bilepix Billing Charge`,
-          text,
-          html,
-        });
-      }
+      return bankSlipFileLink;
     } catch (e) {
       // TODO: Create exception filter for inter API Errors
       const isInterApiError = isAxiosError<InterChargeErrorResponse>(e);
@@ -324,6 +336,46 @@ export class InterService {
         `Customer missing inter charge data`,
         BillingExceptionCode.BILLING_MISSING_REQUEST_BODY,
       );
+  }
+
+  async sendBankSkipFileEmail({
+    fileLink,
+    locale,
+    userEmail,
+  }: {
+    fileLink: string;
+    userEmail: string;
+    locale: keyof typeof APP_LOCALES;
+  }) {
+    const baseUrl = this.twentyConfigService.get('SERVER_URL');
+
+    const emailTemplate = InterBillingChargeFileEmail({
+      duration: '5 Buisiness days',
+      link: fileLink,
+      locale,
+    });
+
+    const html = await render(emailTemplate, { pretty: true });
+    const text = await render(emailTemplate, { plainText: true });
+
+    i18n.activate(locale);
+
+    this.logger.log(`Sengind email to ${userEmail}`);
+    this.emailService.send({
+      from: `${this.twentyConfigService.get(
+        'EMAIL_FROM_NAME',
+      )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
+      to: userEmail,
+      subject: t`Inter Bilepix Billing Charge`,
+      text,
+      html,
+    });
+  }
+
+  private getFileLinkFromPath(filePath: string) {
+    const baseUrl = this.twentyConfigService.get('SERVER_URL');
+
+    return `${baseUrl}/files/${filePath}`;
   }
 
   private getAuthHeaders(integration: InterIntegration) {

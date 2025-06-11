@@ -60,6 +60,9 @@ export class BillingCharge {
   @JoinColumn()
   billingSubscription: Relation<BillingSubscription>;
 
+  @Column({ nullable: true, unique: true })
+  billingSubscriptionId: string;
+
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 

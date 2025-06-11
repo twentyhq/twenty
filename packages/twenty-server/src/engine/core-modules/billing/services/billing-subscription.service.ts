@@ -453,8 +453,7 @@ export class BillingSubscriptionService {
         BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
       );
 
-    // TODO: Check if subscription is not active, check if there is aready a pending charge created.
-    await this.interService.createBolepixCharge({
+    return await this.interService.createBolepixCharge({
       planPrice: billingPricesPerPlan.baseProductPrice.unitAmountDecimal,
       workspaceId: subscription.workspaceId as string,
       userEmail: user.email,

@@ -158,8 +158,15 @@ export class BillingResolver {
         BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
       );
 
+    const bankSlipFileLink =
+      await this.billingSubscriptionService.updateOneTimePaymentSubscription({
+        subscription: currentSubscription,
+        user,
+        locale: context.req.headers['x-locale'],
+      });
+
     return {
-      bankSlipFileUrl: '',
+      bankSlipFileLink,
     };
   }
 

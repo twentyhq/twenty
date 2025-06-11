@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { addDays } from 'date-fns';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
@@ -10,9 +11,12 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCharge } from 'src/engine/core-modules/billing/entities/billing-charge.entity';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
+import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { ChargeStatus } from 'src/engine/core-modules/billing/enums/billing-charge.status.enum';
 import { BillingPaymentProviders } from 'src/engine/core-modules/billing/enums/billing-payment-providers.enum';
+import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
+import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { interToSubscriptionStatusMap } from 'src/engine/core-modules/billing/webhooks/utils/inter-to-subsciption-status.mapper';
 import { InterChargeStatus } from 'src/engine/core-modules/inter/enums/InterChargeStatus.enum';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -33,12 +37,15 @@ export class InterWebhookSubscriptionService {
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
-    @InjectRepository(BillingCustomer, 'core')
-    private readonly billingCustomerRepository: Repository<BillingCustomer>,
     @InjectRepository(BillingCharge, 'core')
     private readonly billingChargeRepository: Repository<BillingCharge>,
+    @InjectRepository(BillingSubscriptionItem, 'core')
+    private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
+    @InjectRepository(BillingCustomer, 'core')
+    private readonly billingCustomerRepository: Repository<BillingCustomer>,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly billingPlanService: BillingPlanService,
   ) {}
 
   async processInterEvent(seuNumero: string, situacao: InterChargeStatus) {
@@ -65,19 +72,19 @@ export class InterWebhookSubscriptionService {
       return { noWorkspace: true };
     }
 
-    if (!workspace.id) {
-      throw new BillingException(
-        'Workspace ID is required for subscription events',
-        BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND,
-      );
-    }
+    const customer = await this.billingCustomerRepository.findOne({
+      where: {
+        workspaceId: workspace.id,
+      },
+    });
 
     if (situacao === InterChargeStatus.RECEBIDO)
       await this.billingChargeRepository.update(billingCharge.id, {
         status: ChargeStatus.PAID,
       });
 
-    // TODO: We also need to upsert subscriptionProduct items
+    const now = new Date(Date.now());
+
     await this.billingSubscriptionRepository.upsert(
       {
         workspaceId: workspace.id,
@@ -88,12 +95,47 @@ export class InterWebhookSubscriptionService {
           workspaceId: workspace.id,
           plan: billingCharge.metadata.planKey,
         },
+        interval: SubscriptionInterval.Month,
+        stripeCustomerId: customer?.id,
+        currentPeriodStart: now,
+        currentPeriodEnd: addDays(now, 30),
+        currency: 'BRL',
       },
       {
         conflictPaths: ['interBillingChargeId'],
         skipUpdateIfNoValuesChanged: true,
       },
     );
+
+    const subscription = await this.billingSubscriptionRepository.findOne({
+      where: {
+        interBillingChargeId: seuNumero,
+      },
+    });
+
+    if (!subscription)
+      throw new BillingException(
+        `Subscription not found`,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
+      );
+
+    const billingPricesPerPlan = await this.billingPlanService.getPricesPerPlan(
+      {
+        planKey: billingCharge.metadata.planKey,
+        interval: SubscriptionInterval.Month,
+      },
+    );
+
+    const { baseProductPrice } = billingPricesPerPlan;
+
+    await this.billingSubscriptionItemRepository.save({
+      billingSubscriptionId: subscription.id,
+      stripeProductId: baseProductPrice.stripeProductId,
+      stripePriceId: baseProductPrice.stripePriceId,
+      metadata: {
+        trialPeriodFreeWorkflowCredits: 0,
+      },
+    });
 
     const billingSubscriptions = await this.billingSubscriptionRepository.find({
       where: { workspaceId: workspace.id },
