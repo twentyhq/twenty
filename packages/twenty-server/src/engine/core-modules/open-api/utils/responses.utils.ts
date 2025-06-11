@@ -53,9 +53,11 @@ export const getFindManyResponse200 = (
                         },
                       },
                     },
-                    totalCount: {
-                      type: 'number',
-                    },
+                    ...(!fromMetadata && {
+                      totalCount: {
+                        type: 'number',
+                      },
+                    }),
                   },
                 },
               },

@@ -883,7 +883,6 @@ jobs:
           echo "=== CHECKING REST API FOR BREAKING CHANGES ==="
           
           # Use the Java-based openapi-diff via Docker
-          # Note: This tool only supports OpenAPI 3.0, but we'll handle the error gracefully
           docker run --rm -v "$(pwd):/specs" openapitools/openapi-diff:latest \
             --json /specs/rest-api-diff.json \
             /specs/main-rest-api.json /specs/current-rest-api.json || echo "OpenAPI diff completed with exit code $?"
@@ -954,31 +953,19 @@ jobs:
               # Don't create diff file for no changes
             fi
           else
-            echo "⚠️ OpenAPI diff tool could not process the files (likely due to OpenAPI 3.1.1 vs 3.0 compatibility)"
+            echo "⚠️ OpenAPI diff tool could not process the files"
             
-            # Check if it's a version compatibility issue
-            if docker run --rm -v "$(pwd):/specs" openapitools/openapi-diff:latest /specs/main-rest-api.json /specs/current-rest-api.json 2>&1 | grep -q "3.1"; then
-              echo "# REST API Analysis - Version Compatibility Issue" > rest-api-diff.md
-              echo "" >> rest-api-diff.md
-              echo "⚠️ **OpenAPI version compatibility issue detected**" >> rest-api-diff.md
-              echo "" >> rest-api-diff.md
-              echo "The OpenAPI diff tool supports OpenAPI 3.0, but your API specifications are using OpenAPI 3.1.1." >> rest-api-diff.md
-              echo "" >> rest-api-diff.md
-              echo "**Recommendation**: Consider downgrading your OpenAPI specification to 3.0.3 for better tool compatibility," >> rest-api-diff.md
-              echo "or manually review the API changes by comparing the specification files directly." >> rest-api-diff.md
-            else
-              echo "# REST API Analysis Error" > rest-api-diff.md
-              echo "" >> rest-api-diff.md
-              echo "⚠️ **Error occurred while analyzing REST API changes**" >> rest-api-diff.md
-              echo "" >> rest-api-diff.md
-              echo "## Error Output" >> rest-api-diff.md
-              echo "\`\`\`" >> rest-api-diff.md
-              docker run --rm -v "$(pwd):/specs" openapitools/openapi-diff:latest /specs/main-rest-api.json /specs/current-rest-api.json 2>&1 >> rest-api-diff.md || echo "Could not capture error output"
-              echo "\`\`\`" >> rest-api-diff.md
-            fi
+            echo "# REST API Analysis Error" > rest-api-diff.md
+            echo "" >> rest-api-diff.md
+            echo "⚠️ **Error occurred while analyzing REST API changes**" >> rest-api-diff.md
+            echo "" >> rest-api-diff.md
+            echo "## Error Output" >> rest-api-diff.md
+            echo "\`\`\`" >> rest-api-diff.md
+            docker run --rm -v "$(pwd):/specs" openapitools/openapi-diff:latest /specs/main-rest-api.json /specs/current-rest-api.json 2>&1 >> rest-api-diff.md || echo "Could not capture error output"
+            echo "\`\`\`" >> rest-api-diff.md
             
-            # Don't fail the workflow for tool compatibility issues
-            echo "::warning::REST API analysis tool compatibility issue - continuing workflow"
+            # Don't fail the workflow for tool errors
+            echo "::warning::REST API analysis tool error - continuing workflow"
 
       - name: Check REST Metadata API Breaking Changes
         run: |
@@ -1057,14 +1044,17 @@ jobs:
           else
             echo "⚠️ OpenAPI diff tool could not process the metadata API files"
             
-            echo "# REST Metadata API Analysis - Compatibility Issue" > rest-metadata-api-diff.md
+            echo "# REST Metadata API Analysis Error" > rest-metadata-api-diff.md
             echo "" >> rest-metadata-api-diff.md
-            echo "⚠️ **OpenAPI version compatibility issue detected**" >> rest-metadata-api-diff.md
+            echo "⚠️ **Error occurred while analyzing REST Metadata API changes**" >> rest-metadata-api-diff.md
             echo "" >> rest-metadata-api-diff.md
-            echo "The OpenAPI diff tool supports OpenAPI 3.0, but your API specifications are using OpenAPI 3.1.1." >> rest-metadata-api-diff.md
+            echo "## Error Output" >> rest-metadata-api-diff.md
+            echo "\`\`\`" >> rest-metadata-api-diff.md
+            docker run --rm -v "$(pwd):/specs" openapitools/openapi-diff:latest /specs/main-rest-metadata-api.json /specs/current-rest-metadata-api.json 2>&1 >> rest-metadata-api-diff.md || echo "Could not capture error output"
+            echo "\`\`\`" >> rest-metadata-api-diff.md
             
-            # Don't fail the workflow for tool compatibility issues
-            echo "::warning::REST Metadata API analysis tool compatibility issue - continuing workflow"
+            # Don't fail the workflow for tool errors
+            echo "::warning::REST Metadata API analysis tool error - continuing workflow"
           fi
 
       - name: Comment API Changes on PR
@@ -1215,4 +1205,5 @@ jobs:
             *-api.json
             *-schema-introspection.json  
             *-diff.md
+            *-diff.json
 

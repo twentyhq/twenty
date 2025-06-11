@@ -1,9 +1,6 @@
 import { OpenAPIV3_1 } from 'openapi-types';
 
-export const getRequestBody = (
-  name: string,
-  propertyName = `${name}CreationInput`,
-): OpenAPIV3_1.RequestBodyObject => {
+export const getRequestBody = (name: string): OpenAPIV3_1.RequestBodyObject => {
   return {
     description: 'body',
     required: true,
