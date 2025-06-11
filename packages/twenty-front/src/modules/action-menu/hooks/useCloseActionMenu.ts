@@ -10,10 +10,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const useCloseActionMenu = ({
   preventCommandMenuClosing = false,
-  forceCommandMenuClosing = false,
+  closeCommandMenuFromShowPageOptionsMenu = false,
 }: {
   preventCommandMenuClosing?: boolean;
-  forceCommandMenuClosing?: boolean;
+  closeCommandMenuFromShowPageOptionsMenu?: boolean;
 } = {}) => {
   const { actionMenuType, isInRightDrawer } = useContext(ActionMenuContext);
 
@@ -46,8 +46,8 @@ export const useCloseActionMenu = ({
 
     if (
       actionMenuType === 'command-menu-show-page-action-menu-dropdown' &&
-      isDefined(forceCommandMenuClosing) &&
-      forceCommandMenuClosing
+      isDefined(closeCommandMenuFromShowPageOptionsMenu) &&
+      closeCommandMenuFromShowPageOptionsMenu
     ) {
       closeCommandMenu();
     }

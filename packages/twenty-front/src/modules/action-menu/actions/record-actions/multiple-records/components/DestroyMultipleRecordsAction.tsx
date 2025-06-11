@@ -80,7 +80,7 @@ export const DestroyMultipleRecordsAction = () => {
       subtitle="Are you sure you want to destroy these records? They won't be recoverable anymore."
       onConfirmClick={handleDestroyClick}
       confirmButtonText="Destroy Records"
-      forceCommandMenuClosing={true}
+      closeCommandMenuFromShowPageOptionsMenu={true}
     />
   );
 };
