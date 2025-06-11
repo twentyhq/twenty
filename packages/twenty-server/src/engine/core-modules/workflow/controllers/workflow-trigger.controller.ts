@@ -14,6 +14,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkflowTriggerRestApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-rest-api-exception.filter';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   WorkflowVersionStatus,
@@ -28,7 +29,10 @@ import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types
 import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service';
 
 @Controller('webhooks')
-@UseFilters(WorkflowTriggerRestApiExceptionFilter)
+@UseFilters(
+  WorkflowTriggerRestApiExceptionFilter,
+  PermissionsGraphqlApiExceptionFilter,
+)
 export class WorkflowTriggerController {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,

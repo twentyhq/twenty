@@ -12,6 +12,7 @@ import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service';
 
 @Resolver()
@@ -20,7 +21,10 @@ import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-t
   UserAuthGuard,
   SettingsPermissionsGuard(SettingPermissionType.WORKFLOWS),
 )
-@UseFilters(WorkflowTriggerGraphqlApiExceptionFilter)
+@UseFilters(
+  WorkflowTriggerGraphqlApiExceptionFilter,
+  PermissionsGraphqlApiExceptionFilter,
+)
 export class WorkflowTriggerResolver {
   constructor(
     private readonly workflowTriggerWorkspaceService: WorkflowTriggerWorkspaceService,
