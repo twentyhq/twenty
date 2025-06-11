@@ -112,7 +112,7 @@ jobs:
           }
           
           set_env_var "PG_DATABASE_URL" "postgres://postgres:postgres@localhost:5432/current_branch"
-          set_env_var "SERVER_PORT" "${{ env.CURRENT_SERVER_PORT }}"
+          set_env_var "NODE_PORT" "${{ env.CURRENT_SERVER_PORT }}"
           set_env_var "REDIS_URL" "redis://localhost:6379"
           set_env_var "CLICKHOUSE_URL" "http://default:clickhousePassword@localhost:8123/twenty"
           set_env_var "CLICKHOUSE_PASSWORD" "clickhousePassword"
@@ -122,8 +122,12 @@ jobs:
 
       - name: Start current branch server in background
         run: |
+          echo "=== Current branch .env file contents ==="
+          cat packages/twenty-server/.env
+          echo "=== Starting current branch server ==="
           nohup npx nx run twenty-server:start:prod > current-server.log 2>&1 &
           echo $! > current-server.pid
+          echo "Current server PID: $(cat current-server.pid)"
 
       - name: Checkout main branch
         run: |
@@ -158,15 +162,19 @@ jobs:
           }
           
           set_env_var "PG_DATABASE_URL" "postgres://postgres:postgres@localhost:5432/main_branch"
-          set_env_var "SERVER_PORT" "${{ env.MAIN_SERVER_PORT }}"
+          set_env_var "NODE_PORT" "${{ env.MAIN_SERVER_PORT }}"
           
           npx nx run twenty-server:database:init:prod
           npx nx run twenty-server:database:migrate:prod
 
       - name: Start main branch server in background
         run: |
+          echo "=== Main branch .env file contents ==="
+          cat packages/twenty-server/.env
+          echo "=== Starting main branch server ==="
           nohup npx nx run twenty-server:start:prod > main-server.log 2>&1 &
           echo $! > main-server.pid
+          echo "Main server PID: $(cat main-server.pid)"
 
       - name: Wait for servers to be ready
         run: |
