@@ -134,88 +134,33 @@ jobs:
           echo $! > /tmp/current-server.pid
           echo "Current server PID: $(cat /tmp/current-server.pid)"
 
-      - name: Checkout main branch
+      - name: Wait for current branch server to be ready
         run: |
-          git stash
-          git checkout origin/main
-          git clean -fd
-
-      - name: Install dependencies for main branch
-        uses: ./.github/workflows/actions/yarn-install
-
-      - name: Build main branch dependencies
-        run: |
-          npx nx build twenty-shared
-          npx nx build twenty-emails
-
-      - name: Build main branch server
-        run: npx nx build twenty-server
-
-      - name: Setup main branch database
-        run: |
-          # Function to set or update environment variable
-          set_env_var() {
-            local var_name="$1"
-            local var_value="$2"
-            local env_file="packages/twenty-server/.env"
-            
-            if grep -q "^${var_name}=" "$env_file"; then
-              sed -i "s|^${var_name}=.*|${var_name}=${var_value}|" "$env_file"
-            else
-              echo "${var_name}=${var_value}" >> "$env_file"
-            fi
-          }
-          
-          set_env_var "PG_DATABASE_URL" "postgres://postgres:postgres@localhost:5432/main_branch"
-          set_env_var "NODE_PORT" "${{ env.MAIN_SERVER_PORT }}"
-          
-          npx nx run twenty-server:database:init:prod
-          npx nx run twenty-server:database:migrate:prod
-
-      - name: Seed main branch database with test data
-        run: |
-          npx nx command-no-deps twenty-server -- workspace:seed:dev
-
-      - name: Start main branch server in background
-        run: |
-          echo "=== Main branch .env file contents ==="
-          cat packages/twenty-server/.env
-          echo "=== Starting main branch server ==="
-          nohup npx nx run twenty-server:start:prod > /tmp/main-server.log 2>&1 &
-          echo $! > /tmp/main-server.pid
-          echo "Main server PID: $(cat /tmp/main-server.pid)"
-
-      - name: Wait for servers to be ready
-        run: |
-          echo "Waiting for servers to start..."
+          echo "Waiting for current branch server to start..."
           timeout=300
           interval=5
           elapsed=0
           
           while [ $elapsed -lt $timeout ]; do
-            if curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/graphql" > /dev/null 2>&1 && \
-               curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/graphql" > /dev/null 2>&1 && \
-               curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/open-api/core" > /dev/null 2>&1 && \
+            if curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/graphql" > /dev/null 2>&1 && \
                curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/open-api/core" > /dev/null 2>&1; then
-              echo "Both servers are ready!"
+              echo "Current branch server is ready!"
               break
             fi
             
-            echo "Servers not ready yet, waiting ${interval}s..."
+            echo "Current branch server not ready yet, waiting ${interval}s..."
             sleep $interval
             elapsed=$((elapsed + interval))
           done
           
           if [ $elapsed -ge $timeout ]; then
-            echo "Timeout waiting for servers to start"
-            echo "Main server log:"
-            cat /tmp/main-server.log || echo "No main server log found"
+            echo "Timeout waiting for current branch server to start"
             echo "Current server log:"
             cat /tmp/current-server.log || echo "No current server log found"
             exit 1
           fi
 
-      - name: Download GraphQL schemas using introspection
+      - name: Download GraphQL and REST responses from current branch
         run: |
           # Admin token from jest-integration.config.ts
           ADMIN_TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC05ZTNiLTQ2ZDQtYTU1Ni04OGI5ZGRjMmIwMzQiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtMDY4Ny00YzQxLWI3MDctZWQxYmZjYTk3MmE3IiwidXNlcldvcmtzcGFjZUlkIjoiMjAyMDIwMjAtOWUzYi00NmQ0LWE1NTYtODhiOWRkYzJiMDM1IiwiaWF0IjoxNzM5NTQ3NjYxLCJleHAiOjMzMjk3MTQ3NjYxfQ.fbOM9yhr3jWDicPZ1n771usUURiPGmNdeFApsgrbxOw"
@@ -352,7 +297,7 @@ jobs:
                         name
                         ofType {
                           kind
-                          name
+                            name
                           ofType {
                             kind
                             name
@@ -461,20 +406,367 @@ jobs:
             -d "{\"query\":\"$(echo "$INTROSPECTION_QUERY" | tr '\n' ' ' | sed 's/"/\\"/g')\"}" \
             -o current-schema-introspection.json
           
-          echo "Downloading GraphQL schema from main server..."
-          curl -X POST "http://localhost:${{ env.MAIN_SERVER_PORT }}/graphql" \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer $ADMIN_TOKEN" \
-            -d "{\"query\":\"$(echo "$INTROSPECTION_QUERY" | tr '\n' ' ' | sed 's/"/\\"/g')\"}" \
-            -o main-schema-introspection.json
-          
-          # Download metadata schemas as well
+          # Download metadata schema as well
           echo "Downloading GraphQL metadata schema from current server..."
           curl -X POST "http://localhost:${{ env.CURRENT_SERVER_PORT }}/metadata" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer $ADMIN_TOKEN" \
             -d "{\"query\":\"$(echo "$INTROSPECTION_QUERY" | tr '\n' ' ' | sed 's/"/\\"/g')\"}" \
             -o current-metadata-schema-introspection.json
+          
+          # Download current branch OpenAPI specs
+          echo "Downloading OpenAPI specifications from current server..."
+          curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/open-api/core" > current-rest-api.json
+          curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/open-api/metadata" > current-rest-metadata-api.json
+          
+          # Verify the downloads
+          echo "Current branch schema download results:"
+          ls -la current-*
+          
+          # Check if the responses contain actual schema data
+          echo "Current schema response preview:"
+          head -c 200 current-schema-introspection.json
+          echo ""
+          echo "Current metadata schema response preview:"
+          head -c 200 current-metadata-schema-introspection.json
+          echo ""
+          echo "Current OpenAPI specs sizes:"
+          wc -c current-*.json
+
+      - name: Stop current branch server
+        run: |
+          if [ -f /tmp/current-server.pid ]; then
+            echo "Stopping current branch server..."
+            kill $(cat /tmp/current-server.pid) || true
+            # Wait a bit for graceful shutdown
+            sleep 5
+            # Force kill if still running
+            kill -9 $(cat /tmp/current-server.pid) 2>/dev/null || true
+            rm -f /tmp/current-server.pid
+          fi
+
+      - name: Checkout main branch
+        run: |
+          git stash
+          git checkout origin/main
+          git clean -fd
+
+      - name: Install dependencies for main branch
+        uses: ./.github/workflows/actions/yarn-install
+
+      - name: Build main branch dependencies
+        run: |
+          npx nx build twenty-shared
+          npx nx build twenty-emails
+
+      - name: Build main branch server
+        run: npx nx build twenty-server
+
+      - name: Setup main branch database
+        run: |
+          # Function to set or update environment variable
+          set_env_var() {
+            local var_name="$1"
+            local var_value="$2"
+            local env_file="packages/twenty-server/.env"
+            
+            if grep -q "^${var_name}=" "$env_file"; then
+              sed -i "s|^${var_name}=.*|${var_name}=${var_value}|" "$env_file"
+            else
+              echo "${var_name}=${var_value}" >> "$env_file"
+            fi
+          }
+          
+          set_env_var "PG_DATABASE_URL" "postgres://postgres:postgres@localhost:5432/main_branch"
+          set_env_var "NODE_PORT" "${{ env.MAIN_SERVER_PORT }}"
+          
+          npx nx run twenty-server:database:init:prod
+          npx nx run twenty-server:database:migrate:prod
+
+      - name: Seed main branch database with test data
+        run: |
+          npx nx command-no-deps twenty-server -- workspace:seed:dev
+
+      - name: Start main branch server in background
+        run: |
+          echo "=== Main branch .env file contents ==="
+          cat packages/twenty-server/.env
+          echo "=== Starting main branch server ==="
+          nohup npx nx run twenty-server:start:prod > /tmp/main-server.log 2>&1 &
+          echo $! > /tmp/main-server.pid
+          echo "Main server PID: $(cat /tmp/main-server.pid)"
+
+      - name: Wait for main branch server to be ready
+        run: |
+          echo "Waiting for main branch server to start..."
+          timeout=300
+          interval=5
+          elapsed=0
+          
+          while [ $elapsed -lt $timeout ]; do
+            if curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/graphql" > /dev/null 2>&1 && \
+               curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/open-api/core" > /dev/null 2>&1; then
+              echo "Main branch server is ready!"
+              break
+            fi
+            
+            echo "Main branch server not ready yet, waiting ${interval}s..."
+            sleep $interval
+            elapsed=$((elapsed + interval))
+          done
+          
+          if [ $elapsed -ge $timeout ]; then
+            echo "Timeout waiting for main branch server to start"
+            echo "Main server log:"
+            cat /tmp/main-server.log || echo "No main server log found"
+            exit 1
+          fi
+
+      - name: Download GraphQL and REST responses from main branch
+        run: |
+          # Admin token from jest-integration.config.ts
+          ADMIN_TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC05ZTNiLTQ2ZDQtYTU1Ni04OGI5ZGRjMmIwMzQiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtMDY4Ny00YzQxLWI3MDctZWQxYmZjYTk3MmE3IiwidXNlcldvcmtzcGFjZUlkIjoiMjAyMDIwMjAtOWUzYi00NmQ0LWE1NTYtODhiOWRkYzJiMDM1IiwiaWF0IjoxNzM5NTQ3NjYxLCJleHAiOjMzMjk3MTQ3NjYxfQ.fbOM9yhr3jWDicPZ1n771usUURiPGmNdeFApsgrbxOw"
+          
+          # Full introspection query (based on GraphQL specification)
+          INTROSPECTION_QUERY='query IntrospectionQuery {
+            __schema {
+              queryType { name }
+              mutationType { name }
+              subscriptionType { name }
+              types {
+                kind
+                name
+                description
+                fields(includeDeprecated: true) {
+                  name
+                  description
+                  args {
+                    name
+                    description
+                    type {
+                      kind
+                      name
+                      ofType {
+                        kind
+                        name
+                        ofType {
+                          kind
+                          name
+                          ofType {
+                            kind
+                            name
+                            ofType {
+                              kind
+                              name
+                              ofType {
+                                kind
+                                name
+                                ofType {
+                                  kind
+                                  name
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                    defaultValue
+                  }
+                  type {
+                    kind
+                    name
+                    ofType {
+                      kind
+                      name
+                      ofType {
+                        kind
+                        name
+                        ofType {
+                          kind
+                          name
+                          ofType {
+                            kind
+                            name
+                            ofType {
+                              kind
+                              name
+                              ofType {
+                                kind
+                                name
+                                ofType {
+                                  kind
+                                  name
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                  isDeprecated
+                  deprecationReason
+                }
+                inputFields {
+                  name
+                  description
+                  type {
+                    kind
+                    name
+                    ofType {
+                      kind
+                      name
+                      ofType {
+                        kind
+                        name
+                        ofType {
+                          kind
+                          name
+                          ofType {
+                            kind
+                            name
+                            ofType {
+                              kind
+                              name
+                              ofType {
+                                kind
+                                name
+                                ofType {
+                                  kind
+                                  name
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                  defaultValue
+                }
+                interfaces {
+                  kind
+                  name
+                  ofType {
+                    kind
+                    name
+                    ofType {
+                      kind
+                      name
+                      ofType {
+                        kind
+                        name
+                        ofType {
+                          kind
+                            name
+                          ofType {
+                            kind
+                            name
+                            ofType {
+                              kind
+                              name
+                              ofType {
+                                kind
+                                name
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+                enumValues(includeDeprecated: true) {
+                  name
+                  description
+                  isDeprecated
+                  deprecationReason
+                }
+                possibleTypes {
+                  kind
+                  name
+                  ofType {
+                    kind
+                    name
+                    ofType {
+                      kind
+                      name
+                      ofType {
+                        kind
+                        name
+                        ofType {
+                          kind
+                          name
+                          ofType {
+                            kind
+                            name
+                            ofType {
+                              kind
+                              name
+                              ofType {
+                                kind
+                                name
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+              directives {
+                name
+                description
+                locations
+                args {
+                  name
+                  description
+                  type {
+                    kind
+                    name
+                    ofType {
+                      kind
+                      name
+                      ofType {
+                        kind
+                        name
+                        ofType {
+                          kind
+                          name
+                          ofType {
+                            kind
+                            name
+                            ofType {
+                              kind
+                              name
+                              ofType {
+                                kind
+                                name
+                                ofType {
+                                  kind
+                                  name
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                  defaultValue
+                }
+              }
+            }
+          }'
+          
+          echo "Downloading GraphQL schema from main server..."
+          curl -X POST "http://localhost:${{ env.MAIN_SERVER_PORT }}/graphql" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $ADMIN_TOKEN" \
+            -d "{\"query\":\"$(echo "$INTROSPECTION_QUERY" | tr '\n' ' ' | sed 's/"/\\"/g')\"}" \
+            -o main-schema-introspection.json
           
           echo "Downloading GraphQL metadata schema from main server..."
           curl -X POST "http://localhost:${{ env.MAIN_SERVER_PORT }}/metadata" \
@@ -483,17 +775,28 @@ jobs:
             -d "{\"query\":\"$(echo "$INTROSPECTION_QUERY" | tr '\n' ' ' | sed 's/"/\\"/g')\"}" \
             -o main-metadata-schema-introspection.json
           
+          # Download main branch OpenAPI specs
+          echo "Downloading OpenAPI specifications from main server..."
+          curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/open-api/core" > main-rest-api.json
+          curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/open-api/metadata" > main-rest-metadata-api.json
+          
           # Verify the downloads
-          echo "Schema download results:"
-          ls -la *-schema-introspection.json
+          echo "Main branch schema download results:"
+          ls -la main-*
           
           # Check if the responses contain actual schema data
-          echo "Current schema response preview:"
-          head -c 200 current-schema-introspection.json
-          echo ""
           echo "Main schema response preview:"
           head -c 200 main-schema-introspection.json
           echo ""
+          echo "Main metadata schema response preview:"
+          head -c 200 main-metadata-schema-introspection.json
+          echo ""
+          echo "Main OpenAPI specs sizes:"
+          wc -c main-*.json
+          
+          # Final verification of all downloaded files
+          echo "All downloaded API files:"
+          ls -la *-*.json
 
       - name: Check GraphQL Schema for Breaking Changes
         uses: graphql-hive/graphql-inspector@master
@@ -512,23 +815,6 @@ jobs:
           endpoint: 'main-metadata-schema-introspection.json'
           fail-on-breaking: true
           annotations: true
-
-      - name: Download OpenAPI specifications
-        run: |
-          # Download current branch OpenAPI specs
-          curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/open-api/core" > current-rest-api.json
-          curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/open-api/metadata" > current-rest-metadata-api.json
-          
-          # Download main branch OpenAPI specs
-          curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/open-api/core" > main-rest-api.json
-          curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/open-api/metadata" > main-rest-metadata-api.json
-          
-          # Verify files were downloaded successfully
-          echo "Downloaded OpenAPI specifications:"
-          ls -la *-api.json
-          
-          # Show file sizes to ensure they're not empty
-          wc -c *-api.json
 
       - name: Setup Java for OpenAPI Diff
         uses: actions/setup-java@v4
