@@ -966,6 +966,7 @@ jobs:
             
             # Don't fail the workflow for tool errors
             echo "::warning::REST API analysis tool error - continuing workflow"
+          fi
 
       - name: Check REST Metadata API Breaking Changes
         run: |
