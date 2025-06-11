@@ -10,6 +10,9 @@ export const CreateNewTableRecordNoSelectionRecordAction = () => {
   });
 
   return (
-    <Action onClick={() => createNewIndexRecord()} preventCommandMenuClosing />
+    <Action
+      onClick={() => createNewIndexRecord()}
+      closeSidePanelOnCommandMenuListActionExecution={false}
+    />
   );
 };
