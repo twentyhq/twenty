@@ -1,14 +1,14 @@
+import { TEST_COMPANY_1_ID } from 'test/integration/constants/test-company-ids.constants';
 import {
   TEST_PERSON_1_ID,
   TEST_PERSON_2_ID,
   TEST_PERSON_3_ID,
   TEST_PERSON_4_ID,
 } from 'test/integration/constants/test-person-ids.constants';
-import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
-import { generateRecordName } from 'test/integration/utils/generate-record-name';
-import { TEST_COMPANY_1_ID } from 'test/integration/constants/test-company-ids.constants';
-import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
+import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
+import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
 describe('Core REST API Find Many endpoint', () => {
   const testPersonIds = [
@@ -261,6 +261,168 @@ describe('Core REST API Find Many endpoint', () => {
 
     expect(people).toEqual([...people].sort((a, b) => a.city - b.city));
   });
+
+  it('should should throw an error when trying to order by a composite field', async () => {
+    await makeRestAPIRequest({
+      method: 'get',
+      path: '/people?order_by=name[AscNullsLast]',
+    }).expect(400);
+  });
+
+  // TODO: Uncomment this test when we support composite fields ordering in the rest api
+
+  // it('should support pagination with fullName composite field ordering', async () => {
+  //   await deleteAllRecords('person');
+
+  //   const testPeople = [
+  //     {
+  //       id: TEST_PERSON_1_ID,
+  //       firstName: 'Alice',
+  //       lastName: 'Brown',
+  //       position: 0,
+  //     },
+  //     {
+  //       id: TEST_PERSON_2_ID,
+  //       firstName: 'Alice',
+  //       lastName: 'Smith',
+  //       position: 1,
+  //     },
+  //     {
+  //       id: TEST_PERSON_3_ID,
+  //       firstName: 'Bob',
+  //       lastName: 'Johnson',
+  //       position: 2,
+  //     },
+  //     {
+  //       id: TEST_PERSON_4_ID,
+  //       firstName: 'Bob',
+  //       lastName: 'Williams',
+  //       position: 3,
+  //     },
+  //     {
+  //       id: TEST_PERSON_5_ID,
+  //       firstName: 'Charlie',
+  //       lastName: 'Davis',
+  //       position: 4,
+  //     },
+  //   ];
+
+  //   for (const person of testPeople) {
+  //     await makeRestAPIRequest({
+  //       method: 'post',
+  //       path: '/people',
+  //       body: {
+  //         id: person.id,
+  //         name: {
+  //           firstName: person.firstName,
+  //           lastName: person.lastName,
+  //         },
+  //       },
+  //     });
+  //   }
+
+  //   const firstPageResponse = await makeRestAPIRequest({
+  //     method: 'get',
+  //     path: '/people?order_by=name[AscNullsLast]&limit=2',
+  //   }).expect(200);
+
+  //   const firstPagePeople = firstPageResponse.body.data.people;
+  //   const firstPageCursor = firstPageResponse.body.pageInfo.endCursor;
+
+  //   expect(firstPagePeople).toHaveLength(2);
+  //   expect(firstPageResponse.body.pageInfo.hasNextPage).toBe(true);
+
+  //   expect(firstPagePeople[0].name.firstName).toBe('Alice');
+  //   expect(firstPagePeople[0].name.lastName).toBe('Brown');
+  //   expect(firstPagePeople[1].name.firstName).toBe('Alice');
+  //   expect(firstPagePeople[1].name.lastName).toBe('Smith');
+
+  //   const secondPageResponse = await makeRestAPIRequest({
+  //     method: 'get',
+  //     path: `/people?order_by=name[AscNullsLast]&limit=2&starting_after=${firstPageCursor}`,
+  //   }).expect(200);
+
+  //   const secondPagePeople = secondPageResponse.body.data.people;
+
+  //   expect(secondPagePeople).toHaveLength(2);
+
+  //   expect(secondPagePeople[0].name.firstName).toBe('Bob');
+  //   expect(secondPagePeople[0].name.lastName).toBe('Johnson');
+  //   expect(secondPagePeople[1].name.firstName).toBe('Bob');
+  //   expect(secondPagePeople[1].name.lastName).toBe('Williams');
+
+  //   const firstPageIds = firstPagePeople.map((p: { id: string }) => p.id);
+  //   const secondPageIds = secondPagePeople.map((p: { id: string }) => p.id);
+  //   const intersection = firstPageIds.filter((id: string) =>
+  //     secondPageIds.includes(id),
+  //   );
+
+  //   expect(intersection).toHaveLength(0);
+
+  //   const thirdPageResponse = await makeRestAPIRequest({
+  //     method: 'get',
+  //     path: `/people?order_by=name[AscNullsLast]&limit=2&starting_after=${secondPageResponse.body.pageInfo.endCursor}`,
+  //   }).expect(200);
+
+  //   const thirdPagePeople = thirdPageResponse.body.data.people;
+
+  //   expect(thirdPagePeople).toHaveLength(1);
+  //   expect(thirdPagePeople[0].name.firstName).toBe('Charlie');
+  //   expect(thirdPagePeople[0].name.lastName).toBe('Davis');
+  //   expect(thirdPageResponse.body.pageInfo.hasNextPage).toBe(false);
+  // });
+
+  // it('should support cursor-based pagination with fullName descending order', async () => {
+  //   const firstPageResponse = await makeRestAPIRequest({
+  //     method: 'get',
+  //     path: '/people?order_by=name[DescNullsLast]&limit=2',
+  //   }).expect(200);
+
+  //   const firstPagePeople = firstPageResponse.body.data.people;
+
+  //   expect(firstPagePeople).toHaveLength(2);
+
+  //   expect(firstPagePeople[0].name.firstName).toBe('Charlie');
+  //   expect(firstPagePeople[0].name.lastName).toBe('Davis');
+  //   expect(firstPagePeople[1].name.firstName).toBe('Bob');
+  //   expect(firstPagePeople[1].name.lastName).toBe('Williams');
+
+  //   const secondPageResponse = await makeRestAPIRequest({
+  //     method: 'get',
+  //     path: `/people?order_by=name[DescNullsLast]&limit=2&starting_after=${firstPageResponse.body.pageInfo.endCursor}`,
+  //   }).expect(200);
+
+  //   const secondPagePeople = secondPageResponse.body.data.people;
+
+  //   expect(secondPagePeople).toHaveLength(2);
+
+  //   expect(secondPagePeople[0].name.firstName).toBe('Bob');
+  //   expect(secondPagePeople[0].name.lastName).toBe('Johnson');
+  //   expect(secondPagePeople[1].name.firstName).toBe('Alice');
+  //   expect(secondPagePeople[1].name.lastName).toBe('Smith');
+  // });
+
+  // it('should support backward pagination with fullName composite field', async () => {
+  //   const allPeopleResponse = await makeRestAPIRequest({
+  //     method: 'get',
+  //     path: '/people?order_by=name.firstName[AscNullsLast],name.lastName[AscNullsLast]',
+  //   }).expect(200);
+
+  //   const allPeople = allPeopleResponse.body.data.people;
+  //   const lastPersonCursor = allPeopleResponse.body.pageInfo.endCursor;
+
+  //   const backwardPageResponse = await makeRestAPIRequest({
+  //     method: 'get',
+  //     path: `/people?order_by=name[AscNullsLast]&limit=2&ending_before=${lastPersonCursor}`,
+  //   }).expect(200);
+
+  //   const backwardPagePeople = backwardPageResponse.body.data.people;
+
+  //   expect(backwardPagePeople).toHaveLength(2);
+
+  //   expect(backwardPagePeople[0].id).toBe(allPeople[allPeople.length - 3].id);
+  //   expect(backwardPagePeople[1].id).toBe(allPeople[allPeople.length - 2].id);
+  // });
 
   it('should support depth 0 parameter', async () => {
     const response = await makeRestAPIRequest({
