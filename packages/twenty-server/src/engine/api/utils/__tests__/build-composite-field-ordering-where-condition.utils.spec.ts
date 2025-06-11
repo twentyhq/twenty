@@ -24,7 +24,7 @@ describe('buildCompositeFieldWhereCondition', () => {
         ],
         cursorValue: { firstName: 'John', lastName: 'Doe' },
         isForwardPagination: true,
-        operator: 'eq',
+        isEqualityCondition: true,
       });
 
       expect(result).toEqual({
@@ -114,7 +114,6 @@ describe('buildCompositeFieldWhereCondition', () => {
           orderBy,
           value,
           isForwardPagination,
-          operator,
           expectedOperator,
         } = context;
 
@@ -124,7 +123,6 @@ describe('buildCompositeFieldWhereCondition', () => {
           orderBy,
           cursorValue: value,
           isForwardPagination,
-          operator,
         });
 
         expect(result).toEqual({

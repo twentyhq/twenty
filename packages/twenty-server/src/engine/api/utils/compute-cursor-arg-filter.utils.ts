@@ -45,7 +45,7 @@ export const computeCursorArgFilter = (
         fieldMetadataMapByName,
         orderBy,
         isForwardPagination: true,
-        operator: 'eq',
+        isEqualityCondition: true,
       }),
     buildMainCondition: ({ cursorKey, cursorValue }) =>
       buildWhereCondition({

@@ -24,7 +24,7 @@ type BuildCompositeFieldWhereConditionParams = {
   orderBy: ObjectRecordOrderBy;
   cursorValue: ObjectRecordCursorLeafCompositeValue;
   isForwardPagination: boolean;
-  operator?: string;
+  isEqualityCondition?: boolean;
 };
 
 export const buildCompositeFieldWhereCondition = ({
@@ -33,7 +33,7 @@ export const buildCompositeFieldWhereCondition = ({
   orderBy,
   cursorValue,
   isForwardPagination,
-  operator,
+  isEqualityCondition = false,
 }: BuildCompositeFieldWhereConditionParams): Record<
   string,
   ObjectRecordFilter
@@ -74,6 +74,26 @@ export const buildCompositeFieldWhereCondition = ({
     })
     .filter(isDefined);
 
+  if (isEqualityCondition) {
+    const result = cursorEntries.reduce<Record<string, ObjectRecordFilter>>(
+      (acc, cursorEntry) => {
+        const [cursorKey, cursorValue] = Object.entries(cursorEntry)[0];
+
+        return {
+          ...acc,
+          [cursorKey]: {
+            eq: cursorValue,
+          },
+        };
+      },
+      {},
+    );
+
+    return {
+      [fieldKey]: result,
+    };
+  }
+
   const orConditions = buildCumulativeConditions({
     items: cursorEntries,
     buildEqualityCondition: ({ cursorKey, cursorValue }) => ({
@@ -97,7 +117,6 @@ export const buildCompositeFieldWhereCondition = ({
       const computedOperator = computeOperator(
         isAscending,
         isForwardPagination,
-        operator,
       );
 
       return {

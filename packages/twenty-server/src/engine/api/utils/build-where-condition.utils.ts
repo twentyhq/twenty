@@ -14,9 +14,9 @@ import {
 import { buildCompositeFieldWhereCondition } from 'src/engine/api/utils/build-composite-field-where-condition.utils';
 import { computeOperator } from 'src/engine/api/utils/compute-operator.utils';
 import { isAscendingOrder } from 'src/engine/api/utils/is-ascending-order.utils';
+import { validateAndGetOrderByForScalarField } from 'src/engine/api/utils/validate-and-get-order-by.utils';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
-import { validateAndGetOrderByForScalarField } from 'src/engine/api/utils/validate-and-get-order-by.utils';
 
 type BuildWhereConditionParams = {
   cursorKey: keyof ObjectRecord;
@@ -26,7 +26,7 @@ type BuildWhereConditionParams = {
   fieldMetadataMapByName: FieldMetadataMap;
   orderBy: ObjectRecordOrderBy;
   isForwardPagination: boolean;
-  operator?: string;
+  isEqualityCondition?: boolean;
 };
 
 export const buildWhereCondition = ({
@@ -35,7 +35,7 @@ export const buildWhereCondition = ({
   fieldMetadataMapByName,
   orderBy,
   isForwardPagination,
-  operator,
+  isEqualityCondition = false,
 }: BuildWhereConditionParams): Record<string, unknown> => {
   const fieldMetadata = fieldMetadataMapByName[cursorKey];
 
@@ -53,8 +53,12 @@ export const buildWhereCondition = ({
       orderBy,
       cursorValue: cursorValue as ObjectRecordCursorLeafCompositeValue,
       isForwardPagination,
-      operator,
+      isEqualityCondition,
     });
+  }
+
+  if (isEqualityCondition) {
+    return { [cursorKey]: { eq: cursorValue } };
   }
 
   const keyOrderBy = validateAndGetOrderByForScalarField(cursorKey, orderBy);
@@ -68,11 +72,7 @@ export const buildWhereCondition = ({
   }
 
   const isAscending = isAscendingOrder(orderByDirection);
-  const computedOperator = computeOperator(
-    isAscending,
-    isForwardPagination,
-    operator,
-  );
+  const computedOperator = computeOperator(isAscending, isForwardPagination);
 
   return { [cursorKey]: { [computedOperator]: cursorValue } };
 };
