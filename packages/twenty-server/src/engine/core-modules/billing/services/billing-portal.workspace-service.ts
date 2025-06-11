@@ -7,6 +7,8 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { randomUUID } from 'crypto';
+
 import Stripe from 'stripe';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
@@ -73,6 +75,11 @@ export class BillingPortalWorkspaceService {
       const { cpfCnpj, legalEntity, name, address, city, stateUnity, cep } =
         interChargeData;
 
+      // TODO: This looks kinda dumb since we a using the upsert but idk how to do it better for now
+      const existingCustomer = await this.billingCustomerRepository.findOneBy({
+        workspaceId: workspace.id,
+      });
+
       await this.billingCustomerRepository.upsert(
         {
           workspaceId: workspace.id,
@@ -84,6 +91,7 @@ export class BillingPortalWorkspaceService {
           stateUnity,
           cep,
           interBillingChargeId: workspace.id.slice(0, 15),
+          stripeCustomerId: existingCustomer?.stripeCustomerId || randomUUID(),
         },
         {
           conflictPaths: ['workspaceId'],
