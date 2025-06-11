@@ -1,25 +1,42 @@
-export const getRequestBody = (name: string) => {
+import { OpenAPIV3_1 } from 'openapi-types';
+
+export const getRequestBody = (
+  name: string,
+  propertyName = `${name}CreationInput`,
+): OpenAPIV3_1.RequestBodyObject => {
   return {
     description: 'body',
     required: true,
     content: {
       'application/json': {
         schema: {
-          $ref: `#/components/schemas/${name}`,
+          type: 'object',
+          properties: {
+            data: {
+              $ref: `#/components/schemas/${name}`,
+            },
+          },
         },
       },
     },
   };
 };
 
-export const getUpdateRequestBody = (name: string) => {
+export const getUpdateRequestBody = (
+  name: string,
+): OpenAPIV3_1.RequestBodyObject => {
   return {
     description: 'body',
     required: true,
     content: {
       'application/json': {
         schema: {
-          $ref: `#/components/schemas/${name} for Update`,
+          type: 'object',
+          properties: {
+            data: {
+              $ref: `#/components/schemas/${name}ForUpdate`,
+            },
+          },
         },
       },
     },

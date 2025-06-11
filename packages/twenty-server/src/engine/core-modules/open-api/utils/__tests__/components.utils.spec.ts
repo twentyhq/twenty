@@ -223,7 +223,7 @@ describe('computeSchemaComponents', () => {
     ],
     "type": "object",
   },
-  "ObjectName for Response": {
+  "ObjectNameForResponse": {
     "description": undefined,
     "properties": {
       "fieldActor": {
@@ -413,7 +413,7 @@ describe('computeSchemaComponents', () => {
       "fieldRelation": {
         "oneOf": [
           {
-            "$ref": "#/components/schemas/RelationTargetObject for Response",
+            "$ref": "#/components/schemas/RelationTargetObjectForResponse",
           },
         ],
         "type": "object",
@@ -442,7 +442,7 @@ describe('computeSchemaComponents', () => {
     },
     "type": "object",
   },
-  "ObjectName for Update": {
+  "ObjectNameForUpdate": {
     "description": undefined,
     "properties": {
       "fieldActor": {
