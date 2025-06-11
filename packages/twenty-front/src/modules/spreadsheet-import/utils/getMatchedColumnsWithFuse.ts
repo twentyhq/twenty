@@ -6,6 +6,7 @@ import {
 } from '@/spreadsheet-import/types';
 import { SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
 import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
+import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { setColumn } from '@/spreadsheet-import/utils/setColumn';
 import Fuse from 'fuse.js';
 import { isDefined } from 'twenty-shared/utils';
@@ -43,11 +44,20 @@ export const getMatchedColumnsWithFuse = <T extends string>(
         secondMatch.score !== firstMatch.score) ||
         !isDefined(secondMatch));
 
+    const isFieldStillUnmatched = !matchedColumns.some(
+      (matchedColumn) =>
+        (matchedColumn.type === SpreadsheetColumnType.matched ||
+          matchedColumn.type === SpreadsheetColumnType.matchedCheckbox ||
+          matchedColumn.type === SpreadsheetColumnType.matchedSelect ||
+          matchedColumn.type === SpreadsheetColumnType.matchedSelectOptions) &&
+        matchedColumn?.value === firstMatch?.item?.key,
+    );
+
     suggestedFieldsByColumnHeader[column.header] = fieldsThatMatch.map(
       (match) => match.item as SpreadsheetImportField<T>,
     );
 
-    if (isFirstMatchValid) {
+    if (isFirstMatchValid && isFieldStillUnmatched) {
       const newColumn = setColumn(column, firstMatch.item as any, data);
 
       matchedColumns.push(newColumn);
