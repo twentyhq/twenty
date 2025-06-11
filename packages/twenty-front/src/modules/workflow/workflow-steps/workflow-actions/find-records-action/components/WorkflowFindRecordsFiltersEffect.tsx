@@ -5,11 +5,11 @@ import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { hasInitializedCurrentRecordFilterGroupsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFilterGroupsComponentFamilyState';
 import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
-import { FindRecordsActionFilter } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionFindRecords';
+import { FindRecordsActionFilter } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const WorkflowFindRecordFiltersEffect = ({
+export const WorkflowFindRecordsFiltersEffect = ({
   defaultValue,
 }: {
   defaultValue?: FindRecordsActionFilter;

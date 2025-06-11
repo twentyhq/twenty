@@ -1,5 +1,4 @@
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { AdvancedFilterAddFilterRuleSelect } from '@/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect';
 import { AdvancedFilterRecordFilterColumn } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterColumn';
@@ -8,26 +7,18 @@ import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/adva
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
 import { isRecordFilterGroupChildARecordFilterGroup } from '@/object-record/advanced-filter/utils/isRecordFilterGroupChildARecordFilterGroup';
-import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
-import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
-import { useCreateEmptyRecordFilterFromFieldMetadataItem } from '@/object-record/record-filter/hooks/useCreateEmptyRecordFilterFromFieldMetadataItem';
-import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeRecordGqlOperationFilter';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyStateV2';
-import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
-import { FindRecordsActionFilter } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionFindRecords';
+import { FindRecordsActionFilter } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords';
+import { WorkflowFindRecordsAddFilterButton } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsAddFilterButton';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { IconFilter } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { v4 } from 'uuid';
 
 const StyledContainer = styled.div`
   align-items: start;
@@ -43,69 +34,7 @@ const StyledChildContainer = styled.div`
   width: 100%;
 `;
 
-const AddFilterButton = ({
-  defaultFieldMetadataItem,
-}: {
-  defaultFieldMetadataItem: FieldMetadataItem;
-}) => {
-  const rootRecordFilterGroup = useRecoilComponentValueV2(
-    rootLevelRecordFilterGroupComponentSelector,
-  );
-
-  const { upsertRecordFilterGroup } = useUpsertRecordFilterGroup();
-
-  const { upsertRecordFilter } = useUpsertRecordFilter();
-
-  const { createEmptyRecordFilterFromFieldMetadataItem } =
-    useCreateEmptyRecordFilterFromFieldMetadataItem();
-
-  const setHasInitializedCurrentRecordFilters =
-    useSetRecoilComponentFamilyStateV2(
-      hasInitializedCurrentRecordFiltersComponentFamilyState,
-      {},
-    );
-
-  const addRootRecordFilterGroup = () => {
-    const alreadyHasAdvancedFilterGroup = isDefined(rootRecordFilterGroup);
-
-    if (!alreadyHasAdvancedFilterGroup) {
-      setHasInitializedCurrentRecordFilters(false);
-
-      const newRecordFilterGroup = {
-        id: v4(),
-        logicalOperator: RecordFilterGroupLogicalOperator.AND,
-      };
-
-      upsertRecordFilterGroup(newRecordFilterGroup);
-
-      if (!isDefined(defaultFieldMetadataItem)) {
-        throw new Error('Missing default filter definition');
-      }
-
-      const { newRecordFilter } = createEmptyRecordFilterFromFieldMetadataItem(
-        defaultFieldMetadataItem,
-      );
-
-      newRecordFilter.recordFilterGroupId = newRecordFilterGroup.id;
-
-      upsertRecordFilter(newRecordFilter);
-    }
-  };
-
-  return (
-    <Button
-      Icon={IconFilter}
-      size="small"
-      variant="secondary"
-      accent="default"
-      onClick={addRootRecordFilterGroup}
-      ariaLabel="Add filter"
-      title="Add filter"
-    />
-  );
-};
-
-export const WorkflowFindRecordFilters = ({
+export const WorkflowFindRecordsFilters = ({
   objectMetadataItem,
   onChange,
 }: {
@@ -215,7 +144,9 @@ export const WorkflowFindRecordFilters = ({
           />
         </StyledContainer>
       ) : (
-        <AddFilterButton defaultFieldMetadataItem={defaultFieldMetadataItem} />
+        <WorkflowFindRecordsAddFilterButton
+          defaultFieldMetadataItem={defaultFieldMetadataItem}
+        />
       )}
     </AdvancedFilterContext.Provider>
   );

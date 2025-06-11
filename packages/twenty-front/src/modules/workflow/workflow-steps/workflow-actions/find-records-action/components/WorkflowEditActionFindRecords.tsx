@@ -13,8 +13,8 @@ import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
-import { WorkflowFindRecordFilters } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowFindRecordFilters';
-import { WorkflowFindRecordFiltersEffect } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowFindRecordFiltersEffect';
+import { WorkflowFindRecordsFilters } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFilters';
+import { WorkflowFindRecordsFiltersEffect } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFiltersEffect';
 import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
 import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
@@ -183,7 +183,7 @@ export const WorkflowEditActionFindRecords = ({
                 <RecordFiltersComponentInstanceContext.Provider
                   value={{ instanceId }}
                 >
-                  <WorkflowFindRecordFilters
+                  <WorkflowFindRecordsFilters
                     objectMetadataItem={selectedObjectMetadataItem}
                     onChange={(filter: FindRecordsActionFilter) => {
                       const newFormData: FindRecordsFormData = {
@@ -196,7 +196,7 @@ export const WorkflowEditActionFindRecords = ({
                       saveAction(newFormData);
                     }}
                   />
-                  <WorkflowFindRecordFiltersEffect
+                  <WorkflowFindRecordsFiltersEffect
                     defaultValue={formData.filter}
                   />
                 </RecordFiltersComponentInstanceContext.Provider>
