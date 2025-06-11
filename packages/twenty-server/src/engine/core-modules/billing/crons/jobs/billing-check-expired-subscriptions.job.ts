@@ -66,7 +66,7 @@ export class CheckExpiredSubscriptionsJob {
         });
 
         await this.billingSubscriptionRepository.update(subscription.id, {
-          status: SubscriptionStatus.PastDue,
+          status: SubscriptionStatus.Expired,
         });
 
         this.logger.log(

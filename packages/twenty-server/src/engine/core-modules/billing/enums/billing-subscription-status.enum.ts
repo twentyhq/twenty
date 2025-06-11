@@ -9,4 +9,5 @@ export enum SubscriptionStatus {
   Paused = 'paused', // TODO: remove this once paused subscriptions are deprecated
   Trialing = 'trialing',
   Unpaid = 'unpaid',
+  Expired = 'expired',
 }
