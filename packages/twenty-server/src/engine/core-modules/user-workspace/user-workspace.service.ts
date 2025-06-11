@@ -46,7 +46,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,

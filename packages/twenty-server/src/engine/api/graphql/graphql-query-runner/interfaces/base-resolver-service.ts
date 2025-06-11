@@ -106,6 +106,7 @@ export abstract class GraphqlQueryBaseResolverService<
       } else {
         if (!isPermissionsV2Enabled)
           await this.validateObjectRecordPermissionsOrThrow({
+            objectMetadataId: objectMetadataItemWithFieldMaps.id,
             operationName,
             options,
           });
@@ -228,9 +229,11 @@ export abstract class GraphqlQueryBaseResolverService<
   }
 
   private async validateObjectRecordPermissionsOrThrow({
+    objectMetadataId,
     operationName,
     options,
   }: {
+    objectMetadataId: string;
     operationName: WorkspaceResolverBuilderMethodNames;
     options: WorkspaceQueryRunnerOptions;
   }) {
@@ -247,6 +250,7 @@ export abstract class GraphqlQueryBaseResolverService<
         requiredPermission,
         workspaceId: workspace.id,
         isExecutedByApiKey: isDefined(options.authContext.apiKey),
+        objectMetadataId,
       });
 
     if (!userHasPermission) {
