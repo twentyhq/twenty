@@ -13,7 +13,7 @@ import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manag
 @Injectable()
 export class TwentyORMManager {
   constructor(
-    @InjectRepository(UserWorkspaceRoleEntity, 'metadata')
+    @InjectRepository(UserWorkspaceRoleEntity, 'core')
     private readonly userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>,
     private readonly workspaceDataSourceFactory: WorkspaceDatasourceFactory,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
@@ -28,7 +28,7 @@ export class TwentyORMManager {
   ): Promise<WorkspaceRepository<T>>;
 
   async getRepository<T extends ObjectLiteral>(
-    workspaceEntityOrobjectMetadataName: Type<T> | string,
+    workspaceEntityOrObjectMetadataName: Type<T> | string,
   ): Promise<WorkspaceRepository<T>> {
     const {
       workspaceId,
@@ -39,11 +39,11 @@ export class TwentyORMManager {
 
     let objectMetadataName: string;
 
-    if (typeof workspaceEntityOrobjectMetadataName === 'string') {
-      objectMetadataName = workspaceEntityOrobjectMetadataName;
+    if (typeof workspaceEntityOrObjectMetadataName === 'string') {
+      objectMetadataName = workspaceEntityOrObjectMetadataName;
     } else {
       objectMetadataName = convertClassNameToObjectMetadataName(
-        workspaceEntityOrobjectMetadataName.name,
+        workspaceEntityOrObjectMetadataName.name,
       );
     }
 

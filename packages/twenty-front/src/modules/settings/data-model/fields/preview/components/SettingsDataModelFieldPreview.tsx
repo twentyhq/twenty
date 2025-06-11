@@ -26,7 +26,7 @@ export type SettingsDataModelFieldPreviewProps = {
     | 'defaultValue'
     | 'options'
     | 'settings'
-    | 'relationDefinition'
+    | 'relation'
   > & {
     id?: string;
     name?: string;
@@ -102,7 +102,7 @@ export const SettingsDataModelFieldPreview = ({
     fieldMetadataItem.name || `${fieldMetadataItem.type}-new-field`;
   const recordId =
     previewRecord?.id ??
-    `${objectMetadataItem.nameSingular}-${fieldName}-${fieldMetadataItem.relationDefinition?.direction}-${relationObjectMetadataItem?.nameSingular}-preview`;
+    `${objectMetadataItem.nameSingular}-${fieldName}-${fieldMetadataItem.relation?.type}-${relationObjectMetadataItem?.nameSingular}-preview`;
 
   return (
     <>
@@ -146,7 +146,7 @@ export const SettingsDataModelFieldPreview = ({
                     relationObjectMetadataItem?.nameSingular,
                   options: fieldMetadataItem.options ?? [],
                   settings: fieldMetadataItem.settings,
-                  relationType: fieldMetadataItem.relationDefinition?.direction,
+                  relationType: fieldMetadataItem.relation?.type,
                 },
                 defaultValue: fieldMetadataItem.defaultValue,
               },

@@ -20,6 +20,7 @@ import { RecordDetailDuplicatesSection } from '@/object-record/record-show/recor
 import { RecordDetailRelationSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSection';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
+import { useIsInRightDrawerOrThrow } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import { FieldMetadataType } from '~/generated/graphql';
 
 type FieldsCardProps = {
@@ -47,6 +48,8 @@ export const FieldsCard = ({
     objectNameSingular,
     objectRecordId,
   });
+
+  const { isInRightDrawer } = useIsInRightDrawerOrThrow();
 
   const availableFieldMetadataItems = objectMetadataItem.fields
     .filter(
@@ -93,7 +96,7 @@ export const FieldsCard = ({
       ) &&
       getObjectPermissionsForObject(
         objectPermissionsByObjectMetadataId,
-        fieldMetadataItem.relationDefinition?.targetObjectMetadata.id,
+        fieldMetadataItem.relation?.targetObjectMetadata.id,
       ).canReadObjectRecords,
   );
 
@@ -139,7 +142,9 @@ export const FieldsCard = ({
                     componentInstanceId={getRecordFieldInputId(
                       objectRecordId,
                       fieldMetadataItem.name,
-                      'fields-card',
+                      isInRightDrawer
+                        ? 'right-drawer-fields-card'
+                        : 'fields-card',
                     )}
                     activityObjectNameSingular={
                       objectNameSingular as

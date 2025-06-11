@@ -15,7 +15,7 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { buildOptimisticActorFieldValueFromCurrentWorkspaceMember } from '@/object-record/utils/buildOptimisticActorFieldValueFromCurrentWorkspaceMember';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
 import { isDefined } from 'twenty-shared/utils';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { RelationType } from '~/generated-metadata/graphql';
 import { FieldMetadataType } from '~/generated/graphql';
 
 type ComputeOptimisticCacheRecordInputArgs = {
@@ -67,16 +67,16 @@ export const computeOptimisticRecordFromInput = ({
 
     if (isFieldUuid(fieldMetadataItem)) {
       const isRelationFieldId = objectMetadataItem.fields.some(
-        ({ type, relationDefinition }) => {
+        ({ type, relation }) => {
           if (type !== FieldMetadataType.RELATION) {
             return false;
           }
 
-          if (!isDefined(relationDefinition)) {
+          if (!isDefined(relation)) {
             return false;
           }
 
-          const sourceFieldName = relationDefinition.sourceFieldMetadata.name;
+          const sourceFieldName = relation.sourceFieldMetadata.name;
           return (
             getForeignKeyNameFromRelationFieldName(sourceFieldName) ===
             fieldMetadataItem.name
@@ -115,16 +115,12 @@ export const computeOptimisticRecordFromInput = ({
       continue;
     }
 
-    if (
-      fieldMetadataItem.relationDefinition?.direction ===
-      RelationDefinitionType.ONE_TO_MANY
-    ) {
+    if (fieldMetadataItem.relation?.type === RelationType.ONE_TO_MANY) {
       continue;
     }
 
     const isManyToOneRelation =
-      fieldMetadataItem.relationDefinition?.direction ===
-      RelationDefinitionType.MANY_TO_ONE;
+      fieldMetadataItem.relation?.type === RelationType.MANY_TO_ONE;
     if (!isManyToOneRelation) {
       continue;
     }
@@ -166,7 +162,7 @@ export const computeOptimisticRecordFromInput = ({
     }
 
     const targetNameSingular =
-      fieldMetadataItem.relationDefinition?.targetObjectMetadata.nameSingular;
+      fieldMetadataItem.relation?.targetObjectMetadata.nameSingular;
     const targetObjectMetataDataItem = objectMetadataItems.find(
       ({ nameSingular }) => nameSingular === targetNameSingular,
     );

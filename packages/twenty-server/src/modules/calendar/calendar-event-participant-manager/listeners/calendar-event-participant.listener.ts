@@ -18,7 +18,7 @@ export class CalendarEventParticipantListener {
     @InjectObjectMetadataRepository(TimelineActivityWorkspaceEntity)
     private readonly timelineActivityRepository: TimelineActivityRepository,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
 

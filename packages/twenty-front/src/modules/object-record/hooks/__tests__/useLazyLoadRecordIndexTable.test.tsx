@@ -40,7 +40,6 @@ const mocks: MockedResponse[] = [
                 __typename
                 avatarUrl
                 city
-                companyId
                 createdAt
                 createdBy {
                   source
@@ -102,7 +101,6 @@ const mocks: MockedResponse[] = [
                         employees
                         id
                         idealCustomerProfile
-                        internalCompetitions
                         introVideo {
                           primaryLinkUrl
                           primaryLinkLabel
@@ -132,6 +130,10 @@ const mocks: MockedResponse[] = [
                       note {
                         __typename
                         body
+                        bodyV2 {
+                          blocknote
+                          markdown
+                        }
                         createdAt
                         createdBy {
                           source
@@ -281,6 +283,22 @@ const mocks: MockedResponse[] = [
                         }
                       }
                       petId
+                      rocket {
+                        __typename
+                        createdAt
+                        createdBy {
+                          source
+                          workspaceMemberId
+                          name
+                          context
+                        }
+                        deletedAt
+                        id
+                        name
+                        position
+                        updatedAt
+                      }
+                      rocketId
                       surveyResult {
                         __typename
                         averageEstimatedNumberOfAtomsInTheUniverse
@@ -352,7 +370,6 @@ const mocks: MockedResponse[] = [
                         employees
                         id
                         idealCustomerProfile
-                        internalCompetitions
                         introVideo {
                           primaryLinkUrl
                           primaryLinkLabel
@@ -514,6 +531,22 @@ const mocks: MockedResponse[] = [
                         }
                       }
                       petId
+                      rocket {
+                        __typename
+                        createdAt
+                        createdBy {
+                          source
+                          workspaceMemberId
+                          name
+                          context
+                        }
+                        deletedAt
+                        id
+                        name
+                        position
+                        updatedAt
+                      }
+                      rocketId
                       surveyResult {
                         __typename
                         averageEstimatedNumberOfAtomsInTheUniverse
@@ -540,6 +573,10 @@ const mocks: MockedResponse[] = [
                         __typename
                         assigneeId
                         body
+                        bodyV2 {
+                          blocknote
+                          markdown
+                        }
                         createdAt
                         createdBy {
                           source

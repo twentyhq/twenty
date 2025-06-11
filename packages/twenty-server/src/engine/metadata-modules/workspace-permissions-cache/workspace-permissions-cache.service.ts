@@ -32,11 +32,11 @@ export class WorkspacePermissionsCacheService {
   logger = new Logger(WorkspacePermissionsCacheService.name);
 
   constructor(
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(RoleEntity, 'metadata')
+    @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(UserWorkspaceRoleEntity, 'metadata')
+    @InjectRepository(UserWorkspaceRoleEntity, 'core')
     private readonly userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>,
     private readonly workspacePermissionsCacheStorageService: WorkspacePermissionsCacheStorageService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,

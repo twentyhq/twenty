@@ -32,7 +32,7 @@ export class TwentyORMGlobalManager {
 
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
-    workspaceEntityOrobjectMetadataName: Type<T> | string,
+    workspaceEntityOrObjectMetadataName: Type<T> | string,
     options: {
       shouldBypassPermissionChecks?: boolean;
       shouldFailIfMetadataNotFound?: boolean;
@@ -43,11 +43,11 @@ export class TwentyORMGlobalManager {
   ): Promise<WorkspaceRepository<T>> {
     let objectMetadataName: string;
 
-    if (typeof workspaceEntityOrobjectMetadataName === 'string') {
-      objectMetadataName = workspaceEntityOrobjectMetadataName;
+    if (typeof workspaceEntityOrObjectMetadataName === 'string') {
+      objectMetadataName = workspaceEntityOrObjectMetadataName;
     } else {
       objectMetadataName = convertClassNameToObjectMetadataName(
-        workspaceEntityOrobjectMetadataName.name,
+        workspaceEntityOrObjectMetadataName.name,
       );
     }
 
