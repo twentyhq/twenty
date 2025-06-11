@@ -457,12 +457,16 @@ jobs:
           # Create a temp directory to store current branch files
           mkdir -p /tmp/current-branch-files
           
+          # List what files we have before preserving
+          echo "Files before preservation:"
+          ls -la current-* 2>/dev/null || echo "No current-* files found"
+          
           # Move current branch files to temp directory
           mv current-* /tmp/current-branch-files/ 2>/dev/null || echo "No current-* files to move"
           
           # List what we've preserved
           echo "Preserved current branch files:"
-          ls -la /tmp/current-branch-files/
+          ls -la /tmp/current-branch-files/ 2>/dev/null || echo "No files in temp directory"
 
       - name: Stop current branch server
         run: |
@@ -846,19 +850,64 @@ jobs:
 
       - name: Restore current branch files
         run: |
+          # Check what files we have in temp before restoring
+          echo "Files in temp directory before restoration:"
+          ls -la /tmp/current-branch-files/ 2>/dev/null || echo "No files in temp directory"
+          
+          # Check what files we currently have in working directory
+          echo "Files in working directory before restoration:"
+          ls -la main-* current-* 2>/dev/null || echo "No schema files in working directory"
+          
           # Move current branch files back to working directory
           mv /tmp/current-branch-files/* . 2>/dev/null || echo "No files to restore"
           
-          # Verify all files are present
+          # Verify all files are present after restoration
           echo "All API files after restoration:"
           ls -la current-* main-* 2>/dev/null || echo "Some files may be missing"
+          
+          # Specifically check for GraphQL schema files
+          echo "Checking for required GraphQL schema files:"
+          for file in current-schema-introspection.json current-metadata-schema-introspection.json main-schema-introspection.json main-metadata-schema-introspection.json; do
+            if [ -f "$file" ]; then
+              echo "✓ $file exists ($(wc -c < "$file") bytes)"
+            else
+              echo "✗ $file missing"
+            fi
+          done
           
           # Clean up temp directory
           rm -rf /tmp/current-branch-files
           
           # Final verification of all downloaded files
           echo "All downloaded API files:"
-          ls -la *-*.json
+          ls -la *-*.json 2>/dev/null || echo "No API files found"
+
+      - name: Verify files before GraphQL Inspector
+        run: |
+          echo "=== FINAL FILE VERIFICATION BEFORE GRAPHQL INSPECTOR ==="
+          echo "Current working directory: $(pwd)"
+          echo "All files in current directory:"
+          ls -la
+          
+          echo "=== Checking specific GraphQL schema files ==="
+          for file in current-schema-introspection.json main-schema-introspection.json; do
+            if [ -f "$file" ]; then
+              echo "✓ $file exists"
+              echo "  - Size: $(wc -c < "$file") bytes"
+              echo "  - First 100 chars: $(head -c 100 "$file")"
+            else
+              echo "✗ $file MISSING - This will cause GraphQL Inspector to fail!"
+            fi
+          done
+          
+          for file in current-metadata-schema-introspection.json main-metadata-schema-introspection.json; do
+            if [ -f "$file" ]; then
+              echo "✓ $file exists"
+              echo "  - Size: $(wc -c < "$file") bytes"
+            else
+              echo "✗ $file MISSING - This will cause GraphQL Metadata Inspector to fail!"
+            fi
+          done
 
       - name: Check GraphQL Schema for Breaking Changes
         uses: graphql-hive/graphql-inspector@master
@@ -965,6 +1014,7 @@ jobs:
             /tmp/main-server.log
             /tmp/current-server.log
             *-api.json
+            *-schema-introspection.json  
             *-diff.md
 
       - name: Restore current branch files
