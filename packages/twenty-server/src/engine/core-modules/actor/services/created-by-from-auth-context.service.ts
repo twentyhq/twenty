@@ -11,6 +11,7 @@ import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/compos
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type CreateInput = Record<string, any>;
