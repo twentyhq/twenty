@@ -433,6 +433,18 @@ jobs:
           echo "Current OpenAPI specs sizes:"
           wc -c current-*.json
 
+      - name: Preserve current branch files
+        run: |
+          # Create a temp directory to store current branch files
+          mkdir -p /tmp/current-branch-files
+          
+          # Move current branch files to temp directory
+          mv current-* /tmp/current-branch-files/ 2>/dev/null || echo "No current-* files to move"
+          
+          # List what we've preserved
+          echo "Preserved current branch files:"
+          ls -la /tmp/current-branch-files/
+
       - name: Stop current branch server
         run: |
           if [ -f /tmp/current-server.pid ]; then
@@ -793,6 +805,18 @@ jobs:
           echo ""
           echo "Main OpenAPI specs sizes:"
           wc -c main-*.json
+
+      - name: Restore current branch files
+        run: |
+          # Move current branch files back to working directory
+          mv /tmp/current-branch-files/* . 2>/dev/null || echo "No files to restore"
+          
+          # Verify all files are present
+          echo "All API files after restoration:"
+          ls -la current-* main-* 2>/dev/null || echo "Some files may be missing"
+          
+          # Clean up temp directory
+          rm -rf /tmp/current-branch-files
           
           # Final verification of all downloaded files
           echo "All downloaded API files:"
@@ -903,4 +927,19 @@ jobs:
             /tmp/main-server.log
             /tmp/current-server.log
             *-api.json
-            *-diff.md 
+            *-diff.md
+
+      - name: Restore current branch files
+        run: |
+          # Move current branch files back to working directory
+          mv /tmp/current-branch-files/* . 2>/dev/null || echo "No files to restore"
+          
+          # Verify all files are present
+          echo "All API files after restoration:"
+          ls -la current-* main-* 2>/dev/null || echo "Some files may be missing"
+          
+          # Clean up temp directory
+          rm -rf /tmp/current-branch-files
+
+          echo "All downloaded API files:"
+          ls -la *-*.json 
