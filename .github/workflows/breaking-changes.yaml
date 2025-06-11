@@ -13,6 +13,10 @@ env:
   MAIN_SERVER_PORT: 3000
   CURRENT_SERVER_PORT: 3002
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   changed-files-check:
     uses: ./.github/workflows/changed-files.yaml
