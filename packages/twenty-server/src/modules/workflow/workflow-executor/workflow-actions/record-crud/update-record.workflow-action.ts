@@ -35,7 +35,7 @@ export class UpdateRecordWorkflowAction implements WorkflowExecutor {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,

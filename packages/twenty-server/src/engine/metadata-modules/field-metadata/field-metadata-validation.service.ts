@@ -1,17 +1,21 @@
 import { Injectable } from '@nestjs/common';
 
-import { plainToInstance } from 'class-transformer';
+import { ClassConstructor, plainToInstance } from 'class-transformer';
 import {
   IsEnum,
   IsInt,
   IsOptional,
+  IsString,
+  IsUUID,
   Max,
   Min,
+  ValidationError,
   validateOrReject,
 } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import {
   FieldMetadataException,
@@ -42,11 +46,50 @@ class TextSettingsValidation {
   displayedMaxRows?: number;
 }
 
+export class RelationCreationPayloadValidation {
+  @IsUUID()
+  targetObjectMetadataId?: string;
+
+  @IsString()
+  targetFieldLabel: string;
+
+  @IsString()
+  targetFieldIcon: string;
+
+  @IsEnum(RelationType)
+  type: RelationType;
+}
+
 @Injectable()
 export class FieldMetadataValidationService<
   T extends FieldMetadataType = FieldMetadataType,
 > {
   constructor() {}
+
+  async validateRelationCreationPayloadOrThrow(
+    relationCreationPayload: RelationCreationPayloadValidation,
+  ) {
+    try {
+      const relationCreationPayloadInstance = plainToInstance(
+        RelationCreationPayloadValidation,
+        relationCreationPayload,
+      );
+
+      await validateOrReject(relationCreationPayloadInstance);
+    } catch (error) {
+      const errorMessages = Array.isArray(error)
+        ? error
+            .map((err: ValidationError) => Object.values(err.constraints ?? {}))
+            .flat()
+            .join(', ')
+        : error.message;
+
+      throw new FieldMetadataException(
+        `Relation creation payload is invalid: ${errorMessages}`,
+        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      );
+    }
+  }
 
   async validateSettingsOrThrow({
     fieldType,
@@ -57,19 +100,32 @@ export class FieldMetadataValidationService<
   }) {
     switch (fieldType) {
       case FieldMetadataType.NUMBER:
-        await this.validateSettings(NumberSettingsValidation, settings);
+        await this.validateSettings<FieldMetadataType.NUMBER>(
+          NumberSettingsValidation,
+          settings,
+        );
         break;
       case FieldMetadataType.TEXT:
-        await this.validateSettings(TextSettingsValidation, settings);
+        await this.validateSettings<FieldMetadataType.TEXT>(
+          TextSettingsValidation,
+          settings,
+        );
         break;
       default:
         break;
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private async validateSettings(validator: any, settings: any) {
+  private async validateSettings<Type extends FieldMetadataType>(
+    validator: ClassConstructor<
+      Type extends FieldMetadataType.NUMBER
+        ? NumberSettingsValidation
+        : Type extends FieldMetadataType.TEXT
+          ? TextSettingsValidation
+          : never
+    >,
+    settings: FieldMetadataSettings<T>,
+  ) {
     try {
       const settingsInstance = plainToInstance(validator, settings);
 
@@ -77,8 +133,7 @@ export class FieldMetadataValidationService<
     } catch (error) {
       const errorMessages = Array.isArray(error)
         ? error
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            .map((err: any) => Object.values(err.constraints))
+            .map((err: ValidationError) => Object.values(err.constraints ?? {}))
             .flat()
             .join(', ')
         : error.message;

@@ -1,23 +1,20 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { RelationType } from '~/generated-metadata/graphql';
 
 export const isObjectRecordConnection = (
-  relationDefinition: NonNullable<FieldMetadataItem['relationDefinition']>,
+  relation: NonNullable<FieldMetadataItem['relation']>,
   value: unknown,
 ): value is RecordGqlConnection => {
-  switch (relationDefinition.direction) {
-    case RelationDefinitionType.MANY_TO_MANY:
-    case RelationDefinitionType.ONE_TO_MANY: {
+  switch (relation.type) {
+    case RelationType.ONE_TO_MANY: {
       return true;
     }
-    case RelationDefinitionType.MANY_TO_ONE:
-    case RelationDefinitionType.ONE_TO_ONE: {
+    case RelationType.MANY_TO_ONE:
       return false;
-    }
     default: {
-      return assertUnreachable(relationDefinition.direction);
+      return assertUnreachable(relation.type);
     }
   }
 };

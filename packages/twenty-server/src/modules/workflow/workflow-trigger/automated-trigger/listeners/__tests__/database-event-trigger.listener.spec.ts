@@ -106,9 +106,6 @@ describe('DatabaseEventTriggerListener', () => {
             createdAt: new Date(),
             updatedAt: new Date(),
             fields: [],
-            relationships: [],
-            fromRelations: [],
-            toRelations: [],
             indexMetadatas: [],
           },
           properties: {

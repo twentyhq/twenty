@@ -30,7 +30,7 @@ import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
           [User, UserWorkspace, Workspace, TwoFactorMethod],
           'core',
         ),
-        NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
+        NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
         TypeORMModule,
         DataSourceModule,
         WorkspaceDataSourceModule,
