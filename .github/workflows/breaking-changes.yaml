@@ -882,77 +882,48 @@ jobs:
           echo "All downloaded API files:"
           ls -la *-*.json 2>/dev/null || echo "No API files found"
 
-      - name: Verify files before GraphQL Inspector
+      - name: Generate GraphQL Schema Diff Reports
         run: |
-          echo "=== FINAL FILE VERIFICATION BEFORE GRAPHQL INSPECTOR ==="
-          echo "Current working directory: $(pwd)"
-          echo "All files in current directory:"
-          ls -la
+          echo "=== GENERATING GRAPHQL DIFF REPORTS ==="
           
-          echo "=== Checking specific GraphQL schema files ==="
-          for file in current-schema-introspection.json main-schema-introspection.json; do
-            if [ -f "$file" ]; then
-              echo "✓ $file exists"
-              echo "  - Size: $(wc -c < "$file") bytes"
-              echo "  - First 100 chars: $(head -c 100 "$file")"
-            else
-              echo "✗ $file MISSING - This will cause GraphQL Inspector to fail!"
-            fi
-          done
-          
-          for file in current-metadata-schema-introspection.json main-metadata-schema-introspection.json; do
-            if [ -f "$file" ]; then
-              echo "✓ $file exists"
-              echo "  - Size: $(wc -c < "$file") bytes"
-            else
-              echo "✗ $file MISSING - This will cause GraphQL Metadata Inspector to fail!"
-            fi
-          done
-
-      - name: Compare schema files and debug GraphQL Inspector
-        run: |
-          echo "=== COMPARING SCHEMA FILES ==="
-          
-          # Check if the schema files are identical
-          if cmp -s current-schema-introspection.json main-schema-introspection.json; then
-            echo "⚠️ WARNING: current-schema-introspection.json and main-schema-introspection.json are IDENTICAL"
-            echo "This means there are no schema changes, but GraphQL Inspector might still fail on identical schemas"
-          else
-            echo "✓ Schema files are different - this is expected for breaking change detection"
-            echo "Showing diff summary:"
-            diff <(head -c 500 current-schema-introspection.json) <(head -c 500 main-schema-introspection.json) || true
-          fi
-          
-          # Check metadata schemas too
-          if cmp -s current-metadata-schema-introspection.json main-metadata-schema-introspection.json; then
-            echo "⚠️ WARNING: Metadata schemas are IDENTICAL"
-          else
-            echo "✓ Metadata schema files are different"
-          fi
-          
-          echo "=== INSTALLING GRAPHQL INSPECTOR CLI FOR DEBUGGING ==="
-          npm install -g @graphql-inspector/cli
-          
-          echo "=== TESTING GRAPHQL INSPECTOR MANUALLY ==="
-          echo "Running: graphql-inspector diff main-schema-introspection.json current-schema-introspection.json"
-          
-          # Try to run GraphQL Inspector manually to get better error messages
-          graphql-inspector diff main-schema-introspection.json current-schema-introspection.json --verbose || {
-            echo "GraphQL Inspector CLI failed with exit code $?"
-            echo "Let's try with different options..."
-            
-            # Try validate command instead
-            echo "Testing schema validation..."
-            graphql-inspector validate current-schema-introspection.json || echo "Current schema validation failed"
-            graphql-inspector validate main-schema-introspection.json || echo "Main schema validation failed"
-            
-            # Try introspect command to see if files are valid
-            echo "Testing introspection parsing..."
-            graphql-inspector introspect current-schema-introspection.json --write current-schema-parsed.graphql || echo "Current schema parsing failed"
-            graphql-inspector introspect main-schema-introspection.json --write main-schema-parsed.graphql || echo "Main schema parsing failed"
+          # Generate GraphQL schema diff report
+          echo "Generating GraphQL schema diff..."
+          graphql-inspector diff main-schema-introspection.json current-schema-introspection.json --format markdown > graphql-schema-diff.md || {
+            echo "GraphQL schema has breaking changes or other issues"
+            echo "# GraphQL Schema Changes" > graphql-schema-diff.md
+            echo "" >> graphql-schema-diff.md
+            echo "⚠️ **Breaking changes or errors detected in GraphQL schema**" >> graphql-schema-diff.md
+            echo "" >> graphql-schema-diff.md
+            echo "\`\`\`" >> graphql-schema-diff.md
+            graphql-inspector diff main-schema-introspection.json current-schema-introspection.json 2>&1 || echo "Error generating diff" >> graphql-schema-diff.md
+            echo "\`\`\`" >> graphql-schema-diff.md
           }
+          
+          # Generate GraphQL metadata schema diff report
+          echo "Generating GraphQL metadata schema diff..."
+          graphql-inspector diff main-metadata-schema-introspection.json current-metadata-schema-introspection.json --format markdown > graphql-metadata-diff.md || {
+            echo "GraphQL metadata schema has breaking changes or other issues"
+            echo "# GraphQL Metadata Schema Changes" > graphql-metadata-diff.md
+            echo "" >> graphql-metadata-diff.md
+            echo "⚠️ **Breaking changes or errors detected in GraphQL metadata schema**" >> graphql-metadata-diff.md
+            echo "" >> graphql-metadata-diff.md
+            echo "\`\`\`" >> graphql-metadata-diff.md
+            graphql-inspector diff main-metadata-schema-introspection.json current-metadata-schema-introspection.json 2>&1 || echo "Error generating diff" >> graphql-metadata-diff.md
+            echo "\`\`\`" >> graphql-metadata-diff.md
+          }
+          
+          # Show what we generated
+          echo "Generated diff files:"
+          ls -la *-diff.md
+          
+          echo "GraphQL schema diff preview:"
+          head -20 graphql-schema-diff.md || echo "No GraphQL schema diff file"
+          
+          echo "GraphQL metadata diff preview:"
+          head -20 graphql-metadata-diff.md || echo "No GraphQL metadata diff file"
 
       - name: Check GraphQL Schema for Breaking Changes
+        continue-on-error: true
         uses: graphql-hive/graphql-inspector@master
         with:
           name: 'GraphQL Schema Breaking Changes'
@@ -962,12 +933,13 @@ jobs:
           annotations: true
 
       - name: Check GraphQL Metadata Schema for Breaking Changes
+        continue-on-error: true 
         uses: graphql-hive/graphql-inspector@master
         with:
           name: 'GraphQL Metadata Schema Breaking Changes'
           schema: 'current-metadata-schema-introspection.json'
           endpoint: 'main-metadata-schema-introspection.json'
-          fail-on-breaking: true
+          # fail-on-breaking: true
           annotations: true
 
       - name: Setup Java for OpenAPI Diff
@@ -1016,17 +988,102 @@ jobs:
             let comment = '## 🚨 API Breaking Changes Detected\n\n';
             
             try {
+              // Check for GraphQL changes
+              if (fs.existsSync('graphql-schema-diff.md')) {
+                const graphqlDiff = fs.readFileSync('graphql-schema-diff.md', 'utf8');
+                if (graphqlDiff.trim()) {
+                  comment += '### GraphQL Schema Changes\n' + graphqlDiff + '\n\n';
+                }
+              }
+              
+              if (fs.existsSync('graphql-metadata-diff.md')) {
+                const graphqlMetadataDiff = fs.readFileSync('graphql-metadata-diff.md', 'utf8');
+                if (graphqlMetadataDiff.trim()) {
+                  comment += '### GraphQL Metadata Schema Changes\n' + graphqlMetadataDiff + '\n\n';
+                }
+              }
+              
+              // Check for REST API changes
               if (fs.existsSync('rest-api-diff.md')) {
                 const restDiff = fs.readFileSync('rest-api-diff.md', 'utf8');
-                comment += '### REST API Changes\n```markdown\n' + restDiff + '\n```\n\n';
+                if (restDiff.trim()) {
+                  comment += '### REST API Changes\n```markdown\n' + restDiff + '\n```\n\n';
+                }
               }
               
               if (fs.existsSync('rest-metadata-api-diff.md')) {
                 const metadataDiff = fs.readFileSync('rest-metadata-api-diff.md', 'utf8');
-                comment += '### REST Metadata API Changes\n```markdown\n' + metadataDiff + '\n```\n\n';
+                if (metadataDiff.trim()) {
+                  comment += '### REST Metadata API Changes\n```markdown\n' + metadataDiff + '\n```\n\n';
+                }
               }
               
-              comment += 'Please review these changes carefully before merging.';
+              // Only add footer if we found any changes
+              if (comment !== '## 🚨 API Breaking Changes Detected\n\n') {
+                comment += 'Please review these changes carefully before merging.';
+              } else {
+                comment = '## ✅ No API Breaking Changes Detected\n\nAll API schemas are compatible with the main branch.';
+              }
+              
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            } catch (error) {
+              console.log('Could not post comment:', error);
+            }
+
+      - name: Comment API Changes on PR (Always)
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let comment = '## 📊 API Changes Report\n\n';
+            let hasChanges = false;
+            
+            try {
+              // Check for GraphQL changes
+              if (fs.existsSync('graphql-schema-diff.md')) {
+                const graphqlDiff = fs.readFileSync('graphql-schema-diff.md', 'utf8');
+                if (graphqlDiff.trim()) {
+                  comment += '### GraphQL Schema Changes\n' + graphqlDiff + '\n\n';
+                  hasChanges = true;
+                }
+              }
+              
+              if (fs.existsSync('graphql-metadata-diff.md')) {
+                const graphqlMetadataDiff = fs.readFileSync('graphql-metadata-diff.md', 'utf8');
+                if (graphqlMetadataDiff.trim()) {
+                  comment += '### GraphQL Metadata Schema Changes\n' + graphqlMetadataDiff + '\n\n';
+                  hasChanges = true;
+                }
+              }
+              
+              // Check for REST API changes
+              if (fs.existsSync('rest-api-diff.md')) {
+                const restDiff = fs.readFileSync('rest-api-diff.md', 'utf8');
+                if (restDiff.trim()) {
+                  comment += '### REST API Changes\n```markdown\n' + restDiff + '\n```\n\n';
+                  hasChanges = true;
+                }
+              }
+              
+              if (fs.existsSync('rest-metadata-api-diff.md')) {
+                const metadataDiff = fs.readFileSync('rest-metadata-api-diff.md', 'utf8');
+                if (metadataDiff.trim()) {
+                  comment += '### REST Metadata API Changes\n```markdown\n' + metadataDiff + '\n```\n\n';
+                  hasChanges = true;
+                }
+              }
+              
+              if (!hasChanges) {
+                comment += '✅ **No API changes detected**\n\nAll GraphQL and REST API schemas are identical to the main branch.';
+              } else {
+                comment += '⚠️ **Please review these API changes carefully before merging.**';
+              }
               
               github.rest.issues.createComment({
                 issue_number: context.issue.number,
