@@ -122,7 +122,7 @@ export const RecordShowRightDrawerOpenRecordButton = ({
     ['ctrl+Enter,meta+Enter'],
     handleOpenRecord,
     AppHotkeyScope.CommandMenuOpen,
-    [closeCommandMenu, navigate, objectNameSingular, recordId],
+    [handleOpenRecord],
   );
 
   if (!isDefined(record)) {

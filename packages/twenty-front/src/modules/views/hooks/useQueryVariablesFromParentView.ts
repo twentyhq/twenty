@@ -3,9 +3,9 @@ import { contextStoreRecordShowParentViewComponentState } from '@/context-store/
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { getQueryVariablesFromView } from './useQueryVariablesFromView';
+import { getQueryVariablesFromFiltersAndSorts } from '../utils/getQueryVariablesFromFiltersAndSorts';
 
-export const useQueryVariablesFromActiveFieldsOfViewOrDefaultView = ({
+export const useQueryVariablesFromParentView = ({
   objectMetadataItem,
 }: {
   objectMetadataItem: ObjectMetadataItem;
@@ -17,7 +17,7 @@ export const useQueryVariablesFromActiveFieldsOfViewOrDefaultView = ({
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
-  const { filter, orderBy } = getQueryVariablesFromView({
+  const { filter, orderBy } = getQueryVariablesFromFiltersAndSorts({
     recordFilterGroups: recordShowParentView?.parentViewFilterGroups ?? [],
     recordFilters: recordShowParentView?.parentViewFilters ?? [],
     recordSorts: recordShowParentView?.parentViewSorts ?? [],

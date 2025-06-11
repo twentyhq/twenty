@@ -14,9 +14,7 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 
-import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/hooks/useOpenFieldInputEditMode';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
@@ -25,10 +23,7 @@ import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropd
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 
-import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
-import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
-import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useSetRecordTableFocusPosition } from '@/object-record/record-table/hooks/internal/useSetRecordTableFocusPosition';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
@@ -37,7 +32,6 @@ import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/po
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { useNavigate } from 'react-router-dom';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 export const DEFAULT_CELL_SCOPE: HotkeyScope = {
@@ -62,7 +56,6 @@ export const useOpenRecordTableCellV2 = (recordTableId: string) => {
       clickOutsideListenerIsActivatedComponentState,
       RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
     );
-  const { indexIdentifierUrl } = useRecordIndexContextOrThrow();
   const setCurrentTableCellInEditModePosition = useSetRecoilComponentStateV2(
     recordTableCellEditModePositionComponentState,
     recordTableId,
@@ -82,12 +75,8 @@ export const useOpenRecordTableCellV2 = (recordTableId: string) => {
     viewableRecordNameSingularState,
   );
 
-  const navigate = useNavigate();
-
   const { setActiveDropdownFocusIdAndMemorizePrevious } =
     useSetActiveDropdownFocusIdAndMemorizePrevious();
-
-  const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   const { openFieldInput } = useOpenFieldInputEditMode();
 
@@ -102,21 +91,6 @@ export const useOpenRecordTableCellV2 = (recordTableId: string) => {
   );
 
   const setFocusPosition = useSetRecordTableFocusPosition();
-
-  const currentRecordFilters = useRecoilComponentCallbackStateV2(
-    currentRecordFiltersComponentState,
-    recordTableId,
-  );
-
-  const currentRecordSorts = useRecoilComponentCallbackStateV2(
-    currentRecordSortsComponentState,
-    recordTableId,
-  );
-
-  const currentRecordFilterGroups = useRecoilComponentCallbackStateV2(
-    currentRecordFilterGroupsComponentState,
-    recordTableId,
-  );
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
@@ -229,17 +203,11 @@ export const useOpenRecordTableCellV2 = (recordTableId: string) => {
       toggleClickOutside,
       setActiveDropdownFocusIdAndMemorizePrevious,
       leaveTableFocus,
-      navigate,
-      indexIdentifierUrl,
-      currentRecordFilters,
-      currentRecordSorts,
-      currentRecordFilterGroups,
-      recordTableId,
-      openRecordInCommandMenu,
       activateRecordTableRow,
       unfocusRecordTableRow,
       setViewableRecordId,
       setViewableRecordNameSingular,
+      openRecordFromIndexView,
     ],
   );
 

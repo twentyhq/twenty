@@ -6,7 +6,7 @@ import { RecordFilterValueDependencies } from '@/object-record/record-filter/typ
 import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeRecordGqlOperationFilter';
 import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
 
-export const getQueryVariablesFromView = ({
+export const getQueryVariablesFromFiltersAndSorts = ({
   recordFilterGroups,
   recordFilters,
   recordSorts,
