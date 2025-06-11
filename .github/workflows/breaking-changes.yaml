@@ -98,11 +98,25 @@ jobs:
       - name: Setup current branch database
         run: |
           npx nx reset:env twenty-server
-          echo "DATABASE_URL=postgres://postgres:postgres@localhost:5432/current_branch" >> packages/twenty-server/.env
-          echo "SERVER_PORT=${{ env.CURRENT_SERVER_PORT }}" >> packages/twenty-server/.env
-          echo "REDIS_URL=redis://localhost:6379" >> packages/twenty-server/.env
-          echo "CLICKHOUSE_URL=http://default:clickhousePassword@localhost:8123/twenty" >> packages/twenty-server/.env
-          echo "CLICKHOUSE_PASSWORD=clickhousePassword" >> packages/twenty-server/.env
+          # Function to set or update environment variable
+          set_env_var() {
+            local var_name="$1"
+            local var_value="$2"
+            local env_file="packages/twenty-server/.env"
+            
+            if grep -q "^${var_name}=" "$env_file"; then
+              sed -i "s|^${var_name}=.*|${var_name}=${var_value}|" "$env_file"
+            else
+              echo "${var_name}=${var_value}" >> "$env_file"
+            fi
+          }
+          
+          set_env_var "PG_DATABASE_URL" "postgres://postgres:postgres@localhost:5432/current_branch"
+          set_env_var "SERVER_PORT" "${{ env.CURRENT_SERVER_PORT }}"
+          set_env_var "REDIS_URL" "redis://localhost:6379"
+          set_env_var "CLICKHOUSE_URL" "http://default:clickhousePassword@localhost:8123/twenty"
+          set_env_var "CLICKHOUSE_PASSWORD" "clickhousePassword"
+          
           npx nx run twenty-server:database:init:prod
           npx nx run twenty-server:database:migrate:prod
 
@@ -130,9 +144,22 @@ jobs:
 
       - name: Setup main branch database
         run: |
-          # Update .env for main branch
-          sed -i 's|DATABASE_URL=.*|DATABASE_URL=postgres://postgres:postgres@localhost:5432/main_branch|' packages/twenty-server/.env
-          sed -i 's|SERVER_PORT=.*|SERVER_PORT=${{ env.MAIN_SERVER_PORT }}|' packages/twenty-server/.env
+          # Function to set or update environment variable
+          set_env_var() {
+            local var_name="$1"
+            local var_value="$2"
+            local env_file="packages/twenty-server/.env"
+            
+            if grep -q "^${var_name}=" "$env_file"; then
+              sed -i "s|^${var_name}=.*|${var_name}=${var_value}|" "$env_file"
+            else
+              echo "${var_name}=${var_value}" >> "$env_file"
+            fi
+          }
+          
+          set_env_var "PG_DATABASE_URL" "postgres://postgres:postgres@localhost:5432/main_branch"
+          set_env_var "SERVER_PORT" "${{ env.MAIN_SERVER_PORT }}"
+          
           npx nx run twenty-server:database:init:prod
           npx nx run twenty-server:database:migrate:prod
 
