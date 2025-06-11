@@ -40,7 +40,6 @@ export const WorkflowDiagramEdgeOptions = ({
     <EdgeLabelRenderer>
       <StyledContainer labelX={labelX} labelY={labelY}>
         <StyledIconButtonGroup
-          size="small"
           className="nodrag nopan"
           iconButtons={[
             {
