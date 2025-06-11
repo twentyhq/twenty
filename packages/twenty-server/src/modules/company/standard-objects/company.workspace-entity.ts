@@ -272,6 +272,16 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   addressOld: string;
 
   @WorkspaceField({
+    standardId: '8ee8c207-fd0c-4727-94ff-d804ebd9733e',
+    type: FieldMetadataType.TEXT,
+    label: msg`Test Field`,
+    description: msg`Test Field`,
+    icon: 'IconLink',
+  })
+  @WorkspaceIsNullable()
+  testField: string | null;
+
+  @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,
