@@ -4,7 +4,6 @@ import {
   PermissionsOnAllObjectRecords,
   SettingPermissionType,
 } from 'twenty-shared/constants';
-import { UserWorkspacePermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -18,6 +17,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 

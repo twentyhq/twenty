@@ -16,7 +16,6 @@ import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
-import { UserWorkspacePermissions } from 'twenty-shared/types';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
@@ -52,6 +51,7 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { fromUserWorkspacePermissionsToUserWorkspacePermissionsDto } from 'src/engine/metadata-modules/role/utils/fromUserWorkspacePermissionsToUserWorkspacePermissionsDto';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -116,17 +116,10 @@ export class UserResolver {
       });
     }
 
-    const { objectPermissions, objectRecordsPermissions, settingsPermissions } =
-      await this.permissionsService.getUserWorkspacePermissionsV2({
-        userWorkspaceId: currentUserWorkspace.id,
-        workspaceId: workspace.id,
-      });
-
-    return {
-      objectPermissions,
-      objectRecordsPermissions,
-      settingsPermissions,
-    };
+    return await this.permissionsService.getUserWorkspacePermissionsV2({
+      userWorkspaceId: currentUserWorkspace.id,
+      workspaceId: workspace.id,
+    });
   }
 
   @Query(() => User)

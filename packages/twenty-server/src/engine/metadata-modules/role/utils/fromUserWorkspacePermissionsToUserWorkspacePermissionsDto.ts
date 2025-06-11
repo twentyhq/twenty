@@ -2,14 +2,9 @@ import {
   PermissionsOnAllObjectRecords,
   SettingPermissionType,
 } from 'twenty-shared/constants';
-import { UserWorkspacePermissions } from 'twenty-shared/types';
 
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-
-export type UserWorkspacePermissionsDto = Pick<
-  UserWorkspace,
-  'objectPermissions' | 'settingsPermissions' | 'objectRecordsPermissions'
->;
+import { UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions';
+import { UserWorkspacePermissionsDto } from 'src/engine/metadata-modules/role/dtos/user-workspace-permissions.dto';
 
 export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
   objectPermissions: rawObjectPermissions,
