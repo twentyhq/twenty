@@ -331,7 +331,7 @@ export class WorkspacePermissionsCacheService {
       where: {
         workspaceId,
       },
-      select: ['id', 'isSystem'],
+      select: ['id', 'isSystem', 'standardId'],
     });
 
     return workspaceObjectMetadata;
