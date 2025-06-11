@@ -30,7 +30,7 @@ import { WorkflowDeleteRecordActionInput } from 'src/modules/workflow/workflow-e
 export class DeleteRecordWorkflowAction implements WorkflowExecutor {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
