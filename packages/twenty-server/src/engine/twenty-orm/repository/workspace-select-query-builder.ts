@@ -10,6 +10,7 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { validateQueryIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-delete-query-builder';
+import { WorkspaceInsertQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-insert-query-builder';
 import { WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-soft-delete-query-builder';
 import { WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-update-query-builder';
 
@@ -97,6 +98,17 @@ export class WorkspaceSelectQueryBuilder<
     this.validatePermissions();
 
     return super.getManyAndCount();
+  }
+
+  override insert(): WorkspaceInsertQueryBuilder<T> {
+    const insertQueryBuilder = super.insert();
+
+    return new WorkspaceInsertQueryBuilder<T>(
+      insertQueryBuilder,
+      this.objectRecordsPermissions,
+      this.internalContext,
+      this.shouldBypassPermissionChecks,
+    );
   }
 
   override update(): WorkspaceUpdateQueryBuilder<T>;
