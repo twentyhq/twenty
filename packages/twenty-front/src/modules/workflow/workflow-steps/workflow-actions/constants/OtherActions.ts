@@ -26,6 +26,6 @@ export const OTHER_ACTIONS: Array<{
   {
     label: 'HTTP Request',
     type: 'HTTP_REQUEST',
-    icon: 'IconApi',
+    icon: 'IconWorld',
   },
 ];
