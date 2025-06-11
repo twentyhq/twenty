@@ -161,8 +161,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     };
 
     const commands_055: VersionCommands = {
-      beforeSyncMetadata: [],
-      afterSyncMetadata: [this.deduplicateIndexedFieldsCommand],
+      beforeSyncMetadata: [this.deduplicateIndexedFieldsCommand],
+      afterSyncMetadata: [],
     };
 
     this.allCommands = {
