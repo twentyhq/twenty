@@ -35,6 +35,7 @@ export class WorkspaceDataSource extends DataSource {
   featureFlagMap: FeatureFlagMap;
   rolesPermissionsVersion: string;
   permissionsPerRoleId: ObjectRecordsPermissionsByRoleId;
+  dataSourceWithOverridenCreateQueryBuilder: WorkspaceDataSource;
 
   constructor(
     internalContext: WorkspaceInternalContext,
@@ -96,6 +97,18 @@ export class WorkspaceDataSource extends DataSource {
   createQueryRunnerForEntityPersistExecutor(
     mode = 'master' as ReplicationMode,
   ) {
+    if (this.dataSourceWithOverridenCreateQueryBuilder) {
+      const queryRunner = this.driver.createQueryRunner(mode);
+      const manager = new EntityManagerFactory().create(
+        this.dataSourceWithOverridenCreateQueryBuilder,
+        queryRunner,
+      );
+
+      Object.assign(queryRunner, { manager: manager });
+
+      return queryRunner;
+    }
+
     const dataSourceWithOverridenCreateQueryBuilder = Object.assign(
       Object.create(Object.getPrototypeOf(this)),
       this,
