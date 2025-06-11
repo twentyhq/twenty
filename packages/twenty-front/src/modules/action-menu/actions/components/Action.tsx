@@ -5,14 +5,17 @@ import { useContext } from 'react';
 
 export const Action = ({
   onClick,
-  preventCommandMenuClosing,
+  sidePanelOptions,
 }: {
   onClick: () => void;
-  preventCommandMenuClosing?: boolean;
+  sidePanelOptions?: {
+    closeOnShowPageOptionsActionExecution?: boolean;
+    closeOnCommandMenuListActionExecution?: boolean;
+  };
 }) => {
   const actionConfig = useContext(ActionConfigContext);
 
-  const { closeActionMenu } = useCloseActionMenu({ preventCommandMenuClosing });
+  const { closeActionMenu } = useCloseActionMenu({ sidePanelOptions });
 
   if (!actionConfig) {
     return null;
