@@ -36,4 +36,5 @@ export enum CoreObjectNamePlural {
   WorkflowVersion = 'workflowVersions',
   WorkflowRun = 'workflowRuns',
   MGA = 'mgas',
+  POLICIES = 'policies',
 }

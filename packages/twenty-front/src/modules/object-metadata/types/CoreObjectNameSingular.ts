@@ -37,4 +37,5 @@ export enum CoreObjectNameSingular {
   WorkflowVersion = 'workflowVersion',
   WorkflowRun = 'workflowRun',
   MGA = 'mga',
+  POLICY = 'policy',
 }

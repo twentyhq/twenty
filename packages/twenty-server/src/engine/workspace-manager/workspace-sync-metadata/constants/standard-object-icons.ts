@@ -42,4 +42,5 @@ export const STANDARD_OBJECT_ICONS = {
   workflowAutomatedTrigger: 'IconSettingsAutomation',
   workspaceMember: 'IconUserCircle',
   mga: 'IconBuildingSkyscraper',
+  policy: 'IconFileText',
 };

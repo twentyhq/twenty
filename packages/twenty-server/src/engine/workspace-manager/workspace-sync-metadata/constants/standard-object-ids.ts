@@ -52,4 +52,5 @@ export const STANDARD_OBJECT_IDS = {
   workspaceMember: '20202020-3319-4234-a34c-82d5c0e881a6',
   workflowAutomatedTrigger: '20202020-3319-4234-a34c-7f3b9d2e4d1f',
   mga: '20202020-9a1b-4c3d-9e2f-1a2b3c4d5e6f',
+  policy: '20202020-0001-0001-0001-000000000001',
 };

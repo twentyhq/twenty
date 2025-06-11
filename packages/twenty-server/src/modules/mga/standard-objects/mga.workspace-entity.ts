@@ -15,6 +15,7 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { MGA_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
@@ -24,6 +25,7 @@ import {
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
+import { PolicyWorkspaceEntity } from 'src/modules/policy/standard-objects/policy.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
@@ -141,6 +143,22 @@ export class MGAWorkspaceEntity extends BaseWorkspaceEntity {
   position: number;
 
   // Relations
+  @WorkspaceRelation({
+    standardId: MGA_STANDARD_FIELD_IDS.policies,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Policies`,
+    description: msg`Policies linked to the MGA`,
+    icon: 'IconFileText',
+    inverseSideTarget: () => PolicyWorkspaceEntity,
+    inverseSideFieldKey: 'mga',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  policies: Relation<PolicyWorkspaceEntity[]>;
+
+  @WorkspaceJoinColumn('policies')
+  policiesId: string;
+
   @WorkspaceRelation({
     standardId: MGA_STANDARD_FIELD_IDS.favorites,
     type: RelationType.ONE_TO_MANY,

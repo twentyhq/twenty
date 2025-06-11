@@ -1,6 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import {
+  IsArray,
   IsBoolean,
   IsNotIn,
   IsOptional,
@@ -192,4 +193,12 @@ export class UpdateWorkspaceInput {
   @IsUUID()
   @IsOptional()
   defaultRoleId?: string;
+
+  @Field(() => [String], { nullable: true })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  featureFlags?: string[] = [
+    'policy',
+  ];
 }

@@ -43,6 +43,7 @@ export const ATTACHMENT_STANDARD_FIELD_IDS = {
   type: '20202020-a417-49b8-a40b-f6a7874caa0d',
   author: '20202020-6501-4ac5-a4ef-b2f8522ef6cd',
   activity: '20202020-b569-481b-a13f-9b94e47e54fe',
+  policy: '20202020-4d1d-41ac-b13b-821631298d55',
   task: '20202020-51e5-4621-9cf8-215487951c4b',
   note: '20202020-4f4b-4503-a6fc-6b982f3dffb5',
   person: '20202020-0158-4aa2-965c-5cdafe21ffa2',
@@ -153,9 +154,10 @@ export const CARRIER_STANDARD_FIELD_IDS = {
   location: '20202020-5243-4ffb-afc5-2c675da41346',
   position: '20202020-9b5b-562b-991d-a0ee33326454',
   createdBy: '20202020-fabc-451d-ab7d-412170916baa',
-  favorites: '20202020-4d1d-41ac-b13b-621631298d55',
-  timelineActivities: '20202020-0414-4daf-9c0d-64fe7b27f89f',
+  favorites: '20202020-4d1d-41ac-b13b-621631298d56',
+  timelineActivities: '20202020-0414-4daf-9c0d-64fe7b27f89b',
   searchVector: '20202020-b8b3-41c2-bc38-41c7e77a84c8',
+  policies: '20202020-4d1d-42ac-b13b-621631298d56',
 };
 
 export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {
@@ -221,10 +223,12 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   linkedRecordCachedName: '20202020-cfdb-4bef-bbce-a29f41230934',
   linkedRecordId: '20202020-2e0e-48c0-b445-ee6c1e61687d',
   linkedObjectMetadataId: '20202020-c595-449d-9f89-562758c9ee69',
+  policy: '20202020-d595-449d-9f89-562758c9ee69',
 };
 
 export const FAVORITE_STANDARD_FIELD_IDS = {
   position: '20202020-dd26-42c6-8c3c-2a7598c204f6',
+  policy: '20202020-4d1d-41ac-b14b-621631298d56',
   forWorkspaceMember: '20202020-ce63-49cb-9676-fdc0c45892cd',
   person: '20202020-c428-4f40-b6f3-86091511c41c',
   carrier: '20202020-4d1d-41ac-b13b-821631298d56',
@@ -319,6 +323,7 @@ export const NOTE_STANDARD_FIELD_IDS = {
   bodyV2: '20202020-a7bb-4d94-be51-8f25181502c8',
   createdBy: '20202020-0d79-4e21-ab77-5a394eff97be',
   noteTargets: '20202020-1f25-43fe-8b00-af212fdde823',
+  policy: '20202020-4d1d-41ab-b13b-621631298d55',
   attachments: '20202020-4986-4c92-bf19-39934b149b16',
   timelineActivities: '20202020-7030-42f8-929c-1a57b25d6bce',
   favorites: '20202020-4d1d-41ac-b13b-621631298d67',
@@ -551,6 +556,7 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   dateFormat: '20202020-af13-4e11-b1e7-b8cf5ea13dc0',
   timeFormat: '20202020-8acb-4cf8-a851-a6ed443c8d81',
   searchVector: '20202020-46d0-4e7f-bc26-74c0edaeb619',
+  managedPolicies: '20202020-4d1e-41ac-b13b-621631298d55',
 };
 
 export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
@@ -579,7 +585,57 @@ export const MGA_STANDARD_FIELD_IDS = {
   position: '20202020-ab1c-2e9d-3f7a-6b5c4d0e8f9a',
   favorites: '20202020-bc2d-3f0e-4a8b-7c6d5e1f9a0b',
   timelineActivities: '20202020-14bf-4a8b-9c9d-1e2f3a4b5c6d',
+  policies: '20202020-4d1d-41ac-b23b-621631298d55',
   searchVector: '20202020-25c0-4b9c-9d0e-2f3a4b5c6d7e',
+};
+
+// each uuid should be unique and of the format 20202020-xxxx-xxxx-xxxx-xxxx
+export const POLICY_STANDARD_FIELD_IDS = {
+  position: '20202020-4d1d-41ac-b13b-421631298d55',
+  policyNumber: '20202020-4d1d-41ac-b13b-621631298d55',
+  status: '20202020-5d2e-42bd-c24c-732742399e66',
+  effectiveDate: '20202020-6e3f-53ce-d35d-8438534aaf77',
+  expirationDate: '20202020-7f4a-64df-e46e-9549645bc088',
+  bindDate: '20202020-8a5b-75ea-f57f-a65a756cd199',
+  binderId: '20202020-9b6c-86fb-068a-b76b867de2aa',
+  businessType: '20202020-ac7d-970c-179b-c87c978ef3bb',
+  businessSubType: '20202020-bd8e-a81d-28ac-d98da89ff4cc',
+  cancellationDate: '20202020-ce9f-b92e-a022-ce22e8d7c814',
+  billingType: '20202020-dfa0-ca3f-4ace-fbafcab1f6ee',
+  paymentStatus: '20202020-e0b1-db4a-5bdf-0cb0dbc2f7ff',
+  autoRenew: '20202020-f1c2-ec5b-6cef-1dc1ecd3f800',
+  mortgageeBilled: '20202020-02d3-fd6c-7df0-2ed2fde4f911',
+  changeDate: '20202020-13e4-0e7d-8ef1-3fe30ef5fa22',
+  createDate: '20202020-24f5-1f8e-f922-40f41ff6fb33',
+  hasEndorsement: '20202020-3506-2f9f-0af3-510520f7fc44',
+  hasAgentCommission: '20202020-4617-3fa0-1bf4-621631f8fd55',
+  hasAgencyCommission: '20202020-5728-4fb1-2cf5-732742f9fe66',
+  lineOfBusinessClass: '20202020-6839-5fc2-3df6-8438530aff77',
+  lineOfBusiness: '20202020-794a-6fd3-4ef7-9549641bf088',
+  productName: '20202020-8a5b-7fe4-5ff8-a65a752cf199',
+  policyUrl: '20202020-9b6c-8ff5-60f9-b76b863df2aa',
+  location: '20202020-ac7d-9ff6-71fa-c87c974ef3bb',
+  agent: '20202020-bd8e-a0f7-82fb-d98da85ff4cc',
+  coverages: '20202020-ce9f-b1f8-93fc-ea9eb92ff5dd',
+  referralSource: '20202020-dfa0-c2f9-a4fd-fbafca31f6ee',
+  financeCompany: '20202020-e0b1-d3fa-b5fe-0cb0db42f7ff',
+  zipCode: '20202020-f1c2-e4fb-c6ff-1dc1ec53f800',
+  workGroups: '20202020-02d3-f5fc-d700-2ed2fd04f911',
+  tag: '20202020-13e4-06fd-e811-3fe30e15fa22',
+  premium: '20202020-24f5-17fe-f922-40f41f26fb33',
+  nonPremium: '20202020-3506-28ff-0a33-51052037fc44',
+  deductibles: '20202020-4617-3900-1b44-62163148fd55',
+  limits: '20202020-5728-4a11-2c55-73274259fe66',
+  endorsements: '20202020-6839-5b22-3d66-8438536aff77',
+  carrier: '20202020-794a-6c33-4e77-9549647bf088',
+  mga: '20202020-8a5b-7d44-5f88-a65a758cf199',
+  accountManager: '20202020-9b6c-8e55-6099-b76b869df2aa',
+  timelineActivities: '20202020-ac7d-9f66-71aa-c87c970ef3bb',
+  favorites: '20202020-bd8e-a077-82bb-d98da81ff4cc',
+  attachments: '20202020-ce9f-b188-93cc-ea9eb92ff5dd',
+  notes: '20202020-dfa0-c299-a4dd-fbafca31f6ee',
+  tasks: '20202020-e0b1-d3aa-b5ee-0cb0db42f7ff',
+  events: '20202020-f1c2-e4bb-c6ff-1dc1ec53f800',
 };
 
 export const STANDARD_OBJECT_FIELD_IDS = {
@@ -625,4 +681,5 @@ export const STANDARD_OBJECT_FIELD_IDS = {
   workflowVersion: WORKFLOW_VERSION_STANDARD_FIELD_IDS,
   workspaceMember: WORKSPACE_MEMBER_STANDARD_FIELD_IDS,
   mga: MGA_STANDARD_FIELD_IDS,
+  policy: POLICY_STANDARD_FIELD_IDS,
 };

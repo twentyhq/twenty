@@ -26,6 +26,7 @@ import {
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
+import { PolicyWorkspaceEntity } from 'src/modules/policy/standard-objects/policy.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
@@ -91,6 +92,20 @@ export class CarrierWorkspaceEntity extends BaseWorkspaceEntity {
 
 
   // Relations
+  @WorkspaceRelation({
+    standardId: CARRIER_STANDARD_FIELD_IDS.policies,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Policies`,
+    description: msg`Policies linked to the carrier`,
+    icon: 'IconFileText',
+    inverseSideTarget: () => PolicyWorkspaceEntity,
+    inverseSideFieldKey: 'carrier',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
+  policies: Relation<PolicyWorkspaceEntity[]>;
+
   @WorkspaceRelation({
     standardId: CARRIER_STANDARD_FIELD_IDS.favorites,
     type: RelationType.ONE_TO_MANY,

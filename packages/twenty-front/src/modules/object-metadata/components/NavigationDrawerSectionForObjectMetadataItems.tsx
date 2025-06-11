@@ -16,6 +16,7 @@ const ORDERED_STANDARD_OBJECTS = [
   'opportunity',
   'task',
   'note',
+  'policy',
 ];
 
 export const NavigationDrawerSectionForObjectMetadataItems = ({

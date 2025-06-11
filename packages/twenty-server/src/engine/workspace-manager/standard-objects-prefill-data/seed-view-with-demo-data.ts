@@ -9,6 +9,7 @@ import { notesAllView } from 'src/engine/workspace-manager/standard-objects-pref
 import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view';
 import { opportunitiesByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view';
 import { peopleAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view';
+import { policyAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/policy-all.view';
 import { tasksAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view';
 import { tasksAssignedToMeView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-assigned-to-me';
 import { tasksByStatusView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view';
@@ -35,6 +36,7 @@ export const seedViewWithDemoData = async (
     workflowVersionsAllView(objectMetadataStandardIdToIdMap),
     workflowRunsAllView(objectMetadataStandardIdToIdMap),
     mgasAllView(objectMetadataStandardIdToIdMap),
+    policyAllView(objectMetadataStandardIdToIdMap),
   ];
 
   return createWorkspaceViews(entityManager, schemaName, viewDefinitions);

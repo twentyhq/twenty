@@ -38,6 +38,7 @@ import {
   IconEyeOff,
   IconFileExport,
   IconFileImport,
+  IconFileText,
   IconHeart,
   IconHeartOff,
   IconPlus,
@@ -48,7 +49,7 @@ import {
   IconTargetArrow,
   IconTrash,
   IconTrashX,
-  IconUser,
+  IconUser
 } from 'twenty-ui/display';
 
 export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
@@ -665,5 +666,30 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       />
     ),
     hotKeys: ['G', 'N'],
+  },
+  [NoSelectionRecordActionKeys.GO_TO_POLICIES]: {
+    type: ActionType.Navigation,
+    scope: ActionScope.Global,
+    key: NoSelectionRecordActionKeys.GO_TO_POLICIES,
+    label: msg`Go to Policies`,
+    shortLabel: msg`Policies`,
+    position: 26,
+    Icon: IconFileText,
+    isPinned: false,
+    availableOn: [
+      ActionViewType.INDEX_PAGE_NO_SELECTION,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.INDEX_PAGE_BULK_SELECTION,
+      ActionViewType.SHOW_PAGE,
+    ],
+    shouldBeRegistered: ({ objectMetadataItem, viewType }) =>
+      objectMetadataItem?.nameSingular !== CoreObjectNameSingular.POLICY ||
+      viewType === ActionViewType.SHOW_PAGE,
+    component: (
+      <ActionLink
+        to={AppPath.RecordIndexPage}
+        params={{ objectNamePlural: CoreObjectNamePlural.POLICIES }}
+      />
+    ),
   },
 };

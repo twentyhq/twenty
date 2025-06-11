@@ -24,6 +24,7 @@ import { MGAWorkspaceEntity } from 'src/modules/mga/standard-objects/mga.workspa
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { PolicyWorkspaceEntity } from 'src/modules/policy/standard-objects/policy.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
@@ -53,6 +54,22 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
   position: number;
 
   // Relations
+  @WorkspaceRelation({
+    standardId: FAVORITE_STANDARD_FIELD_IDS.policy,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Policies`,
+    description: msg`Policies linked to the favorite`,
+    icon: 'IconFileText',
+    inverseSideTarget: () => PolicyWorkspaceEntity,
+    inverseSideFieldKey: 'favorites',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  policy: Relation<PolicyWorkspaceEntity>;
+
+  @WorkspaceJoinColumn('policy')
+  policyId: string | null;
+
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.forWorkspaceMember,
     type: RelationType.MANY_TO_ONE,
