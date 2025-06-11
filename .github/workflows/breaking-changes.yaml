@@ -91,6 +91,9 @@ jobs:
 
       - name: Run ClickHouse migrations
         run: npx nx clickhouse:migrate twenty-server
+        env:
+          CLICKHOUSE_URL: http://default:clickhousePassword@localhost:8123/twenty
+          CLICKHOUSE_PASSWORD: clickhousePassword
 
       - name: Setup current branch database
         run: |
