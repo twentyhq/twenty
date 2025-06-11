@@ -11,10 +11,12 @@ import { RecordFilterGroup } from '@/object-record/record-filter-group/types/Rec
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { InputLabel } from '@/ui/input/components/InputLabel';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
-import { WorkflowFindRecordFilters } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowFindRecordFilters';
-import { WorkflowFindRecordFiltersEffect } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowFindRecordFiltersEffect';
+import { WorkflowFindRecordsFilters } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFilters';
+import { WorkflowFindRecordsFiltersEffect } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFiltersEffect';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
+import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
@@ -50,6 +52,7 @@ export const WorkflowEditActionFindRecords = ({
   actionOptions,
 }: WorkflowEditActionFindRecordsProps) => {
   const { getIcon } = useIcons();
+  const { t } = useLingui();
 
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
@@ -115,7 +118,7 @@ export const WorkflowEditActionFindRecords = ({
       action,
       defaultTitle: 'Search Records',
     });
-  const instanceId = `workflow-edit-action-record-find-records-${action.id}`;
+  const instanceId = `workflow-edit-action-record-find-records-${action.id}-${formData.objectName}`;
 
   return (
     <>
@@ -160,42 +163,45 @@ export const WorkflowEditActionFindRecords = ({
 
         <HorizontalSeparator noMargin />
         {isDefined(selectedObjectMetadataItem) && (
-          <RecordIndexContextProvider
-            value={{
-              indexIdentifierUrl: () => '',
-              onIndexRecordsLoaded: () => {},
-              objectNamePlural: selectedObjectMetadataItem.labelPlural,
-              objectNameSingular: selectedObjectMetadataItem.nameSingular,
-              objectMetadataItem: selectedObjectMetadataItem,
-              recordIndexId: instanceId,
-              objectPermissionsByObjectMetadataId,
-            }}
-          >
-            <RecordFilterGroupsComponentInstanceContext.Provider
-              value={{ instanceId }}
+          <div>
+            <InputLabel>{t`Conditions`}</InputLabel>
+            <RecordIndexContextProvider
+              value={{
+                indexIdentifierUrl: () => '',
+                onIndexRecordsLoaded: () => {},
+                objectNamePlural: selectedObjectMetadataItem.labelPlural,
+                objectNameSingular: selectedObjectMetadataItem.nameSingular,
+                objectMetadataItem: selectedObjectMetadataItem,
+                recordIndexId: instanceId,
+                objectPermissionsByObjectMetadataId,
+              }}
             >
-              <RecordFiltersComponentInstanceContext.Provider
+              <RecordFilterGroupsComponentInstanceContext.Provider
                 value={{ instanceId }}
               >
-                <WorkflowFindRecordFilters
-                  objectMetadataItem={selectedObjectMetadataItem}
-                  onChange={(filter: FindRecordsActionFilter) => {
-                    const newFormData: FindRecordsFormData = {
-                      ...formData,
-                      filter,
-                    };
+                <RecordFiltersComponentInstanceContext.Provider
+                  value={{ instanceId }}
+                >
+                  <WorkflowFindRecordsFilters
+                    objectMetadataItem={selectedObjectMetadataItem}
+                    onChange={(filter: FindRecordsActionFilter) => {
+                      const newFormData: FindRecordsFormData = {
+                        ...formData,
+                        filter,
+                      };
 
-                    setFormData(newFormData);
+                      setFormData(newFormData);
 
-                    saveAction(newFormData);
-                  }}
-                />
-                <WorkflowFindRecordFiltersEffect
-                  defaultValue={formData.filter}
-                />
-              </RecordFiltersComponentInstanceContext.Provider>
-            </RecordFilterGroupsComponentInstanceContext.Provider>
-          </RecordIndexContextProvider>
+                      saveAction(newFormData);
+                    }}
+                  />
+                  <WorkflowFindRecordsFiltersEffect
+                    defaultValue={formData.filter}
+                  />
+                </RecordFiltersComponentInstanceContext.Provider>
+              </RecordFilterGroupsComponentInstanceContext.Provider>
+            </RecordIndexContextProvider>
+          </div>
         )}
 
         <FormNumberFieldInput
