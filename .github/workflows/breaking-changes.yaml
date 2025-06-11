@@ -121,6 +121,10 @@ jobs:
           npx nx run twenty-server:database:init:prod
           npx nx run twenty-server:database:migrate:prod
 
+      - name: Seed current branch database with test data
+        run: |
+          npx nx command-no-deps twenty-server -- workspace:seed:dev
+
       - name: Start current branch server in background
         run: |
           echo "=== Current branch .env file contents ==="
@@ -167,6 +171,10 @@ jobs:
           
           npx nx run twenty-server:database:init:prod
           npx nx run twenty-server:database:migrate:prod
+
+      - name: Seed main branch database with test data
+        run: |
+          npx nx command-no-deps twenty-server -- workspace:seed:dev
 
       - name: Start main branch server in background
         run: |
