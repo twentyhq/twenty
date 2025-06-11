@@ -4,7 +4,7 @@ import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/con
 import { SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-export const getFieldTypeLabel = (fieldType: FieldMetadataType) => {
+export const getFieldMetadataTypeLabel = (fieldType: FieldMetadataType) => {
   if (
     isNonCompositeField(fieldType) ||
     fieldType === FieldMetadataType.RELATION

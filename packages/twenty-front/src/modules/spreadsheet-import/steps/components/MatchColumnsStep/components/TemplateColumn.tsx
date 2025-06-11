@@ -3,10 +3,12 @@ import styled from '@emotion/styled';
 import { MatchColumnToFieldSelect } from '@/spreadsheet-import/components/MatchColumnToFieldSelect';
 import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
+import { suggestedFieldsByColumnHeaderState } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/states/suggestedFieldsByColumnHeaderState';
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
+import { buildFieldOptions } from '@/spreadsheet-import/utils/buildFieldOptions';
 import { useLingui } from '@lingui/react/macro';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { useRecoilValue } from 'recoil';
 import { IconForbid } from 'twenty-ui/display';
 
 const StyledContainer = styled.div`
@@ -28,29 +30,20 @@ export const TemplateColumn = <T extends string>({
   onChange,
 }: TemplateColumnProps<T>) => {
   const { fields } = useSpreadsheetImportInternal<T>();
+  const suggestedFieldsByColumnHeader = useRecoilValue(
+    suggestedFieldsByColumnHeaderState,
+  );
+
   const column = columns[columnIndex];
   const isIgnored = column.type === SpreadsheetColumnType.ignored;
 
   const { t } = useLingui();
 
-  const fieldOptions = fields
-    .filter((field) => field.fieldMetadataType !== FieldMetadataType.RICH_TEXT)
-    .map(({ Icon, label, key }) => {
-      const isSelected =
-        columns.findIndex((column) => {
-          if ('value' in column) {
-            return column.value === key;
-          }
-          return false;
-        }) !== -1;
-
-      return {
-        Icon: Icon,
-        value: key,
-        label: label,
-        disabled: isSelected,
-      } as const;
-    });
+  const fieldOptions = buildFieldOptions(fields, columns);
+  const suggestedFieldOptions = buildFieldOptions(
+    suggestedFieldsByColumnHeader[column.header] ?? [],
+    columns,
+  );
 
   const selectOptions = [
     {
@@ -76,6 +69,7 @@ export const TemplateColumn = <T extends string>({
         value={isIgnored ? ignoreValue : selectValue}
         onChange={(value) => onChange(value?.value as T, column.index)}
         options={selectOptions}
+        suggestedOptions={suggestedFieldOptions}
         columnIndex={column.index.toString()}
       />
     </StyledContainer>

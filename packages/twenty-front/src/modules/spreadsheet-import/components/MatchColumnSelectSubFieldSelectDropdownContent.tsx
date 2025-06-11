@@ -78,7 +78,7 @@ export const MatchColumnSelectSubFieldSelectDropdownContent = ({
     );
 
   return (
-    <DropdownContent>
+    <DropdownContent widthInPixels={320}>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent

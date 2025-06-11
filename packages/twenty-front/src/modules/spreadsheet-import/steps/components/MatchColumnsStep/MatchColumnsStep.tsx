@@ -21,6 +21,7 @@ import { TemplateColumn } from '@/spreadsheet-import/steps/components/MatchColum
 import { UnmatchColumn } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumn';
 import { UserTableColumn } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn';
 import { initialComputedColumnsSelector } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/states/initialComputedColumnsState';
+import { suggestedFieldsByColumnHeaderState } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/states/suggestedFieldsByColumnHeaderState';
 import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import { SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
@@ -30,7 +31,7 @@ import { SpreadsheetImportField } from '@/spreadsheet-import/types/SpreadsheetIm
 import { getMatchedColumnsWithFuse } from '@/spreadsheet-import/utils/getMatchedColumnsWithFuse';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 const StyledContent = styled(Modal.Content)`
   align-items: center;
@@ -84,6 +85,9 @@ export const MatchColumnsStep = <T extends string>({
   const [isLoading, setIsLoading] = useState(false);
   const [columns, setColumns] = useRecoilState(
     initialComputedColumnsSelector(headerValues),
+  );
+  const setSuggestedFieldsByColumnHeader = useSetRecoilState(
+    suggestedFieldsByColumnHeaderState,
   );
 
   const { matchColumnsStepHook } = useSpreadsheetImportInternal();
@@ -261,13 +265,11 @@ export const MatchColumnsStep = <T extends string>({
       (column) => column.type === SpreadsheetColumnType.empty,
     );
     if (autoMapHeaders && isInitialColumnsState) {
-      const { matchedColumns } = getMatchedColumnsWithFuse(
-        columns,
-        fields,
-        data,
-      );
+      const { matchedColumns, suggestedFieldsByColumnHeader } =
+        getMatchedColumnsWithFuse(columns, fields, data);
 
       setColumns(matchedColumns);
+      setSuggestedFieldsByColumnHeader(suggestedFieldsByColumnHeader);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

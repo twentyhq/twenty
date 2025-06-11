@@ -1,5 +1,5 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { getFieldTypeLabel } from '@/object-record/object-filter-dropdown/utils/getFieldTypeLabel';
+import { getFieldMetadataTypeLabel } from '@/object-record/object-filter-dropdown/utils/getFieldMetadataTypeLabel';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
@@ -8,28 +8,44 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { IconForbid, IconX, useIcons } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { ReadonlyDeep } from 'type-fest';
 
+const StyledScrollWrapper = styled(ScrollWrapper)`
+  max-height: 360px;
+`;
+
 export const MatchColumnSelectFieldSelectDropdownContent = ({
   selectedValue,
   onSelectFieldMetadataItem,
+  onSelectSuggestedOption,
   onCancelSelect,
   onDoNotImportSelect,
   options,
+  suggestedOptions,
 }: {
   selectedValue: SelectOption | undefined;
   onSelectFieldMetadataItem: (
     selectedFieldMetadataItem: FieldMetadataItem,
   ) => void;
+  onSelectSuggestedOption: (selectedSuggestedOption: SelectOption) => void;
   onCancelSelect: () => void;
   onDoNotImportSelect: () => void;
-  options: readonly ReadonlyDeep<SelectOption>[];
+  options: readonly ReadonlyDeep<
+    SelectOption & { fieldMetadataTypeLabel?: string }
+  >[];
+  suggestedOptions: readonly ReadonlyDeep<
+    SelectOption & { fieldMetadataTypeLabel?: string }
+  >[];
 }) => {
   const [searchFilter, setSearchFilter] = useState('');
 
@@ -54,6 +70,10 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
     onSelectFieldMetadataItem(fieldMetadataItem);
   };
 
+  const handleSuggestedOptionClick = (suggestedOption: SelectOption) => {
+    onSelectSuggestedOption(suggestedOption);
+  };
+
   const handleCancelClick = () => {
     onCancelSelect();
   };
@@ -76,32 +96,61 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
         value={searchFilter}
         onChange={handleFilterChange}
         autoFocus
-        placeholder={t`Search field`}
+        placeholder={t`Search fields`}
       />
       <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight>
-        <MenuItemSelect
-          selected={selectedValue?.value === DO_NOT_IMPORT_OPTION_KEY}
-          onClick={onDoNotImportSelect}
-          LeftIcon={IconForbid}
-          text={t`Do not import`}
-        />
-        {filteredAvailableFieldMetadataItems.map((field) => (
-          <MenuItemSelect
-            key={field.id}
-            selected={selectedValue?.value === field.name}
-            onClick={() => handleFieldClick(field)}
-            disabled={
-              options.find((option) => option.value === field.name)?.disabled &&
-              selectedValue?.value !== field.name
-            }
-            LeftIcon={getIcon(field.icon)}
-            text={field.label}
-            contextualText={getFieldTypeLabel(field.type)}
-            hasSubMenu={isCompositeFieldType(field.type)}
-          />
-        ))}
-      </DropdownMenuItemsContainer>
+      <StyledScrollWrapper componentInstanceId="match-column-select-field-select-dropdown-content">
+        {!isNonEmptyString(searchFilter) && (
+          <>
+            <DropdownMenuItemsContainer scrollable={false}>
+              <MenuItemSelect
+                selected={selectedValue?.value === DO_NOT_IMPORT_OPTION_KEY}
+                onClick={onDoNotImportSelect}
+                LeftIcon={IconForbid}
+                text={t`Do not import`}
+              />
+            </DropdownMenuItemsContainer>
+            {suggestedOptions.length > 0 && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuSectionLabel label={t`Suggested`} />
+                <DropdownMenuItemsContainer scrollable={false}>
+                  {suggestedOptions.map((option) => (
+                    <MenuItemSelect
+                      key={option.value}
+                      selected={selectedValue?.value === option.value}
+                      onClick={() => handleSuggestedOptionClick(option)}
+                      disabled={option.disabled}
+                      LeftIcon={option.Icon}
+                      text={option.label}
+                      contextualText={option.fieldMetadataTypeLabel}
+                    />
+                  ))}
+                </DropdownMenuItemsContainer>
+              </>
+            )}
+            <DropdownMenuSeparator />
+            <DropdownMenuSectionLabel label={t`All fields`} />
+          </>
+        )}
+        <DropdownMenuItemsContainer scrollable={false}>
+          {filteredAvailableFieldMetadataItems.map((field) => (
+            <MenuItemSelect
+              key={field.id}
+              selected={selectedValue?.value === field.name}
+              onClick={() => handleFieldClick(field)}
+              disabled={
+                options.find((option) => option.value === field.name)
+                  ?.disabled && selectedValue?.value !== field.name
+              }
+              LeftIcon={getIcon(field.icon)}
+              text={field.label}
+              contextualText={getFieldMetadataTypeLabel(field.type)}
+              hasSubMenu={isCompositeFieldType(field.type)}
+            />
+          ))}
+        </DropdownMenuItemsContainer>
+      </StyledScrollWrapper>
     </DropdownContent>
   );
 };
