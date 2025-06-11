@@ -145,6 +145,10 @@ jobs:
     timeout-minutes: 30
     runs-on: depot-ubuntu-24.04-8
     needs: server-setup
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     services:
       postgres:
         image: twentycrm/twenty-postgres-spilo
@@ -183,6 +187,7 @@ jobs:
       ANALYTICS_ENABLED: true
       CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
       CLICKHOUSE_PASSWORD: clickhousePassword
+      SHARD_COUNTER: 4
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
@@ -220,12 +225,7 @@ jobs:
           tag: scope:backend
           tasks: 'test:integration'
           configuration: 'with-db-reset'
-      - name: Server / Upload reset-logs file
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: reset-logs
-          path: reset-logs.log
+          args: --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
   ci-server-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
