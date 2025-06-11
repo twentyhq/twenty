@@ -83,13 +83,13 @@ describe('computeCursorArgFilter', () => {
 
       expect(result).toEqual([
         { name: { gt: 'John' } },
-        { name: { eq: 'John' }, age: { lt: 30 } },
+        { and: [{ name: { eq: 'John' } }, { age: { lt: 30 } }] },
       ]);
     });
   });
 
   describe('composite field handling', () => {
-    it('should handle fullName composite field', () => {
+    it('should handle fullName composite field with proper ordering', () => {
       const cursor = {
         fullName: { firstName: 'John', lastName: 'Doe' },
       };
@@ -111,10 +111,102 @@ describe('computeCursorArgFilter', () => {
 
       expect(result).toEqual([
         {
+          or: [
+            {
+              fullName: {
+                firstName: { gt: 'John' },
+              },
+            },
+            {
+              and: [
+                {
+                  fullName: {
+                    firstName: { eq: 'John' },
+                  },
+                },
+                {
+                  fullName: {
+                    lastName: { gt: 'Doe' },
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ]);
+    });
+
+    it('should handle single property composite field', () => {
+      const cursor = {
+        fullName: { firstName: 'John' },
+      };
+      const orderBy = [
+        {
+          fullName: {
+            firstName: OrderByDirection.AscNullsLast,
+          },
+        },
+      ];
+
+      const result = computeCursorArgFilter(
+        cursor,
+        orderBy,
+        mockFieldMetadataMap,
+        true,
+      );
+
+      expect(result).toEqual([
+        {
           fullName: {
             firstName: { gt: 'John' },
-            lastName: { gt: 'Doe' },
           },
+        },
+      ]);
+    });
+
+    it('should handle composite field with backward pagination', () => {
+      const cursor = {
+        fullName: { firstName: 'John', lastName: 'Doe' },
+      };
+      const orderBy = [
+        {
+          fullName: {
+            firstName: OrderByDirection.AscNullsLast,
+            lastName: OrderByDirection.AscNullsLast,
+          },
+        },
+      ];
+
+      const result = computeCursorArgFilter(
+        cursor,
+        orderBy,
+        mockFieldMetadataMap,
+        false,
+      );
+
+      expect(result).toEqual([
+        {
+          or: [
+            {
+              fullName: {
+                firstName: { lt: 'John' },
+              },
+            },
+            {
+              and: [
+                {
+                  fullName: {
+                    firstName: { eq: 'John' },
+                  },
+                },
+                {
+                  fullName: {
+                    lastName: { lt: 'Doe' },
+                  },
+                },
+              ],
+            },
+          ],
         },
       ]);
     });
