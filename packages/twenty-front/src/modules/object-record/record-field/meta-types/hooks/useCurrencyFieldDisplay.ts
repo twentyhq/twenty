@@ -14,9 +14,12 @@ export const useCurrencyFieldDisplay = () => {
     recordId,
     fieldName,
   );
+  
+  const format = fieldDefinition.defaultValue?.format;
 
   return {
     fieldDefinition,
     fieldValue,
+    format,
   };
 };
