@@ -165,6 +165,10 @@ jobs:
           # Admin token from jest-integration.config.ts
           ADMIN_TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC05ZTNiLTQ2ZDQtYTU1Ni04OGI5ZGRjMmIwMzQiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtMDY4Ny00YzQxLWI3MDctZWQxYmZjYTk3MmE3IiwidXNlcldvcmtzcGFjZUlkIjoiMjAyMDIwMjAtOWUzYi00NmQ0LWE1NTYtODhiOWRkYzJiMDM1IiwiaWF0IjoxNzM5NTQ3NjYxLCJleHAiOjMzMjk3MTQ3NjYxfQ.fbOM9yhr3jWDicPZ1n771usUURiPGmNdeFApsgrbxOw"
           
+          # Debug: verify token is set
+          echo "Token length: ${#ADMIN_TOKEN}"
+          echo "Token starts with: ${ADMIN_TOKEN:0:20}..."
+          
           # Full introspection query (based on GraphQL specification)
           INTROSPECTION_QUERY='query IntrospectionQuery {
             __schema {
@@ -399,37 +403,52 @@ jobs:
             }
           }'
           
+          # Prepare the query payload
+          QUERY_PAYLOAD=$(echo "$INTROSPECTION_QUERY" | tr '\n' ' ' | sed 's/"/\\"/g')
+          
           echo "Downloading GraphQL schema from current server..."
           curl -X POST "http://localhost:${{ env.CURRENT_SERVER_PORT }}/graphql" \
             -H "Content-Type: application/json" \
-            -H "Authorization: Bearer $ADMIN_TOKEN" \
-            -d "{\"query\":\"$(echo "$INTROSPECTION_QUERY" | tr '\n' ' ' | sed 's/"/\\"/g')\"}" \
-            -o current-schema-introspection.json
+            -H "Authorization: Bearer ${ADMIN_TOKEN}" \
+            -d "{\"query\":\"${QUERY_PAYLOAD}\"}" \
+            -o current-schema-introspection.json \
+            -w "HTTP Status: %{http_code}\n" \
+            -v
+          
+          # Check if the request was successful
+          if [ -f current-schema-introspection.json ]; then
+            echo "Current schema file size: $(wc -c < current-schema-introspection.json) bytes"
+            echo "Current schema preview:"
+            head -c 200 current-schema-introspection.json
+            echo ""
+          fi
           
           # Download metadata schema as well
           echo "Downloading GraphQL metadata schema from current server..."
           curl -X POST "http://localhost:${{ env.CURRENT_SERVER_PORT }}/metadata" \
             -H "Content-Type: application/json" \
-            -H "Authorization: Bearer $ADMIN_TOKEN" \
-            -d "{\"query\":\"$(echo "$INTROSPECTION_QUERY" | tr '\n' ' ' | sed 's/"/\\"/g')\"}" \
-            -o current-metadata-schema-introspection.json
+            -H "Authorization: Bearer ${ADMIN_TOKEN}" \
+            -d "{\"query\":\"${QUERY_PAYLOAD}\"}" \
+            -o current-metadata-schema-introspection.json \
+            -w "HTTP Status: %{http_code}\n" \
+            -v
           
           # Download current branch OpenAPI specs
           echo "Downloading OpenAPI specifications from current server..."
-          curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/open-api/core" > current-rest-api.json
-          curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/open-api/metadata" > current-rest-metadata-api.json
+          curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/open-api/core" \
+            -H "Authorization: Bearer ${ADMIN_TOKEN}" \
+            -o current-rest-api.json \
+            -w "HTTP Status: %{http_code}\n"
+          
+          curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/open-api/metadata" \
+            -H "Authorization: Bearer ${ADMIN_TOKEN}" \
+            -o current-rest-metadata-api.json \
+            -w "HTTP Status: %{http_code}\n"
           
           # Verify the downloads
           echo "Current branch schema download results:"
           ls -la current-*
           
-          # Check if the responses contain actual schema data
-          echo "Current schema response preview:"
-          head -c 200 current-schema-introspection.json
-          echo ""
-          echo "Current metadata schema response preview:"
-          head -c 200 current-metadata-schema-introspection.json
-          echo ""
           echo "Current OpenAPI specs sizes:"
           wc -c current-*.json
 
@@ -539,6 +558,10 @@ jobs:
           # Admin token from jest-integration.config.ts
           ADMIN_TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC05ZTNiLTQ2ZDQtYTU1Ni04OGI5ZGRjMmIwMzQiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtMDY4Ny00YzQxLWI3MDctZWQxYmZjYTk3MmE3IiwidXNlcldvcmtzcGFjZUlkIjoiMjAyMDIwMjAtOWUzYi00NmQ0LWE1NTYtODhiOWRkYzJiMDM1IiwiaWF0IjoxNzM5NTQ3NjYxLCJleHAiOjMzMjk3MTQ3NjYxfQ.fbOM9yhr3jWDicPZ1n771usUURiPGmNdeFApsgrbxOw"
           
+          # Debug: verify token is set
+          echo "Token length: ${#ADMIN_TOKEN}"
+          echo "Token starts with: ${ADMIN_TOKEN:0:20}..."
+          
           # Full introspection query (based on GraphQL specification)
           INTROSPECTION_QUERY='query IntrospectionQuery {
             __schema {
@@ -773,36 +796,51 @@ jobs:
             }
           }'
           
+          # Prepare the query payload
+          QUERY_PAYLOAD=$(echo "$INTROSPECTION_QUERY" | tr '\n' ' ' | sed 's/"/\\"/g')
+          
           echo "Downloading GraphQL schema from main server..."
           curl -X POST "http://localhost:${{ env.MAIN_SERVER_PORT }}/graphql" \
             -H "Content-Type: application/json" \
-            -H "Authorization: Bearer $ADMIN_TOKEN" \
-            -d "{\"query\":\"$(echo "$INTROSPECTION_QUERY" | tr '\n' ' ' | sed 's/"/\\"/g')\"}" \
-            -o main-schema-introspection.json
+            -H "Authorization: Bearer ${ADMIN_TOKEN}" \
+            -d "{\"query\":\"${QUERY_PAYLOAD}\"}" \
+            -o main-schema-introspection.json \
+            -w "HTTP Status: %{http_code}\n" \
+            -v
+          
+          # Check if the request was successful
+          if [ -f main-schema-introspection.json ]; then
+            echo "Main schema file size: $(wc -c < main-schema-introspection.json) bytes"
+            echo "Main schema preview:"
+            head -c 200 main-schema-introspection.json
+            echo ""
+          fi
           
           echo "Downloading GraphQL metadata schema from main server..."
           curl -X POST "http://localhost:${{ env.MAIN_SERVER_PORT }}/metadata" \
             -H "Content-Type: application/json" \
-            -H "Authorization: Bearer $ADMIN_TOKEN" \
-            -d "{\"query\":\"$(echo "$INTROSPECTION_QUERY" | tr '\n' ' ' | sed 's/"/\\"/g')\"}" \
-            -o main-metadata-schema-introspection.json
+            -H "Authorization: Bearer ${ADMIN_TOKEN}" \
+            -d "{\"query\":\"${QUERY_PAYLOAD}\"}" \
+            -o main-metadata-schema-introspection.json \
+            -w "HTTP Status: %{http_code}\n" \
+            -v
           
           # Download main branch OpenAPI specs
           echo "Downloading OpenAPI specifications from main server..."
-          curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/open-api/core" > main-rest-api.json
-          curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/open-api/metadata" > main-rest-metadata-api.json
+          curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/open-api/core" \
+            -H "Authorization: Bearer ${ADMIN_TOKEN}" \
+            -o main-rest-api.json \
+            -w "HTTP Status: %{http_code}\n"
+          
+          curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/open-api/metadata" \
+            -H "Authorization: Bearer ${ADMIN_TOKEN}" \
+            -o main-rest-metadata-api.json \
+            -w "HTTP Status: %{http_code}\n"
           
           # Verify the downloads
           echo "Main branch schema download results:"
           ls -la main-*
           
-          # Check if the responses contain actual schema data
-          echo "Main schema response preview:"
-          head -c 200 main-schema-introspection.json
-          echo ""
-          echo "Main metadata schema response preview:"
-          head -c 200 main-metadata-schema-introspection.json
-          echo ""
           echo "Main OpenAPI specs sizes:"
           wc -c main-*.json
 
