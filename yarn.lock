@@ -47774,6 +47774,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"onesignal@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "onesignal@npm:0.1.2"
+  dependencies:
+    request: "npm:^2.79.0"
+  checksum: 10c0/96850a98c9e3a1201dda766d30db910189f0469f8788aba95c23064a65e8bdfdeae9e36f6654e884623ce44e74455184eb98106386bbd1cb0b5205f6299c27e4
+  languageName: node
+  linkType: hard
+
 "onetime@npm:^5.1.0, onetime@npm:^5.1.2":
   version: 5.1.2
   resolution: "onetime@npm:5.1.2"
@@ -52393,7 +52402,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"request@npm:^2.88.2":
+"request@npm:^2.79.0, request@npm:^2.88.2":
   version: 2.88.2
   resolution: "request@npm:2.88.2"
   dependencies:
@@ -56688,6 +56697,7 @@ __metadata:
     eslint-plugin-unused-imports: "npm:^3.0.0"
     file-saver: "npm:^2.0.5"
     firebase: "npm:^11.2.0"
+    onesignal: "npm:^0.1.2"
     optionator: "npm:^0.9.1"
     rollup-plugin-visualizer: "npm:^5.14.0"
     transliteration: "npm:^2.3.5"
@@ -57135,6 +57145,7 @@ __metadata:
     next-mdx-remote: "npm:^4.4.1"
     nodemailer: "npm:^6.9.8"
     nx: "npm:18.3.3"
+    onesignal: "npm:^0.1.2"
     openapi-types: "npm:^12.1.3"
     passport: "npm:^0.7.0"
     passport-google-oauth20: "npm:^2.0.0"

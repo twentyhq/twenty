@@ -1,4 +1,4 @@
-import { InternalServerErrorException } from '@nestjs/common';
+import { InternalServerErrorException, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -37,6 +37,7 @@ import { WhatsappWorkspaceEntity } from 'src/modules/whatsapp-integration/standa
 export class WhatsappService {
   private META_API_URL = this.environmentService.get('META_API_URL');
   private firestoreDb: Firestore;
+  protected readonly logger = new Logger(WhatsappService.name);
 
   constructor(
     @InjectRepository(WhatsappIntegration, 'core')
@@ -221,16 +222,21 @@ export class WhatsappService {
   }
 
   async sendNotification(externalIds: string[], message: string) {
+    this.logger.log('chegou aqui');
     const ONESIGNAL_APPID = this.environmentService.get('ONESIGNAL_APP_ID');
-
     const ONESIGNAL_REST_API_KEY = this.environmentService.get(
       'ONESIGNAL_REST_API_KEY',
     );
 
+    this.logger.log('Attempting to send notification to:', externalIds);
+    this.logger.log('Message:', message);
+    this.logger.log('Using App ID:', ONESIGNAL_APPID);
+    this.logger.log('Authorization:', ONESIGNAL_REST_API_KEY);
+
     const headers = {
-      Authorization: `Basic ${ONESIGNAL_REST_API_KEY}`,
-      accept: 'application/json',
-      'Content-Type': 'application/json; charset=utf-8',
+      Authorization: `Key ${ONESIGNAL_REST_API_KEY}`,
+      'Content-Type': 'application/json',
+      accept: 'application/json', // Adicionado
     };
 
     try {
@@ -241,22 +247,28 @@ export class WhatsappService {
         },
         target_channel: 'push',
         isAnyWeb: true,
-        headings: {
-          en: message,
-        },
-        contents: {
-          en: message,
-        },
+        headings: { en: message },
+        contents: { en: message },
       };
 
-      await axios.post('https://onesignal.com/api/v1/notifications', body, {
-        headers,
-      });
+      this.logger.log('Request body:', JSON.stringify(body, null, 2));
+
+      const response = await axios.post(
+        'https://onesignal.com/api/v1/notifications',
+        body,
+        {
+          headers,
+        },
+      );
+
+      this.logger.log('Notification sent successfully:', response.data);
 
       return true;
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('ERROR', error.response?.data || error.message);
+      this.logger.error(
+        'Notification error:',
+        error.response?.data || error.message,
+      );
 
       return false;
     }
@@ -273,6 +285,8 @@ export class WhatsappService {
     const docId = `${whatsappDoc.integrationId}_${whatsappDoc.client.phone}`;
     const docRef = doc(messagesCollection, docId);
     const docSnapshot = await getDoc(docRef);
+
+    this.logger.log('MENSAGEM', messagesCollection);
 
     if (!docSnapshot.exists()) {
       await setDoc(docRef, {
@@ -306,12 +320,14 @@ export class WhatsappService {
           return true;
         }
 
-        //   await this.sendNotification(
-        //     sectorsFromWorkspace.flatMap((sector) =>
-        //       sector.agents.map((agent) => agent.memberId),
-        //     ),
-        //     `${whatsappDoc.client.name}: ${whatsappDoc.messages[0].message}`,
-        //   );
+        this.logger.log('Chegou aqui');
+
+        await this.sendNotification(
+          sectorsFromWorkspace.flatMap((sector) =>
+            sector.agents.map((agent) => agent.memberId),
+          ),
+          `${whatsappDoc.client.name}: ${whatsappDoc.messages[0].message}`,
+        );
       }
 
       return true;
@@ -363,10 +379,10 @@ export class WhatsappService {
             return true;
           }
 
-          //     await this.sendNotification(
-          //       sector.agents.map((agent) => agent.memberId),
-          //       `${whatsappIntegration.client.name}: ${whatsappDoc.messages[0].message}`,
-          //     );
+          await this.sendNotification(
+            sector.agents.map((agent) => agent.memberId),
+            `${whatsappIntegration.client.name}: ${whatsappDoc.messages[0].message}`,
+          );
         }
       }
 
