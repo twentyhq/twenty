@@ -3018,6 +3018,7 @@ export enum SubscriptionInterval {
 export enum SubscriptionStatus {
   Active = 'Active',
   Canceled = 'Canceled',
+  Expired = 'Expired',
   Incomplete = 'Incomplete',
   IncompleteExpired = 'IncompleteExpired',
   PastDue = 'PastDue',

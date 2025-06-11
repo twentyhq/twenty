@@ -42,7 +42,7 @@ export const InformationBannerFailPaymentInfo = () => {
     }
   };
   const BANNER_MESSAGE_MAP = {
-    [SubscriptionStatus.PastDue]: {
+    [SubscriptionStatus.Expired]: {
       [BillingPaymentProviders.Inter]: {
         admin: {
           message: t`Subscription expired. Click on the 'Download bank slip' button to download yor bank slip.`,
@@ -72,13 +72,13 @@ export const InformationBannerFailPaymentInfo = () => {
     const userType = hasPermissionToUpdateBillingDetails ? 'admin' : 'member';
 
     const providerMessages =
-      BANNER_MESSAGE_MAP[status as SubscriptionStatus.PastDue]?.[
+      BANNER_MESSAGE_MAP[status as SubscriptionStatus.Expired]?.[
         subscriptionPaymentProvider as BillingPaymentProviders.Inter
-      ] ?? BANNER_MESSAGE_MAP[status as SubscriptionStatus.PastDue]?.default;
+      ] ?? BANNER_MESSAGE_MAP[status as SubscriptionStatus.Expired]?.default;
 
     return (
       providerMessages?.[userType] ??
-      BANNER_MESSAGE_MAP[SubscriptionStatus.PastDue].default[userType]
+      BANNER_MESSAGE_MAP[SubscriptionStatus.Expired].default[userType]
     );
   };
 
