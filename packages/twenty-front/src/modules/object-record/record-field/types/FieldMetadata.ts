@@ -211,9 +211,13 @@ export type FieldLinksValue = {
   primaryLinkUrl: string | null;
   secondaryLinks?: { label: string | null; url: string | null }[] | null;
 };
+
+export const fieldMetadataCurrencyFormat = ['short', 'full'] as const;
+type FieldCurrencyFormat = (typeof fieldMetadataCurrencyFormat)[number];
 export type FieldCurrencyValue = {
   currencyCode: CurrencyCode;
   amountMicros: number | null;
+  format: FieldCurrencyFormat
 };
 export type FormFieldCurrencyValue = {
   currencyCode: CurrencyCode | null;

@@ -2,7 +2,7 @@ import { useCurrencyFieldDisplay } from '@/object-record/record-field/meta-types
 import { CurrencyDisplay } from '@/ui/field/display/components/CurrencyDisplay';
 
 export const CurrencyFieldDisplay = () => {
-  const { fieldValue, format } = useCurrencyFieldDisplay();
+  const { fieldValue } = useCurrencyFieldDisplay();
 
-  return <CurrencyDisplay currencyValue={fieldValue} format={format}/>;
+  return <CurrencyDisplay currencyValue={fieldValue}/>;
 };

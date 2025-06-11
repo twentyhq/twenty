@@ -21,6 +21,7 @@ type Story = StoryObj<typeof FormCurrencyFieldInput>;
 
 const defaultSalaryValue: FieldCurrencyValue = {
   currencyCode: CurrencyCode.USD,
+  format: 'short',
   amountMicros: 44000000,
 };
 
