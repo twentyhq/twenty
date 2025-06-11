@@ -4,6 +4,7 @@ import {
 } from '@/workflow/types/Workflow';
 import { Edge, Node } from '@xyflow/react';
 
+export type WorkflowDiagramStepNode = Node<WorkflowDiagramStepNodeData>;
 export type WorkflowDiagramNode = Node<WorkflowDiagramNodeData>;
 export type WorkflowDiagramEdge = Edge;
 
