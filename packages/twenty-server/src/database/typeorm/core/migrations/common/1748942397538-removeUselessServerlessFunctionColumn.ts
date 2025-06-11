@@ -10,6 +10,12 @@ export class RemoveUselessServerlessFunctionColumn1748942397538
       `ALTER TABLE "core"."serverlessFunction" DROP COLUMN "syncStatus"`,
     );
     await queryRunner.query(
+      ` ALTER TYPE "metadata"."dataSource_type_enum" SET SCHEMA "core";
+        ALTER TYPE "metadata"."indexMetadata_indextype_enum" SET SCHEMA "core";
+        ALTER TYPE "metadata"."relationMetadata_ondeleteaction_enum" SET SCHEMA "core";
+        ALTER TYPE "metadata"."serverlessFunction_syncstatus_enum" SET SCHEMA "core";`,
+    );
+    await queryRunner.query(
       `DROP TYPE "core"."serverlessFunction_syncstatus_enum"`,
     );
   }
