@@ -652,18 +652,6 @@ export const computeMetadataSchemaComponents = (
 
           return schemas;
         }
-        case 'fieldRelation': {
-          schemas[`${capitalize(item.nameSingular)}`] = {
-            oneOf: [
-              {
-                $ref: '#/components/schemas/RelationTargetObjectForResponse',
-              },
-            ],
-            type: 'object',
-          };
-
-          return schemas;
-        }
       }
 
       return schemas;

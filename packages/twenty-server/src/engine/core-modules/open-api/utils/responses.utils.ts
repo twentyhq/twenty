@@ -1,4 +1,3 @@
-import { OpenAPIV3_1 } from 'openapi-types';
 import { capitalize } from 'twenty-shared/utils';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -6,8 +5,10 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 export const getFindManyResponse200 = (
   item: Pick<ObjectMetadataEntity, 'nameSingular' | 'namePlural'>,
   fromMetadata = false,
-): OpenAPIV3_1.ResponseObject => {
-  const schemaRef = `#/components/schemas/${capitalize(item.namePlural)}ForResponse`;
+) => {
+  const schemaRef = `#/components/schemas/${capitalize(
+    item.nameSingular,
+  )}ForResponse`;
 
   return {
     description: 'Successful operation',
@@ -20,48 +21,32 @@ export const getFindManyResponse200 = (
               type: 'object',
               properties: {
                 [item.namePlural]: {
-                  type: 'object',
-                  properties: {
-                    edges: {
-                      type: 'array',
-                      items: {
-                        type: 'object',
-                        properties: {
-                          node: {
-                            $ref: schemaRef,
-                          },
-                          cursor: {
-                            type: 'string',
-                          },
-                        },
-                      },
-                    },
-                    pageInfo: {
-                      type: 'object',
-                      properties: {
-                        hasNextPage: {
-                          type: 'boolean',
-                        },
-                        hasPreviousPage: {
-                          type: 'boolean',
-                        },
-                        startCursor: {
-                          type: 'string',
-                        },
-                        endCursor: {
-                          type: 'string',
-                        },
-                      },
-                    },
-                    ...(!fromMetadata && {
-                      totalCount: {
-                        type: 'number',
-                      },
-                    }),
+                  type: 'array',
+                  items: {
+                    $ref: schemaRef,
                   },
                 },
               },
             },
+            pageInfo: {
+              type: 'object',
+              properties: {
+                hasNextPage: { type: 'boolean' },
+                startCursor: {
+                  type: 'string',
+                  format: 'uuid',
+                },
+                endCursor: {
+                  type: 'string',
+                  format: 'uuid',
+                },
+              },
+            },
+            ...(!fromMetadata && {
+              totalCount: {
+                type: 'integer',
+              },
+            }),
           },
         },
       },
@@ -71,7 +56,7 @@ export const getFindManyResponse200 = (
 
 export const getFindOneResponse200 = (
   item: Pick<ObjectMetadataEntity, 'nameSingular'>,
-): OpenAPIV3_1.ResponseObject => {
+) => {
   const schemaRef = `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`;
 
   return {
@@ -99,8 +84,12 @@ export const getFindOneResponse200 = (
 export const getCreateOneResponse201 = (
   item: Pick<ObjectMetadataEntity, 'nameSingular'>,
   fromMetadata = false,
-): OpenAPIV3_1.ResponseObject => {
-  const schemaRef = `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`;
+) => {
+  const one = fromMetadata ? 'One' : '';
+
+  const schemaRef = `#/components/schemas/${capitalize(
+    item.nameSingular,
+  )}ForResponse`;
 
   return {
     description: 'Successful operation',
@@ -112,9 +101,7 @@ export const getCreateOneResponse201 = (
             data: {
               type: 'object',
               properties: {
-                [fromMetadata
-                  ? 'createOne' + capitalize(item.nameSingular)
-                  : 'create' + capitalize(item.nameSingular)]: {
+                [`create${one}${capitalize(item.nameSingular)}`]: {
                   $ref: schemaRef,
                 },
               },
@@ -131,7 +118,7 @@ export const getCreateManyResponse201 = (
 ) => {
   const schemaRef = `#/components/schemas/${capitalize(
     item.nameSingular,
-  )} for Response`;
+  )}ForResponse`;
 
   return {
     description: 'Successful operation',
@@ -161,7 +148,8 @@ export const getCreateManyResponse201 = (
 export const getUpdateOneResponse200 = (
   item: Pick<ObjectMetadataEntity, 'nameSingular'>,
   fromMetadata = false,
-): OpenAPIV3_1.ResponseObject => {
+) => {
+  const one = fromMetadata ? 'One' : '';
   const schemaRef = `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`;
 
   return {
@@ -174,9 +162,7 @@ export const getUpdateOneResponse200 = (
             data: {
               type: 'object',
               properties: {
-                [fromMetadata
-                  ? 'updateOne' + capitalize(item.nameSingular)
-                  : 'update' + capitalize(item.nameSingular)]: {
+                [`update${one}${capitalize(item.nameSingular)}`]: {
                   $ref: schemaRef,
                 },
               },
@@ -191,7 +177,9 @@ export const getUpdateOneResponse200 = (
 export const getDeleteResponse200 = (
   item: Pick<ObjectMetadataEntity, 'nameSingular'>,
   fromMetadata = false,
-): OpenAPIV3_1.ResponseObject => {
+) => {
+  const one = fromMetadata ? 'One' : '';
+
   return {
     description: 'Successful operation',
     content: {
@@ -202,9 +190,7 @@ export const getDeleteResponse200 = (
             data: {
               type: 'object',
               properties: {
-                [fromMetadata
-                  ? 'deleteOne' + capitalize(item.nameSingular)
-                  : 'delete' + capitalize(item.nameSingular)]: {
+                [`delete${one}${capitalize(item.nameSingular)}`]: {
                   type: 'object',
                   properties: {
                     id: {
@@ -279,9 +265,11 @@ export const getJsonResponse = () => {
 };
 
 export const getFindDuplicatesResponse200 = (
-  item: Pick<ObjectMetadataEntity, 'namePlural'>,
-): OpenAPIV3_1.ResponseObject => {
-  const schemaRef = `#/components/schemas/${capitalize(item.namePlural)}ForResponse`;
+  item: Pick<ObjectMetadataEntity, 'nameSingular'>,
+) => {
+  const schemaRef = `#/components/schemas/${capitalize(
+    item.nameSingular,
+  )}ForResponse`;
 
   return {
     description: 'Successful operation',
@@ -291,44 +279,29 @@ export const getFindDuplicatesResponse200 = (
           type: 'object',
           properties: {
             data: {
-              type: 'object',
-              properties: {
-                [item.namePlural]: {
-                  type: 'object',
-                  properties: {
-                    edges: {
-                      type: 'array',
-                      items: {
-                        type: 'object',
-                        properties: {
-                          node: {
-                            $ref: schemaRef,
-                          },
-                          cursor: {
-                            type: 'string',
-                          },
-                        },
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  totalCount: { type: 'number' },
+                  pageInfo: {
+                    type: 'object',
+                    properties: {
+                      hasNextPage: { type: 'boolean' },
+                      startCursor: {
+                        type: 'string',
+                        format: 'uuid',
+                      },
+                      endCursor: {
+                        type: 'string',
+                        format: 'uuid',
                       },
                     },
-                    pageInfo: {
-                      type: 'object',
-                      properties: {
-                        hasNextPage: {
-                          type: 'boolean',
-                        },
-                        hasPreviousPage: {
-                          type: 'boolean',
-                        },
-                        startCursor: {
-                          type: 'string',
-                        },
-                        endCursor: {
-                          type: 'string',
-                        },
-                      },
-                    },
-                    totalCount: {
-                      type: 'number',
+                  },
+                  [`${item.nameSingular}Duplicates`]: {
+                    type: 'array',
+                    items: {
+                      $ref: schemaRef,
                     },
                   },
                 },
