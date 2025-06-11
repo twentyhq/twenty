@@ -5,6 +5,7 @@ import { WorkflowHttpRequestAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
+import { isMethodWithBody } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/isMethodWithBody';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useEffect } from 'react';
 import { useIcons } from 'twenty-ui/display';
@@ -12,7 +13,6 @@ import {
   DEFAULT_BODY_PLACEHOLDER,
   DEFAULT_HEADERS_PLACEHOLDER,
   HTTP_METHODS,
-  METHODS_WITH_BODY,
 } from '../constants/HttpRequest';
 import { useHttpRequestForm } from '../hooks/useHttpRequestForm';
 
@@ -101,9 +101,7 @@ export const WorkflowEditActionHttpRequest = ({
           onChange={(value) => handleFieldChange('headers', value)}
           VariablePicker={WorkflowVariablePicker}
         />
-        {!METHODS_WITH_BODY.includes(
-          formData.method as (typeof METHODS_WITH_BODY)[number],
-        ) ? null : (
+        {!isMethodWithBody(formData.method) ? null : (
           <FormRawJsonFieldInput
             label="Body"
             placeholder={DEFAULT_BODY_PLACEHOLDER}

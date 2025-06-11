@@ -1,8 +1,8 @@
 import { WorkflowHttpRequestAction } from '@/workflow/types/Workflow';
+import { isMethodWithBody } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/isMethodWithBody';
 import { useState } from 'react';
 import { isDefined, isValidUrl } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
-import { METHODS_WITH_BODY } from '../constants/HttpRequest';
 
 export type HttpRequestFormData = {
   url: string;
@@ -113,10 +113,7 @@ export const useHttpRequestForm = ({
       }
     }
 
-    if (
-      ['POST', 'PUT', 'PATCH'].includes(formData.method) &&
-      isDefined(formData.body)
-    ) {
+    if (isMethodWithBody(formData.method) && isDefined(formData.body)) {
       try {
         parsedBody = JSON.parse(formData.body);
       } catch {
@@ -148,10 +145,7 @@ export const useHttpRequestForm = ({
       return;
     }
 
-    if (
-      field === 'method' &&
-      !METHODS_WITH_BODY.includes(value as (typeof METHODS_WITH_BODY)[number])
-    ) {
+    if (field === 'method' && !isMethodWithBody(value)) {
       newFormData = { ...newFormData, body: null };
     }
 
@@ -163,7 +157,7 @@ export const useHttpRequestForm = ({
 
     if (
       field === 'body' &&
-      ['POST', 'PUT', 'PATCH'].includes(formData.method) &&
+      isMethodWithBody(formData.method) &&
       !validateJson(value, 'body')
     ) {
       return;
