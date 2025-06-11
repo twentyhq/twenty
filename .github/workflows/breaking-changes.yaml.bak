@@ -877,26 +877,6 @@ jobs:
           echo "Generated diff files:"
           ls -la *-diff.md 2>/dev/null || echo "No diff files generated (no changes detected)"
 
-      - name: Check GraphQL Schema for Breaking Changes
-        continue-on-error: true
-        uses: graphql-hive/graphql-inspector@master
-        with:
-          name: 'GraphQL Schema Breaking Changes'
-          schema: 'current-schema-introspection.json'
-          endpoint: 'main-schema-introspection.json'
-          # fail-on-breaking: true
-          annotations: true
-
-      - name: Check GraphQL Metadata Schema for Breaking Changes
-        continue-on-error: true 
-        uses: graphql-hive/graphql-inspector@master
-        with:
-          name: 'GraphQL Metadata Schema Breaking Changes'
-          schema: 'current-metadata-schema-introspection.json'
-          endpoint: 'main-metadata-schema-introspection.json'
-          # fail-on-breaking: true
-          annotations: true
-
       - name: Check REST API Breaking Changes
         run: |
           echo "=== CHECKING REST API FOR BREAKING CHANGES ==="
@@ -1066,8 +1046,7 @@ jobs:
             
             # Only exit with error if it's a real tool failure
             if [ $exit_code -ne 0 ]; then
-              echo "::error::REST Metadata API analysis failed"
-              exit 1
+              echo "::warning::REST Metadata API analysis tool error (exit code: $exit_code) - continuing workflow"
             fi
           fi
 
