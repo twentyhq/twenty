@@ -1075,12 +1075,9 @@ export class WorkspaceEntityManager extends EntityManager {
     if (Array.isArray(entity) && entity.length === 0)
       return Promise.resolve(entity as Entity[]);
 
-    const queryRunnerForEntityPersistExecutor =
-      this.connection.createQueryRunnerForEntityPersistExecutor();
-
     return new EntityPersistExecutor(
       this.connection,
-      queryRunnerForEntityPersistExecutor,
+      this.queryRunner,
       'save',
       target,
       entity as ObjectLiteral,
@@ -1088,7 +1085,7 @@ export class WorkspaceEntityManager extends EntityManager {
     )
       .execute()
       .then(() => entity as Entity)
-      .finally(() => queryRunnerForEntityPersistExecutor.release());
+      .finally(() => this.queryRunner?.release());
   }
 
   override remove<Entity>(
@@ -1151,12 +1148,9 @@ export class WorkspaceEntityManager extends EntityManager {
     if (Array.isArray(entity) && entity.length === 0)
       return Promise.resolve(entity);
 
-    const queryRunnerForEntityPersistExecutor =
-      this.connection.createQueryRunnerForEntityPersistExecutor();
-
     return new EntityPersistExecutor(
       this.connection,
-      queryRunnerForEntityPersistExecutor,
+      this.queryRunner,
       'remove',
       target as string | undefined,
       entity as ObjectLiteral,
@@ -1164,7 +1158,7 @@ export class WorkspaceEntityManager extends EntityManager {
     )
       .execute()
       .then(() => entity as Entity | Entity[])
-      .finally(() => queryRunnerForEntityPersistExecutor.release());
+      .finally(() => this.queryRunner?.release());
   }
 
   override softRemove<Entity extends ObjectLiteral>(
@@ -1237,12 +1231,9 @@ export class WorkspaceEntityManager extends EntityManager {
     if (Array.isArray(entity) && entity.length === 0)
       return Promise.resolve(entity);
 
-    const queryRunnerForEntityPersistExecutor =
-      this.connection.createQueryRunnerForEntityPersistExecutor();
-
     return new EntityPersistExecutor(
       this.connection,
-      queryRunnerForEntityPersistExecutor,
+      this.queryRunner,
       'soft-remove',
       target,
       entity as ObjectLiteral,
@@ -1250,7 +1241,7 @@ export class WorkspaceEntityManager extends EntityManager {
     )
       .execute()
       .then(() => entity as Entity)
-      .finally(() => queryRunnerForEntityPersistExecutor.release());
+      .finally(() => this.queryRunner?.release());
   }
 
   override recover<Entity>(
@@ -1316,12 +1307,9 @@ export class WorkspaceEntityManager extends EntityManager {
     if (Array.isArray(entity) && entity.length === 0)
       return Promise.resolve(entity);
 
-    const queryRunnerForEntityPersistExecutor =
-      this.connection.createQueryRunnerForEntityPersistExecutor();
-
     return new EntityPersistExecutor(
       this.connection,
-      queryRunnerForEntityPersistExecutor,
+      this.queryRunner,
       'recover',
       target,
       entity as ObjectLiteral,
@@ -1329,7 +1317,7 @@ export class WorkspaceEntityManager extends EntityManager {
     )
       .execute()
       .then(() => entity as Entity)
-      .finally(() => queryRunnerForEntityPersistExecutor.release());
+      .finally(() => this.queryRunner?.release());
   }
 
   // Forbidden methods

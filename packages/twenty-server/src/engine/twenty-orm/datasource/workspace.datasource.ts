@@ -1,4 +1,3 @@
-import { Entity } from '@microsoft/microsoft-graph-types';
 import { isDefined } from 'class-validator';
 import { ObjectRecordsPermissionsByRoleId } from 'twenty-shared/types';
 import {
@@ -10,7 +9,6 @@ import {
   ReplicationMode,
   SelectQueryBuilder,
 } from 'typeorm';
-import { EntityManagerFactory } from 'typeorm/entity-manager/EntityManagerFactory';
 
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
@@ -35,7 +33,8 @@ export class WorkspaceDataSource extends DataSource {
   featureFlagMap: FeatureFlagMap;
   rolesPermissionsVersion: string;
   permissionsPerRoleId: ObjectRecordsPermissionsByRoleId;
-  dataSourceWithOverridenCreateQueryBuilder: WorkspaceDataSource;
+  internalDatasource: WorkspaceDataSource;
+  allowCreateQueryBuilder = false;
 
   constructor(
     internalContext: WorkspaceInternalContext,
@@ -78,7 +77,26 @@ export class WorkspaceDataSource extends DataSource {
   override createEntityManager(
     queryRunner?: QueryRunner,
   ): WorkspaceEntityManager {
-    return new WorkspaceEntityManager(this.internalContext, this, queryRunner);
+    if (this.internalDatasource) {
+      return new WorkspaceEntityManager(
+        this.internalContext,
+        this.internalDatasource,
+        queryRunner,
+      );
+    }
+
+    const internalDatasource = Object.assign(
+      Object.create(Object.getPrototypeOf(this)),
+      this,
+    );
+
+    internalDatasource.allowCreateQueryBuilder = true;
+
+    return new WorkspaceEntityManager(
+      this.internalContext,
+      internalDatasource,
+      queryRunner,
+    );
   }
 
   override createQueryRunner(
@@ -91,58 +109,6 @@ export class WorkspaceDataSource extends DataSource {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return queryRunner as any as WorkspaceQueryRunner;
-  }
-
-  // Do not use, only for specific permission-related purpose
-  createQueryRunnerForEntityPersistExecutor(
-    mode = 'master' as ReplicationMode,
-  ) {
-    if (this.dataSourceWithOverridenCreateQueryBuilder) {
-      const queryRunner = this.driver.createQueryRunner(mode);
-      const manager = new EntityManagerFactory().create(
-        this.dataSourceWithOverridenCreateQueryBuilder,
-        queryRunner,
-      );
-
-      Object.assign(queryRunner, { manager: manager });
-
-      return queryRunner;
-    }
-
-    const dataSourceWithOverridenCreateQueryBuilder = Object.assign(
-      Object.create(Object.getPrototypeOf(this)),
-      this,
-      {
-        createQueryBuilder: (
-          entityOrRunner: EntityTarget<Entity> | QueryRunner,
-          alias?: string,
-          queryRunner?: QueryRunner,
-        ) => {
-          if (isDefined(alias) && typeof alias === 'string') {
-            const entity = entityOrRunner as EntityTarget<Entity>;
-
-            return this.createQueryBuilder(entity, alias, queryRunner, {
-              calledByWorkspaceEntityManager: true,
-            });
-          } else {
-            const runner = entityOrRunner as QueryRunner;
-
-            return this.createQueryBuilder(runner, {
-              calledByWorkspaceEntityManager: true,
-            });
-          }
-        },
-      },
-    );
-    const queryRunner = this.driver.createQueryRunner(mode);
-    const manager = new EntityManagerFactory().create(
-      dataSourceWithOverridenCreateQueryBuilder,
-      queryRunner,
-    );
-
-    Object.assign(queryRunner, { manager: manager });
-
-    return queryRunner;
   }
 
   override createQueryBuilder<Entity extends ObjectLiteral>(
@@ -163,11 +129,8 @@ export class WorkspaceDataSource extends DataSource {
     queryRunnerOrEntityClass?: QueryRunner | EntityTarget<any>,
     aliasOrOptions?: string | CreateQueryBuilderOptions,
     queryRunner?: QueryRunner,
-    options?: CreateQueryBuilderOptions,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): SelectQueryBuilder<any> {
-    let calledByWorkspaceEntityManager;
-
     const isPermissionsV2Enabled =
       this.featureFlagMap[FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED];
 
@@ -175,16 +138,7 @@ export class WorkspaceDataSource extends DataSource {
       isDefined(aliasOrOptions) && typeof aliasOrOptions === 'string';
 
     if (isPermissionsV2Enabled) {
-      if (isCalledWithEntityTarget) {
-        calledByWorkspaceEntityManager =
-          options?.calledByWorkspaceEntityManager;
-      } else {
-        calledByWorkspaceEntityManager = (
-          aliasOrOptions as CreateQueryBuilderOptions
-        )?.calledByWorkspaceEntityManager;
-      }
-
-      if (!(calledByWorkspaceEntityManager === true)) {
+      if (!this.allowCreateQueryBuilder) {
         throw new PermissionsException(
           'Method not allowed because permissions are not implemented at datasource level.',
           PermissionsExceptionCode.METHOD_NOT_ALLOWED,
