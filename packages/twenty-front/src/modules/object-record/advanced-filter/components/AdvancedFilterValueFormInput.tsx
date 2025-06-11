@@ -68,13 +68,15 @@ export const AdvancedFilterValueFormInput = ({
     );
   }
 
+  const field = {
+    type: recordFilter.type as FieldMetadataType,
+    label: '',
+    metadata: fieldDefinition?.metadata as FieldMetadata,
+  };
+
   return (
     <FormFieldInput
-      field={{
-        type: recordFilter.type as FieldMetadataType,
-        label: '',
-        metadata: fieldDefinition?.metadata as FieldMetadata,
-      }}
+      field={field}
       defaultValue={recordFilter.value}
       onChange={handleChange}
       VariablePicker={VariablePicker}

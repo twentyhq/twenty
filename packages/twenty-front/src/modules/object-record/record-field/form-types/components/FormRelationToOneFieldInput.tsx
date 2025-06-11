@@ -1,19 +1,25 @@
-import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { FormSingleRecordPicker } from '@/object-record/record-field/form-types/components/FormSingleRecordPicker';
-import { isDefined } from 'twenty-shared/utils';
-import { JsonValue } from 'type-fest';
+import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import {
   FieldRelationToOneValue,
   FieldRelationValue,
 } from '@/object-record/record-field/types/FieldMetadata';
+import { isDefined } from 'twenty-shared/utils';
+import { JsonValue } from 'type-fest';
 
 export type FormRelationToOneFieldInputProps = {
   label?: string;
   objectNameSingular?: string;
-  defaultValue?: FieldRelationValue<FieldRelationToOneValue>;
+  defaultValue?: FieldRelationValue<FieldRelationToOneValue> | string;
   onChange: (value: JsonValue) => void;
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;
+};
+
+const isFieldRelationToOneValue = (
+  value: FormRelationToOneFieldInputProps['defaultValue'],
+): value is FieldRelationValue<FieldRelationToOneValue> => {
+  return typeof value === 'object' && isDefined(value?.id);
 };
 
 export const FormRelationToOneFieldInput = ({
@@ -28,12 +34,12 @@ export const FormRelationToOneFieldInput = ({
     isDefined(objectNameSingular) && (
       <FormSingleRecordPicker
         label={label}
-        defaultValue={defaultValue?.id}
-        onChange={(recordId) => {
-          onChange({
-            id: recordId,
-          });
-        }}
+        defaultValue={
+          isFieldRelationToOneValue(defaultValue)
+            ? defaultValue?.id
+            : defaultValue
+        }
+        onChange={onChange}
         objectNameSingular={objectNameSingular}
         disabled={readonly}
         VariablePicker={VariablePicker}
