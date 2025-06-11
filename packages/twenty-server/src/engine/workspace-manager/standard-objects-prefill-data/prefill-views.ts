@@ -3,12 +3,15 @@ import { v4 } from 'uuid';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
+import { carriersAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/carriers-all.view';
 import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
 import { customAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view';
+import { mgasAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/mgas-all.view';
 import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
 import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view';
 import { opportunitiesByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view';
 import { peopleAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view';
+import { policiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/policies-all.view';
 import { tasksAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view';
 import { tasksAssignedToMeView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-assigned-to-me';
 import { tasksByStatusView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view';
@@ -32,6 +35,9 @@ export const prefillViews = async (
   const views = [
     companiesAllView(objectMetadataItems),
     peopleAllView(objectMetadataItems),
+    policiesAllView(objectMetadataItems),
+    mgasAllView(objectMetadataItems),
+    carriersAllView(objectMetadataItems),
     opportunitiesAllView(objectMetadataItems),
     opportunitiesByStageView(objectMetadataItems),
     notesAllView(objectMetadataItems),
