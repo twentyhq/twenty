@@ -444,6 +444,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         ...options?.where,
         workspaceId,
       },
+      order: {
+        namePlural: 'ASC',
+      },
     });
   }
 
