@@ -121,7 +121,7 @@ export const useHttpRequestForm = ({
         ...action.settings,
         input: {
           url: formData.url,
-          method: formData.method as any,
+          method: formData.method,
           headers: parsedHeaders,
           body: parsedBody,
         },
