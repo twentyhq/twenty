@@ -18,10 +18,8 @@ export type ActionModalProps = {
   confirmButtonText?: string;
   confirmButtonAccent?: ButtonAccent;
   isLoading?: boolean;
-  sidePanelOptions?: {
-    closeOnShowPageOptionsActionExecution: false;
-    closeOnCommandMenuListActionExecution: true;
-  };
+  closeSidePanelOnShowPageOptionsActionExecution?: boolean;
+  closeSidePanelOnCommandMenuListActionExecution?: boolean;
 };
 
 export const ActionModal = ({
@@ -31,12 +29,14 @@ export const ActionModal = ({
   confirmButtonText = 'Confirm',
   confirmButtonAccent = 'danger',
   isLoading = false,
-  sidePanelOptions,
+  closeSidePanelOnShowPageOptionsActionExecution,
+  closeSidePanelOnCommandMenuListActionExecution,
 }: ActionModalProps) => {
   const { openModal } = useModal();
 
   const { closeActionMenu } = useCloseActionMenu({
-    sidePanelOptions,
+    closeSidePanelOnShowPageOptionsActionExecution,
+    closeSidePanelOnCommandMenuListActionExecution,
   });
 
   const handleConfirmClick = () => {
