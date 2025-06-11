@@ -12,4 +12,5 @@ export enum NoSelectionRecordActionKeys {
   GO_TO_SETTINGS = 'go-to-settings',
   GO_TO_TASKS = 'go-to-tasks',
   GO_TO_NOTES = 'go-to-notes',
+  GO_TO_MGAS = 'go-to-mgas',
 }

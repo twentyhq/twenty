@@ -12,6 +12,7 @@ const ORDERED_STANDARD_OBJECTS = [
   'person',
   'company',
   'carrier',
+  'mga',
   'opportunity',
   'task',
   'note',

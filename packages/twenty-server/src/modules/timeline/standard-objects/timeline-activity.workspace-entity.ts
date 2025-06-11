@@ -20,6 +20,7 @@ import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sy
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CarrierWorkspaceEntity } from 'src/modules/carrier/standard-objects/carrier.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
+import { MGAWorkspaceEntity } from 'src/modules/mga/standard-objects/mga.workspace-entity';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
@@ -275,4 +276,20 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('carrier')
   carrierId: string | null;
+
+  @WorkspaceRelation({
+    standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.mga,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`MGA`,
+    description: msg`Event MGA`,
+    icon: 'IconBuildingSkyscraper',
+    inverseSideTarget: () => MGAWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivities',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  mga: Relation<MGAWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('mga')
+  mgaId: string | null;
 }

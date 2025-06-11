@@ -10,6 +10,7 @@ export const ACTIVITY_TARGET_STANDARD_FIELD_IDS = {
   activity: '20202020-ca58-478c-a4f5-ae825671c30e',
   person: '20202020-4afd-4ae7-99c2-de57d795a93f',
   carrier: '20202020-5afd-4ae7-99c2-de57d795a93f',
+  mga: '20202020-7a1b-4c3d-9e2f-1a2b3c4d5e6f',
   company: '20202020-7cc0-44a1-8068-f11171fdd02e',
   opportunity: '20202020-1fc2-4af1-8c91-7901ee0fd38b',
   custom: '20202020-7f21-442f-94be-32462281b1ca',
@@ -46,6 +47,7 @@ export const ATTACHMENT_STANDARD_FIELD_IDS = {
   note: '20202020-4f4b-4503-a6fc-6b982f3dffb5',
   person: '20202020-0158-4aa2-965c-5cdafe21ffa2',
   carrier: '20202020-7c21-442f-94be-32462281b1ca',
+  mga: '20202020-8b2c-4d3e-9f1a-2b3c4d5e6f7a',
   company: '20202020-ceab-4a28-b546-73b06b4c08d5',
   opportunity: '20202020-7374-499d-bea3-9354890755b5',
   custom: '20202020-302d-43b3-9aea-aa4f89282a9f',
@@ -175,6 +177,7 @@ export const EVENT_STANDARD_FIELD_IDS = {
   workspaceMember: '20202020-af23-4479-9a30-868edc474b35',
   person: '20202020-c414-45b9-a60a-ac27aa96229e',
   carrier: '20202020-42f2-442f-94be-32462281b1ca',
+  mga: '20202020-9c3d-4e2f-9a1b-3c4d5e6f7a8b',
   company: '20202020-04ad-4221-a744-7a8278a5ce20',
   opportunity: '20202020-7664-4a35-a3df-580d389fd5f0',
   custom: '20202020-4a71-41b0-9f83-9cdcca3f8b14',
@@ -206,6 +209,7 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   workspaceMember: '20202020-af23-4479-9a30-868edc474b36',
   person: '20202020-c414-45b9-a60a-ac27aa96229f',
   carrier: '20202020-4d1d-41ac-b13b-621631298d56',
+  mga: '20202020-ad4e-4f1a-9b2c-4d5e6f7a8b9c',
   company: '20202020-04ad-4221-a744-7a8278a5ce21',
   opportunity: '20202020-7664-4a35-a3df-580d389fd527',
   task: '20202020-b2f5-415c-9135-a31dfe49501b',
@@ -224,6 +228,7 @@ export const FAVORITE_STANDARD_FIELD_IDS = {
   forWorkspaceMember: '20202020-ce63-49cb-9676-fdc0c45892cd',
   person: '20202020-c428-4f40-b6f3-86091511c41c',
   carrier: '20202020-4d1d-41ac-b13b-821631298d56',
+  mga: '20202020-1a2b-3c4d-5e6f-7a8b9c0d1e2f',
   company: '20202020-cff5-4682-8bf9-069169e08279',
   opportunity: '20202020-dabc-48e1-8318-2781a2b32aa2',
   workflow: '20202020-b11b-4dc8-999a-6bd0a947b463',
@@ -324,6 +329,7 @@ export const NOTE_TARGET_STANDARD_FIELD_IDS = {
   note: '20202020-57f3-4f50-9599-fc0f671df003',
   person: '20202020-38ca-4aab-92f5-8a605ca2e4c5',
   carrier: '20202020-4d1d-41ac-b13b-621631898d56',
+  mga: '20202020-cf6a-4b3c-9d4e-6f7a8b9c0d1e',
   company: 'c500fbc0-d6f2-4982-a959-5a755431696c',
   opportunity: '20202020-4e42-417a-a705-76581c9ade79',
   custom: '20202020-3d12-4579-94ee-7117c1bad492',
@@ -339,6 +345,7 @@ export const OPPORTUNITY_STANDARD_FIELD_IDS = {
   createdBy: '20202020-a63e-4a62-8e63-42a51828f831',
   pointOfContact: '20202020-8dfb-42fc-92b6-01afb759ed16',
   carrier: '20202020-4d1d-41ac-b13b-621631898d59',
+  mga: '20202020-5d1d-41ac-b13b-621631898d59',
   company: '20202020-cbac-457e-b565-adece5fc815f',
   favorites: '20202020-a1c2-4500-aaae-83ba8a0e827a',
   // TODO: check if activityTargets field can be deleted
@@ -560,6 +567,21 @@ export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
   searchVector: '70e56537-18ef-4811-b1c7-0a444006b815',
 };
 
+export const MGA_STANDARD_FIELD_IDS = {
+  name: '20202020-8e2b-4c1a-9f3d-7b2c4d5e6f8a',
+  naic: '20202020-9f3c-4d2b-8a1e-6c5d7e8f9a0b',
+  phone: '20202020-af4d-5e3c-7b2a-1c9d8e0f2b3a',
+  email: '20202020-bc5e-6f4d-8a2b-3c1d9e0f7a4b',
+  fullAddress: '20202020-cd6f-7a5e-9b3c-2d1e8f0a3b4c',
+  isActive: '20202020-da7e-8b6f-0c4d-3e2f1a9b5c6d',
+  lineOfBusiness: '20202020-eb8f-9c7a-1d5e-4f3a2b0c6d7e',
+  commissionStructure: '20202020-fa9a-0d8b-2e6f-5a4b3c1d7e8f',
+  position: '20202020-ab1c-2e9d-3f7a-6b5c4d0e8f9a',
+  favorites: '20202020-bc2d-3f0e-4a8b-7c6d5e1f9a0b',
+  timelineActivities: '20202020-14bf-4a8b-9c9d-1e2f3a4b5c6d',
+  searchVector: '20202020-25c0-4b9c-9d0e-2f3a4b5c6d7e',
+};
+
 export const STANDARD_OBJECT_FIELD_IDS = {
   activityTarget: ACTIVITY_TARGET_STANDARD_FIELD_IDS,
   activity: ACTIVITY_STANDARD_FIELD_IDS,
@@ -602,4 +624,5 @@ export const STANDARD_OBJECT_FIELD_IDS = {
   workflowRun: WORKFLOW_RUN_STANDARD_FIELD_IDS,
   workflowVersion: WORKFLOW_VERSION_STANDARD_FIELD_IDS,
   workspaceMember: WORKSPACE_MEMBER_STANDARD_FIELD_IDS,
+  mga: MGA_STANDARD_FIELD_IDS,
 };

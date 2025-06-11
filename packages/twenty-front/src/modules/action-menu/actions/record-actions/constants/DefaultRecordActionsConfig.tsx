@@ -552,13 +552,39 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     ),
     hotKeys: ['G', 'O'],
   },
+  [NoSelectionRecordActionKeys.GO_TO_MGAS]: {
+    type: ActionType.Navigation,
+    scope: ActionScope.Global,
+    key: NoSelectionRecordActionKeys.GO_TO_MGAS,
+    label: msg`Go to MGAs`,
+    shortLabel: msg`MGAs`,
+    position: 22,
+    Icon: IconBuildingSkyscraper,
+    isPinned: false,
+    availableOn: [
+      ActionViewType.INDEX_PAGE_NO_SELECTION,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.INDEX_PAGE_BULK_SELECTION,
+      ActionViewType.SHOW_PAGE,
+    ],
+    shouldBeRegistered: ({ objectMetadataItem, viewType }) =>
+      objectMetadataItem?.nameSingular !== CoreObjectNameSingular.MGA ||
+      viewType === ActionViewType.SHOW_PAGE,
+    component: (
+      <ActionLink
+        to={AppPath.RecordIndexPage}
+        params={{ objectNamePlural: CoreObjectNamePlural.MGA }}
+      />
+    ),
+    hotKeys: ['G', 'M'],
+  },
   [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
     type: ActionType.Navigation,
     scope: ActionScope.Global,
     key: NoSelectionRecordActionKeys.GO_TO_SETTINGS,
     label: msg`Go to Settings`,
     shortLabel: msg`Settings`,
-    position: 22,
+    position: 23,
     Icon: IconSettings,
     isPinned: false,
     availableOn: [
@@ -584,7 +610,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_TASKS,
     label: msg`Go to Tasks`,
     shortLabel: msg`Tasks`,
-    position: 23,
+    position: 24,
     Icon: IconCheckbox,
     isPinned: false,
     availableOn: [
@@ -615,7 +641,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_NOTES,
     label: msg`Go to Notes`,
     shortLabel: msg`Notes`,
-    position: 24,
+    position: 25,
     Icon: IconCheckbox,
     isPinned: false,
     availableOn: [

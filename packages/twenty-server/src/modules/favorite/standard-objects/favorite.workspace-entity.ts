@@ -20,6 +20,7 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 import { CarrierWorkspaceEntity } from 'src/modules/carrier/standard-objects/carrier.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { FavoriteFolderWorkspaceEntity } from 'src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity';
+import { MGAWorkspaceEntity } from 'src/modules/mga/standard-objects/mga.workspace-entity';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
@@ -99,6 +100,22 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('company')
   companyId: string;
+
+  @WorkspaceRelation({
+    standardId: FAVORITE_STANDARD_FIELD_IDS.mga,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`MGA`,
+    description: msg`Favorite MGA`,
+    icon: 'IconBuildingSkyscraper',
+    inverseSideTarget: () => MGAWorkspaceEntity,
+    inverseSideFieldKey: 'favorites',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  mga: Relation<MGAWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('mga')
+  mgaId: string;
 
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.favoriteFolder,

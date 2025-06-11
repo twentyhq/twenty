@@ -77,6 +77,7 @@ export class UpdateWorkspaceInput {
     'legal',
     'shop',
     'merch',
+    'mga',
     'store',
     'auth',
     'register',
