@@ -11,6 +11,7 @@ export class ClientConfigController {
   @Get()
   @UseGuards(PublicEndpointGuard)
   async getClientConfig(): Promise<ClientConfig> {
+    // TODO: Remove this comment used to trigger CI
     return this.clientConfigService.getClientConfig();
   }
 }
