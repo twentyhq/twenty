@@ -19,18 +19,28 @@ export enum OrderByDirection {
   DescNullsLast = 'DescNullsLast',
 }
 
-export type ObjectRecordOrderBy = Array<{
-  [Property in keyof ObjectRecord]?:
-    | OrderByDirection
-    | Record<string, OrderByDirection>;
-}>;
+export type ObjectRecordOrderBy = Array<
+  ObjectRecordOrderByForScalarField | ObjectRecordOrderByForCompositeField
+>;
 
-export type ObjectRecordOrderByLeafForNonCompositeFields = {
+export type ObjectRecordOrderByForScalarField = {
   [Property in keyof ObjectRecord]?: OrderByDirection;
 };
 
-export type ObjectRecordOrderByLeafForCompositeFields = {
+export type ObjectRecordOrderByForCompositeField = {
   [Property in keyof ObjectRecord]?: Record<string, OrderByDirection>;
+};
+
+export type ObjectRecordCursorLeafScalarValue = string | number | boolean;
+export type ObjectRecordCursorLeafCompositeValue = Record<
+  string,
+  ObjectRecordCursorLeafScalarValue
+>;
+
+export type ObjectRecordCursor = {
+  [Property in keyof ObjectRecord]?:
+    | ObjectRecordCursorLeafScalarValue
+    | ObjectRecordCursorLeafCompositeValue;
 };
 
 export interface ObjectRecordDuplicateCriteria {

@@ -1,4 +1,9 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import {
+  ObjectRecordCursor,
+  ObjectRecordCursorLeafCompositeValue,
+  ObjectRecordCursorLeafScalarValue,
   ObjectRecordFilter,
   ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -8,32 +13,44 @@ import { buildWhereCondition } from 'src/engine/api/utils/build-where-condition.
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 
 export const computeCursorArgFilter = (
-  cursor: Record<string, unknown>,
+  cursor: ObjectRecordCursor,
   orderBy: ObjectRecordOrderBy,
   fieldMetadataMapByName: FieldMetadataMap,
   isForwardPagination = true,
 ): ObjectRecordFilter[] => {
-  const cursorEntries = Object.entries(cursor ?? {});
+  const cursorEntries = Object.entries(cursor)
+    .map(([key, value]) => {
+      if (value === undefined) {
+        return null;
+      }
+
+      return {
+        [key]: value,
+      };
+    })
+    .filter(isDefined);
 
   if (cursorEntries.length === 0) {
     return [];
   }
 
-  return buildCumulativeConditions({
+  return buildCumulativeConditions<
+    ObjectRecordCursorLeafCompositeValue | ObjectRecordCursorLeafScalarValue
+  >({
     items: cursorEntries,
-    buildEqualityCondition: ([key, value]) =>
+    buildEqualityCondition: ({ cursorKey, cursorValue }) =>
       buildWhereCondition({
-        key,
-        cursorValue: value,
+        cursorKey,
+        cursorValue,
         fieldMetadataMapByName,
         orderBy,
         isForwardPagination: true,
         operator: 'eq',
       }),
-    buildMainCondition: ([key, value]) =>
+    buildMainCondition: ({ cursorKey, cursorValue }) =>
       buildWhereCondition({
-        key,
-        cursorValue: value,
+        cursorKey,
+        cursorValue,
         fieldMetadataMapByName,
         orderBy,
         isForwardPagination,

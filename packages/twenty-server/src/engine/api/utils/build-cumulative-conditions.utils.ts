@@ -1,18 +1,37 @@
-import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import {
+  ObjectRecordCursorLeafCompositeValue,
+  ObjectRecordCursorLeafScalarValue,
+  ObjectRecordFilter,
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+
+type BuildCursorConditionParams<CursorValue> = {
+  cursorKey: string;
+  cursorValue: CursorValue;
+};
+
+type ReturnType = Array<ObjectRecordFilter | { and: ObjectRecordFilter[] }>;
 
 export const buildCumulativeConditions = <
-  T,
-  R extends ObjectRecordFilter | { and: ObjectRecordFilter[] },
+  CursorValue extends
+    | ObjectRecordCursorLeafCompositeValue
+    | ObjectRecordCursorLeafScalarValue,
 >({
   items,
   buildEqualityCondition,
   buildMainCondition,
 }: {
-  items: T[];
-  buildEqualityCondition: (item: T, index: number) => ObjectRecordFilter;
-  buildMainCondition: (item: T, index: number) => ObjectRecordFilter;
-}): R[] => {
+  items: Record<string, CursorValue>[];
+  buildEqualityCondition: ({
+    cursorKey,
+    cursorValue,
+  }: BuildCursorConditionParams<CursorValue>) => ObjectRecordFilter;
+  buildMainCondition: ({
+    cursorKey,
+    cursorValue,
+  }: BuildCursorConditionParams<CursorValue>) => ObjectRecordFilter;
+}): ReturnType => {
   return items.map((item, index) => {
+    const [currentCursorKey, currentCursorValue] = Object.entries(item)[0];
     const andConditions: ObjectRecordFilter[] = [];
 
     for (
@@ -21,13 +40,23 @@ export const buildCumulativeConditions = <
       subConditionIndex++
     ) {
       const previousItem = items[subConditionIndex];
+      const [previousCursorKey, previousCursorValue] =
+        Object.entries(previousItem)[0];
 
       andConditions.push(
-        buildEqualityCondition(previousItem, subConditionIndex),
+        buildEqualityCondition({
+          cursorKey: previousCursorKey,
+          cursorValue: previousCursorValue,
+        }),
       );
     }
 
-    andConditions.push(buildMainCondition(item, index));
+    andConditions.push(
+      buildMainCondition({
+        cursorKey: currentCursorKey,
+        cursorValue: currentCursorValue,
+      }),
+    );
 
     if (andConditions.length === 1) {
       return andConditions[0];
@@ -36,5 +65,5 @@ export const buildCumulativeConditions = <
     return {
       and: andConditions,
     };
-  }) as R[];
+  });
 };

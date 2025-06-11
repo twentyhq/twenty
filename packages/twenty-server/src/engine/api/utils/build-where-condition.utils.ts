@@ -2,6 +2,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import {
   ObjectRecord,
+  ObjectRecordCursorLeafCompositeValue,
+  ObjectRecordCursorLeafScalarValue,
   ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
@@ -12,30 +14,34 @@ import {
 import { buildCompositeFieldWhereCondition } from 'src/engine/api/utils/build-composite-field-where-condition.utils';
 import { computeOperator } from 'src/engine/api/utils/compute-operator.utils';
 import { isAscendingOrder } from 'src/engine/api/utils/is-ascending-order.utils';
-import { validateAndGetOrderByForNonCompositeFields } from 'src/engine/api/utils/validate-and-get-order-by.utils';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
+import { validateAndGetOrderByForScalarField } from 'src/engine/api/utils/validate-and-get-order-by.utils';
+
+type BuildWhereConditionParams = {
+  cursorKey: keyof ObjectRecord;
+  cursorValue:
+    | ObjectRecordCursorLeafScalarValue
+    | ObjectRecordCursorLeafCompositeValue;
+  fieldMetadataMapByName: FieldMetadataMap;
+  orderBy: ObjectRecordOrderBy;
+  isForwardPagination: boolean;
+  operator?: string;
+};
 
 export const buildWhereCondition = ({
-  key,
+  cursorKey,
   cursorValue,
   fieldMetadataMapByName,
   orderBy,
   isForwardPagination,
   operator,
-}: {
-  key: keyof ObjectRecord;
-  cursorValue: unknown;
-  fieldMetadataMapByName: FieldMetadataMap;
-  orderBy: ObjectRecordOrderBy;
-  isForwardPagination: boolean;
-  operator?: string;
-}): Record<string, unknown> => {
-  const fieldMetadata = fieldMetadataMapByName[key];
+}: BuildWhereConditionParams): Record<string, unknown> => {
+  const fieldMetadata = fieldMetadataMapByName[cursorKey];
 
   if (!fieldMetadata) {
     throw new GraphqlQueryRunnerException(
-      `Field metadata not found for key: ${key}`,
+      `Field metadata not found for key: ${cursorKey}`,
       GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,
     );
   }
@@ -43,16 +49,16 @@ export const buildWhereCondition = ({
   if (isCompositeFieldMetadataType(fieldMetadata.type)) {
     return buildCompositeFieldWhereCondition({
       fieldType: fieldMetadata.type,
-      fieldKey: key,
+      fieldKey: cursorKey,
       orderBy,
-      cursorValue: cursorValue as Record<string, unknown>,
+      cursorValue: cursorValue as ObjectRecordCursorLeafCompositeValue,
       isForwardPagination,
       operator,
     });
   }
 
-  const keyOrderBy = validateAndGetOrderByForNonCompositeFields(key, orderBy);
-  const orderByDirection = keyOrderBy[key];
+  const keyOrderBy = validateAndGetOrderByForScalarField(cursorKey, orderBy);
+  const orderByDirection = keyOrderBy[cursorKey];
 
   if (!isDefined(orderByDirection)) {
     throw new GraphqlQueryRunnerException(
@@ -68,5 +74,5 @@ export const buildWhereCondition = ({
     operator,
   );
 
-  return { [key]: { [computedOperator]: cursorValue } };
+  return { [cursorKey]: { [computedOperator]: cursorValue } };
 };

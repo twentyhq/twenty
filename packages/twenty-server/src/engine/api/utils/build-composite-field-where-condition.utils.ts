@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import {
   ObjectRecord,
+  ObjectRecordCursorLeafCompositeValue,
   ObjectRecordFilter,
   ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -14,8 +15,17 @@ import {
 import { buildCumulativeConditions } from 'src/engine/api/utils/build-cumulative-conditions.utils';
 import { computeOperator } from 'src/engine/api/utils/compute-operator.utils';
 import { isAscendingOrder } from 'src/engine/api/utils/is-ascending-order.utils';
-import { validateAndGetOrderByForCompositeFields } from 'src/engine/api/utils/validate-and-get-order-by.utils';
+import { validateAndGetOrderByForCompositeField } from 'src/engine/api/utils/validate-and-get-order-by.utils';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+
+type BuildCompositeFieldWhereConditionParams = {
+  fieldType: FieldMetadataType;
+  fieldKey: keyof ObjectRecord;
+  orderBy: ObjectRecordOrderBy;
+  cursorValue: ObjectRecordCursorLeafCompositeValue;
+  isForwardPagination: boolean;
+  operator?: string;
+};
 
 export const buildCompositeFieldWhereCondition = ({
   fieldType,
@@ -24,14 +34,10 @@ export const buildCompositeFieldWhereCondition = ({
   cursorValue,
   isForwardPagination,
   operator,
-}: {
-  fieldType: FieldMetadataType;
-  fieldKey: keyof ObjectRecord;
-  orderBy: ObjectRecordOrderBy;
-  cursorValue: Record<string, unknown>;
-  isForwardPagination: boolean;
-  operator?: string;
-}): Record<string, ObjectRecordFilter> => {
+}: BuildCompositeFieldWhereConditionParams): Record<
+  string,
+  ObjectRecordFilter
+> => {
   const compositeType = compositeTypeDefinitions.get(fieldType);
 
   if (!compositeType) {
@@ -41,7 +47,7 @@ export const buildCompositeFieldWhereCondition = ({
     );
   }
 
-  const fieldOrderBy = validateAndGetOrderByForCompositeFields(
+  const fieldOrderBy = validateAndGetOrderByForCompositeField(
     fieldKey,
     orderBy,
   );
@@ -56,32 +62,29 @@ export const buildCompositeFieldWhereCondition = ({
     return {};
   }
 
-  if (operator === 'eq') {
-    const result: Record<string, Partial<ObjectRecordFilter>> = {};
+  const cursorEntries = compositeFieldProperties
+    .map((property) => {
+      if (cursorValue[property.name] === undefined) {
+        return null;
+      }
 
-    for (const property of compositeFieldProperties) {
-      result[fieldKey] = {
-        ...result[fieldKey],
-        [property.name]: {
-          eq: cursorValue[property.name],
-        },
+      return {
+        [property.name]: cursorValue[property.name],
       };
-    }
-
-    return result;
-  }
+    })
+    .filter(isDefined);
 
   const orConditions = buildCumulativeConditions({
-    items: compositeFieldProperties,
-    buildEqualityCondition: (property) => ({
+    items: cursorEntries,
+    buildEqualityCondition: ({ cursorKey, cursorValue }) => ({
       [fieldKey]: {
-        [property.name]: {
-          eq: cursorValue[property.name],
+        [cursorKey]: {
+          eq: cursorValue,
         },
       },
     }),
-    buildMainCondition: (currentProperty) => {
-      const orderByDirection = fieldOrderBy[fieldKey]?.[currentProperty.name];
+    buildMainCondition: ({ cursorKey, cursorValue }) => {
+      const orderByDirection = fieldOrderBy[fieldKey]?.[cursorKey];
 
       if (!isDefined(orderByDirection)) {
         throw new GraphqlQueryRunnerException(
@@ -99,8 +102,8 @@ export const buildCompositeFieldWhereCondition = ({
 
       return {
         [fieldKey]: {
-          [currentProperty.name]: {
-            [computedOperator]: cursorValue[currentProperty.name],
+          [cursorKey]: {
+            [computedOperator]: cursorValue,
           },
         },
       };

@@ -3,8 +3,8 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   ObjectRecord,
   ObjectRecordOrderBy,
-  ObjectRecordOrderByLeafForCompositeFields,
-  ObjectRecordOrderByLeafForNonCompositeFields,
+  ObjectRecordOrderByForCompositeField,
+  ObjectRecordOrderByForScalarField,
   OrderByDirection,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
@@ -17,10 +17,10 @@ const isOrderByDirection = (value: unknown): value is OrderByDirection => {
   return Object.values(OrderByDirection).includes(value as OrderByDirection);
 };
 
-const isOrderByForNonCompositeField = (
+const isOrderByForScalarField = (
   orderByLeaf: Record<string, unknown>,
   key: keyof ObjectRecord,
-): orderByLeaf is ObjectRecordOrderByLeafForNonCompositeFields => {
+): orderByLeaf is ObjectRecordOrderByForScalarField => {
   const value = orderByLeaf[key as string];
 
   return isDefined(value) && isOrderByDirection(value);
@@ -29,7 +29,7 @@ const isOrderByForNonCompositeField = (
 const isOrderByForCompositeField = (
   orderByLeaf: Record<string, unknown>,
   key: keyof ObjectRecord,
-): orderByLeaf is ObjectRecordOrderByLeafForCompositeFields => {
+): orderByLeaf is ObjectRecordOrderByForCompositeField => {
   const value = orderByLeaf[key as string];
 
   return (
@@ -41,10 +41,10 @@ const isOrderByForCompositeField = (
   );
 };
 
-export const validateAndGetOrderByForNonCompositeFields = (
+export const validateAndGetOrderByForScalarField = (
   key: keyof ObjectRecord,
   orderBy: ObjectRecordOrderBy,
-): ObjectRecordOrderByLeafForNonCompositeFields => {
+): ObjectRecordOrderByForScalarField => {
   const keyOrderBy = orderBy.find((order) => key in order);
 
   if (!isDefined(keyOrderBy)) {
@@ -54,7 +54,7 @@ export const validateAndGetOrderByForNonCompositeFields = (
     );
   }
 
-  if (!isOrderByForNonCompositeField(keyOrderBy, key)) {
+  if (!isOrderByForScalarField(keyOrderBy, key)) {
     throw new GraphqlQueryRunnerException(
       'Expected non-composite field order by',
       GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,
@@ -64,10 +64,10 @@ export const validateAndGetOrderByForNonCompositeFields = (
   return keyOrderBy;
 };
 
-export const validateAndGetOrderByForCompositeFields = (
+export const validateAndGetOrderByForCompositeField = (
   key: keyof ObjectRecord,
   orderBy: ObjectRecordOrderBy,
-): ObjectRecordOrderByLeafForCompositeFields => {
+): ObjectRecordOrderByForCompositeField => {
   const keyOrderBy = orderBy.find((order) => key in order);
 
   if (!isDefined(keyOrderBy)) {
