@@ -8,9 +8,9 @@ import {
   ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { buildCumulativeConditions } from 'src/engine/api/utils/build-cumulative-conditions.utils';
-import { buildWhereCondition } from 'src/engine/api/utils/build-where-condition.utils';
+import { buildCursorCumulativeWhereCondition } from 'src/engine/api/utils/build-cursor-cumulative-where-conditions.utils';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
+import { buildCursorWhereCondition } from 'src/engine/api/utils/build-cursor-where-condition.utils';
 
 export const computeCursorArgFilter = (
   cursor: ObjectRecordCursor,
@@ -34,12 +34,12 @@ export const computeCursorArgFilter = (
     return [];
   }
 
-  return buildCumulativeConditions<
+  return buildCursorCumulativeWhereCondition<
     ObjectRecordCursorLeafCompositeValue | ObjectRecordCursorLeafScalarValue
   >({
-    items: cursorEntries,
+    cursorEntries,
     buildEqualityCondition: ({ cursorKey, cursorValue }) =>
-      buildWhereCondition({
+      buildCursorWhereCondition({
         cursorKey,
         cursorValue,
         fieldMetadataMapByName,
@@ -48,7 +48,7 @@ export const computeCursorArgFilter = (
         isEqualityCondition: true,
       }),
     buildMainCondition: ({ cursorKey, cursorValue }) =>
-      buildWhereCondition({
+      buildCursorWhereCondition({
         cursorKey,
         cursorValue,
         fieldMetadataMapByName,

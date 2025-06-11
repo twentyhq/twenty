@@ -6,12 +6,12 @@ import {
   OrderByDirection,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { buildCompositeFieldWhereCondition } from 'src/engine/api/utils/build-composite-field-where-condition.utils';
+import { buildCursorCompositeFieldWhereCondition } from 'src/engine/api/utils/build-cursor-composite-field-where-condition.utils';
 
 describe('buildCompositeFieldWhereCondition', () => {
   describe('eq operator cases', () => {
     it('should handle eq operator', () => {
-      const result = buildCompositeFieldWhereCondition({
+      const result = buildCursorCompositeFieldWhereCondition({
         fieldType: FieldMetadataType.FULL_NAME,
         fieldKey: 'name',
         orderBy: [
@@ -117,7 +117,7 @@ describe('buildCompositeFieldWhereCondition', () => {
           expectedOperator,
         } = context;
 
-        const result = buildCompositeFieldWhereCondition({
+        const result = buildCursorCompositeFieldWhereCondition({
           fieldType,
           fieldKey,
           orderBy,
@@ -147,7 +147,7 @@ describe('buildCompositeFieldWhereCondition', () => {
           description,
         } = context;
 
-        const result = buildCompositeFieldWhereCondition({
+        const result = buildCursorCompositeFieldWhereCondition({
           fieldType,
           fieldKey,
           orderBy,
@@ -278,7 +278,7 @@ describe('buildCompositeFieldWhereCondition', () => {
       ({ context }) => {
         const { fieldType, fieldKey, orderBy, value, isForwardPagination } =
           context;
-        const result = buildCompositeFieldWhereCondition({
+        const result = buildCursorCompositeFieldWhereCondition({
           fieldType,
           fieldKey,
           orderBy,
@@ -317,7 +317,7 @@ describe('buildCompositeFieldWhereCondition', () => {
           description,
         } = context;
 
-        const result = buildCompositeFieldWhereCondition({
+        const result = buildCursorCompositeFieldWhereCondition({
           fieldType,
           fieldKey,
           orderBy,
@@ -333,7 +333,7 @@ describe('buildCompositeFieldWhereCondition', () => {
   describe('error cases', () => {
     it('should throw error for invalid composite type', () => {
       expect(() =>
-        buildCompositeFieldWhereCondition({
+        buildCursorCompositeFieldWhereCondition({
           fieldType: FieldMetadataType.TEXT,
           fieldKey: 'person',
           orderBy: [{ person: { firstName: OrderByDirection.AscNullsLast } }],
@@ -345,7 +345,7 @@ describe('buildCompositeFieldWhereCondition', () => {
 
     it('should throw error for invalid cursor with missing order by', () => {
       expect(() =>
-        buildCompositeFieldWhereCondition({
+        buildCursorCompositeFieldWhereCondition({
           fieldType: FieldMetadataType.FULL_NAME,
           fieldKey: 'person',
           orderBy: [],

@@ -12,13 +12,13 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { buildCumulativeConditions } from 'src/engine/api/utils/build-cumulative-conditions.utils';
+import { buildCursorCumulativeWhereCondition } from 'src/engine/api/utils/build-cursor-cumulative-where-conditions.utils';
 import { computeOperator } from 'src/engine/api/utils/compute-operator.utils';
 import { isAscendingOrder } from 'src/engine/api/utils/is-ascending-order.utils';
 import { validateAndGetOrderByForCompositeField } from 'src/engine/api/utils/validate-and-get-order-by.utils';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 
-type BuildCompositeFieldWhereConditionParams = {
+type BuildCursorCompositeFieldWhereConditionParams = {
   fieldType: FieldMetadataType;
   fieldKey: keyof ObjectRecord;
   orderBy: ObjectRecordOrderBy;
@@ -27,14 +27,14 @@ type BuildCompositeFieldWhereConditionParams = {
   isEqualityCondition?: boolean;
 };
 
-export const buildCompositeFieldWhereCondition = ({
+export const buildCursorCompositeFieldWhereCondition = ({
   fieldType,
   fieldKey,
   orderBy,
   cursorValue,
   isForwardPagination,
   isEqualityCondition = false,
-}: BuildCompositeFieldWhereConditionParams): Record<
+}: BuildCursorCompositeFieldWhereConditionParams): Record<
   string,
   ObjectRecordFilter
 > => {
@@ -94,8 +94,8 @@ export const buildCompositeFieldWhereCondition = ({
     };
   }
 
-  const orConditions = buildCumulativeConditions({
-    items: cursorEntries,
+  const orConditions = buildCursorCumulativeWhereCondition({
+    cursorEntries,
     buildEqualityCondition: ({ cursorKey, cursorValue }) => ({
       [fieldKey]: {
         [cursorKey]: {

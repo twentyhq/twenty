@@ -11,16 +11,10 @@ type BuildCursorConditionParams<CursorValue> = {
 
 type ReturnType = Array<ObjectRecordFilter | { and: ObjectRecordFilter[] }>;
 
-export const buildCumulativeConditions = <
-  CursorValue extends
-    | ObjectRecordCursorLeafCompositeValue
-    | ObjectRecordCursorLeafScalarValue,
->({
-  items,
-  buildEqualityCondition,
-  buildMainCondition,
-}: {
-  items: Record<string, CursorValue>[];
+type CursorEntry<CursorValue> = Record<string, CursorValue>;
+
+type BuildCursorCumulativeWhereConditionsParams<CursorValue> = {
+  cursorEntries: CursorEntry<CursorValue>[];
   buildEqualityCondition: ({
     cursorKey,
     cursorValue,
@@ -29,9 +23,20 @@ export const buildCumulativeConditions = <
     cursorKey,
     cursorValue,
   }: BuildCursorConditionParams<CursorValue>) => ObjectRecordFilter;
-}): ReturnType => {
-  return items.map((item, index) => {
-    const [currentCursorKey, currentCursorValue] = Object.entries(item)[0];
+};
+
+export const buildCursorCumulativeWhereCondition = <
+  CursorValue extends
+    | ObjectRecordCursorLeafCompositeValue
+    | ObjectRecordCursorLeafScalarValue,
+>({
+  cursorEntries,
+  buildEqualityCondition,
+  buildMainCondition,
+}: BuildCursorCumulativeWhereConditionsParams<CursorValue>): ReturnType => {
+  return cursorEntries.map((cursorEntry, index) => {
+    const [currentCursorKey, currentCursorValue] =
+      Object.entries(cursorEntry)[0];
     const andConditions: ObjectRecordFilter[] = [];
 
     for (
@@ -39,9 +44,9 @@ export const buildCumulativeConditions = <
       subConditionIndex < index;
       subConditionIndex++
     ) {
-      const previousItem = items[subConditionIndex];
+      const previousCursorEntry = cursorEntries[subConditionIndex];
       const [previousCursorKey, previousCursorValue] =
-        Object.entries(previousItem)[0];
+        Object.entries(previousCursorEntry)[0];
 
       andConditions.push(
         buildEqualityCondition({
