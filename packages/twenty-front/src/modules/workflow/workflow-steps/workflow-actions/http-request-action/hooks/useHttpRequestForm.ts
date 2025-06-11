@@ -17,15 +17,17 @@ export type ErrorMessagesVisible = {
   body: boolean;
 };
 
+export type UseHttpRequestFormParams = {
+  action: WorkflowHttpRequestAction;
+  onActionUpdate?: (action: WorkflowHttpRequestAction) => void;
+  readonly: boolean;
+};
+
 export const useHttpRequestForm = ({
   action,
   onActionUpdate,
   readonly,
-}: {
-  action: WorkflowHttpRequestAction;
-  onActionUpdate?: (action: WorkflowHttpRequestAction) => void;
-  readonly: boolean;
-}) => {
+}: UseHttpRequestFormParams) => {
   const [errorMessages, setErrorMessages] = useState<ErrorMessages>({});
   const [errorMessagesVisible, setErrorMessagesVisible] =
     useState<ErrorMessagesVisible>({
