@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  PermissionsOnAllObjectRecords,
-  SettingPermissionType,
-} from 'twenty-shared/constants';
+import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -12,6 +9,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,

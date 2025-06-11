@@ -1,8 +1,6 @@
-import {
-  PermissionsOnAllObjectRecords,
-  SettingPermissionType,
-} from 'twenty-shared/constants';
+import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions';
 import { UserWorkspacePermissionsDto } from 'src/engine/metadata-modules/role/dtos/user-workspace-permissions.dto';
 
