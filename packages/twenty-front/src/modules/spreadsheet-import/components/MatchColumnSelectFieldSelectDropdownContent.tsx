@@ -1,4 +1,5 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { getFieldTypeLabel } from '@/object-record/object-filter-dropdown/utils/getFieldTypeLabel';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
@@ -60,7 +61,7 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
   const { t } = useLingui();
 
   return (
-    <DropdownContent>
+    <DropdownContent widthInPixels={320}>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -75,6 +76,7 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
         value={searchFilter}
         onChange={handleFilterChange}
         autoFocus
+        placeholder={t`Search field`}
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
@@ -95,6 +97,7 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
             }
             LeftIcon={getIcon(field.icon)}
             text={field.label}
+            contextualText={getFieldTypeLabel(field.type)}
             hasSubMenu={isCompositeFieldType(field.type)}
           />
         ))}
