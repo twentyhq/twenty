@@ -886,41 +886,55 @@ jobs:
         run: |
           echo "=== GENERATING GRAPHQL DIFF REPORTS ==="
           
-          # Generate GraphQL schema diff report
-          echo "Generating GraphQL schema diff..."
-          graphql-inspector diff main-schema-introspection.json current-schema-introspection.json --format markdown > graphql-schema-diff.md || {
-            echo "GraphQL schema has breaking changes or other issues"
+          # Check if GraphQL schema has changes
+          echo "Checking GraphQL schema for changes..."
+          if graphql-inspector diff main-schema-introspection.json current-schema-introspection.json >/dev/null 2>&1; then
+            echo "✅ No changes in GraphQL schema"
+            # Don't create a diff file for no changes
+          else
+            echo "⚠️ Changes detected in GraphQL schema, generating report..."
             echo "# GraphQL Schema Changes" > graphql-schema-diff.md
             echo "" >> graphql-schema-diff.md
-            echo "⚠️ **Breaking changes or errors detected in GraphQL schema**" >> graphql-schema-diff.md
-            echo "" >> graphql-schema-diff.md
-            echo "\`\`\`" >> graphql-schema-diff.md
-            graphql-inspector diff main-schema-introspection.json current-schema-introspection.json 2>&1 || echo "Error generating diff" >> graphql-schema-diff.md
-            echo "\`\`\`" >> graphql-schema-diff.md
-          }
+            graphql-inspector diff main-schema-introspection.json current-schema-introspection.json >> graphql-schema-diff.md 2>&1 || {
+              echo "⚠️ **Breaking changes or errors detected in GraphQL schema**" >> graphql-schema-diff.md
+              echo "" >> graphql-schema-diff.md
+              echo "\`\`\`" >> graphql-schema-diff.md
+              graphql-inspector diff main-schema-introspection.json current-schema-introspection.json 2>&1 >> graphql-schema-diff.md || echo "Error generating diff" >> graphql-schema-diff.md
+              echo "\`\`\`" >> graphql-schema-diff.md
+            }
+          fi
           
-          # Generate GraphQL metadata schema diff report
-          echo "Generating GraphQL metadata schema diff..."
-          graphql-inspector diff main-metadata-schema-introspection.json current-metadata-schema-introspection.json --format markdown > graphql-metadata-diff.md || {
-            echo "GraphQL metadata schema has breaking changes or other issues"
+          # Check if GraphQL metadata schema has changes
+          echo "Checking GraphQL metadata schema for changes..."
+          if graphql-inspector diff main-metadata-schema-introspection.json current-metadata-schema-introspection.json >/dev/null 2>&1; then
+            echo "✅ No changes in GraphQL metadata schema"
+            # Don't create a diff file for no changes
+          else
+            echo "⚠️ Changes detected in GraphQL metadata schema, generating report..."
             echo "# GraphQL Metadata Schema Changes" > graphql-metadata-diff.md
             echo "" >> graphql-metadata-diff.md
-            echo "⚠️ **Breaking changes or errors detected in GraphQL metadata schema**" >> graphql-metadata-diff.md
-            echo "" >> graphql-metadata-diff.md
-            echo "\`\`\`" >> graphql-metadata-diff.md
-            graphql-inspector diff main-metadata-schema-introspection.json current-metadata-schema-introspection.json 2>&1 || echo "Error generating diff" >> graphql-metadata-diff.md
-            echo "\`\`\`" >> graphql-metadata-diff.md
-          }
+            graphql-inspector diff main-metadata-schema-introspection.json current-metadata-schema-introspection.json >> graphql-metadata-diff.md 2>&1 || {
+              echo "⚠️ **Breaking changes or errors detected in GraphQL metadata schema**" >> graphql-metadata-diff.md
+              echo "" >> graphql-metadata-diff.md
+              echo "\`\`\`" >> graphql-metadata-diff.md
+              graphql-inspector diff main-metadata-schema-introspection.json current-metadata-schema-introspection.json 2>&1 >> graphql-metadata-diff.md || echo "Error generating diff" >> graphql-metadata-diff.md
+              echo "\`\`\`" >> graphql-metadata-diff.md
+            }
+          fi
           
           # Show what we generated
           echo "Generated diff files:"
-          ls -la *-diff.md
+          ls -la *-diff.md 2>/dev/null || echo "No diff files generated (no changes detected)"
           
-          echo "GraphQL schema diff preview:"
-          head -20 graphql-schema-diff.md || echo "No GraphQL schema diff file"
+          if [ -f graphql-schema-diff.md ]; then
+            echo "GraphQL schema diff preview:"
+            head -20 graphql-schema-diff.md
+          fi
           
-          echo "GraphQL metadata diff preview:"
-          head -20 graphql-metadata-diff.md || echo "No GraphQL metadata diff file"
+          if [ -f graphql-metadata-diff.md ]; then
+            echo "GraphQL metadata diff preview:"
+            head -20 graphql-metadata-diff.md
+          fi
 
       - name: Check GraphQL Schema for Breaking Changes
         continue-on-error: true
@@ -942,42 +956,121 @@ jobs:
           # fail-on-breaking: true
           annotations: true
 
-      - name: Setup Java for OpenAPI Diff
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '11'
+      - name: Install OpenAPI Diff Tool
+        run: |
+          npm install -g openapi-diff
 
       - name: Check REST API Breaking Changes
         run: |
-          # Download openapi-diff CLI
-          wget -q https://repo1.maven.org/maven2/org/openapitools/openapi-diff-cli/2.1.2/openapi-diff-cli-2.1.2.jar -O openapi-diff.jar
+          echo "=== CHECKING REST API FOR BREAKING CHANGES ==="
           
-          echo "Checking REST API breaking changes..."
-          java -jar openapi-diff.jar --old main-rest-api.json --new current-rest-api.json --output rest-api-diff.md --format markdown
-          
-          # Check if there are breaking changes (exit code 1 means breaking changes found)
-          java -jar openapi-diff.jar --old main-rest-api.json --new current-rest-api.json --fail-on-incompatible || {
+          # Use openapi-diff to compare APIs and generate detailed report
+          if npx openapi-diff main-rest-api.json current-rest-api.json > rest-api-diff-output.json 2>&1; then
+            echo "✅ No breaking changes detected in REST API"
+            
+            # Check if there are any changes at all
+            if ! npx openapi-diff main-rest-api.json current-rest-api.json --json | jq -e '.breakingDifferencesFound == false and (.nonBreakingDifferences | length) == 0 and (.unclassifiedDifferences | length) == 0' >/dev/null 2>&1; then
+              echo "📝 Non-breaking or unclassified changes detected, generating report..."
+              
+              # Generate markdown report for non-breaking changes
+              echo "# REST API Changes" > rest-api-diff.md
+              echo "" >> rest-api-diff.md
+              echo "## Summary" >> rest-api-diff.md
+              npx openapi-diff main-rest-api.json current-rest-api.json --json | jq -r '
+                if (.nonBreakingDifferences | length) > 0 then
+                  "### ✅ Non-Breaking Changes (" + (.nonBreakingDifferences | length | tostring) + ")\n" +
+                  (.nonBreakingDifferences | map("- " + .action + " " + .entity + ": " + (.sourceSpecEntityDetails[0].location // "N/A")) | join("\n"))
+                else "" end,
+                if (.unclassifiedDifferences | length) > 0 then
+                  "\n### ❓ Unclassified Changes (" + (.unclassifiedDifferences | length | tostring) + ")\n" +
+                  (.unclassifiedDifferences | map("- " + .action + " " + .entity + ": " + (.sourceSpecEntityDetails[0].location // "N/A")) | join("\n"))
+                else "" end
+              ' >> rest-api-diff.md
+            fi
+          else
+            echo "❌ Breaking changes detected in REST API"
+            
+            # Generate breaking changes report
+            echo "# REST API Breaking Changes" > rest-api-diff.md
+            echo "" >> rest-api-diff.md
+            echo "⚠️ **Breaking changes detected that may affect existing API consumers**" >> rest-api-diff.md
+            echo "" >> rest-api-diff.md
+            
+            # Parse and format the breaking changes
+            npx openapi-diff main-rest-api.json current-rest-api.json --json | jq -r '
+              if (.breakingDifferences | length) > 0 then
+                "## 🚨 Breaking Changes (" + (.breakingDifferences | length | tostring) + ")\n" +
+                (.breakingDifferences | map("- **" + .action + " " + .entity + "**: " + (.sourceSpecEntityDetails[0].location // "N/A")) | join("\n"))
+              else "" end,
+              if (.nonBreakingDifferences | length) > 0 then
+                "\n## ✅ Non-Breaking Changes (" + (.nonBreakingDifferences | length | tostring) + ")\n" +
+                (.nonBreakingDifferences | map("- " + .action + " " + .entity + ": " + (.sourceSpecEntityDetails[0].location // "N/A")) | join("\n"))
+              else "" end,
+              if (.unclassifiedDifferences | length) > 0 then
+                "\n## ❓ Unclassified Changes (" + (.unclassifiedDifferences | length | tostring) + ")\n" +
+                (.unclassifiedDifferences | map("- " + .action + " " + .entity + ": " + (.sourceSpecEntityDetails[0].location // "N/A")) | join("\n"))
+              else "" end
+            ' >> rest-api-diff.md
+            
             echo "::error::Breaking changes detected in REST API"
-            echo "::group::REST API Changes"
-            cat rest-api-diff.md || echo "No diff output available"
-            echo "::endgroup::"
             exit 1
-          }
+          fi
 
       - name: Check REST Metadata API Breaking Changes
         run: |
-          echo "Checking REST Metadata API breaking changes..."
-          java -jar openapi-diff.jar --old main-rest-metadata-api.json --new current-rest-metadata-api.json --output rest-metadata-api-diff.md --format markdown
+          echo "=== CHECKING REST METADATA API FOR BREAKING CHANGES ==="
           
-          # Check if there are breaking changes
-          java -jar openapi-diff.jar --old main-rest-metadata-api.json --new current-rest-metadata-api.json --fail-on-incompatible || {
+          # Use openapi-diff to compare metadata APIs
+          if npx openapi-diff main-rest-metadata-api.json current-rest-metadata-api.json > rest-metadata-api-diff-output.json 2>&1; then
+            echo "✅ No breaking changes detected in REST Metadata API"
+            
+            # Check if there are any changes at all
+            if ! npx openapi-diff main-rest-metadata-api.json current-rest-metadata-api.json --json | jq -e '.breakingDifferencesFound == false and (.nonBreakingDifferences | length) == 0 and (.unclassifiedDifferences | length) == 0' >/dev/null 2>&1; then
+              echo "📝 Non-breaking or unclassified changes detected, generating report..."
+              
+              # Generate markdown report for non-breaking changes
+              echo "# REST Metadata API Changes" > rest-metadata-api-diff.md
+              echo "" >> rest-metadata-api-diff.md
+              echo "## Summary" >> rest-metadata-api-diff.md
+              npx openapi-diff main-rest-metadata-api.json current-rest-metadata-api.json --json | jq -r '
+                if (.nonBreakingDifferences | length) > 0 then
+                  "### ✅ Non-Breaking Changes (" + (.nonBreakingDifferences | length | tostring) + ")\n" +
+                  (.nonBreakingDifferences | map("- " + .action + " " + .entity + ": " + (.sourceSpecEntityDetails[0].location // "N/A")) | join("\n"))
+                else "" end,
+                if (.unclassifiedDifferences | length) > 0 then
+                  "\n### ❓ Unclassified Changes (" + (.unclassifiedDifferences | length | tostring) + ")\n" +
+                  (.unclassifiedDifferences | map("- " + .action + " " + .entity + ": " + (.sourceSpecEntityDetails[0].location // "N/A")) | join("\n"))
+                else "" end
+              ' >> rest-metadata-api-diff.md
+            fi
+          else
+            echo "❌ Breaking changes detected in REST Metadata API"
+            
+            # Generate breaking changes report
+            echo "# REST Metadata API Breaking Changes" > rest-metadata-api-diff.md
+            echo "" >> rest-metadata-api-diff.md
+            echo "⚠️ **Breaking changes detected that may affect existing API consumers**" >> rest-metadata-api-diff.md
+            echo "" >> rest-metadata-api-diff.md
+            
+            # Parse and format the breaking changes
+            npx openapi-diff main-rest-metadata-api.json current-rest-metadata-api.json --json | jq -r '
+              if (.breakingDifferences | length) > 0 then
+                "## 🚨 Breaking Changes (" + (.breakingDifferences | length | tostring) + ")\n" +
+                (.breakingDifferences | map("- **" + .action + " " + .entity + "**: " + (.sourceSpecEntityDetails[0].location // "N/A")) | join("\n"))
+              else "" end,
+              if (.nonBreakingDifferences | length) > 0 then
+                "\n## ✅ Non-Breaking Changes (" + (.nonBreakingDifferences | length | tostring) + ")\n" +
+                (.nonBreakingDifferences | map("- " + .action + " " + .entity + ": " + (.sourceSpecEntityDetails[0].location // "N/A")) | join("\n"))
+              else "" end,
+              if (.unclassifiedDifferences | length) > 0 then
+                "\n## ❓ Unclassified Changes (" + (.unclassifiedDifferences | length | tostring) + ")\n" +
+                (.unclassifiedDifferences | map("- " + .action + " " + .entity + ": " + (.sourceSpecEntityDetails[0].location // "N/A")) | join("\n"))
+              else "" end
+            ' >> rest-metadata-api-diff.md
+            
             echo "::error::Breaking changes detected in REST Metadata API"
-            echo "::group::REST Metadata API Changes"
-            cat rest-metadata-api-diff.md || echo "No diff output available"
-            echo "::endgroup::"
             exit 1
-          }
+          fi
 
       - name: Comment API Changes on PR
         if: failure()
