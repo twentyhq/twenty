@@ -923,13 +923,6 @@ jobs:
                 else "" end
               ' rest-api-diff.json >> rest-api-diff.md
               
-              # Only fail if PR title contains "breaking"
-              if [[ "${{ github.event.pull_request.title }}" == *"breaking"* ]]; then
-                echo "::error::Breaking changes detected in REST API and PR title contains 'breaking'"
-                exit 1
-              else
-                echo "⚠️ Breaking changes detected but PR title does not contain 'breaking' - allowing to pass"
-              fi
             elif [ "$different" = "true" ]; then
               echo "📝 Non-breaking changes detected ($new_endpoints new endpoints, $missing_endpoints removed, $changed_operations changed)"
               
@@ -1012,14 +1005,7 @@ jobs:
                   (.newEndpoints | map("- " + .method + " " + .pathUrl + ": " + (.summary // "")) | join("\n"))
                 else "" end
               ' rest-metadata-api-diff.json >> rest-metadata-api-diff.md
-              
-              # Only fail if PR title contains "breaking"
-              if [[ "${{ github.event.pull_request.title }}" == *"breaking"* ]]; then
-                echo "::error::Breaking changes detected in REST Metadata API and PR title contains 'breaking'"
-                exit 1
-              else
-                echo "⚠️ Breaking changes detected but PR title does not contain 'breaking' - allowing to pass"
-              fi
+
             elif [ "$different" = "true" ]; then
               echo "📝 Non-breaking changes detected ($new_endpoints new endpoints, $missing_endpoints removed, $changed_operations changed)"
               
@@ -1068,7 +1054,6 @@ jobs:
             let comment = '';
             
             try {
-              // Check for GraphQL changes
               if (fs.existsSync('graphql-schema-diff.md')) {
                 const graphqlDiff = fs.readFileSync('graphql-schema-diff.md', 'utf8');
                 if (graphqlDiff.trim()) {
@@ -1091,7 +1076,6 @@ jobs:
                 }
               }
               
-              // Check for REST API changes
               if (fs.existsSync('rest-api-diff.md')) {
                 const restDiff = fs.readFileSync('rest-api-diff.md', 'utf8');
                 if (restDiff.trim()) {
@@ -1099,7 +1083,7 @@ jobs:
                     comment = '## 📊 API Changes Report\n\n';
                     hasChanges = true;
                   }
-                  comment += '### REST API Changes\n```markdown\n' + restDiff + '\n```\n\n';
+                  comment += restDiff + '\n\n';
                 }
               }
               
@@ -1110,7 +1094,7 @@ jobs:
                     comment = '## 📊 API Changes Report\n\n';
                     hasChanges = true;
                   }
-                  comment += '### REST Metadata API Changes\n```markdown\n' + metadataDiff + '\n```\n\n';
+                  comment += metadataDiff + '\n\n';
                 }
               }
               
@@ -1123,14 +1107,16 @@ jobs:
                 // Check for breaking changes in any of the diff files
                 if (fs.existsSync('rest-api-diff.md')) {
                   const restDiff = fs.readFileSync('rest-api-diff.md', 'utf8');
-                  if (restDiff.includes('Breaking Changes') || restDiff.includes('🚨')) {
+                  if (restDiff.includes('Breaking Changes') || restDiff.includes('🚨') || 
+                      restDiff.includes('Removed Endpoints') || restDiff.includes('Changed Operations')) {
                     hasBreakingChanges = true;
                   }
                 }
                 
                 if (fs.existsSync('rest-metadata-api-diff.md')) {
                   const metadataDiff = fs.readFileSync('rest-metadata-api-diff.md', 'utf8');
-                  if (metadataDiff.includes('Breaking Changes') || metadataDiff.includes('🚨')) {
+                  if (metadataDiff.includes('Breaking Changes') || metadataDiff.includes('🚨') || 
+                      metadataDiff.includes('Removed Endpoints') || metadataDiff.includes('Changed Operations')) {
                     hasBreakingChanges = true;
                   }
                 }
@@ -1170,16 +1156,59 @@ jobs:
                   }
                 }
                 
-                comment += '⚠️ **Please review these API changes carefully before merging.**' + breakingChangeNote;
+                const COMMENT_MARKER = '<!-- API_CHANGES_REPORT -->';
+                const commentBody = COMMENT_MARKER + '\n' + comment + '⚠️ **Please review these API changes carefully before merging.**' + breakingChangeNote;
                 
-                github.rest.issues.createComment({
-                  issue_number: context.issue.number,
+                // Get all comments to find existing API changes comment
+                const {data: comments} = await github.rest.issues.listComments({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                  body: comment
+                  issue_number: context.issue.number,
                 });
+                
+                // Find our existing comment
+                const botComment = comments.find(comment => comment.body.includes(COMMENT_MARKER));
+                
+                if (botComment) {
+                  // Update existing comment
+                  await github.rest.issues.updateComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    comment_id: botComment.id,
+                    body: commentBody
+                  });
+                  console.log('Updated existing API changes comment');
+                } else {
+                  // Create new comment
+                  await github.rest.issues.createComment({
+                    issue_number: context.issue.number,
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    body: commentBody
+                  });
+                  console.log('Created new API changes comment');
+                }
               } else {
                 console.log('No API changes detected - skipping PR comment');
+                
+                // Check if there's an existing comment to remove
+                const {data: comments} = await github.rest.issues.listComments({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.issue.number,
+                });
+                
+                const COMMENT_MARKER = '<!-- API_CHANGES_REPORT -->';
+                const botComment = comments.find(comment => comment.body.includes(COMMENT_MARKER));
+                
+                if (botComment) {
+                  await github.rest.issues.deleteComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    comment_id: botComment.id,
+                  });
+                  console.log('Deleted existing API changes comment (no changes detected)');
+                }
               }
             } catch (error) {
               console.log('Could not post comment:', error);
