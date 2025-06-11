@@ -58,6 +58,7 @@ import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
+import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItem';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { i18n } from '@lingui/core';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -84,6 +85,8 @@ export const useAuth = () => {
   const isEmailVerificationRequired = useRecoilValue(
     isEmailVerificationRequiredState,
   );
+
+  const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
 
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
@@ -379,9 +382,19 @@ export const useAuth = () => {
         ),
       );
 
+      // TODO: We can't parallelize this yet because when loadCurrentUSer is loaded
+      // then UserProvider updates its children and PrefetchDataProvider is triggered
+      // which requires the correct metadata to be loaded (not the mocks)
+      await refreshObjectMetadataItems();
       await loadCurrentUser();
     },
-    [getAuthTokensFromLoginToken, setTokenPair, loadCurrentUser, origin],
+    [
+      getAuthTokensFromLoginToken,
+      setTokenPair,
+      loadCurrentUser,
+      origin,
+      refreshObjectMetadataItems,
+    ],
   );
 
   const handleCredentialsSignIn = useCallback(

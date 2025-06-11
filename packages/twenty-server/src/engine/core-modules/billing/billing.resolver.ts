@@ -124,6 +124,17 @@ export class BillingResolver {
     return { success: true };
   }
 
+  @Mutation(() => BillingUpdateOutput)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionsGuard(SettingPermissionType.WORKSPACE),
+  )
+  async switchToEnterprisePlan(@AuthWorkspace() workspace: Workspace) {
+    await this.billingSubscriptionService.switchToEnterprisePlan(workspace);
+
+    return { success: true };
+  }
+
   @Query(() => [BillingPlanOutput])
   @UseGuards(WorkspaceAuthGuard)
   async plans(): Promise<BillingPlanOutput[]> {

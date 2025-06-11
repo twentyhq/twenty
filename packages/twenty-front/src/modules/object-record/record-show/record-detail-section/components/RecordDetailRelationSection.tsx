@@ -21,7 +21,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useLingui } from '@lingui/react/macro';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { RelationType } from '~/generated-metadata/graphql';
 import { getAppPath } from '~/utils/navigation/getAppPath';
 
 type RecordDetailRelationSectionProps = {
@@ -57,8 +57,8 @@ export const RecordDetailRelationSection = ({
   >(recordStoreFamilySelector({ recordId, fieldName }));
 
   // TODO: use new relation type
-  const isToOneObject = relationType === RelationDefinitionType.MANY_TO_ONE;
-  const isToManyObjects = relationType === RelationDefinitionType.ONE_TO_MANY;
+  const isToOneObject = relationType === RelationType.MANY_TO_ONE;
+  const isToManyObjects = relationType === RelationType.ONE_TO_MANY;
 
   const relationRecords: ObjectRecord[] =
     fieldValue && isToOneObject
@@ -115,6 +115,7 @@ export const RecordDetailRelationSection = ({
 
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId,
+    objectMetadataId: relationObjectMetadataItem.id,
   });
 
   const isFieldReadOnly = useIsFieldValueReadOnly({

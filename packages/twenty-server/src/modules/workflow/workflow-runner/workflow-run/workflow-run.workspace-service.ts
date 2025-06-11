@@ -31,7 +31,7 @@ export class WorkflowRunWorkspaceService {
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly recordPositionService: RecordPositionService,
   ) {}

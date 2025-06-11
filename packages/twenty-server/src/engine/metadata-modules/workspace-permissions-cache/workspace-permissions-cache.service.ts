@@ -34,11 +34,11 @@ export class WorkspacePermissionsCacheService {
   logger = new Logger(WorkspacePermissionsCacheService.name);
 
   constructor(
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(RoleEntity, 'metadata')
+    @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(UserWorkspaceRoleEntity, 'metadata')
+    @InjectRepository(UserWorkspaceRoleEntity, 'core')
     private readonly userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>,
     private readonly workspacePermissionsCacheStorageService: WorkspacePermissionsCacheStorageService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
@@ -249,18 +249,17 @@ export class WorkspacePermissionsCacheService {
       relations: ['objectPermissions', 'settingPermissions'],
     });
 
-    const workspaceObjectMetadataIdsAndStandardIds =
-      await this.getWorkspaceObjectMetadataIdsAndStandardIds(workspaceId);
+    const workspaceObjectMetadataCollection =
+      await this.getWorkspaceObjectMetadataCollection(workspaceId);
 
     const permissionsByRoleId: ObjectRecordsPermissionsByRoleId = {};
 
     for (const role of roles) {
       const objectRecordsPermissions: ObjectRecordsPermissions = {};
 
-      for (const [
-        objectMetadataId,
-        standardId,
-      ] of workspaceObjectMetadataIdsAndStandardIds) {
+      for (const objectMetadata of workspaceObjectMetadataCollection) {
+        const { id: objectMetadataId, isSystem, standardId } = objectMetadata;
+
         let canRead = role.canReadAllObjectRecords;
         let canUpdate = role.canUpdateAllObjectRecords;
         let canSoftDelete = role.canSoftDeleteAllObjectRecords;
@@ -287,63 +286,55 @@ export class WorkspacePermissionsCacheService {
                 objectPermission.objectMetadataId === objectMetadataId,
             );
 
-            canRead =
-              objectRecordPermissionsOverride?.canReadObjectRecords ?? canRead;
-            canUpdate =
-              objectRecordPermissionsOverride?.canUpdateObjectRecords ??
-              canUpdate;
-            canSoftDelete =
-              objectRecordPermissionsOverride?.canSoftDeleteObjectRecords ??
-              canSoftDelete;
-            canDestroy =
-              objectRecordPermissionsOverride?.canDestroyObjectRecords ??
-              canDestroy;
+            const getPermissionValue = (
+              overrideValue: boolean | undefined,
+              defaultValue: boolean,
+            ) => (isSystem ? true : (overrideValue ?? defaultValue));
+
+            canRead = getPermissionValue(
+              objectRecordPermissionsOverride?.canReadObjectRecords,
+              canRead,
+            );
+            canUpdate = getPermissionValue(
+              objectRecordPermissionsOverride?.canUpdateObjectRecords,
+              canUpdate,
+            );
+            canSoftDelete = getPermissionValue(
+              objectRecordPermissionsOverride?.canSoftDeleteObjectRecords,
+              canSoftDelete,
+            );
+            canDestroy = getPermissionValue(
+              objectRecordPermissionsOverride?.canDestroyObjectRecords,
+              canDestroy,
+            );
           }
+
+          objectRecordsPermissions[objectMetadataId] = {
+            canRead,
+            canUpdate,
+            canSoftDelete,
+            canDestroy,
+          };
         }
 
-        objectRecordsPermissions[objectMetadataId] = {
-          canRead,
-          canUpdate,
-          canSoftDelete,
-          canDestroy,
-        };
+        permissionsByRoleId[role.id] = objectRecordsPermissions;
       }
-
-      permissionsByRoleId[role.id] = objectRecordsPermissions;
     }
 
     return permissionsByRoleId;
   }
 
-  private hasWorkflowsPermissions(role: RoleEntity): boolean {
-    const hasWorkflowsPermissionFromRole = role.canUpdateAllSettings;
-    const hasWorkflowsPermissionsFromSettingPermissions = isDefined(
-      role.settingPermissions.find(
-        (settingPermission) =>
-          settingPermission.setting === SettingPermissionType.WORKFLOWS,
-      ),
-    );
-
-    return (
-      hasWorkflowsPermissionFromRole ||
-      hasWorkflowsPermissionsFromSettingPermissions
-    );
-  }
-
-  private async getWorkspaceObjectMetadataIdsAndStandardIds(
+  private async getWorkspaceObjectMetadataCollection(
     workspaceId: string,
-  ): Promise<[string, string | null][]> {
+  ): Promise<ObjectMetadataEntity[]> {
     const workspaceObjectMetadata = await this.objectMetadataRepository.find({
       where: {
         workspaceId,
       },
-      select: ['id', 'standardId'],
+      select: ['id', 'isSystem'],
     });
 
-    return workspaceObjectMetadata.map((objectMetadata) => [
-      objectMetadata.id,
-      objectMetadata.standardId,
-    ]);
+    return workspaceObjectMetadata;
   }
 
   private async getUserWorkspaceRoleMapFromDatabase({
@@ -362,5 +353,20 @@ export class WorkspacePermissionsCacheService {
 
       return acc;
     }, {} as UserWorkspaceRoleMap);
+  }
+
+  private hasWorkflowsPermissions(role: RoleEntity): boolean {
+    const hasWorkflowsPermissionFromRole = role.canUpdateAllSettings;
+    const hasWorkflowsPermissionsFromSettingPermissions = isDefined(
+      role.settingPermissions.find(
+        (settingPermission) =>
+          settingPermission.setting === SettingPermissionType.WORKFLOWS,
+      ),
+    );
+
+    return (
+      hasWorkflowsPermissionFromRole ||
+      hasWorkflowsPermissionsFromSettingPermissions
+    );
   }
 }

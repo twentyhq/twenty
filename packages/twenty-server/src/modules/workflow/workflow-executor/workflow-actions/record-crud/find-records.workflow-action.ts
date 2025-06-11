@@ -132,7 +132,8 @@ export class FindRecordsWorkflowAction implements WorkflowExecutor {
     const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
       workflowActionInput.objectName,
-      workflowActionInput.filter ?? ({} as ObjectRecordFilter),
+      workflowActionInput.filter?.gqlOperationFilter ??
+        ({} as ObjectRecordFilter),
     );
 
     const orderByWithIdCondition = [
@@ -170,14 +171,15 @@ export class FindRecordsWorkflowAction implements WorkflowExecutor {
     const withFilterCountQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
       countQueryBuilder,
       workflowActionInput.objectName,
-      workflowActionInput.filter ?? ({} as ObjectRecordFilter),
+      workflowActionInput.filter?.gqlOperationFilter ??
+        ({} as ObjectRecordFilter),
     );
 
     const withDeletedCountQueryBuilder =
       graphqlQueryParser.applyDeletedAtToBuilder(
         withFilterCountQueryBuilder,
-        workflowActionInput.filter
-          ? workflowActionInput.filter
+        workflowActionInput.filter?.gqlOperationFilter
+          ? workflowActionInput.filter.gqlOperationFilter
           : ({} as ObjectRecordFilter),
       );
 

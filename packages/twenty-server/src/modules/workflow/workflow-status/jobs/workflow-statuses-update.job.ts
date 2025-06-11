@@ -74,9 +74,9 @@ export class WorkflowStatusesUpdateJob {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly serverlessFunctionService: ServerlessFunctionService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     protected readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(ServerlessFunctionEntity, 'metadata')
+    @InjectRepository(ServerlessFunctionEntity, 'core')
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
   ) {}
 

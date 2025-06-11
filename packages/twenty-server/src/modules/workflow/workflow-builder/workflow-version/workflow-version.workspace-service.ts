@@ -28,7 +28,7 @@ export class WorkflowVersionWorkspaceService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workflowVersionStepWorkspaceService: WorkflowVersionStepWorkspaceService,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly recordPositionService: RecordPositionService,

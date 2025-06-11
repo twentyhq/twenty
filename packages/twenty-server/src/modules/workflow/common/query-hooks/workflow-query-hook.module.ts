@@ -13,6 +13,10 @@ import { WorkflowCreateOnePostQueryHook } from 'src/modules/workflow/common/quer
 import { WorkflowCreateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-create-one.pre-query.hook';
 import { WorkflowDeleteManyPostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-delete-many.post-query.hook';
 import { WorkflowDeleteOnePostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-delete-one.post-query.hook';
+import { WorkflowDestroyManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-destroy-many.pre-query.hook';
+import { WorkflowDestroyOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-destroy-one.pre-query.hook';
+import { WorkflowRestoreManyPostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-restore-many.post-query.hook';
+import { WorkflowRestoreOnePostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-restore-one.post-query.hook';
 import { WorkflowRunCreateManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-run-create-many.pre-query.hook';
 import { WorkflowRunCreateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-run-create-one.pre-query.hook';
 import { WorkflowRunDeleteManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-run-delete-many.pre-query.hook';
@@ -29,14 +33,10 @@ import { WorkflowVersionUpdateManyPreQueryHook } from 'src/modules/workflow/comm
 import { WorkflowVersionUpdateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-update-one.pre-query.hook';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service';
-import { WorkflowRestoreOnePostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-restore-one.post-query.hook';
-import { WorkflowRestoreManyPostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-restore-many.post-query.hook';
-import { WorkflowDestroyOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-destroy-one.pre-query.hook';
-import { WorkflowDestroyManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-destroy-many.pre-query.hook';
 
 @Module({
   imports: [
-    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
+    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
     ServerlessFunctionModule,
     RecordPositionModule,
     WorkspaceCacheStorageModule,

@@ -10,9 +10,6 @@ export const getFindManyResponse200 = (
     item.nameSingular,
   )} for Response`;
 
-  const namePlural =
-    item.namePlural === 'relations' ? 'relationMetadata' : item.namePlural;
-
   return {
     description: 'Successful operation',
     content: {
@@ -23,7 +20,7 @@ export const getFindManyResponse200 = (
             data: {
               type: 'object',
               properties: {
-                [namePlural]: {
+                [item.namePlural]: {
                   type: 'array',
                   items: {
                     $ref: schemaRef,
@@ -90,10 +87,9 @@ export const getCreateOneResponse201 = (
 ) => {
   const one = fromMetadata ? 'One' : '';
 
-  const nameSingular =
-    item.nameSingular === 'relation' ? 'relationMetadata' : item.nameSingular;
-
-  const schemaRef = `#/components/schemas/${capitalize(nameSingular)} for Response`;
+  const schemaRef = `#/components/schemas/${capitalize(
+    item.nameSingular,
+  )} for Response`;
 
   return {
     description: 'Successful operation',
@@ -105,7 +101,7 @@ export const getCreateOneResponse201 = (
             data: {
               type: 'object',
               properties: {
-                [`create${one}${capitalize(nameSingular)}`]: {
+                [`create${one}${capitalize(item.nameSingular)}`]: {
                   $ref: schemaRef,
                 },
               },

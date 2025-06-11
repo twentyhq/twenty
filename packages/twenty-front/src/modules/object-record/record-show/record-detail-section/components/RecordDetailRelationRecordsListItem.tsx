@@ -10,6 +10,7 @@ import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/uti
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
   FieldContext,
@@ -46,7 +47,7 @@ import {
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
-import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { RelationType } from '~/generated-metadata/graphql';
 
 const StyledListItem = styled(RecordDetailRecordsListItem)<{
   isDropdownOpen?: boolean;
@@ -112,7 +113,7 @@ export const RecordDetailRelationRecordsListItem = ({
     relationType,
   } = fieldDefinition.metadata as FieldRelationMetadata;
 
-  const isToOneObject = relationType === RelationDefinitionType.MANY_TO_ONE;
+  const isToOneObject = relationType === RelationType.MANY_TO_ONE;
   const { objectMetadataItem: relationObjectMetadataItem } =
     useObjectMetadataItem({
       objectNameSingular: relationObjectMetadataNameSingular,
@@ -123,6 +124,10 @@ export const RecordDetailRelationRecordsListItem = ({
   );
 
   const { objectMetadataItems } = useObjectMetadataItems();
+
+  const relationObjectPermissions = useObjectPermissionsForObject(
+    relationObjectMetadataItem.id,
+  );
 
   const persistField = usePersistField();
 
@@ -213,6 +218,7 @@ export const RecordDetailRelationRecordsListItem = ({
 
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId: relationRecord.id,
+    objectMetadataId: relationObjectMetadataItem.id,
   });
 
   const isFieldReadOnly = useIsFieldValueReadOnly({
@@ -254,14 +260,15 @@ export const RecordDetailRelationRecordsListItem = ({
                       text="Detach"
                       onClick={handleDetach}
                     />
-                    {!isAccountOwnerRelation && (
-                      <MenuItem
-                        LeftIcon={IconTrash}
-                        text="Delete"
-                        accent="danger"
-                        onClick={handleDelete}
-                      />
-                    )}
+                    {!isAccountOwnerRelation &&
+                      relationObjectPermissions.canSoftDeleteObjectRecords && (
+                        <MenuItem
+                          LeftIcon={IconTrash}
+                          text="Delete"
+                          accent="danger"
+                          onClick={handleDelete}
+                        />
+                      )}
                   </DropdownMenuItemsContainer>
                 </DropdownContent>
               }

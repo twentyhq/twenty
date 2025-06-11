@@ -5,11 +5,11 @@ import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 
-import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
-import { DEV_SEED_WORKSPACE_MEMBER_IDS } from 'src/database/typeorm-seeds/workspace/workspace-members';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -192,7 +192,7 @@ describe('roles permissions', () => {
       const query = {
         query: `
             mutation UpdateWorkspaceMemberRole {
-                updateWorkspaceMemberRole(workspaceMemberId: "${DEV_SEED_WORKSPACE_MEMBER_IDS.TIM}", roleId: "test-role-id") {
+                updateWorkspaceMemberRole(workspaceMemberId: "${WORKSPACE_MEMBER_DATA_SEED_IDS.TIM}", roleId: "test-role-id") {
                     id
                 }
             }
@@ -245,7 +245,7 @@ describe('roles permissions', () => {
       const updateRoleQuery = {
         query: `
           mutation UpdateWorkspaceMemberRole {
-              updateWorkspaceMemberRole(workspaceMemberId: "${DEV_SEED_WORKSPACE_MEMBER_IDS.PHIL}", roleId: "${memberRoleId}") {
+              updateWorkspaceMemberRole(workspaceMemberId: "${WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL}", roleId: "${memberRoleId}") {
                   id
               }
           }
@@ -262,7 +262,7 @@ describe('roles permissions', () => {
           expect(res.body.data).toBeDefined();
           expect(res.body.errors).toBeUndefined();
           expect(res.body.data.updateWorkspaceMemberRole.id).toBe(
-            DEV_SEED_WORKSPACE_MEMBER_IDS.PHIL,
+            WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
           );
         });
 
@@ -270,7 +270,7 @@ describe('roles permissions', () => {
       const rollbackRoleUpdateQuery = {
         query: `
           mutation UpdateWorkspaceMemberRole {
-              updateWorkspaceMemberRole(workspaceMemberId: "${DEV_SEED_WORKSPACE_MEMBER_IDS.PHIL}", roleId: "${guestRoleId}") {
+              updateWorkspaceMemberRole(workspaceMemberId: "${WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL}", roleId: "${guestRoleId}") {
                   id
               }
           }
@@ -286,7 +286,7 @@ describe('roles permissions', () => {
           expect(res.body.data).toBeDefined();
           expect(res.body.errors).toBeUndefined();
           expect(res.body.data.updateWorkspaceMemberRole.id).toBe(
-            DEV_SEED_WORKSPACE_MEMBER_IDS.PHIL,
+            WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
           );
         });
     });

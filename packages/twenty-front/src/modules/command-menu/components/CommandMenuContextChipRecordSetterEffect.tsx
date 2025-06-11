@@ -3,6 +3,7 @@ import { commandMenuNavigationRecordsState } from '@/command-menu/states/command
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useApolloClient } from '@apollo/client';
 import { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -18,6 +19,7 @@ export const CommandMenuContextChipRecordSetterEffect = () => {
   );
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const commandMenuNavigationStack = useRecoilValue(
     commandMenuNavigationStackState,
@@ -46,6 +48,7 @@ export const CommandMenuContextChipRecordSetterEffect = () => {
             cache: apolloClient.cache,
             objectMetadataItems,
             objectMetadataItem,
+            objectPermissionsByObjectMetadataId,
           });
 
           if (!record) {
@@ -68,6 +71,7 @@ export const CommandMenuContextChipRecordSetterEffect = () => {
     commandMenuNavigationStack.length,
     objectMetadataItems,
     setCommandMenuNavigationRecords,
+    objectPermissionsByObjectMetadataId,
   ]);
 
   return null;

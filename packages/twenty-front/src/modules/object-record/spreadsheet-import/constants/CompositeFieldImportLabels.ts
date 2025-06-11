@@ -53,17 +53,20 @@ export const COMPOSITE_FIELD_IMPORT_LABELS = {
     primaryLinkUrlLabel:
       SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS.LINKS.labelBySubField
         .primaryLinkUrl,
+    primaryLinkLabelLabel:
+      SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS.LINKS.labelBySubField
+        .primaryLinkLabel,
     secondaryLinksLabel:
       SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS.LINKS.labelBySubField
         .secondaryLinks,
-  } satisfies Partial<CompositeFieldLabels<FieldLinksValue>>,
+  } satisfies CompositeFieldLabels<FieldLinksValue>,
   [FieldMetadataType.EMAILS]: {
     primaryEmailLabel:
       SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS.EMAILS.labelBySubField.primaryEmail,
     additionalEmailsLabel:
       SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS.EMAILS.labelBySubField
         .additionalEmails,
-  } satisfies Partial<CompositeFieldLabels<FieldEmailsValue>>,
+  } satisfies CompositeFieldLabels<FieldEmailsValue>,
   [FieldMetadataType.PHONES]: {
     primaryPhoneCountryCodeLabel:
       SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS.PHONES.labelBySubField
@@ -71,7 +74,13 @@ export const COMPOSITE_FIELD_IMPORT_LABELS = {
     primaryPhoneNumberLabel:
       SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS.PHONES.labelBySubField
         .primaryPhoneNumber,
-  } satisfies Partial<CompositeFieldLabels<FieldPhonesValue>>,
+    primaryPhoneCallingCodeLabel:
+      SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS.PHONES.labelBySubField
+        .primaryPhoneCallingCode,
+    additionalPhonesLabel:
+      SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS.PHONES.labelBySubField
+        .additionalPhones,
+  } satisfies CompositeFieldLabels<FieldPhonesValue>,
   [FieldMetadataType.RICH_TEXT_V2]: {
     blocknoteLabel:
       SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS.RICH_TEXT_V2.labelBySubField
@@ -79,7 +88,7 @@ export const COMPOSITE_FIELD_IMPORT_LABELS = {
     markdownLabel:
       SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS.RICH_TEXT_V2.labelBySubField
         .markdown,
-  } satisfies Partial<CompositeFieldLabels<FieldRichTextV2Value>>,
+  } satisfies CompositeFieldLabels<FieldRichTextV2Value>,
   [FieldMetadataType.ACTOR]: {
     sourceLabel:
       SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS.ACTOR.labelBySubField.source,

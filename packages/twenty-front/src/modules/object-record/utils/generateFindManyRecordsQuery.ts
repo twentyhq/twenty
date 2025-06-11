@@ -4,6 +4,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { capitalize } from 'twenty-shared/utils';
+import { ObjectPermission } from '~/generated-metadata/graphql';
 
 export type QueryCursorDirection = 'before' | 'after';
 
@@ -13,12 +14,14 @@ export const generateFindManyRecordsQuery = ({
   recordGqlFields,
   computeReferences,
   cursorDirection,
+  objectPermissionsByObjectMetadataId,
 }: {
   objectMetadataItem: ObjectMetadataItem;
   objectMetadataItems: ObjectMetadataItem[];
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
   computeReferences?: boolean;
   cursorDirection?: QueryCursorDirection;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>;
 }) => gql`
 query FindMany${capitalize(
   objectMetadataItem.namePlural,
@@ -38,6 +41,7 @@ query FindMany${capitalize(
         objectMetadataItem,
         recordGqlFields,
         computeReferences,
+        objectPermissionsByObjectMetadataId,
       })}
       cursor
     }

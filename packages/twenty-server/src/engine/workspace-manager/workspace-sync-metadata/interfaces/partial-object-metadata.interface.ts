@@ -7,7 +7,7 @@ import {
 
 export type PartialWorkspaceEntity = Omit<
   ObjectMetadataInterface,
-  'id' | 'standardId' | 'fromRelations' | 'toRelations' | 'fields' | 'isActive'
+  'id' | 'standardId' | 'fields' | 'isActive'
 > & {
   standardId: string;
   icon?: string;

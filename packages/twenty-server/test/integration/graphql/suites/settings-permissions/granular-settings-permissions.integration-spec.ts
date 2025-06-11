@@ -4,14 +4,15 @@ import { deleteOneRoleOperationFactory } from 'test/integration/graphql/utils/de
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
+import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
 import { createOneObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata-query-factory.util';
 import { deleteOneObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata-query-factory.util';
 
-import { SEED_APPLE_WORKSPACE_ID } from 'src/database/typeorm-seeds/core/workspaces';
-import { DEV_SEED_WORKSPACE_MEMBER_IDS } from 'src/database/typeorm-seeds/workspace/workspace-members';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -100,27 +101,11 @@ describe('Granular settings permissions', () => {
       .send(upsertSettingPermissionsQuery);
 
     // Assign the custom role to JONY (who uses MEMBER_ACCESS_TOKEN)
-    const updateMemberRoleQuery = {
-      query: `
-        mutation UpdateWorkspaceMemberRole {
-          updateWorkspaceMemberRole(
-            workspaceMemberId: "${DEV_SEED_WORKSPACE_MEMBER_IDS.JONY}"
-            roleId: "${customRoleId}"
-          ) {
-            id
-            roles {
-              id
-              label
-            }
-          }
-        }
-      `,
-    };
-
-    await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
-      .send(updateMemberRoleQuery);
+    await updateWorkspaceMemberRole({
+      client,
+      roleId: customRoleId,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    });
   });
 
   afterAll(async () => {
@@ -129,7 +114,7 @@ describe('Granular settings permissions', () => {
       query: `
         mutation UpdateWorkspaceMemberRole {
           updateWorkspaceMemberRole(
-            workspaceMemberId: "${DEV_SEED_WORKSPACE_MEMBER_IDS.JONY}"
+            workspaceMemberId: "${WORKSPACE_MEMBER_DATA_SEED_IDS.JONY}"
             roleId: "${originalMemberRoleId}"
           ) {
             id

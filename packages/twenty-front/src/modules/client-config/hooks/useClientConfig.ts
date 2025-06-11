@@ -40,6 +40,7 @@ export const useClientConfig = (): UseClientConfigResult => {
       setClientConfigApiStatus((prev) => ({
         ...prev,
         isLoading: false,
+        isLoadedOnce: true,
         isErrored: true,
         error,
       }));

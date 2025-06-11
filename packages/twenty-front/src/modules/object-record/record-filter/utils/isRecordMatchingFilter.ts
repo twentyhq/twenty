@@ -24,6 +24,7 @@ import {
   RichTextV2Filter,
   SelectFilter,
   StringFilter,
+  TSVectorFilter,
   UUIDFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { isMatchingArrayFilter } from '@/object-record/record-filter/utils/isMatchingArrayFilter';
@@ -37,6 +38,7 @@ import { isMatchingRawJsonFilter } from '@/object-record/record-filter/utils/isM
 import { isMatchingRichTextV2Filter } from '@/object-record/record-filter/utils/isMatchingRichTextV2Filter';
 import { isMatchingSelectFilter } from '@/object-record/record-filter/utils/isMatchingSelectFilter';
 import { isMatchingStringFilter } from '@/object-record/record-filter/utils/isMatchingStringFilter';
+import { isMatchingTSVectorFilter } from '@/object-record/record-filter/utils/isMatchingTSVectorFilter';
 import { isMatchingUUIDFilter } from '@/object-record/record-filter/utils/isMatchingUUIDFilter';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -374,10 +376,15 @@ export const isRecordMatchingFilter = ({
         }
 
         throw new Error(
-          `Not implemented yet, use UUID filter instead on the corredponding "${filterKey}Id" field`,
+          `Not implemented yet, use UUID filter instead on the corresponding "${filterKey}Id" field`,
         );
       }
-
+      case FieldMetadataType.TS_VECTOR: {
+        return isMatchingTSVectorFilter({
+          tsVectorFilter: filterValue as TSVectorFilter,
+          value: record[filterKey],
+        });
+      }
       default: {
         throw new Error(
           `Not implemented yet for field type "${objectMetadataField.type}"`,
