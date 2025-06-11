@@ -92,10 +92,11 @@ export class WorkspaceDataSource extends DataSource {
     return queryRunner as any as WorkspaceQueryRunner;
   }
 
+  // Do not use, only for specific permission-related purpose
   createQueryRunnerForEntityPersistExecutor(
     mode = 'master' as ReplicationMode,
   ) {
-    const dataSourceWithCreateQueryBuilder = Object.assign(
+    const dataSourceWithOverridenCreateQueryBuilder = Object.assign(
       Object.create(Object.getPrototypeOf(this)),
       this,
       {
@@ -122,7 +123,7 @@ export class WorkspaceDataSource extends DataSource {
     );
     const queryRunner = this.driver.createQueryRunner(mode);
     const manager = new EntityManagerFactory().create(
-      dataSourceWithCreateQueryBuilder,
+      dataSourceWithOverridenCreateQueryBuilder,
       queryRunner,
     );
 
