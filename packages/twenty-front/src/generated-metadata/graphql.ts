@@ -280,6 +280,8 @@ export type BillingSubscription = {
   chargeType?: Maybe<ChargeType>;
   id: Scalars['UUID']['output'];
   interval?: Maybe<SubscriptionInterval>;
+  metadata?: Maybe<Scalars['JSON']['output']>;
+  provider: BillingPaymentProviders;
   status: SubscriptionStatus;
 };
 
@@ -301,6 +303,12 @@ export type BillingTrialPeriodDto = {
   __typename?: 'BillingTrialPeriodDTO';
   duration: Scalars['Float']['output'];
   isCreditCardRequired: Scalars['Boolean']['output'];
+};
+
+export type BillingUpdateOneTimePaidSubscriptionOutput = {
+  __typename?: 'BillingUpdateOneTimePaidSubscriptionOutput';
+  /** The link for the bankslip file */
+  bankSlipFileLink: Scalars['String']['output'];
 };
 
 export type BillingUpdateOutput = {
@@ -1458,6 +1466,7 @@ export type Mutation = {
   updateOneRemoteServer: RemoteServer;
   updateOneRole: Role;
   updateOneServerlessFunction: ServerlessFunction;
+  updateOneTimePaidSubscription: BillingUpdateOneTimePaidSubscriptionOutput;
   updatePasswordViaResetToken: InvalidatePassword;
   updateRoutingRules: UpdateRoutingRulesResponseType;
   updateSector: Sector;
