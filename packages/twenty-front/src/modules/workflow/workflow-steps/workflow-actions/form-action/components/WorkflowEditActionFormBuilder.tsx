@@ -45,10 +45,6 @@ export type WorkflowEditActionFormBuilderProps = {
       };
 };
 
-type StyledFieldContainerProps = {
-  isReadOnly: boolean;
-};
-
 type FormData = WorkflowFormActionField[];
 
 const StyledWorkflowStepBody = styled(WorkflowStepBody)`
@@ -92,7 +88,9 @@ const StyledOpenedSettingsContainer = styled.div`
   grid-area: settings;
 `;
 
-const StyledFieldContainer = styled.div<StyledFieldContainerProps>`
+const StyledFieldContainer = styled.div<{
+  readonly?: boolean;
+}>`
   align-items: center;
   background: transparent;
   border: none;
@@ -101,10 +99,10 @@ const StyledFieldContainer = styled.div<StyledFieldContainerProps>`
   padding-inline: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 
-  cursor: ${({ isReadOnly }) => (isReadOnly ? 'default' : 'pointer')};
+  cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
 
-  ${({ isReadOnly, theme }) =>
-    !isReadOnly &&
+  ${({ readonly, theme }) =>
+    !readonly &&
     css`
       &:hover,
       &[data-open='true'] {
@@ -294,7 +292,7 @@ export const WorkflowEditActionFormBuilder = ({
                               }}
                             >
                               <StyledFieldContainer
-                                isReadOnly={actionOptions.readonly ?? false}
+                                readonly={actionOptions.readonly}
                               >
                                 <StyledPlaceholder>
                                   {isDefined(field.placeholder) &&
@@ -387,7 +385,7 @@ export const WorkflowEditActionFormBuilder = ({
                     setSelectedField(newField.id);
                   }}
                 >
-                  <StyledFieldContainer isReadOnly={false}>
+                  <StyledFieldContainer>
                     <StyledAddFieldButtonContentContainer>
                       <IconPlus size={theme.icon.size.sm} />
                       {t`Add Field`}
