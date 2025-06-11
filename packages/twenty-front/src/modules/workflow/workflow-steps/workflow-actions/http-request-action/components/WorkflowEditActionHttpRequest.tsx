@@ -101,7 +101,7 @@ export const WorkflowEditActionHttpRequest = ({
           onChange={(value) => handleFieldChange('headers', value)}
           VariablePicker={WorkflowVariablePicker}
         />
-        {!isMethodWithBody(formData.method) ? null : (
+        {isMethodWithBody(formData.method) && (
           <FormRawJsonFieldInput
             label="Body"
             placeholder={DEFAULT_BODY_PLACEHOLDER}
