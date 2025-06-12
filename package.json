@@ -353,7 +353,8 @@
     "type-fest": "4.10.1",
     "typescript": "5.3.3",
     "graphql-redis-subscriptions/ioredis": "^5.6.0",
-    "prosemirror-view": "1.40.0"
+    "prosemirror-view": "1.40.0",
+    "prosemirror-transform": "1.10.4"
   },
   "version": "0.2.1",
   "nx": {},
