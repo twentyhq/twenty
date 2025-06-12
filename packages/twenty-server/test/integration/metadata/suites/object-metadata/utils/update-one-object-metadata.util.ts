@@ -1,22 +1,25 @@
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import {
   UpdateOneObjectFactoryInput,
   updateOneObjectMetadataQueryFactory,
 } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata-query-factory.util';
-import { PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
+import { PerformMetadataQueryParams } from 'test/integration/types/perform-metadata-query.type';
+import { makeGraphqlAPIRequest } from 'test/integration/utils/make-graphql-api-request.util';
 
 export const updateOneObjectMetadata = async ({
   input,
   gqlFields,
   expectToFail = false,
 }: PerformMetadataQueryParams<UpdateOneObjectFactoryInput>) => {
-  const graphqlOperation = updateOneObjectMetadataQueryFactory({
+  const operation = updateOneObjectMetadataQueryFactory({
     input,
     gqlFields,
   });
 
-  const response = await makeGraphqlAPIRequest(graphqlOperation);
+  const response = await makeGraphqlAPIRequest<{
+    updateOneObject: ObjectRecord;
+  }>({ operation });
 
   if (expectToFail) {
     warnIfNoErrorButExpectedToFail({
@@ -25,5 +28,5 @@ export const updateOneObjectMetadata = async ({
     });
   }
 
-  return { data: response.body.data, errors: response.body.errors };
+  return response;
 };

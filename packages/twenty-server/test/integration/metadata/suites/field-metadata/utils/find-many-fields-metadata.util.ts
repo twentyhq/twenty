@@ -2,21 +2,23 @@ import {
   FindManyFieldsMetadataFactoryInput,
   findManyFieldsMetadataQueryFactory,
 } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata-query-factory.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
+import { PerformMetadataQueryParams } from 'test/integration/types/perform-metadata-query.type';
+import { makeMetadataAPIRequest } from 'test/integration/utils/make-metadata-api-request.util';
 
 export const findManyFieldsMetadata = async ({
   input,
   gqlFields,
   expectToFail = false,
 }: PerformMetadataQueryParams<FindManyFieldsMetadataFactoryInput>) => {
-  const graphqlOperation = findManyFieldsMetadataQueryFactory({
+  const operation = findManyFieldsMetadataQueryFactory({
     input,
     gqlFields,
   });
 
-  const response = await makeMetadataAPIRequest(graphqlOperation);
+  const response = await makeMetadataAPIRequest({
+    operation
+  });
 
   if (expectToFail) {
     warnIfNoErrorButExpectedToFail({
@@ -25,8 +27,5 @@ export const findManyFieldsMetadata = async ({
     });
   }
 
-  return {
-    errors: response.body.errors,
-    fields: response.body.data.fields?.edges,
-  };
+  return response
 };

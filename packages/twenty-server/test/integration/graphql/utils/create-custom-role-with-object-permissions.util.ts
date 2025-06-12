@@ -1,6 +1,7 @@
 import gql from 'graphql-tag';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
+import { makeGraphqlAPIRequest } from 'test/integration/utils/make-graphql-api-request.util';
+import { makeMetadataAPIRequest } from 'test/integration/utils/make-metadata-api-request.util';
 
 export const createCustomRoleWithObjectPermissions = async (options: {
   label: string;
@@ -28,8 +29,10 @@ export const createCustomRoleWithObjectPermissions = async (options: {
       `,
   };
 
-  const response = await makeGraphqlAPIRequest(createRoleOperation);
-  const roleId = response.body.data.createOneRole.id;
+  const response = await makeGraphqlAPIRequest<{ createOneRole: RoleDTO }>({
+    operation: createRoleOperation,
+  });
+  const roleId = response.data.createOneRole.id;
 
   // Get object metadata IDs for Person and Company
   const getObjectMetadataOperation = {
@@ -47,10 +50,11 @@ export const createCustomRoleWithObjectPermissions = async (options: {
     `,
   };
 
-  const objectMetadataResponse = await makeMetadataAPIRequest(
-    getObjectMetadataOperation,
-  );
-  const objects = objectMetadataResponse.body.data.objects.edges;
+  // TODO type
+  const objectMetadataResponse = await makeMetadataAPIRequest<any>({
+    operation: getObjectMetadataOperation,
+  });
+  const objects = objectMetadataResponse.data.objects.edges;
 
   const personObjectId = objects.find(
     (obj: any) => obj.node.nameSingular === 'person',
@@ -119,7 +123,9 @@ export const createCustomRoleWithObjectPermissions = async (options: {
       },
     };
 
-    await makeGraphqlAPIRequest(upsertObjectPermissionsOperation);
+    await makeGraphqlAPIRequest({
+      operation: upsertObjectPermissionsOperation,
+    });
   }
 
   return {

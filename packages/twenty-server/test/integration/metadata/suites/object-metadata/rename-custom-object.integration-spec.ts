@@ -3,7 +3,7 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { findManyObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-query-factory.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataAPIRequest } from 'test/integration/utils/make-metadata-api-request.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 const LISTING_NAME_SINGULAR = 'listing';
@@ -74,9 +74,9 @@ describe('Custom object renaming', () => {
 
   it('1. should create one custom object with standard relations', async () => {
     // Arrange
-    const standardObjects = await makeMetadataAPIRequest(
-      standardObjectsGraphqlOperation,
-    );
+    const standardObjects = await makeMetadataAPIRequest<any>({
+      operation: standardObjectsGraphqlOperation,
+    });
 
     fillStandardObjectRelationsMapObjectMetadataId(standardObjects);
 
@@ -104,9 +104,11 @@ describe('Custom object renaming', () => {
 
     listingObjectId = data.createOneObject.id;
 
-    const fields = await makeMetadataAPIRequest(fieldsGraphqlOperation);
+    const fields = await makeMetadataAPIRequest<any>({
+      operation: fieldsGraphqlOperation,
+    });
 
-    const relationFieldsMetadataForListing = fields.body.data.fields.edges
+    const relationFieldsMetadataForListing = fields.data.fields.edges
       .filter(
         // @ts-expect-error legacy noImplicitAny
         (field) =>
@@ -166,9 +168,11 @@ describe('Custom object renaming', () => {
     expect(data.updateOneObject.labelSingular).toBe(HOUSE_LABEL_SINGULAR);
     expect(data.updateOneObject.labelPlural).toBe(HOUSE_LABEL_PLURAL);
 
-    const fieldsResponse = await makeMetadataAPIRequest(fieldsGraphqlOperation);
+    const fieldsResponse = await makeMetadataAPIRequest<any>({
+      operation: fieldsGraphqlOperation,
+    });
 
-    const fieldsMetadata = fieldsResponse.body.data.fields.edges.map(
+    const fieldsMetadata = fieldsResponse.data.fields.edges.map(
       // @ts-expect-error legacy noImplicitAny
       (field) => field.node,
     );

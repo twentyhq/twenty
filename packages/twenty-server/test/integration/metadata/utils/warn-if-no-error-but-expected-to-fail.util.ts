@@ -1,8 +1,8 @@
 import { isDefined } from 'class-validator';
-import { Response } from 'supertest';
+import { CommonResponseBody } from 'test/integration/types/common-response-body.type';
 
 type WarnIfNoErrorButExpectedToFailInput = {
-  response: Response;
+  response: Awaited<CommonResponseBody<unknown>>;
   errorMessage: string;
 };
 
@@ -10,8 +10,8 @@ export const warnIfNoErrorButExpectedToFail = ({
   response,
   errorMessage,
 }: WarnIfNoErrorButExpectedToFailInput) => {
-  if (isDefined(response.body.data)) {
+  if (isDefined(response.data)) {
     expect(false).toEqual(errorMessage);
   }
-  expect(response.body.errors.length).toBeGreaterThan(0);
+  expect(response.errors.length).toBeGreaterThan(0);
 };

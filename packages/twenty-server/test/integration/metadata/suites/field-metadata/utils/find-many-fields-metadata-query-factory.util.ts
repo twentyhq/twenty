@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
+import { PerformMetadataQueryParams } from 'test/integration/types/perform-metadata-query.type';
 
 export type FindManyFieldsMetadataFactoryInput = {
   filter: object;

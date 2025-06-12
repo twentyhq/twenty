@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import { capitalize } from 'twenty-shared/utils';
 
-type FindOneOperationFactoryParams = {
+export type FindOneOperationFactoryParams = {
   objectMetadataSingularName: string;
   gqlFields: string;
   filter?: unknown;
