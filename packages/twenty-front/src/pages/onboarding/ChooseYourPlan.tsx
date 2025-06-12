@@ -9,6 +9,7 @@ import { TrialCard } from '@/billing/components/TrialCard';
 import { useHandleCheckoutSession } from '@/billing/hooks/useHandleCheckoutSession';
 import { isBillingPriceLicensed } from '@/billing/utils/isBillingPriceLicensed';
 import { billingState } from '@/client-config/states/billingState';
+import { AppPath } from '@/types/AppPath';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -16,11 +17,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { CardPicker, MainButton } from 'twenty-ui/input';
-import {
-  CAL_LINK,
-  ClickToActionLink,
-  TWENTY_PRICING_LINK,
-} from 'twenty-ui/navigation';
+import { ClickToActionLink, TWENTY_PRICING_LINK } from 'twenty-ui/navigation';
 import {
   BillingPlanKey,
   BillingPriceLicensedDto,
@@ -250,7 +247,7 @@ export const ChooseYourPlan = () => {
               <Trans>Change Plan</Trans>
             </ClickToActionLink>
             <span />
-            <ClickToActionLink href={CAL_LINK} target="_blank" rel="noreferrer">
+            <ClickToActionLink href={AppPath.BookCall}>
               <Trans>Book a Call</Trans>
             </ClickToActionLink>
           </StyledLinkGroup>
