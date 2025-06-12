@@ -7,6 +7,7 @@ import {
   DEFAULT_BODY_PLACEHOLDER,
   HttpRequestBody,
 } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
+import { hasNonStringValues } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/hasNonStringValues';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { Toggle } from 'twenty-ui/input';
@@ -35,7 +36,7 @@ type InputMode = 'keyValue' | 'rawJson';
 
 type BodyInputProps = {
   label?: string;
-  defaultValue?: Record<string, unknown> | null;
+  defaultValue?: HttpRequestBody;
   onChange: (value?: HttpRequestBody) => void;
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;
@@ -44,13 +45,17 @@ type BodyInputProps = {
 };
 
 export const BodyInput = ({
-  defaultValue = null,
+  defaultValue,
   onChange,
   readonly,
   VariablePicker,
 }: BodyInputProps) => {
-  const [inputMode, setInputMode] = useState<InputMode>('keyValue');
-  const [jsonString, setJsonString] = useState<string | null>(null);
+  const [inputMode, setInputMode] = useState<InputMode>(() =>
+    hasNonStringValues(defaultValue) ? 'rawJson' : 'keyValue',
+  );
+  const [jsonString, setJsonString] = useState<string | null>(
+    JSON.stringify(defaultValue, null, 2),
+  );
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
 
   const validateJson = (value: string | null): boolean => {
