@@ -186,6 +186,11 @@ msgstr "24小时 ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "一个共享的环境，您可以与您的团队一起管理客户关系。"
 
+#. js-lingui-id: /cSHSG
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "A verification email has been sent to"
+msgstr ""
+
 #. js-lingui-id: JE9zuL
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Ability to edit all settings"
@@ -863,6 +868,11 @@ msgstr "加泰罗尼亚语"
 #~ msgid "Change {to}"
 #~ msgstr "更改 {to}"
 
+#. js-lingui-id: feCRNv
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Change email"
+msgstr ""
+
 #. js-lingui-id: VhMDMg
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/profile/components/ChangePassword.tsx
@@ -893,6 +903,11 @@ msgstr ""
 #. js-lingui-id: N8mUQE
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Change to Yearly?"
+msgstr ""
+
+#. js-lingui-id: AwAGI4
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Check your Emails"
 msgstr ""
 
 #. js-lingui-id: SviKkE
@@ -1862,6 +1877,11 @@ msgstr "电子邮件或域已在拦截列表中"
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email verification"
 msgstr "电子邮件验证"
+
+#. js-lingui-id: hn6Eox
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Email Verification Failed"
+msgstr ""
 
 #. js-lingui-id: TBv/iZ
 #: src/modules/auth/components/VerifyEmailEffect.tsx
@@ -3699,11 +3719,21 @@ msgstr "仅时间戳和参与者将与您的团队分享。"
 msgid "Open command menu"
 msgstr "打开命令菜单"
 
+#. js-lingui-id: pZZH4Q
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Open Gmail"
+msgstr ""
+
 #. js-lingui-id: C39K59
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Open in"
 msgstr "在以下中打开"
+
+#. js-lingui-id: xGd6Ih
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Open Outlook"
+msgstr ""
 
 #. js-lingui-id: OV5wZZ
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx
@@ -4116,6 +4146,12 @@ msgstr "移除选项"
 msgid "Reorder field"
 msgstr ""
 
+#. js-lingui-id: G42SNI
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Resend email"
+msgstr ""
+
 #. js-lingui-id: OfhWJH
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
@@ -4484,6 +4520,12 @@ msgstr "选择您偏好的语言"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Send an invite email to your team"
 msgstr "向您的团队发送邀请电子邮件"
+
+#. js-lingui-id: IoAuJG
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Sending..."
+msgstr ""
 
 #. js-lingui-id: h69WC6
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
@@ -5167,6 +5209,11 @@ msgstr "真"
 msgid "Try our REST or GraphQL API playgrounds."
 msgstr "试用我们的REST或GraphQL API操场。"
 
+#. js-lingui-id: LQdi+H
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Try with another email"
+msgstr ""
+
 #. js-lingui-id: Kz91g/
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Turkish"
@@ -5448,6 +5495,11 @@ msgstr ""
 #. js-lingui-id: S0enzB
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObject.tsx
 msgid "was restored by"
+msgstr ""
+
+#. js-lingui-id: 6eMAkI
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "We encountered an issue verifying"
 msgstr ""
 
 #. js-lingui-id: id6ein
