@@ -94,7 +94,7 @@ export class MessagingSendMessageService {
         break;
       }
       case ConnectedAccountProvider.IMAP: {
-        return;
+        throw new Error('IMAP provider does not support sending messages');
       }
       default:
         assertUnreachable(
