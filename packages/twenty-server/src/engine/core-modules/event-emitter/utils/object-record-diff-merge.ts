@@ -4,7 +4,7 @@ import deepEqual from 'deep-equal';
 // This function replaces null, empty strings, empty arrays, and empty objects with placeholders
 // to ensure that they are treated as equal when they are effectively the same.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function normalizeValueForComparison (val: any): any {
+export function normalizeValueForComparison(val: any): any {
   if (val === null || val === '') return '__empty__';
   if (Array.isArray(val) && val.length === 0) return '__empty__';
   if (typeof val === 'object' && val !== null && Object.keys(val).length === 0)
@@ -29,7 +29,7 @@ export function normalizeValueForComparison (val: any): any {
   }
 
   return val;
-};
+}
 
 export function objectRecordDiffMerge(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
