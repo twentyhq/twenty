@@ -67,11 +67,8 @@ export class ImapHandleErrorService {
             recordId: messageChannelId,
             objectMetadata: messageChannelMetadata,
             properties: {
-              before: messageChannel,
-              after: {
-                ...messageChannel,
-                ...updatedMessageChannel.raw[0],
-              },
+              before: { syncStatus: messageChannel.syncStatus },
+              after: { syncStatus: MessageChannelSyncStatus.FAILED_UNKNOWN },
             },
           },
         ],
