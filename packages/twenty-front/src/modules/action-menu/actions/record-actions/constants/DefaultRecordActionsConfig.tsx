@@ -96,8 +96,15 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     position: 2,
     isPinned: true,
     Icon: IconHeart,
-    shouldBeRegistered: ({ selectedRecord, isFavorite }) =>
-      !selectedRecord?.isRemote && !isFavorite,
+    shouldBeRegistered: ({
+      selectedRecord,
+      isFavorite,
+      isSoftDeleteFilterActive,
+    }) =>
+      !selectedRecord?.isRemote &&
+      !isFavorite &&
+      !isDefined(selectedRecord?.deletedAt) &&
+      !isSoftDeleteFilterActive,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
@@ -113,11 +120,17 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     isPinned: true,
     position: 3,
     Icon: IconHeartOff,
-    shouldBeRegistered: ({ selectedRecord, isFavorite }) =>
+    shouldBeRegistered: ({
+      selectedRecord,
+      isFavorite,
+      isSoftDeleteFilterActive,
+    }) =>
       isDefined(selectedRecord) &&
       !selectedRecord?.isRemote &&
       isDefined(isFavorite) &&
-      isFavorite,
+      isFavorite &&
+      !isDefined(selectedRecord?.deletedAt) &&
+      !isSoftDeleteFilterActive,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,
@@ -273,10 +286,17 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconTrashX,
     accent: 'danger',
     isPinned: true,
-    shouldBeRegistered: ({ selectedRecord, objectPermissions, isRemote }) =>
+    shouldBeRegistered: ({
+      selectedRecord,
+      objectPermissions,
+      isSoftDeleteFilterActive,
+      isRemote,
+    }) =>
       objectPermissions.canDestroyObjectRecords &&
       !isRemote &&
-      isDefined(selectedRecord?.deletedAt),
+      isDefined(selectedRecord?.deletedAt) &&
+      isDefined(isSoftDeleteFilterActive) &&
+      isSoftDeleteFilterActive,
     availableOn: [
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.SHOW_PAGE,

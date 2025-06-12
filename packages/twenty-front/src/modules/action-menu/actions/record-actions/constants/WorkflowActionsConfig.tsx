@@ -62,9 +62,10 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       Icon: IconPlayerPause,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
-      shouldBeRegistered: ({ workflowWithCurrentVersion }) =>
+      shouldBeRegistered: ({ selectedRecord, workflowWithCurrentVersion }) =>
         isDefined(workflowWithCurrentVersion) &&
-        workflowWithCurrentVersion.currentVersion.status === 'ACTIVE',
+        workflowWithCurrentVersion.currentVersion.status === 'ACTIVE' &&
+        !isDefined(selectedRecord?.deletedAt),
       availableOn: [
         ActionViewType.SHOW_PAGE,
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
@@ -117,8 +118,9 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       Icon: IconHistoryToggle,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
-      shouldBeRegistered: ({ workflowWithCurrentVersion }) =>
-        isDefined(workflowWithCurrentVersion),
+      shouldBeRegistered: ({ selectedRecord, workflowWithCurrentVersion }) =>
+        isDefined(workflowWithCurrentVersion) &&
+        !isDefined(selectedRecord?.deletedAt),
       availableOn: [
         ActionViewType.SHOW_PAGE,
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
