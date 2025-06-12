@@ -117,16 +117,12 @@ export const SignInUp = () => {
     }
 
     if (
-      (!isMultiWorkspaceEnabled ||
-        (isMultiWorkspaceEnabled && isOnAWorkspace)) &&
+      isOnAWorkspace &&
       signInUpStep === SignInUpStep.SSOIdentityProviderSelection
     ) {
       return <SignInUpSSOIdentityProviderSelection />;
     }
-    if (
-      isDefined(workspacePublicData) &&
-      (!isMultiWorkspaceEnabled || isOnAWorkspace)
-    ) {
+    if (isDefined(workspacePublicData) && isOnAWorkspace) {
       return (
         <>
           <SignInUpWorkspaceScopeFormEffect />
