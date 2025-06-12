@@ -3,8 +3,6 @@ import { randomUUID } from 'node:crypto';
 import { WORKFLOW_GQL_FIELDS } from 'test/integration/constants/workflow-gql-fields.constants';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
-import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
-import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
@@ -27,17 +25,19 @@ describe('workflowsPermissions', () => {
           },
         });
 
-        const response =
-          await makeGraphqlAPIRequestWithGuestRole(graphqlOperation);
+        const response = await makeGraphqlAPIRequest<any>({
+          operation: graphqlOperation,
+          options: {
+            testingToken: 'GUEST',
+          },
+        });
 
-        expect(response.body.data).toStrictEqual({ createWorkflow: null });
-        expect(response.body.errors).toBeDefined();
-        expect(response.body.errors[0].message).toBe(
+        expect(response.data).toStrictEqual({ createWorkflow: null });
+        expect(response.errors).toBeDefined();
+        expect(response.errors[0].message).toBe(
           PermissionsExceptionMessage.PERMISSION_DENIED,
         );
-        expect(response.body.errors[0].extensions.code).toBe(
-          ErrorCode.FORBIDDEN,
-        );
+        expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
       });
 
       it('should create a workflow when user has permission (admin role)', async () => {
@@ -51,14 +51,17 @@ describe('workflowsPermissions', () => {
           },
         });
 
-        const response = await makeGraphqlAPIRequest(graphqlOperation);
+        const response = await makeGraphqlAPIRequest<any>({
+          operation: graphqlOperation,
+        });
 
-        expect(response.body.data).toBeDefined();
-        expect(response.body.data.createWorkflow).toBeDefined();
-        expect(response.body.data.createWorkflow.id).toBe(workflowId);
-        expect(response.body.data.createWorkflow.name).toBe(
-          'Test Workflow Admin',
-        );
+        expect(response.rawResponse.status).toBe(200);
+        expect(response.errors).toBeUndefined();
+
+        expect(response.data).toBeDefined();
+        expect(response.data.createWorkflow).toBeDefined();
+        expect(response.data.createWorkflow.id).toBe(workflowId);
+        expect(response.data.createWorkflow.name).toBe('Test Workflow Admin');
 
         // Clean up - delete the created workflow
         const destroyWorkflowOperation = destroyOneOperationFactory({
@@ -66,10 +69,10 @@ describe('workflowsPermissions', () => {
           gqlFields: `
             id
         `,
-          recordId: response.body.data.createWorkflow.id,
+          recordId: response.data.createWorkflow.id,
         });
 
-        await makeGraphqlAPIRequest(destroyWorkflowOperation);
+        await makeGraphqlAPIRequest({ operation: destroyWorkflowOperation });
       });
     });
 
@@ -81,7 +84,7 @@ describe('workflowsPermissions', () => {
           true,
         );
 
-        await makeGraphqlAPIRequest(enablePermissionsQuery);
+        await makeGraphqlAPIRequest({ operation: enablePermissionsQuery });
       });
 
       afterAll(async () => {
@@ -91,7 +94,7 @@ describe('workflowsPermissions', () => {
           false,
         );
 
-        await makeGraphqlAPIRequest(disablePermissionsQuery);
+        await makeGraphqlAPIRequest({ operation: disablePermissionsQuery });
       });
 
       it('should throw a permission error when user does not have permission (guest role)', async () => {
@@ -105,17 +108,19 @@ describe('workflowsPermissions', () => {
           },
         });
 
-        const response =
-          await makeGraphqlAPIRequestWithGuestRole(graphqlOperation);
+        const response = await makeGraphqlAPIRequest<any>({
+          operation: graphqlOperation,
+          options: {
+            testingToken: 'GUEST',
+          },
+        });
 
-        expect(response.body.data).toStrictEqual({ createWorkflow: null });
-        expect(response.body.errors).toBeDefined();
-        expect(response.body.errors[0].message).toBe(
+        expect(response.data).toStrictEqual({ createWorkflow: null });
+        expect(response.errors).toBeDefined();
+        expect(response.errors[0].message).toBe(
           PermissionsExceptionMessage.PERMISSION_DENIED,
         );
-        expect(response.body.errors[0].extensions.code).toBe(
-          ErrorCode.FORBIDDEN,
-        );
+        expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
       });
 
       it('should create a workflow when user has permission (admin role)', async () => {
@@ -129,14 +134,17 @@ describe('workflowsPermissions', () => {
           },
         });
 
-        const response = await makeGraphqlAPIRequest(graphqlOperation);
+        const response = await makeGraphqlAPIRequest<any>({
+          operation: graphqlOperation,
+        });
 
-        expect(response.body.data).toBeDefined();
-        expect(response.body.data.createWorkflow).toBeDefined();
-        expect(response.body.data.createWorkflow.id).toBe(workflowId);
-        expect(response.body.data.createWorkflow.name).toBe(
-          'Test Workflow Admin',
-        );
+        expect(response.rawResponse.status).toBe(200);
+        expect(response.errors).toBeUndefined();
+
+        expect(response.data).toBeDefined();
+        expect(response.data.createWorkflow).toBeDefined();
+        expect(response.data.createWorkflow.id).toBe(workflowId);
+        expect(response.data.createWorkflow.name).toBe('Test Workflow Admin');
 
         // Clean up - delete the created workflow
         const destroyWorkflowOperation = destroyOneOperationFactory({
@@ -144,10 +152,10 @@ describe('workflowsPermissions', () => {
           gqlFields: `
               id
           `,
-          recordId: response.body.data.createWorkflow.id,
+          recordId: response.data.createWorkflow.id,
         });
 
-        await makeGraphqlAPIRequest(destroyWorkflowOperation);
+        await makeGraphqlAPIRequest({ operation: destroyWorkflowOperation });
       });
 
       it('should create a workflow when executed by api key', async () => {
@@ -161,15 +169,20 @@ describe('workflowsPermissions', () => {
           },
         });
 
-        const response =
-          await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
+        const response = await makeGraphqlAPIRequest<any>({
+          operation: graphqlOperation,
+          options: {
+            testingToken: 'API_KEY',
+          },
+        });
 
-        expect(response.body.data).toBeDefined();
-        expect(response.body.data.createWorkflow).toBeDefined();
-        expect(response.body.data.createWorkflow.id).toBe(workflowId);
-        expect(response.body.data.createWorkflow.name).toBe(
-          'Test Workflow API Key',
-        );
+        expect(response.rawResponse.status).toBe(200);
+        expect(response.errors).toBeUndefined();
+
+        expect(response.data).toBeDefined();
+        expect(response.data.createWorkflow).toBeDefined();
+        expect(response.data.createWorkflow.id).toBe(workflowId);
+        expect(response.data.createWorkflow.name).toBe('Test Workflow API Key');
 
         // Clean up - delete the created workflow
         const destroyWorkflowOperation = destroyOneOperationFactory({
@@ -177,10 +190,10 @@ describe('workflowsPermissions', () => {
           gqlFields: `
               id
           `,
-          recordId: response.body.data.createWorkflow.id,
+          recordId: response.data.createWorkflow.id,
         });
 
-        await makeGraphqlAPIRequest(destroyWorkflowOperation);
+        await makeGraphqlAPIRequest({ operation: destroyWorkflowOperation });
       });
     });
   });
@@ -199,7 +212,7 @@ describe('workflowsPermissions', () => {
           },
         });
 
-        await makeGraphqlAPIRequest(createWorkflowOperation);
+        await makeGraphqlAPIRequest({ operation: createWorkflowOperation });
       });
 
       afterAll(async () => {
@@ -211,7 +224,7 @@ describe('workflowsPermissions', () => {
           recordId: workflowId,
         });
 
-        await makeGraphqlAPIRequest(destroyWorkflowOperation);
+        await makeGraphqlAPIRequest({ operation: destroyWorkflowOperation });
       });
 
       it('should throw a permission error when user does not have permission (guest role)', async () => {
@@ -224,17 +237,19 @@ describe('workflowsPermissions', () => {
           },
         });
 
-        const response =
-          await makeGraphqlAPIRequestWithGuestRole(graphqlOperation);
+        const response = await makeGraphqlAPIRequest<any>({
+          operation: graphqlOperation,
+          options: {
+            testingToken: 'GUEST',
+          },
+        });
 
-        expect(response.body.data).toStrictEqual({ updateWorkflow: null });
-        expect(response.body.errors).toBeDefined();
-        expect(response.body.errors[0].message).toBe(
+        expect(response.data).toStrictEqual({ updateWorkflow: null });
+        expect(response.errors).toBeDefined();
+        expect(response.errors[0].message).toBe(
           PermissionsExceptionMessage.PERMISSION_DENIED,
         );
-        expect(response.body.errors[0].extensions.code).toBe(
-          ErrorCode.FORBIDDEN,
-        );
+        expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
       });
 
       it('should update a workflow when user has permission (admin role)', async () => {
@@ -247,12 +262,17 @@ describe('workflowsPermissions', () => {
           },
         });
 
-        const response = await makeGraphqlAPIRequest(graphqlOperation);
+        const response = await makeGraphqlAPIRequest<any>({
+          operation: graphqlOperation,
+        });
 
-        expect(response.body.data).toBeDefined();
-        expect(response.body.data.updateWorkflow).toBeDefined();
-        expect(response.body.data.updateWorkflow.id).toBe(workflowId);
-        expect(response.body.data.updateWorkflow.name).toBe(
+        expect(response.rawResponse.status).toBe(200);
+        expect(response.errors).toBeUndefined();
+
+        expect(response.data).toBeDefined();
+        expect(response.data.updateWorkflow).toBeDefined();
+        expect(response.data.updateWorkflow.id).toBe(workflowId);
+        expect(response.data.updateWorkflow.name).toBe(
           'Updated Workflow Name Admin',
         );
       });
@@ -271,7 +291,7 @@ describe('workflowsPermissions', () => {
           },
         });
 
-        await makeGraphqlAPIRequest(createWorkflowOperation);
+        await makeGraphqlAPIRequest({ operation: createWorkflowOperation });
 
         const enablePermissionsQuery = updateFeatureFlagFactory(
           SEED_APPLE_WORKSPACE_ID,
@@ -279,7 +299,7 @@ describe('workflowsPermissions', () => {
           true,
         );
 
-        await makeGraphqlAPIRequest(enablePermissionsQuery);
+        await makeGraphqlAPIRequest({ operation: enablePermissionsQuery });
       });
 
       afterAll(async () => {
@@ -291,7 +311,7 @@ describe('workflowsPermissions', () => {
           recordId: workflowId,
         });
 
-        await makeGraphqlAPIRequest(destroyWorkflowOperation);
+        await makeGraphqlAPIRequest({ operation: destroyWorkflowOperation });
 
         const disablePermissionsQuery = updateFeatureFlagFactory(
           SEED_APPLE_WORKSPACE_ID,
@@ -299,7 +319,7 @@ describe('workflowsPermissions', () => {
           false,
         );
 
-        await makeGraphqlAPIRequest(disablePermissionsQuery);
+        await makeGraphqlAPIRequest({ operation: disablePermissionsQuery });
       });
 
       it('should throw a permission error when user does not have permission (guest role)', async () => {
@@ -312,17 +332,19 @@ describe('workflowsPermissions', () => {
           },
         });
 
-        const response =
-          await makeGraphqlAPIRequestWithGuestRole(graphqlOperation);
+        const response = await makeGraphqlAPIRequest<any>({
+          operation: graphqlOperation,
+          options: {
+            testingToken: 'GUEST',
+          },
+        });
 
-        expect(response.body.data).toStrictEqual({ updateWorkflow: null });
-        expect(response.body.errors).toBeDefined();
-        expect(response.body.errors[0].message).toBe(
+        expect(response.data).toStrictEqual({ updateWorkflow: null });
+        expect(response.errors).toBeDefined();
+        expect(response.errors[0].message).toBe(
           PermissionsExceptionMessage.PERMISSION_DENIED,
         );
-        expect(response.body.errors[0].extensions.code).toBe(
-          ErrorCode.FORBIDDEN,
-        );
+        expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
       });
 
       it('should update a workflow when user has permission (admin role)', async () => {
@@ -335,12 +357,17 @@ describe('workflowsPermissions', () => {
           },
         });
 
-        const response = await makeGraphqlAPIRequest(graphqlOperation);
+        const response = await makeGraphqlAPIRequest<any>({
+          operation: graphqlOperation,
+        });
 
-        expect(response.body.data).toBeDefined();
-        expect(response.body.data.updateWorkflow).toBeDefined();
-        expect(response.body.data.updateWorkflow.id).toBe(workflowId);
-        expect(response.body.data.updateWorkflow.name).toBe(
+        expect(response.rawResponse.status).toBe(200);
+        expect(response.errors).toBeUndefined();
+
+        expect(response.data).toBeDefined();
+        expect(response.data.updateWorkflow).toBeDefined();
+        expect(response.data.updateWorkflow.id).toBe(workflowId);
+        expect(response.data.updateWorkflow.name).toBe(
           'Updated Workflow V2 Admin',
         );
       });
@@ -355,13 +382,20 @@ describe('workflowsPermissions', () => {
           },
         });
 
-        const response =
-          await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
+        const response = await makeGraphqlAPIRequest<any>({
+          operation: graphqlOperation,
+          options: {
+            testingToken: 'API_KEY',
+          },
+        });
 
-        expect(response.body.data).toBeDefined();
-        expect(response.body.data.updateWorkflow).toBeDefined();
-        expect(response.body.data.updateWorkflow.id).toBe(workflowId);
-        expect(response.body.data.updateWorkflow.name).toBe(
+        expect(response.rawResponse.status).toBe(200);
+        expect(response.errors).toBeUndefined();
+
+        expect(response.data).toBeDefined();
+        expect(response.data.updateWorkflow).toBeDefined();
+        expect(response.data.updateWorkflow.id).toBe(workflowId);
+        expect(response.data.updateWorkflow.name).toBe(
           'Updated Workflow API Key',
         );
       });
