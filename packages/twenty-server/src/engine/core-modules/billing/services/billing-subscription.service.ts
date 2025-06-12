@@ -9,7 +9,7 @@ import { differenceInDays } from 'date-fns';
 import Stripe from 'stripe';
 import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
-import { Not, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 
 import {
   BillingException,
@@ -60,7 +60,12 @@ export class BillingSubscriptionService {
   }) {
     const notCanceledSubscriptions =
       await this.billingSubscriptionRepository.find({
-        where: { ...criteria, status: Not(SubscriptionStatus.Canceled) },
+        where: {
+          ...criteria,
+          status: Not(
+            In([SubscriptionStatus.Canceled, SubscriptionStatus.Expired]),
+          ),
+        },
         relations: [
           'billingCustomer',
           'billingSubscriptionItems',
