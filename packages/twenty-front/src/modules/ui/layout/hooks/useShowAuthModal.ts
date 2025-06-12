@@ -20,7 +20,8 @@ export const useShowAuthModal = () => {
       isMatchingLocation(location, AppPath.CreateWorkspace) ||
       isMatchingLocation(location, AppPath.PlanRequired) ||
       isMatchingLocation(location, AppPath.PlanRequiredSuccess) ||
-      isMatchingLocation(location, AppPath.BookOnboardingDecision)
+      isMatchingLocation(location, AppPath.BookOnboardingDecision) ||
+      isMatchingLocation(location, AppPath.BookCall)
     ) {
       return true;
     }

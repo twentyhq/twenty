@@ -7,8 +7,6 @@ import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/Keyboa
 import { AppNavigationDrawer } from '@/navigation/components/AppNavigationDrawer';
 import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
-import { BookCallModal } from '@/onboarding/components/BookCallModal';
-import { useShowBookCallModal } from '@/onboarding/hooks/useShowBookCallModal';
 import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
 import { SignInAppNavigationDrawerMock } from '@/sign-in-background-mock/components/SignInAppNavigationDrawerMock';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
@@ -64,7 +62,6 @@ export const DefaultLayout = () => {
   const theme = useTheme();
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
-  const showBookCallModal = useShowBookCallModal();
   const useShowFullScreen = useShowFullscreen();
 
   return (
@@ -93,13 +90,13 @@ export const DefaultLayout = () => {
               duration: theme.animation.duration.normal,
             }}
           >
-            {!showAuthModal && !showBookCallModal && (
+            {!showAuthModal && (
               <>
                 <CommandMenuRouter />
                 <KeyboardShortcutMenu />
               </>
             )}
-            {showAuthModal || showBookCallModal ? (
+            {showAuthModal ? (
               <StyledAppNavigationDrawerMock />
             ) : useShowFullScreen ? null : (
               <StyledAppNavigationDrawer />
@@ -117,19 +114,6 @@ export const DefaultLayout = () => {
                   </LayoutGroup>
                 </AnimatePresence>
               </>
-            ) : showBookCallModal ? (
-              <>
-                <StyledMainContainer>
-                  <SignInBackgroundMockPage />
-                </StyledMainContainer>
-                <AnimatePresence mode="wait">
-                  <LayoutGroup>
-                    <BookCallModal>
-                      <Outlet />
-                    </BookCallModal>
-                  </LayoutGroup>
-                </AnimatePresence>
-              </>
             ) : (
               <StyledMainContainer>
                 <AppErrorBoundary FallbackComponent={AppPageErrorFallback}>
@@ -138,9 +122,7 @@ export const DefaultLayout = () => {
               </StyledMainContainer>
             )}
           </StyledPageContainer>
-          {isMobile && !showAuthModal && !showBookCallModal && (
-            <MobileNavigationBar />
-          )}
+          {isMobile && !showAuthModal && <MobileNavigationBar />}
         </AppErrorBoundary>
       </StyledLayout>
     </>

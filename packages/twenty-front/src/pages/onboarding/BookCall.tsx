@@ -5,24 +5,13 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useTheme } from '@emotion/react';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { IconChevronRightPipe } from '@tabler/icons-react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton } from 'twenty-ui/input';
-
-const StyledBorderedContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: hidden;
-`;
-
-const StyledScrollableContent = styled.div`
-  flex: 1;
-  min-height: 0;
-`;
+import { LightButton } from 'twenty-ui/input';
 
 const StyledCalWrapper = styled.div`
   place-content: center;
@@ -41,14 +30,15 @@ const StyledFallbackContainer = styled.div`
   text-align: center;
 `;
 
-const StyledFooter = styled.div`
-  align-items: center;
-  /* background: ${({ theme }) => theme.background.primary}; */
-  /* border-top: 1px solid ${({ theme }) => theme.border.color.light}; */
-  display: flex;
-  flex-shrink: 0;
-  justify-content: center;
-  padding: ${({ theme }) => theme.spacing(4)} 0;
+const StyledModalHeader = styled(Modal.Header)`
+  height: auto;
+  padding: ${({ theme }) => theme.spacing(3)};
+  padding-bottom: 0;
+  justify-content: flex-end;
+`;
+
+const StyledModalContent = styled(Modal.Content)`
+  padding: ${({ theme }) => theme.spacing(3)};
 `;
 
 export const BookCall = () => {
@@ -63,44 +53,40 @@ export const BookCall = () => {
   };
 
   return (
-    <StyledBorderedContainer>
-      <StyledScrollableContent>
-        <ScrollWrapper componentInstanceId="book-call-scroll-wrapper">
-          {isDefined(calendarBookingPageId) ? (
-            <StyledCalWrapper>
-              <Cal
-                calLink={calendarBookingPageId}
-                config={{
-                  layout: 'month_view',
-                  theme: theme.name === 'light' ? 'light' : 'dark',
-                  email: currentUser?.email ?? '',
-                }}
-              />
-            </StyledCalWrapper>
-          ) : (
-            <StyledFallbackContainer>
-              <SubTitle>
-                <Trans>
-                  Booking is not available at the moment. Please continue with
-                  the setup. You can book on{' '}
-                  <a href="https://twenty.com/Book-a-call">
-                    https://twenty.com/Book-a-call
-                  </a>
-                </Trans>
-              </SubTitle>
-            </StyledFallbackContainer>
-          )}
-        </ScrollWrapper>
-      </StyledScrollableContent>
-
-      <StyledFooter>
-        <MainButton
-          title={t`Complete setup`}
+    <>
+      <StyledModalHeader>
+        <LightButton
+          Icon={IconChevronRightPipe}
+          title={t`Skip`}
           onClick={handleCompleteOnboarding}
-          variant="primary"
-          width={198}
         />
-      </StyledFooter>
-    </StyledBorderedContainer>
+      </StyledModalHeader>
+      <StyledModalContent isHorizontalCentered isVerticalCentered>
+        {isDefined(calendarBookingPageId) ? (
+          <StyledCalWrapper>
+            <Cal
+              calLink={calendarBookingPageId}
+              config={{
+                layout: 'month_view',
+                theme: theme.name === 'light' ? 'light' : 'dark',
+                email: currentUser?.email ?? '',
+              }}
+            />
+          </StyledCalWrapper>
+        ) : (
+          <StyledFallbackContainer>
+            <SubTitle>
+              <Trans>
+                Booking is not available at the moment. Please continue with the
+                setup. You can book on{' '}
+                <a href="https://twenty.com/Book-a-call">
+                  https://twenty.com/Book-a-call
+                </a>
+              </Trans>
+            </SubTitle>
+          </StyledFallbackContainer>
+        )}
+      </StyledModalContent>
+    </>
   );
 };
