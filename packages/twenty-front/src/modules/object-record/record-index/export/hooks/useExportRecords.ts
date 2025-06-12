@@ -61,9 +61,7 @@ export const generateCsv: GenerateExport = ({
     const column = {
       field: `${col.metadata.fieldName}${col.type === 'RELATION' ? 'Id' : ''}`,
       title: escapeCSVValue(
-        [col.label, col.type === 'RELATION' ? 'Id' : null]
-          .filter(isDefined)
-          .join(' '),
+        `${col.label}${col.type === 'RELATION' ? ' Id' : ''}`,
       ),
     };
 
