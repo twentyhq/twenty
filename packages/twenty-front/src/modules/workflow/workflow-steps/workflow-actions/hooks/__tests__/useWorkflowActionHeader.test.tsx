@@ -1,14 +1,13 @@
 import {
-    workflowActionSchema,
-    workflowFormActionSettingsSchema,
-    workflowHttpRequestActionSettingsSchema,
-    workflowSendEmailActionSettingsSchema,
+  workflowActionSchema,
+  workflowFormActionSettingsSchema,
+  workflowHttpRequestActionSettingsSchema,
+  workflowSendEmailActionSettingsSchema,
 } from '@/workflow/validation-schemas/workflowSchema';
 import { renderHook } from '@testing-library/react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { useWorkflowActionHeader } from '../useWorkflowActionHeader';
 
-// Mock dependencies
 jest.mock('../useActionIconColorOrThrow', () => ({
   useActionIconColorOrThrow: jest.fn().mockReturnValue('blue'),
 }));
