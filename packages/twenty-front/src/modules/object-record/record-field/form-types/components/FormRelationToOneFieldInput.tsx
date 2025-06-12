@@ -4,6 +4,7 @@ import {
   FieldRelationToOneValue,
   FieldRelationValue,
 } from '@/object-record/record-field/types/FieldMetadata';
+import { isObject } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { JsonValue } from 'type-fest';
 
@@ -19,7 +20,7 @@ export type FormRelationToOneFieldInputProps = {
 const isFieldRelationToOneValue = (
   value: FormRelationToOneFieldInputProps['defaultValue'],
 ): value is FieldRelationValue<FieldRelationToOneValue> => {
-  return typeof value === 'object' && isDefined(value?.id);
+  return isObject(value) && isDefined(value?.id);
 };
 
 export const FormRelationToOneFieldInput = ({
