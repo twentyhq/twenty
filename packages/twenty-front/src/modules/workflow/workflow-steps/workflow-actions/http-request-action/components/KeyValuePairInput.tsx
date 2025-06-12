@@ -55,13 +55,11 @@ export const KeyValuePairInput = ({
   valuePlaceholder = 'Value',
 }: KeyValuePairInputProps) => {
   const [pairs, setPairs] = useState<KeyValuePair[]>(() => {
-    const initialPairs = defaultValue
-      ? Object.entries(defaultValue).map(([key, value]) => ({
-          id: v4(),
-          key,
-          value,
-        }))
-      : [];
+    const initialPairs = Object.entries(defaultValue).map(([key, value]) => ({
+      id: v4(),
+      key,
+      value,
+    }));
     return initialPairs.length > 0
       ? [...initialPairs, { id: v4(), key: '', value: '' }]
       : [{ id: v4(), key: '', value: '' }];
