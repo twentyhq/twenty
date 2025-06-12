@@ -181,6 +181,11 @@ msgstr "24h ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "A shared environment where you will be able to manage your customer relations with your team."
 
+#. js-lingui-id: /cSHSG
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "A verification email has been sent to"
+msgstr "A verification email has been sent to"
+
 #. js-lingui-id: JE9zuL
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Ability to edit all settings"
@@ -858,6 +863,11 @@ msgstr "Catalan"
 #~ msgid "Change {to}"
 #~ msgstr "Change {to}"
 
+#. js-lingui-id: feCRNv
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Change email"
+msgstr "Change email"
+
 #. js-lingui-id: VhMDMg
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/profile/components/ChangePassword.tsx
@@ -889,6 +899,11 @@ msgstr "Change to Organization Plan?"
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Change to Yearly?"
 msgstr "Change to Yearly?"
+
+#. js-lingui-id: AwAGI4
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Check your Emails"
+msgstr "Check your Emails"
 
 #. js-lingui-id: SviKkE
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -1861,6 +1876,11 @@ msgstr "Email or domain is already in blocklist"
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email verification"
 msgstr "Email verification"
+
+#. js-lingui-id: hn6Eox
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Email Verification Failed"
+msgstr "Email Verification Failed"
 
 #. js-lingui-id: TBv/iZ
 #: src/modules/auth/components/VerifyEmailEffect.tsx
@@ -3704,11 +3724,21 @@ msgstr "Only the timestamp & participants will be shared with your team."
 msgid "Open command menu"
 msgstr "Open command menu"
 
+#. js-lingui-id: pZZH4Q
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Open Gmail"
+msgstr "Open Gmail"
+
 #. js-lingui-id: C39K59
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Open in"
 msgstr "Open in"
+
+#. js-lingui-id: xGd6Ih
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Open Outlook"
+msgstr "Open Outlook"
 
 #. js-lingui-id: OV5wZZ
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx
@@ -4131,6 +4161,12 @@ msgstr "Remove option"
 msgid "Reorder field"
 msgstr "Reorder field"
 
+#. js-lingui-id: G42SNI
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Resend email"
+msgstr "Resend email"
+
 #. js-lingui-id: OfhWJH
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
@@ -4504,6 +4540,12 @@ msgstr "Select your preferred language"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Send an invite email to your team"
 msgstr "Send an invite email to your team"
+
+#. js-lingui-id: IoAuJG
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Sending..."
+msgstr "Sending..."
 
 #. js-lingui-id: h69WC6
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
@@ -5187,6 +5229,11 @@ msgstr "True"
 msgid "Try our REST or GraphQL API playgrounds."
 msgstr "Try our REST or GraphQL API playgrounds."
 
+#. js-lingui-id: LQdi+H
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Try with another email"
+msgstr "Try with another email"
+
 #. js-lingui-id: Kz91g/
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Turkish"
@@ -5469,6 +5516,11 @@ msgstr "was deleted by"
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObject.tsx
 msgid "was restored by"
 msgstr "was restored by"
+
+#. js-lingui-id: 6eMAkI
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "We encountered an issue verifying"
+msgstr "We encountered an issue verifying"
 
 #. js-lingui-id: id6ein
 #: src/modules/ui/input/components/ImageInput.tsx
