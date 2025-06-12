@@ -213,11 +213,18 @@ function assertStepIsValid(step: WorkflowAction) {
   }
 }
 
-function assertFormStepIsValid(settings: WorkflowFormActionSettings) {
+export function assertFormStepIsValid(settings: WorkflowFormActionSettings) {
   if (!settings.input) {
     throw new WorkflowTriggerException(
       'No input provided in form step',
       WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
+    );
+  }
+
+  if (settings.input.length === 0) {
+    throw new WorkflowTriggerException(
+      'Form action must have at least one field',
+      WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
     );
   }
 
