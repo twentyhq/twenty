@@ -3,7 +3,7 @@ import { isMethodWithBody } from '@/workflow/workflow-steps/workflow-actions/htt
 import { useState } from 'react';
 import { isValidUrl } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
-import { HttpRequestFormData } from '../constants/HttpRequest';
+import { HttpRequestBody, HttpRequestFormData } from '../constants/HttpRequest';
 
 export type UseHttpRequestFormParams = {
   action: WorkflowHttpRequestAction;
@@ -11,16 +11,20 @@ export type UseHttpRequestFormParams = {
   readonly: boolean;
 };
 
+type ErrorState = {
+  message: string | undefined;
+  isVisible: boolean;
+};
+
 export const useHttpRequestForm = ({
   action,
   onActionUpdate,
   readonly,
 }: UseHttpRequestFormParams) => {
-  const [errorMessages, setErrorMessages] = useState<string | undefined>(
-    undefined,
-  );
-  const [errorMessagesVisible, setErrorMessagesVisible] =
-    useState<boolean>(false);
+  const [error, setError] = useState<ErrorState>({
+    message: undefined,
+    isVisible: false,
+  });
   const [formData, setFormData] = useState<HttpRequestFormData>({
     url: action.settings.input.url,
     method: action.settings.input.method,
@@ -30,21 +34,24 @@ export const useHttpRequestForm = ({
 
   const validateUrl = (url: string): boolean => {
     if (!url) {
-      setErrorMessages('URL is required');
+      setError({ message: 'URL is required', isVisible: false });
       return false;
     }
 
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
-      setErrorMessages('URL must start with http:// or https://');
+      setError({
+        message: 'URL must start with http:// or https://',
+        isVisible: false,
+      });
       return false;
     }
 
     if (!isValidUrl(url)) {
-      setErrorMessages('Invalid URL');
+      setError({ message: 'Invalid URL', isVisible: false });
       return false;
     }
 
-    setErrorMessages(undefined);
+    setError({ message: undefined, isVisible: false });
     return true;
   };
 
@@ -69,9 +76,9 @@ export const useHttpRequestForm = ({
 
   const handleFieldChange = (
     field: keyof HttpRequestFormData,
-    value: string | Record<string, unknown> | null,
+    value: string | HttpRequestBody | undefined,
   ) => {
-    let newFormData = { ...formData, [field]: value ?? '' };
+    let newFormData = { ...formData, [field]: value };
 
     if (field === 'url' && !validateUrl(value as string)) {
       return;
@@ -86,13 +93,12 @@ export const useHttpRequestForm = ({
   };
 
   const onBlur = () => {
-    setErrorMessagesVisible(Boolean(formData.url));
+    setError((prev) => ({ ...prev, isVisible: Boolean(formData.url) }));
   };
 
   return {
     formData,
-    errorMessages,
-    errorMessagesVisible,
+    error,
     handleFieldChange,
     onBlur,
     saveAction,

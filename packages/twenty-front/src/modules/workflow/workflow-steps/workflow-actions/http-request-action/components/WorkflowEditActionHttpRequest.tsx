@@ -1,4 +1,3 @@
-import { FormRawJsonFieldInput } from '@/object-record/record-field/form-types/components/FormRawJsonFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
 import { WorkflowHttpRequestAction } from '@/workflow/types/Workflow';
@@ -9,11 +8,9 @@ import { isMethodWithBody } from '@/workflow/workflow-steps/workflow-actions/htt
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useEffect } from 'react';
 import { useIcons } from 'twenty-ui/display';
-import {
-  DEFAULT_BODY_PLACEHOLDER,
-  HTTP_METHODS,
-} from '../constants/HttpRequest';
+import { HTTP_METHODS } from '../constants/HttpRequest';
 import { useHttpRequestForm } from '../hooks/useHttpRequestForm';
+import { BodyInput } from './BodyInput';
 import { KeyValuePairInput } from './KeyValuePairInput';
 
 type WorkflowEditActionHttpRequestProps = {
@@ -37,21 +34,15 @@ export const WorkflowEditActionHttpRequest = ({
       defaultTitle: 'HTTP Request',
     });
 
-  const {
-    formData,
-    errorMessages,
-    errorMessagesVisible,
-    handleFieldChange,
-    onBlur,
-    saveAction,
-  } = useHttpRequestForm({
-    action,
-    onActionUpdate:
-      actionOptions.readonly === true
-        ? undefined
-        : actionOptions.onActionUpdate,
-    readonly: actionOptions.readonly === true,
-  });
+  const { formData, error, handleFieldChange, onBlur, saveAction } =
+    useHttpRequestForm({
+      action,
+      onActionUpdate:
+        actionOptions.readonly === true
+          ? undefined
+          : actionOptions.onActionUpdate,
+      readonly: actionOptions.readonly === true,
+    });
 
   useEffect(() => () => saveAction.flush(), [saveAction]);
 
@@ -72,43 +63,38 @@ export const WorkflowEditActionHttpRequest = ({
       />
       <WorkflowStepBody>
         <FormTextFieldInput
-          label="Live URL"
-          placeholder="Enter request URL"
+          label="URL"
+          placeholder="https://api.example.com/endpoint"
           readonly={actionOptions.readonly}
           defaultValue={formData.url}
-          error={errorMessagesVisible.url ? errorMessages.url : undefined}
-          onBlur={() => onBlur('url')}
+          error={error.isVisible ? error.message : undefined}
+          onBlur={onBlur}
           onChange={(value) => handleFieldChange('url', value)}
           VariablePicker={WorkflowVariablePicker}
         />
         <Select
-          dropdownId="select-http-method"
-          label="HTTP method"
+          label="HTTP Method"
+          dropdownId="http-method"
           options={[...HTTP_METHODS]}
           value={formData.method}
           onChange={(value) => handleFieldChange('method', value)}
           disabled={actionOptions.readonly}
         />
+
         <KeyValuePairInput
           label="Headers"
-          readonly={actionOptions.readonly}
           defaultValue={formData.headers}
-          error={
-            errorMessagesVisible.headers ? errorMessages.headers : undefined
-          }
-          onBlur={() => onBlur('headers')}
           onChange={(value) => handleFieldChange('headers', value)}
-          VariablePicker={WorkflowVariablePicker}
+          readonly={actionOptions.readonly}
+          keyPlaceholder="Header name"
+          valuePlaceholder="Header value"
         />
+
         {isMethodWithBody(formData.method) && (
-          <FormRawJsonFieldInput
-            label="Body"
-            placeholder={DEFAULT_BODY_PLACEHOLDER}
-            readonly={actionOptions.readonly}
+          <BodyInput
             defaultValue={formData.body}
-            error={errorMessagesVisible.body ? errorMessages.body : undefined}
-            onBlur={() => onBlur('body')}
             onChange={(value) => handleFieldChange('body', value)}
+            readonly={actionOptions.readonly}
             VariablePicker={WorkflowVariablePicker}
           />
         )}
