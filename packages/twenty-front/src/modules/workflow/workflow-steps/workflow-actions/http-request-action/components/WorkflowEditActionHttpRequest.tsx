@@ -34,15 +34,14 @@ export const WorkflowEditActionHttpRequest = ({
       defaultTitle: 'HTTP Request',
     });
 
-  const { formData, error, handleFieldChange, onBlur, saveAction } =
-    useHttpRequestForm({
-      action,
-      onActionUpdate:
-        actionOptions.readonly === true
-          ? undefined
-          : actionOptions.onActionUpdate,
-      readonly: actionOptions.readonly === true,
-    });
+  const { formData, handleFieldChange, saveAction } = useHttpRequestForm({
+    action,
+    onActionUpdate:
+      actionOptions.readonly === true
+        ? undefined
+        : actionOptions.onActionUpdate,
+    readonly: actionOptions.readonly === true,
+  });
 
   useEffect(() => () => saveAction.flush(), [saveAction]);
 
@@ -67,8 +66,6 @@ export const WorkflowEditActionHttpRequest = ({
           placeholder="https://api.example.com/endpoint"
           readonly={actionOptions.readonly}
           defaultValue={formData.url}
-          error={error.isVisible ? error.message : undefined}
-          onBlur={onBlur}
           onChange={(value) => handleFieldChange('url', value)}
           VariablePicker={WorkflowVariablePicker}
         />
