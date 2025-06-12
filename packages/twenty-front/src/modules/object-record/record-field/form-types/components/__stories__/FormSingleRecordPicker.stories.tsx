@@ -41,9 +41,13 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('Company');
+    const label = await canvas.findByText('Company');
+    expect(label).toBeVisible();
+
     const dropdown = await canvas.findByRole('button');
     expect(dropdown).toBeVisible();
+
+    await userEvent.click(dropdown);
   },
 };
 

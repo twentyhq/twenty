@@ -151,21 +151,24 @@ export const ObjectFilterDropdownOptionSelect = () => {
       hotkeyScope={SingleRecordPickerHotkeyScope.SingleRecordPicker}
     >
       <DropdownMenuItemsContainer hasMaxHeight>
-        {optionsInDropdown?.map((option) => (
-          <MenuItemMultiSelect
-            key={option.id}
-            selected={option.isSelected}
-            isKeySelected={option.id === selectedItemId}
-            onSelectChange={(selected) =>
-              handleMultipleOptionSelectChange(option, selected)
-            }
-            text={option.label}
-            color={option.color}
-            className=""
-          />
-        ))}
+        {showNoResult ? (
+          <MenuItem text="No results" />
+        ) : (
+          optionsInDropdown?.map((option) => (
+            <MenuItemMultiSelect
+              key={option.id}
+              selected={option.isSelected}
+              isKeySelected={option.id === selectedItemId}
+              onSelectChange={(selected) =>
+                handleMultipleOptionSelectChange(option, selected)
+              }
+              text={option.label}
+              color={option.color}
+              className=""
+            />
+          ))
+        )}
       </DropdownMenuItemsContainer>
-      {showNoResult && <MenuItem text="No results" />}
     </SelectableList>
   );
 };

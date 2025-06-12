@@ -15,7 +15,7 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useCallback } from 'react';
+import { useCallback, useId } from 'react';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconChevronDown, IconForbid } from 'twenty-ui/display';
 
@@ -98,8 +98,9 @@ export const FormSingleRecordPicker = ({
     skip: !isDefined(defaultValue) || !isValidUuid(defaultValue),
   });
 
-  const dropdownId = `form-record-picker-${objectNameSingular}`;
-  const variablesDropdownId = `form-record-picker-${objectNameSingular}-variables`;
+  const componentId = useId();
+  const dropdownId = `form-record-picker-${componentId}`;
+  const variablesDropdownId = `form-record-picker-${componentId}-variables`;
 
   const { closeDropdown } = useDropdown(dropdownId);
 

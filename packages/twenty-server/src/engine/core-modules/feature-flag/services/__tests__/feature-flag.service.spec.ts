@@ -11,6 +11,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
 import { publicFeatureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/is-public-feature-flag.validate';
 import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
+import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 
 jest.mock(
   'src/engine/core-modules/feature-flag/validates/is-public-feature-flag.validate',
@@ -35,6 +36,10 @@ describe('FeatureFlagService', () => {
     recomputeFeatureFlagsMapCache: jest.fn(),
   };
 
+  const mockWorkspacePermissionsCacheService = {
+    recomputeRolesPermissionsCache: jest.fn(),
+  };
+
   const workspaceId = 'workspace-id';
   const featureFlag = FeatureFlagKey.IS_WORKFLOW_ENABLED;
 
@@ -56,6 +61,10 @@ describe('FeatureFlagService', () => {
         {
           provide: WorkspaceFeatureFlagsMapCacheService,
           useValue: mockWorkspaceFeatureFlagsMapCacheService,
+        },
+        {
+          provide: WorkspacePermissionsCacheService,
+          useValue: mockWorkspacePermissionsCacheService,
         },
       ],
     }).compile();

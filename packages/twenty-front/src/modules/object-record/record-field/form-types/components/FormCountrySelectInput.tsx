@@ -9,11 +9,13 @@ import { SelectOption } from 'twenty-ui/input';
 export const FormCountrySelectInput = ({
   selectedCountryName,
   onChange,
+  label,
   readonly = false,
   VariablePicker,
 }: {
   selectedCountryName: string;
   onChange: (country: string) => void;
+  label?: string;
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;
 }) => {
@@ -52,7 +54,7 @@ export const FormCountrySelectInput = ({
 
   return (
     <FormSelectFieldInput
-      label="Country"
+      label={label}
       onChange={onCountryChange}
       options={options}
       defaultValue={selectedCountryName}

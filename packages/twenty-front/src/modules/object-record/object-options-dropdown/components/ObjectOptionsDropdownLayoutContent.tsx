@@ -106,12 +106,12 @@ export const ObjectOptionsDropdownLayoutContent = () => {
       </DropdownMenuHeader>
 
       {!!currentView && (
-        <DropdownMenuItemsContainer>
-          <SelectableList
-            selectableListInstanceId={OBJECT_OPTIONS_DROPDOWN_ID}
-            hotkeyScope={TableOptionsHotkeyScope.Dropdown}
-            selectableItemIdArray={selectableItemIdArray}
-          >
+        <SelectableList
+          selectableListInstanceId={OBJECT_OPTIONS_DROPDOWN_ID}
+          hotkeyScope={TableOptionsHotkeyScope.Dropdown}
+          selectableItemIdArray={selectableItemIdArray}
+        >
+          <DropdownMenuItemsContainer scrollable={false}>
             <SelectableListItem
               itemId={ViewType.Table}
               onEnter={() => {
@@ -157,7 +157,9 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                 onClick={handleSelectKanbanViewType}
               />
             </SelectableListItem>
-            <DropdownMenuSeparator />
+          </DropdownMenuItemsContainer>
+          <DropdownMenuSeparator />
+          <DropdownMenuItemsContainer scrollable={false}>
             <SelectableListItem
               itemId={ViewOpenRecordInType.SIDE_PANEL}
               onEnter={() => {
@@ -232,8 +234,8 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                 </SelectableListItem>
               </>
             )}
-          </SelectableList>
-        </DropdownMenuItemsContainer>
+          </DropdownMenuItemsContainer>
+        </SelectableList>
       )}
     </DropdownContent>
   );

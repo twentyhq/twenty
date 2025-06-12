@@ -1,3 +1,4 @@
+import { Entity } from '@microsoft/microsoft-graph-types';
 import { isDefined } from 'class-validator';
 import { ObjectRecordsPermissionsByRoleId } from 'twenty-shared/types';
 import {
@@ -9,6 +10,7 @@ import {
   ReplicationMode,
   SelectQueryBuilder,
 } from 'typeorm';
+import { EntityManagerFactory } from 'typeorm/entity-manager/EntityManagerFactory';
 
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
@@ -33,6 +35,7 @@ export class WorkspaceDataSource extends DataSource {
   featureFlagMap: FeatureFlagMap;
   rolesPermissionsVersion: string;
   permissionsPerRoleId: ObjectRecordsPermissionsByRoleId;
+  dataSourceWithOverridenCreateQueryBuilder: WorkspaceDataSource;
 
   constructor(
     internalContext: WorkspaceInternalContext,
@@ -88,6 +91,58 @@ export class WorkspaceDataSource extends DataSource {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return queryRunner as any as WorkspaceQueryRunner;
+  }
+
+  // Do not use, only for specific permission-related purpose
+  createQueryRunnerForEntityPersistExecutor(
+    mode = 'master' as ReplicationMode,
+  ) {
+    if (this.dataSourceWithOverridenCreateQueryBuilder) {
+      const queryRunner = this.driver.createQueryRunner(mode);
+      const manager = new EntityManagerFactory().create(
+        this.dataSourceWithOverridenCreateQueryBuilder,
+        queryRunner,
+      );
+
+      Object.assign(queryRunner, { manager: manager });
+
+      return queryRunner;
+    }
+
+    const dataSourceWithOverridenCreateQueryBuilder = Object.assign(
+      Object.create(Object.getPrototypeOf(this)),
+      this,
+      {
+        createQueryBuilder: (
+          entityOrRunner: EntityTarget<Entity> | QueryRunner,
+          alias?: string,
+          queryRunner?: QueryRunner,
+        ) => {
+          if (isDefined(alias) && typeof alias === 'string') {
+            const entity = entityOrRunner as EntityTarget<Entity>;
+
+            return this.createQueryBuilder(entity, alias, queryRunner, {
+              calledByWorkspaceEntityManager: true,
+            });
+          } else {
+            const runner = entityOrRunner as QueryRunner;
+
+            return this.createQueryBuilder(runner, {
+              calledByWorkspaceEntityManager: true,
+            });
+          }
+        },
+      },
+    );
+    const queryRunner = this.driver.createQueryRunner(mode);
+    const manager = new EntityManagerFactory().create(
+      dataSourceWithOverridenCreateQueryBuilder,
+      queryRunner,
+    );
+
+    Object.assign(queryRunner, { manager: manager });
+
+    return queryRunner;
   }
 
   override createQueryBuilder<Entity extends ObjectLiteral>(

@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
 import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
@@ -9,13 +9,21 @@ import { UpdateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow
 import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-step.dto';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-step/workflow-version-step.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 @Resolver()
-@UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+@UseGuards(
+  WorkspaceAuthGuard,
+  UserAuthGuard,
+  SettingsPermissionsGuard(SettingPermissionType.WORKFLOWS),
+)
+@UseFilters(PermissionsGraphqlApiExceptionFilter)
 export class WorkflowStepResolver {
   constructor(
     private readonly workflowVersionStepWorkspaceService: WorkflowVersionStepWorkspaceService,
@@ -78,10 +86,12 @@ export class WorkflowStepResolver {
 
   @Mutation(() => WorkflowActionDTO)
   async updateWorkflowRunStep(
+    @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args('input')
     { workflowRunId, step }: UpdateWorkflowRunStepInput,
   ): Promise<WorkflowActionDTO> {
     await this.workflowRunWorkspaceService.updateWorkflowRunStep({
+      workspaceId,
       workflowRunId,
       step,
     });

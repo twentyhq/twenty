@@ -21,6 +21,7 @@ export const useChipFieldDisplay = () => {
     disableChipClick,
     maxWidth,
     triggerEvent,
+    onRecordChipClick,
   } = useContext(FieldContext);
 
   const { chipGeneratorPerObjectPerField } = useContext(
@@ -54,5 +55,6 @@ export const useChipFieldDisplay = () => {
     disableChipClick,
     maxWidth,
     triggerEvent,
+    onRecordChipClick,
   };
 };

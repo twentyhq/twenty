@@ -19,7 +19,7 @@ export const getUpdateRequestBody = (name: string) => {
     content: {
       'application/json': {
         schema: {
-          $ref: `#/components/schemas/${name} for Update`,
+          $ref: `#/components/schemas/${name}ForUpdate`,
         },
       },
     },

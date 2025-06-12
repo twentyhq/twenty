@@ -71,7 +71,8 @@ export const TabList = ({
   const [containerWidth, setContainerWidth] = useState(0);
   const [moreButtonWidth, setMoreButtonWidth] = useState(0);
 
-  const initialActiveTabId = activeTabId || visibleTabs[0]?.id || '';
+  const activeTabExists = visibleTabs.some((tab) => tab.id === activeTabId);
+  const initialActiveTabId = activeTabExists ? activeTabId : visibleTabs[0]?.id;
 
   const visibleTabCount = useMemo(() => {
     return calculateVisibleTabCount({

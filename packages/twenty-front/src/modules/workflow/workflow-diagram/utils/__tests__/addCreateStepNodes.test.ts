@@ -30,6 +30,7 @@ describe('addCreateStepNodes', () => {
           },
           outputSchema: {},
         },
+        nextStepIds: ['step2'],
       },
       {
         id: 'step2',
@@ -48,6 +49,7 @@ describe('addCreateStepNodes', () => {
           },
           outputSchema: {},
         },
+        nextStepIds: undefined,
       },
     ];
 

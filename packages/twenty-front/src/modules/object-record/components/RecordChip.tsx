@@ -7,6 +7,7 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { MouseEvent } from 'react';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import {
   AvatarChip,
   AvatarChipVariant,
@@ -27,6 +28,7 @@ export type RecordChipProps = {
   size?: ChipSize;
   isLabelHidden?: boolean;
   triggerEvent?: TriggerEventType;
+  onClick?: (event: MouseEvent) => void;
 };
 
 export const RecordChip = ({
@@ -40,6 +42,7 @@ export const RecordChip = ({
   forceDisableClick = false,
   isLabelHidden = false,
   triggerEvent = 'MOUSE_DOWN',
+  onClick,
 }: RecordChipProps) => {
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
@@ -53,14 +56,16 @@ export const RecordChip = ({
   const isSidePanelViewOpenRecordInType =
     recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL;
 
-  const handleCustomClick = isSidePanelViewOpenRecordInType
-    ? (_event: MouseEvent<HTMLElement>) => {
-        openRecordInCommandMenu({
-          recordId: record.id,
-          objectNameSingular,
-        });
-      }
-    : undefined;
+  const handleCustomClick = isDefined(onClick)
+    ? onClick
+    : isSidePanelViewOpenRecordInType
+      ? (_event: MouseEvent<HTMLElement>) => {
+          openRecordInCommandMenu({
+            recordId: record.id,
+            objectNameSingular,
+          });
+        }
+      : undefined;
 
   // TODO temporary until we create a record show page for Workspaces members
 

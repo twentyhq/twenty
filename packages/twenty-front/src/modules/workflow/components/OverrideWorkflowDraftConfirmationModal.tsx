@@ -5,13 +5,11 @@ import {
   StyledCenteredButton,
 } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { OVERRIDE_WORKFLOW_DRAFT_CONFIRMATION_MODAL_ID } from '@/workflow/constants/OverrideWorkflowDraftConfirmationModalId';
 import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
 import { t } from '@lingui/core/macro';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getAppPath } from '~/utils/navigation/getAppPath';
-
-const OVERRIDE_WORKFLOW_DRAFT_CONFIRMATION_MODAL_ID =
-  'override-workflow-draft-confirmation-modal';
 
 export const OverrideWorkflowDraftConfirmationModal = ({
   workflowId,

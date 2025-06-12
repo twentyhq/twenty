@@ -206,6 +206,7 @@ export class DatabaseEventTriggerListener {
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
           workspaceId,
           relatedObjectMetadataNameSingular,
+          { shouldBypassPermissionChecks: true },
         );
 
       record[joinField.name] = await relatedObjectRepository.findOne({
@@ -254,6 +255,7 @@ export class DatabaseEventTriggerListener {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowAutomatedTriggerWorkspaceEntity>(
         workspaceId,
         automatedTriggerTableName,
+        { shouldBypassPermissionChecks: true },
       );
 
     const eventListeners = await workflowAutomatedTriggerRepository.find({

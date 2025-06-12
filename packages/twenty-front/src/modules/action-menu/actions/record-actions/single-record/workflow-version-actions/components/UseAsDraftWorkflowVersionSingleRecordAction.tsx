@@ -2,17 +2,19 @@ import { Action } from '@/action-menu/actions/components/Action';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { AppPath } from '@/types/AppPath';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { OverrideWorkflowDraftConfirmationModal } from '@/workflow/components/OverrideWorkflowDraftConfirmationModal';
+import { OVERRIDE_WORKFLOW_DRAFT_CONFIRMATION_MODAL_ID } from '@/workflow/constants/OverrideWorkflowDraftConfirmationModalId';
 import { useCreateDraftFromWorkflowVersion } from '@/workflow/hooks/useCreateDraftFromWorkflowVersion';
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { openOverrideWorkflowDraftConfirmationModalState } from '@/workflow/states/openOverrideWorkflowDraftConfirmationModalState';
 import { useState } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const UseAsDraftWorkflowVersionSingleRecordAction = () => {
+  const { openModal } = useModal();
+
   const recordId = useSelectedRecordIdOrThrow();
   const workflowVersion = useWorkflowVersion(recordId);
   const workflow = useWorkflowWithCurrentVersion(
@@ -20,9 +22,6 @@ export const UseAsDraftWorkflowVersionSingleRecordAction = () => {
   );
   const { createDraftFromWorkflowVersion } =
     useCreateDraftFromWorkflowVersion();
-  const setOpenOverrideWorkflowDraftConfirmationModal = useSetRecoilState(
-    openOverrideWorkflowDraftConfirmationModalState,
-  );
   const navigate = useNavigateApp();
   const [hasNavigated, setHasNavigated] = useState(false);
 
@@ -35,7 +34,7 @@ export const UseAsDraftWorkflowVersionSingleRecordAction = () => {
     }
 
     if (hasAlreadyDraftVersion) {
-      setOpenOverrideWorkflowDraftConfirmationModal(true);
+      openModal(OVERRIDE_WORKFLOW_DRAFT_CONFIRMATION_MODAL_ID);
     } else {
       const executeActionWithoutWaiting = async () => {
         await createDraftFromWorkflowVersion({

@@ -21,6 +21,7 @@ describe('generateWorkflowRunDiagram', () => {
         outputSchema: {},
       },
     };
+
     const steps: WorkflowStep[] = [
       {
         id: 'step1',
@@ -39,6 +40,7 @@ describe('generateWorkflowRunDiagram', () => {
           },
           outputSchema: {},
         },
+        nextStepIds: ['step2'],
       },
       {
         id: 'step2',
@@ -57,6 +59,7 @@ describe('generateWorkflowRunDiagram', () => {
           },
           outputSchema: {},
         },
+        nextStepIds: ['step3'],
       },
       {
         id: 'step3',
@@ -75,8 +78,10 @@ describe('generateWorkflowRunDiagram', () => {
           },
           outputSchema: {},
         },
+        nextStepIds: undefined,
       },
     ];
+
     const stepsOutput: WorkflowRunOutputStepsOutput = {
       step1: {
         result: undefined,
@@ -144,7 +149,7 @@ describe('generateWorkflowRunDiagram', () => {
         "id": "step1",
         "position": {
           "x": 0,
-          "y": 0,
+          "y": 150,
         },
       },
       {
@@ -157,7 +162,7 @@ describe('generateWorkflowRunDiagram', () => {
         "id": "step2",
         "position": {
           "x": 0,
-          "y": 150,
+          "y": 300,
         },
       },
       {
@@ -170,7 +175,7 @@ describe('generateWorkflowRunDiagram', () => {
         "id": "step3",
         "position": {
           "x": 0,
-          "y": 300,
+          "y": 450,
         },
       },
     ],
@@ -189,6 +194,7 @@ describe('generateWorkflowRunDiagram', () => {
         outputSchema: {},
       },
     };
+
     const steps: WorkflowStep[] = [
       {
         id: 'step1',
@@ -207,6 +213,7 @@ describe('generateWorkflowRunDiagram', () => {
           },
           outputSchema: {},
         },
+        nextStepIds: ['step2'],
       },
       {
         id: 'step2',
@@ -225,6 +232,7 @@ describe('generateWorkflowRunDiagram', () => {
           },
           outputSchema: {},
         },
+        nextStepIds: ['step3'],
       },
       {
         id: 'step3',
@@ -243,8 +251,10 @@ describe('generateWorkflowRunDiagram', () => {
           },
           outputSchema: {},
         },
+        nextStepIds: undefined,
       },
     ];
+
     const stepsOutput: WorkflowRunOutputStepsOutput = {
       step1: {
         result: {},
@@ -322,7 +332,7 @@ describe('generateWorkflowRunDiagram', () => {
         "id": "step1",
         "position": {
           "x": 0,
-          "y": 0,
+          "y": 150,
         },
       },
       {
@@ -335,7 +345,7 @@ describe('generateWorkflowRunDiagram', () => {
         "id": "step2",
         "position": {
           "x": 0,
-          "y": 150,
+          "y": 300,
         },
       },
       {
@@ -348,7 +358,7 @@ describe('generateWorkflowRunDiagram', () => {
         "id": "step3",
         "position": {
           "x": 0,
-          "y": 300,
+          "y": 450,
         },
       },
     ],
@@ -367,6 +377,7 @@ describe('generateWorkflowRunDiagram', () => {
         outputSchema: {},
       },
     };
+
     const steps: WorkflowStep[] = [
       {
         id: 'step1',
@@ -385,6 +396,7 @@ describe('generateWorkflowRunDiagram', () => {
           },
           outputSchema: {},
         },
+        nextStepIds: ['step2'],
       },
       {
         id: 'step2',
@@ -403,6 +415,7 @@ describe('generateWorkflowRunDiagram', () => {
           },
           outputSchema: {},
         },
+        nextStepIds: ['step3'],
       },
       {
         id: 'step3',
@@ -421,8 +434,10 @@ describe('generateWorkflowRunDiagram', () => {
           },
           outputSchema: {},
         },
+        nextStepIds: undefined,
       },
     ];
+
     const stepsOutput = undefined;
 
     const result = generateWorkflowRunDiagram({ trigger, steps, stepsOutput });
@@ -485,7 +500,7 @@ describe('generateWorkflowRunDiagram', () => {
         "id": "step1",
         "position": {
           "x": 0,
-          "y": 0,
+          "y": 150,
         },
       },
       {
@@ -498,7 +513,7 @@ describe('generateWorkflowRunDiagram', () => {
         "id": "step2",
         "position": {
           "x": 0,
-          "y": 150,
+          "y": 300,
         },
       },
       {
@@ -511,7 +526,7 @@ describe('generateWorkflowRunDiagram', () => {
         "id": "step3",
         "position": {
           "x": 0,
-          "y": 300,
+          "y": 450,
         },
       },
     ],
@@ -530,6 +545,7 @@ describe('generateWorkflowRunDiagram', () => {
         outputSchema: {},
       },
     };
+
     const steps: WorkflowStep[] = [
       {
         id: 'step1',
@@ -548,6 +564,7 @@ describe('generateWorkflowRunDiagram', () => {
           },
           outputSchema: {},
         },
+        nextStepIds: ['step2'],
       },
       {
         id: 'step2',
@@ -566,6 +583,7 @@ describe('generateWorkflowRunDiagram', () => {
           },
           outputSchema: {},
         },
+        nextStepIds: ['step3'],
       },
       {
         id: 'step3',
@@ -584,6 +602,7 @@ describe('generateWorkflowRunDiagram', () => {
           },
           outputSchema: {},
         },
+        nextStepIds: ['step4'],
       },
       {
         id: 'step4',
@@ -602,8 +621,10 @@ describe('generateWorkflowRunDiagram', () => {
           },
           outputSchema: {},
         },
+        nextStepIds: undefined,
       },
     ];
+
     const stepsOutput: WorkflowRunOutputStepsOutput = {
       step1: {
         result: {},
@@ -681,7 +702,7 @@ describe('generateWorkflowRunDiagram', () => {
         "id": "step1",
         "position": {
           "x": 0,
-          "y": 0,
+          "y": 150,
         },
       },
       {
@@ -694,7 +715,7 @@ describe('generateWorkflowRunDiagram', () => {
         "id": "step2",
         "position": {
           "x": 0,
-          "y": 150,
+          "y": 300,
         },
       },
       {
@@ -707,7 +728,7 @@ describe('generateWorkflowRunDiagram', () => {
         "id": "step3",
         "position": {
           "x": 0,
-          "y": 300,
+          "y": 450,
         },
       },
       {
@@ -720,7 +741,7 @@ describe('generateWorkflowRunDiagram', () => {
         "id": "step4",
         "position": {
           "x": 0,
-          "y": 450,
+          "y": 600,
         },
       },
     ],
@@ -762,6 +783,7 @@ describe('generateWorkflowRunDiagram', () => {
           ],
           outputSchema: {},
         },
+        nextStepIds: undefined,
       },
     ];
     const stepsOutput = {
@@ -814,7 +836,7 @@ describe('generateWorkflowRunDiagram', () => {
         "id": "step1",
         "position": {
           "x": 0,
-          "y": 0,
+          "y": 150,
         },
       },
     ],

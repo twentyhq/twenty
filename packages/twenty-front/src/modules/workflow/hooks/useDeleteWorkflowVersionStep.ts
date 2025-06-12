@@ -35,7 +35,9 @@ export const useDeleteWorkflowVersionStep = () => {
     input: DeleteWorkflowVersionStepInput,
   ) => {
     const result = await mutate({ variables: { input } });
+
     const deletedStep = result?.data?.deleteWorkflowVersionStep;
+
     if (!isDefined(deletedStep)) {
       return;
     }
@@ -43,6 +45,7 @@ export const useDeleteWorkflowVersionStep = () => {
     const cachedRecord = getRecordFromCache<WorkflowVersion>(
       input.workflowVersionId,
     );
+
     if (!isDefined(cachedRecord)) {
       return;
     }
@@ -51,12 +54,21 @@ export const useDeleteWorkflowVersionStep = () => {
       ...cachedRecord,
       steps: (cachedRecord.steps || [])
         .filter((step: WorkflowAction) => step.id !== deletedStep.id)
-        .map((step) => {
+        .map((step: WorkflowAction) => {
+          if (!step.nextStepIds?.includes(deletedStep.id)) {
+            return step;
+          }
+
           return {
             ...step,
-            nextStepIds: step.nextStepIds?.filter(
-              (nextStepId) => nextStepId !== deletedStep.id,
-            ),
+            nextStepIds: [
+              ...new Set([
+                ...(step.nextStepIds?.filter(
+                  (nextStepId) => nextStepId !== deletedStep.id,
+                ) || []),
+                ...(deletedStep.nextStepIds || []),
+              ]),
+            ],
           };
         }),
     };
@@ -64,6 +76,7 @@ export const useDeleteWorkflowVersionStep = () => {
     const recordGqlFields = {
       steps: true,
     };
+
     updateRecordFromCache({
       objectMetadataItems,
       objectMetadataItem,

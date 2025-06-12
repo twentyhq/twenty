@@ -5,11 +5,7 @@ import {
   CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
-import {
-  IconButtonAccent,
-  IconButtonSize,
-  IconButtonVariant,
-} from '../IconButton';
+
 import { IconButtonGroup } from '../IconButtonGroup';
 
 const meta: Meta<typeof IconButtonGroup> = {
@@ -32,40 +28,22 @@ type Story = StoryObj<typeof IconButtonGroup>;
 
 export const Default: Story = {
   args: {
-    size: 'small',
-    variant: 'primary',
-    accent: 'danger',
+    disabled: false,
   },
   decorators: [ComponentDecorator],
 };
 
 export const Catalog: CatalogStory<Story, typeof IconButtonGroup> = {
   argTypes: {
-    size: { control: false },
-    variant: { control: false },
-    accent: { control: false },
+    disabled: { control: false },
   },
   parameters: {
     catalog: {
       dimensions: [
         {
-          name: 'sizes',
-          values: ['small', 'medium'] satisfies IconButtonSize[],
-          props: (size: IconButtonSize) => ({ size }),
-        },
-        {
-          name: 'accents',
-          values: ['default', 'blue', 'danger'] satisfies IconButtonAccent[],
-          props: (accent: IconButtonAccent) => ({ accent }),
-        },
-        {
-          name: 'variants',
-          values: [
-            'primary',
-            'secondary',
-            'tertiary',
-          ] satisfies IconButtonVariant[],
-          props: (variant: IconButtonVariant) => ({ variant }),
+          name: 'disabled',
+          values: [true, false],
+          props: (disabled: boolean) => ({ disabled }),
         },
       ],
     },

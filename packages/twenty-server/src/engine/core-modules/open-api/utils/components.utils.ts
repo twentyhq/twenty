@@ -358,7 +358,7 @@ const getSchemaComponentsRelationProperties = (
             {
               $ref: `#/components/schemas/${capitalize(
                 field.relationTargetObjectMetadata.nameSingular,
-              )} for Response`,
+              )}ForResponse`,
             },
           ],
         };
@@ -368,7 +368,7 @@ const getSchemaComponentsRelationProperties = (
           items: {
             $ref: `#/components/schemas/${capitalize(
               field.relationTargetObjectMetadata.nameSingular,
-            )} for Response`,
+            )}ForResponse`,
           },
         };
       }
@@ -446,14 +446,14 @@ export const computeSchemaComponents = (
         forResponse: false,
         withRelations: false,
       });
-      schemas[capitalize(item.nameSingular) + ' for Update'] =
+      schemas[capitalize(item.nameSingular) + 'ForUpdate'] =
         computeSchemaComponent({
           item,
           withRequiredFields: false,
           forResponse: false,
           withRelations: false,
         });
-      schemas[capitalize(item.nameSingular) + ' for Response'] =
+      schemas[capitalize(item.nameSingular) + 'ForResponse'] =
         computeSchemaComponent({
           item,
           withRequiredFields: false,
@@ -515,14 +515,14 @@ export const computeMetadataSchemaComponents = (
               $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
             },
           };
-          schemas[`${capitalize(item.nameSingular)} for Update`] = {
+          schemas[`${capitalize(item.nameSingular)}ForUpdate`] = {
             type: 'object',
             description: `An object`,
             properties: {
               isActive: { type: 'boolean' },
             },
           };
-          schemas[`${capitalize(item.nameSingular)} for Response`] = {
+          schemas[`${capitalize(item.nameSingular)}ForResponse`] = {
             ...schemas[`${capitalize(item.nameSingular)}`],
             properties: {
               ...schemas[`${capitalize(item.nameSingular)}`].properties,
@@ -542,7 +542,7 @@ export const computeMetadataSchemaComponents = (
                       node: {
                         type: 'array',
                         items: {
-                          $ref: '#/components/schemas/Field for Response',
+                          $ref: '#/components/schemas/FieldForResponse',
                         },
                       },
                     },
@@ -551,11 +551,11 @@ export const computeMetadataSchemaComponents = (
               },
             },
           };
-          schemas[`${capitalize(item.namePlural)} for Response`] = {
+          schemas[`${capitalize(item.namePlural)}ForResponse`] = {
             type: 'array',
             description: `A list of ${item.namePlural}`,
             items: {
-              $ref: `#/components/schemas/${capitalize(item.nameSingular)} for Response`,
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`,
             },
           };
 
@@ -622,12 +622,12 @@ export const computeMetadataSchemaComponents = (
               $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
             },
           };
-          schemas[`${capitalize(item.nameSingular)} for Update`] =
+          schemas[`${capitalize(item.nameSingular)}ForUpdate`] =
             baseFieldProperties({
               withImmutableFields: false,
               withRequiredFields: false,
             });
-          schemas[`${capitalize(item.nameSingular)} for Response`] = {
+          schemas[`${capitalize(item.nameSingular)}ForResponse`] = {
             ...baseFieldProperties({
               withImmutableFields: true,
               withRequiredFields: false,
@@ -642,11 +642,11 @@ export const computeMetadataSchemaComponents = (
               updatedAt: { type: 'string', format: 'date-time' },
             },
           };
-          schemas[`${capitalize(item.namePlural)} for Response`] = {
+          schemas[`${capitalize(item.namePlural)}ForResponse`] = {
             type: 'array',
             description: `A list of ${item.namePlural}`,
             items: {
-              $ref: `#/components/schemas/${capitalize(item.nameSingular)} for Response`,
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`,
             },
           };
 

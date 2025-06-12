@@ -10,7 +10,7 @@ import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/interfa
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import {
   WorkflowStepExecutorException,
@@ -29,7 +29,7 @@ import { WorkflowDeleteRecordActionInput } from 'src/modules/workflow/workflow-e
 @Injectable()
 export class DeleteRecordWorkflowAction implements WorkflowExecutor {
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
@@ -72,10 +72,6 @@ export class DeleteRecordWorkflowAction implements WorkflowExecutor {
       );
     }
 
-    const repository = await this.twentyORMManager.getRepository(
-      workflowActionInput.objectName,
-    );
-
     const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
 
     if (!workspaceId) {
@@ -84,6 +80,13 @@ export class DeleteRecordWorkflowAction implements WorkflowExecutor {
         RecordCRUDActionExceptionCode.INVALID_REQUEST,
       );
     }
+
+    const repository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        workflowActionInput.objectName,
+        { shouldBypassPermissionChecks: true },
+      );
 
     const objectMetadata = await this.objectMetadataRepository.findOne({
       where: {

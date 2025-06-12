@@ -15,6 +15,58 @@ import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerSt
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+/**
+ * Groups workflow steps into levels based on their distance from root nodes.
+ *
+ * A root node is one that is not referenced as a `nextStepId` by any other step.
+ * The function performs a breadth-first traversal from all roots and assigns
+ * each step to a level indicating its depth in the graph.
+ *
+ * Returns an array where each sub-array contains all steps at the same level.
+ */
+const groupStepsByLevel = (steps: WorkflowStep[]): WorkflowStep[][] => {
+  const stepMap = new Map<string, WorkflowStep>();
+
+  const childIds = new Set<string>();
+
+  for (const step of steps) {
+    stepMap.set(step.id, step);
+    step.nextStepIds?.forEach((id) => childIds.add(id));
+  }
+
+  const rootSteps = steps.filter((step) => !childIds.has(step.id));
+
+  const stepsByLevel: WorkflowStep[][] = [];
+
+  const visited = new Set<string>();
+
+  const visit = ({ step, level }: { step: WorkflowStep; level: number }) => {
+    if (visited.has(step.id)) {
+      return;
+    }
+
+    visited.add(step.id);
+
+    if (!isDefined(stepsByLevel[level])) {
+      stepsByLevel[level] = [];
+    }
+
+    stepsByLevel[level].push(step);
+
+    step.nextStepIds?.forEach((childId) => {
+      const child = stepMap.get(childId);
+
+      if (isDefined(child)) {
+        visit({ step: child, level: level + 1 });
+      }
+    });
+  };
+
+  rootSteps.forEach((root) => visit({ step: root, level: 0 }));
+
+  return stepsByLevel;
+};
+
 export const generateWorkflowDiagram = ({
   trigger,
   steps,
@@ -23,6 +75,7 @@ export const generateWorkflowDiagram = ({
   steps: Array<WorkflowStep>;
 }): WorkflowDiagram => {
   const nodes: Array<WorkflowDiagramNode> = [];
+
   const edges: Array<WorkflowDiagramEdge> = [];
 
   if (isDefined(trigger)) {
@@ -31,58 +84,50 @@ export const generateWorkflowDiagram = ({
     nodes.push(WORKFLOW_DIAGRAM_EMPTY_TRIGGER_NODE_DEFINITION);
   }
 
-  const processNode = ({
-    stepIndex,
-    parentNodeId,
-    xPos,
-    yPos,
-  }: {
-    stepIndex: number;
-    parentNodeId: string;
-    xPos: number;
-    yPos: number;
-  }) => {
-    const step = steps.at(stepIndex);
-    if (!isDefined(step)) {
-      return;
+  const stepsGroupedByLevel = groupStepsByLevel(steps);
+
+  let levelYPos = FIRST_NODE_POSITION.y;
+
+  const xPos = FIRST_NODE_POSITION.x;
+
+  for (const stepsByLevel of stepsGroupedByLevel) {
+    levelYPos += VERTICAL_DISTANCE_BETWEEN_TWO_NODES;
+
+    for (const step of stepsByLevel) {
+      nodes.push({
+        id: step.id,
+        data: {
+          nodeType: 'action',
+          actionType: step.type,
+          name: step.name,
+        } satisfies WorkflowDiagramStepNodeData,
+        position: {
+          x: xPos,
+          y: levelYPos,
+        },
+      });
     }
+  }
 
-    const nodeId = step.id;
-
-    nodes.push({
-      id: nodeId,
-      data: {
-        nodeType: 'action',
-        actionType: step.type,
-        name: step.name,
-      } satisfies WorkflowDiagramStepNodeData,
-      position: {
-        x: xPos,
-        y: yPos + VERTICAL_DISTANCE_BETWEEN_TWO_NODES,
-      },
-    });
-
+  for (const firstLevelStep of stepsGroupedByLevel[0] || []) {
     edges.push({
       ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
       id: v4(),
-      source: parentNodeId,
-      target: nodeId,
+      source: TRIGGER_STEP_ID,
+      target: firstLevelStep.id,
     });
+  }
 
-    processNode({
-      stepIndex: stepIndex + 1,
-      parentNodeId: nodeId,
-      xPos,
-      yPos: yPos + VERTICAL_DISTANCE_BETWEEN_TWO_NODES,
+  for (const step of steps) {
+    step.nextStepIds?.forEach((child) => {
+      edges.push({
+        ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
+        id: v4(),
+        source: step.id,
+        target: child,
+      });
     });
-  };
-
-  processNode({
-    stepIndex: 0,
-    parentNodeId: TRIGGER_STEP_ID,
-    xPos: FIRST_NODE_POSITION.x,
-    yPos: FIRST_NODE_POSITION.y,
-  });
+  }
 
   return {
     nodes,

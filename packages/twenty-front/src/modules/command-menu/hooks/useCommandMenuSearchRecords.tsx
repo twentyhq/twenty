@@ -76,7 +76,7 @@ export const useCommandMenuSearchRecords = () => {
                         objectNameSingular: CoreObjectNameSingular.Note,
                       });
                 }}
-                preventCommandMenuClosing
+                closeSidePanelOnCommandMenuListActionExecution={false}
               />
             ),
           };

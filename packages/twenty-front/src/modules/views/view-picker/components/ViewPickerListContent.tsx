@@ -96,7 +96,7 @@ export const ViewPickerListContent = () => {
 
   return (
     <DropdownContent>
-      <DropdownMenuItemsContainer>
+      <DropdownMenuItemsContainer hasMaxHeight>
         <DraggableList
           onDragEnd={handleDragEnd}
           draggableItems={viewsOnCurrentObject.map((view, index) => {

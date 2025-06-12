@@ -8,7 +8,7 @@ import {
 } from '@/workflow/types/Workflow';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { useCreateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionStep';
-import { workflowCreateStepFromParentStepIdComponentState } from '@/workflow/workflow-steps/states/workflowCreateStepFromParentStepIdComponentState';
+import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useCreateStep = ({
@@ -24,15 +24,17 @@ export const useCreateStep = ({
     workflowLastCreatedStepIdComponentState,
   );
 
-  const workflowCreateStepFromParentStepId = useRecoilComponentValueV2(
-    workflowCreateStepFromParentStepIdComponentState,
+  const workflowInsertStepIds = useRecoilComponentValueV2(
+    workflowInsertStepIdsComponentState,
   );
 
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
 
   const createStep = async (newStepType: WorkflowStepType) => {
-    if (!isDefined(workflowCreateStepFromParentStepId)) {
-      throw new Error('Select a step to create a new step from first.');
+    if (!isDefined(workflowInsertStepIds.parentStepId)) {
+      throw new Error(
+        'No parentStepId. Please select a parent step to create from.',
+      );
     }
 
     const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
@@ -41,8 +43,8 @@ export const useCreateStep = ({
       await createWorkflowVersionStep({
         workflowVersionId,
         stepType: newStepType,
-        parentStepId: workflowCreateStepFromParentStepId,
-        nextStepId: undefined,
+        parentStepId: workflowInsertStepIds.parentStepId,
+        nextStepId: workflowInsertStepIds.nextStepId,
       })
     )?.data?.createWorkflowVersionStep;
 

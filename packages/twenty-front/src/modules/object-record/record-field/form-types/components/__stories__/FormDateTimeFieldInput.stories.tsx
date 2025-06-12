@@ -198,12 +198,22 @@ export const ResetsDateByErasingInputContent: Story = {
       new RegExp(`12/09/${currentYear} \\d{2}:\\d{2}`),
     );
 
+    await userEvent.click(input);
+
+    await waitFor(() => {
+      expect(canvas.getByRole('dialog')).toBeVisible();
+    });
+
     await userEvent.clear(input);
+
+    const waitForDialogToBeRemoved = waitForElementToBeRemoved(() =>
+      canvas.queryByRole('dialog'),
+    );
 
     await Promise.all([
       userEvent.type(input, '{Enter}'),
 
-      waitForElementToBeRemoved(() => canvas.queryByRole('dialog')),
+      waitForDialogToBeRemoved,
       waitFor(() => {
         expect(args.onChange).toHaveBeenCalledWith(null);
       }),

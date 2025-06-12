@@ -6,4 +6,5 @@ export enum SettingPermissionType {
   DATA_MODEL = 'DATA_MODEL',
   ADMIN_PANEL = 'ADMIN_PANEL',
   SECURITY = 'SECURITY',
+  WORKFLOWS = 'WORKFLOWS',
 }

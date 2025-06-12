@@ -38,7 +38,8 @@ describe('insertStep', () => {
       insertedStep: newStep,
     });
 
-    expect(result).toEqual([step1, step2, newStep]);
+    expect(result.updatedSteps).toEqual([step1, step2, newStep]);
+    expect(result.updatedInsertedStep).toEqual(newStep);
   });
 
   it('should update parent step nextStepIds when inserting a step between two steps', () => {
@@ -53,7 +54,7 @@ describe('insertStep', () => {
       nextStepId: '2',
     });
 
-    expect(result).toEqual([
+    expect(result.updatedSteps).toEqual([
       { ...step1, nextStepIds: ['new'] },
       step2,
       { ...newStep, nextStepIds: ['2'] },
@@ -71,7 +72,10 @@ describe('insertStep', () => {
       nextStepId: '1',
     });
 
-    expect(result).toEqual([step1, { ...newStep, nextStepIds: ['1'] }]);
+    expect(result.updatedSteps).toEqual([
+      step1,
+      { ...newStep, nextStepIds: ['1'] },
+    ]);
   });
 
   it('should handle inserting a step at the end of the workflow', () => {
@@ -85,7 +89,10 @@ describe('insertStep', () => {
       nextStepId: undefined,
     });
 
-    expect(result).toEqual([{ ...step1, nextStepIds: ['new'] }, newStep]);
+    expect(result.updatedSteps).toEqual([
+      { ...step1, nextStepIds: ['new'] },
+      newStep,
+    ]);
   });
 
   it('should handle inserting a step between two steps with multiple nextStepIds', () => {
@@ -101,7 +108,7 @@ describe('insertStep', () => {
       nextStepId: '2',
     });
 
-    expect(result).toEqual([
+    expect(result.updatedSteps).toEqual([
       { ...step1, nextStepIds: ['3', 'new'] },
       step2,
       step3,

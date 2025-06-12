@@ -76,9 +76,6 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ApiKeyWorkspaceEntity>(
         workspace.id,
         'apiKey',
-        {
-          shouldBypassPermissionChecks: true,
-        },
       );
 
     apiKey = await apiKeyRepository.findOne({

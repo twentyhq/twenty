@@ -10,7 +10,7 @@ import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow
 import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-step.dto';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
@@ -47,7 +47,7 @@ const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
 @Injectable()
 export class WorkflowVersionStepWorkspaceService {
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workflowSchemaWorkspaceService: WorkflowSchemaWorkspaceService,
     private readonly serverlessFunctionService: ServerlessFunctionService,
     @InjectRepository(ObjectMetadataEntity, 'core')
@@ -74,8 +74,10 @@ export class WorkflowVersionStepWorkspaceService {
       workspaceId,
     });
     const workflowVersionRepository =
-      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+        workspaceId,
         'workflowVersion',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowVersion = await workflowVersionRepository.findOne({
@@ -94,7 +96,8 @@ export class WorkflowVersionStepWorkspaceService {
     assertWorkflowVersionIsDraft(workflowVersion);
 
     const existingSteps = workflowVersion.steps || [];
-    const updatedSteps = insertStep({
+
+    const { updatedSteps, updatedInsertedStep } = insertStep({
       existingSteps,
       insertedStep: enrichedNewStep,
       parentStepId,
@@ -105,7 +108,7 @@ export class WorkflowVersionStepWorkspaceService {
       steps: updatedSteps,
     });
 
-    return enrichedNewStep;
+    return updatedInsertedStep;
   }
 
   async updateWorkflowVersionStep({
@@ -118,8 +121,10 @@ export class WorkflowVersionStepWorkspaceService {
     step: WorkflowAction;
   }): Promise<WorkflowAction> {
     const workflowVersionRepository =
-      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+        workspaceId,
         'workflowVersion',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowVersion = await workflowVersionRepository.findOne({
@@ -174,8 +179,10 @@ export class WorkflowVersionStepWorkspaceService {
     stepIdToDelete: string;
   }): Promise<WorkflowActionDTO> {
     const workflowVersionRepository =
-      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+        workspaceId,
         'workflowVersion',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowVersion = await workflowVersionRepository.findOne({
@@ -279,9 +286,10 @@ export class WorkflowVersionStepWorkspaceService {
     response: object;
   }) {
     const workflowRun =
-      await this.workflowRunWorkspaceService.getWorkflowRunOrFail(
+      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
         workflowRunId,
-      );
+        workspaceId,
+      });
 
     const step = workflowRun.output?.flow?.steps?.find(
       (step) => step.id === stepId,
@@ -302,6 +310,7 @@ export class WorkflowVersionStepWorkspaceService {
     }
 
     const enrichedResponse = await this.enrichFormStepResponse({
+      workspaceId,
       step,
       response,
     });
@@ -319,6 +328,7 @@ export class WorkflowVersionStepWorkspaceService {
     };
 
     await this.workflowRunWorkspaceService.saveWorkflowRunState({
+      workspaceId,
       workflowRunId,
       stepOutput: newStepOutput,
       context: updatedContext,
@@ -554,9 +564,11 @@ export class WorkflowVersionStepWorkspaceService {
   }
 
   private async enrichFormStepResponse({
+    workspaceId,
     step,
     response,
   }: {
+    workspaceId: string;
     step: WorkflowFormAction;
     response: object;
   }) {
@@ -580,9 +592,12 @@ export class WorkflowVersionStepWorkspaceService {
           // @ts-expect-error legacy noImplicitAny
           isValidUuid(response[key].id)
         ) {
-          const repository = await this.twentyORMManager.getRepository(
-            field.settings.objectName,
-          );
+          const repository =
+            await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+              workspaceId,
+              field.settings.objectName,
+              { shouldBypassPermissionChecks: true },
+            );
 
           const record = await repository.findOne({
             // @ts-expect-error legacy noImplicitAny

@@ -1,5 +1,5 @@
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
-import { workflowCreateStepFromParentStepIdComponentState } from '@/workflow/workflow-steps/states/workflowCreateStepFromParentStepIdComponentState';
+import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 import { WorkflowVisualizerComponentInstanceContext } from '../../../workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
@@ -33,10 +33,10 @@ const wrapper = ({ children }: { children: React.ReactNode }) => {
     <RecoilRoot
       initializeState={({ set }) => {
         set(
-          workflowCreateStepFromParentStepIdComponentState.atomFamily({
+          workflowInsertStepIdsComponentState.atomFamily({
             instanceId: workflowVisualizerComponentInstanceId,
           }),
-          'parent-step-id',
+          { parentStepId: 'parent-step-id', nextStepId: undefined },
         );
       }}
     >

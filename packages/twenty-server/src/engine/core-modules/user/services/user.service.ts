@@ -103,9 +103,6 @@ export class UserService extends TypeOrmQueryService<User> {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspaceId,
         'workspaceMember',
-        {
-          shouldBypassPermissionChecks: true,
-        },
       );
 
     const workspaceMembers = await workspaceMemberRepository.find();

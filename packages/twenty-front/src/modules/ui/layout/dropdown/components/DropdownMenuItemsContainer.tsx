@@ -1,12 +1,8 @@
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { css } from '@emotion/react';
+import { DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT } from '@/ui/layout/dropdown/constants/DropdownMenuItemsContainerMaxHeight';
 import styled from '@emotion/styled';
-import { useId } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
-const StyledDropdownMenuItemsExternalContainer = styled.div<{
-  hasMaxHeight?: boolean;
-  width: number | 'auto' | '100%';
+const StyledExternalContainer = styled.div<{
+  maxHeight?: number;
 }>`
   --padding: ${({ theme }) => theme.spacing(1)};
 
@@ -14,22 +10,27 @@ const StyledDropdownMenuItemsExternalContainer = styled.div<{
   display: flex;
 
   flex-direction: column;
-  max-height: ${({ hasMaxHeight }) => (hasMaxHeight ? '168px' : 'none')};
+  max-height: ${({ maxHeight }) => (maxHeight ? `${maxHeight}px` : 'none')};
+
+  width: 100%;
+
+  height: fit-content;
 
   padding: var(--padding);
-
-  ${({ width }) =>
-    isDefined(width) && width === '100%'
-      ? css`
-          width: 100%;
-        `
-      : css`
-          width: ${width}px;
-        `}
+  box-sizing: border-box;
 `;
 
-const StyledDropdownMenuItemsInternalContainer = styled.div`
-  align-items: stretch;
+const StyledScrollableContainer = styled.div<{ maxHeight?: number }>`
+  box-sizing: border-box;
+
+  display: flex;
+  max-height: ${({ maxHeight }) => (maxHeight ? `${maxHeight}px` : 'none')};
+  width: 100%;
+
+  overflow-y: scroll;
+`;
+
+const StyledInternalContainer = styled.div`
   display: flex;
 
   flex-direction: column;
@@ -39,64 +40,28 @@ const StyledDropdownMenuItemsInternalContainer = styled.div`
   width: 100%;
 `;
 
-const StyledScrollWrapper = styled(ScrollWrapper)`
-  width: 100%;
-`;
-
 export const DropdownMenuItemsContainer = ({
   children,
   hasMaxHeight,
-  className,
   scrollable = true,
-  width = 'auto',
-  scrollWrapperHeightAuto,
 }: {
   children: React.ReactNode;
   hasMaxHeight?: boolean;
-  className?: string;
   scrollable?: boolean;
-  width?: number | 'auto' | '100%';
-  scrollWrapperHeightAuto?: boolean;
 }) => {
-  const id = useId();
-
-  return scrollable !== true ? (
-    <StyledDropdownMenuItemsExternalContainer
-      hasMaxHeight={hasMaxHeight}
-      className={className}
-      role="listbox"
-      width={width}
+  return scrollable === true ? (
+    <StyledScrollableContainer
+      maxHeight={
+        hasMaxHeight ? DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT : undefined
+      }
     >
-      {hasMaxHeight ? (
-        <StyledScrollWrapper
-          componentInstanceId={`scroll-wrapper-dropdown-menu-${id}`}
-          heightAuto={scrollWrapperHeightAuto}
-        >
-          <StyledDropdownMenuItemsInternalContainer>
-            {children}
-          </StyledDropdownMenuItemsInternalContainer>
-        </StyledScrollWrapper>
-      ) : (
-        <StyledDropdownMenuItemsInternalContainer>
-          {children}
-        </StyledDropdownMenuItemsInternalContainer>
-      )}
-    </StyledDropdownMenuItemsExternalContainer>
+      <StyledExternalContainer role="listbox">
+        <StyledInternalContainer>{children}</StyledInternalContainer>
+      </StyledExternalContainer>
+    </StyledScrollableContainer>
   ) : (
-    <ScrollWrapper
-      componentInstanceId={`scroll-wrapper-dropdown-menu-${id}`}
-      heightAuto={scrollWrapperHeightAuto}
-    >
-      <StyledDropdownMenuItemsExternalContainer
-        hasMaxHeight={hasMaxHeight}
-        className={className}
-        role="listbox"
-        width={width}
-      >
-        <StyledDropdownMenuItemsInternalContainer>
-          {children}
-        </StyledDropdownMenuItemsInternalContainer>
-      </StyledDropdownMenuItemsExternalContainer>
-    </ScrollWrapper>
+    <StyledExternalContainer role="listbox">
+      <StyledInternalContainer>{children}</StyledInternalContainer>
+    </StyledExternalContainer>
   );
 };

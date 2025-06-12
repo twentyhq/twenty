@@ -9,6 +9,8 @@ const StyledPanel = styled.div`
   overflow-x: auto;
   overflow-y: hidden;
   width: 100%;
+  display: flex;
+  flex-direction: column;
 `;
 
 type PagePanelProps = {

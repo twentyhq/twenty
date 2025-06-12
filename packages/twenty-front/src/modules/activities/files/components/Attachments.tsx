@@ -103,7 +103,7 @@ export const Attachments = ({
               onChange={handleFileChange}
               type="file"
             />
-            {!hasObjectUpdatePermissions && (
+            {hasObjectUpdatePermissions && (
               <Button
                 Icon={IconPlus}
                 title="Add file"
