@@ -42,8 +42,6 @@ export type KeyValuePairInputProps = {
   defaultValue?: Record<string, string>;
   onChange: (value: Record<string, string>) => void;
   readonly?: boolean;
-  error?: string;
-  onBlur?: () => void;
   keyPlaceholder?: string;
   valuePlaceholder?: string;
 };
