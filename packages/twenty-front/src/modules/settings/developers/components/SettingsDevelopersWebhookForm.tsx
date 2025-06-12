@@ -7,7 +7,6 @@ import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLo
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
 import { useWebhookForm } from '@/settings/developers/hooks/useWebhookForm';
 import { SettingsPath } from '@/types/SettingsPath';
-import { InputHint } from '@/ui/input/components/InputHint';
 import { Select } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -104,7 +103,7 @@ export const SettingsDevelopersWebhookForm = ({
     { label: 'All Objects', value: '*', Icon: IconNorthStar },
     ...objectMetadataItems.map((item) => ({
       label: item.labelPlural,
-      value: item.namePlural,
+      value: item.nameSingular,
       Icon: getIcon(item.icon),
     })),
   ];
@@ -155,34 +154,15 @@ export const SettingsDevelopersWebhookForm = ({
                 field: { onChange, value },
                 fieldState: { error },
               }) => {
-                const trimmedValue = value?.trim() || '';
-                const isTypingProtocol =
-                  /^(h|ht|htt|http|https|http:|https:|http:\/|https:\/)$/i.test(
-                    trimmedValue,
-                  );
-                const hasValidProtocol =
-                  trimmedValue.startsWith('http://') ||
-                  trimmedValue.startsWith('https://');
-
-                const showHttpsHint =
-                  trimmedValue && !hasValidProtocol && !isTypingProtocol;
-
                 return (
-                  <>
-                    <TextInput
-                      placeholder={t`https://example.com/webhook`}
-                      value={value}
-                      onChange={onChange}
-                      error={error?.message}
-                      fullWidth
-                      autoFocus={isCreationMode}
-                    />
-                    {showHttpsHint && (
-                      <InputHint>
-                        {t`Will be saved as:`} https://{trimmedValue}
-                      </InputHint>
-                    )}
-                  </>
+                  <TextInput
+                    placeholder={t`https://example.com/webhook`}
+                    value={value}
+                    onChange={onChange}
+                    error={error?.message}
+                    fullWidth
+                    autoFocus={isCreationMode}
+                  />
                 );
               }}
             />
