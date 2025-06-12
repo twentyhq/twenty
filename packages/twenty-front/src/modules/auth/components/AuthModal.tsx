@@ -31,10 +31,15 @@ export const AuthModal = ({ children }: AuthModalProps) => {
         modalId={AUTH_MODAL_ID}
         padding={'none'}
         size={isBookCall ? 'large' : 'medium'}
+        modalVariant={isBookCall ? 'transparent' : 'primary'}
       >
-        <ScrollWrapper componentInstanceId="scroll-wrapper-modal-content">
-          <StyledContent>{children}</StyledContent>
-        </ScrollWrapper>
+        {isBookCall ? (
+          <>{children}</>
+        ) : (
+          <ScrollWrapper componentInstanceId="scroll-wrapper-modal-content">
+            <StyledContent>{children}</StyledContent>
+          </ScrollWrapper>
+        )}
       </Modal>
     </>
   );
