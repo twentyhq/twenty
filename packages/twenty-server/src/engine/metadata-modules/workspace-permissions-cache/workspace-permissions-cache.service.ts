@@ -9,16 +9,15 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserWorkspaceRoleEntity } from 'src/engine/metadata-modules/role/user-workspace-role.entity';
+import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
 import { UserWorkspaceRoleMap } from 'src/engine/metadata-modules/workspace-permissions-cache/types/user-workspace-role-map.type';
 import { WorkspacePermissionsCacheStorageService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache-storage.service';
 import { TwentyORMExceptionCode } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { getFromCacheWithRecompute } from 'src/engine/utils/get-data-from-cache-with-recompute.util';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 type CacheResult<T, U> = {
@@ -41,8 +40,7 @@ export class WorkspacePermissionsCacheService {
     @InjectRepository(UserWorkspaceRoleEntity, 'core')
     private readonly userWorkspaceRoleRepository: Repository<UserWorkspaceRoleEntity>,
     private readonly workspacePermissionsCacheStorageService: WorkspacePermissionsCacheStorageService,
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
-    private readonly featureFlagService: FeatureFlagService,
+    private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
   ) {}
 
   async recomputeRolesPermissionsCache({
@@ -87,11 +85,13 @@ export class WorkspacePermissionsCacheService {
           );
       }
 
-      const isPermissionsV2Enabled =
-        await this.featureFlagService.isFeatureEnabled(
-          FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
-          workspaceId,
+      const workspaceFeatureFlagsMap =
+        await this.workspaceFeatureFlagsMapCacheService.getWorkspaceFeatureFlagsMap(
+          { workspaceId },
         );
+
+      const isPermissionsV2Enabled =
+        !!workspaceFeatureFlagsMap[FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED];
 
       const recomputedRolesPermissions =
         await this.getObjectRecordPermissionsForRoles({
