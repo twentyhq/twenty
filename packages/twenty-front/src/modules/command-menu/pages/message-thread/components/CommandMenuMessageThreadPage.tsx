@@ -83,6 +83,7 @@ export const CommandMenuMessageThreadPage = () => {
     return (
       connectedAccountHandle &&
       connectedAccountProvider &&
+      connectedAccountProvider !== ConnectedAccountProvider.IMAP &&
       lastMessage &&
       messageThreadExternalId != null
     );
