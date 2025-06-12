@@ -89,7 +89,7 @@ describe('WebhookUrlValidationService', () => {
         expect(error.code).toBe(
           GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
         );
-        expect(error.message).toContain('Invalid URL format');
+        expect(error.message).toContain('Invalid URL: missing scheme');
         expect(error.message).toContain('example.com/webhook');
       }
     });
