@@ -37,7 +37,7 @@ const StyledModalDiv = styled(motion.div)<{
   z-index: ${RootStackingContextZIndices.RootModal}; // should be higher than Backdrop's z-index
 
   width: ${({ isMobile, size, theme }) => {
-    if (isMobile) return theme.modal.size.fullscreen;
+    if (isMobile) return theme.modal.size.fullscreen.width;
     switch (size) {
       case 'small':
         return theme.modal.size.sm.width;
