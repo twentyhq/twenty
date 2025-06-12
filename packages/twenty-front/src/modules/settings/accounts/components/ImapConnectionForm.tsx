@@ -119,16 +119,16 @@ export const ImapConnectionForm = ({
               label={t`Message Visibility`}
               options={[
                 {
-                  label: 'Share Everything',
+                  label: t`Everything`,
                   value: MessageChannelVisibility.SHARE_EVERYTHING,
                 },
                 {
-                  label: 'Share Metadata Only',
-                  value: MessageChannelVisibility.METADATA,
+                  label: t`Subject and metadata`,
+                  value: MessageChannelVisibility.SUBJECT,
                 },
                 {
-                  label: 'Share Subject & Metadata',
-                  value: MessageChannelVisibility.SUBJECT,
+                  label: t`Metadata`,
+                  value: MessageChannelVisibility.METADATA,
                 },
               ]}
               value={field.value}
