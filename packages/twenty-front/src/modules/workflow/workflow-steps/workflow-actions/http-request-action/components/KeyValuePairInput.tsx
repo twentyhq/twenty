@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { IconTrash } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
+import { v4 } from 'uuid';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -31,6 +32,7 @@ const StyledPlaceholder = styled.div`
 `;
 
 export type KeyValuePair = {
+  id: string;
   key: string;
   value: string;
 };
@@ -57,20 +59,22 @@ export const KeyValuePairInput = ({
   const [pairs, setPairs] = useState<KeyValuePair[]>(() => {
     const initialPairs = defaultValue
       ? Object.entries(defaultValue).map(([key, value]) => ({
+          id: v4(),
           key,
           value,
         }))
       : [];
     return initialPairs.length > 0
-      ? [...initialPairs, { key: '', value: '' }]
-      : [{ key: '', value: '' }];
+      ? [...initialPairs, { id: v4(), key: '', value: '' }]
+      : [{ id: v4(), key: '', value: '' }];
   });
 
   const handlePairChange = (
-    index: number,
+    pairId: string,
     field: 'key' | 'value',
     newValue: string,
   ) => {
+    const index = pairs.findIndex((p) => p.id === pairId);
     const newPairs = [...pairs];
     newPairs[index] = { ...newPairs[index], [field]: newValue };
 
@@ -79,7 +83,7 @@ export const KeyValuePairInput = ({
       (field === 'key' || field === 'value') &&
       Boolean(newValue.trim())
     ) {
-      newPairs.push({ key: '', value: '' });
+      newPairs.push({ id: v4(), key: '', value: '' });
     }
 
     setPairs(newPairs);
@@ -97,10 +101,10 @@ export const KeyValuePairInput = ({
     onChange(record);
   };
 
-  const handleRemovePair = (index: number) => {
-    const newPairs = pairs.filter((_, i) => i !== index);
+  const handleRemovePair = (pairId: string) => {
+    const newPairs = pairs.filter((pair) => pair.id !== pairId);
     if (newPairs.length === 0) {
-      newPairs.push({ key: '', value: '' });
+      newPairs.push({ id: v4(), key: '', value: '' });
     }
     setPairs(newPairs);
 
@@ -121,15 +125,15 @@ export const KeyValuePairInput = ({
     <FormFieldInputContainer>
       {label && <InputLabel>{label}</InputLabel>}
       <StyledContainer>
-        {pairs.map((pair, index) => (
-          <StyledRow key={index}>
+        {pairs.map((pair) => (
+          <StyledRow key={pair.id}>
             <StyledKeyValueContainer>
               <FormTextFieldInput
                 placeholder={keyPlaceholder}
                 readonly={readonly}
                 defaultValue={pair.key}
                 onChange={(value) =>
-                  handlePairChange(index, 'key', value ?? '')
+                  handlePairChange(pair.id, 'key', value ?? '')
                 }
                 VariablePicker={WorkflowVariablePicker}
               />
@@ -138,13 +142,13 @@ export const KeyValuePairInput = ({
                 readonly={readonly}
                 defaultValue={pair.value}
                 onChange={(value) =>
-                  handlePairChange(index, 'value', value ?? '')
+                  handlePairChange(pair.id, 'value', value ?? '')
                 }
                 VariablePicker={WorkflowVariablePicker}
               />
-              {!readonly && index !== pairs.length - 1 ? (
+              {!readonly && pair.id !== pairs[pairs.length - 1].id ? (
                 <IconButton
-                  onClick={() => handleRemovePair(index)}
+                  onClick={() => handleRemovePair(pair.id)}
                   variant="tertiary"
                   size="medium"
                   Icon={IconTrash}
