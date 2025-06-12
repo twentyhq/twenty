@@ -3,7 +3,7 @@ import { FormTextFieldInput } from '@/object-record/record-field/form-types/comp
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import styled from '@emotion/styled';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { IconTrash } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 
@@ -65,20 +65,6 @@ export const KeyValuePairInput = ({
       ? [...initialPairs, { key: '', value: '' }]
       : [{ key: '', value: '' }];
   });
-
-  useEffect(() => {
-    const newPairs = defaultValue
-      ? Object.entries(defaultValue).map(([key, value]) => ({
-          key,
-          value,
-        }))
-      : [];
-    setPairs(
-      newPairs.length > 0
-        ? [...newPairs, { key: '', value: '' }]
-        : [{ key: '', value: '' }],
-    );
-  }, [defaultValue]);
 
   const handlePairChange = (
     index: number,
