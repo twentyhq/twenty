@@ -22,6 +22,8 @@ export const getActionIconColorOrThrow = ({
       return theme.color.blue;
     case 'HTTP_REQUEST':
       return theme.color.purple;
+    case 'AI_AGENT':
+      return theme.color.pink;
     default:
       assertUnreachable(actionType, `Unsupported action type: ${actionType}`);
   }

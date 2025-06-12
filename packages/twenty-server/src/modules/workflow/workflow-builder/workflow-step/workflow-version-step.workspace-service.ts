@@ -562,6 +562,23 @@ export class WorkflowVersionStepWorkspaceService {
           },
         };
       }
+      case WorkflowActionType.AI_AGENT: {
+        return {
+          id: newStepId,
+          name: 'AI Agent',
+          type: WorkflowActionType.AI_AGENT,
+          valid: false,
+          settings: {
+            ...BASE_STEP_DEFINITION,
+            input: {
+              modelProvider: 'openai',
+              model: '',
+              prompt: '',
+              responseFormat: '',
+            },
+          },
+        };
+      }
       default:
         throw new WorkflowVersionStepException(
           `WorkflowActionType '${type}' unknown`,
