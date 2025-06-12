@@ -5573,8 +5573,8 @@ msgstr "When the key will be disabled"
 
 #. js-lingui-id: RfrIUU
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
-msgid "Will be saved as:"
-msgstr "Will be saved as:"
+#~ msgid "Will be saved as:"
+#~ msgstr "Will be saved as:"
 
 #. js-lingui-id: wvyffT
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx

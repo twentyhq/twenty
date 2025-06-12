@@ -5570,8 +5570,8 @@ msgstr ""
 
 #. js-lingui-id: RfrIUU
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
-msgid "Will be saved as:"
-msgstr ""
+#~ msgid "Will be saved as:"
+#~ msgstr ""
 
 #. js-lingui-id: wvyffT
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
