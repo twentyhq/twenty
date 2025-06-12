@@ -173,7 +173,9 @@ export const AdvancedFilterFieldSelectMenu = ({
         {shouldShowSeparator && <DropdownMenuSeparator />}
         {shouldShowHiddenFields && (
           <>
-            <DropdownMenuSectionLabel label={t`Hidden fields`} />
+            {visibleColumnsFieldMetadataItems.length > 0 && (
+              <DropdownMenuSectionLabel label={t`Hidden fields`} />
+            )}
             <DropdownMenuItemsContainer>
               {hiddenColumnsFieldMetadataItems.map(
                 (hiddenFieldMetadataItem, index) => (
