@@ -1,7 +1,7 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
-import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { IconTrash } from 'twenty-ui/display';
@@ -40,7 +40,6 @@ export type KeyValuePairInputProps = {
   defaultValue?: Record<string, string>;
   onChange: (value: Record<string, string>) => void;
   readonly?: boolean;
-  VariablePicker?: VariablePickerComponent;
   error?: string;
   onBlur?: () => void;
   keyPlaceholder?: string;
@@ -52,7 +51,6 @@ export const KeyValuePairInput = ({
   defaultValue = {},
   onChange,
   readonly,
-  VariablePicker,
   keyPlaceholder = 'Key',
   valuePlaceholder = 'Value',
 }: KeyValuePairInputProps) => {
@@ -147,7 +145,7 @@ export const KeyValuePairInput = ({
                 onChange={(value) =>
                   handlePairChange(index, 'key', value ?? '')
                 }
-                VariablePicker={VariablePicker}
+                VariablePicker={WorkflowVariablePicker}
               />
               <FormTextFieldInput
                 placeholder={valuePlaceholder}
@@ -156,7 +154,7 @@ export const KeyValuePairInput = ({
                 onChange={(value) =>
                   handlePairChange(index, 'value', value ?? '')
                 }
-                VariablePicker={VariablePicker}
+                VariablePicker={WorkflowVariablePicker}
               />
               {!readonly && index !== pairs.length - 1 ? (
                 <IconButton
