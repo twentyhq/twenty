@@ -32,8 +32,6 @@ const StyledLabelRow = styled(InputLabel)`
   width: 100%;
 `;
 
-type InputMode = 'keyValue' | 'rawJson';
-
 type BodyInputProps = {
   label?: string;
   defaultValue?: HttpRequestBody;
@@ -50,8 +48,8 @@ export const BodyInput = ({
   readonly,
   VariablePicker,
 }: BodyInputProps) => {
-  const [inputMode, setInputMode] = useState<InputMode>(() =>
-    hasNonStringValues(defaultValue) ? 'rawJson' : 'keyValue',
+  const [isRawJson, setIsRawJson] = useState<boolean>(() =>
+    hasNonStringValues(defaultValue),
   );
   const [jsonString, setJsonString] = useState<string | null>(
     JSON.stringify(defaultValue, null, 2),
@@ -97,14 +95,13 @@ export const BodyInput = ({
   };
 
   const handleModeChange = (isRawJson: boolean) => {
-    const newMode: InputMode = isRawJson ? 'rawJson' : 'keyValue';
-    setInputMode(newMode);
+    setIsRawJson(isRawJson);
     onChange();
     setJsonString(null);
   };
 
   const handleBlur = () => {
-    if (inputMode === 'rawJson' && Boolean(jsonString)) {
+    if (isRawJson && Boolean(jsonString)) {
       validateJson(jsonString);
     }
   };
@@ -116,7 +113,7 @@ export const BodyInput = ({
         <StyledModeSelector>
           <div>Raw JSON</div>
           <Toggle
-            value={inputMode === 'rawJson'}
+            value={isRawJson}
             onChange={handleModeChange}
             disabled={readonly}
             toggleSize="small"
@@ -124,15 +121,7 @@ export const BodyInput = ({
         </StyledModeSelector>
       </StyledLabelRow>
       <StyledContainer>
-        {inputMode === 'keyValue' ? (
-          <KeyValuePairInput
-            defaultValue={defaultValue as Record<string, string>}
-            onChange={handleKeyValueChange}
-            readonly={readonly}
-            keyPlaceholder="Property name"
-            valuePlaceholder="Property value"
-          />
-        ) : (
+        {isRawJson ? (
           <FormRawJsonFieldInput
             placeholder={DEFAULT_BODY_PLACEHOLDER}
             readonly={readonly}
@@ -141,6 +130,14 @@ export const BodyInput = ({
             onBlur={handleBlur}
             onChange={handleJsonChange}
             VariablePicker={VariablePicker}
+          />
+        ) : (
+          <KeyValuePairInput
+            defaultValue={defaultValue as Record<string, string>}
+            onChange={handleKeyValueChange}
+            readonly={readonly}
+            keyPlaceholder="Property name"
+            valuePlaceholder="Property value"
           />
         )}
       </StyledContainer>
