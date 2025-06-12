@@ -13,7 +13,7 @@ export type HttpMethodWithBody = (typeof METHODS_WITH_BODY)[number];
 export type HttpRequestFormData = {
   url: string;
   method: (typeof HTTP_METHODS)[number]['value'];
-  headers: string | null;
+  headers: Record<string, string>;
   body: string | null;
 };
 

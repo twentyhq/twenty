@@ -38,11 +38,7 @@ export const useHttpRequestForm = ({
   const [formData, setFormData] = useState<HttpRequestFormData>({
     url: action.settings.input.url,
     method: action.settings.input.method,
-    headers:
-      action.settings.input.headers &&
-      Object.keys(action.settings.input.headers).length > 0
-        ? JSON.stringify(action.settings.input.headers, null, 2)
-        : null,
+    headers: action.settings.input.headers || {},
     body: action.settings.input.body
       ? Object.keys(action.settings.input.body).length > 0
         ? JSON.stringify(action.settings.input.body, null, 2)
@@ -50,10 +46,7 @@ export const useHttpRequestForm = ({
       : null,
   });
 
-  const validateJson = (
-    value: string | null,
-    field: 'headers' | 'body',
-  ): boolean => {
+  const validateJson = (value: string | null, field: 'body'): boolean => {
     if (!value?.trim()) {
       return true;
     }
@@ -99,16 +92,7 @@ export const useHttpRequestForm = ({
       return;
     }
 
-    let parsedHeaders: Record<string, string> | undefined = undefined;
     let parsedBody: Record<string, unknown> | undefined = undefined;
-
-    if (isDefined(formData.headers)) {
-      try {
-        parsedHeaders = JSON.parse(formData.headers);
-      } catch {
-        parsedHeaders = undefined;
-      }
-    }
 
     if (isMethodWithBody(formData.method) && isDefined(formData.body)) {
       try {
@@ -125,7 +109,7 @@ export const useHttpRequestForm = ({
         input: {
           url: formData.url,
           method: formData.method,
-          headers: parsedHeaders,
+          headers: formData.headers,
           body: parsedBody,
         },
       },
@@ -134,28 +118,24 @@ export const useHttpRequestForm = ({
 
   const handleFieldChange = (
     field: keyof HttpRequestFormData,
-    value: string | null,
+    value: string | Record<string, string> | null,
   ) => {
     let newFormData = { ...formData, [field]: value ?? '' };
 
-    if (field === 'url' && !validateUrl(value ?? '')) {
+    if (field === 'url' && !validateUrl(value as string)) {
       return;
     }
 
-    if (field === 'method' && !isMethodWithBody(value)) {
+    if (field === 'method' && !isMethodWithBody(value as string)) {
       newFormData = { ...newFormData, body: null };
     }
 
     setFormData(newFormData);
 
-    if (field === 'headers' && !validateJson(value, 'headers')) {
-      return;
-    }
-
     if (
       field === 'body' &&
       isMethodWithBody(formData.method) &&
-      !validateJson(value, 'body')
+      !validateJson(value as string, 'body')
     ) {
       return;
     }

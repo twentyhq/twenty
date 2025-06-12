@@ -11,10 +11,10 @@ import { useEffect } from 'react';
 import { useIcons } from 'twenty-ui/display';
 import {
   DEFAULT_BODY_PLACEHOLDER,
-  DEFAULT_HEADERS_PLACEHOLDER,
   HTTP_METHODS,
 } from '../constants/HttpRequest';
 import { useHttpRequestForm } from '../hooks/useHttpRequestForm';
+import { KeyValuePairInput } from './KeyValuePairInput';
 
 type WorkflowEditActionHttpRequestProps = {
   action: WorkflowHttpRequestAction;
@@ -89,9 +89,8 @@ export const WorkflowEditActionHttpRequest = ({
           onChange={(value) => handleFieldChange('method', value)}
           disabled={actionOptions.readonly}
         />
-        <FormRawJsonFieldInput
+        <KeyValuePairInput
           label="Headers"
-          placeholder={DEFAULT_HEADERS_PLACEHOLDER}
           readonly={actionOptions.readonly}
           defaultValue={formData.headers}
           error={
