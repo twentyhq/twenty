@@ -215,7 +215,9 @@ export const getSpreadSheetFieldValidationDefinitions = (
           level: 'error',
         },
       ];
-    case FieldMetadataType.RATING:
+    case FieldMetadataType.RATING: {
+      const ratingValues = RATING_VALUES.join(', ');
+
       return [
         {
           rule: 'function',
@@ -224,10 +226,11 @@ export const getSpreadSheetFieldValidationDefinitions = (
               value as (typeof RATING_VALUES)[number],
             );
           },
-          errorMessage: `${fieldName} ${t` must be one of ${JSON.stringify(RATING_VALUES)} values`}`,
+          errorMessage: `${fieldName} ${t` must be one of ${ratingValues} values`}`,
           level: 'error',
         },
       ];
+    }
     default:
       return [];
   }

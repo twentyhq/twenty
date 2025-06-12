@@ -44,7 +44,7 @@ export type SpreadsheetMatchedSelectOptionsColumn<T> = {
 };
 
 export type SpreadsheetErrorColumn<T> = {
-  type: SpreadsheetColumnType.error;
+  type: SpreadsheetColumnType.matchedError;
   index: number;
   header: string;
   value: T;
