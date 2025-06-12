@@ -5,8 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { MessageChannelVisibility } from '~/generated-metadata/graphql';
 
 const GET_CONNECTED_ACCOUNT = gql`
-  query GetConnectedAccount($filter: ConnectedAccountFilterInput!) {
-    connectedAccount(filter: $filter) {
+  query GetConnectedAccount($id: ID!) {
+    connectedAccount(id: $id) {
       id
       handle
       provider
@@ -59,11 +59,7 @@ export const useConnectedAccount = ({
 
   const { data, loading, error } = useQuery(GET_CONNECTED_ACCOUNT, {
     variables: {
-      filter: {
-        id: {
-          eq: connectedAccountId,
-        },
-      },
+      id: connectedAccountId,
     },
     skip: !connectedAccountId || skip,
   });

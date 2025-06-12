@@ -2754,13 +2754,6 @@ export type SaveImapConnectionMutationVariables = Exact<{
 
 export type SaveImapConnectionMutation = { __typename?: 'Mutation', saveImapConnection: boolean };
 
-export type UpdateImapConnectionMutationVariables = Exact<{
-  input: SaveImapConnectionInput;
-}>;
-
-
-export type UpdateImapConnectionMutation = { __typename?: 'Mutation', saveImapConnection: boolean };
-
 export type CreateDatabaseConfigVariableMutationVariables = Exact<{
   key: Scalars['String'];
   value: Scalars['JSON'];
@@ -4810,37 +4803,6 @@ export function useSaveImapConnectionMutation(baseOptions?: Apollo.MutationHookO
 export type SaveImapConnectionMutationHookResult = ReturnType<typeof useSaveImapConnectionMutation>;
 export type SaveImapConnectionMutationResult = Apollo.MutationResult<SaveImapConnectionMutation>;
 export type SaveImapConnectionMutationOptions = Apollo.BaseMutationOptions<SaveImapConnectionMutation, SaveImapConnectionMutationVariables>;
-export const UpdateImapConnectionDocument = gql`
-    mutation UpdateImapConnection($input: SaveImapConnectionInput!) {
-  saveImapConnection(input: $input)
-}
-    `;
-export type UpdateImapConnectionMutationFn = Apollo.MutationFunction<UpdateImapConnectionMutation, UpdateImapConnectionMutationVariables>;
-
-/**
- * __useUpdateImapConnectionMutation__
- *
- * To run a mutation, you first call `useUpdateImapConnectionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateImapConnectionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateImapConnectionMutation, { data, loading, error }] = useUpdateImapConnectionMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useUpdateImapConnectionMutation(baseOptions?: Apollo.MutationHookOptions<UpdateImapConnectionMutation, UpdateImapConnectionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateImapConnectionMutation, UpdateImapConnectionMutationVariables>(UpdateImapConnectionDocument, options);
-      }
-export type UpdateImapConnectionMutationHookResult = ReturnType<typeof useUpdateImapConnectionMutation>;
-export type UpdateImapConnectionMutationResult = Apollo.MutationResult<UpdateImapConnectionMutation>;
-export type UpdateImapConnectionMutationOptions = Apollo.BaseMutationOptions<UpdateImapConnectionMutation, UpdateImapConnectionMutationVariables>;
 export const CreateDatabaseConfigVariableDocument = gql`
     mutation CreateDatabaseConfigVariable($key: String!, $value: JSON!) {
   createDatabaseConfigVariable(key: $key, value: $value)

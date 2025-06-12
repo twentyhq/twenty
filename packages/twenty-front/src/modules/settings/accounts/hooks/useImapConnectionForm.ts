@@ -19,12 +19,6 @@ const SAVE_IMAP_CONNECTION = gql`
   }
 `;
 
-const UPDATE_IMAP_CONNECTION = gql`
-  mutation UpdateImapConnection($input: SaveImapConnectionInput!) {
-    saveImapConnection(input: $input)
-  }
-`;
-
 const imapConnectionFormSchema = z.object({
   handle: z.string().email('Invalid email address'),
   host: z.string().min(1, 'IMAP server is required'),
@@ -94,7 +88,7 @@ export const useImapConnectionForm = ({
   const { handleSubmit, formState } = formMethods;
   const { isValid, isSubmitting } = formState;
   const canSave = isValid && !isSubmitting;
-  const loading = saveLoading || updateLoading;
+  const loading = saveLoading;
 
   const handleSave = async (formValues: ImapConnectionFormValues) => {
     if (!currentWorkspace?.id) {
