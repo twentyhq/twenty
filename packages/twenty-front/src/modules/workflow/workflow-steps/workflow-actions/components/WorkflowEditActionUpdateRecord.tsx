@@ -235,9 +235,7 @@ export const WorkflowEditActionUpdateRecord = ({
             return null;
           }
 
-          const currentValue = formData[
-            fieldDefinition.metadata.fieldName
-          ] as JsonValue;
+          const currentValue = formData[fieldName] as JsonValue;
 
           return (
             <FormFieldInput

@@ -9,6 +9,7 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { isObject } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { JsonValue } from 'type-fest';
@@ -40,7 +41,13 @@ export const AdvancedFilterValueFormInput = ({
     useApplyObjectFilterDropdownFilterValue();
 
   const handleChange = (newValue: JsonValue) => {
-    applyObjectFilterDropdownFilterValue(JSON.stringify(newValue));
+    if (typeof newValue === 'string') {
+      applyObjectFilterDropdownFilterValue(newValue);
+    } else if (Array.isArray(newValue) || isObject(newValue)) {
+      applyObjectFilterDropdownFilterValue(JSON.stringify(newValue));
+    } else {
+      applyObjectFilterDropdownFilterValue(String(newValue));
+    }
   };
 
   const fieldMetadataItemUsedInDropdown = useRecoilComponentValueV2(

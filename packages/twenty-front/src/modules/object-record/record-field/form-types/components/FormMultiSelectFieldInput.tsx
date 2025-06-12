@@ -64,6 +64,14 @@ const StyledPlaceholder = styled.div`
   width: 100%;
 `;
 
+const safeParsedValue = (value: string) => {
+  try {
+    return JSON.parse(value);
+  } catch (error) {
+    return value;
+  }
+};
+
 export const FormMultiSelectFieldInput = ({
   label,
   defaultValue,
@@ -175,7 +183,7 @@ export const FormMultiSelectFieldInput = ({
     draftValue.type === 'static' && isDefined(draftValue.value)
       ? isArray(draftValue.value)
         ? draftValue.value
-        : JSON.parse(draftValue.value)
+        : safeParsedValue(draftValue.value)
       : undefined;
 
   const selectedOptions =
