@@ -146,32 +146,31 @@ export class ObjectPermissionService {
           newObjectPermission.objectMetadataId,
       );
 
-      const canReadObjectRecordsValueAfterUpdate =
+      const hasReadPermissionAfterUpdate =
         newObjectPermission.canReadObjectRecords ??
         objectRecordPermissionsOverride?.canReadObjectRecords ??
         roleWithObjectPermissions.canReadAllObjectRecords;
 
-      if (canReadObjectRecordsValueAfterUpdate === false) {
-        const hasWritingPermission = (
-          permissionValue: boolean | null | undefined,
-          defaultValue: boolean,
-        ) =>
-          permissionValue === true ||
-          (permissionValue === null && defaultValue === true);
+      if (hasReadPermissionAfterUpdate === false) {
+        const hasUpdatePermissionAfterUpdate =
+          newObjectPermission.canUpdateObjectRecords ??
+          objectRecordPermissionsOverride?.canUpdateObjectRecords ??
+          roleWithObjectPermissions.canUpdateAllObjectRecords;
+
+        const hasSoftDeletePermissionAfterUpdate =
+          newObjectPermission.canSoftDeleteObjectRecords ??
+          objectRecordPermissionsOverride?.canSoftDeleteObjectRecords ??
+          roleWithObjectPermissions.canSoftDeleteAllObjectRecords;
+
+        const hasDestroyPermissionAfterUpdate =
+          newObjectPermission.canDestroyObjectRecords ??
+          objectRecordPermissionsOverride?.canDestroyObjectRecords ??
+          roleWithObjectPermissions.canDestroyAllObjectRecords;
 
         if (
-          hasWritingPermission(
-            newObjectPermission.canUpdateObjectRecords,
-            roleWithObjectPermissions.canUpdateAllObjectRecords,
-          ) ||
-          hasWritingPermission(
-            newObjectPermission.canSoftDeleteObjectRecords,
-            roleWithObjectPermissions.canSoftDeleteAllObjectRecords,
-          ) ||
-          hasWritingPermission(
-            newObjectPermission.canDestroyObjectRecords,
-            roleWithObjectPermissions.canDestroyAllObjectRecords,
-          )
+          hasUpdatePermissionAfterUpdate ||
+          hasSoftDeletePermissionAfterUpdate ||
+          hasDestroyPermissionAfterUpdate
         ) {
           throw new PermissionsException(
             PermissionsExceptionMessage.CANNOT_GIVE_WRITING_PERMISSION_ON_NON_READABLE_OBJECT,

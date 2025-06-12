@@ -280,17 +280,19 @@ export class RoleService {
     const workspaceRoles = await this.getWorkspaceRoles(workspaceId);
 
     if (isDefined(input.label)) {
+      let rolesForLabelComparison = workspaceRoles;
+
       if (isDefined(roleId)) {
-        const otherWorkspaceRoles = workspaceRoles.filter(
+        rolesForLabelComparison = workspaceRoles.filter(
           (role) => role.id !== roleId,
         );
+      }
 
-        if (otherWorkspaceRoles.some((role) => role.label === input.label)) {
-          throw new PermissionsException(
-            PermissionsExceptionMessage.ROLE_LABEL_ALREADY_EXISTS,
-            PermissionsExceptionCode.ROLE_LABEL_ALREADY_EXISTS,
-          );
-        }
+      if (rolesForLabelComparison.some((role) => role.label === input.label)) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.ROLE_LABEL_ALREADY_EXISTS,
+          PermissionsExceptionCode.ROLE_LABEL_ALREADY_EXISTS,
+        );
       }
     }
 
@@ -335,21 +337,6 @@ export class RoleService {
       throw new PermissionsException(
         PermissionsExceptionMessage.CANNOT_GIVE_WRITING_PERMISSION_WITHOUT_READING_PERMISSION,
         PermissionsExceptionCode.CANNOT_GIVE_WRITING_PERMISSION_WITHOUT_READING_PERMISSION,
-      );
-    }
-  }
-
-  private async validateRoleIsNotDefaultRoleOrThrow({
-    roleId,
-    defaultRoleId,
-  }: {
-    roleId: string;
-    defaultRoleId: string;
-  }): Promise<void> {
-    if (defaultRoleId === roleId) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.DEFAULT_ROLE_CANNOT_BE_DELETED,
-        PermissionsExceptionCode.DEFAULT_ROLE_CANNOT_BE_DELETED,
       );
     }
   }
@@ -405,6 +392,21 @@ export class RoleService {
       throw new PermissionsException(
         PermissionsExceptionMessage.ROLE_NOT_EDITABLE,
         PermissionsExceptionCode.ROLE_NOT_EDITABLE,
+      );
+    }
+  }
+
+  private async validateRoleIsNotDefaultRoleOrThrow({
+    roleId,
+    defaultRoleId,
+  }: {
+    roleId: string;
+    defaultRoleId: string;
+  }): Promise<void> {
+    if (defaultRoleId === roleId) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.DEFAULT_ROLE_CANNOT_BE_DELETED,
+        PermissionsExceptionCode.DEFAULT_ROLE_CANNOT_BE_DELETED,
       );
     }
   }
