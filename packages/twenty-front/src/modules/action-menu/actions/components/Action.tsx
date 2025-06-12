@@ -5,14 +5,19 @@ import { useContext } from 'react';
 
 export const Action = ({
   onClick,
-  preventCommandMenuClosing,
+  closeSidePanelOnShowPageOptionsActionExecution = false,
+  closeSidePanelOnCommandMenuListActionExecution = true,
 }: {
   onClick: () => void;
-  preventCommandMenuClosing?: boolean;
+  closeSidePanelOnShowPageOptionsActionExecution?: boolean;
+  closeSidePanelOnCommandMenuListActionExecution?: boolean;
 }) => {
   const actionConfig = useContext(ActionConfigContext);
 
-  const { closeActionMenu } = useCloseActionMenu(preventCommandMenuClosing);
+  const { closeActionMenu } = useCloseActionMenu({
+    closeSidePanelOnShowPageOptionsActionExecution,
+    closeSidePanelOnCommandMenuListActionExecution,
+  });
 
   if (!actionConfig) {
     return null;
