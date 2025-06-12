@@ -96,7 +96,8 @@ export class WorkflowVersionStepWorkspaceService {
     assertWorkflowVersionIsDraft(workflowVersion);
 
     const existingSteps = workflowVersion.steps || [];
-    const updatedSteps = insertStep({
+
+    const { updatedSteps, updatedInsertedStep } = insertStep({
       existingSteps,
       insertedStep: enrichedNewStep,
       parentStepId,
@@ -107,7 +108,7 @@ export class WorkflowVersionStepWorkspaceService {
       steps: updatedSteps,
     });
 
-    return enrichedNewStep;
+    return updatedInsertedStep;
   }
 
   async updateWorkflowVersionStep({
