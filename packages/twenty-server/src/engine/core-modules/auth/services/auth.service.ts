@@ -728,7 +728,7 @@ export class AuthService {
             refreshToken: await this.refreshTokenService.generateRefreshToken({
               userId: user.id,
               authProvider,
-              targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC
+              targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
             }),
           }),
         },
