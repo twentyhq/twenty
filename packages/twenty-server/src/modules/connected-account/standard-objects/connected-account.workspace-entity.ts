@@ -122,7 +122,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.TEXT,
     defaultValue: "'OAuth2'",
     label: msg`Connection Type`,
-    description: msg`Connection Type`,
+    description: msg`The type of connection to the account possible values are: OAuth2, IMAP`,
     icon: 'IconSettings',
   })
   connectionType: string;
