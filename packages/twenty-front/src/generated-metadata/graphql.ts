@@ -315,6 +315,7 @@ export type ClientConfig = {
   isEmailVerificationRequired: Scalars['Boolean']['output'];
   isGoogleCalendarEnabled: Scalars['Boolean']['output'];
   isGoogleMessagingEnabled: Scalars['Boolean']['output'];
+  isIMAPMessagingEnabled: Scalars['Boolean']['output'];
   isMicrosoftCalendarEnabled: Scalars['Boolean']['output'];
   isMicrosoftMessagingEnabled: Scalars['Boolean']['output'];
   isMultiWorkspaceEnabled: Scalars['Boolean']['output'];
@@ -632,6 +633,7 @@ export type FeatureFlagDto = {
 export enum FeatureFlagKey {
   IS_AIRTABLE_INTEGRATION_ENABLED = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IS_AI_ENABLED = 'IS_AI_ENABLED',
+  IS_IMAP_ENABLED = 'IS_IMAP_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_PERMISSIONS_V2_ENABLED = 'IS_PERMISSIONS_V2_ENABLED',
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
@@ -974,6 +976,7 @@ export type Mutation = {
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
   runWorkflowVersion: WorkflowRun;
+  saveImapConnection: Scalars['Boolean']['output'];
   sendInvitations: SendInvitationsOutput;
   signUp: SignUpOutput;
   signUpInNewWorkspace: SignUpOutput;
@@ -983,6 +986,7 @@ export type Mutation = {
   switchToYearlyInterval: BillingUpdateOutput;
   syncRemoteTable: RemoteTable;
   syncRemoteTableSchemaChanges: RemoteTable;
+  testImapConnection: Scalars['Boolean']['output'];
   trackAnalytics: Analytics;
   unsyncRemoteTable: RemoteTable;
   updateDatabaseConfigVariable: Scalars['Boolean']['output'];
@@ -1244,6 +1248,11 @@ export type MutationRunWorkflowVersionArgs = {
 };
 
 
+export type MutationSaveImapConnectionArgs = {
+  input: SaveImapConnectionInput;
+};
+
+
 export type MutationSendInvitationsArgs = {
   emails: Array<Scalars['String']['input']>;
 };
@@ -1273,6 +1282,11 @@ export type MutationSyncRemoteTableArgs = {
 
 export type MutationSyncRemoteTableSchemaChangesArgs = {
   input: RemoteTableInput;
+};
+
+
+export type MutationTestImapConnectionArgs = {
+  input: TestImapConnectionInput;
 };
 
 
@@ -1717,7 +1731,7 @@ export type QueryGetIndicatorHealthStatusArgs = {
 
 
 export type QueryGetPublicWorkspaceDataByDomainArgs = {
-  origin: Scalars['String']['input'];
+  origin?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -1935,6 +1949,17 @@ export enum SsoIdentityProviderStatus {
   Inactive = 'Inactive'
 }
 
+export type SaveImapConnectionInput = {
+  accountOwnerId: Scalars['String']['input'];
+  handle: Scalars['String']['input'];
+  host: Scalars['String']['input'];
+  id?: InputMaybe<Scalars['String']['input']>;
+  messageVisibility?: InputMaybe<MessageChannelVisibility>;
+  password: Scalars['String']['input'];
+  port: Scalars['Float']['input'];
+  secure: Scalars['Boolean']['input'];
+};
+
 export type SearchRecord = {
   __typename?: 'SearchRecord';
   imageUrl?: Maybe<Scalars['String']['output']>;
@@ -2031,6 +2056,7 @@ export enum SettingPermissionType {
   DATA_MODEL = 'DATA_MODEL',
   ROLES = 'ROLES',
   SECURITY = 'SECURITY',
+  WORKFLOWS = 'WORKFLOWS',
   WORKSPACE = 'WORKSPACE',
   WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS'
 }
@@ -2133,6 +2159,14 @@ export type SystemHealthService = {
   id: HealthIndicatorId;
   label: Scalars['String']['output'];
   status: AdminPanelHealthServiceStatus;
+};
+
+export type TestImapConnectionInput = {
+  host: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+  port: Scalars['Float']['input'];
+  secure: Scalars['Boolean']['input'];
+  username: Scalars['String']['input'];
 };
 
 export type TimelineCalendarEvent = {

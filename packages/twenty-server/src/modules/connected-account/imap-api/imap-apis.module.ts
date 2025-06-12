@@ -7,6 +7,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { IMAPAPIsService } from 'src/modules/connected-account/services/imap-apis.service';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { IMAPAPIsService } from 'src/modules/connected-account/services/imap-api
     WorkspaceEventEmitterModule,
     TwentyConfigModule,
     TwentyORMModule,
+    FeatureFlagModule,
   ],
   providers: [IMAPAPIsService],
   exports: [IMAPAPIsService],

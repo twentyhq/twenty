@@ -6,6 +6,8 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -36,6 +38,7 @@ export class IMAPAPIsService {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async setupIMAPAccount(input: {
@@ -48,6 +51,15 @@ export class IMAPAPIsService {
     imapPassword: string;
     messageVisibility: MessageChannelVisibility | undefined;
   }) {
+    const isImapEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_IMAP_ENABLED,
+      input.workspaceId,
+    );
+
+    if (!isImapEnabled) {
+      throw new Error('IMAP feature is not enabled for this workspace');
+    }
+
     const {
       handle,
       workspaceId,

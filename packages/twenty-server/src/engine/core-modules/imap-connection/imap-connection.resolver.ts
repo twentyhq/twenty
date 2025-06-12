@@ -3,6 +3,9 @@ import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
   SaveImapConnectionInput,
   TestImapConnectionInput,
@@ -36,26 +39,43 @@ import {
 )
 export class ImapConnectionResolver {
   constructor(
-    private readonly imapConnectionService: ImapConnectionService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly imapConnectionService: ImapConnectionService,
     private readonly imapApisService: IMAPAPIsService,
+    private readonly twentyConfigService: TwentyConfigService,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly twentyConfigService: TwentyConfigService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
+
+  private async checkIfImapFeatureEnabled(workspaceId: string): Promise<void> {
+    const isImapEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_IMAP_ENABLED,
+      workspaceId,
+    );
+
+    if (!isImapEnabled) {
+      throw new UserInputError(
+        'IMAP feature is not enabled for this workspace',
+      );
+    }
+  }
 
   @Mutation(() => Boolean)
   @UseGuards(WorkspaceAuthGuard)
   async testImapConnection(
     @Args('input') input: TestImapConnectionInput,
+    @AuthWorkspace() workspace: Workspace,
   ): Promise<boolean> {
-    return await this.imapConnectionService.testConnection({
-      host: input.host,
-      port: input.port,
-      secure: input.secure,
-      username: input.username,
-      password: input.password,
-    });
+    await this.checkIfImapFeatureEnabled(workspace.id);
+
+    try {
+      await this.imapConnectionService.testConnection(input);
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   @Mutation(() => Boolean)
@@ -64,6 +84,8 @@ export class ImapConnectionResolver {
     @Args('input') input: SaveImapConnectionInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<boolean> {
+    await this.checkIfImapFeatureEnabled(workspace.id);
+
     const {
       id,
       accountOwnerId,
