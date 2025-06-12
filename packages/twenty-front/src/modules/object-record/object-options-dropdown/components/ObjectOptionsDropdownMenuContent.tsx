@@ -173,7 +173,9 @@ export const ObjectOptionsDropdownMenuContent = () => {
               width="100%"
             />
           )}
-          <DropdownMenuSeparator />
+        </DropdownMenuItemsContainer>
+        <DropdownMenuSeparator />
+        <DropdownMenuItemsContainer scrollable={false}>
           <SelectableListItem
             itemId="Copy link to view"
             onEnter={() => {

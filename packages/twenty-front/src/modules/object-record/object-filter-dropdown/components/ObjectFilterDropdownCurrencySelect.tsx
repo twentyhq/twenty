@@ -107,7 +107,7 @@ export const ObjectFilterDropdownCurrencySelect = () => {
         }}
       />
       <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight width="auto">
+      <DropdownMenuItemsContainer hasMaxHeight>
         {filteredSelectedItems?.map((item) => {
           return (
             <MenuItemMultiSelectAvatar
