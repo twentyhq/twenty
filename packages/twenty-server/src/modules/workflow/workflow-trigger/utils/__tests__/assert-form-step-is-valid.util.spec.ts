@@ -2,7 +2,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { WorkflowFormActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
 import { WorkflowTriggerException } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
-import { assertFormStepIsValid } from 'src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util';
+import { assertFormStepIsValid } from 'src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util';
 
 const settings: WorkflowFormActionSettings = {
   input: [
