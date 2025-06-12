@@ -14,6 +14,7 @@ import { performCreateManyOperation } from 'test/integration/graphql/utils/perfo
 import { searchFactory } from 'test/integration/graphql/utils/search-factory.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { EachTestingContext } from 'twenty-shared/testing';
+import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 import {
   decodeCursor,
@@ -22,7 +23,6 @@ import {
 import { SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
 import { SearchResultEdgeDTO } from 'src/engine/core-modules/search/dtos/search-result-edge.dto';
 import { SearchCursor } from 'src/engine/core-modules/search/services/search.service';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 describe('SearchResolver', () => {
   const [firstPerson, secondPerson, thirdPerson] = [
@@ -536,11 +536,9 @@ describe('SearchResolver', () => {
 
     expect({
       ...response.data.search,
-      edges: response.data.search.edges.map(
-        (edge: SearchResultEdgeDTO) => ({
-          cursor: edge.cursor,
-        }),
-      ),
+      edges: response.data.search.edges.map((edge: SearchResultEdgeDTO) => ({
+        cursor: edge.cursor,
+      })),
     }).toEqual(expectedResult);
   });
 
@@ -595,11 +593,9 @@ describe('SearchResolver', () => {
 
     expect({
       ...response.data.search,
-      edges: response.data.search.edges.map(
-        (edge: SearchResultEdgeDTO) => ({
-          cursor: edge.cursor,
-        }),
-      ),
+      edges: response.data.search.edges.map((edge: SearchResultEdgeDTO) => ({
+        cursor: edge.cursor,
+      })),
     }).toEqual(expectedResult);
   });
 });

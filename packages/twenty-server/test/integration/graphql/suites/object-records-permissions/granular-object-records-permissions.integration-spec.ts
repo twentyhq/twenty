@@ -4,8 +4,8 @@ import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
-
 import gql from 'graphql-tag';
+
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
@@ -62,8 +62,8 @@ describe('granularObjectRecordsPermissions', () => {
       };
 
       await makeGraphqlAPIRequest({
-        operation: restoreMemberRoleQuery
-      })
+        operation: restoreMemberRoleQuery,
+      });
 
       // Disable Permissions V2
       const disablePermissionsQuery = updateFeatureFlagFactory(

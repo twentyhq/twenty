@@ -4,9 +4,9 @@ import {
   CreateOneObjectFactoryInput,
   createOneObjectMetadataQueryFactory,
 } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata-query-factory.util';
+import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
 export const createOneObjectMetadata = async ({
   input,

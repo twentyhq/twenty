@@ -3,13 +3,13 @@ import { deleteOneRoleOperationFactory } from 'test/integration/graphql/utils/de
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -44,7 +44,7 @@ describe('roles permissions', () => {
       true,
     );
 
-    await makeGraphqlAPIRequest({operation: enablePermissionsV2Query});
+    await makeGraphqlAPIRequest({ operation: enablePermissionsV2Query });
 
     const query = {
       query: `
@@ -80,7 +80,7 @@ describe('roles permissions', () => {
       false,
     );
 
-    await makeGraphqlAPIRequest({operation: disablePermissionsV2Query});
+    await makeGraphqlAPIRequest({ operation: disablePermissionsV2Query });
   });
 
   describe('getRoles', () => {

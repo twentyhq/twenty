@@ -3,10 +3,10 @@ import {
   UpdateOneFieldFactoryInput,
   updateOneFieldMetadataQueryFactory,
 } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata-query-factory.util';
-
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
+
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 export const updateOneFieldMetadata = async ({
   input,

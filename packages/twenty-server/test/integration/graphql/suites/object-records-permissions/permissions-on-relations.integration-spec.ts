@@ -8,8 +8,8 @@ import { findManyOperationFactory } from 'test/integration/graphql/utils/find-ma
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
-
 import gql from 'graphql-tag';
+
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
@@ -38,6 +38,7 @@ describe('permissionsOnRelations', () => {
           }
         `,
       };
+
       await makeGraphqlAPIRequest<any>({ operation: enablePermissionsQuery });
 
       const rolesResponse = await makeGraphqlAPIRequest<any>({

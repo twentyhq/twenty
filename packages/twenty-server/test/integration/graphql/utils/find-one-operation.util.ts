@@ -1,9 +1,12 @@
-import { FindOneOperationFactoryParams, findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
-
-import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import {
+  FindOneOperationFactoryParams,
+  findOneOperationFactory,
+} from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { CommonResponseBody } from 'test/integration/graphql/types/common-response-body.type';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
+
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 type FindOneOperationArgs = FindOneOperationFactoryParams & {
   expectToFail?: boolean;

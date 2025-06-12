@@ -15,6 +15,7 @@ export const TESTING_MOCK_ACCESS_TOKEN = {
   GUEST: GUEST_ACCESS_TOKEN,
   API_KEY: API_KEY_ACCESS_TOKEN,
 } as const;
+
 type TestingMockAccessTokenKeys = keyof typeof TESTING_MOCK_ACCESS_TOKEN;
 
 export type MakeMetadataAPIRequestOptions = {
@@ -47,6 +48,7 @@ export const makeGraphqlRequest = async <ResponseTypeT = unknown>(
 
   if (!unAuthenticated) {
     const token = TESTING_MOCK_ACCESS_TOKEN[testingToken];
+
     client.set('Authorization', `Bearer ${authenticationToken ?? token}`);
   }
 

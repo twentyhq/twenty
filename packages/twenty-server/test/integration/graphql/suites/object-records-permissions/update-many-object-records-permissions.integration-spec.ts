@@ -262,12 +262,8 @@ describe('updateManyObjectRecordsPermissions', () => {
       expect(response.data.updatePeople).toHaveLength(2);
       expect(response.data.updatePeople[0].id).toBe(personId1);
       expect(response.data.updatePeople[1].id).toBe(personId2);
-      expect(response.data.updatePeople[0].jobTitle).toBe(
-        'Product Manager',
-      );
-      expect(response.data.updatePeople[1].jobTitle).toBe(
-        'Product Manager',
-      );
+      expect(response.data.updatePeople[0].jobTitle).toBe('Product Manager');
+      expect(response.data.updatePeople[1].jobTitle).toBe('Product Manager');
     });
   });
 });

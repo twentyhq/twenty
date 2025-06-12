@@ -56,7 +56,10 @@ describe('GraphQL People Pagination with Composite Field Sorting', () => {
         },
       });
 
-      const response = await makeGraphqlAPIRequest({ operation: graphqlOperation });
+      const response = await makeGraphqlAPIRequest({
+        operation: graphqlOperation,
+      });
+
       expect(response.rawResponse.status).toBe(200);
       expect(response.errors).toBeUndefined();
     }
@@ -76,7 +79,10 @@ describe('GraphQL People Pagination with Composite Field Sorting', () => {
       first: 2,
     });
 
-    const firstPageResponse = await makeGraphqlAPIRequest<any>({ operation: firstPageOperation });
+    const firstPageResponse = await makeGraphqlAPIRequest<any>({
+      operation: firstPageOperation,
+    });
+
     expect(firstPageResponse.rawResponse.status).toBe(200);
     expect(firstPageResponse.errors).toBeUndefined();
 
@@ -108,7 +114,10 @@ describe('GraphQL People Pagination with Composite Field Sorting', () => {
       after: firstPageCursor,
     });
 
-    const secondPageResponse = await makeGraphqlAPIRequest<any>({ operation: secondPageOperation });
+    const secondPageResponse = await makeGraphqlAPIRequest<any>({
+      operation: secondPageOperation,
+    });
+
     expect(secondPageResponse.rawResponse.status).toBe(200);
     expect(secondPageResponse.errors).toBeUndefined();
 
@@ -146,7 +155,10 @@ describe('GraphQL People Pagination with Composite Field Sorting', () => {
       after: secondPageData.people.pageInfo.endCursor,
     });
 
-    const thirdPageResponse = await makeGraphqlAPIRequest<any>({ operation: thirdPageOperation });
+    const thirdPageResponse = await makeGraphqlAPIRequest<any>({
+      operation: thirdPageOperation,
+    });
+
     expect(thirdPageResponse.rawResponse.status).toBe(200);
     expect(thirdPageResponse.errors).toBeUndefined();
 
@@ -175,7 +187,10 @@ describe('GraphQL People Pagination with Composite Field Sorting', () => {
       first: 2,
     });
 
-    const firstPageResponse = await makeGraphqlAPIRequest<any>({ operation: firstPageOperation });
+    const firstPageResponse = await makeGraphqlAPIRequest<any>({
+      operation: firstPageOperation,
+    });
+
     expect(firstPageResponse.rawResponse.status).toBe(200);
     expect(firstPageResponse.errors).toBeUndefined();
 
@@ -205,7 +220,10 @@ describe('GraphQL People Pagination with Composite Field Sorting', () => {
       after: firstPageData.people.pageInfo.endCursor,
     });
 
-    const secondPageResponse = await makeGraphqlAPIRequest<any>({ operation: secondPageOperation });
+    const secondPageResponse = await makeGraphqlAPIRequest<any>({
+      operation: secondPageOperation,
+    });
+
     expect(secondPageResponse.rawResponse.status).toBe(200);
     expect(secondPageResponse.errors).toBeUndefined();
 
@@ -235,14 +253,15 @@ describe('GraphQL People Pagination with Composite Field Sorting', () => {
       },
     });
 
-    const allPeopleResponse = await makeGraphqlAPIRequest<any>({ operation: allPeopleOperation });
+    const allPeopleResponse = await makeGraphqlAPIRequest<any>({
+      operation: allPeopleOperation,
+    });
+
     expect(allPeopleResponse.rawResponse.status).toBe(200);
     expect(allPeopleResponse.errors).toBeUndefined();
 
     const allPeopleData = allPeopleResponse.data;
-    const allPeople = allPeopleData.people.edges.map(
-      (edge: any) => edge.node,
-    );
+    const allPeople = allPeopleData.people.edges.map((edge: any) => edge.node);
     const lastPersonCursor = allPeopleData.people.pageInfo.endCursor;
 
     const backwardPageOperation = findManyOperationFactory({
@@ -259,7 +278,10 @@ describe('GraphQL People Pagination with Composite Field Sorting', () => {
       before: lastPersonCursor,
     });
 
-    const backwardPageResponse = await makeGraphqlAPIRequest<any>({ operation: backwardPageOperation });
+    const backwardPageResponse = await makeGraphqlAPIRequest<any>({
+      operation: backwardPageOperation,
+    });
+
     expect(backwardPageResponse.rawResponse.status).toBe(200);
     expect(backwardPageResponse.errors).toBeUndefined();
 

@@ -17,7 +17,7 @@ export const findManyFieldsMetadata = async ({
   });
 
   const response = await makeMetadataAPIRequest({
-    operation
+    operation,
   });
 
   if (expectToFail) {
@@ -27,5 +27,5 @@ export const findManyFieldsMetadata = async ({
     });
   }
 
-  return response
+  return response;
 };

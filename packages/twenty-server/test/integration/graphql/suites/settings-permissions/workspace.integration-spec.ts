@@ -1,7 +1,7 @@
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
-
 import gql from 'graphql-tag';
+
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
@@ -112,6 +112,7 @@ describe('workspace permissions', () => {
         expect(response.data).toBeDefined();
         expect(response.errors).toBeUndefined();
         const data = response.data.updateWorkspace;
+
         expect(data).toBeDefined();
         expect(data.displayName).toBe('New Workspace Name');
       });
@@ -119,7 +120,9 @@ describe('workspace permissions', () => {
       it('should throw a permission error when user does not have permission (member role)', async () => {
         const query = gql`
           mutation updateWorkspace {
-            updateWorkspace(data: { displayName: "Another New Workspace Name" }) {
+            updateWorkspace(
+              data: { displayName: "Another New Workspace Name" }
+            ) {
               id
               displayName
             }
@@ -160,6 +163,7 @@ describe('workspace permissions', () => {
         expect(response.data).toBeDefined();
         expect(response.errors).toBeUndefined();
         const data = response.data.updateWorkspace;
+
         expect(data).toBeDefined();
         expect(data.subdomain).toBe('new-subdomain');
       });
@@ -208,6 +212,7 @@ describe('workspace permissions', () => {
         expect(response.data).toBeDefined();
         expect(response.errors).toBeUndefined();
         const data = response.data.updateWorkspace;
+
         expect(data).toBeDefined();
         expect(data.customDomain).toBe(null);
       });
@@ -215,7 +220,9 @@ describe('workspace permissions', () => {
       it('should throw a permission error when user does not have permission (member role)', async () => {
         const query = gql`
           mutation updateWorkspace {
-            updateWorkspace(data: { customDomain: "another-new-custom-domain" }) {
+            updateWorkspace(
+              data: { customDomain: "another-new-custom-domain" }
+            ) {
               id
               customDomain
             }
@@ -256,6 +263,7 @@ describe('workspace permissions', () => {
         expect(response.data).toBeDefined();
         expect(response.errors).toBeUndefined();
         const data = response.data.updateWorkspace;
+
         expect(data).toBeDefined();
         expect(data.logo).toContain('new-logo');
       });

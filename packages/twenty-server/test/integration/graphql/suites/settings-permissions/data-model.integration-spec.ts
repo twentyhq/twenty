@@ -8,10 +8,10 @@ import { deleteOneObjectMetadataQueryFactory } from 'test/integration/metadata/s
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata-query-factory.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { makeMetadataAPIRequest } from 'test/integration/graphql/utils/make-metadata-api-request.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { makeMetadataAPIRequest } from 'test/integration/graphql/utils/make-metadata-api-request.util';
 
 describe('datamodel permissions', () => {
   describe('fieldMetadata', () => {
@@ -80,9 +80,7 @@ describe('datamodel permissions', () => {
         expect(response.errors[0].message).toBe(
           PermissionsExceptionMessage.PERMISSION_DENIED,
         );
-        expect(response.errors[0].extensions.code).toBe(
-          ErrorCode.FORBIDDEN,
-        );
+        expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
       });
     });
 
@@ -115,9 +113,7 @@ describe('datamodel permissions', () => {
         expect(response.errors[0].message).toBe(
           PermissionsExceptionMessage.PERMISSION_DENIED,
         );
-        expect(response.errors[0].extensions.code).toBe(
-          ErrorCode.FORBIDDEN,
-        );
+        expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
       });
     });
 
@@ -141,9 +137,7 @@ describe('datamodel permissions', () => {
         expect(response.errors[0].message).toBe(
           PermissionsExceptionMessage.PERMISSION_DENIED,
         );
-        expect(response.errors[0].extensions.code).toBe(
-          ErrorCode.FORBIDDEN,
-        );
+        expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
       });
     });
   });
@@ -177,9 +171,7 @@ describe('datamodel permissions', () => {
         expect(response.errors[0].message).toBe(
           PermissionsExceptionMessage.PERMISSION_DENIED,
         );
-        expect(response.errors[0].extensions.code).toBe(
-          ErrorCode.FORBIDDEN,
-        );
+        expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
       });
     });
 
@@ -233,9 +225,7 @@ describe('datamodel permissions', () => {
           expect(response.errors[0].message).toBe(
             PermissionsExceptionMessage.PERMISSION_DENIED,
           );
-          expect(response.errors[0].extensions.code).toBe(
-            ErrorCode.FORBIDDEN,
-          );
+          expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
         });
       });
       describe('deleteOne', () => {
@@ -258,9 +248,7 @@ describe('datamodel permissions', () => {
           expect(response.errors[0].message).toBe(
             PermissionsExceptionMessage.PERMISSION_DENIED,
           );
-          expect(response.errors[0].extensions.code).toBe(
-            ErrorCode.FORBIDDEN,
-          );
+          expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
         });
       });
     });

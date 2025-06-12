@@ -4,9 +4,9 @@ import {
   CreateOneFieldFactoryInput,
   createOneFieldMetadataQueryFactory,
 } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata-query-factory.util';
+import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
 export const createOneFieldMetadata = async ({
   input,

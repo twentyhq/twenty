@@ -1,4 +1,3 @@
-import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { PerformMetadataQueryParams } from 'test/integration/graphql/types/perform-metadata-query.type';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import {
@@ -6,6 +5,8 @@ import {
   deleteOneObjectMetadataQueryFactory,
 } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata-query-factory.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
+
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 export const deleteOneObjectMetadata = async ({
   input,
@@ -17,7 +18,9 @@ export const deleteOneObjectMetadata = async ({
     gqlFields,
   });
 
-  const response = await makeGraphqlAPIRequest<{deleteOneObject: ObjectRecord}>({ operation: graphqlOperation });
+  const response = await makeGraphqlAPIRequest<{
+    deleteOneObject: ObjectRecord;
+  }>({ operation: graphqlOperation });
 
   if (expectToFail) {
     warnIfNoErrorButExpectedToFail({

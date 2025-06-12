@@ -1,5 +1,5 @@
-import gql from "graphql-tag";
-import { makeGraphqlAPIRequest } from "test/integration/graphql/utils/make-graphql-api-request.util";
+import gql from 'graphql-tag';
+import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 export const updateWorkspaceMemberRole = async ({
   roleId,
@@ -25,8 +25,7 @@ export const updateWorkspaceMemberRole = async ({
         `,
   };
 
-
   return await makeGraphqlAPIRequest({
-    operation: updateMemberRoleQuery
-  })
+    operation: updateMemberRoleQuery,
+  });
 };
