@@ -62,6 +62,7 @@ import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.au
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -288,6 +289,7 @@ export class AuthService {
       userId: user.id,
       workspaceId,
       authProvider,
+      targetedTokenType: JwtTokenTypeEnum.ACCESS,
     });
 
     return {
@@ -726,6 +728,7 @@ export class AuthService {
             refreshToken: await this.refreshTokenService.generateRefreshToken({
               userId: user.id,
               authProvider,
+              targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC
             }),
           }),
         },

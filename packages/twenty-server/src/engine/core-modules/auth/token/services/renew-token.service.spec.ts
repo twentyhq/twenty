@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 import { Repository } from 'typeorm';
 
@@ -66,6 +67,7 @@ describe('RenewTokenService', () => {
       const mockNewRefreshToken = {
         token: 'new-refresh-token',
         expiresAt: new Date(),
+        targetedTokenType: JwtTokenTypeEnum.ACCESS
       };
       const mockAppToken: Partial<AppToken> = {
         id: mockTokenId,
@@ -78,6 +80,7 @@ describe('RenewTokenService', () => {
         user: mockUser,
         token: mockAppToken as AppToken,
         authProvider: undefined,
+        targetedTokenType: JwtTokenTypeEnum.ACCESS
       });
       jest.spyOn(appTokenRepository, 'update').mockResolvedValue({} as any);
       jest
