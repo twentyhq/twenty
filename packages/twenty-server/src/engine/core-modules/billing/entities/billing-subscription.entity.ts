@@ -80,7 +80,7 @@ export class BillingSubscription {
   @Field(() => SubscriptionStatus)
   @Column({
     type: 'enum',
-    enum: Object.values(SubscriptionStatus),
+    enum: SubscriptionStatus,
     nullable: false,
   })
   status: SubscriptionStatus;
