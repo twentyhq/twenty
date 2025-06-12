@@ -329,7 +329,7 @@ export class RoleService {
       existingRole?.canDestroyAllObjectRecords;
 
     if (
-      !hasReadingPermissionsAfterUpdate &&
+      hasReadingPermissionsAfterUpdate === false &&
       (hasUpdatePermissionsAfterUpdate ||
         hasSoftDeletePermissionsAfterUpdate ||
         hasDestroyPermissionsAfterUpdate)
