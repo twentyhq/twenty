@@ -188,6 +188,7 @@ export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrat
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<PersonWorkspaceEntity>(
         workspaceId,
         'person',
+        { shouldBypassPermissionChecks: true },
       );
     const people = await personRepository.find({
       where: {

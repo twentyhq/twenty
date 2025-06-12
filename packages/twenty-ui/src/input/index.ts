@@ -49,6 +49,8 @@ export type {
 export { IconButton } from './button/components/IconButton';
 export type { IconButtonGroupProps } from './button/components/IconButtonGroup';
 export { IconButtonGroup } from './button/components/IconButtonGroup';
+export type { InsideButtonProps } from './button/components/InsideButton';
+export { InsideButton } from './button/components/InsideButton';
 export type {
   LightButtonAccent,
   LightButtonProps,

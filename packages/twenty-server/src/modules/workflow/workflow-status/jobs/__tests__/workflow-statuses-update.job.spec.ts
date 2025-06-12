@@ -4,7 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
@@ -28,17 +28,25 @@ describe('WorkflowStatusesUpdate', () => {
     update: jest.fn(),
   };
 
-  const mockTwentyORMManager = {
-    getRepository: jest.fn().mockImplementation((entity) => {
-      if (entity === 'workflow') {
-        return Promise.resolve(mockWorkflowRepository);
-      }
-      if (entity === 'workflowVersion') {
-        return Promise.resolve(mockWorkflowVersionRepository);
-      }
+  const mockTwentyORMGlobalManager = {
+    getRepositoryForWorkspace: jest
+      .fn()
+      .mockImplementation((_workspaceId, entity, options) => {
+        if (!options?.shouldBypassPermissionChecks) {
+          throw new Error(
+            'Permission check will fail because job runners dont have permissions',
+          );
+        }
 
-      return Promise.resolve(null);
-    }),
+        if (entity === 'workflow') {
+          return Promise.resolve(mockWorkflowRepository);
+        }
+        if (entity === 'workflowVersion') {
+          return Promise.resolve(mockWorkflowVersionRepository);
+        }
+
+        return Promise.resolve(null);
+      }),
   };
 
   const mockServerlessFunctionService = {
@@ -55,8 +63,8 @@ describe('WorkflowStatusesUpdate', () => {
       providers: [
         WorkflowStatusesUpdateJob,
         {
-          provide: TwentyORMManager,
-          useValue: mockTwentyORMManager,
+          provide: TwentyORMGlobalManager,
+          useValue: mockTwentyORMGlobalManager,
         },
         {
           provide: ServerlessFunctionService,
