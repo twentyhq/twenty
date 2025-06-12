@@ -2,8 +2,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { WorkflowFormActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
 import {
-    WorkflowTriggerException,
-    WorkflowTriggerExceptionCode,
+  WorkflowTriggerException,
+  WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 
 export function assertFormStepIsValid(settings: WorkflowFormActionSettings) {
