@@ -51,7 +51,7 @@ describe('useHttpRequestForm', () => {
     });
   });
 
-  it('should handle field changes and validate JSON', () => {
+  it('should handle field changes and validate URL', () => {
     const { result } = renderHook(() =>
       useHttpRequestForm({
         action: mockAction,
@@ -61,13 +61,10 @@ describe('useHttpRequestForm', () => {
     );
 
     act(() => {
-      result.current.handleFieldChange(
-        'headers',
-        JSON.stringify({ Authorization: 'Bearer token' }, null, 2),
-      );
+      result.current.handleFieldChange('url', 'https://api.example.com');
     });
 
-    expect(result.current.errorMessages.headers).toBeUndefined();
+    expect(result.current.error.message).toBeUndefined();
 
     act(() => {
       jest.advanceTimersByTime(500);
@@ -77,17 +74,17 @@ describe('useHttpRequestForm', () => {
       expect.objectContaining({
         settings: expect.objectContaining({
           input: expect.objectContaining({
-            headers: { Authorization: 'Bearer token' },
+            url: 'https://api.example.com',
           }),
         }),
       }),
     );
 
     act(() => {
-      result.current.handleFieldChange('headers', '{invalid json}');
+      result.current.handleFieldChange('url', 'invalid-url');
     });
 
-    expect(result.current.errorMessages.headers).toBeDefined();
+    expect(result.current.error.message).toBeDefined();
 
     act(() => {
       jest.advanceTimersByTime(500);
@@ -97,7 +94,7 @@ describe('useHttpRequestForm', () => {
       expect.objectContaining({
         settings: expect.objectContaining({
           input: expect.objectContaining({
-            headers: '{invalid json}',
+            url: 'invalid-url',
           }),
         }),
       }),
@@ -125,13 +122,8 @@ describe('useHttpRequestForm', () => {
     );
 
     act(() => {
-      result.current.handleFieldChange(
-        'body',
-        JSON.stringify({ data: 'test' }, null, 2),
-      );
+      result.current.handleFieldChange('body', { data: 'test' });
     });
-
-    expect(result.current.errorMessages.body).toBeUndefined();
 
     act(() => {
       jest.advanceTimersByTime(500);
