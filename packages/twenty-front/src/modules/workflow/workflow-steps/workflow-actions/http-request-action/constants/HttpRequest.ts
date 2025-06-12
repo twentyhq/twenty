@@ -10,11 +10,16 @@ export const METHODS_WITH_BODY = ['POST', 'PUT', 'PATCH'] as const;
 
 export type HttpMethodWithBody = (typeof METHODS_WITH_BODY)[number];
 
+export type HttpMethod = (typeof HTTP_METHODS)[number]['value'];
+
 export type HttpRequestFormData = {
   url: string;
-  method: (typeof HTTP_METHODS)[number]['value'];
+  method: HttpMethod;
   headers: Record<string, string>;
-  body: string | null;
+  body?: Record<
+    string,
+    string | number | boolean | null | Array<string | number | boolean | null>
+  >;
 };
 
 export const DEFAULT_HEADERS_PLACEHOLDER =
