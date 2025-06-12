@@ -77,6 +77,7 @@ export class WorkflowVersionStepWorkspaceService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
         workspaceId,
         'workflowVersion',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowVersion = await workflowVersionRepository.findOne({
@@ -594,6 +595,7 @@ export class WorkflowVersionStepWorkspaceService {
             await this.twentyORMGlobalManager.getRepositoryForWorkspace(
               workspaceId,
               field.settings.objectName,
+              { shouldBypassPermissionChecks: true },
             );
 
           const record = await repository.findOne({
