@@ -1,45 +1,35 @@
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { OnboardingModalCircularIcon } from '@/onboarding/components/OnboardingModalCircularIcon';
 import { AppPath } from '@/types/AppPath';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCheck } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
-import { RGBA } from 'twenty-ui/theme';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
 import { useGetCurrentUserLazyQuery } from '~/generated/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
-const StyledCheckContainer = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  border: 2px solid ${(props) => props.color};
-  border-radius: ${({ theme }) => theme.border.radius.rounded};
-  box-shadow: ${(props) =>
-    props.color && `-4px 4px 0 -2px ${RGBA(props.color, 1)}`};
-  height: 36px;
-  width: 36px;
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
+const StyledModalContent = styled(Modal.Content)`
+  gap: ${({ theme }) => theme.spacing(8)};
 `;
 
-const StyledButtonContainer = styled.div`
-  margin-top: ${({ theme }) => theme.spacing(8)};
+const StyledTitleContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 `;
 
 export const PaymentSuccess = () => {
-  const theme = useTheme();
   const navigate = useNavigateApp();
   const subscriptionStatus = useSubscriptionStatus();
   const [getCurrentUser] = useGetCurrentUserLazyQuery();
   const setCurrentUser = useSetRecoilState(currentUserState);
-  const color =
-    theme.name === 'light' ? theme.grayScale.gray90 : theme.grayScale.gray10;
 
   const navigateWithSubscriptionCheck = async () => {
     if (isDefined(subscriptionStatus)) {
@@ -65,21 +55,19 @@ export const PaymentSuccess = () => {
   };
 
   return (
-    <Modal.Content isVerticalCentered isHorizontalCentered>
+    <StyledModalContent isVerticalCentered isHorizontalCentered>
       <AnimatedEaseIn>
-        <StyledCheckContainer color={color}>
-          <IconCheck color={color} size={24} stroke={3} />
-        </StyledCheckContainer>
+        <OnboardingModalCircularIcon Icon={IconCheck} />
       </AnimatedEaseIn>
-      <Title>All set!</Title>
-      <SubTitle>Your account has been activated.</SubTitle>
-      <StyledButtonContainer>
-        <MainButton
-          title="Start"
-          width={200}
-          onClick={navigateWithSubscriptionCheck}
-        />
-      </StyledButtonContainer>
-    </Modal.Content>
+      <StyledTitleContainer>
+        <Title noMarginTop>All set!</Title>
+        <SubTitle>Your account has been activated.</SubTitle>
+      </StyledTitleContainer>
+      <MainButton
+        title="Start"
+        width={200}
+        onClick={navigateWithSubscriptionCheck}
+      />
+    </StyledModalContent>
   );
 };

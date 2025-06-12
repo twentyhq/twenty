@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -8,11 +7,16 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
+import { OnboardingModalCircularIcon } from '@/onboarding/components/OnboardingModalCircularIcon';
 import { t } from '@lingui/core/macro';
 import { useSetRecoilState } from 'recoil';
-import { IconGmail, IconMail, IconMicrosoft } from 'twenty-ui/display';
+import {
+  IconGmail,
+  IconMail,
+  IconMailX,
+  IconMicrosoft,
+} from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
-import { RGBA } from 'twenty-ui/theme';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
 
 const StyledContainer = styled.div`
@@ -23,28 +27,10 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-const StyledMailContainer = styled.div`
-  align-items: center;
-  background: ${({ theme }) => theme.background.primary};
-  border: 2px solid ${(props) => props.color};
-  border-radius: 60px;
-  box-shadow: ${(props) =>
-    props.color && `-4px 4px 0 -2px ${RGBA(props.color, 1)}`};
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(2)};
-  height: 40px;
-  justify-content: center;
-  padding: ${({ theme }) => theme.spacing(1)};
-  width: 40px;
-`;
-
 const StyledTextContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(4)};
   text-align: center;
 `;
 
@@ -103,10 +89,7 @@ export const EmailVerificationSent = ({
   email: string | null;
   isError?: boolean;
 }) => {
-  const theme = useTheme();
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
-  const color =
-    theme.name === 'light' ? theme.grayScale.gray90 : theme.grayScale.gray10;
 
   const { handleResendEmailVerificationToken, loading: isLoading } =
     useHandleResendEmailVerificationToken();
@@ -129,65 +112,78 @@ export const EmailVerificationSent = ({
     setSignInUpStep(SignInUpStep.Email);
   };
 
+  const title = isError ? t`Email Verification Failed` : t`Check your Emails`;
+  const subtitle = isError
+    ? t`We encountered an issue verifying`
+    : t`A verification email has been sent to`;
+
+  const Icon = isError ? IconMailX : IconMail;
+
+  const mainButtons = isError ? (
+    <>
+      <MainButton
+        title={t`Try with another email`}
+        onClick={handleChangeEmail}
+        variant="secondary"
+        fullWidth
+      />
+      <MainButton
+        title={t`Resend email`}
+        onClick={handleResendEmailVerificationToken(email)}
+        disabled={isLoading}
+        fullWidth
+      />
+    </>
+  ) : (
+    <>
+      <MainButton
+        title={t`Open Gmail`}
+        onClick={handleOpenGmail}
+        Icon={IconGmail}
+        variant="secondary"
+        fullWidth
+      />
+      <MainButton
+        title={t`Open Outlook`}
+        onClick={handleOpenOutlook}
+        Icon={IconMicrosoft}
+        variant="secondary"
+        fullWidth
+      />
+    </>
+  );
+
   return (
     <StyledContainer>
       <AnimatedEaseIn>
-        <StyledMailContainer color={color}>
-          <IconMail color={color} size={24} />
-        </StyledMailContainer>
+        <OnboardingModalCircularIcon Icon={Icon} />
       </AnimatedEaseIn>
 
       <StyledTextContainer>
         <Title animate noMarginTop>
-          {isError ? 'Email Verification Failed' : 'Check your Emails'}
+          {title}
         </Title>
         <SubTitle>
-          {isError ? (
-            <>
-              {t`Oops! We encountered an issue verifying`}{' '}
-              <StyledEmail>{email}</StyledEmail>.{' '}
-              {t`Please request a new
-              verification email and try again.`}
-            </>
-          ) : (
-            <>
-              {t`A verification email has been sent to`}{' '}
-              <StyledEmail>{email}</StyledEmail>
-            </>
-          )}
+          {subtitle} <StyledEmail>{email}</StyledEmail>
         </SubTitle>
       </StyledTextContainer>
 
-      <StyledButtonsContainer>
-        <MainButton
-          title={t`Open Gmail`}
-          onClick={handleOpenGmail}
-          Icon={IconGmail}
-          variant="secondary"
-          fullWidth
-        />
+      <StyledButtonsContainer>{mainButtons}</StyledButtonsContainer>
 
-        <MainButton
-          title={t`Open Outlook`}
-          onClick={handleOpenOutlook}
-          Icon={IconMicrosoft}
-          variant="secondary"
-          fullWidth
-        />
-      </StyledButtonsContainer>
-
-      <StyledBottomLinks>
-        <StyledLinkButton
-          onClick={handleResendEmailVerificationToken(email)}
-          disabled={isLoading}
-        >
-          {isLoading ? t`Sending...` : t`Resend email`}
-        </StyledLinkButton>
-        <StyledDot />
-        <StyledLinkButton onClick={handleChangeEmail}>
-          {t`Change email`}
-        </StyledLinkButton>
-      </StyledBottomLinks>
+      {!isError && (
+        <StyledBottomLinks>
+          <StyledLinkButton
+            onClick={handleResendEmailVerificationToken(email)}
+            disabled={isLoading}
+          >
+            {isLoading ? t`Sending...` : t`Resend email`}
+          </StyledLinkButton>
+          <StyledDot />
+          <StyledLinkButton onClick={handleChangeEmail}>
+            {t`Change email`}
+          </StyledLinkButton>
+        </StyledBottomLinks>
+      )}
     </StyledContainer>
   );
 };
