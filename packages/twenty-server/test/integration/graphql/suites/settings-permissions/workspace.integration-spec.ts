@@ -1,14 +1,11 @@
-import gql from 'graphql-tag';
-import request from 'supertest';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
+import { makeGraphqlAPIRequest } from 'test/integration/utils/make-graphql-api-request.util';
 
+import gql from 'graphql-tag';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
-
-const client = request(`http://localhost:${APP_PORT}`);
 
 describe('workspace permissions', () => {
   let originalWorkspaceState: Record<string, unknown>;
@@ -29,9 +26,11 @@ describe('workspace permissions', () => {
       }
     `;
 
-    const response = await makeGraphqlAPIRequest({ query });
+    const response = await makeGraphqlAPIRequest<any>({
+      operation: { query },
+    });
 
-    originalWorkspaceState = response.body.data.currentWorkspace;
+    originalWorkspaceState = response.data.currentWorkspace;
   });
 
   afterAll(async () => {
@@ -41,10 +40,12 @@ describe('workspace permissions', () => {
       false,
     );
 
-    await makeGraphqlAPIRequest(disablePermissionsQuery);
+    await makeGraphqlAPIRequest({
+      operation: disablePermissionsQuery,
+    });
 
     // Restore workspace state
-    const restoreQuery = gql`
+    const query = gql`
       mutation updateWorkspace {
         updateWorkspace(data: {
           displayName: "${originalWorkspaceState.displayName}",
@@ -60,277 +61,228 @@ describe('workspace permissions', () => {
       }
     `;
 
-    await makeGraphqlAPIRequest({ query: restoreQuery });
+    await makeGraphqlAPIRequest({
+      operation: { query },
+    });
   });
 
   describe('workspace permissions', () => {
     describe('delete workspace', () => {
       it('should throw a permission error when user does not have permission (member role)', async () => {
-        const queryData = {
-          query: `
-              mutation DeleteCurrentWorkspace {
-        deleteCurrentWorkspace {
-          id
-          __typename
-        }
-      }
-      `,
-        };
+        const query = gql`
+          mutation DeleteCurrentWorkspace {
+            deleteCurrentWorkspace {
+              id
+              __typename
+            }
+          }
+        `;
 
-        await client
-          .post('/graphql')
-          .set('Authorization', `Bearer ${MEMBER_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeNull();
-            expect(res.body.errors).toBeDefined();
-            expect(res.body.errors[0].message).toBe(
-              PermissionsExceptionMessage.PERMISSION_DENIED,
-            );
-            expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
-            );
-          });
+        const response = await makeGraphqlAPIRequest({
+          operation: { query },
+          options: {
+            testingToken: 'MEMBER',
+          },
+        });
+
+        expect(response.data).toBeNull();
+        expect(response.errors).toBeDefined();
+        expect(response.errors[0].message).toBe(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+        );
+        expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
       });
     });
+
     describe('display name update', () => {
       it('should update workspace display name when user has workspace settings permission', async () => {
-        const queryData = {
-          query: `
-        mutation updateWorkspace {
-          updateWorkspace(data: { displayName: "New Workspace Name" }) {
-            id
-            displayName
+        const query = gql`
+          mutation updateWorkspace {
+            updateWorkspace(data: { displayName: "New Workspace Name" }) {
+              id
+              displayName
+            }
           }
-        }
-      `,
-        };
+        `;
 
-        return client
-          .post('/graphql')
-          .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeDefined();
-            expect(res.body.errors).toBeUndefined();
-          })
-          .expect((res) => {
-            const data = res.body.data.updateWorkspace;
+        const response = await makeGraphqlAPIRequest<any>({
+          operation: { query },
+        });
 
-            expect(data).toBeDefined();
-            expect(data.displayName).toBe('New Workspace Name');
-          });
+        expect(response.data).toBeDefined();
+        expect(response.errors).toBeUndefined();
+        const data = response.data.updateWorkspace;
+        expect(data).toBeDefined();
+        expect(data.displayName).toBe('New Workspace Name');
       });
 
       it('should throw a permission error when user does not have permission (member role)', async () => {
-        const queryData = {
-          query: `
-        mutation updateWorkspace {
-          updateWorkspace(data: { displayName: "Another New Workspace Name" }) {
-            id
-            displayName
+        const query = gql`
+          mutation updateWorkspace {
+            updateWorkspace(data: { displayName: "Another New Workspace Name" }) {
+              id
+              displayName
+            }
           }
-        }
-      `,
-        };
+        `;
 
-        await client
-          .post('/graphql')
-          .set('Authorization', `Bearer ${MEMBER_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeNull();
-            expect(res.body.errors).toBeDefined();
-            expect(res.body.errors[0].message).toBe(
-              PermissionsExceptionMessage.PERMISSION_DENIED,
-            );
-            expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
-            );
-          });
+        const response = await makeGraphqlAPIRequest({
+          operation: { query },
+          options: {
+            testingToken: 'MEMBER',
+          },
+        });
+
+        expect(response.data).toBeNull();
+        expect(response.errors).toBeDefined();
+        expect(response.errors[0].message).toBe(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+        );
+        expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
       });
     });
 
     describe('subdomain update', () => {
       it('should update workspace subdomain when user has workspace settings permission', async () => {
-        const queryData = {
-          query: `
-        mutation updateWorkspace {
-          updateWorkspace(data: { subdomain: "new-subdomain" }) {
-            id
-            subdomain
+        const query = gql`
+          mutation updateWorkspace {
+            updateWorkspace(data: { subdomain: "new-subdomain" }) {
+              id
+              subdomain
+            }
           }
-        }
-      `,
-        };
+        `;
 
-        return client
-          .post('/graphql')
-          .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeDefined();
-            expect(res.body.errors).toBeUndefined();
-          })
-          .expect((res) => {
-            const data = res.body.data.updateWorkspace;
+        const response = await makeGraphqlAPIRequest<any>({
+          operation: { query },
+        });
 
-            expect(data).toBeDefined();
-            expect(data.subdomain).toBe('new-subdomain');
-          });
+        expect(response.data).toBeDefined();
+        expect(response.errors).toBeUndefined();
+        const data = response.data.updateWorkspace;
+        expect(data).toBeDefined();
+        expect(data.subdomain).toBe('new-subdomain');
       });
 
       it('should throw a permission error when user does not have permission (member role)', async () => {
-        const queryData = {
-          query: `
-        mutation updateWorkspace {
-          updateWorkspace(data: { subdomain: "another-new-subdomain" }) {
-            id
-            subdomain
+        const query = gql`
+          mutation updateWorkspace {
+            updateWorkspace(data: { subdomain: "another-new-subdomain" }) {
+              id
+              subdomain
+            }
           }
-        }
-      `,
-        };
+        `;
 
-        await client
-          .post('/graphql')
-          .set('Authorization', `Bearer ${MEMBER_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeNull();
-            expect(res.body.errors).toBeDefined();
-            expect(res.body.errors[0].message).toBe(
-              PermissionsExceptionMessage.PERMISSION_DENIED,
-            );
-            expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
-            );
-          });
+        const response = await makeGraphqlAPIRequest({
+          operation: { query },
+          options: {
+            testingToken: 'MEMBER',
+          },
+        });
+
+        expect(response.data).toBeNull();
+        expect(response.errors).toBeDefined();
+        expect(response.errors[0].message).toBe(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+        );
+        expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
       });
     });
 
     describe('custom domain update', () => {
       it('should update workspace custom domain when user has workspace settings permission', async () => {
-        const queryData = {
-          query: `
-        mutation updateWorkspace {
-          updateWorkspace(data: { customDomain: null }) {
-            id
-            customDomain
+        const query = gql`
+          mutation updateWorkspace {
+            updateWorkspace(data: { customDomain: null }) {
+              id
+              customDomain
+            }
           }
-        }
-      `,
-        };
+        `;
 
-        return client
-          .post('/graphql')
-          .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeDefined();
-            expect(res.body.errors).toBeUndefined();
-          })
-          .expect((res) => {
-            const data = res.body.data.updateWorkspace;
+        const response = await makeGraphqlAPIRequest<any>({
+          operation: { query },
+        });
 
-            expect(data).toBeDefined();
-            expect(data.customDomain).toBe(null);
-          });
+        expect(response.data).toBeDefined();
+        expect(response.errors).toBeUndefined();
+        const data = response.data.updateWorkspace;
+        expect(data).toBeDefined();
+        expect(data.customDomain).toBe(null);
       });
 
       it('should throw a permission error when user does not have permission (member role)', async () => {
-        const queryData = {
-          query: `
-        mutation updateWorkspace {
-          updateWorkspace(data: { customDomain: "another-new-custom-domain" }) {
-            id
-            customDomain
+        const query = gql`
+          mutation updateWorkspace {
+            updateWorkspace(data: { customDomain: "another-new-custom-domain" }) {
+              id
+              customDomain
+            }
           }
-        }
-      `,
-        };
+        `;
 
-        await client
-          .post('/graphql')
-          .set('Authorization', `Bearer ${MEMBER_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeNull();
-            expect(res.body.errors).toBeDefined();
-            expect(res.body.errors[0].message).toBe(
-              PermissionsExceptionMessage.PERMISSION_DENIED,
-            );
-            expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
-            );
-          });
+        const response = await makeGraphqlAPIRequest({
+          operation: { query },
+          options: {
+            testingToken: 'MEMBER',
+          },
+        });
+
+        expect(response.data).toBeNull();
+        expect(response.errors).toBeDefined();
+        expect(response.errors[0].message).toBe(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+        );
+        expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
       });
     });
 
     describe('logo update', () => {
       it('should update workspace logo when user has workspace settings permission', async () => {
-        const queryData = {
-          query: `
-        mutation updateWorkspace {
-          updateWorkspace(data: { logo: "new-logo" }) {
-            id
-            logo
+        const query = gql`
+          mutation updateWorkspace {
+            updateWorkspace(data: { logo: "new-logo" }) {
+              id
+              logo
+            }
           }
-        }
-      `,
-        };
+        `;
 
-        return client
-          .post('/graphql')
-          .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeDefined();
-            expect(res.body.errors).toBeUndefined();
-          })
-          .expect((res) => {
-            const data = res.body.data.updateWorkspace;
+        const response = await makeGraphqlAPIRequest<any>({
+          operation: { query },
+        });
 
-            expect(data).toBeDefined();
-            expect(data.logo).toContain('new-logo');
-          });
+        expect(response.data).toBeDefined();
+        expect(response.errors).toBeUndefined();
+        const data = response.data.updateWorkspace;
+        expect(data).toBeDefined();
+        expect(data.logo).toContain('new-logo');
       });
 
       it('should throw a permission error when user does not have permission (member role)', async () => {
-        const queryData = {
-          query: `
-        mutation updateWorkspace {
-          updateWorkspace(data: { logo: "another-new-logo" }) {
-            id
-            logo
+        const query = gql`
+          mutation updateWorkspace {
+            updateWorkspace(data: { logo: "another-new-logo" }) {
+              id
+              logo
+            }
           }
-        }
-      `,
-        };
+        `;
 
-        await client
-          .post('/graphql')
-          .set('Authorization', `Bearer ${MEMBER_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeNull();
-            expect(res.body.errors).toBeDefined();
-            expect(res.body.errors[0].message).toBe(
-              PermissionsExceptionMessage.PERMISSION_DENIED,
-            );
-            expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
-            );
-          });
+        const response = await makeGraphqlAPIRequest({
+          operation: { query },
+          options: {
+            testingToken: 'MEMBER',
+          },
+        });
+
+        expect(response.data).toBeNull();
+        expect(response.errors).toBeDefined();
+        expect(response.errors[0].message).toBe(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+        );
+        expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
       });
     });
   });
@@ -338,110 +290,102 @@ describe('workspace permissions', () => {
   describe('billing', () => {
     describe('switchToYearlyInterval', () => {
       it('should throw a permission error when user does not have permission (member role)', async () => {
-        const queryData = {
-          query: `
-            mutation SwitchToYearlyInterval {
-              switchToYearlyInterval {
-                success
-              }
+        const query = gql`
+          mutation SwitchToYearlyInterval {
+            switchToYearlyInterval {
+              success
             }
-          `,
-        };
+          }
+        `;
 
-        await client
-          .post('/graphql')
-          .set('Authorization', `Bearer ${MEMBER_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeNull();
-            expect(res.body.errors).toBeDefined();
-            expect(res.body.errors[0].message).toBe(
-              PermissionsExceptionMessage.PERMISSION_DENIED,
-            );
-            expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
-            );
-          });
+        const response = await makeGraphqlAPIRequest({
+          operation: { query },
+          options: {
+            testingToken: 'MEMBER',
+          },
+        });
+
+        expect(response.data).toBeNull();
+        expect(response.errors).toBeDefined();
+        expect(response.errors[0].message).toBe(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+        );
+        expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
       });
     });
 
     describe('billingPortalSession', () => {
       it('should throw a permission error when user does not have permission (member role)', async () => {
-        const queryData = {
-          query: `
-            query BillingPortalSession($returnUrlPath: String!) {
-              billingPortalSession(returnUrlPath: $returnUrlPath) {
-                url
-              }
+        const query = gql`
+          query BillingPortalSession($returnUrlPath: String!) {
+            billingPortalSession(returnUrlPath: $returnUrlPath) {
+              url
             }
-          `,
-          variables: {
-            returnUrlPath: '/settings/billing',
-          },
-        };
+          }
+        `;
 
-        await client
-          .post('/graphql')
-          .set('Authorization', `Bearer ${MEMBER_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeNull();
-            expect(res.body.errors).toBeDefined();
-            expect(res.body.errors[0].message).toBe(
-              PermissionsExceptionMessage.PERMISSION_DENIED,
-            );
-            expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
-            );
-          });
+        const response = await makeGraphqlAPIRequest({
+          operation: {
+            query,
+            variables: {
+              returnUrlPath: '/settings/billing',
+            },
+          },
+          options: {
+            testingToken: 'MEMBER',
+          },
+        });
+
+        expect(response.data).toBeNull();
+        expect(response.errors).toBeDefined();
+        expect(response.errors[0].message).toBe(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+        );
+        expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
       });
     });
 
     describe('checkoutSession', () => {
       it('should throw a permission error when user does not have permission (member role)', async () => {
-        const queryData = {
-          query: `
-            mutation CheckoutSession(
-              $recurringInterval: SubscriptionInterval!
-              $successUrlPath: String!
-              $plan: BillingPlanKey!
-              $requirePaymentMethod: Boolean
+        const query = gql`
+          mutation CheckoutSession(
+            $recurringInterval: SubscriptionInterval!
+            $successUrlPath: String!
+            $plan: BillingPlanKey!
+            $requirePaymentMethod: Boolean
+          ) {
+            checkoutSession(
+              recurringInterval: $recurringInterval
+              successUrlPath: $successUrlPath
+              plan: $plan
+              requirePaymentMethod: $requirePaymentMethod
             ) {
-              checkoutSession(
-                recurringInterval: $recurringInterval
-                successUrlPath: $successUrlPath
-                plan: $plan
-                requirePaymentMethod: $requirePaymentMethod
-              ) {
-                url
-              }
+              url
             }
-          `,
-          variables: {
-            recurringInterval: 'Month',
-            successUrlPath: '/settings/billing',
-            plan: BillingPlanKey.PRO,
-            requirePaymentMethod: true,
-          },
-        };
+          }
+        `;
 
-        await client
-          .post('/graphql')
-          .set('Authorization', `Bearer ${MEMBER_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeNull();
-            expect(res.body.errors).toBeDefined();
-            expect(res.body.errors[0].message).toBe(
-              PermissionsExceptionMessage.PERMISSION_DENIED,
-            );
-            expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
-            );
-          });
+        const response = await makeGraphqlAPIRequest({
+          operation: {
+            query,
+            variables: {
+              recurringInterval: 'Month',
+              successUrlPath: '/settings/billing',
+              plan: BillingPlanKey.PRO,
+              requirePaymentMethod: true,
+            },
+          },
+          options: {
+            testingToken: 'MEMBER',
+          },
+        });
+
+        expect(response.data).toBeNull();
+        expect(response.errors).toBeDefined();
+        expect(response.errors[0].message).toBe(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+        );
+        expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
       });
     });
   });
@@ -449,73 +393,69 @@ describe('workspace permissions', () => {
   describe('lab', () => {
     describe('updateLabPublicFeatureFlag', () => {
       it('should update feature flag when user has workspace settings permission', async () => {
-        const queryData = {
-          query: `
-                mutation UpdateLabPublicFeatureFlag(
-                  $input: UpdateLabPublicFeatureFlagInput!
-                ) {
-                  updateLabPublicFeatureFlag(input: $input) {
-                    key
-                    value
-                  }
-                }
-              `,
-          variables: {
-            input: {
-              publicFeatureFlag: 'IS_STRIPE_INTEGRATION_ENABLED',
-              value: true,
+        const query = gql`
+          mutation UpdateLabPublicFeatureFlag(
+            $input: UpdateLabPublicFeatureFlagInput!
+          ) {
+            updateLabPublicFeatureFlag(input: $input) {
+              key
+              value
+            }
+          }
+        `;
+
+        const response = await makeGraphqlAPIRequest<any>({
+          operation: {
+            query,
+            variables: {
+              input: {
+                publicFeatureFlag: 'IS_STRIPE_INTEGRATION_ENABLED',
+                value: true,
+              },
             },
           },
-        };
+        });
 
-        await client
-          .post('/graphql')
-          .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect((res) => {
-            expect(res.body.data).toBeDefined();
-            expect(res.body.errors).toBeDefined();
-            expect(res.body.errors[0].message).toBe(
-              'Invalid feature flag key, flag is not public',
-            );
-          });
+        expect(response.data).toBeDefined();
+        expect(response.errors).toBeDefined();
+        expect(response.errors[0].message).toBe(
+          'Invalid feature flag key, flag is not public',
+        );
       });
 
       it('should throw a permission error when user does not have permission (member role)', async () => {
-        const queryData = {
-          query: `
-              mutation UpdateLabPublicFeatureFlag(
-                $input: UpdateLabPublicFeatureFlagInput!
-              ) {
-                updateLabPublicFeatureFlag(input: $input) {
-                  key
-                  value
-                }
-              }
-            `,
-          variables: {
-            input: {
-              publicFeatureFlag: 'TestFeature',
-              value: false,
+        const query = gql`
+          mutation UpdateLabPublicFeatureFlag(
+            $input: UpdateLabPublicFeatureFlagInput!
+          ) {
+            updateLabPublicFeatureFlag(input: $input) {
+              key
+              value
+            }
+          }
+        `;
+
+        const response = await makeGraphqlAPIRequest<any>({
+          operation: {
+            query,
+            variables: {
+              input: {
+                publicFeatureFlag: 'TestFeature',
+                value: false,
+              },
             },
           },
-        };
+          options: {
+            testingToken: 'MEMBER',
+          },
+        });
 
-        await client
-          .post('/graphql')
-          .set('Authorization', `Bearer ${MEMBER_ACCESS_TOKEN}`)
-          .send(queryData)
-          .expect(200)
-          .expect((res) => {
-            expect(res.body.data).toBeNull();
-            expect(res.body.errors).toBeDefined();
-            expect(res.body.errors[0].message).toBe(
-              PermissionsExceptionMessage.PERMISSION_DENIED,
-            );
-            expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
-            );
-          });
+        expect(response.data).toBeNull();
+        expect(response.errors).toBeDefined();
+        expect(response.errors[0].message).toBe(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+        );
+        expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
       });
     });
   });

@@ -2,11 +2,9 @@ import { randomUUID } from 'node:crypto';
 
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
-import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/utils/make-graphql-api-request-with-api-key.util';
-import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/utils/make-graphql-api-request-with-guest-role.util';
+import { makeGraphqlAPIRequest } from 'test/integration/utils/make-graphql-api-request.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
@@ -32,7 +30,9 @@ describe('updateManyObjectRecordsPermissions', () => {
         ],
       });
 
-      await makeGraphqlAPIRequest(createGraphqlOperation);
+      await makeGraphqlAPIRequest({
+        operation: createGraphqlOperation,
+      });
     });
 
     it('should throw a permission error when user does not have permission (guest role)', async () => {
@@ -50,15 +50,19 @@ describe('updateManyObjectRecordsPermissions', () => {
         },
       });
 
-      const response =
-        await makeGraphqlAPIRequestWithGuestRole(graphqlOperation);
+      const response = await makeGraphqlAPIRequest({
+        operation: graphqlOperation,
+        options: {
+          testingToken: 'GUEST',
+        },
+      });
 
-      expect(response.body.data).toStrictEqual({ updatePeople: null });
-      expect(response.body.errors).toBeDefined();
-      expect(response.body.errors[0].message).toBe(
+      expect(response.data).toStrictEqual({ updatePeople: null });
+      expect(response.errors).toBeDefined();
+      expect(response.errors[0].message).toBe(
         PermissionsExceptionMessage.PERMISSION_DENIED,
       );
-      expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+      expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
     });
 
     it('should update multiple object records when user has permission (admin role)', async () => {
@@ -76,13 +80,15 @@ describe('updateManyObjectRecordsPermissions', () => {
         },
       });
 
-      const response = await makeGraphqlAPIRequest(graphqlOperation);
+      const response = await makeGraphqlAPIRequest<any>({
+        operation: graphqlOperation,
+      });
 
-      expect(response.body.data).toBeDefined();
-      expect(response.body.data.updatePeople).toBeDefined();
-      expect(response.body.data.updatePeople).toHaveLength(2);
-      expect(response.body.data.updatePeople[0].jobTitle).toBe('Architect');
-      expect(response.body.data.updatePeople[1].jobTitle).toBe('Architect');
+      expect(response.data).toBeDefined();
+      expect(response.data.updatePeople).toBeDefined();
+      expect(response.data.updatePeople).toHaveLength(2);
+      expect(response.data.updatePeople[0].jobTitle).toBe('Architect');
+      expect(response.data.updatePeople[1].jobTitle).toBe('Architect');
     });
   });
 
@@ -94,7 +100,9 @@ describe('updateManyObjectRecordsPermissions', () => {
         true,
       );
 
-      await makeGraphqlAPIRequest(enablePermissionsQuery);
+      await makeGraphqlAPIRequest({
+        operation: enablePermissionsQuery,
+      });
     });
 
     afterAll(async () => {
@@ -104,7 +112,9 @@ describe('updateManyObjectRecordsPermissions', () => {
         false,
       );
 
-      await makeGraphqlAPIRequest(disablePermissionsQuery);
+      await makeGraphqlAPIRequest({
+        operation: disablePermissionsQuery,
+      });
     });
 
     it('should throw a permission error when user does not have permission (guest role)', async () => {
@@ -124,7 +134,9 @@ describe('updateManyObjectRecordsPermissions', () => {
         ],
       });
 
-      await makeGraphqlAPIRequest(createGraphqlOperation);
+      await makeGraphqlAPIRequest({
+        operation: createGraphqlOperation,
+      });
 
       const updateGraphqlOperation = updateManyOperationFactory({
         objectMetadataSingularName: 'person',
@@ -140,16 +152,19 @@ describe('updateManyObjectRecordsPermissions', () => {
         },
       });
 
-      const response = await makeGraphqlAPIRequestWithGuestRole(
-        updateGraphqlOperation,
-      );
+      const response = await makeGraphqlAPIRequest({
+        operation: updateGraphqlOperation,
+        options: {
+          testingToken: 'GUEST',
+        },
+      });
 
-      expect(response.body.data).toStrictEqual({ updatePeople: null });
-      expect(response.body.errors).toBeDefined();
-      expect(response.body.errors[0].message).toBe(
+      expect(response.data).toStrictEqual({ updatePeople: null });
+      expect(response.errors).toBeDefined();
+      expect(response.errors[0].message).toBe(
         PermissionsExceptionMessage.PERMISSION_DENIED,
       );
-      expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+      expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
     });
 
     it('should update multiple object records when user has permission (admin role)', async () => {
@@ -169,7 +184,9 @@ describe('updateManyObjectRecordsPermissions', () => {
         ],
       });
 
-      await makeGraphqlAPIRequest(createGraphqlOperation);
+      await makeGraphqlAPIRequest({
+        operation: createGraphqlOperation,
+      });
 
       const updateGraphqlOperation = updateManyOperationFactory({
         objectMetadataSingularName: 'person',
@@ -185,15 +202,17 @@ describe('updateManyObjectRecordsPermissions', () => {
         },
       });
 
-      const response = await makeGraphqlAPIRequest(updateGraphqlOperation);
+      const response = await makeGraphqlAPIRequest<any>({
+        operation: updateGraphqlOperation,
+      });
 
-      expect(response.body.data).toBeDefined();
-      expect(response.body.data.updatePeople).toBeDefined();
-      expect(response.body.data.updatePeople).toHaveLength(2);
-      expect(response.body.data.updatePeople[0].id).toBe(personId1);
-      expect(response.body.data.updatePeople[1].id).toBe(personId2);
-      expect(response.body.data.updatePeople[0].jobTitle).toBe('Tech Lead');
-      expect(response.body.data.updatePeople[1].jobTitle).toBe('Tech Lead');
+      expect(response.data).toBeDefined();
+      expect(response.data.updatePeople).toBeDefined();
+      expect(response.data.updatePeople).toHaveLength(2);
+      expect(response.data.updatePeople[0].id).toBe(personId1);
+      expect(response.data.updatePeople[1].id).toBe(personId2);
+      expect(response.data.updatePeople[0].jobTitle).toBe('Tech Lead');
+      expect(response.data.updatePeople[1].jobTitle).toBe('Tech Lead');
     });
 
     it('should update multiple object records when executed by api key', async () => {
@@ -213,7 +232,9 @@ describe('updateManyObjectRecordsPermissions', () => {
         ],
       });
 
-      await makeGraphqlAPIRequest(createGraphqlOperation);
+      await makeGraphqlAPIRequest({
+        operation: createGraphqlOperation,
+      });
 
       const updateGraphqlOperation = updateManyOperationFactory({
         objectMetadataSingularName: 'person',
@@ -229,19 +250,22 @@ describe('updateManyObjectRecordsPermissions', () => {
         },
       });
 
-      const response = await makeGraphqlAPIRequestWithApiKey(
-        updateGraphqlOperation,
-      );
+      const response = await makeGraphqlAPIRequest<any>({
+        operation: updateGraphqlOperation,
+        options: {
+          testingToken: 'API_KEY',
+        },
+      });
 
-      expect(response.body.data).toBeDefined();
-      expect(response.body.data.updatePeople).toBeDefined();
-      expect(response.body.data.updatePeople).toHaveLength(2);
-      expect(response.body.data.updatePeople[0].id).toBe(personId1);
-      expect(response.body.data.updatePeople[1].id).toBe(personId2);
-      expect(response.body.data.updatePeople[0].jobTitle).toBe(
+      expect(response.data).toBeDefined();
+      expect(response.data.updatePeople).toBeDefined();
+      expect(response.data.updatePeople).toHaveLength(2);
+      expect(response.data.updatePeople[0].id).toBe(personId1);
+      expect(response.data.updatePeople[1].id).toBe(personId2);
+      expect(response.data.updatePeople[0].jobTitle).toBe(
         'Product Manager',
       );
-      expect(response.body.data.updatePeople[1].jobTitle).toBe(
+      expect(response.data.updatePeople[1].jobTitle).toBe(
         'Product Manager',
       );
     });

@@ -1,28 +1,28 @@
 import { OBJECT_MODEL_COMMON_FIELDS } from 'test/integration/constants/object-model-common-fields';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { performCreateManyOperation } from 'test/integration/graphql/utils/perform-create-many-operation.utils';
-import { searchFactory } from 'test/integration/graphql/utils/search-factory.util';
-import { EachTestingContext } from 'twenty-shared/testing';
-import {
-  TEST_PERSON_1_ID,
-  TEST_PERSON_2_ID,
-  TEST_PERSON_3_ID,
-} from 'test/integration/constants/test-person-ids.constants';
 import { TEST_API_KEY_1_ID } from 'test/integration/constants/test-api-key-ids.constant';
 import {
-  TEST_PET_ID_1,
-  TEST_PET_ID_2,
-} from 'test/integration/constants/test-pet-ids.constants';
-import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
-
-import { SearchResultEdgeDTO } from 'src/engine/core-modules/search/dtos/search-result-edge.dto';
+    TEST_PERSON_1_ID,
+    TEST_PERSON_2_ID,
+    TEST_PERSON_3_ID,
+} from 'test/integration/constants/test-person-ids.constants';
 import {
-  decodeCursor,
-  encodeCursorData,
+    TEST_PET_ID_1,
+    TEST_PET_ID_2,
+} from 'test/integration/constants/test-pet-ids.constants';
+import { performCreateManyOperation } from 'test/integration/graphql/utils/perform-create-many-operation.utils';
+import { searchFactory } from 'test/integration/graphql/utils/search-factory.util';
+import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
+import { EachTestingContext } from 'twenty-shared/testing';
+
+import {
+    decodeCursor,
+    encodeCursorData,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
-import { SearchCursor } from 'src/engine/core-modules/search/services/search.service';
 import { SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
+import { SearchResultEdgeDTO } from 'src/engine/core-modules/search/dtos/search-result-edge.dto';
+import { SearchCursor } from 'src/engine/core-modules/search/services/search.service';
+import { makeGraphqlAPIRequest } from 'test/integration/utils/make-graphql-api-request.util';
 
 describe('SearchResolver', () => {
   const [firstPerson, secondPerson, thirdPerson] = [
@@ -465,12 +465,14 @@ describe('SearchResolver', () => {
 
   it.each(testsUseCases)('$title', async ({ context }) => {
     const graphqlOperation = searchFactory(context.input);
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlAPIRequest<any>({
+      operation: graphqlOperation,
+    });
 
-    expect(response.body.data).toBeDefined();
-    expect(response.body.data.search).toBeDefined();
+    expect(response.data).toBeDefined();
+    expect(response.data.search).toBeDefined();
 
-    const search = response.body.data.search;
+    const search = response.data.search;
     const edges = search.edges;
     const pageInfo = search.pageInfo;
 
@@ -498,7 +500,9 @@ describe('SearchResolver', () => {
       limit: 2,
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlAPIRequest<any>({
+      operation: graphqlOperation,
+    });
 
     const expectedResult = {
       edges: [
@@ -531,8 +535,8 @@ describe('SearchResolver', () => {
     };
 
     expect({
-      ...response.body.data.search,
-      edges: response.body.data.search.edges.map(
+      ...response.data.search,
+      edges: response.data.search.edges.map(
         (edge: SearchResultEdgeDTO) => ({
           cursor: edge.cursor,
         }),
@@ -553,7 +557,9 @@ describe('SearchResolver', () => {
       }),
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlAPIRequest<any>({
+      operation: graphqlOperation,
+    });
 
     const expectedResult = {
       edges: [
@@ -588,8 +594,8 @@ describe('SearchResolver', () => {
     };
 
     expect({
-      ...response.body.data.search,
-      edges: response.body.data.search.edges.map(
+      ...response.data.search,
+      edges: response.data.search.edges.map(
         (edge: SearchResultEdgeDTO) => ({
           cursor: edge.cursor,
         }),

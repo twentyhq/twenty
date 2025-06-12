@@ -7,11 +7,11 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata-query-factory.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata-query-factory.util';
-import { makeMetadataAPIRequestWithMemberRole } from 'test/integration/utils/make-metadata-api-request-with-member-role.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { makeMetadataAPIRequest } from 'test/integration/utils/make-metadata-api-request.util';
 
 describe('datamodel permissions', () => {
   describe('fieldMetadata', () => {
@@ -67,16 +67,20 @@ describe('datamodel permissions', () => {
           `,
         });
 
-        const response =
-          await makeMetadataAPIRequestWithMemberRole(graphqlOperation);
+        const response = await makeMetadataAPIRequest({
+          operation: graphqlOperation,
+          options: {
+            testingToken: 'MEMBER',
+          },
+        });
 
         // Assert
-        expect(response.body.data).toBeNull();
-        expect(response.body.errors).toBeDefined();
-        expect(response.body.errors[0].message).toBe(
+        expect(response.data).toBeNull();
+        expect(response.errors).toBeDefined();
+        expect(response.errors[0].message).toBe(
           PermissionsExceptionMessage.PERMISSION_DENIED,
         );
-        expect(response.body.errors[0].extensions.code).toBe(
+        expect(response.errors[0].extensions.code).toBe(
           ErrorCode.FORBIDDEN,
         );
       });
@@ -98,16 +102,20 @@ describe('datamodel permissions', () => {
         `,
         });
 
-        const response =
-          await makeMetadataAPIRequestWithMemberRole(graphqlOperation);
+        const response = await makeMetadataAPIRequest({
+          operation: graphqlOperation,
+          options: {
+            testingToken: 'MEMBER',
+          },
+        });
 
         // Assert
-        expect(response.body.data).toBeNull();
-        expect(response.body.errors).toBeDefined();
-        expect(response.body.errors[0].message).toBe(
+        expect(response.data).toBeNull();
+        expect(response.errors).toBeDefined();
+        expect(response.errors[0].message).toBe(
           PermissionsExceptionMessage.PERMISSION_DENIED,
         );
-        expect(response.body.errors[0].extensions.code).toBe(
+        expect(response.errors[0].extensions.code).toBe(
           ErrorCode.FORBIDDEN,
         );
       });
@@ -120,16 +128,20 @@ describe('datamodel permissions', () => {
           input: { idToDelete: testFieldId },
         });
 
-        const response =
-          await makeMetadataAPIRequestWithMemberRole(graphqlOperation);
+        const response = await makeMetadataAPIRequest({
+          operation: graphqlOperation,
+          options: {
+            testingToken: 'MEMBER',
+          },
+        });
 
         // Assert
-        expect(response.body.data).toBeNull();
-        expect(response.body.errors).toBeDefined();
-        expect(response.body.errors[0].message).toBe(
+        expect(response.data).toBeNull();
+        expect(response.errors).toBeDefined();
+        expect(response.errors[0].message).toBe(
           PermissionsExceptionMessage.PERMISSION_DENIED,
         );
-        expect(response.body.errors[0].extensions.code).toBe(
+        expect(response.errors[0].extensions.code).toBe(
           ErrorCode.FORBIDDEN,
         );
       });
@@ -152,16 +164,20 @@ describe('datamodel permissions', () => {
           },
         });
 
-        const response =
-          await makeMetadataAPIRequestWithMemberRole(graphqlOperation);
+        const response = await makeMetadataAPIRequest({
+          operation: graphqlOperation,
+          options: {
+            testingToken: 'MEMBER',
+          },
+        });
 
         // Assert
-        expect(response.body.data).toBeNull();
-        expect(response.body.errors).toBeDefined();
-        expect(response.body.errors[0].message).toBe(
+        expect(response.data).toBeNull();
+        expect(response.errors).toBeDefined();
+        expect(response.errors[0].message).toBe(
           PermissionsExceptionMessage.PERMISSION_DENIED,
         );
-        expect(response.body.errors[0].extensions.code).toBe(
+        expect(response.errors[0].extensions.code).toBe(
           ErrorCode.FORBIDDEN,
         );
       });
@@ -204,16 +220,20 @@ describe('datamodel permissions', () => {
             },
           });
 
-          const response =
-            await makeMetadataAPIRequestWithMemberRole(graphqlOperation);
+          const response = await makeMetadataAPIRequest({
+            operation: graphqlOperation,
+            options: {
+              testingToken: 'MEMBER',
+            },
+          });
 
           // Assert
-          expect(response.body.data).toBeNull();
-          expect(response.body.errors).toBeDefined();
-          expect(response.body.errors[0].message).toBe(
+          expect(response.data).toBeNull();
+          expect(response.errors).toBeDefined();
+          expect(response.errors[0].message).toBe(
             PermissionsExceptionMessage.PERMISSION_DENIED,
           );
-          expect(response.body.errors[0].extensions.code).toBe(
+          expect(response.errors[0].extensions.code).toBe(
             ErrorCode.FORBIDDEN,
           );
         });
@@ -225,16 +245,20 @@ describe('datamodel permissions', () => {
             input: { idToDelete: listingObjectId },
           });
 
-          const response =
-            await makeMetadataAPIRequestWithMemberRole(graphqlOperation);
+          const response = await makeMetadataAPIRequest({
+            operation: graphqlOperation,
+            options: {
+              testingToken: 'MEMBER',
+            },
+          });
 
           // Assert
-          expect(response.body.data).toBeNull();
-          expect(response.body.errors).toBeDefined();
-          expect(response.body.errors[0].message).toBe(
+          expect(response.data).toBeNull();
+          expect(response.errors).toBeDefined();
+          expect(response.errors[0].message).toBe(
             PermissionsExceptionMessage.PERMISSION_DENIED,
           );
-          expect(response.body.errors[0].extensions.code).toBe(
+          expect(response.errors[0].extensions.code).toBe(
             ErrorCode.FORBIDDEN,
           );
         });
