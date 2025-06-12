@@ -59,7 +59,7 @@ export const SettingsAccountsListEmptyStateCard = ({
           Icon={IconMail}
           title={t`Connect with IMAP`}
           variant="secondary"
-          // Apparantly <Link> Is broken so we resort to onClick
+          // Apparently <Link> Is broken so we resort to onClick
           // eslint-disable-next-line @nx/workspace-no-navigate-prefer-link
           onClick={() => navigate(SettingsPath.NewImapConnection)}
         />
