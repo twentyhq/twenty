@@ -21,6 +21,10 @@ import { WorkflowExecutorFactory } from 'src/modules/workflow/workflow-executor/
 import { WorkflowExecutorInput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
 import { WorkflowExecutorOutput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-output.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import {
+  WorkflowTriggerException,
+  WorkflowTriggerExceptionCode,
+} from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 
 const MAX_RETRIES_ON_FAILURE = 3;
 
@@ -58,15 +62,25 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
 
     let actionOutput: WorkflowExecutorOutput;
 
+    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
+
+    if (!workspaceId) {
+      throw new WorkflowTriggerException(
+        'No workspace id found',
+        WorkflowTriggerExceptionCode.INTERNAL_ERROR,
+      );
+    }
+
     if (
       this.billingService.isBillingEnabled() &&
-      !(await this.canBillWorkflowNodeExecution())
+      !(await this.canBillWorkflowNodeExecution(workspaceId))
     ) {
       const billingOutput = {
         error: BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE,
       };
 
       await this.workflowRunWorkspaceService.saveWorkflowRunState({
+        workspaceId,
         workflowRunId,
         stepOutput: {
           id: step.id,
@@ -93,7 +107,7 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
     }
 
     if (!actionOutput.error) {
-      this.sendWorkflowNodeRunEvent();
+      this.sendWorkflowNodeRunEvent(workspaceId);
     }
 
     const stepOutput: StepOutput = {
@@ -106,6 +120,7 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
         workflowRunId,
         stepOutput,
         context,
+        workspaceId,
       });
 
       return actionOutput;
@@ -127,6 +142,7 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
         workflowRunId,
         stepOutput,
         context: updatedContext,
+        workspaceId,
       });
 
       if (!isDefined(step.nextStepIds?.[0])) {
@@ -159,15 +175,13 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
       workflowRunId,
       stepOutput,
       context,
+      workspaceId,
     });
 
     return actionOutput;
   }
 
-  private sendWorkflowNodeRunEvent() {
-    const workspaceId =
-      this.scopedWorkspaceContextFactory.create().workspaceId ?? '';
-
+  private sendWorkflowNodeRunEvent(workspaceId: string) {
     this.workspaceEventEmitter.emitCustomBatchEvent<BillingUsageEvent>(
       BILLING_FEATURE_USED,
       [
@@ -180,10 +194,7 @@ export class WorkflowExecutorWorkspaceService implements WorkflowExecutor {
     );
   }
 
-  private async canBillWorkflowNodeExecution() {
-    const workspaceId =
-      this.scopedWorkspaceContextFactory.create().workspaceId ?? '';
-
+  private async canBillWorkflowNodeExecution(workspaceId: string) {
     return this.billingService.canBillMeteredProduct(
       workspaceId,
       BillingProductKey.WORKFLOW_NODE_EXECUTION,

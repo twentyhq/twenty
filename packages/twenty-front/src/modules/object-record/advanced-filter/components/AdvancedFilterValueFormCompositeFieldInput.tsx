@@ -10,12 +10,12 @@ import { JsonValue } from 'type-fest';
 
 export const AdvancedFilterValueFormCompositeFieldInput = ({
   recordFilter,
-  VariablePicker,
   onChange,
+  VariablePicker,
 }: {
   recordFilter: RecordFilter;
-  VariablePicker: VariablePickerComponent;
   onChange: (newValue: JsonValue) => void;
+  VariablePicker?: VariablePickerComponent;
 }) => {
   const subFieldNameUsedInDropdown = useRecoilComponentValueV2(
     subFieldNameUsedInDropdownComponentState,
@@ -25,8 +25,8 @@ export const AdvancedFilterValueFormCompositeFieldInput = ({
 
   return (
     <>
-      {filterType === 'ADDRESS' &&
-        (subFieldNameUsedInDropdown === 'addressCountry' ? (
+      {filterType === 'ADDRESS' ? (
+        subFieldNameUsedInDropdown === 'addressCountry' ? (
           <FormCountrySelectInput
             selectedCountryName={recordFilter.value}
             onChange={onChange}
@@ -38,9 +38,9 @@ export const AdvancedFilterValueFormCompositeFieldInput = ({
             onChange={onChange}
             VariablePicker={VariablePicker}
           />
-        ))}
-      {filterType === 'CURRENCY' &&
-        (recordFilter.subFieldName === 'currencyCode' ? (
+        )
+      ) : filterType === 'CURRENCY' ? (
+        recordFilter.subFieldName === 'currencyCode' ? (
           <FormCountryCodeSelectInput
             selectedCountryCode={recordFilter.value}
             onChange={onChange}
@@ -52,7 +52,28 @@ export const AdvancedFilterValueFormCompositeFieldInput = ({
             onChange={onChange}
             VariablePicker={VariablePicker}
           />
-        ) : null)}
+        ) : null
+      ) : filterType === 'PHONES' ? (
+        recordFilter.subFieldName === 'primaryPhoneNumber' ? (
+          <FormNumberFieldInput
+            defaultValue={recordFilter.value}
+            onChange={onChange}
+            VariablePicker={VariablePicker}
+          />
+        ) : (
+          <FormTextFieldInput
+            defaultValue={recordFilter.value}
+            onChange={onChange}
+            VariablePicker={VariablePicker}
+          />
+        )
+      ) : (
+        <FormTextFieldInput
+          defaultValue={recordFilter.value}
+          onChange={onChange}
+          VariablePicker={VariablePicker}
+        />
+      )}
     </>
   );
 };
