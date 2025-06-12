@@ -47,6 +47,7 @@ export const usePageChangeEffectNavigateLocation = () => {
     (objectMetadataItem) => objectMetadataItem.namePlural === objectNamePlural,
   );
   const verifyEmailNextPath = useRecoilValue(verifyEmailNextPathState);
+
   if (
     (!isLoggedIn || (isLoggedIn && !isOnAWorkspace)) &&
     !someMatchingLocationOf([
