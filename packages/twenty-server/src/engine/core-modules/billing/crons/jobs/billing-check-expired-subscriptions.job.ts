@@ -51,6 +51,7 @@ export class CheckExpiredSubscriptionsJob {
       const subscription = await this.billingSubscriptionRepository.findOne({
         where: {
           workspaceId: workspace.id,
+          status: SubscriptionStatus.Active,
         },
         relations: ['billingSubscriptionItems'],
       });

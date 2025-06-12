@@ -66,9 +66,10 @@ export class BillingSubscriptionService {
       await this.billingSubscriptionRepository.find({
         where: {
           ...criteria,
-          status: Not(
-            In([SubscriptionStatus.Canceled, SubscriptionStatus.Expired]),
-          ),
+          status: Not(In([SubscriptionStatus.Canceled])),
+        },
+        order: {
+          createdAt: 'DESC',
         },
         relations: [
           'billingCustomer',
@@ -79,8 +80,8 @@ export class BillingSubscriptionService {
       });
 
     assert(
-      notCanceledSubscriptions.length <= 1,
-      `More than one not canceled subscription for workspace ${criteria.workspaceId}`,
+      notCanceledSubscriptions.length >= 1,
+      `No subscriptions found for workspace ${criteria.workspaceId}`,
     );
 
     const currentSubscription = notCanceledSubscriptions?.[0];
