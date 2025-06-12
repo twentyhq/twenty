@@ -307,6 +307,7 @@ export type ClientConfig = {
   isEmailVerificationRequired: Scalars['Boolean'];
   isGoogleCalendarEnabled: Scalars['Boolean'];
   isGoogleMessagingEnabled: Scalars['Boolean'];
+  isIMAPMessagingEnabled: Scalars['Boolean'];
   isMicrosoftCalendarEnabled: Scalars['Boolean'];
   isMicrosoftMessagingEnabled: Scalars['Boolean'];
   isMultiWorkspaceEnabled: Scalars['Boolean'];
@@ -921,6 +922,7 @@ export type Mutation = {
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
   runWorkflowVersion: WorkflowRun;
+  saveImapConnection: Scalars['Boolean'];
   sendInvitations: SendInvitationsOutput;
   signUp: SignUpOutput;
   signUpInNewWorkspace: SignUpOutput;
@@ -928,6 +930,7 @@ export type Mutation = {
   submitFormStep: Scalars['Boolean'];
   switchToEnterprisePlan: BillingUpdateOutput;
   switchToYearlyInterval: BillingUpdateOutput;
+  testImapConnection: Scalars['Boolean'];
   trackAnalytics: Analytics;
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateLabPublicFeatureFlag: FeatureFlagDto;
@@ -1167,6 +1170,11 @@ export type MutationRunWorkflowVersionArgs = {
 };
 
 
+export type MutationSaveImapConnectionArgs = {
+  input: SaveImapConnectionInput;
+};
+
+
 export type MutationSendInvitationsArgs = {
   emails: Array<Scalars['String']>;
 };
@@ -1186,6 +1194,11 @@ export type MutationSignUpArgs = {
 
 export type MutationSubmitFormStepArgs = {
   input: SubmitFormStepInput;
+};
+
+
+export type MutationTestImapConnectionArgs = {
+  input: TestImapConnectionInput;
 };
 
 
@@ -1591,7 +1604,7 @@ export type QueryGetIndicatorHealthStatusArgs = {
 
 
 export type QueryGetPublicWorkspaceDataByDomainArgs = {
-  origin: Scalars['String'];
+  origin?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1773,6 +1786,16 @@ export enum SsoIdentityProviderStatus {
   Inactive = 'Inactive'
 }
 
+export type SaveImapConnectionInput = {
+  accountOwnerId: Scalars['String'];
+  handle: Scalars['String'];
+  host: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
+  password: Scalars['String'];
+  port: Scalars['Float'];
+  secure: Scalars['Boolean'];
+};
+
 export type SearchRecord = {
   __typename?: 'SearchRecord';
   imageUrl?: Maybe<Scalars['String']>;
@@ -1869,6 +1892,7 @@ export enum SettingPermissionType {
   DATA_MODEL = 'DATA_MODEL',
   ROLES = 'ROLES',
   SECURITY = 'SECURITY',
+  WORKFLOWS = 'WORKFLOWS',
   WORKSPACE = 'WORKSPACE',
   WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS'
 }
@@ -1971,6 +1995,14 @@ export type SystemHealthService = {
   id: HealthIndicatorId;
   label: Scalars['String'];
   status: AdminPanelHealthServiceStatus;
+};
+
+export type TestImapConnectionInput = {
+  host: Scalars['String'];
+  password: Scalars['String'];
+  port: Scalars['Float'];
+  secure: Scalars['Boolean'];
+  username: Scalars['String'];
 };
 
 export type TimelineCalendarEvent = {

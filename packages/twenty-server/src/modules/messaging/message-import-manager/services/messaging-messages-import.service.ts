@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { ConnectedAccountProvider } from 'twenty-shared/types';
+
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -72,38 +74,55 @@ export class MessagingMessagesImportService {
         messageChannel.id,
       ]);
 
-      try {
-        connectedAccount.accessToken =
-          await this.connectedAccountRefreshTokensService.refreshAndSaveTokens(
-            connectedAccount,
+      if (connectedAccount.provider === ConnectedAccountProvider.IMAP) {
+        // For IMAP provider, check customConnectionParams instead of access token
+        if (!connectedAccount.customConnectionParams) {
+          await this.messagingMonitoringService.track({
+            eventName: 'messages_import.error.missing_imap_credentials',
             workspaceId,
-          );
-      } catch (error) {
-        switch (error.code) {
-          case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED:
-          case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
-            await this.messagingMonitoringService.track({
-              eventName: `refresh_token.error.insufficient_permissions`,
+            connectedAccountId: messageChannel.connectedAccountId,
+            messageChannelId: messageChannel.id,
+          });
+
+          throw {
+            code: MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+            message: 'Missing IMAP credentials in customConnectionParams',
+          };
+        }
+      } else {
+        try {
+          connectedAccount.accessToken =
+            await this.connectedAccountRefreshTokensService.refreshAndSaveTokens(
+              connectedAccount,
               workspaceId,
-              connectedAccountId: messageChannel.connectedAccountId,
-              messageChannelId: messageChannel.id,
-              message: `${error.code}: ${error.reason}`,
-            });
-            throw {
-              code: MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
-              message: error.message,
-            };
-          case ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED:
-            throw {
-              code: MessageImportExceptionCode.PROVIDER_NOT_SUPPORTED,
-              message: error.message,
-            };
-          default:
-            this.logger.error(
-              `Error (${error.code}) refreshing access token for account ${connectedAccount.id}`,
             );
-            this.logger.log(error);
-            throw error;
+        } catch (error) {
+          switch (error.code) {
+            case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED:
+            case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
+              await this.messagingMonitoringService.track({
+                eventName: `refresh_token.error.insufficient_permissions`,
+                workspaceId,
+                connectedAccountId: messageChannel.connectedAccountId,
+                messageChannelId: messageChannel.id,
+                message: `${error.code}: ${error.reason}`,
+              });
+              throw {
+                code: MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+                message: error.message,
+              };
+            case ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED:
+              throw {
+                code: MessageImportExceptionCode.PROVIDER_NOT_SUPPORTED,
+                message: error.message,
+              };
+            default:
+              this.logger.error(
+                `Error (${error.code}) refreshing access token for account ${connectedAccount.id}`,
+              );
+              this.logger.log(error);
+              throw error;
+          }
         }
       }
 
@@ -130,6 +149,8 @@ export class MessagingMessagesImportService {
       const allMessages = await this.messagingGetMessagesService.getMessages(
         messageIdsToFetch,
         connectedAccount,
+        workspaceId,
+        messageChannel.id,
       );
 
       const blocklist = await this.blocklistRepository.getByWorkspaceMemberId(

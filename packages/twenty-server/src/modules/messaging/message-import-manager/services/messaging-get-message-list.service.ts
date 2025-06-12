@@ -6,6 +6,7 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { GmailGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-message-list.service';
+import { ImapGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-get-message-list.service';
 import { MicrosoftGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-message-list.service';
 import {
   MessageImportException,
@@ -40,12 +41,14 @@ export class MessagingGetMessageListService {
   constructor(
     private readonly gmailGetMessageListService: GmailGetMessageListService,
     private readonly microsoftGetMessageListService: MicrosoftGetMessageListService,
+    private readonly imapGetMessageListService: ImapGetMessageListService,
     private readonly messagingCursorService: MessagingCursorService,
     private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
   public async getFullMessageLists(
     messageChannel: MessageChannelWorkspaceEntity,
+    workspaceId: string,
   ): Promise<GetFullMessageListForFoldersResponse[]> {
     switch (messageChannel.connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE: {
@@ -78,6 +81,20 @@ export class MessagingGetMessageListService {
           folders,
         );
       }
+      case ConnectedAccountProvider.IMAP: {
+        const messageList = await this.imapGetMessageListService.getMessageList(
+          messageChannel.id,
+          workspaceId,
+        );
+
+        return [
+          {
+            messageExternalIds: messageList.messageIds,
+            nextSyncCursor: messageList.nextCursor || '',
+            folderId: undefined,
+          },
+        ];
+      }
       default:
         throw new MessageImportException(
           `Provider ${messageChannel.connectedAccount.provider} is not supported`,
@@ -88,6 +105,7 @@ export class MessagingGetMessageListService {
 
   public async getPartialMessageLists(
     messageChannel: MessageChannelWorkspaceEntity,
+    workspaceId: string,
   ): Promise<GetPartialMessageListForFoldersResponse[]> {
     switch (messageChannel.connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:
@@ -105,6 +123,23 @@ export class MessagingGetMessageListService {
           messageChannel.connectedAccount,
           messageChannel,
         );
+      case ConnectedAccountProvider.IMAP: {
+        const messageList = await this.imapGetMessageListService.getMessageList(
+          messageChannel.id,
+          workspaceId,
+          messageChannel.syncCursor,
+        );
+
+        return [
+          {
+            messageExternalIds: messageList.messageIds,
+            messageExternalIdsToDelete: [],
+            previousSyncCursor: messageChannel.syncCursor || '',
+            nextSyncCursor: messageList.nextCursor || '',
+            folderId: undefined,
+          },
+        ];
+      }
       default:
         throw new MessageImportException(
           `Provider ${messageChannel.connectedAccount.provider} is not supported`,

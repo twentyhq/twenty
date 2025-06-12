@@ -4,6 +4,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { GmailGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-messages.service';
+import { ImapGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-get-messages.service';
 import { MicrosoftGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.service';
 import {
   MessageImportException,
@@ -18,6 +19,7 @@ export class MessagingGetMessagesService {
   constructor(
     private readonly gmailGetMessagesService: GmailGetMessagesService,
     private readonly microsoftGetMessagesService: MicrosoftGetMessagesService,
+    private readonly imapGetMessagesService: ImapGetMessagesService,
   ) {}
 
   public async getMessages(
@@ -30,7 +32,10 @@ export class MessagingGetMessagesService {
       | 'id'
       | 'handle'
       | 'handleAliases'
+      | 'accountOwnerId'
     >,
+    workspaceId: string,
+    messageChannelId: string,
   ): Promise<GetMessagesResponse> {
     switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:
@@ -41,6 +46,13 @@ export class MessagingGetMessagesService {
       case ConnectedAccountProvider.MICROSOFT:
         return this.microsoftGetMessagesService.getMessages(
           messageIds,
+          connectedAccount,
+        );
+      case ConnectedAccountProvider.IMAP:
+        return this.imapGetMessagesService.getMessages(
+          messageIds,
+          workspaceId,
+          messageChannelId,
           connectedAccount,
         );
       default:

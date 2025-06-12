@@ -1,5 +1,7 @@
 import { Scope } from '@nestjs/common';
 
+import { ConnectedAccountProvider } from 'twenty-shared/types';
+
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -82,34 +84,54 @@ export class MessagingMessageListFetchJob {
         return;
       }
 
-      try {
-        messageChannel.connectedAccount.accessToken =
-          await this.connectedAccountRefreshTokensService.refreshAndSaveTokens(
-            messageChannel.connectedAccount,
+      if (
+        messageChannel.connectedAccount.provider ===
+        ConnectedAccountProvider.IMAP
+      ) {
+        // For IMAP provider, check customConnectionParams instead of access token
+        if (!messageChannel.connectedAccount.customConnectionParams) {
+          await this.messagingMonitoringService.track({
+            eventName: 'message_list_fetch_job.error.missing_imap_credentials',
             workspaceId,
-          );
-      } catch (error) {
-        switch (error.code) {
-          case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED:
-          case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
-            await this.messagingMonitoringService.track({
-              eventName: `refresh_token.error.insufficient_permissions`,
+            connectedAccountId: messageChannel.connectedAccount.id,
+            messageChannelId: messageChannel.id,
+          });
+
+          throw {
+            code: MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+            message: 'Missing IMAP credentials in customConnectionParams',
+          };
+        }
+      } else {
+        try {
+          messageChannel.connectedAccount.accessToken =
+            await this.connectedAccountRefreshTokensService.refreshAndSaveTokens(
+              messageChannel.connectedAccount,
               workspaceId,
-              connectedAccountId: messageChannel.connectedAccountId,
-              messageChannelId: messageChannel.id,
-              message: `${error.code}: ${error.reason ?? ''}`,
-            });
-            throw {
-              code: MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
-              message: error.message,
-            };
-          case ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED:
-            throw {
-              code: MessageImportExceptionCode.PROVIDER_NOT_SUPPORTED,
-              message: error.message,
-            };
-          default:
-            throw error;
+            );
+        } catch (error) {
+          switch (error.code) {
+            case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED:
+            case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
+              await this.messagingMonitoringService.track({
+                eventName: `refresh_token.error.insufficient_permissions`,
+                workspaceId,
+                connectedAccountId: messageChannel.connectedAccountId,
+                messageChannelId: messageChannel.id,
+                message: `${error.code}: ${error.reason ?? ''}`,
+              });
+              throw {
+                code: MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+                message: error.message,
+              };
+            case ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED:
+              throw {
+                code: MessageImportExceptionCode.PROVIDER_NOT_SUPPORTED,
+                message: error.message,
+              };
+            default:
+              throw error;
+          }
         }
       }
 

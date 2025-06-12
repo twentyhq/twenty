@@ -58,6 +58,7 @@ export class MessagingPartialMessageListFetchService {
       const partialMessageLists =
         await this.messagingGetMessageListService.getPartialMessageLists(
           messageChannel,
+          workspaceId,
         );
 
       for (const partialMessageList of partialMessageLists) {

@@ -155,6 +155,8 @@ export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {
   calendarChannels: '20202020-af4a-47bb-99ec-51911c1d3977',
   handleAliases: '20202020-8a3d-46be-814f-6228af16c47b',
   scopes: '20202020-8a3d-46be-814f-6228af16c47c',
+  customConnectionParams: '20202020-a1b2-46be-814f-6228af16c481',
+  connectionType: '20202020-a1b2-46be-814f-6228af16c482',
 };
 
 export const EVENT_STANDARD_FIELD_IDS = {

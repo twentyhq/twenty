@@ -25,6 +25,7 @@ const PROVIDORS_ICON_MAPPING = {
   EMAIL: {
     [ConnectedAccountProvider.MICROSOFT]: IconMicrosoftOutlook,
     [ConnectedAccountProvider.GOOGLE]: IconGmail,
+    [ConnectedAccountProvider.IMAP]: IconMail,
     default: IconMail,
   },
   CALENDAR: {
@@ -47,10 +48,20 @@ export const ActorDisplay = ({
         return IconApi;
       case 'IMPORT':
         return IconCsv;
-      case 'EMAIL':
-        return PROVIDORS_ICON_MAPPING.EMAIL[context?.provider ?? 'default'];
-      case 'CALENDAR':
-        return PROVIDORS_ICON_MAPPING.CALENDAR[context?.provider ?? 'default'];
+      case 'EMAIL': {
+        const providerIcon =
+          PROVIDORS_ICON_MAPPING.EMAIL[
+            context?.provider as keyof typeof PROVIDORS_ICON_MAPPING.EMAIL
+          ] ?? PROVIDORS_ICON_MAPPING.EMAIL.default;
+        return providerIcon;
+      }
+      case 'CALENDAR': {
+        const providerIcon =
+          PROVIDORS_ICON_MAPPING.CALENDAR[
+            context?.provider as keyof typeof PROVIDORS_ICON_MAPPING.CALENDAR
+          ] ?? PROVIDORS_ICON_MAPPING.CALENDAR.default;
+        return providerIcon;
+      }
       case 'SYSTEM':
         return IconRobot;
       case 'WORKFLOW':

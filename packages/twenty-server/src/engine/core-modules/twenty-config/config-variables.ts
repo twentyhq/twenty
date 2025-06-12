@@ -144,6 +144,13 @@ export class ConfigVariables {
   MESSAGING_PROVIDER_GMAIL_ENABLED = false;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.Other,
+    description: 'Enable or disable the IMAP messaging integration',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  MESSAGING_PROVIDER_IMAP_ENABLED = false;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MicrosoftAuth,
     description: 'Enable or disable Microsoft authentication',
     type: ConfigVariableType.BOOLEAN,
