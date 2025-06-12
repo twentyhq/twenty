@@ -128,7 +128,7 @@ export const EmailVerificationSent = ({
         fullWidth
       />
       <MainButton
-        title={t`Resend email`}
+        title={isLoading ? t`Sending...` : t`Resend email`}
         onClick={handleResendEmailVerificationToken(email)}
         disabled={isLoading}
         fullWidth
