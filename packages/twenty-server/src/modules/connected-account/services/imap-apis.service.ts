@@ -32,7 +32,7 @@ export class IMAPAPIsService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly twentryConfigService: TwentyConfigService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
