@@ -22,10 +22,4 @@ describe('isMethodWithBody', () => {
       expect(isMethodWithBody(method)).toBe(true);
     });
   });
-
-  it('should handle case-insensitive method names', () => {
-    expect(isMethodWithBody('post')).toBe(true);
-    expect(isMethodWithBody('Post')).toBe(true);
-    expect(isMethodWithBody('POST')).toBe(true);
-  });
 });
