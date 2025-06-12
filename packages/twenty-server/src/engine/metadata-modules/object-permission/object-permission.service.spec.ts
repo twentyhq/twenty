@@ -89,7 +89,8 @@ describe('ObjectPermissionService', () => {
         id: roleId,
         workspaceId,
         isEditable: true,
-      } as RoleEntity);
+        objectPermissions: [],
+      } as unknown as RoleEntity);
     });
 
     it('should throw PermissionsException when trying to add object permission on system object', async () => {
