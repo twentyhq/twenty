@@ -1,5 +1,7 @@
+import gql from "graphql-tag";
+
 export const deleteOneRoleOperationFactory = (roleId: string) => ({
-  query: `
+  query: gql`
     mutation DeleteOneRole {
         deleteOneRole(roleId: "${roleId}")
       }

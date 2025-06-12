@@ -1,6 +1,5 @@
 import { randomUUID } from 'crypto';
 
-import { default as request } from 'supertest';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createCustomRoleWithObjectPermissions } from 'test/integration/graphql/utils/create-custom-role-with-object-permissions.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
@@ -8,14 +7,13 @@ import { deleteRole } from 'test/integration/graphql/utils/delete-one-role.util'
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
+import { makeGraphqlAPIRequest } from 'test/integration/utils/make-graphql-api-request.util';
 
+import gql from 'graphql-tag';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
-import { makeGraphqlAPIRequest } from 'test/integration/utils/make-graphql-api-request.util';
-
-const client = request(`http://localhost:${APP_PORT}`);
 
 describe('permissionsOnRelations', () => {
   describe('permissions V2 enabled', () => {
@@ -30,26 +28,23 @@ describe('permissionsOnRelations', () => {
         true,
       );
 
-      await makeGraphqlAPIRequest(enablePermissionsQuery);
-
-      // Get the original Member role ID for restoration later
       const getRolesQuery = {
-        query: `
-        query GetRoles {
-          getRoles {
-            id
-            label
+        query: gql`
+          query GetRoles {
+            getRoles {
+              id
+              label
+            }
           }
-        }
-      `,
+        `,
       };
+      await makeGraphqlAPIRequest<any>({ operation: enablePermissionsQuery });
 
-      const rolesResponse = await client
-        .post('/graphql')
-        .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
-        .send(getRolesQuery);
+      const rolesResponse = await makeGraphqlAPIRequest<any>({
+        operation: getRolesQuery,
+      });
 
-      originalMemberRoleId = rolesResponse.body.data.getRoles.find(
+      originalMemberRoleId = rolesResponse.data.getRoles.find(
         (role: any) => role.label === 'Member',
       ).id;
 
@@ -66,7 +61,9 @@ describe('permissionsOnRelations', () => {
         },
       });
 
-      await makeGraphqlAPIRequest(graphqlOperationForCompanyCreation);
+      await makeGraphqlAPIRequest<any>({
+        operation: graphqlOperationForCompanyCreation,
+      });
 
       const graphqlOperationForPersonCreation = createOneOperationFactory({
         objectMetadataSingularName: 'person',
@@ -81,12 +78,14 @@ describe('permissionsOnRelations', () => {
         },
       });
 
-      await makeGraphqlAPIRequest(graphqlOperationForPersonCreation);
+      await makeGraphqlAPIRequest<any>({
+        operation: graphqlOperationForPersonCreation,
+      });
     });
 
     afterAll(async () => {
       const restoreMemberRoleQuery = {
-        query: `
+        query: gql`
           mutation UpdateWorkspaceMemberRole {
             updateWorkspaceMemberRole(
               workspaceMemberId: "${WORKSPACE_MEMBER_DATA_SEED_IDS.JONY}"
@@ -98,10 +97,9 @@ describe('permissionsOnRelations', () => {
         `,
       };
 
-      await client
-        .post('/graphql')
-        .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
-        .send(restoreMemberRoleQuery);
+      await makeGraphqlAPIRequest({
+        operation: restoreMemberRoleQuery,
+      });
 
       // Disable Permissions V2
       const disablePermissionsQuery = updateFeatureFlagFactory(
@@ -110,11 +108,11 @@ describe('permissionsOnRelations', () => {
         false,
       );
 
-      await makeGraphqlAPIRequest(disablePermissionsQuery);
+      await makeGraphqlAPIRequest<any>({ operation: disablePermissionsQuery });
     });
 
     afterEach(async () => {
-      await deleteRole(client, customRoleId);
+      await deleteRole(customRoleId);
     });
 
     it('should throw permission error when querying person with company relation without company read permission', async () => {
@@ -128,7 +126,6 @@ describe('permissionsOnRelations', () => {
       customRoleId = roleId;
 
       await updateWorkspaceMemberRole({
-        client,
         roleId: customRoleId,
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       });
@@ -148,13 +145,18 @@ describe('permissionsOnRelations', () => {
         `,
       });
 
-      const response = await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
+      const response = await makeGraphqlAPIRequest<any>({
+        operation: graphqlOperation,
+        options: {
+          testingToken: 'MEMBER',
+        },
+      });
 
       // The query should fail when trying to access company relation without permission
-      expect(response.body.errors[0].message).toBe(
+      expect(response.errors[0].message).toBe(
         PermissionsExceptionMessage.PERMISSION_DENIED,
       );
-      expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+      expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
     });
 
     it('should successfully query person with company relation when having both permissions', async () => {
@@ -168,7 +170,6 @@ describe('permissionsOnRelations', () => {
       customRoleId = roleId;
 
       await updateWorkspaceMemberRole({
-        client,
         roleId: customRoleId,
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       });
@@ -188,15 +189,20 @@ describe('permissionsOnRelations', () => {
         `,
       });
 
-      const response = await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
+      const response = await makeGraphqlAPIRequest<any>({
+        operation: graphqlOperation,
+        options: {
+          testingToken: 'MEMBER',
+        },
+      });
 
       // The query should succeed
-      expect(response.body.data).toBeDefined();
-      expect(response.body.data.people).toBeDefined();
-      const person = response.body.data.people.edges[0].node;
+      expect(response.data).toBeDefined();
+      expect(response.data.people).toBeDefined();
+      const person = response.data.people.edges[0].node;
 
       expect(person.company).toBeDefined();
-      expect(response.body.error).toBeUndefined();
+      expect(response.errors).toBeUndefined();
     });
 
     it('nested relations - should throw permission error when querying nested opportunity relation without opportunity read permission', async () => {
@@ -212,7 +218,6 @@ describe('permissionsOnRelations', () => {
       customRoleId = roleId;
 
       await updateWorkspaceMemberRole({
-        client,
         roleId: customRoleId,
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       });
@@ -239,13 +244,18 @@ describe('permissionsOnRelations', () => {
         `,
       });
 
-      const response = await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
+      const response = await makeGraphqlAPIRequest<any>({
+        operation: graphqlOperation,
+        options: {
+          testingToken: 'MEMBER',
+        },
+      });
 
-      expect(response.body.errors).toBeDefined();
-      expect(response.body.errors[0].message).toBe(
+      expect(response.errors).toBeDefined();
+      expect(response.errors[0].message).toBe(
         PermissionsExceptionMessage.PERMISSION_DENIED,
       );
-      expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+      expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
     });
   });
 });

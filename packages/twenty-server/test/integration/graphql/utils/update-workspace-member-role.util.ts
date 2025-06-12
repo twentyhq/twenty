@@ -1,14 +1,15 @@
+import gql from "graphql-tag";
+import { makeGraphqlAPIRequest } from "test/integration/utils/make-graphql-api-request.util";
+
 export const updateWorkspaceMemberRole = async ({
-  client,
   roleId,
   workspaceMemberId,
 }: {
-  client: any;
   roleId: string;
   workspaceMemberId: string;
 }) => {
   const updateMemberRoleQuery = {
-    query: `
+    query: gql`
           mutation UpdateWorkspaceMemberRole {
             updateWorkspaceMemberRole(
               workspaceMemberId: "${workspaceMemberId}"
@@ -24,8 +25,8 @@ export const updateWorkspaceMemberRole = async ({
         `,
   };
 
-  await client
-    .post('/graphql')
-    .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
-    .send(updateMemberRoleQuery);
+
+  return await makeGraphqlAPIRequest({
+    operation: updateMemberRoleQuery
+  })
 };
