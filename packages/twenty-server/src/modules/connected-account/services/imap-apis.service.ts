@@ -8,6 +8,7 @@ import { v4 } from 'uuid';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { ImapConnectionParams } from 'src/engine/core-modules/imap-connection/types/imap-connection.type';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -45,11 +46,8 @@ export class IMAPAPIsService {
     handle: string;
     workspaceMemberId: string;
     workspaceId: string;
-    imapServer: string;
-    imapPort: number;
-    imapEncryption: string;
-    imapPassword: string;
     messageVisibility: MessageChannelVisibility | undefined;
+    connectionParams: ImapConnectionParams;
   }) {
     const isImapEnabled = await this.featureFlagService.isFeatureEnabled(
       FeatureFlagKey.IS_IMAP_ENABLED,
@@ -64,10 +62,7 @@ export class IMAPAPIsService {
       handle,
       workspaceId,
       workspaceMemberId,
-      imapServer,
-      imapPort,
-      imapEncryption,
-      imapPassword,
+      connectionParams,
       messageVisibility,
     } = input;
 
@@ -104,10 +99,11 @@ export class IMAPAPIsService {
             provider: ConnectedAccountProvider.IMAP,
             connectionType: 'IMAP',
             customConnectionParams: {
-              imapServer,
-              imapPort,
-              imapEncryption,
-              imapPassword,
+              handle: connectionParams.handle,
+              host: connectionParams.host,
+              port: connectionParams.port,
+              secure: connectionParams.secure,
+              password: connectionParams.password,
             },
             accountOwnerId: workspaceMemberId,
           },
@@ -173,10 +169,11 @@ export class IMAPAPIsService {
           },
           {
             customConnectionParams: {
-              imapServer,
-              imapPort,
-              imapEncryption,
-              imapPassword,
+              handle: connectionParams.handle,
+              host: connectionParams.host,
+              port: connectionParams.port,
+              secure: connectionParams.secure,
+              password: connectionParams.password,
             },
           },
         );

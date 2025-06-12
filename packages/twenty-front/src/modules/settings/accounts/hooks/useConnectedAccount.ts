@@ -74,9 +74,9 @@ export const useConnectedAccount = ({
         MessageChannelVisibility.SHARE_EVERYTHING;
 
       setConnectionParams({
-        host: params.imapServer as string,
-        port: params.imapPort as number,
-        secure: params.imapEncryption === 'ssl',
+        host: params.host as string,
+        port: params.port as number,
+        secure: params.secure as boolean,
         messageVisibility: visibility as MessageChannelVisibility,
       });
     }

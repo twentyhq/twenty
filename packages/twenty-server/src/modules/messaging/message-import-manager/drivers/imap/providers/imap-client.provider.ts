@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ImapFlow } from 'imapflow';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
+import { ImapConnectionParams } from 'src/engine/core-modules/imap-connection/types/imap-connection.type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
@@ -59,23 +60,17 @@ export class ImapClientProvider {
       throw new Error('Connected account is not an IMAP provider');
     }
 
-    interface ImapConnectionParams {
-      imapServer?: string;
-      imapPort?: number;
-      imapEncryption?: string;
-      imapPassword?: string;
-    }
-
     const customConnectionParams: ImapConnectionParams =
-      (connectedAccount.customConnectionParams as ImapConnectionParams) || {};
+      (connectedAccount.customConnectionParams as unknown as ImapConnectionParams) ||
+      {};
 
     const client = new ImapFlow({
-      host: customConnectionParams.imapServer || '',
-      port: customConnectionParams.imapPort || 993,
-      secure: customConnectionParams.imapEncryption === 'SSL',
+      host: customConnectionParams.host || '',
+      port: customConnectionParams.port || 993,
+      secure: customConnectionParams.secure,
       auth: {
-        user: connectedAccount.handle,
-        pass: customConnectionParams.imapPassword || '',
+        user: customConnectionParams.handle,
+        pass: customConnectionParams.password || '',
       },
       logger: false,
       tls: {

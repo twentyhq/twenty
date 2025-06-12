@@ -32,7 +32,7 @@ export class TestImapConnectionInput {
   @Field(() => String)
   @IsNotEmpty()
   @IsString()
-  username: string;
+  handle: string;
 
   @Field(() => String)
   @IsNotEmpty()

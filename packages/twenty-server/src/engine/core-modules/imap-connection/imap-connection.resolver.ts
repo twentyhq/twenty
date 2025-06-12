@@ -10,6 +10,7 @@ import {
   SaveImapConnectionInput,
   TestImapConnectionInput,
 } from 'src/engine/core-modules/imap-connection/dtos/imap-connection.dto';
+import { ImapConnectionValidatorService } from 'src/engine/core-modules/imap-connection/services/imap-connection-validator.service';
 import { ImapConnectionService } from 'src/engine/core-modules/imap-connection/services/imap-connection.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -46,6 +47,7 @@ export class ImapConnectionResolver {
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly imapConnectionValidatorService: ImapConnectionValidatorService,
   ) {}
 
   private async checkIfImapFeatureEnabled(workspaceId: string): Promise<void> {
@@ -70,7 +72,13 @@ export class ImapConnectionResolver {
     await this.checkIfImapFeatureEnabled(workspace.id);
 
     try {
-      await this.imapConnectionService.testConnection(input);
+      await this.imapConnectionService.testConnection({
+        handle: input.handle,
+        host: input.host,
+        port: input.port,
+        secure: input.secure,
+        password: input.password,
+      });
 
       return true;
     } catch (e) {
@@ -97,12 +105,14 @@ export class ImapConnectionResolver {
       messageVisibility,
     } = input;
 
-    const connectionParams = this.imapConnectionService.formatConnectionParams({
-      host,
-      port,
-      secure,
-      password,
-    });
+    const connectionParams =
+      this.imapConnectionValidatorService.validateImapConnectionParams({
+        host,
+        port,
+        secure,
+        password,
+        handle,
+      });
 
     if (id) {
       const connectedAccountRepository =
@@ -117,7 +127,7 @@ export class ImapConnectionResolver {
           handle,
           provider: ConnectedAccountProvider.IMAP,
           connectionType: 'IMAP',
-          customConnectionParams: connectionParams as object,
+          customConnectionParams: connectionParams,
         },
       );
 
@@ -159,10 +169,7 @@ export class ImapConnectionResolver {
         handle,
         workspaceMemberId: accountOwnerId,
         workspaceId: workspace.id,
-        imapServer: connectionParams.imapServer as string,
-        imapPort: connectionParams.imapPort as number,
-        imapEncryption: connectionParams.imapEncryption as string,
-        imapPassword: connectionParams.imapPassword as string,
+        connectionParams,
         messageVisibility,
       });
     }

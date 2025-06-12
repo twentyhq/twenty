@@ -4,16 +4,9 @@ import { ImapFlow } from 'imapflow';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { ImapConnectionParams } from 'src/engine/core-modules/imap-connection/types/imap-connection.type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-
-type ImapConnectionParams = {
-  host: string;
-  port: number;
-  secure: boolean;
-  username: string;
-  password: string;
-};
 
 @Injectable()
 export class ImapConnectionService {
@@ -24,7 +17,7 @@ export class ImapConnectionService {
   ) {}
 
   async testConnection(params: ImapConnectionParams): Promise<boolean> {
-    if (!params.host || !params.username || !params.password) {
+    if (!params.host || !params.handle || !params.password) {
       throw new UserInputError('Missing required IMAP connection parameters');
     }
 
@@ -33,7 +26,7 @@ export class ImapConnectionService {
       port: params.secure ? 993 : 143,
       secure: params.secure,
       auth: {
-        user: params.username,
+        user: params.handle,
         pass: params.password,
       },
       logger: false,
@@ -78,20 +71,6 @@ export class ImapConnectionService {
         await client.logout();
       }
     }
-  }
-
-  formatConnectionParams(params: {
-    host: string;
-    port: number;
-    secure: boolean;
-    password: string;
-  }): Record<string, unknown> {
-    return {
-      imapServer: params.host,
-      imapPort: params.port,
-      imapEncryption: params.secure ? 'SSL' : 'None',
-      imapPassword: params.password,
-    };
   }
 
   async getImapConnection(
