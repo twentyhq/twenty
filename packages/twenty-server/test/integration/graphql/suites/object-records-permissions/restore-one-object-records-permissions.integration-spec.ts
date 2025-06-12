@@ -3,12 +3,11 @@ import { randomUUID } from 'node:crypto';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { restoreOneOperationFactory } from 'test/integration/graphql/utils/restore-one-operation-factory.util';
-import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/utils/make-graphql-api-request-with-guest-role.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { makeGraphqlAPIRequest } from 'test/integration/utils/make-graphql-api-request.util';
 
 describe('restoreOneObjectRecordsPermissions', () => {
   const personId = randomUUID();
@@ -23,7 +22,9 @@ describe('restoreOneObjectRecordsPermissions', () => {
       },
     });
 
-    await makeGraphqlAPIRequest(createGraphqlOperation);
+    await makeGraphqlAPIRequest({
+      operation: createGraphqlOperation,
+    });
 
     // Delete the person
     const deleteGraphqlOperation = deleteOneOperationFactory({
@@ -32,7 +33,9 @@ describe('restoreOneObjectRecordsPermissions', () => {
       recordId: personId,
     });
 
-    await makeGraphqlAPIRequest(deleteGraphqlOperation);
+    await makeGraphqlAPIRequest({
+      operation: deleteGraphqlOperation,
+    });
   });
 
   it('should throw a permission error when user does not have permission (guest role)', async () => {
@@ -42,14 +45,19 @@ describe('restoreOneObjectRecordsPermissions', () => {
       recordId: personId,
     });
 
-    const response = await makeGraphqlAPIRequestWithGuestRole(graphqlOperation);
+    const response = await makeGraphqlAPIRequest<any>({
+      operation: graphqlOperation,
+      options: {
+        testingToken: 'GUEST',
+      },
+    });
 
-    expect(response.body.data).toStrictEqual({ restorePerson: null });
-    expect(response.body.errors).toBeDefined();
-    expect(response.body.errors[0].message).toBe(
+    expect(response.data).toStrictEqual({ restorePerson: null });
+    expect(response.errors).toBeDefined();
+    expect(response.errors[0].message).toBe(
       PermissionsExceptionMessage.PERMISSION_DENIED,
     );
-    expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+    expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
   });
 
   it('should restore an object record when user has permission (admin role)', async () => {
@@ -59,10 +67,12 @@ describe('restoreOneObjectRecordsPermissions', () => {
       recordId: personId,
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlAPIRequest<any>({
+      operation: graphqlOperation,
+    });
 
-    expect(response.body.data).toBeDefined();
-    expect(response.body.data.restorePerson).toBeDefined();
-    expect(response.body.data.restorePerson.id).toBe(personId);
+    expect(response.data).toBeDefined();
+    expect(response.data.restorePerson).toBeDefined();
+    expect(response.data.restorePerson.id).toBe(personId);
   });
 });

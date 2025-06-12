@@ -3,14 +3,13 @@ import { randomUUID } from 'node:crypto';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delete-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { restoreManyOperationFactory } from 'test/integration/graphql/utils/restore-many-operation-factory.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
-import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/utils/make-graphql-api-request-with-guest-role.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
+import { makeGraphqlAPIRequest } from 'test/integration/utils/make-graphql-api-request.util';
 
 describe('restoreManyObjectRecordsPermissions', () => {
   describe('permissions V2 disabled', () => {
@@ -33,7 +32,9 @@ describe('restoreManyObjectRecordsPermissions', () => {
         ],
       });
 
-      await makeGraphqlAPIRequest(createGraphqlOperation);
+      await makeGraphqlAPIRequest({
+        operation: createGraphqlOperation,
+      });
 
       // Delete people
       const deleteGraphqlOperation = deleteManyOperationFactory({
@@ -47,7 +48,9 @@ describe('restoreManyObjectRecordsPermissions', () => {
         },
       });
 
-      await makeGraphqlAPIRequest(deleteGraphqlOperation);
+      await makeGraphqlAPIRequest({
+        operation: deleteGraphqlOperation,
+      });
     });
 
     it('should throw a permission error when user does not have permission (guest role)', async () => {
@@ -62,15 +65,19 @@ describe('restoreManyObjectRecordsPermissions', () => {
         },
       });
 
-      const response =
-        await makeGraphqlAPIRequestWithGuestRole(graphqlOperation);
+      const response = await makeGraphqlAPIRequest<any>({
+        operation: graphqlOperation,
+        options: {
+          testingToken: 'GUEST',
+        },
+      });
 
-      expect(response.body.data).toStrictEqual({ restorePeople: null });
-      expect(response.body.errors).toBeDefined();
-      expect(response.body.errors[0].message).toBe(
+      expect(response.data).toStrictEqual({ restorePeople: null });
+      expect(response.errors).toBeDefined();
+      expect(response.errors[0].message).toBe(
         PermissionsExceptionMessage.PERMISSION_DENIED,
       );
-      expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+      expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
     });
 
     it('should restore multiple object records when user has permission (admin role)', async () => {
@@ -85,13 +92,15 @@ describe('restoreManyObjectRecordsPermissions', () => {
         },
       });
 
-      const response = await makeGraphqlAPIRequest(graphqlOperation);
+      const response = await makeGraphqlAPIRequest<any>({
+        operation: graphqlOperation,
+      });
 
-      expect(response.body.data).toBeDefined();
-      expect(response.body.data.restorePeople).toBeDefined();
-      expect(response.body.data.restorePeople).toHaveLength(2);
-      expect(response.body.data.restorePeople[0].id).toBe(personId1);
-      expect(response.body.data.restorePeople[1].id).toBe(personId2);
+      expect(response.data).toBeDefined();
+      expect(response.data.restorePeople).toBeDefined();
+      expect(response.data.restorePeople).toHaveLength(2);
+      expect(response.data.restorePeople[0].id).toBe(personId1);
+      expect(response.data.restorePeople[1].id).toBe(personId2);
     });
   });
 
@@ -115,7 +124,9 @@ describe('restoreManyObjectRecordsPermissions', () => {
         ],
       });
 
-      await makeGraphqlAPIRequest(createGraphqlOperation);
+      await makeGraphqlAPIRequest({
+        operation: createGraphqlOperation,
+      });
 
       // Delete people
       const deleteGraphqlOperation = deleteManyOperationFactory({
@@ -129,7 +140,9 @@ describe('restoreManyObjectRecordsPermissions', () => {
         },
       });
 
-      await makeGraphqlAPIRequest(deleteGraphqlOperation);
+      await makeGraphqlAPIRequest({
+        operation: deleteGraphqlOperation,
+      });
 
       const enablePermissionsQuery = updateFeatureFlagFactory(
         SEED_APPLE_WORKSPACE_ID,
@@ -137,7 +150,9 @@ describe('restoreManyObjectRecordsPermissions', () => {
         true,
       );
 
-      await makeGraphqlAPIRequest(enablePermissionsQuery);
+      await makeGraphqlAPIRequest({
+        operation: enablePermissionsQuery,
+      });
     });
 
     afterAll(async () => {
@@ -147,7 +162,9 @@ describe('restoreManyObjectRecordsPermissions', () => {
         false,
       );
 
-      await makeGraphqlAPIRequest(disablePermissionsQuery);
+      await makeGraphqlAPIRequest({
+        operation: disablePermissionsQuery,
+      });
     });
 
     it('should throw a permission error when user does not have permission (guest role)', async () => {
@@ -162,15 +179,19 @@ describe('restoreManyObjectRecordsPermissions', () => {
         },
       });
 
-      const response =
-        await makeGraphqlAPIRequestWithGuestRole(graphqlOperation);
+      const response = await makeGraphqlAPIRequest<any>({
+        operation: graphqlOperation,
+        options: {
+          testingToken: 'GUEST',
+        },
+      });
 
-      expect(response.body.data).toStrictEqual({ restorePeople: null });
-      expect(response.body.errors).toBeDefined();
-      expect(response.body.errors[0].message).toBe(
+      expect(response.data).toStrictEqual({ restorePeople: null });
+      expect(response.errors).toBeDefined();
+      expect(response.errors[0].message).toBe(
         PermissionsExceptionMessage.PERMISSION_DENIED,
       );
-      expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+      expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
     });
 
     it('should restore multiple object records when user has permission (admin role)', async () => {
@@ -185,13 +206,15 @@ describe('restoreManyObjectRecordsPermissions', () => {
         },
       });
 
-      const response = await makeGraphqlAPIRequest(graphqlOperation);
+      const response = await makeGraphqlAPIRequest<any>({
+        operation: graphqlOperation,
+      });
 
-      expect(response.body.data).toBeDefined();
-      expect(response.body.data.restorePeople).toBeDefined();
-      expect(response.body.data.restorePeople).toHaveLength(2);
-      expect(response.body.data.restorePeople[0].id).toBe(personId1);
-      expect(response.body.data.restorePeople[1].id).toBe(personId2);
+      expect(response.data).toBeDefined();
+      expect(response.data.restorePeople).toBeDefined();
+      expect(response.data.restorePeople).toHaveLength(2);
+      expect(response.data.restorePeople[0].id).toBe(personId1);
+      expect(response.data.restorePeople[1].id).toBe(personId2);
     });
   });
 });
