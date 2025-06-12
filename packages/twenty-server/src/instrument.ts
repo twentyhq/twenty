@@ -49,7 +49,6 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
 }
 
 // Meter setup
-console.log('>>>>>>>>>>>>>>', process.env.OTLP_COLLECTOR_METRICS_ENDPOINT_URL);
 const meterProvider = new MeterProvider({
   readers: [
     ...(meterDrivers.includes(MeterDriver.Console)
@@ -60,16 +59,12 @@ const meterProvider = new MeterProvider({
           }),
         ]
       : []),
-    ...(meterDrivers.includes(MeterDriver.OpenTelemetry)
-      ? [
-          new PeriodicExportingMetricReader({
-            exporter: new OTLPMetricExporter({
-              url: process.env.OTLP_COLLECTOR_METRICS_ENDPOINT_URL,
-            }),
-            exportIntervalMillis: 10000,
-          }),
-        ]
-      : []),
+    new PeriodicExportingMetricReader({
+      exporter: new OTLPMetricExporter({
+        url: process.env.OTLP_COLLECTOR_METRICS_ENDPOINT_URL,
+      }),
+      exportIntervalMillis: 10000,
+    }),
   ],
 });
 

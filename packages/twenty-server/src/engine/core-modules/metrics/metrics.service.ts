@@ -57,12 +57,12 @@ export class MetricsService {
     const date = Date.now();
 
     for (const metric of metrics) {
-      const metricValue = await this.metricsCacheService.computeCount({
-        key: metric.cacheKey,
-        date,
-      });
-
-      groupedMetrics[metric.name] = metricValue;
+      groupedMetrics[metric.name] = await this.metricsCacheService.computeCount(
+        {
+          key: metric.cacheKey,
+          date,
+        },
+      );
     }
 
     return groupedMetrics;
