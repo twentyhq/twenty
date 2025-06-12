@@ -49,8 +49,7 @@ export const USER_QUERY_FRAGMENT = gql`
       customDomain
       isCustomDomainEnabled
       workspaceUrls {
-        subdomainUrl
-        customUrl
+        ...WorkspaceUrlsFragment
       }
       featureFlags {
         key
@@ -87,26 +86,13 @@ export const USER_QUERY_FRAGMENT = gql`
         ...RoleFragment
       }
     }
-    workspaces {
-      workspace {
-        id
-        logo
-        displayName
-        subdomain
-        customDomain
-        workspaceUrls {
-          subdomainUrl
-          customUrl
-        }
-      }
-    }
     availableWorkspaces {
       ...AvailableWorkspacesFragment
     }
     userVars
   }
 
+  ${AVAILABLE_WORKSPACES_FOR_AUTH_FRAGMENT}
   ${WORKSPACE_MEMBER_QUERY_FRAGMENT}
   ${DELETED_WORKSPACE_MEMBER_QUERY_FRAGMENT}
-  ${AVAILABLE_WORKSPACES_FOR_AUTH_FRAGMENT}
 `;

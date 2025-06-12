@@ -20,6 +20,7 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
+import { getAvailableWorkspacePathAndSearchParams } from '@/auth/utils/availableWorkspacesUtils';
 import { SignInUpMode } from '@/auth/types/signInUpMode';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
@@ -35,7 +36,6 @@ import { MainButton } from 'twenty-ui/input';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
-import { AppPath } from '@/types/AppPath';
 import { AvailableWorkspace } from '~/generated/graphql';
 
 const StyledContentContainer = styled(motion.div)`
@@ -168,24 +168,16 @@ export const SignInUpGlobalScopeForm = () => {
   };
 
   const getAvailableWorkspaceUrl = (availableWorkspace: AvailableWorkspace) => {
-    const workspaceUrl = getWorkspaceUrl(availableWorkspace.workspaceUrls);
-    const path = availableWorkspace.loginToken
-      ? AppPath.Verify
-      : AppPath.SignInUp;
+    const { pathname, searchParams } = getAvailableWorkspacePathAndSearchParams(
+      availableWorkspace,
+      { email: form.getValues('email') },
+    );
 
-    const email = form.getValues('email');
-
-    const queryParams: Record<string, string> = {};
-
-    if (isDefined(availableWorkspace.loginToken)) {
-      queryParams.loginToken = availableWorkspace.loginToken;
-    }
-
-    if (isDefined(email)) {
-      queryParams.email = email;
-    }
-
-    return buildWorkspaceUrl(workspaceUrl, path, queryParams);
+    return buildWorkspaceUrl(
+      getWorkspaceUrl(availableWorkspace.workspaceUrls),
+      pathname,
+      searchParams,
+    );
   };
 
   return (

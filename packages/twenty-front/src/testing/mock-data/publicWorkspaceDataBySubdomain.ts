@@ -7,6 +7,7 @@ export const mockedPublicWorkspaceDataBySubdomain: GetPublicWorkspaceDataByDomai
     logo: 'workspace-logo/original/c88deb49-7636-4560-918d-08c3265ffb20.49?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3b3Jrc3BhY2VJZCI6Ijk4NzAzMjNlLTIyYzMtNGQxNC05YjdmLTViZGM4NGY3ZDZlZSIsImlhdCI6MTczNjU0MDU0MywiZXhwIjoxNzM2NjI2OTQzfQ.C8cnHu09VGseRbQAMM4nhiO6z4TLG03ntFTvxm53-xg',
     displayName: 'Twenty Eng',
     workspaceUrls: {
+      __typename: 'WorkspaceUrls',
       customUrl: 'https://twenty-eng.com',
       subdomainUrl: 'https://custom.twenty.com',
     },

@@ -11,7 +11,6 @@ import {
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { workspacesState } from '@/auth/states/workspaces';
 import { billingState } from '@/client-config/states/billingState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { supportChatState } from '@/client-config/states/supportChatState';
@@ -101,7 +100,6 @@ export const useAuth = () => {
 
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
-  const setWorkspaces = useSetRecoilState(workspacesState);
   const { redirect } = useRedirect();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
@@ -343,17 +341,6 @@ export const useAuth = () => {
       });
     }
 
-    if (isDefined(user.workspaces)) {
-      const validWorkspaces = user.workspaces
-        .filter(
-          ({ workspace }) => workspace !== null && workspace !== undefined,
-        )
-        .map((validWorkspace) => validWorkspace.workspace)
-        .filter(isDefined);
-
-      setWorkspaces(validWorkspaces);
-    }
-
     return {
       user,
       workspaceMember,
@@ -369,7 +356,6 @@ export const useAuth = () => {
     setCurrentWorkspaceMembers,
     setDateTimeFormat,
     setLastAuthenticateWorkspaceDomain,
-    setWorkspaces,
     setAvailableWorkspaces,
   ]);
 

@@ -143,6 +143,14 @@ export type AvailableWorkspaceOutput = {
   workspaceUrls: WorkspaceUrls;
 };
 
+export type AvailableWorkspacesToJoin = {
+  __typename?: 'AvailableWorkspacesToJoin';
+  displayName?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  logo?: Maybe<Scalars['String']['output']>;
+  workspaceUrl: Scalars['String']['output'];
+};
+
 export type Billing = {
   __typename?: 'Billing';
   billingUrl?: Maybe<Scalars['String']['output']>;
@@ -2378,6 +2386,7 @@ export type UpsertSettingPermissionsInput = {
 
 export type User = {
   __typename?: 'User';
+  availableWorkspaces: Array<AvailableWorkspacesToJoin>;
   canAccessFullAdminPanel: Scalars['Boolean']['output'];
   canImpersonate: Scalars['Boolean']['output'];
   createdAt: Scalars['DateTime']['output'];
