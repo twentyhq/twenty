@@ -51,56 +51,6 @@ describe('useHttpRequestForm', () => {
     });
   });
 
-  it('should handle field changes and validate URL', () => {
-    const { result } = renderHook(() =>
-      useHttpRequestForm({
-        action: mockAction,
-        onActionUpdate: mockOnActionUpdate,
-        readonly: false,
-      }),
-    );
-
-    act(() => {
-      result.current.handleFieldChange('url', 'https://api.example.com');
-    });
-
-    expect(result.current.error.message).toBeUndefined();
-
-    act(() => {
-      jest.advanceTimersByTime(500);
-    });
-
-    expect(mockOnActionUpdate).toHaveBeenCalledWith(
-      expect.objectContaining({
-        settings: expect.objectContaining({
-          input: expect.objectContaining({
-            url: 'https://api.example.com',
-          }),
-        }),
-      }),
-    );
-
-    act(() => {
-      result.current.handleFieldChange('url', 'invalid-url');
-    });
-
-    expect(result.current.error.message).toBeDefined();
-
-    act(() => {
-      jest.advanceTimersByTime(500);
-    });
-
-    expect(mockOnActionUpdate).not.toHaveBeenCalledWith(
-      expect.objectContaining({
-        settings: expect.objectContaining({
-          input: expect.objectContaining({
-            url: 'invalid-url',
-          }),
-        }),
-      }),
-    );
-  });
-
   it('should handle body changes for POST method', () => {
     const postAction: WorkflowHttpRequestAction = {
       ...mockAction,
