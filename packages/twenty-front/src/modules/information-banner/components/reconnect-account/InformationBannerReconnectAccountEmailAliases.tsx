@@ -17,7 +17,7 @@ export const InformationBannerReconnectAccountEmailAliases = () => {
 
   return (
     <InformationBanner
-      message={`Please reconnect your mailbox ${accountToReconnect?.handle} to update your email aliases:`}
+      message={`Please reconnect your mailbox ${accountToReconnect.handle} to update your email aliases:`}
       buttonTitle="Reconnect"
       buttonIcon={IconRefresh}
       buttonOnClick={() =>
