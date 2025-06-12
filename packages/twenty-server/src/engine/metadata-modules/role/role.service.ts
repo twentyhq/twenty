@@ -67,7 +67,7 @@ export class RoleService {
     input: CreateRoleInput;
     workspaceId: string;
   }): Promise<RoleEntity> {
-    await this.validateRoleInput({ input, workspaceId });
+    await this.validateRoleInputOrThrow({ input, workspaceId });
 
     const role = await this.roleRepository.save({
       label: input.label,
@@ -117,7 +117,7 @@ export class RoleService {
       );
     }
 
-    await this.validateRoleInput({
+    await this.validateRoleInputOrThrow({
       input: input.update,
       workspaceId,
       roleId: input.id,
@@ -243,7 +243,7 @@ export class RoleService {
     });
   }
 
-  private async validateRoleInput({
+  private async validateRoleInputOrThrow({
     input,
     workspaceId,
     roleId,
@@ -277,19 +277,65 @@ export class RoleService {
       }
     }
 
+    const workspaceRoles = await this.getWorkspaceRoles(workspaceId);
+
     if (isDefined(input.label)) {
-      let workspaceRoles = await this.getWorkspaceRoles(workspaceId);
-
       if (isDefined(roleId)) {
-        workspaceRoles = workspaceRoles.filter((role) => role.id !== roleId);
-      }
-
-      if (workspaceRoles.some((role) => role.label === input.label)) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.ROLE_LABEL_ALREADY_EXISTS,
-          PermissionsExceptionCode.ROLE_LABEL_ALREADY_EXISTS,
+        const otherWorkspaceRoles = workspaceRoles.filter(
+          (role) => role.id !== roleId,
         );
+
+        if (otherWorkspaceRoles.some((role) => role.label === input.label)) {
+          throw new PermissionsException(
+            PermissionsExceptionMessage.ROLE_LABEL_ALREADY_EXISTS,
+            PermissionsExceptionCode.ROLE_LABEL_ALREADY_EXISTS,
+          );
+        }
       }
+    }
+
+    const existingRole = workspaceRoles.find((role) => role.id === roleId);
+
+    await this.validateRoleDoesNotHaveWritingPermissionsWithoutReadingPermissionsOrThrow(
+      {
+        input,
+        existingRole,
+      },
+    );
+  }
+
+  private async validateRoleDoesNotHaveWritingPermissionsWithoutReadingPermissionsOrThrow({
+    input,
+    existingRole,
+  }: {
+    input: CreateRoleInput | UpdateRolePayload;
+    existingRole?: RoleEntity;
+  }) {
+    const hasReadingPermissionsAfterUpdate =
+      input.canReadAllObjectRecords ?? existingRole?.canReadAllObjectRecords;
+
+    const hasUpdatePermissionsAfterUpdate =
+      input.canUpdateAllObjectRecords ??
+      existingRole?.canUpdateAllObjectRecords;
+
+    const hasSoftDeletePermissionsAfterUpdate =
+      input.canSoftDeleteAllObjectRecords ??
+      existingRole?.canSoftDeleteAllObjectRecords;
+
+    const hasDestroyPermissionsAfterUpdate =
+      input.canDestroyAllObjectRecords ??
+      existingRole?.canDestroyAllObjectRecords;
+
+    if (
+      !hasReadingPermissionsAfterUpdate &&
+      (hasUpdatePermissionsAfterUpdate ||
+        hasSoftDeletePermissionsAfterUpdate ||
+        hasDestroyPermissionsAfterUpdate)
+    ) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.CANNOT_GIVE_WRITING_PERMISSION_WITHOUT_READING_PERMISSION,
+        PermissionsExceptionCode.CANNOT_GIVE_WRITING_PERMISSION_WITHOUT_READING_PERMISSION,
+      );
     }
   }
 
