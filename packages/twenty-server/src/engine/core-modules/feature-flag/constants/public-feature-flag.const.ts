@@ -7,7 +7,10 @@ type FeatureFlagMetadata = {
 };
 
 export type PublicFeatureFlag = {
-  key: Extract<FeatureFlagKey, FeatureFlagKey.IS_WORKFLOW_ENABLED>;
+  key: Extract<
+    FeatureFlagKey,
+    FeatureFlagKey.IS_WORKFLOW_ENABLED | FeatureFlagKey.IS_IMAP_ENABLED
+  >;
   metadata: FeatureFlagMetadata;
 };
 
@@ -18,6 +21,14 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       label: 'Workflows',
       description: 'Create custom workflows to automate your work.',
       imagePath: 'https://twenty.com/images/lab/is-workflow-enabled.png',
+    },
+  },
+  {
+    key: FeatureFlagKey.IS_IMAP_ENABLED,
+    metadata: {
+      label: 'IMAP',
+      description: 'Enable IMAP integration.',
+      imagePath: 'https://twenty.com/images/lab/is-imap-enabled.png',
     },
   },
   ...(process.env.CLOUDFLARE_API_KEY
