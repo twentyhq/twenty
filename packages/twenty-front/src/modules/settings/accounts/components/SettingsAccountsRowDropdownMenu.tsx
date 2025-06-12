@@ -10,7 +10,6 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
 import {
   IconCalendarEvent,
   IconDotsVertical,
@@ -46,8 +45,6 @@ export const SettingsAccountsRowDropdownMenu = ({
   const deleteAccount = async () => {
     await destroyOneRecord(account.id);
   };
-
-  const isImapConnection = account.provider === ConnectedAccountProvider.IMAP;
 
   return (
     <>
