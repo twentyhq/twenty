@@ -43,7 +43,7 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   const objectNamePlural = useParams().objectNamePlural ?? '';
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-  const objectMetadataItem = objectMetadataItems.find(
+  const objectMetadataItem = objectMetadataItems?.find(
     (objectMetadataItem) => objectMetadataItem.namePlural === objectNamePlural,
   );
   const verifyEmailNextPath = useRecoilValue(verifyEmailNextPathState);
