@@ -95,7 +95,6 @@ export const WorkflowEditActionHttpRequest = ({
             defaultValue={formData.body}
             onChange={(value) => handleFieldChange('body', value)}
             readonly={actionOptions.readonly}
-            VariablePicker={WorkflowVariablePicker}
           />
         )}
       </WorkflowStepBody>

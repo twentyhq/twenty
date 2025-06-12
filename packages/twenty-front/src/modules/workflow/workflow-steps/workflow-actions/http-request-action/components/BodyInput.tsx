@@ -1,6 +1,5 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { FormRawJsonFieldInput } from '@/object-record/record-field/form-types/components/FormRawJsonFieldInput';
-import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import {
@@ -8,6 +7,7 @@ import {
   HttpRequestBody,
 } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
 import { hasNonStringValues } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/hasNonStringValues';
+import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { Toggle } from 'twenty-ui/input';
@@ -37,16 +37,12 @@ type BodyInputProps = {
   defaultValue?: HttpRequestBody;
   onChange: (value?: HttpRequestBody) => void;
   readonly?: boolean;
-  VariablePicker?: VariablePickerComponent;
-  error?: string;
-  onBlur?: () => void;
 };
 
 export const BodyInput = ({
   defaultValue,
   onChange,
   readonly,
-  VariablePicker,
 }: BodyInputProps) => {
   const [isRawJson, setIsRawJson] = useState<boolean>(() =>
     hasNonStringValues(defaultValue),
@@ -129,7 +125,7 @@ export const BodyInput = ({
             error={errorMessage}
             onBlur={handleBlur}
             onChange={handleJsonChange}
-            VariablePicker={VariablePicker}
+            VariablePicker={WorkflowVariablePicker}
           />
         ) : (
           <KeyValuePairInput
