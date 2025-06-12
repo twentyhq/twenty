@@ -16,6 +16,13 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
+const StyledErrorMessage = styled.span`
+  color: ${({ theme }) => theme.font.color.danger};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  margin-top: ${({ theme }) => theme.spacing(1)};
+`;
+
 type TemplateColumnProps<T extends string> = {
   columns: SpreadsheetColumns<string>;
   columnIndex: number;
@@ -78,6 +85,9 @@ export const TemplateColumn = <T extends string>({
         options={selectOptions}
         columnIndex={column.index.toString()}
       />
+      {column.type === SpreadsheetColumnType.error && (
+        <StyledErrorMessage>{`"${selectValue?.label}" ${column.errorMessage}`}</StyledErrorMessage>
+      )}
     </StyledContainer>
   );
 };
