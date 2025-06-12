@@ -98,7 +98,7 @@ export const Default: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('URL')).toBeVisible();
-    expect(await canvas.findByText('HTTP method')).toBeVisible();
+    expect(await canvas.findByText('HTTP Method')).toBeVisible();
     expect(await canvas.findByText('Headers')).toBeVisible();
   },
 };
