@@ -168,17 +168,15 @@ export const SignInUpGlobalScopeForm = () => {
   };
 
   const getAvailableWorkspaceUrl = (availableWorkspace: AvailableWorkspace) => {
-    return buildWorkspaceUrl(
-      getWorkspaceUrl(availableWorkspace.workspaceUrls),
-      availableWorkspace.loginToken ? AppPath.Verify : AppPath.SignInUp,
-      isDefined(availableWorkspace.loginToken)
-        ? {
-            loginToken: availableWorkspace.loginToken,
-          }
-        : {
-            email: form.getValues('email'),
-          },
-    );
+    const workspaceUrl = getWorkspaceUrl(availableWorkspace.workspaceUrls);
+    const path = availableWorkspace.loginToken
+      ? AppPath.Verify
+      : AppPath.SignInUp;
+    const queryParams = availableWorkspace.loginToken
+      ? { loginToken: availableWorkspace.loginToken }
+      : { email: form.getValues('email') };
+
+    return buildWorkspaceUrl(workspaceUrl, path, queryParams);
   };
 
   return (
