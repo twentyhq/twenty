@@ -1,19 +1,27 @@
 import { msg } from '@lingui/core/macro';
+import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceDuplicateCriteria } from 'src/engine/twenty-orm/decorators/workspace-duplicate-criteria.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
+import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceIsUnique } from 'src/engine/twenty-orm/decorators/workspace-is-unique.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { POLICY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import {
+  FieldTypeAndNameMetadata,
+  getTsVectorColumnExpressionFromFields,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { CarrierWorkspaceEntity } from 'src/modules/carrier/standard-objects/carrier.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
@@ -23,6 +31,34 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { Relation } from 'typeorm';
+
+const POLICY_NUMBER_FIELD_NAME = 'policyNumber';
+const BUSINESS_TYPE_FIELD_NAME = 'businessType';
+const BUSINESS_SUB_TYPE_FIELD_NAME = 'businessSubType';
+const LINE_OF_BUSINESS_FIELD_NAME = 'lineOfBusiness';
+const LINE_OF_BUSINESS_CLASS_FIELD_NAME = 'lineOfBusinessClass';
+const PRODUCT_NAME_FIELD_NAME = 'productName';
+const LOCATION_FIELD_NAME = 'location';
+const AGENT_FIELD_NAME = 'agent';
+const REFERRAL_SOURCE_FIELD_NAME = 'referralSource';
+const FINANCE_COMPANY_FIELD_NAME = 'financeCompany';
+const ZIP_CODE_FIELD_NAME = 'zipCode';
+const TAG_FIELD_NAME = 'tag';
+
+export const SEARCH_FIELDS_FOR_POLICY: FieldTypeAndNameMetadata[] = [
+  { name: POLICY_NUMBER_FIELD_NAME, type: FieldMetadataType.TEXT },
+  { name: BUSINESS_TYPE_FIELD_NAME, type: FieldMetadataType.TEXT },
+  { name: BUSINESS_SUB_TYPE_FIELD_NAME, type: FieldMetadataType.TEXT },
+  { name: LINE_OF_BUSINESS_FIELD_NAME, type: FieldMetadataType.TEXT },
+  { name: LINE_OF_BUSINESS_CLASS_FIELD_NAME, type: FieldMetadataType.TEXT },
+  { name: PRODUCT_NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
+  { name: LOCATION_FIELD_NAME, type: FieldMetadataType.TEXT },
+  { name: AGENT_FIELD_NAME, type: FieldMetadataType.TEXT },
+  { name: REFERRAL_SOURCE_FIELD_NAME, type: FieldMetadataType.TEXT },
+  { name: FINANCE_COMPANY_FIELD_NAME, type: FieldMetadataType.TEXT },
+  { name: ZIP_CODE_FIELD_NAME, type: FieldMetadataType.TEXT },
+  { name: TAG_FIELD_NAME, type: FieldMetadataType.TEXT },
+];
 
 export enum PolicyStatus {
   ACTIVE = 'Active',
@@ -575,6 +611,19 @@ export class PolicyWorkspaceEntity extends BaseWorkspaceEntity {
   })
   notes: Relation<NoteWorkspaceEntity[]>;
 
-  @WorkspaceJoinColumn('notes')
-  notesId: string;
+  @WorkspaceField({
+    standardId: POLICY_STANDARD_FIELD_IDS.searchVector,
+    type: FieldMetadataType.TS_VECTOR,
+    label: SEARCH_VECTOR_FIELD.label,
+    description: SEARCH_VECTOR_FIELD.description,
+    icon: 'IconUser',
+    generatedType: 'STORED',
+    asExpression: getTsVectorColumnExpressionFromFields(
+      SEARCH_FIELDS_FOR_POLICY,
+    ),
+  })
+  @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
+  @WorkspaceFieldIndex({ indexType: IndexType.GIN })
+  searchVector: string;
 } 

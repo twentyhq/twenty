@@ -636,6 +636,7 @@ export const POLICY_STANDARD_FIELD_IDS = {
   notes: '20202020-dfa0-c299-a4dd-fbafca31f6ee',
   tasks: '20202020-e0b1-d3aa-b5ee-0cb0db42f7ff',
   events: '20202020-f1c2-e4bb-c6ff-1dc1ec53f800',
+  searchVector: '20202020-02d3-f5fc-d700-2fd2fd04f911',
 };
 
 export const STANDARD_OBJECT_FIELD_IDS = {
