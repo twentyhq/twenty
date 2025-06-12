@@ -56,6 +56,7 @@ export type RefreshTokenJwtPayload = CommonPropertiesJwtPayload & {
   userId: string;
   jti?: string;
   authProvider?: AuthProviderEnum;
+  targetedTokenType: JwtTokenTypeEnum;
 };
 
 export type WorkspaceAgnosticTokenJwtPayload = CommonPropertiesJwtPayload & {

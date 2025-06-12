@@ -15,7 +15,7 @@ import {
   WorkspaceResolverBuilderMethodNames,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-import { SYSTEM_OBJECTS_PERMISSIONS_REQUIREMENTS } from 'src/engine/api/graphql/graphql-query-runner/constants/system-objects-permissions-requirements.constant';
+import { OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS } from 'src/engine/api/graphql/graphql-query-runner/constants/objects-with-settings-permissions-requirements';
 import { GraphqlQuerySelectedFieldsResult } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
@@ -102,10 +102,11 @@ export abstract class GraphqlQueryBaseResolverService<
         featureFlagsMap[FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED];
 
       if (objectMetadataItemWithFieldMaps.isSystem === true) {
-        await this.validateSystemObjectPermissionsOrThrow(options);
+        await this.validateSettingsPermissionsOnObjectOrThrow(options);
       } else {
         if (!isPermissionsV2Enabled)
           await this.validateObjectRecordPermissionsOrThrow({
+            objectMetadataId: objectMetadataItemWithFieldMaps.id,
             operationName,
             options,
           });
@@ -190,7 +191,7 @@ export abstract class GraphqlQueryBaseResolverService<
     }
   }
 
-  private async validateSystemObjectPermissionsOrThrow(
+  private async validateSettingsPermissionsOnObjectOrThrow(
     options: WorkspaceQueryRunnerOptions,
   ) {
     const { authContext, objectMetadataItemWithFieldMaps } = options;
@@ -200,13 +201,13 @@ export abstract class GraphqlQueryBaseResolverService<
     workspaceValidator.assertIsDefinedOrThrow(workspace);
 
     if (
-      Object.keys(SYSTEM_OBJECTS_PERMISSIONS_REQUIREMENTS).includes(
+      Object.keys(OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS).includes(
         objectMetadataItemWithFieldMaps.nameSingular,
       )
     ) {
       const permissionRequired: SettingPermissionType =
         // @ts-expect-error legacy noImplicitAny
-        SYSTEM_OBJECTS_PERMISSIONS_REQUIREMENTS[
+        OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS[
           objectMetadataItemWithFieldMaps.nameSingular
         ];
 
@@ -228,9 +229,11 @@ export abstract class GraphqlQueryBaseResolverService<
   }
 
   private async validateObjectRecordPermissionsOrThrow({
+    objectMetadataId,
     operationName,
     options,
   }: {
+    objectMetadataId: string;
     operationName: WorkspaceResolverBuilderMethodNames;
     options: WorkspaceQueryRunnerOptions;
   }) {
@@ -247,6 +250,7 @@ export abstract class GraphqlQueryBaseResolverService<
         requiredPermission,
         workspaceId: workspace.id,
         isExecutedByApiKey: isDefined(options.authContext.apiKey),
+        objectMetadataId,
       });
 
     if (!userHasPermission) {

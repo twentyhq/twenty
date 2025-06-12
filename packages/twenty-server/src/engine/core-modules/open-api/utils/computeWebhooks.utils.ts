@@ -101,7 +101,7 @@ export const computeWebhooks = (
                   example: '2024-02-14T11:27:01.779Z',
                 },
                 record: {
-                  $ref: `#/components/schemas/${capitalize(item.nameSingular)} for Response`,
+                  $ref: `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`,
                 },
                 ...(type === DatabaseEventAction.UPDATED && { updatedFields }),
               },

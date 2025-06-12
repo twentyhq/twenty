@@ -60,6 +60,7 @@ import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services
 import { AvailableWorkspacesAndAccessTokensOutput } from 'src/engine/core-modules/auth/dto/available-workspaces-and-access-tokens.output';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { UserCredentialsInput } from './dto/user-credentials.input';
@@ -210,6 +211,7 @@ export class AuthResolver {
         refreshToken: await this.refreshTokenService.generateRefreshToken({
           userId: user.id,
           authProvider: AuthProviderEnum.Password,
+          targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
         }),
       },
     };
@@ -288,6 +290,7 @@ export class AuthResolver {
         refreshToken: await this.refreshTokenService.generateRefreshToken({
           userId: user.id,
           authProvider: AuthProviderEnum.Password,
+          targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
         }),
       },
     };

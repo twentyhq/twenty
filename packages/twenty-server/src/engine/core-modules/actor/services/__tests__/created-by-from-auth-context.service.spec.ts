@@ -10,10 +10,10 @@ import {
   FieldActorSource,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 type TestingAuthContext = Omit<AuthContext, 'workspace' | 'apiKey' | 'user'> & {
   workspace: Partial<Workspace>;
@@ -51,7 +51,7 @@ describe('CreatedByFromAuthContextService', () => {
           useValue: twentyORMGlobalManager,
         },
         {
-          provide: getRepositoryToken(FieldMetadataEntity, 'metadata'),
+          provide: getRepositoryToken(FieldMetadataEntity, 'core'),
           useValue: {
             findOne: jest.fn().mockResolvedValue(true),
           },

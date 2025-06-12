@@ -8,6 +8,7 @@ import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 import { RefreshTokenService } from './refresh-token.service';
 
@@ -138,6 +139,7 @@ describe('RefreshTokenService', () => {
       const result = await service.generateRefreshToken({
         userId,
         workspaceId,
+        targetedTokenType: JwtTokenTypeEnum.ACCESS,
       });
 
       expect(result).toEqual({
@@ -162,6 +164,7 @@ describe('RefreshTokenService', () => {
         service.generateRefreshToken({
           userId: 'user-id',
           workspaceId: 'workspace-id',
+          targetedTokenType: JwtTokenTypeEnum.ACCESS,
         }),
       ).rejects.toThrow(AuthException);
     });

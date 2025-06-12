@@ -18,8 +18,9 @@ export const useIsCurrentLocationOnAWorkspace = () => {
     throw new Error('frontDomain and defaultSubdomain are required');
   }
 
-  const isOnAWorkspace =
-    isMultiWorkspaceEnabled && window.location.hostname !== defaultDomain;
+  const isOnAWorkspace = !isMultiWorkspaceEnabled
+    ? true
+    : window.location.hostname !== defaultDomain;
 
   return {
     isOnAWorkspace,

@@ -98,15 +98,12 @@ export class RefreshTokenService {
       );
     }
 
-    // TODO: Delete this useless condition and error after March 31st 2025
-    if (!token.workspaceId) {
-      throw new AuthException(
-        'This refresh token is malformed',
-        AuthExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    return { user, token, authProvider: jwtPayload.authProvider };
+    return {
+      user,
+      token,
+      authProvider: jwtPayload.authProvider,
+      targetedTokenType: jwtPayload.targetedTokenType,
+    };
   }
 
   async generateRefreshToken(

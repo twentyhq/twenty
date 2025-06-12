@@ -15,6 +15,7 @@ type Story = StoryObj<typeof FormCountrySelectInput>;
 
 export const Default: Story = {
   args: {
+    label: 'Country',
     selectedCountryName: 'Canada',
   },
   play: async ({ canvasElement }) => {

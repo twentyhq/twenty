@@ -50,11 +50,6 @@ const StyledDescription = styled.div`
   padding-left: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledDropdownMenuItemsContainer = styled.div`
-  margin: ${({ theme }) => theme.spacing(1)} 0;
-  padding: 0 ${({ theme }) => theme.spacing(1)};
-`;
-
 export const MultiWorkspaceDropdownDefaultComponents = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const { t } = useLingui();
@@ -142,7 +137,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
       </DropdownMenuHeader>
       {availableWorkspacesCount > 1 && (
         <>
-          <StyledDropdownMenuItemsContainer>
+          <DropdownMenuItemsContainer>
             {[
               ...availableWorkspaces.availableWorkspacesForSignIn,
               ...availableWorkspaces.availableWorkspacesForSignUp,
@@ -184,7 +179,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                 hasSubMenu={true}
               />
             )}
-          </StyledDropdownMenuItemsContainer>
+          </DropdownMenuItemsContainer>
           <DropdownMenuSeparator />
         </>
       )}

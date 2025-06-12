@@ -39,8 +39,7 @@ export class RelationColumnActionFactory extends ColumnActionAbstractFactory<Fie
         columnType: fieldMetadataTypeToColumnType(FieldMetadataType.UUID),
         isArray: false,
         isNullable: fieldMetadata.isNullable ?? true,
-        isUnique:
-          fieldMetadata.settings.relationType === RelationType.ONE_TO_ONE,
+        isUnique: false,
         defaultValue: null,
       },
     ];
@@ -82,9 +81,7 @@ export class RelationColumnActionFactory extends ColumnActionAbstractFactory<Fie
           columnType: fieldMetadataTypeToColumnType(FieldMetadataType.UUID),
           isArray: false,
           isNullable: currentFieldMetadata.isNullable ?? true,
-          isUnique:
-            currentFieldMetadata.settings.relationType ===
-            RelationType.ONE_TO_ONE,
+          isUnique: false,
           defaultValue: null,
         },
         alteredColumnDefinition: {
@@ -92,9 +89,7 @@ export class RelationColumnActionFactory extends ColumnActionAbstractFactory<Fie
           columnType: fieldMetadataTypeToColumnType(FieldMetadataType.UUID),
           isArray: false,
           isNullable: alteredFieldMetadata.isNullable ?? true,
-          isUnique:
-            alteredFieldMetadata.settings.relationType ===
-            RelationType.ONE_TO_ONE,
+          isUnique: false,
           defaultValue: null,
         },
       },

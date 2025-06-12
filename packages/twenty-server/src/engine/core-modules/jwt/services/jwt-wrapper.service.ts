@@ -91,11 +91,9 @@ export class JwtWrapperService {
       }
 
       const appSecretBody =
-        payload.type === JwtTokenTypeEnum.WORKSPACE_AGNOSTIC
-          ? payload.userId
-          : payload.workspaceId;
+        'workspaceId' in payload ? payload.workspaceId : payload.userId;
 
-      if (appSecretBody === undefined) {
+      if (!isDefined(appSecretBody)) {
         throw new AuthException(
           'Invalid token type',
           AuthExceptionCode.INVALID_JWT_TOKEN_TYPE,
