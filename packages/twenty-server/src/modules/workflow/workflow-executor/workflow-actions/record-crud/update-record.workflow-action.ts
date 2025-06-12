@@ -12,7 +12,7 @@ import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
@@ -33,7 +33,7 @@ import { WorkflowUpdateRecordActionInput } from 'src/modules/workflow/workflow-e
 @Injectable()
 export class UpdateRecordWorkflowAction implements WorkflowExecutor {
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
@@ -79,10 +79,6 @@ export class UpdateRecordWorkflowAction implements WorkflowExecutor {
       );
     }
 
-    const repository = await this.twentyORMManager.getRepository(
-      workflowActionInput.objectName,
-    );
-
     const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
 
     if (!workspaceId) {
@@ -91,6 +87,13 @@ export class UpdateRecordWorkflowAction implements WorkflowExecutor {
         RecordCRUDActionExceptionCode.INVALID_REQUEST,
       );
     }
+
+    const repository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        workflowActionInput.objectName,
+        { shouldBypassPermissionChecks: true },
+      );
 
     const objectMetadata = await this.objectMetadataRepository.findOne({
       where: {
