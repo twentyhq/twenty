@@ -15,15 +15,15 @@ const StyledContainer = styled.div<{ isLast: boolean }>`
   }
 `;
 
-const StyledStepCircle = styled(motion.div)<{ isNextStep: boolean }>`
+const StyledStepCircle = styled(motion.div)<{ isInNextSteps: boolean }>`
   align-items: center;
   border-radius: 50%;
   border-style: solid;
   border-width: 1px;
-  border-color: ${({ theme, isNextStep }) =>
-    isNextStep
-      ? theme.border.color.inverted
-      : theme.border.color.medium} !important;
+  border-color: ${({ theme, isInNextSteps }) =>
+    isInNextSteps
+      ? theme.border.color.medium
+      : theme.border.color.inverted} !important;
   display: flex;
   flex-basis: auto;
   flex-shrink: 0;
@@ -34,18 +34,16 @@ const StyledStepCircle = styled(motion.div)<{ isNextStep: boolean }>`
   width: 20px;
 `;
 
-const StyledStepIndex = styled.span<{ isNextStep: boolean }>`
-  color: ${({ theme, isNextStep }) =>
-    isNextStep ? theme.font.color.secondary : theme.font.color.tertiary};
+const StyledStepIndex = styled.span<{ isCurrentStep: boolean }>`
+  color: ${({ theme, isCurrentStep }) =>
+    isCurrentStep ? theme.font.color.inverted : theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
-const StyledStepLabel = styled.span<{ isActive: boolean; isNextStep: boolean }>`
-  color: ${({ theme, isActive, isNextStep }) =>
-    isActive || isNextStep
-      ? theme.font.color.primary
-      : theme.font.color.tertiary};
+const StyledStepLabel = styled.span<{ isInNextSteps: boolean }>`
+  color: ${({ theme, isInNextSteps }) =>
+    isInNextSteps ? theme.font.color.tertiary : theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   margin-left: ${({ theme }) => theme.spacing(2)};
@@ -62,7 +60,6 @@ const StyledStepLine = styled(motion.div)`
 
 export type StepProps = React.PropsWithChildren &
   React.ComponentProps<'div'> & {
-    isActive?: boolean;
     isLast?: boolean;
     index?: number;
     label: string;
@@ -70,7 +67,6 @@ export type StepProps = React.PropsWithChildren &
   };
 
 export const Step = ({
-  isActive = false,
   isLast = false,
   index = 0,
   label,
@@ -80,59 +76,65 @@ export const Step = ({
   const theme = useTheme();
   const isMobile = useIsMobile();
 
-  const variantsCircle = {
-    active: {
-      backgroundColor: theme.font.color.primary,
-      borderColor: theme.font.color.primary,
-      transition: { duration: 0.5 },
-    },
-    inactive: {
-      backgroundColor: theme.background.transparent.lighter,
-      borderColor: theme.border.color.medium,
-      transition: { duration: 0.5 },
-    },
-  };
-
   const variantsLine = {
-    active: {
+    previous: {
       backgroundColor: theme.font.color.primary,
       transition: { duration: 0.5 },
     },
-    inactive: {
+    next: {
       backgroundColor: theme.border.color.medium,
       transition: { duration: 0.5 },
     },
   };
 
-  const isNextStep = activeStep + 1 === index;
+  const variantsCircle = {
+    current: {
+      backgroundColor: theme.background.invertedPrimary,
+      transition: { duration: 0.5 },
+    },
+    previous: {
+      backgroundColor: theme.background.secondary,
+      transition: { duration: 0.5 },
+    },
+    next: {
+      backgroundColor: theme.background.tertiary,
+      transition: { duration: 0.5 },
+    },
+  };
+
+  const isInPreviousSteps = activeStep > index;
+  const isCurrentStep = activeStep === index;
+  const isInNextSteps = activeStep < index;
 
   return (
     <StyledContainer isLast={isLast}>
       <StyledStepCircle
         variants={variantsCircle}
-        animate={isActive ? 'active' : 'inactive'}
-        isNextStep={isNextStep}
+        animate={
+          isCurrentStep ? 'current' : isInPreviousSteps ? 'previous' : 'next'
+        }
+        isInNextSteps={isInNextSteps}
       >
-        {isActive && (
+        {isInPreviousSteps && (
           <AnimatedCheckmark
-            isAnimating={isActive}
-            color={theme.grayScale.gray0}
+            isAnimating={isInPreviousSteps}
+            color={theme.grayScale.gray60}
           />
         )}
-        {!isActive && (
-          <StyledStepIndex isNextStep={isNextStep}>{index + 1}</StyledStepIndex>
+        {!isInPreviousSteps && (
+          <StyledStepIndex isCurrentStep={isCurrentStep}>
+            {index + 1}
+          </StyledStepIndex>
         )}
       </StyledStepCircle>
-      <StyledStepLabel isNextStep={isNextStep} isActive={isActive}>
-        {label}
-      </StyledStepLabel>
+      <StyledStepLabel isInNextSteps={isInNextSteps}>{label}</StyledStepLabel>
       {!isLast && !isMobile && (
         <StyledStepLine
           variants={variantsLine}
-          animate={isActive ? 'active' : 'inactive'}
+          animate={isInPreviousSteps ? 'previous' : 'next'}
         />
       )}
-      {isActive && children}
+      {(isInPreviousSteps || isCurrentStep) && children}
     </StyledContainer>
   );
 };

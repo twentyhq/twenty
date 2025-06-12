@@ -96,7 +96,7 @@ export const FieldsCard = ({
       ) &&
       getObjectPermissionsForObject(
         objectPermissionsByObjectMetadataId,
-        fieldMetadataItem.relationDefinition?.targetObjectMetadata.id,
+        fieldMetadataItem.relation?.targetObjectMetadata.id,
       ).canReadObjectRecords,
   );
 

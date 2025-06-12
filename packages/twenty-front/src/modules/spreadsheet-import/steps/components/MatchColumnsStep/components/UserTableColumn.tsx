@@ -13,7 +13,7 @@ const StyledContainer = styled.div`
 
 const StyledValue = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   overflow: hidden;
   text-overflow: ellipsis;

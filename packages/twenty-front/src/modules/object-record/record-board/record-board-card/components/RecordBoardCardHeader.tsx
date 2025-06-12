@@ -8,13 +8,11 @@ import { RecordBoardScopeInternalContext } from '@/object-record/record-board/sc
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
+import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import styled from '@emotion/styled';
 import { Dispatch, SetStateAction, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -45,8 +43,6 @@ export const RecordBoardCardHeader = ({
 }: RecordBoardCardHeaderProps) => {
   const { recordId } = useContext(RecordBoardCardContext);
 
-  const { indexIdentifierUrl } = useRecordIndexContextOrThrow();
-
   const record = useRecoilValue(recordStoreFamilyState(recordId));
 
   const { objectMetadataItem } = useContext(RecordBoardContext);
@@ -68,7 +64,7 @@ export const RecordBoardCardHeader = ({
       recordId,
     );
 
-  const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
+  const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
   return (
     <RecordBoardCardHeaderContainer showCompactView={showCompactView}>
@@ -79,11 +75,9 @@ export const RecordBoardCardHeader = ({
             record={record}
             variant={AvatarChipVariant.Transparent}
             maxWidth={150}
-            to={
-              recordIndexOpenRecordIn === ViewOpenRecordInType.RECORD_PAGE
-                ? indexIdentifierUrl(recordId)
-                : undefined
-            }
+            onClick={() => {
+              openRecordFromIndexView({ recordId });
+            }}
             triggerEvent="CLICK"
           />
         )}

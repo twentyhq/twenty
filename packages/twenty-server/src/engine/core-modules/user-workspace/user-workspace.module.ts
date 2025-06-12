@@ -28,7 +28,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
           [User, UserWorkspace, Workspace, TwoFactorMethod],
           'core',
         ),
-        NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
+        NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
         TypeORMModule,
         DataSourceModule,
         WorkspaceDataSourceModule,

@@ -25,7 +25,7 @@ export class FixCreatedByDefaultValueCommand extends ActiveOrSuspendedWorkspaces
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {
