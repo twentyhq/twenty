@@ -170,7 +170,7 @@ export const FormFieldInput = ({
       defaultValue={defaultValue as FieldMultiSelectValue | string | undefined}
       onChange={onChange}
       VariablePicker={VariablePicker}
-      options={field.metadata.options}
+      options={field.metadata?.options}
       readonly={readonly}
       placeholder={placeholder}
     />

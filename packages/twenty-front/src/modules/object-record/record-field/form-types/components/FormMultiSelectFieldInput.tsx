@@ -88,7 +88,7 @@ export const FormMultiSelectFieldInput = ({
   const [draftValue, setDraftValue] = useState<
     | {
         type: 'static';
-        value: FieldMultiSelectValue;
+        value: FieldMultiSelectValue | string;
         editingMode: 'view' | 'edit';
       }
     | {
@@ -172,7 +172,11 @@ export const FormMultiSelectFieldInput = ({
   };
 
   const selectedNames =
-    draftValue.type === 'static' ? draftValue.value : undefined;
+    draftValue.type === 'static' && isDefined(draftValue.value)
+      ? isArray(draftValue.value)
+        ? draftValue.value
+        : JSON.parse(draftValue.value)
+      : undefined;
 
   const selectedOptions =
     isDefined(selectedNames) && isDefined(options) && isArray(selectedNames)
@@ -247,7 +251,7 @@ export const FormMultiSelectFieldInput = ({
                   options={options}
                   onCancel={onCancel}
                   onOptionSelected={onOptionSelected}
-                  values={draftValue.value}
+                  values={selectedNames}
                 />
               </OverlayContainer>
             )}
