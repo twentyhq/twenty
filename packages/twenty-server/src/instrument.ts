@@ -49,7 +49,7 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
 }
 
 // Meter setup
-
+console.log('>>>>>>>>>>>>>>', process.env.OTLP_COLLECTOR_METRICS_ENDPOINT_URL);
 const meterProvider = new MeterProvider({
   readers: [
     ...(meterDrivers.includes(MeterDriver.Console)
