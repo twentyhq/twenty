@@ -230,7 +230,7 @@ export class IMAPAPIsService {
       }
     });
 
-    if (this.twentryConfigService.get('MESSAGING_PROVIDER_IMAP_ENABLED')) {
+    if (this.twentyConfigService.get('MESSAGING_PROVIDER_IMAP_ENABLED')) {
       const messageChannels = await messageChannelRepository.find({
         where: {
           connectedAccountId: newOrExistingConnectedAccountId,
