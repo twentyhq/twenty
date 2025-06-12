@@ -20,6 +20,7 @@ import { FixCreatedByDefaultValueCommand } from 'src/database/commands/upgrade-v
 import { FixStandardSelectFieldsPositionCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-fix-standard-select-fields-position.command';
 import { LowercaseUserAndInvitationEmailsCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-lowercase-user-and-invitation-emails.command';
 import { MigrateDefaultAvatarUrlToUserWorkspaceCommand } from 'src/database/commands/upgrade-version-command/0-54/0-54-migrate-default-avatar-url-to-user-workspace.command';
+import { DeduplicateIndexedFieldsCommand } from 'src/database/commands/upgrade-version-command/0-55/0-55-deduplicate-indexed-fields.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -131,6 +132,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly cleanNotFoundFilesCommand: CleanNotFoundFilesCommand,
     protected readonly lowercaseUserAndInvitationEmailsCommand: LowercaseUserAndInvitationEmailsCommand,
     protected readonly migrateDefaultAvatarUrlToUserWorkspaceCommand: MigrateDefaultAvatarUrlToUserWorkspaceCommand,
+
+    // 0.55 Commands
+    protected readonly deduplicateIndexedFieldsCommand: DeduplicateIndexedFieldsCommand,
   ) {
     super(
       workspaceRepository,
@@ -138,6 +142,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       twentyORMGlobalManager,
       syncWorkspaceMetadataCommand,
     );
+
+    const commands_053: VersionCommands = {
+      beforeSyncMetadata: [],
+      afterSyncMetadata: [],
+    };
 
     const commands_054: VersionCommands = {
       beforeSyncMetadata: [
@@ -151,8 +160,15 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       ],
     };
 
+    const commands_055: VersionCommands = {
+      beforeSyncMetadata: [this.deduplicateIndexedFieldsCommand],
+      afterSyncMetadata: [],
+    };
+
     this.allCommands = {
+      '0.53.0': commands_053,
       '0.54.0': commands_054,
+      '0.55.0': commands_055,
     };
   }
 

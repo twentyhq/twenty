@@ -171,6 +171,10 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
           {
             req: {
               workspaceId: workspace.id,
+              userWorkspaceId: executeParams?.[0].userWorkspaceId,
+              apiKey: executeParams?.[0].apiKey,
+              workspaceMemberId: executeParams?.[0].workspaceMemberId,
+              user: executeParams?.[0].user,
             },
           },
           contextId,

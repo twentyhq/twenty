@@ -1,6 +1,7 @@
 import { print } from 'graphql';
 import request from 'supertest';
 import { deleteOneRoleOperationFactory } from 'test/integration/graphql/utils/delete-one-role-operation-factory.util';
+import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
@@ -84,7 +85,7 @@ describe('Granular settings permissions', () => {
         mutation UpsertSettingPermissions {
           upsertSettingPermissions(upsertSettingPermissionsInput: {
             roleId: "${customRoleId}"
-            settingPermissionKeys: [${SettingPermissionType.DATA_MODEL}, ${SettingPermissionType.WORKSPACE}]
+            settingPermissionKeys: [${SettingPermissionType.DATA_MODEL}, ${SettingPermissionType.WORKSPACE}, ${SettingPermissionType.WORKFLOWS}]
           }) {
             id
             setting
@@ -243,6 +244,48 @@ describe('Granular settings permissions', () => {
     });
   });
 
+  describe('Workflows Permissions', () => {
+    it('should allow access to workflows operations when user has WORKFLOWS setting permission', async () => {
+      // Test creating a workflow (requires WORKFLOWS permission)
+      const createWorkflowQuery = {
+        query: `
+          mutation CreateWorkflow {
+            createWorkflow(data: {
+              name: "Test Workflow"
+            }) {
+              id
+              name
+            }
+          }
+        `,
+      };
+
+      const response = await client
+        .post('/graphql')
+        .set('Authorization', `Bearer ${MEMBER_ACCESS_TOKEN}`)
+        .send(createWorkflowQuery);
+
+      expect(response.status).toBe(200);
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.createWorkflow).toBeDefined();
+      expect(response.body.data.createWorkflow.name).toBe('Test Workflow');
+
+      // Clean up - delete the created workflow
+      const graphqlOperation = destroyOneOperationFactory({
+        objectMetadataSingularName: 'workflow',
+        gqlFields: `
+            id
+        `,
+        recordId: response.body.data.createWorkflow.id,
+      });
+
+      await client
+        .post('/graphql')
+        .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
+        .send(graphqlOperation);
+    });
+  });
+
   describe('Denied Permissions', () => {
     it('should deny access to roles operations when user does not have ROLES setting permission', async () => {
       // Test creating a role (requires ROLES permission, which our custom role doesn't have)
@@ -354,7 +397,7 @@ describe('Granular settings permissions', () => {
 
       expect(customRole).toBeDefined();
       expect(customRole.canUpdateAllSettings).toBe(false);
-      expect(customRole.settingPermissions).toHaveLength(2);
+      expect(customRole.settingPermissions).toHaveLength(3);
       expect(
         customRole.settingPermissions.map((p: any) => p.setting),
       ).toContain(SettingPermissionType.DATA_MODEL);

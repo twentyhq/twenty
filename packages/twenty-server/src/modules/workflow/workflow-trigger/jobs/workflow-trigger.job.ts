@@ -10,7 +10,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { handleWorkflowTriggerException } from 'src/engine/core-modules/workflow/filters/workflow-trigger-graphql-api-exception.filter';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   WorkflowVersionStatus,
   WorkflowVersionWorkspaceEntity,
@@ -33,7 +33,7 @@ const DEFAULT_WORKFLOW_NAME = 'Workflow';
 @Processor({ queueName: MessageQueue.workflowQueue, scope: Scope.REQUEST })
 export class WorkflowTriggerJob {
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -43,8 +43,10 @@ export class WorkflowTriggerJob {
   async handle(data: WorkflowTriggerJobData): Promise<void> {
     try {
       const workflowRepository =
-        await this.twentyORMManager.getRepository<WorkflowWorkspaceEntity>(
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowWorkspaceEntity>(
+          data.workspaceId,
           'workflow',
+          { shouldBypassPermissionChecks: true },
         );
 
       const workflow = await workflowRepository.findOneBy({
@@ -66,8 +68,10 @@ export class WorkflowTriggerJob {
       }
 
       const workflowVersionRepository =
-        await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+          data.workspaceId,
           'workflowVersion',
+          { shouldBypassPermissionChecks: true },
         );
 
       const workflowVersion = await workflowVersionRepository.findOneBy({
