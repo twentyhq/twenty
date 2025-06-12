@@ -16,7 +16,7 @@ import { UpdateRecordWorkflowAction } from 'src/modules/workflow/workflow-execut
 @Module({
   imports: [
     WorkspaceCacheStorageModule,
-    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
+    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
     RecordPositionModule,
     RecordTransformerModule,
     WorkflowCommonModule,

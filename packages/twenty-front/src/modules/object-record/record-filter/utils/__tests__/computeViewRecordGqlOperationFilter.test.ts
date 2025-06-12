@@ -14,6 +14,10 @@ const companyMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'company',
 )!;
 
+const petMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
+  (item) => item.nameSingular === 'pet',
+)!;
+
 const personMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'person',
 )!;
@@ -1364,21 +1368,21 @@ describe('should work as expected for the different field types', () => {
   });
 
   it('select field type with empty options', () => {
-    const selectFieldMetadata = companyMockObjectMetadataItem.fields.find(
+    const selectFieldMetadata = petMockObjectMetadataItem.fields.find(
       (field) => field.type === FieldMetadataType.SELECT,
     );
 
     if (!selectFieldMetadata) {
       throw new Error(
-        `Select field metadata not found ${companyMockObjectMetadataItem.fields.map((field) => [field.name, field.type])}`,
+        `Select field metadata not found ${petMockObjectMetadataItem.fields.map((field) => [field.name, field.type])}`,
       );
     }
 
     const selectFilterIs: RecordFilter = {
-      id: 'company-select-filter-is',
-      value: '["option1",""]',
+      id: 'pet-select-filter-is',
+      value: '["DOG",""]',
       fieldMetadataId: selectFieldMetadata?.id,
-      displayValue: '["option1",""]',
+      displayValue: '["Dog",""]',
       operand: ViewFilterOperand.Is,
       label: 'Select',
       type: FieldMetadataType.SELECT,
@@ -1386,9 +1390,9 @@ describe('should work as expected for the different field types', () => {
 
     const selectFilterIsNot: RecordFilter = {
       id: 'company-select-filter-is-not',
-      value: '["option1",""]',
+      value: '["DOG",""]',
       fieldMetadataId: selectFieldMetadata.id,
-      displayValue: '["option1",""]',
+      displayValue: '["Dog",""]',
       operand: ViewFilterOperand.IsNot,
       label: 'Select',
       type: FieldMetadataType.SELECT,
@@ -1398,7 +1402,7 @@ describe('should work as expected for the different field types', () => {
       filterValueDependencies: mockFilterValueDependencies,
       recordFilters: [selectFilterIs, selectFilterIsNot],
       recordFilterGroups: [],
-      fields: companyMockObjectMetadataItem.fields,
+      fields: petMockObjectMetadataItem.fields,
     });
 
     expect(result).toEqual({
@@ -1407,7 +1411,7 @@ describe('should work as expected for the different field types', () => {
           or: [
             {
               [selectFieldMetadata.name]: {
-                in: ['option1'],
+                in: ['DOG'],
               },
             },
             {
@@ -1422,7 +1426,7 @@ describe('should work as expected for the different field types', () => {
             {
               not: {
                 [selectFieldMetadata.name]: {
-                  in: ['option1'],
+                  in: ['DOG'],
                 },
               },
             },

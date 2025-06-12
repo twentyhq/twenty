@@ -87,12 +87,11 @@ export const useViewFromQueryParams = () => {
                 if (!fieldMetadataItem) return null;
 
                 const relationObjectMetadataNameSingular =
-                  fieldMetadataItem.relationDefinition?.targetObjectMetadata
+                  fieldMetadataItem.relation?.targetObjectMetadata
                     ?.nameSingular;
 
                 const relationObjectMetadataNamePlural =
-                  fieldMetadataItem.relationDefinition?.targetObjectMetadata
-                    ?.namePlural;
+                  fieldMetadataItem.relation?.targetObjectMetadata?.namePlural;
 
                 const relationObjectMetadataItem =
                   relationObjectMetadataNameSingular

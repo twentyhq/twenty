@@ -13,7 +13,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { buildDescriptionForRelationFieldMetadataOnFromField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-from-field.util';
 import { buildDescriptionForRelationFieldMetadataOnToField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-to-field.util';
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import {
   CUSTOM_OBJECT_STANDARD_FIELD_IDS,
   STANDARD_OBJECT_FIELD_IDS,
@@ -33,9 +33,9 @@ const DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS = [
 @Injectable()
 export class ObjectMetadataFieldRelationService {
   constructor(
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(FieldMetadataEntity, 'metadata')
+    @InjectRepository(FieldMetadataEntity, 'core')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
   ) {}
 

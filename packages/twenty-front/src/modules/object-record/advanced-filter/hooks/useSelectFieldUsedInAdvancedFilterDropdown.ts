@@ -6,10 +6,13 @@ import { objectFilterDropdownSearchInputComponentState } from '@/object-record/o
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { getInitialFilterValue } from '@/object-record/object-filter-dropdown/utils/getInitialFilterValue';
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-record/record-filter/utils/getDefaultSubFieldNameForCompositeFilterableFieldType';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
+import { isCompositeTypeNonFilterableByAnySubField } from '@/object-record/record-filter/utils/isCompositeTypeNonFilterableByAnySubField';
 import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 
@@ -81,7 +84,13 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
     const firstOperand = getRecordFilterOperands({
       filterType,
       subFieldName,
-    })[0];
+    })?.[0];
+
+    if (!isDefined(firstOperand)) {
+      throw new Error(
+        `No valid operand found for filter type: ${filterType} and subFieldName: ${subFieldName}`,
+      );
+    }
 
     setSelectedOperandInDropdown(firstOperand);
 
@@ -94,6 +103,27 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
       (recordFilter) => recordFilter.id === recordFilterId,
     );
 
+    const isCompositeFilterOnAnySubField =
+      isCompositeFieldType(filterType) && !isDefined(subFieldName);
+    const compositeFilterNonFilterableByAnySubField =
+      isCompositeTypeNonFilterableByAnySubField(filterType);
+
+    let subFieldNameForNonFilterableWithAny:
+      | CompositeFieldSubFieldName
+      | undefined
+      | null = subFieldName;
+
+    if (
+      isCompositeFilterOnAnySubField &&
+      compositeFilterNonFilterableByAnySubField
+    ) {
+      subFieldNameForNonFilterableWithAny =
+        getDefaultSubFieldNameForCompositeFilterableFieldType(filterType);
+    }
+
+    const subFieldNameToUse =
+      subFieldName ?? subFieldNameForNonFilterableWithAny;
+
     const newAdvancedFilter = {
       id: recordFilterId,
       fieldMetadataId: fieldMetadataItem.id,
@@ -105,10 +135,10 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
         existingRecordFilter?.positionInRecordFilterGroup,
       type: filterType,
       label: fieldMetadataItem.label,
-      subFieldName,
+      subFieldName: subFieldNameToUse,
     } satisfies RecordFilter;
 
-    setSubFieldNameUsedInDropdown(subFieldName);
+    setSubFieldNameUsedInDropdown(subFieldNameToUse);
 
     setObjectFilterDropdownSearchInput('');
 

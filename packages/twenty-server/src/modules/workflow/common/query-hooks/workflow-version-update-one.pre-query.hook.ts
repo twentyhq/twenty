@@ -15,12 +15,17 @@ export class WorkflowVersionUpdateOnePreQueryHook
   ) {}
 
   async execute(
-    _authContext: AuthContext,
+    authContext: AuthContext,
     _objectName: string,
     payload: UpdateOneResolverArgs<WorkflowVersionWorkspaceEntity>,
   ): Promise<UpdateOneResolverArgs<WorkflowVersionWorkspaceEntity>> {
+    const { workspace } = authContext;
+
     await this.workflowVersionValidationWorkspaceService.validateWorkflowVersionForUpdateOne(
-      payload,
+      {
+        workspaceId: workspace.id,
+        payload,
+      },
     );
 
     return payload;

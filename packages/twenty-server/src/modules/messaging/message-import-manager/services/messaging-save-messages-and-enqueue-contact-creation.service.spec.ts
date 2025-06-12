@@ -111,7 +111,7 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
           },
         },
         {
-          provide: getRepositoryToken(ObjectMetadataEntity, 'metadata'),
+          provide: getRepositoryToken(ObjectMetadataEntity, 'core'),
           useValue: {
             findOneOrFail: jest.fn(),
           },

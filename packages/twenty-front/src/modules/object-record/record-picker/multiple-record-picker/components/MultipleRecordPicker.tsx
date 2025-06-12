@@ -2,6 +2,7 @@ import { MultipleRecordPickerItemsDisplay } from '@/object-record/record-picker/
 import { MultipleRecordPickerOnClickOutsideEffect } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerOnClickOutsideEffect';
 import { MultipleRecordPickerSearchInput } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerSearchInput';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
+import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
@@ -60,12 +61,37 @@ export const MultipleRecordPicker = ({
       componentInstanceId,
     );
 
+  const multipleRecordPickerPickableMorphItemsState =
+    useRecoilComponentCallbackStateV2(
+      multipleRecordPickerPickableMorphItemsComponentState,
+      componentInstanceId,
+    );
+
   const hasObjectReadOnlyPermission = useHasObjectReadOnlyPermission();
+
+  const resetState = useRecoilCallback(
+    ({ set }) => {
+      return () => {
+        set(multipleRecordPickerPickableMorphItemsState, []);
+        set(multipleRecordPickerSearchFilterState, '');
+      };
+    },
+    [
+      multipleRecordPickerPickableMorphItemsState,
+      multipleRecordPickerSearchFilterState,
+    ],
+  );
 
   const handleSubmit = () => {
     onSubmit?.();
     goBackToPreviousHotkeyScope();
     resetSelectedItem();
+    resetState();
+  };
+
+  const handleClickOutside = () => {
+    onClickOutside();
+    resetState();
   };
 
   useScopedHotkeys(
@@ -108,7 +134,7 @@ export const MultipleRecordPicker = ({
     >
       <MultipleRecordPickerOnClickOutsideEffect
         containerRef={containerRef}
-        onClickOutside={onClickOutside}
+        onClickOutside={handleClickOutside}
       />
       <DropdownContent ref={containerRef}>
         {layoutDirection === 'search-bar-on-bottom' && (

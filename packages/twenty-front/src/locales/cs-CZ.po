@@ -121,8 +121,8 @@ msgstr "{workspaceMemberName} bude odebrán z následující role:"
 
 #. js-lingui-id: NNQszp
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
-msgid "⚠️ Please verify the auto mapping of the columns. You can also ignore or change the mapping of the columns."
-msgstr ""
+#~ msgid "⚠️ Please verify the auto mapping of the columns. You can also ignore or change the mapping of the columns."
+#~ msgstr ""
 
 #. js-lingui-id: YT0WJ4
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -1018,6 +1018,11 @@ msgstr "Kompaktní zobrazení"
 msgid "Companies"
 msgstr ""
 
+#. js-lingui-id: 0CuAor
+#: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
+msgid "Conditions"
+msgstr ""
+
 #. js-lingui-id: Vj43Y/
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
@@ -1172,8 +1177,8 @@ msgstr "Jádro"
 
 #. js-lingui-id: w5Stxm
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
-msgid "Correct the issues and fill the missing data."
-msgstr ""
+#~ msgid "Correct the issues and fill the missing data."
+#~ msgstr ""
 
 #. js-lingui-id: I99Miw
 #: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
@@ -3123,11 +3128,11 @@ msgstr "Spravujte své internetové účty."
 
 #. js-lingui-id: 7h8ch8
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
-msgid "Match columns"
-msgstr ""
+#~ msgid "Match columns"
+#~ msgstr ""
 
 #. js-lingui-id: gDLior
-#: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
+#: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
 msgid "Match Columns"
 msgstr ""
 
@@ -3545,6 +3550,11 @@ msgstr "Žádné výsledky"
 #. js-lingui-id: 9mcJ/7
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "No roles found"
+msgstr ""
+
+#. js-lingui-id: mmm8hk
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "No rows with errors"
 msgstr ""
 
 #. js-lingui-id: Hsl+kr
@@ -4161,8 +4171,8 @@ msgstr "Výsledky"
 
 #. js-lingui-id: BohSvm
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
-msgid "Review your import"
-msgstr ""
+#~ msgid "Review your import"
+#~ msgstr ""
 
 #. js-lingui-id: GG37FL
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
@@ -4597,8 +4607,8 @@ msgstr ""
 
 #. js-lingui-id: MHlGJL
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
-msgid "Show unmatched columns"
-msgstr ""
+#~ msgid "Show unmatched columns"
+#~ msgstr ""
 
 #. js-lingui-id: uVg8dY
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
@@ -5223,10 +5233,14 @@ msgid "Upload .xlsx, .xls or .csv file"
 msgstr ""
 
 #. js-lingui-id: 2IXDgU
-#: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Upload file"
 msgstr "Nahrát soubor"
+
+#. js-lingui-id: IQ3gAw
+#: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
+msgid "Upload File"
+msgstr ""
 
 #. js-lingui-id: akDOEO
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -5312,7 +5326,12 @@ msgstr ""
 
 #. js-lingui-id: MGeZsN
 #: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
-msgid "Validate data"
+#~ msgid "Validate data"
+#~ msgstr ""
+
+#. js-lingui-id: Clr4qp
+#: src/modules/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer.tsx
+msgid "Validate Data"
 msgstr ""
 
 #. js-lingui-id: wMHvYH

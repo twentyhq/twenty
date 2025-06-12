@@ -40,6 +40,7 @@ const companyMocks = [
                 firstName
                 lastName
               }
+              position
               timeFormat
               timeZone
               updatedAt
@@ -76,6 +77,7 @@ const companyMocks = [
                   opportunityId
                   personId
                   petId
+                  rocketId
                   surveyResultId
                   taskId
                   type
@@ -112,6 +114,7 @@ const companyMocks = [
                   personId
                   petId
                   position
+                  rocketId
                   surveyResultId
                   taskId
                   updatedAt
@@ -124,7 +127,6 @@ const companyMocks = [
             }
             id
             idealCustomerProfile
-            internalCompetitions
             introVideo {
               primaryLinkUrl
               primaryLinkLabel
@@ -148,6 +150,7 @@ const companyMocks = [
                   opportunityId
                   personId
                   petId
+                  rocketId
                   surveyResultId
                   updatedAt
                 }
@@ -248,6 +251,7 @@ const companyMocks = [
                   opportunityId
                   personId
                   petId
+                  rocketId
                   surveyResultId
                   taskId
                   updatedAt
@@ -272,6 +276,7 @@ const companyMocks = [
                   personId
                   petId
                   properties
+                  rocketId
                   surveyResultId
                   taskId
                   updatedAt

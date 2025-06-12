@@ -86,7 +86,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
       ],
       'core',
     ),
-    TypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
+    TypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
     HttpModule,
     UserWorkspaceModule,
     WorkspaceModule,

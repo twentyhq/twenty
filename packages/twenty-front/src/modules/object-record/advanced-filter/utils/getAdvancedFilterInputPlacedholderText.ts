@@ -24,7 +24,7 @@ export const getAdvancedFilterInputPlaceholderText = (
     case FieldMetadataType.ACTOR:
       return 'Select actor';
     case FieldMetadataType.RELATION:
-      return `Select ${fieldMetadataItem.relationDefinition?.targetObjectMetadata.nameSingular}`;
+      return `Select ${fieldMetadataItem.relation?.targetObjectMetadata.nameSingular}`;
     case FieldMetadataType.SELECT:
     case FieldMetadataType.MULTI_SELECT:
       return `Select ${fieldMetadataItem.label}`;
