@@ -1,3 +1,36 @@
+import deepEqual from 'deep-equal';
+
+// Normalize values to sort the keys and compare meaningfully
+// This function replaces null, empty strings, empty arrays, and empty objects with placeholders
+// to ensure that they are treated as equal when they are effectively the same.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function normalizeValueForComparison (val: any): any {
+  if (val === null || val === '') return '__empty__';
+  if (Array.isArray(val) && val.length === 0) return '__empty__';
+  if (typeof val === 'object' && val !== null && Object.keys(val).length === 0)
+    return '__empty__';
+
+  // recursively normalize nested objects
+  if (Array.isArray(val)) {
+    // recursively normalize array elements
+    return val.map((item) => normalizeValueForComparison(item));
+  } else if (typeof val === 'object' && val !== null) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const normalized: Record<string, any> = {};
+
+    // sort keys to ensure consistent order for comparison
+    const sortedKeys = Object.keys(val).sort();
+
+    for (const key of sortedKeys) {
+      normalized[key] = normalizeValueForComparison(val[key]);
+    }
+
+    return normalized;
+  }
+
+  return val;
+};
+
 export function objectRecordDiffMerge(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   oldRecord: Record<string, any>,
@@ -9,44 +42,13 @@ export function objectRecordDiffMerge(
   const result: Record<string, any> = { diff: {} };
   const skippedKeys: Set<string> = new Set();
 
-  // Normalize values to sort the keys and compare meaningfully
-  // This function replaces null, empty strings, empty arrays, and empty objects with placeholders
-  // to ensure that they are treated as equal when they are effectively the same.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const normalize = (val: any): any => {
-    if (val === null || val === '') return '__empty__';
-    if (Array.isArray(val) && val.length === 0) return '__empty__';
-    if (
-      typeof val === 'object' &&
-      val !== null &&
-      Object.keys(val).length === 0
-    )
-      return '__empty__';
+  const isEffectivelyEqual = (a: unknown, b: unknown): boolean => {
+    const normalizedA = normalizeValueForComparison(a);
+    const normalizedB = normalizeValueForComparison(b);
 
-    // recursively normalize nested objects
-    if (typeof val === 'object' && val !== null) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const normalized: Record<string, any> = {};
-
-      // sort keys to ensure consistent order for comparison
-      const sortedKeys = Object.keys(val).sort();
-
-      for (const key of sortedKeys) {
-        normalized[key] = normalize(val[key]);
-      }
-
-      return normalized;
-    }
-
-    return val;
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const isEffectivelyEqual = (a: any, b: any): boolean => {
-    const normalizedA = JSON.stringify(normalize(a));
-    const normalizedB = JSON.stringify(normalize(b));
-
-    return normalizedA === normalizedB;
+    return deepEqual(normalizedA, normalizedB, {
+      strict: true,
+    });
   };
 
   // Merge the diff properties from oldRecord and newRecord
