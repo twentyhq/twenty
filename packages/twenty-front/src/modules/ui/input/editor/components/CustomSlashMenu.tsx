@@ -1,6 +1,7 @@
 import type { SuggestionMenuProps } from '@blocknote/react';
 import styled from '@emotion/styled';
 
+import { SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/ui/input/constants/SlashMenuDropdownClickOutsideId';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
@@ -44,7 +45,11 @@ export const CustomSlashMenu = (props: CustomSlashMenuProps) => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.1 }}
         >
-          <OverlayContainer ref={refs.setFloating} style={floatingStyles}>
+          <OverlayContainer
+            ref={refs.setFloating}
+            style={floatingStyles}
+            data-click-outside-id={SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
+          >
             <StyledInnerContainer>
               <DropdownContent>
                 <DropdownMenuItemsContainer>
