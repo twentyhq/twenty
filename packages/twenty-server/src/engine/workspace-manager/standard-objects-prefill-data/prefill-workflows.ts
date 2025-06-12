@@ -112,7 +112,7 @@ export const prefillWorkflows = async (
                   id: 'd6ca80ee-26cd-466d-91bf-984d7205451c',
                   name: 'companyDomain',
                   type: 'TEXT',
-                  label: 'Company domain ',
+                  label: 'Company domain',
                   placeholder: 'Company domain eg: www.apple.com',
                 },
               ],
@@ -149,7 +149,7 @@ export const prefillWorkflows = async (
                 },
                 companyDomain: {
                   type: 'TEXT',
-                  label: 'Company domain ',
+                  label: 'Company domain',
                   value: 'My text',
                   isLeaf: true,
                 },
