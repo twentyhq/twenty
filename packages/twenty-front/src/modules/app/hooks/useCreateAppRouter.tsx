@@ -20,7 +20,7 @@ import { NotFound } from '~/pages/not-found/NotFound';
 import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
 import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
 import { BookCall } from '~/pages/onboarding/BookCall';
-import { BookCallDecision } from '~/pages/onboarding/BookCallDecision';
+import { BookOnboardingDecision } from '~/pages/onboarding/BookOnboardingDecision';
 import { ChooseYourPlan } from '~/pages/onboarding/ChooseYourPlan';
 import { CreateProfile } from '~/pages/onboarding/CreateProfile';
 import { CreateWorkspace } from '~/pages/onboarding/CreateWorkspace';
@@ -56,8 +56,8 @@ export const useCreateAppRouter = (
             element={<PaymentSuccess />}
           />
           <Route
-            path={AppPath.BookCallDecision}
-            element={<BookCallDecision />}
+            path={AppPath.BookOnboardingDecision}
+            element={<BookOnboardingDecision />}
           />
           <Route path={AppPath.BookCall} element={<BookCall />} />
           <Route path={indexAppPath.getIndexAppPath()} element={<></>} />

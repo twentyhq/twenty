@@ -2,8 +2,8 @@ import { renderHook } from '@testing-library/react';
 import * as reactRouterDom from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 
+import { useShowBookCallModal } from '@/onboarding/hooks/useShowBookCallModal';
 import { AppPath } from '@/types/AppPath';
-import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 jest.mock('react-router-dom', () => ({
@@ -25,7 +25,7 @@ const setupMockIsMatchingLocation = (pathname: string) => {
 const getResult = () =>
   renderHook(
     () => {
-      return useShowAuthModal();
+      return useShowBookCallModal();
     },
     {
       wrapper: RecoilRoot,
@@ -33,19 +33,18 @@ const getResult = () =>
   );
 
 const testCases = [
-  { loc: AppPath.Verify, res: true },
-  { loc: AppPath.VerifyEmail, res: true },
-  { loc: AppPath.SignInUp, res: true },
-  { loc: AppPath.Invite, res: true },
-  { loc: AppPath.ResetPassword, res: true },
-  { loc: AppPath.CreateWorkspace, res: true },
-  { loc: AppPath.SyncEmails, res: true },
-  { loc: AppPath.InviteTeam, res: true },
-  { loc: AppPath.PlanRequired, res: true },
-  { loc: AppPath.PlanRequiredSuccess, res: true },
-  { loc: AppPath.BookOnboardingDecision, res: true },
-  { loc: AppPath.BookCall, res: false },
-
+  { loc: AppPath.BookCall, res: true },
+  { loc: AppPath.Verify, res: false },
+  { loc: AppPath.VerifyEmail, res: false },
+  { loc: AppPath.SignInUp, res: false },
+  { loc: AppPath.Invite, res: false },
+  { loc: AppPath.ResetPassword, res: false },
+  { loc: AppPath.CreateWorkspace, res: false },
+  { loc: AppPath.SyncEmails, res: false },
+  { loc: AppPath.InviteTeam, res: false },
+  { loc: AppPath.PlanRequired, res: false },
+  { loc: AppPath.PlanRequiredSuccess, res: false },
+  { loc: AppPath.BookOnboardingDecision, res: false },
   { loc: AppPath.Index, res: false },
   { loc: AppPath.RecordIndexPage, res: false },
   { loc: AppPath.RecordShowPage, res: false },
@@ -56,9 +55,9 @@ const testCases = [
   { loc: AppPath.NotFound, res: false },
 ];
 
-describe('useShowAuthModal', () => {
+describe('useShowBookCallModal', () => {
   testCases.forEach((testCase) => {
-    it(`testCase for location ${testCase.loc} should return ${testCase.res}`, () => {
+    it(`should return ${testCase.res} for location ${testCase.loc}`, () => {
       setupMockIsMatchingLocation(testCase.loc);
       const { result } = getResult();
       if (testCase.res) {

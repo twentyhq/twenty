@@ -1442,6 +1442,7 @@ export type OnDbEventInput = {
 
 /** Onboarding status */
 export enum OnboardingStatus {
+  BOOK_ONBOARDING_DECISION = 'BOOK_ONBOARDING_DECISION',
   COMPLETED = 'COMPLETED',
   INVITE_TEAM = 'INVITE_TEAM',
   PLAN_REQUIRED = 'PLAN_REQUIRED',

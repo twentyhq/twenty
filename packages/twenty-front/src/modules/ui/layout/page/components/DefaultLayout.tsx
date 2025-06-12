@@ -7,27 +7,20 @@ import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/Keyboa
 import { AppNavigationDrawer } from '@/navigation/components/AppNavigationDrawer';
 import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
+import { BookCallModal } from '@/onboarding/components/BookCallModal';
+import { useShowBookCallModal } from '@/onboarding/hooks/useShowBookCallModal';
 import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
 import { SignInAppNavigationDrawerMock } from '@/sign-in-background-mock/components/SignInAppNavigationDrawerMock';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
-import { AppPath } from '@/types/AppPath';
 import { useShowFullscreen } from '@/ui/layout/fullscreen/hooks/useShowFullscreen';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
-import { ModalSize, ModalVariants } from '@/ui/layout/modal/components/Modal';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { Global, css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { useScreenSize } from 'twenty-ui/utilities';
-
-const AUTH_MODAL_SIZES_AND_VARIANTS: Record<
-  string,
-  { size: ModalSize; variant: ModalVariants }
-> = {
-  [AppPath.BookCall]: { size: 'xl', variant: 'transparent' },
-};
 
 const StyledLayout = styled.div`
   background: ${({ theme }) => theme.background.noisy};
@@ -71,15 +64,8 @@ export const DefaultLayout = () => {
   const theme = useTheme();
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
+  const showBookCallModal = useShowBookCallModal();
   const useShowFullScreen = useShowFullscreen();
-  const location = useLocation();
-
-  const authModalSizeAndVariant = AUTH_MODAL_SIZES_AND_VARIANTS[
-    location.pathname
-  ] || {
-    size: 'medium',
-    variant: 'primary',
-  };
 
   return (
     <>
@@ -107,13 +93,13 @@ export const DefaultLayout = () => {
               duration: theme.animation.duration.normal,
             }}
           >
-            {!showAuthModal && (
+            {!showAuthModal && !showBookCallModal && (
               <>
                 <CommandMenuRouter />
                 <KeyboardShortcutMenu />
               </>
             )}
-            {showAuthModal ? (
+            {showAuthModal || showBookCallModal ? (
               <StyledAppNavigationDrawerMock />
             ) : useShowFullScreen ? null : (
               <StyledAppNavigationDrawer />
@@ -125,12 +111,22 @@ export const DefaultLayout = () => {
                 </StyledMainContainer>
                 <AnimatePresence mode="wait">
                   <LayoutGroup>
-                    <AuthModal
-                      size={authModalSizeAndVariant.size}
-                      modalVariant={authModalSizeAndVariant.variant}
-                    >
+                    <AuthModal>
                       <Outlet />
                     </AuthModal>
+                  </LayoutGroup>
+                </AnimatePresence>
+              </>
+            ) : showBookCallModal ? (
+              <>
+                <StyledMainContainer>
+                  <SignInBackgroundMockPage />
+                </StyledMainContainer>
+                <AnimatePresence mode="wait">
+                  <LayoutGroup>
+                    <BookCallModal>
+                      <Outlet />
+                    </BookCallModal>
                   </LayoutGroup>
                 </AnimatePresence>
               </>
@@ -142,7 +138,9 @@ export const DefaultLayout = () => {
               </StyledMainContainer>
             )}
           </StyledPageContainer>
-          {isMobile && !showAuthModal && <MobileNavigationBar />}
+          {isMobile && !showAuthModal && !showBookCallModal && (
+            <MobileNavigationBar />
+          )}
         </AppErrorBoundary>
       </StyledLayout>
     </>

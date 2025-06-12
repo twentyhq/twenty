@@ -49,5 +49,6 @@
   "files.associations": {
     ".cursorrules": "markdown"
   },
-  "jestrunner.codeLensSelector": "**/*.{test,spec,integration-spec}.{js,jsx,ts,tsx}"
+  "jestrunner.codeLensSelector": "**/*.{test,spec,integration-spec}.{js,jsx,ts,tsx}",
+  "nxConsole.generateAiAgentRules": true
 }

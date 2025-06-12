@@ -2,77 +2,105 @@ import Cal from '@calcom/embed-react';
 import styled from '@emotion/styled';
 
 import { SubTitle } from '@/auth/components/SubTitle';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
-import { AppPath } from '@/types/AppPath';
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useTheme } from '@emotion/react';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
+import { MainButton } from 'twenty-ui/input';
 
-const StyledModalContent = styled(Modal.Content)`
-  padding: 0;
+const StyledBorderedContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+`;
+
+const StyledScrollableContent = styled.div`
+  flex: 1;
+  min-height: 0;
 `;
 
 const StyledCalWrapper = styled.div`
-  flex: 1;
+  place-content: center;
+  height: 100%;
   width: 100%;
-  margin: 0 -${({ theme }) => theme.spacing(16)};
-  min-height: 460px;
 `;
 
-const StyledFooter = styled(Modal.Footer)`
-  height: 40px;
-
-  display: flex;
-  justify-content: center;
+const StyledFallbackContainer = styled.div`
   align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(4)};
+  justify-content: center;
+  min-height: 400px;
+  padding: ${({ theme }) => theme.spacing(8)};
+  text-align: center;
+`;
+
+const StyledFooter = styled.div`
+  align-items: center;
+  /* background: ${({ theme }) => theme.background.primary}; */
+  /* border-top: 1px solid ${({ theme }) => theme.border.color.light}; */
+  display: flex;
+  flex-shrink: 0;
+  justify-content: center;
+  padding: ${({ theme }) => theme.spacing(4)} 0;
 `;
 
 export const BookCall = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const calendarBookingPageId = useRecoilValue(calendarBookingPageIdState);
-  const [searchParams] = useSearchParams();
+  const setNextOnboardingStatus = useSetNextOnboardingStatus();
+  const currentUser = useRecoilValue(currentUserState);
 
-  const email = searchParams.get('email');
+  const handleCompleteOnboarding = () => {
+    setNextOnboardingStatus();
+  };
 
   return (
-    <>
-      <StyledModalContent isHorizontalCentered isVerticalCentered>
-        {isDefined(calendarBookingPageId) ? (
-          <StyledCalWrapper>
-            <Cal
-              calLink={calendarBookingPageId}
-              config={{
-                layout: 'month_view',
-                theme: theme.name === 'light' ? 'light' : 'dark',
-                email: email ?? '',
-              }}
-            />
-          </StyledCalWrapper>
-        ) : (
-          <SubTitle>
-            <Trans>
-              Booking is not available at the moment. Please continue with the
-              setup. You can book on{' '}
-              <a href="https://twenty.com/Book-a-call">
-                https://twenty.com/Book-a-call
-              </a>
-            </Trans>
-          </SubTitle>
-        )}
-      </StyledModalContent>
+    <StyledBorderedContainer>
+      <StyledScrollableContent>
+        <ScrollWrapper componentInstanceId="book-call-scroll-wrapper">
+          {isDefined(calendarBookingPageId) ? (
+            <StyledCalWrapper>
+              <Cal
+                calLink={calendarBookingPageId}
+                config={{
+                  layout: 'month_view',
+                  theme: theme.name === 'light' ? 'light' : 'dark',
+                  email: currentUser?.email ?? '',
+                }}
+              />
+            </StyledCalWrapper>
+          ) : (
+            <StyledFallbackContainer>
+              <SubTitle>
+                <Trans>
+                  Booking is not available at the moment. Please continue with
+                  the setup. You can book on{' '}
+                  <a href="https://twenty.com/Book-a-call">
+                    https://twenty.com/Book-a-call
+                  </a>
+                </Trans>
+              </SubTitle>
+            </StyledFallbackContainer>
+          )}
+        </ScrollWrapper>
+      </StyledScrollableContent>
+
       <StyledFooter>
-        <Button
-          title={t`Continue with workspace creation`}
-          to={AppPath.CreateWorkspace}
+        <MainButton
+          title={t`Complete setup`}
+          onClick={handleCompleteOnboarding}
           variant="primary"
-          size="medium"
+          width={198}
         />
       </StyledFooter>
-    </>
+    </StyledBorderedContainer>
   );
 };

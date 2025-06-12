@@ -1,6 +1,5 @@
 import { verifyEmailNextPathState } from '@/app/states/verifyEmailNextPathState';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
-import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
@@ -22,10 +21,6 @@ export const usePageChangeEffectNavigateLocation = () => {
   );
   const { defaultHomePagePath } = useDefaultHomePagePath();
   const location = useLocation();
-  const { data: clientConfigData } = useClientConfig();
-
-  const calendarBookingPageId =
-    clientConfigData?.clientConfig?.calendarBookingPageId;
 
   const someMatchingLocationOf = (appPaths: AppPath[]): boolean =>
     appPaths.some((appPath) => isMatchingLocation(location, appPath));
@@ -42,7 +37,7 @@ export const usePageChangeEffectNavigateLocation = () => {
     AppPath.InviteTeam,
     AppPath.PlanRequired,
     AppPath.PlanRequiredSuccess,
-    AppPath.BookCallDecision,
+    AppPath.BookOnboardingDecision,
     AppPath.BookCall,
   ];
 
@@ -69,7 +64,7 @@ export const usePageChangeEffectNavigateLocation = () => {
       AppPath.PlanRequired,
       AppPath.PlanRequiredSuccess,
       AppPath.BookCall,
-      AppPath.BookCallDecision,
+      AppPath.BookOnboardingDecision,
     ])
   ) {
     if (
@@ -95,13 +90,10 @@ export const usePageChangeEffectNavigateLocation = () => {
     !someMatchingLocationOf([
       AppPath.CreateWorkspace,
       AppPath.PlanRequiredSuccess,
-      AppPath.BookCallDecision,
+      AppPath.BookOnboardingDecision,
       AppPath.BookCall,
     ])
   ) {
-    if (isDefined(calendarBookingPageId)) {
-      return AppPath.BookCallDecision;
-    }
     return AppPath.CreateWorkspace;
   }
 
@@ -124,6 +116,13 @@ export const usePageChangeEffectNavigateLocation = () => {
     !isMatchingLocation(location, AppPath.InviteTeam)
   ) {
     return AppPath.InviteTeam;
+  }
+
+  if (
+    onboardingStatus === OnboardingStatus.BOOK_ONBOARDING_DECISION &&
+    !someMatchingLocationOf([AppPath.BookOnboardingDecision, AppPath.BookCall])
+  ) {
+    return AppPath.BookOnboardingDecision;
   }
 
   if (

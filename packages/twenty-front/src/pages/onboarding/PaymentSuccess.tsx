@@ -1,13 +1,12 @@
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { AppPath } from '@/types/AppPath';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCheck } from 'twenty-ui/display';
 import { MainButton } from 'twenty-ui/input';
@@ -42,18 +41,9 @@ export const PaymentSuccess = () => {
   const color =
     theme.name === 'light' ? theme.grayScale.gray90 : theme.grayScale.gray10;
 
-  const calendarBookingPageId = useRecoilValue(calendarBookingPageIdState);
-  const getNextPath = () => {
-    return isDefined(calendarBookingPageId)
-      ? AppPath.BookCallDecision
-      : AppPath.CreateWorkspace;
-  };
-
   const navigateWithSubscriptionCheck = async () => {
-    const nextPath = getNextPath();
-
     if (isDefined(subscriptionStatus)) {
-      navigate(nextPath);
+      navigate(AppPath.CreateWorkspace);
       return;
     }
 
@@ -64,7 +54,7 @@ export const PaymentSuccess = () => {
 
     if (isDefined(currentUser) && isDefined(refreshedSubscriptionStatus)) {
       setCurrentUser(currentUser);
-      navigate(nextPath);
+      navigate(AppPath.CreateWorkspace);
       return;
     }
 

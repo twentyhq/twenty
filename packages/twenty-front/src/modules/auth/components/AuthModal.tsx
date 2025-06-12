@@ -20,19 +20,10 @@ type AuthModalProps = {
   modalVariant?: ModalVariants;
 };
 
-export const AuthModal = ({
-  children,
-  size = 'medium',
-  modalVariant,
-}: AuthModalProps) => (
+export const AuthModal = ({ children }: AuthModalProps) => (
   <>
     <AuthModalMountEffect />
-    <Modal
-      modalId={AUTH_MODAL_ID}
-      padding={'none'}
-      modalVariant={modalVariant}
-      size={size}
-    >
+    <Modal modalId={AUTH_MODAL_ID} padding={'none'}>
       <ScrollWrapper componentInstanceId="scroll-wrapper-modal-content">
         <StyledContent>{children}</StyledContent>
       </ScrollWrapper>
