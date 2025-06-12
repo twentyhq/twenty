@@ -87,7 +87,7 @@ export const ImapConnectionForm = ({
                 { label: 'SSL/TLS', value: true },
                 { label: 'None', value: false },
               ]}
-              value={field.value ? 'SSL/TLS' : 'None'}
+              value={field.value}
               onChange={field.onChange}
               dropdownId="secure-dropdown"
             />

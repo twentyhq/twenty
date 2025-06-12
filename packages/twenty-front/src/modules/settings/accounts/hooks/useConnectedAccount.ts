@@ -67,19 +67,21 @@ export const useConnectedAccount = ({
   const connectedAccount = data?.connectedAccount;
 
   useEffect(() => {
-    if (isDefined(connectedAccount?.customConnectionParams)) {
-      const params = connectedAccount.customConnectionParams || {};
-      const visibility =
-        connectedAccount.messageChannels?.edges?.[0]?.node?.visibility ||
-        MessageChannelVisibility.SHARE_EVERYTHING;
-
-      setConnectionParams({
-        host: params.host as string,
-        port: params.port as number,
-        secure: params.secure as boolean,
-        messageVisibility: visibility as MessageChannelVisibility,
-      });
+    if (!isDefined(connectedAccount?.customConnectionParams)) {
+      return;
     }
+
+    const params = connectedAccount.customConnectionParams || {};
+    const visibility =
+      connectedAccount.messageChannels?.edges?.[0]?.node?.visibility ||
+      MessageChannelVisibility.SHARE_EVERYTHING;
+
+    setConnectionParams({
+      host: params.host as string,
+      port: params.port as number,
+      secure: params.secure as boolean,
+      messageVisibility: visibility as MessageChannelVisibility,
+    });
   }, [connectedAccount]);
 
   return {
