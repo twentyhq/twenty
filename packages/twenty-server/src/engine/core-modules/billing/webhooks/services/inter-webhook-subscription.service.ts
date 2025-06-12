@@ -13,11 +13,11 @@ import { BillingCharge } from 'src/engine/core-modules/billing/entities/billing-
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { ChargeStatus } from 'src/engine/core-modules/billing/enums/billing-charge.status.enum';
 import { BillingPaymentProviders } from 'src/engine/core-modules/billing/enums/billing-payment-providers.enum';
 import { BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/billing/enums/billing-subscription-collection-method.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
+import { getChargeStatusFromInterChargeStatus } from 'src/engine/core-modules/billing/webhooks/utils/getChargeStatus';
 import { interToSubscriptionStatusMap } from 'src/engine/core-modules/billing/webhooks/utils/inter-to-subsciption-status.mapper';
 import { InterChargeStatus } from 'src/engine/core-modules/inter/enums/InterChargeStatus.enum';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -79,11 +79,6 @@ export class InterWebhookSubscriptionService {
       },
     });
 
-    if (situacao === InterChargeStatus.RECEBIDO)
-      await this.billingChargeRepository.update(billingCharge.id, {
-        status: ChargeStatus.PAID,
-      });
-
     const now = new Date(Date.now());
 
     await this.billingSubscriptionRepository.upsert(
@@ -120,6 +115,11 @@ export class InterWebhookSubscriptionService {
         `Subscription not found`,
         BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
       );
+
+    await this.billingChargeRepository.update(billingCharge.id, {
+      status: getChargeStatusFromInterChargeStatus(situacao),
+      billingSubscriptionId: subscription.id,
+    });
 
     const billingPricesPerPlan = await this.billingPlanService.getPricesPerPlan(
       {

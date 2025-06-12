@@ -169,8 +169,8 @@ export class InterService {
       await this.billingChargeRepository.upsert(
         {
           chargeCode,
-          interBillingChargeFilePath: bolepixFilePath,
           dueDate,
+          interBillingChargeFilePath: bolepixFilePath,
           metadata: {
             planKey,
             workspaceId,
@@ -347,8 +347,6 @@ export class InterService {
     userEmail: string;
     locale: keyof typeof APP_LOCALES;
   }) {
-    const baseUrl = this.twentyConfigService.get('SERVER_URL');
-
     const emailTemplate = InterBillingChargeFileEmail({
       duration: '5 Buisiness days',
       link: fileLink,
@@ -372,7 +370,7 @@ export class InterService {
     });
   }
 
-  private getFileLinkFromPath(filePath: string) {
+  getFileLinkFromPath(filePath: string) {
     const baseUrl = this.twentyConfigService.get('SERVER_URL');
 
     return `${baseUrl}/files/${filePath}`;

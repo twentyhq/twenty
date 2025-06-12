@@ -15,10 +15,12 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { BillingCharge } from 'src/engine/core-modules/billing/entities/billing-charge.entity';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { ChargeStatus } from 'src/engine/core-modules/billing/enums/billing-charge.status.enum';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
@@ -52,6 +54,8 @@ export class BillingSubscriptionService {
     @InjectRepository(BillingSubscriptionItem, 'core')
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
     private readonly interService: InterService,
+    @InjectRepository(BillingCharge, 'core')
+    private readonly billingChargeRepository: Repository<BillingCharge>,
   ) {}
 
   async getCurrentBillingSubscriptionOrThrow(criteria: {
@@ -79,7 +83,18 @@ export class BillingSubscriptionService {
       `More than one not canceled subscription for workspace ${criteria.workspaceId}`,
     );
 
-    return notCanceledSubscriptions?.[0];
+    const currentSubscription = notCanceledSubscriptions?.[0];
+
+    const currentCharge =
+      await this.getCurrentSubscriptionCharge(currentSubscription);
+
+    const currentChargeFileLink = currentCharge?.interBillingChargeFilePath
+      ? this.interService.getFileLinkFromPath(
+          currentCharge?.interBillingChargeFilePath,
+        )
+      : null;
+
+    return { ...notCanceledSubscriptions?.[0], currentChargeFileLink };
   }
 
   async getBaseProductCurrentBillingSubscriptionItemOrThrow(
@@ -491,5 +506,22 @@ export class BillingSubscriptionService {
           : 'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD',
       ),
     );
+  }
+
+  async getCurrentSubscriptionCharge(
+    billingSubscription: BillingSubscription,
+  ): Promise<BillingCharge | null> {
+    if (!billingSubscription) {
+      return null;
+    }
+
+    const currentCharge = await this.billingChargeRepository.findOne({
+      where: {
+        billingSubscriptionId: billingSubscription.id,
+        status: ChargeStatus.PAID,
+      },
+    });
+
+    return currentCharge;
   }
 }

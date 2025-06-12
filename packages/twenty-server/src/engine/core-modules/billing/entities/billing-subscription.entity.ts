@@ -118,6 +118,9 @@ export class BillingSubscription {
   )
   billingSubscriptionCharges: Relation<BillingCharge[]>;
 
+  @Field(() => String, { nullable: true })
+  currentChargeFileLink: string | null;
+
   @ManyToOne(
     () => BillingCustomer,
     (billingCustomer) => billingCustomer.billingSubscriptions,
