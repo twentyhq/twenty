@@ -1,9 +1,9 @@
+import { makeMetadataAPIRequest } from 'test/integration/graphql/utils/make-metadata-api-request.util';
 import { findManyFieldsMetadataQueryFactory } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata-query-factory.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { findManyObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-query-factory.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { makeMetadataAPIRequest } from 'test/integration/utils/make-metadata-api-request.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 const LISTING_NAME_SINGULAR = 'listing';

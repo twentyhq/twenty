@@ -12,11 +12,11 @@ import { destroyManyOperationFactory } from 'test/integration/graphql/utils/dest
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
+import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
-import { makeGraphqlAPIRequest } from 'test/integration/utils/make-graphql-api-request.util';
 
 describe('people resolvers (integration)', () => {
   beforeAll(async () => {

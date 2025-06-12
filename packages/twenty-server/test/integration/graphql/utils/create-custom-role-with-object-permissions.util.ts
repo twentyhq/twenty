@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
-import { makeGraphqlAPIRequest } from 'test/integration/utils/make-graphql-api-request.util';
-import { makeMetadataAPIRequest } from 'test/integration/utils/make-metadata-api-request.util';
+import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeMetadataAPIRequest } from 'test/integration/graphql/utils/make-metadata-api-request.util';
 
 export const createCustomRoleWithObjectPermissions = async (options: {
   label: string;

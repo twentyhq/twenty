@@ -1,15 +1,15 @@
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import {
-    TEST_PERSON_1_ID,
-    TEST_PERSON_2_ID,
-    TEST_PERSON_3_ID,
-    TEST_PERSON_4_ID,
-    TEST_PERSON_5_ID,
+  TEST_PERSON_1_ID,
+  TEST_PERSON_2_ID,
+  TEST_PERSON_3_ID,
+  TEST_PERSON_4_ID,
+  TEST_PERSON_5_ID,
 } from 'test/integration/constants/test-person-ids.constants';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
+import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
-import { makeGraphqlAPIRequest } from 'test/integration/utils/make-graphql-api-request.util';
 
 describe('GraphQL People Pagination with Composite Field Sorting', () => {
   beforeAll(async () => {

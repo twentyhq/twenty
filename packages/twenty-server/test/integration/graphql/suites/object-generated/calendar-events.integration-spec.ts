@@ -3,7 +3,7 @@ import { findManyOperationFactory } from 'test/integration/graphql/utils/find-ma
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 
 import { CALENDAR_EVENT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-event-data-seeds.constant';
-import { makeGraphqlAPIRequest } from 'test/integration/utils/make-graphql-api-request.util';
+import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 describe('calendarEventsResolver (e2e)', () => {
   it('should find many calendarEvents', async () => {

@@ -1,4 +1,4 @@
-import { MakeMetadataAPIRequestOptions } from "test/integration/utils/make-graphql-request.util";
+import { MakeMetadataAPIRequestOptions } from "test/integration/graphql/utils/make-graphql-request.util";
 
 export type CommonOperationInput<T> = {
   input: T;

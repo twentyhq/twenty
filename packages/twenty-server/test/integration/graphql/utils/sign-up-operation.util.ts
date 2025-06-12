@@ -1,8 +1,8 @@
 import { SignUpInput } from 'src/engine/core-modules/auth/dto/sign-up.input';
 import { SignUpOutput } from 'src/engine/core-modules/auth/dto/sign-up.output';
+import { makeMetadataAPIRequest } from 'test/integration/graphql/utils/make-metadata-api-request.util';
 import { signUpOperationFactory } from 'test/integration/graphql/utils/sign-up-operation-factory.util';
 import { CommonResponseBody } from 'test/integration/types/common-response-body.type';
-import { makeMetadataAPIRequest } from 'test/integration/utils/make-metadata-api-request.util';
 
 export const performSignUp = async (
   signUpInput: SignUpInput,

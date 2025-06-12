@@ -2,13 +2,13 @@ import { OBJECT_MODEL_COMMON_FIELDS } from 'test/integration/constants/object-mo
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { TEST_API_KEY_1_ID } from 'test/integration/constants/test-api-key-ids.constant';
 import {
-    TEST_PERSON_1_ID,
-    TEST_PERSON_2_ID,
-    TEST_PERSON_3_ID,
+  TEST_PERSON_1_ID,
+  TEST_PERSON_2_ID,
+  TEST_PERSON_3_ID,
 } from 'test/integration/constants/test-person-ids.constants';
 import {
-    TEST_PET_ID_1,
-    TEST_PET_ID_2,
+  TEST_PET_ID_1,
+  TEST_PET_ID_2,
 } from 'test/integration/constants/test-pet-ids.constants';
 import { performCreateManyOperation } from 'test/integration/graphql/utils/perform-create-many-operation.utils';
 import { searchFactory } from 'test/integration/graphql/utils/search-factory.util';
@@ -16,13 +16,13 @@ import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { EachTestingContext } from 'twenty-shared/testing';
 
 import {
-    decodeCursor,
-    encodeCursorData,
+  decodeCursor,
+  encodeCursorData,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
 import { SearchResultEdgeDTO } from 'src/engine/core-modules/search/dtos/search-result-edge.dto';
 import { SearchCursor } from 'src/engine/core-modules/search/services/search.service';
-import { makeGraphqlAPIRequest } from 'test/integration/utils/make-graphql-api-request.util';
+import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 describe('SearchResolver', () => {
   const [firstPerson, secondPerson, thirdPerson] = [

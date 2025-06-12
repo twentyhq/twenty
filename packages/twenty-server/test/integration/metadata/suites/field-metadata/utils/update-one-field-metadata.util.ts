@@ -5,8 +5,8 @@ import {
 import { PerformMetadataQueryParams } from 'test/integration/types/perform-metadata-query.type';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
-import { makeGraphqlAPIRequest } from 'test/integration/utils/make-graphql-api-request.util';
 
 export const updateOneFieldMetadata = async ({
   input,

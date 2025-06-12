@@ -1,9 +1,9 @@
 import { createCustomRoleWithObjectPermissions } from 'test/integration/graphql/utils/create-custom-role-with-object-permissions.util';
 import { deleteRole } from 'test/integration/graphql/utils/delete-one-role.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
+import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
-import { makeGraphqlAPIRequest } from 'test/integration/utils/make-graphql-api-request.util';
 
 import gql from 'graphql-tag';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';

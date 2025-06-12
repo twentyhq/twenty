@@ -9,7 +9,7 @@ import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
-import { makeGraphqlAPIRequest } from 'test/integration/utils/make-graphql-api-request.util';
+import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 describe('restoreManyObjectRecordsPermissions', () => {
   describe('permissions V2 disabled', () => {

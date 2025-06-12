@@ -11,7 +11,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { makeMetadataAPIRequest } from 'test/integration/utils/make-metadata-api-request.util';
+import { makeMetadataAPIRequest } from 'test/integration/graphql/utils/make-metadata-api-request.util';
 
 describe('datamodel permissions', () => {
   describe('fieldMetadata', () => {

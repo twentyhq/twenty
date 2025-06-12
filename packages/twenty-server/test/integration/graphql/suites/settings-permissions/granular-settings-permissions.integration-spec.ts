@@ -12,7 +12,7 @@ import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/c
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
-import { makeGraphqlAPIRequest } from 'test/integration/utils/make-graphql-api-request.util';
+import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 const client = request(`http://localhost:${APP_PORT}`);
 

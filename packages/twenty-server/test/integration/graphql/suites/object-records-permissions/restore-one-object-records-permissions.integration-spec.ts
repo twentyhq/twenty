@@ -7,7 +7,7 @@ import { restoreOneOperationFactory } from 'test/integration/graphql/utils/resto
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { makeGraphqlAPIRequest } from 'test/integration/utils/make-graphql-api-request.util';
+import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 describe('restoreOneObjectRecordsPermissions', () => {
   const personId = randomUUID();

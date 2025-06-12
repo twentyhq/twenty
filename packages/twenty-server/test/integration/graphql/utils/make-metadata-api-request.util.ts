@@ -1,7 +1,7 @@
 import {
   GraphqlOperationWithOptions,
   makeGraphqlRequest,
-} from 'test/integration/utils/make-graphql-request.util';
+} from 'test/integration/graphql/utils/make-graphql-request.util';
 
 export const makeMetadataAPIRequest = async <T>(
   operationAndOptions: GraphqlOperationWithOptions,
