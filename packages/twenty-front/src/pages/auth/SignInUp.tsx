@@ -123,7 +123,6 @@ export const SignInUp = () => {
     ) {
       return <SignInUpSSOIdentityProviderSelection />;
     }
-
     if (
       isDefined(workspacePublicData) &&
       (!isMultiWorkspaceEnabled || isOnAWorkspace)
