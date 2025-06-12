@@ -14,6 +14,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useCurrentBillingChargeFileLink } from '@/workspace/hooks/useCurrentBillingChargeFileLink';
 import { useSubscriptioProvider } from '@/workspace/hooks/useSubscriptionProvider';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { isDefined } from 'twenty-shared/utils';
@@ -56,6 +57,8 @@ export const SettingsBilling = () => {
     isDefined(subscriptionStatus) &&
     subscriptionStatus !== SubscriptionStatus.Canceled;
 
+  const currentBillingChargeFileLink = useCurrentBillingChargeFileLink();
+
   const subscriptionPaymentProvider = useSubscriptioProvider();
   const isOneTimePaidSubscription =
     subscriptionPaymentProvider === BillingPaymentProviders.Inter;
@@ -83,6 +86,13 @@ export const SettingsBilling = () => {
 
   const { handleUpdateSubscription, loading: loadingUpdateSubscription } =
     useHandleUpdateSubscription();
+
+  const handleDonwloadBankSlip = () => {
+    if (subscriptionStatus === SubscriptionStatus.Expired)
+      handleUpdateSubscription();
+    else if (isDefined(currentBillingChargeFileLink))
+      redirect(currentBillingChargeFileLink, '_blank');
+  };
 
   const { openModal } = useModal();
 
@@ -139,7 +149,7 @@ export const SettingsBilling = () => {
             variant="secondary"
             onClick={
               isOneTimePaidSubscription
-                ? handleUpdateSubscription
+                ? handleDonwloadBankSlip
                 : openBillingPortal
             }
             disabled={billingPortalButtonDisabled || loadingUpdateSubscription}

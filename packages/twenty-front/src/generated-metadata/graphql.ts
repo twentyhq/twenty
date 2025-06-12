@@ -278,6 +278,7 @@ export type BillingSubscription = {
   __typename?: 'BillingSubscription';
   billingSubscriptionItems?: Maybe<Array<BillingSubscriptionItem>>;
   chargeType?: Maybe<ChargeType>;
+  currentChargeFileLink?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
   interval?: Maybe<SubscriptionInterval>;
   metadata?: Maybe<Scalars['JSON']['output']>;
