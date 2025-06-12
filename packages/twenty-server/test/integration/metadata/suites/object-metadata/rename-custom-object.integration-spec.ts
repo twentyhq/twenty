@@ -60,14 +60,14 @@ describe('Custom object renaming', () => {
     },
   });
 
-  // @ts-expect-error legacy noImplicitAny
-  const fillStandardObjectRelationsMapObjectMetadataId = (standardObjects) => {
+  const fillStandardObjectRelationsMapObjectMetadataId = (
+    standardObjects: any,
+  ) => {
     STANDARD_OBJECT_RELATIONS.forEach((relation) => {
       // @ts-expect-error legacy noImplicitAny
       standardObjectRelationsMap[relation].objectMetadataId =
-        standardObjects.body.data.objects.edges.find(
-          // @ts-expect-error legacy noImplicitAny
-          (object) => object.node.nameSingular === relation,
+        standardObjects.data.objects.edges.find(
+          (object: any) => object.node.nameSingular === relation,
         ).node.id;
     });
   };
