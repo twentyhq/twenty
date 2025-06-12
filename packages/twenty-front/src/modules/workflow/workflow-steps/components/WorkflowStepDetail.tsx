@@ -1,6 +1,7 @@
 import { WorkflowAction, WorkflowTrigger } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
+import { WorkflowEditActionAiAgent } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent';
 import { WorkflowActionServerlessFunction } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowActionServerlessFunction';
 import { WorkflowEditActionCreateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord';
 import { WorkflowEditActionDeleteRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord';
@@ -168,6 +169,16 @@ export const WorkflowStepDetail = ({
         case 'HTTP_REQUEST': {
           return (
             <WorkflowEditActionHttpRequest
+              key={stepId}
+              action={stepDefinition.definition}
+              actionOptions={props}
+            />
+          );
+        }
+
+        case 'AI_AGENT': {
+          return (
+            <WorkflowEditActionAiAgent
               key={stepId}
               action={stepDefinition.definition}
               actionOptions={props}
