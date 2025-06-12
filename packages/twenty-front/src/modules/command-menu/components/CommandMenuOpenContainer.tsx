@@ -8,7 +8,7 @@ import { SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/ui/input/constants/Slash
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PAGE_HEADER_COMMAND_MENU_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderCommandMenuButtonClickOutsideId';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useListenClickOutsideOnMouseDown } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideOnMouseDown';
 import { useTheme } from '@emotion/react';
 
 import styled from '@emotion/styled';
@@ -63,7 +63,7 @@ export const CommandMenuOpenContainer = ({
     [closeCommandMenu],
   );
 
-  useListenClickOutside({
+  useListenClickOutsideOnMouseDown({
     refs: [commandMenuRef],
     callback: handleClickOutside,
     listenerId: 'COMMAND_MENU_LISTENER_ID',
