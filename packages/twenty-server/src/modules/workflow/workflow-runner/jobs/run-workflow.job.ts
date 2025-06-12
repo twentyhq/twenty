@@ -14,6 +14,7 @@ import {
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import { getRootSteps } from 'src/modules/workflow/workflow-runner/utils/getRootSteps.utils';
 
 export type RunWorkflowJobData = {
   workspaceId: string;
@@ -114,9 +115,11 @@ export class RunWorkflowJob {
 
     await this.throttleExecution(workflowVersion.workflowId);
 
+    const rootSteps = getRootSteps(workflowVersion.steps);
+
     await this.executeWorkflow({
       workflowRunId,
-      currentStepId: workflowVersion.steps[0].id,
+      currentStepId: rootSteps[0].id,
       steps: workflowVersion.steps,
       context,
       workspaceId,
