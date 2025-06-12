@@ -924,8 +924,8 @@ msgstr ""
 
 #. js-lingui-id: 8Pfllj
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
-msgid "By using Twenty, you agree to the"
-msgstr "Durch die Nutzung von Twenty stimmen Sie den"
+msgid "By using InsurOS, you agree to the"
+msgstr "Durch die Nutzung von InsurOS stimmen Sie den"
 
 #. js-lingui-id: PmmvzS
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx

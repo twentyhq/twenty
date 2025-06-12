@@ -676,7 +676,7 @@ msgstr "crwdns153:0crwdne153:0"
 
 #. js-lingui-id: 8Pfllj
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
-msgid "By using Twenty, you agree to the"
+msgid "By using InsurOS, you agree to the"
 msgstr "crwdns155:0crwdne155:0"
 
 #. js-lingui-id: PmmvzS

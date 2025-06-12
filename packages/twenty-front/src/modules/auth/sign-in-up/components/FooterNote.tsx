@@ -22,7 +22,7 @@ export const FooterNote = () => (
   <StyledContainer>
     <Trans>By using InsurOS, you agree to the</Trans>{' '}
     <a
-      href="https://twenty.com/legal/terms"
+      href="https://insuros.ca/policies/terms-of-service"
       target="_blank"
       rel="noopener noreferrer"
     >
@@ -30,7 +30,7 @@ export const FooterNote = () => (
     </a>{' '}
     <Trans>and</Trans>{' '}
     <a
-      href="https://twenty.com/legal/privacy"
+      href="https://insuros.ca/policies/privacy-policy"
       target="_blank"
       rel="noopener noreferrer"
     >
