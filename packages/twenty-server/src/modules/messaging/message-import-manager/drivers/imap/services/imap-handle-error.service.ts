@@ -42,7 +42,7 @@ export class ImapHandleErrorService {
         where: { id: messageChannelId },
       });
 
-      const updatedMessageChannel = await messageChannelRepository.update(
+      await messageChannelRepository.update(
         { id: messageChannelId },
         {
           syncStatus: MessageChannelSyncStatus.FAILED_UNKNOWN,

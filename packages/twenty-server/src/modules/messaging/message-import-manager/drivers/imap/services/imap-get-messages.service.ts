@@ -5,9 +5,6 @@ import { AddressObject, ParsedMail, simpleParser } from 'mailparser';
 // @ts-expect-error legacy noImplicitAny
 import planer from 'planer';
 
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
@@ -27,8 +24,6 @@ export class ImapGetMessagesService {
   constructor(
     private readonly imapClientProvider: ImapClientProvider,
     private readonly imapHandleErrorService: ImapHandleErrorService,
-    @InjectMessageQueue(MessageQueue.messagingQueue)
-    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   async getMessages(
