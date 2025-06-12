@@ -64,10 +64,6 @@ export const useImapConnectionForm = ({
   const [saveImapConnection, { loading: saveLoading }] =
     useMutation(SAVE_IMAP_CONNECTION);
 
-  const [updateImapConnection, { loading: updateLoading }] = useMutation(
-    UPDATE_IMAP_CONNECTION,
-  );
-
   const resolver = isEditing
     ? zodResolver(
         imapConnectionFormSchema.omit({ password: true }).merge(
