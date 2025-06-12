@@ -34,9 +34,9 @@ export const findOneOperation = async ({
   }
 
   return {
+    ...response,
     data: {
       findResponse: response.data[objectMetadataSingularName],
     },
-    errors: response.errors,
   };
 };
