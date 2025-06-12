@@ -18,7 +18,7 @@ export const TESTING_MOCK_ACCESS_TOKEN = {
 
 type TestingMockAccessTokenKeys = keyof typeof TESTING_MOCK_ACCESS_TOKEN;
 
-export type MakeMetadataAPIRequestOptions = {
+export type MakeGraphqlRequestOptions = {
   unAuthenticated?: boolean;
   authenticationToken?: string;
   testingToken?: TestingMockAccessTokenKeys;
@@ -28,7 +28,7 @@ type ApiPath = 'metadata' | 'graphql';
 
 export type GraphqlOperationWithOptions = {
   operation: GraphqlOperation;
-  options?: MakeMetadataAPIRequestOptions;
+  options?: MakeGraphqlRequestOptions;
 };
 export const makeGraphqlRequest = async <ResponseTypeT = unknown>(
   path: ApiPath,
@@ -38,7 +38,7 @@ export const makeGraphqlRequest = async <ResponseTypeT = unknown>(
     authenticationToken,
     testingToken,
     unAuthenticated,
-  }: MakeMetadataAPIRequestOptions = {
+  }: MakeGraphqlRequestOptions = {
     unAuthenticated: false,
     testingToken: 'ADMIN',
     ...options,

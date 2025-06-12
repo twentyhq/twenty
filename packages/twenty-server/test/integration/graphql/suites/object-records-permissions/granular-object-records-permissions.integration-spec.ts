@@ -1,10 +1,10 @@
+import gql from 'graphql-tag';
 import { createCustomRoleWithObjectPermissions } from 'test/integration/graphql/utils/create-custom-role-with-object-permissions.util';
 import { deleteRole } from 'test/integration/graphql/utils/delete-one-role.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
-import gql from 'graphql-tag';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
@@ -79,7 +79,7 @@ describe('granularObjectRecordsPermissions', () => {
       await deleteRole(customRoleId);
     });
 
-    it('should throw permission error when querying person while person reading rights are overriden to false', async () => {
+    it('should throw permission error when querying person while person reading rights are overridden to false', async () => {
       // Arrange
       const { roleId } = await createCustomRoleWithObjectPermissions({
         label: 'PersonReadRightsExcludedRole',
@@ -140,7 +140,7 @@ describe('granularObjectRecordsPermissions', () => {
       expect(companyResponse.data.company).toBeDefined();
     });
 
-    it('should successfully query person when person reading rights are overriden to true', async () => {
+    it('should successfully query person when person reading rights are overridden to true', async () => {
       // Arrange
       const { roleId } = await createCustomRoleWithObjectPermissions({
         label: 'PersonRole',
