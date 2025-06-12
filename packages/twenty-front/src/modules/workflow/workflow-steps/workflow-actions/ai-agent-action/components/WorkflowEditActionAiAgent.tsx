@@ -7,7 +7,11 @@ import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-acti
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useEffect } from 'react';
 import { useIcons } from 'twenty-ui/display';
-import { MODEL_PROVIDERS, MODELS } from '../constants/AIAgent';
+import {
+  MODEL_PROVIDERS,
+  MODELS,
+  RESPONSE_FORMATS,
+} from '../constants/AIAgent';
 import { useAiAgentForm } from '../hooks/useAiAgentForm';
 
 type WorkflowEditActionAiAgentProps = {
@@ -94,18 +98,13 @@ export const WorkflowEditActionAiAgent = ({
           onChange={(value) => handleFieldChange('prompt', value)}
           VariablePicker={WorkflowVariablePicker}
         />
-        <FormTextFieldInput
+        <Select
+          dropdownId="select-response-format"
           label="Response Format"
-          placeholder="Enter response format (e.g. 'text', 'json')"
-          readonly={actionOptions.readonly}
-          defaultValue={formData.responseFormat}
-          error={
-            errorMessagesVisible.responseFormat
-              ? errorMessages.responseFormat
-              : undefined
-          }
-          onBlur={() => onBlur('responseFormat')}
+          options={RESPONSE_FORMATS}
+          value={formData.responseFormat}
           onChange={(value) => handleFieldChange('responseFormat', value)}
+          disabled={actionOptions.readonly}
         />
       </WorkflowStepBody>
     </>

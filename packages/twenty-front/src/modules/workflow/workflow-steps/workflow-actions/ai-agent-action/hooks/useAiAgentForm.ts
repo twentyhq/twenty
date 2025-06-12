@@ -1,6 +1,8 @@
 import { WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { useCallback, useEffect, useState } from 'react';
+import { SelectOption } from 'twenty-ui/input';
 import { useDebouncedCallback } from 'use-debounce';
+import { RESPONSE_FORMATS } from '../constants/AIAgent';
 
 type AiAgentFormData = {
   modelProvider: string;
@@ -48,7 +50,19 @@ export const useAiAgentForm = ({
         case 'prompt':
           return !value ? 'Prompt is required' : undefined;
         case 'responseFormat':
-          return !value ? 'Response format is required' : undefined;
+          {
+            if (!value) {
+              return 'Response format is required';
+            }
+            const allowedValues = RESPONSE_FORMATS.map(
+              (opt: SelectOption<string>) => opt.value,
+            );
+            if (!allowedValues.includes(value))
+              return (
+                'Response format must be one of: ' + allowedValues.join(', ')
+              );
+          }
+          return undefined;
         default:
           return undefined;
       }

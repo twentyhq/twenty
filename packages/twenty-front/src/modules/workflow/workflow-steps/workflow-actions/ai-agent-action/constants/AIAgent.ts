@@ -22,3 +22,8 @@ export const MODELS: Record<string, SelectOption<string>[]> = {
     { value: 'gemini-ultra', label: 'Gemini Ultra' },
   ],
 };
+
+export const RESPONSE_FORMATS: SelectOption<string>[] = [
+  { value: 'text', label: 'Text' },
+  { value: 'json', label: 'JSON' },
+];
