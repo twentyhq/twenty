@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { PerformMetadataQueryParams } from 'test/integration/types/perform-metadata-query.type';
+import { PerformMetadataQueryParams } from 'test/integration/graphql/types/perform-metadata-query.type';
 
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 

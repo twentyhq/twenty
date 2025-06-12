@@ -1,9 +1,9 @@
+import { PerformMetadataQueryParams } from 'test/integration/graphql/types/perform-metadata-query.type';
 import { makeMetadataAPIRequest } from 'test/integration/graphql/utils/make-metadata-api-request.util';
 import {
   CreateOneObjectFactoryInput,
   createOneObjectMetadataQueryFactory,
 } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata-query-factory.util';
-import { PerformMetadataQueryParams } from 'test/integration/types/perform-metadata-query.type';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';

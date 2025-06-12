@@ -1,5 +1,5 @@
 import { isDefined } from 'class-validator';
-import { CommonResponseBody } from 'test/integration/types/common-response-body.type';
+import { CommonResponseBody } from 'test/integration/graphql/types/common-response-body.type';
 
 type WarnIfNoErrorButExpectedToFailInput = {
   response: Awaited<CommonResponseBody<unknown>>;

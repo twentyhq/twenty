@@ -1,8 +1,8 @@
 import { randomUUID } from 'crypto';
 
+import { CommonResponseBody } from 'test/integration/graphql/types/common-response-body.type';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { CommonResponseBody } from 'test/integration/types/common-response-body.type';
 import { capitalize } from 'twenty-shared/utils';
 
 export const performCreateManyOperation = async (

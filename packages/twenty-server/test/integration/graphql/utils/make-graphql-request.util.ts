@@ -1,6 +1,6 @@
 import { ASTNode, print } from 'graphql';
 import request from 'supertest';
-import { CommonResponseBody } from 'test/integration/types/common-response-body.type';
+import { CommonResponseBody } from 'test/integration/graphql/types/common-response-body.type';
 
 type GraphqlOperation = {
   query: ASTNode;

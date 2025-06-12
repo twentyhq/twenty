@@ -1,8 +1,8 @@
+import { PerformMetadataQueryParams } from 'test/integration/graphql/types/perform-metadata-query.type';
 import {
   UpdateOneFieldFactoryInput,
   updateOneFieldMetadataQueryFactory,
 } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata-query-factory.util';
-import { PerformMetadataQueryParams } from 'test/integration/types/perform-metadata-query.type';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';

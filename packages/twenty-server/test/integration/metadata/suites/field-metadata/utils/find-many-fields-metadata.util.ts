@@ -1,10 +1,10 @@
+import { PerformMetadataQueryParams } from 'test/integration/graphql/types/perform-metadata-query.type';
 import { makeMetadataAPIRequest } from 'test/integration/graphql/utils/make-metadata-api-request.util';
 import {
   FindManyFieldsMetadataFactoryInput,
   findManyFieldsMetadataQueryFactory,
 } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata-query-factory.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
-import { PerformMetadataQueryParams } from 'test/integration/types/perform-metadata-query.type';
 
 export const findManyFieldsMetadata = async ({
   input,
