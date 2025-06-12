@@ -34,28 +34,25 @@ type UseConnectedAccountProps = {
   skip?: boolean;
 };
 
+type ConnectionParams = {
+  host: string;
+  port: number;
+  secure: boolean;
+  messageVisibility: MessageChannelVisibility;
+};
+
 type UseConnectedAccountReturn = {
   connectedAccount?: ConnectedAccount;
   loading: boolean;
   error?: Error;
-  connectionParams?: {
-    host: string;
-    port: number;
-    secure: boolean;
-    messageVisibility: MessageChannelVisibility;
-  };
+  connectionParams?: ConnectionParams;
 };
 
 export const useConnectedAccount = ({
   connectedAccountId,
   skip = false,
 }: UseConnectedAccountProps): UseConnectedAccountReturn => {
-  const [connectionParams, setConnectionParams] = useState<{
-    host: string;
-    port: number;
-    secure: boolean;
-    messageVisibility: MessageChannelVisibility;
-  }>();
+  const [connectionParams, setConnectionParams] = useState<ConnectionParams>();
 
   const { data, loading, error } = useQuery(GET_CONNECTED_ACCOUNT, {
     variables: {
