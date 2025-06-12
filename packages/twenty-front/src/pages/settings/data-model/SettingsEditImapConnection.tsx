@@ -100,7 +100,7 @@ export const SettingsEditImapConnection = () => {
         }
       >
         <SettingsPageContainer>
-          <ImapConnectionForm control={control} isEditing={true} />
+          <ImapConnectionForm control={control} isEditing />
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
     </FormProvider>
