@@ -2,7 +2,7 @@ import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/
 import { filterAvailableFieldMetadataItemsToImport } from '@/object-record/spreadsheet-import/utils/filterAvailableFieldMetadataItemsToImport';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
-import { isString } from '@sniptt/guards';
+import { escapeCSVValue } from '@/spreadsheet-import/utils/escapeCSVValue';
 import { saveAs } from 'file-saver';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -120,22 +120,7 @@ export const useDownloadFakeRecords = () => {
 
   const formatToCsvContent = (rows: string[][]) => {
     const escapedRows = rows.map((row) => {
-      return row.map((value) => {
-        if (value == null) return '';
-
-        const stringValue = isString(value) ? value : JSON.stringify(value);
-
-        if (
-          stringValue.includes(',') ||
-          stringValue.includes('"') ||
-          stringValue.includes('\n') ||
-          stringValue.includes('\r')
-        ) {
-          return `"${stringValue.replace(/"/g, '""')}"`;
-        }
-
-        return stringValue;
-      });
+      return row.map((value) => escapeCSVValue(value));
     });
 
     const csvContent = [...escapedRows.map((row) => row.join(','))].join('\n');

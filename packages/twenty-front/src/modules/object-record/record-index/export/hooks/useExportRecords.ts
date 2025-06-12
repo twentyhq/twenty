@@ -12,6 +12,7 @@ import {
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constants/CompositeFieldSubFieldLabel';
+import { escapeCSVValue } from '@/spreadsheet-import/utils/escapeCSVValue';
 import { t } from '@lingui/core/macro';
 import { saveAs } from 'file-saver';
 import { isDefined } from 'twenty-shared/utils';
@@ -59,9 +60,11 @@ export const generateCsv: GenerateExport = ({
   const keys = columnsToExportWithIdColumn.flatMap((col) => {
     const column = {
       field: `${col.metadata.fieldName}${col.type === 'RELATION' ? 'Id' : ''}`,
-      title: [col.label, col.type === 'RELATION' ? 'Id' : null]
-        .filter(isDefined)
-        .join(' '),
+      title: escapeCSVValue(
+        [col.label, col.type === 'RELATION' ? 'Id' : null]
+          .filter(isDefined)
+          .join(' '),
+      ),
     };
 
     const columnType = col.type;
