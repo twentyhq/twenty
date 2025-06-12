@@ -34,13 +34,13 @@ export const InformationBannerWrapper = () => {
   const displayBillingSubscriptionCanceledBanner =
     isWorkspaceSuspended && !isDefined(subscriptionStatus);
 
-  const displayFailPaymentInfoBanner = [
-    SubscriptionStatus.PastDue,
-    SubscriptionStatus.Unpaid,
-    SubscriptionStatus.Expired,
-  ];
-  subscriptionStatus === SubscriptionStatus.PastDue ||
-    subscriptionStatus === SubscriptionStatus.Unpaid;
+  const displayFailPaymentInfoBanner = (
+    [
+      SubscriptionStatus.PastDue,
+      SubscriptionStatus.Unpaid,
+      SubscriptionStatus.Expired,
+    ] as (typeof subscriptionStatus)[]
+  ).includes(subscriptionStatus);
 
   const displayEndTrialPeriodBanner =
     isSomeMeteredProductCapReached &&
