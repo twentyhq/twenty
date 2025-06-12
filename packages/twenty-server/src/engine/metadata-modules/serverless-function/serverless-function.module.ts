@@ -15,7 +15,7 @@ import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverles
 @Module({
   imports: [
     FileUploadModule,
-    NestjsQueryTypeOrmModule.forFeature([ServerlessFunctionEntity], 'metadata'),
+    NestjsQueryTypeOrmModule.forFeature([ServerlessFunctionEntity], 'core'),
     TypeOrmModule.forFeature([FeatureFlag], 'core'),
     FileModule,
     ThrottlerModule,

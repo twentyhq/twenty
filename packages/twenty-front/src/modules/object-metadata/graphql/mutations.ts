@@ -45,23 +45,6 @@ export const CREATE_ONE_FIELD_METADATA_ITEM = gql`
   }
 `;
 
-export const CREATE_ONE_RELATION_METADATA_ITEM = gql`
-  mutation CreateOneRelationMetadataItem(
-    $input: CreateOneRelationMetadataInput!
-  ) {
-    createOneRelationMetadata(input: $input) {
-      id
-      relationType
-      fromObjectMetadataId
-      toObjectMetadataId
-      fromFieldMetadataId
-      toFieldMetadataId
-      createdAt
-      updatedAt
-    }
-  }
-`;
-
 export const UPDATE_ONE_FIELD_METADATA_ITEM = gql`
   mutation UpdateOneFieldMetadataItem(
     $idToUpdate: UUID!
@@ -149,14 +132,6 @@ export const DELETE_ONE_FIELD_METADATA_ITEM = gql`
       createdAt
       updatedAt
       settings
-    }
-  }
-`;
-
-export const DELETE_ONE_RELATION_METADATA_ITEM = gql`
-  mutation DeleteOneRelationMetadataItem($idToDelete: UUID!) {
-    deleteOneRelation(input: { id: $idToDelete }) {
-      id
     }
   }
 `;

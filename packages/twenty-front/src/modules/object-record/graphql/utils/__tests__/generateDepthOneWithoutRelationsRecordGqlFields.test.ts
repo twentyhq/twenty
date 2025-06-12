@@ -11,7 +11,6 @@ describe('generateDepthOneWithoutRelationsRecordGqlFields', () => {
 {
   "avatarUrl": true,
   "city": true,
-  "companyId": true,
   "createdAt": true,
   "createdBy": true,
   "deletedAt": true,

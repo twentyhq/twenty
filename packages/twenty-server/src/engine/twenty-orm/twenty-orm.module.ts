@@ -23,7 +23,7 @@ import { PgPoolSharedModule } from './pg-shared-pool/pg-shared-pool.module';
   imports: [
     TypeOrmModule.forFeature(
       [ObjectMetadataEntity, UserWorkspaceRoleEntity],
-      'metadata',
+      'core',
     ),
     DataSourceModule,
     WorkspaceCacheStorageModule,
