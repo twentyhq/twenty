@@ -16,6 +16,7 @@ import { mergeWorkflowDiagrams } from '@/workflow/workflow-diagram/utils/mergeWo
 import { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { addEdgeOptions } from '@/workflow/workflow-diagram/utils/addEdgeOptions';
 
 export const WorkflowDiagramEffect = ({
   workflowWithCurrentVersion,
@@ -44,10 +45,11 @@ export const WorkflowDiagramEffect = ({
         );
 
         const nextWorkflowDiagram = addCreateStepNodes(
-          getWorkflowVersionDiagram(currentVersion),
+          addEdgeOptions(getWorkflowVersionDiagram(currentVersion)),
         );
 
         let mergedWorkflowDiagram = nextWorkflowDiagram;
+
         if (isDefined(previousWorkflowDiagram)) {
           mergedWorkflowDiagram = mergeWorkflowDiagrams(
             previousWorkflowDiagram,
@@ -59,6 +61,7 @@ export const WorkflowDiagramEffect = ({
           snapshot,
           workflowLastCreatedStepIdState,
         );
+
         if (isDefined(lastCreatedStepId)) {
           mergedWorkflowDiagram.nodes = mergedWorkflowDiagram.nodes.map(
             (node) => {
@@ -79,6 +82,7 @@ export const WorkflowDiagramEffect = ({
   );
 
   const currentVersion = workflowWithCurrentVersion?.currentVersion;
+
   useEffect(() => {
     if (!isDefined(currentVersion)) {
       setFlow(undefined);

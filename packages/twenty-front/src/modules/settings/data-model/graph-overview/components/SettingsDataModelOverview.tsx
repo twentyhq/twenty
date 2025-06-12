@@ -204,8 +204,7 @@ export const SettingsDataModelOverview = () => {
       >
         <Background />
         <IconButtonGroup
-          className="react-flow__panel react-flow__controls bottom left"
-          size="small"
+          className="react-flow__panel react-flow__controls bottom left horizontal"
           iconButtons={[
             {
               Icon: IconPlus,
