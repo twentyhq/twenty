@@ -5,6 +5,7 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -33,6 +34,7 @@ export class CronTriggerCronJob {
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   @Process(CronTriggerCronJob.name)
@@ -44,41 +46,50 @@ export class CronTriggerCronJob {
       },
     });
 
+    console.log('WORKFLOW CRON activeWorkspaces', activeWorkspaces);
     const now = new Date();
 
     for (const activeWorkspace of activeWorkspaces) {
-      const workflowAutomatedTriggerRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowAutomatedTriggerWorkspaceEntity>(
-          activeWorkspace.id,
-          'workflowAutomatedTrigger',
-        );
+      try {
+        const workflowAutomatedTriggerRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowAutomatedTriggerWorkspaceEntity>(
+            activeWorkspace.id,
+            'workflowAutomatedTrigger',
+          );
 
-      const workflowAutomatedCronTriggers =
-        await workflowAutomatedTriggerRepository.find({
-          where: { type: AutomatedTriggerType.CRON },
-        });
+        const workflowAutomatedCronTriggers =
+          await workflowAutomatedTriggerRepository.find({
+            where: { type: AutomatedTriggerType.CRON },
+          });
 
-      for (const workflowAutomatedCronTrigger of workflowAutomatedCronTriggers) {
-        const settings =
-          workflowAutomatedCronTrigger.settings as CronTriggerSettings;
+        for (const workflowAutomatedCronTrigger of workflowAutomatedCronTriggers) {
+          const settings =
+            workflowAutomatedCronTrigger.settings as CronTriggerSettings;
 
-        if (!isDefined(settings.pattern)) {
-          continue;
+          if (!isDefined(settings.pattern)) {
+            continue;
+          }
+
+          if (!shouldRunNow(settings.pattern, now)) {
+            continue;
+          }
+
+          await this.messageQueueService.add<WorkflowTriggerJobData>(
+            WorkflowTriggerJob.name,
+            {
+              workspaceId: activeWorkspace.id,
+              workflowId: workflowAutomatedCronTrigger.workflowId,
+              payload: {},
+            },
+            { retryLimit: 3 },
+          );
         }
-
-        if (!shouldRunNow(settings.pattern, now)) {
-          continue;
-        }
-
-        await this.messageQueueService.add<WorkflowTriggerJobData>(
-          WorkflowTriggerJob.name,
-          {
-            workspaceId: activeWorkspace.id,
-            workflowId: workflowAutomatedCronTrigger.workflowId,
-            payload: {},
+      } catch (error) {
+        this.exceptionHandlerService.captureExceptions([error], {
+          workspace: {
+            id: activeWorkspace.id,
           },
-          { retryLimit: 3 },
-        );
+        });
       }
     }
   }
