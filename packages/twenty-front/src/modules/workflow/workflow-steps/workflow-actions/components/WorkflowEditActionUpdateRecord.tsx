@@ -241,11 +241,11 @@ export const WorkflowEditActionUpdateRecord = ({
 
           return (
             <FormFieldInput
-              key={fieldDefinition.metadata.fieldName}
+              key={fieldName}
               defaultValue={currentValue}
               field={fieldDefinition}
               onChange={(value) => {
-                handleFieldChange(fieldDefinition.metadata.fieldName, value);
+                handleFieldChange(fieldName, value);
               }}
               VariablePicker={WorkflowVariablePicker}
               readonly={isFormDisabled}
