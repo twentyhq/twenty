@@ -45,7 +45,8 @@ export const WorkflowDiagramStepNodeIcon = ({
     }
     case 'action': {
       switch (data.actionType) {
-        case 'CODE': {
+        case 'CODE':
+        case 'HTTP_REQUEST': {
           return (
             <StyledStepNodeLabelIconContainer>
               <Icon
@@ -60,17 +61,6 @@ export const WorkflowDiagramStepNodeIcon = ({
           return (
             <StyledStepNodeLabelIconContainer>
               <Icon size={theme.icon.size.md} color={theme.color.blue} />
-            </StyledStepNodeLabelIconContainer>
-          );
-        }
-        case 'HTTP_REQUEST': {
-          return (
-            <StyledStepNodeLabelIconContainer>
-              <Icon
-                size={theme.icon.size.md}
-                color={theme.color.orange}
-                stroke={theme.icon.stroke.sm}
-              />
             </StyledStepNodeLabelIconContainer>
           );
         }
