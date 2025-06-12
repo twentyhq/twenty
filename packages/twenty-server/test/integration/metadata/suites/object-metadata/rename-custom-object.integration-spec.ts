@@ -3,7 +3,7 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { findManyObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-query-factory.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataAPIRequest } from 'test/integration/utils/make-metadata-api-request.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 const LISTING_NAME_SINGULAR = 'listing';

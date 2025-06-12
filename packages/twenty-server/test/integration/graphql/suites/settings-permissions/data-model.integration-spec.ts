@@ -7,7 +7,7 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata-query-factory.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata-query-factory.util';
-import { makeMetadataAPIRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
+import { makeMetadataAPIRequestWithMemberRole } from 'test/integration/utils/make-metadata-api-request-with-member-role.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';

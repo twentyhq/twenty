@@ -3,8 +3,8 @@ import {
   DeleteOneFieldFactoryInput,
   deleteOneFieldMetadataQueryFactory,
 } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata-query-factory.util';
-import { PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
+import { PerformMetadataQueryParams } from 'test/integration/types/perform-metadata-query.type';
 
 export const deleteOneFieldMetadata = async ({
   input,

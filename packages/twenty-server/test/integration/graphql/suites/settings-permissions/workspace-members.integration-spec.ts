@@ -1,9 +1,9 @@
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
-import { makeGraphqlAPIRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { restoreOneOperationFactory } from 'test/integration/graphql/utils/restore-one-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
+import { makeGraphqlAPIRequestWithMemberRole } from 'test/integration/utils/make-graphql-api-request-with-member-role.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
