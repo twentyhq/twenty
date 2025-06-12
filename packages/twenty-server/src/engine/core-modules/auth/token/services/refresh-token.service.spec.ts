@@ -148,7 +148,13 @@ describe('RefreshTokenService', () => {
       });
       expect(appTokenRepository.save).toHaveBeenCalled();
       expect(jwtWrapperService.sign).toHaveBeenCalledWith(
-        { sub: userId, workspaceId, type: 'REFRESH', userId: 'user-id' },
+        {
+          sub: userId,
+          workspaceId,
+          type: 'REFRESH',
+          userId: 'user-id',
+          targetedTokenType: 'ACCESS',
+        },
         expect.objectContaining({
           secret: 'mock-secret',
           expiresIn: mockExpiresIn,
