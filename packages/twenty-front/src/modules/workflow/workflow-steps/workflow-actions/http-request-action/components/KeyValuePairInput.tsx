@@ -30,12 +30,12 @@ const StyledPlaceholder = styled.div`
   height: ${({ theme }) => theme.spacing(8)};
 `;
 
-type KeyValuePair = {
+export type KeyValuePair = {
   key: string;
   value: string;
 };
 
-type KeyValuePairInputProps = {
+export type KeyValuePairInputProps = {
   label?: string;
   defaultValue?: Record<string, string>;
   onChange: (value: Record<string, string>) => void;
@@ -43,6 +43,8 @@ type KeyValuePairInputProps = {
   VariablePicker?: VariablePickerComponent;
   error?: string;
   onBlur?: () => void;
+  keyPlaceholder?: string;
+  valuePlaceholder?: string;
 };
 
 export const KeyValuePairInput = ({
@@ -51,24 +53,28 @@ export const KeyValuePairInput = ({
   onChange,
   readonly,
   VariablePicker,
-  error,
-  onBlur,
+  keyPlaceholder = 'Key',
+  valuePlaceholder = 'Value',
 }: KeyValuePairInputProps) => {
   const [pairs, setPairs] = useState<KeyValuePair[]>(() => {
-    const initialPairs = Object.entries(defaultValue).map(([key, value]) => ({
-      key,
-      value,
-    }));
+    const initialPairs = defaultValue
+      ? Object.entries(defaultValue).map(([key, value]) => ({
+          key,
+          value,
+        }))
+      : [];
     return initialPairs.length > 0
       ? [...initialPairs, { key: '', value: '' }]
       : [{ key: '', value: '' }];
   });
 
   useEffect(() => {
-    const newPairs = Object.entries(defaultValue).map(([key, value]) => ({
-      key,
-      value,
-    }));
+    const newPairs = defaultValue
+      ? Object.entries(defaultValue).map(([key, value]) => ({
+          key,
+          value,
+        }))
+      : [];
     setPairs(
       newPairs.length > 0
         ? [...newPairs, { key: '', value: '' }]
@@ -135,7 +141,7 @@ export const KeyValuePairInput = ({
           <StyledRow key={index}>
             <StyledKeyValueContainer>
               <FormTextFieldInput
-                placeholder="Header name"
+                placeholder={keyPlaceholder}
                 readonly={readonly}
                 defaultValue={pair.key}
                 onChange={(value) =>
@@ -144,7 +150,7 @@ export const KeyValuePairInput = ({
                 VariablePicker={VariablePicker}
               />
               <FormTextFieldInput
-                placeholder="Header value"
+                placeholder={valuePlaceholder}
                 readonly={readonly}
                 defaultValue={pair.value}
                 onChange={(value) =>
@@ -159,9 +165,9 @@ export const KeyValuePairInput = ({
                   size="medium"
                   Icon={IconTrash}
                 />
-              ) : (
+              ) : pairs.length > 1 ? (
                 <StyledPlaceholder />
-              )}
+              ) : null}
             </StyledKeyValueContainer>
           </StyledRow>
         ))}
