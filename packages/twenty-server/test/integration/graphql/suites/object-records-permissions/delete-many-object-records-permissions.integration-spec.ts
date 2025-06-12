@@ -3,14 +3,12 @@ import { randomUUID } from 'node:crypto';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delete-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
-import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/utils/make-graphql-api-request-with-api-key.util';
-import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/utils/make-graphql-api-request-with-guest-role.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
+import { makeGraphqlAPIRequest } from 'test/integration/utils/make-graphql-api-request.util';
 
 describe('deleteManyObjectRecordsPermissions', () => {
   describe('permissions V2 disabled', () => {
@@ -26,15 +24,19 @@ describe('deleteManyObjectRecordsPermissions', () => {
         },
       });
 
-      const response =
-        await makeGraphqlAPIRequestWithGuestRole(graphqlOperation);
+      const response = await makeGraphqlAPIRequest({
+        operation: graphqlOperation,
+        options: {
+          testingToken: 'GUEST',
+        },
+      });
 
-      expect(response.body.data).toStrictEqual({ deletePeople: null });
-      expect(response.body.errors).toBeDefined();
-      expect(response.body.errors[0].message).toBe(
+      expect(response.data).toStrictEqual({ deletePeople: null });
+      expect(response.errors).toBeDefined();
+      expect(response.errors[0].message).toBe(
         PermissionsExceptionMessage.PERMISSION_DENIED,
       );
-      expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+      expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
     });
 
     it('should delete multiple object records when user has permission (admin role)', async () => {
@@ -55,7 +57,7 @@ describe('deleteManyObjectRecordsPermissions', () => {
         ],
       });
 
-      await makeGraphqlAPIRequest(createGraphqlOperation);
+      await makeGraphqlAPIRequest({ operation: createGraphqlOperation });
 
       const deleteGraphqlOperation = deleteManyOperationFactory({
         objectMetadataSingularName: 'person',
@@ -68,13 +70,15 @@ describe('deleteManyObjectRecordsPermissions', () => {
         },
       });
 
-      const response = await makeGraphqlAPIRequest(deleteGraphqlOperation);
+      const response = await makeGraphqlAPIRequest<any>({
+        operation: deleteGraphqlOperation,
+      });
 
-      expect(response.body.data).toBeDefined();
-      expect(response.body.data.deletePeople).toBeDefined();
-      expect(response.body.data.deletePeople).toHaveLength(2);
-      expect(response.body.data.deletePeople[0].id).toBe(personId1);
-      expect(response.body.data.deletePeople[1].id).toBe(personId2);
+      expect(response.data).toBeDefined();
+      expect(response.data.deletePeople).toBeDefined();
+      expect(response.data.deletePeople).toHaveLength(2);
+      expect(response.data.deletePeople[0].id).toBe(personId1);
+      expect(response.data.deletePeople[1].id).toBe(personId2);
     });
   });
 
@@ -86,7 +90,7 @@ describe('deleteManyObjectRecordsPermissions', () => {
         true,
       );
 
-      await makeGraphqlAPIRequest(enablePermissionsQuery);
+      await makeGraphqlAPIRequest({ operation: enablePermissionsQuery });
     });
 
     afterAll(async () => {
@@ -96,7 +100,7 @@ describe('deleteManyObjectRecordsPermissions', () => {
         false,
       );
 
-      await makeGraphqlAPIRequest(disablePermissionsQuery);
+      await makeGraphqlAPIRequest({ operation: disablePermissionsQuery });
     });
 
     it('should throw a permission error when user does not have permission (guest role)', async () => {
@@ -111,15 +115,19 @@ describe('deleteManyObjectRecordsPermissions', () => {
         },
       });
 
-      const response =
-        await makeGraphqlAPIRequestWithGuestRole(graphqlOperation);
+      const response = await makeGraphqlAPIRequest({
+        operation: graphqlOperation,
+        options: {
+          testingToken: 'GUEST',
+        },
+      });
 
-      expect(response.body.data).toStrictEqual({ deletePeople: null });
-      expect(response.body.errors).toBeDefined();
-      expect(response.body.errors[0].message).toBe(
+      expect(response.data).toStrictEqual({ deletePeople: null });
+      expect(response.errors).toBeDefined();
+      expect(response.errors[0].message).toBe(
         PermissionsExceptionMessage.PERMISSION_DENIED,
       );
-      expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+      expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
     });
 
     it('should delete multiple object records when user has permission (admin role)', async () => {
@@ -140,7 +148,7 @@ describe('deleteManyObjectRecordsPermissions', () => {
         ],
       });
 
-      await makeGraphqlAPIRequest(createGraphqlOperation);
+      await makeGraphqlAPIRequest({ operation: createGraphqlOperation });
 
       const deleteGraphqlOperation = deleteManyOperationFactory({
         objectMetadataSingularName: 'person',
@@ -153,13 +161,15 @@ describe('deleteManyObjectRecordsPermissions', () => {
         },
       });
 
-      const response = await makeGraphqlAPIRequest(deleteGraphqlOperation);
+      const response = await makeGraphqlAPIRequest<any>({
+        operation: deleteGraphqlOperation,
+      });
 
-      expect(response.body.data).toBeDefined();
-      expect(response.body.data.deletePeople).toBeDefined();
-      expect(response.body.data.deletePeople).toHaveLength(2);
-      expect(response.body.data.deletePeople[0].id).toBe(personId1);
-      expect(response.body.data.deletePeople[1].id).toBe(personId2);
+      expect(response.data).toBeDefined();
+      expect(response.data.deletePeople).toBeDefined();
+      expect(response.data.deletePeople).toHaveLength(2);
+      expect(response.data.deletePeople[0].id).toBe(personId1);
+      expect(response.data.deletePeople[1].id).toBe(personId2);
     });
 
     it('should delete multiple object records when executed by api key', async () => {
@@ -180,7 +190,7 @@ describe('deleteManyObjectRecordsPermissions', () => {
         ],
       });
 
-      await makeGraphqlAPIRequest(createGraphqlOperation);
+      await makeGraphqlAPIRequest({ operation: createGraphqlOperation });
 
       const deleteGraphqlOperation = deleteManyOperationFactory({
         objectMetadataSingularName: 'person',
@@ -193,15 +203,18 @@ describe('deleteManyObjectRecordsPermissions', () => {
         },
       });
 
-      const response = await makeGraphqlAPIRequestWithApiKey(
-        deleteGraphqlOperation,
-      );
+      const response = await makeGraphqlAPIRequest<any>({
+        operation: deleteGraphqlOperation,
+        options: {
+          testingToken: 'API_KEY',
+        },
+      });
 
-      expect(response.body.data).toBeDefined();
-      expect(response.body.data.deletePeople).toBeDefined();
-      expect(response.body.data.deletePeople).toHaveLength(2);
-      expect(response.body.data.deletePeople[0].id).toBe(personId1);
-      expect(response.body.data.deletePeople[1].id).toBe(personId2);
+      expect(response.data).toBeDefined();
+      expect(response.data.deletePeople).toBeDefined();
+      expect(response.data.deletePeople).toHaveLength(2);
+      expect(response.data.deletePeople[0].id).toBe(personId1);
+      expect(response.data.deletePeople[1].id).toBe(personId2);
     });
   });
 });

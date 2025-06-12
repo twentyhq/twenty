@@ -2,11 +2,10 @@ import { randomUUID } from 'node:crypto';
 
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/utils/make-graphql-api-request-with-guest-role.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { makeGraphqlAPIRequest } from 'test/integration/utils/make-graphql-api-request.util';
 
 describe('createManyObjectRecordsPermissions', () => {
   describe('permissions V2 disabled', () => {
@@ -25,15 +24,19 @@ describe('createManyObjectRecordsPermissions', () => {
         ],
       });
 
-      const response =
-        await makeGraphqlAPIRequestWithGuestRole(graphqlOperation);
+      const response = await makeGraphqlAPIRequest({
+        operation: graphqlOperation,
+        options: {
+          testingToken: 'GUEST',
+        },
+      });
 
-      expect(response.body.data).toStrictEqual({ createPeople: null });
-      expect(response.body.errors).toBeDefined();
-      expect(response.body.errors[0].message).toBe(
+      expect(response.data).toStrictEqual({ createPeople: null });
+      expect(response.errors).toBeDefined();
+      expect(response.errors[0].message).toBe(
         PermissionsExceptionMessage.PERMISSION_DENIED,
       );
-      expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+      expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
     });
 
     it('should create multiple object records when user has permission (admin role)', async () => {
@@ -54,13 +57,15 @@ describe('createManyObjectRecordsPermissions', () => {
         ],
       });
 
-      const response = await makeGraphqlAPIRequest(graphqlOperation);
+      const response = await makeGraphqlAPIRequest<any>({
+        operation: graphqlOperation,
+      });
 
-      expect(response.body.data).toBeDefined();
-      expect(response.body.data.createPeople).toBeDefined();
-      expect(response.body.data.createPeople).toHaveLength(2);
-      expect(response.body.data.createPeople[0].id).toBe(personId1);
-      expect(response.body.data.createPeople[1].id).toBe(personId2);
+      expect(response.data).toBeDefined();
+      expect(response.data.createPeople).toBeDefined();
+      expect(response.data.createPeople).toHaveLength(2);
+      expect(response.data.createPeople[0].id).toBe(personId1);
+      expect(response.data.createPeople[1].id).toBe(personId2);
     });
   });
 

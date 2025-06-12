@@ -3,9 +3,8 @@ import { randomUUID } from 'node:crypto';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
-import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/utils/make-graphql-api-request-with-guest-role.util';
+import { makeGraphqlAPIRequest } from 'test/integration/utils/make-graphql-api-request.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
@@ -16,7 +15,7 @@ describe('destroyOneObjectRecordsPermissions', () => {
     const personId = randomUUID();
 
     beforeAll(async () => {
-      const createGraphqlOperation = createOneOperationFactory({
+      const operation = createOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: PERSON_GQL_FIELDS,
         data: {
@@ -24,39 +23,43 @@ describe('destroyOneObjectRecordsPermissions', () => {
         },
       });
 
-      await makeGraphqlAPIRequest(createGraphqlOperation);
+      await makeGraphqlAPIRequest({ operation });
     });
 
     it('should throw a permission error when user does not have permission (guest role)', async () => {
-      const graphqlOperation = destroyOneOperationFactory({
+      const operation = destroyOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: PERSON_GQL_FIELDS,
         recordId: personId,
       });
 
-      const response =
-        await makeGraphqlAPIRequestWithGuestRole(graphqlOperation);
+      const response = await makeGraphqlAPIRequest({
+        operation,
+        options: {
+          testingToken: 'GUEST',
+        },
+      });
 
-      expect(response.body.data).toStrictEqual({ destroyPerson: null });
-      expect(response.body.errors).toBeDefined();
-      expect(response.body.errors[0].message).toBe(
+      expect(response.data).toStrictEqual({ destroyPerson: null });
+      expect(response.errors).toBeDefined();
+      expect(response.errors[0].message).toBe(
         PermissionsExceptionMessage.PERMISSION_DENIED,
       );
-      expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+      expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
     });
 
     it('should destroy an object record when user has permission (admin role)', async () => {
-      const graphqlOperation = destroyOneOperationFactory({
+      const operation = destroyOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: PERSON_GQL_FIELDS,
         recordId: personId,
       });
 
-      const response = await makeGraphqlAPIRequest(graphqlOperation);
+      const response = await makeGraphqlAPIRequest<any>({ operation });
 
-      expect(response.body.data).toBeDefined();
-      expect(response.body.data.destroyPerson).toBeDefined();
-      expect(response.body.data.destroyPerson.id).toBe(personId);
+      expect(response.data).toBeDefined();
+      expect(response.data.destroyPerson).toBeDefined();
+      expect(response.data.destroyPerson.id).toBe(personId);
     });
   });
 
@@ -64,7 +67,7 @@ describe('destroyOneObjectRecordsPermissions', () => {
     const personId = randomUUID();
 
     beforeAll(async () => {
-      const createGraphqlOperation = createOneOperationFactory({
+      const createOperation = createOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: PERSON_GQL_FIELDS,
         data: {
@@ -72,58 +75,62 @@ describe('destroyOneObjectRecordsPermissions', () => {
         },
       });
 
-      await makeGraphqlAPIRequest(createGraphqlOperation);
+      await makeGraphqlAPIRequest({ operation: createOperation });
 
-      const enablePermissionsQuery = updateFeatureFlagFactory(
+      const operation = updateFeatureFlagFactory(
         SEED_APPLE_WORKSPACE_ID,
         'IS_PERMISSIONS_V2_ENABLED',
         true,
       );
 
-      await makeGraphqlAPIRequest(enablePermissionsQuery);
+      await makeGraphqlAPIRequest({ operation });
     });
 
     afterAll(async () => {
-      const disablePermissionsQuery = updateFeatureFlagFactory(
+      const operation = updateFeatureFlagFactory(
         SEED_APPLE_WORKSPACE_ID,
         'IS_PERMISSIONS_V2_ENABLED',
         false,
       );
 
-      await makeGraphqlAPIRequest(disablePermissionsQuery);
+      await makeGraphqlAPIRequest({ operation });
     });
 
     it('should throw a permission error when user does not have permission (guest role)', async () => {
       const personId = randomUUID();
-      const graphqlOperation = destroyOneOperationFactory({
+      const operation = destroyOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: PERSON_GQL_FIELDS,
         recordId: personId,
       });
 
-      const response =
-        await makeGraphqlAPIRequestWithGuestRole(graphqlOperation);
+      const response = await makeGraphqlAPIRequest({
+        operation,
+        options: {
+          testingToken: 'GUEST',
+        },
+      });
 
-      expect(response.body.data).toStrictEqual({ destroyPerson: null });
-      expect(response.body.errors).toBeDefined();
-      expect(response.body.errors[0].message).toBe(
+      expect(response.data).toStrictEqual({ destroyPerson: null });
+      expect(response.errors).toBeDefined();
+      expect(response.errors[0].message).toBe(
         PermissionsExceptionMessage.PERMISSION_DENIED,
       );
-      expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+      expect(response.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
     });
 
     it('should destroy an object record when user has permission (admin role)', async () => {
-      const graphqlOperation = destroyOneOperationFactory({
+      const operation = destroyOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: PERSON_GQL_FIELDS,
         recordId: personId,
       });
 
-      const response = await makeGraphqlAPIRequest(graphqlOperation);
+      const response = await makeGraphqlAPIRequest<any>({ operation });
 
-      expect(response.body.data).toBeDefined();
-      expect(response.body.data.destroyPerson).toBeDefined();
-      expect(response.body.data.destroyPerson.id).toBe(personId);
+      expect(response.data).toBeDefined();
+      expect(response.data.destroyPerson).toBeDefined();
+      expect(response.data.destroyPerson.id).toBe(personId);
     });
   });
 });

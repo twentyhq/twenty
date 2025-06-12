@@ -2,10 +2,9 @@ import { default as request } from 'supertest';
 import { createCustomRoleWithObjectPermissions } from 'test/integration/graphql/utils/create-custom-role-with-object-permissions.util';
 import { deleteRole } from 'test/integration/graphql/utils/delete-one-role.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
-import { makeGraphqlAPIRequestWithMemberRole as makeGraphqlAPIRequestWithJony } from 'test/integration/utils/make-graphql-api-request-with-member-role.util';
+import { makeGraphqlAPIRequest } from 'test/integration/utils/make-graphql-api-request.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
@@ -27,7 +26,7 @@ describe('granularObjectRecordsPermissions', () => {
         true,
       );
 
-      await makeGraphqlAPIRequest(enablePermissionsQuery);
+      await makeGraphqlAPIRequest<any>({ operation: enablePermissionsQuery });
 
       // Get the original Member role ID for restoration later
       const getRolesQuery = {
@@ -77,7 +76,7 @@ describe('granularObjectRecordsPermissions', () => {
         false,
       );
 
-      await makeGraphqlAPIRequest(disablePermissionsQuery);
+      await makeGraphqlAPIRequest<any>({ operation: disablePermissionsQuery });
     });
 
     afterEach(async () => {
@@ -100,7 +99,7 @@ describe('granularObjectRecordsPermissions', () => {
       });
 
       // Act
-      const graphqlOperation = findOneOperationFactory({
+      const operation = findOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: `
           id
@@ -119,23 +118,31 @@ describe('granularObjectRecordsPermissions', () => {
         filter: { name: { eq: 'Apple' } },
       });
 
-      const personResponse =
-        await makeGraphqlAPIRequestWithJony(graphqlOperation);
+      const personResponse = await makeGraphqlAPIRequest<any>({
+        operation,
+        options: {
+          testingToken: 'MEMBER',
+        },
+      });
 
-      const companyResponse = await makeGraphqlAPIRequestWithJony(
-        companyGraphqlOperation,
-      );
+      const companyResponse = await makeGraphqlAPIRequest<any>({
+        operation: companyGraphqlOperation,
+        options: {
+          testingToken: 'MEMBER',
+        },
+      });
 
       // Assert
-      expect(personResponse.body.errors).toBeDefined();
-      expect(personResponse.body.errors[0].message).toBe(
+      expect(personResponse.data).toBeNull();
+      expect(personResponse.errors).toBeDefined();
+      expect(personResponse.errors[0].message).toBe(
         PermissionsExceptionMessage.PERMISSION_DENIED,
       );
-      expect(personResponse.body.errors[0].extensions.code).toBe(
+      expect(personResponse.errors[0].extensions.code).toBe(
         ErrorCode.FORBIDDEN,
       );
-      expect(companyResponse.body.data).toBeDefined();
-      expect(companyResponse.body.data.company).toBeDefined();
+      expect(companyResponse.data).toBeDefined();
+      expect(companyResponse.data.company).toBeDefined();
     });
 
     it('should successfully query person when person reading rights are overriden to true', async () => {
@@ -155,7 +162,7 @@ describe('granularObjectRecordsPermissions', () => {
       });
 
       // Act
-      const graphqlOperation = findOneOperationFactory({
+      const operation = findOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: `
           id
@@ -174,21 +181,28 @@ describe('granularObjectRecordsPermissions', () => {
         filter: { name: { eq: 'Apple' } },
       });
 
-      const personResponse =
-        await makeGraphqlAPIRequestWithJony(graphqlOperation);
+      const personResponse = await makeGraphqlAPIRequest<any>({
+        operation,
+        options: {
+          testingToken: 'MEMBER',
+        },
+      });
 
-      const companyResponse = await makeGraphqlAPIRequestWithJony(
-        companyGraphqlOperation,
-      );
+      const companyResponse = await makeGraphqlAPIRequest<any>({
+        operation: companyGraphqlOperation,
+        options: {
+          testingToken: 'MEMBER',
+        },
+      });
 
       // Assert
-      expect(personResponse.body.data).toBeDefined();
-      expect(personResponse.body.data.person).toBeDefined();
-      expect(companyResponse.body.errors).toBeDefined();
-      expect(companyResponse.body.errors[0].message).toBe(
+      expect(personResponse.data).toBeDefined();
+      expect(personResponse.data.person).toBeDefined();
+      expect(companyResponse.errors).toBeDefined();
+      expect(companyResponse.errors[0].message).toBe(
         PermissionsExceptionMessage.PERMISSION_DENIED,
       );
-      expect(companyResponse.body.errors[0].extensions.code).toBe(
+      expect(companyResponse.errors[0].extensions.code).toBe(
         ErrorCode.FORBIDDEN,
       );
     });

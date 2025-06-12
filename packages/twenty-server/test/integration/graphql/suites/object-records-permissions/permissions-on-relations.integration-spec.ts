@@ -6,15 +6,14 @@ import { createCustomRoleWithObjectPermissions } from 'test/integration/graphql/
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { deleteRole } from 'test/integration/graphql/utils/delete-one-role.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
-import { makeGraphqlAPIRequestWithMemberRole as makeGraphqlAPIRequestWithJony } from 'test/integration/utils/make-graphql-api-request-with-member-role.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { makeGraphqlAPIRequest } from 'test/integration/utils/make-graphql-api-request.util';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -149,7 +148,7 @@ describe('permissionsOnRelations', () => {
         `,
       });
 
-      const response = await makeGraphqlAPIRequestWithJony(graphqlOperation);
+      const response = await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
 
       // The query should fail when trying to access company relation without permission
       expect(response.body.errors[0].message).toBe(
@@ -189,7 +188,7 @@ describe('permissionsOnRelations', () => {
         `,
       });
 
-      const response = await makeGraphqlAPIRequestWithJony(graphqlOperation);
+      const response = await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
 
       // The query should succeed
       expect(response.body.data).toBeDefined();
@@ -240,7 +239,7 @@ describe('permissionsOnRelations', () => {
         `,
       });
 
-      const response = await makeGraphqlAPIRequestWithJony(graphqlOperation);
+      const response = await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
 
       expect(response.body.errors).toBeDefined();
       expect(response.body.errors[0].message).toBe(

@@ -57,7 +57,8 @@ describe('GraphQL People Pagination with Composite Field Sorting', () => {
       });
 
       const response = await makeGraphqlAPIRequest({ operation: graphqlOperation });
-      expect(response.status).toBe(200);
+      expect(response.rawResponse.status).toBe(200);
+      expect(response.errors).toBeUndefined();
     }
   });
 
@@ -75,16 +76,18 @@ describe('GraphQL People Pagination with Composite Field Sorting', () => {
       first: 2,
     });
 
-    const firstPageResponse = await makeGraphqlAPIRequest({ operation: firstPageOperation });
-    expect(firstPageResponse.status).toBe(200);
+    const firstPageResponse = await makeGraphqlAPIRequest<any>({ operation: firstPageOperation });
+    expect(firstPageResponse.rawResponse.status).toBe(200);
+    expect(firstPageResponse.errors).toBeUndefined();
 
-    const firstPagePeople = firstPageResponse.data.people.edges.map(
+    const firstPageData = firstPageResponse.data;
+    const firstPagePeople = firstPageData.people.edges.map(
       (edge: any) => edge.node,
     );
-    const firstPageCursor = firstPageResponse.data.people.pageInfo.endCursor;
+    const firstPageCursor = firstPageData.people.pageInfo.endCursor;
 
     expect(firstPagePeople).toHaveLength(2);
-    expect(firstPageResponse.data.people.pageInfo.hasNextPage).toBe(true);
+    expect(firstPageData.people.pageInfo.hasNextPage).toBe(true);
 
     expect(firstPagePeople[0].name.firstName).toBe('Alice');
     expect(firstPagePeople[0].name.lastName).toBe('Brown');
@@ -105,10 +108,12 @@ describe('GraphQL People Pagination with Composite Field Sorting', () => {
       after: firstPageCursor,
     });
 
-    const secondPageResponse = await makeGraphqlAPIRequest({ operation: secondPageOperation });
-    expect(secondPageResponse.status).toBe(200);
+    const secondPageResponse = await makeGraphqlAPIRequest<any>({ operation: secondPageOperation });
+    expect(secondPageResponse.rawResponse.status).toBe(200);
+    expect(secondPageResponse.errors).toBeUndefined();
 
-    const secondPagePeople = secondPageResponse.data.people.edges.map(
+    const secondPageData = secondPageResponse.data;
+    const secondPagePeople = secondPageData.people.edges.map(
       (edge: any) => edge.node,
     );
 
@@ -138,20 +143,22 @@ describe('GraphQL People Pagination with Composite Field Sorting', () => {
         },
       },
       first: 2,
-      after: secondPageResponse.data.people.pageInfo.endCursor,
+      after: secondPageData.people.pageInfo.endCursor,
     });
 
-    const thirdPageResponse = await makeGraphqlAPIRequest({ operation: thirdPageOperation });
-    expect(thirdPageResponse.status).toBe(200);
+    const thirdPageResponse = await makeGraphqlAPIRequest<any>({ operation: thirdPageOperation });
+    expect(thirdPageResponse.rawResponse.status).toBe(200);
+    expect(thirdPageResponse.errors).toBeUndefined();
 
-    const thirdPagePeople = thirdPageResponse.data.people.edges.map(
+    const thirdPageData = thirdPageResponse.data;
+    const thirdPagePeople = thirdPageData.people.edges.map(
       (edge: any) => edge.node,
     );
 
     expect(thirdPagePeople).toHaveLength(1);
     expect(thirdPagePeople[0].name.firstName).toBe('Charlie');
     expect(thirdPagePeople[0].name.lastName).toBe('Davis');
-    expect(thirdPageResponse.data.people.pageInfo.hasNextPage).toBe(false);
+    expect(thirdPageData.people.pageInfo.hasNextPage).toBe(false);
   });
 
   it('should support cursor-based pagination with fullName in descending order', async () => {
@@ -168,10 +175,12 @@ describe('GraphQL People Pagination with Composite Field Sorting', () => {
       first: 2,
     });
 
-    const firstPageResponse =
-      await makeGraphqlAPIRequest({ operation: firstPageOperation }).expect(200);
+    const firstPageResponse = await makeGraphqlAPIRequest<any>({ operation: firstPageOperation });
+    expect(firstPageResponse.rawResponse.status).toBe(200);
+    expect(firstPageResponse.errors).toBeUndefined();
 
-    const firstPagePeople = firstPageResponse.body.data.people.edges.map(
+    const firstPageData = firstPageResponse.data;
+    const firstPagePeople = firstPageData.people.edges.map(
       (edge: any) => edge.node,
     );
 
@@ -193,13 +202,15 @@ describe('GraphQL People Pagination with Composite Field Sorting', () => {
         },
       },
       first: 2,
-      after: firstPageResponse.body.data.people.pageInfo.endCursor,
+      after: firstPageData.people.pageInfo.endCursor,
     });
 
-    const secondPageResponse =
-      await makeGraphqlAPIRequest({ operation: secondPageOperation }).expect(200);
+    const secondPageResponse = await makeGraphqlAPIRequest<any>({ operation: secondPageOperation });
+    expect(secondPageResponse.rawResponse.status).toBe(200);
+    expect(secondPageResponse.errors).toBeUndefined();
 
-    const secondPagePeople = secondPageResponse.body.data.people.edges.map(
+    const secondPageData = secondPageResponse.data;
+    const secondPagePeople = secondPageData.people.edges.map(
       (edge: any) => edge.node,
     );
 
@@ -224,14 +235,15 @@ describe('GraphQL People Pagination with Composite Field Sorting', () => {
       },
     });
 
-    const allPeopleResponse =
-      await makeGraphqlAPIRequest({ operation: allPeopleOperation }).expect(200);
+    const allPeopleResponse = await makeGraphqlAPIRequest<any>({ operation: allPeopleOperation });
+    expect(allPeopleResponse.rawResponse.status).toBe(200);
+    expect(allPeopleResponse.errors).toBeUndefined();
 
-    const allPeople = allPeopleResponse.body.data.people.edges.map(
+    const allPeopleData = allPeopleResponse.data;
+    const allPeople = allPeopleData.people.edges.map(
       (edge: any) => edge.node,
     );
-    const lastPersonCursor =
-      allPeopleResponse.body.data.people.pageInfo.endCursor;
+    const lastPersonCursor = allPeopleData.people.pageInfo.endCursor;
 
     const backwardPageOperation = findManyOperationFactory({
       objectMetadataSingularName: 'person',
@@ -247,9 +259,12 @@ describe('GraphQL People Pagination with Composite Field Sorting', () => {
       before: lastPersonCursor,
     });
 
-    const backwardPageResponse = await makeGraphqlAPIRequest({ operation: backwardPageOperation }).expect(200);
+    const backwardPageResponse = await makeGraphqlAPIRequest<any>({ operation: backwardPageOperation });
+    expect(backwardPageResponse.rawResponse.status).toBe(200);
+    expect(backwardPageResponse.errors).toBeUndefined();
 
-    const backwardPagePeople = backwardPageResponse.body.data.people.edges.map(
+    const backwardPageData = backwardPageResponse.data;
+    const backwardPagePeople = backwardPageData.people.edges.map(
       (edge: any) => edge.node,
     );
 
