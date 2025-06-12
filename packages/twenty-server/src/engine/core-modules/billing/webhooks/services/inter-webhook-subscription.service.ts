@@ -15,6 +15,7 @@ import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entitie
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { ChargeStatus } from 'src/engine/core-modules/billing/enums/billing-charge.status.enum';
 import { BillingPaymentProviders } from 'src/engine/core-modules/billing/enums/billing-payment-providers.enum';
+import { BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/billing/enums/billing-subscription-collection-method.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { interToSubscriptionStatusMap } from 'src/engine/core-modules/billing/webhooks/utils/inter-to-subsciption-status.mapper';
@@ -91,15 +92,16 @@ export class InterWebhookSubscriptionService {
         interBillingChargeId: seuNumero,
         status: interToSubscriptionStatusMap[situacao],
         provider: BillingPaymentProviders.Inter,
+        interval: SubscriptionInterval.Month,
+        stripeCustomerId: customer?.stripeCustomerId,
+        currentPeriodStart: now,
+        currentPeriodEnd: addDays(now, 30),
+        currency: 'BRL',
+        collectionMethod: BillingSubscriptionCollectionMethod.SEND_INVOICE,
         metadata: {
           workspaceId: workspace.id,
           plan: billingCharge.metadata.planKey,
         },
-        interval: SubscriptionInterval.Month,
-        stripeCustomerId: customer?.id,
-        currentPeriodStart: now,
-        currentPeriodEnd: addDays(now, 30),
-        currency: 'BRL',
       },
       {
         conflictPaths: ['interBillingChargeId'],
