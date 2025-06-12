@@ -46,8 +46,8 @@ describe('useHttpRequestForm', () => {
     expect(result.current.formData).toEqual({
       url: 'https://api.example.com',
       method: 'GET',
-      headers: JSON.stringify({ 'Content-Type': 'application/json' }, null, 2),
-      body: null,
+      headers: { 'Content-Type': 'application/json' },
+      body: undefined,
     });
   });
 
