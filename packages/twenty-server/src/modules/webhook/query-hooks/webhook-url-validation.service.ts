@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-    GraphqlQueryRunnerException,
-    GraphqlQueryRunnerExceptionCode,
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 
 @Injectable()
