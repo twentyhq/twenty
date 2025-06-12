@@ -17,7 +17,7 @@ import { CreateContactService } from 'src/modules/contact-creation-manager/servi
     TypeOrmModule.forFeature([FeatureFlag], 'core'),
     TypeOrmModule.forFeature(
       [ObjectMetadataEntity, FieldMetadataEntity],
-      'metadata',
+      'core',
     ),
   ],
   providers: [

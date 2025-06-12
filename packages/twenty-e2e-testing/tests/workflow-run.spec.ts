@@ -30,21 +30,31 @@ test('The workflow run visualizer shows the executed draft version without the l
 
   await launchTestButton.click();
 
-  const goToExecutionPageLink = page.getByRole('link', {
-    name: 'View execution details',
-  });
-  const executionPageUrl = await goToExecutionPageLink.getAttribute('href');
-  expect(executionPageUrl).not.toBeNull();
+  await workflowVisualizer.closeSidePanel();
 
   await workflowVisualizer.deleteStep(firstStepId);
 
-  await page.goto(executionPageUrl!);
+  await page.goto('/objects/workflowRuns');
 
-  const workflowRunName = page
+  const recordTableRowForWorkflowRun = page
+    .getByRole('row', {
+      name: workflowVisualizer.workflowName,
+    })
+    .first();
+
+  const linkToWorkflowRun = recordTableRowForWorkflowRun
+    .getByRole('link', {
+      name: workflowVisualizer.workflowName,
+    })
+    .first();
+
+  await linkToWorkflowRun.click({ force: true });
+
+  const workflowRunNameElement = page
     .getByText(`#1 - ${workflowVisualizer.workflowName}`)
     .nth(1);
 
-  await expect(workflowRunName).toBeVisible();
+  await expect(workflowRunNameElement).toBeVisible();
 
   const executedFirstStepNode = workflowVisualizer.getStepNode(firstStepId);
 
@@ -85,12 +95,6 @@ test('Workflow Runs with a pending form step can be opened in the side panel and
   const launchTestButton = page.getByLabel(workflowVisualizer.workflowName);
 
   await launchTestButton.click();
-
-  const goToExecutionPageLink = page.getByRole('link', {
-    name: 'View execution details',
-  });
-
-  await expect(goToExecutionPageLink).toBeVisible();
 
   await workflowVisualizer.seeRunsButton.click();
 

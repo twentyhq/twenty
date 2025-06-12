@@ -9,11 +9,8 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
-import {
-  FieldMetadataType,
-  RelationDefinitionType,
-} from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 type RecordDetailRelationSectionProps = {
   relationObjectMetadataNameSingular: string;
@@ -38,8 +35,8 @@ export const useAddNewRecordAndOpenRightDrawer = ({
 
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular:
-      relationFieldMetadataItem?.relationDefinition?.targetObjectMetadata
-        .nameSingular ?? 'workspaceMember',
+      relationFieldMetadataItem?.relation?.targetObjectMetadata.nameSingular ??
+      'workspaceMember',
   });
 
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
@@ -47,8 +44,7 @@ export const useAddNewRecordAndOpenRightDrawer = ({
   if (
     relationObjectMetadataNameSingular === 'workspaceMember' ||
     !isDefined(
-      relationFieldMetadataItem?.relationDefinition?.targetObjectMetadata
-        .nameSingular,
+      relationFieldMetadataItem?.relation?.targetObjectMetadata.nameSingular,
     )
   ) {
     return {
@@ -83,24 +79,22 @@ export const useAddNewRecordAndOpenRightDrawer = ({
           : { id: newRecordId, name: searchInput ?? '' };
 
       if (
-        relationFieldMetadataItem?.relationDefinition?.direction ===
-        RelationDefinitionType.MANY_TO_ONE
+        relationFieldMetadataItem?.relation?.type === RelationType.MANY_TO_ONE
       ) {
         createRecordPayload[
-          `${relationFieldMetadataItem?.relationDefinition?.sourceFieldMetadata.name}Id`
+          `${relationFieldMetadataItem?.relation?.sourceFieldMetadata.name}Id`
         ] = recordId;
       }
 
       await createOneRecord(createRecordPayload);
 
       if (
-        relationFieldMetadataItem?.relationDefinition?.direction ===
-        RelationDefinitionType.ONE_TO_MANY
+        relationFieldMetadataItem?.relation?.type === RelationType.ONE_TO_MANY
       ) {
         await updateOneRecord({
           idToUpdate: recordId,
           updateOneRecordInput: {
-            [`${relationFieldMetadataItem?.relationDefinition?.targetFieldMetadata.name}Id`]:
+            [`${relationFieldMetadataItem?.relation?.targetFieldMetadata.name}Id`]:
               newRecordId,
           },
         });

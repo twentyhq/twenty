@@ -97,6 +97,8 @@ module.exports = {
         'prefer-arrow/prefer-arrow-functions': 'off',
         '@nx/workspace-max-consts-per-file': 'off',
         '@nx/workspace-inject-workspace-repository': 'warn',
+        '@nx/workspace-rest-api-methods-should-be-guarded': 'error',
+        '@nx/workspace-graphql-resolvers-should-be-guarded': 'error',
       },
     },
     {

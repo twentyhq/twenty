@@ -7,6 +7,7 @@ import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableE
 import { Task } from '@/activities/types/Task';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import groupBy from 'lodash.groupby';
@@ -22,7 +23,6 @@ import {
 } from 'twenty-ui/layout';
 import { AddTaskButton } from './AddTaskButton';
 import { TaskList } from './TaskList';
-import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -83,7 +83,7 @@ export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
             All tasks addressed. Maintain the momentum.
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
-        {!hasObjectUpdatePermissions && (
+        {hasObjectUpdatePermissions && (
           <Button
             Icon={IconPlus}
             title="New task"

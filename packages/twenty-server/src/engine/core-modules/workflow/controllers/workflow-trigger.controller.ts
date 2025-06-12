@@ -1,11 +1,21 @@
-import { Controller, Get, Param, Post, Req, UseFilters } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseFilters,
+  UseGuards,
+} from '@nestjs/common';
 
 import { Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkflowTriggerRestApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-rest-api-exception.filter';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   WorkflowVersionStatus,
   WorkflowVersionWorkspaceEntity,
@@ -19,14 +29,18 @@ import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types
 import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service';
 
 @Controller('webhooks')
-@UseFilters(WorkflowTriggerRestApiExceptionFilter)
+@UseFilters(
+  WorkflowTriggerRestApiExceptionFilter,
+  PermissionsGraphqlApiExceptionFilter,
+)
 export class WorkflowTriggerController {
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workflowTriggerWorkspaceService: WorkflowTriggerWorkspaceService,
   ) {}
 
   @Post('workflows/:workspaceId/:workflowId')
+  @UseGuards(PublicEndpointGuard)
   async runWorkflowByPostRequest(
     @Param('workspaceId') workspaceId: string,
     @Param('workflowId') workflowId: string,
@@ -40,6 +54,7 @@ export class WorkflowTriggerController {
   }
 
   @Get('workflows/:workspaceId/:workflowId')
+  @UseGuards(PublicEndpointGuard)
   async runWorkflowByGetRequest(
     @Param('workspaceId') workspaceId: string,
     @Param('workflowId') workflowId: string,
@@ -57,8 +72,10 @@ export class WorkflowTriggerController {
     workspaceId: string;
   }) {
     const workflowRepository =
-      await this.twentyORMManager.getRepository<WorkflowWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowWorkspaceEntity>(
+        workspaceId,
         'workflow',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflow = await workflowRepository.findOne({
@@ -83,8 +100,10 @@ export class WorkflowTriggerController {
     }
 
     const workflowVersionRepository =
-      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+        workspaceId,
         'workflowVersion',
+        { shouldBypassPermissionChecks: true },
       );
     const workflowVersion = await workflowVersionRepository.findOne({
       where: { id: workflow.lastPublishedVersionId },
