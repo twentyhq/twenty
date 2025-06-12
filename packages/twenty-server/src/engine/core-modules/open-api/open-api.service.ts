@@ -62,7 +62,11 @@ export class OpenApiService {
         await this.accessTokenService.validateTokenByRequest(request);
 
       objectMetadataItems =
-        await this.objectMetadataService.findManyWithinWorkspace(workspace.id);
+        await this.objectMetadataService.findManyWithinWorkspace(workspace.id, {
+          order: {
+            namePlural: 'ASC',
+          },
+        });
     } catch (err) {
       return schema;
     }
