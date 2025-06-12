@@ -12,16 +12,16 @@ export type HttpMethodWithBody = (typeof METHODS_WITH_BODY)[number];
 
 export type HttpMethod = (typeof HTTP_METHODS)[number]['value'];
 
+export type HttpRequestBody = Record<
+  string,
+  string | number | boolean | null | Array<string | number | boolean | null>
+>;
+
 export type HttpRequestFormData = {
   url: string;
   method: HttpMethod;
   headers: Record<string, string>;
-  body?: Record<
-    string,
-    string | number | boolean | null | Array<string | number | boolean | null>
-  >;
+  body?: HttpRequestBody;
 };
 
-export const DEFAULT_HEADERS_PLACEHOLDER =
-  '{\n  "Authorization": "Bearer ..."\n}';
 export const DEFAULT_BODY_PLACEHOLDER = '{\n  "key": "value"\n}';
