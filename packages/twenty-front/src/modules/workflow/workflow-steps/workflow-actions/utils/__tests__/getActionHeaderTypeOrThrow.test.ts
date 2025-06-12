@@ -1,9 +1,8 @@
-import { msg } from '@lingui/core/macro';
 import { getActionHeaderTypeOrThrow } from '../getActionHeaderTypeOrThrow';
 
 describe('getActionHeaderTypeOrThrow', () => {
   it('should return "Code" for CODE action type', () => {
-    expect(getActionHeaderTypeOrThrow('CODE')).toBe(msg`Code`);
+    expect(getActionHeaderTypeOrThrow('CODE').message).toBe('Code');
   });
 
   it('should return "Action" for record-related action types', () => {
@@ -15,20 +14,22 @@ describe('getActionHeaderTypeOrThrow', () => {
     ] as const;
 
     recordActionTypes.forEach((type) => {
-      expect(getActionHeaderTypeOrThrow(type)).toBe(msg`Action`);
+      expect(getActionHeaderTypeOrThrow(type).message).toBe('Action');
     });
   });
 
   it('should return "Action" for FORM action type', () => {
-    expect(getActionHeaderTypeOrThrow('FORM')).toBe(msg`Action`);
+    expect(getActionHeaderTypeOrThrow('FORM').message).toBe('Action');
   });
 
   it('should return "Action" for SEND_EMAIL action type', () => {
-    expect(getActionHeaderTypeOrThrow('SEND_EMAIL')).toBe(msg`Action`);
+    expect(getActionHeaderTypeOrThrow('SEND_EMAIL').message).toBe('Action');
   });
 
   it('should return "HTTP Request" for HTTP_REQUEST action type', () => {
-    expect(getActionHeaderTypeOrThrow('HTTP_REQUEST')).toBe(msg`HTTP Request`);
+    expect(getActionHeaderTypeOrThrow('HTTP_REQUEST').message).toBe(
+      'HTTP Request',
+    );
   });
 
   it('should throw error for unknown action type', () => {
