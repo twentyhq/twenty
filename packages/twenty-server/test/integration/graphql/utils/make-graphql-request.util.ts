@@ -19,7 +19,7 @@ export const TESTING_MOCK_ACCESS_TOKEN = {
 type TestingMockAccessTokenKeys = keyof typeof TESTING_MOCK_ACCESS_TOKEN;
 
 export type MakeGraphqlRequestOptions = {
-  unAuthenticated?: boolean;
+  unauthenticated?: boolean;
   authenticationToken?: string;
   testingToken?: TestingMockAccessTokenKeys;
 };
@@ -37,16 +37,16 @@ export const makeGraphqlRequest = async <ResponseTypeT = unknown>(
   const {
     authenticationToken,
     testingToken,
-    unAuthenticated,
+    unauthenticated,
   }: MakeGraphqlRequestOptions = {
-    unAuthenticated: false,
+    unauthenticated: false,
     testingToken: 'ADMIN',
     ...options,
   };
 
   const client = request(`http://localhost:${APP_PORT}`).post(`/${path}`);
 
-  if (!unAuthenticated) {
+  if (!unauthenticated) {
     const token = TESTING_MOCK_ACCESS_TOKEN[testingToken];
 
     client.set('Authorization', `Bearer ${authenticationToken ?? token}`);
