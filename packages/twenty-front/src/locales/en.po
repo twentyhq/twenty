@@ -1792,6 +1792,16 @@ msgstr "Don’t create contacts from/to Gmail, Outlook emails"
 msgid "Don’t sync emails from team@ support@ noreply@..."
 msgstr "Don’t sync emails from team@ support@ noreply@..."
 
+#. js-lingui-id: Iari6C
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Donwload bank slip"
+msgstr "Donwload bank slip"
+
+#. js-lingui-id: XxrnrL
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Download bank slip"
+msgstr "Download bank slip"
+
 #. js-lingui-id: WcWS//
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Download file"
@@ -2094,6 +2104,11 @@ msgstr "Error while ending trial period. Please contact Twenty team."
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Error while switching subscription to yearly."
 msgstr "Error while switching subscription to yearly."
+
+#. js-lingui-id: ON1CRr
+#: src/modules/settings/billing/hooks/useHandleUpdateSubscription.ts
+msgid "Error while updating subscription."
+msgstr "Error while updating subscription."
 
 #. js-lingui-id: JLxMta
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
@@ -4748,6 +4763,16 @@ msgstr "Subscribe"
 msgid "Subscription activated."
 msgstr "Subscription activated."
 
+#. js-lingui-id: 8Ucb+k
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Subscription expired. Click on the 'Download bank slip' button to download yor bank slip."
+msgstr "Subscription expired. Click on the 'Download bank slip' button to download yor bank slip."
+
+#. js-lingui-id: h69Gpa
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Subscription expired. Please contact your admin."
+msgstr "Subscription expired. Please contact your admin."
+
 #. js-lingui-id: B5jRKH
 #: src/pages/settings/SettingsBilling.tsx
 #~ msgid "Subscription has been switched {to}"
@@ -5060,6 +5085,11 @@ msgstr "This week"
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 msgid "This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings."
 msgstr "This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings."
+
+#. js-lingui-id: kjAL4v
+#: src/modules/chat/call-center/hooks/useCommandMenuTicket.ts
+msgid "Ticket"
+msgstr "Ticket"
 
 #. js-lingui-id: n9nSNJ
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
