@@ -46,7 +46,6 @@ export class CronTriggerCronJob {
       },
     });
 
-    console.log('WORKFLOW CRON activeWorkspaces', activeWorkspaces);
     const now = new Date();
 
     for (const activeWorkspace of activeWorkspaces) {
