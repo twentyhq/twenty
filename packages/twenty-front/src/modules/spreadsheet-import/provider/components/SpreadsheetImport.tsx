@@ -1,7 +1,7 @@
 import { ReactSpreadsheetImportContextProvider } from '@/spreadsheet-import/components/ReactSpreadsheetImportContextProvider';
 import { SpreadSheetImportModalWrapper } from '@/spreadsheet-import/components/SpreadSheetImportModalWrapper';
-import { MAX_RECORDS_IMPORT_CAPACITY } from '@/spreadsheet-import/constants/MaxRecordImportCapacity';
 import { SPREADSHEET_IMPORT_MODAL_ID } from '@/spreadsheet-import/constants/SpreadsheetImportModalId';
+import { SpreadsheetMaxRecordImportCapacity } from '@/spreadsheet-import/constants/SpreadsheetMaxRecordImportCapacity';
 import { SpreadsheetImportStepperContainer } from '@/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer';
 import { SpreadsheetImportDialogOptions as SpreadsheetImportProps } from '@/spreadsheet-import/types';
 
@@ -20,7 +20,7 @@ export const defaultSpreadsheetImportProps: Partial<
   dateFormat: 'yyyy-mm-dd', // ISO 8601,
   parseRaw: true,
   selectHeader: false,
-  maxRecords: MAX_RECORDS_IMPORT_CAPACITY,
+  maxRecords: SpreadsheetMaxRecordImportCapacity,
 } as const;
 
 export const SpreadsheetImport = <T extends string>(

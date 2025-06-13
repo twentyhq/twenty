@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { read, WorkBook } from 'xlsx-ugnis';
 
-import { MAX_RECORDS_IMPORT_CAPACITY } from '@/spreadsheet-import/constants/MaxRecordImportCapacity';
+import { SpreadsheetMaxRecordImportCapacity } from '@/spreadsheet-import/constants/SpreadsheetMaxRecordImportCapacity';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { useDownloadFakeRecords } from '@/spreadsheet-import/steps/components/UploadStep/hooks/useDownloadFakeRecords';
 import { readFileAsync } from '@/spreadsheet-import/utils/readFilesAsync';
@@ -179,7 +179,7 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
           </StyledText>
           <MainButton onClick={open} title={t`Select file`} />
           <StyledFooterText>
-            {t`Max import capacity: ${MAX_RECORDS_IMPORT_CAPACITY} records. Otherwise, consider splitting your file or using the API.`}{' '}
+            {t`Max import capacity: ${SpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API.`}{' '}
             <StyledTextAction onClick={downloadSample}>
               {t`Download sample file.`}
             </StyledTextAction>

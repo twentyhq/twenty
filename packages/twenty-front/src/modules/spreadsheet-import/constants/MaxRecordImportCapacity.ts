@@ -1,1 +1,0 @@
-export const MAX_RECORDS_IMPORT_CAPACITY = 2000;
