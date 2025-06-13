@@ -6,7 +6,7 @@ import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpre
 import { suggestedFieldsByColumnHeaderState } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/states/suggestedFieldsByColumnHeaderState';
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
-import { buildFieldOptions } from '@/spreadsheet-import/utils/buildFieldOptions';
+import { spreadsheetBuildFieldOptions } from '@/spreadsheet-import/utils/spreadsheetBuildFieldOptions';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import { IconForbid } from 'twenty-ui/display';
@@ -39,8 +39,8 @@ export const TemplateColumn = <T extends string>({
 
   const { t } = useLingui();
 
-  const fieldOptions = buildFieldOptions(fields, columns);
-  const suggestedFieldOptions = buildFieldOptions(
+  const fieldOptions = spreadsheetBuildFieldOptions(fields, columns);
+  const suggestedFieldOptions = spreadsheetBuildFieldOptions(
     suggestedFieldsByColumnHeader[column.header] ?? [],
     columns,
   );

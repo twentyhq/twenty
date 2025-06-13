@@ -266,7 +266,7 @@ export const MatchColumnsStep = <T extends string>({
     );
     if (autoMapHeaders && isInitialColumnsState) {
       const { matchedColumns, suggestedFieldsByColumnHeader } =
-        getMatchedColumnsWithFuse(columns, fields, data);
+        getMatchedColumnsWithFuse({ columns, fields, data });
 
       setColumns(matchedColumns);
       setSuggestedFieldsByColumnHeader(suggestedFieldsByColumnHeader);

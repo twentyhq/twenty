@@ -1,7 +1,7 @@
 import { SpreadsheetImportField } from '@/spreadsheet-import/types';
-import { atom } from 'recoil';
+import { createState } from 'twenty-ui/utilities';
 
-export const suggestedFieldsByColumnHeaderState = atom({
+export const suggestedFieldsByColumnHeaderState = createState({
   key: 'suggestedFieldsByColumnHeaderState',
-  default: {} as Record<string, SpreadsheetImportField<string>[]>,
+  defaultValue: {} as Record<string, SpreadsheetImportField<string>[]>,
 });

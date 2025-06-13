@@ -3,7 +3,7 @@ import { SpreadsheetImportFields } from '@/spreadsheet-import/types';
 import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-export const buildFieldOptions = <T extends string>(
+export const spreadsheetBuildFieldOptions = <T extends string>(
   fields: SpreadsheetImportFields<T>,
   columns: SpreadsheetColumns<string>,
 ) => {

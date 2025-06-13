@@ -5,14 +5,15 @@ import { SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const getFieldMetadataTypeLabel = (fieldType: FieldMetadataType) => {
+  //TODO: Remove ?.label > .label when we have a proper type for field (issue #1097)
   if (
     isNonCompositeField(fieldType) ||
     fieldType === FieldMetadataType.RELATION
   )
     return SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS[
       fieldType as keyof typeof SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS
-    ].label;
+    ]?.label;
 
   if (isCompositeFieldType(fieldType))
-    return SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[fieldType].label;
+    return SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[fieldType]?.label;
 };

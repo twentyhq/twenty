@@ -11,11 +11,15 @@ import { setColumn } from '@/spreadsheet-import/utils/setColumn';
 import Fuse from 'fuse.js';
 import { isDefined } from 'twenty-shared/utils';
 
-export const getMatchedColumnsWithFuse = <T extends string>(
-  columns: SpreadsheetColumns<T>,
-  fields: SpreadsheetImportFields<T>,
-  data: MatchColumnsStepProps['data'],
-) => {
+export const getMatchedColumnsWithFuse = <T extends string>({
+  columns,
+  fields,
+  data,
+}: {
+  columns: SpreadsheetColumns<T>;
+  fields: SpreadsheetImportFields<T>;
+  data: MatchColumnsStepProps['data'];
+}) => {
   const matchedColumns: SpreadsheetColumn<T>[] = [];
 
   const fieldsToSearch = new Fuse(fields, {
