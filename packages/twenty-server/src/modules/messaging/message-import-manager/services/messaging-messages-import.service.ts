@@ -149,7 +149,6 @@ export class MessagingMessagesImportService {
       const allMessages = await this.messagingGetMessagesService.getMessages(
         messageIdsToFetch,
         connectedAccount,
-        messageChannel.id,
       );
 
       const blocklist = await this.blocklistRepository.getByWorkspaceMemberId(

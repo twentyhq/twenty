@@ -84,7 +84,6 @@ export class MessagingGetMessageListService {
         const fullMessageList =
           await this.imapGetMessageListService.getFullMessageList(
             messageChannel.connectedAccount,
-            messageChannel.id,
           );
 
         return [
@@ -125,7 +124,6 @@ export class MessagingGetMessageListService {
         const messageList =
           await this.imapGetMessageListService.getPartialMessageList(
             messageChannel.connectedAccount,
-            messageChannel.id,
             messageChannel.syncCursor,
           );
 

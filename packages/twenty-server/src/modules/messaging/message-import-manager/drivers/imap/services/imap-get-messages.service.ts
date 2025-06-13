@@ -28,7 +28,6 @@ export class ImapGetMessagesService {
 
   async getMessages(
     messageIds: string[],
-    messageChannelId: string,
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
       'id' | 'provider' | 'handle' | 'handleAliases'
@@ -41,10 +40,7 @@ export class ImapGetMessagesService {
     }
 
     try {
-      const client = await this.imapClientProvider.getClient(
-        connectedAccount,
-        messageChannelId,
-      );
+      const client = await this.imapClientProvider.getClient(connectedAccount);
 
       const messages: MessageWithParticipants[] = [];
 
@@ -105,10 +101,7 @@ export class ImapGetMessagesService {
       );
       throw error;
     } finally {
-      await this.imapClientProvider.closeClient(
-        connectedAccount.id,
-        messageChannelId,
-      );
+      await this.imapClientProvider.closeClient(connectedAccount.id);
     }
   }
 

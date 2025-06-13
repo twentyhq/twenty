@@ -35,7 +35,6 @@ export class MessagingGetMessagesService {
       | 'accountOwnerId'
       | 'customConnectionParams'
     >,
-    messageChannelId: string,
   ): Promise<GetMessagesResponse> {
     switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:
@@ -51,7 +50,6 @@ export class MessagingGetMessagesService {
       case ConnectedAccountProvider.IMAP:
         return this.imapGetMessagesService.getMessages(
           messageIds,
-          messageChannelId,
           connectedAccount,
         );
       default:

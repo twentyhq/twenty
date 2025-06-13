@@ -23,9 +23,8 @@ export class ImapClientProvider {
       ConnectedAccountWorkspaceEntity,
       'id' | 'provider' | 'customConnectionParams'
     >,
-    messageChannelId: string,
   ): Promise<ImapFlow> {
-    const cacheKey = `${connectedAccount.id}-${messageChannelId}`;
+    const cacheKey = `${connectedAccount.id}`;
 
     if (this.clientInstances.has(cacheKey)) {
       const instance = this.clientInstances.get(cacheKey);
@@ -89,11 +88,8 @@ export class ImapClientProvider {
     }
   }
 
-  async closeClient(
-    connectedAccountId: string,
-    messageChannelId: string,
-  ): Promise<void> {
-    const cacheKey = `${connectedAccountId}-${messageChannelId}`;
+  async closeClient(connectedAccountId: string): Promise<void> {
+    const cacheKey = `${connectedAccountId}`;
     const instance = this.clientInstances.get(cacheKey);
 
     if (instance?.isReady) {

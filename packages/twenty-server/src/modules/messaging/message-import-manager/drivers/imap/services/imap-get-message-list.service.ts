@@ -22,13 +22,9 @@ export class ImapGetMessageListService {
       ConnectedAccountWorkspaceEntity,
       'id' | 'provider' | 'customConnectionParams'
     >,
-    messageChannelId: string,
   ): Promise<GetFullMessageListResponse> {
     try {
-      const client = await this.imapClientProvider.getClient(
-        connectedAccount,
-        messageChannelId,
-      );
+      const client = await this.imapClientProvider.getClient(connectedAccount);
 
       const mailboxes = ['INBOX'];
 
@@ -78,10 +74,7 @@ export class ImapGetMessageListService {
 
       return { messageExternalIds: [], nextSyncCursor: '' };
     } finally {
-      await this.imapClientProvider.closeClient(
-        connectedAccount.id,
-        messageChannelId,
-      );
+      await this.imapClientProvider.closeClient(connectedAccount.id);
     }
   }
 
@@ -90,14 +83,10 @@ export class ImapGetMessageListService {
       ConnectedAccountWorkspaceEntity,
       'id' | 'provider' | 'customConnectionParams'
     >,
-    messageChannelId: string,
     syncCursor?: string,
   ): Promise<{ messageExternalIds: string[]; nextSyncCursor: string }> {
     try {
-      const client = await this.imapClientProvider.getClient(
-        connectedAccount,
-        messageChannelId,
-      );
+      const client = await this.imapClientProvider.getClient(connectedAccount);
 
       const mailboxes = ['INBOX'];
 
@@ -153,10 +142,7 @@ export class ImapGetMessageListService {
 
       return { messageExternalIds: [], nextSyncCursor: syncCursor || '' };
     } finally {
-      await this.imapClientProvider.closeClient(
-        connectedAccount.id,
-        messageChannelId,
-      );
+      await this.imapClientProvider.closeClient(connectedAccount.id);
     }
   }
 
