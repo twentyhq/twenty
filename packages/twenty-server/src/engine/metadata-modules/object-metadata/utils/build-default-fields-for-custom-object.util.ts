@@ -98,11 +98,11 @@ export const buildDefaultFieldsForCustomObject = (
     label: 'Position',
     icon: 'IconHierarchy2',
     description: 'Position',
-    isNullable: true,
+    isNullable: false,
     isActive: true,
     isCustom: false,
     isSystem: true,
     workspaceId,
-    defaultValue: null,
+    defaultValue: 0,
   },
 ];
