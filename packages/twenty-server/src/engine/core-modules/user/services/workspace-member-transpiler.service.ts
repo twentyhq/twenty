@@ -36,7 +36,7 @@ export class WorkspaceMemberTranspiler {
       !isDefined(workspaceMember.avatarUrl) ||
       !isNonEmptyString(workspaceMember.avatarUrl)
     ) {
-      return "";
+      return '';
     }
 
     return this.fileService.signFileUrl({
@@ -91,7 +91,7 @@ export class WorkspaceMemberTranspiler {
     allWorkspaceEntitiesBundles: ToWorkspaceMemberDtoArgs[],
   ) {
     return allWorkspaceEntitiesBundles.map((bundle) =>
-      this.toWorkspaceMemberDto(bundle)
+      this.toWorkspaceMemberDto(bundle),
     );
   }
 
