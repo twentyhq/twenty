@@ -1,3 +1,5 @@
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { CommandMenuAnimationVariant } from '@/command-menu/types/CommandMenuAnimationVariant';
 import { useListenRightDrawerClose } from '@/ui/layout/right-drawer/hooks/useListenRightDrawerClose';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -26,7 +28,14 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, TagColor } from 'twenty-ui/components';
 import { THEME_COMMON } from 'twenty-ui/theme';
@@ -124,6 +133,10 @@ export const WorkflowDiagramCanvasBase = ({
   const workflowDiagram = useRecoilComponentValueV2(
     workflowDiagramComponentState,
   );
+  const [
+    workflowDiagramFlowInitializationStatus,
+    setWorkflowDiagramFlowInitializationStatus,
+  ] = useState<'not-initialized' | 'initialized'>('not-initialized');
 
   const { nodes, edges } = useMemo(
     () =>
@@ -134,10 +147,7 @@ export const WorkflowDiagramCanvasBase = ({
   );
 
   const { rightDrawerState } = useRightDrawerState();
-
-  const rightDrawerWidth = Number(
-    THEME_COMMON.rightDrawerWidth.replace('px', ''),
-  );
+  const { isInRightDrawer } = useContext(ActionMenuContext);
 
   const setWorkflowDiagram = useSetRecoilComponentStateV2(
     workflowDiagramComponentState,
@@ -168,32 +178,67 @@ export const WorkflowDiagramCanvasBase = ({
 
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const setFlowViewport = useCallback(
+    ({
+      rightDrawerState,
+      noAnimation,
+      workflowDiagramFlowInitializationStatus,
+      isInRightDrawer,
+    }: {
+      rightDrawerState: CommandMenuAnimationVariant;
+      noAnimation?: boolean;
+      workflowDiagramFlowInitializationStatus:
+        | 'not-initialized'
+        | 'initialized';
+      isInRightDrawer: boolean;
+    }) => {
+      if (
+        !isDefined(containerRef.current) ||
+        workflowDiagramFlowInitializationStatus !== 'initialized'
+      ) {
+        return;
+      }
+
+      const currentViewport = reactflow.getViewport();
+      const flowBounds = reactflow.getNodesBounds(reactflow.getNodes());
+
+      let visibleRightDrawerWidth = 0;
+      if (rightDrawerState === 'normal' && !isInRightDrawer) {
+        const rightDrawerWidth = Number(
+          THEME_COMMON.rightDrawerWidth.replace('px', ''),
+        );
+
+        visibleRightDrawerWidth = rightDrawerWidth;
+      }
+
+      const viewportX =
+        (containerRef.current.offsetWidth + visibleRightDrawerWidth) / 2 -
+        flowBounds.width / 2;
+
+      reactflow.setViewport(
+        {
+          ...currentViewport,
+          x: viewportX - visibleRightDrawerWidth,
+          zoom: defaultFitViewOptions.maxZoom,
+        },
+        { duration: noAnimation ? 0 : 300 },
+      );
+    },
+    [reactflow],
+  );
+
   useEffect(() => {
-    if (!isDefined(containerRef.current) || !reactflow.viewportInitialized) {
-      return;
-    }
-
-    const currentViewport = reactflow.getViewport();
-
-    const flowBounds = reactflow.getNodesBounds(reactflow.getNodes());
-
-    let visibleRightDrawerWidth = 0;
-    if (rightDrawerState === 'normal') {
-      visibleRightDrawerWidth = rightDrawerWidth;
-    }
-
-    const viewportX =
-      (containerRef.current.offsetWidth + visibleRightDrawerWidth) / 2 -
-      flowBounds.width / 2;
-
-    reactflow.setViewport(
-      {
-        ...currentViewport,
-        x: viewportX - visibleRightDrawerWidth,
-      },
-      { duration: 300 },
-    );
-  }, [reactflow, rightDrawerState, rightDrawerWidth]);
+    setFlowViewport({
+      rightDrawerState,
+      isInRightDrawer,
+      workflowDiagramFlowInitializationStatus,
+    });
+  }, [
+    isInRightDrawer,
+    rightDrawerState,
+    setFlowViewport,
+    workflowDiagramFlowInitializationStatus,
+  ]);
 
   const handleNodesChanges = (changes: NodeChange<WorkflowDiagramNode>[]) => {
     setWorkflowDiagram((diagram) => {
@@ -213,13 +258,14 @@ export const WorkflowDiagramCanvasBase = ({
       return;
     }
 
-    const flowBounds = reactflow.getNodesBounds(reactflow.getNodes());
-
-    reactflow.setViewport({
-      x: containerRef.current.offsetWidth / 2 - flowBounds.width / 2,
-      y: 150,
-      zoom: defaultFitViewOptions.maxZoom,
+    setFlowViewport({
+      rightDrawerState,
+      noAnimation: true,
+      isInRightDrawer,
+      workflowDiagramFlowInitializationStatus: 'initialized',
     });
+
+    setWorkflowDiagramFlowInitializationStatus('initialized');
 
     onInit?.();
   };
@@ -232,6 +278,7 @@ export const WorkflowDiagramCanvasBase = ({
         onInit={handleInit}
         minZoom={defaultFitViewOptions.minZoom}
         maxZoom={defaultFitViewOptions.maxZoom}
+        defaultViewport={{ x: 0, y: 150, zoom: defaultFitViewOptions.maxZoom }}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         nodes={nodes}
