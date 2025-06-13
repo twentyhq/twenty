@@ -68,6 +68,7 @@ import { iconsState } from 'twenty-ui/display';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -77,7 +78,7 @@ export const useAuth = () => {
   );
   const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
   const { origin } = useOrigin();
-
+  const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
   const setCurrentWorkspaceMembers = useSetRecoilState(
     currentWorkspaceMembersState,
   );
@@ -429,51 +430,55 @@ export const useAuth = () => {
       captchaToken?: string;
       verifyEmailNextPath?: string;
     }) => {
-      const signUpResult = await signUp({
-        variables: {
-          email,
-          password,
-          workspaceInviteHash,
-          workspacePersonalInviteToken,
-          captchaToken,
-          locale: i18n.locale ?? 'en',
-          ...(workspacePublicData?.id
-            ? { workspaceId: workspacePublicData.id }
-            : {}),
-          verifyEmailNextPath,
-        },
-      });
-
-      if (isDefined(signUpResult.errors)) {
-        throw signUpResult.errors;
-      }
-
-      if (!signUpResult.data?.signUp) {
-        throw new Error('No login token');
-      }
-
-      if (isEmailVerificationRequired) {
-        setSearchParams({ email });
-        setSignInUpStep(SignInUpStep.EmailVerification);
-        return null;
-      }
-
-      if (isMultiWorkspaceEnabled) {
-        return await redirectToWorkspaceDomain(
-          getWorkspaceUrl(signUpResult.data.signUp.workspace.workspaceUrls),
-          isEmailVerificationRequired ? AppPath.SignInUp : AppPath.Verify,
-          {
-            ...(!isEmailVerificationRequired && {
-              loginToken: signUpResult.data.signUp.loginToken.token,
-            }),
+      try {
+        const signUpResult = await signUp({
+          variables: {
             email,
+            password,
+            workspaceInviteHash,
+            workspacePersonalInviteToken,
+            captchaToken,
+            locale: i18n.locale ?? 'en',
+            ...(workspacePublicData?.id
+              ? { workspaceId: workspacePublicData.id }
+              : {}),
+            verifyEmailNextPath,
           },
-        );
-      }
+        });
 
-      await handleGetAuthTokensFromLoginToken(
-        signUpResult.data?.signUp.loginToken.token,
-      );
+        if (isDefined(signUpResult.errors)) {
+          throw signUpResult.errors;
+        }
+
+        if (!signUpResult.data?.signUp) {
+          throw new Error('No login token');
+        }
+
+        if (isEmailVerificationRequired) {
+          setSearchParams({ email });
+          setSignInUpStep(SignInUpStep.EmailVerification);
+          return null;
+        }
+
+        if (isMultiWorkspaceEnabled) {
+          return await redirectToWorkspaceDomain(
+            getWorkspaceUrl(signUpResult.data.signUp.workspace.workspaceUrls),
+            isEmailVerificationRequired ? AppPath.SignInUp : AppPath.Verify,
+            {
+              ...(!isEmailVerificationRequired && {
+                loginToken: signUpResult.data.signUp.loginToken.token,
+              }),
+              email,
+            },
+          );
+        }
+
+        await handleGetAuthTokensFromLoginToken(
+          signUpResult.data?.signUp.loginToken.token,
+        );
+      } finally {
+        requestFreshCaptchaToken();
+      }
     },
     [
       signUp,
@@ -484,6 +489,7 @@ export const useAuth = () => {
       setSearchParams,
       isEmailVerificationRequired,
       redirectToWorkspaceDomain,
+      requestFreshCaptchaToken
     ],
   );
 
