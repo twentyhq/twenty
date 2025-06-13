@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
@@ -27,7 +27,6 @@ import { SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn'
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { SpreadsheetImportField } from '@/spreadsheet-import/types/SpreadsheetImportField';
-import { getMatchedColumnsWithFuse } from '@/spreadsheet-import/utils/getMatchedColumnsWithFuse';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
@@ -80,7 +79,7 @@ export const MatchColumnsStep = <T extends string>({
   const { enqueueDialog } = useDialogManager();
   const { enqueueSnackBar } = useSnackBar();
   const dataExample = data.slice(0, 2);
-  const { fields, autoMapHeaders } = useSpreadsheetImportInternal<T>();
+  const { fields } = useSpreadsheetImportInternal<T>();
   const [isLoading, setIsLoading] = useState(false);
   const [columns, setColumns] = useRecoilState(
     initialComputedColumnsSelector(headerValues),
@@ -255,22 +254,6 @@ export const MatchColumnsStep = <T extends string>({
     fields,
     t,
   ]);
-
-  useEffect(() => {
-    const isInitialColumnsState = columns.every(
-      (column) => column.type === SpreadsheetColumnType.empty,
-    );
-    if (autoMapHeaders && isInitialColumnsState) {
-      const { matchedColumns } = getMatchedColumnsWithFuse(
-        columns,
-        fields,
-        data,
-      );
-
-      setColumns(matchedColumns);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const hasMatchedColumns = columns.some(
     (column) =>
