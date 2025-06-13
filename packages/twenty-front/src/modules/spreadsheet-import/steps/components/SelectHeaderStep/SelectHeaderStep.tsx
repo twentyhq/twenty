@@ -7,6 +7,7 @@ import { ImportedRow } from '@/spreadsheet-import/types';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
 
+import { useComputeColumnSuggestionsAndAutoMatch } from '@/spreadsheet-import/hooks/useComputeColumnSuggestionsAndAutoMatch';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
@@ -50,11 +51,19 @@ export const SelectHeaderStep = ({
 
   const { selectHeaderStepHook } = useSpreadsheetImportInternal();
 
+  const computeColumnSuggestionsAndAutoMatch = useComputeColumnSuggestionsAndAutoMatch();
+
   const handleContinue = useCallback(
     async (...args: Parameters<typeof selectHeaderStepHook>) => {
       try {
         const { importedRows: data, headerRow: headerValues } =
           await selectHeaderStepHook(...args);
+
+        await computeColumnSuggestionsAndAutoMatch({
+          headerValues,
+          data,
+        });
+
         setCurrentStepState({
           type: SpreadsheetImportStepType.matchColumns,
           data,
@@ -73,6 +82,7 @@ export const SelectHeaderStep = ({
       setPreviousStepState,
       setCurrentStepState,
       currentStepState,
+      computeColumnSuggestionsAndAutoMatch,
     ],
   );
 
