@@ -39,7 +39,7 @@ describe('WorkspaceMigrationIndexFactory', () => {
     const objectMetadata = {
       id: 'obj2',
       workspaceId: 'ws1',
-      nameSingular: 'Attachement',
+      nameSingular: 'Attachment',
       fields: [{ id: 'f2', name: 'author', type: FieldMetadataType.RELATION }],
     } as ObjectMetadataEntity;
     const indexMetadata = {
