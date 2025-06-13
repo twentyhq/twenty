@@ -27,7 +27,7 @@ export class WorkflowDeleteManyPostQueryHook
 
     workspaceValidator.assertIsDefinedOrThrow(workspace);
 
-    this.workflowCommonWorkspaceService.handleWorkflowSubEntities({
+    await this.workflowCommonWorkspaceService.handleWorkflowSubEntities({
       workflowIds: payload.map((workflow) => workflow.id),
       workspaceId: workspace.id,
       operation: 'delete',
