@@ -4,15 +4,15 @@ import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useR
 import { RecordBoardCardHeaderContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHeaderContainer';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
-import { RecordBoardScopeInternalContext } from '@/object-record/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
+import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import styled from '@emotion/styled';
 import { Dispatch, SetStateAction, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -45,11 +45,7 @@ export const RecordBoardCardHeader = ({
 
   const record = useRecoilValue(recordStoreFamilyState(recordId));
 
-  const { objectMetadataItem } = useContext(RecordBoardContext);
-
-  const recordBoardId = useAvailableScopeIdOrThrow(
-    RecordBoardScopeInternalContext,
-  );
+  const { objectMetadataItem, recordBoardId } = useContext(RecordBoardContext);
 
   const showCompactView = useRecoilComponentValueV2(
     isRecordBoardCompactModeActiveComponentState,
@@ -66,6 +62,12 @@ export const RecordBoardCardHeader = ({
 
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
+  const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
+  const triggerEvent =
+    recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
+      ? 'CLICK'
+      : 'MOUSE_DOWN';
+
   return (
     <RecordBoardCardHeaderContainer showCompactView={showCompactView}>
       <StopPropagationContainer>
@@ -78,7 +80,7 @@ export const RecordBoardCardHeader = ({
             onClick={() => {
               openRecordFromIndexView({ recordId });
             }}
-            triggerEvent="CLICK"
+            triggerEvent={triggerEvent}
           />
         )}
       </StopPropagationContainer>
