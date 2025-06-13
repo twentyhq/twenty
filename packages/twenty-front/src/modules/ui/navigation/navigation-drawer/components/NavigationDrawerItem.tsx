@@ -270,19 +270,23 @@ export const NavigationDrawerItem = ({
     }
   };
 
-  const { onClick: handleClick, onMouseDown: handleMouseDown } =
-    useMouseDownNavigation({
-      to,
-      onClick,
-      onBeforeNavigation: handleMobileNavigation,
-      triggerEvent,
-    });
+  const {
+    onClick: handleMouseDownNavigationClickClick,
+    onMouseDown: handleMouseDown,
+  } = useMouseDownNavigation({
+    to,
+    onClick,
+    onBeforeNavigation: handleMobileNavigation,
+    triggerEvent,
+  });
 
   return (
     <StyledNavigationDrawerItemContainer>
       <StyledItem
         className={`navigation-drawer-item ${className || ''}`}
-        onClick={mouseUpNavigation ? onClick : handleClick}
+        onClick={
+          mouseUpNavigation ? onClick : handleMouseDownNavigationClickClick
+        }
         onMouseDown={mouseUpNavigation ? undefined : handleMouseDown}
         active={active}
         aria-selected={active}
