@@ -86,7 +86,7 @@ export const TemplateColumn = <T extends string>({
         columnIndex={column.index.toString()}
       />
       {column.type === SpreadsheetColumnType.matchedError && (
-        <StyledErrorMessage>{`"${selectValue?.label}" ${column.errorMessage}`}</StyledErrorMessage>
+        <StyledErrorMessage>{`"${column.header}" ${column.errorMessage}`}</StyledErrorMessage>
       )}
     </StyledContainer>
   );
