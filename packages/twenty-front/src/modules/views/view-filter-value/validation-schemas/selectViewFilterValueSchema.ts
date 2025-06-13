@@ -1,5 +1,6 @@
 import { isValidVariable } from 'twenty-shared/utils';
 import { z } from 'zod';
+
 export const selectViewFilterValueSchema = z
   .string()
   .transform((val) => {
@@ -11,9 +12,8 @@ export const selectViewFilterValueSchema = z
   })
   .refine(
     (parsed) =>
-      Array.isArray(parsed) &&
-      parsed.every((item) => typeof item === 'string' && isValidVariable(item)),
+      Array.isArray(parsed) && parsed.every((item) => typeof item === 'string'),
     {
-      message: 'Expected an array of strings or variables in format {{ ... }}',
+      message: 'Expected an array of strings',
     },
   );
