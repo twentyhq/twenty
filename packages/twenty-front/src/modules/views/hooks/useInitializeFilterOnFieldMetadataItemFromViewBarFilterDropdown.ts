@@ -17,7 +17,7 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-export const useInitializeFilterOnFieldMetataItemFromViewBarFilterDropdown =
+export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
   () => {
     const selectedOperandInDropdownCallbackState =
       useRecoilComponentCallbackStateV2(
@@ -118,6 +118,11 @@ export const useInitializeFilterOnFieldMetataItemFromViewBarFilterDropdown =
                 };
 
                 upsertObjectFilterDropdownCurrentFilter(
+                  initialDateRecordFilter,
+                );
+
+                set(
+                  objectFilterDropdownCurrentRecordFilterCallbackState,
                   initialDateRecordFilter,
                 );
               }

@@ -4,7 +4,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
-import { useInitializeFilterOnFieldMetataItemFromViewBarFilterDropdown } from '@/views/hooks/useInitializeFilterOnFieldMetataItemFromViewBarFilterDropdown';
+import { useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown } from '@/views/hooks/useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
@@ -23,7 +23,7 @@ export const ViewBarFilterDropdownFieldSelectMenuItem = ({
   );
 
   const { initializeFilterOnFieldMetataItemFromViewBarFilterDropdown } =
-    useInitializeFilterOnFieldMetataItemFromViewBarFilterDropdown();
+    useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown();
 
   const { getIcon } = useIcons();
 
