@@ -5,7 +5,7 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { IconTrash } from 'twenty-ui/display';
-import { IconButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
 import { v4 } from 'uuid';
 
 const StyledContainer = styled.div`
@@ -143,10 +143,8 @@ export const KeyValuePairInput = ({
                 VariablePicker={WorkflowVariablePicker}
               />
               {!readonly && pair.id !== pairs[pairs.length - 1].id ? (
-                <IconButton
+                <Button
                   onClick={() => handleRemovePair(pair.id)}
-                  variant="tertiary"
-                  size="medium"
                   Icon={IconTrash}
                 />
               ) : pairs.length > 1 ? (
