@@ -124,7 +124,7 @@ export const Configured: Story = {
     expect(urlEditor).toHaveTextContent('https://api.example.com/data');
 
     expect(await canvas.findByText('POST')).toBeVisible();
-    expect(await canvas.findByText('Body')).toBeVisible();
+    expect(await canvas.findByText('Body Input')).toBeVisible();
   },
 };
 
