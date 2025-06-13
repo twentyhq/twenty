@@ -8,11 +8,11 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { useRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/hooks/useRecordFieldCardRelationPickerDropdownId';
 import { RecordDetailRelationRecordsList } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsList';
 import { RecordDetailRelationSectionDropdown } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSectionDropdown';
 import { RecordDetailSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailSection';
 import { RecordDetailSectionHeader } from '@/object-record/record-show/record-detail-section/components/RecordDetailSectionHeader';
+import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -66,7 +66,10 @@ export const RecordDetailRelationSection = ({
       ? [fieldValue as ObjectRecord]
       : ((fieldValue as ObjectRecord[]) ?? []);
 
-  const dropdownId = useRecordFieldCardRelationPickerDropdownId();
+  const dropdownId = getRecordFieldCardRelationPickerDropdownId({
+    fieldDefinition,
+    recordId,
+  });
 
   const { isDropdownOpen } = useDropdown(dropdownId);
 

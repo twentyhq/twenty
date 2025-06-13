@@ -25,8 +25,8 @@ import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldM
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
-import { useRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/hooks/useRecordFieldCardRelationPickerDropdownId';
 import { RecordDetailRecordsListItem } from '@/object-record/record-show/record-detail-section/components/RecordDetailRecordsListItem';
+import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
@@ -106,7 +106,7 @@ export const RecordDetailRelationRecordsListItem = ({
   onClick,
   relationRecord,
 }: RecordDetailRelationRecordsListItemProps) => {
-  const { fieldDefinition } = useContext(FieldContext);
+  const { fieldDefinition, recordId } = useContext(FieldContext);
 
   const { openModal } = useModal();
 
@@ -159,7 +159,10 @@ export const RecordDetailRelationRecordsListItem = ({
 
   const { closeDropdown, isDropdownOpen } = useDropdown(dropdownScopeId);
 
-  const dropdownId = useRecordFieldCardRelationPickerDropdownId();
+  const dropdownId = getRecordFieldCardRelationPickerDropdownId({
+    fieldDefinition,
+    recordId,
+  });
   const setSingleRecordPickerSelectedId = useSetRecoilComponentStateV2(
     singleRecordPickerSelectedIdComponentState,
     dropdownId,
