@@ -48,7 +48,6 @@ export class MessagingGetMessageListService {
 
   public async getFullMessageLists(
     messageChannel: MessageChannelWorkspaceEntity,
-    workspaceId: string,
   ): Promise<GetFullMessageListForFoldersResponse[]> {
     switch (messageChannel.connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE: {
@@ -82,15 +81,15 @@ export class MessagingGetMessageListService {
         );
       }
       case ConnectedAccountProvider.IMAP: {
-        const messageList = await this.imapGetMessageListService.getMessageList(
-          messageChannel.id,
-          workspaceId,
-        );
+        const fullMessageList =
+          await this.imapGetMessageListService.getFullMessageList(
+            messageChannel.connectedAccount,
+            messageChannel.id,
+          );
 
         return [
           {
-            messageExternalIds: messageList.messageIds,
-            nextSyncCursor: messageList.nextCursor || '',
+            ...fullMessageList,
             folderId: undefined,
           },
         ];
@@ -105,7 +104,6 @@ export class MessagingGetMessageListService {
 
   public async getPartialMessageLists(
     messageChannel: MessageChannelWorkspaceEntity,
-    workspaceId: string,
   ): Promise<GetPartialMessageListForFoldersResponse[]> {
     switch (messageChannel.connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:
@@ -124,18 +122,19 @@ export class MessagingGetMessageListService {
           messageChannel,
         );
       case ConnectedAccountProvider.IMAP: {
-        const messageList = await this.imapGetMessageListService.getMessageList(
-          messageChannel.id,
-          workspaceId,
-          messageChannel.syncCursor,
-        );
+        const messageList =
+          await this.imapGetMessageListService.getPartialMessageList(
+            messageChannel.connectedAccount,
+            messageChannel.id,
+            messageChannel.syncCursor,
+          );
 
         return [
           {
-            messageExternalIds: messageList.messageIds,
+            messageExternalIds: messageList.messageExternalIds,
             messageExternalIdsToDelete: [],
             previousSyncCursor: messageChannel.syncCursor || '',
-            nextSyncCursor: messageList.nextCursor || '',
+            nextSyncCursor: messageList.nextSyncCursor || '',
             folderId: undefined,
           },
         ];

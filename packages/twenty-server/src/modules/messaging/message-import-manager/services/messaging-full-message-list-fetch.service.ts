@@ -41,7 +41,6 @@ export class MessagingFullMessageListFetchService {
       const fullMessageLists =
         await this.messagingGetMessageListService.getFullMessageLists(
           messageChannel,
-          workspaceId,
         );
 
       const isEmptyMailbox = fullMessageLists.some(

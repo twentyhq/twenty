@@ -33,8 +33,8 @@ export class MessagingGetMessagesService {
       | 'handle'
       | 'handleAliases'
       | 'accountOwnerId'
+      | 'customConnectionParams'
     >,
-    workspaceId: string,
     messageChannelId: string,
   ): Promise<GetMessagesResponse> {
     switch (connectedAccount.provider) {
@@ -51,7 +51,6 @@ export class MessagingGetMessagesService {
       case ConnectedAccountProvider.IMAP:
         return this.imapGetMessagesService.getMessages(
           messageIds,
-          workspaceId,
           messageChannelId,
           connectedAccount,
         );

@@ -28,12 +28,13 @@ export class ImapGetMessagesService {
 
   async getMessages(
     messageIds: string[],
-    workspaceId: string,
     messageChannelId: string,
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'handle' | 'handleAliases'
-    >,
+      'id' | 'provider' | 'handle' | 'handleAliases'
+    > & {
+      customConnectionParams: Record<string, unknown> | null;
+    },
   ): Promise<MessageWithParticipants[]> {
     if (!messageIds.length) {
       return [];
@@ -41,7 +42,7 @@ export class ImapGetMessagesService {
 
     try {
       const client = await this.imapClientProvider.getClient(
-        workspaceId,
+        connectedAccount,
         messageChannelId,
       );
 
@@ -104,7 +105,10 @@ export class ImapGetMessagesService {
       );
       throw error;
     } finally {
-      await this.imapClientProvider.closeClient(workspaceId, messageChannelId);
+      await this.imapClientProvider.closeClient(
+        connectedAccount.id,
+        messageChannelId,
+      );
     }
   }
 

@@ -4,9 +4,7 @@ import { ImapFlow } from 'imapflow';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { ImapConnectionParams } from 'src/engine/core-modules/imap-connection/types/imap-connection.type';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 interface ImapClientInstance {
   client: ImapFlow;
@@ -18,15 +16,16 @@ export class ImapClientProvider {
   private readonly logger = new Logger(ImapClientProvider.name);
   private readonly clientInstances = new Map<string, ImapClientInstance>();
 
-  constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-  ) {}
+  constructor() {}
 
   async getClient(
-    workspaceId: string,
+    connectedAccount: Pick<
+      ConnectedAccountWorkspaceEntity,
+      'id' | 'provider' | 'customConnectionParams'
+    >,
     messageChannelId: string,
   ): Promise<ImapFlow> {
-    const cacheKey = `${workspaceId}-${messageChannelId}`;
+    const cacheKey = `${connectedAccount.id}-${messageChannelId}`;
 
     if (this.clientInstances.has(cacheKey)) {
       const instance = this.clientInstances.get(cacheKey);
@@ -35,26 +34,6 @@ export class ImapClientProvider {
         return instance.client;
       }
     }
-
-    const messageChannelRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
-        workspaceId,
-        'messageChannel',
-      );
-
-    const messageChannel = await messageChannelRepository.findOneOrFail({
-      where: { id: messageChannelId },
-    });
-
-    const connectedAccountRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
-        workspaceId,
-        'connectedAccount',
-      );
-
-    const connectedAccount = await connectedAccountRepository.findOneOrFail({
-      where: { id: messageChannel.connectedAccountId },
-    });
 
     if (connectedAccount.provider !== ConnectedAccountProvider.IMAP) {
       throw new Error('Connected account is not an IMAP provider');
@@ -82,14 +61,14 @@ export class ImapClientProvider {
       await client.connect();
 
       this.logger.log(
-        `Connected to IMAP server for ${connectedAccount.handle}`,
+        `Connected to IMAP server for ${customConnectionParams.handle}`,
       );
 
       try {
         const mailboxes = await client.list();
 
         this.logger.log(
-          `Available mailboxes for ${connectedAccount.handle}: ${mailboxes.map((m) => m.path).join(', ')}`,
+          `Available mailboxes for ${customConnectionParams.handle}: ${mailboxes.map((m) => m.path).join(', ')}`,
         );
       } catch (error) {
         this.logger.warn(`Failed to list mailboxes: ${error.message}`);
@@ -111,10 +90,10 @@ export class ImapClientProvider {
   }
 
   async closeClient(
-    workspaceId: string,
+    connectedAccountId: string,
     messageChannelId: string,
   ): Promise<void> {
-    const cacheKey = `${workspaceId}-${messageChannelId}`;
+    const cacheKey = `${connectedAccountId}-${messageChannelId}`;
     const instance = this.clientInstances.get(cacheKey);
 
     if (instance?.isReady) {
