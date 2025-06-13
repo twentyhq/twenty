@@ -2,6 +2,7 @@ import { FormFieldInputContainer } from '@/object-record/record-field/form-types
 import { FormRawJsonFieldInput } from '@/object-record/record-field/form-types/components/FormRawJsonFieldInput';
 
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { Select } from '@/ui/input/components/Select';
 import {
   DEFAULT_JSON_BODY_PLACEHOLDER,
   HttpRequestBody,
@@ -10,7 +11,7 @@ import { hasNonStringValues } from '@/workflow/workflow-steps/workflow-actions/h
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { Toggle } from 'twenty-ui/input';
+import { IconFileText, IconKey } from 'twenty-ui/display';
 import { KeyValuePairInput } from './KeyValuePairInput';
 
 const StyledContainer = styled.div`
@@ -19,17 +20,8 @@ const StyledContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledModeSelector = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledLabelRow = styled(InputLabel)`
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
+const StyledSelectDropdown = styled(Select)`
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 type BodyInputProps = {
@@ -104,18 +96,18 @@ export const BodyInput = ({
 
   return (
     <FormFieldInputContainer>
-      <StyledLabelRow>
-        <div>Body</div>
-        <StyledModeSelector>
-          <div>Raw JSON</div>
-          <Toggle
-            value={isRawJson}
-            onChange={handleModeChange}
-            disabled={readonly}
-            toggleSize="small"
-          />
-        </StyledModeSelector>
-      </StyledLabelRow>
+      <InputLabel>Body Input</InputLabel>
+      <StyledSelectDropdown
+        options={[
+          { label: 'Key/Value', value: 'keyValue', Icon: IconKey },
+          { label: 'Raw JSON', value: 'rawJson', Icon: IconFileText },
+        ]}
+        dropdownId="body-input-mode"
+        value={isRawJson ? 'rawJson' : 'keyValue'}
+        onChange={(value) => handleModeChange(value === 'rawJson')}
+        disabled={readonly}
+      />
+
       <StyledContainer>
         {isRawJson ? (
           <FormRawJsonFieldInput
