@@ -12,8 +12,9 @@ export const filterAvailableFieldMetadataItemsToImport = (
         (!fieldMetadataItem.isSystem || fieldMetadataItem.name === 'id') &&
         fieldMetadataItem.name !== 'createdAt' &&
         fieldMetadataItem.name !== 'updatedAt' &&
-        fieldMetadataItem.type !== FieldMetadataType.ACTOR &&
-        (fieldMetadataItem.type !== FieldMetadataType.RELATION ||
+        (![FieldMetadataType.RELATION, FieldMetadataType.RICH_TEXT].includes(
+          fieldMetadataItem.type,
+        ) ||
           fieldMetadataItem.relation?.type === RelationType.MANY_TO_ONE),
     )
     .sort((fieldMetadataItemA, fieldMetadataItemB) =>
