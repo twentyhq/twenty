@@ -44,16 +44,18 @@ const resolveObject = (
   input: object,
   context: Record<string, unknown>,
 ): object => {
-  const resolvedObject = input;
+  return Object.entries(input).reduce<Record<string, unknown>>(
+    (resolvedObject, [key, value]) => {
+      const resolvedKey = resolveInput(key, context);
 
-  const entries = Object.entries(resolvedObject);
+      resolvedObject[
+        typeof resolvedKey === 'string' ? resolvedKey : String(resolvedKey)
+      ] = resolveInput(value, context);
 
-  for (const [key, value] of entries) {
-    // @ts-expect-error legacy noImplicitAny
-    resolvedObject[key] = resolveInput(value, context);
-  }
-
-  return resolvedObject;
+      return resolvedObject;
+    },
+    {},
+  );
 };
 
 const resolveString = (
