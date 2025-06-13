@@ -102,7 +102,9 @@ export class StandardIndexFactory {
           const hasAllFields = workspaceIndexMetadataArgs.columns.every(
             (expectedField) => {
               return objectMetadata.fields.some(
-                (field) => field.name === expectedField,
+                (field) =>
+                  field.name === expectedField ||
+                  `${field.name}Id` === expectedField,
               );
             },
           );
