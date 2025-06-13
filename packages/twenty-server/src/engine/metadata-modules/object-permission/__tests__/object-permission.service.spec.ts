@@ -4,6 +4,9 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { UpsertObjectPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-object-permissions.input';
+import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
+import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -13,11 +16,6 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
-
-import { ObjectPermissionEntity } from './object-permission.entity';
-import { ObjectPermissionService } from './object-permission.service';
-
-import { UpsertObjectPermissionsInput } from './dtos/upsert-object-permissions.input';
 
 describe('ObjectPermissionService', () => {
   let service: ObjectPermissionService;
@@ -89,7 +87,8 @@ describe('ObjectPermissionService', () => {
         id: roleId,
         workspaceId,
         isEditable: true,
-      } as RoleEntity);
+        objectPermissions: [],
+      } as unknown as RoleEntity);
     });
 
     it('should throw PermissionsException when trying to add object permission on system object', async () => {
