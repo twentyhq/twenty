@@ -201,7 +201,7 @@ export class UserResolver {
     );
 
     if (!isDefined(workspaceMemberEntity)) {
-      return null
+      return null;
     }
 
     const workspaceId = workspace.id;
