@@ -5,149 +5,62 @@ import { statusEnum, WhatsappDocument } from '@/chat/types/WhatsappDocument';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 
-interface getTabUnreadMessagesArgs {
+interface GetTabUnreadMessagesArgs {
   integrationWhatsappIds: string[];
   // integrationMessengerIds: string[];
   setUnreadTabMessages: Dispatch<SetStateAction<UnreadMessages | null>>;
   agent: string | undefined;
 }
 
+interface GetTabUnreadMessagesArgs {
+  integrationWhatsappIds: string[];
+  setUnreadTabMessages: Dispatch<SetStateAction<UnreadMessages | null>>;
+  agent: string | undefined;
+}
+
 export const useGetTabUnreadMessages = ({
   integrationWhatsappIds,
-  // integrationMessengerIds,
   setUnreadTabMessages,
   agent,
-}: getTabUnreadMessagesArgs) => {
+}: GetTabUnreadMessagesArgs) => {
   const { firestoreDb } = useFirestoreDb();
 
   useEffect(() => {
-    if (integrationWhatsappIds.length === 0) {
-      // && integrationMessengerIds.length === 0
-      return;
-    }
+    if (integrationWhatsappIds.length === 0) return;
 
-    const processUnreadMessages = (chats: WhatsappDocument[]) => {
-      // | FacebookDocument
-      const unreadMine = chats
-        .filter(
-          (chat) =>
-            chat.status === statusEnum.InProgress && chat.agent === agent,
-        )
-        .map((chat) => chat.unreadMessages || 0);
+    const countChatsByStatus = (chats: WhatsappDocument[]) => {
+      const countMine = chats.filter(
+        (chat) => chat.status === statusEnum.InProgress && chat.agent === agent,
+      ).length;
 
-      const unreadUnassigned = chats
-        .filter((chat) => chat.status === statusEnum.Waiting)
-        .map((chat) => chat.unreadMessages || 0);
+      const countUnassigned = chats.filter(
+        (chat) => chat.status === statusEnum.Waiting,
+      ).length;
 
-      const unreadAbandoned = chats
-        .filter((chat) => chat.status === statusEnum.Pending)
-        .map((chat) => chat.unreadMessages || 0);
+      const countAbandoned = chats.filter(
+        (chat) => chat.status === statusEnum.Pending,
+      ).length;
 
       return {
-        unreadMine: unreadMine.reduce(
-          (acc, unreadMessages) => acc + unreadMessages,
-          0,
-        ),
-        unreadUnassigned: unreadUnassigned.reduce(
-          (acc, unreadMessages) => acc + unreadMessages,
-          0,
-        ),
-        unreadAbandoned: unreadAbandoned.reduce(
-          (acc, unreadMessages) => acc + unreadMessages,
-          0,
-        ),
+        unreadMine: countMine,
+        unreadUnassigned: countUnassigned,
+        unreadAbandoned: countAbandoned,
       };
     };
 
-    let unsubscribeWhatsapp: () => void = () => {};
-    // let unsubscribeMessenger: () => void = () => {};
+    const waQuery = query(
+      collection(firestoreDb, 'whatsapp'),
+      where('integrationId', 'in', integrationWhatsappIds),
+    );
 
-    if (integrationWhatsappIds.length > 0) {
-      const waQuery = query(
-        collection(firestoreDb, 'whatsapp'),
-        where('integrationId', 'in', integrationWhatsappIds),
-      );
+    const unsubscribe = onSnapshot(waQuery, (snapshot) => {
+      const chats = snapshot.docs.map((doc) => doc.data() as WhatsappDocument);
 
-      unsubscribeWhatsapp = onSnapshot(waQuery, (snapshot) => {
-        const chats = snapshot.docs.map(
-          (doc) => doc.data() as WhatsappDocument,
-        );
-        const unreadMessagesWhatsapp = processUnreadMessages(chats);
+      const counts = countChatsByStatus(chats);
 
-        setUnreadTabMessages({
-          unreadMine: unreadMessagesWhatsapp.unreadMine,
-          unreadUnassigned: unreadMessagesWhatsapp.unreadUnassigned,
-          unreadAbandoned: unreadMessagesWhatsapp.unreadAbandoned,
-        });
+      setUnreadTabMessages(counts);
+    });
 
-        // if (integrationMessengerIds.length > 0) {
-        //   unsubscribeMessenger = onSnapshot(
-        //     query(
-        //       collection(firestoreDb, 'messenger'),
-        //       where('integrationId', 'in', integrationMessengerIds),
-        //     ),
-        //     (snapshot) => {
-        //       const chats = snapshot.docs.map(
-        //         (doc) => doc.data() as FacebookDocument,
-        //       );
-        //       const unreadMessagesMessenger = processUnreadMessages(chats);
-
-        //       setUnreadTabMessages({
-        //         unreadMine:
-        //           unreadMessagesWhatsapp.unreadMine +
-        //           unreadMessagesMessenger.unreadMine,
-        //         unreadUnassigned:
-        //           unreadMessagesWhatsapp.unreadUnassigned +
-        //           unreadMessagesMessenger.unreadUnassigned,
-        //         unreadAbandoned:
-        //           unreadMessagesWhatsapp.unreadAbandoned +
-        //           unreadMessagesMessenger.unreadAbandoned,
-        //       });
-        //     },
-        //   );
-        // } else {
-        //   setUnreadTabMessages({
-        //     unreadMine: unreadMessagesWhatsapp.unreadMine,
-        //     unreadUnassigned: unreadMessagesWhatsapp.unreadUnassigned,
-        //     unreadAbandoned: unreadMessagesWhatsapp.unreadAbandoned,
-        //   });
-        // }
-      });
-    }
-
-    // if (integrationMessengerIds.length > 0) {
-    //   const fbQuery = query(
-    //     collection(firestoreDb, 'messenger'),
-    //     where('integrationId', 'in', integrationMessengerIds),
-    //   );
-
-    //   unsubscribeMessenger = onSnapshot(fbQuery, (snapshot) => {
-    //     const chats = snapshot.docs.map(
-    //       (doc) => doc.data() as FacebookDocument,
-    //     );
-    //     const unreadMessagesMessenger = processUnreadMessages(chats);
-
-    //     setUnreadTabMessages({
-    //       unreadMine: unreadMessagesMessenger.unreadMine,
-    //       unreadUnassigned: unreadMessagesMessenger.unreadUnassigned,
-    //       unreadAbandoned: unreadMessagesMessenger.unreadAbandoned,
-    //     });
-    //   });
-    // }
-
-    return () => {
-      if (unsubscribeWhatsapp) {
-        unsubscribeWhatsapp();
-      }
-
-      // if (unsubscribeMessenger) {
-      //   unsubscribeMessenger();
-      // }
-    };
-  }, [
-    integrationWhatsappIds,
-    // integrationMessengerIds,
-    agent,
-    setUnreadTabMessages,
-  ]);
+    return () => unsubscribe();
+  }, [integrationWhatsappIds, agent, setUnreadTabMessages, firestoreDb]);
 };

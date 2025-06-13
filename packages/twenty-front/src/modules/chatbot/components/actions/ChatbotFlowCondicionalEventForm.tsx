@@ -1,4 +1,6 @@
+import { ChatbotFlowEventContainerForm } from '@/chatbot/components/actions/ChatbotFlowEventContainerForm';
 import { LogicOption } from '@/chatbot/components/ui/LogicOption';
+import { useDeleteSelectedNode } from '@/chatbot/hooks/useDeleteSelectedNode';
 import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
 import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
 import { chatbotFlowState } from '@/chatbot/state/chatbotFlowState';
@@ -116,6 +118,7 @@ export const ChatbotFlowCondicionalEventForm = ({
   const [nodeData, setNodeData] = useState<NewConditionalState>(initialState);
 
   const { updateFlow } = useUpdateChatbotFlow();
+  const { deleteSelectedNode } = useDeleteSelectedNode();
 
   const chatbotFlow = useRecoilValue(chatbotFlowState);
   const setChatbotFlowSelectedNode = useSetRecoilState(
@@ -260,41 +263,45 @@ export const ChatbotFlowCondicionalEventForm = ({
           </StyledHeaderType>
         </StyledHeaderInfo>
       </StyledHeader>
-      <StyledStepBody>
-        <StyledDiv>
-          <Label>Message body</Label>
-          <textarea
-            id="text"
-            ref={textareaRef}
-            value={text}
-            onChange={handleInputChange}
-            disabled={text.length >= 4000}
-            onBlur={handleTextBlur}
-          />
-          <StyledLabel>{text.length}/4000</StyledLabel>
-        </StyledDiv>
-        <StyledDiv>
-          {nodeData.logicNodes.map((_, index) => {
-            return (
-              <LogicOption
-                key={index}
-                nodeIndex={index}
-                condition={nodeData.logicNodeData[index]}
-                onDelete={() => deleteCondition(index)}
-                onUpdate={(updates) => updateCondition(index, updates)}
-                showDeleteButton={nodeData.logicNodes.length > 1}
-              />
-            );
-          })}
-        </StyledDiv>
+      <ChatbotFlowEventContainerForm
+        onClick={() => deleteSelectedNode(selectedNode.id)}
+      >
+        <StyledStepBody>
+          <StyledDiv>
+            <Label>Message body</Label>
+            <textarea
+              id="text"
+              ref={textareaRef}
+              value={text}
+              onChange={handleInputChange}
+              disabled={text.length >= 4000}
+              onBlur={handleTextBlur}
+            />
+            <StyledLabel>{text.length}/4000</StyledLabel>
+          </StyledDiv>
+          <StyledDiv>
+            {nodeData.logicNodes.map((_, index) => {
+              return (
+                <LogicOption
+                  key={index}
+                  nodeIndex={index}
+                  condition={nodeData.logicNodeData[index]}
+                  onDelete={() => deleteCondition(index)}
+                  onUpdate={(updates) => updateCondition(index, updates)}
+                  showDeleteButton={nodeData.logicNodes.length > 1}
+                />
+              );
+            })}
+          </StyledDiv>
 
-        <Button
-          onClick={addCondition}
-          title={'Add option'}
-          Icon={IconPlus}
-          justify="center"
-        />
-      </StyledStepBody>
+          <Button
+            onClick={addCondition}
+            title={'Add option'}
+            Icon={IconPlus}
+            justify="center"
+          />
+        </StyledStepBody>
+      </ChatbotFlowEventContainerForm>
     </>
   );
 };

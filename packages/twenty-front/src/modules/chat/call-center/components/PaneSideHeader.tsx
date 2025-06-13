@@ -118,8 +118,8 @@ export const PaneSideHeader = () => {
   ) => {
     const sendTemplateInput = {
       integrationId: integrationId,
-      to: `${phoneNumber}`,
-      from: `${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`,
+      to: `+${phoneNumber}`,
+      from: `_${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`,
       templateName,
       language,
       message,
