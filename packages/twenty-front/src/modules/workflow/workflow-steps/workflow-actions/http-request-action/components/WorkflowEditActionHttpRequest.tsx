@@ -1,26 +1,30 @@
+import { FormRawJsonFieldInput } from '@/object-record/record-field/form-types/components/FormRawJsonFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
 import { WorkflowHttpRequestAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
+
 import { isMethodWithBody } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/isMethodWithBody';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useEffect } from 'react';
 import { useIcons } from 'twenty-ui/display';
-import { HTTP_METHODS } from '../constants/HttpRequest';
+import {
+  DEFAULT_JSON_BODY_PLACEHOLDER,
+  HTTP_METHODS,
+} from '../constants/HttpRequest';
 import { useHttpRequestForm } from '../hooks/useHttpRequestForm';
+import { useHttpRequestOutputSchema } from '../hooks/useHttpRequestOutputSchema';
 import { BodyInput } from './BodyInput';
 import { KeyValuePairInput } from './KeyValuePairInput';
 
 type WorkflowEditActionHttpRequestProps = {
   action: WorkflowHttpRequestAction;
-  actionOptions:
-    | { readonly: true }
-    | {
-        readonly?: false;
-        onActionUpdate: (action: WorkflowHttpRequestAction) => void;
-      };
+  actionOptions: {
+    readonly?: boolean;
+    onActionUpdate?: (action: WorkflowHttpRequestAction) => void;
+  };
 };
 
 export const WorkflowEditActionHttpRequest = ({
@@ -36,12 +40,16 @@ export const WorkflowEditActionHttpRequest = ({
 
   const { formData, handleFieldChange, saveAction } = useHttpRequestForm({
     action,
-    onActionUpdate:
-      actionOptions.readonly === true
-        ? undefined
-        : actionOptions.onActionUpdate,
+    onActionUpdate: actionOptions.onActionUpdate,
     readonly: actionOptions.readonly === true,
   });
+
+  const { outputSchema, handleOutputSchemaChange, error } =
+    useHttpRequestOutputSchema({
+      action,
+      onActionUpdate: actionOptions.onActionUpdate,
+      readonly: actionOptions.readonly === true,
+    });
 
   useEffect(() => () => saveAction.flush(), [saveAction]);
 
@@ -94,6 +102,15 @@ export const WorkflowEditActionHttpRequest = ({
             readonly={actionOptions.readonly}
           />
         )}
+
+        <FormRawJsonFieldInput
+          label="Expected Response"
+          placeholder={DEFAULT_JSON_BODY_PLACEHOLDER}
+          defaultValue={outputSchema}
+          onChange={handleOutputSchemaChange}
+          readonly={actionOptions.readonly}
+          error={error}
+        />
       </WorkflowStepBody>
     </>
   );
