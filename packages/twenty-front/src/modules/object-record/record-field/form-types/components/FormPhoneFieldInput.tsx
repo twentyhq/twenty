@@ -55,6 +55,7 @@ export const FormPhoneFieldInput = ({
       {label && <InputLabel>{label}</InputLabel>}
       <FormNestedFieldInputContainer>
         <FormCountryCodeSelectInput
+          label="Country Code"
           selectedCountryCode={defaultValue?.primaryPhoneCountryCode || ''}
           onChange={handleCountryChange}
           readonly={readonly}

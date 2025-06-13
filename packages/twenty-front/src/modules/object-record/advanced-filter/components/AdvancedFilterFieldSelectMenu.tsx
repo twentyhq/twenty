@@ -15,6 +15,7 @@ import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldM
 import { AdvancedFilterFieldSelectSearchInput } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput';
 import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
 import { useSelectFieldUsedInAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks/useSelectFieldUsedInAdvancedFilterDropdown';
+import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { ObjectFilterDropdownFilterSelectMenuItemV2 } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectMenuItemV2';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
@@ -25,7 +26,9 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { useLingui } from '@lingui/react/macro';
+import { useContext } from 'react';
 
 type AdvancedFilterFieldSelectMenuProps = {
   recordFilterId: string;
@@ -35,6 +38,7 @@ export const AdvancedFilterFieldSelectMenu = ({
   recordFilterId,
 }: AdvancedFilterFieldSelectMenuProps) => {
   const { recordIndexId } = useRecordIndexContextOrThrow();
+  const { isColumn } = useContext(AdvancedFilterContext);
 
   const {
     closeAdvancedFilterFieldSelectDropdown,
@@ -48,6 +52,15 @@ export const AdvancedFilterFieldSelectMenu = ({
   const { filterableFieldMetadataItems } =
     useFilterableFieldMetadataItemsInRecordIndexContext();
 
+  const availableFieldMetadataItems = isColumn
+    ? filterableFieldMetadataItems.filter((fieldMetadataItem) =>
+        shouldDisplayFormField({
+          fieldMetadataItem,
+          actionType: 'FIND_RECORDS',
+        }),
+      )
+    : filterableFieldMetadataItems;
+
   const visibleTableColumns = useRecoilComponentValueV2(
     visibleTableColumnsComponentSelector,
     recordIndexId,
@@ -57,7 +70,7 @@ export const AdvancedFilterFieldSelectMenu = ({
   );
 
   const filteredSearchInputFieldMetadataItems =
-    filterableFieldMetadataItems.filter((fieldMetadataItem) =>
+    availableFieldMetadataItems.filter((fieldMetadataItem) =>
       fieldMetadataItem.label
         .toLocaleLowerCase()
         .includes(objectFilterDropdownSearchInput.toLocaleLowerCase()),

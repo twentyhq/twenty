@@ -20,6 +20,26 @@ const DISPLAYABLE_FIELD_TYPES_FOR_UPDATE = [
   FieldMetadataType.UUID,
 ];
 
+const DISPLAYABLE_FIELD_TYPES_FOR_FIND_RECORDS = [
+  FieldMetadataType.TEXT,
+  FieldMetadataType.NUMBER,
+  FieldMetadataType.DATE,
+  FieldMetadataType.BOOLEAN,
+  FieldMetadataType.SELECT,
+  FieldMetadataType.MULTI_SELECT,
+  FieldMetadataType.EMAILS,
+  FieldMetadataType.LINKS,
+  FieldMetadataType.FULL_NAME,
+  FieldMetadataType.ADDRESS,
+  FieldMetadataType.PHONES,
+  FieldMetadataType.CURRENCY,
+  FieldMetadataType.DATE_TIME,
+  FieldMetadataType.RAW_JSON,
+  FieldMetadataType.UUID,
+  FieldMetadataType.ARRAY,
+  FieldMetadataType.RELATION,
+];
+
 export const shouldDisplayFormField = ({
   fieldMetadataItem,
   actionType,
@@ -39,6 +59,12 @@ export const shouldDisplayFormField = ({
       isTypeAllowedForAction =
         DISPLAYABLE_FIELD_TYPES_FOR_UPDATE.includes(fieldMetadataItem.type) ||
         fieldMetadataItem.settings?.['relationType'] === 'MANY_TO_ONE';
+      break;
+    case 'FIND_RECORDS':
+      isTypeAllowedForAction =
+        DISPLAYABLE_FIELD_TYPES_FOR_FIND_RECORDS.includes(
+          fieldMetadataItem.type,
+        );
       break;
     default:
       throw new Error(`Action "${actionType}" is not supported`);
