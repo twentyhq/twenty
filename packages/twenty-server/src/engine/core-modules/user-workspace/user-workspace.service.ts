@@ -14,13 +14,11 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
@@ -35,6 +33,12 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
+import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
+import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
+import { AvailableWorkspace } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   constructor(
@@ -44,10 +48,11 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     private readonly userRepository: Repository<User>,
     @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly domainManagerService: DomainManagerService,
+    private readonly loginTokenService: LoginTokenService,
+    private readonly approvedAccessDomainService: ApprovedAccessDomainService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly userRoleService: UserRoleService,
     private readonly fileUploadService: FileUploadService,
@@ -255,39 +260,53 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
         'workspaces',
         'workspaces.workspace',
         'workspaces.workspace.workspaceSSOIdentityProviders',
+        'workspaces.workspace.approvedAccessDomains',
       ],
     });
 
-    userValidator.assertIsDefinedOrThrow(
-      user,
-      new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
+    const alreadyMemberWorkspaces = user
+      ? user.workspaces.map(({ workspace }) => ({ workspace }))
+      : [];
+
+    const alreadyMemberWorkspacesIds = alreadyMemberWorkspaces.map(
+      ({ workspace }) => workspace.id,
     );
 
-    return user.workspaces.map<AvailableWorkspaceOutput>((userWorkspace) => ({
-      id: userWorkspace.workspaceId,
-      displayName: userWorkspace.workspace.displayName,
-      workspaceUrls: this.domainManagerService.getWorkspaceUrls(
-        userWorkspace.workspace,
-      ),
-      logo: userWorkspace.workspace.logo,
-      sso: userWorkspace.workspace.workspaceSSOIdentityProviders.reduce(
-        (acc, identityProvider) =>
-          acc.concat(
-            identityProvider.status === 'Inactive'
-              ? []
-              : [
-                  {
-                    id: identityProvider.id,
-                    name: identityProvider.name,
-                    issuer: identityProvider.issuer,
-                    type: identityProvider.type,
-                    status: identityProvider.status,
-                  },
-                ],
-          ),
-        [] as AvailableWorkspaceOutput['sso'],
-      ),
-    }));
+    const workspacesFromApprovedAccessDomain = (
+      await this.approvedAccessDomainService.findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain(
+        getDomainNameByEmail(email),
+      )
+    )
+      .filter(
+        ({ workspace }) => !alreadyMemberWorkspacesIds.includes(workspace.id),
+      )
+      .map(({ workspace }) => ({ workspace }));
+
+    const workspacesFromApprovedAccessDomainIds =
+      workspacesFromApprovedAccessDomain.map(({ workspace }) => workspace.id);
+
+    const workspacesFromInvitations = (
+      await this.workspaceInvitationService.findInvitationsByEmail(email)
+    )
+      .filter(
+        ({ workspaceId }) =>
+          ![
+            ...alreadyMemberWorkspacesIds,
+            ...workspacesFromApprovedAccessDomainIds,
+          ].includes(workspaceId),
+      )
+      .map((appToken) => ({
+        workspace: appToken.workspace,
+        appToken,
+      }));
+
+    return {
+      availableWorkspacesForSignIn: alreadyMemberWorkspaces,
+      availableWorkspacesForSignUp: [
+        ...workspacesFromApprovedAccessDomain,
+        ...workspacesFromInvitations,
+      ],
+    };
   }
 
   async getUserWorkspaceForUserOrThrow({
@@ -379,5 +398,79 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     }
 
     return files[0].path;
+  }
+
+  castWorkspaceToAvailableWorkspace(workspace: Workspace) {
+    return {
+      id: workspace.id,
+      displayName: workspace.displayName,
+      workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
+      logo: workspace.logo,
+      sso: workspace.workspaceSSOIdentityProviders.reduce(
+        (acc, identityProvider) =>
+          acc.concat(
+            identityProvider.status === 'Inactive'
+              ? []
+              : [
+                  {
+                    id: identityProvider.id,
+                    name: identityProvider.name,
+                    issuer: identityProvider.issuer,
+                    type: identityProvider.type,
+                    status: identityProvider.status,
+                  },
+                ],
+          ),
+        [] as AvailableWorkspace['sso'],
+      ),
+    };
+  }
+
+  async setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
+    availableWorkspaces: {
+      availableWorkspacesForSignUp: Array<{
+        workspace: Workspace;
+        appToken?: AppToken;
+      }>;
+      availableWorkspacesForSignIn: Array<{
+        workspace: Workspace;
+        appToken?: AppToken;
+      }>;
+    },
+    user: User,
+    authProvider: AuthProviderEnum,
+  ) {
+    return {
+      availableWorkspacesForSignUp:
+        availableWorkspaces.availableWorkspacesForSignUp.map(
+          ({ workspace, appToken }) => {
+            return {
+              ...this.castWorkspaceToAvailableWorkspace(workspace),
+              ...(appToken ? { personalInviteToken: appToken.value } : {}),
+            };
+          },
+        ),
+      availableWorkspacesForSignIn: await Promise.all(
+        availableWorkspaces.availableWorkspacesForSignIn.map(
+          async ({ workspace }) => {
+            return {
+              ...this.castWorkspaceToAvailableWorkspace(workspace),
+              loginToken: workspaceValidator.isAuthEnabled(
+                authProvider,
+                workspace,
+              )
+                ? (
+                    await this.loginTokenService.generateLoginToken(
+                      user.email,
+                      workspace.id,
+                      AuthProviderEnum.Password,
+                    )
+                  ).token
+                : undefined,
+            };
+          },
+        ),
+      ),
+    };
   }
 }

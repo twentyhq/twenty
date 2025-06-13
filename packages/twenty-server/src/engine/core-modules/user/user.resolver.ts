@@ -57,6 +57,10 @@ import { fromUserWorkspacePermissionsToUserWorkspacePermissionsDto } from 'src/e
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { AvailableWorkspaces } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -66,7 +70,6 @@ const getHMACKey = (email?: string, key?: string | null) => {
   return hmac.update(email).digest('hex');
 };
 
-@UseGuards(WorkspaceAuthGuard)
 @Resolver(() => User)
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
 export class UserResolver {
@@ -123,15 +126,16 @@ export class UserResolver {
   }
 
   @Query(() => User)
+  @UseGuards(UserAuthGuard)
   async currentUser(
     @AuthUser() { id: userId }: User,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace,
   ): Promise<User> {
     const user = await this.userRepository.findOne({
       where: {
         id: userId,
       },
-      relations: ['workspaces', 'workspaces.workspace'],
+      relations: ['workspaces'],
     });
 
     userValidator.assertIsDefinedOrThrow(
@@ -139,8 +143,12 @@ export class UserResolver {
       new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
     );
 
+    if (!workspace) {
+      return user;
+    }
+
     const currentUserWorkspace = user.workspaces.find(
-      (userWorkspace) => userWorkspace.workspace.id === workspace.id,
+      (userWorkspace) => userWorkspace.workspaceId === workspace.id,
     );
 
     if (!isDefined(currentUserWorkspace)) {
@@ -165,11 +173,14 @@ export class UserResolver {
     };
   }
 
-  @ResolveField(() => GraphQLJSONObject)
+  @ResolveField(() => GraphQLJSONObject, {
+    nullable: true,
+  })
   async userVars(
     @Parent() user: User,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
   ): Promise<Record<string, unknown>> {
+    if (!workspace) return {};
     const userVars = await this.userVarService.getAll({
       userId: user.id,
       workspaceId: workspace.id,
@@ -193,15 +204,17 @@ export class UserResolver {
   })
   async workspaceMember(
     @Parent() user: User,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
   ): Promise<WorkspaceMember | null> {
+    if (!workspace) return null;
+
     const workspaceMemberEntity = await this.userService.loadWorkspaceMember(
       user,
       workspace,
     );
 
     if (!isDefined(workspaceMemberEntity)) {
-      throw new Error('Workspace member not found');
+      return null;
     }
 
     const workspaceId = workspace.id;
@@ -235,8 +248,10 @@ export class UserResolver {
   })
   async workspaceMembers(
     @Parent() _user: User,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
   ): Promise<WorkspaceMember[]> {
+    if (!workspace) return [];
+
     const workspaceMemberEntities = await this.userService.loadWorkspaceMembers(
       workspace,
       false,
@@ -301,8 +316,10 @@ export class UserResolver {
   })
   async deletedWorkspaceMembers(
     @Parent() _user: User,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
   ): Promise<DeletedWorkspaceMember[]> {
+    if (!workspace) return [];
+
     const workspaceMemberEntities =
       await this.userService.loadDeletedWorkspaceMembersOnly(workspace);
 
@@ -327,9 +344,10 @@ export class UserResolver {
   }
 
   @Mutation(() => SignedFileDTO)
+  @UseGuards(WorkspaceAuthGuard)
   async uploadProfilePicture(
     @AuthUser() { id }: User,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace({ allowUndefined: true }) { id: workspaceId }: Workspace,
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename, mimetype }: FileUpload,
   ): Promise<SignedFileDTO> {
@@ -357,20 +375,43 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
+  @UseGuards(UserAuthGuard)
   async deleteUser(@AuthUser() { id: userId }: User) {
     return this.userService.deleteUser(userId);
   }
 
-  @ResolveField(() => OnboardingStatus)
+  @ResolveField(() => OnboardingStatus, {
+    nullable: true,
+  })
   async onboardingStatus(
     @Parent() user: User,
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<OnboardingStatus> {
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
+  ): Promise<OnboardingStatus | null> {
+    if (!workspace) return null;
+
     return this.onboardingService.getOnboardingStatus(user, workspace);
   }
 
-  @ResolveField(() => Workspace)
-  async currentWorkspace(@AuthWorkspace() workspace: Workspace) {
+  @ResolveField(() => Workspace, {
+    nullable: true,
+  })
+  async currentWorkspace(
+    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
+  ) {
     return workspace;
+  }
+
+  @ResolveField(() => AvailableWorkspaces)
+  async availableWorkspaces(
+    @AuthUser() user: User,
+    @AuthProvider() authProvider: AuthProviderEnum,
+  ): Promise<AvailableWorkspaces> {
+    return this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
+      await this.userWorkspaceService.findAvailableWorkspacesByEmail(
+        user.email,
+      ),
+      user,
+      authProvider,
+    );
   }
 }

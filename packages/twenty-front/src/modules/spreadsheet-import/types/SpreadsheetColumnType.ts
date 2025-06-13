@@ -5,4 +5,5 @@ export enum SpreadsheetColumnType {
   matchedCheckbox,
   matchedSelect,
   matchedSelectOptions,
+  matchedError,
 }

@@ -37,6 +37,7 @@ export const MainNavigationDrawerFixedItems = () => {
           Icon={IconSearch}
           onClick={openRecordsSearchPage}
           keyboard={['/']}
+          mouseUpNavigation={true}
         />
         <NavigationDrawerItem
           label={t`Settings`}

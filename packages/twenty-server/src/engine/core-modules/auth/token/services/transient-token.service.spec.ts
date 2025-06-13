@@ -18,7 +18,7 @@ describe('TransientTokenService', () => {
           provide: JwtWrapperService,
           useValue: {
             sign: jest.fn(),
-            verifyWorkspaceToken: jest.fn(),
+            verifyJwtToken: jest.fn(),
             decode: jest.fn(),
             generateAppSecret: jest.fn().mockReturnValue('mocked-secret'),
           },
@@ -56,11 +56,11 @@ describe('TransientTokenService', () => {
       });
       jest.spyOn(jwtWrapperService, 'sign').mockReturnValue(mockToken);
 
-      const result = await service.generateTransientToken(
+      const result = await service.generateTransientToken({
         workspaceMemberId,
         userId,
         workspaceId,
-      );
+      });
 
       expect(result).toEqual({
         token: mockToken,
@@ -72,8 +72,10 @@ describe('TransientTokenService', () => {
       expect(jwtWrapperService.sign).toHaveBeenCalledWith(
         {
           sub: workspaceMemberId,
+          type: 'LOGIN',
           userId,
           workspaceId,
+          workspaceMemberId,
         },
         expect.objectContaining({
           secret: 'mocked-secret',
@@ -90,21 +92,23 @@ describe('TransientTokenService', () => {
         sub: 'workspace-member-id',
         userId: 'user-id',
         workspaceId: 'workspace-id',
+        workspaceMemberId: 'workspace-member-id',
       };
 
       jest
-        .spyOn(jwtWrapperService, 'verifyWorkspaceToken')
+        .spyOn(jwtWrapperService, 'verifyJwtToken')
         .mockResolvedValue(undefined);
       jest.spyOn(jwtWrapperService, 'decode').mockReturnValue(mockPayload);
 
       const result = await service.verifyTransientToken(mockToken);
 
       expect(result).toEqual({
-        workspaceMemberId: mockPayload.sub,
+        workspaceMemberId: mockPayload.workspaceMemberId,
+        sub: mockPayload.sub,
         userId: mockPayload.userId,
         workspaceId: mockPayload.workspaceId,
       });
-      expect(jwtWrapperService.verifyWorkspaceToken).toHaveBeenCalledWith(
+      expect(jwtWrapperService.verifyJwtToken).toHaveBeenCalledWith(
         mockToken,
         'LOGIN',
       );
@@ -115,7 +119,7 @@ describe('TransientTokenService', () => {
       const mockToken = 'invalid-token';
 
       jest
-        .spyOn(jwtWrapperService, 'verifyWorkspaceToken')
+        .spyOn(jwtWrapperService, 'verifyJwtToken')
         .mockRejectedValue(new Error('Invalid token'));
 
       await expect(service.verifyTransientToken(mockToken)).rejects.toThrow();
