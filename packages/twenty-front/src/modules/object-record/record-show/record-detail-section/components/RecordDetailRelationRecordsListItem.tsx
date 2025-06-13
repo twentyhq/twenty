@@ -106,7 +106,7 @@ export const RecordDetailRelationRecordsListItem = ({
   onClick,
   relationRecord,
 }: RecordDetailRelationRecordsListItemProps) => {
-  const { fieldDefinition, recordId } = useContext(FieldContext);
+  const { fieldDefinition } = useContext(FieldContext);
 
   const { openModal } = useModal();
 
