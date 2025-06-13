@@ -25,6 +25,7 @@ import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldM
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
+import { useRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/hooks/useRecordFieldCardRelationPickerDropdownId';
 import { RecordDetailRecordsListItem } from '@/object-record/record-show/record-detail-section/components/RecordDetailRecordsListItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
@@ -158,7 +159,7 @@ export const RecordDetailRelationRecordsListItem = ({
 
   const { closeDropdown, isDropdownOpen } = useDropdown(dropdownScopeId);
 
-  const dropdownId = `record-field-card-relation-picker-${fieldDefinition.fieldMetadataId}-${recordId}`;
+  const dropdownId = useRecordFieldCardRelationPickerDropdownId()
   const setSingleRecordPickerSelectedId = useSetRecoilComponentStateV2(
     singleRecordPickerSelectedIdComponentState,
     dropdownId,
