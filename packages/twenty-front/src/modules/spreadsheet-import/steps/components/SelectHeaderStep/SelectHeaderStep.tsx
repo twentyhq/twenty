@@ -51,7 +51,8 @@ export const SelectHeaderStep = ({
 
   const { selectHeaderStepHook } = useSpreadsheetImportInternal();
 
-  const computeColumnSuggestionsAndAutoMatch = useComputeColumnSuggestionsAndAutoMatch();
+  const computeColumnSuggestionsAndAutoMatch =
+    useComputeColumnSuggestionsAndAutoMatch();
 
   const handleContinue = useCallback(
     async (...args: Parameters<typeof selectHeaderStepHook>) => {
