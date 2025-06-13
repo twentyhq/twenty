@@ -41,7 +41,7 @@ export const getHttpRequestOutputSchema = (
           type: 'string',
           label: key,
           value: val as string,
-          icon: 'IconText',
+          icon: 'IconAbc',
         };
         break;
       case 'number':
