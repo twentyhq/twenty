@@ -6,5 +6,5 @@ import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/c
 export type UserWorkspacePermissions = {
   settingsPermissions: Record<SettingPermissionType, boolean>;
   objectRecordsPermissions: Record<PermissionsOnAllObjectRecords, boolean>;
-  objectPermissions: ObjectRecordsPermissions; // Missleading naming regarding above key naming
+  objectPermissions: ObjectRecordsPermissions;
 };
