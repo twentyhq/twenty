@@ -703,7 +703,7 @@ msgid "Assignment"
 msgstr "할당"
 
 #. js-lingui-id: H8QGSx
-#: src/modules/auth/sign-in-up/components/SignInUpPasswordField.tsx
+#: src/modules/auth/sign-in-up/components/internal/SignInUpPasswordField.tsx
 msgid "At least 8 characters long."
 msgstr "최소 8자 이상."
 
@@ -930,6 +930,11 @@ msgstr "중국어 - 간체"
 msgid "Chinese — Traditional"
 msgstr "중국어 - 번체"
 
+#. js-lingui-id: NFfUic
+#: src/pages/auth/SignInUp.tsx
+msgid "Choose a Workspace"
+msgstr ""
+
 #. js-lingui-id: JEFFOR
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #~ msgid "Choose an object"
@@ -1136,22 +1141,23 @@ msgstr "컨텍스트"
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
-#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx
+#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
+#: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Continue"
 msgstr "계속"
 
 #. js-lingui-id: RvVi9c
-#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx
+#: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Continue with Email"
 msgstr "이메일로 계속"
 
 #. js-lingui-id: oZyG4C
-#: src/modules/auth/sign-in-up/components/SignInUpWithGoogle.tsx
+#: src/modules/auth/sign-in-up/components/internal/SignInUpWithGoogle.tsx
 msgid "Continue with Google"
 msgstr "Google로 계속"
 
 #. js-lingui-id: ztoybH
-#: src/modules/auth/sign-in-up/components/SignInUpWithMicrosoft.tsx
+#: src/modules/auth/sign-in-up/components/internal/SignInUpWithMicrosoft.tsx
 msgid "Continue with Microsoft"
 msgstr "Microsoft로 계속"
 
@@ -1271,6 +1277,11 @@ msgstr "생성"
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Create a workflow and return here to view its versions"
 msgstr "워크플로를 생성하고 여기로 돌아와 버전을 확인하세요"
+
+#. js-lingui-id: Hn5erC
+#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
+msgid "Create a workspace"
+msgstr ""
 
 #. js-lingui-id: uXGLuq
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
@@ -1758,8 +1769,8 @@ msgstr "도메인"
 
 #. js-lingui-id: yGpVSw
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
-msgid "Domain added successfully."
-msgstr "도메인이 성공적으로 추가되었습니다."
+#~ msgid "Domain added successfully."
+#~ msgstr "도메인이 성공적으로 추가되었습니다."
 
 #. js-lingui-id: 7kVRe6
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -2804,6 +2815,11 @@ msgstr "잘못된 양식 값"
 msgid "Invalid workspace"
 msgstr "잘못된 작업 공간"
 
+#. js-lingui-id: ZR1dJ4
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignUp.tsx
+msgid "Invitations"
+msgstr ""
+
 #. js-lingui-id: MFKlMB
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
@@ -3189,6 +3205,11 @@ msgstr ""
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Max"
 msgstr "최대"
+
+#. js-lingui-id: Sma10A
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignIn.tsx
+msgid "Member of"
+msgstr ""
 
 #. js-lingui-id: wlQNTg
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -3943,6 +3964,11 @@ msgstr ""
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Playground"
 msgstr "플레이그라운드"
+
+#. js-lingui-id: 90/XJz
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+msgid "Please check your email for a verification link."
+msgstr ""
 
 #. js-lingui-id: jEw0Mr
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
@@ -4704,17 +4730,27 @@ msgid "Side Panel"
 msgstr "사이드 패널"
 
 #. js-lingui-id: 5lWFkC
-#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx
+#: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Sign in"
 msgstr "로그인"
 
+#. js-lingui-id: n1ekoW
+#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
+msgid "Sign In"
+msgstr ""
+
 #. js-lingui-id: e+RpCP
-#: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx
+#: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Sign up"
 msgstr "가입하기"
 
+#. js-lingui-id: mErq7F
+#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
+msgid "Sign Up"
+msgstr ""
+
 #. js-lingui-id: 5v3IHX
-#: src/modules/auth/sign-in-up/components/SignInUpWithSSO.tsx
+#: src/modules/auth/sign-in-up/components/internal/SignInUpWithSSO.tsx
 msgid "Single sign-on (SSO)"
 msgstr "싱글 사인온(SSO)"
 
