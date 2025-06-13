@@ -53,7 +53,6 @@ export const useCommandMenuSearchRecords = () => {
           ),
           shouldBeRegistered: () => true,
           description: capitalize(searchRecord.objectNameSingular),
-          shouldCloseCommandMenuOnClick: true,
         };
 
         if (
