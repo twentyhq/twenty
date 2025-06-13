@@ -8,7 +8,6 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -84,19 +83,9 @@ export class WorkspacePermissionsCacheService {
             workspaceId,
           );
       }
-
-      const workspaceFeatureFlagsMap =
-        await this.workspaceFeatureFlagsMapCacheService.getWorkspaceFeatureFlagsMap(
-          { workspaceId },
-        );
-
-      const isPermissionsV2Enabled =
-        !!workspaceFeatureFlagsMap[FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED];
-
       const recomputedRolesPermissions =
         await this.getObjectRecordPermissionsForRoles({
           workspaceId,
-          isPermissionsV2Enabled,
           roleIds,
         });
 
@@ -232,11 +221,9 @@ export class WorkspacePermissionsCacheService {
 
   private async getObjectRecordPermissionsForRoles({
     workspaceId,
-    isPermissionsV2Enabled,
     roleIds,
   }: {
     workspaceId: string;
-    isPermissionsV2Enabled: boolean;
     roleIds?: string[];
   }): Promise<ObjectRecordsPermissionsByRoleId> {
     let roles: RoleEntity[] = [];
@@ -265,49 +252,47 @@ export class WorkspacePermissionsCacheService {
         let canSoftDelete = role.canSoftDeleteAllObjectRecords;
         let canDestroy = role.canDestroyAllObjectRecords;
 
-        if (isPermissionsV2Enabled) {
-          if (
-            standardId &&
-            [
-              STANDARD_OBJECT_IDS.workflow,
-              STANDARD_OBJECT_IDS.workflowRun,
-              STANDARD_OBJECT_IDS.workflowVersion,
-            ].includes(standardId)
-          ) {
-            const hasWorkflowsPermissions = this.hasWorkflowsPermissions(role);
+        if (
+          standardId &&
+          [
+            STANDARD_OBJECT_IDS.workflow,
+            STANDARD_OBJECT_IDS.workflowRun,
+            STANDARD_OBJECT_IDS.workflowVersion,
+          ].includes(standardId)
+        ) {
+          const hasWorkflowsPermissions = this.hasWorkflowsPermissions(role);
 
-            canRead = hasWorkflowsPermissions;
-            canUpdate = hasWorkflowsPermissions;
-            canSoftDelete = hasWorkflowsPermissions;
-            canDestroy = hasWorkflowsPermissions;
-          } else {
-            const objectRecordPermissionsOverride = role.objectPermissions.find(
-              (objectPermission) =>
-                objectPermission.objectMetadataId === objectMetadataId,
-            );
+          canRead = hasWorkflowsPermissions;
+          canUpdate = hasWorkflowsPermissions;
+          canSoftDelete = hasWorkflowsPermissions;
+          canDestroy = hasWorkflowsPermissions;
+        } else {
+          const objectRecordPermissionsOverride = role.objectPermissions.find(
+            (objectPermission) =>
+              objectPermission.objectMetadataId === objectMetadataId,
+          );
 
-            const getPermissionValue = (
-              overrideValue: boolean | undefined,
-              defaultValue: boolean,
-            ) => (isSystem ? true : (overrideValue ?? defaultValue));
+          const getPermissionValue = (
+            overrideValue: boolean | undefined,
+            defaultValue: boolean,
+          ) => (isSystem ? true : (overrideValue ?? defaultValue));
 
-            canRead = getPermissionValue(
-              objectRecordPermissionsOverride?.canReadObjectRecords,
-              canRead,
-            );
-            canUpdate = getPermissionValue(
-              objectRecordPermissionsOverride?.canUpdateObjectRecords,
-              canUpdate,
-            );
-            canSoftDelete = getPermissionValue(
-              objectRecordPermissionsOverride?.canSoftDeleteObjectRecords,
-              canSoftDelete,
-            );
-            canDestroy = getPermissionValue(
-              objectRecordPermissionsOverride?.canDestroyObjectRecords,
-              canDestroy,
-            );
-          }
+          canRead = getPermissionValue(
+            objectRecordPermissionsOverride?.canReadObjectRecords,
+            canRead,
+          );
+          canUpdate = getPermissionValue(
+            objectRecordPermissionsOverride?.canUpdateObjectRecords,
+            canUpdate,
+          );
+          canSoftDelete = getPermissionValue(
+            objectRecordPermissionsOverride?.canSoftDeleteObjectRecords,
+            canSoftDelete,
+          );
+          canDestroy = getPermissionValue(
+            objectRecordPermissionsOverride?.canDestroyObjectRecords,
+            canDestroy,
+          );
         }
 
         objectRecordsPermissions[objectMetadataId] = {

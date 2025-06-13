@@ -25,7 +25,6 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
@@ -121,40 +120,23 @@ export class UserResolver {
         WorkspaceActivationStatus.ONGOING_CREATION,
       ].includes(workspace.activationStatus)
     ) {
-      const isPermissionsV2Enabled =
-        await this.featureFlagService.isFeatureEnabled(
-          FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
-          workspace.id,
-        );
+      const permissions =
+        await this.permissionsService.getUserWorkspacePermissionsV2({
+          userWorkspaceId: currentUserWorkspace.id,
+          workspaceId: workspace.id,
+        });
 
-      if (isPermissionsV2Enabled) {
-        const permissions =
-          await this.permissionsService.getUserWorkspacePermissionsV2({
-            userWorkspaceId: currentUserWorkspace.id,
-            workspaceId: workspace.id,
-          });
-
-        settingsPermissions = permissions.settingsPermissions;
-        objectPermissions = Object.entries(permissions.objectPermissions).map(
-          ([objectMetadataId, permissions]) => ({
-            objectMetadataId,
-            canReadObjectRecords: permissions.canRead,
-            canUpdateObjectRecords: permissions.canUpdate,
-            canSoftDeleteObjectRecords: permissions.canSoftDelete,
-            canDestroyObjectRecords: permissions.canDestroy,
-          }),
-        );
-        objectRecordsPermissions = permissions.objectRecordsPermissions;
-      } else {
-        const permissions =
-          await this.permissionsService.getUserWorkspacePermissions({
-            userWorkspaceId: currentUserWorkspace.id,
-            workspaceId: workspace.id,
-          });
-
-        settingsPermissions = permissions.settingsPermissions;
-        objectRecordsPermissions = permissions.objectRecordsPermissions;
-      }
+      settingsPermissions = permissions.settingsPermissions;
+      objectPermissions = Object.entries(permissions.objectPermissions).map(
+        ([objectMetadataId, permissions]) => ({
+          objectMetadataId,
+          canReadObjectRecords: permissions.canRead,
+          canUpdateObjectRecords: permissions.canUpdate,
+          canSoftDeleteObjectRecords: permissions.canSoftDelete,
+          canDestroyObjectRecords: permissions.canDestroy,
+        }),
+      );
+      objectRecordsPermissions = permissions.objectRecordsPermissions;
     }
 
     const grantedSettingsPermissions: SettingPermissionType[] = (

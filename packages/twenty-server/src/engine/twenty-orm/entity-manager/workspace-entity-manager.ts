@@ -32,7 +32,6 @@ import { InstanceChecker } from 'typeorm/util/InstanceChecker';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -94,25 +93,18 @@ export class WorkspaceEntityManager extends EntityManager {
 
     let objectPermissions = {};
 
-    const featureFlagMap = this.getFeatureFlagMap();
-
-    const isPermissionsV2Enabled =
-      featureFlagMap[FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED];
-
     if (permissionOptions?.roleId) {
       const objectPermissionsByRoleId = dataSource.permissionsPerRoleId;
 
       if (!isDefined(objectPermissionsByRoleId?.[permissionOptions.roleId])) {
-        if (isPermissionsV2Enabled) {
-          throw new PermissionsException(
-            `No permissions found for role in datasource (missing ${
-              !isDefined(objectPermissionsByRoleId)
-                ? 'objectPermissionsByRoleId object'
-                : `roleId in objectPermissionsByRoleId object (${permissionOptions.roleId})`
-            })`,
-            PermissionsExceptionCode.NO_PERMISSIONS_FOUND_IN_DATASOURCE,
-          );
-        }
+        throw new PermissionsException(
+          `No permissions found for role in datasource (missing ${
+            !isDefined(objectPermissionsByRoleId)
+              ? 'objectPermissionsByRoleId object'
+              : `roleId in objectPermissionsByRoleId object (${permissionOptions.roleId})`
+          })`,
+          PermissionsExceptionCode.NO_PERMISSIONS_FOUND_IN_DATASOURCE,
+        );
       } else {
         objectPermissions = objectPermissionsByRoleId[permissionOptions.roleId];
       }
@@ -165,21 +157,12 @@ export class WorkspaceEntityManager extends EntityManager {
       );
     }
 
-    const featureFlagMap = this.getFeatureFlagMap();
-
-    const isPermissionsV2Enabled =
-      featureFlagMap[FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED];
-
-    if (!isPermissionsV2Enabled) {
-      return queryBuilder;
-    } else {
-      return new WorkspaceSelectQueryBuilder(
-        queryBuilder,
-        options?.objectRecordsPermissions ?? {},
-        this.internalContext,
-        options?.shouldBypassPermissionChecks ?? false,
-      );
-    }
+    return new WorkspaceSelectQueryBuilder(
+      queryBuilder,
+      options?.objectRecordsPermissions ?? {},
+      this.internalContext,
+      options?.shouldBypassPermissionChecks ?? false,
+    );
   }
 
   override insert<Entity extends ObjectLiteral>(
@@ -391,15 +374,6 @@ export class WorkspaceEntityManager extends EntityManager {
       objectRecordsPermissions?: ObjectRecordsPermissions;
     },
   ): void {
-    const featureFlagMap = this.getFeatureFlagMap();
-
-    const isPermissionsV2Enabled =
-      featureFlagMap[FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED];
-
-    if (!isPermissionsV2Enabled) {
-      return;
-    }
-
     if (permissionOptions?.shouldBypassPermissionChecks === true) {
       return;
     }
