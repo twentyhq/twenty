@@ -19,7 +19,9 @@ export class ScopedWorkspaceContextFactory {
       // @ts-expect-error legacy noImplicitAny
       this.request?.['req']?.['workspaceId'] ||
       // @ts-expect-error legacy noImplicitAny
-      this.request?.['params']?.['workspaceId'];
+      this.request?.['params']?.['workspaceId'] ||
+      // @ts-expect-error legacy noImplicitAny
+      this.request?.['workspace']?.['id']; // rest api
     const workspaceMetadataVersion: number | undefined =
       // @ts-expect-error legacy noImplicitAny
       this.request?.['req']?.['workspaceMetadataVersion'];
@@ -27,10 +29,18 @@ export class ScopedWorkspaceContextFactory {
     return {
       workspaceId: workspaceId ?? null,
       workspaceMetadataVersion: workspaceMetadataVersion ?? null,
-      // @ts-expect-error legacy noImplicitAny
-      userWorkspaceId: this.request?.['req']?.['userWorkspaceId'] ?? null,
-      // @ts-expect-error legacy noImplicitAny
-      isExecutedByApiKey: !!this.request?.['req']?.['apiKey'],
+      userWorkspaceId:
+        // @ts-expect-error legacy noImplicitAny
+        this.request?.['req']?.['userWorkspaceId'] ??
+        // @ts-expect-error legacy noImplicitAny
+        this.request?.['userWorkspaceId'] ?? // rest api
+        null,
+      isExecutedByApiKey:
+        // @ts-expect-error legacy noImplicitAny
+        !!this.request?.['req']?.['apiKey'] ??
+        // @ts-expect-error legacy noImplicitAny
+        !!this.request?.['apiKey'] ?? // rest api
+        null,
     };
   }
 }

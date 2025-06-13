@@ -222,11 +222,11 @@ export class WorkspacePermissionsCacheService {
       return;
     }
 
-    const userWorkspaceRoleMap = await this.getUserWorkspaceRoleMapFromCache({
-      workspaceId,
-    });
+    const { data: userWorkspaceRoleMap } =
+      await this.getUserWorkspaceRoleMapFromCache({
+        workspaceId,
+      });
 
-    // @ts-expect-error legacy noImplicitAny
     return userWorkspaceRoleMap[userWorkspaceId];
   }
 
