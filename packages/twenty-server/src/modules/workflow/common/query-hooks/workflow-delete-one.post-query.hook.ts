@@ -29,7 +29,7 @@ export class WorkflowDeleteOnePostQueryHook
 
     await this.workflowCommonWorkspaceService.handleWorkflowSubEntities({
       workflowIds: payload.map((workflow) => workflow.id),
-      workspaceId: authContext.workspace.id,
+      workspaceId: workspace.id,
       operation: 'delete',
     });
   }
