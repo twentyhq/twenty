@@ -65,7 +65,7 @@ export const setColumn = <T extends string>(
         header: oldColumn.header,
         type: SpreadsheetColumnType.matchedError,
         value: field.key,
-        errorMessage: t`column data is not compatible with Multi-Select`,
+        errorMessage: t`column data is not compatible with Multi-Select.`,
       };
     }
 
