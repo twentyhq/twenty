@@ -112,6 +112,7 @@ export class PermissionsService {
         [SettingPermissionType.DATA_MODEL]: false,
         [SettingPermissionType.ADMIN_PANEL]: false,
         [SettingPermissionType.SECURITY]: false,
+        [SettingPermissionType.WORKFLOWS]: false,
       },
       objectPermissions: {},
     }) as const satisfies UserWorkspacePermissions;
