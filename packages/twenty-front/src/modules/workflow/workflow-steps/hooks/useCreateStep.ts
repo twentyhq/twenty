@@ -10,12 +10,14 @@ import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/
 import { useCreateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionStep';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { isDefined } from 'twenty-shared/utils';
+import { useState } from 'react';
 
 export const useCreateStep = ({
   workflow,
 }: {
   workflow: WorkflowWithCurrentVersion;
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const { createWorkflowVersionStep } = useCreateWorkflowVersionStep();
   const setWorkflowSelectedNode = useSetRecoilComponentStateV2(
     workflowSelectedNodeComponentState,
@@ -31,6 +33,12 @@ export const useCreateStep = ({
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
 
   const createStep = async (newStepType: WorkflowStepType) => {
+    if (isLoading === true) {
+      return;
+    }
+
+    setIsLoading(true);
+
     if (!isDefined(workflowInsertStepIds.parentStepId)) {
       throw new Error(
         'No parentStepId. Please select a parent step to create from.',
@@ -49,11 +57,13 @@ export const useCreateStep = ({
     )?.data?.createWorkflowVersionStep;
 
     if (!createdStep) {
+      setIsLoading(false);
       return;
     }
 
     setWorkflowSelectedNode(createdStep.id);
     setWorkflowLastCreatedStepId(createdStep.id);
+    setIsLoading(false);
   };
 
   return {
