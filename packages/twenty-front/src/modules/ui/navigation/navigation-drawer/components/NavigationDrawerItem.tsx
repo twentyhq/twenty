@@ -39,6 +39,7 @@ export type NavigationDrawerItemProps = {
   isDragging?: boolean;
   isRightOptionsDropdownOpen?: boolean;
   triggerEvent?: TriggerEventType;
+  mouseUpNavigation?: boolean;
 };
 
 type StyledItemProps = Pick<
@@ -253,6 +254,7 @@ export const NavigationDrawerItem = ({
   isDragging,
   isRightOptionsDropdownOpen,
   triggerEvent,
+  mouseUpNavigation = false,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -280,8 +282,8 @@ export const NavigationDrawerItem = ({
     <StyledNavigationDrawerItemContainer>
       <StyledItem
         className={`navigation-drawer-item ${className || ''}`}
-        onClick={handleClick}
-        onMouseDown={handleMouseDown}
+        onClick={mouseUpNavigation ? onClick : handleClick}
+        onMouseDown={mouseUpNavigation ? undefined : handleMouseDown}
         active={active}
         aria-selected={active}
         danger={danger}
