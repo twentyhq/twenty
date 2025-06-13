@@ -219,6 +219,7 @@ export const WorkflowDiagramCanvasBase = ({
         {
           ...currentViewport,
           x: viewportX - visibleRightDrawerWidth,
+          zoom: defaultFitViewOptions.maxZoom,
         },
         { duration: noAnimation ? 0 : 300 },
       );
