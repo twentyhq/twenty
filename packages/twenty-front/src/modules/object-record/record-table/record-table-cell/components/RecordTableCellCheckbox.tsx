@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
 import { useSetCurrentRowSelected } from '@/object-record/record-table/record-table-row/hooks/useSetCurrentRowSelected';
+import { isDefined } from 'twenty-shared/utils';
 import { Checkbox } from 'twenty-ui/input';
 
 export const TABLE_CELL_CHECKBOX_MIN_WIDTH = '24px';
@@ -26,9 +27,15 @@ export const RecordTableCellCheckbox = () => {
 
   const { setCurrentRowSelected } = useSetCurrentRowSelected();
 
-  const handleClick = useCallback(() => {
-    setCurrentRowSelected(!isSelected);
-  }, [isSelected, setCurrentRowSelected]);
+  const handleClick = useCallback(
+    (event?: React.MouseEvent<HTMLDivElement>) => {
+      setCurrentRowSelected({
+        newSelectedState: !isSelected,
+        shouldSelectRange: isDefined(event?.shiftKey) && event.shiftKey,
+      });
+    },
+    [isSelected, setCurrentRowSelected],
+  );
 
   return (
     <StyledRecordTableTd isSelected={isSelected} hasRightBorder={false}>
