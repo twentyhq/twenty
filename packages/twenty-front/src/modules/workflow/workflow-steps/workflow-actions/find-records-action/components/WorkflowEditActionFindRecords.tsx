@@ -15,9 +15,7 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowFindRecordsFilters } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFilters';
 import { WorkflowFindRecordsFiltersEffect } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFiltersEffect';
-import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
-import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
-import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
+import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
@@ -115,10 +113,11 @@ export const WorkflowEditActionFindRecords = ({
     };
   }, [saveAction]);
 
-  const headerTitle = isDefined(action.name) ? action.name : `Search Records`;
-  const headerIcon = getActionIcon(action.type);
-  const headerIconColor = useActionIconColorOrThrow(action.type);
-  const headerType = useActionHeaderTypeOrThrow(action.type);
+  const { headerTitle, headerIcon, headerIconColor, headerType } =
+    useWorkflowActionHeader({
+      action,
+      defaultTitle: 'Search Records',
+    });
   const instanceId = `workflow-edit-action-record-find-records-${action.id}-${formData.objectName}`;
 
   return (

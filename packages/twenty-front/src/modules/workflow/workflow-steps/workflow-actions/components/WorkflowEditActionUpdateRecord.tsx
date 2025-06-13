@@ -10,9 +10,7 @@ import { isFieldRelation } from '@/object-record/record-field/types/guards/isFie
 import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
-import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
-import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
-import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
+import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { isDefined } from 'twenty-shared/utils';
@@ -139,10 +137,11 @@ export const WorkflowEditActionUpdateRecord = ({
     };
   }, [saveAction]);
 
-  const headerTitle = isDefined(action.name) ? action.name : `Update Record`;
-  const headerIcon = getActionIcon(action.type);
-  const headerIconColor = useActionIconColorOrThrow(action.type);
-  const headerType = useActionHeaderTypeOrThrow(action.type);
+  const { headerTitle, headerIcon, headerIconColor, headerType } =
+    useWorkflowActionHeader({
+      action,
+      defaultTitle: 'Update Record',
+    });
 
   return (
     <>
