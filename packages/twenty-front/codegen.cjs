@@ -9,7 +9,7 @@ module.exports = {
     '!./src/modules/object-metadata/**',
     '!./src/modules/object-record/**',
     '!./src/modules/settings/serverless-functions/**',
-    '!./src/modules/settings/accounts/hooks/useConnectedAccount.ts',
+    '!./src/modules/settings/accounts/hooks/**',
     './src/modules/**/*.tsx',
     './src/modules/**/*.ts',
     '!./src/**/*.test.tsx',
