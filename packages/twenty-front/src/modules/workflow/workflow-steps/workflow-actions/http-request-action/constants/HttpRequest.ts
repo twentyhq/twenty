@@ -24,4 +24,7 @@ export type HttpRequestFormData = {
   body?: HttpRequestBody;
 };
 
-export const DEFAULT_JSON_BODY_PLACEHOLDER = '{\n  "key": "value"\n}';
+export const DEFAULT_JSON_BODY_PLACEHOLDER =
+  '{\n  "key": "value"\n "another_key": "{{workflow.variable}}" \n}';
+export const JSON_RESPONSE_PLACEHOLDER =
+  '{\n  Paste expected call response here to use its keys later in the workflow \n}';

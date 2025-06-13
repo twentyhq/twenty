@@ -11,8 +11,8 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import { useEffect } from 'react';
 import { useIcons } from 'twenty-ui/display';
 import {
-  DEFAULT_JSON_BODY_PLACEHOLDER,
   HTTP_METHODS,
+  JSON_RESPONSE_PLACEHOLDER,
 } from '../constants/HttpRequest';
 import { useHttpRequestForm } from '../hooks/useHttpRequestForm';
 import { useHttpRequestOutputSchema } from '../hooks/useHttpRequestOutputSchema';
@@ -87,7 +87,7 @@ export const WorkflowEditActionHttpRequest = ({
         />
 
         <KeyValuePairInput
-          label="Headers"
+          label="Headers Input"
           defaultValue={formData.headers}
           onChange={(value) => handleFieldChange('headers', value)}
           readonly={actionOptions.readonly}
@@ -104,8 +104,8 @@ export const WorkflowEditActionHttpRequest = ({
         )}
 
         <FormRawJsonFieldInput
-          label="Expected Response"
-          placeholder={DEFAULT_JSON_BODY_PLACEHOLDER}
+          label="Expected Body Output"
+          placeholder={JSON_RESPONSE_PLACEHOLDER}
           defaultValue={outputSchema}
           onChange={handleOutputSchemaChange}
           readonly={actionOptions.readonly}
