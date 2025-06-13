@@ -1,5 +1,5 @@
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
-import { filterAvailableFieldMetadataItemsToImport } from '@/object-record/spreadsheet-import/utils/filterAvailableFieldMetadataItemsToImport';
+import { spreadsheetImportFilterAvailableFieldMetadataItems } from '@/object-record/spreadsheet-import/utils/spreadsheetImportFilterAvailableFieldMetadataItems.ts';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
 import { escapeCSVValue } from '@/spreadsheet-import/utils/escapeCSVValue';
@@ -9,9 +9,10 @@ import { FieldMetadataType } from 'twenty-shared/types';
 export const useDownloadFakeRecords = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const availableFieldMetadataItems = filterAvailableFieldMetadataItemsToImport(
-    objectMetadataItem.fields,
-  );
+  const availableFieldMetadataItems =
+    spreadsheetImportFilterAvailableFieldMetadataItems(
+      objectMetadataItem.fields,
+    );
 
   const buildTableWithFakeRecords = () => {
     const headerRow: string[] = [];

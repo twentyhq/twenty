@@ -2,7 +2,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useBuildAvailableFieldsForImport } from '@/object-record/spreadsheet-import/hooks/useBuildAvailableFieldsForImport';
 import { buildRecordFromImportedStructuredRow } from '@/object-record/spreadsheet-import/utils/buildRecordFromImportedStructuredRow';
-import { filterAvailableFieldMetadataItemsToImport } from '@/object-record/spreadsheet-import/utils/filterAvailableFieldMetadataItemsToImport';
+import { spreadsheetImportFilterAvailableFieldMetadataItems } from '@/object-record/spreadsheet-import/utils/spreadsheetImportFilterAvailableFieldMetadataItems.ts';
 import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOpenSpreadsheetImportDialog';
 import { SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -33,7 +33,9 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
   ) => {
     //All fields that can be imported (included matchable and auto-filled)
     const availableFieldMetadataItemsToImport =
-      filterAvailableFieldMetadataItemsToImport(objectMetadataItem.fields);
+      spreadsheetImportFilterAvailableFieldMetadataItems(
+        objectMetadataItem.fields,
+      );
 
     const availableFieldMetadataItemsForMatching =
       availableFieldMetadataItemsToImport.filter(

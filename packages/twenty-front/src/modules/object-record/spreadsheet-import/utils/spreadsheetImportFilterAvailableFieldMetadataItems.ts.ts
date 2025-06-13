@@ -2,7 +2,7 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from '~/generated-metadata/graphql';
 
-export const filterAvailableFieldMetadataItemsToImport = (
+export const spreadsheetImportFilterAvailableFieldMetadataItems = (
   fields: FieldMetadataItem[],
 ) => {
   return fields
