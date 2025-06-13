@@ -65,7 +65,11 @@ export class OpenApiService {
       workspaceValidator.assertIsDefinedOrThrow(workspace);
 
       objectMetadataItems =
-        await this.objectMetadataService.findManyWithinWorkspace(workspace.id);
+        await this.objectMetadataService.findManyWithinWorkspace(workspace.id, {
+          order: {
+            namePlural: 'ASC',
+          },
+        });
     } catch (err) {
       return schema;
     }
