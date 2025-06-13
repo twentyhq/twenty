@@ -24,6 +24,7 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
+import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
 import { RecordDetailRecordsListItem } from '@/object-record/record-show/record-detail-section/components/RecordDetailRecordsListItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
@@ -36,6 +37,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { createPortal } from 'react-dom';
 import {
   IconChevronDown,
@@ -103,7 +105,7 @@ export const RecordDetailRelationRecordsListItem = ({
   onClick,
   relationRecord,
 }: RecordDetailRelationRecordsListItemProps) => {
-  const { fieldDefinition } = useContext(FieldContext);
+  const { fieldDefinition, recordId } = useContext(FieldContext);
 
   const { openModal } = useModal();
 
@@ -156,6 +158,12 @@ export const RecordDetailRelationRecordsListItem = ({
 
   const { closeDropdown, isDropdownOpen } = useDropdown(dropdownScopeId);
 
+  const dropdownId = `record-field-card-relation-picker-${fieldDefinition.fieldMetadataId}-${recordId}`;
+  const setSingleRecordPickerSelectedId = useSetRecoilComponentStateV2(
+    singleRecordPickerSelectedIdComponentState,
+    dropdownId,
+  );
+
   const handleDetach = () => {
     closeDropdown();
 
@@ -167,17 +175,18 @@ export const RecordDetailRelationRecordsListItem = ({
 
     if (isToOneObject) {
       persistField(null);
-      return;
+    } else {
+      updateOneRelationRecord({
+        idToUpdate: relationRecord.id,
+        updateOneRecordInput: {
+          [getForeignKeyNameFromRelationFieldName(
+            relationFieldMetadataItem.name,
+          )]: null,
+        },
+      });
     }
 
-    updateOneRelationRecord({
-      idToUpdate: relationRecord.id,
-      updateOneRecordInput: {
-        [getForeignKeyNameFromRelationFieldName(
-          relationFieldMetadataItem.name,
-        )]: null,
-      },
-    });
+    setSingleRecordPickerSelectedId(undefined);
   };
 
   const handleDelete = async () => {
