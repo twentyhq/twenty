@@ -34,14 +34,14 @@ export const getSpreadSheetFieldValidationDefinitions = (
       ];
     case FieldMetadataType.CURRENCY:
       switch (subFieldKey) {
-        case 'amountMicrosLabel':
+        case 'amountMicros':
           return [getNumberValidationDefinition(fieldName)];
         default:
           return [];
       }
     case FieldMetadataType.EMAILS:
       switch (subFieldKey) {
-        case 'primaryEmailLabel':
+        case 'primaryEmail':
           return [
             {
               rule: 'function',
@@ -50,7 +50,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
               level: 'error',
             },
           ];
-        case 'additionalEmailsLabel':
+        case 'additionalEmails':
           return [
             {
               rule: 'function',
@@ -76,7 +76,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
       }
     case FieldMetadataType.LINKS:
       switch (subFieldKey) {
-        case 'primaryLinkUrlLabel':
+        case 'primaryLinkUrl':
           return [
             {
               rule: 'function',
@@ -88,7 +88,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
               level: 'error',
             },
           ];
-        case 'secondaryLinksLabel':
+        case 'secondaryLinks':
           return [
             {
               rule: 'function',
@@ -138,7 +138,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
       ];
     case FieldMetadataType.PHONES:
       switch (subFieldKey) {
-        case 'primaryPhoneNumberLabel':
+        case 'primaryPhoneNumber':
           return [
             {
               rule: 'regex',
@@ -147,7 +147,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
               level: 'error',
             },
           ];
-        case 'additionalPhonesLabel':
+        case 'additionalPhones':
           return [
             {
               rule: 'function',

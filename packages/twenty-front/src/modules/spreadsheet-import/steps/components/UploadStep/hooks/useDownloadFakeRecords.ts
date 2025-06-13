@@ -48,26 +48,25 @@ export const useDownloadFakeRecords = () => {
         case FieldMetadataType.ADDRESS: {
           const compositeFieldSettings =
             SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[field.type];
-          const subFields =
-            'importableSubFields' in compositeFieldSettings
-              ? compositeFieldSettings.importableSubFields
-              : compositeFieldSettings.subFields;
+
+          const subFields = compositeFieldSettings.subFields.filter(
+            (subField) => subField.isImportable,
+          );
 
           const exampleValues =
             SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[field.type].exampleValues;
 
           headerRow.push(
             ...subFields.map(
-              (subField: string) =>
-                `${field.label} / ${compositeFieldSettings.labelBySubField[subField as keyof typeof compositeFieldSettings.labelBySubField]}`,
+              ({ subFieldLabel }) => `${field.label} / ${subFieldLabel}`,
             ),
           );
 
           bodyRows.forEach((_, index) => {
-            subFields.forEach((subField: string) => {
+            subFields.forEach(({ subFieldName }) => {
               bodyRows[index].push(
                 exampleValues?.[index]?.[
-                  subField as keyof (typeof exampleValues)[typeof index]
+                  subFieldName as keyof (typeof exampleValues)[typeof index]
                 ] || '',
               );
             });

@@ -7,7 +7,7 @@ import {
   FieldPhonesValue,
   FieldRichTextV2Value,
 } from '@/object-record/record-field/types/FieldMetadata';
-import { COMPOSITE_FIELD_IMPORT_LABELS } from '@/object-record/spreadsheet-import/constants/CompositeFieldImportLabels';
+import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constants/CompositeFieldSubFieldLabel';
 import { ImportedStructuredRow } from '@/spreadsheet-import/types';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -85,25 +85,35 @@ export const buildRecordFromImportedStructuredRow = ({
 
   const {
     ADDRESS: {
-      addressCityLabel,
-      addressCountryLabel,
-      addressPostcodeLabel,
-      addressStateLabel,
-      addressStreet1Label,
-      addressStreet2Label,
+      addressCity: addressCityLabel,
+      addressCountry: addressCountryLabel,
+      addressPostcode: addressPostcodeLabel,
+      addressState: addressStateLabel,
+      addressStreet1: addressStreet1Label,
+      addressStreet2: addressStreet2Label,
     },
-    CURRENCY: { amountMicrosLabel, currencyCodeLabel },
-    FULL_NAME: { firstNameLabel, lastNameLabel },
-    LINKS: { primaryLinkUrlLabel, primaryLinkLabelLabel, secondaryLinksLabel },
-    EMAILS: { primaryEmailLabel, additionalEmailsLabel },
+    CURRENCY: {
+      amountMicros: amountMicrosLabel,
+      currencyCode: currencyCodeLabel,
+    },
+    FULL_NAME: { firstName: firstNameLabel, lastName: lastNameLabel },
+    LINKS: {
+      primaryLinkUrl: primaryLinkUrlLabel,
+      primaryLinkLabel: primaryLinkLabelLabel,
+      secondaryLinks: secondaryLinksLabel,
+    },
+    EMAILS: {
+      primaryEmail: primaryEmailLabel,
+      additionalEmails: additionalEmailsLabel,
+    },
     PHONES: {
-      primaryPhoneNumberLabel,
-      primaryPhoneCountryCodeLabel,
-      primaryPhoneCallingCodeLabel,
-      additionalPhonesLabel,
+      primaryPhoneNumber: primaryPhoneNumberLabel,
+      primaryPhoneCountryCode: primaryPhoneCountryCodeLabel,
+      primaryPhoneCallingCode: primaryPhoneCallingCodeLabel,
+      additionalPhones: additionalPhonesLabel,
     },
-    RICH_TEXT_V2: { blocknoteLabel, markdownLabel },
-  } = COMPOSITE_FIELD_IMPORT_LABELS;
+    RICH_TEXT_V2: { blocknote: blocknoteLabel, markdown: markdownLabel },
+  } = COMPOSITE_FIELD_SUB_FIELD_LABELS;
 
   for (const field of fields) {
     const importedFieldValue = importedStructuredRow[field.name];

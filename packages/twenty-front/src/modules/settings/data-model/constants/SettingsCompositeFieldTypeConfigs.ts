@@ -25,11 +25,15 @@ import {
 } from 'twenty-ui/display';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
+type CompositeSubFieldConfig<T> = {
+  subFieldName: keyof T;
+  subFieldLabel: string;
+  isImportable: boolean;
+  isFilterable: boolean;
+};
+
 export type SettingsCompositeFieldTypeConfig<T> = SettingsFieldTypeConfig<T> & {
-  subFields: (keyof T)[];
-  filterableSubFields: (keyof T)[];
-  importableSubFields?: (keyof T)[];
-  labelBySubField: Record<keyof T, string>;
+  subFields: CompositeSubFieldConfig<T>[];
   exampleValues: [T, T, T];
 };
 
@@ -42,16 +46,24 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
   [FieldMetadataType.CURRENCY]: {
     label: 'Currency',
     Icon: IllustrationIconCurrency,
-    subFields: ['amountMicros', 'currencyCode'],
-    filterableSubFields: ['amountMicros', 'currencyCode'],
-    labelBySubField: {
-      amountMicros:
-        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.CURRENCY]
-          .amountMicros,
-      currencyCode:
-        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.CURRENCY]
-          .currencyCode,
-    },
+    subFields: [
+      {
+        subFieldName: 'amountMicros',
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.CURRENCY]
+            .amountMicros,
+        isImportable: true,
+        isFilterable: true,
+      },
+      {
+        subFieldName: 'currencyCode',
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.CURRENCY]
+            .currencyCode,
+        isImportable: true,
+        isFilterable: true,
+      },
+    ],
     exampleValues: [
       {
         amountMicros: 2000000000,
@@ -71,12 +83,24 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
   [FieldMetadataType.EMAILS]: {
     label: 'Emails',
     Icon: IllustrationIconMail,
-    subFields: ['primaryEmail', 'additionalEmails'],
-    filterableSubFields: ['primaryEmail', 'additionalEmails'],
-    labelBySubField: {
-      primaryEmail: 'Primary Email',
-      additionalEmails: 'Additional Emails',
-    },
+    subFields: [
+      {
+        subFieldName: 'primaryEmail',
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.EMAILS]
+            .primaryEmail,
+        isImportable: true,
+        isFilterable: true,
+      },
+      {
+        subFieldName: 'additionalEmails',
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.EMAILS]
+            .additionalEmails,
+        isImportable: true,
+        isFilterable: true,
+      },
+    ],
     exampleValues: [
       {
         primaryEmail: 'tim@twenty.com',
@@ -100,6 +124,32 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
   [FieldMetadataType.LINKS]: {
     label: 'Links',
     Icon: IllustrationIconLink,
+    subFields: [
+      {
+        subFieldName: 'primaryLinkUrl',
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.LINKS]
+            .primaryLinkUrl,
+        isImportable: true,
+        isFilterable: true,
+      },
+      {
+        subFieldName: 'primaryLinkLabel',
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.LINKS]
+            .primaryLinkLabel,
+        isImportable: true,
+        isFilterable: true,
+      },
+      {
+        subFieldName: 'secondaryLinks',
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.LINKS]
+            .secondaryLinks,
+        isImportable: true,
+        isFilterable: true,
+      },
+    ],
     exampleValues: [
       {
         primaryLinkUrl: 'twenty.com',
@@ -118,27 +168,44 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
       },
     ],
     category: 'Basic',
-    subFields: ['primaryLinkUrl', 'primaryLinkLabel', 'secondaryLinks'],
-    filterableSubFields: [
-      'primaryLinkUrl',
-      'primaryLinkLabel',
-      'secondaryLinks',
-    ],
-    labelBySubField: {
-      primaryLinkUrl:
-        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.LINKS]
-          .primaryLinkUrl,
-      primaryLinkLabel:
-        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.LINKS]
-          .primaryLinkLabel,
-      secondaryLinks:
-        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.LINKS]
-          .secondaryLinks,
-    },
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldLinksValue>,
   [FieldMetadataType.PHONES]: {
     label: 'Phones',
     Icon: IllustrationIconPhone,
+    subFields: [
+      {
+        subFieldName: 'primaryPhoneCallingCode',
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.PHONES]
+            .primaryPhoneCallingCode,
+        isImportable: true,
+        isFilterable: true,
+      },
+      {
+        subFieldName: 'primaryPhoneCountryCode',
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.PHONES]
+            .primaryPhoneCountryCode,
+        isImportable: true,
+        isFilterable: false,
+      },
+      {
+        subFieldName: 'primaryPhoneNumber',
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.PHONES]
+            .primaryPhoneNumber,
+        isImportable: true,
+        isFilterable: true,
+      },
+      {
+        subFieldName: 'additionalPhones',
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.PHONES]
+            .additionalPhones,
+        isImportable: true,
+        isFilterable: true,
+      },
+    ],
     exampleValues: [
       {
         primaryPhoneCallingCode: '+33',
@@ -164,103 +231,105 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         additionalPhones: [],
       },
     ],
-    subFields: [
-      'primaryPhoneNumber',
-      'primaryPhoneCountryCode',
-      'primaryPhoneCallingCode',
-      'additionalPhones',
-    ],
-    filterableSubFields: [
-      'primaryPhoneNumber',
-      'primaryPhoneCallingCode',
-      'additionalPhones',
-    ],
-    labelBySubField: {
-      primaryPhoneNumber:
-        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.PHONES]
-          .primaryPhoneNumber,
-      primaryPhoneCountryCode:
-        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.PHONES]
-          .primaryPhoneCountryCode,
-      primaryPhoneCallingCode:
-        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.PHONES]
-          .primaryPhoneCallingCode,
-      additionalPhones:
-        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.PHONES]
-          .additionalPhones,
-    },
     category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldPhonesValue>,
   [FieldMetadataType.FULL_NAME]: {
     label: 'Full Name',
     Icon: IllustrationIconUser,
+    subFields: [
+      {
+        subFieldName: 'firstName',
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.FULL_NAME]
+            .firstName,
+        isImportable: true,
+        isFilterable: true,
+      },
+      {
+        subFieldName: 'lastName',
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.FULL_NAME]
+            .lastName,
+        isImportable: true,
+        isFilterable: true,
+      },
+    ],
     exampleValues: [
       { firstName: 'John', lastName: 'Doe' },
       { firstName: 'Jane', lastName: 'Doe' },
       { firstName: 'John', lastName: 'Smith' },
     ],
     category: 'Basic',
-    subFields: ['firstName', 'lastName'],
-    filterableSubFields: ['firstName', 'lastName'],
-    labelBySubField: {
-      firstName:
-        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.FULL_NAME].firstName,
-      lastName:
-        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.FULL_NAME].lastName,
-    },
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldFullNameValue>,
   [FieldMetadataType.ADDRESS]: {
     label: 'Address',
     Icon: IllustrationIconMap,
     subFields: [
-      'addressStreet1',
-      'addressStreet2',
-      'addressCity',
-      'addressState',
-      'addressCountry',
-      'addressPostcode',
-      'addressLat',
-      'addressLng',
+      {
+        subFieldName: 'addressStreet1',
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
+            .addressStreet1,
+        isImportable: true,
+        isFilterable: true,
+      },
+      {
+        subFieldName: 'addressStreet2',
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
+            .addressStreet2,
+        isImportable: true,
+        isFilterable: true,
+      },
+      {
+        subFieldName: 'addressCity',
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
+            .addressCity,
+        isImportable: true,
+        isFilterable: true,
+      },
+      {
+        subFieldName: 'addressState',
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
+            .addressState,
+        isImportable: true,
+        isFilterable: true,
+      },
+      {
+        subFieldName: 'addressCountry',
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
+            .addressCountry,
+        isImportable: true,
+        isFilterable: true,
+      },
+      {
+        subFieldName: 'addressPostcode',
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
+            .addressPostcode,
+        isImportable: true,
+        isFilterable: true,
+      },
+      {
+        subFieldName: 'addressLat',
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
+            .addressLat,
+        isImportable: false,
+        isFilterable: false,
+      },
+      {
+        subFieldName: 'addressLng',
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
+            .addressLng,
+        isImportable: false,
+        isFilterable: false,
+      },
     ],
-    filterableSubFields: [
-      'addressStreet1',
-      'addressStreet2',
-      'addressCity',
-      'addressState',
-      'addressCountry',
-      'addressPostcode',
-    ],
-    importableSubFields: [
-      'addressStreet1',
-      'addressStreet2',
-      'addressCity',
-      'addressState',
-      'addressCountry',
-      'addressPostcode',
-    ],
-    labelBySubField: {
-      addressStreet1:
-        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
-          .addressStreet1,
-      addressStreet2:
-        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
-          .addressStreet2,
-      addressCity:
-        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS].addressCity,
-      addressState:
-        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
-          .addressState,
-      addressCountry:
-        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
-          .addressCountry,
-      addressPostcode:
-        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS]
-          .addressPostcode,
-      addressLat:
-        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS].addressLat,
-      addressLng:
-        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ADDRESS].addressLng,
-    },
     exampleValues: [
       {
         addressStreet1: '456 Oak Street',
@@ -299,17 +368,37 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     label: 'Actor',
     Icon: IllustrationIconSetting,
     category: 'Basic',
-    subFields: ['source', 'name'],
-    filterableSubFields: ['source', 'name'],
-    labelBySubField: {
-      source: COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ACTOR].source,
-      name: COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ACTOR].name,
-      workspaceMemberId:
-        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ACTOR]
-          .workspaceMemberId,
-      context:
-        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ACTOR].context,
-    },
+    subFields: [
+      {
+        subFieldName: 'source',
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ACTOR].source,
+        isImportable: true,
+        isFilterable: true,
+      },
+      {
+        subFieldName: 'name',
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ACTOR].name,
+        isImportable: true,
+        isFilterable: true,
+      },
+      {
+        subFieldName: 'workspaceMemberId',
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ACTOR]
+            .workspaceMemberId,
+        isImportable: true,
+        isFilterable: false,
+      },
+      {
+        subFieldName: 'context',
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.ACTOR].context,
+        isImportable: true,
+        isFilterable: false,
+      },
+    ],
     exampleValues: [
       {
         source: 'IMPORT',
@@ -334,16 +423,25 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
   [FieldMetadataType.RICH_TEXT_V2]: {
     label: 'Rich Text',
     Icon: IllustrationIconText,
-    subFields: ['blocknote', 'markdown'],
-    filterableSubFields: [],
-    labelBySubField: {
-      blocknote:
-        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.RICH_TEXT_V2]
-          .blocknote,
-      markdown:
-        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.RICH_TEXT_V2]
-          .markdown,
-    },
+    category: 'Basic',
+    subFields: [
+      {
+        subFieldName: 'blocknote',
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.RICH_TEXT_V2]
+            .blocknote,
+        isImportable: false,
+        isFilterable: false,
+      },
+      {
+        subFieldName: 'markdown',
+        subFieldLabel:
+          COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.RICH_TEXT_V2]
+            .markdown,
+        isImportable: false,
+        isFilterable: false,
+      },
+    ],
     exampleValues: [
       {
         blocknote: '[{"type":"heading","content":"Hello"}]',
@@ -358,6 +456,5 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
         markdown: '# Hello Again',
       },
     ],
-    category: 'Basic',
   } as const satisfies SettingsCompositeFieldTypeConfig<FieldRichTextV2Value>,
 } as const satisfies SettingsCompositeFieldTypeConfigArray;
