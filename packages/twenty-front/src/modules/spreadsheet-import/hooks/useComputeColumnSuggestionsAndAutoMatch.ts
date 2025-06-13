@@ -35,7 +35,7 @@ export const useComputeColumnSuggestionsAndAutoMatch = <T extends string>() => {
           );
         }
       },
-    [],
+    [autoMapHeaders, fields],
   );
 
   return computeColumnSuggestionsAndAutoMatch;
