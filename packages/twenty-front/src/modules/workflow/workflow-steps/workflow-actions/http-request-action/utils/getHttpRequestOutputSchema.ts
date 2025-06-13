@@ -31,8 +31,8 @@ export const getHttpRequestOutputSchema = (
   }
 
   const schema: BaseOutputSchema = {};
-  Object.entries(responseData).forEach(([key, val]) => {
-    const type = getValueType(val);
+  Object.entries(responseData).forEach(([key, value]) => {
+    const type = getValueType(value);
 
     switch (type) {
       case 'string':
@@ -40,7 +40,7 @@ export const getHttpRequestOutputSchema = (
           isLeaf: true,
           type: 'string',
           label: key,
-          value: val as string,
+          value,
           icon: 'IconAbc',
         };
         break;
@@ -49,7 +49,7 @@ export const getHttpRequestOutputSchema = (
           isLeaf: true,
           type: 'number',
           label: key,
-          value: val as number,
+          value,
           icon: 'IconText',
         };
         break;
@@ -58,7 +58,7 @@ export const getHttpRequestOutputSchema = (
           isLeaf: true,
           type: 'boolean',
           label: key,
-          value: val as boolean,
+          value,
           icon: 'IconCheckbox',
         };
         break;
@@ -67,7 +67,7 @@ export const getHttpRequestOutputSchema = (
         schema[key] = {
           isLeaf: false,
           label: key,
-          value: getHttpRequestOutputSchema(val),
+          value: getHttpRequestOutputSchema(value),
           icon: 'IconBox',
         };
         break;
@@ -77,7 +77,7 @@ export const getHttpRequestOutputSchema = (
           isLeaf: true,
           type: 'unknown',
           label: key,
-          value: val === null ? null : String(val),
+          value: value === null ? null : String(value),
           icon: 'IconQuestionMark',
         };
         break;
