@@ -489,7 +489,7 @@ export const useAuth = () => {
       setSearchParams,
       isEmailVerificationRequired,
       redirectToWorkspaceDomain,
-      requestFreshCaptchaToken
+      requestFreshCaptchaToken,
     ],
   );
 
