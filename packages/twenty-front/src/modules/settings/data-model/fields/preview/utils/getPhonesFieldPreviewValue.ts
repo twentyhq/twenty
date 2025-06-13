@@ -38,7 +38,7 @@ export const getPhonesFieldPreviewValue = ({
     FieldMetadataType.PHONES,
   );
 
-  const placeholderDefaultValue = phonesFieldTypeConfig.exampleValue;
+  const placeholderDefaultValue = phonesFieldTypeConfig.exampleValues?.[0];
   const primaryPhoneCountryCode =
     fieldMetadataItem.defaultValue?.primaryPhoneCountryCode &&
     fieldMetadataItem.defaultValue.primaryPhoneCountryCode !== ''

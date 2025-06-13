@@ -31,10 +31,10 @@ export const getFieldPreviewValue = ({
 
   if (
     isDefined(fieldTypeConfig) &&
-    'exampleValue' in fieldTypeConfig &&
-    isDefined(fieldTypeConfig.exampleValue)
+    'exampleValues' in fieldTypeConfig &&
+    isDefined(fieldTypeConfig.exampleValues?.[0])
   ) {
-    return fieldTypeConfig.exampleValue;
+    return fieldTypeConfig.exampleValues?.[0];
   }
 
   return null;

@@ -3,5 +3,7 @@ import { COMPOSITE_FIELD_TYPES } from '@/settings/data-model/types/CompositeFiel
 
 export const ALL_SUB_FIELDS = COMPOSITE_FIELD_TYPES.flatMap(
   (compositeFieldType) =>
-    SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[compositeFieldType].subFields,
+    SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[compositeFieldType].subFields.map(
+      (subField) => subField.subFieldName,
+    ),
 );

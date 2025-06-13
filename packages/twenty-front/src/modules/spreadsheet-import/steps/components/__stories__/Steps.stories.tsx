@@ -4,7 +4,9 @@ import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/Componen
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 import { stepBarInternalState } from '@/ui/navigation/step-bar/states/stepBarInternalState';
+import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SpreadsheetImportStepperContainer } from '../SpreadsheetImportStepperContainer';
 
 const meta: Meta<typeof SpreadsheetImportStepperContainer> = {
@@ -14,6 +16,8 @@ const meta: Meta<typeof SpreadsheetImportStepperContainer> = {
     ComponentWithRecoilScopeDecorator,
     SnackBarDecorator,
     I18nFrontDecorator,
+    ObjectMetadataItemsDecorator,
+    ContextStoreDecorator,
   ],
   parameters: {
     initialRecoilState: {

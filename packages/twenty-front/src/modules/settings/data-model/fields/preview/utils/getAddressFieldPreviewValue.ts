@@ -18,7 +18,7 @@ export const getAddressFieldPreviewValue = ({
     FieldMetadataType.ADDRESS,
   );
 
-  const placeholderDefaultValue = addressFieldTypeConfig.exampleValue;
+  const placeholderDefaultValue = addressFieldTypeConfig.exampleValues?.[0];
 
   const addressCountry =
     fieldMetadataItem.defaultValue?.addressCountry &&

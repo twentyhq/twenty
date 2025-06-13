@@ -8,7 +8,9 @@ import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/Spre
 import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { RecoilRoot } from 'recoil';
+import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 const meta: Meta<typeof UploadStep> = {
@@ -18,6 +20,8 @@ const meta: Meta<typeof UploadStep> = {
     layout: 'fullscreen',
   },
   decorators: [
+    ObjectMetadataItemsDecorator,
+    ContextStoreDecorator,
     (Story) => (
       <RecoilRoot
         initializeState={({ set }) => {

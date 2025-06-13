@@ -1,8 +1,8 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
-import { COMPOSITE_FIELD_IMPORT_LABELS } from '@/object-record/spreadsheet-import/constants/CompositeFieldImportLabels';
 import { AvailableFieldForImport } from '@/object-record/spreadsheet-import/types/AvailableFieldForImport';
 import { getSpreadSheetFieldValidationDefinitions } from '@/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions';
+import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
 import { useIcons } from 'twenty-ui/display';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -36,8 +36,9 @@ export const useBuildAvailableFieldsForImport = () => {
       fieldMetadataItem: FieldMetadataItem,
       fieldType: CompositeFieldType,
     ) => {
-      Object.entries(COMPOSITE_FIELD_IMPORT_LABELS[fieldType]).forEach(
-        ([subFieldKey, subFieldLabel]) => {
+      SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[fieldType].subFields.forEach(
+        ({ subFieldName, subFieldLabel, isImportable }) => {
+          if (!isImportable) return;
           const label = `${fieldMetadataItem.label} / ${subFieldLabel}`;
 
           availableFieldsForImport.push(
@@ -48,7 +49,7 @@ export const useBuildAvailableFieldsForImport = () => {
                 getSpreadSheetFieldValidationDefinitions(
                   fieldMetadataItem.type,
                   label,
-                  subFieldKey,
+                  subFieldName,
                 ),
             }),
           );

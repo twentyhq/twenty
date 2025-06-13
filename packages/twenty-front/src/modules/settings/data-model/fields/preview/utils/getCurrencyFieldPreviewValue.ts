@@ -20,7 +20,7 @@ export const getCurrencyFieldPreviewValue = ({
     FieldMetadataType.CURRENCY,
   );
 
-  const placeholderDefaultValue = currencyFieldTypeConfig.exampleValue;
+  const placeholderDefaultValue = currencyFieldTypeConfig.exampleValues?.[0];
 
   return currencyFieldDefaultValueSchema
     .transform((value) => ({
