@@ -159,7 +159,7 @@ export const RecordDetailRelationRecordsListItem = ({
 
   const { closeDropdown, isDropdownOpen } = useDropdown(dropdownScopeId);
 
-  const dropdownId = useRecordFieldCardRelationPickerDropdownId()
+  const dropdownId = useRecordFieldCardRelationPickerDropdownId();
   const setSingleRecordPickerSelectedId = useSetRecoilComponentStateV2(
     singleRecordPickerSelectedIdComponentState,
     dropdownId,
