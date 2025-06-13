@@ -671,6 +671,26 @@ export const graphqlMocks = {
         });
       },
     ),
+    graphql.query<GraphQLQuery, { objectRecordId: string }>(
+      'FindOneWebhook',
+      ({ variables: { objectRecordId } }) => {
+        return HttpResponse.json({
+          data: {
+            webhook: {
+              __typename: 'Webhook',
+              id: objectRecordId,
+              createdAt: '2021-08-27T12:00:00Z',
+              updatedAt: '2021-08-27T12:00:00Z',
+              deletedAt: null,
+              targetUrl: 'https://example.com/webhook',
+              description: 'A Sample Description',
+              operations: ['*.created', '*.updated'],
+              secret: 'sample-secret',
+            },
+          },
+        });
+      },
+    ),
     graphql.query('FindManyWorkflows', () => {
       return HttpResponse.json({
         data: workflowQueryResult,

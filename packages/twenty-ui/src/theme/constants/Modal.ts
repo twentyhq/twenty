@@ -16,6 +16,7 @@ export const MODAL: {
       height: '800px',
     },
     fullscreen: {
+      width: '100dvw',
       height: '100dvh',
     },
   },
