@@ -7,6 +7,8 @@ import { RecordBoardCardContext } from '@/object-record/record-board/record-boar
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 
+import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
+import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -46,6 +48,9 @@ export const RecordBoardCardHeader = ({
   const record = useRecoilValue(recordStoreFamilyState(recordId));
 
   const { objectMetadataItem, recordBoardId } = useContext(RecordBoardContext);
+  const { rowIndex, columnIndex } = useContext(RecordBoardCardContext);
+  const { activateBoardCard } = useActiveRecordBoardCard(recordBoardId);
+  const { unfocusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
 
   const showCompactView = useRecoilComponentValueV2(
     isRecordBoardCompactModeActiveComponentState,
@@ -78,6 +83,8 @@ export const RecordBoardCardHeader = ({
             variant={AvatarChipVariant.Transparent}
             maxWidth={150}
             onClick={() => {
+              activateBoardCard({ rowIndex, columnIndex });
+              unfocusBoardCard();
               openRecordFromIndexView({ recordId });
             }}
             triggerEvent={triggerEvent}
