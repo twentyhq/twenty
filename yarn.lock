@@ -24,42 +24,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ai-sdk/groq@npm:^1.2.9":
-  version: 1.2.9
-  resolution: "@ai-sdk/groq@npm:1.2.9"
-  dependencies:
-    "@ai-sdk/provider": "npm:1.1.3"
-    "@ai-sdk/provider-utils": "npm:2.2.8"
-  peerDependencies:
-    zod: ^3.0.0
-  checksum: 10c0/b268c337fb656d6b36e2a0ee7737c073ad22521acf20b6861a51c269d4f49f59c269d6184ce21cbc61316987e46ed64696dffef57d6d60fb9c45f069d0f30297
-  languageName: node
-  linkType: hard
-
-"@ai-sdk/mistral@npm:^1.2.8":
-  version: 1.2.8
-  resolution: "@ai-sdk/mistral@npm:1.2.8"
-  dependencies:
-    "@ai-sdk/provider": "npm:1.1.3"
-    "@ai-sdk/provider-utils": "npm:2.2.8"
-  peerDependencies:
-    zod: ^3.0.0
-  checksum: 10c0/d798ce75685f86f8a77c38745c71328fd1bd6b361601d1cb613b94c3c709e890e15e369f8b7e7b009e28394ec42c500c775ec293d506de2be08b13730ea7a924
-  languageName: node
-  linkType: hard
-
-"@ai-sdk/openai-compatible@npm:^0.2.14":
-  version: 0.2.14
-  resolution: "@ai-sdk/openai-compatible@npm:0.2.14"
-  dependencies:
-    "@ai-sdk/provider": "npm:1.1.3"
-    "@ai-sdk/provider-utils": "npm:2.2.8"
-  peerDependencies:
-    zod: ^3.0.0
-  checksum: 10c0/60980df8507c1e5d04ac51123bc15ea5cbf29eb88485f63da28d64ab5d9c3b335d2a2c9155a383605972ef5fa636929c8e2d360bf799153acf2b358e1af1fd47
-  languageName: node
-  linkType: hard
-
 "@ai-sdk/openai@npm:^1.3.22":
   version: 1.3.22
   resolution: "@ai-sdk/openai@npm:1.3.22"
@@ -4728,7 +4692,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@blocknote/mantine@npm:0.31.1, @blocknote/mantine@npm:^0.31.1":
+"@blocknote/mantine@npm:^0.31.1":
   version: 0.31.1
   resolution: "@blocknote/mantine@npm:0.31.1"
   dependencies:
@@ -4742,18 +4706,6 @@ __metadata:
     react: ^18.0 || ^19.0 || >= 19.0.0-rc
     react-dom: ^18.0 || ^19.0 || >= 19.0.0-rc
   checksum: 10c0/c06e080ca6fd49227a8b931765f77ae550f142107c4cabd3e2f7405c5fdc4b65fccbcbfb4ad89219afa328bf30180fbee6a31a142c8fc3594afdcba3c14aa2b2
-  languageName: node
-  linkType: hard
-
-"@blocknote/prosemirror-suggest-changes@npm:^0.1.3":
-  version: 0.1.3
-  resolution: "@blocknote/prosemirror-suggest-changes@npm:0.1.3"
-  peerDependencies:
-    prosemirror-model: ^1.0.0
-    prosemirror-state: ^1.0.0
-    prosemirror-transform: ^1.0.0
-    prosemirror-view: ^1.0.0
-  checksum: 10c0/406926d8edcbf609d7887d9c76cb84a578f10cacf3bd992fd6631ed76eebf8fe572e95c00f38e5831fc9e547aec4ccd667347d5ac8cb2c21cb0c3bd7fa4ce3b1
   languageName: node
   linkType: hard
 
@@ -4793,43 +4745,6 @@ __metadata:
     react: ^18.0 || ^19.0 || >= 19.0.0-rc
     react-dom: ^18.0 || ^19.0 || >= 19.0.0-rc
   checksum: 10c0/85989a4cbcce2bc5dfbdae1e763a8f8d351bf41e64cf6f2666c23f8d41fea4eedce5bc8db99a29fca252e659649bd8882c50067d61f12853049786fc6f5ac1f1
-  languageName: node
-  linkType: hard
-
-"@blocknote/xl-ai@npm:^0.31.1":
-  version: 0.31.1
-  resolution: "@blocknote/xl-ai@npm:0.31.1"
-  dependencies:
-    "@ai-sdk/groq": "npm:^1.2.9"
-    "@ai-sdk/mistral": "npm:^1.2.8"
-    "@ai-sdk/openai": "npm:^1.3.22"
-    "@ai-sdk/openai-compatible": "npm:^0.2.14"
-    "@blocknote/core": "npm:0.31.1"
-    "@blocknote/mantine": "npm:0.31.1"
-    "@blocknote/prosemirror-suggest-changes": "npm:^0.1.3"
-    "@blocknote/react": "npm:0.31.1"
-    "@floating-ui/react": "npm:^0.26.4"
-    "@tiptap/core": "npm:^2.12.0"
-    ai: "npm:^4.3.15"
-    lodash.isequal: "npm:^4.5.0"
-    prosemirror-changeset: "npm:^2.3.0"
-    prosemirror-model: "npm:^1.24.1"
-    prosemirror-state: "npm:^1.4.3"
-    prosemirror-tables: "npm:^1.6.4"
-    prosemirror-transform: "npm:^1.10.4"
-    prosemirror-view: "npm:^1.33.7"
-    react: "npm:^18"
-    react-dom: "npm:^18"
-    react-icons: "npm:^5.2.1"
-    remark-parse: "npm:^10.0.1"
-    remark-stringify: "npm:^10.0.2"
-    unified: "npm:^10.1.2"
-    y-prosemirror: "npm:^1.3.4"
-    zustand: "npm:^5.0.3"
-  peerDependencies:
-    react: ^18.0 || ^19.0 || >= 19.0.0-rc
-    react-dom: ^18.0 || ^19.0 || >= 19.0.0-rc
-  checksum: 10c0/29b3cd4f9406857f55a9f0cf776be41b26c937ea6732bfdf03d417b2206f8850831c81e0ba6f2226016bca9c1f6ad8dab98c77dc5b17f88f87b498b3fab1225b
   languageName: node
   linkType: hard
 
@@ -26551,7 +26466,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ai@npm:^4.3.15, ai@npm:^4.3.16":
+"ai@npm:^4.3.16":
   version: 4.3.16
   resolution: "ai@npm:4.3.16"
   dependencies:
@@ -50175,25 +50090,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prosemirror-transform@npm:^1.0.0, prosemirror-transform@npm:^1.1.0, prosemirror-transform@npm:^1.7.3":
-  version: 1.9.0
-  resolution: "prosemirror-transform@npm:1.9.0"
-  dependencies:
-    prosemirror-model: "npm:^1.21.0"
-  checksum: 10c0/8832d825a9d38fd116f5c3fbc9708f3aa627f88980efbc1923524da7673f5bd9d7ed0032762f5be223d990176a759b2ae0a5f3ba67bffd596c028ddbc0d53b93
-  languageName: node
-  linkType: hard
-
-"prosemirror-transform@npm:^1.10.2, prosemirror-transform@npm:^1.7.1":
-  version: 1.10.2
-  resolution: "prosemirror-transform@npm:1.10.2"
-  dependencies:
-    prosemirror-model: "npm:^1.21.0"
-  checksum: 10c0/4b63879bab3faf4e266a58ae00760f20d87e1fc9a342788276cccba6bdd6cb7b5cfd089f17d975200c0715e07b503126aa752ffe42e8c50761369dc6ff920b05
-  languageName: node
-  linkType: hard
-
-"prosemirror-transform@npm:^1.10.3, prosemirror-transform@npm:^1.10.4":
+"prosemirror-transform@npm:1.10.4":
   version: 1.10.4
   resolution: "prosemirror-transform@npm:1.10.4"
   dependencies:
@@ -50727,7 +50624,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^18, react-dom@npm:^18.2.0":
+"react-dom@npm:^18.2.0":
   version: 18.3.1
   resolution: "react-dom@npm:18.3.1"
   dependencies:
@@ -52107,7 +52004,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"remark-parse@npm:^10.0.0, remark-parse@npm:^10.0.1":
+"remark-parse@npm:^10.0.0":
   version: 10.0.2
   resolution: "remark-parse@npm:10.0.2"
   dependencies:
@@ -52185,17 +52082,6 @@ __metadata:
     mdast-util-to-string: "npm:^1.0.0"
     unist-util-visit: "npm:^2.0.0"
   checksum: 10c0/7cc2857936fce9c9c00b9c7d70de46d594cedf93bd8560fd006164dee7aacccdf472654ee35b33f4fb4bd0af882d89998c6d0c9088c2e95702a9fc15ebae002a
-  languageName: node
-  linkType: hard
-
-"remark-stringify@npm:^10.0.2":
-  version: 10.0.3
-  resolution: "remark-stringify@npm:10.0.3"
-  dependencies:
-    "@types/mdast": "npm:^3.0.0"
-    mdast-util-to-markdown: "npm:^1.0.0"
-    unified: "npm:^10.0.0"
-  checksum: 10c0/682f26c66ce72e97a00bff75774b68f8008184dc1e4407039e186de896b5cd5d336aa65842bf131f4826a7415acdcd01d14ba59ff41b421a250c23fb187cda85
   languageName: node
   linkType: hard
 
@@ -56531,7 +56417,6 @@ __metadata:
   dependencies:
     "@blocknote/mantine": "npm:^0.31.1"
     "@blocknote/react": "npm:^0.31.1"
-    "@blocknote/xl-ai": "npm:^0.31.1"
     "@blocknote/xl-docx-exporter": "npm:^0.31.1"
     "@blocknote/xl-pdf-exporter": "npm:^0.31.1"
     "@cyntler/react-doc-viewer": "npm:^1.17.0"
@@ -57584,7 +57469,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unified@npm:^10.0.0, unified@npm:^10.1.2":
+"unified@npm:^10.0.0":
   version: 10.1.2
   resolution: "unified@npm:10.1.2"
   dependencies:
@@ -60610,27 +60495,6 @@ __metadata:
     react:
       optional: true
   checksum: 10c0/479af491ffa1f1eb2c38b3ba25dc4e14339e8b35a60033d3f6c165b22f8be8163f7e1370015ded9c6e28548cd25af84a73fb40b5fad0bd7882d16ddd5ed613c6
-  languageName: node
-  linkType: hard
-
-"zustand@npm:^5.0.3":
-  version: 5.0.5
-  resolution: "zustand@npm:5.0.5"
-  peerDependencies:
-    "@types/react": ">=18.0.0"
-    immer: ">=9.0.6"
-    react: ">=18.0.0"
-    use-sync-external-store: ">=1.2.0"
-  peerDependenciesMeta:
-    "@types/react":
-      optional: true
-    immer:
-      optional: true
-    react:
-      optional: true
-    use-sync-external-store:
-      optional: true
-  checksum: 10c0/76228022ad589c8ef29227f184d8852277509f88c80afd537de0506a6ded2e7ecc01d21bb79f426867560e4d59553c526e88d01abc46bd32b133d97ff337e19b
   languageName: node
   linkType: hard
 
