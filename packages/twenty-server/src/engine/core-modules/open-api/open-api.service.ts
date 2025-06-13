@@ -38,6 +38,7 @@ import {
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { getServerUrl } from 'src/utils/get-server-url';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @Injectable()
 export class OpenApiService {
@@ -60,6 +61,8 @@ export class OpenApiService {
     try {
       const { workspace } =
         await this.accessTokenService.validateTokenByRequest(request);
+
+      workspaceValidator.assertIsDefinedOrThrow(workspace);
 
       objectMetadataItems =
         await this.objectMetadataService.findManyWithinWorkspace(workspace.id, {

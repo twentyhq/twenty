@@ -9,6 +9,7 @@ import {
   BlocklistItem,
   BlocklistValidationService,
 } from 'src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @WorkspaceQueryHook(`blocklist.updateOne`)
 export class BlocklistUpdateOnePreQueryHook
@@ -27,10 +28,14 @@ export class BlocklistUpdateOnePreQueryHook
       throw new BadRequestException('User id is required');
     }
 
+    const workspace = authContext.workspace;
+
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
+
     await this.blocklistValidationService.validateBlocklistForUpdateOne(
       payload,
       authContext.user?.id,
-      authContext.workspace.id,
+      workspace.id,
     );
 
     return payload;

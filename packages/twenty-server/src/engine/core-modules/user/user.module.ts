@@ -8,7 +8,6 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
-import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
@@ -47,8 +46,8 @@ import { UserService } from './services/user.service';
     OnboardingModule,
     TypeOrmModule.forFeature([KeyValuePair, UserWorkspace], 'core'),
     UserVarsModule,
+    UserWorkspaceModule,
     AuditModule,
-    DomainManagerModule,
     UserRoleModule,
     FeatureFlagModule,
     PermissionsModule,
