@@ -57,7 +57,6 @@ import { fromUserWorkspacePermissionsToUserWorkspacePermissionsDto } from 'src/e
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { AvailableWorkspaces } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
