@@ -19,12 +19,14 @@ import { useRecoilState } from 'recoil';
 import { buildAppPathWithQueryParams } from '~/utils/buildAppPathWithQueryParams';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { useAuth } from '../../hooks/useAuth';
+import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 
 export const useSignInUp = (form: UseFormReturn<Form>) => {
   const { enqueueSnackBar } = useSnackBar();
 
   const [signInUpStep, setSignInUpStep] = useRecoilState(signInUpStepState);
   const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
+  const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
 
   const location = useLocation();
 
@@ -38,7 +40,9 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   );
 
   const {
+    signInWithCredentialsInWorkspace,
     signInWithCredentials,
+    signUpWithCredentialsInWorkspace,
     signUpWithCredentials,
     checkUserExists: { checkUserExistsQuery },
   } = useAuth();
@@ -71,11 +75,11 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       },
       onCompleted: (data) => {
         requestFreshCaptchaToken();
-        if (data?.checkUserExists.exists) {
-          setSignInUpMode(SignInUpMode.SignIn);
-        } else {
-          setSignInUpMode(SignInUpMode.SignUp);
-        }
+        setSignInUpMode(
+          data?.checkUserExists.exists
+            ? SignInUpMode.SignIn
+            : SignInUpMode.SignUp,
+        );
         setSignInUpStep(SignInUpStep.Password);
       },
     });
@@ -97,31 +101,60 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           throw new Error('Email and password are required');
         }
 
-        if (signInUpMode === SignInUpMode.SignIn && !isInviteMode) {
-          await signInWithCredentials(
+        if (
+          !isInviteMode &&
+          signInUpMode === SignInUpMode.SignIn &&
+          isOnAWorkspace
+        ) {
+          return await signInWithCredentialsInWorkspace(
             data.email.toLowerCase().trim(),
             data.password,
             token,
           );
-        } else {
-          const verifyEmailNextPath = buildAppPathWithQueryParams(
-            AppPath.PlanRequired,
-            await buildSearchParamsFromUrlSyncedStates(),
-          );
-
-          await signUpWithCredentials({
-            email: data.email.toLowerCase().trim(),
-            password: data.password,
-            workspaceInviteHash,
-            workspacePersonalInviteToken,
-            captchaToken: token,
-            verifyEmailNextPath,
-          });
         }
+
+        if (
+          !isInviteMode &&
+          signInUpMode === SignInUpMode.SignIn &&
+          !isOnAWorkspace
+        ) {
+          return await signInWithCredentials(
+            data.email.toLowerCase().trim(),
+            data.password,
+            token,
+          );
+        }
+
+        if (
+          !isInviteMode &&
+          signInUpMode === SignInUpMode.SignUp &&
+          !isOnAWorkspace
+        ) {
+          return await signUpWithCredentials(
+            data.email.toLowerCase().trim(),
+            data.password,
+            token,
+          );
+        }
+
+        const verifyEmailNextPath = buildAppPathWithQueryParams(
+          AppPath.PlanRequired,
+          await buildSearchParamsFromUrlSyncedStates(),
+        );
+
+        await signUpWithCredentialsInWorkspace({
+          email: data.email.toLowerCase().trim(),
+          password: data.password,
+          workspaceInviteHash,
+          workspacePersonalInviteToken,
+          captchaToken: token,
+          verifyEmailNextPath,
+        });
       } catch (err: any) {
         enqueueSnackBar(err?.message, {
           variant: SnackBarVariant.Error,
         });
+      } finally {
         requestFreshCaptchaToken();
       }
     },
@@ -129,13 +162,16 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       readCaptchaToken,
       signInUpMode,
       isInviteMode,
+      signInWithCredentialsInWorkspace,
       signInWithCredentials,
       signUpWithCredentials,
+      signUpWithCredentialsInWorkspace,
       workspaceInviteHash,
       workspacePersonalInviteToken,
       enqueueSnackBar,
       requestFreshCaptchaToken,
       buildSearchParamsFromUrlSyncedStates,
+      isOnAWorkspace,
     ],
   );
 

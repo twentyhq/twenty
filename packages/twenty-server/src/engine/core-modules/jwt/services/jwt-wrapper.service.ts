@@ -13,15 +13,15 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-
-export type WorkspaceTokenType =
-  | 'ACCESS'
-  | 'LOGIN'
-  | 'REFRESH'
-  | 'FILE'
-  | 'POSTGRES_PROXY'
-  | 'REMOTE_SERVER'
-  | 'API_KEY';
+import {
+  JwtPayload,
+  JwtTokenTypeEnum,
+  TransientTokenJwtPayload,
+  RefreshTokenJwtPayload,
+  WorkspaceAgnosticTokenJwtPayload,
+  AccessTokenJwtPayload,
+  FileTokenJwtPayload,
+} from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @Injectable()
 export class JwtWrapperService {
@@ -30,17 +30,16 @@ export class JwtWrapperService {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  sign(payload: string | object, options?: JwtSignOptions): string {
+  sign(payload: JwtPayload, options?: JwtSignOptions): string {
     // Typescript does not handle well the overloads of the sign method, helping it a little bit
-    if (typeof payload === 'object') {
-      return this.jwtService.sign(payload, options);
-    }
-
     return this.jwtService.sign(payload, options);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  verify<T extends object = any>(token: string, options?: JwtVerifyOptions): T {
+  verify<T extends object = any>(
+    token: string,
+    options?: { secret: string },
+  ): T {
     return this.jwtService.verify(token, options);
   }
 
@@ -49,18 +48,30 @@ export class JwtWrapperService {
     return this.jwtService.decode(payload, options);
   }
 
-  verifyWorkspaceToken(
+  verifyJwtToken(
     token: string,
-    type: WorkspaceTokenType,
+    type: JwtTokenTypeEnum,
     options?: JwtVerifyOptions,
   ) {
-    const payload = this.decode(token, {
+    const payload = this.decode<
+      | TransientTokenJwtPayload
+      | RefreshTokenJwtPayload
+      | WorkspaceAgnosticTokenJwtPayload
+      | AccessTokenJwtPayload
+      | FileTokenJwtPayload
+    >(token, {
       json: true,
     });
 
     if (!isDefined(payload)) {
       throw new AuthException('No payload', AuthExceptionCode.UNAUTHENTICATED);
     }
+
+    // @TODO: Migrate to use type from payload instead of parameter
+    type =
+      payload.type === JwtTokenTypeEnum.WORKSPACE_AGNOSTIC
+        ? JwtTokenTypeEnum.WORKSPACE_AGNOSTIC
+        : type;
 
     // TODO: check if this is really needed
     if (type !== 'FILE' && !payload.sub) {
@@ -72,16 +83,26 @@ export class JwtWrapperService {
 
     try {
       // TODO: Deprecate this once old API KEY tokens are no longer in use
-      if (!payload.type && !payload.workspaceId && type === 'ACCESS') {
+      if (!payload.type && !('workspaceId' in payload) && type === 'ACCESS') {
         return this.jwtService.verify(token, {
           ...options,
           secret: this.generateAppSecretLegacy(),
         });
       }
 
+      const appSecretBody =
+        'workspaceId' in payload ? payload.workspaceId : payload.userId;
+
+      if (!isDefined(appSecretBody)) {
+        throw new AuthException(
+          'Invalid token type',
+          AuthExceptionCode.INVALID_JWT_TOKEN_TYPE,
+        );
+      }
+
       return this.jwtService.verify(token, {
         ...options,
-        secret: this.generateAppSecret(type, payload.workspaceId),
+        secret: this.generateAppSecret(type, appSecretBody),
       });
     } catch (error) {
       if (error instanceof jwt.TokenExpiredError) {
@@ -103,7 +124,7 @@ export class JwtWrapperService {
     }
   }
 
-  generateAppSecret(type: WorkspaceTokenType, workspaceId?: string): string {
+  generateAppSecret(type: JwtTokenTypeEnum, appSecretBody: string): string {
     const appSecret = this.twentyConfigService.get('APP_SECRET');
 
     if (!appSecret) {
@@ -111,7 +132,7 @@ export class JwtWrapperService {
     }
 
     return createHash('sha256')
-      .update(`${appSecret}${workspaceId}${type}`)
+      .update(`${appSecret}${appSecretBody}${type}`)
       .digest('hex');
   }
 

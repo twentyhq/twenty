@@ -17,3 +17,36 @@ export const AUTH_TOKENS = gql`
     }
   }
 `;
+
+export const AVAILABLE_WORKSPACE_FOR_AUTH_FRAGMENT = gql`
+  fragment AvailableWorkspaceFragment on AvailableWorkspace {
+    id
+    displayName
+    loginToken
+    inviteHash
+    personalInviteToken
+    workspaceUrls {
+      subdomainUrl
+      customUrl
+    }
+    logo
+    sso {
+      type
+      id
+      issuer
+      name
+      status
+    }
+  }
+`;
+
+export const AVAILABLE_WORKSPACES_FOR_AUTH_FRAGMENT = gql`
+  fragment AvailableWorkspacesFragment on AvailableWorkspaces {
+    availableWorkspacesForSignIn {
+      ...AvailableWorkspaceFragment
+    }
+    availableWorkspacesForSignUp {
+      ...AvailableWorkspaceFragment
+    }
+  }
+`;
