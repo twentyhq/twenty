@@ -180,8 +180,6 @@ export class TelephonyResolver {
       createTelephonyInput.workspaceId,
     );
 
-    console.log('ramalBody', ramalBody);
-
     try {
       const createdRamal = await this.pabxService.createExtention(ramalBody);
 
@@ -293,13 +291,17 @@ export class TelephonyResolver {
 
   @Query(() => TelephonyExtension, { nullable: true })
   async getUserSoftfone(
-    @Args('extNum', { type: () => String }) extNum: string,
     @Args('workspaceId', { type: () => ID }) workspaceId: string,
-  ): Promise<TelephonyExtension> {
+    @Args('extNum', { type: () => String, nullable: true }) extNum?: string,
+  ): Promise<TelephonyExtension | null> {
     const workspace = await this.workspaceService.findById(workspaceId);
 
     if (!workspace) {
       throw new Error('Workspace not found');
+    }
+
+    if (!extNum) {
+      return null;
     }
 
     const extensions = await this.pabxService.listExtentions({

@@ -6,10 +6,12 @@ import { AppPageErrorFallback } from '@/error-handler/components/AppPageErrorFal
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
 import { AppNavigationDrawer } from '@/navigation/components/AppNavigationDrawer';
 import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar';
+import { useIsOnboarding } from '@/navigation/hooks/useIsOnboarding';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
 import { SignInAppNavigationDrawerMock } from '@/sign-in-background-mock/components/SignInAppNavigationDrawerMock';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
+import WebSoftphone from '@/softphone/components/WebSoftphone';
 import { useShowFullscreen } from '@/ui/layout/fullscreen/hooks/useShowFullscreen';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
@@ -19,7 +21,6 @@ import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
 import { useScreenSize } from 'twenty-ui/utilities';
-import WebSoftphone from '../../../../softphone/components/WebSoftphone';
 
 const StyledLayout = styled.div`
   background: ${({ theme }) => theme.background.noisy};
@@ -71,6 +72,7 @@ export const DefaultLayout = () => {
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
   const useShowFullScreen = useShowFullscreen();
+  const isOnboarding = useIsOnboarding();
 
   return (
     <>
@@ -133,9 +135,11 @@ export const DefaultLayout = () => {
           {isMobile && !showAuthModal && <MobileNavigationBar />}
         </AppErrorBoundary>
       </StyledLayout>
-      <StyledWebSoftphoneContainer>
-        <WebSoftphone />
-      </StyledWebSoftphoneContainer>
+      {!isOnboarding && (
+        <StyledWebSoftphoneContainer>
+          <WebSoftphone />
+        </StyledWebSoftphoneContainer>
+      )}
     </>
   );
 };

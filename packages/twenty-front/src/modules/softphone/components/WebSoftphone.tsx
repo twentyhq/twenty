@@ -193,7 +193,7 @@ const WebSoftphone: React.FC = () => {
 
   // const { telephonyExtensions, loading } = useFindAllPABX();
   const { telephonyExtension } = useGetUserSoftfone({
-    extNum: workspaceMember?.extensionNumber || '',
+    extNum: workspaceMember?.extensionNumber ?? undefined,
   });
 
   useEffect(() => {
@@ -211,14 +211,19 @@ const WebSoftphone: React.FC = () => {
   }, [telephonyExtension]);
 
   useEffect(() => {
-    if (config?.username && config?.password && config?.domain) {
+    if (
+      config?.username &&
+      config?.password &&
+      config?.domain &&
+      telephonyExtension
+    ) {
       updateConfigWithHa1();
     }
     return () => {
       onComponentUnmount();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config?.username, config?.password, config?.domain]);
+  }, [config?.username, config?.password, config?.domain, telephonyExtension]);
 
   const startTimer = (
     startTime: number | null,
@@ -831,6 +836,10 @@ const WebSoftphone: React.FC = () => {
       sendDTMF(keyTrimmedLastChar);
     }
   };
+
+  if (!telephonyExtension) {
+    return <></>;
+  }
 
   return (
     <Draggable
