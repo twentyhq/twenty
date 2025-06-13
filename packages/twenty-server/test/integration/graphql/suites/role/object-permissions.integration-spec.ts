@@ -1,8 +1,10 @@
 import gql from 'graphql-tag';
 import { default as request } from 'supertest';
+import { createRoleOperation } from 'test/integration/graphql/utils/create-custom-role-operation-factory.util';
 import { deleteRole } from 'test/integration/graphql/utils/delete-one-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
+import { createUpsertObjectPermissionsOperation } from 'test/integration/graphql/utils/upsert-object-permission-operation-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -69,28 +71,17 @@ describe('Object Permissions Validation', () => {
   describe('cases with role with all rights by default', () => {
     beforeEach(async () => {
       // Create a custom role for each test
-      const createRoleOperation = {
-        query: gql`
-          mutation CreateOneRole {
-            createOneRole(
-              createRoleInput: {
-                label: "TestRole"
-                description: "Test role for object permission validation"
-                canUpdateAllSettings: true
-                canReadAllObjectRecords: true
-                canUpdateAllObjectRecords: true
-                canSoftDeleteAllObjectRecords: true
-                canDestroyAllObjectRecords: true
-              }
-            ) {
-              id
-              label
-            }
-          }
-        `,
-      };
+      const roleOperation = createRoleOperation({
+        label: 'TestRole',
+        description: 'Test role for object permission validation',
+        canUpdateAllSettings: true,
+        canReadAllObjectRecords: true,
+        canUpdateAllObjectRecords: true,
+        canSoftDeleteAllObjectRecords: true,
+        canDestroyAllObjectRecords: true,
+      });
 
-      const response = await makeGraphqlAPIRequest(createRoleOperation);
+      const response = await makeGraphqlAPIRequest(roleOperation);
 
       customRoleId = response.body.data.createOneRole.id;
     });
@@ -104,43 +95,17 @@ describe('Object Permissions Validation', () => {
 
     describe('validateObjectPermissionsOrThrow - basic valid cases', () => {
       it('should allow read=true with any write permissions', async () => {
-        const upsertObjectPermissionsOperation = {
-          query: gql`
-            mutation UpsertObjectPermissions(
-              $roleId: String!
-              $objectPermissions: [ObjectPermissionInput!]!
-            ) {
-              upsertObjectPermissions(
-                upsertObjectPermissionsInput: {
-                  roleId: $roleId
-                  objectPermissions: $objectPermissions
-                }
-              ) {
-                objectMetadataId
-                canReadObjectRecords
-                canUpdateObjectRecords
-                canSoftDeleteObjectRecords
-                canDestroyObjectRecords
-              }
-            }
-          `,
-          variables: {
-            roleId: customRoleId,
-            objectPermissions: [
-              {
-                objectMetadataId: personObjectId,
-                canReadObjectRecords: true,
-                canUpdateObjectRecords: true,
-                canSoftDeleteObjectRecords: true,
-                canDestroyObjectRecords: true,
-              },
-            ],
+        const operation = createUpsertObjectPermissionsOperation(customRoleId, [
+          {
+            objectMetadataId: personObjectId,
+            canReadObjectRecords: true,
+            canUpdateObjectRecords: true,
+            canSoftDeleteObjectRecords: true,
+            canDestroyObjectRecords: true,
           },
-        };
+        ]);
 
-        const response = await makeGraphqlAPIRequest(
-          upsertObjectPermissionsOperation,
-        );
+        const response = await makeGraphqlAPIRequest(operation);
 
         expect(response.body.errors).toBeUndefined();
         expect(response.body.data.upsertObjectPermissions).toHaveLength(1);
@@ -154,43 +119,17 @@ describe('Object Permissions Validation', () => {
       });
 
       it('should allow read=false with all write permissions=false', async () => {
-        const upsertObjectPermissionsOperation = {
-          query: gql`
-            mutation UpsertObjectPermissions(
-              $roleId: String!
-              $objectPermissions: [ObjectPermissionInput!]!
-            ) {
-              upsertObjectPermissions(
-                upsertObjectPermissionsInput: {
-                  roleId: $roleId
-                  objectPermissions: $objectPermissions
-                }
-              ) {
-                objectMetadataId
-                canReadObjectRecords
-                canUpdateObjectRecords
-                canSoftDeleteObjectRecords
-                canDestroyObjectRecords
-              }
-            }
-          `,
-          variables: {
-            roleId: customRoleId,
-            objectPermissions: [
-              {
-                objectMetadataId: personObjectId,
-                canReadObjectRecords: false,
-                canUpdateObjectRecords: false,
-                canSoftDeleteObjectRecords: false,
-                canDestroyObjectRecords: false,
-              },
-            ],
+        const operation = createUpsertObjectPermissionsOperation(customRoleId, [
+          {
+            objectMetadataId: personObjectId,
+            canReadObjectRecords: false,
+            canUpdateObjectRecords: false,
+            canSoftDeleteObjectRecords: false,
+            canDestroyObjectRecords: false,
           },
-        };
+        ]);
 
-        const response = await makeGraphqlAPIRequest(
-          upsertObjectPermissionsOperation,
-        );
+        const response = await makeGraphqlAPIRequest(operation);
 
         expect(response.body.errors).toBeUndefined();
         expect(response.body.data.upsertObjectPermissions).toHaveLength(1);
@@ -206,41 +145,25 @@ describe('Object Permissions Validation', () => {
 
     describe('validateObjectPermissionsOrThrow - Invalid Cases', () => {
       it('should throw error when read=false but canUpdateObjectRecords=true', async () => {
-        const upsertObjectPermissionsOperation = {
-          query: gql`
-            mutation UpsertObjectPermissions(
-              $roleId: String!
-              $objectPermissions: [ObjectPermissionInput!]!
-            ) {
-              upsertObjectPermissions(
-                upsertObjectPermissionsInput: {
-                  roleId: $roleId
-                  objectPermissions: $objectPermissions
-                }
-              ) {
-                objectMetadataId
-                canReadObjectRecords
-                canUpdateObjectRecords
-              }
-            }
-          `,
-          variables: {
-            roleId: customRoleId,
-            objectPermissions: [
-              {
-                objectMetadataId: personObjectId,
-                canReadObjectRecords: false,
-                canUpdateObjectRecords: true,
-                canSoftDeleteObjectRecords: false,
-                canDestroyObjectRecords: false,
-              },
-            ],
-          },
-        };
-
-        const response = await makeGraphqlAPIRequest(
-          upsertObjectPermissionsOperation,
+        const operation = createUpsertObjectPermissionsOperation(
+          customRoleId,
+          [
+            {
+              objectMetadataId: personObjectId,
+              canReadObjectRecords: false,
+              canUpdateObjectRecords: true,
+              canSoftDeleteObjectRecords: false,
+              canDestroyObjectRecords: false,
+            },
+          ],
+          [
+            'objectMetadataId',
+            'canReadObjectRecords',
+            'canUpdateObjectRecords',
+          ],
         );
+
+        const response = await makeGraphqlAPIRequest(operation);
 
         expect(response.body.data).toBeNull();
         expect(response.body.errors).toBeDefined();
@@ -253,41 +176,25 @@ describe('Object Permissions Validation', () => {
       });
 
       it('should throw error when read=false but canSoftDeleteObjectRecords=true', async () => {
-        const upsertObjectPermissionsOperation = {
-          query: gql`
-            mutation UpsertObjectPermissions(
-              $roleId: String!
-              $objectPermissions: [ObjectPermissionInput!]!
-            ) {
-              upsertObjectPermissions(
-                upsertObjectPermissionsInput: {
-                  roleId: $roleId
-                  objectPermissions: $objectPermissions
-                }
-              ) {
-                objectMetadataId
-                canReadObjectRecords
-                canSoftDeleteObjectRecords
-              }
-            }
-          `,
-          variables: {
-            roleId: customRoleId,
-            objectPermissions: [
-              {
-                objectMetadataId: personObjectId,
-                canReadObjectRecords: false,
-                canUpdateObjectRecords: false,
-                canSoftDeleteObjectRecords: true,
-                canDestroyObjectRecords: false,
-              },
-            ],
-          },
-        };
-
-        const response = await makeGraphqlAPIRequest(
-          upsertObjectPermissionsOperation,
+        const operation = createUpsertObjectPermissionsOperation(
+          customRoleId,
+          [
+            {
+              objectMetadataId: personObjectId,
+              canReadObjectRecords: false,
+              canUpdateObjectRecords: false,
+              canSoftDeleteObjectRecords: true,
+              canDestroyObjectRecords: false,
+            },
+          ],
+          [
+            'objectMetadataId',
+            'canReadObjectRecords',
+            'canSoftDeleteObjectRecords',
+          ],
         );
+
+        const response = await makeGraphqlAPIRequest(operation);
 
         expect(response.body.data).toBeNull();
         expect(response.body.errors).toBeDefined();
@@ -300,41 +207,25 @@ describe('Object Permissions Validation', () => {
       });
 
       it('should throw error when read=false but canDestroyObjectRecords=true', async () => {
-        const upsertObjectPermissionsOperation = {
-          query: gql`
-            mutation UpsertObjectPermissions(
-              $roleId: String!
-              $objectPermissions: [ObjectPermissionInput!]!
-            ) {
-              upsertObjectPermissions(
-                upsertObjectPermissionsInput: {
-                  roleId: $roleId
-                  objectPermissions: $objectPermissions
-                }
-              ) {
-                objectMetadataId
-                canReadObjectRecords
-                canDestroyObjectRecords
-              }
-            }
-          `,
-          variables: {
-            roleId: customRoleId,
-            objectPermissions: [
-              {
-                objectMetadataId: personObjectId,
-                canReadObjectRecords: false,
-                canUpdateObjectRecords: false,
-                canSoftDeleteObjectRecords: false,
-                canDestroyObjectRecords: true,
-              },
-            ],
-          },
-        };
-
-        const response = await makeGraphqlAPIRequest(
-          upsertObjectPermissionsOperation,
+        const operation = createUpsertObjectPermissionsOperation(
+          customRoleId,
+          [
+            {
+              objectMetadataId: personObjectId,
+              canReadObjectRecords: false,
+              canUpdateObjectRecords: false,
+              canSoftDeleteObjectRecords: false,
+              canDestroyObjectRecords: true,
+            },
+          ],
+          [
+            'objectMetadataId',
+            'canReadObjectRecords',
+            'canDestroyObjectRecords',
+          ],
         );
+
+        const response = await makeGraphqlAPIRequest(operation);
 
         expect(response.body.data).toBeNull();
         expect(response.body.errors).toBeDefined();
@@ -347,42 +238,26 @@ describe('Object Permissions Validation', () => {
       });
 
       it('should throw error when read=false but multiple write permissions=true', async () => {
-        const upsertObjectPermissionsOperation = {
-          query: gql`
-            mutation UpsertObjectPermissions(
-              $roleId: String!
-              $objectPermissions: [ObjectPermissionInput!]!
-            ) {
-              upsertObjectPermissions(
-                upsertObjectPermissionsInput: {
-                  roleId: $roleId
-                  objectPermissions: $objectPermissions
-                }
-              ) {
-                objectMetadataId
-                canReadObjectRecords
-                canUpdateObjectRecords
-                canSoftDeleteObjectRecords
-              }
-            }
-          `,
-          variables: {
-            roleId: customRoleId,
-            objectPermissions: [
-              {
-                objectMetadataId: personObjectId,
-                canReadObjectRecords: false,
-                canUpdateObjectRecords: true,
-                canSoftDeleteObjectRecords: true,
-                canDestroyObjectRecords: false,
-              },
-            ],
-          },
-        };
-
-        const response = await makeGraphqlAPIRequest(
-          upsertObjectPermissionsOperation,
+        const operation = createUpsertObjectPermissionsOperation(
+          customRoleId,
+          [
+            {
+              objectMetadataId: personObjectId,
+              canReadObjectRecords: false,
+              canUpdateObjectRecords: true,
+              canSoftDeleteObjectRecords: true,
+              canDestroyObjectRecords: false,
+            },
+          ],
+          [
+            'objectMetadataId',
+            'canReadObjectRecords',
+            'canUpdateObjectRecords',
+            'canSoftDeleteObjectRecords',
+          ],
         );
+
+        const response = await makeGraphqlAPIRequest(operation);
 
         expect(response.body.data).toBeNull();
         expect(response.body.errors).toBeDefined();
@@ -397,96 +272,64 @@ describe('Object Permissions Validation', () => {
 
     describe('validateObjectPermissionsOrThrow - Multiple Objects', () => {
       it('should validate permissions across multiple objects correctly', async () => {
-        const upsertObjectPermissionsOperation = {
-          query: gql`
-            mutation UpsertObjectPermissions(
-              $roleId: String!
-              $objectPermissions: [ObjectPermissionInput!]!
-            ) {
-              upsertObjectPermissions(
-                upsertObjectPermissionsInput: {
-                  roleId: $roleId
-                  objectPermissions: $objectPermissions
-                }
-              ) {
-                objectMetadataId
-                canReadObjectRecords
-                canUpdateObjectRecords
-              }
-            }
-          `,
-          variables: {
-            roleId: customRoleId,
-            objectPermissions: [
-              {
-                objectMetadataId: personObjectId,
-                canReadObjectRecords: true,
-                canUpdateObjectRecords: true,
-                canSoftDeleteObjectRecords: false,
-                canDestroyObjectRecords: false,
-              },
-              {
-                objectMetadataId: companyObjectId,
-                canReadObjectRecords: false,
-                canUpdateObjectRecords: false,
-                canSoftDeleteObjectRecords: false,
-                canDestroyObjectRecords: false,
-              },
-            ],
-          },
-        };
-
-        const response = await makeGraphqlAPIRequest(
-          upsertObjectPermissionsOperation,
+        const operation = createUpsertObjectPermissionsOperation(
+          customRoleId,
+          [
+            {
+              objectMetadataId: personObjectId,
+              canReadObjectRecords: true,
+              canUpdateObjectRecords: true,
+              canSoftDeleteObjectRecords: false,
+              canDestroyObjectRecords: false,
+            },
+            {
+              objectMetadataId: companyObjectId,
+              canReadObjectRecords: false,
+              canUpdateObjectRecords: false,
+              canSoftDeleteObjectRecords: false,
+              canDestroyObjectRecords: false,
+            },
+          ],
+          [
+            'objectMetadataId',
+            'canReadObjectRecords',
+            'canUpdateObjectRecords',
+          ],
         );
+
+        const response = await makeGraphqlAPIRequest(operation);
 
         expect(response.body.errors).toBeUndefined();
         expect(response.body.data.upsertObjectPermissions).toHaveLength(2);
       });
 
       it('should throw error when one object has invalid permissions', async () => {
-        const upsertObjectPermissionsOperation = {
-          query: gql`
-            mutation UpsertObjectPermissions(
-              $roleId: String!
-              $objectPermissions: [ObjectPermissionInput!]!
-            ) {
-              upsertObjectPermissions(
-                upsertObjectPermissionsInput: {
-                  roleId: $roleId
-                  objectPermissions: $objectPermissions
-                }
-              ) {
-                objectMetadataId
-                canReadObjectRecords
-                canUpdateObjectRecords
-              }
-            }
-          `,
-          variables: {
-            roleId: customRoleId,
-            objectPermissions: [
-              {
-                objectMetadataId: personObjectId,
-                canReadObjectRecords: true,
-                canUpdateObjectRecords: true,
-                canSoftDeleteObjectRecords: false,
-                canDestroyObjectRecords: false,
-              },
-              {
-                objectMetadataId: companyObjectId,
-                canReadObjectRecords: false,
-                canUpdateObjectRecords: true, // This should fail
-                canSoftDeleteObjectRecords: false,
-                canDestroyObjectRecords: false,
-              },
-            ],
-          },
-        };
-
-        const response = await makeGraphqlAPIRequest(
-          upsertObjectPermissionsOperation,
+        const operation = createUpsertObjectPermissionsOperation(
+          customRoleId,
+          [
+            {
+              objectMetadataId: personObjectId,
+              canReadObjectRecords: true,
+              canUpdateObjectRecords: true,
+              canSoftDeleteObjectRecords: false,
+              canDestroyObjectRecords: false,
+            },
+            {
+              objectMetadataId: companyObjectId,
+              canReadObjectRecords: false,
+              canUpdateObjectRecords: true, // This should fail
+              canSoftDeleteObjectRecords: false,
+              canDestroyObjectRecords: false,
+            },
+          ],
+          [
+            'objectMetadataId',
+            'canReadObjectRecords',
+            'canUpdateObjectRecords',
+          ],
         );
+
+        const response = await makeGraphqlAPIRequest(operation);
 
         expect(response.body.data).toBeNull();
         expect(response.body.errors).toBeDefined();
@@ -501,76 +344,44 @@ describe('Object Permissions Validation', () => {
   });
 
   describe('cases with role with no rights by default', () => {
-    let roleWithWriteDefaultsId: string;
+    let roleWithoutPermissions: string;
 
     beforeEach(async () => {
       // Create a role with write permissions as defaults
-      const createRoleWithDefaultsOperation = {
-        query: gql`
-          mutation CreateOneRole {
-            createOneRole(
-              createRoleInput: {
-                label: "TestRoleWithNoRights"
-                description: "Test role with no rights"
-                canUpdateAllSettings: false
-                canReadAllObjectRecords: false
-                canUpdateAllObjectRecords: false
-                canSoftDeleteAllObjectRecords: false
-                canDestroyAllObjectRecords: false
-              }
-            ) {
-              id
-              label
-            }
-          }
-        `,
-      };
+      const roleWithoutPermissionsQuery = createRoleOperation({
+        label: 'TestRoleWithNoRights',
+        description: 'Test role with no rights',
+        canUpdateAllSettings: false,
+        canReadAllObjectRecords: false,
+        canUpdateAllObjectRecords: false,
+        canSoftDeleteAllObjectRecords: false,
+        canDestroyAllObjectRecords: false,
+      });
 
-      const response = await makeGraphqlAPIRequest(
-        createRoleWithDefaultsOperation,
-      );
+      const response = await makeGraphqlAPIRequest(roleWithoutPermissionsQuery);
 
-      roleWithWriteDefaultsId = response.body.data.createOneRole.id;
+      roleWithoutPermissions = response.body.data.createOneRole.id;
     });
 
     afterEach(async () => {
-      if (roleWithWriteDefaultsId) {
-        await deleteRole(client, roleWithWriteDefaultsId);
+      if (roleWithoutPermissions) {
+        await deleteRole(client, roleWithoutPermissions);
       }
     });
 
     it('should throw error when read=true and write permissions inherit false from role defaults', async () => {
-      const upsertObjectPermissionsOperation = {
-        query: gql`
-          mutation UpsertObjectPermissions(
-            $roleId: String!
-            $objectPermissions: [ObjectPermissionInput!]!
-          ) {
-            upsertObjectPermissions(
-              upsertObjectPermissionsInput: {
-                roleId: $roleId
-                objectPermissions: $objectPermissions
-              }
-            ) {
-              objectMetadataId
-              canReadObjectRecords
-            }
-          }
-        `,
-        variables: {
-          roleId: roleWithWriteDefaultsId,
-          objectPermissions: [
-            {
-              objectMetadataId: personObjectId,
-              canUpdateObjectRecords: true,
-            },
-          ],
-        },
-      };
-
-      const response = await makeGraphqlAPIRequest(
-        upsertObjectPermissionsOperation,
+      const operation = createUpsertObjectPermissionsOperation(
+        roleWithoutPermissions,
+        [
+          {
+            objectMetadataId: personObjectId,
+            canUpdateObjectRecords: true,
+          },
+        ],
+        ['objectMetadataId', 'canReadObjectRecords'],
       );
+
+      const response = await makeGraphqlAPIRequest(operation);
 
       expect(response.body.data).toBeNull();
       expect(response.body.errors).toBeDefined();
@@ -583,41 +394,18 @@ describe('Object Permissions Validation', () => {
     });
 
     it('should work when read=true and update=true', async () => {
-      const upsertObjectPermissionsOperation = {
-        query: gql`
-          mutation UpsertObjectPermissions(
-            $roleId: String!
-            $objectPermissions: [ObjectPermissionInput!]!
-          ) {
-            upsertObjectPermissions(
-              upsertObjectPermissionsInput: {
-                roleId: $roleId
-                objectPermissions: $objectPermissions
-              }
-            ) {
-              objectMetadataId
-              canReadObjectRecords
-              canUpdateObjectRecords
-              canSoftDeleteObjectRecords
-              canDestroyObjectRecords
-            }
-          }
-        `,
-        variables: {
-          roleId: roleWithWriteDefaultsId,
-          objectPermissions: [
-            {
-              objectMetadataId: personObjectId,
-              canReadObjectRecords: true,
-              canUpdateObjectRecords: true,
-            },
-          ],
-        },
-      };
-
-      const response = await makeGraphqlAPIRequest(
-        upsertObjectPermissionsOperation,
+      const operation = createUpsertObjectPermissionsOperation(
+        roleWithoutPermissions,
+        [
+          {
+            objectMetadataId: personObjectId,
+            canReadObjectRecords: true,
+            canUpdateObjectRecords: true,
+          },
+        ],
       );
+
+      const response = await makeGraphqlAPIRequest(operation);
 
       expect(response.body.errors).toBeUndefined();
       expect(response.body.data.upsertObjectPermissions).toHaveLength(1);

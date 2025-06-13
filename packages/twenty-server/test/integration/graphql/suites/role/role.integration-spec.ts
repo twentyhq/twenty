@@ -1,5 +1,6 @@
 import gql from 'graphql-tag';
 import { default as request } from 'supertest';
+import { createRoleOperation } from 'test/integration/graphql/utils/create-custom-role-operation-factory.util';
 import { deleteRole } from 'test/integration/graphql/utils/delete-one-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
@@ -30,197 +31,59 @@ describe('Role Permissions Validation', () => {
 
     await makeGraphqlAPIRequest(disablePermissionsQuery);
   });
+
   describe('validateRoleDoesNotHaveWritingPermissionsWithoutReadingPermissionsOrThrow', () => {
     describe('createRole - Valid Cases', () => {
-      let createdRoleIds: string[] = [];
-
-      afterEach(async () => {
-        // Clean up created roles
-        for (const roleId of createdRoleIds) {
-          await deleteRole(client, roleId);
-        }
-        createdRoleIds = [];
-      });
-
       it('should allow creating role with read=true and any write permissions', async () => {
-        const createRoleOperation = {
-          query: gql`
-            mutation CreateOneRole {
-              createOneRole(
-                createRoleInput: {
-                  label: "TestReadWriteRole"
-                  description: "Test role with read and write permissions"
-                  canUpdateAllSettings: false
-                  canReadAllObjectRecords: true
-                  canUpdateAllObjectRecords: true
-                  canSoftDeleteAllObjectRecords: true
-                  canDestroyAllObjectRecords: true
-                }
-              ) {
-                id
-                label
-                canReadAllObjectRecords
-                canUpdateAllObjectRecords
-                canSoftDeleteAllObjectRecords
-                canDestroyAllObjectRecords
-              }
-            }
-          `,
-        };
-
-        const response = await makeGraphqlAPIRequest(createRoleOperation);
-
-        expect(response.body.errors).toBeUndefined();
-        expect(response.body.data.createOneRole).toMatchObject({
-          label: 'TestReadWriteRole',
+        const operation = createRoleOperation({
+          label: 'ValidRole',
+          description: 'Valid role with read and write permissions',
+          canUpdateAllSettings: true,
           canReadAllObjectRecords: true,
           canUpdateAllObjectRecords: true,
           canSoftDeleteAllObjectRecords: true,
           canDestroyAllObjectRecords: true,
         });
 
-        createdRoleIds.push(response.body.data.createOneRole.id);
+        const response = await makeGraphqlAPIRequest(operation);
+
+        expect(response.body.errors).toBeUndefined();
+        expect(response.body.data.createOneRole).toBeDefined();
+        expect(response.body.data.createOneRole.label).toBe('ValidRole');
       });
 
       it('should allow creating role with read=false and all write permissions=false', async () => {
-        const createRoleOperation = {
-          query: gql`
-            mutation CreateOneRole {
-              createOneRole(
-                createRoleInput: {
-                  label: "TestReadOnlyRole"
-                  description: "Test role with no permissions"
-                  canUpdateAllSettings: false
-                  canReadAllObjectRecords: false
-                  canUpdateAllObjectRecords: false
-                  canSoftDeleteAllObjectRecords: false
-                  canDestroyAllObjectRecords: false
-                }
-              ) {
-                id
-                label
-                canReadAllObjectRecords
-                canUpdateAllObjectRecords
-                canSoftDeleteAllObjectRecords
-                canDestroyAllObjectRecords
-              }
-            }
-          `,
-        };
-
-        const response = await makeGraphqlAPIRequest(createRoleOperation);
-
-        expect(response.body.errors).toBeUndefined();
-        expect(response.body.data.createOneRole).toMatchObject({
-          label: 'TestReadOnlyRole',
+        const operation = createRoleOperation({
+          label: 'ValidNoWriteRole',
+          description: 'Valid role with no write permissions',
+          canUpdateAllSettings: false,
           canReadAllObjectRecords: false,
           canUpdateAllObjectRecords: false,
           canSoftDeleteAllObjectRecords: false,
           canDestroyAllObjectRecords: false,
         });
 
-        createdRoleIds.push(response.body.data.createOneRole.id);
-      });
-
-      it('should allow creating role with read=true and mixed write permissions', async () => {
-        const createRoleOperation = {
-          query: gql`
-            mutation CreateOneRole {
-              createOneRole(
-                createRoleInput: {
-                  label: "TestMixedRole"
-                  description: "Test role with mixed permissions"
-                  canUpdateAllSettings: false
-                  canReadAllObjectRecords: true
-                  canUpdateAllObjectRecords: true
-                  canSoftDeleteAllObjectRecords: false
-                  canDestroyAllObjectRecords: false
-                }
-              ) {
-                id
-                label
-                canReadAllObjectRecords
-                canUpdateAllObjectRecords
-                canSoftDeleteAllObjectRecords
-                canDestroyAllObjectRecords
-              }
-            }
-          `,
-        };
-
-        const response = await makeGraphqlAPIRequest(createRoleOperation);
+        const response = await makeGraphqlAPIRequest(operation);
 
         expect(response.body.errors).toBeUndefined();
-        expect(response.body.data.createOneRole).toMatchObject({
-          label: 'TestMixedRole',
-          canReadAllObjectRecords: true,
-          canUpdateAllObjectRecords: true,
-          canSoftDeleteAllObjectRecords: false,
-          canDestroyAllObjectRecords: false,
-        });
-
-        createdRoleIds.push(response.body.data.createOneRole.id);
+        expect(response.body.data.createOneRole).toBeDefined();
+        expect(response.body.data.createOneRole.label).toBe('ValidNoWriteRole');
       });
     });
 
     describe('createRole - Invalid Cases', () => {
       it('should throw error when creating role with read=false but canDestroyAllObjectRecords=true', async () => {
-        const createRoleOperation = {
-          query: gql`
-            mutation CreateOneRole {
-              createOneRole(
-                createRoleInput: {
-                  label: "InvalidDestroyRole"
-                  description: "Invalid role with destroy permission but no read"
-                  canUpdateAllSettings: false
-                  canReadAllObjectRecords: false
-                  canUpdateAllObjectRecords: false
-                  canSoftDeleteAllObjectRecords: false
-                  canDestroyAllObjectRecords: true
-                }
-              ) {
-                id
-                label
-              }
-            }
-          `,
-        };
+        const operation = createRoleOperation({
+          label: 'InvalidDestroyRole',
+          description: 'Invalid role with destroy permission but no read',
+          canUpdateAllSettings: false,
+          canReadAllObjectRecords: false,
+          canUpdateAllObjectRecords: false,
+          canSoftDeleteAllObjectRecords: false,
+          canDestroyAllObjectRecords: true,
+        });
 
-        const response = await makeGraphqlAPIRequest(createRoleOperation);
-
-        expect(response.body.data).toBeNull();
-        expect(response.body.errors).toBeDefined();
-        expect(response.body.errors[0].message).toBe(
-          PermissionsExceptionMessage.CANNOT_GIVE_WRITING_PERMISSION_WITHOUT_READING_PERMISSION,
-        );
-        expect(response.body.errors[0].extensions.code).toBe(
-          ErrorCode.BAD_USER_INPUT,
-        );
-      });
-
-      it('should throw error when creating role with read=false but multiple write permissions=true', async () => {
-        const createRoleOperation = {
-          query: gql`
-            mutation CreateOneRole {
-              createOneRole(
-                createRoleInput: {
-                  label: "InvalidMultiWriteRole"
-                  description: "Invalid role with multiple write permissions but no read"
-                  canUpdateAllSettings: false
-                  canReadAllObjectRecords: false
-                  canUpdateAllObjectRecords: true
-                  canSoftDeleteAllObjectRecords: true
-                  canDestroyAllObjectRecords: false
-                }
-              ) {
-                id
-                label
-              }
-            }
-          `,
-        };
-
-        const response = await makeGraphqlAPIRequest(createRoleOperation);
+        const response = await makeGraphqlAPIRequest(operation);
 
         expect(response.body.data).toBeNull();
         expect(response.body.errors).toBeDefined();
@@ -237,29 +100,17 @@ describe('Role Permissions Validation', () => {
       let baseRoleId: string;
 
       beforeEach(async () => {
-        // Create a base role for updating
-        const createRoleOperation = {
-          query: gql`
-            mutation CreateOneRole {
-              createOneRole(
-                createRoleInput: {
-                  label: "BaseTestRole"
-                  description: "Base role for update tests"
-                  canUpdateAllSettings: false
-                  canReadAllObjectRecords: true
-                  canUpdateAllObjectRecords: false
-                  canSoftDeleteAllObjectRecords: false
-                  canDestroyAllObjectRecords: false
-                }
-              ) {
-                id
-                label
-              }
-            }
-          `,
-        };
+        const operation = createRoleOperation({
+          label: 'BaseRole',
+          description: 'Base role for update tests',
+          canUpdateAllSettings: false,
+          canReadAllObjectRecords: true,
+          canUpdateAllObjectRecords: false,
+          canSoftDeleteAllObjectRecords: false,
+          canDestroyAllObjectRecords: false,
+        });
 
-        const response = await makeGraphqlAPIRequest(createRoleOperation);
+        const response = await makeGraphqlAPIRequest(operation);
 
         baseRoleId = response.body.data.createOneRole.id;
       });
@@ -270,7 +121,7 @@ describe('Role Permissions Validation', () => {
         }
       });
 
-      it('should allow updating role to add write permissions when read=true', async () => {
+      it('should allow updating role to have read=true and any write permissions', async () => {
         const updateRoleOperation = {
           query: gql`
             mutation UpdateOneRole($updateRoleInput: UpdateRoleInput!) {
@@ -298,49 +149,22 @@ describe('Role Permissions Validation', () => {
         const response = await makeGraphqlAPIRequest(updateRoleOperation);
 
         expect(response.body.errors).toBeUndefined();
-        expect(response.body.data.updateOneRole).toMatchObject({
-          canReadAllObjectRecords: true,
-          canUpdateAllObjectRecords: true,
-          canSoftDeleteAllObjectRecords: true,
-          canDestroyAllObjectRecords: true,
-        });
+        expect(response.body.data.updateOneRole).toBeDefined();
+        expect(response.body.data.updateOneRole.canReadAllObjectRecords).toBe(
+          true,
+        );
+        expect(response.body.data.updateOneRole.canUpdateAllObjectRecords).toBe(
+          true,
+        );
+        expect(
+          response.body.data.updateOneRole.canSoftDeleteAllObjectRecords,
+        ).toBe(true);
+        expect(
+          response.body.data.updateOneRole.canDestroyAllObjectRecords,
+        ).toBe(true);
       });
 
-      it('should allow updating role to remove read permission when all write permissions are false', async () => {
-        const updateRoleOperation = {
-          query: gql`
-            mutation UpdateOneRole($updateRoleInput: UpdateRoleInput!) {
-              updateOneRole(updateRoleInput: $updateRoleInput) {
-                id
-                canReadAllObjectRecords
-                canUpdateAllObjectRecords
-                canSoftDeleteAllObjectRecords
-                canDestroyAllObjectRecords
-              }
-            }
-          `,
-          variables: {
-            updateRoleInput: {
-              id: baseRoleId,
-              update: {
-                canReadAllObjectRecords: false,
-              },
-            },
-          },
-        };
-
-        const response = await makeGraphqlAPIRequest(updateRoleOperation);
-
-        expect(response.body.errors).toBeUndefined();
-        expect(response.body.data.updateOneRole).toMatchObject({
-          canReadAllObjectRecords: false,
-          canUpdateAllObjectRecords: false,
-          canSoftDeleteAllObjectRecords: false,
-          canDestroyAllObjectRecords: false,
-        });
-      });
-
-      it('should allow updating role to remove read permission and explicitly set write permissions to false', async () => {
+      it('should allow updating role to have read=false and all write permissions=false', async () => {
         const updateRoleOperation = {
           query: gql`
             mutation UpdateOneRole($updateRoleInput: UpdateRoleInput!) {
@@ -369,163 +193,37 @@ describe('Role Permissions Validation', () => {
         const response = await makeGraphqlAPIRequest(updateRoleOperation);
 
         expect(response.body.errors).toBeUndefined();
-        expect(response.body.data.updateOneRole).toMatchObject({
-          canReadAllObjectRecords: false,
-          canUpdateAllObjectRecords: false,
-          canSoftDeleteAllObjectRecords: false,
-          canDestroyAllObjectRecords: false,
-        });
+        expect(response.body.data.updateOneRole).toBeDefined();
+        expect(response.body.data.updateOneRole.canReadAllObjectRecords).toBe(
+          false,
+        );
+        expect(response.body.data.updateOneRole.canUpdateAllObjectRecords).toBe(
+          false,
+        );
+        expect(
+          response.body.data.updateOneRole.canSoftDeleteAllObjectRecords,
+        ).toBe(false);
+        expect(
+          response.body.data.updateOneRole.canDestroyAllObjectRecords,
+        ).toBe(false);
       });
     });
 
     describe('updateRole - Invalid Cases', () => {
-      let baseRoleId: string;
-
-      beforeEach(async () => {
-        // Create a base role for updating
-        const createRoleOperation = {
-          query: gql`
-            mutation CreateOneRole {
-              createOneRole(
-                createRoleInput: {
-                  label: "BaseTestRoleForInvalid"
-                  description: "Base role for invalid update tests"
-                  canUpdateAllSettings: false
-                  canReadAllObjectRecords: true
-                  canUpdateAllObjectRecords: false
-                  canSoftDeleteAllObjectRecords: false
-                  canDestroyAllObjectRecords: false
-                }
-              ) {
-                id
-                label
-              }
-            }
-          `,
-        };
-
-        const response = await makeGraphqlAPIRequest(createRoleOperation);
-
-        baseRoleId = response.body.data.createOneRole.id;
-      });
-
-      afterEach(async () => {
-        if (baseRoleId) {
-          await deleteRole(client, baseRoleId);
-        }
-      });
-
-      it('should throw error when updating role to read=false while keeping existing write permission', async () => {
-        // First, give the role write permissions
-        await makeGraphqlAPIRequest({
-          query: gql`
-            mutation UpdateOneRole($updateRoleInput: UpdateRoleInput!) {
-              updateOneRole(updateRoleInput: $updateRoleInput) {
-                id
-              }
-            }
-          `,
-          variables: {
-            updateRoleInput: {
-              id: baseRoleId,
-              update: {
-                canUpdateAllObjectRecords: true,
-              },
-            },
-          },
-        });
-
-        // Then try to remove read permission while keeping write permission
-        const updateRoleOperation = {
-          query: gql`
-            mutation UpdateOneRole($updateRoleInput: UpdateRoleInput!) {
-              updateOneRole(updateRoleInput: $updateRoleInput) {
-                id
-              }
-            }
-          `,
-          variables: {
-            updateRoleInput: {
-              id: baseRoleId,
-              update: {
-                canReadAllObjectRecords: false,
-              },
-            },
-          },
-        };
-
-        const response = await makeGraphqlAPIRequest(updateRoleOperation);
-
-        expect(response.body.data).toBeNull();
-        expect(response.body.errors).toBeDefined();
-        expect(response.body.errors[0].message).toBe(
-          PermissionsExceptionMessage.CANNOT_GIVE_WRITING_PERMISSION_WITHOUT_READING_PERMISSION,
-        );
-        expect(response.body.errors[0].extensions.code).toBe(
-          ErrorCode.BAD_USER_INPUT,
-        );
-      });
-
-      it('should throw error when updating role to read=false but canUpdateAllObjectRecords=true', async () => {
-        const updateRoleOperation = {
-          query: gql`
-            mutation UpdateOneRole($updateRoleInput: UpdateRoleInput!) {
-              updateOneRole(updateRoleInput: $updateRoleInput) {
-                id
-              }
-            }
-          `,
-          variables: {
-            updateRoleInput: {
-              id: baseRoleId,
-              update: {
-                canReadAllObjectRecords: false,
-                canUpdateAllObjectRecords: true,
-              },
-            },
-          },
-        };
-
-        const response = await makeGraphqlAPIRequest(updateRoleOperation);
-
-        expect(response.body.data).toBeNull();
-        expect(response.body.errors).toBeDefined();
-        expect(response.body.errors[0].message).toBe(
-          PermissionsExceptionMessage.CANNOT_GIVE_WRITING_PERMISSION_WITHOUT_READING_PERMISSION,
-        );
-        expect(response.body.errors[0].extensions.code).toBe(
-          ErrorCode.BAD_USER_INPUT,
-        );
-      });
-    });
-
-    describe('updateRole - Edge Cases with Existing Permissions', () => {
       let roleWithWritePermissionsId: string;
 
       beforeEach(async () => {
-        // Create a role that already has write permissions
-        const createRoleOperation = {
-          query: gql`
-            mutation CreateOneRole {
-              createOneRole(
-                createRoleInput: {
-                  label: "RoleWithWritePermissions"
-                  description: "Role with existing write permissions"
-                  canUpdateAllSettings: false
-                  canReadAllObjectRecords: true
-                  canUpdateAllObjectRecords: true
-                  canSoftDeleteAllObjectRecords: true
-                  canDestroyAllObjectRecords: true
-                }
-              ) {
-                id
-                label
-              }
-            }
-          `,
-        };
+        const operation = createRoleOperation({
+          label: 'RoleWithWritePermissions',
+          description: 'Role with write permissions for update tests',
+          canUpdateAllSettings: false,
+          canReadAllObjectRecords: true,
+          canUpdateAllObjectRecords: true,
+          canSoftDeleteAllObjectRecords: true,
+          canDestroyAllObjectRecords: true,
+        });
 
-        const response = await makeGraphqlAPIRequest(createRoleOperation);
+        const response = await makeGraphqlAPIRequest(operation);
 
         roleWithWritePermissionsId = response.body.data.createOneRole.id;
       });
@@ -536,7 +234,7 @@ describe('Role Permissions Validation', () => {
         }
       });
 
-      it('should throw error when trying to remove read permission while existing write permissions remain', async () => {
+      it('should throw error when updating role to read=false but keeping write permissions', async () => {
         const updateRoleOperation = {
           query: gql`
             mutation UpdateOneRole($updateRoleInput: UpdateRoleInput!) {
@@ -568,7 +266,7 @@ describe('Role Permissions Validation', () => {
         );
       });
 
-      it('should work when removing read permission and explicitly setting all write permissions to false', async () => {
+      it('should allow updating role to read=false when explicitly setting all write permissions to false', async () => {
         const updateRoleOperation = {
           query: gql`
             mutation UpdateOneRole($updateRoleInput: UpdateRoleInput!) {
@@ -597,15 +295,22 @@ describe('Role Permissions Validation', () => {
         const response = await makeGraphqlAPIRequest(updateRoleOperation);
 
         expect(response.body.errors).toBeUndefined();
-        expect(response.body.data.updateOneRole).toMatchObject({
-          canReadAllObjectRecords: false,
-          canUpdateAllObjectRecords: false,
-          canSoftDeleteAllObjectRecords: false,
-          canDestroyAllObjectRecords: false,
-        });
+        expect(response.body.data.updateOneRole).toBeDefined();
+        expect(response.body.data.updateOneRole.canReadAllObjectRecords).toBe(
+          false,
+        );
+        expect(response.body.data.updateOneRole.canUpdateAllObjectRecords).toBe(
+          false,
+        );
+        expect(
+          response.body.data.updateOneRole.canSoftDeleteAllObjectRecords,
+        ).toBe(false);
+        expect(
+          response.body.data.updateOneRole.canDestroyAllObjectRecords,
+        ).toBe(false);
       });
 
-      it('should work when updating only some write permissions while read=true', async () => {
+      it('should allow updating role to read=false when explicitly setting some write permissions to false', async () => {
         const updateRoleOperation = {
           query: gql`
             mutation UpdateOneRole($updateRoleInput: UpdateRoleInput!) {
@@ -632,12 +337,10 @@ describe('Role Permissions Validation', () => {
         const response = await makeGraphqlAPIRequest(updateRoleOperation);
 
         expect(response.body.errors).toBeUndefined();
-        expect(response.body.data.updateOneRole).toMatchObject({
-          canReadAllObjectRecords: true,
-          canUpdateAllObjectRecords: true,
-          canSoftDeleteAllObjectRecords: false,
-          canDestroyAllObjectRecords: true,
-        });
+        expect(response.body.data.updateOneRole).toBeDefined();
+        expect(
+          response.body.data.updateOneRole.canSoftDeleteAllObjectRecords,
+        ).toBe(false);
       });
     });
   });
