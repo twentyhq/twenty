@@ -189,7 +189,6 @@ export const WorkflowRunStepNodeDetail = ({
             />
           );
         }
-
         case 'AI_AGENT': {
           return (
             <WorkflowEditActionAiAgent

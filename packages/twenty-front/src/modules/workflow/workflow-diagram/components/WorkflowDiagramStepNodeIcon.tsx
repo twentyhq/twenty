@@ -45,7 +45,8 @@ export const WorkflowDiagramStepNodeIcon = ({
     }
     case 'action': {
       switch (data.actionType) {
-        case 'CODE': {
+        case 'CODE':
+        case 'HTTP_REQUEST': {
           return (
             <StyledStepNodeLabelIconContainer>
               <Icon

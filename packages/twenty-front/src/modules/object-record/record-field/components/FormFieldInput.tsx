@@ -104,7 +104,7 @@ export const FormFieldInput = ({
       defaultValue={defaultValue as string | undefined}
       onChange={onChange}
       VariablePicker={VariablePicker}
-      options={field.metadata.options}
+      options={field.metadata?.options}
       readonly={readonly}
     />
   ) : isFieldFullName(field) ? (
@@ -170,7 +170,7 @@ export const FormFieldInput = ({
       defaultValue={defaultValue as FieldMultiSelectValue | string | undefined}
       onChange={onChange}
       VariablePicker={VariablePicker}
-      options={field.metadata.options}
+      options={field.metadata?.options}
       readonly={readonly}
       placeholder={placeholder}
     />
@@ -213,7 +213,9 @@ export const FormFieldInput = ({
     <FormRelationToOneFieldInput
       label={field.label}
       objectNameSingular={field.metadata.relationObjectMetadataNameSingular}
-      defaultValue={defaultValue as FieldRelationValue<FieldRelationToOneValue>}
+      defaultValue={
+        defaultValue as FieldRelationValue<FieldRelationToOneValue> | string
+      }
       onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}

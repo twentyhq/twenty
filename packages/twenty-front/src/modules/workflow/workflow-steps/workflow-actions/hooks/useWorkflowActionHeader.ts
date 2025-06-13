@@ -1,5 +1,4 @@
 import { WorkflowAction } from '@/workflow/types/Workflow';
-import { isDefined } from 'twenty-shared/utils';
 import { IconComponent, useIcons } from 'twenty-ui/display';
 import { getActionIcon } from '../utils/getActionIcon';
 import { useActionHeaderTypeOrThrow } from './useActionHeaderTypeOrThrow';
@@ -24,7 +23,7 @@ export const useWorkflowActionHeader = ({
 }: UseWorkflowActionHeaderProps): UseWorkflowActionHeaderReturn => {
   const { getIcon } = useIcons();
 
-  const headerTitle = isDefined(action.name) ? action.name : defaultTitle;
+  const headerTitle = action.name ? action.name : defaultTitle;
   const headerIcon = getActionIcon(action.type);
   const headerIconColor = useActionIconColorOrThrow(action.type);
   const headerType = useActionHeaderTypeOrThrow(action.type);

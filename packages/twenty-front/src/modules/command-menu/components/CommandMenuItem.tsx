@@ -15,7 +15,6 @@ export type CommandMenuItemProps = {
   onClick?: () => void;
   Icon?: IconComponent;
   hotKeys?: string[];
-  shouldCloseCommandMenuOnClick?: boolean;
   RightComponent?: ReactNode;
 };
 

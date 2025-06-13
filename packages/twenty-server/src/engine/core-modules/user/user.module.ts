@@ -8,7 +8,6 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
-import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
@@ -16,7 +15,7 @@ import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-p
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
-import { DeletedWorkspaceMemberTranspiler } from 'src/engine/core-modules/user/services/deleted-workspace-member-transpiler.service';
+import { WorkspaceMemberTranspiler } from 'src/engine/core-modules/user/services/workspace-member-transpiler.service';
 import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { UserResolver } from 'src/engine/core-modules/user/user.resolver';
@@ -47,19 +46,19 @@ import { UserService } from './services/user.service';
     OnboardingModule,
     TypeOrmModule.forFeature([KeyValuePair, UserWorkspace], 'core'),
     UserVarsModule,
+    UserWorkspaceModule,
     AuditModule,
-    DomainManagerModule,
     UserRoleModule,
     FeatureFlagModule,
     PermissionsModule,
     UserWorkspaceModule,
   ],
-  exports: [UserService, DeletedWorkspaceMemberTranspiler],
+  exports: [UserService, WorkspaceMemberTranspiler],
   providers: [
     UserService,
     UserResolver,
     TypeORMService,
-    DeletedWorkspaceMemberTranspiler,
+    WorkspaceMemberTranspiler,
   ],
 })
 export class UserModule {}

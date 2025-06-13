@@ -116,7 +116,17 @@ export const workflowHttpRequestActionSettingsSchema =
       url: z.string().url(),
       method: z.enum(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']),
       headers: z.record(z.string()).optional(),
-      body: z.record(z.any()).optional(),
+      body: z
+        .record(
+          z.union([
+            z.string(),
+            z.number(),
+            z.boolean(),
+            z.null(),
+            z.array(z.union([z.string(), z.number(), z.boolean(), z.null()])),
+          ]),
+        )
+        .optional(),
     }),
   });
 

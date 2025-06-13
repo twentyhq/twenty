@@ -1,11 +1,8 @@
-import { isNonEmptyString } from '@sniptt/guards';
-
 import {
   WorkflowVersionStatus,
   WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-import { WorkflowFormActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
 import {
   WorkflowAction,
   WorkflowActionType,
@@ -15,6 +12,7 @@ import {
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { assertFormStepIsValid } from 'src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util';
 
 export function assertVersionCanBeActivated(
   workflowVersion: WorkflowVersionWorkspaceEntity,
@@ -211,37 +209,4 @@ function assertStepIsValid(step: WorkflowAction) {
     default:
       break;
   }
-}
-
-function assertFormStepIsValid(settings: WorkflowFormActionSettings) {
-  if (!settings.input) {
-    throw new WorkflowTriggerException(
-      'No input provided in form step',
-      WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
-    );
-  }
-
-  // Check all fields have unique and defined names
-  const fieldNames = settings.input.map((fieldMetadata) => fieldMetadata.name);
-  const uniqueFieldNames = new Set(fieldNames);
-
-  if (fieldNames.length !== uniqueFieldNames.size) {
-    throw new WorkflowTriggerException(
-      'Form action fields must have unique names',
-      WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
-    );
-  }
-
-  // Check all fields have defined labels and types
-  settings.input.forEach((fieldMetadata) => {
-    if (
-      !isNonEmptyString(fieldMetadata.label) ||
-      !isNonEmptyString(fieldMetadata.type)
-    ) {
-      throw new WorkflowTriggerException(
-        'Form action fields must have a defined label and type',
-        WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
-      );
-    }
-  });
 }

@@ -31,7 +31,6 @@
   "dependencies": {
     "@blocknote/mantine": "^0.31.1",
     "@blocknote/react": "^0.31.1",
-    "@blocknote/xl-ai": "^0.31.1",
     "@blocknote/xl-docx-exporter": "^0.31.1",
     "@blocknote/xl-pdf-exporter": "^0.31.1",
     "@cyntler/react-doc-viewer": "^1.17.0",

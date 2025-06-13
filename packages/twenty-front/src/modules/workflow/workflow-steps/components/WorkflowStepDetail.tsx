@@ -175,7 +175,6 @@ export const WorkflowStepDetail = ({
             />
           );
         }
-
         case 'AI_AGENT': {
           return (
             <WorkflowEditActionAiAgent

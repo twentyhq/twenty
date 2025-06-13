@@ -231,7 +231,8 @@ export class ServerlessFunctionService {
       });
     }
 
-    await this.serverlessService.delete(existingServerlessFunction);
+    // We don't need to await this
+    this.serverlessService.delete(existingServerlessFunction);
 
     return existingServerlessFunction;
   }

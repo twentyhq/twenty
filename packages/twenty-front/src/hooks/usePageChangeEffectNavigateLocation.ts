@@ -12,9 +12,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { OnboardingStatus } from '~/generated/graphql';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
+import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 
 export const usePageChangeEffectNavigateLocation = () => {
   const isLoggedIn = useIsLogged();
+  const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
   const onboardingStatus = useOnboardingStatus();
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.SUSPENDED,
@@ -41,13 +43,13 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   const objectNamePlural = useParams().objectNamePlural ?? '';
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-  const objectMetadataItem = objectMetadataItems.find(
+  const objectMetadataItem = objectMetadataItems?.find(
     (objectMetadataItem) => objectMetadataItem.namePlural === objectNamePlural,
   );
   const verifyEmailNextPath = useRecoilValue(verifyEmailNextPathState);
 
   if (
-    !isLoggedIn &&
+    (!isLoggedIn || (isLoggedIn && !isOnAWorkspace)) &&
     !someMatchingLocationOf([
       ...onGoingUserCreationPaths,
       AppPath.ResetPassword,

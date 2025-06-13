@@ -97,9 +97,9 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('Live URL')).toBeVisible();
-    expect(await canvas.findByText('HTTP method')).toBeVisible();
-    expect(await canvas.findByText('Headers')).toBeVisible();
+    expect(await canvas.findByText('URL')).toBeVisible();
+    expect(await canvas.findByText('HTTP Method')).toBeVisible();
+    expect(await canvas.findByText('Headers Input')).toBeVisible();
   },
 };
 
@@ -117,14 +117,14 @@ export const Configured: Story = {
     const headerCanvas = within(header);
     expect(await headerCanvas.findByText('API Call')).toBeVisible();
 
-    const urlLabel = await canvas.findByText('Live URL');
+    const urlLabel = await canvas.findByText('URL');
     const urlInputContainer = urlLabel.closest('div')?.nextElementSibling;
     const urlEditor = urlInputContainer?.querySelector('.ProseMirror');
     expect(urlEditor).toBeVisible();
     expect(urlEditor).toHaveTextContent('https://api.example.com/data');
 
     expect(await canvas.findByText('POST')).toBeVisible();
-    expect(await canvas.findByText('Body')).toBeVisible();
+    expect(await canvas.findByText('Body Input')).toBeVisible();
   },
 };
 
@@ -138,7 +138,7 @@ export const ReadOnly: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const urlLabel = await canvas.findByText('Live URL');
+    const urlLabel = await canvas.findByText('URL');
     const urlInputContainer = urlLabel.closest('div')?.nextElementSibling;
     const urlEditor = urlInputContainer?.querySelector('.ProseMirror');
     expect(urlEditor).toBeVisible();

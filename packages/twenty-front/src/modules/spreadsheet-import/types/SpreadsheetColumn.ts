@@ -43,10 +43,19 @@ export type SpreadsheetMatchedSelectOptionsColumn<T> = {
   matchedOptions: SpreadsheetMatchedOptions<T>[];
 };
 
+export type SpreadsheetErrorColumn<T> = {
+  type: SpreadsheetColumnType.matchedError;
+  index: number;
+  header: string;
+  value: T;
+  errorMessage: string;
+};
+
 export type SpreadsheetColumn<T extends string> =
   | SpreadsheetEmptyColumn
   | SpreadsheetIgnoredColumn
   | SpreadsheetMatchedColumn<T>
   | SpreadsheetMatchedSwitchColumn<T>
   | SpreadsheetMatchedSelectColumn<T>
-  | SpreadsheetMatchedSelectOptionsColumn<T>;
+  | SpreadsheetMatchedSelectOptionsColumn<T>
+  | SpreadsheetErrorColumn<T>;

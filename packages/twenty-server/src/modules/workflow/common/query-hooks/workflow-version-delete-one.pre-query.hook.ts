@@ -4,6 +4,7 @@ import { DeleteOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @WorkspaceQueryHook(`workflowVersion.deleteOne`)
 export class WorkflowVersionDeleteOnePreQueryHook
@@ -14,11 +15,16 @@ export class WorkflowVersionDeleteOnePreQueryHook
   ) {}
 
   async execute(
-    _authContext: AuthContext,
+    authContext: AuthContext,
     _objectName: string,
     payload: DeleteOneResolverArgs,
   ): Promise<DeleteOneResolverArgs> {
+    const { workspace } = authContext;
+
+    workspaceValidator.assertIsDefinedOrThrow(workspace);
+
     await this.workflowVersionValidationWorkspaceService.validateWorkflowVersionForDeleteOne(
+      workspace.id,
       payload,
     );
 

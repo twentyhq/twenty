@@ -83,6 +83,7 @@ export const FormAddressFieldInput = ({
           placeholder="Post Code"
         />
         <FormCountrySelectInput
+          label="Country"
           selectedCountryName={defaultValue?.addressCountry ?? ''}
           onChange={handleChange('addressCountry')}
           readonly={readonly}
