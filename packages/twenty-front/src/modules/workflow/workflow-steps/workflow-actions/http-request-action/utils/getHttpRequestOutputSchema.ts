@@ -50,7 +50,7 @@ export const getHttpRequestOutputSchema = (
           type: 'number',
           label: key,
           value: val as number,
-          icon: 'IconNumber',
+          icon: 'IconText',
         };
         break;
       case 'boolean':
