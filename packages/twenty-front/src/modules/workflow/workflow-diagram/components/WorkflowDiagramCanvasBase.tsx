@@ -149,10 +149,6 @@ export const WorkflowDiagramCanvasBase = ({
   const { rightDrawerState } = useRightDrawerState();
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
-  const rightDrawerWidth = Number(
-    THEME_COMMON.rightDrawerWidth.replace('px', ''),
-  );
-
   const setWorkflowDiagram = useSetRecoilComponentStateV2(
     workflowDiagramComponentState,
   );
@@ -185,13 +181,11 @@ export const WorkflowDiagramCanvasBase = ({
   const setFlowViewport = useCallback(
     ({
       rightDrawerState,
-      rightDrawerWidth,
       noAnimation,
       workflowDiagramFlowInitializationStatus,
       isInRightDrawer,
     }: {
       rightDrawerState: CommandMenuAnimationVariant;
-      rightDrawerWidth: number;
       noAnimation?: boolean;
       workflowDiagramFlowInitializationStatus:
         | 'not-initialized'
@@ -210,6 +204,10 @@ export const WorkflowDiagramCanvasBase = ({
 
       let visibleRightDrawerWidth = 0;
       if (rightDrawerState === 'normal' && !isInRightDrawer) {
+        const rightDrawerWidth = Number(
+          THEME_COMMON.rightDrawerWidth.replace('px', ''),
+        );
+
         visibleRightDrawerWidth = rightDrawerWidth;
       }
 
@@ -231,14 +229,12 @@ export const WorkflowDiagramCanvasBase = ({
   useEffect(() => {
     setFlowViewport({
       rightDrawerState,
-      rightDrawerWidth,
       isInRightDrawer,
       workflowDiagramFlowInitializationStatus,
     });
   }, [
     isInRightDrawer,
     rightDrawerState,
-    rightDrawerWidth,
     setFlowViewport,
     workflowDiagramFlowInitializationStatus,
   ]);
@@ -263,7 +259,6 @@ export const WorkflowDiagramCanvasBase = ({
 
     setFlowViewport({
       rightDrawerState,
-      rightDrawerWidth,
       noAnimation: true,
       isInRightDrawer,
       workflowDiagramFlowInitializationStatus: 'initialized',
