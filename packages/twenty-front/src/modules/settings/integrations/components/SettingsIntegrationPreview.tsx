@@ -6,6 +6,7 @@ import SyncImage from '../assets/sync.svg?react';
 
 type SettingsIntegrationPreviewProps = {
   integrationLogoUrl: string;
+  label?: string;
 };
 
 const StyledCard = styled(Card)`
@@ -39,6 +40,7 @@ const StyledIntegrationLogoContainer = styled.div`
 
 const StyledIntegrationLogo = styled.img`
   height: 100%;
+  max-height: ${({ theme }) => theme.spacing(12)};
 `;
 
 const StyledTwentyLogo = styled.img`
@@ -55,10 +57,12 @@ const StyledLabel = styled.div`
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   line-height: ${({ theme }) => theme.spacing(6)};
+  text-align: center;
 `;
 
 export const SettingsIntegrationPreview = ({
   integrationLogoUrl,
+  label,
 }: SettingsIntegrationPreviewProps) => (
   <StyledCard>
     <StyledCardContent>
@@ -69,7 +73,9 @@ export const SettingsIntegrationPreview = ({
         <StyledSyncImage />
         <StyledTwentyLogo alt="" src="/images/integrations/insurOS-logo.svg" />
       </StyledLogosContainer>
-      <StyledLabel>Import your tables as remote objects</StyledLabel>
+      <StyledLabel>
+        {label ?? 'Import your tables as remote objects'}
+      </StyledLabel>
     </StyledCardContent>
   </StyledCard>
 );

@@ -37,4 +37,5 @@ export enum CoreObjectNamePlural {
   WorkflowRun = 'workflowRuns',
   MGA = 'mgas',
   POLICIES = 'policies',
+  RABBIT_SIGN_KEYS = 'rabbitSignKeys',
 }

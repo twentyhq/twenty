@@ -557,7 +557,8 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   timeFormat: '20202020-8acb-4cf8-a851-a6ed443c8d81',
   searchVector: '20202020-46d0-4e7f-bc26-74c0edaeb619',
   managedPolicies: '20202020-4d1e-41ac-b13b-621631298d55',
-};
+  rabbitSignKeys: '20202020-5d1e-41ac-b13b-621631298d55',
+} as const;
 
 export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
   name: '20202020-ba07-4ffd-ba63-009491f5749c',
@@ -639,6 +640,12 @@ export const POLICY_STANDARD_FIELD_IDS = {
   searchVector: '20202020-02d3-f5fc-d700-2fd2fd04f911',
 };
 
+export const RABBIT_SIGN_KEY_STANDARD_FIELD_IDS = {
+  keyId: '20202020-9d1e-41ac-b13b-621631298d55',
+  keySecret: '20202020-1d1e-41ac-b13b-621631298d55',
+  workspaceMember: '20202020-7d0e-41ac-b13b-621631298d55',
+};
+
 export const STANDARD_OBJECT_FIELD_IDS = {
   activityTarget: ACTIVITY_TARGET_STANDARD_FIELD_IDS,
   activity: ACTIVITY_STANDARD_FIELD_IDS,
@@ -683,4 +690,5 @@ export const STANDARD_OBJECT_FIELD_IDS = {
   workspaceMember: WORKSPACE_MEMBER_STANDARD_FIELD_IDS,
   mga: MGA_STANDARD_FIELD_IDS,
   policy: POLICY_STANDARD_FIELD_IDS,
+  rabbitSignKey: RABBIT_SIGN_KEY_STANDARD_FIELD_IDS,
 };

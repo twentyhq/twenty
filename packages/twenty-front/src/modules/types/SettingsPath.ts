@@ -26,6 +26,7 @@ export enum SettingsPath {
   ApiKeyDetail = 'apis/:apiKeyId',
   Integrations = 'integrations',
   IntegrationDatabase = 'integrations/:databaseKey',
+  IntegrationRabbitSign = 'integrations/rabbit-sign',
   IntegrationDatabaseConnection = 'integrations/:databaseKey/:connectionId',
   IntegrationEditDatabaseConnection = 'integrations/:databaseKey/:connectionId/edit',
   IntegrationNewDatabaseConnection = 'integrations/:databaseKey/new',

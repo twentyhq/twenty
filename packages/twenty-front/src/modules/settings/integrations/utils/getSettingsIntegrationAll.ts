@@ -53,7 +53,7 @@ export const getSettingsIntegrationAll = ({
       },
       type: 'Add',
       text: 'RabbitSign',
-      link: 'https://rabbitsign.com/',
+      link: '/settings/integrations/rabbit-sign',
     },
   ].filter(Boolean) as SettingsIntegration[],
 });

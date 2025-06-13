@@ -38,4 +38,5 @@ export enum CoreObjectNameSingular {
   WorkflowRun = 'workflowRun',
   MGA = 'mga',
   POLICY = 'policy',
+  RABBIT_SIGN_KEY = 'rabbitSignKey',
 }

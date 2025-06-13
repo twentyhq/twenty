@@ -35,6 +35,7 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { PolicyWorkspaceEntity } from 'src/modules/policy/standard-objects/policy.workspace-entity';
+import { RabbitSignKeyWorkspaceEntity } from 'src/modules/rabbitsign/standard-objects/rabbitsignkey.workplace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
@@ -377,4 +378,16 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   searchVector: string;
+
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.rabbitSignKeys,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`RabbitSign Keys`,
+    description: msg`RabbitSign keys owned by the workspace member`,
+    icon: 'IconKey',
+    inverseSideTarget: () => RabbitSignKeyWorkspaceEntity,
+    inverseSideFieldKey: 'workspaceMember',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  rabbitSignKeys: Relation<RabbitSignKeyWorkspaceEntity[]>;
 }
