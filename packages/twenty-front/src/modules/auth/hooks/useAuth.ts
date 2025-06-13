@@ -552,14 +552,15 @@ export const useAuth = () => {
         if (isMultiWorkspaceEnabled) {
           return await redirectToWorkspaceDomain(
             getWorkspaceUrl(
-            signUpInWorkspaceResult.data.signUpInWorkspace.workspace
-              .workspaceUrls,
-          ),
+              signUpInWorkspaceResult.data.signUpInWorkspace.workspace
+                .workspaceUrls,
+            ),
             isEmailVerificationRequired ? AppPath.SignInUp : AppPath.Verify,
             {
               ...(!isEmailVerificationRequired && {
                 loginToken:
-                signUpInWorkspaceResult.data.signUpInWorkspace.loginToken.token,
+                  signUpInWorkspaceResult.data.signUpInWorkspace.loginToken
+                    .token,
               }),
               email,
             },
