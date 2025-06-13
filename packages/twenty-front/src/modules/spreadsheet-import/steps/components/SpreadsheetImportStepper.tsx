@@ -7,14 +7,15 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 
+import { ImportDataStep } from '@/spreadsheet-import/steps/components/ImportDataStep';
 import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
+import { CircularProgressBar } from 'twenty-ui/feedback';
 import { MatchColumnsStep } from './MatchColumnsStep/MatchColumnsStep';
 import { SelectHeaderStep } from './SelectHeaderStep/SelectHeaderStep';
 import { SelectSheetStep } from './SelectSheetStep/SelectSheetStep';
 import { UploadStep } from './UploadStep/UploadStep';
 import { ValidationStep } from './ValidationStep/ValidationStep';
-import { CircularProgressBar } from 'twenty-ui/feedback';
 
 const StyledProgressBarContainer = styled(Modal.Content)`
   align-items: center;
@@ -37,7 +38,7 @@ export const SpreadsheetImportStepper = ({
 
   const [currentStepState, setCurrentStepState] =
     useState<SpreadsheetImportStep>(
-      initialStepState || { type: SpreadsheetImportStepType.upload },
+      initialStepState || { type: SpreadsheetImportStepType.importData },
     );
   const [previousStepState, setPreviousStepState] =
     useState<SpreadsheetImportStep>(
@@ -128,6 +129,8 @@ export const SpreadsheetImportStepper = ({
           }}
         />
       );
+    case SpreadsheetImportStepType.importData:
+      return <ImportDataStep />;
     case SpreadsheetImportStepType.loading:
     default:
       return (

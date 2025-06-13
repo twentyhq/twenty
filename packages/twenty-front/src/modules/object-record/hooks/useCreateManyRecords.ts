@@ -32,7 +32,7 @@ type PartialObjectRecordWithOptionalId = Partial<ObjectRecord> & {
   id?: string;
 };
 
-type useCreateManyRecordsProps = {
+export type useCreateManyRecordsProps = {
   objectNameSingular: string;
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
   skipPostOptimisticEffect?: boolean;

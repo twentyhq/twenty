@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
+import { t } from '@lingui/core/macro';
 import { CircularProgressBar } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -15,18 +16,20 @@ const StyledFooter = styled(Modal.Footer)`
 `;
 
 type StepNavigationButtonProps = {
-  onClick: () => void;
-  title: string;
+  onContinue?: () => void;
+  continueTitle?: string;
   isLoading?: boolean;
   onBack?: () => void;
+  backTitle?: string;
   isNextDisabled?: boolean;
 };
 
 export const StepNavigationButton = ({
-  onClick,
-  title,
+  onContinue,
+  continueTitle = t`Continue`,
   isLoading,
   onBack,
+  backTitle = t`Back`,
   isNextDisabled = false,
 }: StepNavigationButtonProps) => {
   return (
@@ -34,18 +37,20 @@ export const StepNavigationButton = ({
       {!isUndefinedOrNull(onBack) && (
         <MainButton
           Icon={isLoading ? CircularProgressBar : undefined}
-          title="Back"
+          title={backTitle}
           onClick={!isLoading ? onBack : undefined}
           variant="secondary"
         />
       )}
-      <MainButton
-        Icon={isLoading ? CircularProgressBar : undefined}
-        title={title}
-        onClick={!isLoading ? onClick : undefined}
-        variant="primary"
-        disabled={isNextDisabled}
-      />
+      {!isUndefinedOrNull(onContinue) && (
+        <MainButton
+          Icon={isLoading ? CircularProgressBar : undefined}
+          title={continueTitle}
+          onClick={!isLoading ? onContinue : undefined}
+          variant="primary"
+          disabled={isNextDisabled}
+        />
+      )}
     </StyledFooter>
   );
 };

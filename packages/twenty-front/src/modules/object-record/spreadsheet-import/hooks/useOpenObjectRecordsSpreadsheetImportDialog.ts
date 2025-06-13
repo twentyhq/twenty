@@ -1,5 +1,5 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
+import { useBatchCreateManyRecords } from '@/object-record/hooks/useBatchCreateManyRecords';
 import { useBuildAvailableFieldsForImport } from '@/object-record/spreadsheet-import/hooks/useBuildAvailableFieldsForImport';
 import { buildRecordFromImportedStructuredRow } from '@/object-record/spreadsheet-import/utils/buildRecordFromImportedStructuredRow';
 import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOpenSpreadsheetImportDialog';
@@ -18,8 +18,10 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
     objectNameSingular,
   });
 
-  const { createManyRecords } = useCreateManyRecords({
+  const { batchCreateManyRecords } = useBatchCreateManyRecords({
     objectNameSingular,
+    mutationBatchSize: 1,
+    skipPostOptimisticEffect: true,
   });
 
   const { buildAvailableFieldsForImport } = useBuildAvailableFieldsForImport();
@@ -62,8 +64,10 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
         });
 
         try {
-          const upsert = true;
-          await createManyRecords(createInputs, upsert);
+          await batchCreateManyRecords({
+            recordsToCreate: createInputs,
+            upsert: true,
+          });
         } catch (error: any) {
           enqueueSnackBar(error?.message || 'Something went wrong', {
             variant: SnackBarVariant.Error,

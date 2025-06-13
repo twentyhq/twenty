@@ -321,9 +321,9 @@ export const ValidationStep = <T extends string>({
         </StyledToolbar>
       </StyledContent>
       <StepNavigationButton
-        onClick={onContinue}
+        onContinue={onContinue}
         onBack={onBack}
-        title={t`Confirm`}
+        continueTitle={t`Confirm`}
       />
     </>
   );
