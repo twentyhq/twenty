@@ -27,7 +27,7 @@ const StyledScrollableContainer = styled.div<{ maxHeight?: number }>`
   max-height: ${({ maxHeight }) => (maxHeight ? `${maxHeight}px` : 'none')};
   width: 100%;
 
-  overflow-y: overlay;
+  overflow-y: auto;
 `;
 
 const StyledInternalContainer = styled.div`
