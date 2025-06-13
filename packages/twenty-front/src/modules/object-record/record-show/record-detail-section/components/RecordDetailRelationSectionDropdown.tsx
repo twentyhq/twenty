@@ -72,7 +72,7 @@ export const RecordDetailRelationSectionDropdown = ({
 
   const dropdownId = getRecordFieldCardRelationPickerDropdownId({
     fieldDefinition,
-    recordId
+    recordId,
   });
 
   const { closeDropdown, dropdownPlacement } = useDropdown(dropdownId);
