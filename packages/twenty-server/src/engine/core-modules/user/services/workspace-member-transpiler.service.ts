@@ -31,12 +31,12 @@ export class WorkspaceMemberTranspiler {
   }: {
     workspaceMember: Pick<WorkspaceMemberWorkspaceEntity, 'avatarUrl' | 'id'>;
     workspaceId: string;
-  }): string | null {
+  }): string {
     if (
       !isDefined(workspaceMember.avatarUrl) ||
       !isNonEmptyString(workspaceMember.avatarUrl)
     ) {
-      return null;
+      return "";
     }
 
     return this.fileService.signFileUrl({
@@ -72,12 +72,10 @@ export class WorkspaceMemberTranspiler {
 
     const roles = fromRoleEntitiesToRoleDtos(userWorkspaceRoles);
 
-    // @ts-expect-error TODO determine if we should type the avatarUrl as string | null
     return {
       id,
       name,
       userEmail,
-      // @ts-expect-error TODO determine if we should type the avatarUrl as string | null
       avatarUrl,
       userWorkspaceId: userWorkspace.id,
       colorScheme,
@@ -93,7 +91,7 @@ export class WorkspaceMemberTranspiler {
     allWorkspaceEntitiesBundles: ToWorkspaceMemberDtoArgs[],
   ) {
     return allWorkspaceEntitiesBundles.map((bundle) =>
-      this.toWorkspaceMemberDto(bundle),
+      this.toWorkspaceMemberDto(bundle)
     );
   }
 
