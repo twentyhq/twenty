@@ -3,7 +3,7 @@ import { FormRawJsonFieldInput } from '@/object-record/record-field/form-types/c
 
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import {
-  DEFAULT_BODY_PLACEHOLDER,
+  DEFAULT_JSON_BODY_PLACEHOLDER,
   HttpRequestBody,
 } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
 import { hasNonStringValues } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/hasNonStringValues';
@@ -119,7 +119,7 @@ export const BodyInput = ({
       <StyledContainer>
         {isRawJson ? (
           <FormRawJsonFieldInput
-            placeholder={DEFAULT_BODY_PLACEHOLDER}
+            placeholder={DEFAULT_JSON_BODY_PLACEHOLDER}
             readonly={readonly}
             defaultValue={jsonString}
             error={errorMessage}

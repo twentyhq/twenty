@@ -24,4 +24,4 @@ export type HttpRequestFormData = {
   body?: HttpRequestBody;
 };
 
-export const DEFAULT_BODY_PLACEHOLDER = '{\n  "key": "value"\n}';
+export const DEFAULT_JSON_BODY_PLACEHOLDER = '{\n  "key": "value"\n}';
