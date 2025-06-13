@@ -7,6 +7,7 @@ import {
   IconDotsVertical,
   IconDownload,
   IconPencil,
+  IconSignature,
   IconTrash,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -44,6 +45,11 @@ export const AttachmentDropdown = ({
     closeDropdown();
   };
 
+  const handleCreateSignature = () => {
+    console.log('create signature');
+    closeDropdown();
+  };
+
   return (
     <Dropdown
       dropdownId={dropdownId}
@@ -52,7 +58,13 @@ export const AttachmentDropdown = ({
       }
       dropdownComponents={
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
-          <DropdownMenuItemsContainer>
+          <DropdownMenuItemsContainer scrollable={false}>
+            <MenuItem
+              text="Create Signature"
+              LeftIcon={IconSignature}
+              onClick={handleCreateSignature}
+              disabled
+            />
             <MenuItem
               text="Download"
               LeftIcon={IconDownload}
