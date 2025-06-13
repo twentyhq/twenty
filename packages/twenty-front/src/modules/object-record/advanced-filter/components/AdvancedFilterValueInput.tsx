@@ -85,11 +85,6 @@ export const AdvancedFilterValueInput = ({
     subFieldNameUsedInDropdown,
   });
 
-  console.log(
-    'showFilterTextInputInsteadOfDropdown',
-    showFilterTextInputInsteadOfDropdown,
-  );
-
   return (
     <StyledValueDropdownContainer>
       {operandHasNoInput ? (

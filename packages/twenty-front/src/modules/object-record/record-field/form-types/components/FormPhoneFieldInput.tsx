@@ -56,13 +56,13 @@ export const FormPhoneFieldInput = ({
       <FormNestedFieldInputContainer>
         <FormCountryCodeSelectInput
           label="Country Code"
-          selectedCountryCode={defaultValue?.primaryPhoneCountryCode || ''}
+          selectedCountryCode={defaultValue?.primaryPhoneCountryCode ?? ''}
           onChange={handleCountryChange}
           readonly={readonly}
         />
         <FormNumberFieldInput
           label="Phone Number"
-          defaultValue={defaultValue?.primaryPhoneNumber || ''}
+          defaultValue={defaultValue?.primaryPhoneNumber ?? ''}
           onChange={handleNumberChange}
           VariablePicker={VariablePicker}
           placeholder="Enter phone number"
