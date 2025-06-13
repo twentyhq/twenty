@@ -44,6 +44,8 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     subFields: ['amountMicros', 'currencyCode'],
     filterableSubFields: ['amountMicros', 'currencyCode'],
     labelBySubField: {
+      format:
+        COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.CURRENCY].format,
       amountMicros:
         COMPOSITE_FIELD_SUB_FIELD_LABELS[FieldMetadataType.CURRENCY]
           .amountMicros,
@@ -52,6 +54,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           .currencyCode,
     },
     exampleValue: {
+      format: 'short',
       amountMicros: 2000000000,
       currencyCode: CurrencyCode.USD,
     },
