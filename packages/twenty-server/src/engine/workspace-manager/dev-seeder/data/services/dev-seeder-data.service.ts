@@ -74,6 +74,12 @@ import {
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { prefillViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-views';
 import { prefillWorkspaceFavorites } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workspace-favorites';
+import {
+  WORKFLOW_DATA_SEED_COLUMNS,
+  WORKFLOW_DATA_SEEDS,
+  WORKFLOW_VERSION_DATA_SEED_COLUMNS,
+  WORKFLOW_VERSION_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/workflow-data-seeds.constants';
 
 const RECORD_SEEDS_CONFIGS = [
   {
@@ -150,6 +156,16 @@ const RECORD_SEEDS_CONFIGS = [
     tableName: 'messageParticipant',
     pgColumns: MESSAGE_PARTICIPANT_DATA_SEED_COLUMNS,
     recordSeeds: MESSAGE_PARTICIPANT_DATA_SEEDS,
+  },
+  {
+    tableName: 'workflow',
+    pgColumns: WORKFLOW_DATA_SEED_COLUMNS,
+    recordSeeds: WORKFLOW_DATA_SEEDS,
+  },
+  {
+    tableName: 'workflowVersion',
+    pgColumns: WORKFLOW_VERSION_DATA_SEED_COLUMNS,
+    recordSeeds: WORKFLOW_VERSION_DATA_SEEDS,
   },
   {
     tableName: '_pet',

@@ -186,6 +186,11 @@ msgstr "24 ساعة ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "بيئة مشتركة حيث يمكنك التحكم في علاقات العملاء مع فريقك."
 
+#. js-lingui-id: /cSHSG
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "A verification email has been sent to"
+msgstr ""
+
 #. js-lingui-id: JE9zuL
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Ability to edit all settings"
@@ -449,8 +454,8 @@ msgstr "الكل ({relationRecordsCount})"
 
 #. js-lingui-id: 9ljU00
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "All Actions"
-msgstr "كل الإجراءات"
+#~ msgid "All Actions"
+#~ msgstr "كل الإجراءات"
 
 #. js-lingui-id: 7EZqN0
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -464,8 +469,8 @@ msgstr "جميع الخطوط"
 
 #. js-lingui-id: aFE/OW
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "All Objects"
-msgstr "كل الكائنات"
+#~ msgid "All Objects"
+#~ msgstr "كل الكائنات"
 
 #. js-lingui-id: Hm90t3
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
@@ -508,7 +513,7 @@ msgid "An error occurred while updating password"
 msgstr "حدث خطأ أثناء تحديث كلمة المرور"
 
 #. js-lingui-id: mJ6m4C
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "An optional description"
 msgstr "وصف اختياري"
 
@@ -863,6 +868,11 @@ msgstr "الكاتالانية"
 #~ msgid "Change {to}"
 #~ msgstr "تغيير <b>{to}</b>"
 
+#. js-lingui-id: feCRNv
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Change email"
+msgstr ""
+
 #. js-lingui-id: VhMDMg
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/profile/components/ChangePassword.tsx
@@ -895,6 +905,11 @@ msgstr ""
 msgid "Change to Yearly?"
 msgstr ""
 
+#. js-lingui-id: AwAGI4
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Check your Emails"
+msgstr ""
+
 #. js-lingui-id: SviKkE
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Chinese — Simplified"
@@ -907,8 +922,8 @@ msgstr "الصينية — التقليدية"
 
 #. js-lingui-id: JEFFOR
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Choose an object"
-msgstr "اختر كائن"
+#~ msgid "Choose an object"
+#~ msgstr "اختر كائن"
 
 #. js-lingui-id: Qz73jD
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
@@ -1300,8 +1315,8 @@ msgstr "إنشاء مساحة العمل الخاصة بك"
 
 #. js-lingui-id: d+F6q9
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Created"
-msgstr "أنشئ"
+#~ msgid "Created"
+#~ msgstr "أنشئ"
 
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
@@ -1370,11 +1385,11 @@ msgid "Czech"
 msgstr "التشيكية"
 
 #. js-lingui-id: Zz6Cxn
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Danger zone"
 msgstr "المنطقة الخطرة"
@@ -1511,12 +1526,13 @@ msgid "Define what will be visible to other users in your workspace"
 msgstr "حدد ما سيكون مرئيًا للمستخدمين الآخرين في مساحة العمل الخاصة بك"
 
 #. js-lingui-id: cnGeoo
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
@@ -1570,10 +1586,14 @@ msgid "Delete Records on All Objects"
 msgstr ""
 
 #. js-lingui-id: T6S2Ns
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Delete this integration"
 msgstr "حذف هذا التكامل"
+
+#. js-lingui-id: KSOhjo
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "Delete this webhook"
+msgstr ""
 
 #. js-lingui-id: aRG49z
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
@@ -1581,8 +1601,7 @@ msgid "Delete view"
 msgstr "حذف العرض"
 
 #. js-lingui-id: snMaH4
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Delete webhook"
 msgstr "حذف Webhook"
 
@@ -1609,8 +1628,8 @@ msgstr "حذف مساحة العمل بشكل كامل"
 
 #. js-lingui-id: vGjmyl
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Deleted"
-msgstr "تم الحذف"
+#~ msgid "Deleted"
+#~ msgstr "تم الحذف"
 
 #. js-lingui-id: kcGoDz
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
@@ -1644,10 +1663,10 @@ msgid "Descending"
 msgstr "تنازلي"
 
 #. js-lingui-id: Nu4oKW
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Description"
 msgstr "الوصف"
 
@@ -1863,6 +1882,11 @@ msgstr "البريد الإلكتروني أو النطاق مدرج بالفع�
 msgid "Email verification"
 msgstr "التحقق من البريد الإلكتروني"
 
+#. js-lingui-id: hn6Eox
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Email Verification Failed"
+msgstr ""
+
 #. js-lingui-id: TBv/iZ
 #: src/modules/auth/components/VerifyEmailEffect.tsx
 #~ msgid "Email verification failed."
@@ -1930,7 +1954,7 @@ msgid "Empty Object"
 msgstr "كائن فارغ"
 
 #. js-lingui-id: T3juzf
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Endpoint URL"
 msgstr "عنوان URL للواجهة النهائية"
 
@@ -2309,7 +2333,7 @@ msgid "Filter"
 msgstr "تصفية"
 
 #. js-lingui-id: cSev+j
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Filters"
 msgstr "الفلاتر"
 
@@ -2592,6 +2616,11 @@ msgstr "كيف ستتم تعريفك في التطبيق."
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 msgid "How your system is doing"
 msgstr "كيف حال نظامك"
+
+#. js-lingui-id: 0yRnXS
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "https://example.com/webhook"
+msgstr ""
 
 #. js-lingui-id: mkWad2
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -3341,6 +3370,7 @@ msgstr "الانتقال إلى عملية العمل السابقة"
 
 #. js-lingui-id: isRobC
 #: src/pages/settings/data-model/SettingsNewObject.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "New"
 msgstr "جديد"
 
@@ -3699,11 +3729,21 @@ msgstr "سيتم مشاركة الطابع الزمني والمشاركين ف�
 msgid "Open command menu"
 msgstr "فتح قائمة الأوامر"
 
+#. js-lingui-id: pZZH4Q
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Open Gmail"
+msgstr ""
+
 #. js-lingui-id: C39K59
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Open in"
 msgstr "فتح في"
+
+#. js-lingui-id: xGd6Ih
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Open Outlook"
+msgstr ""
 
 #. js-lingui-id: OV5wZZ
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx
@@ -3715,10 +3755,15 @@ msgstr "تم الفتح"
 msgid "Opportunities"
 msgstr ""
 
+#. js-lingui-id: hY8F2i
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "Optional secret used to compute the HMAC signature for webhook payloads"
+msgstr ""
+
 #. js-lingui-id: qNELak
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
-msgstr "اختياري: حدد سلسلة سرية سنقوم بتضمينها في كل Webhook. استخدم هذا للمصادقة والتحقق من Webhook عند الاستقبال."
+#~ msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
+#~ msgstr "اختياري: حدد سلسلة سرية سنقوم بتضمينها في كل Webhook. استخدم هذا للمصادقة والتحقق من Webhook عند الاستقبال."
 
 #. js-lingui-id: 0zpgxV
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
@@ -3882,8 +3927,8 @@ msgstr "ساحة اللعب"
 
 #. js-lingui-id: jEw0Mr
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Please enter a valid URL"
-msgstr "الرجاء إدخال عنوان URL صحيح"
+#~ msgid "Please enter a valid URL"
+#~ msgstr "الرجاء إدخال عنوان URL صحيح"
 
 #. js-lingui-id: X5x85V
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -3895,10 +3940,15 @@ msgstr "يرجى البحث عن مستخدم أولاً"
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
 msgstr "الرجاء كتابة \"{confirmationValue}\" لتأكيد رغبتك في حذف مفتاح API هذا. كن على علم بأن أي سكربت يستعمل هذا المفتاح سوف يتوقف عن العمل."
 
+#. js-lingui-id: GbtYRD
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "Please type \"yes\" to confirm you want to delete this webhook."
+msgstr ""
+
 #. js-lingui-id: mFZTXr
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Please type {confirmationText} to confirm you want to delete this webhook."
-msgstr "الرجاء كتابة {confirmationText} لتأكيد رغبتك في حذف الويبهوك هذا."
+#~ msgid "Please type {confirmationText} to confirm you want to delete this webhook."
+#~ msgstr "الرجاء كتابة {confirmationText} لتأكيد رغبتك في حذف الويبهوك هذا."
 
 #. js-lingui-id: aRWD63
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
@@ -4116,6 +4166,12 @@ msgstr "إزالة الخيار"
 msgid "Reorder field"
 msgstr ""
 
+#. js-lingui-id: G42SNI
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Resend email"
+msgstr ""
+
 #. js-lingui-id: OfhWJH
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
@@ -4328,9 +4384,14 @@ msgid "Seats"
 msgstr ""
 
 #. js-lingui-id: 8VEDbV
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Secret"
 msgstr "سري"
+
+#. js-lingui-id: e1v+J3
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "Secret (optional)"
+msgstr ""
 
 #. js-lingui-id: a3LDKx
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
@@ -4466,7 +4527,7 @@ msgid "Select the default value for this boolean field"
 msgstr "اختر القيمة الافتراضية لهذا الحقل المنطقي"
 
 #. js-lingui-id: xraglu
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Select the events you wish to send to this endpoint"
 msgstr "\\\\"
 
@@ -4484,6 +4545,12 @@ msgstr "\\\\"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Send an invite email to your team"
 msgstr "\\\\"
+
+#. js-lingui-id: IoAuJG
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Sending..."
+msgstr ""
 
 #. js-lingui-id: h69WC6
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
@@ -5167,6 +5234,11 @@ msgstr "صحيح"
 msgid "Try our REST or GraphQL API playgrounds."
 msgstr "جرب ساحات لعب REST أو GraphQL لواجهة برمجة التطبيقات."
 
+#. js-lingui-id: LQdi+H
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Try with another email"
+msgstr ""
+
 #. js-lingui-id: Kz91g/
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Turkish"
@@ -5219,8 +5291,8 @@ msgstr ""
 
 #. js-lingui-id: +b7T3G
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Updated"
-msgstr "تم التحديث"
+#~ msgid "Updated"
+#~ msgstr "تم التحديث"
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx
@@ -5249,8 +5321,8 @@ msgstr "ارفع ملف XML مع معلومات الاتصال الخاصة بك
 
 #. js-lingui-id: IagCbF
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "URL"
-msgstr "عنوان URL"
+#~ msgid "URL"
+#~ msgstr "عنوان URL"
 
 #. js-lingui-id: 6dMpmz
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
@@ -5450,13 +5522,18 @@ msgstr ""
 msgid "was restored by"
 msgstr ""
 
+#. js-lingui-id: 6eMAkI
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "We encountered an issue verifying"
+msgstr ""
+
 #. js-lingui-id: id6ein
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
 msgstr "نحن ندعم صيغ PNG و JPEG و GIF المربعة بمقاس يقل عن 10 ميغابايت"
 
 #. js-lingui-id: ZS7vYp
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "We will send POST requests to this endpoint for every new event"
 msgstr "سنرسل طلبات POST إلى هذه النقطة النهائية لكل حدث جديد"
 
@@ -5474,8 +5551,8 @@ msgstr "سوف نرسل إليك رابط للتحقق من ملكية النط�
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Webhooks"
 msgstr "الويب هوكس"
 
@@ -5498,6 +5575,11 @@ msgstr "حينما سينتهي مفتاح واجهة برمجة التطبيق�
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "When the key will be disabled"
 msgstr "حين سيتم تعطيل المفتاح"
+
+#. js-lingui-id: RfrIUU
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+#~ msgid "Will be saved as:"
+#~ msgstr ""
 
 #. js-lingui-id: wvyffT
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
@@ -5524,7 +5606,6 @@ msgstr "حين سيتم تعطيل المفتاح"
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
@@ -5540,6 +5621,7 @@ msgstr "حين سيتم تعطيل المفتاح"
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/favorites/components/WorkspaceFavorites.tsx
 msgid "Workspace"
 msgstr "مساحة العمل"
@@ -5580,8 +5662,8 @@ msgid "Wrap on record pages"
 msgstr "لف في صفحات السجل"
 
 #. js-lingui-id: Q9pNST
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm.tsx
 msgid "Write a description"
@@ -5589,8 +5671,8 @@ msgstr "اكتب وصفاً"
 
 #. js-lingui-id: L80fMJ
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Write a secret"
-msgstr "اكتب سرًا"
+#~ msgid "Write a secret"
+#~ msgstr "اكتب سرًا"
 
 #. js-lingui-id: zkWmBh
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -5598,8 +5680,9 @@ msgid "Yearly"
 msgstr ""
 
 #. js-lingui-id: 3d1wCB
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "yes"
 msgstr "نعم"
 

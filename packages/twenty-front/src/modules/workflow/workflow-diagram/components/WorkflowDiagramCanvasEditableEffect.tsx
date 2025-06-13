@@ -68,7 +68,10 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
       }
 
       if (isCreateStepNode(selectedNode)) {
-        startNodeCreation(selectedNode.data.parentNodeId);
+        startNodeCreation({
+          parentStepId: selectedNode.data.parentNodeId,
+          nextStepId: undefined,
+        });
 
         return;
       }

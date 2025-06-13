@@ -186,6 +186,11 @@ msgstr "24 часа ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "Заједничко окружење у којем ћете моћи да управљате својим односима с купцима са вашим тимом."
 
+#. js-lingui-id: /cSHSG
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "A verification email has been sent to"
+msgstr ""
+
 #. js-lingui-id: JE9zuL
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Ability to edit all settings"
@@ -449,8 +454,8 @@ msgstr "Сви ({relationRecordsCount})"
 
 #. js-lingui-id: 9ljU00
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "All Actions"
-msgstr "Све акције"
+#~ msgid "All Actions"
+#~ msgstr "Све акције"
 
 #. js-lingui-id: 7EZqN0
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -464,8 +469,8 @@ msgstr "Све линије"
 
 #. js-lingui-id: aFE/OW
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "All Objects"
-msgstr "Сви објекти"
+#~ msgid "All Objects"
+#~ msgstr "Сви објекти"
 
 #. js-lingui-id: Hm90t3
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
@@ -508,7 +513,7 @@ msgid "An error occurred while updating password"
 msgstr "Дошло је до грешке при ажурирању лозинке"
 
 #. js-lingui-id: mJ6m4C
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "An optional description"
 msgstr "Опциони опис"
 
@@ -863,6 +868,11 @@ msgstr "Каталонски"
 #~ msgid "Change {to}"
 #~ msgstr "Промени {to}"
 
+#. js-lingui-id: feCRNv
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Change email"
+msgstr ""
+
 #. js-lingui-id: VhMDMg
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/profile/components/ChangePassword.tsx
@@ -895,6 +905,11 @@ msgstr ""
 msgid "Change to Yearly?"
 msgstr ""
 
+#. js-lingui-id: AwAGI4
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Check your Emails"
+msgstr ""
+
 #. js-lingui-id: SviKkE
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Chinese — Simplified"
@@ -907,8 +922,8 @@ msgstr "Кинески — Традиционални"
 
 #. js-lingui-id: JEFFOR
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Choose an object"
-msgstr "Изаберите објекат"
+#~ msgid "Choose an object"
+#~ msgstr "Изаберите објекат"
 
 #. js-lingui-id: Qz73jD
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
@@ -1300,8 +1315,8 @@ msgstr "Креирај свој радни простор"
 
 #. js-lingui-id: d+F6q9
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Created"
-msgstr "Креирано"
+#~ msgid "Created"
+#~ msgstr "Креирано"
 
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
@@ -1370,11 +1385,11 @@ msgid "Czech"
 msgstr "Чешки"
 
 #. js-lingui-id: Zz6Cxn
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Danger zone"
 msgstr "Опасна зона"
@@ -1511,12 +1526,13 @@ msgid "Define what will be visible to other users in your workspace"
 msgstr "Дефинишите шта ће бити видљиво другим корисницима у вашем радном простору"
 
 #. js-lingui-id: cnGeoo
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
@@ -1570,10 +1586,14 @@ msgid "Delete Records on All Objects"
 msgstr ""
 
 #. js-lingui-id: T6S2Ns
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Delete this integration"
 msgstr "Обриши ову интеграцију"
+
+#. js-lingui-id: KSOhjo
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "Delete this webhook"
+msgstr ""
 
 #. js-lingui-id: aRG49z
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
@@ -1581,8 +1601,7 @@ msgid "Delete view"
 msgstr "Обриши приказ"
 
 #. js-lingui-id: snMaH4
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Delete webhook"
 msgstr "Обриши Вебхук"
 
@@ -1609,8 +1628,8 @@ msgstr "Обриши цео свој простор за рад"
 
 #. js-lingui-id: vGjmyl
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Deleted"
-msgstr "Обрисано"
+#~ msgid "Deleted"
+#~ msgstr "Обрисано"
 
 #. js-lingui-id: kcGoDz
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
@@ -1644,10 +1663,10 @@ msgid "Descending"
 msgstr "Опадајуће"
 
 #. js-lingui-id: Nu4oKW
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Description"
 msgstr "Опис"
 
@@ -1863,6 +1882,11 @@ msgstr "Имејл или домен су већ на листи блокира�
 msgid "Email verification"
 msgstr "Провера имејла"
 
+#. js-lingui-id: hn6Eox
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Email Verification Failed"
+msgstr ""
+
 #. js-lingui-id: TBv/iZ
 #: src/modules/auth/components/VerifyEmailEffect.tsx
 #~ msgid "Email verification failed."
@@ -1930,7 +1954,7 @@ msgid "Empty Object"
 msgstr "Празан објекат"
 
 #. js-lingui-id: T3juzf
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Endpoint URL"
 msgstr "Ендпоинт УРЛ"
 
@@ -2309,7 +2333,7 @@ msgid "Filter"
 msgstr "Филтер"
 
 #. js-lingui-id: cSev+j
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Filters"
 msgstr "Филтери"
 
@@ -2592,6 +2616,11 @@ msgstr "Како ћете бити идентификовани на аплик�
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 msgid "How your system is doing"
 msgstr "Како ваш систем функционише"
+
+#. js-lingui-id: 0yRnXS
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "https://example.com/webhook"
+msgstr ""
 
 #. js-lingui-id: mkWad2
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -3341,6 +3370,7 @@ msgstr "Навигација до претходног радног процес
 
 #. js-lingui-id: isRobC
 #: src/pages/settings/data-model/SettingsNewObject.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "New"
 msgstr "Ново"
 
@@ -3699,11 +3729,21 @@ msgstr "Само временска ознака & учесници ће бит�
 msgid "Open command menu"
 msgstr "Отвори мени команди"
 
+#. js-lingui-id: pZZH4Q
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Open Gmail"
+msgstr ""
+
 #. js-lingui-id: C39K59
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Open in"
 msgstr "Отвори у"
+
+#. js-lingui-id: xGd6Ih
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Open Outlook"
+msgstr ""
 
 #. js-lingui-id: OV5wZZ
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx
@@ -3715,10 +3755,15 @@ msgstr "Отворено"
 msgid "Opportunities"
 msgstr ""
 
+#. js-lingui-id: hY8F2i
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "Optional secret used to compute the HMAC signature for webhook payloads"
+msgstr ""
+
 #. js-lingui-id: qNELak
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
-msgstr "Опционално: Дефинишите тајни низ који ћемо укључити у сваки вебхук. Користите ово за аутентификацију и проверу вебхука по пријему."
+#~ msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
+#~ msgstr "Опционално: Дефинишите тајни низ који ћемо укључити у сваки вебхук. Користите ово за аутентификацију и проверу вебхука по пријему."
 
 #. js-lingui-id: 0zpgxV
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
@@ -3882,8 +3927,8 @@ msgstr "Плејграунд"
 
 #. js-lingui-id: jEw0Mr
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Please enter a valid URL"
-msgstr "Унесите важећи URL"
+#~ msgid "Please enter a valid URL"
+#~ msgstr "Унесите важећи URL"
 
 #. js-lingui-id: X5x85V
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -3895,10 +3940,15 @@ msgstr "Прво пронађите корисника"
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
 msgstr "Унесите \"{confirmationValue}\" да бисте потврдили да желите да избришете овај API кључ. Имајте на уму да ће сваки скрипт који користи овај кључ престати са радом."
 
+#. js-lingui-id: GbtYRD
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "Please type \"yes\" to confirm you want to delete this webhook."
+msgstr ""
+
 #. js-lingui-id: mFZTXr
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Please type {confirmationText} to confirm you want to delete this webhook."
-msgstr "Унесите {confirmationText} да потврдите да желите да избришете овај вебхуку."
+#~ msgid "Please type {confirmationText} to confirm you want to delete this webhook."
+#~ msgstr "Унесите {confirmationText} да потврдите да желите да избришете овај вебхуку."
 
 #. js-lingui-id: aRWD63
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
@@ -4116,6 +4166,12 @@ msgstr "Уклони опцију"
 msgid "Reorder field"
 msgstr ""
 
+#. js-lingui-id: G42SNI
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Resend email"
+msgstr ""
+
 #. js-lingui-id: OfhWJH
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
@@ -4328,9 +4384,14 @@ msgid "Seats"
 msgstr ""
 
 #. js-lingui-id: 8VEDbV
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Secret"
 msgstr "Тајна"
+
+#. js-lingui-id: e1v+J3
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "Secret (optional)"
+msgstr ""
 
 #. js-lingui-id: a3LDKx
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
@@ -4466,7 +4527,7 @@ msgid "Select the default value for this boolean field"
 msgstr "Изаберите подразумевану вредност за ово булеан поље"
 
 #. js-lingui-id: xraglu
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Select the events you wish to send to this endpoint"
 msgstr "Изаберите догађаје које желите да пошаљете на овај крај"
 
@@ -4484,6 +4545,12 @@ msgstr "Изаберите жељени језик"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Send an invite email to your team"
 msgstr "Пошаљите имејл позивницу вашем тиму"
+
+#. js-lingui-id: IoAuJG
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Sending..."
+msgstr ""
 
 #. js-lingui-id: h69WC6
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
@@ -5167,6 +5234,11 @@ msgstr "Истина"
 msgid "Try our REST or GraphQL API playgrounds."
 msgstr "Испробајте наше РЕСТ или GraphQL АПИ плејграундове."
 
+#. js-lingui-id: LQdi+H
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Try with another email"
+msgstr ""
+
 #. js-lingui-id: Kz91g/
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Turkish"
@@ -5219,8 +5291,8 @@ msgstr ""
 
 #. js-lingui-id: +b7T3G
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Updated"
-msgstr "Ажурирано"
+#~ msgid "Updated"
+#~ msgstr "Ажурирано"
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx
@@ -5249,8 +5321,8 @@ msgstr "Отпремите XML датотеку са информацијама 
 
 #. js-lingui-id: IagCbF
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "URL"
-msgstr "УРЛ"
+#~ msgid "URL"
+#~ msgstr "УРЛ"
 
 #. js-lingui-id: 6dMpmz
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
@@ -5450,13 +5522,18 @@ msgstr ""
 msgid "was restored by"
 msgstr ""
 
+#. js-lingui-id: 6eMAkI
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "We encountered an issue verifying"
+msgstr ""
+
 #. js-lingui-id: id6ein
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
 msgstr "Подржавамо ваше квадратне PNG, JPEG и GIF фајлове величине испод 10MB"
 
 #. js-lingui-id: ZS7vYp
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "We will send POST requests to this endpoint for every new event"
 msgstr "Слаћемо POST захтеве овом ендпоинту за сваки нови догађај"
 
@@ -5474,8 +5551,8 @@ msgstr "Послаћемо вам линк за проверу власништ�
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Webhooks"
 msgstr "Вебхукс"
 
@@ -5498,6 +5575,11 @@ msgstr "Када ће API кључ истећи."
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "When the key will be disabled"
 msgstr "Када ће кључ бити онемогућен"
+
+#. js-lingui-id: RfrIUU
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+#~ msgid "Will be saved as:"
+#~ msgstr ""
 
 #. js-lingui-id: wvyffT
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
@@ -5524,7 +5606,6 @@ msgstr "Када ће кључ бити онемогућен"
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
@@ -5540,6 +5621,7 @@ msgstr "Када ће кључ бити онемогућен"
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/favorites/components/WorkspaceFavorites.tsx
 msgid "Workspace"
 msgstr "Радни простор"
@@ -5580,8 +5662,8 @@ msgid "Wrap on record pages"
 msgstr "Омотати на страницама записа"
 
 #. js-lingui-id: Q9pNST
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm.tsx
 msgid "Write a description"
@@ -5589,8 +5671,8 @@ msgstr "Напишите опис"
 
 #. js-lingui-id: L80fMJ
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Write a secret"
-msgstr "Напишите тајну"
+#~ msgid "Write a secret"
+#~ msgstr "Напишите тајну"
 
 #. js-lingui-id: zkWmBh
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -5598,8 +5680,9 @@ msgid "Yearly"
 msgstr ""
 
 #. js-lingui-id: 3d1wCB
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "yes"
 msgstr "да"
 

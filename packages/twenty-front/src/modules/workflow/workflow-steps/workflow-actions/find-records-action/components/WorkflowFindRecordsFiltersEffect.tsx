@@ -68,7 +68,7 @@ export const WorkflowFindRecordsFiltersEffect = ({
       isDefined(defaultValue?.recordFilterGroups) &&
       defaultValue.recordFilterGroups.length > 0
     ) {
-      setCurrentRecordFilterGroups(defaultValue.recordFilterGroups);
+      setCurrentRecordFilterGroups(defaultValue.recordFilterGroups ?? []);
       setHasInitializedCurrentRecordFilterGroups(true);
     }
   }, [

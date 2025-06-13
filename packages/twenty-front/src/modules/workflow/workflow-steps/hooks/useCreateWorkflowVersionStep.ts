@@ -37,8 +37,9 @@ export const useCreateWorkflowVersionStep = () => {
       variables: { input },
     });
 
-    const createdStep = result?.data?.createWorkflowVersionStep;
-    if (!isDefined(createdStep)) {
+    const insertedStep = result?.data?.createWorkflowVersionStep;
+
+    if (!isDefined(insertedStep)) {
       return;
     }
 
@@ -50,20 +51,29 @@ export const useCreateWorkflowVersionStep = () => {
       return;
     }
 
+    const { parentStepId, nextStepId } = input;
+
     const updatedExistingSteps =
-      cachedRecord.steps?.map((step) => {
-        if (step.id === input.parentStepId) {
+      cachedRecord.steps?.map((existingStep) => {
+        if (existingStep.id === parentStepId) {
           return {
-            ...step,
-            nextStepIds: [...(step.nextStepIds || []), createdStep.id],
+            ...existingStep,
+            nextStepIds: [
+              ...new Set([
+                ...(existingStep.nextStepIds?.filter(
+                  (id) => id !== nextStepId,
+                ) || []),
+                insertedStep.id,
+              ]),
+            ],
           };
         }
-        return step;
+        return existingStep;
       }) ?? [];
 
     const newCachedRecord = {
       ...cachedRecord,
-      steps: [...updatedExistingSteps, createdStep],
+      steps: [...updatedExistingSteps, insertedStep],
     };
 
     const recordGqlFields = {

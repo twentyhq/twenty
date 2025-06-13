@@ -186,6 +186,11 @@ msgstr "24小時 ({hour24Label})"
 msgid "A shared environment where you will be able to manage your customer relations with your team."
 msgstr "一個共享環境，您與您的團隊可以在此管理客戶關係。"
 
+#. js-lingui-id: /cSHSG
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "A verification email has been sent to"
+msgstr ""
+
 #. js-lingui-id: JE9zuL
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Ability to edit all settings"
@@ -449,8 +454,8 @@ msgstr "全部 ({relationRecordsCount})"
 
 #. js-lingui-id: 9ljU00
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "All Actions"
-msgstr "所有操作"
+#~ msgid "All Actions"
+#~ msgstr "所有操作"
 
 #. js-lingui-id: 7EZqN0
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -464,8 +469,8 @@ msgstr "所有行"
 
 #. js-lingui-id: aFE/OW
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "All Objects"
-msgstr "所有對象"
+#~ msgid "All Objects"
+#~ msgstr "所有對象"
 
 #. js-lingui-id: Hm90t3
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
@@ -508,7 +513,7 @@ msgid "An error occurred while updating password"
 msgstr "更新密碼時發生錯誤"
 
 #. js-lingui-id: mJ6m4C
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "An optional description"
 msgstr "可選描述"
 
@@ -863,6 +868,11 @@ msgstr "加泰羅尼亞語"
 #~ msgid "Change {to}"
 #~ msgstr "更改 {to}"
 
+#. js-lingui-id: feCRNv
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Change email"
+msgstr ""
+
 #. js-lingui-id: VhMDMg
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/profile/components/ChangePassword.tsx
@@ -895,6 +905,11 @@ msgstr ""
 msgid "Change to Yearly?"
 msgstr ""
 
+#. js-lingui-id: AwAGI4
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Check your Emails"
+msgstr ""
+
 #. js-lingui-id: SviKkE
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Chinese — Simplified"
@@ -907,8 +922,8 @@ msgstr "繁體中文"
 
 #. js-lingui-id: JEFFOR
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Choose an object"
-msgstr "選擇對象"
+#~ msgid "Choose an object"
+#~ msgstr "選擇對象"
 
 #. js-lingui-id: Qz73jD
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
@@ -1300,8 +1315,8 @@ msgstr "創建您的工作區"
 
 #. js-lingui-id: d+F6q9
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Created"
-msgstr "已創建"
+#~ msgid "Created"
+#~ msgstr "已創建"
 
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
@@ -1370,11 +1385,11 @@ msgid "Czech"
 msgstr "捷克語"
 
 #. js-lingui-id: Zz6Cxn
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Danger zone"
 msgstr "危險區"
@@ -1511,12 +1526,13 @@ msgid "Define what will be visible to other users in your workspace"
 msgstr "定義在您的工作區中對其他用戶可見的內容"
 
 #. js-lingui-id: cnGeoo
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
@@ -1570,10 +1586,14 @@ msgid "Delete Records on All Objects"
 msgstr ""
 
 #. js-lingui-id: T6S2Ns
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Delete this integration"
 msgstr "刪除此集成"
+
+#. js-lingui-id: KSOhjo
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "Delete this webhook"
+msgstr ""
 
 #. js-lingui-id: aRG49z
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
@@ -1581,8 +1601,7 @@ msgid "Delete view"
 msgstr "刪除視圖"
 
 #. js-lingui-id: snMaH4
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Delete webhook"
 msgstr "刪除 Webhook"
 
@@ -1609,8 +1628,8 @@ msgstr "刪除整個工作區"
 
 #. js-lingui-id: vGjmyl
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Deleted"
-msgstr "已刪除"
+#~ msgid "Deleted"
+#~ msgstr "已刪除"
 
 #. js-lingui-id: kcGoDz
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
@@ -1644,10 +1663,10 @@ msgid "Descending"
 msgstr "降序"
 
 #. js-lingui-id: Nu4oKW
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Description"
 msgstr "描述"
 
@@ -1863,6 +1882,11 @@ msgstr "電子郵件或域名已在阻止列表中"
 msgid "Email verification"
 msgstr "電子郵件驗證"
 
+#. js-lingui-id: hn6Eox
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Email Verification Failed"
+msgstr ""
+
 #. js-lingui-id: TBv/iZ
 #: src/modules/auth/components/VerifyEmailEffect.tsx
 #~ msgid "Email verification failed."
@@ -1930,7 +1954,7 @@ msgid "Empty Object"
 msgstr "空對象"
 
 #. js-lingui-id: T3juzf
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Endpoint URL"
 msgstr "端點 URL"
 
@@ -2309,7 +2333,7 @@ msgid "Filter"
 msgstr "篩選"
 
 #. js-lingui-id: cSev+j
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Filters"
 msgstr "篩選"
 
@@ -2592,6 +2616,11 @@ msgstr "這是您在應用程式上的識別名稱。"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 msgid "How your system is doing"
 msgstr "系統運行情況"
+
+#. js-lingui-id: 0yRnXS
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "https://example.com/webhook"
+msgstr ""
 
 #. js-lingui-id: mkWad2
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -3341,6 +3370,7 @@ msgstr "導航至上一個工作流程"
 
 #. js-lingui-id: isRobC
 #: src/pages/settings/data-model/SettingsNewObject.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "New"
 msgstr "新"
 
@@ -3699,11 +3729,21 @@ msgstr "僅時間戳和參與者將與您的團隊共享。"
 msgid "Open command menu"
 msgstr "打開指令選單"
 
+#. js-lingui-id: pZZH4Q
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Open Gmail"
+msgstr ""
+
 #. js-lingui-id: C39K59
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Open in"
 msgstr "打開"
+
+#. js-lingui-id: xGd6Ih
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Open Outlook"
+msgstr ""
 
 #. js-lingui-id: OV5wZZ
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx
@@ -3715,10 +3755,15 @@ msgstr "已開啟"
 msgid "Opportunities"
 msgstr ""
 
+#. js-lingui-id: hY8F2i
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "Optional secret used to compute the HMAC signature for webhook payloads"
+msgstr ""
+
 #. js-lingui-id: qNELak
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
-msgstr "可選：定義我們將在每個 Webhook 中包含的秘密字符串。使用此字符串在接收時驗證和身份驗證 Webhook。"
+#~ msgid "Optional: Define a secret string that we will include in every webhook. Use this to authenticate and verify the webhook upon receipt."
+#~ msgstr "可選：定義我們將在每個 Webhook 中包含的秘密字符串。使用此字符串在接收時驗證和身份驗證 Webhook。"
 
 #. js-lingui-id: 0zpgxV
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
@@ -3882,8 +3927,8 @@ msgstr "操場"
 
 #. js-lingui-id: jEw0Mr
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Please enter a valid URL"
-msgstr "請輸入有效的 URL"
+#~ msgid "Please enter a valid URL"
+#~ msgstr "請輸入有效的 URL"
 
 #. js-lingui-id: X5x85V
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -3895,10 +3940,15 @@ msgstr "請先搜索用戶"
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this API Key. Be aware that any script using this key will stop working."
 msgstr "請鍵入\"{confirmationValue}\"確認要刪除此 API 密鑰。請注意，任何使用此密鑰的腳本都將停止工作。"
 
+#. js-lingui-id: GbtYRD
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "Please type \"yes\" to confirm you want to delete this webhook."
+msgstr ""
+
 #. js-lingui-id: mFZTXr
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Please type {confirmationText} to confirm you want to delete this webhook."
-msgstr "請鍵入 {confirmationText} 確認要刪除此 Webhook。"
+#~ msgid "Please type {confirmationText} to confirm you want to delete this webhook."
+#~ msgstr "請鍵入 {confirmationText} 確認要刪除此 Webhook。"
 
 #. js-lingui-id: aRWD63
 #: src/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldConfigure.tsx
@@ -4116,6 +4166,12 @@ msgstr "移除選項"
 msgid "Reorder field"
 msgstr ""
 
+#. js-lingui-id: G42SNI
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Resend email"
+msgstr ""
+
 #. js-lingui-id: OfhWJH
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
@@ -4328,9 +4384,14 @@ msgid "Seats"
 msgstr ""
 
 #. js-lingui-id: 8VEDbV
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Secret"
 msgstr "密鑰"
+
+#. js-lingui-id: e1v+J3
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "Secret (optional)"
+msgstr ""
 
 #. js-lingui-id: a3LDKx
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
@@ -4466,7 +4527,7 @@ msgid "Select the default value for this boolean field"
 msgstr "選擇此布爾字段的默認值"
 
 #. js-lingui-id: xraglu
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Select the events you wish to send to this endpoint"
 msgstr "選擇要發送到此端點的事件"
 
@@ -4484,6 +4545,12 @@ msgstr "選擇您偏好的語言"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Send an invite email to your team"
 msgstr "向您的團隊發送邀請電子郵件"
+
+#. js-lingui-id: IoAuJG
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Sending..."
+msgstr ""
 
 #. js-lingui-id: h69WC6
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
@@ -5167,6 +5234,11 @@ msgstr "真"
 msgid "Try our REST or GraphQL API playgrounds."
 msgstr "試試我們的REST或GraphQL API操場。"
 
+#. js-lingui-id: LQdi+H
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "Try with another email"
+msgstr ""
+
 #. js-lingui-id: Kz91g/
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Turkish"
@@ -5219,8 +5291,8 @@ msgstr ""
 
 #. js-lingui-id: +b7T3G
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Updated"
-msgstr "已更新"
+#~ msgid "Updated"
+#~ msgstr "已更新"
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx
@@ -5249,8 +5321,8 @@ msgstr "上傳包含連接信息的 XML 文件"
 
 #. js-lingui-id: IagCbF
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "URL"
-msgstr "網址"
+#~ msgid "URL"
+#~ msgstr "網址"
 
 #. js-lingui-id: 6dMpmz
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
@@ -5450,13 +5522,18 @@ msgstr ""
 msgid "was restored by"
 msgstr ""
 
+#. js-lingui-id: 6eMAkI
+#: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
+msgid "We encountered an issue verifying"
+msgstr ""
+
 #. js-lingui-id: id6ein
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
 msgstr "我們支持 10MB 以下的正方形 PNG、JPEG 和 GIF 文件"
 
 #. js-lingui-id: ZS7vYp
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "We will send POST requests to this endpoint for every new event"
 msgstr "我們將為每個新事件向此端點發送 POST 請求"
 
@@ -5474,8 +5551,8 @@ msgstr "我們將向您發送一個鏈接來驗證域所有權"
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Webhooks"
 msgstr "Webhooks"
 
@@ -5498,6 +5575,11 @@ msgstr "API 密鑰的過期時間。"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "When the key will be disabled"
 msgstr "按鍵何時禁用"
+
+#. js-lingui-id: RfrIUU
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+#~ msgid "Will be saved as:"
+#~ msgstr ""
 
 #. js-lingui-id: wvyffT
 #: src/modules/workflow/components/RecordShowPageWorkflowHeader.tsx
@@ -5524,7 +5606,6 @@ msgstr "按鍵何時禁用"
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
@@ -5540,6 +5621,7 @@ msgstr "按鍵何時禁用"
 #: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/favorites/components/WorkspaceFavorites.tsx
 msgid "Workspace"
 msgstr "工作區"
@@ -5580,8 +5662,8 @@ msgid "Wrap on record pages"
 msgstr "在記錄頁面上換行"
 
 #. js-lingui-id: Q9pNST
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm.tsx
 msgid "Write a description"
@@ -5589,8 +5671,8 @@ msgstr "撰寫描述"
 
 #. js-lingui-id: L80fMJ
 #: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
-msgid "Write a secret"
-msgstr "寫入秘鑰"
+#~ msgid "Write a secret"
+#~ msgstr "寫入秘鑰"
 
 #. js-lingui-id: zkWmBh
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -5598,8 +5680,9 @@ msgid "Yearly"
 msgstr ""
 
 #. js-lingui-id: 3d1wCB
-#: src/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "yes"
 msgstr "是"
 
