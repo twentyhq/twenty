@@ -39,31 +39,36 @@ export const useCreateStep = ({
 
     setIsLoading(true);
 
-    if (!isDefined(workflowInsertStepIds.parentStepId)) {
-      throw new Error(
-        'No parentStepId. Please select a parent step to create from.',
-      );
-    }
+    try {
+      if (!isDefined(workflowInsertStepIds.parentStepId)) {
+        throw new Error(
+          'No parentStepId. Please select a parent step to create from.',
+        );
+      }
 
-    const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
+      const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
 
-    const createdStep = (
-      await createWorkflowVersionStep({
-        workflowVersionId,
-        stepType: newStepType,
-        parentStepId: workflowInsertStepIds.parentStepId,
-        nextStepId: workflowInsertStepIds.nextStepId,
-      })
-    )?.data?.createWorkflowVersionStep;
+      const createdStep = (
+        await createWorkflowVersionStep({
+          workflowVersionId,
+          stepType: newStepType,
+          parentStepId: workflowInsertStepIds.parentStepId,
+          nextStepId: workflowInsertStepIds.nextStepId,
+        })
+      )?.data?.createWorkflowVersionStep;
 
-    if (!createdStep) {
+      if (!createdStep) {
+        return;
+      }
+
+      setWorkflowSelectedNode(createdStep.id);
+      setWorkflowLastCreatedStepId(createdStep.id);
+    } catch (error) {
       setIsLoading(false);
-      return;
+      throw error;
+    } finally {
+      setIsLoading(false);
     }
-
-    setWorkflowSelectedNode(createdStep.id);
-    setWorkflowLastCreatedStepId(createdStep.id);
-    setIsLoading(false);
   };
 
   return {
