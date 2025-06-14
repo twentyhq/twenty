@@ -1,6 +1,6 @@
 import { CalendarChannel } from '@/accounts/types/CalendarChannel';
-import { MessageChannel } from './MessageChannel';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { MessageChannel } from './MessageChannel';
 
 export type ConnectedAccount = {
   id: string;
@@ -14,5 +14,8 @@ export type ConnectedAccount = {
   messageChannels: MessageChannel[];
   calendarChannels: CalendarChannel[];
   scopes: string[] | null;
+  customConnectionParams?: Record<string, any>;
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  connectionType: 'OAuth2' | 'IMAP' | (string & {});
   __typename: 'ConnectedAccount';
 };
