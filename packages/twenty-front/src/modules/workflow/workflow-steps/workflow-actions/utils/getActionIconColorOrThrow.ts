@@ -11,6 +11,7 @@ export const getActionIconColorOrThrow = ({
 }) => {
   switch (actionType) {
     case 'CODE':
+    case 'HTTP_REQUEST':
       return theme.color.orange;
     case 'CREATE_RECORD':
     case 'UPDATE_RECORD':

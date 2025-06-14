@@ -17,6 +17,10 @@ import { AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import {
+  RefreshTokenJwtPayload,
+  JwtTokenTypeEnum,
+} from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @Injectable()
 export class RefreshTokenService {
@@ -32,8 +36,12 @@ export class RefreshTokenService {
   async verifyRefreshToken(refreshToken: string) {
     const coolDown = this.twentyConfigService.get('REFRESH_TOKEN_COOL_DOWN');
 
-    await this.jwtWrapperService.verifyWorkspaceToken(refreshToken, 'REFRESH');
-    const jwtPayload = await this.jwtWrapperService.decode(refreshToken);
+    await this.jwtWrapperService.verifyJwtToken(
+      refreshToken,
+      JwtTokenTypeEnum.REFRESH,
+    );
+    const jwtPayload =
+      this.jwtWrapperService.decode<RefreshTokenJwtPayload>(refreshToken);
 
     if (!(jwtPayload.jti && jwtPayload.sub)) {
       throw new AuthException(
@@ -90,24 +98,20 @@ export class RefreshTokenService {
       );
     }
 
-    // TODO: Delete this useless condition and error after March 31st 2025
-    if (!token.workspaceId) {
-      throw new AuthException(
-        'This refresh token is malformed',
-        AuthExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    return { user, token };
+    return {
+      user,
+      token,
+      authProvider: jwtPayload.authProvider,
+      targetedTokenType: jwtPayload.targetedTokenType,
+    };
   }
 
   async generateRefreshToken(
-    userId: string,
-    workspaceId: string,
+    payload: Omit<RefreshTokenJwtPayload, 'type' | 'sub' | 'jti'>,
   ): Promise<AuthToken> {
     const secret = this.jwtWrapperService.generateAppSecret(
-      'REFRESH',
-      workspaceId,
+      JwtTokenTypeEnum.REFRESH,
+      payload.workspaceId ?? payload.userId,
     );
     const expiresIn = this.twentyConfigService.get('REFRESH_TOKEN_EXPIRES_IN');
 
@@ -120,28 +124,27 @@ export class RefreshTokenService {
 
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
-    const refreshTokenPayload = {
-      userId,
+    const refreshToken = this.appTokenRepository.create({
+      ...payload,
       expiresAt,
-      workspaceId,
       type: AppTokenType.RefreshToken,
-    };
-    const jwtPayload = {
-      sub: userId,
-      workspaceId,
-    };
-
-    const refreshToken = this.appTokenRepository.create(refreshTokenPayload);
+    });
 
     await this.appTokenRepository.save(refreshToken);
 
     return {
-      token: this.jwtWrapperService.sign(jwtPayload, {
-        secret,
-        expiresIn,
-        // Jwtid will be used to link RefreshToken entity to this token
-        jwtid: refreshToken.id,
-      }),
+      token: this.jwtWrapperService.sign(
+        {
+          ...payload,
+          sub: payload.userId,
+          type: JwtTokenTypeEnum.REFRESH,
+        },
+        {
+          secret,
+          expiresIn,
+          jwtid: refreshToken.id,
+        },
+      ),
       expiresAt,
     };
   }

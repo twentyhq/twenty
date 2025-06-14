@@ -14,7 +14,6 @@ import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-u
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { ExistingUserOrNewUser } from 'src/engine/core-modules/auth/types/signInUp.type';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -22,18 +21,15 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 import { AuthService } from './auth.service';
 
 jest.mock('bcrypt');
-
-const UserFindOneMock = jest.fn();
-const UserWorkspacefindOneMock = jest.fn();
-
-const userWorkspaceServiceCheckUserWorkspaceExistsMock = jest.fn();
-const workspaceInvitationGetOneWorkspaceInvitationMock = jest.fn();
-const workspaceInvitationValidatePersonalInvitationMock = jest.fn();
-const userWorkspaceAddUserToWorkspaceMock = jest.fn();
 
 const twentyConfigServiceGetMock = jest.fn();
 
@@ -41,7 +37,10 @@ describe('AuthService', () => {
   let service: AuthService;
   let userService: UserService;
   let workspaceRepository: Repository<Workspace>;
+  let userRepository: Repository<User>;
   let authSsoService: AuthSsoService;
+  let userWorkspaceService: UserWorkspaceService;
+  let workspaceInvitationService: WorkspaceInvitationService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -56,7 +55,7 @@ describe('AuthService', () => {
         {
           provide: getRepositoryToken(User, 'core'),
           useValue: {
-            findOne: UserFindOneMock,
+            findOne: jest.fn(),
           },
         },
         {
@@ -71,6 +70,22 @@ describe('AuthService', () => {
           },
         },
         {
+          provide: LoginTokenService,
+          useValue: {},
+        },
+        {
+          provide: DomainManagerService,
+          useValue: {},
+        },
+        {
+          provide: WorkspaceAgnosticTokenService,
+          useValue: {},
+        },
+        {
+          provide: GuardRedirectService,
+          useValue: {},
+        },
+        {
           provide: SignInUpService,
           useValue: {},
         },
@@ -79,10 +94,6 @@ describe('AuthService', () => {
           useValue: {
             get: twentyConfigServiceGetMock,
           },
-        },
-        {
-          provide: DomainManagerService,
-          useValue: {},
         },
         {
           provide: EmailService,
@@ -99,10 +110,9 @@ describe('AuthService', () => {
         {
           provide: UserWorkspaceService,
           useValue: {
-            checkUserWorkspaceExists:
-              userWorkspaceServiceCheckUserWorkspaceExistsMock,
-            addUserToWorkspaceIfUserNotInWorkspace:
-              userWorkspaceAddUserToWorkspaceMock,
+            checkUserWorkspaceExists: jest.fn(),
+            addUserToWorkspaceIfUserNotInWorkspace: jest.fn(),
+            findAvailableWorkspacesByEmail: jest.fn(),
           },
         },
         {
@@ -114,10 +124,8 @@ describe('AuthService', () => {
         {
           provide: WorkspaceInvitationService,
           useValue: {
-            getOneWorkspaceInvitation:
-              workspaceInvitationGetOneWorkspaceInvitationMock,
-            validatePersonalInvitation:
-              workspaceInvitationValidatePersonalInvitationMock,
+            getOneWorkspaceInvitation: jest.fn(),
+            validatePersonalInvitation: jest.fn(),
           },
         },
         {
@@ -131,9 +139,17 @@ describe('AuthService', () => {
 
     service = module.get<AuthService>(AuthService);
     userService = module.get<UserService>(UserService);
+    workspaceInvitationService = module.get<WorkspaceInvitationService>(
+      WorkspaceInvitationService,
+    );
     authSsoService = module.get<AuthSsoService>(AuthSsoService);
+    userWorkspaceService =
+      module.get<UserWorkspaceService>(UserWorkspaceService);
     workspaceRepository = module.get<Repository<Workspace>>(
       getRepositoryToken(Workspace, 'core'),
+    );
+    userRepository = module.get<Repository<User>>(
+      getRepositoryToken(User, 'core'),
     );
   });
 
@@ -155,17 +171,17 @@ describe('AuthService', () => {
 
     (bcrypt.compare as jest.Mock).mockReturnValueOnce(true);
 
-    UserFindOneMock.mockReturnValueOnce({
+    jest.spyOn(userRepository, 'findOne').mockReturnValueOnce({
       email: user.email,
       passwordHash: 'passwordHash',
       captchaToken: user.captchaToken,
-    });
+    } as unknown as Promise<User>);
 
-    UserWorkspacefindOneMock.mockReturnValueOnce({});
+    jest
+      .spyOn(userWorkspaceService, 'checkUserWorkspaceExists')
+      .mockReturnValueOnce({} as any);
 
-    userWorkspaceServiceCheckUserWorkspaceExistsMock.mockReturnValueOnce({});
-
-    const response = await service.getLoginTokenFromCredentials(
+    const response = await service.validateLoginWithPassword(
       {
         email: 'email',
         password: 'password',
@@ -188,20 +204,32 @@ describe('AuthService', () => {
       captchaToken: 'captchaToken',
     };
 
-    UserFindOneMock.mockReturnValueOnce({
-      email: user.email,
-      passwordHash: 'passwordHash',
-      captchaToken: user.captchaToken,
-    });
+    const UserFindOneSpy = jest
+      .spyOn(userRepository, 'findOne')
+      .mockReturnValueOnce({
+        email: user.email,
+        passwordHash: 'passwordHash',
+        captchaToken: user.captchaToken,
+      } as unknown as Promise<User>);
 
     (bcrypt.compare as jest.Mock).mockReturnValueOnce(true);
-    userWorkspaceServiceCheckUserWorkspaceExistsMock.mockReturnValueOnce(false);
+    jest
+      .spyOn(userWorkspaceService, 'checkUserWorkspaceExists')
+      .mockReturnValueOnce(null as any);
 
-    workspaceInvitationGetOneWorkspaceInvitationMock.mockReturnValueOnce({});
-    workspaceInvitationValidatePersonalInvitationMock.mockReturnValueOnce({});
-    userWorkspaceAddUserToWorkspaceMock.mockReturnValueOnce({});
+    const getOneWorkspaceInvitationSpy = jest
+      .spyOn(workspaceInvitationService, 'getOneWorkspaceInvitation')
+      .mockReturnValueOnce({} as any);
 
-    const response = await service.getLoginTokenFromCredentials(
+    const workspaceInvitationValidatePersonalInvitationSpy = jest
+      .spyOn(workspaceInvitationService, 'validatePersonalInvitation')
+      .mockReturnValueOnce({} as any);
+
+    const addUserToWorkspaceIfUserNotInWorkspaceSpy = jest
+      .spyOn(userWorkspaceService, 'addUserToWorkspaceIfUserNotInWorkspace')
+      .mockReturnValueOnce({} as any);
+
+    const response = await service.validateLoginWithPassword(
       {
         email: 'email',
         password: 'password',
@@ -218,14 +246,12 @@ describe('AuthService', () => {
       captchaToken: user.captchaToken,
     });
 
+    expect(getOneWorkspaceInvitationSpy).toHaveBeenCalledTimes(1);
     expect(
-      workspaceInvitationGetOneWorkspaceInvitationMock,
+      workspaceInvitationValidatePersonalInvitationSpy,
     ).toHaveBeenCalledTimes(1);
-    expect(
-      workspaceInvitationValidatePersonalInvitationMock,
-    ).toHaveBeenCalledTimes(1);
-    expect(userWorkspaceAddUserToWorkspaceMock).toHaveBeenCalledTimes(1);
-    expect(UserFindOneMock).toHaveBeenCalledTimes(1);
+    expect(addUserToWorkspaceIfUserNotInWorkspaceSpy).toHaveBeenCalledTimes(1);
+    expect(UserFindOneSpy).toHaveBeenCalledTimes(1);
   });
 
   describe('checkAccessForSignIn', () => {
@@ -418,7 +444,7 @@ describe('AuthService', () => {
       );
 
       const result = await service.findWorkspaceForSignInUp({
-        authProvider: 'password',
+        authProvider: AuthProviderEnum.Password,
         workspaceId: 'workspaceId',
       });
 
@@ -438,7 +464,7 @@ describe('AuthService', () => {
       );
 
       const result = await service.findWorkspaceForSignInUp({
-        authProvider: 'password',
+        authProvider: AuthProviderEnum.Password,
         workspaceId: 'workspaceId',
         workspaceInviteHash: 'workspaceInviteHash',
       });
@@ -459,7 +485,7 @@ describe('AuthService', () => {
       );
 
       const result = await service.findWorkspaceForSignInUp({
-        authProvider: 'password',
+        authProvider: AuthProviderEnum.Password,
         workspaceId: 'workspaceId',
         workspaceInviteHash: 'workspaceInviteHash',
       });
@@ -476,7 +502,7 @@ describe('AuthService', () => {
         .mockResolvedValue({} as Workspace);
 
       const result = await service.findWorkspaceForSignInUp({
-        authProvider: 'google',
+        authProvider: AuthProviderEnum.Google,
         workspaceId: 'workspaceId',
         email: 'email',
       });
@@ -493,7 +519,7 @@ describe('AuthService', () => {
         .mockResolvedValue({} as Workspace);
 
       const result = await service.findWorkspaceForSignInUp({
-        authProvider: 'sso',
+        authProvider: AuthProviderEnum.SSO,
         workspaceId: 'workspaceId',
         email: 'email',
       });

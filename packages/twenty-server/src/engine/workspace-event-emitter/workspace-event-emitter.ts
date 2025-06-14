@@ -30,7 +30,7 @@ export class WorkspaceEventEmitter {
     objectMetadataNameSingular: string;
     action: A;
     events: ActionEventMap<T>[A][];
-    workspaceId: string;
+    workspaceId: string | undefined;
   }) {
     if (!events.length) {
       return;
@@ -48,7 +48,7 @@ export class WorkspaceEventEmitter {
   public emitCustomBatchEvent<T extends object>(
     eventName: CustomEventName,
     events: T[],
-    workspaceId: string,
+    workspaceId: string | undefined,
   ) {
     if (!events.length) {
       return;
