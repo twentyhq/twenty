@@ -1,3 +1,36 @@
+import deepEqual from 'deep-equal';
+
+// Normalize values to sort the keys and compare meaningfully
+// This function replaces null, empty strings, empty arrays, and empty objects with placeholders
+// to ensure that they are treated as equal when they are effectively the same.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function normalizeValueForComparison(val: any): any {
+  if (val === null || val === '') return '__empty__';
+  if (Array.isArray(val) && val.length === 0) return '__empty__';
+  if (typeof val === 'object' && val !== null && Object.keys(val).length === 0)
+    return '__empty__';
+
+  // recursively normalize nested objects
+  if (Array.isArray(val)) {
+    // recursively normalize array elements
+    return val.map((item) => normalizeValueForComparison(item));
+  } else if (typeof val === 'object' && val !== null) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const normalized: Record<string, any> = {};
+
+    // sort keys to ensure consistent order for comparison
+    const sortedKeys = Object.keys(val).sort();
+
+    for (const key of sortedKeys) {
+      normalized[key] = normalizeValueForComparison(val[key]);
+    }
+
+    return normalized;
+  }
+
+  return val;
+}
+
 export function objectRecordDiffMerge(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   oldRecord: Record<string, any>,
@@ -7,25 +40,49 @@ export function objectRecordDiffMerge(
 ): Record<string, any> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const result: Record<string, any> = { diff: {} };
+  const skippedKeys: Set<string> = new Set();
 
-  // Iterate over the keys in the oldRecord diff
+  const isEffectivelyEqual = (a: unknown, b: unknown): boolean => {
+    const normalizedA = normalizeValueForComparison(a);
+    const normalizedB = normalizeValueForComparison(b);
+
+    return deepEqual(normalizedA, normalizedB, {
+      strict: true,
+    });
+  };
+
+  // Merge the diff properties from oldRecord and newRecord
   Object.keys(oldRecord.diff ?? {}).forEach((key) => {
-    if (newRecord.diff && newRecord.diff[key]) {
-      // If the key also exists in the newRecord, merge the 'before' from the oldRecord and the 'after' from the newRecord
-      result.diff[key] = {
-        before: oldRecord.diff[key].before,
-        after: newRecord.diff[key].after,
+    const oldDiff = oldRecord.diff[key];
+    const newDiff = newRecord.diff?.[key];
+
+    // If the key exists in both old and new records, we should merge them
+    // Merge Logic: If both before and after values are effectively equal, we skip adding this key to the result.
+    // If they are not equal, we create a new merged object with before from oldDiff and after from newDiff.
+    // If newDiff is undefined, we keep the oldDiff as is.
+    if (newDiff) {
+      const merged = {
+        before: oldDiff.before,
+        after: newDiff.after,
       };
+
+      if (isEffectivelyEqual(merged.before, merged.after)) {
+        // skip this key if before and after are effectively equal
+        skippedKeys.add(key);
+
+        return;
+      }
+
+      result.diff[key] = merged;
     } else {
-      // If the key does not exist in the newRecord, copy it as is from the oldRecord
-      result.diff[key] = oldRecord.diff[key];
+      result.diff[key] = oldDiff;
     }
   });
 
-  // Iterate over the keys in the newRecord diff to catch any that weren't in the oldRecord
+  // Add keys that were only in newRecord - these are new changes that were not in oldRecord
   Object.keys(newRecord.diff ?? {}).forEach((key) => {
-    if (!result.diff[key]) {
-      // If the key was not already added from the oldRecord, add it from the newRecord
+    if (!result.diff[key] && !skippedKeys.has(key)) {
+      // If the key is not already in result.diff and was not skipped, we add it
       result.diff[key] = newRecord.diff[key];
     }
   });

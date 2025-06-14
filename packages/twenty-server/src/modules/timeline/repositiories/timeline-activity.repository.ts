@@ -50,6 +50,15 @@ export class TimelineActivityRepository {
         properties,
       );
 
+      // This essentially means that the timeline activity is not changed from the base records.
+      // So, we should just delete this timeline activity.
+      if (newProps.diff === null || Object.keys(newProps.diff).length === 0) {
+        return this.deleteTimelineActivity(
+          recentTimelineActivity[0].id,
+          workspaceId,
+        );
+      }
+
       return this.updateTimelineActivity(
         recentTimelineActivity[0].id,
         newProps,
@@ -108,6 +117,19 @@ export class TimelineActivityRepository {
       order: { createdAt: 'DESC' },
       take: 1,
     });
+  }
+
+  private async deleteTimelineActivity(id: string, workspaceId: string) {
+    const timelineActivityTypeORMRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        'timelineActivity',
+        {
+          shouldBypassPermissionChecks: true,
+        },
+      );
+
+    return timelineActivityTypeORMRepository.delete(id);
   }
 
   private async updateTimelineActivity(
