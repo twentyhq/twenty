@@ -23,7 +23,7 @@ export class ImapConnectionService {
 
     const client = new ImapFlow({
       host: params.host,
-      port: params.secure ? 993 : 143,
+      port: params.port,
       secure: params.secure,
       auth: {
         user: params.handle,
