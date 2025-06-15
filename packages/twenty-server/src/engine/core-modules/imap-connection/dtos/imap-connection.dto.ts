@@ -1,7 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import {
-  IsEnum,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -9,8 +8,6 @@ import {
   IsUUID,
   Min,
 } from 'class-validator';
-
-import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 @InputType()
 export class TestImapConnectionInput {
@@ -76,9 +73,4 @@ export class SaveImapConnectionInput {
   @IsNotEmpty()
   @IsString()
   password: string;
-
-  @Field(() => MessageChannelVisibility, { nullable: true })
-  @IsOptional()
-  @IsEnum(MessageChannelVisibility)
-  messageVisibility?: MessageChannelVisibility;
 }
