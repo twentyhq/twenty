@@ -1,7 +1,7 @@
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
 import { useAccountToReconnect } from '@/information-banner/hooks/useAccountToReconnect';
 import { InformationBannerKeys } from '@/information-banner/types/InformationBannerKeys';
-import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
+import { useTriggerProviderReconnect } from '@/settings/accounts/hooks/useTriggerProviderReconnect';
 import { IconRefresh } from 'twenty-ui/display';
 
 export const InformationBannerReconnectAccountInsufficientPermissions = () => {
@@ -9,7 +9,7 @@ export const InformationBannerReconnectAccountInsufficientPermissions = () => {
     InformationBannerKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
   );
 
-  const { triggerApisOAuth } = useTriggerApisOAuth();
+  const { triggerProviderReconnect } = useTriggerProviderReconnect();
 
   if (!accountToReconnect) {
     return null;
@@ -21,7 +21,12 @@ export const InformationBannerReconnectAccountInsufficientPermissions = () => {
     reconnect for updates:`}
       buttonTitle="Reconnect"
       buttonIcon={IconRefresh}
-      buttonOnClick={() => triggerApisOAuth(accountToReconnect.provider)}
+      buttonOnClick={() =>
+        triggerProviderReconnect(
+          accountToReconnect.provider,
+          accountToReconnect.id,
+        )
+      }
     />
   );
 };

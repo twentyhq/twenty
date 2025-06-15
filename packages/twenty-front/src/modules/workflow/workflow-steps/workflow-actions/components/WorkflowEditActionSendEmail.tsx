@@ -85,6 +85,8 @@ export const WorkflowEditActionSendEmail = ({
           return scopes.some((scope) => scope === GMAIL_SEND_SCOPE);
         case ConnectedAccountProvider.MICROSOFT:
           return scopes.some((scope) => scope === MICROSOFT_SEND_SCOPE);
+        case ConnectedAccountProvider.IMAP:
+          return false;
         default:
           assertUnreachable(
             connectedAccount.provider,
@@ -182,6 +184,10 @@ export const WorkflowEditActionSendEmail = ({
   const connectedAccountOptions: SelectOption<string | null>[] = [];
 
   accounts.forEach((account) => {
+    if (account.connectionType === 'IMAP') {
+      return;
+    }
+
     const selectOption = {
       label: account.handle,
       value: account.id,
