@@ -1196,7 +1196,13 @@ export type MutationRunWorkflowVersionArgs = {
 
 
 export type MutationSaveImapConnectionArgs = {
-  input: SaveImapConnectionInput;
+  accountOwnerId: Scalars['String'];
+  handle: Scalars['String'];
+  host: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
+  password: Scalars['String'];
+  port: Scalars['Float'];
+  secure: Scalars['Boolean'];
 };
 
 
@@ -1237,7 +1243,11 @@ export type MutationSubmitFormStepArgs = {
 
 
 export type MutationTestImapConnectionArgs = {
-  input: TestImapConnectionInput;
+  handle: Scalars['String'];
+  host: Scalars['String'];
+  password: Scalars['String'];
+  port: Scalars['Float'];
+  secure: Scalars['Boolean'];
 };
 
 
@@ -1825,17 +1835,6 @@ export enum SsoIdentityProviderStatus {
   Inactive = 'Inactive'
 }
 
-export type SaveImapConnectionInput = {
-  accountOwnerId: Scalars['String'];
-  handle: Scalars['String'];
-  host: Scalars['String'];
-  id?: InputMaybe<Scalars['String']>;
-  messageVisibility?: InputMaybe<MessageChannelVisibility>;
-  password: Scalars['String'];
-  port: Scalars['Float'];
-  secure: Scalars['Boolean'];
-};
-
 export type SearchRecord = {
   __typename?: 'SearchRecord';
   imageUrl?: Maybe<Scalars['String']>;
@@ -2035,14 +2034,6 @@ export type SystemHealthService = {
   id: HealthIndicatorId;
   label: Scalars['String'];
   status: AdminPanelHealthServiceStatus;
-};
-
-export type TestImapConnectionInput = {
-  host: Scalars['String'];
-  password: Scalars['String'];
-  port: Scalars['Float'];
-  secure: Scalars['Boolean'];
-  username: Scalars['String'];
 };
 
 export type TimelineCalendarEvent = {
@@ -2793,13 +2784,6 @@ export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{ [key: string]
 
 
 export type SkipSyncEmailOnboardingStepMutation = { __typename?: 'Mutation', skipSyncEmailOnboardingStep: { __typename?: 'OnboardingStepSuccess', success: boolean } };
-
-export type SaveImapConnectionMutationVariables = Exact<{
-  input: SaveImapConnectionInput;
-}>;
-
-
-export type SaveImapConnectionMutation = { __typename?: 'Mutation', saveImapConnection: boolean };
 
 export type CreateDatabaseConfigVariableMutationVariables = Exact<{
   key: Scalars['String'];
@@ -4909,37 +4893,6 @@ export function useSkipSyncEmailOnboardingStepMutation(baseOptions?: Apollo.Muta
 export type SkipSyncEmailOnboardingStepMutationHookResult = ReturnType<typeof useSkipSyncEmailOnboardingStepMutation>;
 export type SkipSyncEmailOnboardingStepMutationResult = Apollo.MutationResult<SkipSyncEmailOnboardingStepMutation>;
 export type SkipSyncEmailOnboardingStepMutationOptions = Apollo.BaseMutationOptions<SkipSyncEmailOnboardingStepMutation, SkipSyncEmailOnboardingStepMutationVariables>;
-export const SaveImapConnectionDocument = gql`
-    mutation SaveImapConnection($input: SaveImapConnectionInput!) {
-  saveImapConnection(input: $input)
-}
-    `;
-export type SaveImapConnectionMutationFn = Apollo.MutationFunction<SaveImapConnectionMutation, SaveImapConnectionMutationVariables>;
-
-/**
- * __useSaveImapConnectionMutation__
- *
- * To run a mutation, you first call `useSaveImapConnectionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSaveImapConnectionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [saveImapConnectionMutation, { data, loading, error }] = useSaveImapConnectionMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useSaveImapConnectionMutation(baseOptions?: Apollo.MutationHookOptions<SaveImapConnectionMutation, SaveImapConnectionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SaveImapConnectionMutation, SaveImapConnectionMutationVariables>(SaveImapConnectionDocument, options);
-      }
-export type SaveImapConnectionMutationHookResult = ReturnType<typeof useSaveImapConnectionMutation>;
-export type SaveImapConnectionMutationResult = Apollo.MutationResult<SaveImapConnectionMutation>;
-export type SaveImapConnectionMutationOptions = Apollo.BaseMutationOptions<SaveImapConnectionMutation, SaveImapConnectionMutationVariables>;
 export const CreateDatabaseConfigVariableDocument = gql`
     mutation CreateDatabaseConfigVariable($key: String!, $value: JSON!) {
   createDatabaseConfigVariable(key: $key, value: $value)

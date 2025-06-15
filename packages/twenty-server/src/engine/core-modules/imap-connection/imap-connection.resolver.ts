@@ -6,10 +6,6 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import {
-  SaveImapConnectionInput,
-  TestImapConnectionInput,
-} from 'src/engine/core-modules/imap-connection/dtos/imap-connection.dto';
 import { ImapConnectionValidatorService } from 'src/engine/core-modules/imap-connection/services/imap-connection-validator.service';
 import { ImapConnectionService } from 'src/engine/core-modules/imap-connection/services/imap-connection.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -66,18 +62,22 @@ export class ImapConnectionResolver {
   @Mutation(() => Boolean)
   @UseGuards(WorkspaceAuthGuard)
   async testImapConnection(
-    @Args('input') input: TestImapConnectionInput,
+    @Args('handle') handle: string,
+    @Args('host') host: string,
+    @Args('port') port: number,
+    @Args('secure') secure: boolean,
+    @Args('password') password: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<boolean> {
     await this.checkIfImapFeatureEnabled(workspace.id);
 
     try {
       await this.imapConnectionService.testConnection({
-        handle: input.handle,
-        host: input.host,
-        port: input.port,
-        secure: input.secure,
-        password: input.password,
+        handle,
+        host,
+        port,
+        secure,
+        password,
       });
 
       return true;
@@ -89,12 +89,16 @@ export class ImapConnectionResolver {
   @Mutation(() => Boolean)
   @UseGuards(WorkspaceAuthGuard)
   async saveImapConnection(
-    @Args('input') input: SaveImapConnectionInput,
+    @Args('accountOwnerId') accountOwnerId: string,
+    @Args('handle') handle: string,
+    @Args('host') host: string,
+    @Args('port') port: number,
+    @Args('secure') secure: boolean,
+    @Args('password') password: string,
     @AuthWorkspace() workspace: Workspace,
+    @Args('id', { nullable: true }) id?: string,
   ): Promise<boolean> {
     await this.checkIfImapFeatureEnabled(workspace.id);
-
-    const { id, accountOwnerId, handle, host, port, secure, password } = input;
 
     const connectionParams =
       this.imapConnectionValidatorService.validateImapConnectionParams({

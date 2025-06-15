@@ -65,19 +65,19 @@ const SettingsNewObject = lazy(() =>
 );
 
 const SettingsNewImapConnection = lazy(() =>
-  import('~/pages/settings/data-model/SettingsNewImapConnection').then(
-    (module) => ({
-      default: module.SettingsNewImapConnection,
-    }),
-  ),
+  import(
+    '@/settings/accounts/components/SettingsAccountsNewImapConnection'
+  ).then((module) => ({
+    default: module.SettingsAccountsNewImapConnection,
+  })),
 );
 
 const SettingsEditImapConnection = lazy(() =>
-  import('~/pages/settings/data-model/SettingsEditImapConnection').then(
-    (module) => ({
-      default: module.SettingsEditImapConnection,
-    }),
-  ),
+  import(
+    '@/settings/accounts/components/SettingsAccountsEditImapConnection'
+  ).then((module) => ({
+    default: module.SettingsAccountsEditImapConnection,
+  })),
 );
 
 const SettingsObjectDetailPage = lazy(() =>

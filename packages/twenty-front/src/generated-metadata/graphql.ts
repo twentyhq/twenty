@@ -134,21 +134,28 @@ export type AuthorizeApp = {
   redirectUrl: Scalars['String']['output'];
 };
 
-export type AvailableWorkspaceOutput = {
-  __typename?: 'AvailableWorkspaceOutput';
+export type AvailableWorkspace = {
+  __typename?: 'AvailableWorkspace';
   displayName?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
+  inviteHash?: Maybe<Scalars['String']['output']>;
+  loginToken?: Maybe<Scalars['String']['output']>;
   logo?: Maybe<Scalars['String']['output']>;
+  personalInviteToken?: Maybe<Scalars['String']['output']>;
   sso: Array<SsoConnection>;
   workspaceUrls: WorkspaceUrls;
 };
 
-export type AvailableWorkspacesToJoin = {
-  __typename?: 'AvailableWorkspacesToJoin';
-  displayName?: Maybe<Scalars['String']['output']>;
-  id: Scalars['String']['output'];
-  logo?: Maybe<Scalars['String']['output']>;
-  workspaceUrl: Scalars['String']['output'];
+export type AvailableWorkspaces = {
+  __typename?: 'AvailableWorkspaces';
+  availableWorkspacesForSignIn: Array<AvailableWorkspace>;
+  availableWorkspacesForSignUp: Array<AvailableWorkspace>;
+};
+
+export type AvailableWorkspacesAndAccessTokensOutput = {
+  __typename?: 'AvailableWorkspacesAndAccessTokensOutput';
+  availableWorkspaces: AvailableWorkspaces;
+  tokens: AuthTokenPair;
 };
 
 export type Billing = {
@@ -308,7 +315,7 @@ export enum CaptchaDriverType {
 
 export type CheckUserExistOutput = {
   __typename?: 'CheckUserExistOutput';
-  availableWorkspaces: Array<AvailableWorkspaceOutput>;
+  availableWorkspacesCount: Scalars['Float']['output'];
   exists: Scalars['Boolean']['output'];
   isEmailVerified: Scalars['Boolean']['output'];
 };
@@ -959,7 +966,6 @@ export type Mutation = {
   createOneRole: Role;
   createOneServerlessFunction: ServerlessFunction;
   createSAMLIdentityProvider: SetupSsoOutput;
-  createUserAndWorkspace: SignUpOutput;
   createWorkflowVersionStep: WorkflowAction;
   deactivateWorkflowVersion: Scalars['Boolean']['output'];
   deleteApprovedAccessDomain: Scalars['Boolean']['output'];
@@ -994,8 +1000,10 @@ export type Mutation = {
   runWorkflowVersion: WorkflowRun;
   saveImapConnection: Scalars['Boolean']['output'];
   sendInvitations: SendInvitationsOutput;
-  signUp: SignUpOutput;
+  signIn: AvailableWorkspacesAndAccessTokensOutput;
+  signUp: AvailableWorkspacesAndAccessTokensOutput;
   signUpInNewWorkspace: SignUpOutput;
+  signUpInWorkspace: SignUpOutput;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   submitFormStep: Scalars['Boolean']['output'];
   switchToEnterprisePlan: BillingUpdateOutput;
@@ -1120,16 +1128,6 @@ export type MutationCreateOneServerlessFunctionArgs = {
 
 export type MutationCreateSamlIdentityProviderArgs = {
   input: SetupSamlSsoInput;
-};
-
-
-export type MutationCreateUserAndWorkspaceArgs = {
-  captchaToken?: InputMaybe<Scalars['String']['input']>;
-  email: Scalars['String']['input'];
-  firstName?: InputMaybe<Scalars['String']['input']>;
-  lastName?: InputMaybe<Scalars['String']['input']>;
-  locale?: InputMaybe<Scalars['String']['input']>;
-  picture?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -1275,7 +1273,13 @@ export type MutationRunWorkflowVersionArgs = {
 
 
 export type MutationSaveImapConnectionArgs = {
-  input: SaveImapConnectionInput;
+  accountOwnerId: Scalars['String']['input'];
+  handle: Scalars['String']['input'];
+  host: Scalars['String']['input'];
+  id?: InputMaybe<Scalars['String']['input']>;
+  password: Scalars['String']['input'];
+  port: Scalars['Float']['input'];
+  secure: Scalars['Boolean']['input'];
 };
 
 
@@ -1284,7 +1288,21 @@ export type MutationSendInvitationsArgs = {
 };
 
 
+export type MutationSignInArgs = {
+  captchaToken?: InputMaybe<Scalars['String']['input']>;
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+};
+
+
 export type MutationSignUpArgs = {
+  captchaToken?: InputMaybe<Scalars['String']['input']>;
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+};
+
+
+export type MutationSignUpInWorkspaceArgs = {
   captchaToken?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   locale?: InputMaybe<Scalars['String']['input']>;
@@ -1312,7 +1330,11 @@ export type MutationSyncRemoteTableSchemaChangesArgs = {
 
 
 export type MutationTestImapConnectionArgs = {
-  input: TestImapConnectionInput;
+  handle: Scalars['String']['input'];
+  host: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+  port: Scalars['Float']['input'];
+  secure: Scalars['Boolean']['input'];
 };
 
 
@@ -1680,7 +1702,6 @@ export type Query = {
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   index: Index;
   indexMetadatas: IndexConnection;
-  listAvailableWorkspaces: Array<AvailableWorkspaceOutput>;
   object: Object;
   objects: ObjectConnection;
   plans: Array<BillingPlanOutput>;
@@ -1809,12 +1830,6 @@ export type QueryIndexArgs = {
 export type QueryIndexMetadatasArgs = {
   filter?: IndexFilter;
   paging?: CursorPaging;
-};
-
-
-export type QueryListAvailableWorkspacesArgs = {
-  captchaToken?: InputMaybe<Scalars['String']['input']>;
-  email: Scalars['String']['input'];
 };
 
 
@@ -1981,17 +1996,6 @@ export enum SsoIdentityProviderStatus {
   Error = 'Error',
   Inactive = 'Inactive'
 }
-
-export type SaveImapConnectionInput = {
-  accountOwnerId: Scalars['String']['input'];
-  handle: Scalars['String']['input'];
-  host: Scalars['String']['input'];
-  id?: InputMaybe<Scalars['String']['input']>;
-  messageVisibility?: InputMaybe<MessageChannelVisibility>;
-  password: Scalars['String']['input'];
-  port: Scalars['Float']['input'];
-  secure: Scalars['Boolean']['input'];
-};
 
 export type SearchRecord = {
   __typename?: 'SearchRecord';
@@ -2192,14 +2196,6 @@ export type SystemHealthService = {
   id: HealthIndicatorId;
   label: Scalars['String']['output'];
   status: AdminPanelHealthServiceStatus;
-};
-
-export type TestImapConnectionInput = {
-  host: Scalars['String']['input'];
-  password: Scalars['String']['input'];
-  port: Scalars['Float']['input'];
-  secure: Scalars['Boolean']['input'];
-  username: Scalars['String']['input'];
 };
 
 export type TimelineCalendarEvent = {
@@ -2420,7 +2416,7 @@ export type UpsertSettingPermissionsInput = {
 
 export type User = {
   __typename?: 'User';
-  availableWorkspaces: Array<AvailableWorkspacesToJoin>;
+  availableWorkspaces: AvailableWorkspaces;
   canAccessFullAdminPanel: Scalars['Boolean']['output'];
   canImpersonate: Scalars['Boolean']['output'];
   createdAt: Scalars['DateTime']['output'];
@@ -2440,7 +2436,7 @@ export type User = {
   passwordHash?: Maybe<Scalars['String']['output']>;
   supportUserHash?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['DateTime']['output'];
-  userVars: Scalars['JSONObject']['output'];
+  userVars?: Maybe<Scalars['JSONObject']['output']>;
   workspaceMember?: Maybe<WorkspaceMember>;
   workspaceMembers?: Maybe<Array<WorkspaceMember>>;
   workspaces: Array<UserWorkspace>;
