@@ -1,5 +1,6 @@
 import { CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { LiteralUnion } from 'type-fest';
 import { MessageChannel } from './MessageChannel';
 
 export type ConnectedAccount = {
@@ -16,6 +17,6 @@ export type ConnectedAccount = {
   scopes: string[] | null;
   customConnectionParams?: Record<string, any>;
   // eslint-disable-next-line @typescript-eslint/ban-types
-  connectionType: 'OAuth2' | 'IMAP' | (string & {});
+  connectionType: LiteralUnion<'OAuth2' | 'IMAP', string>;
   __typename: 'ConnectedAccount';
 };
