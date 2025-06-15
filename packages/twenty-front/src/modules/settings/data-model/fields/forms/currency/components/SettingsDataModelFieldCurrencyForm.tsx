@@ -8,7 +8,7 @@ import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
 import { Select } from '@/ui/input/components/Select';
 import { useLingui } from '@lingui/react/macro';
-import { IconCurrencyDollar } from 'twenty-ui/display';
+import { IconCurrencyDollar, IconCheckbox } from 'twenty-ui/display';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 
 export const settingsDataModelFieldCurrencyFormSchema = z.object({
@@ -32,7 +32,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
   const { control } =
     useFormContext<SettingsDataModelFieldCurrencyFormValues>();
 
-  const { initialAmountMicrosValue, initialCurrencyCodeValue } =
+  const { initialAmountMicrosValue, initialCurrencyCodeValue, initialFormatValue } =
     useCurrencySettingsFormInitialValues({ fieldMetadataItem });
 
   return (
@@ -65,6 +65,32 @@ export const SettingsDataModelFieldCurrencyForm = ({
               }))}
               selectSizeVariant="small"
               withSearchInput={true}
+            />
+          </SettingsOptionCardContentSelect>
+        )}
+      />
+      <Controller
+        name="defaultValue.format"
+        control={control}
+        defaultValue={initialFormatValue}
+        render={({ field: { onChange, value } }) => (
+          <SettingsOptionCardContentSelect
+            Icon={IconCheckbox}
+            title={t`Format`}
+            description={t`Choose between Short and Full`}
+          >
+            <Select<string>
+              dropdownWidth={140}
+              value={value}
+              onChange={onChange}
+              disabled={disabled}
+              dropdownId="object-field-format-select"
+              options={[
+                { label: 'Short', value: 'short' },
+                { label: 'Full', value: 'full' },
+              ]}
+              selectSizeVariant="small"
+              withSearchInput={false}
             />
           </SettingsOptionCardContentSelect>
         )}
