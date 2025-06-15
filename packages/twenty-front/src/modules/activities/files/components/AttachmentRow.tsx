@@ -202,6 +202,7 @@ export const AttachmentRow = ({
             onDelete={handleDelete}
             onDownload={handleDownload}
             onRename={handleRename}
+            isSignatureEnabled={attachment.type === 'TextDocument'}
           />
         </StyledRightContent>
       </ActivityRow>
