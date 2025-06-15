@@ -184,6 +184,10 @@ export const WorkflowEditActionSendEmail = ({
   const connectedAccountOptions: SelectOption<string | null>[] = [];
 
   accounts.forEach((account) => {
+    if (account.connectionType === 'IMAP') {
+      return;
+    }
+
     const selectOption = {
       label: account.handle,
       value: account.id,
