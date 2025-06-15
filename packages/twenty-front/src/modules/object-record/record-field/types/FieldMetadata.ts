@@ -56,7 +56,7 @@ export type FieldDateMetadata = BaseFieldMetadata & {
   settings?: FieldDateMetadataSettings;
 };
 
-export type FieldNumberVariant = 'number' | 'percentage';
+export type FieldNumberVariant = 'number' | 'percentage' | 'shortNumber';
 
 export type FieldNumberMetadata = BaseFieldMetadata & {
   placeHolder: string;

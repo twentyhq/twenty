@@ -8,6 +8,11 @@ export const NUMBER_DATA_MODEL_SELECT_OPTIONS = [
     value: 'number',
   },
   {
+    Icon: IconNumber9,
+    label: msg`Short Number`,
+    value: 'shortNumber',
+  },
+  {
     Icon: IconPercentage,
     label: msg`Percentage`,
     value: 'percentage',
