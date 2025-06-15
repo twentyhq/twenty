@@ -27,7 +27,8 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     key: FeatureFlagKey.IS_IMAP_ENABLED,
     metadata: {
       label: 'IMAP',
-      description: 'Enable IMAP integration.',
+      description:
+        'Easily add email accounts from any provider that supports IMAP (and soon, send emails with SMTP)',
       imagePath: 'https://twenty.com/images/lab/is-imap-enabled.png',
     },
   },
