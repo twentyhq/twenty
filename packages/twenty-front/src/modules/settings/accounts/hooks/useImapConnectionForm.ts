@@ -116,7 +116,6 @@ export const useImapConnectionForm = ({
         ...(formValues.password || !isEditing
           ? { password: formValues.password }
           : {}),
-        messageVisibility: formValues.messageVisibility,
       };
 
       await saveImapConnection({

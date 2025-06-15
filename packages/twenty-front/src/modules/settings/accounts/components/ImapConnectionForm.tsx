@@ -7,7 +7,6 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { MessageChannelVisibility } from '~/generated-metadata/graphql';
 
 const StyledFormContainer = styled.form`
   display: flex;
@@ -108,32 +107,6 @@ export const ImapConnectionForm = ({
               value={field.value || ''}
               onChange={field.onChange}
               error={fieldState.error?.message}
-            />
-          )}
-        />
-        <Controller
-          name="messageVisibility"
-          control={control}
-          render={({ field }) => (
-            <Select
-              label={t`Message Visibility`}
-              options={[
-                {
-                  label: t`Everything`,
-                  value: MessageChannelVisibility.SHARE_EVERYTHING,
-                },
-                {
-                  label: t`Subject and metadata`,
-                  value: MessageChannelVisibility.SUBJECT,
-                },
-                {
-                  label: t`Metadata`,
-                  value: MessageChannelVisibility.METADATA,
-                },
-              ]}
-              value={field.value}
-              onChange={field.onChange}
-              dropdownId="messageVisibility-dropdown"
             />
           )}
         />

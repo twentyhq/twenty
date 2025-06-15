@@ -94,16 +94,7 @@ export class ImapConnectionResolver {
   ): Promise<boolean> {
     await this.checkIfImapFeatureEnabled(workspace.id);
 
-    const {
-      id,
-      accountOwnerId,
-      handle,
-      host,
-      port,
-      secure,
-      password,
-      messageVisibility,
-    } = input;
+    const { id, accountOwnerId, handle, host, port, secure, password } = input;
 
     const connectionParams =
       this.imapConnectionValidatorService.validateImapConnectionParams({
@@ -170,7 +161,6 @@ export class ImapConnectionResolver {
         workspaceMemberId: accountOwnerId,
         workspaceId: workspace.id,
         connectionParams,
-        messageVisibility,
       });
     }
 

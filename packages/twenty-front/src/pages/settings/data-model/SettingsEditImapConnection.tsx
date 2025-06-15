@@ -10,7 +10,6 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -37,12 +36,15 @@ export const SettingsEditImapConnection = () => {
     connectedAccountId,
   });
 
-  const initialData = connectionParams
-    ? {
-        handle: connectedAccount?.handle || '',
-        ...connectionParams,
-      }
-    : undefined;
+  const initialData =
+    connectionParams && isDefined(connectedAccount)
+      ? {
+          handle: connectedAccount?.handle || '',
+          host: connectionParams.host,
+          port: connectionParams.port,
+          secure: connectionParams.secure,
+        }
+      : undefined;
 
   const { formMethods, handleSave, handleSubmit, canSave, isSubmitting } =
     useImapConnectionForm({
@@ -51,22 +53,7 @@ export const SettingsEditImapConnection = () => {
       connectedAccountId,
     });
 
-  const { control, reset } = formMethods;
-
-  useEffect(() => {
-    if (!isDefined(connectionParams)) {
-      return;
-    }
-
-    // Update form values in a single batch operation
-    reset({
-      handle: connectedAccount?.handle || '',
-      host: connectionParams.host,
-      port: connectionParams.port,
-      secure: connectionParams.secure,
-      messageVisibility: connectionParams.messageVisibility,
-    });
-  }, [connectionParams, connectedAccount, reset]);
+  const { control } = formMethods;
 
   const renderLoadingState = () => (
     <StyledLoadingContainer>

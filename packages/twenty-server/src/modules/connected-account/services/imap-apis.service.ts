@@ -6,7 +6,6 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ImapConnectionParams } from 'src/engine/core-modules/imap-connection/types/imap-connection.type';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -21,7 +20,6 @@ import {
   MessageChannelSyncStage,
   MessageChannelSyncStatus,
   MessageChannelType,
-  MessageChannelVisibility,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
@@ -46,7 +44,6 @@ export class IMAPAPIsService {
     handle: string;
     workspaceMemberId: string;
     workspaceId: string;
-    messageVisibility: MessageChannelVisibility | undefined;
     connectionParams: ImapConnectionParams;
   }) {
     const isImapEnabled = await this.featureFlagService.isFeatureEnabled(
@@ -58,13 +55,7 @@ export class IMAPAPIsService {
       throw new Error('IMAP feature is not enabled for this workspace');
     }
 
-    const {
-      handle,
-      workspaceId,
-      workspaceMemberId,
-      connectionParams,
-      messageVisibility,
-    } = input;
+    const { handle, workspaceId, workspaceMemberId, connectionParams } = input;
 
     const connectedAccountRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
@@ -136,8 +127,6 @@ export class IMAPAPIsService {
             connectedAccountId: newOrExistingConnectedAccountId,
             type: MessageChannelType.EMAIL,
             handle,
-            visibility:
-              messageVisibility || MessageChannelVisibility.SHARE_EVERYTHING,
             syncStatus: MessageChannelSyncStatus.ONGOING,
           },
           {},

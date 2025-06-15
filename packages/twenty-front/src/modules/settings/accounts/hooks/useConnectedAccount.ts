@@ -1,6 +1,5 @@
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { gql, useQuery } from '@apollo/client';
-import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { MessageChannelVisibility } from '~/generated-metadata/graphql';
 
@@ -52,8 +51,6 @@ export const useConnectedAccount = ({
   connectedAccountId,
   skip = false,
 }: UseConnectedAccountProps): UseConnectedAccountReturn => {
-  const [connectionParams, setConnectionParams] = useState<ConnectionParams>();
-
   const { data, loading, error } = useQuery(GET_CONNECTED_ACCOUNT, {
     variables: {
       id: connectedAccountId,
@@ -63,23 +60,16 @@ export const useConnectedAccount = ({
 
   const connectedAccount = data?.connectedAccount;
 
-  useEffect(() => {
-    if (!isDefined(connectedAccount?.customConnectionParams)) {
-      return;
-    }
-
-    const params = connectedAccount.customConnectionParams || {};
-    const visibility =
-      connectedAccount.messageChannels?.edges?.[0]?.node?.visibility ||
-      MessageChannelVisibility.SHARE_EVERYTHING;
-
-    setConnectionParams({
-      host: params.host as string,
-      port: params.port as number,
-      secure: params.secure as boolean,
-      messageVisibility: visibility as MessageChannelVisibility,
-    });
-  }, [connectedAccount]);
+  const connectionParams = isDefined(connectedAccount?.customConnectionParams)
+    ? {
+        host: connectedAccount.customConnectionParams.host as string,
+        port: connectedAccount.customConnectionParams.port as number,
+        secure: connectedAccount.customConnectionParams.secure as boolean,
+        messageVisibility: (connectedAccount.messageChannels?.edges?.[0]?.node
+          ?.visibility ||
+          MessageChannelVisibility.SHARE_EVERYTHING) as MessageChannelVisibility,
+      }
+    : undefined;
 
   return {
     connectedAccount,
