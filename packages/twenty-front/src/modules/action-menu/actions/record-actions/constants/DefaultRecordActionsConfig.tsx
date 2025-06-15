@@ -49,7 +49,7 @@ import {
   IconTargetArrow,
   IconTrash,
   IconTrashX,
-  IconUser
+  IconUser,
 } from 'twenty-ui/display';
 
 export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
@@ -510,7 +510,8 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_BULK_SELECTION,
       ActionViewType.SHOW_PAGE,
     ],
-    shouldBeRegistered: ({ objectMetadataItem, viewType }) =>      objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Carrier ||
+    shouldBeRegistered: ({ objectMetadataItem, viewType }) =>
+      objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Carrier ||
       viewType === ActionViewType.SHOW_PAGE,
     component: (
       <ActionLink
