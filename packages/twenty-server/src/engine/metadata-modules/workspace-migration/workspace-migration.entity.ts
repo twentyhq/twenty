@@ -56,16 +56,15 @@ export type WorkspaceMigrationColumnAlter = {
   alteredColumnDefinition: WorkspaceMigrationColumnDefinition;
 };
 
-export type WorkspaceMigrationColumnCreateRelation = {
+export type WorkspaceMigrationColumnCreateForeignKey = {
   action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY;
   columnName: string;
   referencedTableName: string;
   referencedTableColumnName: string;
-  isUnique?: boolean;
   onDelete?: RelationOnDeleteAction;
 };
 
-export type WorkspaceMigrationColumnDropRelation = {
+export type WorkspaceMigrationColumnDropForeignKey = {
   action: WorkspaceMigrationColumnActionType.DROP_FOREIGN_KEY;
   columnName: string;
 };
@@ -102,8 +101,8 @@ export type WorkspaceMigrationColumnAction = {
 } & (
   | WorkspaceMigrationColumnCreate
   | WorkspaceMigrationColumnAlter
-  | WorkspaceMigrationColumnCreateRelation
-  | WorkspaceMigrationColumnDropRelation
+  | WorkspaceMigrationColumnCreateForeignKey
+  | WorkspaceMigrationColumnDropForeignKey
   | WorkspaceMigrationColumnDrop
 );
 

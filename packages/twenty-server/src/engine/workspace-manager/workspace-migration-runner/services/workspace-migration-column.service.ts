@@ -1,21 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'class-validator';
-import {
-  QueryRunner,
-  TableColumn,
-  TableForeignKey,
-  TableUnique,
-} from 'typeorm';
+import { QueryRunner, TableColumn, TableForeignKey } from 'typeorm';
 
 import {
   WorkspaceMigrationColumnAction,
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationColumnAlter,
   WorkspaceMigrationColumnCreate,
-  WorkspaceMigrationColumnCreateRelation,
+  WorkspaceMigrationColumnCreateForeignKey,
   WorkspaceMigrationColumnDrop,
-  WorkspaceMigrationColumnDropRelation,
+  WorkspaceMigrationColumnDropForeignKey,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationEnumService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-enum.service';
 import { WorkspaceMigrationTypeService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-type.service';
@@ -60,14 +54,23 @@ export class WorkspaceMigrationColumnService {
       );
     }
 
-    await this.handleOtherColumnActions(
-      queryRunner,
-      schemaName,
-      tableName,
-      columnsByAction.alter,
-      columnsByAction.createForeignKey,
-      columnsByAction.dropForeignKey,
-    );
+    if (columnsByAction.alter.length > 0) {
+      for (const column of columnsByAction.alter) {
+        await this.alterColumn(queryRunner, schemaName, tableName, column);
+      }
+    }
+
+    if (columnsByAction.createForeignKey.length > 0) {
+      for (const column of columnsByAction.createForeignKey) {
+        await this.createForeignKey(queryRunner, schemaName, tableName, column);
+      }
+    }
+
+    if (columnsByAction.dropForeignKey.length > 0) {
+      for (const column of columnsByAction.dropForeignKey) {
+        await this.dropForeignKey(queryRunner, schemaName, tableName, column);
+      }
+    }
   }
 
   private groupColumnsByAction(
@@ -84,12 +87,12 @@ export class WorkspaceMigrationColumnService {
             break;
           case WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY:
             acc.createForeignKey.push(
-              column as WorkspaceMigrationColumnCreateRelation,
+              column as WorkspaceMigrationColumnCreateForeignKey,
             );
             break;
           case WorkspaceMigrationColumnActionType.DROP_FOREIGN_KEY:
             acc.dropForeignKey.push(
-              column as WorkspaceMigrationColumnDropRelation,
+              column as WorkspaceMigrationColumnDropForeignKey,
             );
             break;
           case WorkspaceMigrationColumnActionType.DROP:
@@ -102,8 +105,8 @@ export class WorkspaceMigrationColumnService {
       {
         create: [] as WorkspaceMigrationColumnCreate[],
         alter: [] as WorkspaceMigrationColumnAlter[],
-        createForeignKey: [] as WorkspaceMigrationColumnCreateRelation[],
-        dropForeignKey: [] as WorkspaceMigrationColumnDropRelation[],
+        createForeignKey: [] as WorkspaceMigrationColumnCreateForeignKey[],
+        dropForeignKey: [] as WorkspaceMigrationColumnDropForeignKey[],
         drop: [] as WorkspaceMigrationColumnDrop[],
       },
     );
@@ -173,27 +176,6 @@ export class WorkspaceMigrationColumnService {
     const columnNames = dropColumns.map((column) => column.columnName);
 
     await queryRunner.dropColumns(`${schemaName}.${tableName}`, columnNames);
-  }
-
-  public async handleOtherColumnActions(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-    alterColumns: WorkspaceMigrationColumnAlter[],
-    createForeignKeyColumns: WorkspaceMigrationColumnCreateRelation[],
-    dropForeignKeyColumns: WorkspaceMigrationColumnDropRelation[],
-  ) {
-    for (const column of alterColumns) {
-      await this.alterColumn(queryRunner, schemaName, tableName, column);
-    }
-
-    for (const column of createForeignKeyColumns) {
-      await this.createRelation(queryRunner, schemaName, tableName, column);
-    }
-
-    for (const column of dropForeignKeyColumns) {
-      await this.dropRelation(queryRunner, schemaName, tableName, column);
-    }
   }
 
   public async alterColumn(
@@ -269,56 +251,29 @@ export class WorkspaceMigrationColumnService {
     );
   }
 
-  private async createRelation(
+  private async createForeignKey(
     queryRunner: QueryRunner,
     schemaName: string,
     tableName: string,
-    migrationColumn: WorkspaceMigrationColumnCreateRelation,
+    migrationColumn: WorkspaceMigrationColumnCreateForeignKey,
   ) {
-    try {
-      await queryRunner.createForeignKey(
-        `${schemaName}.${tableName}`,
-        new TableForeignKey({
-          columnNames: [migrationColumn.columnName],
-          referencedColumnNames: [migrationColumn.referencedTableColumnName],
-          referencedTableName: migrationColumn.referencedTableName,
-          referencedSchema: schemaName,
-          onDelete: convertOnDeleteActionToOnDelete(migrationColumn.onDelete),
-        }),
-      );
-      // TODO remove me after 0.53 release @prastoin @charlesBochet Swallowing blocking false positive constraint
-    } catch (error) {
-      if (
-        [error.driverError.message, error.message]
-          .filter(isDefined)
-          .some((el: string) => el.includes('FK_e078063f0cbce9767a0f8ca431d'))
-      ) {
-        this.logger.warn(
-          'Encountered a FK_e078063f0cbce9767a0f8ca431d exception, swallowing',
-        );
-      } else {
-        throw error;
-      }
-    }
-    /// End remove me
-
-    // Create unique constraint if for one to one relation
-    if (migrationColumn.isUnique) {
-      await queryRunner.createUniqueConstraint(
-        `${schemaName}.${tableName}`,
-        new TableUnique({
-          name: `UNIQUE_${tableName}_${migrationColumn.columnName}`,
-          columnNames: [migrationColumn.columnName],
-        }),
-      );
-    }
+    await queryRunner.createForeignKey(
+      `${schemaName}.${tableName}`,
+      new TableForeignKey({
+        columnNames: [migrationColumn.columnName],
+        referencedColumnNames: [migrationColumn.referencedTableColumnName],
+        referencedTableName: migrationColumn.referencedTableName,
+        referencedSchema: schemaName,
+        onDelete: convertOnDeleteActionToOnDelete(migrationColumn.onDelete),
+      }),
+    );
   }
 
-  private async dropRelation(
+  private async dropForeignKey(
     queryRunner: QueryRunner,
     schemaName: string,
     tableName: string,
-    migrationColumn: WorkspaceMigrationColumnDropRelation,
+    migrationColumn: WorkspaceMigrationColumnDropForeignKey,
   ) {
     const foreignKeyName = await this.getForeignKeyName(
       queryRunner,
@@ -328,10 +283,6 @@ export class WorkspaceMigrationColumnService {
     );
 
     if (!foreignKeyName) {
-      // Todo: Remove this temporary hack tied to 0.32 upgrade
-      if (migrationColumn.columnName === 'activityId') {
-        return;
-      }
       throw new Error(
         `Foreign key not found for column ${migrationColumn.columnName}`,
       );
