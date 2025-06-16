@@ -14,7 +14,6 @@ export enum WorkspaceMigrationColumnActionType {
   CREATE_FOREIGN_KEY = 'CREATE_FOREIGN_KEY',
   DROP_FOREIGN_KEY = 'DROP_FOREIGN_KEY',
   DROP = 'DROP',
-  CREATE_COMMENT = 'CREATE_COMMENT',
 }
 export type WorkspaceMigrationRenamedEnum = { from: string; to: string };
 export type WorkspaceMigrationEnum = string | WorkspaceMigrationRenamedEnum;
@@ -76,11 +75,6 @@ export type WorkspaceMigrationColumnDrop = {
   columnName: string;
 };
 
-export type WorkspaceMigrationCreateComment = {
-  action: WorkspaceMigrationColumnActionType.CREATE_COMMENT;
-  comment: string;
-};
-
 export type WorkspaceMigrationForeignColumnDefinition =
   WorkspaceMigrationColumnDefinition & {
     distantColumnName: string;
@@ -111,7 +105,6 @@ export type WorkspaceMigrationColumnAction = {
   | WorkspaceMigrationColumnCreateRelation
   | WorkspaceMigrationColumnDropRelation
   | WorkspaceMigrationColumnDrop
-  | WorkspaceMigrationCreateComment
 );
 
 /**
