@@ -1,0 +1,18 @@
+{
+  "install": "yarn install && echo 'Setting up Docker Compose environment...' && cd packages/twenty-docker && cp -n docker-compose.yml docker-compose.dev.yml || true",
+  "start": "sudo service docker start && cd packages/twenty-docker && echo 'Installing yq...' && sudo apt-get update && sudo apt-get install -y wget && wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 && sudo chmod +x /usr/local/bin/yq && echo 'Patching docker-compose for local development...' && yq eval 'del(.services.server.image)' -i docker-compose.dev.yml && yq eval '.services.server.build.context = \"../../\"' -i docker-compose.dev.yml && yq eval '.services.server.build.dockerfile = \"./packages/twenty-docker/twenty/Dockerfile\"' -i docker-compose.dev.yml && yq eval 'del(.services.worker.image)' -i docker-compose.dev.yml && yq eval '.services.worker.build.context = \"../../\"' -i docker-compose.dev.yml && yq eval '.services.worker.build.dockerfile = \"./packages/twenty-docker/twenty/Dockerfile\"' -i docker-compose.dev.yml && echo 'Setting up .env file...' && echo 'SERVER_URL=http://localhost:3000' > .env && echo 'APP_SECRET='$(openssl rand -base64 32) >> .env && echo 'PG_DATABASE_PASSWORD='$(openssl rand -hex 16) >> .env && echo 'SIGN_IN_PREFILLED=true' >> .env && echo 'Building and starting services...' && docker-compose -f docker-compose.dev.yml up -d --build",
+  "terminals": [
+    {
+      "name": "Docker Compose Logs",
+      "command": "sleep 30 && cd packages/twenty-docker && docker-compose -f docker-compose.dev.yml logs -f"
+    },
+    {
+      "name": "Database Seed",
+      "command": "sleep 60 && cd packages/twenty-docker && echo 'Waiting for services to be ready...' && until docker-compose -f docker-compose.dev.yml exec -T server curl --fail http://localhost:3000/healthz 2>/dev/null; do echo 'Waiting for server...'; sleep 5; done && echo 'Seeding database...' && docker-compose -f docker-compose.dev.yml exec -T server yarn command:prod -- workspace:seed:dev"
+    },
+    {
+      "name": "Service Status",
+      "command": "sleep 10 && cd packages/twenty-docker && while true; do clear; echo '=== Service Status ===' && docker-compose -f docker-compose.dev.yml ps && echo '\\n=== Health Status ===' && docker-compose -f docker-compose.dev.yml exec -T server curl -s http://localhost:3000/healthz 2>/dev/null && echo ' - Server: Healthy' || echo ' - Server: Starting...' && sleep 30; done"
+    }
+  ]
+} 
