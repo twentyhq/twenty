@@ -90,7 +90,7 @@ export const Notes = ({
         title="All"
         notes={notes}
         button={
-          !hasObjectUpdatePermissions && (
+          hasObjectUpdatePermissions && (
             <Button
               Icon={IconPlus}
               size="small"
