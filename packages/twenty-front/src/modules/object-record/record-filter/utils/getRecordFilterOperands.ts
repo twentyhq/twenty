@@ -150,7 +150,7 @@ export const COMPOSITE_FIELD_FILTER_OPERANDS_MAP = {
 export const getRecordFilterOperands = ({
   filterType,
   subFieldName,
-}: GetRecordFilterOperandsParams) => {
+}: GetRecordFilterOperandsParams): readonly RecordFilterOperand[] => {
   switch (filterType) {
     case 'TEXT':
     case 'EMAILS':
