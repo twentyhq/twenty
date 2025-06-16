@@ -1,18 +1,15 @@
 import { AdvancedFilterLogicalOperatorDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorDropdown';
-import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 
 import styled from '@emotion/styled';
-import { useContext } from 'react';
 import { capitalize } from 'twenty-shared/utils';
 
-const StyledText = styled.div<{ noPadding?: boolean }>`
+const StyledText = styled.div`
   height: ${({ theme }) => theme.spacing(8)};
   display: flex;
   align-items: center;
 
-  padding-left: ${({ theme, noPadding }) =>
-    noPadding ? 0 : theme.spacing(2.25)};
+  padding-left: ${({ theme }) => theme.spacing(2.25)};
 `;
 
 const StyledContainer = styled.div`
@@ -31,18 +28,16 @@ export const AdvancedFilterLogicalOperatorCell = ({
   index,
   recordFilterGroup,
 }: AdvancedFilterLogicalOperatorCellProps) => {
-  const { isColumn } = useContext(AdvancedFilterContext);
-
   return (
     <StyledContainer>
       {index === 0 ? (
-        <StyledText noPadding={isColumn}>Where</StyledText>
+        <StyledText>Where</StyledText>
       ) : index === 1 ? (
         <AdvancedFilterLogicalOperatorDropdown
           recordFilterGroup={recordFilterGroup}
         />
       ) : (
-        <StyledText noPadding={isColumn}>
+        <StyledText>
           {capitalize(recordFilterGroup.logicalOperator.toLowerCase())}
         </StyledText>
       )}

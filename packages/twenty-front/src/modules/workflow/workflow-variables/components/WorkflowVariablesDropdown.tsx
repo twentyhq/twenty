@@ -37,11 +37,13 @@ export const WorkflowVariablesDropdown = ({
   onVariableSelect,
   disabled,
   objectNameSingularToSelect,
+  multiline,
 }: {
   inputId: string;
   onVariableSelect: (variableName: string) => void;
   disabled?: boolean;
   objectNameSingularToSelect?: string;
+  multiline?: boolean;
 }) => {
   const theme = useTheme();
 
@@ -132,7 +134,10 @@ export const WorkflowVariablesDropdown = ({
         )
       }
       dropdownPlacement="bottom-end"
-      dropdownOffset={{ x: 2, y: 4 }}
+      dropdownOffset={{
+        x: parseInt(theme.spacing(0.5), 10),
+        y: parseInt(theme.spacing(multiline ? 11 : 1), 10),
+      }}
     />
   );
 };

@@ -25,6 +25,7 @@ import {
 enum ValueType {
   PERCENTAGE = 'percentage',
   NUMBER = 'number',
+  SHORT_NUMBER = 'shortNumber',
 }
 
 class NumberSettingsValidation {
@@ -35,7 +36,7 @@ class NumberSettingsValidation {
 
   @IsOptional()
   @IsEnum(ValueType)
-  type?: 'percentage' | 'number';
+  type?: 'percentage' | 'number' | 'shortNumber';
 }
 
 class TextSettingsValidation {

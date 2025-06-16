@@ -1,5 +1,4 @@
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
-import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { useApplyObjectFilterDropdownOperand } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownOperand';
 
 import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
@@ -17,28 +16,27 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import styled from '@emotion/styled';
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItem } from 'twenty-ui/navigation';
 
-const StyledContainer = styled.div<{ isColumn?: boolean }>`
-  width: ${({ isColumn }) => (isColumn ? 'auto' : '100px')};
+const StyledContainer = styled.div<{ width?: string }>`
+  width: ${({ width }) => width ?? '100px'};
 `;
 
 type AdvancedFilterRecordFilterOperandSelectProps = {
   recordFilterId: string;
+  widthFromProps?: string;
 };
 
 export const AdvancedFilterRecordFilterOperandSelect = ({
   recordFilterId,
+  widthFromProps,
 }: AdvancedFilterRecordFilterOperandSelectProps) => {
   const dropdownId = `advanced-filter-view-filter-operand-${recordFilterId}`;
 
   const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );
-
-  const { isColumn } = useContext(AdvancedFilterContext);
 
   const filter = currentRecordFilters.find(
     (recordFilter) => recordFilter.id === recordFilterId,
@@ -86,7 +84,7 @@ export const AdvancedFilterRecordFilterOperandSelect = ({
   }
 
   return (
-    <StyledContainer isColumn={isColumn}>
+    <StyledContainer width={widthFromProps}>
       <Dropdown
         dropdownId={dropdownId}
         clickableComponent={
