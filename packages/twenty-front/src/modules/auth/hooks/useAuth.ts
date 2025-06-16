@@ -323,6 +323,18 @@ export const useAuth = () => {
       setWorkspaces(validWorkspaces);
     }
 
+    if (typeof window !== 'undefined') {
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      window.OneSignalDeferred.push(async (OneSignal) => {
+        try {
+          console.log('[OneSignal] Setando external_id:', user.id);
+          await OneSignal.setExternalUserId(user.id);
+        } catch (error) {
+          console.error('[OneSignal] Erro ao setar external_id:', error);
+        }
+      });
+    }
+
     return {
       user,
       workspaceMember,

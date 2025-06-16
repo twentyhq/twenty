@@ -236,14 +236,14 @@ export class WhatsappService {
     const headers = {
       Authorization: `Key ${ONESIGNAL_REST_API_KEY}`,
       'Content-Type': 'application/json',
-      accept: 'application/json', // Adicionado
+      accept: 'application/json',
     };
 
     try {
       const body = {
         app_id: ONESIGNAL_APPID,
         include_aliases: {
-          external_id: externalIds,
+          external_id: [externalIds],
         },
         target_channel: 'push',
         isAnyWeb: true,
