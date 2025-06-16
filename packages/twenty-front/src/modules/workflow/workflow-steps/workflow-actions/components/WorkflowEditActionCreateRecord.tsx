@@ -16,6 +16,8 @@ import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useTheme } from '@emotion/react';
 
 type WorkflowEditActionCreateRecordProps = {
   action: WorkflowCreateRecordAction;
@@ -57,6 +59,8 @@ export const WorkflowEditActionCreateRecord = ({
   action,
   actionOptions,
 }: WorkflowEditActionCreateRecordProps) => {
+  const theme = useTheme();
+
   const { getIcon } = useIcons();
 
   const { activeNonSystemObjectMetadataItems } =
@@ -201,6 +205,8 @@ export const WorkflowEditActionCreateRecord = ({
             saveAction(newFormData);
           }}
           withSearchInput
+          dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+          dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
 
         <HorizontalSeparator noMargin />

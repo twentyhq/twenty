@@ -27,7 +27,11 @@ export const useCloseRecordTableCellInGroup = () => {
       toggleClickOutside(true);
       setDragSelectionStartEnabled(true);
       closeCurrentTableCellInEditMode();
-      setHotkeyScope(TableHotkeyScope.TableFocus);
+      setHotkeyScope(TableHotkeyScope.TableFocus, {
+        goto: true,
+        keyboardShortcutMenu: true,
+        searchRecords: true,
+      });
     },
     [
       closeCurrentTableCellInEditMode,

@@ -1,21 +1,20 @@
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
-import { FormCountryCodeSelectInput } from '@/object-record/record-field/form-types/components/FormCountryCodeSelectInput';
-import { FormCountrySelectInput } from '@/object-record/record-field/form-types/components/FormCountrySelectInput';
+import { FormCountryMultiSelectInput } from '@/object-record/record-field/form-types/components/FormCountryMultiSelectInput';
+import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput';
 import { FormNumberFieldInput } from '@/object-record/record-field/form-types/components/FormNumberFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
-import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { JsonValue } from 'type-fest';
 
-export const AdvancedFilterValueFormCompositeFieldInput = ({
+export const WorkflowAdvancedFilterValueFormCompositeFieldInput = ({
   recordFilter,
   onChange,
-  VariablePicker,
 }: {
   recordFilter: RecordFilter;
   onChange: (newValue: JsonValue) => void;
-  VariablePicker?: VariablePickerComponent;
 }) => {
   const subFieldNameUsedInDropdown = useRecoilComponentValueV2(
     subFieldNameUsedInDropdownComponentState,
@@ -27,30 +26,31 @@ export const AdvancedFilterValueFormCompositeFieldInput = ({
     <>
       {filterType === 'ADDRESS' ? (
         subFieldNameUsedInDropdown === 'addressCountry' ? (
-          <FormCountrySelectInput
-            selectedCountryName={recordFilter.value}
+          <FormCountryMultiSelectInput
+            defaultValue={recordFilter.value}
             onChange={onChange}
-            VariablePicker={VariablePicker}
+            VariablePicker={WorkflowVariablePicker}
           />
         ) : (
           <FormTextFieldInput
             defaultValue={recordFilter.value}
             onChange={onChange}
-            VariablePicker={VariablePicker}
+            VariablePicker={WorkflowVariablePicker}
           />
         )
       ) : filterType === 'CURRENCY' ? (
         recordFilter.subFieldName === 'currencyCode' ? (
-          <FormCountryCodeSelectInput
-            selectedCountryCode={recordFilter.value}
+          <FormMultiSelectFieldInput
+            defaultValue={recordFilter.value}
             onChange={onChange}
-            VariablePicker={VariablePicker}
+            VariablePicker={WorkflowVariablePicker}
+            options={CURRENCIES}
           />
         ) : recordFilter.subFieldName === 'amountMicros' ? (
           <FormNumberFieldInput
             defaultValue={recordFilter.value}
             onChange={onChange}
-            VariablePicker={VariablePicker}
+            VariablePicker={WorkflowVariablePicker}
           />
         ) : null
       ) : filterType === 'PHONES' ? (
@@ -58,20 +58,20 @@ export const AdvancedFilterValueFormCompositeFieldInput = ({
           <FormNumberFieldInput
             defaultValue={recordFilter.value}
             onChange={onChange}
-            VariablePicker={VariablePicker}
+            VariablePicker={WorkflowVariablePicker}
           />
         ) : (
           <FormTextFieldInput
             defaultValue={recordFilter.value}
             onChange={onChange}
-            VariablePicker={VariablePicker}
+            VariablePicker={WorkflowVariablePicker}
           />
         )
       ) : (
         <FormTextFieldInput
           defaultValue={recordFilter.value}
           onChange={onChange}
-          VariablePicker={VariablePicker}
+          VariablePicker={WorkflowVariablePicker}
         />
       )}
     </>

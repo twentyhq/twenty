@@ -1,14 +1,13 @@
-import { AdvancedFilterDropdownColumn } from '@/object-record/advanced-filter/components/AdvancedFilterDropdownColumn';
 import { AdvancedFilterFieldSelectDropdownButton } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectDropdownButton';
-import { AdvancedFilterLogicalOperatorCell } from '@/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorCell';
-import { AdvancedFilterRecordFilterOperandSelect } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterOperandSelect';
 import { AdvancedFilterRecordFilterOptionsDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterOptionsDropdown';
-import { AdvancedFilterValueFormInput } from '@/object-record/advanced-filter/components/AdvancedFilterValueFormInput';
 import { getAdvancedFilterObjectFilterDropdownComponentInstanceId } from '@/object-record/advanced-filter/utils/getAdvancedFilterObjectFilterDropdownComponentInstanceId';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
-import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { WorkflowAdvancedFilterDropdownColumn } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterDropdownColumn';
+import { WorkflowAdvancedFilterValueFormInput } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterFormInput';
+import { WorkflowAdvancedFilterLogicalOperatorCell } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterLogicalOperatorCell';
+import { WorkflowAdvancedFilterRecordFilterOperandSelect } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterRecordFilterOperandSelect';
 import styled from '@emotion/styled';
 
 const StyledContainer = styled.div`
@@ -18,16 +17,14 @@ const StyledContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const AdvancedFilterRecordFilterColumn = ({
+export const WorkflowAdvancedFilterRecordFilterColumn = ({
   recordFilterGroup,
   recordFilter,
   recordFilterIndex,
-  VariablePicker,
 }: {
   recordFilterGroup: RecordFilterGroup;
   recordFilter: RecordFilter;
   recordFilterIndex: number;
-  VariablePicker?: VariablePickerComponent;
 }) => {
   return (
     <ObjectFilterDropdownComponentInstanceContext.Provider
@@ -37,9 +34,9 @@ export const AdvancedFilterRecordFilterColumn = ({
         ),
       }}
     >
-      <AdvancedFilterDropdownColumn>
+      <WorkflowAdvancedFilterDropdownColumn>
         <StyledContainer>
-          <AdvancedFilterLogicalOperatorCell
+          <WorkflowAdvancedFilterLogicalOperatorCell
             index={recordFilterIndex}
             recordFilterGroup={recordFilterGroup}
           />
@@ -50,14 +47,13 @@ export const AdvancedFilterRecordFilterColumn = ({
         <AdvancedFilterFieldSelectDropdownButton
           recordFilterId={recordFilter.id}
         />
-        <AdvancedFilterRecordFilterOperandSelect
+        <WorkflowAdvancedFilterRecordFilterOperandSelect
           recordFilterId={recordFilter.id}
         />
-        <AdvancedFilterValueFormInput
+        <WorkflowAdvancedFilterValueFormInput
           recordFilterId={recordFilter.id}
-          VariablePicker={VariablePicker}
         />
-      </AdvancedFilterDropdownColumn>
+      </WorkflowAdvancedFilterDropdownColumn>
     </ObjectFilterDropdownComponentInstanceContext.Provider>
   );
 };

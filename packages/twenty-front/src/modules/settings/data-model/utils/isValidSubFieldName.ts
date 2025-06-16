@@ -5,9 +5,10 @@ import { COMPOSITE_FIELD_TYPES } from '@/settings/data-model/types/CompositeFiel
 export const isValidSubFieldName = (
   subFieldName: string,
 ): subFieldName is CompositeFieldSubFieldName => {
-  const allSubFields = COMPOSITE_FIELD_TYPES.flatMap(
-    (compositeFieldType) =>
-      SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[compositeFieldType].subFields,
+  const allSubFields = COMPOSITE_FIELD_TYPES.flatMap((compositeFieldType) =>
+    SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[compositeFieldType].subFields.map(
+      (subField) => subField.subFieldName,
+    ),
   );
 
   return allSubFields.includes(subFieldName as any);

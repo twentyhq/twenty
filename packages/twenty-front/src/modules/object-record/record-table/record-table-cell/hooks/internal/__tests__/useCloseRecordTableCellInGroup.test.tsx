@@ -94,6 +94,10 @@ describe('useCloseRecordTableCellInGroup', () => {
 
     expect(result.current.isDragSelectionStartEnabled()).toBe(true);
     expect(result.current.currentTableCellInEditModePosition).toBe(null);
-    expect(setHotkeyScope).toHaveBeenCalledWith('table-focus');
+    expect(setHotkeyScope).toHaveBeenCalledWith('table-focus', {
+      goto: true,
+      keyboardShortcutMenu: true,
+      searchRecords: true,
+    });
   });
 });

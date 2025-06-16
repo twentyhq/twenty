@@ -13,6 +13,7 @@ export const SINGLE_RECORD_PICKER_LISTENER_ID = 'single-record-select';
 
 export type SingleRecordPickerProps = {
   componentInstanceId: string;
+  dropdownWidth?: number;
 } & SingleRecordPickerMenuItemsWithSearchProps;
 
 export const SingleRecordPicker = ({
@@ -25,6 +26,7 @@ export const SingleRecordPicker = ({
   objectNameSingular,
   componentInstanceId,
   layoutDirection,
+  dropdownWidth,
 }: SingleRecordPickerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -49,7 +51,7 @@ export const SingleRecordPicker = ({
     <SingleRecordPickerComponentInstanceContext.Provider
       value={{ instanceId: componentInstanceId }}
     >
-      <DropdownContent ref={containerRef}>
+      <DropdownContent ref={containerRef} widthInPixels={dropdownWidth}>
         <SingleRecordPickerMenuItemsWithSearch
           {...{
             EmptyIcon,
