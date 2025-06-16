@@ -136,7 +136,7 @@ export const WorkflowVariablesDropdown = ({
       dropdownPlacement="bottom-end"
       dropdownOffset={{
         x: parseInt(theme.spacing(0.5), 10),
-        y: parseInt(theme.spacing(multiline ? 11 : 1, 10)),
+        y: parseInt(theme.spacing(multiline ? 11 : 1), 10),
       }}
     />
   );
