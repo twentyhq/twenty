@@ -147,6 +147,7 @@ export const PageChangeEffect = () => {
         setHotkeyScope(RecordIndexHotkeyScope.RecordIndex, {
           goto: true,
           keyboardShortcutMenu: true,
+          searchRecords: true,
         });
         break;
       }
@@ -154,6 +155,7 @@ export const PageChangeEffect = () => {
         setHotkeyScope(PageHotkeyScope.RecordShowPage, {
           goto: true,
           keyboardShortcutMenu: true,
+          searchRecords: true,
         });
         break;
       }
@@ -191,6 +193,7 @@ export const PageChangeEffect = () => {
           keyboardShortcutMenu: false,
           commandMenu: false,
           commandMenuOpen: false,
+          searchRecords: false,
         });
         break;
       }

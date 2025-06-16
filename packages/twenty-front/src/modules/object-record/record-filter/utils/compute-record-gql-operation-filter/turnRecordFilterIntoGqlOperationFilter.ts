@@ -367,7 +367,9 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
           subFieldName,
         )
       ) {
-        const parsedCurrencyCodes = JSON.parse(recordFilter.value) as string[];
+        const parsedCurrencyCodes = arrayOfStringsOrVariablesSchema.parse(
+          recordFilter.value,
+        );
 
         if (parsedCurrencyCodes.length === 0) return undefined;
 
@@ -543,14 +545,11 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
             };
           } else {
             if (subFieldName === 'addressCountry') {
-              const parsedCountryCodes = JSON.parse(
+              const parsedCountryCodes = arrayOfStringsOrVariablesSchema.parse(
                 recordFilter.value,
-              ) as string[];
+              );
 
-              if (
-                recordFilter.value === '[]' ||
-                parsedCountryCodes.length === 0
-              ) {
+              if (parsedCountryCodes.length === 0) {
                 return {};
               }
 

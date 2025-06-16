@@ -1,5 +1,4 @@
 import { AdvancedFilterFieldSelectDropdownButton } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectDropdownButton';
-import { AdvancedFilterRecordFilterOperandSelect } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterOperandSelect';
 import { AdvancedFilterRecordFilterOptionsDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterOptionsDropdown';
 import { getAdvancedFilterObjectFilterDropdownComponentInstanceId } from '@/object-record/advanced-filter/utils/getAdvancedFilterObjectFilterDropdownComponentInstanceId';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
@@ -8,6 +7,7 @@ import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { WorkflowAdvancedFilterDropdownColumn } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterDropdownColumn';
 import { WorkflowAdvancedFilterValueFormInput } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterFormInput';
 import { WorkflowAdvancedFilterLogicalOperatorCell } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterLogicalOperatorCell';
+import { WorkflowAdvancedFilterRecordFilterOperandSelect } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterRecordFilterOperandSelect';
 import styled from '@emotion/styled';
 
 const StyledContainer = styled.div`
@@ -47,9 +47,8 @@ export const WorkflowAdvancedFilterRecordFilterColumn = ({
         <AdvancedFilterFieldSelectDropdownButton
           recordFilterId={recordFilter.id}
         />
-        <AdvancedFilterRecordFilterOperandSelect
+        <WorkflowAdvancedFilterRecordFilterOperandSelect
           recordFilterId={recordFilter.id}
-          widthFromProps="auto"
         />
         <WorkflowAdvancedFilterValueFormInput
           recordFilterId={recordFilter.id}
