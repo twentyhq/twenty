@@ -4690,6 +4690,11 @@ msgstr ""
 msgid "Share this link to invite users to join your workspace"
 msgstr ""
 
+#. js-lingui-id: RRXpo1
+#: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
+msgid "Short"
+msgstr ""
+
 #. js-lingui-id: gWk8gY
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "Should changing a field's label also change the API name?"
