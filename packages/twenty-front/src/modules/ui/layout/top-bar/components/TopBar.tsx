@@ -12,7 +12,7 @@ type TopBarProps = {
 const StyledContainer = styled.div`
   border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
   display: flex;
-  margin-left: ${({ theme }) => theme.spacing(2)};
+  margin-left: ${({ theme }) => theme.spacing(2.75)};
 
   flex-direction: column;
 `;
