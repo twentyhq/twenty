@@ -140,7 +140,7 @@ export class ObjectPermissionService {
       roleWithObjectPermissions.objectPermissions;
 
     for (const newObjectPermission of newObjectPermissions) {
-      const objectRecordPermissionsOverride = existingObjectPermissions.find(
+      const existingObjectRecordPermission = existingObjectPermissions.find(
         (objectPermission) =>
           objectPermission.objectMetadataId ===
           newObjectPermission.objectMetadataId,
@@ -148,23 +148,23 @@ export class ObjectPermissionService {
 
       const hasReadPermissionAfterUpdate =
         newObjectPermission.canReadObjectRecords ??
-        objectRecordPermissionsOverride?.canReadObjectRecords ??
+        existingObjectRecordPermission?.canReadObjectRecords ??
         roleWithObjectPermissions.canReadAllObjectRecords;
 
       if (hasReadPermissionAfterUpdate === false) {
         const hasUpdatePermissionAfterUpdate =
           newObjectPermission.canUpdateObjectRecords ??
-          objectRecordPermissionsOverride?.canUpdateObjectRecords ??
+          existingObjectRecordPermission?.canUpdateObjectRecords ??
           roleWithObjectPermissions.canUpdateAllObjectRecords;
 
         const hasSoftDeletePermissionAfterUpdate =
           newObjectPermission.canSoftDeleteObjectRecords ??
-          objectRecordPermissionsOverride?.canSoftDeleteObjectRecords ??
+          existingObjectRecordPermission?.canSoftDeleteObjectRecords ??
           roleWithObjectPermissions.canSoftDeleteAllObjectRecords;
 
         const hasDestroyPermissionAfterUpdate =
           newObjectPermission.canDestroyObjectRecords ??
-          objectRecordPermissionsOverride?.canDestroyObjectRecords ??
+          existingObjectRecordPermission?.canDestroyObjectRecords ??
           roleWithObjectPermissions.canDestroyAllObjectRecords;
 
         if (
