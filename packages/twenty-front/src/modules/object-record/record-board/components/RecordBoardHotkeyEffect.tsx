@@ -107,7 +107,7 @@ export const RecordBoardHotkeyEffect = () => {
           keyboardShortcutMenu: true,
           searchRecords: true,
         },
-      }); 
+      });
       move('down');
     },
     RecordIndexHotkeyScope.RecordIndex,
