@@ -53,6 +53,7 @@ export const WorkflowVariablePicker: VariablePickerComponent = ({
         onVariableSelect={onVariableSelect}
         disabled={disabled}
         objectNameSingularToSelect={objectNameSingularToSelect}
+        multiline={multiline}
       />
     </StyledSearchVariablesDropdownContainer>
   );
