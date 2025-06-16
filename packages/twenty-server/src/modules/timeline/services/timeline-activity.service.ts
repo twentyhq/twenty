@@ -6,7 +6,7 @@ import { ObjectRecordNonDestructiveEvent } from 'src/engine/core-modules/event-e
 import { ObjectRecordBaseEvent } from 'src/engine/core-modules/event-emitter/types/object-record.base.event';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { TimelineActivityRepository } from 'src/modules/timeline/repositiories/timeline-activity.repository';
+import { TimelineActivityRepository } from 'src/modules/timeline/repositories/timeline-activity.repository';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
 type TimelineActivity = Omit<ObjectRecordNonDestructiveEvent, 'properties'> & {
