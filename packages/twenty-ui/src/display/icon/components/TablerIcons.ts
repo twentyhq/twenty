@@ -47,6 +47,7 @@ export {
   IconChevronDown,
   IconChevronLeft,
   IconChevronRight,
+  IconChevronRightPipe,
   IconChevronsRight,
   IconChevronUp,
   IconCircleDot,
@@ -306,7 +307,7 @@ export {
   IconWand,
   IconWebhook,
   IconWorld,
-  IconX
+  IconX,
 } from '@tabler/icons-react';
 
 export type { IconProps as TablerIconsProps } from '@tabler/icons-react';
