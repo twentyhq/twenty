@@ -1,8 +1,6 @@
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { AdvancedFilterAddFilterRuleSelect } from '@/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect';
-import { AdvancedFilterRecordFilterColumn } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterColumn';
-import { AdvancedFilterRecordFilterGroupColumn } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupColumn';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
@@ -13,9 +11,10 @@ import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/u
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { WorkflowAdvancedFilterRecordFilterColumn } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterRecordFilterColumn';
+import { WorkflowAdvancedFilterRecordFilterGroupColumn } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterRecordFilterGroupColumn';
 import { FindRecordsActionFilter } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords';
 import { WorkflowFindRecordsAddFilterButton } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsAddFilterButton';
-import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -110,7 +109,7 @@ export const WorkflowFindRecordsFilters = ({
     <AdvancedFilterContext.Provider
       value={{
         onUpdate,
-        isColumn: true,
+        isWorkflowFindRecords: true,
       }}
     >
       {isDefined(rootRecordFilterGroup) ? (
@@ -121,20 +120,18 @@ export const WorkflowFindRecordsFilters = ({
                 isRecordFilterGroupChildARecordFilterGroup(
                   recordFilterGroupChild,
                 ) ? (
-                  <AdvancedFilterRecordFilterGroupColumn
+                  <WorkflowAdvancedFilterRecordFilterGroupColumn
                     key={recordFilterGroupChild.id}
                     parentRecordFilterGroup={rootRecordFilterGroup}
                     recordFilterGroup={recordFilterGroupChild}
                     recordFilterGroupIndex={recordFilterGroupChildIndex}
-                    VariablePicker={WorkflowVariablePicker}
                   />
                 ) : (
-                  <AdvancedFilterRecordFilterColumn
+                  <WorkflowAdvancedFilterRecordFilterColumn
                     key={recordFilterGroupChild.id}
                     recordFilterGroup={rootRecordFilterGroup}
                     recordFilter={recordFilterGroupChild}
                     recordFilterIndex={recordFilterGroupChildIndex}
-                    VariablePicker={WorkflowVariablePicker}
                   />
                 ),
             )}

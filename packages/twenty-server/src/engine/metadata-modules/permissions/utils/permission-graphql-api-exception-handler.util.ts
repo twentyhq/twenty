@@ -23,6 +23,8 @@ export const permissionGraphqlApiExceptionHandler = (
       throw new ForbiddenError(error.message);
     case PermissionsExceptionCode.INVALID_ARG:
     case PermissionsExceptionCode.INVALID_SETTING:
+    case PermissionsExceptionCode.CANNOT_GIVE_WRITING_PERMISSION_ON_NON_READABLE_OBJECT:
+    case PermissionsExceptionCode.CANNOT_GIVE_WRITING_PERMISSION_WITHOUT_READING_PERMISSION:
       throw new UserInputError(error.message);
     case PermissionsExceptionCode.ROLE_NOT_FOUND:
     case PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND:

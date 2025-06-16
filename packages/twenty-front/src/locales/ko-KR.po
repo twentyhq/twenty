@@ -4698,6 +4698,11 @@ msgstr "설정 권한"
 msgid "Share this link to invite users to join your workspace"
 msgstr "이 링크를 공유하여 사용자를 워크스페이스에 초대하세요"
 
+#. js-lingui-id: RRXpo1
+#: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
+msgid "Short"
+msgstr ""
+
 #. js-lingui-id: gWk8gY
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "Should changing a field's label also change the API name?"

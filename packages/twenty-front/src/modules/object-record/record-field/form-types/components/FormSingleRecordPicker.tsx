@@ -18,6 +18,7 @@ import styled from '@emotion/styled';
 import { useCallback, useId } from 'react';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconChevronDown, IconForbid } from 'twenty-ui/display';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 const StyledFormSelectContainer = styled(FormFieldInputInnerContainer)<{
   readonly?: boolean;
@@ -165,6 +166,7 @@ export const FormSingleRecordPicker = ({
             clickableComponentWidth={'100%'}
             onClose={handleCloseRelationPickerDropdown}
             onOpen={handleOpenDropdown}
+            dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
             clickableComponent={
               <StyledFormSelectContainer
                 hasRightElement={isDefined(VariablePicker) && !disabled}
@@ -194,6 +196,7 @@ export const FormSingleRecordPicker = ({
                 onRecordSelected={handleRecordSelected}
                 objectNameSingular={objectNameSingular}
                 recordPickerInstanceId={dropdownId}
+                dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
               />
             }
             dropdownHotkeyScope={{ scope: dropdownId }}

@@ -25,6 +25,7 @@ type MultiSelectInputProps = {
   onCancel?: () => void;
   options: SelectOption[];
   onOptionSelected: (value: FieldMultiSelectValue) => void;
+  dropdownWidth?: number;
 };
 
 export const MultiSelectInput = ({
@@ -34,6 +35,7 @@ export const MultiSelectInput = ({
   hotkeyScope,
   onCancel,
   onOptionSelected,
+  dropdownWidth,
 }: MultiSelectInputProps) => {
   const { resetSelectedItem } = useSelectableList(
     selectableListComponentInstanceId,
@@ -102,7 +104,11 @@ export const MultiSelectInput = ({
       selectableItemIdArray={optionIds}
       hotkeyScope={hotkeyScope}
     >
-      <DropdownContent ref={containerRef} selectDisabled>
+      <DropdownContent
+        ref={containerRef}
+        selectDisabled
+        widthInPixels={dropdownWidth}
+      >
         <DropdownMenuSearchInput
           value={searchFilter}
           onChange={(event) =>

@@ -13,6 +13,8 @@ import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useTheme } from '@emotion/react';
 
 type WorkflowEditActionDeleteRecordProps = {
   action: WorkflowDeleteRecordAction;
@@ -35,6 +37,8 @@ export const WorkflowEditActionDeleteRecord = ({
   action,
   actionOptions,
 }: WorkflowEditActionDeleteRecordProps) => {
+  const theme = useTheme();
+
   const { getIcon } = useIcons();
 
   const { activeNonSystemObjectMetadataItems } =
@@ -147,6 +151,8 @@ export const WorkflowEditActionDeleteRecord = ({
             saveAction(newFormData);
           }}
           withSearchInput
+          dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+          dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
 
         <HorizontalSeparator noMargin />

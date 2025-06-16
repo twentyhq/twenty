@@ -24,6 +24,8 @@ import { SelectOption } from 'twenty-ui/input';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { useTheme } from '@emotion/react';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 type WorkflowEditActionSendEmailProps = {
   action: WorkflowSendEmailAction;
@@ -48,6 +50,7 @@ export const WorkflowEditActionSendEmail = ({
   action,
   actionOptions,
 }: WorkflowEditActionSendEmailProps) => {
+  const theme = useTheme();
   const { getIcon } = useIcons();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { triggerApisOAuth } = useTriggerApisOAuth();
@@ -244,6 +247,8 @@ export const WorkflowEditActionSendEmail = ({
               handleFieldChange('connectedAccountId', connectedAccountId);
             }}
             disabled={actionOptions.readonly}
+            dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+            dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
           />
           <FormTextFieldInput
             label="Email"
