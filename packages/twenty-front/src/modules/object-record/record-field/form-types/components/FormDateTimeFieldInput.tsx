@@ -26,13 +26,14 @@ import { Nullable } from 'twenty-ui/utilities';
 const StyledInputContainer = styled(FormFieldInputInnerContainer)`
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 1fr 0px;
+  grid-template-rows: 1fr 0;
   overflow: visible;
   position: relative;
 `;
 
 const StyledDateInputAbsoluteContainer = styled.div`
   position: absolute;
+  top: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledDateInput = styled.input<{ hasError?: boolean }>`
