@@ -1,6 +1,6 @@
 /**
  * Removes null characters (\0) from a string to prevent unexpected errors
  */
-export const removeNullCharacters = (str: string) => {
+export const sanitizeString = (str: string) => {
   return str.replace(/\0/g, '');
 };
