@@ -6,6 +6,7 @@ import { createCustomRoleWithObjectPermissions } from 'test/integration/graphql/
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { deleteRole } from 'test/integration/graphql/utils/delete-one-role.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
+import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlAPIRequestWithMemberRole as makeGraphqlAPIRequestWithJony } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
@@ -19,6 +20,7 @@ const client = request(`http://localhost:${APP_PORT}`);
 describe('permissionsOnRelations', () => {
   let originalMemberRoleId: string;
   let customRoleId: string;
+  const personId = randomUUID();
 
   beforeAll(async () => {
     // Get the original Member role ID for restoration later
@@ -61,7 +63,7 @@ describe('permissionsOnRelations', () => {
       objectMetadataSingularName: 'person',
       gqlFields: PERSON_GQL_FIELDS,
       data: {
-        id: randomUUID(),
+        id: personId,
         name: {
           firstName: 'Marie',
         },
@@ -198,9 +200,8 @@ describe('permissionsOnRelations', () => {
     });
 
     // Create a query with nested relations
-    const graphqlOperation = findManyOperationFactory({
+    const graphqlOperation = findOneOperationFactory({
       objectMetadataSingularName: 'person',
-      objectMetadataPluralName: 'people',
       gqlFields: `
           id
           city
@@ -217,6 +218,11 @@ describe('permissionsOnRelations', () => {
             }
           }
         `,
+      filter: {
+        id: {
+          eq: personId,
+        },
+      },
     });
 
     const response = await makeGraphqlAPIRequestWithJony(graphqlOperation);

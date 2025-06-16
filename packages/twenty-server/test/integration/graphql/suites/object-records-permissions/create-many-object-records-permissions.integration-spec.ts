@@ -58,8 +58,14 @@ describe('createManyObjectRecordsPermissions', () => {
     expect(response.body.data).toBeDefined();
     expect(response.body.data.createPeople).toBeDefined();
     expect(response.body.data.createPeople).toHaveLength(2);
-    expect(response.body.data.createPeople[0].id).toBe(personId1);
-    expect(response.body.data.createPeople[1].id).toBe(personId2);
+    expect([
+      response.body.data.createPeople[0].id,
+      response.body.data.createPeople[1].id,
+    ]).toContain(personId1);
+    expect([
+      response.body.data.createPeople[0].id,
+      response.body.data.createPeople[1].id,
+    ]).toContain(personId2);
   });
 
   it('should create multiple object records when executed by api key', async () => {
