@@ -73,8 +73,8 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
       ]}
       actionButton={
         <Button
-          title={t`Back`}
-          variant="primary"
+          title={t`Finish`}
+          variant="secondary"
           size="small"
           accent="blue"
           to={getSettingsPath(SettingsPath.RoleDetail, {
