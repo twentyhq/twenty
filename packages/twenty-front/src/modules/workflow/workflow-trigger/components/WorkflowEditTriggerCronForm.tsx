@@ -15,6 +15,7 @@ import cron from 'cron-validate';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 type WorkflowEditTriggerCronFormProps = {
   trigger: WorkflowCronTrigger;
@@ -101,6 +102,8 @@ export const WorkflowEditTriggerCronForm = ({
             });
           }}
           withSearchInput
+          dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+          dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
         {trigger.settings.type === 'CUSTOM' && (
           <FormTextFieldInput

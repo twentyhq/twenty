@@ -9,6 +9,7 @@ import { StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutput
 import { useState } from 'react';
 import { IconX, OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 type WorkflowVariablesDropdownWorkflowStepItemsProps = {
   dropdownId: string;
@@ -33,7 +34,7 @@ export const WorkflowVariablesDropdownWorkflowStepItems = ({
   );
 
   return (
-    <DropdownContent>
+    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
