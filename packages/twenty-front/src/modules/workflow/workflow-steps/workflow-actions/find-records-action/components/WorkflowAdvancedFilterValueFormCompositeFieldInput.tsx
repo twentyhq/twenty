@@ -1,9 +1,10 @@
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
-import { FormCountryCodeSelectInput } from '@/object-record/record-field/form-types/components/FormCountryCodeSelectInput';
-import { FormCountrySelectInput } from '@/object-record/record-field/form-types/components/FormCountrySelectInput';
+import { FormCountryMultiSelectInput } from '@/object-record/record-field/form-types/components/FormCountryMultiSelectInput';
+import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput';
 import { FormNumberFieldInput } from '@/object-record/record-field/form-types/components/FormNumberFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { JsonValue } from 'type-fest';
@@ -25,8 +26,8 @@ export const WorkflowAdvancedFilterValueFormCompositeFieldInput = ({
     <>
       {filterType === 'ADDRESS' ? (
         subFieldNameUsedInDropdown === 'addressCountry' ? (
-          <FormCountrySelectInput
-            selectedCountryName={recordFilter.value}
+          <FormCountryMultiSelectInput
+            defaultValue={recordFilter.value}
             onChange={onChange}
             VariablePicker={WorkflowVariablePicker}
           />
@@ -39,10 +40,11 @@ export const WorkflowAdvancedFilterValueFormCompositeFieldInput = ({
         )
       ) : filterType === 'CURRENCY' ? (
         recordFilter.subFieldName === 'currencyCode' ? (
-          <FormCountryCodeSelectInput
-            selectedCountryCode={recordFilter.value}
+          <FormMultiSelectFieldInput
+            defaultValue={recordFilter.value}
             onChange={onChange}
             VariablePicker={WorkflowVariablePicker}
+            options={CURRENCIES}
           />
         ) : recordFilter.subFieldName === 'amountMicros' ? (
           <FormNumberFieldInput
