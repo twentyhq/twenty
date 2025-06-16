@@ -1,12 +1,5 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import {
-  FieldActorForInputValue,
-  FieldAddressValue,
-  FieldEmailsValue,
-  FieldLinksValue,
-  FieldPhonesValue,
-  FieldRichTextV2Value,
-} from '@/object-record/record-field/types/FieldMetadata';
+import { FieldActorForInputValue } from '@/object-record/record-field/types/FieldMetadata';
 import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constants/CompositeFieldSubFieldLabel';
 import { ImportedStructuredRow } from '@/spreadsheet-import/types';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -128,160 +121,207 @@ export const buildRecordFromImportedStructuredRow = ({
         recordToBuild[field.name] = Number(importedFieldValue);
         break;
       case FieldMetadataType.CURRENCY:
+        recordToBuild[field.name] = {};
         if (
           isDefined(
             importedStructuredRow[`${amountMicrosLabel} (${field.name})`],
-          ) ||
-          isDefined(
-            importedStructuredRow[`${currencyCodeLabel} (${field.name})`],
           )
-        ) {
-          recordToBuild[field.name] = {
-            amountMicros: convertCurrencyAmountToCurrencyMicros(
+        )
+          recordToBuild[field.name]['amountMicros'] =
+            convertCurrencyAmountToCurrencyMicros(
               Number(
                 importedStructuredRow[`${amountMicrosLabel} (${field.name})`],
               ),
-            ),
-            currencyCode:
-              importedStructuredRow[`${currencyCodeLabel} (${field.name})`] ||
-              'USD',
-          };
-        }
-        break;
-      case FieldMetadataType.ADDRESS: {
+            );
+
         if (
           isDefined(
-            importedStructuredRow[`${addressStreet1Label} (${field.name})`] ||
-              importedStructuredRow[`${addressStreet2Label} (${field.name})`] ||
-              importedStructuredRow[`${addressCityLabel} (${field.name})`] ||
-              importedStructuredRow[
-                `${addressPostcodeLabel} (${field.name})`
-              ] ||
-              importedStructuredRow[`${addressStateLabel} (${field.name})`] ||
-              importedStructuredRow[`${addressCountryLabel} (${field.name})`],
+            importedStructuredRow[`${currencyCodeLabel} (${field.name})`],
           )
-        ) {
-          recordToBuild[field.name] = {
-            addressStreet1: castToString(
-              importedStructuredRow[`${addressStreet1Label} (${field.name})`],
-            ),
-            addressStreet2: castToString(
-              importedStructuredRow[`${addressStreet2Label} (${field.name})`],
-            ),
-            addressCity: castToString(
-              importedStructuredRow[`${addressCityLabel} (${field.name})`],
-            ),
-            addressPostcode: castToString(
-              importedStructuredRow[`${addressPostcodeLabel} (${field.name})`],
-            ),
-            addressState: castToString(
-              importedStructuredRow[`${addressStateLabel} (${field.name})`],
-            ),
-            addressCountry: castToString(
-              importedStructuredRow[`${addressCountryLabel} (${field.name})`],
-            ),
-          } satisfies Partial<FieldAddressValue>;
-        }
+        )
+          recordToBuild[field.name]['currencyCode'] =
+            importedStructuredRow[`${currencyCodeLabel} (${field.name})`];
+
+        break;
+
+      case FieldMetadataType.ADDRESS: {
+        recordToBuild[field.name] = {};
+        if (
+          isDefined(
+            importedStructuredRow[`${addressStreet1Label} (${field.name})`],
+          )
+        )
+          recordToBuild[field.name]['addressStreet1'] = castToString(
+            importedStructuredRow[`${addressStreet1Label} (${field.name})`],
+          );
+
+        if (
+          isDefined(
+            importedStructuredRow[`${addressStreet2Label} (${field.name})`],
+          )
+        )
+          recordToBuild[field.name]['addressStreet2'] = castToString(
+            importedStructuredRow[`${addressStreet2Label} (${field.name})`],
+          );
+
+        if (
+          isDefined(
+            importedStructuredRow[`${addressCityLabel} (${field.name})`],
+          )
+        )
+          recordToBuild[field.name]['addressCity'] = castToString(
+            importedStructuredRow[`${addressCityLabel} (${field.name})`],
+          );
+
+        if (
+          isDefined(
+            importedStructuredRow[`${addressPostcodeLabel} (${field.name})`],
+          )
+        )
+          recordToBuild[field.name]['addressPostcode'] = castToString(
+            importedStructuredRow[`${addressPostcodeLabel} (${field.name})`],
+          );
+
+        if (
+          isDefined(
+            importedStructuredRow[`${addressStateLabel} (${field.name})`],
+          )
+        )
+          recordToBuild[field.name]['addressState'] = castToString(
+            importedStructuredRow[`${addressStateLabel} (${field.name})`],
+          );
+
+        if (
+          isDefined(
+            importedStructuredRow[`${addressCountryLabel} (${field.name})`],
+          )
+        )
+          recordToBuild[field.name]['addressCountry'] = castToString(
+            importedStructuredRow[`${addressCountryLabel} (${field.name})`],
+          );
+
         break;
       }
       case FieldMetadataType.LINKS: {
+        recordToBuild[field.name] = {};
         if (
           isDefined(
-            importedStructuredRow[`${primaryLinkUrlLabel} (${field.name})`] ||
-              importedStructuredRow[
-                `${primaryLinkLabelLabel} (${field.name})`
-              ] ||
-              importedStructuredRow[`${secondaryLinksLabel} (${field.name})`],
+            importedStructuredRow[`${primaryLinkLabelLabel} (${field.name})`],
           )
-        ) {
-          recordToBuild[field.name] = {
-            primaryLinkLabel: castToString(
-              importedStructuredRow[`${primaryLinkLabelLabel} (${field.name})`],
-            ),
-            primaryLinkUrl: castToString(
-              importedStructuredRow[`${primaryLinkUrlLabel} (${field.name})`],
-            ),
-            secondaryLinks: linkArrayJSONSchema.parse(
+        )
+          recordToBuild[field.name]['primaryLinkLabel'] = castToString(
+            importedStructuredRow[`${primaryLinkLabelLabel} (${field.name})`],
+          );
+
+        if (
+          isDefined(
+            importedStructuredRow[`${primaryLinkUrlLabel} (${field.name})`],
+          )
+        )
+          recordToBuild[field.name]['primaryLinkUrl'] = castToString(
+            importedStructuredRow[`${primaryLinkUrlLabel} (${field.name})`],
+          );
+
+        if (
+          isDefined(
+            importedStructuredRow[`${secondaryLinksLabel} (${field.name})`],
+          )
+        )
+          recordToBuild[field.name]['secondaryLinks'] =
+            linkArrayJSONSchema.parse(
               importedStructuredRow[`${secondaryLinksLabel} (${field.name})`],
-            ),
-          } satisfies FieldLinksValue;
-        }
+            );
+
         break;
       }
       case FieldMetadataType.PHONES: {
+        recordToBuild[field.name] = {};
         if (
           isDefined(
             importedStructuredRow[
               `${primaryPhoneCountryCodeLabel} (${field.name})`
-            ] ||
-              importedStructuredRow[
-                `${primaryPhoneNumberLabel} (${field.name})`
-              ] ||
-              importedStructuredRow[
-                `${primaryPhoneCallingCodeLabel} (${field.name})`
-              ] ||
-              importedStructuredRow[`${additionalPhonesLabel} (${field.name})`],
+            ],
           )
-        ) {
-          recordToBuild[field.name] = {
-            primaryPhoneCountryCode: castToString(
-              importedStructuredRow[
-                `${primaryPhoneCountryCodeLabel} (${field.name})`
-              ],
-            ),
-            primaryPhoneNumber: castToString(
-              importedStructuredRow[
-                `${primaryPhoneNumberLabel} (${field.name})`
-              ],
-            ),
-            primaryPhoneCallingCode: castToString(
-              importedStructuredRow[
-                `${primaryPhoneCallingCodeLabel} (${field.name})`
-              ],
-            ),
-            additionalPhones: phoneArrayJSONSchema.parse(
+        )
+          recordToBuild[field.name]['primaryPhoneCountryCode'] = castToString(
+            importedStructuredRow[
+              `${primaryPhoneCountryCodeLabel} (${field.name})`
+            ],
+          );
+
+        if (
+          isDefined(
+            importedStructuredRow[`${primaryPhoneNumberLabel} (${field.name})`],
+          )
+        )
+          recordToBuild[field.name]['primaryPhoneNumber'] = castToString(
+            importedStructuredRow[`${primaryPhoneNumberLabel} (${field.name})`],
+          );
+
+        if (
+          isDefined(
+            importedStructuredRow[
+              `${primaryPhoneCallingCodeLabel} (${field.name})`
+            ],
+          )
+        )
+          recordToBuild[field.name]['primaryPhoneCallingCode'] = castToString(
+            importedStructuredRow[
+              `${primaryPhoneCallingCodeLabel} (${field.name})`
+            ],
+          );
+
+        if (
+          isDefined(
+            importedStructuredRow[`${additionalPhonesLabel} (${field.name})`],
+          )
+        )
+          recordToBuild[field.name]['additionalPhones'] =
+            phoneArrayJSONSchema.parse(
               importedStructuredRow[`${additionalPhonesLabel} (${field.name})`],
-            ),
-          } satisfies FieldPhonesValue;
-        }
+            );
+
         break;
       }
       case FieldMetadataType.RICH_TEXT_V2: {
+        recordToBuild[field.name] = {};
         if (
-          isDefined(
-            importedStructuredRow[`${blocknoteLabel} (${field.name})`] ||
-              importedStructuredRow[`${markdownLabel} (${field.name})`],
-          )
-        ) {
-          recordToBuild[field.name] = {
-            blocknote: castToString(
-              importedStructuredRow[`${blocknoteLabel} (${field.name})`],
-            ),
-            markdown: castToString(
-              importedStructuredRow[`${markdownLabel} (${field.name})`],
-            ),
-          } satisfies FieldRichTextV2Value;
-        }
+          isDefined(importedStructuredRow[`${blocknoteLabel} (${field.name})`])
+        )
+          recordToBuild[field.name]['blocknote'] = castToString(
+            importedStructuredRow[`${blocknoteLabel} (${field.name})`],
+          );
+
+        if (
+          isDefined(importedStructuredRow[`${markdownLabel} (${field.name})`])
+        )
+          recordToBuild[field.name]['markdown'] = castToString(
+            importedStructuredRow[`${markdownLabel} (${field.name})`],
+          );
+
         break;
       }
       case FieldMetadataType.EMAILS: {
+        recordToBuild[field.name] = {};
         if (
           isDefined(
             importedStructuredRow[`${primaryEmailLabel} (${field.name})`],
-          ) ||
+          )
+        )
+          recordToBuild[field.name]['primaryEmail'] = castToString(
+            importedStructuredRow[`${primaryEmailLabel} (${field.name})`],
+          );
+
+        if (
           isDefined(
             importedStructuredRow[`${additionalEmailsLabel} (${field.name})`],
           )
-        ) {
-          recordToBuild[field.name] = {
-            primaryEmail: castToString(
-              importedStructuredRow[`${primaryEmailLabel} (${field.name})`],
-            ),
-            additionalEmails: stringArrayJSONSchema.parse(
+        )
+          recordToBuild[field.name]['additionalEmails'] =
+            stringArrayJSONSchema.parse(
               importedStructuredRow[`${additionalEmailsLabel} (${field.name})`],
-            ),
-          } satisfies FieldEmailsValue;
-        }
+            );
+
         break;
       }
       case FieldMetadataType.UUID:
@@ -293,27 +333,28 @@ export const buildRecordFromImportedStructuredRow = ({
         }
         break;
       case FieldMetadataType.RELATION:
+        recordToBuild[field.name] = {};
         if (
           isDefined(importedFieldValue) &&
           isNonEmptyString(importedFieldValue)
-        ) {
+        )
           recordToBuild[field.name + 'Id'] = importedFieldValue;
-        }
+
         break;
       case FieldMetadataType.FULL_NAME:
+        recordToBuild[field.name] = {};
         if (
-          isDefined(
-            importedStructuredRow[`${firstNameLabel} (${field.name})`] ??
-              importedStructuredRow[`${lastNameLabel} (${field.name})`],
-          )
-        ) {
-          recordToBuild[field.name] = {
-            firstName:
-              importedStructuredRow[`${firstNameLabel} (${field.name})`] ?? '',
-            lastName:
-              importedStructuredRow[`${lastNameLabel} (${field.name})`] ?? '',
-          };
-        }
+          isDefined(importedStructuredRow[`${firstNameLabel} (${field.name})`])
+        )
+          recordToBuild[field.name]['firstName'] =
+            importedStructuredRow[`${firstNameLabel} (${field.name})`] ?? '';
+
+        if (
+          isDefined(importedStructuredRow[`${lastNameLabel} (${field.name})`])
+        )
+          recordToBuild[field.name]['lastName'] =
+            importedStructuredRow[`${lastNameLabel} (${field.name})`] ?? '';
+
         break;
       case FieldMetadataType.ACTOR:
         recordToBuild[field.name] = {
@@ -342,6 +383,8 @@ export const buildRecordFromImportedStructuredRow = ({
         break;
     }
   }
+
+  console.log('recordToBuild', recordToBuild);
 
   return recordToBuild;
 };
