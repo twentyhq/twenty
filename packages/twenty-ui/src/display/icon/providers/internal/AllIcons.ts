@@ -4182,7 +4182,7 @@ import {
   IconZoomReplace,
   IconZoomReset,
   IconZzz,
-  IconZzzOff
+  IconZzzOff,
 } from '@tabler/icons-react';
 
 export const ALL_ICONS = {
