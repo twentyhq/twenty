@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { QueryRunner, TableColumn, TableForeignKey } from 'typeorm';
+import { QueryRunner, TableColumn } from 'typeorm';
 
 import {
   WorkspaceMigrationColumnAction,
@@ -257,16 +257,25 @@ export class WorkspaceMigrationColumnService {
     tableName: string,
     migrationColumn: WorkspaceMigrationColumnCreateForeignKey,
   ) {
-    await queryRunner.createForeignKey(
-      `${schemaName}.${tableName}`,
-      new TableForeignKey({
-        columnNames: [migrationColumn.columnName],
-        referencedColumnNames: [migrationColumn.referencedTableColumnName],
-        referencedTableName: migrationColumn.referencedTableName,
-        referencedSchema: schemaName,
-        onDelete: convertOnDeleteActionToOnDelete(migrationColumn.onDelete),
-      }),
+    // Code reference:
+    // https://github.com/typeorm/typeorm/blob/master/src/driver/postgres/PostgresQueryRunner.ts#L2894
+    const foreignKeyName = queryRunner.connection.namingStrategy.foreignKeyName(
+      tableName,
+      [migrationColumn.columnName],
+      `${schemaName}.${migrationColumn.referencedTableName}`,
+      [migrationColumn.referencedTableColumnName],
     );
+
+    let sql =
+      `ALTER TABLE "${schemaName}"."${tableName}" ADD CONSTRAINT "${
+        foreignKeyName
+      }" FOREIGN KEY ("${migrationColumn.columnName}") ` +
+      `REFERENCES "${schemaName}"."${migrationColumn.referencedTableName}"("${migrationColumn.referencedTableColumnName}")`;
+
+    if (migrationColumn.onDelete)
+      sql += ` ON DELETE ${convertOnDeleteActionToOnDelete(migrationColumn.onDelete)}`;
+
+    await queryRunner.query(sql);
   }
 
   private async dropForeignKey(
