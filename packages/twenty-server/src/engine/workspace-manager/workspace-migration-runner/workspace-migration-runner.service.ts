@@ -17,6 +17,7 @@ import {
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceMigrationColumnService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-column.service';
+import { PostgresQueryRunner } from 'src/engine/workspace-manager/workspace-migration-runner/types/postgres-query-runner.type';
 import { tableDefaultColumns } from 'src/engine/workspace-manager/workspace-migration-runner/utils/table-default-column.util';
 
 export const RELATION_MIGRATION_PRIORITY_PREFIX = '1000';
@@ -53,7 +54,8 @@ export class WorkspaceMigrationRunnerService {
         return [...acc, ...pendingMigration.migrations];
       }, []);
 
-    const queryRunner = mainDataSource.createQueryRunner();
+    const queryRunner =
+      mainDataSource.createQueryRunner() as PostgresQueryRunner;
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -95,7 +97,7 @@ export class WorkspaceMigrationRunnerService {
   }
 
   private async handleTableChanges(
-    queryRunner: QueryRunner,
+    queryRunner: PostgresQueryRunner,
     schemaName: string,
     tableMigration: WorkspaceMigrationTableAction,
   ) {
@@ -249,7 +251,7 @@ export class WorkspaceMigrationRunnerService {
   }
 
   private async createTable(
-    queryRunner: QueryRunner,
+    queryRunner: PostgresQueryRunner,
     schemaName: string,
     tableName: string,
     columns?: WorkspaceMigrationColumnAction[],

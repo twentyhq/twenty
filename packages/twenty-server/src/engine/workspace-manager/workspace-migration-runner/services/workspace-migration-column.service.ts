@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
 import { QueryRunner, TableColumn } from 'typeorm';
 
 import {
@@ -13,7 +14,10 @@ import {
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationEnumService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-enum.service';
 import { WorkspaceMigrationTypeService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-type.service';
+import { PostgresQueryRunner } from 'src/engine/workspace-manager/workspace-migration-runner/types/postgres-query-runner.type';
+import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration-runner/utils/compute-postgres-enum-name.util';
 import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration-runner/utils/convert-on-delete-action-to-on-delete.util';
+import { typeormBuildCreateColumnSql } from 'src/engine/workspace-manager/workspace-migration-runner/utils/internal/typeorm-build-create-column-sql.util';
 
 @Injectable()
 export class WorkspaceMigrationColumnService {
@@ -25,7 +29,7 @@ export class WorkspaceMigrationColumnService {
   ) {}
 
   public async handleColumnChanges(
-    queryRunner: QueryRunner,
+    queryRunner: PostgresQueryRunner,
     schemaName: string,
     tableName: string,
     columnMigrations?: WorkspaceMigrationColumnAction[],
@@ -137,36 +141,60 @@ export class WorkspaceMigrationColumnService {
   }
 
   public async handleCreateColumns(
-    queryRunner: QueryRunner,
+    queryRunner: PostgresQueryRunner,
     schemaName: string,
     tableName: string,
-    createColumns: WorkspaceMigrationColumnCreate[],
+    createColumnMigrations: WorkspaceMigrationColumnCreate[],
   ) {
-    if (createColumns.length === 0) return;
+    for (const createColumnMigration of createColumnMigrations) {
+      // TODO: remove once refactor is complete, id column is already created during table creation
+      if (createColumnMigration.columnName === 'id') {
+        continue;
+      }
 
-    const table = await queryRunner.getTable(`${schemaName}.${tableName}`);
+      if (isDefined(createColumnMigration.enum)) {
+        const enumName = computePostgresEnumName({
+          tableName,
+          columnName: createColumnMigration.columnName,
+        });
 
-    if (!table) {
-      throw new Error(`Table "${tableName}" not found`);
+        await queryRunner.query(
+          `CREATE TYPE "${enumName}" AS ENUM (${createColumnMigration.enum.map((value) => `'${value}'`).join(',')})`,
+        );
+      }
+
+      await queryRunner.query(
+        `ALTER TABLE "${schemaName}"."${tableName}" ADD ${typeormBuildCreateColumnSql(
+          {
+            table: { name: tableName },
+            column: {
+              name: createColumnMigration.columnName,
+              type: createColumnMigration.columnType,
+              isArray: createColumnMigration.isArray ?? false,
+              isNullable: createColumnMigration.isNullable,
+              default: createColumnMigration.defaultValue,
+              asExpression: createColumnMigration.asExpression,
+              generatedType: createColumnMigration.generatedType,
+            },
+          },
+        )}`,
+      );
+
+      if (createColumnMigration.columnName === 'id') {
+        const pkName = queryRunner.connection.namingStrategy.primaryKeyName(
+          tableName,
+          [createColumnMigration.columnName],
+        );
+
+        await queryRunner.query(
+          `ALTER TABLE "${schemaName}"."${tableName} ADD CONSTRAINT "${pkName}" PRIMARY KEY (${createColumnMigration.columnName})`,
+        );
+      }
     }
-
-    const existingColumns = new Set(table.columns.map((column) => column.name));
-
-    const columnsToCreate = createColumns.filter(
-      (column) => !existingColumns.has(column.columnName),
-    );
-
-    if (columnsToCreate.length === 0) return;
-
-    const tableColumns = columnsToCreate.map((column) =>
-      this.createTableColumnFromMigration(tableName, column),
-    );
-
-    await queryRunner.addColumns(`${schemaName}.${tableName}`, tableColumns);
   }
 
   public async handleDropColumns(
-    queryRunner: QueryRunner,
+    queryRunner: PostgresQueryRunner,
     schemaName: string,
     tableName: string,
     dropColumns: WorkspaceMigrationColumnDrop[],
@@ -179,7 +207,7 @@ export class WorkspaceMigrationColumnService {
   }
 
   public async alterColumn(
-    queryRunner: QueryRunner,
+    queryRunner: PostgresQueryRunner,
     schemaName: string,
     tableName: string,
     migrationColumn: WorkspaceMigrationColumnAlter,
@@ -252,7 +280,7 @@ export class WorkspaceMigrationColumnService {
   }
 
   private async createForeignKey(
-    queryRunner: QueryRunner,
+    queryRunner: PostgresQueryRunner,
     schemaName: string,
     tableName: string,
     migrationColumn: WorkspaceMigrationColumnCreateForeignKey,
@@ -279,7 +307,7 @@ export class WorkspaceMigrationColumnService {
   }
 
   private async dropForeignKey(
-    queryRunner: QueryRunner,
+    queryRunner: PostgresQueryRunner,
     schemaName: string,
     tableName: string,
     migrationColumn: WorkspaceMigrationColumnDropForeignKey,
