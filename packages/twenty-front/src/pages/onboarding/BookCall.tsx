@@ -53,6 +53,15 @@ const StyledScrollWrapper = styled(ScrollWrapper)`
   scrollbar-width: none;
 `;
 
+// I dont like this at all, becuase then its not responsive to different screen sizes
+// but I dont know how to fix it
+// I think we should just use the iframe and not the embed react component
+// get back to this
+const StyledCalWrapper = styled.div`
+  min-height: 600px;
+  place-content: center;
+`;
+
 export const BookCall = () => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -72,14 +81,16 @@ export const BookCall = () => {
         <StyledScrollArea>
           {isDefined(calendarBookingPageId) ? (
             <StyledScrollWrapper componentInstanceId="scroll-wrapper-modal-content">
+              <StyledCalWrapper>
               <Cal
                 calLink={calendarBookingPageId}
                 config={{
                   layout: 'month_view',
                   theme: theme.name === 'light' ? 'light' : 'dark',
-                  email: currentUser?.email ?? '',
-                }}
-              />
+                    email: currentUser?.email ?? '',
+                  }}
+                />
+              </StyledCalWrapper>
             </StyledScrollWrapper>
           ) : (
             <StyledFallbackContainer>
