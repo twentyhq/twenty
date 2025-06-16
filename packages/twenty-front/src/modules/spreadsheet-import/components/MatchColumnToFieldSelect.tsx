@@ -150,7 +150,6 @@ export const MatchColumnToFieldSelect = ({
             onSelectSuggestedOption={handleSelectSuggestedOption}
             onCancelSelect={handleCancelSelectClick}
             onDoNotImportSelect={handleDoNotImportSelect}
-            options={options}
             suggestedOptions={suggestedOptions}
           />
         )
