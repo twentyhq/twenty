@@ -10,7 +10,7 @@ import { computeMessageDirection } from 'src/modules/messaging/message-import-ma
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { ImapHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-handle-error.service';
 import { findSentMailbox } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/find-sent-mailbox.util';
-import { sanitizeString } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/sanitize-string.util';
+import { removeNullCharacters } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/sanitize-string.util';
 import { EmailAddress } from 'src/modules/messaging/message-import-manager/types/email-address';
 import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
@@ -174,7 +174,7 @@ export class ImapGetMessagesService {
       : '';
 
     const direction = computeMessageDirection(fromHandle, connectedAccount);
-    const text = sanitizeString(textWithoutReplyQuotations);
+    const text = removeNullCharacters(textWithoutReplyQuotations);
 
     return {
       externalId: messageId,
