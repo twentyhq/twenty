@@ -1,15 +1,16 @@
 import request from 'supertest';
 import { deleteOneRoleOperationFactory } from 'test/integration/graphql/utils/delete-one-role-operation-factory.util';
+import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { CreateOneRoleDocument } from 'test/generated/graphql';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -294,7 +295,7 @@ describe('roles permissions', () => {
 
   describe('createRole', () => {
     it('should throw a permission error when user does not have permission to create roles (member role)', async () => {
-      const query = {
+            const querytmp = {
         query: `
           mutation CreateOneRole {
               createOneRole(createRoleInput: {label: "test-role"}) {
@@ -303,6 +304,7 @@ describe('roles permissions', () => {
           }
         `,
       };
+      const query = CreateOneRoleDocument
 
       await assertPermissionDeniedForMemberWithMemberRole({ query });
     });

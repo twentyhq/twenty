@@ -1,5 +1,14 @@
+import { TypedDocumentNode } from '@apollo/client';
 import { ASTNode, print } from 'graphql';
 import request from 'supertest';
+import {
+  CreateOneRoleMutation,
+  CreateOneRoleMutationVariables,
+  CreateWorkflowVersionStepDocument,
+  CreateWorkflowVersionStepMutation,
+  CreateWorkflowVersionStepMutationVariables,
+  UpdateOneRoleDocument,
+} from 'test/generated/graphql';
 import { CommonResponseBody } from 'test/integration/graphql/types/common-response-body.type';
 
 type GraphqlOperation = {
@@ -30,10 +39,20 @@ export type GraphqlOperationWithOptions = {
   operation: GraphqlOperation;
   options?: MakeGraphqlRequestOptions;
 };
-export const makeGraphqlRequest = async <ResponseTypeT = unknown>(
+
+export const makeGraphqlRequest = async <
+  TData = unknown,
+  TVariables = Record<string, unknown>,
+>(
   path: ApiPath,
-  { operation, options }: GraphqlOperationWithOptions,
-): CommonResponseBody<ResponseTypeT> => {
+  document: TypedDocumentNode<TData, TVariables>,
+  variables?: TVariables,
+  options?: {
+    authenticationToken?: string;
+    testingToken?: TestingMockAccessTokenKeys;
+    unauthenticated?: boolean;
+  },
+): CommonResponseBody<TData> => {
   const {
     authenticationToken,
     testingToken,
@@ -53,8 +72,8 @@ export const makeGraphqlRequest = async <ResponseTypeT = unknown>(
   }
 
   const response = await client.send({
-    query: print(operation.query),
-    variables: operation.variables || {},
+    query: print(document),
+    variables: variables || {},
   });
 
   return {
@@ -62,4 +81,22 @@ export const makeGraphqlRequest = async <ResponseTypeT = unknown>(
     errors: response.body.errors,
     rawResponse: response,
   };
+};
+
+const tmp = async () => {
+  const coucou = await makeGraphqlRequest<
+    CreateOneRoleMutation,
+    CreateOneRoleMutationVariables
+  >('graphql', UpdateOneRoleDocument, {
+    createRoleInput: {
+      label: 'test',
+    },
+  });
+
+  const workflows = await makeGraphqlRequest<
+    CreateWorkflowVersionStepMutation,
+    CreateWorkflowVersionStepMutationVariables
+  >('graphql', CreateWorkflowVersionStepDocument, {
+    input: { stepType: 'to', workflowVersionId: '' },
+  });
 };

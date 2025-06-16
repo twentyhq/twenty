@@ -1,3 +1,4 @@
+import gql from 'graphql-tag';
 import request from 'supertest';
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -5,7 +6,7 @@ const client = request(`http://localhost:${APP_PORT}`);
 describe('workflowsResolver (e2e)', () => {
   it('should find many workflows', () => {
     const queryData = {
-      query: `
+      query: gql`
         query workflows {
           workflows {
             edges {
