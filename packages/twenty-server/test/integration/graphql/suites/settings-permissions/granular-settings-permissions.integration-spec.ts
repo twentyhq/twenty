@@ -2,8 +2,6 @@ import { print } from 'graphql';
 import request from 'supertest';
 import { deleteOneRoleOperationFactory } from 'test/integration/graphql/utils/delete-one-role-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
 import { createOneObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata-query-factory.util';
 import { deleteOneObjectMetadataQueryFactory } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata-query-factory.util';
@@ -11,7 +9,6 @@ import { deleteOneObjectMetadataQueryFactory } from 'test/integration/metadata/s
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -21,15 +18,6 @@ describe('Granular settings permissions', () => {
   let originalMemberRoleId: string;
 
   beforeAll(async () => {
-    // Enable Permissions V2
-    const enablePermissionsV2Query = updateFeatureFlagFactory(
-      SEED_APPLE_WORKSPACE_ID,
-      'IS_PERMISSIONS_V2_ENABLED',
-      true,
-    );
-
-    await makeGraphqlAPIRequest(enablePermissionsV2Query);
-
     // Get the original Member role ID for restoration later
     const getRolesQuery = {
       query: `
@@ -135,15 +123,6 @@ describe('Granular settings permissions', () => {
       .post('/graphql')
       .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
       .send(deleteRoleQuery);
-
-    // Disable Permissions V2
-    const disablePermissionsV2Query = updateFeatureFlagFactory(
-      SEED_APPLE_WORKSPACE_ID,
-      'IS_PERMISSIONS_V2_ENABLED',
-      false,
-    );
-
-    await makeGraphqlAPIRequest(disablePermissionsV2Query);
   });
 
   describe('Data Model Permissions', () => {
