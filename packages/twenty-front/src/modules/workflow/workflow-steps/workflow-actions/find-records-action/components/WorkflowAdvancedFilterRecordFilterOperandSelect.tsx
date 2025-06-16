@@ -1,23 +1,19 @@
 import { AdvancedFilterRecordFilterOperandSelectContent } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterOperandSelectContent';
 import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 
-const StyledContainer = styled.div`
-  width: 100px;
-`;
-
-type AdvancedFilterRecordFilterOperandSelectProps = {
+type WorkflowAdvancedFilterRecordFilterOperandSelectProps = {
   recordFilterId: string;
 };
 
-export const AdvancedFilterRecordFilterOperandSelect = ({
+export const WorkflowAdvancedFilterRecordFilterOperandSelect = ({
   recordFilterId,
-}: AdvancedFilterRecordFilterOperandSelectProps) => {
+}: WorkflowAdvancedFilterRecordFilterOperandSelectProps) => {
   const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
   );
@@ -34,7 +30,7 @@ export const AdvancedFilterRecordFilterOperandSelect = ({
     ? getRecordFilterOperands({
         filterType,
         subFieldName: filter?.subFieldName,
-      })
+      }).filter((operand) => operand !== RecordFilterOperand.IsRelative)
     : [];
 
   if (isDisabled === true) {
@@ -52,12 +48,10 @@ export const AdvancedFilterRecordFilterOperandSelect = ({
   }
 
   return (
-    <StyledContainer>
-      <AdvancedFilterRecordFilterOperandSelectContent
-        recordFilterId={recordFilterId}
-        filter={filter}
-        operandsForFilterType={operandsForFilterType}
-      />
-    </StyledContainer>
+    <AdvancedFilterRecordFilterOperandSelectContent
+      recordFilterId={recordFilterId}
+      filter={filter}
+      operandsForFilterType={operandsForFilterType}
+    />
   );
 };
