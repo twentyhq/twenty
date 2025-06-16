@@ -69,7 +69,7 @@ export const ImapConnectionForm = ({
         <Controller
           name="port"
           control={control}
-          defaultValue={defaultValues?.port}
+          defaultValue={defaultValues?.port ?? 993}
           render={({ field, fieldState }) => (
             <TextInput
               label={t`IMAP Port`}
