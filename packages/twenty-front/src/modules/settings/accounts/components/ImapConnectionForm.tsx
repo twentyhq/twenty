@@ -1,12 +1,12 @@
 import { Control, Controller } from 'react-hook-form';
 
-import { ImapConnectionFormValues } from '@/settings/accounts/hooks/useImapConnectionForm';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { ImapConnectionParams } from '~/generated/graphql';
 
 const StyledFormContainer = styled.form`
   display: flex;
@@ -15,9 +15,9 @@ const StyledFormContainer = styled.form`
 `;
 
 type ImapConnectionFormProps = {
-  control: Control<ImapConnectionFormValues>;
+  control: Control<ImapConnectionParams>;
   isEditing: boolean;
-  defaultValues?: Partial<ImapConnectionFormValues>;
+  defaultValues?: Partial<ImapConnectionParams>;
 };
 
 export const ImapConnectionForm = ({

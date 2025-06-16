@@ -20,7 +20,7 @@ const imapConnectionFormSchema = z.object({
   password: z.string().min(1, 'Password is required'),
 });
 
-export type ImapConnectionFormValues = z.infer<typeof imapConnectionFormSchema>;
+type ImapConnectionFormValues = z.infer<typeof imapConnectionFormSchema>;
 
 type UseImapConnectionFormProps = {
   initialData?: ImapConnectionFormValues;
