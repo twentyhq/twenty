@@ -133,10 +133,7 @@ export const workflowHttpRequestActionSettingsSchema =
 export const workflowAiAgentActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.object({
-      modelProvider: z.string(),
-      model: z.string(),
-      prompt: z.string(),
-      responseFormat: z.string(),
+      agentId: z.string(),
     }),
   });
 
