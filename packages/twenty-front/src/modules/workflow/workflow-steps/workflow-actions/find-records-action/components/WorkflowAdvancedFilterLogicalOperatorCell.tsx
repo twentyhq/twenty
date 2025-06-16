@@ -8,8 +8,6 @@ const StyledText = styled.div`
   height: ${({ theme }) => theme.spacing(8)};
   display: flex;
   align-items: center;
-
-  padding-left: ${({ theme }) => theme.spacing(2.25)};
 `;
 
 const StyledContainer = styled.div`
@@ -19,15 +17,15 @@ const StyledContainer = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
-type AdvancedFilterLogicalOperatorCellProps = {
+type WorkflowAdvancedFilterLogicalOperatorCellProps = {
   index: number;
   recordFilterGroup: RecordFilterGroup;
 };
 
-export const AdvancedFilterLogicalOperatorCell = ({
+export const WorkflowAdvancedFilterLogicalOperatorCell = ({
   index,
   recordFilterGroup,
-}: AdvancedFilterLogicalOperatorCellProps) => {
+}: WorkflowAdvancedFilterLogicalOperatorCellProps) => {
   return (
     <StyledContainer>
       {index === 0 ? (

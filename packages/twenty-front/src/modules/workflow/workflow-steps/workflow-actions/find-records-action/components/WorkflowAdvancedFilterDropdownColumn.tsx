@@ -7,4 +7,4 @@ const StyledColumn = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const AdvancedFilterDropdownColumn = StyledColumn;
+export const WorkflowAdvancedFilterDropdownColumn = StyledColumn;
