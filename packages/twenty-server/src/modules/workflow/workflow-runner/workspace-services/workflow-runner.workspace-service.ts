@@ -23,11 +23,13 @@ export class WorkflowRunnerWorkspaceService {
 
   async run({
     workspaceId,
+    workflowRunId: initialWorkflowRunId,
     workflowVersionId,
     payload,
     source,
   }: {
     workspaceId: string;
+    workflowRunId?: string;
     workflowVersionId: string;
     payload: object;
     source: ActorMetadata;
@@ -43,6 +45,7 @@ export class WorkflowRunnerWorkspaceService {
     const workflowRunId =
       await this.workflowRunWorkspaceService.createWorkflowRun({
         workflowVersionId,
+        workflowRunId: initialWorkflowRunId,
         createdBy: source,
       });
 

@@ -65,6 +65,7 @@ export class WorkflowTriggerWorkspaceService {
     createdBy,
   }: {
     workflowVersionId: string;
+    workflowRunId?: string;
     payload: object;
     createdBy: ActorMetadata;
   }) {

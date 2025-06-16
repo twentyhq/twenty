@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
@@ -37,9 +38,11 @@ export class WorkflowRunWorkspaceService {
   ) {}
 
   async createWorkflowRun({
+    workflowRunId,
     workflowVersionId,
     createdBy,
   }: {
+    workflowRunId?: string;
     workflowVersionId: string;
     createdBy: ActorMetadata;
   }) {
@@ -54,7 +57,7 @@ export class WorkflowRunWorkspaceService {
     }
 
     const workflowRunRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowRunWorkspaceEntity>(
         workspaceId,
         'workflowRun',
         { shouldBypassPermissionChecks: true },
@@ -101,16 +104,19 @@ export class WorkflowRunWorkspaceService {
       workspaceId,
     });
 
-    return (
-      await workflowRunRepository.save({
-        name: `#${workflowRunCount + 1} - ${workflow.name}`,
-        workflowVersionId,
-        createdBy,
-        workflowId: workflow.id,
-        status: WorkflowRunStatus.NOT_STARTED,
-        position,
-      })
-    ).id;
+    const workflowRun = workflowRunRepository.create({
+      id: workflowRunId ?? v4(),
+      name: `#${workflowRunCount + 1} - ${workflow.name}`,
+      workflowVersionId,
+      createdBy,
+      workflowId: workflow.id,
+      status: WorkflowRunStatus.NOT_STARTED,
+      position,
+    });
+
+    await workflowRunRepository.insert(workflowRun);
+
+    return workflowRun.id;
   }
 
   async startWorkflowRun({

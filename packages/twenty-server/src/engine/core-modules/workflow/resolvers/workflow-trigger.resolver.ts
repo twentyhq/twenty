@@ -52,10 +52,12 @@ export class WorkflowTriggerResolver {
   async runWorkflowVersion(
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthUser() user: User,
-    @Args('input') { workflowVersionId, payload }: RunWorkflowVersionInput,
+    @Args('input')
+    { workflowVersionId, workflowRunId, payload }: RunWorkflowVersionInput,
   ) {
     return await this.workflowTriggerWorkspaceService.runWorkflowVersion({
       workflowVersionId,
+      workflowRunId: workflowRunId ?? undefined,
       payload: payload ?? {},
       createdBy: buildCreatedByFromFullNameMetadata({
         fullNameMetadata: {
