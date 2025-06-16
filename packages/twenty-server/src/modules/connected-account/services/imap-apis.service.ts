@@ -18,14 +18,14 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
-    MessageChannelSyncStage,
-    MessageChannelSyncStatus,
-    MessageChannelType,
-    MessageChannelWorkspaceEntity,
+  MessageChannelSyncStage,
+  MessageChannelSyncStatus,
+  MessageChannelType,
+  MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
-    MessagingMessageListFetchJob,
-    MessagingMessageListFetchJobData,
+  MessagingMessageListFetchJob,
+  MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 
 @Injectable()

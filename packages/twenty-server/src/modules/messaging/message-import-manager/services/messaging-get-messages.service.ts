@@ -7,8 +7,8 @@ import { GmailGetMessagesService } from 'src/modules/messaging/message-import-ma
 import { ImapGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-get-messages.service';
 import { MicrosoftGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.service';
 import {
-    MessageImportException,
-    MessageImportExceptionCode,
+  MessageImportException,
+  MessageImportExceptionCode,
 } from 'src/modules/messaging/message-import-manager/exceptions/message-import.exception';
 import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 
