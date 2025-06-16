@@ -405,6 +405,15 @@ export type ConfigVariablesOutput = {
   groups: Array<ConfigVariablesGroupData>;
 };
 
+export type ConnectedImapAccount = {
+  __typename?: 'ConnectedImapAccount';
+  accountOwnerId: Scalars['String'];
+  customConnectionParams?: Maybe<ImapConnectionParams>;
+  handle: Scalars['String'];
+  id: Scalars['String'];
+  provider: Scalars['String'];
+};
+
 export type CreateApprovedAccessDomainInput = {
   domain: Scalars['String'];
   email: Scalars['String'];
@@ -763,6 +772,15 @@ export enum IdentityProviderType {
   OIDC = 'OIDC',
   SAML = 'SAML'
 }
+
+export type ImapConnectionParams = {
+  __typename?: 'ImapConnectionParams';
+  handle: Scalars['String'];
+  host: Scalars['String'];
+  password: Scalars['String'];
+  port: Scalars['Float'];
+  secure: Scalars['Boolean'];
+};
 
 export type ImapConnectionSuccess = {
   __typename?: 'ImapConnectionSuccess';
@@ -1582,6 +1600,7 @@ export type Query = {
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAvailablePackages: Scalars['JSON'];
   getConfigVariablesGrouped: ConfigVariablesOutput;
+  getConnectedImapAccount: ConnectedImapAccount;
   getDatabaseConfigVariable: ConfigVariable;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
@@ -1635,6 +1654,11 @@ export type QueryFindWorkspaceFromInviteHashArgs = {
 
 export type QueryGetAvailablePackagesArgs = {
   input: ServerlessFunctionIdInput;
+};
+
+
+export type QueryGetConnectedImapAccountArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -2793,6 +2817,13 @@ export type SaveImapConnectionMutationVariables = Exact<{
 
 
 export type SaveImapConnectionMutation = { __typename?: 'Mutation', saveImapConnection: { __typename?: 'ImapConnectionSuccess', success: boolean } };
+
+export type GetConnectedImapAccountQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type GetConnectedImapAccountQuery = { __typename?: 'Query', getConnectedImapAccount: { __typename?: 'ConnectedImapAccount', id: string, handle: string, provider: string, accountOwnerId: string, customConnectionParams?: { __typename?: 'ImapConnectionParams', handle: string, host: string, port: number, secure: boolean, password: string } | null } };
 
 export type CreateDatabaseConfigVariableMutationVariables = Exact<{
   key: Scalars['String'];
@@ -4949,6 +4980,51 @@ export function useSaveImapConnectionMutation(baseOptions?: Apollo.MutationHookO
 export type SaveImapConnectionMutationHookResult = ReturnType<typeof useSaveImapConnectionMutation>;
 export type SaveImapConnectionMutationResult = Apollo.MutationResult<SaveImapConnectionMutation>;
 export type SaveImapConnectionMutationOptions = Apollo.BaseMutationOptions<SaveImapConnectionMutation, SaveImapConnectionMutationVariables>;
+export const GetConnectedImapAccountDocument = gql`
+    query GetConnectedImapAccount($id: String!) {
+  getConnectedImapAccount(id: $id) {
+    id
+    handle
+    provider
+    accountOwnerId
+    customConnectionParams {
+      handle
+      host
+      port
+      secure
+      password
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetConnectedImapAccountQuery__
+ *
+ * To run a query within a React component, call `useGetConnectedImapAccountQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetConnectedImapAccountQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetConnectedImapAccountQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetConnectedImapAccountQuery(baseOptions: Apollo.QueryHookOptions<GetConnectedImapAccountQuery, GetConnectedImapAccountQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetConnectedImapAccountQuery, GetConnectedImapAccountQueryVariables>(GetConnectedImapAccountDocument, options);
+      }
+export function useGetConnectedImapAccountLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetConnectedImapAccountQuery, GetConnectedImapAccountQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetConnectedImapAccountQuery, GetConnectedImapAccountQueryVariables>(GetConnectedImapAccountDocument, options);
+        }
+export type GetConnectedImapAccountQueryHookResult = ReturnType<typeof useGetConnectedImapAccountQuery>;
+export type GetConnectedImapAccountLazyQueryHookResult = ReturnType<typeof useGetConnectedImapAccountLazyQuery>;
+export type GetConnectedImapAccountQueryResult = Apollo.QueryResult<GetConnectedImapAccountQuery, GetConnectedImapAccountQueryVariables>;
 export const CreateDatabaseConfigVariableDocument = gql`
     mutation CreateDatabaseConfigVariable($key: String!, $value: JSON!) {
   createDatabaseConfigVariable(key: $key, value: $value)

@@ -1,14 +1,16 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { ConnectedImapAccount } from 'src/engine/core-modules/imap-connection/dtos/imap-connected-account.dto';
+import { ImapConnectionSuccess } from 'src/engine/core-modules/imap-connection/dtos/imap-connection-success.dto';
 import { ImapConnectionValidatorService } from 'src/engine/core-modules/imap-connection/services/imap-connection-validator.service';
 import { ImapConnectionService } from 'src/engine/core-modules/imap-connection/services/imap-connection.service';
-import { ImapConnectionSuccess } from 'src/engine/core-modules/imap-connection/types/imap-connection-success.dto';
+import { ImapConnectionParams } from 'src/engine/core-modules/imap-connection/types/imap-connection.type';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -58,6 +60,38 @@ export class ImapConnectionResolver {
         'IMAP feature is not enabled for this workspace',
       );
     }
+  }
+
+  @Query(() => ConnectedImapAccount)
+  @UseGuards(WorkspaceAuthGuard)
+  async getConnectedImapAccount(
+    @Args('id') id: string,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<ConnectedImapAccount> {
+    await this.checkIfImapFeatureEnabled(workspace.id);
+
+    const connectedAccountRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
+        workspace.id,
+        'connectedAccount',
+      );
+
+    const connectedAccount = await connectedAccountRepository.findOne({
+      where: { id, provider: ConnectedAccountProvider.IMAP },
+    });
+
+    if (!connectedAccount) {
+      throw new UserInputError('Connected IMAP account not found');
+    }
+
+    return {
+      id: connectedAccount.id,
+      handle: connectedAccount.handle,
+      provider: connectedAccount.provider,
+      customConnectionParams:
+        connectedAccount.customConnectionParams as unknown as ImapConnectionParams,
+      accountOwnerId: connectedAccount.accountOwnerId,
+    };
   }
 
   @Mutation(() => ImapConnectionSuccess)

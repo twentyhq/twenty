@@ -2,7 +2,7 @@ import { FormProvider } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 
 import { ImapConnectionForm } from '@/settings/accounts/components/ImapConnectionForm';
-import { useConnectedAccount } from '@/settings/accounts/hooks/useConnectedAccount';
+import { useConnectedIMAPAccount } from '@/settings/accounts/hooks/useConnectedIMAPAccount';
 import { useImapConnectionForm } from '@/settings/accounts/hooks/useImapConnectionForm';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -28,23 +28,17 @@ export const SettingsAccountsEditImapConnection = () => {
   const navigate = useNavigateSettings();
   const { connectedAccountId } = useParams<{ connectedAccountId: string }>();
 
-  const {
-    connectedAccount,
-    loading: accountLoading,
-    connectionParams,
-  } = useConnectedAccount({
-    connectedAccountId,
-  });
+  const { connectedAccount, loading: accountLoading } =
+    useConnectedIMAPAccount(connectedAccountId);
 
-  const initialData =
-    connectionParams && isDefined(connectedAccount)
-      ? {
-          handle: connectedAccount?.handle || '',
-          host: connectionParams.host,
-          port: connectionParams.port,
-          secure: connectionParams.secure,
-        }
-      : undefined;
+  const initialData = isDefined(connectedAccount?.customConnectionParams)
+    ? {
+        handle: connectedAccount?.customConnectionParams?.handle || '',
+        host: connectedAccount?.customConnectionParams?.host || '',
+        port: connectedAccount?.customConnectionParams?.port || 993,
+        secure: connectedAccount?.customConnectionParams?.secure || true,
+      }
+    : undefined;
 
   const { formMethods, handleSave, handleSubmit, canSave, isSubmitting } =
     useImapConnectionForm({
@@ -93,7 +87,7 @@ export const SettingsAccountsEditImapConnection = () => {
     </FormProvider>
   );
 
-  if (accountLoading) {
+  if (accountLoading === true) {
     return renderLoadingState();
   }
 

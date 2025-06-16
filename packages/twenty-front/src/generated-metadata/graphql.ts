@@ -413,6 +413,15 @@ export type ConfigVariablesOutput = {
   groups: Array<ConfigVariablesGroupData>;
 };
 
+export type ConnectedImapAccount = {
+  __typename?: 'ConnectedImapAccount';
+  accountOwnerId: Scalars['String']['output'];
+  customConnectionParams?: Maybe<ImapConnectionParams>;
+  handle: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  provider: Scalars['String']['output'];
+};
+
 export type CreateAppTokenInput = {
   expiresAt: Scalars['DateTime']['input'];
 };
@@ -814,6 +823,15 @@ export enum IdentityProviderType {
   OIDC = 'OIDC',
   SAML = 'SAML'
 }
+
+export type ImapConnectionParams = {
+  __typename?: 'ImapConnectionParams';
+  handle: Scalars['String']['output'];
+  host: Scalars['String']['output'];
+  password: Scalars['String']['output'];
+  port: Scalars['Float']['output'];
+  secure: Scalars['Boolean']['output'];
+};
 
 export type ImapConnectionSuccess = {
   __typename?: 'ImapConnectionSuccess';
@@ -1682,6 +1700,7 @@ export type Query = {
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAvailablePackages: Scalars['JSON']['output'];
   getConfigVariablesGrouped: ConfigVariablesOutput;
+  getConnectedImapAccount: ConnectedImapAccount;
   getDatabaseConfigVariable: ConfigVariable;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
@@ -1761,6 +1780,11 @@ export type QueryFindWorkspaceFromInviteHashArgs = {
 
 export type QueryGetAvailablePackagesArgs = {
   input: ServerlessFunctionIdInput;
+};
+
+
+export type QueryGetConnectedImapAccountArgs = {
+  id: Scalars['String']['input'];
 };
 
 
