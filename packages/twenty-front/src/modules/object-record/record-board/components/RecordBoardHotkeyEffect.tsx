@@ -13,6 +13,12 @@ import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotV
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilCallback } from 'recoil';
 
+const BOARD_NAVIGATION_CUSTOM_SCOPES = {
+  goto: true,
+  keyboardShortcutMenu: true,
+  searchRecords: true,
+};
+
 export const RecordBoardHotkeyEffect = () => {
   const { recordBoardId } = useContext(RecordBoardContext);
 
@@ -54,11 +60,7 @@ export const RecordBoardHotkeyEffect = () => {
     () => {
       setHotkeyScopeAndMemorizePreviousScope({
         scope: BoardHotkeyScope.BoardFocus,
-        customScopes: {
-          goto: true,
-          keyboardShortcutMenu: true,
-          searchRecords: true,
-        },
+        customScopes: BOARD_NAVIGATION_CUSTOM_SCOPES,
       });
       move('left');
     },
@@ -70,11 +72,7 @@ export const RecordBoardHotkeyEffect = () => {
     () => {
       setHotkeyScopeAndMemorizePreviousScope({
         scope: BoardHotkeyScope.BoardFocus,
-        customScopes: {
-          goto: true,
-          keyboardShortcutMenu: true,
-          searchRecords: true,
-        },
+        customScopes: BOARD_NAVIGATION_CUSTOM_SCOPES,
       });
       move('right');
     },
@@ -86,11 +84,7 @@ export const RecordBoardHotkeyEffect = () => {
     () => {
       setHotkeyScopeAndMemorizePreviousScope({
         scope: BoardHotkeyScope.BoardFocus,
-        customScopes: {
-          goto: true,
-          keyboardShortcutMenu: true,
-          searchRecords: true,
-        },
+        customScopes: BOARD_NAVIGATION_CUSTOM_SCOPES,
       });
       move('up');
     },
@@ -102,11 +96,7 @@ export const RecordBoardHotkeyEffect = () => {
     () => {
       setHotkeyScopeAndMemorizePreviousScope({
         scope: BoardHotkeyScope.BoardFocus,
-        customScopes: {
-          goto: true,
-          keyboardShortcutMenu: true,
-          searchRecords: true,
-        },
+        customScopes: BOARD_NAVIGATION_CUSTOM_SCOPES,
       });
       move('down');
     },

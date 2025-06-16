@@ -5,6 +5,12 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { Key } from 'ts-key-enum';
 
+const TABLE_NAVIGATION_CUSTOM_SCOPES = {
+  goto: true,
+  keyboardShortcutMenu: true,
+  searchRecords: true,
+};
+
 export const useMapKeyboardToFocus = (recordTableId?: string) => {
   const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
 
@@ -33,11 +39,7 @@ export const useMapKeyboardToFocus = (recordTableId?: string) => {
     () => {
       setHotkeyScopeAndMemorizePreviousScope({
         scope: TableHotkeyScope.TableFocus,
-        customScopes: {
-          goto: true,
-          keyboardShortcutMenu: true,
-          searchRecords: true,
-        },
+        customScopes: TABLE_NAVIGATION_CUSTOM_SCOPES,
       });
       move('up');
     },
@@ -50,11 +52,7 @@ export const useMapKeyboardToFocus = (recordTableId?: string) => {
     () => {
       setHotkeyScopeAndMemorizePreviousScope({
         scope: TableHotkeyScope.TableFocus,
-        customScopes: {
-          goto: true,
-          keyboardShortcutMenu: true,
-          searchRecords: true,
-        },
+        customScopes: TABLE_NAVIGATION_CUSTOM_SCOPES,
       });
       move('down');
     },
