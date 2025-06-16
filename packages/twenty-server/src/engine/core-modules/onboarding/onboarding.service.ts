@@ -12,14 +12,14 @@ export enum OnboardingStepKeys {
   ONBOARDING_CONNECT_ACCOUNT_PENDING = 'ONBOARDING_CONNECT_ACCOUNT_PENDING',
   ONBOARDING_INVITE_TEAM_PENDING = 'ONBOARDING_INVITE_TEAM_PENDING',
   ONBOARDING_CREATE_PROFILE_PENDING = 'ONBOARDING_CREATE_PROFILE_PENDING',
-  ONBOARDING_BOOK_ONBOARDING_DECISION_PENDING = 'ONBOARDING_BOOK_ONBOARDING_DECISION_PENDING',
+  ONBOARDING_BOOK_ONBOARDING_PENDING = 'ONBOARDING_BOOK_ONBOARDING_PENDING',
 }
 
 export type OnboardingKeyValueTypeMap = {
   [OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING]: boolean;
-  [OnboardingStepKeys.ONBOARDING_BOOK_ONBOARDING_DECISION_PENDING]: boolean;
+  [OnboardingStepKeys.ONBOARDING_BOOK_ONBOARDING_PENDING]: boolean;
 };
 
 @Injectable()
@@ -64,10 +64,9 @@ export class OnboardingService {
     const isInviteTeamPending =
       userVars.get(OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING) === true;
 
-    const isBookOnboardingDecisionPending =
-      userVars.get(
-        OnboardingStepKeys.ONBOARDING_BOOK_ONBOARDING_DECISION_PENDING,
-      ) === true;
+    const isBookOnboardingPending =
+      userVars.get(OnboardingStepKeys.ONBOARDING_BOOK_ONBOARDING_PENDING) ===
+      true;
 
     if (isProfileCreationPending) {
       return OnboardingStatus.PROFILE_CREATION;
@@ -81,8 +80,8 @@ export class OnboardingService {
       return OnboardingStatus.INVITE_TEAM;
     }
 
-    if (isBookOnboardingDecisionPending) {
-      return OnboardingStatus.BOOK_ONBOARDING_DECISION;
+    if (isBookOnboardingPending) {
+      return OnboardingStatus.BOOK_ONBOARDING;
     }
 
     return OnboardingStatus.COMPLETED;
@@ -165,7 +164,7 @@ export class OnboardingService {
     });
   }
 
-  async setOnboardingBookOnboardingDecisionPending({
+  async setOnboardingBookOnboardingPending({
     workspaceId,
     value,
   }: {
@@ -175,7 +174,7 @@ export class OnboardingService {
     if (!value) {
       await this.userVarsService.delete({
         workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_BOOK_ONBOARDING_DECISION_PENDING,
+        key: OnboardingStepKeys.ONBOARDING_BOOK_ONBOARDING_PENDING,
       });
 
       return;
@@ -183,7 +182,7 @@ export class OnboardingService {
 
     await this.userVarsService.set({
       workspaceId,
-      key: OnboardingStepKeys.ONBOARDING_BOOK_ONBOARDING_DECISION_PENDING,
+      key: OnboardingStepKeys.ONBOARDING_BOOK_ONBOARDING_PENDING,
       value: true,
     });
   }

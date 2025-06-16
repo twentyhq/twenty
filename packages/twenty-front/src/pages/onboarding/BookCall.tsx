@@ -13,6 +13,7 @@ import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRightPipe } from 'twenty-ui/display';
 import { LightButton } from 'twenty-ui/input';
+import { useSkipBookOnboardingStepMutation } from '~/generated/graphql';
 
 const StyledFallbackContainer = styled.div`
   align-items: center;
@@ -60,8 +61,10 @@ export const BookCall = () => {
   const calendarBookingPageId = useRecoilValue(calendarBookingPageIdState);
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const currentUser = useRecoilValue(currentUserState);
+  const [skipBookOnboardingStepMutation] = useSkipBookOnboardingStepMutation();
 
-  const handleCompleteOnboarding = () => {
+  const handleCompleteOnboarding = async () => {
+    await skipBookOnboardingStepMutation();
     setNextOnboardingStatus();
   };
 

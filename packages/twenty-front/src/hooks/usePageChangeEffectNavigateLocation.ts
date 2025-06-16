@@ -1,5 +1,6 @@
 import { verifyEmailNextPathState } from '@/app/states/verifyEmailNextPathState';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
@@ -12,7 +13,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { OnboardingStatus } from '~/generated/graphql';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
-import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 
 export const usePageChangeEffectNavigateLocation = () => {
   const isLoggedIn = useIsLogged();
@@ -121,7 +121,7 @@ export const usePageChangeEffectNavigateLocation = () => {
   }
 
   if (
-    onboardingStatus === OnboardingStatus.BOOK_ONBOARDING_DECISION &&
+    onboardingStatus === OnboardingStatus.BOOK_ONBOARDING &&
     !someMatchingLocationOf([AppPath.BookOnboardingDecision, AppPath.BookCall])
   ) {
     return AppPath.BookOnboardingDecision;

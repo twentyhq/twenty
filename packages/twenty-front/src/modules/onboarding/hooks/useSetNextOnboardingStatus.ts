@@ -29,12 +29,10 @@ const getNextOnboardingStatus = (
   }
   if (currentUser?.onboardingStatus === OnboardingStatus.INVITE_TEAM) {
     return isDefined(calendarBookingPageId)
-      ? OnboardingStatus.BOOK_ONBOARDING_DECISION
+      ? OnboardingStatus.BOOK_ONBOARDING
       : OnboardingStatus.COMPLETED;
   }
-  if (
-    currentUser?.onboardingStatus === OnboardingStatus.BOOK_ONBOARDING_DECISION
-  ) {
+  if (currentUser?.onboardingStatus === OnboardingStatus.BOOK_ONBOARDING) {
     return OnboardingStatus.COMPLETED;
   }
   return OnboardingStatus.COMPLETED;

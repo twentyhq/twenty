@@ -342,9 +342,7 @@ export class WorkspaceInvitationService {
       value: false,
     });
 
-    // Set the next onboarding status to book onboarding decision
-    // Frontend will handle conditional logic for whether to show it or skip it
-    await this.onboardingService.setOnboardingBookOnboardingDecisionPending({
+    await this.onboardingService.setOnboardingBookOnboardingPending({
       workspaceId: workspace.id,
       value: true,
     });

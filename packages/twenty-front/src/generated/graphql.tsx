@@ -949,6 +949,7 @@ export type Mutation = {
   signUp: AvailableWorkspacesAndAccessTokensOutput;
   signUpInNewWorkspace: SignUpOutput;
   signUpInWorkspace: SignUpOutput;
+  skipBookOnboardingStep: OnboardingStepSuccess;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   submitFormStep: Scalars['Boolean'];
   switchToEnterprisePlan: BillingUpdateOutput;
@@ -1478,7 +1479,7 @@ export type OnDbEventInput = {
 
 /** Onboarding status */
 export enum OnboardingStatus {
-  BOOK_ONBOARDING_DECISION = 'BOOK_ONBOARDING_DECISION',
+  BOOK_ONBOARDING = 'BOOK_ONBOARDING',
   COMPLETED = 'COMPLETED',
   INVITE_TEAM = 'INVITE_TEAM',
   PLAN_REQUIRED = 'PLAN_REQUIRED',
@@ -1631,7 +1632,7 @@ export type QueryGetIndicatorHealthStatusArgs = {
 
 
 export type QueryGetPublicWorkspaceDataByDomainArgs = {
-  origin: Scalars['String'];
+  origin?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1909,6 +1910,7 @@ export enum SettingPermissionType {
   DATA_MODEL = 'DATA_MODEL',
   ROLES = 'ROLES',
   SECURITY = 'SECURITY',
+  WORKFLOWS = 'WORKFLOWS',
   WORKSPACE = 'WORKSPACE',
   WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS'
 }
@@ -2756,6 +2758,11 @@ export type SearchQueryVariables = Exact<{
 
 
 export type SearchQuery = { __typename?: 'Query', search: { __typename?: 'SearchResultConnection', edges: Array<{ __typename?: 'SearchResultEdge', cursor: string, node: { __typename?: 'SearchRecord', recordId: string, objectNameSingular: string, label: string, imageUrl?: string | null, tsRankCD: number, tsRank: number } }>, pageInfo: { __typename?: 'SearchResultPageInfo', hasNextPage: boolean, endCursor?: string | null } } };
+
+export type SkipBookOnboardingStepMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SkipBookOnboardingStepMutation = { __typename?: 'Mutation', skipBookOnboardingStep: { __typename?: 'OnboardingStepSuccess', success: boolean } };
 
 export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -4839,6 +4846,38 @@ export function useSearchLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Sea
 export type SearchQueryHookResult = ReturnType<typeof useSearchQuery>;
 export type SearchLazyQueryHookResult = ReturnType<typeof useSearchLazyQuery>;
 export type SearchQueryResult = Apollo.QueryResult<SearchQuery, SearchQueryVariables>;
+export const SkipBookOnboardingStepDocument = gql`
+    mutation SkipBookOnboardingStep {
+  skipBookOnboardingStep {
+    success
+  }
+}
+    `;
+export type SkipBookOnboardingStepMutationFn = Apollo.MutationFunction<SkipBookOnboardingStepMutation, SkipBookOnboardingStepMutationVariables>;
+
+/**
+ * __useSkipBookOnboardingStepMutation__
+ *
+ * To run a mutation, you first call `useSkipBookOnboardingStepMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSkipBookOnboardingStepMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [skipBookOnboardingStepMutation, { data, loading, error }] = useSkipBookOnboardingStepMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSkipBookOnboardingStepMutation(baseOptions?: Apollo.MutationHookOptions<SkipBookOnboardingStepMutation, SkipBookOnboardingStepMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SkipBookOnboardingStepMutation, SkipBookOnboardingStepMutationVariables>(SkipBookOnboardingStepDocument, options);
+      }
+export type SkipBookOnboardingStepMutationHookResult = ReturnType<typeof useSkipBookOnboardingStepMutation>;
+export type SkipBookOnboardingStepMutationResult = Apollo.MutationResult<SkipBookOnboardingStepMutation>;
+export type SkipBookOnboardingStepMutationOptions = Apollo.BaseMutationOptions<SkipBookOnboardingStepMutation, SkipBookOnboardingStepMutationVariables>;
 export const SkipSyncEmailOnboardingStepDocument = gql`
     mutation SkipSyncEmailOnboardingStep {
   skipSyncEmailOnboardingStep {
