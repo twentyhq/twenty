@@ -63,7 +63,8 @@ export const SettingsDataModelFieldNumberForm = ({
                 onChange={(value) =>
                   onChange({
                     type: value,
-                    decimals: value === 'shortNumber' ? 0 : count,
+                    decimals:
+                      value === 'shortNumber' ? DEFAULT_DECIMAL_VALUE : count,
                   })
                 }
                 disabled={disabled}
