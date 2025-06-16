@@ -5,6 +5,9 @@ import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/com
 
 type CalendarEventParticipantDataSeed = {
   id: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
   calendarEventId: string;
   handle: string;
   displayName: string;
@@ -16,6 +19,9 @@ type CalendarEventParticipantDataSeed = {
 
 export const CALENDAR_EVENT_PARTICIPANT_DATA_SEED_COLUMNS = [
   'id',
+  'createdAt',
+  'updatedAt',
+  'deletedAt',
   'calendarEventId',
   'handle',
   'displayName',
@@ -34,6 +40,9 @@ export const CALENDAR_EVENT_PARTICIPANT_DATA_SEEDS: CalendarEventParticipantData
   [
     {
       id: CALENDAR_EVENT_PARTICIPANT_DATA_SEED_IDS.ONE,
+      createdAt: '2025-06-16T20:15:47.451Z',
+      updatedAt: '2025-06-16T20:15:47.451Z',
+      deletedAt: null,
       calendarEventId: CALENDAR_EVENT_DATA_SEED_IDS.ID_1,
       handle: 'christoph.calisto@linkedin.com',
       displayName: 'Christoph Calisto',
@@ -44,6 +53,9 @@ export const CALENDAR_EVENT_PARTICIPANT_DATA_SEEDS: CalendarEventParticipantData
     },
     {
       id: CALENDAR_EVENT_PARTICIPANT_DATA_SEED_IDS.TWO,
+      createdAt: '2025-06-16T20:15:47.451Z',
+      updatedAt: '2025-06-16T20:15:47.451Z',
+      deletedAt: null,
       calendarEventId: CALENDAR_EVENT_DATA_SEED_IDS.ID_1,
       handle: 'tim@apple.com',
       displayName: 'Tim Apple',
