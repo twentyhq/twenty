@@ -1,7 +1,7 @@
 import { isValidVariable } from 'twenty-shared/utils';
 import { z } from 'zod';
 
-export const selectViewFilterValueSchema = z
+export const arrayOfStringsOrVariablesSchema = z
   .string()
   .transform((val) => {
     if (val === '') return [];

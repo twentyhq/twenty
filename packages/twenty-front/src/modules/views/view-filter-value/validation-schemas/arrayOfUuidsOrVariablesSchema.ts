@@ -1,7 +1,7 @@
 import { isValidUuid, isValidVariable } from 'twenty-shared/utils';
 import { z } from 'zod';
 
-export const simpleRelationFilterValueSchema = z
+export const arrayOfUuidOrVariableSchema = z
   .preprocess(
     (value) => {
       try {

@@ -1,9 +1,9 @@
-import { selectViewFilterValueSchema } from '../selectViewFilterValueSchema';
+import { arrayOfStringsOrVariablesSchema } from '../arrayOfStringsOrVariablesSchema';
 
-describe('selectViewFilterValueSchema', () => {
+describe('arrayOfStringsOrVariablesSchema', () => {
   describe('Empty value handling', () => {
     it('should return empty array for empty string', () => {
-      const result = selectViewFilterValueSchema.safeParse('');
+      const result = arrayOfStringsOrVariablesSchema.safeParse('');
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data).toEqual([]);
@@ -20,7 +20,7 @@ describe('selectViewFilterValueSchema', () => {
       ];
 
       validVariables.forEach((variable) => {
-        const result = selectViewFilterValueSchema.safeParse(variable);
+        const result = arrayOfStringsOrVariablesSchema.safeParse(variable);
         expect(result.success).toBe(true);
         if (result.success) {
           expect(result.data).toEqual([variable]);
@@ -38,7 +38,7 @@ describe('selectViewFilterValueSchema', () => {
       ];
 
       validArrays.forEach((array) => {
-        const result = selectViewFilterValueSchema.safeParse(array);
+        const result = arrayOfStringsOrVariablesSchema.safeParse(array);
         expect(result.success).toBe(true);
         if (result.success) {
           expect(result.data).toEqual(JSON.parse(array));
@@ -55,7 +55,7 @@ describe('selectViewFilterValueSchema', () => {
       ];
 
       invalidArrays.forEach((array) => {
-        const result = selectViewFilterValueSchema.safeParse(array);
+        const result = arrayOfStringsOrVariablesSchema.safeParse(array);
         expect(result.success).toBe(false);
       });
     });
@@ -63,7 +63,8 @@ describe('selectViewFilterValueSchema', () => {
 
   describe('Edge cases', () => {
     it('should handle whitespace in variable syntax', () => {
-      const result = selectViewFilterValueSchema.safeParse('{{ variable }}');
+      const result =
+        arrayOfStringsOrVariablesSchema.safeParse('{{ variable }}');
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data).toEqual(['{{ variable }}']);
@@ -72,7 +73,7 @@ describe('selectViewFilterValueSchema', () => {
 
     it('should handle nested variables in JSON array', () => {
       const input = JSON.stringify(['{{outer.{{inner}}}}']);
-      const result = selectViewFilterValueSchema.safeParse(input);
+      const result = arrayOfStringsOrVariablesSchema.safeParse(input);
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data).toEqual(['{{outer.{{inner}}}}']);
@@ -80,7 +81,7 @@ describe('selectViewFilterValueSchema', () => {
     });
 
     it('should handle empty array in JSON', () => {
-      const result = selectViewFilterValueSchema.safeParse('[]');
+      const result = arrayOfStringsOrVariablesSchema.safeParse('[]');
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data).toEqual([]);
