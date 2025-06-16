@@ -193,6 +193,10 @@ const getSchemaComponentsProperties = ({
             currencyCode: {
               type: 'string',
             },
+            format: {
+              type: 'string',
+              enum: ['short', 'full'],
+            },
           },
         };
         break;

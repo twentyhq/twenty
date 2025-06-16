@@ -36,7 +36,7 @@ export const CurrencyDisplay = ({ currencyValue }: CurrencyDisplayProps) => {
             color={theme.font.color.primary}
             size={theme.icon.size.md}
             stroke={theme.icon.stroke.sm}
-          />
+          />{' '}
         </>
       )}
       {amountToDisplay !== null

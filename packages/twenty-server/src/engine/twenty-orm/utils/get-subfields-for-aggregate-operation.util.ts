@@ -10,7 +10,7 @@ export const getSubfieldsForAggregateOperation = (
   } else {
     switch (fieldType) {
       case FieldMetadataType.CURRENCY:
-        return ['amountMicros', 'currencyCode'];
+        return ['amountMicros', 'currencyCode', 'format'];
       case FieldMetadataType.FULL_NAME:
         return ['firstName', 'lastName'];
       case FieldMetadataType.ADDRESS:

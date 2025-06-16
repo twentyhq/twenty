@@ -1,8 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
-
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 export function generateDefaultValue(
   type: FieldMetadataType,
@@ -34,7 +33,8 @@ export function generateDefaultValue(
     case FieldMetadataType.CURRENCY:
       return {
         amountMicros: null,
-        currencyCode: "''",
+        currencyCode: "'USD'",
+        format: "'short'",
       };
     case FieldMetadataType.LINKS:
       return {

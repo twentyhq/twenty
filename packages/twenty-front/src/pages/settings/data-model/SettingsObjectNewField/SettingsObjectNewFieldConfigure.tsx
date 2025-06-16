@@ -75,6 +75,7 @@ export const SettingsObjectNewFieldConfigure = () => {
       label: '',
       description: '',
       name: '',
+      // format: ''
     },
   });
 
@@ -126,6 +127,8 @@ export const SettingsObjectNewFieldConfigure = () => {
   if (!activeObjectMetadataItem) return null;
 
   const { isValid, isSubmitting } = formConfig.formState;
+  console.log("HERE", formConfig.formState.errors)
+  console.log(isValid)
   const canSave = isValid && !isSubmitting;
 
   const handleSave = async (
@@ -204,7 +207,8 @@ export const SettingsObjectNewFieldConfigure = () => {
 
           { children: <SettingsDataModelNewFieldBreadcrumbDropDown /> },
         ]}
-        actionButton={
+        actionButton={<>
+        SALUT
           <SaveAndCancelButtons
             isSaveDisabled={!canSave}
             isCancelDisabled={isSubmitting}
@@ -221,6 +225,8 @@ export const SettingsObjectNewFieldConfigure = () => {
             }
             onSave={formConfig.handleSubmit(handleSave)}
           />
+        </>
+        
         }
       >
         <SettingsPageContainer>

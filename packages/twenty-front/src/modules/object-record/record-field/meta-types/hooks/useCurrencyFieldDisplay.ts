@@ -9,7 +9,7 @@ export const useCurrencyFieldDisplay = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
   const fieldName = fieldDefinition.metadata.fieldName;
-  
+
   console.log(fieldDefinition);
   const fieldValue = useRecordFieldValue<FieldCurrencyValue | undefined>(
     recordId,
@@ -24,4 +24,3 @@ export const useCurrencyFieldDisplay = () => {
     fieldValue,
   };
 };
-

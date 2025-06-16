@@ -23,6 +23,7 @@ type PetDataSeed = {
   picturesSecondaryLinks: string;
   averageCostOfKibblePerMonthAmountMicros: number;
   averageCostOfKibblePerMonthCurrencyCode: string;
+  averageCostOfKibblePerMonthCurrencyFormat: string;
   makesOwnerThinkOfFirstName: string;
   makesOwnerThinkOfLastName: string;
   soundSwag: string;
@@ -31,6 +32,7 @@ type PetDataSeed = {
   extraData: string;
 };
 
+// ORDER SEEMS TO MATTER DAMN
 export const PET_DATA_SEED_COLUMNS: (keyof PetDataSeed)[] = [
   'id',
   'name',
@@ -56,6 +58,7 @@ export const PET_DATA_SEED_COLUMNS: (keyof PetDataSeed)[] = [
   'picturesSecondaryLinks',
   'averageCostOfKibblePerMonthAmountMicros',
   'averageCostOfKibblePerMonthCurrencyCode',
+  'averageCostOfKibblePerMonthCurrencyFormat',
   'makesOwnerThinkOfFirstName',
   'makesOwnerThinkOfLastName',
   'soundSwag',
@@ -104,6 +107,7 @@ export const PET_DATA_SEEDS: PetDataSeed[] = [
     ]),
     averageCostOfKibblePerMonthAmountMicros: 2000000000,
     averageCostOfKibblePerMonthCurrencyCode: 'USD',
+    averageCostOfKibblePerMonthCurrencyFormat: 'short',
     makesOwnerThinkOfFirstName: 'Brad',
     makesOwnerThinkOfLastName: 'Pitt',
     soundSwag: 'RATING_3',

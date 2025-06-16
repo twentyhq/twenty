@@ -13,5 +13,11 @@ export const currencyFieldDefaultValueSchema = z.object({
       currencyCodeSchema.safeParse(stripSimpleQuotesFromString(value)).success,
     { message: 'String is not a valid currencyCode' },
   ),
-  format: z.enum(fieldMetadataCurrencyFormat),
+  format: simpleQuotesStringSchema.refine(
+    (value): value is `'${CurrencyCode}'` =>
+      z
+        .enum(fieldMetadataCurrencyFormat)
+        .safeParse(stripSimpleQuotesFromString(value)).success,
+    { message: 'String is not a valid format' },
+  ),
 });

@@ -2,6 +2,7 @@ import {
   IsArray,
   IsBoolean,
   IsDate,
+  IsIn,
   IsNotEmpty,
   IsNumber,
   IsNumberString,
@@ -90,6 +91,11 @@ export class FieldMetadataDefaultValueCurrency {
   @ValidateIf((object, value) => value !== null)
   @IsQuotedString()
   currencyCode: string | null;
+
+  @ValidateIf((object, value) => value !== null)
+  @IsString()
+  @IsIn(['short', 'full'])
+  format: string | null;
 }
 
 export class FieldMetadataDefaultValueFullName {
