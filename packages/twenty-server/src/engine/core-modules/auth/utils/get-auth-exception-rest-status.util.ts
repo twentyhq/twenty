@@ -19,6 +19,7 @@ export const getAuthExceptionRestStatus = (exception: AuthException) => {
     case AuthExceptionCode.MICROSOFT_API_AUTH_DISABLED:
     case AuthExceptionCode.MISSING_ENVIRONMENT_VARIABLE:
     case AuthExceptionCode.EMAIL_NOT_VERIFIED:
+    case AuthExceptionCode.INVALID_JWT_TOKEN_TYPE:
       return 403;
     case AuthExceptionCode.INVALID_DATA:
     case AuthExceptionCode.UNAUTHENTICATED:

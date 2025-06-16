@@ -71,6 +71,7 @@ export const useOpenRecordFromIndexView = () => {
           openRecordInCommandMenu({
             recordId,
             objectNameSingular,
+            resetNavigationStack: true,
           });
         } else {
           navigate(AppPath.RecordShowPage, {

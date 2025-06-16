@@ -39,6 +39,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 @Controller('auth')
 export class SSOAuthController {
@@ -136,7 +137,7 @@ export class SSOAuthController {
         workspaceId: workspaceIdentityProvider.workspaceId,
         workspaceInviteHash: req.user.workspaceInviteHash,
         email: req.user.email,
-        authProvider: 'sso',
+        authProvider: AuthProviderEnum.SSO,
       });
 
       workspaceValidator.assertIsDefinedOrThrow(
@@ -206,7 +207,7 @@ export class SSOAuthController {
       workspace: currentWorkspace,
       invitation,
       authParams: {
-        provider: 'sso',
+        provider: AuthProviderEnum.SSO,
       },
     });
 
@@ -215,6 +216,7 @@ export class SSOAuthController {
       loginToken: await this.loginTokenService.generateLoginToken(
         user.email,
         workspace.id,
+        AuthProviderEnum.SSO,
       ),
     };
   }

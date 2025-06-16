@@ -12,6 +12,7 @@ import { OnboardingStatus } from '~/generated/graphql';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
 import { UNTESTED_APP_PATHS } from '~/testing/constants/UntestedAppPaths';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
+import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 
 jest.mock('@/onboarding/hooks/useOnboardingStatus');
 const setupMockOnboardingStatus = (
@@ -48,6 +49,11 @@ const defaultHomePagePath = '/objects/companies';
 jest.mock('@/navigation/hooks/useDefaultHomePagePath');
 jest.mocked(useDefaultHomePagePath).mockReturnValue({
   defaultHomePagePath,
+});
+
+jest.mock('@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace');
+jest.mocked(useIsCurrentLocationOnAWorkspace).mockReturnValue({
+  isOnAWorkspace: true,
 });
 
 jest.mock('react-router-dom');
