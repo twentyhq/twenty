@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
-import { fieldMetadataCurrencyFormat } from '@/object-record/record-field/types/FieldMetadata';
+import { FieldCurrencyFormat, fieldMetadataCurrencyFormat } from '@/object-record/record-field/types/FieldMetadata';
 import { currencyCodeSchema } from '@/object-record/record-field/validation-schemas/currencyCodeSchema';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 import { simpleQuotesStringSchema } from '~/utils/validation-schemas/simpleQuotesStringSchema';
@@ -14,7 +14,7 @@ export const currencyFieldDefaultValueSchema = z.object({
     { message: 'String is not a valid currencyCode' },
   ),
   format: simpleQuotesStringSchema.refine(
-    (value): value is `'${CurrencyCode}'` =>
+    (value): value is `'${FieldCurrencyFormat}'` =>
       z
         .enum(fieldMetadataCurrencyFormat)
         .safeParse(stripSimpleQuotesFromString(value)).success,

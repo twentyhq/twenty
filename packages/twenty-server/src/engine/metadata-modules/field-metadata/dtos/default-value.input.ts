@@ -90,11 +90,13 @@ export class FieldMetadataDefaultValueCurrency {
 
   @ValidateIf((object, value) => value !== null)
   @IsQuotedString()
+  // No integrity validation within decorators ?
   currencyCode: string | null;
 
   @ValidateIf((object, value) => value !== null)
-  @IsString()
-  @IsIn(['short', 'full'])
+  @IsQuotedString()
+  // TODO improve
+  @IsIn(["'short'", "'full'"])
   format: string | null;
 }
 
