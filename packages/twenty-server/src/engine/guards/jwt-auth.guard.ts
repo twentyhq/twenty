@@ -16,15 +16,16 @@ export class JwtAuthGuard implements CanActivate {
     try {
       const data =
         await this.accessTokenService.validateTokenByRequest(request);
-      const metadataVersion =
-        await this.workspaceStorageCacheService.getMetadataVersion(
-          data.workspace.id,
-        );
+      const metadataVersion = data.workspace
+        ? await this.workspaceStorageCacheService.getMetadataVersion(
+            data.workspace.id,
+          )
+        : undefined;
 
       request.user = data.user;
       request.apiKey = data.apiKey;
       request.workspace = data.workspace;
-      request.workspaceId = data.workspace.id;
+      request.workspaceId = data.workspace?.id;
       request.workspaceMetadataVersion = metadataVersion;
       request.workspaceMemberId = data.workspaceMemberId;
       request.userWorkspaceId = data.userWorkspaceId;

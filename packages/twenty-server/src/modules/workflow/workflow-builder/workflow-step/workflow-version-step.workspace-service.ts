@@ -77,6 +77,7 @@ export class WorkflowVersionStepWorkspaceService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
         workspaceId,
         'workflowVersion',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workflowVersion = await workflowVersionRepository.findOne({
@@ -95,7 +96,8 @@ export class WorkflowVersionStepWorkspaceService {
     assertWorkflowVersionIsDraft(workflowVersion);
 
     const existingSteps = workflowVersion.steps || [];
-    const updatedSteps = insertStep({
+
+    const { updatedSteps, updatedInsertedStep } = insertStep({
       existingSteps,
       insertedStep: enrichedNewStep,
       parentStepId,
@@ -106,7 +108,7 @@ export class WorkflowVersionStepWorkspaceService {
       steps: updatedSteps,
     });
 
-    return enrichedNewStep;
+    return updatedInsertedStep;
   }
 
   async updateWorkflowVersionStep({
@@ -346,8 +348,14 @@ export class WorkflowVersionStepWorkspaceService {
     step: WorkflowAction;
     workspaceId: string;
   }): Promise<WorkflowAction> {
-    // We don't enrich on the fly for code workflow action. OutputSchema is computed and updated when testing the serverless function
-    if (step.type === WorkflowActionType.CODE) {
+    // We don't enrich on the fly for code and HTTP request workflow actions.
+    // For code actions, OutputSchema is computed and updated when testing the serverless function.
+    // For HTTP requests, OutputSchema is determined by the expamle response input
+    if (
+      [WorkflowActionType.CODE, WorkflowActionType.HTTP_REQUEST].includes(
+        step.type,
+      )
+    ) {
       return step;
     }
 
@@ -553,6 +561,23 @@ export class WorkflowVersionStepWorkspaceService {
           },
         };
       }
+      case WorkflowActionType.HTTP_REQUEST: {
+        return {
+          id: newStepId,
+          name: 'HTTP Request',
+          type: WorkflowActionType.HTTP_REQUEST,
+          valid: false,
+          settings: {
+            ...BASE_STEP_DEFINITION,
+            input: {
+              url: '',
+              method: 'GET',
+              headers: {},
+              body: {},
+            },
+          },
+        };
+      }
       default:
         throw new WorkflowVersionStepException(
           `WorkflowActionType '${type}' unknown`,
@@ -594,6 +619,7 @@ export class WorkflowVersionStepWorkspaceService {
             await this.twentyORMGlobalManager.getRepositoryForWorkspace(
               workspaceId,
               field.settings.objectName,
+              { shouldBypassPermissionChecks: true },
             );
 
           const record = await repository.findOne({

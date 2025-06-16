@@ -20,6 +20,7 @@ interface MatchColumnToFieldSelectProps {
   onChange: (value: ReadonlyDeep<SelectOption> | null) => void;
   value?: ReadonlyDeep<SelectOption>;
   options: readonly ReadonlyDeep<SelectOption>[];
+  suggestedOptions: readonly ReadonlyDeep<SelectOption>[];
   placeholder?: string;
 }
 
@@ -32,6 +33,7 @@ export const MatchColumnToFieldSelect = ({
   onChange,
   value,
   options,
+  suggestedOptions,
   placeholder,
   columnIndex,
 }: MatchColumnToFieldSelectProps) => {
@@ -81,6 +83,13 @@ export const MatchColumnToFieldSelect = ({
       onChange(correspondingOption);
       closeDropdown();
     }
+  };
+
+  const handleSelectSuggestedOption = (
+    selectedSuggestedOption: SelectOption,
+  ) => {
+    onChange(selectedSuggestedOption);
+    closeDropdown();
   };
 
   const handleDoNotImportSelect = () => {
@@ -138,9 +147,11 @@ export const MatchColumnToFieldSelect = ({
           <MatchColumnSelectFieldSelectDropdownContent
             selectedValue={value}
             onSelectFieldMetadataItem={handleFieldMetadataItemSelect}
+            onSelectSuggestedOption={handleSelectSuggestedOption}
             onCancelSelect={handleCancelSelectClick}
             onDoNotImportSelect={handleDoNotImportSelect}
             options={options}
+            suggestedOptions={suggestedOptions}
           />
         )
       }

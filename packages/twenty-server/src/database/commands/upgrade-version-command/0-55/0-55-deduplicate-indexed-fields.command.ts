@@ -73,6 +73,7 @@ export class DeduplicateIndexedFieldsCommand extends ActiveOrSuspendedWorkspaces
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         'company',
+        { shouldBypassPermissionChecks: true },
       );
 
     const duplicates = await companyRepository
@@ -121,6 +122,7 @@ export class DeduplicateIndexedFieldsCommand extends ActiveOrSuspendedWorkspaces
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         'person',
+        { shouldBypassPermissionChecks: true },
       );
 
     const duplicates = await personRepository

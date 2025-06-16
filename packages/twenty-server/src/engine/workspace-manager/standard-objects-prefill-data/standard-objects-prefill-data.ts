@@ -7,6 +7,7 @@ import { prefillCompanies } from 'src/engine/workspace-manager/standard-objects-
 import { prefillPeople } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-people';
 import { prefillViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-views';
 import { prefillWorkspaceFavorites } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workspace-favorites';
+import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflows';
 
 export const standardObjectsPrefillData = async (
   mainDataSource: DataSource,
@@ -15,7 +16,11 @@ export const standardObjectsPrefillData = async (
 ) => {
   mainDataSource.transaction(async (entityManager: WorkspaceEntityManager) => {
     await prefillCompanies(entityManager, schemaName);
+
     await prefillPeople(entityManager, schemaName);
+
+    await prefillWorkflows(entityManager, schemaName);
+
     const viewDefinitionsWithId = await prefillViews(
       entityManager,
       schemaName,

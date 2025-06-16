@@ -81,7 +81,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
     <>
       {layoutDirection === 'search-bar-on-bottom' && (
         <>
-          {isDefined(onCreate) && !hasObjectUpdatePermissions && (
+          {isDefined(onCreate) && hasObjectUpdatePermissions && (
             <DropdownMenuItemsContainer scrollable={false}>
               {createNewButton}
             </DropdownMenuItemsContainer>
@@ -125,7 +125,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
           {records.recordsToSelect.length > 0 && isDefined(onCreate) && (
             <DropdownMenuSeparator />
           )}
-          {isDefined(onCreate) && !hasObjectUpdatePermissions && (
+          {isDefined(onCreate) && hasObjectUpdatePermissions && (
             <DropdownMenuItemsContainer scrollable={false}>
               {createNewButton}
             </DropdownMenuItemsContainer>

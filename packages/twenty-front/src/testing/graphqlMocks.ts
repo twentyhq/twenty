@@ -19,6 +19,7 @@ import { mockedRemoteTables } from '~/testing/mock-data/remote-tables';
 import { mockedUserData } from '~/testing/mock-data/users';
 import { mockedViewsData } from '~/testing/mock-data/views';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
+import { mockedPublicWorkspaceDataBySubdomain } from '~/testing/mock-data/publicWorkspaceDataBySubdomain';
 
 import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataByDomain';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
@@ -90,22 +91,8 @@ export const graphqlMocks = {
       () => {
         return HttpResponse.json({
           data: {
-            getPublicWorkspaceDataByDomain: {
-              id: 'id',
-              logo: 'logo',
-              displayName: 'displayName',
-              workspaceUrls: {
-                customUrl: undefined,
-                subdomainUrl: 'https://twenty.com',
-              },
-              authProviders: {
-                google: true,
-                microsoft: false,
-                password: true,
-                magicLink: false,
-                sso: [],
-              },
-            },
+            getPublicWorkspaceDataByDomain:
+              mockedPublicWorkspaceDataBySubdomain,
           },
         });
       },
@@ -667,6 +654,26 @@ export const graphqlMocks = {
         return HttpResponse.json({
           data: {
             person: peopleMock.find((person) => person.id === objectRecordId),
+          },
+        });
+      },
+    ),
+    graphql.query<GraphQLQuery, { objectRecordId: string }>(
+      'FindOneWebhook',
+      ({ variables: { objectRecordId } }) => {
+        return HttpResponse.json({
+          data: {
+            webhook: {
+              __typename: 'Webhook',
+              id: objectRecordId,
+              createdAt: '2021-08-27T12:00:00Z',
+              updatedAt: '2021-08-27T12:00:00Z',
+              deletedAt: null,
+              targetUrl: 'https://example.com/webhook',
+              description: 'A Sample Description',
+              operations: ['*.created', '*.updated'],
+              secret: 'sample-secret',
+            },
           },
         });
       },
