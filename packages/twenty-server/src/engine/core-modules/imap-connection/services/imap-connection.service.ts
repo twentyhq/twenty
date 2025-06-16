@@ -44,8 +44,6 @@ export class ImapConnectionService {
         `Connection successful. Found ${mailboxes.length} mailboxes.`,
       );
 
-      await client.logout();
-
       return true;
     } catch (error) {
       this.logger.error(
