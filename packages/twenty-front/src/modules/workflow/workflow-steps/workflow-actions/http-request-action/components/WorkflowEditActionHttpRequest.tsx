@@ -18,6 +18,8 @@ import { useHttpRequestForm } from '../hooks/useHttpRequestForm';
 import { useHttpRequestOutputSchema } from '../hooks/useHttpRequestOutputSchema';
 import { BodyInput } from './BodyInput';
 import { KeyValuePairInput } from './KeyValuePairInput';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useTheme } from '@emotion/react';
 
 type WorkflowEditActionHttpRequestProps = {
   action: WorkflowHttpRequestAction;
@@ -31,6 +33,7 @@ export const WorkflowEditActionHttpRequest = ({
   action,
   actionOptions,
 }: WorkflowEditActionHttpRequestProps) => {
+  const theme = useTheme();
   const { getIcon } = useIcons();
   const { headerTitle, headerIcon, headerIconColor, headerType } =
     useWorkflowActionHeader({
@@ -84,6 +87,8 @@ export const WorkflowEditActionHttpRequest = ({
           value={formData.method}
           onChange={(value) => handleFieldChange('method', value)}
           disabled={actionOptions.readonly}
+          dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+          dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
 
         <KeyValuePairInput

@@ -965,7 +965,7 @@ export class WorkspaceEntityManager extends EntityManager {
       .execute();
   }
 
-  override findByIds<Entity extends ObjectLiteral>(
+  override async findByIds<Entity extends ObjectLiteral>(
     entityClass: EntityTarget<Entity>,
     ids: string[],
     permissionOptions?: PermissionOptions,
@@ -1033,7 +1033,10 @@ export class WorkspaceEntityManager extends EntityManager {
     permissionOptions?: PermissionOptions,
   ): Promise<T>;
 
-  override save<Entity extends ObjectLiteral, T extends DeepPartial<Entity>>(
+  override async save<
+    Entity extends ObjectLiteral,
+    T extends DeepPartial<Entity>,
+  >(
     targetOrEntity: EntityTarget<Entity> | Entity | Entity[],
     entityOrMaybeOptions:
       | T
@@ -1117,7 +1120,7 @@ export class WorkspaceEntityManager extends EntityManager {
     permissionOptions?: PermissionOptions,
   ): Promise<Entity[]>;
 
-  override remove<Entity extends ObjectLiteral>(
+  override async remove<Entity extends ObjectLiteral>(
     targetOrEntity: EntityTarget<Entity> | Entity[] | Entity,
     entityOrMaybeOptions: Entity | Entity[] | RemoveOptions,
     maybeOptionsOrMaybePermissionOptions?: RemoveOptions | PermissionOptions,
@@ -1279,7 +1282,10 @@ export class WorkspaceEntityManager extends EntityManager {
     permissionOptions?: PermissionOptions,
   ): Promise<T>;
 
-  override recover<Entity extends ObjectLiteral, T extends DeepPartial<Entity>>(
+  override async recover<
+    Entity extends ObjectLiteral,
+    T extends DeepPartial<Entity>,
+  >(
     targetOrEntityOrEntities: EntityTarget<Entity> | Entity | Entity[],
     entityOrEntitiesOrMaybeOptions: T | T[] | SaveOptions,
     maybeOptionsOrMaybePermissionOptions?: SaveOptions | PermissionOptions,
