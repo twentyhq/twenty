@@ -1,3 +1,5 @@
+import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-runner/utils/remove-sql-injection.util';
+
 type ComputePostgresEnumNameParams = {
   tableName: string;
   columnName: string;
@@ -7,5 +9,5 @@ export const computePostgresEnumName = ({
   tableName,
   columnName,
 }: ComputePostgresEnumNameParams): string => {
-  return `${tableName}_${columnName}_enum`;
+  return removeSqlDDLInjection(`${tableName}_${columnName}_enum`);
 };

@@ -18,6 +18,7 @@ import { PostgresQueryRunner } from 'src/engine/workspace-manager/workspace-migr
 import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration-runner/utils/compute-postgres-enum-name.util';
 import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration-runner/utils/convert-on-delete-action-to-on-delete.util';
 import { typeormBuildCreateColumnSql } from 'src/engine/workspace-manager/workspace-migration-runner/utils/internal/typeorm-build-create-column-sql.util';
+import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-runner/utils/remove-sql-injection.util';
 
 @Injectable()
 export class WorkspaceMigrationColumnService {
@@ -158,8 +159,16 @@ export class WorkspaceMigrationColumnService {
           columnName: createColumnMigration.columnName,
         });
 
+        const joinedEnumValues = createColumnMigration.enum
+          .map((value) => removeSqlDDLInjection(value.toString()))
+          .map((value) => `'${value}'`)
+          .join(',');
+
+        // TODO: remove once drop table as been refactored to remove the enum types
+        await queryRunner.query(`DROP TYPE IF EXISTS "${enumName}"`);
+
         await queryRunner.query(
-          `CREATE TYPE "${enumName}" AS ENUM (${createColumnMigration.enum.map((value) => `'${value}'`).join(',')})`,
+          `CREATE TYPE "${enumName}" AS ENUM (${joinedEnumValues})`,
         );
       }
 
@@ -187,7 +196,7 @@ export class WorkspaceMigrationColumnService {
         );
 
         await queryRunner.query(
-          `ALTER TABLE "${schemaName}"."${tableName} ADD CONSTRAINT "${pkName}" PRIMARY KEY (${createColumnMigration.columnName})`,
+          `ALTER TABLE "${schemaName}"."${tableName} ADD CONSTRAINT "${pkName}" PRIMARY KEY (${removeSqlDDLInjection(createColumnMigration.columnName)})`,
         );
       }
     }
@@ -297,8 +306,8 @@ export class WorkspaceMigrationColumnService {
     let sql =
       `ALTER TABLE "${schemaName}"."${tableName}" ADD CONSTRAINT "${
         foreignKeyName
-      }" FOREIGN KEY ("${migrationColumn.columnName}") ` +
-      `REFERENCES "${schemaName}"."${migrationColumn.referencedTableName}"("${migrationColumn.referencedTableColumnName}")`;
+      }" FOREIGN KEY ("${removeSqlDDLInjection(migrationColumn.columnName)}") ` +
+      `REFERENCES "${schemaName}"."${removeSqlDDLInjection(migrationColumn.referencedTableName)}"("${removeSqlDDLInjection(migrationColumn.referencedTableColumnName)}")`;
 
     if (migrationColumn.onDelete)
       sql += ` ON DELETE ${convertOnDeleteActionToOnDelete(migrationColumn.onDelete)}`;
