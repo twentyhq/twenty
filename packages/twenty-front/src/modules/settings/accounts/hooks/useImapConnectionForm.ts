@@ -1,4 +1,3 @@
-import { gql, useMutation } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
@@ -9,38 +8,17 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
 import { MessageChannelVisibility } from '~/generated-metadata/graphql';
+import { useSaveImapConnectionMutation } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { currentWorkspaceMemberState } from '~/modules/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '~/modules/auth/states/currentWorkspaceState';
-
-const SAVE_IMAP_CONNECTION = gql`
-  mutation SaveImapConnection(
-    $accountOwnerId: String!
-    $handle: String!
-    $host: String!
-    $port: Float!
-    $secure: Boolean!
-    $password: String!
-    $id: String
-  ) {
-    saveImapConnection(
-      accountOwnerId: $accountOwnerId
-      handle: $handle
-      host: $host
-      port: $port
-      secure: $secure
-      password: $password
-      id: $id
-    )
-  }
-`;
 
 const imapConnectionFormSchema = z.object({
   handle: z.string().email('Invalid email address'),
   host: z.string().min(1, 'IMAP server is required'),
   port: z.number().int().positive('Port must be a positive number'),
   secure: z.boolean(),
-  password: z.string().min(1, 'Password is required').or(z.string().optional()),
+  password: z.string().min(1, 'Password is required'),
   messageVisibility: z.nativeEnum(MessageChannelVisibility).optional(),
 });
 
@@ -72,17 +50,9 @@ export const useImapConnectionForm = ({
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const [saveImapConnection, { loading: saveLoading }] =
-    useMutation(SAVE_IMAP_CONNECTION);
+    useSaveImapConnectionMutation();
 
-  const resolver = isEditing
-    ? zodResolver(
-        imapConnectionFormSchema.omit({ password: true }).merge(
-          z.object({
-            password: z.string().optional(),
-          }),
-        ),
-      )
-    : zodResolver(imapConnectionFormSchema);
+  const resolver = zodResolver(imapConnectionFormSchema);
 
   const defaultValues = {
     handle: initialData?.handle || '',
@@ -129,9 +99,7 @@ export const useImapConnectionForm = ({
         host: formValues.host,
         port: formValues.port,
         secure: formValues.secure,
-        ...(formValues.password || !isEditing
-          ? { password: formValues.password }
-          : {}),
+        password: formValues.password,
       };
 
       await saveImapConnection({
@@ -139,7 +107,7 @@ export const useImapConnectionForm = ({
       });
 
       enqueueSnackBar(
-        isEditing
+        connectedAccountId
           ? t`IMAP connection successfully updated`
           : t`IMAP connection successfully created`,
         {

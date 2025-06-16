@@ -815,6 +815,12 @@ export enum IdentityProviderType {
   SAML = 'SAML'
 }
 
+export type ImapConnectionSuccess = {
+  __typename?: 'ImapConnectionSuccess';
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean']['output'];
+};
+
 export type ImpersonateOutput = {
   __typename?: 'ImpersonateOutput';
   loginToken: AuthToken;
@@ -998,7 +1004,7 @@ export type Mutation = {
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
   runWorkflowVersion: WorkflowRun;
-  saveImapConnection: Scalars['Boolean']['output'];
+  saveImapConnection: ImapConnectionSuccess;
   sendInvitations: SendInvitationsOutput;
   signIn: AvailableWorkspacesAndAccessTokensOutput;
   signUp: AvailableWorkspacesAndAccessTokensOutput;
@@ -1010,7 +1016,6 @@ export type Mutation = {
   switchToYearlyInterval: BillingUpdateOutput;
   syncRemoteTable: RemoteTable;
   syncRemoteTableSchemaChanges: RemoteTable;
-  testImapConnection: Scalars['Boolean']['output'];
   trackAnalytics: Analytics;
   unsyncRemoteTable: RemoteTable;
   updateDatabaseConfigVariable: Scalars['Boolean']['output'];
@@ -1326,15 +1331,6 @@ export type MutationSyncRemoteTableArgs = {
 
 export type MutationSyncRemoteTableSchemaChangesArgs = {
   input: RemoteTableInput;
-};
-
-
-export type MutationTestImapConnectionArgs = {
-  handle: Scalars['String']['input'];
-  host: Scalars['String']['input'];
-  password: Scalars['String']['input'];
-  port: Scalars['Float']['input'];
-  secure: Scalars['Boolean']['input'];
 };
 
 

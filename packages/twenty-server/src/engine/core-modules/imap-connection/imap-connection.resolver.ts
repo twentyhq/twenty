@@ -8,6 +8,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ImapConnectionValidatorService } from 'src/engine/core-modules/imap-connection/services/imap-connection-validator.service';
 import { ImapConnectionService } from 'src/engine/core-modules/imap-connection/services/imap-connection.service';
+import { ImapConnectionSuccess } from 'src/engine/core-modules/imap-connection/types/imap-connection-success.dto';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -59,34 +60,7 @@ export class ImapConnectionResolver {
     }
   }
 
-  @Mutation(() => Boolean)
-  @UseGuards(WorkspaceAuthGuard)
-  async testImapConnection(
-    @Args('handle') handle: string,
-    @Args('host') host: string,
-    @Args('port') port: number,
-    @Args('secure') secure: boolean,
-    @Args('password') password: string,
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<boolean> {
-    await this.checkIfImapFeatureEnabled(workspace.id);
-
-    try {
-      await this.imapConnectionService.testConnection({
-        handle,
-        host,
-        port,
-        secure,
-        password,
-      });
-
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  @Mutation(() => Boolean)
+  @Mutation(() => ImapConnectionSuccess)
   @UseGuards(WorkspaceAuthGuard)
   async saveImapConnection(
     @Args('accountOwnerId') accountOwnerId: string,
@@ -97,7 +71,7 @@ export class ImapConnectionResolver {
     @Args('password') password: string,
     @AuthWorkspace() workspace: Workspace,
     @Args('id', { nullable: true }) id?: string,
-  ): Promise<boolean> {
+  ): Promise<ImapConnectionSuccess> {
     await this.checkIfImapFeatureEnabled(workspace.id);
 
     const connectionParams =
@@ -109,57 +83,15 @@ export class ImapConnectionResolver {
         handle,
       });
 
-    if (id) {
-      const connectedAccountRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
-          workspace.id,
-          'connectedAccount',
-        );
+    await this.imapConnectionService.testConnection({
+      handle,
+      host,
+      port,
+      secure,
+      password,
+    });
 
-      await connectedAccountRepository.update(
-        { id },
-        {
-          handle,
-          provider: ConnectedAccountProvider.IMAP,
-          connectionType: 'IMAP',
-          customConnectionParams: connectionParams,
-        },
-      );
-
-      const messageChannelRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
-          workspace.id,
-          'messageChannel',
-        );
-
-      const messageChannels = await messageChannelRepository.find({
-        where: { connectedAccountId: id },
-      });
-
-      if (messageChannels.length > 0) {
-        await messageChannelRepository.update(
-          { connectedAccountId: id },
-          {
-            syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
-            syncStatus: null,
-            syncCursor: '',
-            syncStageStartedAt: null,
-          },
-        );
-
-        if (this.twentyConfigService.get('MESSAGING_PROVIDER_IMAP_ENABLED')) {
-          for (const messageChannel of messageChannels) {
-            await this.messageQueueService.add<MessagingMessageListFetchJobData>(
-              MessagingMessageListFetchJob.name,
-              {
-                workspaceId: workspace.id,
-                messageChannelId: messageChannel.id,
-              },
-            );
-          }
-        }
-      }
-    } else {
+    if (!id) {
       await this.imapApisService.setupIMAPAccount({
         handle,
         workspaceMemberId: accountOwnerId,
@@ -168,6 +100,58 @@ export class ImapConnectionResolver {
       });
     }
 
-    return true;
+    const connectedAccountRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
+        workspace.id,
+        'connectedAccount',
+      );
+
+    await connectedAccountRepository.update(
+      { id },
+      {
+        handle,
+        provider: ConnectedAccountProvider.IMAP,
+        connectionType: 'IMAP',
+        customConnectionParams: connectionParams,
+      },
+    );
+
+    const messageChannelRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+        workspace.id,
+        'messageChannel',
+      );
+
+    const messageChannels = await messageChannelRepository.find({
+      where: { connectedAccountId: id },
+    });
+
+    if (messageChannels.length > 0) {
+      await messageChannelRepository.update(
+        { connectedAccountId: id },
+        {
+          syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
+          syncStatus: null,
+          syncCursor: '',
+          syncStageStartedAt: null,
+        },
+      );
+
+      if (this.twentyConfigService.get('MESSAGING_PROVIDER_IMAP_ENABLED')) {
+        for (const messageChannel of messageChannels) {
+          await this.messageQueueService.add<MessagingMessageListFetchJobData>(
+            MessagingMessageListFetchJob.name,
+            {
+              workspaceId: workspace.id,
+              messageChannelId: messageChannel.id,
+            },
+          );
+        }
+      }
+    }
+
+    return {
+      success: true,
+    };
   }
 }
