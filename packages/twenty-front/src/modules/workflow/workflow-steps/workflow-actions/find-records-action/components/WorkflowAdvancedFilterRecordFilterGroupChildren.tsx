@@ -1,7 +1,7 @@
 import { AdvancedFilterAddFilterRuleSelect } from '@/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect';
-import { AdvancedFilterRecordFilterRow } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterRow';
 
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
+import { WorkflowAdvancedFilterRecordFilterColumn } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterRecordFilterColumn';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -18,13 +18,13 @@ const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
-type AdvancedFilterRecordFilterGroupChildrenProps = {
+type WorkflowAdvancedFilterRecordFilterGroupChildrenProps = {
   recordFilterGroupId: string;
 };
 
-export const AdvancedFilterRecordFilterGroupChildren = ({
+export const WorkflowAdvancedFilterRecordFilterGroupChildren = ({
   recordFilterGroupId,
-}: AdvancedFilterRecordFilterGroupChildrenProps) => {
+}: WorkflowAdvancedFilterRecordFilterGroupChildrenProps) => {
   const { currentRecordFilterGroup, childRecordFilters } =
     useChildRecordFiltersAndRecordFilterGroups({
       recordFilterGroupId,
@@ -41,7 +41,7 @@ export const AdvancedFilterRecordFilterGroupChildren = ({
   return (
     <StyledContainer isGrayBackground={hasParentRecordFilterGroup}>
       {childRecordFilters.map((childRecordFilter, childRecordFilterIndex) => (
-        <AdvancedFilterRecordFilterRow
+        <WorkflowAdvancedFilterRecordFilterColumn
           key={childRecordFilter.id}
           recordFilter={childRecordFilter}
           recordFilterIndex={childRecordFilterIndex}

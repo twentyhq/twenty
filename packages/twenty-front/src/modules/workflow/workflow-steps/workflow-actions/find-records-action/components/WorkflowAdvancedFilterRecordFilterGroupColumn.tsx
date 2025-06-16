@@ -1,9 +1,8 @@
-import { AdvancedFilterDropdownColumn } from '@/object-record/advanced-filter/components/AdvancedFilterDropdownColumn';
-import { AdvancedFilterLogicalOperatorCell } from '@/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorCell';
-import { AdvancedFilterRecordFilterGroupChildren } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupChildren';
 import { AdvancedFilterRecordFilterGroupOptionsDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown';
-import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
+import { WorkflowAdvancedFilterDropdownColumn } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterDropdownColumn';
+import { WorkflowAdvancedFilterLogicalOperatorCell } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterLogicalOperatorCell';
+import { WorkflowAdvancedFilterRecordFilterGroupChildren } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterRecordFilterGroupChildren';
 import styled from '@emotion/styled';
 
 const StyledContainer = styled.div`
@@ -13,21 +12,19 @@ const StyledContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const AdvancedFilterRecordFilterGroupColumn = ({
+export const WorkflowAdvancedFilterRecordFilterGroupColumn = ({
   parentRecordFilterGroup,
   recordFilterGroup,
   recordFilterGroupIndex,
-  VariablePicker,
 }: {
   parentRecordFilterGroup: RecordFilterGroup;
   recordFilterGroup: RecordFilterGroup;
   recordFilterGroupIndex: number;
-  VariablePicker?: VariablePickerComponent;
 }) => {
   return (
-    <AdvancedFilterDropdownColumn>
+    <WorkflowAdvancedFilterDropdownColumn>
       <StyledContainer>
-        <AdvancedFilterLogicalOperatorCell
+        <WorkflowAdvancedFilterLogicalOperatorCell
           index={recordFilterGroupIndex}
           recordFilterGroup={parentRecordFilterGroup}
         />
@@ -35,10 +32,9 @@ export const AdvancedFilterRecordFilterGroupColumn = ({
           recordFilterGroupId={recordFilterGroup.id}
         />
       </StyledContainer>
-      <AdvancedFilterRecordFilterGroupChildren
+      <WorkflowAdvancedFilterRecordFilterGroupChildren
         recordFilterGroupId={recordFilterGroup.id}
-        VariablePicker={VariablePicker}
       />
-    </AdvancedFilterDropdownColumn>
+    </WorkflowAdvancedFilterDropdownColumn>
   );
 };

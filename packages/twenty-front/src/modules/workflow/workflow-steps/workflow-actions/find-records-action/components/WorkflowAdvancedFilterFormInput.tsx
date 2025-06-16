@@ -1,5 +1,4 @@
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
-import { AdvancedFilterValueFormCompositeFieldInput } from '@/object-record/advanced-filter/components/AdvancedFilterValueFormCompositeFieldInput';
 import { shouldShowFilterTextInput } from '@/object-record/advanced-filter/utils/shouldShowFilterTextInput';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
@@ -8,7 +7,6 @@ import { configurableViewFilterOperands } from '@/object-record/object-filter-dr
 import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
-import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import {
   FieldMetadata,
   FieldMultiSelectMetadata,
@@ -17,17 +15,17 @@ import {
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { WorkflowAdvancedFilterValueFormCompositeFieldInput } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterValueFormCompositeFieldInput';
+import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { isObject } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { JsonValue } from 'type-fest';
 
-export const AdvancedFilterValueFormInput = ({
+export const WorkflowAdvancedFilterValueFormInput = ({
   recordFilterId,
-  VariablePicker,
 }: {
   recordFilterId: string;
-  VariablePicker?: VariablePickerComponent;
 }) => {
   const currentRecordFilters = useRecoilComponentValueV2(
     currentRecordFiltersComponentState,
@@ -101,16 +99,15 @@ export const AdvancedFilterValueFormInput = ({
         label={''}
         defaultValue={recordFilter.value}
         onChange={handleChange}
-        VariablePicker={VariablePicker}
+        VariablePicker={WorkflowVariablePicker}
       />
     );
   }
 
   if (isDefined(subFieldNameUsedInDropdown)) {
     return (
-      <AdvancedFilterValueFormCompositeFieldInput
+      <WorkflowAdvancedFilterValueFormCompositeFieldInput
         recordFilter={recordFilter}
-        VariablePicker={VariablePicker}
         onChange={handleChange}
       />
     );
@@ -126,7 +123,7 @@ export const AdvancedFilterValueFormInput = ({
         label={''}
         defaultValue={recordFilter.value}
         onChange={handleChange}
-        VariablePicker={VariablePicker}
+        VariablePicker={WorkflowVariablePicker}
         options={metadata?.options ?? []}
       />
     );
@@ -144,7 +141,9 @@ export const AdvancedFilterValueFormInput = ({
       defaultValue={recordFilter.value}
       onChange={handleChange}
       // VariablePicker is not supported for date filters yet
-      VariablePicker={isFilterableByDateValue ? undefined : VariablePicker}
+      VariablePicker={
+        isFilterableByDateValue ? undefined : WorkflowVariablePicker
+      }
     />
   );
 };

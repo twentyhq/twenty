@@ -3,19 +3,17 @@ import { FormCountryCodeSelectInput } from '@/object-record/record-field/form-ty
 import { FormCountrySelectInput } from '@/object-record/record-field/form-types/components/FormCountrySelectInput';
 import { FormNumberFieldInput } from '@/object-record/record-field/form-types/components/FormNumberFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
-import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { JsonValue } from 'type-fest';
 
-export const AdvancedFilterValueFormCompositeFieldInput = ({
+export const WorkflowAdvancedFilterValueFormCompositeFieldInput = ({
   recordFilter,
   onChange,
-  VariablePicker,
 }: {
   recordFilter: RecordFilter;
   onChange: (newValue: JsonValue) => void;
-  VariablePicker?: VariablePickerComponent;
 }) => {
   const subFieldNameUsedInDropdown = useRecoilComponentValueV2(
     subFieldNameUsedInDropdownComponentState,
@@ -30,13 +28,13 @@ export const AdvancedFilterValueFormCompositeFieldInput = ({
           <FormCountrySelectInput
             selectedCountryName={recordFilter.value}
             onChange={onChange}
-            VariablePicker={VariablePicker}
+            VariablePicker={WorkflowVariablePicker}
           />
         ) : (
           <FormTextFieldInput
             defaultValue={recordFilter.value}
             onChange={onChange}
-            VariablePicker={VariablePicker}
+            VariablePicker={WorkflowVariablePicker}
           />
         )
       ) : filterType === 'CURRENCY' ? (
@@ -44,13 +42,13 @@ export const AdvancedFilterValueFormCompositeFieldInput = ({
           <FormCountryCodeSelectInput
             selectedCountryCode={recordFilter.value}
             onChange={onChange}
-            VariablePicker={VariablePicker}
+            VariablePicker={WorkflowVariablePicker}
           />
         ) : recordFilter.subFieldName === 'amountMicros' ? (
           <FormNumberFieldInput
             defaultValue={recordFilter.value}
             onChange={onChange}
-            VariablePicker={VariablePicker}
+            VariablePicker={WorkflowVariablePicker}
           />
         ) : null
       ) : filterType === 'PHONES' ? (
@@ -58,20 +56,20 @@ export const AdvancedFilterValueFormCompositeFieldInput = ({
           <FormNumberFieldInput
             defaultValue={recordFilter.value}
             onChange={onChange}
-            VariablePicker={VariablePicker}
+            VariablePicker={WorkflowVariablePicker}
           />
         ) : (
           <FormTextFieldInput
             defaultValue={recordFilter.value}
             onChange={onChange}
-            VariablePicker={VariablePicker}
+            VariablePicker={WorkflowVariablePicker}
           />
         )
       ) : (
         <FormTextFieldInput
           defaultValue={recordFilter.value}
           onChange={onChange}
-          VariablePicker={VariablePicker}
+          VariablePicker={WorkflowVariablePicker}
         />
       )}
     </>
