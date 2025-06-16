@@ -248,6 +248,7 @@ export {
   IconLayoutSidebarRight,
   IconLayoutSidebarRightCollapse,
   IconLayoutSidebarRightExpand,
+  IconLetterK,
   IconLibraryPlus,
   IconLifebuoy,
   IconLink,

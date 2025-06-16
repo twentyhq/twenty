@@ -39,7 +39,7 @@ const StyledModalContent = styled(Modal.Content)`
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: ${({ theme }) => theme.spacing(3)};
+  padding: 0;
 `;
 
 const StyledScrollArea = styled.div`
@@ -49,8 +49,6 @@ const StyledScrollArea = styled.div`
   min-height: 0;
 `;
 
-// not sure about this, ie not code but do we want to hide the scrollbar?
-// product review
 const StyledScrollWrapper = styled(ScrollWrapper)`
   scrollbar-width: none;
 `;

@@ -2,7 +2,7 @@ import { createContext } from 'react';
 
 type AdvancedFilterContextType = {
   onUpdate?: () => void;
-  isColumn?: boolean;
+  isWorkflowFindRecords?: boolean;
 };
 
 export const AdvancedFilterContext = createContext<AdvancedFilterContextType>(
