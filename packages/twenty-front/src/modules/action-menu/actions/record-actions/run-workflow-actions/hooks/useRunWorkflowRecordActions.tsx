@@ -68,6 +68,7 @@ export const useRunWorkflowRecordActions = ({
                 payload: selectedRecord,
               });
             }}
+            closeSidePanelOnCommandMenuListActionExecution={false}
           />
         ),
       };

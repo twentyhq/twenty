@@ -1,3 +1,4 @@
+import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
 import { emailSchema } from '@/object-record/record-field/validation-schemas/emailSchema';
 import { SpreadsheetImportFieldValidationDefinition } from '@/spreadsheet-import/types';
 import { t } from '@lingui/core/macro';
@@ -214,6 +215,22 @@ export const getSpreadSheetFieldValidationDefinitions = (
           level: 'error',
         },
       ];
+    case FieldMetadataType.RATING: {
+      const ratingValues = RATING_VALUES.join(', ');
+
+      return [
+        {
+          rule: 'function',
+          isValid: (value: string) => {
+            return RATING_VALUES.includes(
+              value as (typeof RATING_VALUES)[number],
+            );
+          },
+          errorMessage: `${fieldName} ${t` must be one of ${ratingValues} values`}`,
+          level: 'error',
+        },
+      ];
+    }
     default:
       return [];
   }

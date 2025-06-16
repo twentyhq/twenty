@@ -8,6 +8,7 @@ import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 import { RefreshTokenService } from './refresh-token.service';
 
@@ -25,7 +26,7 @@ describe('RefreshTokenService', () => {
         {
           provide: JwtWrapperService,
           useValue: {
-            verifyWorkspaceToken: jest.fn(),
+            verifyJwtToken: jest.fn(),
             decode: jest.fn(),
             sign: jest.fn(),
             generateAppSecret: jest.fn(),
@@ -84,7 +85,7 @@ describe('RefreshTokenService', () => {
       };
 
       jest
-        .spyOn(jwtWrapperService, 'verifyWorkspaceToken')
+        .spyOn(jwtWrapperService, 'verifyJwtToken')
         .mockResolvedValue(undefined);
       jest.spyOn(jwtWrapperService, 'decode').mockReturnValue(mockJwtPayload);
       jest
@@ -96,7 +97,7 @@ describe('RefreshTokenService', () => {
       const result = await service.verifyRefreshToken(mockToken);
 
       expect(result).toEqual({ user: mockUser, token: mockAppToken });
-      expect(jwtWrapperService.verifyWorkspaceToken).toHaveBeenCalledWith(
+      expect(jwtWrapperService.verifyJwtToken).toHaveBeenCalledWith(
         mockToken,
         'REFRESH',
       );
@@ -106,7 +107,7 @@ describe('RefreshTokenService', () => {
       const mockToken = 'invalid-token';
 
       jest
-        .spyOn(jwtWrapperService, 'verifyWorkspaceToken')
+        .spyOn(jwtWrapperService, 'verifyJwtToken')
         .mockResolvedValue(undefined);
       jest.spyOn(jwtWrapperService, 'decode').mockReturnValue({});
 
@@ -135,7 +136,11 @@ describe('RefreshTokenService', () => {
         .spyOn(appTokenRepository, 'save')
         .mockResolvedValue({ id: 'new-token-id' } as AppToken);
 
-      const result = await service.generateRefreshToken(userId, workspaceId);
+      const result = await service.generateRefreshToken({
+        userId,
+        workspaceId,
+        targetedTokenType: JwtTokenTypeEnum.ACCESS,
+      });
 
       expect(result).toEqual({
         token: mockToken,
@@ -143,7 +148,13 @@ describe('RefreshTokenService', () => {
       });
       expect(appTokenRepository.save).toHaveBeenCalled();
       expect(jwtWrapperService.sign).toHaveBeenCalledWith(
-        { sub: userId, workspaceId },
+        {
+          sub: userId,
+          workspaceId,
+          type: 'REFRESH',
+          userId: 'user-id',
+          targetedTokenType: 'ACCESS',
+        },
         expect.objectContaining({
           secret: 'mock-secret',
           expiresIn: mockExpiresIn,
@@ -156,7 +167,11 @@ describe('RefreshTokenService', () => {
       jest.spyOn(twentyConfigService, 'get').mockReturnValue(undefined);
 
       await expect(
-        service.generateRefreshToken('user-id', 'workspace-id'),
+        service.generateRefreshToken({
+          userId: 'user-id',
+          workspaceId: 'workspace-id',
+          targetedTokenType: JwtTokenTypeEnum.ACCESS,
+        }),
       ).rejects.toThrow(AuthException);
     });
   });

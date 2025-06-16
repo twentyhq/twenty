@@ -4,7 +4,7 @@ import { Any, Equal } from 'typeorm';
 
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-filters-to-query-builder';
@@ -21,20 +21,23 @@ export class MatchParticipantService<
 > {
   constructor(
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
   private async getParticipantRepository(
+    workspaceId: string,
     objectMetadataName: 'messageParticipant' | 'calendarEventParticipant',
   ) {
     if (objectMetadataName === 'messageParticipant') {
-      return await this.twentyORMManager.getRepository<MessageParticipantWorkspaceEntity>(
+      return await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageParticipantWorkspaceEntity>(
+        workspaceId,
         objectMetadataName,
       );
     }
 
-    return await this.twentyORMManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
+    return await this.twentyORMGlobalManager.getRepositoryForWorkspace<CalendarEventParticipantWorkspaceEntity>(
+      workspaceId,
       objectMetadataName,
     );
   }
@@ -52,14 +55,15 @@ export class MatchParticipantService<
       return;
     }
 
-    const participantRepository =
-      await this.getParticipantRepository(objectMetadataName);
-
     const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
 
     if (!workspaceId) {
       throw new Error('Workspace ID is required');
     }
+    const participantRepository = await this.getParticipantRepository(
+      workspaceId,
+      objectMetadataName,
+    );
 
     const participantIds = participants.map((participant) => participant.id);
     const uniqueParticipantsHandles = [
@@ -67,8 +71,10 @@ export class MatchParticipantService<
     ];
 
     const personRepository =
-      await this.twentyORMManager.getRepository<PersonWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<PersonWorkspaceEntity>(
+        workspaceId,
         'person',
+        { shouldBypassPermissionChecks: true },
       );
 
     const queryBuilder = addPersonEmailFiltersToQueryBuilder({
@@ -83,7 +89,8 @@ export class MatchParticipantService<
     const people = await personRepository.formatResult(rawPeople);
 
     const workspaceMemberRepository =
-      await this.twentyORMManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+        workspaceId,
         'workspaceMember',
       );
 
@@ -152,14 +159,15 @@ export class MatchParticipantService<
     personId?: string;
     workspaceMemberId?: string;
   }) {
-    const participantRepository =
-      await this.getParticipantRepository(objectMetadataName);
-
     const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
 
     if (!workspaceId) {
       throw new Error('Workspace ID is required');
     }
+    const participantRepository = await this.getParticipantRepository(
+      workspaceId,
+      objectMetadataName,
+    );
 
     if (personId) {
       await participantRepository.update(
@@ -172,8 +180,10 @@ export class MatchParticipantService<
       );
 
       const personRepository =
-        await this.twentyORMManager.getRepository<PersonWorkspaceEntity>(
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<PersonWorkspaceEntity>(
+          workspaceId,
           'person',
+          { shouldBypassPermissionChecks: true },
         );
 
       const queryBuilder = addPersonEmailFiltersToQueryBuilder({
@@ -253,8 +263,10 @@ export class MatchParticipantService<
       throw new Error('Workspace ID is required');
     }
 
-    const participantRepository =
-      await this.getParticipantRepository(objectMetadataName);
+    const participantRepository = await this.getParticipantRepository(
+      workspaceId,
+      objectMetadataName,
+    );
 
     const participantsToUpdate = await participantRepository.find({
       where: {
@@ -340,8 +352,10 @@ export class MatchParticipantService<
       throw new Error('Workspace ID is required');
     }
 
-    const participantRepository =
-      await this.getParticipantRepository(objectMetadataName);
+    const participantRepository = await this.getParticipantRepository(
+      workspaceId,
+      objectMetadataName,
+    );
 
     const participantsToUpdate = await participantRepository.find({
       where: {

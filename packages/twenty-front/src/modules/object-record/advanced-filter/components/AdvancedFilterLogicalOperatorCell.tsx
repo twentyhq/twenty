@@ -27,18 +27,20 @@ type AdvancedFilterLogicalOperatorCellProps = {
 export const AdvancedFilterLogicalOperatorCell = ({
   index,
   recordFilterGroup,
-}: AdvancedFilterLogicalOperatorCellProps) => (
-  <StyledContainer>
-    {index === 0 ? (
-      <StyledText>Where</StyledText>
-    ) : index === 1 ? (
-      <AdvancedFilterLogicalOperatorDropdown
-        recordFilterGroup={recordFilterGroup}
-      />
-    ) : (
-      <StyledText>
-        {capitalize(recordFilterGroup.logicalOperator.toLowerCase())}
-      </StyledText>
-    )}
-  </StyledContainer>
-);
+}: AdvancedFilterLogicalOperatorCellProps) => {
+  return (
+    <StyledContainer>
+      {index === 0 ? (
+        <StyledText>Where</StyledText>
+      ) : index === 1 ? (
+        <AdvancedFilterLogicalOperatorDropdown
+          recordFilterGroup={recordFilterGroup}
+        />
+      ) : (
+        <StyledText>
+          {capitalize(recordFilterGroup.logicalOperator.toLowerCase())}
+        </StyledText>
+      )}
+    </StyledContainer>
+  );
+};
