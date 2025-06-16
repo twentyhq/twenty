@@ -76,18 +76,18 @@ export const SettingsDataModelFieldNumberForm = ({
               />
             </SettingsOptionCardContentSelect>
             <Separator />
-            {type !== 'shortNumber' && <SettingsOptionCardContentCounter
-              Icon={IconDecimal}
-              title={t`Number of decimals`}
-              description={
-                  `E.g. ${(type === 'percentage' ? 99 : 1000).toFixed(count)}${type === 'percentage' ? '%' : ''} for ${count} decimal${count > 1 ? 's' : ''}`
-              }
-              value={count}
-              onChange={(value) => onChange({ type: type, decimals: value })}
-              disabled={disabled}
-              minValue={0}
-              maxValue={100} // needs to be changed
-            />}
+            {type !== 'shortNumber' && (
+              <SettingsOptionCardContentCounter
+                Icon={IconDecimal}
+                title={t`Number of decimals`}
+                description={`E.g. ${(type === 'percentage' ? 99 : 1000).toFixed(count)}${type === 'percentage' ? '%' : ''} for ${count} decimal${count > 1 ? 's' : ''}`}
+                value={count}
+                onChange={(value) => onChange({ type: type, decimals: value })}
+                disabled={disabled}
+                minValue={0}
+                maxValue={100} // needs to be changed
+              />
+            )}
           </>
         );
       }}
