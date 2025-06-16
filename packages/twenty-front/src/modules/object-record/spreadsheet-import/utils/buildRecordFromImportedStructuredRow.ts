@@ -384,7 +384,5 @@ export const buildRecordFromImportedStructuredRow = ({
     }
   }
 
-  console.log('recordToBuild', recordToBuild);
-
   return recordToBuild;
 };
