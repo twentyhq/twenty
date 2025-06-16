@@ -1,10 +1,11 @@
-import { EdgeLabelRenderer } from '@xyflow/react';
 import { STEP_ICON_WIDTH } from '@/workflow/workflow-diagram/constants/CreateStepNodeWidth';
-import styled from '@emotion/styled';
-import { IconButtonGroup } from 'twenty-ui/input';
-import { IconPlus } from 'twenty-ui/display';
+import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
+import styled from '@emotion/styled';
+import { EdgeLabelRenderer } from '@xyflow/react';
 import { isDefined } from 'twenty-shared/utils';
+import { IconPlus } from 'twenty-ui/display';
+import { IconButtonGroup } from 'twenty-ui/input';
 
 const EDGE_OPTION_BUTTON_LEFT_MARGIN = 8;
 
@@ -38,7 +39,11 @@ export const WorkflowDiagramEdgeOptions = ({
 
   return (
     <EdgeLabelRenderer>
-      <StyledContainer labelX={labelX} labelY={labelY}>
+      <StyledContainer
+        labelX={labelX}
+        labelY={labelY}
+        data-click-outside-id={WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID}
+      >
         <StyledIconButtonGroup
           className="nodrag nopan"
           iconButtons={[
