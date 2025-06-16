@@ -9,7 +9,7 @@ export const NUMBER_DATA_MODEL_SELECT_OPTIONS = [
   },
   {
     Icon: IconNumber9,
-    label: msg`Short Number`,
+    label: msg`Short`,
     value: 'shortNumber',
   },
   {
