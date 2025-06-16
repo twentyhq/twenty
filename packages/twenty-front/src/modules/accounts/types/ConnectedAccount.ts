@@ -14,6 +14,6 @@ export type ConnectedAccount = {
   messageChannels: MessageChannel[];
   calendarChannels: CalendarChannel[];
   scopes: string[] | null;
-  customConnectionParams?: Record<string, any>;
+  connectionParameters?: Record<string, any>;
   __typename: 'ConnectedAccount';
 };

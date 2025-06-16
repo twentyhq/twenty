@@ -32,7 +32,7 @@ export class ImapGetMessagesService {
       ConnectedAccountWorkspaceEntity,
       'id' | 'provider' | 'handle' | 'handleAliases'
     > & {
-      customConnectionParams: Record<string, unknown> | null;
+      connectionParameters: Record<string, unknown> | null;
     },
   ): Promise<MessageWithParticipants[]> {
     if (!messageIds.length) {

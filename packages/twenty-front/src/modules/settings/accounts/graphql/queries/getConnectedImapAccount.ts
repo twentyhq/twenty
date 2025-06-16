@@ -7,7 +7,7 @@ export const GET_CONNECTED_IMAP_ACCOUNT = gql`
       handle
       provider
       accountOwnerId
-      customConnectionParams {
+      connectionParameters {
         handle
         host
         port

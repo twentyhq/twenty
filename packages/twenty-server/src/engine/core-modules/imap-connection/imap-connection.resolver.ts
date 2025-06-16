@@ -24,12 +24,12 @@ import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation
 import { IMAPAPIsService } from 'src/modules/connected-account/services/imap-apis.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
-  MessageChannelSyncStage,
-  MessageChannelWorkspaceEntity,
+    MessageChannelSyncStage,
+    MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
-  MessagingMessageListFetchJob,
-  MessagingMessageListFetchJobData,
+    MessagingMessageListFetchJob,
+    MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 
 @Resolver()
@@ -88,8 +88,8 @@ export class ImapConnectionResolver {
       id: connectedAccount.id,
       handle: connectedAccount.handle,
       provider: connectedAccount.provider,
-      customConnectionParams:
-        connectedAccount.customConnectionParams as unknown as ImapConnectionParams,
+      connectionParameters:
+        connectedAccount.connectionParameters as unknown as ImapConnectionParams,
       accountOwnerId: connectedAccount.accountOwnerId,
     };
   }
@@ -145,7 +145,7 @@ export class ImapConnectionResolver {
       {
         handle,
         provider: ConnectedAccountProvider.IMAP,
-        customConnectionParams: connectionParams,
+        connectionParameters: connectionParams,
       },
     );
 

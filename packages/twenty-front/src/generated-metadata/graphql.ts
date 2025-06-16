@@ -416,7 +416,7 @@ export type ConfigVariablesOutput = {
 export type ConnectedImapAccount = {
   __typename?: 'ConnectedImapAccount';
   accountOwnerId: Scalars['String']['output'];
-  customConnectionParams?: Maybe<ImapConnectionParams>;
+  connectionParameters?: Maybe<ImapConnectionParams>;
   handle: Scalars['String']['output'];
   id: Scalars['String']['output'];
   provider: Scalars['String']['output'];

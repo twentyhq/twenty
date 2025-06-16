@@ -65,7 +65,7 @@ export class MessagingAccountAuthenticationService {
     workspaceId: string,
     messageChannelId: string,
   ): Promise<void> {
-    if (!connectedAccount.customConnectionParams) {
+    if (!connectedAccount.connectionParameters) {
       await this.messagingMonitoringService.track({
         eventName: 'messages_import.error.missing_imap_credentials',
         workspaceId,
@@ -75,7 +75,7 @@ export class MessagingAccountAuthenticationService {
 
       throw {
         code: MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
-        message: 'Missing IMAP credentials in customConnectionParams',
+        message: 'Missing IMAP credentials in connectionParameters',
       };
     }
   }
@@ -84,7 +84,7 @@ export class MessagingAccountAuthenticationService {
     messageChannel: MessageChannelWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
-    if (!messageChannel.connectedAccount.customConnectionParams) {
+    if (!messageChannel.connectedAccount.connectionParameters) {
       await this.messagingMonitoringService.track({
         eventName: 'message_list_fetch_job.error.missing_imap_credentials',
         workspaceId,
@@ -94,7 +94,7 @@ export class MessagingAccountAuthenticationService {
 
       throw {
         code: MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
-        message: 'Missing IMAP credentials in customConnectionParams',
+        message: 'Missing IMAP credentials in connectionParameters',
       };
     }
   }

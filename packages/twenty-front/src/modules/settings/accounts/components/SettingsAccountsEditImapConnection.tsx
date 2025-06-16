@@ -31,11 +31,11 @@ export const SettingsAccountsEditImapConnection = () => {
     useConnectedIMAPAccount(connectedAccountId);
 
   const initialData = {
-    handle: connectedAccount?.customConnectionParams?.handle || '',
-    host: connectedAccount?.customConnectionParams?.host || '',
-    port: connectedAccount?.customConnectionParams?.port || 993,
-    secure: connectedAccount?.customConnectionParams?.secure ?? true,
-    password: connectedAccount?.customConnectionParams?.password || '',
+    handle: connectedAccount?.connectionParameters?.handle || '',
+    host: connectedAccount?.connectionParameters?.host || '',
+    port: connectedAccount?.connectionParameters?.port || 993,
+    secure: connectedAccount?.connectionParameters?.secure ?? true,
+    password: connectedAccount?.connectionParameters?.password || '',
   };
 
   const { formMethods, handleSave, handleSubmit, canSave, isSubmitting } =

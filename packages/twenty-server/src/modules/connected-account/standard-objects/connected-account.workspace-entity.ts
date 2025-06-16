@@ -1,7 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import {
-  ConnectedAccountProvider,
-  FieldMetadataType,
+    ConnectedAccountProvider,
+    FieldMetadataType,
 } from 'twenty-shared/types';
 
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
@@ -108,14 +108,14 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   scopes: string[] | null;
 
   @WorkspaceField({
-    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.customConnectionParams,
+    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.connectionParameters,
     type: FieldMetadataType.RAW_JSON,
     label: msg`Custom Connection Parameters`,
     description: msg`JSON object containing custom connection parameters`,
     icon: 'IconSettings',
   })
   @WorkspaceIsNullable()
-  customConnectionParams: Record<string, unknown> | null;
+  connectionParameters: Record<string, unknown> | null;
 
   @WorkspaceRelation({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.accountOwner,

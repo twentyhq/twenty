@@ -19,5 +19,5 @@ export class ConnectedImapAccount {
   accountOwnerId: string;
 
   @Field(() => ImapConnectionParams, { nullable: true })
-  customConnectionParams?: ImapConnectionParams;
+  connectionParameters?: ImapConnectionParams;
 }

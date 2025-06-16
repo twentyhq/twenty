@@ -21,7 +21,7 @@ export class ImapClientProvider {
   async getClient(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'id' | 'provider' | 'customConnectionParams'
+      'id' | 'provider' | 'connectionParameters'
     >,
   ): Promise<ImapFlow> {
     const cacheKey = `${connectedAccount.id}`;
@@ -38,17 +38,17 @@ export class ImapClientProvider {
       throw new Error('Connected account is not an IMAP provider');
     }
 
-    const customConnectionParams: ImapConnectionParams =
-      (connectedAccount.customConnectionParams as unknown as ImapConnectionParams) ||
+    const connectionParameters: ImapConnectionParams =
+      (connectedAccount.connectionParameters as unknown as ImapConnectionParams) ||
       {};
 
     const client = new ImapFlow({
-      host: customConnectionParams.host || '',
-      port: customConnectionParams.port || 993,
-      secure: customConnectionParams.secure,
+      host: connectionParameters.host || '',
+      port: connectionParameters.port || 993,
+      secure: connectionParameters.secure,
       auth: {
-        user: customConnectionParams.handle,
-        pass: customConnectionParams.password || '',
+        user: connectionParameters.handle,
+        pass: connectionParameters.password || '',
       },
       logger: false,
       tls: {
@@ -60,14 +60,14 @@ export class ImapClientProvider {
       await client.connect();
 
       this.logger.log(
-        `Connected to IMAP server for ${customConnectionParams.handle}`,
+        `Connected to IMAP server for ${connectionParameters.handle}`,
       );
 
       try {
         const mailboxes = await client.list();
 
         this.logger.log(
-          `Available mailboxes for ${customConnectionParams.handle}: ${mailboxes.map((m) => m.path).join(', ')}`,
+          `Available mailboxes for ${connectionParameters.handle}: ${mailboxes.map((m) => m.path).join(', ')}`,
         );
       } catch (error) {
         this.logger.warn(`Failed to list mailboxes: ${error.message}`);

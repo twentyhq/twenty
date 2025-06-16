@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -408,7 +408,7 @@ export type ConfigVariablesOutput = {
 export type ConnectedImapAccount = {
   __typename?: 'ConnectedImapAccount';
   accountOwnerId: Scalars['String'];
-  customConnectionParams?: Maybe<ImapConnectionParams>;
+  connectionParameters?: Maybe<ImapConnectionParams>;
   handle: Scalars['String'];
   id: Scalars['String'];
   provider: Scalars['String'];
@@ -2823,7 +2823,7 @@ export type GetConnectedImapAccountQueryVariables = Exact<{
 }>;
 
 
-export type GetConnectedImapAccountQuery = { __typename?: 'Query', getConnectedImapAccount: { __typename?: 'ConnectedImapAccount', id: string, handle: string, provider: string, accountOwnerId: string, customConnectionParams?: { __typename?: 'ImapConnectionParams', handle: string, host: string, port: number, secure: boolean, password: string } | null } };
+export type GetConnectedImapAccountQuery = { __typename?: 'Query', getConnectedImapAccount: { __typename?: 'ConnectedImapAccount', id: string, handle: string, provider: string, accountOwnerId: string, connectionParameters?: { __typename?: 'ImapConnectionParams', handle: string, host: string, port: number, secure: boolean, password: string } | null } };
 
 export type CreateDatabaseConfigVariableMutationVariables = Exact<{
   key: Scalars['String'];
@@ -4987,7 +4987,7 @@ export const GetConnectedImapAccountDocument = gql`
     handle
     provider
     accountOwnerId
-    customConnectionParams {
+    connectionParameters {
       handle
       host
       port
