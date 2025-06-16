@@ -13,7 +13,7 @@ import { IconGoogle, IconMail, IconMicrosoft } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Card, CardContent, CardHeader } from 'twenty-ui/layout';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledHeader = styled(CardHeader)`
   align-items: center;
@@ -53,8 +53,6 @@ export const SettingsAccountsListEmptyStateCard = ({
 
   const isImapEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_IMAP_ENABLED);
 
-  const navigate = useNavigateSettings();
-
   return (
     <Card>
       <StyledHeader>{label || t`No connected account`}</StyledHeader>
@@ -64,9 +62,7 @@ export const SettingsAccountsListEmptyStateCard = ({
             Icon={IconMail}
             title={t`Connect with IMAP`}
             variant="secondary"
-            // Apparently <Link> Is broken so we resort to onClick
-            // eslint-disable-next-line @nx/workspace-no-navigate-prefer-link
-            onClick={() => navigate(SettingsPath.NewImapConnection)}
+            to={getSettingsPath(SettingsPath.NewImapConnection)}
           />
         )}
 
