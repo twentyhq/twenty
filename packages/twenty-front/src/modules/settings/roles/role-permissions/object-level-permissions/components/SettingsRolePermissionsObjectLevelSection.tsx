@@ -1,11 +1,9 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { SettingsRolePermissionsObjectLevelObjectPickerDropdownContent } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPickerDropdownContent';
 import { SettingsRolePermissionsObjectLevelTableHeader } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader';
 import { SettingsRolePermissionsObjectLevelTableRow } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRow';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SettingsPath } from '@/types/SettingsPath';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import styled from '@emotion/styled';
@@ -43,11 +41,11 @@ export const SettingsRolePermissionsObjectLevelSection = ({
   roleId,
   isEditable,
 }: SettingsRolePermissionsObjectLevelSectionProps) => {
-  const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
+  const [settingsDraftRole] = useRecoilState(
     settingsDraftRoleFamilyState(roleId),
   );
 
-  const navigate = useNavigateSettings();
+  const navigateSettings = useNavigateSettings();
 
   const objectMetadataItems = useObjectMetadataItems();
 
@@ -75,25 +73,9 @@ export const SettingsRolePermissionsObjectLevelSection = ({
           settingsDraftRole.canDestroyAllObjectRecords),
   );
 
-  const handleSelectObjectMetadata = (objectMetadataId: string) => {
-    setSettingsDraftRole((draftRole) => ({
-      ...draftRole,
-      objectPermissions: [
-        ...(draftRole.objectPermissions ?? []).filter(
-          (permission) => permission.objectMetadataId !== objectMetadataId,
-        ),
-        {
-          objectMetadataId,
-          canReadObjectRecords: null,
-          canUpdateObjectRecords: null,
-          canSoftDeleteObjectRecords: null,
-          canDestroyObjectRecords: null,
-        },
-      ],
-    }));
-    navigate(SettingsPath.RoleObjectLevel, {
+  const handleAddRule = () => {
+    navigateSettings(SettingsPath.RoleAddObjectLevel, {
       roleId,
-      objectMetadataId,
     });
   };
 
@@ -124,29 +106,13 @@ export const SettingsRolePermissionsObjectLevelSection = ({
         </StyledTableRows>
       </Table>
       <StyledCreateObjectOverrideSection>
-        <Dropdown
-          dropdownId="role-object-select"
-          dropdownHotkeyScope={{ scope: 'roleObject' }}
-          clickableComponent={
-            <Button
-              Icon={IconPlus}
-              title={t`Add rule`}
-              variant="secondary"
-              size="small"
-              disabled={!isEditable}
-            />
-          }
-          dropdownOffset={{ x: 0, y: 4 }}
-          dropdownComponents={
-            <SettingsRolePermissionsObjectLevelObjectPickerDropdownContent
-              excludedObjectMetadataIds={
-                filteredObjectPermissions?.map(
-                  (objectPermission) => objectPermission.objectMetadataId,
-                ) ?? []
-              }
-              onSelect={handleSelectObjectMetadata}
-            />
-          }
+        <Button
+          Icon={IconPlus}
+          title={t`Add rule`}
+          variant="secondary"
+          size="small"
+          disabled={!isEditable}
+          onClick={handleAddRule}
         />
       </StyledCreateObjectOverrideSection>
     </Section>
