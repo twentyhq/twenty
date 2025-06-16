@@ -32,11 +32,12 @@ type PartialObjectRecordWithOptionalId = Partial<ObjectRecord> & {
   id?: string;
 };
 
-type useCreateManyRecordsProps = {
+export type useCreateManyRecordsProps = {
   objectNameSingular: string;
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
   skipPostOptimisticEffect?: boolean;
   shouldMatchRootQueryFilter?: boolean;
+  shouldRefetchAggregateQueries?: boolean;
 };
 
 export const useCreateManyRecords = <
@@ -46,6 +47,7 @@ export const useCreateManyRecords = <
   recordGqlFields,
   skipPostOptimisticEffect = false,
   shouldMatchRootQueryFilter,
+  shouldRefetchAggregateQueries = true,
 }: useCreateManyRecordsProps) => {
   const apolloClient = useApolloClient();
 
@@ -205,7 +207,8 @@ export const useCreateManyRecords = <
         throw error;
       });
 
-    await refetchAggregateQueries();
+    if (shouldRefetchAggregateQueries) await refetchAggregateQueries();
+
     return createdObjects.data?.[mutationResponseField] ?? [];
   };
 
