@@ -5,6 +5,8 @@ import { EdgeLabelRenderer } from '@xyflow/react';
 import { IconPlus } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
 import { useState } from 'react';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 
 const StyledIconButtonGroup = styled(IconButtonGroup)`
   pointer-events: all;
@@ -14,7 +16,7 @@ const StyledContainer = styled.div<{
   labelY?: number;
 }>`
   position: absolute;
-  transform: ${({ labelY }) => `translate(${21}px, ${(labelY || 0) - 14}px) `};
+  transform: ${({ labelY }) => `translate(${21}px, ${(labelY || 0) - 14}px)`};
 `;
 
 const StyledHoverZone = styled.div`
@@ -46,6 +48,14 @@ export const WorkflowDiagramEdgeOptions = ({
 
   const { startNodeCreation } = useStartNodeCreation();
 
+  const workflowInsertStepIds = useRecoilComponentValueV2(
+    workflowInsertStepIdsComponentState,
+  );
+
+  const isSelected =
+    workflowInsertStepIds.parentStepId === parentStepId &&
+    workflowInsertStepIds.nextStepId === nextStepId;
+
   return (
     <EdgeLabelRenderer>
       <StyledContainer
@@ -57,7 +67,7 @@ export const WorkflowDiagramEdgeOptions = ({
           onMouseLeave={() => setHovered(false)}
         >
           <StyledHoverZone />
-          {hovered && (
+          {(hovered || isSelected) && (
             <StyledIconButtonGroup
               className="nodrag nopan"
               iconButtons={[
