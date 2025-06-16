@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { castToString } from '~/utils/castToString';
 import { convertCurrencyAmountToCurrencyMicros } from '~/utils/convertCurrencyToCurrencyMicros';
+import { isEmptyObject } from '~/utils/isEmptyObject';
 
 type BuildRecordFromImportedStructuredRowArgs = {
   importedStructuredRow: ImportedStructuredRow<any>;
@@ -17,7 +18,7 @@ type BuildRecordFromImportedStructuredRowArgs = {
 const buildCompositeFieldRecord = (
   fieldName: string,
   importedStructuredRow: ImportedStructuredRow<any>,
-  fieldMappings: Record<
+  compositeFieldConfig: Record<
     string,
     {
       labelKey: string;
@@ -25,15 +26,22 @@ const buildCompositeFieldRecord = (
     }
   >,
 ): Record<string, any> | undefined => {
-  const entries = Object.entries(fieldMappings)
-    .map(([outputKey, { labelKey, transform = (v: any) => v }]) => {
-      const inputKey = `${labelKey} (${fieldName})`;
-      const value = importedStructuredRow[inputKey];
-      return isDefined(value) ? [outputKey, transform(value)] : null;
-    })
-    .filter(Boolean) as [string, any][];
+  const compositeFieldRecord = Object.entries(compositeFieldConfig).reduce(
+    (
+      acc,
+      [compositeFieldKey, { labelKey: compositeFieldLabelKey, transform }],
+    ) => {
+      const value =
+        importedStructuredRow[`${compositeFieldLabelKey} (${fieldName})`];
 
-  return entries.length > 0 ? Object.fromEntries(entries) : undefined;
+      return isDefined(value)
+        ? { ...acc, [compositeFieldKey]: transform?.(value) || value }
+        : acc;
+    },
+    {},
+  );
+
+  return isEmptyObject(compositeFieldRecord) ? undefined : compositeFieldRecord;
 };
 
 export const buildRecordFromImportedStructuredRow = ({
