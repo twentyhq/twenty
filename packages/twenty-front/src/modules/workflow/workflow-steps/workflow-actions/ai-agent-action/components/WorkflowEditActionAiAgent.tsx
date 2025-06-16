@@ -1,18 +1,16 @@
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
+import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Select } from '@/ui/input/components/Select';
 import { WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { useEffect } from 'react';
 import { useIcons } from 'twenty-ui/display';
-import {
-  MODEL_PROVIDERS,
-  MODELS,
-  RESPONSE_FORMATS,
-} from '../constants/AIAgent';
-import { useAiAgentForm } from '../hooks/useAiAgentForm';
+import { CodeEditor } from 'twenty-ui/input';
+import { useDebouncedCallback } from 'use-debounce';
+import { ALL_MODELS } from '../constants/AIAgent';
+import { useAgentUpdateFormState } from '../hooks/useAgentUpdateFormState';
 
 type WorkflowEditActionAiAgentProps = {
   action: WorkflowAiAgentAction;
@@ -35,78 +33,81 @@ export const WorkflowEditActionAiAgent = ({
       defaultTitle: 'AI Agent',
     });
 
-  const {
-    formData,
-    errorMessages,
-    errorMessagesVisible,
-    handleFieldChange,
-    onBlur,
-    saveAction,
-  } = useAiAgentForm({
-    action,
-    onActionUpdate:
-      actionOptions.readonly === true
-        ? undefined
-        : actionOptions.onActionUpdate,
-    readonly: actionOptions.readonly === true,
-  });
+  const { formValues, setFormValues, updateAgent, loading } =
+    useAgentUpdateFormState({
+      agentId: action.settings.input.agentId,
+    });
 
-  useEffect(() => () => saveAction.flush(), [saveAction]);
+  const handleSave = useDebouncedCallback(async (formData) => {
+    await updateAgent({
+      name: formData.name,
+      prompt: formData.prompt,
+      model: formData.model,
+      responseFormat: formData.responseFormat,
+    });
+  }, 500);
 
-  const availableModels =
-    MODELS[formData.modelProvider as keyof typeof MODELS] || [];
+  const handleFieldChange = async (field: string, value: string) => {
+    if (actionOptions.readonly === true) {
+      return;
+    }
+    setFormValues((prev) => ({ ...prev, [field]: value }));
+    await handleSave({ ...formValues, [field]: value });
+  };
 
   return (
-    <>
-      <WorkflowStepHeader
-        onTitleChange={(newName: string) => {
-          if (actionOptions.readonly === true) {
-            return;
-          }
-          actionOptions.onActionUpdate?.({ ...action, name: newName });
-        }}
-        Icon={getIcon(headerIcon)}
-        iconColor={headerIconColor}
-        initialTitle={headerTitle}
-        headerType={headerType}
-        disabled={actionOptions.readonly}
-      />
-      <WorkflowStepBody>
-        <Select
-          dropdownId="select-model-provider"
-          label="Model Provider"
-          options={MODEL_PROVIDERS}
-          value={formData.modelProvider}
-          onChange={(value) => handleFieldChange('modelProvider', value)}
+    !loading && (
+      <>
+        <WorkflowStepHeader
+          onTitleChange={(newName: string) => {
+            if (actionOptions.readonly === true) {
+              return;
+            }
+            actionOptions.onActionUpdate?.({ ...action, name: newName });
+          }}
+          Icon={getIcon(headerIcon)}
+          iconColor={headerIconColor}
+          initialTitle={headerTitle}
+          headerType={headerType}
           disabled={actionOptions.readonly}
         />
-        <Select
-          dropdownId="select-model"
-          label="Model"
-          options={availableModels}
-          value={formData.model}
-          onChange={(value) => handleFieldChange('model', value)}
-          disabled={actionOptions.readonly}
-        />
-        <FormTextFieldInput
-          label="Prompt"
-          placeholder="Enter prompt"
-          readonly={actionOptions.readonly}
-          defaultValue={formData.prompt}
-          error={errorMessagesVisible.prompt ? errorMessages.prompt : undefined}
-          onBlur={() => onBlur('prompt')}
-          onChange={(value) => handleFieldChange('prompt', value)}
-          VariablePicker={WorkflowVariablePicker}
-        />
-        <Select
-          dropdownId="select-response-format"
-          label="Response Format"
-          options={RESPONSE_FORMATS}
-          value={formData.responseFormat}
-          onChange={(value) => handleFieldChange('responseFormat', value)}
-          disabled={actionOptions.readonly}
-        />
-      </WorkflowStepBody>
-    </>
+        <WorkflowStepBody>
+          <Select
+            dropdownId="select-model"
+            label="Model"
+            options={ALL_MODELS}
+            value={formValues.model}
+            onChange={(value) => handleFieldChange('model', value)}
+            disabled={actionOptions.readonly}
+          />
+          <FormTextFieldInput
+            label="Prompt"
+            placeholder="Enter prompt"
+            readonly={actionOptions.readonly}
+            defaultValue={formValues.prompt}
+            onChange={(value) => handleFieldChange('prompt', value)}
+            VariablePicker={WorkflowVariablePicker}
+          />
+          <div>
+            <InputLabel>Output Format (JSON)</InputLabel>
+            <CodeEditor
+              height={200}
+              value={formValues.responseFormat}
+              language="json"
+              onChange={(value) => handleFieldChange('responseFormat', value)}
+              options={{
+                readOnly: actionOptions.readonly,
+                domReadOnly: actionOptions.readonly,
+                minimap: { enabled: false },
+                scrollBeyondLastLine: false,
+                lineNumbers: 'on',
+                folding: true,
+                wordWrap: 'on',
+              }}
+            />
+          </div>
+        </WorkflowStepBody>
+      </>
+    )
   );
 };
