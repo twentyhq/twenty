@@ -35,12 +35,10 @@ export class ScopedWorkspaceContextFactory {
         // @ts-expect-error legacy noImplicitAny
         this.request?.['userWorkspaceId'] ?? // rest api
         null,
-      isExecutedByApiKey:
+      isExecutedByApiKey: !!(
         // @ts-expect-error legacy noImplicitAny
-        !!this.request?.['req']?.['apiKey'] ??
-        // @ts-expect-error legacy noImplicitAny
-        !!this.request?.['apiKey'] ?? // rest api
-        null,
+        (this.request?.['req']?.['apiKey'] || this.request?.['apiKey'])
+      ),
     };
   }
 }
