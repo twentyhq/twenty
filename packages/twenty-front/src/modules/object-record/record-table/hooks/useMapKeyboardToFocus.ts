@@ -33,6 +33,11 @@ export const useMapKeyboardToFocus = (recordTableId?: string) => {
     () => {
       setHotkeyScopeAndMemorizePreviousScope({
         scope: TableHotkeyScope.TableFocus,
+        customScopes: {
+          goto: true,
+          keyboardShortcutMenu: true,
+          searchRecords: true,
+        },
       });
       move('up');
     },
@@ -45,6 +50,11 @@ export const useMapKeyboardToFocus = (recordTableId?: string) => {
     () => {
       setHotkeyScopeAndMemorizePreviousScope({
         scope: TableHotkeyScope.TableFocus,
+        customScopes: {
+          goto: true,
+          keyboardShortcutMenu: true,
+          searchRecords: true,
+        },
       });
       move('down');
     },

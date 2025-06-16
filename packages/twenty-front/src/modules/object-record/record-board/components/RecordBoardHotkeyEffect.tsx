@@ -54,6 +54,11 @@ export const RecordBoardHotkeyEffect = () => {
     () => {
       setHotkeyScopeAndMemorizePreviousScope({
         scope: BoardHotkeyScope.BoardFocus,
+        customScopes: {
+          goto: true,
+          keyboardShortcutMenu: true,
+          searchRecords: true,
+        },
       });
       move('left');
     },
@@ -65,6 +70,11 @@ export const RecordBoardHotkeyEffect = () => {
     () => {
       setHotkeyScopeAndMemorizePreviousScope({
         scope: BoardHotkeyScope.BoardFocus,
+        customScopes: {
+          goto: true,
+          keyboardShortcutMenu: true,
+          searchRecords: true,
+        },
       });
       move('right');
     },
@@ -76,6 +86,11 @@ export const RecordBoardHotkeyEffect = () => {
     () => {
       setHotkeyScopeAndMemorizePreviousScope({
         scope: BoardHotkeyScope.BoardFocus,
+        customScopes: {
+          goto: true,
+          keyboardShortcutMenu: true,
+          searchRecords: true,
+        },
       });
       move('up');
     },
@@ -87,7 +102,12 @@ export const RecordBoardHotkeyEffect = () => {
     () => {
       setHotkeyScopeAndMemorizePreviousScope({
         scope: BoardHotkeyScope.BoardFocus,
-      });
+        customScopes: {
+          goto: true,
+          keyboardShortcutMenu: true,
+          searchRecords: true,
+        },
+      }); 
       move('down');
     },
     RecordIndexHotkeyScope.RecordIndex,
