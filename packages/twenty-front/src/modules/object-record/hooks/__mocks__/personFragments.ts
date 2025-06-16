@@ -67,6 +67,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             opportunityId
             personId
             petId
+            rocketId
             surveyResultId
             taskId
             type
@@ -127,7 +128,6 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
         employees
         id
         idealCustomerProfile
-        internalCompetitions
         introVideo {
           primaryLinkUrl
           primaryLinkLabel
@@ -178,6 +178,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             personId
             petId
             position
+            rocketId
             surveyResultId
             taskId
             updatedAt
@@ -229,6 +230,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             opportunityId
             personId
             petId
+            rocketId
             surveyResultId
             updatedAt
           }
@@ -280,6 +282,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             opportunityId
             personId
             petId
+            rocketId
             surveyResultId
             taskId
             updatedAt
@@ -304,6 +307,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             personId
             petId
             properties
+            rocketId
             surveyResultId
             taskId
             updatedAt

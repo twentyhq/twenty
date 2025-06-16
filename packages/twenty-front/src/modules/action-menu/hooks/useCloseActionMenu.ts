@@ -8,7 +8,13 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useCloseActionMenu = (preventCommandMenuClosing?: boolean) => {
+export const useCloseActionMenu = ({
+  closeSidePanelOnShowPageOptionsActionExecution = false,
+  closeSidePanelOnCommandMenuListActionExecution = true,
+}: {
+  closeSidePanelOnShowPageOptionsActionExecution?: boolean;
+  closeSidePanelOnCommandMenuListActionExecution?: boolean;
+} = {}) => {
   const { actionMenuType, isInRightDrawer } = useContext(ActionMenuContext);
 
   const { closeCommandMenu } = useCommandMenu();
@@ -25,7 +31,10 @@ export const useCloseActionMenu = (preventCommandMenuClosing?: boolean) => {
 
   const closeActionMenu = () => {
     if (actionMenuType === 'command-menu') {
-      if (isDefined(preventCommandMenuClosing) && preventCommandMenuClosing) {
+      if (
+        isDefined(closeSidePanelOnCommandMenuListActionExecution) &&
+        !closeSidePanelOnCommandMenuListActionExecution
+      ) {
         return;
       }
       closeCommandMenu();
@@ -36,6 +45,14 @@ export const useCloseActionMenu = (preventCommandMenuClosing?: boolean) => {
       actionMenuType === 'command-menu-show-page-action-menu-dropdown'
     ) {
       closeDropdown(dropdownId);
+    }
+
+    if (
+      actionMenuType === 'command-menu-show-page-action-menu-dropdown' &&
+      isDefined(closeSidePanelOnShowPageOptionsActionExecution) &&
+      closeSidePanelOnShowPageOptionsActionExecution
+    ) {
+      closeCommandMenu();
     }
   };
 

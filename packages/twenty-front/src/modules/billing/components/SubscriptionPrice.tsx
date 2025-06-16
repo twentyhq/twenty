@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { SubscriptionInterval } from '~/generated-metadata/graphql';
 
 type SubscriptionPriceProps = {
@@ -20,10 +21,26 @@ const StyledPriceUnitSpan = styled.span`
 `;
 
 export const SubscriptionPrice = ({ type, price }: SubscriptionPriceProps) => {
+  const { t } = useLingui();
+  const pricePerSeat =
+    type === SubscriptionInterval.Year ? (price / 12).toFixed(2) : price;
+
+  let priceUnit = '';
+  switch (type) {
+    case SubscriptionInterval.Month:
+      priceUnit = t`seat / month`;
+      break;
+    case SubscriptionInterval.Year:
+      priceUnit = t`seat / month - billed yearly`;
+      break;
+    default:
+      priceUnit = `seat / ${type.toLocaleLowerCase()}`;
+  }
+
   return (
     <>
-      <StyledPriceSpan>{`$${price}`}</StyledPriceSpan>
-      <StyledPriceUnitSpan>{`seat / ${type.toLocaleLowerCase()}`}</StyledPriceUnitSpan>
+      <StyledPriceSpan>{`$${pricePerSeat}`}</StyledPriceSpan>
+      <StyledPriceUnitSpan>{priceUnit}</StyledPriceUnitSpan>
     </>
   );
 };

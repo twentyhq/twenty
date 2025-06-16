@@ -28,7 +28,20 @@ export const RecordTableRowHotkeyEffect = () => {
   useScopedHotkeys(
     'x',
     () => {
-      setCurrentRowSelected(!isSelected);
+      setCurrentRowSelected({
+        newSelectedState: !isSelected,
+      });
+    },
+    TableHotkeyScope.TableFocus,
+  );
+
+  useScopedHotkeys(
+    `${Key.Shift}+x`,
+    () => {
+      setCurrentRowSelected({
+        newSelectedState: !isSelected,
+        shouldSelectRange: true,
+      });
     },
     TableHotkeyScope.TableFocus,
   );

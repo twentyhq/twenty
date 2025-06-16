@@ -10,6 +10,7 @@ import { RecordFiltersComponentInstanceContext } from '@/object-record/record-fi
 import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
 import { RecordShowEffect } from '@/object-record/record-show/components/RecordShowEffect';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
+import { computeRecordShowComponentInstanceId } from '@/object-record/record-show/utils/computeRecordShowComponentInstanceId';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { PageHeaderToggleCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
@@ -28,21 +29,24 @@ export const RecordShowPage = () => {
     parameters.objectRecordId ?? '',
   );
 
+  const recordShowComponentInstanceId =
+    computeRecordShowComponentInstanceId(objectRecordId);
+
   return (
     <RecordFilterGroupsComponentInstanceContext.Provider
-      value={{ instanceId: `record-show-${objectRecordId}` }}
+      value={{ instanceId: recordShowComponentInstanceId }}
     >
       <RecordFiltersComponentInstanceContext.Provider
-        value={{ instanceId: `record-show-${objectRecordId}` }}
+        value={{ instanceId: recordShowComponentInstanceId }}
       >
         <RecordSortsComponentInstanceContext.Provider
-          value={{ instanceId: `record-show-${objectRecordId}` }}
+          value={{ instanceId: recordShowComponentInstanceId }}
         >
           <ContextStoreComponentInstanceContext.Provider
             value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
           >
             <ActionMenuComponentInstanceContext.Provider
-              value={{ instanceId: `record-show-${objectRecordId}` }}
+              value={{ instanceId: recordShowComponentInstanceId }}
             >
               <PageContainer>
                 <RecordShowPageTitle

@@ -2,14 +2,12 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useBuildAvailableFieldsForImport } from '@/object-record/spreadsheet-import/hooks/useBuildAvailableFieldsForImport';
 import { buildRecordFromImportedStructuredRow } from '@/object-record/spreadsheet-import/utils/buildRecordFromImportedStructuredRow';
+import { spreadsheetImportFilterAvailableFieldMetadataItems } from '@/object-record/spreadsheet-import/utils/spreadsheetImportFilterAvailableFieldMetadataItems.ts';
 import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOpenSpreadsheetImportDialog';
 import { SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import {
-  FieldMetadataType,
-  RelationDefinitionType,
-} from '~/generated-metadata/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useOpenObjectRecordsSpreadsheetImportDialog = (
   objectNameSingular: string,
@@ -33,23 +31,20 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
       'fields' | 'isOpen' | 'onClose'
     >,
   ) => {
-    const availableFieldMetadataItems = objectMetadataItem.fields
-      .filter(
-        (fieldMetadataItem) =>
-          fieldMetadataItem.isActive &&
-          (!fieldMetadataItem.isSystem || fieldMetadataItem.name === 'id') &&
-          fieldMetadataItem.name !== 'createdAt' &&
-          fieldMetadataItem.name !== 'updatedAt' &&
-          (fieldMetadataItem.type !== FieldMetadataType.RELATION ||
-            fieldMetadataItem.relationDefinition?.direction ===
-              RelationDefinitionType.MANY_TO_ONE),
-      )
-      .sort((fieldMetadataItemA, fieldMetadataItemB) =>
-        fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
+    //All fields that can be imported (included matchable and auto-filled)
+    const availableFieldMetadataItemsToImport =
+      spreadsheetImportFilterAvailableFieldMetadataItems(
+        objectMetadataItem.fields,
       );
 
-    const availableFields = buildAvailableFieldsForImport(
-      availableFieldMetadataItems,
+    const availableFieldMetadataItemsForMatching =
+      availableFieldMetadataItemsToImport.filter(
+        (fieldMetadataItem) =>
+          fieldMetadataItem.type !== FieldMetadataType.ACTOR,
+      );
+
+    const availableFieldsForMatching = buildAvailableFieldsForImport(
+      availableFieldMetadataItemsForMatching,
     );
 
     openSpreadsheetImportDialog({
@@ -59,7 +54,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
           const fieldMapping: Record<string, any> =
             buildRecordFromImportedStructuredRow({
               importedStructuredRow: record,
-              fields: availableFieldMetadataItems,
+              fields: availableFieldMetadataItemsToImport,
             });
 
           return fieldMapping;
@@ -74,8 +69,8 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
           });
         }
       },
-      fields: availableFields,
-      availableFieldMetadataItems,
+      fields: availableFieldsForMatching,
+      availableFieldMetadataItems: availableFieldMetadataItemsToImport,
     });
   };
 

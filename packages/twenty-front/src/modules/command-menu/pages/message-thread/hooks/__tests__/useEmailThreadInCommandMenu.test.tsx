@@ -123,6 +123,7 @@ const mocks = [
                           firstName
                           lastName
                         }
+                        position
                         timeFormat
                         timeZone
                         updatedAt
@@ -284,6 +285,7 @@ const mocks = [
                     firstName
                     lastName
                   }
+                  position
                   timeFormat
                   timeZone
                   updatedAt

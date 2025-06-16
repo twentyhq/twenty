@@ -33,9 +33,7 @@ import { RecordFilterValueDependencies } from '@/object-record/record-filter/typ
 import { getEmptyRecordGqlOperationFilter } from '@/object-record/record-filter/utils/getEmptyRecordGqlOperationFilter';
 
 import { resolveDateViewFilterValue } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
-import { resolveSelectViewFilterValue } from '@/views/view-filter-value/utils/resolveSelectViewFilterValue';
 import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
-import { simpleRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/simpleRelationFilterValueSchema';
 import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
 import { z } from 'zod';
 
@@ -44,6 +42,8 @@ import { checkIfShouldComputeEmptinessFilter } from '@/object-record/record-filt
 import { checkIfShouldSkipFiltering } from '@/object-record/record-filter/utils/compute-record-gql-operation-filter/checkIfShouldSkipFiltering';
 import { computeGqlOperationFilterForEmails } from '@/object-record/record-filter/utils/compute-record-gql-operation-filter/for-composite-field/computeGqlOperationFilterForEmails';
 import { computeGqlOperationFilterForLinks } from '@/object-record/record-filter/utils/compute-record-gql-operation-filter/for-composite-field/computeGqlOperationFilterForLinks';
+import { arrayOfStringsOrVariablesSchema } from '@/views/view-filter-value/validation-schemas/arrayOfStringsOrVariablesSchema';
+import { arrayOfUuidOrVariableSchema } from '@/views/view-filter-value/validation-schemas/arrayOfUuidsOrVariablesSchema';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -312,7 +312,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         jsonRelationFilterValueSchema
           .catch({
             isCurrentWorkspaceMemberSelected: false,
-            selectedRecordIds: simpleRelationFilterValueSchema.parse(
+            selectedRecordIds: arrayOfUuidOrVariableSchema.parse(
               recordFilter.value,
             ),
           })
@@ -759,7 +759,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
           );
       }
     case 'MULTI_SELECT': {
-      const options = resolveSelectViewFilterValue(recordFilter);
+      const options = arrayOfStringsOrVariablesSchema.parse(recordFilter.value);
 
       if (options.length === 0) return;
 
@@ -817,7 +817,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
       }
     }
     case 'SELECT': {
-      const options = resolveSelectViewFilterValue(recordFilter);
+      const options = arrayOfStringsOrVariablesSchema.parse(recordFilter.value);
 
       if (options.length === 0) return;
 

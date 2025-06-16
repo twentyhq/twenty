@@ -38,7 +38,7 @@ export const ObjectFilterDropdownNumberInput = () => {
   };
 
   return (
-    <DropdownMenuItemsContainer width="auto">
+    <DropdownMenuItemsContainer>
       <DropdownMenuInput
         ref={handleInputRef}
         value={objectFilterDropdownFilterValue}

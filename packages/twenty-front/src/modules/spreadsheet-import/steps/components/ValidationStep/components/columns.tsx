@@ -11,7 +11,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 
 import camelCase from 'lodash.camelcase';
 import { isDefined } from 'twenty-shared/utils';
-import { AppTooltip } from 'twenty-ui/display';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/display';
 import { Checkbox, CheckboxVariant, Toggle } from 'twenty-ui/input';
 import { ImportedStructuredRowMetadata } from '../types';
 
@@ -220,6 +220,7 @@ export const generateColumns = <T extends string>(
                   anchorSelect={`#${formatSafeId(`${columnKey}-${row.__index}`)}`}
                   place="top"
                   content={row.__errors?.[columnKey]?.message}
+                  delay={TooltipDelay.shortDelay}
                 />,
                 document.body,
               )}

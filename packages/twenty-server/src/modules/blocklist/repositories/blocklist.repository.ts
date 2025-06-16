@@ -35,9 +35,6 @@ export class BlocklistRepository {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         BlocklistWorkspaceEntity,
-        {
-          shouldBypassPermissionChecks: true,
-        },
       );
 
     return blockListRepository.find({

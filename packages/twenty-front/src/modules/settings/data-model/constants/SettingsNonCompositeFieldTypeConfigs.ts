@@ -15,7 +15,6 @@ import {
 import { DEFAULT_DATE_VALUE } from '@/settings/data-model/constants/DefaultDateValue';
 import { SettingsFieldTypeCategoryType } from '@/settings/data-model/types/SettingsFieldTypeCategoryType';
 import { SettingsNonCompositeFieldType } from '@/settings/data-model/types/SettingsNonCompositeFieldType';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 import {
   IconComponent,
   IllustrationIconArray,
@@ -31,13 +30,14 @@ import {
   IllustrationIconToggle,
   IllustrationIconUid,
 } from 'twenty-ui/display';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 DEFAULT_DATE_VALUE.setFullYear(DEFAULT_DATE_VALUE.getFullYear() + 2);
 
 export type SettingsFieldTypeConfig<T> = {
   label: string;
   Icon: IconComponent;
-  exampleValue?: T;
+  exampleValues?: [T, T, T];
   category: SettingsFieldTypeCategoryType;
 };
 
@@ -52,44 +52,59 @@ export const SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS: SettingsNonCompositeFiel
     [FieldMetadataType.UUID]: {
       label: 'Unique ID',
       Icon: IllustrationIconUid,
-      exampleValue: '00000000-0000-0000-0000-000000000000',
+      exampleValues: [
+        '00000000-0000-0000-0000-000000000000',
+        '00000000-0000-0000-0000-000000000001',
+        '00000000-0000-0000-0000-000000000002',
+      ],
       category: 'Advanced',
     } as const satisfies SettingsFieldTypeConfig<FieldUUidValue>,
     [FieldMetadataType.TEXT]: {
       label: 'Text',
       Icon: IllustrationIconText,
-      exampleValue:
+      exampleValues: [
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum magna enim, dapibus non enim in, lacinia faucibus nunc. Sed interdum ante sed felis facilisis, eget ultricies neque molestie. Mauris auctor, justo eu volutpat cursus, libero erat tempus nulla, non sodales lorem lacus a est.',
+        'Vestibulum magna enim, dapibus non enim in, lacinia faucibus nunc. Sed interdum ante sed felis facilisis, eget ultricies neque molestie. Mauris auctor, justo eu volutpat cursus, libero erat tempus nulla, non sodales lorem lacus a est.',
+        'Sed interdum ante sed felis facilisis, eget ultricies neque molestie. Mauris auctor, justo eu volutpat cursus, libero erat tempus nulla, non sodales lorem lacus a est.',
+      ],
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldTextValue>,
     [FieldMetadataType.NUMERIC]: {
       label: 'Numeric',
       Icon: IllustrationIconNumbers,
-      exampleValue: 2000,
+      exampleValues: [2000, 3000, 4000],
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldNumberValue>,
     [FieldMetadataType.NUMBER]: {
       label: 'Number',
       Icon: IllustrationIconNumbers,
-      exampleValue: 2000,
+      exampleValues: [2000, 3000, 4000],
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldNumberValue>,
     [FieldMetadataType.BOOLEAN]: {
       label: 'True/False',
       Icon: IllustrationIconToggle,
-      exampleValue: true,
+      exampleValues: [true, false, true],
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldBooleanValue>,
     [FieldMetadataType.DATE_TIME]: {
       label: 'Date and Time',
       Icon: IllustrationIconCalendarTime,
-      exampleValue: DEFAULT_DATE_VALUE.toISOString(),
+      exampleValues: [
+        DEFAULT_DATE_VALUE.toISOString(),
+        '2025-06-10T12:01:00.000Z',
+        '2018-07-14T12:02:00.000Z',
+      ],
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldDateTimeValue>,
     [FieldMetadataType.DATE]: {
       label: 'Date',
       Icon: IllustrationIconCalendarEvent,
-      exampleValue: DEFAULT_DATE_VALUE.toISOString(),
+      exampleValues: [
+        DEFAULT_DATE_VALUE.toISOString(),
+        '2025-06-10T00:00:00.000Z',
+        '2018-07-14T00:00:00.000Z',
+      ],
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldDateValue>,
     [FieldMetadataType.SELECT]: {
@@ -110,19 +125,19 @@ export const SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS: SettingsNonCompositeFiel
     [FieldMetadataType.RATING]: {
       label: 'Rating',
       Icon: IllustrationIconStar,
-      exampleValue: 'RATING_3',
+      exampleValues: ['RATING_3', 'RATING_4', 'RATING_5'],
       category: 'Basic',
     } as const satisfies SettingsFieldTypeConfig<FieldRatingValue>,
     [FieldMetadataType.RAW_JSON]: {
       label: 'JSON',
       Icon: IllustrationIconJson,
-      exampleValue: { key: 'value' },
+      exampleValues: [{ key: 'value1' }, { key: 'value2', key2: 'value2' }, {}],
       category: 'Advanced',
     } as const satisfies SettingsFieldTypeConfig<FieldJsonValue>,
     [FieldMetadataType.ARRAY]: {
       label: 'Array',
       Icon: IllustrationIconArray,
       category: 'Advanced',
-      exampleValue: ['value1', 'value2'],
+      exampleValues: [['value1', 'value2'], ['value3'], []],
     } as const satisfies SettingsFieldTypeConfig<FieldArrayValue>,
   };

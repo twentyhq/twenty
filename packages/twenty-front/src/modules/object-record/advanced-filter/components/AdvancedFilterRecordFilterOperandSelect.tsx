@@ -19,16 +19,18 @@ import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItem } from 'twenty-ui/navigation';
 
-const StyledContainer = styled.div`
-  width: 100px;
+const StyledContainer = styled.div<{ width?: string }>`
+  width: ${({ width }) => width ?? '100px'};
 `;
 
 type AdvancedFilterRecordFilterOperandSelectProps = {
   recordFilterId: string;
+  widthFromProps?: string;
 };
 
 export const AdvancedFilterRecordFilterOperandSelect = ({
   recordFilterId,
+  widthFromProps,
 }: AdvancedFilterRecordFilterOperandSelectProps) => {
   const dropdownId = `advanced-filter-view-filter-operand-${recordFilterId}`;
 
@@ -82,7 +84,7 @@ export const AdvancedFilterRecordFilterOperandSelect = ({
   }
 
   return (
-    <StyledContainer>
+    <StyledContainer width={widthFromProps}>
       <Dropdown
         dropdownId={dropdownId}
         clickableComponent={

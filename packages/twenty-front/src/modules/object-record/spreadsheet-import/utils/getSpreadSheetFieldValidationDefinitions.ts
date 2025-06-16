@@ -1,3 +1,4 @@
+import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
 import { emailSchema } from '@/object-record/record-field/validation-schemas/emailSchema';
 import { SpreadsheetImportFieldValidationDefinition } from '@/spreadsheet-import/types';
 import { t } from '@lingui/core/macro';
@@ -34,14 +35,14 @@ export const getSpreadSheetFieldValidationDefinitions = (
       ];
     case FieldMetadataType.CURRENCY:
       switch (subFieldKey) {
-        case 'amountMicrosLabel':
+        case 'amountMicros':
           return [getNumberValidationDefinition(fieldName)];
         default:
           return [];
       }
     case FieldMetadataType.EMAILS:
       switch (subFieldKey) {
-        case 'primaryEmailLabel':
+        case 'primaryEmail':
           return [
             {
               rule: 'function',
@@ -50,7 +51,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
               level: 'error',
             },
           ];
-        case 'additionalEmailsLabel':
+        case 'additionalEmails':
           return [
             {
               rule: 'function',
@@ -76,7 +77,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
       }
     case FieldMetadataType.LINKS:
       switch (subFieldKey) {
-        case 'primaryLinkUrlLabel':
+        case 'primaryLinkUrl':
           return [
             {
               rule: 'function',
@@ -88,7 +89,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
               level: 'error',
             },
           ];
-        case 'secondaryLinksLabel':
+        case 'secondaryLinks':
           return [
             {
               rule: 'function',
@@ -138,7 +139,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
       ];
     case FieldMetadataType.PHONES:
       switch (subFieldKey) {
-        case 'primaryPhoneNumberLabel':
+        case 'primaryPhoneNumber':
           return [
             {
               rule: 'regex',
@@ -147,7 +148,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
               level: 'error',
             },
           ];
-        case 'additionalPhonesLabel':
+        case 'additionalPhones':
           return [
             {
               rule: 'function',
@@ -214,6 +215,22 @@ export const getSpreadSheetFieldValidationDefinitions = (
           level: 'error',
         },
       ];
+    case FieldMetadataType.RATING: {
+      const ratingValues = RATING_VALUES.join(', ');
+
+      return [
+        {
+          rule: 'function',
+          isValid: (value: string) => {
+            return RATING_VALUES.includes(
+              value as (typeof RATING_VALUES)[number],
+            );
+          },
+          errorMessage: `${fieldName} ${t` must be one of ${ratingValues} values`}`,
+          level: 'error',
+        },
+      ];
+    }
     default:
       return [];
   }

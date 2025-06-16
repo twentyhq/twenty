@@ -23,5 +23,4 @@ export type Command = {
   Icon?: IconComponent;
   hotKeys?: string[];
   onCommandClick?: () => void;
-  shouldCloseCommandMenuOnClick?: boolean;
 };

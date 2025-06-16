@@ -13,9 +13,9 @@ export const parseMetadataPath = (
     );
   }
 
-  if (!['fields', 'objects', 'relations'].includes(queryAction[0])) {
+  if (!['fields', 'objects'].includes(queryAction[0])) {
     throw new BadRequestException(
-      `Query path '${request.path}' invalid. Metadata path "${queryAction[0]}" does not exist. Valid examples: /rest/metadata/fields or /rest/metadata/objects or /rest/metadata/relations`,
+      `Query path '${request.path}' invalid. Metadata path "${queryAction[0]}" does not exist. Valid examples: /rest/metadata/fields or /rest/metadata/objects`,
     );
   }
 
@@ -35,12 +35,6 @@ export const parseMetadataPath = (
           objectNamePlural: 'objects',
           id: queryAction[1],
         };
-      case 'relations':
-        return {
-          objectNameSingular: 'relationMetadata',
-          objectNamePlural: 'relationMetadata',
-          id: queryAction[1],
-        };
       default:
         return { objectNameSingular: '', objectNamePlural: '', id: '' };
     }
@@ -50,11 +44,6 @@ export const parseMetadataPath = (
         return { objectNameSingular: 'field', objectNamePlural: 'fields' };
       case 'objects':
         return { objectNameSingular: 'object', objectNamePlural: 'objects' };
-      case 'relations':
-        return {
-          objectNameSingular: 'relationMetadata',
-          objectNamePlural: 'relationMetadata',
-        };
       default:
         return { objectNameSingular: '', objectNamePlural: '' };
     }

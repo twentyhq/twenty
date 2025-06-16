@@ -36,7 +36,7 @@ export class ServerlessFunctionService {
   constructor(
     private readonly fileStorageService: FileStorageService,
     private readonly serverlessService: ServerlessService,
-    @InjectRepository(ServerlessFunctionEntity, 'metadata')
+    @InjectRepository(ServerlessFunctionEntity, 'core')
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -224,14 +224,16 @@ export class ServerlessFunctionService {
       await this.serverlessFunctionRepository.softDelete({ id });
     } else {
       await this.serverlessFunctionRepository.delete({ id });
-      await this.fileStorageService.delete({
+      // We don't need to await this
+      this.fileStorageService.delete({
         folderPath: getServerlessFolder({
           serverlessFunction: existingServerlessFunction,
         }),
       });
     }
 
-    await this.serverlessService.delete(existingServerlessFunction);
+    // We don't need to await this
+    this.serverlessService.delete(existingServerlessFunction);
 
     return existingServerlessFunction;
   }

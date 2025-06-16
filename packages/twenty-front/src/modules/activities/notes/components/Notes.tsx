@@ -68,7 +68,7 @@ export const Notes = ({
             There are no associated notes with this record.
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
-        {!hasObjectUpdatePermissions && (
+        {hasObjectUpdatePermissions && (
           <Button
             Icon={IconPlus}
             title="New note"
@@ -90,7 +90,7 @@ export const Notes = ({
         title="All"
         notes={notes}
         button={
-          !hasObjectUpdatePermissions && (
+          hasObjectUpdatePermissions && (
             <Button
               Icon={IconPlus}
               size="small"

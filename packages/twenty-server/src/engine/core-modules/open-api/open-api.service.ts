@@ -38,6 +38,7 @@ import {
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { getServerUrl } from 'src/utils/get-server-url';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @Injectable()
 export class OpenApiService {
@@ -61,8 +62,14 @@ export class OpenApiService {
       const { workspace } =
         await this.accessTokenService.validateTokenByRequest(request);
 
+      workspaceValidator.assertIsDefinedOrThrow(workspace);
+
       objectMetadataItems =
-        await this.objectMetadataService.findManyWithinWorkspace(workspace.id);
+        await this.objectMetadataService.findManyWithinWorkspace(workspace.id, {
+          order: {
+            namePlural: 'ASC',
+          },
+        });
     } catch (err) {
       return schema;
     }
@@ -145,10 +152,6 @@ export class OpenApiService {
         nameSingular: 'field',
         namePlural: 'fields',
       },
-      {
-        nameSingular: 'relation',
-        namePlural: 'relations',
-      },
     ];
 
     schema.paths = metadata.reduce((path, item) => {
@@ -191,30 +194,28 @@ export class OpenApiService {
             '401': { $ref: '#/components/responses/401' },
           },
         },
-        ...(item.nameSingular !== 'relation' && {
-          get: {
-            tags: [item.namePlural],
-            summary: `Find One ${item.nameSingular}`,
-            parameters: [{ $ref: '#/components/parameters/idPath' }],
-            responses: {
-              '200': getFindOneResponse200(item),
-              '400': { $ref: '#/components/responses/400' },
-              '401': { $ref: '#/components/responses/401' },
-            },
+        get: {
+          tags: [item.namePlural],
+          summary: `Find One ${item.nameSingular}`,
+          parameters: [{ $ref: '#/components/parameters/idPath' }],
+          responses: {
+            '200': getFindOneResponse200(item),
+            '400': { $ref: '#/components/responses/400' },
+            '401': { $ref: '#/components/responses/401' },
           },
-          patch: {
-            tags: [item.namePlural],
-            summary: `Update One ${item.nameSingular}`,
-            operationId: `updateOne${capitalize(item.nameSingular)}`,
-            parameters: [{ $ref: '#/components/parameters/idPath' }],
-            requestBody: getUpdateRequestBody(capitalize(item.nameSingular)),
-            responses: {
-              '200': getUpdateOneResponse200(item, true),
-              '400': { $ref: '#/components/responses/400' },
-              '401': { $ref: '#/components/responses/401' },
-            },
+        },
+        patch: {
+          tags: [item.namePlural],
+          summary: `Update One ${item.nameSingular}`,
+          operationId: `updateOne${capitalize(item.nameSingular)}`,
+          parameters: [{ $ref: '#/components/parameters/idPath' }],
+          requestBody: getUpdateRequestBody(capitalize(item.nameSingular)),
+          responses: {
+            '200': getUpdateOneResponse200(item, true),
+            '400': { $ref: '#/components/responses/400' },
+            '401': { $ref: '#/components/responses/401' },
           },
-        }),
+        },
       } as OpenAPIV3_1.PathItemObject;
 
       return path;

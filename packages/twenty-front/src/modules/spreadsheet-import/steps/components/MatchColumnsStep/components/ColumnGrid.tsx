@@ -12,12 +12,9 @@ const StyledGridContainer = styled.div`
 `;
 
 const StyledGrid = styled.div`
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  margin-top: ${({ theme }) => theme.spacing(8)};
   width: 100%;
 `;
 
@@ -73,22 +70,16 @@ const StyledGridCell = styled.div<PositionProps>`
 
 const StyledGridHeader = styled.div<PositionProps>`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.tertiary};
+  background-color: ${({ theme }) => theme.background.secondary};
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
   box-sizing: border-box;
   color: ${({ theme }) => theme.font.color.light};
   display: flex;
   flex: 1;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   padding-left: ${({ theme }) => theme.spacing(4)};
   padding-right: ${({ theme }) => theme.spacing(4)};
-  ${({ position, theme }) => {
-    if (position === 'left') {
-      return `border-top-left-radius: calc(${theme.border.radius.md} - 1px);`;
-    }
-    return `border-top-right-radius: calc(${theme.border.radius.md} - 1px);`;
-  }};
-  text-transform: uppercase;
 `;
 
 type ColumnGridProps<T extends string> = {
@@ -117,7 +108,7 @@ export const ColumnGrid = <T extends string>({
     <>
       <StyledGridContainer>
         <StyledGrid>
-          <StyledGridRow height="29px">
+          <StyledGridRow height="32px">
             <StyledGridHeader position="left">Imported data</StyledGridHeader>
             <StyledGridHeader position="right">Twenty fields</StyledGridHeader>
           </StyledGridRow>

@@ -15,11 +15,13 @@ import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContaine
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { useTheme } from '@emotion/react';
+import { isArray } from '@sniptt/guards';
 import { useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { VisibilityHidden } from 'twenty-ui/accessibility';
 import { IconChevronDown } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 type FormMultiSelectFieldInputProps = {
   label?: string;
@@ -54,7 +56,7 @@ const StyledDisplayModeContainer = styled(StyledDisplayModeReadonlyContainer)`
 const StyledSelectInputContainer = styled.div`
   position: absolute;
   z-index: 1;
-  top: ${({ theme }) => theme.spacing(8)};
+  top: ${({ theme }) => theme.spacing(9)};
 `;
 
 const StyledPlaceholder = styled.div`
@@ -62,6 +64,14 @@ const StyledPlaceholder = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.medium};
   width: 100%;
 `;
+
+const safeParsedValue = (value: string) => {
+  try {
+    return JSON.parse(value);
+  } catch (error) {
+    return value;
+  }
+};
 
 export const FormMultiSelectFieldInput = ({
   label,
@@ -87,7 +97,7 @@ export const FormMultiSelectFieldInput = ({
   const [draftValue, setDraftValue] = useState<
     | {
         type: 'static';
-        value: FieldMultiSelectValue;
+        value: FieldMultiSelectValue | string;
         editingMode: 'view' | 'edit';
       }
     | {
@@ -171,10 +181,14 @@ export const FormMultiSelectFieldInput = ({
   };
 
   const selectedNames =
-    draftValue.type === 'static' ? draftValue.value : undefined;
+    draftValue.type === 'static' && isDefined(draftValue.value)
+      ? isArray(draftValue.value)
+        ? draftValue.value
+        : safeParsedValue(draftValue.value)
+      : undefined;
 
   const selectedOptions =
-    isDefined(selectedNames) && isDefined(options)
+    isDefined(selectedNames) && isDefined(options) && isArray(selectedNames)
       ? options.filter((option) =>
           selectedNames.some((name) => option.value === name),
         )
@@ -246,7 +260,8 @@ export const FormMultiSelectFieldInput = ({
                   options={options}
                   onCancel={onCancel}
                   onOptionSelected={onOptionSelected}
-                  values={draftValue.value}
+                  values={selectedNames}
+                  dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
                 />
               </OverlayContainer>
             )}

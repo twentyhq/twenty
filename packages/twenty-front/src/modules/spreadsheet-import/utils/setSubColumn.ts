@@ -14,9 +14,16 @@ export const setSubColumn = <T>(
 ):
   | SpreadsheetMatchedSelectColumn<T>
   | SpreadsheetMatchedSelectOptionsColumn<T> => {
+  const shouldUnselectValue =
+    oldColumn.matchedOptions.find((option) => option.entry === entry)?.value ===
+    value;
+
   const options = oldColumn.matchedOptions.map((option) =>
-    option.entry === entry ? { ...option, value } : option,
+    option.entry === entry
+      ? { ...option, value: shouldUnselectValue ? undefined : value }
+      : option,
   );
+
   const allMatched = options.every(({ value }) => !!value);
   if (allMatched) {
     return {

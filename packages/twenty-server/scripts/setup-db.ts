@@ -12,10 +12,6 @@ rawDataSource
       'create schema "public"',
     );
     await performQuery(
-      'CREATE SCHEMA IF NOT EXISTS "metadata"',
-      'create schema "metadata"',
-    );
-    await performQuery(
       'CREATE SCHEMA IF NOT EXISTS "core"',
       'create schema "core"',
     );
