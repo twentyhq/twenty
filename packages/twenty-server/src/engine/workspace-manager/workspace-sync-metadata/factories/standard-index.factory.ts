@@ -94,23 +94,6 @@ export class StandardIndexFactory {
 
           return indexMetadata;
         })
-        // TODO: remove this filter when we have a way to handle index on relations
-        .filter((workspaceIndexMetadataArgs) => {
-          const objectMetadata =
-            originalStandardObjectMetadataMap[workspaceEntity.nameSingular];
-
-          const hasAllFields = workspaceIndexMetadataArgs.columns.every(
-            (expectedField) => {
-              return objectMetadata.fields.some(
-                (field) =>
-                  field.name === expectedField ||
-                  `${field.name}Id` === expectedField,
-              );
-            },
-          );
-
-          return hasAllFields;
-        })
     );
   }
 
