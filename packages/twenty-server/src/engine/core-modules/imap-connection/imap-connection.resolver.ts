@@ -111,7 +111,6 @@ export class ImapConnectionResolver {
       {
         handle,
         provider: ConnectedAccountProvider.IMAP,
-        connectionType: 'IMAP',
         customConnectionParams: connectionParams,
       },
     );

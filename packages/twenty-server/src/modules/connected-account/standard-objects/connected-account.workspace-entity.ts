@@ -117,16 +117,6 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   customConnectionParams: Record<string, unknown> | null;
 
-  @WorkspaceField({
-    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.connectionType,
-    type: FieldMetadataType.TEXT,
-    defaultValue: "'OAuth2'",
-    label: msg`Connection Type`,
-    description: msg`The type of connection to the account possible values are: OAuth2, IMAP`,
-    icon: 'IconSettings',
-  })
-  connectionType: string;
-
   @WorkspaceRelation({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.accountOwner,
     type: RelationType.MANY_TO_ONE,

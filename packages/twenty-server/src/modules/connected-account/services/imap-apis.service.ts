@@ -89,7 +89,6 @@ export class IMAPAPIsService {
             id: newOrExistingConnectedAccountId,
             handle,
             provider: ConnectedAccountProvider.IMAP,
-            connectionType: 'IMAP',
             customConnectionParams: {
               handle: connectionParams.handle,
               host: connectionParams.host,

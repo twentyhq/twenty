@@ -9,7 +9,6 @@ const GET_CONNECTED_ACCOUNT = gql`
       id
       handle
       provider
-      connectionType
       accessToken
       refreshToken
       accountOwnerId
