@@ -51,12 +51,14 @@ export const CommandMenuOpenContainer = ({
 
   const handleClickOutside = useRecoilCallback(
     ({ snapshot }) =>
-      () => {
+      (event: MouseEvent | TouchEvent) => {
         const hotkeyScope = snapshot
           .getLoadable(currentHotkeyScopeState)
           .getValue();
 
         if (hotkeyScope?.scope === CommandMenuHotkeyScope.CommandMenuFocused) {
+          event.stopImmediatePropagation();
+          event.preventDefault();
           closeCommandMenu();
         }
       },
