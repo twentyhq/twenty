@@ -1797,6 +1797,16 @@ msgstr "Maak geen contacten aan van/naar Gmail, Outlook e-mails"
 msgid "Don’t sync emails from team@ support@ noreply@..."
 msgstr "Synchroniseer geen e-mails van team@ support@ noreply@..."
 
+#. js-lingui-id: Iari6C
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Donwload bank slip"
+msgstr ""
+
+#. js-lingui-id: XxrnrL
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Download bank slip"
+msgstr ""
+
 #. js-lingui-id: WcWS//
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Download file"
@@ -2098,6 +2108,11 @@ msgstr ""
 #. js-lingui-id: k06M7e
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Error while switching subscription to yearly."
+msgstr ""
+
+#. js-lingui-id: ON1CRr
+#: src/modules/settings/billing/hooks/useHandleUpdateSubscription.ts
+msgid "Error while updating subscription."
 msgstr ""
 
 #. js-lingui-id: JLxMta
@@ -4753,6 +4768,16 @@ msgstr ""
 msgid "Subscription activated."
 msgstr ""
 
+#. js-lingui-id: 8Ucb+k
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Subscription expired. Click on the 'Download bank slip' button to download yor bank slip."
+msgstr ""
+
+#. js-lingui-id: h69Gpa
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Subscription expired. Please contact your admin."
+msgstr ""
+
 #. js-lingui-id: B5jRKH
 #: src/pages/settings/SettingsBilling.tsx
 #~ msgid "Subscription has been switched {to}"
@@ -5064,6 +5089,11 @@ msgstr "Deze week"
 #. js-lingui-id: 4YifBe
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 msgid "This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings."
+msgstr ""
+
+#. js-lingui-id: kjAL4v
+#: src/modules/chat/call-center/hooks/useCommandMenuTicket.ts
+msgid "Ticket"
 msgstr ""
 
 #. js-lingui-id: n9nSNJ
