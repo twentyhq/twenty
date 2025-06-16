@@ -47,7 +47,7 @@ export class ObjectPermissionService {
         role,
       });
 
-      await this.validateObjectPermissionsOrThrow({
+      await this.validateObjectPermissionsReadAndWriteConsistencyOrThrow({
         objectPermissions: input.objectPermissions,
         roleWithObjectPermissions: role,
       });
@@ -129,7 +129,7 @@ export class ObjectPermissionService {
     }
   }
 
-  private async validateObjectPermissionsOrThrow({
+  private async validateObjectPermissionsReadAndWriteConsistencyOrThrow({
     objectPermissions: newObjectPermissions,
     roleWithObjectPermissions,
   }: {
@@ -249,7 +249,7 @@ export class ObjectPermissionService {
   }
 
   private async validateRoleIsEditableOrThrow({ role }: { role: RoleEntity }) {
-    if (!role?.isEditable) {
+    if (!role.isEditable) {
       throw new PermissionsException(
         PermissionsExceptionMessage.ROLE_NOT_EDITABLE,
         PermissionsExceptionCode.ROLE_NOT_EDITABLE,

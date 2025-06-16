@@ -298,15 +298,13 @@ export class RoleService {
 
     const existingRole = workspaceRoles.find((role) => role.id === roleId);
 
-    await this.validateRoleDoesNotHaveWritingPermissionsWithoutReadingPermissionsOrThrow(
-      {
-        input,
-        existingRole,
-      },
-    );
+    await this.validateRoleReadAndWirtePermissionsConsistencyOrThrow({
+      input,
+      existingRole,
+    });
   }
 
-  private async validateRoleDoesNotHaveWritingPermissionsWithoutReadingPermissionsOrThrow({
+  private async validateRoleReadAndWirtePermissionsConsistencyOrThrow({
     input,
     existingRole,
   }: {
