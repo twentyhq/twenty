@@ -477,7 +477,7 @@ describe('roles permissions', () => {
         roleId: string;
       }) => `
       mutation UpsertObjectPermissions {
-          upsertObjectPermissions(upsertObjectPermissionsInput: { roleId: "${roleId}", objectPermissions: [{objectMetadataId: "${objectMetadataId}", canUpdateObjectRecords: true}]}) {
+          upsertObjectPermissions(upsertObjectPermissionsInput: { roleId: "${roleId}", objectPermissions: [{objectMetadataId: "${objectMetadataId}", canUpdateObjectRecords: true, canReadObjectRecords: true}]}) {
               objectMetadataId
               canUpdateObjectRecords
           }
