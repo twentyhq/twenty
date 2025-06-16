@@ -44,7 +44,11 @@ export const RecordTableBodyFocusClickOutsideEffect = ({
       }
 
       leaveTableFocus();
-      setHotkeyScope(RecordIndexHotkeyScope.RecordIndex);
+      setHotkeyScope(RecordIndexHotkeyScope.RecordIndex, {
+        goto: true,
+        keyboardShortcutMenu: true,
+        searchRecords: true,
+      });
     },
   });
 
