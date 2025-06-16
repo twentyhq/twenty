@@ -37,7 +37,7 @@ export const AdvancedFilterRecordFilterOperandSelect = ({
       })
     : [];
 
-  if (isDisabled === true) {
+  if (isDisabled) {
     return (
       <SelectControl
         selectedOption={{

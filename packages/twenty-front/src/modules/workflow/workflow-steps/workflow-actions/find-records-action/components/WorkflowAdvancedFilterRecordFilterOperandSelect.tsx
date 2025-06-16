@@ -33,7 +33,7 @@ export const WorkflowAdvancedFilterRecordFilterOperandSelect = ({
       }).filter((operand) => operand !== RecordFilterOperand.IsRelative)
     : [];
 
-  if (isDisabled === true) {
+  if (isDisabled) {
     return (
       <SelectControl
         selectedOption={{
