@@ -7,7 +7,6 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
-import { MessageChannelVisibility } from '~/generated-metadata/graphql';
 import { useSaveImapConnectionMutation } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { currentWorkspaceMemberState } from '~/modules/auth/states/currentWorkspaceMemberState';
@@ -19,21 +18,12 @@ const imapConnectionFormSchema = z.object({
   port: z.number().int().positive('Port must be a positive number'),
   secure: z.boolean(),
   password: z.string().min(1, 'Password is required'),
-  messageVisibility: z.nativeEnum(MessageChannelVisibility).optional(),
 });
 
 export type ImapConnectionFormValues = z.infer<typeof imapConnectionFormSchema>;
 
-type ImapConnectionData = {
-  handle?: string;
-  host?: string;
-  port?: number;
-  secure?: boolean;
-  messageVisibility?: MessageChannelVisibility;
-};
-
 type UseImapConnectionFormProps = {
-  initialData?: ImapConnectionData;
+  initialData?: ImapConnectionFormValues;
   isEditing?: boolean;
   connectedAccountId?: string;
 };
@@ -59,10 +49,7 @@ export const useImapConnectionForm = ({
     host: initialData?.host || '',
     port: initialData?.port || 993,
     secure: initialData?.secure ?? true,
-    password: '',
-    messageVisibility:
-      initialData?.messageVisibility ||
-      MessageChannelVisibility.SHARE_EVERYTHING,
+    password: initialData?.password || '',
   };
 
   const formMethods = useForm<ImapConnectionFormValues>({

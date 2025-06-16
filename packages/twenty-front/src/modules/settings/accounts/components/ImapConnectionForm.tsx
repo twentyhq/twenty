@@ -17,11 +17,13 @@ const StyledFormContainer = styled.form`
 type ImapConnectionFormProps = {
   control: Control<ImapConnectionFormValues>;
   isEditing: boolean;
+  defaultValues?: Partial<ImapConnectionFormValues>;
 };
 
 export const ImapConnectionForm = ({
   control,
   isEditing,
+  defaultValues,
 }: ImapConnectionFormProps) => {
   const { t } = useLingui();
 
@@ -39,6 +41,7 @@ export const ImapConnectionForm = ({
         <Controller
           name="handle"
           control={control}
+          defaultValue={defaultValues?.handle}
           render={({ field, fieldState }) => (
             <TextInput
               label={t`Email Address`}
@@ -52,6 +55,7 @@ export const ImapConnectionForm = ({
         <Controller
           name="host"
           control={control}
+          defaultValue={defaultValues?.host}
           render={({ field, fieldState }) => (
             <TextInput
               label={t`IMAP Server`}
@@ -65,6 +69,7 @@ export const ImapConnectionForm = ({
         <Controller
           name="port"
           control={control}
+          defaultValue={defaultValues?.port}
           render={({ field, fieldState }) => (
             <TextInput
               label={t`IMAP Port`}
@@ -79,6 +84,7 @@ export const ImapConnectionForm = ({
         <Controller
           name="secure"
           control={control}
+          defaultValue={defaultValues?.secure}
           render={({ field }) => (
             <Select
               label={t`Encryption`}
@@ -95,16 +101,13 @@ export const ImapConnectionForm = ({
         <Controller
           name="password"
           control={control}
+          defaultValue={defaultValues?.password}
           render={({ field, fieldState }) => (
             <TextInput
-              label={
-                isEditing
-                  ? t`Password (leave blank to keep current password)`
-                  : t`Password`
-              }
+              label={t`Password`}
               placeholder={t`••••••••`}
               type="password"
-              value={field.value || ''}
+              value={field.value}
               onChange={field.onChange}
               error={fieldState.error?.message}
             />

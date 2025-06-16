@@ -10,7 +10,6 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -31,14 +30,13 @@ export const SettingsAccountsEditImapConnection = () => {
   const { connectedAccount, loading: accountLoading } =
     useConnectedIMAPAccount(connectedAccountId);
 
-  const initialData = isDefined(connectedAccount?.customConnectionParams)
-    ? {
-        handle: connectedAccount?.customConnectionParams?.handle || '',
-        host: connectedAccount?.customConnectionParams?.host || '',
-        port: connectedAccount?.customConnectionParams?.port || 993,
-        secure: connectedAccount?.customConnectionParams?.secure || true,
-      }
-    : undefined;
+  const initialData = {
+    handle: connectedAccount?.customConnectionParams?.handle || '',
+    host: connectedAccount?.customConnectionParams?.host || '',
+    port: connectedAccount?.customConnectionParams?.port || 993,
+    secure: connectedAccount?.customConnectionParams?.secure ?? true,
+    password: connectedAccount?.customConnectionParams?.password || '',
+  };
 
   const { formMethods, handleSave, handleSubmit, canSave, isSubmitting } =
     useImapConnectionForm({
