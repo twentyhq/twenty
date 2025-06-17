@@ -81,6 +81,7 @@ export const useCreateManyRecords = <
   const createManyRecords = async (
     recordsToCreate: Partial<CreatedObjectRecord>[],
     upsert?: boolean,
+    abortController?: AbortController,
   ) => {
     const sanitizedCreateManyRecordsInput: PartialObjectRecordWithOptionalId[] =
       [];
@@ -170,6 +171,11 @@ export const useCreateManyRecords = <
         variables: {
           data: sanitizedCreateManyRecordsInput,
           upsert: upsert,
+        },
+        context: {
+          fetchOptions: {
+            signal: abortController?.signal,
+          },
         },
         update: (cache, { data }) => {
           const records = data?.[mutationResponseField];

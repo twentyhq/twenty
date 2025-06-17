@@ -6,6 +6,11 @@ import {
 } from '@/object-record/hooks/useCreateManyRecords';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { ApolloError } from '@apollo/client';
+import { t } from '@lingui/core/macro';
+import { formatNumber } from '~/utils/format/number';
 
 export const useBatchCreateManyRecords = <
   CreatedObjectRecord extends ObjectRecord = ObjectRecord,
@@ -36,6 +41,14 @@ export const useBatchCreateManyRecords = <
     objectMetadataNamePlural: objectMetadataItem.namePlural,
   });
 
+  const { enqueueSnackBar } = useSnackBar();
+
+  const abortController = new AbortController();
+
+  const abortBatchCreateManyRecords = () => {
+    abortController.abort();
+  };
+
   const batchCreateManyRecords = async ({
     recordsToCreate,
     upsert,
@@ -61,6 +74,7 @@ export const useBatchCreateManyRecords = <
         const createdRecords = await createManyRecords(
           batchedRecordsToCreate,
           upsert,
+          abortController,
         );
 
         setBatchedRecordsCount?.((batchIndex + 1) * mutationBatchSize);
@@ -69,6 +83,19 @@ export const useBatchCreateManyRecords = <
 
       await refetchAggregateQueries();
       return allCreatedRecords;
+    } catch (error) {
+      if (error instanceof ApolloError && error.message.includes('aborted')) {
+        const recordsCreated = formatNumber(allCreatedRecords.length);
+        enqueueSnackBar(
+          t`Record creation stopped. ${recordsCreated} records created only.`,
+          {
+            variant: SnackBarVariant.Warning,
+            duration: 5000,
+          },
+        );
+      } else {
+        throw error;
+      }
     } finally {
       setBatchedRecordsCount?.(0);
     }
@@ -76,5 +103,6 @@ export const useBatchCreateManyRecords = <
 
   return {
     batchCreateManyRecords,
+    abortBatchCreateManyRecords,
   };
 };

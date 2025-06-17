@@ -43,6 +43,7 @@ export const SpreadsheetImportProvider = (
   const { closeModal } = useModal();
 
   const handleClose = () => {
+    spreadsheetImportDialog.options?.onAbortSubmit?.();
     setSpreadsheetImportDialog({
       isOpen: false,
       options: null,

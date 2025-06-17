@@ -1,4 +1,5 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useBatchCreateManyRecords } from '@/object-record/hooks/useBatchCreateManyRecords';
 import { useBuildAvailableFieldsForImport } from '@/object-record/spreadsheet-import/hooks/useBuildAvailableFieldsForImport';
 import { buildRecordFromImportedStructuredRow } from '@/object-record/spreadsheet-import/utils/buildRecordFromImportedStructuredRow';
 import { spreadsheetImportFilterAvailableFieldMetadataItems } from '@/object-record/spreadsheet-import/utils/spreadsheetImportFilterAvailableFieldMetadataItems.ts';
@@ -24,12 +25,13 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
     spreadsheetImportCreatedRecordsProgressState,
   );
 
-  const { batchCreateManyRecords } = useBatchCreateManyRecords({
-    objectNameSingular,
-    mutationBatchSize: 1,
-    skipPostOptimisticEffect: true,
-    setBatchedRecordsCount: setCreatedRecordsProgress,
-  });
+  const { batchCreateManyRecords, abortBatchCreateManyRecords } =
+    useBatchCreateManyRecords({
+      objectNameSingular,
+      mutationBatchSize: 500,
+      skipPostOptimisticEffect: true,
+      setBatchedRecordsCount: setCreatedRecordsProgress,
+    });
 
   const { buildAvailableFieldsForImport } = useBuildAvailableFieldsForImport();
 
@@ -81,6 +83,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
       },
       fields: availableFieldsForMatching,
       availableFieldMetadataItems: availableFieldMetadataItemsToImport,
+      onAbortSubmit: abortBatchCreateManyRecords,
     });
   };
 
