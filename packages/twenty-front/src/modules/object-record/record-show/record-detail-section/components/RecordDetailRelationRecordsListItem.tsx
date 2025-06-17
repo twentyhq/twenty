@@ -307,7 +307,7 @@ export const RecordDetailRelationRecordsListItem = ({
                     labelWidth: 90,
                   }),
                   useUpdateRecord: useUpdateOneObjectRecordMutation,
-                  isReadOnly: false,
+                  isReadOnly: isFieldReadOnly,
                 }}
               >
                 <RecordFieldComponentInstanceContext.Provider

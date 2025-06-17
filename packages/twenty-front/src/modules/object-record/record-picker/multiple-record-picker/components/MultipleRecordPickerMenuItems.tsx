@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+import { RecordPickerNoRecordFoundMenuItem } from '@/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem';
 import { MultipleRecordPickerFetchMoreLoader } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerFetchMoreLoader';
 import { MultipleRecordPickerMenuItem } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItem';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
@@ -20,14 +21,6 @@ import { useRecoilCallback } from 'recoil';
 export const StyledSelectableItem = styled(SelectableListItem)`
   height: 100%;
   width: 100%;
-`;
-
-const StyledEmptyText = styled.div`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.light};
-  display: flex;
-  justify-content: center;
-  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 type MultipleRecordPickerMenuItemsProps = {
@@ -87,7 +80,7 @@ export const MultipleRecordPickerMenuItems = ({
   return (
     <DropdownMenuItemsContainer hasMaxHeight>
       {pickableRecordIds.length === 0 ? (
-        <StyledEmptyText>No results found</StyledEmptyText>
+        <RecordPickerNoRecordFoundMenuItem />
       ) : (
         <SelectableList
           selectableListInstanceId={selectableListComponentInstanceId}

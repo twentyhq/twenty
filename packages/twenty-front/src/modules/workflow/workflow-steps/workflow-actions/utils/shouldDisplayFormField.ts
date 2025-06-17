@@ -34,6 +34,7 @@ export const shouldDisplayFormField = ({
   actionType: WorkflowActionType;
 }) => {
   let isTypeAllowedForAction = false;
+  const isIdField = fieldMetadataItem.name === 'id';
 
   switch (actionType) {
     case 'CREATE_RECORD':
@@ -57,7 +58,7 @@ export const shouldDisplayFormField = ({
 
   return (
     isTypeAllowedForAction &&
-    !fieldMetadataItem.isSystem &&
+    (!fieldMetadataItem.isSystem || isIdField) &&
     fieldMetadataItem.isActive
   );
 };

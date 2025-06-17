@@ -51,6 +51,8 @@ export const getFilterTypeFromFieldType = (
       return 'BOOLEAN';
     case FieldMetadataType.TS_VECTOR:
       return 'TS_VECTOR';
+    case FieldMetadataType.UUID:
+      return 'UUID';
     default:
       return 'TEXT';
   }

@@ -44,9 +44,15 @@ export const RecordDetailRelationSectionDropdown = ({
     relationFieldMetadataId,
     relationObjectMetadataNameSingular,
     relationType,
+    objectMetadataNameSingular,
   } = fieldDefinition.metadata as FieldRelationMetadata;
 
   const record = useRecoilValue(recordStoreFamilyState(recordId));
+
+  const { objectMetadataItem: recordObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: objectMetadataNameSingular ?? '',
+    });
 
   const { objectMetadataItem: relationObjectMetadataItem } =
     useObjectMetadataItem({
@@ -148,7 +154,9 @@ export const RecordDetailRelationSectionDropdown = ({
 
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId,
-    objectMetadataId: relationObjectMetadataItem.id,
+    objectMetadataId: isToOneObject
+      ? recordObjectMetadataItem.id
+      : relationObjectMetadataItem.id,
   });
 
   const isFieldReadOnly = useIsFieldValueReadOnly({

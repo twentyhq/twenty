@@ -20,7 +20,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { getOperationName } from '@apollo/client/utilities';
 import { t } from '@lingui/core/macro';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLockOpen, IconSettings, IconUserPlus } from 'twenty-ui/display';
 import { v4 } from 'uuid';
@@ -74,7 +74,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
 
   const settingsRolesIsLoading = useRecoilValue(settingsRolesIsLoadingState);
 
-  const settingsDraftRole = useRecoilValue(
+  const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
     settingsDraftRoleFamilyState(roleId),
   );
 
@@ -109,6 +109,12 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   ];
 
   const isDirty = !isDeeplyEqual(settingsDraftRole, settingsPersistedRole);
+
+  const handleCancel = () => {
+    if (isDefined(settingsPersistedRole)) {
+      setSettingsDraftRole(settingsPersistedRole);
+    }
+  };
 
   const handleSave = async () => {
     const dirtyFields = getDirtyFields(
@@ -281,11 +287,10 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
         },
       ]}
       actionButton={
-        <SaveAndCancelButtons
-          onSave={handleSave}
-          onCancel={() => navigateSettings(SettingsPath.Roles)}
-          isSaveDisabled={!isRoleEditable || !isDirty}
-        />
+        isRoleEditable &&
+        isDirty && (
+          <SaveAndCancelButtons onSave={handleSave} onCancel={handleCancel} />
+        )
       }
     >
       <SettingsPageContainer>
