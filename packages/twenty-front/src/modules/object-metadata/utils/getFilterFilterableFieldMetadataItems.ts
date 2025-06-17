@@ -9,6 +9,7 @@ export const getFilterFilterableFieldMetadataItems = ({
   return (field: FieldMetadataItem) => {
     const isSystemField = field.isSystem;
     const isFieldActive = field.isActive;
+    const isIdField = field.name === 'id';
 
     const isRelationFieldHandled = !(
       field.type === FieldMetadataType.RELATION &&
@@ -16,6 +17,7 @@ export const getFilterFilterableFieldMetadataItems = ({
     );
 
     const isFieldTypeFilterable = [
+      FieldMetadataType.UUID,
       FieldMetadataType.BOOLEAN,
       FieldMetadataType.DATE_TIME,
       FieldMetadataType.DATE,
@@ -42,6 +44,6 @@ export const getFilterFilterableFieldMetadataItems = ({
       isRelationFieldHandled &&
       isFieldTypeFilterable;
 
-    return isFieldFilterable;
+    return isFieldFilterable || isIdField;
   };
 };

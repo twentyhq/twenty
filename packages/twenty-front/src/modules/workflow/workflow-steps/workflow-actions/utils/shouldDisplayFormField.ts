@@ -57,7 +57,7 @@ export const shouldDisplayFormField = ({
 
   return (
     isTypeAllowedForAction &&
-    !fieldMetadataItem.isSystem &&
+    (!fieldMetadataItem.isSystem || fieldMetadataItem.name === 'id') &&
     fieldMetadataItem.isActive
   );
 };
