@@ -9,7 +9,7 @@ import {
   IconTimelineEvent,
 } from 'twenty-ui/display';
 
-export const BASE_RECORD_LAYOUT: RecordLayout = {
+const BASE_RECORD_LAYOUT: RecordLayout = {
   tabs: {
     fields: {
       title: 'Fields',
@@ -82,4 +82,26 @@ export const BASE_RECORD_LAYOUT: RecordLayout = {
       },
     },
   },
+};
+
+export const getBaseRecordLayout = ({
+  hasNoteReadPermission,
+  hasTaskReadPermission,
+}: {
+  hasNoteReadPermission: boolean;
+  hasTaskReadPermission: boolean;
+}) => {
+  const { tabs, ...rest } = BASE_RECORD_LAYOUT;
+  const { notes, tasks, ...remainingTabs } = tabs;
+
+  const filteredTabs = {
+    ...remainingTabs,
+    ...(hasNoteReadPermission ? { notes } : {}),
+    ...(hasTaskReadPermission ? { tasks } : {}),
+  };
+
+  return {
+    ...rest,
+    tabs: filteredTabs,
+  };
 };

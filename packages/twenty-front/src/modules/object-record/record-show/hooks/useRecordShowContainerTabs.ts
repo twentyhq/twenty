@@ -1,13 +1,16 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { notePermissionsSelector } from '@/auth/states/objectPermissionsSelector.ts/notePermissionsSelector';
+import { taskPermissionsSelector } from '@/auth/states/objectPermissionsSelector.ts/taskPermissionsSelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { BASE_RECORD_LAYOUT } from '@/object-record/record-show/constants/BaseRecordLayout';
 import { CardType } from '@/object-record/record-show/types/CardType';
 import { RecordLayout } from '@/object-record/record-show/types/RecordLayout';
+import { getBaseRecordLayout } from '@/object-record/record-show/utils/getBaseRecordLayout';
 import { RecordLayoutTab } from '@/ui/layout/tab-list/types/RecordLayoutTab';
 import { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
@@ -30,52 +33,65 @@ export const useRecordShowContainerTabs = (
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const notePermissions = useRecoilValue(notePermissionsSelector);
+  const taskPermissions = useRecoilValue(taskPermissionsSelector);
+  const isPermissionsV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
+  );
 
   // Object-specific layouts that override or extend the base layout
   const OBJECT_SPECIFIC_LAYOUTS: Partial<
     Record<CoreObjectNameSingular, RecordLayout>
   > = useMemo(
     () => ({
-      [CoreObjectNameSingular.Note]: {
-        tabs: {
-          richText: {
-            title: 'Note',
-            position: 101,
-            Icon: IconNotes,
-            cards: [{ type: CardType.RichTextCard }],
-            hide: {
-              ifMobile: false,
-              ifDesktop: false,
-              ifInRightDrawer: false,
-              ifFeaturesDisabled: [],
-              ifRequiredObjectsInactive: [],
-              ifRelationsMissing: [],
+      ...(notePermissions.canRead
+        ? {
+            [CoreObjectNameSingular.Note]: {
+              tabs: {
+                richText: {
+                  title: 'Note',
+                  position: 101,
+                  Icon: IconNotes,
+                  cards: [{ type: CardType.RichTextCard }],
+                  hide: {
+                    ifMobile: false,
+                    ifDesktop: false,
+                    ifInRightDrawer: false,
+                    ifFeaturesDisabled: [],
+                    ifRequiredObjectsInactive: [],
+                    ifRelationsMissing: [],
+                  },
+                },
+                tasks: null,
+                notes: null,
+              },
             },
-          },
-          tasks: null,
-          notes: null,
-        },
-      },
-      [CoreObjectNameSingular.Task]: {
-        tabs: {
-          richText: {
-            title: 'Note',
-            position: 101,
-            Icon: IconNotes,
-            cards: [{ type: CardType.RichTextCard }],
-            hide: {
-              ifMobile: false,
-              ifDesktop: false,
-              ifInRightDrawer: false,
-              ifFeaturesDisabled: [],
-              ifRequiredObjectsInactive: [],
-              ifRelationsMissing: [],
+          }
+        : {}),
+      ...(taskPermissions.canRead
+        ? {
+            [CoreObjectNameSingular.Task]: {
+              tabs: {
+                richText: {
+                  title: 'Note',
+                  position: 101,
+                  Icon: IconNotes,
+                  cards: [{ type: CardType.RichTextCard }],
+                  hide: {
+                    ifMobile: false,
+                    ifDesktop: false,
+                    ifInRightDrawer: false,
+                    ifFeaturesDisabled: [],
+                    ifRequiredObjectsInactive: [],
+                    ifRelationsMissing: [],
+                  },
+                },
+                tasks: null,
+                notes: null,
+              },
             },
-          },
-          tasks: null,
-          notes: null,
-        },
-      },
+          }
+        : {}),
       [CoreObjectNameSingular.Company]: {
         tabs: {
           emails: {
@@ -209,20 +225,29 @@ export const useRecordShowContainerTabs = (
         },
       },
     }),
-    [],
+    [notePermissions.canRead, taskPermissions.canRead],
   );
+
+  const baseRecordLayout = getBaseRecordLayout({
+    hasNoteReadPermission: isPermissionsV2Enabled
+      ? notePermissions.canRead
+      : true,
+    hasTaskReadPermission: isPermissionsV2Enabled
+      ? taskPermissions.canRead
+      : true,
+  });
 
   // Merge base layout with object-specific layout
   const recordLayout: RecordLayout = useMemo(() => {
     return {
-      ...BASE_RECORD_LAYOUT,
+      ...baseRecordLayout,
       ...(OBJECT_SPECIFIC_LAYOUTS[targetObjectNameSingular] || {}),
       tabs: {
-        ...BASE_RECORD_LAYOUT.tabs,
+        ...baseRecordLayout.tabs,
         ...(OBJECT_SPECIFIC_LAYOUTS[targetObjectNameSingular]?.tabs || {}),
       },
     };
-  }, [OBJECT_SPECIFIC_LAYOUTS, targetObjectNameSingular]);
+  }, [OBJECT_SPECIFIC_LAYOUTS, baseRecordLayout, targetObjectNameSingular]);
 
   return {
     layout: recordLayout,
