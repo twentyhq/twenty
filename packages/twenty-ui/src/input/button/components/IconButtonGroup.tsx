@@ -21,6 +21,7 @@ const StyledIconButtonGroupContainer = styled.div<
   background-color: ${({ disabled, theme }) =>
     disabled ? 'inherit' : theme.background.transparent.lighter};
   border-radius: ${({ theme }) => theme.border.radius.sm};
+  border: 1px solid ${({ theme }) => theme.border.color.strong};
   gap: 2px;
   padding: 2px;
   backdrop-filter: blur(20px);

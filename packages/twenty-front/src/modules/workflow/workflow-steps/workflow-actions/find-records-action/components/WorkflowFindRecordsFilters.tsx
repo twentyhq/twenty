@@ -36,9 +36,11 @@ const StyledChildContainer = styled.div`
 export const WorkflowFindRecordsFilters = ({
   objectMetadataItem,
   onChange,
+  readonly,
 }: {
   objectMetadataItem: ObjectMetadataItem;
   onChange: (filter: FindRecordsActionFilter) => void;
+  readonly?: boolean;
 }) => {
   const rootRecordFilterGroup = useRecoilComponentValueV2(
     rootLevelRecordFilterGroupComponentSelector,
@@ -108,8 +110,9 @@ export const WorkflowFindRecordsFilters = ({
   return (
     <AdvancedFilterContext.Provider
       value={{
-        onUpdate,
+        onUpdate: readonly ? undefined : onUpdate,
         isWorkflowFindRecords: true,
+        readonly,
       }}
     >
       {isDefined(rootRecordFilterGroup) ? (
@@ -136,9 +139,11 @@ export const WorkflowFindRecordsFilters = ({
                 ),
             )}
           </StyledChildContainer>
-          <AdvancedFilterAddFilterRuleSelect
-            recordFilterGroup={rootRecordFilterGroup}
-          />
+          {!readonly && (
+            <AdvancedFilterAddFilterRuleSelect
+              recordFilterGroup={rootRecordFilterGroup}
+            />
+          )}
         </StyledContainer>
       ) : (
         <WorkflowFindRecordsAddFilterButton

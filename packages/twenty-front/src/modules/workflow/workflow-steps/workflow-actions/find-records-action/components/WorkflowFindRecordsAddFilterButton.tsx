@@ -1,4 +1,5 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
 import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
 import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
@@ -7,6 +8,7 @@ import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUp
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyStateV2';
 import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilter } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -16,6 +18,7 @@ export const WorkflowFindRecordsAddFilterButton = ({
 }: {
   defaultFieldMetadataItem: FieldMetadataItem;
 }) => {
+  const { readonly } = useContext(AdvancedFilterContext);
   const rootRecordFilterGroup = useRecoilComponentValueV2(
     rootLevelRecordFilterGroupComponentSelector,
   );
@@ -69,6 +72,7 @@ export const WorkflowFindRecordsAddFilterButton = ({
       onClick={addRootRecordFilterGroup}
       ariaLabel="Add filter"
       title="Add filter"
+      disabled={readonly}
     />
   );
 };
