@@ -23,13 +23,13 @@ export class CreateAgentTable1747401483136 implements MigrationInterface {
       `CREATE INDEX "IDX_AGENT_ID_DELETED_AT" ON "core"."agent" ("id", "deletedAt")`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."agent" ADD CONSTRAINT "FK_agent_workspace" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+      `ALTER TABLE "core"."agent" ADD CONSTRAINT "FK_c4cb56621768a4a325dd772bbe1" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."agent" DROP CONSTRAINT "FK_agent_workspace"`,
+      `ALTER TABLE "core"."agent" DROP CONSTRAINT "FK_c4cb56621768a4a325dd772bbe1"`,
     );
     await queryRunner.query(`DROP INDEX "core"."IDX_AGENT_ID_DELETED_AT"`);
     await queryRunner.query(`DROP TABLE "core"."agent"`);
