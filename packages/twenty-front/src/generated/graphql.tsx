@@ -952,6 +952,7 @@ export type Mutation = {
   submitFormStep: Scalars['Boolean'];
   switchToEnterprisePlan: BillingUpdateOutput;
   switchToYearlyInterval: BillingUpdateOutput;
+  testEndpoint: Scalars['Boolean'];
   trackAnalytics: Analytics;
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateLabPublicFeatureFlag: FeatureFlagDto;
@@ -1224,6 +1225,12 @@ export type MutationSignUpInWorkspaceArgs = {
 
 export type MutationSubmitFormStepArgs = {
   input: SubmitFormStepInput;
+};
+
+
+export type MutationTestEndpointArgs = {
+  captchaToken?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
 };
 
 
@@ -2086,6 +2093,25 @@ export type TransientToken = {
   transientToken: AuthToken;
 };
 
+/** 2FA Policy Enforcement */
+export enum TwoFactorAuthenticationPolicyEnforcement {
+  CONDITIONAL = 'CONDITIONAL',
+  ENFORCED = 'ENFORCED',
+  OPTIONAL = 'OPTIONAL'
+}
+
+/** 2FA Authentication Providers */
+export enum TwoFactorAuthenticationProviders {
+  HOTP = 'HOTP',
+  TOTP = 'TOTP'
+}
+
+export type TwoFactorPolicy = {
+  __typename?: 'TwoFactorPolicy';
+  level: TwoFactorAuthenticationPolicyEnforcement;
+  providers: TwoFactorAuthenticationProviders;
+};
+
 export type UuidFilter = {
   eq?: InputMaybe<Scalars['UUID']>;
   gt?: InputMaybe<Scalars['UUID']>;
@@ -2370,6 +2396,7 @@ export type Workspace = {
   logo?: Maybe<Scalars['String']>;
   metadataVersion: Scalars['Float'];
   subdomain: Scalars['String'];
+  twoFactorAuthenticationPolicy?: Maybe<TwoFactorPolicy>;
   updatedAt: Scalars['DateTime'];
   version?: Maybe<Scalars['String']>;
   workspaceMembersCount?: Maybe<Scalars['Float']>;
@@ -2671,6 +2698,14 @@ export type SignUpInWorkspaceMutationVariables = Exact<{
 
 
 export type SignUpInWorkspaceMutation = { __typename?: 'Mutation', signUpInWorkspace: { __typename?: 'SignUpOutput', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, workspace: { __typename?: 'WorkspaceUrlsAndId', id: string, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null } } } };
+
+export type TestEndpointMutationVariables = Exact<{
+  email: Scalars['String'];
+  captchaToken?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type TestEndpointMutation = { __typename?: 'Mutation', testEndpoint: boolean };
 
 export type UpdatePasswordViaResetTokenMutationVariables = Exact<{
   token: Scalars['String'];
@@ -4269,6 +4304,38 @@ export function useSignUpInWorkspaceMutation(baseOptions?: Apollo.MutationHookOp
 export type SignUpInWorkspaceMutationHookResult = ReturnType<typeof useSignUpInWorkspaceMutation>;
 export type SignUpInWorkspaceMutationResult = Apollo.MutationResult<SignUpInWorkspaceMutation>;
 export type SignUpInWorkspaceMutationOptions = Apollo.BaseMutationOptions<SignUpInWorkspaceMutation, SignUpInWorkspaceMutationVariables>;
+export const TestEndpointDocument = gql`
+    mutation TestEndpoint($email: String!, $captchaToken: String) {
+  testEndpoint(email: $email, captchaToken: $captchaToken)
+}
+    `;
+export type TestEndpointMutationFn = Apollo.MutationFunction<TestEndpointMutation, TestEndpointMutationVariables>;
+
+/**
+ * __useTestEndpointMutation__
+ *
+ * To run a mutation, you first call `useTestEndpointMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useTestEndpointMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [testEndpointMutation, { data, loading, error }] = useTestEndpointMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *      captchaToken: // value for 'captchaToken'
+ *   },
+ * });
+ */
+export function useTestEndpointMutation(baseOptions?: Apollo.MutationHookOptions<TestEndpointMutation, TestEndpointMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<TestEndpointMutation, TestEndpointMutationVariables>(TestEndpointDocument, options);
+      }
+export type TestEndpointMutationHookResult = ReturnType<typeof useTestEndpointMutation>;
+export type TestEndpointMutationResult = Apollo.MutationResult<TestEndpointMutation>;
+export type TestEndpointMutationOptions = Apollo.BaseMutationOptions<TestEndpointMutation, TestEndpointMutationVariables>;
 export const UpdatePasswordViaResetTokenDocument = gql`
     mutation UpdatePasswordViaResetToken($token: String!, $newPassword: String!) {
   updatePasswordViaResetToken(
