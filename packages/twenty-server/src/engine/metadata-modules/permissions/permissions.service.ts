@@ -27,7 +27,7 @@ export class PermissionsService {
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
-  public async getUserWorkspacePermissionsV2({
+  public async getUserWorkspacePermissions({
     userWorkspaceId,
     workspaceId,
   }: {
@@ -116,68 +116,6 @@ export class PermissionsService {
       },
       objectPermissions: {},
     }) as const satisfies UserWorkspacePermissions;
-
-  public async getUserWorkspacePermissions({
-    userWorkspaceId,
-    workspaceId,
-  }: {
-    userWorkspaceId: string;
-    workspaceId: string;
-  }): Promise<UserWorkspacePermissions> {
-    const [roleOfUserWorkspace] = await this.userRoleService
-      .getRolesByUserWorkspaces({
-        userWorkspaceIds: [userWorkspaceId],
-        workspaceId,
-      })
-      .then((roles) => roles?.get(userWorkspaceId) ?? []);
-
-    let hasPermissionOnSettingFeature = false;
-
-    if (!isDefined(roleOfUserWorkspace)) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
-        PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
-      );
-    }
-
-    if (roleOfUserWorkspace.canUpdateAllSettings === true) {
-      hasPermissionOnSettingFeature = true;
-    }
-
-    const settingPermissions = roleOfUserWorkspace.settingPermissions ?? [];
-
-    const defaultSettingsPermissions =
-      this.getDefaultUserWorkspacePermissions().settingsPermissions;
-    const settingsPermissions = Object.keys(SettingPermissionType).reduce(
-      (acc, feature) => ({
-        ...acc,
-        [feature]:
-          hasPermissionOnSettingFeature ||
-          settingPermissions.some(
-            (settingPermission) => settingPermission.setting === feature,
-          ),
-      }),
-      defaultSettingsPermissions,
-    );
-
-    const objectRecordsPermissions: UserWorkspacePermissions['objectRecordsPermissions'] =
-      {
-        [PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS]:
-          roleOfUserWorkspace.canReadAllObjectRecords ?? false,
-        [PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS]:
-          roleOfUserWorkspace.canUpdateAllObjectRecords ?? false,
-        [PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS]:
-          roleOfUserWorkspace.canSoftDeleteAllObjectRecords ?? false,
-        [PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS]:
-          roleOfUserWorkspace.canDestroyAllObjectRecords ?? false,
-      };
-
-    return {
-      settingsPermissions,
-      objectRecordsPermissions,
-      objectPermissions: {},
-    };
-  }
 
   public async userHasWorkspaceSettingPermission({
     userWorkspaceId,
