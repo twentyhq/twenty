@@ -27,16 +27,14 @@ export class AgentResolver {
   ) {}
 
   private async checkFeatureFlag(workspaceId: string) {
-    const isWorkflowEnabled = await this.featureFlagRepository.findOneBy({
+    const isAiEnabled = await this.featureFlagRepository.findOneBy({
       workspaceId,
-      key: FeatureFlagKey.IS_WORKFLOW_ENABLED,
+      key: FeatureFlagKey.IS_AI_ENABLED,
       value: true,
     });
 
-    if (!isWorkflowEnabled) {
-      throw new Error(
-        'IS_WORKFLOW_ENABLED feature flag is not set to true for this workspace',
-      );
+    if (!isAiEnabled) {
+      throw new Error('AI feature is not enabled for this workspace');
     }
   }
 
