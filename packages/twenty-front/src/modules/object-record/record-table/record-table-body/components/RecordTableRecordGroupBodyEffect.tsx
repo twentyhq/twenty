@@ -7,18 +7,20 @@ import { useLazyLoadRecordIndexTable } from '@/object-record/record-index/hooks/
 import { recordIndexHasFetchedAllRecordsByGroupComponentState } from '@/object-record/record-index/states/recordIndexHasFetchedAllRecordsByGroupComponentState';
 import { ROW_HEIGHT } from '@/object-record/record-table/constants/RowHeight';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
+import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useScrollToPosition } from '@/ui/utilities/scroll/hooks/useScrollToPosition';
 import { useSetRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyStateV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { isNonEmptyString } from '@sniptt/guards';
-import { OnboardingStatus } from '~/generated-metadata/graphql';
 
 export const RecordTableRecordGroupBodyEffect = () => {
   const { objectNameSingular } = useRecordTableContextOrThrow();
 
   const [hasInitialized, setHasInitialized] = useState(false);
 
-  const onboardingStatus = useOnboardingStatus();
+  const setIsRecordTableInitialLoading = useSetRecoilComponentStateV2(
+    isRecordTableInitialLoadingComponentState,
+  );
 
   const recordGroupId = useCurrentRecordGroupId();
 
@@ -82,15 +84,12 @@ export const RecordTableRecordGroupBodyEffect = () => {
   }, [hasNextPage, setHasRecordFetchedAllRecordsComponents]);
 
   useEffect(() => {
-    if (onboardingStatus !== OnboardingStatus.COMPLETED) {
-      return;
-    }
-
     if (!hasInitialized) {
       findManyRecords();
       setHasInitialized(true);
+      setIsRecordTableInitialLoading(false);
     }
-  }, [onboardingStatus, findManyRecords, hasInitialized]);
+  }, [findManyRecords, hasInitialized]);
 
   return <></>;
 };

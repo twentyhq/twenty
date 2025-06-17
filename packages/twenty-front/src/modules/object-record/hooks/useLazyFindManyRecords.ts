@@ -16,7 +16,7 @@ import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 
 type UseLazyFindManyRecordsParams<T> = Omit<
   UseFindManyRecordsParams<T>,
-  'skip'
+  'skip' | 'onCompleted' | 'onError'
 >;
 
 export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
@@ -26,8 +26,6 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   limit,
   recordGqlFields,
   fetchPolicy,
-  onCompleted,
-  onError,
 }: UseLazyFindManyRecordsParams<T>) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -40,7 +38,6 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
   const { handleFindManyRecordsError } = useHandleFindManyRecordsError({
     objectMetadataItem,
-    handleError: onError,
   });
 
   const queryIdentifier = getQueryIdentifier({
@@ -53,7 +50,6 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   const { handleFindManyRecordsCompleted } = useHandleFindManyRecordsCompleted({
     objectMetadataItem,
     queryIdentifier,
-    onCompleted,
   });
 
   const objectPermissions = useObjectPermissionsForObject(
@@ -80,7 +76,6 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       filter,
       orderBy,
       limit,
-      onCompleted,
       fetchMore,
       data,
       error,

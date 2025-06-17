@@ -31,12 +31,6 @@ export const useLazyLoadRecordIndexTable = (objectNameSingular: string) => {
   } = useLazyFindManyRecords({
     ...params,
     recordGqlFields,
-    onCompleted: () => {
-      setIsRecordTableInitialLoading(false);
-    },
-    onError: () => {
-      setIsRecordTableInitialLoading(false);
-    },
   });
 
   return {

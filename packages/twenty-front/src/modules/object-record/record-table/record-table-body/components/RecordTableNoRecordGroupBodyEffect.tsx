@@ -6,8 +6,8 @@ import { lastShowPageRecordIdState } from '@/object-record/record-field/states/l
 import { useLazyLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLazyLoadRecordIndexTable';
 import { ROW_HEIGHT } from '@/object-record/record-table/constants/RowHeight';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { hasRecordTableFetchedAllRecordsComponentStateV2 } from '@/object-record/record-table/states/hasRecordTableFetchedAllRecordsComponentStateV2';
+import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { tableEncounteredUnrecoverableErrorComponentState } from '@/object-record/record-table/states/tableEncounteredUnrecoverableErrorComponentState';
 import { tableLastRowVisibleComponentState } from '@/object-record/record-table/states/tableLastRowVisibleComponentState';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
@@ -21,7 +21,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 export const RecordTableNoRecordGroupBodyEffect = () => {
   const { objectNameSingular } = useRecordTableContextOrThrow();
 
-  const { setIsRecordTableInitialLoading } = useRecordTable();
+  const setIsRecordTableInitialLoading = useSetRecoilComponentStateV2(
+    isRecordTableInitialLoadingComponentState,
+  );
 
   const showAuthModal = useShowAuthModal();
 
@@ -140,13 +142,16 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
   ]);
 
   useEffect(() => {
-    setIsRecordTableInitialLoading(false);
-
     if (showAuthModal) {
       return;
     }
 
-    findManyRecords();
+    const fetchRecords = async () => {
+      await findManyRecords();
+      setIsRecordTableInitialLoading(false);
+    };
+
+    fetchRecords();
   }, [findManyRecords, setIsRecordTableInitialLoading, showAuthModal]);
 
   return <></>;
