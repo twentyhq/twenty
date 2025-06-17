@@ -47,6 +47,7 @@ opentelemetry-collector-on-docker:
 	--name twenty_otlp_collector \
 	-p 4317:4317 \
 	-p 4318:4318 \
+	-p 13133:13133 \
 	-v $(PWD)/packages/twenty-docker/otel-collector/otel-collector-config.yaml:/etc/otel-collector-config.yaml \
 	otel/opentelemetry-collector-contrib:latest \
 	--config /etc/otel-collector-config.yaml
