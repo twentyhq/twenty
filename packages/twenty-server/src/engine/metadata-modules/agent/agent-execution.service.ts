@@ -7,8 +7,6 @@ import { generateObject } from 'ai';
 import { Repository } from 'typeorm';
 import { z } from 'zod';
 
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
 
@@ -19,7 +17,6 @@ export class AgentExecutionService {
   constructor(
     @InjectRepository(AgentEntity, 'core')
     private readonly agentRepository: Repository<AgentEntity>,
-    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   private getModelConfig(model: string): {
@@ -53,9 +50,10 @@ export class AgentExecutionService {
   private async validateApiKey(
     provider: 'openai' | 'anthropic',
   ): Promise<void> {
-    const apiKey = this.twentyConfigService.get(
-      provider === 'openai' ? 'OPENAI_API_KEY' : 'ANTHROPIC_API_KEY',
-    );
+    const apiKey =
+      process.env[
+        provider === 'openai' ? 'OPENAI_API_KEY' : 'ANTHROPIC_API_KEY'
+      ];
 
     if (!apiKey) {
       throw new AgentException(
