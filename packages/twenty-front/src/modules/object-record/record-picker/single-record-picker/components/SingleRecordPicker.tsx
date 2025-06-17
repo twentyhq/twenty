@@ -5,9 +5,10 @@ import {
   SingleRecordPickerMenuItemsWithSearchProps,
 } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPickerMenuItemsWithSearch';
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
+import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { isDefined } from 'twenty-shared/utils';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
 export const SINGLE_RECORD_PICKER_LISTENER_ID = 'single-record-select';
 
@@ -30,6 +31,23 @@ export const SingleRecordPicker = ({
 }: SingleRecordPickerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const setRecordPickerSearchFilter = useSetRecoilComponentStateV2(
+    singleRecordPickerSearchFilterComponentState,
+    componentInstanceId,
+  );
+
+  const handleCancel = () => {
+    setRecordPickerSearchFilter('');
+
+    onCancel?.();
+  };
+
+  const handleCreateNew = (searchInput?: string | undefined) => {
+    onCreate?.(searchInput);
+
+    setRecordPickerSearchFilter('');
+  };
+
   useListenClickOutside({
     refs: [containerRef],
     callback: (event) => {
@@ -40,8 +58,8 @@ export const SingleRecordPicker = ({
         event.target.tagName === 'INPUT'
       );
 
-      if (weAreNotInAnHTMLInput && isDefined(onCancel)) {
-        onCancel();
+      if (weAreNotInAnHTMLInput) {
+        handleCancel();
       }
     },
     listenerId: SINGLE_RECORD_PICKER_LISTENER_ID,
@@ -57,8 +75,8 @@ export const SingleRecordPicker = ({
             EmptyIcon,
             emptyLabel,
             excludedRecordIds,
-            onCancel,
-            onCreate,
+            onCancel: handleCancel,
+            onCreate: handleCreateNew,
             onRecordSelected,
             objectNameSingular,
             layoutDirection,
