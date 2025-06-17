@@ -678,7 +678,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
   );
 };
 
-describe('useLazyLoadRecordIndexTable', () => {
+describe('useRecordIndexTableQuery', () => {
   it('should fetch', async () => {
     const { result } = renderHook(
       () => {
