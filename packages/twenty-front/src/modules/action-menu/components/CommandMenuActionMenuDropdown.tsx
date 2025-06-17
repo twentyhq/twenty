@@ -37,7 +37,7 @@ export const CommandMenuActionMenuDropdown = () => {
     },
     focusId: 'global', // TODO: Update this
     scope: AppHotkeyScope.CommandMenuOpen,
-    dependencies: [],
+    dependencies: [toggleDropdown],
   });
 
   const recordSelectionActions = actions.filter(

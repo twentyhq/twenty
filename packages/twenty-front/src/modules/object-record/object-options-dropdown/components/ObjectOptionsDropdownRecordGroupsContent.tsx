@@ -93,6 +93,8 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     'HideEmptyGroups',
   ];
 
+  const hiddenGroupsSelectableListId = `${OBJECT_OPTIONS_DROPDOWN_ID}-hidden-groups`;
+
   return (
     <DropdownContent>
       <DropdownMenuHeader
@@ -174,8 +176,8 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer scrollable={false}>
             <SelectableList
-              selectableListInstanceId={`${OBJECT_OPTIONS_DROPDOWN_ID}-hidden-groups`}
-              focusId={`${OBJECT_OPTIONS_DROPDOWN_ID}-hidden-groups`}
+              selectableListInstanceId={hiddenGroupsSelectableListId}
+              focusId={hiddenGroupsSelectableListId}
               selectableItemIdArray={['HiddenGroups']}
             >
               <SelectableListItem

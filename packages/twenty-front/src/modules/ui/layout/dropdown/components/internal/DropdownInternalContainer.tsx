@@ -6,7 +6,6 @@ import { dropdownMaxWidthComponentState } from '@/ui/layout/dropdown/states/inte
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -44,7 +43,6 @@ export type DropdownInternalContainerProps = {
   dropdownPlacement: Placement;
   floatingUiRefs: UseFloatingReturn['refs'];
   onClickOutside?: () => void;
-  globalHotkeysConfig?: Partial<GlobalHotkeysConfig>;
   floatingStyles: UseFloatingReturn['floatingStyles'];
   hotkey?: {
     key: Keys;
@@ -117,7 +115,12 @@ export const DropdownInternalContainer = ({
     },
     focusId: dropdownId,
     scope: 'dropdown',
-    dependencies: [closeDropdown, isDropdownOpen, activeDropdownFocusId],
+    dependencies: [
+      closeDropdown,
+      isDropdownOpen,
+      activeDropdownFocusId,
+      dropdownId,
+    ],
   });
 
   const dropdownMenuStyles = {
