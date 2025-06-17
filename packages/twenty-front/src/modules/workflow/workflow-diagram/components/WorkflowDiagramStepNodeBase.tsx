@@ -1,4 +1,6 @@
+import { WorkflowDiagramBaseHandle } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseHandle';
 import { NODE_BORDER_WIDTH } from '@/workflow/workflow-diagram/constants/NodeBorderWidth';
+import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
 import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
 import { css } from '@emotion/react';
@@ -8,7 +10,6 @@ import React from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { Label, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
-import { WorkflowDiagramBaseHandle } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseHandle';
 
 const StyledStepNodeContainer = styled.div`
   display: flex;
@@ -185,7 +186,10 @@ export const WorkflowDiagramStepNodeBase = ({
   RightFloatingElement?: React.ReactNode;
 }) => {
   return (
-    <StyledStepNodeContainer className="workflow-node-container">
+    <StyledStepNodeContainer
+      className="workflow-node-container"
+      data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
+    >
       {nodeType !== 'trigger' ? (
         <WorkflowDiagramBaseHandle type="target" position={Position.Top} />
       ) : null}

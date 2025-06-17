@@ -39,6 +39,7 @@ import React, {
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, TagColor } from 'twenty-ui/components';
 import { THEME_COMMON } from 'twenty-ui/theme';
+import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -133,6 +134,11 @@ export const WorkflowDiagramCanvasBase = ({
   const workflowDiagram = useRecoilComponentValueV2(
     workflowDiagramComponentState,
   );
+
+  const setWorkflowInsertStepIds = useSetRecoilComponentStateV2(
+    workflowInsertStepIdsComponentState,
+  );
+
   const [
     workflowDiagramFlowInitializationStatus,
     setWorkflowDiagramFlowInitializationStatus,
@@ -174,6 +180,10 @@ export const WorkflowDiagramCanvasBase = ({
     reactflow.setNodes((nodes) =>
       nodes.map((node) => ({ ...node, selected: false })),
     );
+    setWorkflowInsertStepIds({
+      parentStepId: undefined,
+      nextStepId: undefined,
+    });
   });
 
   const containerRef = useRef<HTMLDivElement>(null);

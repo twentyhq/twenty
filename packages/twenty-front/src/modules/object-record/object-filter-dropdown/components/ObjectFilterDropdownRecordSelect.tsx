@@ -15,8 +15,8 @@ import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { RelationFilterValue } from '@/views/view-filter-value/types/RelationFilterValue';
+import { arrayOfUuidOrVariableSchema } from '@/views/view-filter-value/validation-schemas/arrayOfUuidsOrVariablesSchema';
 import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
-import { simpleRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/simpleRelationFilterValueSchema';
 import { isDefined } from 'twenty-shared/utils';
 import { IconUserCircle } from 'twenty-ui/display';
 
@@ -59,7 +59,7 @@ export const ObjectFilterDropdownRecordSelect = ({
   const { isCurrentWorkspaceMemberSelected } = jsonRelationFilterValueSchema
     .catch({
       isCurrentWorkspaceMemberSelected: false,
-      selectedRecordIds: simpleRelationFilterValueSchema.parse(
+      selectedRecordIds: arrayOfUuidOrVariableSchema.parse(
         objectFilterDropdownFilterValue,
       ),
     })
@@ -105,7 +105,7 @@ export const ObjectFilterDropdownRecordSelect = ({
   const { selectedRecordIds } = jsonRelationFilterValueSchema
     .catch({
       isCurrentWorkspaceMemberSelected: false,
-      selectedRecordIds: simpleRelationFilterValueSchema.parse(
+      selectedRecordIds: arrayOfUuidOrVariableSchema.parse(
         recordFilterUsedInDropdown?.value,
       ),
     })

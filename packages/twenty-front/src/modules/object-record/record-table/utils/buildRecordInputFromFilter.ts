@@ -96,6 +96,11 @@ export const buildValueFromFilter = ({
         label,
       );
     }
+    case 'UUID':
+      return computeValueFromFilterUUID(
+        filter.operand as (typeof FILTER_OPERANDS_MAP)['UUID'][number],
+        filter.value,
+      );
     default:
       assertUnreachable(filter.type);
   }
@@ -305,6 +310,18 @@ const computeValueFromFilterTSVector = (
 ) => {
   switch (operand) {
     case ViewFilterOperand.VectorSearch:
+      return value;
+    default:
+      assertUnreachable(operand);
+  }
+};
+
+const computeValueFromFilterUUID = (
+  operand: RecordFilterToRecordInputOperand<'UUID'>,
+  value: string,
+) => {
+  switch (operand) {
+    case ViewFilterOperand.Is:
       return value;
     default:
       assertUnreachable(operand);

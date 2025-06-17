@@ -1,24 +1,35 @@
-import { EdgeLabelRenderer } from '@xyflow/react';
-import { STEP_ICON_WIDTH } from '@/workflow/workflow-diagram/constants/CreateStepNodeWidth';
-import styled from '@emotion/styled';
-import { IconButtonGroup } from 'twenty-ui/input';
-import { IconPlus } from 'twenty-ui/display';
+import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
-import { isDefined } from 'twenty-shared/utils';
-
-const EDGE_OPTION_BUTTON_LEFT_MARGIN = 8;
+import styled from '@emotion/styled';
+import { EdgeLabelRenderer } from '@xyflow/react';
+import { IconPlus } from 'twenty-ui/display';
+import { IconButtonGroup } from 'twenty-ui/input';
+import { useState } from 'react';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 
 const StyledIconButtonGroup = styled(IconButtonGroup)`
   pointer-events: all;
 `;
 
 const StyledContainer = styled.div<{
-  labelX?: number;
   labelY?: number;
 }>`
   position: absolute;
-  transform: ${({ labelX, labelY }) =>
-    `translate(${labelX || 0}px, ${isDefined(labelY) ? labelY - STEP_ICON_WIDTH / 2 : 0}px) translateX(${EDGE_OPTION_BUTTON_LEFT_MARGIN}px)`};
+  transform: ${({ labelY }) => `translate(${21}px, ${(labelY || 0) - 14}px)`};
+`;
+
+const StyledHoverZone = styled.div`
+  position: absolute;
+  width: 48px;
+  height: 52px;
+  transform: translate(-13px, -16px);
+  background: transparent;
+`;
+
+const StyledWrapper = styled.div`
+  pointer-events: all;
+  position: relative;
 `;
 
 type WorkflowDiagramEdgeOptionsProps = {
@@ -29,27 +40,47 @@ type WorkflowDiagramEdgeOptionsProps = {
 };
 
 export const WorkflowDiagramEdgeOptions = ({
-  labelX,
   labelY,
   parentStepId,
   nextStepId,
 }: WorkflowDiagramEdgeOptionsProps) => {
+  const [hovered, setHovered] = useState(false);
+
   const { startNodeCreation } = useStartNodeCreation();
+
+  const workflowInsertStepIds = useRecoilComponentValueV2(
+    workflowInsertStepIdsComponentState,
+  );
+
+  const isSelected =
+    workflowInsertStepIds.parentStepId === parentStepId &&
+    workflowInsertStepIds.nextStepId === nextStepId;
 
   return (
     <EdgeLabelRenderer>
-      <StyledContainer labelX={labelX} labelY={labelY}>
-        <StyledIconButtonGroup
-          className="nodrag nopan"
-          iconButtons={[
-            {
-              Icon: IconPlus,
-              onClick: () => {
-                startNodeCreation({ parentStepId, nextStepId });
-              },
-            },
-          ]}
-        />
+      <StyledContainer
+        labelY={labelY}
+        data-click-outside-id={WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID}
+      >
+        <StyledWrapper
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+        >
+          <StyledHoverZone />
+          {(hovered || isSelected) && (
+            <StyledIconButtonGroup
+              className="nodrag nopan"
+              iconButtons={[
+                {
+                  Icon: IconPlus,
+                  onClick: () => {
+                    startNodeCreation({ parentStepId, nextStepId });
+                  },
+                },
+              ]}
+            />
+          )}
+        </StyledWrapper>
       </StyledContainer>
     </EdgeLabelRenderer>
   );

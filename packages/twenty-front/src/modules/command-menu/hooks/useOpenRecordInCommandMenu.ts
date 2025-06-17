@@ -38,10 +38,12 @@ export const useOpenRecordInCommandMenu = () => {
         recordId,
         objectNameSingular,
         isNewRecord = false,
+        resetNavigationStack = false,
       }: {
         recordId: string;
         objectNameSingular: string;
         isNewRecord?: boolean;
+        resetNavigationStack?: boolean;
       }) => {
         const navigationStack = getSnapshotValue(
           snapshot,
@@ -171,7 +173,7 @@ export const useOpenRecordInCommandMenu = () => {
           pageIcon: Icon,
           pageIconColor: IconColor,
           pageId: pageComponentInstanceId,
-          resetNavigationStack: false,
+          resetNavigationStack,
         });
 
         if (objectNameSingular === CoreObjectNameSingular.WorkflowRun) {
