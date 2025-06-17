@@ -1,7 +1,9 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { createIndexMigration } from 'src/engine/workspace-manager/workspace-migration-builder/factories/utils/workspace-migration-index.factory.utils';
 
 describe('WorkspaceMigrationIndexFactory', () => {
@@ -11,7 +13,8 @@ describe('WorkspaceMigrationIndexFactory', () => {
       workspaceId: 'ws1',
       nameSingular: 'Test',
       fields: [{ id: 'f1', name: 'simpleField', type: FieldMetadataType.TEXT }],
-    } as ObjectMetadataEntity;
+      isCustom: false,
+    };
     const indexMetadata = {
       name: 'idx_simple',
       isUnique: true,
@@ -36,12 +39,27 @@ describe('WorkspaceMigrationIndexFactory', () => {
   });
 
   it('should create index migrations for relation fields', async () => {
+    const fieldMetadata: Pick<
+      FieldMetadataEntity<FieldMetadataType.RELATION>,
+      'id' | 'name' | 'type' | 'settings' | 'isCustom'
+    > = {
+      id: 'f2',
+      name: 'author',
+      type: FieldMetadataType.RELATION,
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        joinColumnName: 'authorId',
+      },
+      isCustom: false,
+    };
+
     const objectMetadata = {
       id: 'obj2',
       workspaceId: 'ws1',
       nameSingular: 'Attachment',
-      fields: [{ id: 'f2', name: 'author', type: FieldMetadataType.RELATION }],
-    } as ObjectMetadataEntity;
+      fields: [fieldMetadata],
+      isCustom: false,
+    };
     const indexMetadata = {
       name: 'idx_rel',
       isUnique: false,

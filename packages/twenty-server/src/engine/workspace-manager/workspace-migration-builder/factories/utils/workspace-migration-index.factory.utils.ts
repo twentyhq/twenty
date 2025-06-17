@@ -1,6 +1,10 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
 import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
@@ -12,11 +16,16 @@ import {
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 export const createIndexMigration = async (
   indexMetadataByObjectMetadataMap: Map<
-    ObjectMetadataEntity,
+    Pick<
+      ObjectMetadataEntity,
+      'id' | 'workspaceId' | 'nameSingular' | 'isCustom'
+    > & {
+      fields: Pick<FieldMetadataEntity, 'id' | 'name' | 'type' | 'settings'>[];
+    },
     IndexMetadataEntity[]
   >,
 ): Promise<Partial<WorkspaceMigrationEntity>[]> => {
@@ -44,8 +53,19 @@ export const createIndexMigration = async (
             );
           }
 
-          if (isRelationFieldMetadataType(fieldMetadata.type)) {
-            return `${fieldMetadata.name}Id`;
+          if (
+            isFieldMetadataEntityOfType(
+              fieldMetadata,
+              FieldMetadataType.RELATION,
+            )
+          ) {
+            if (!fieldMetadata.settings) {
+              throw new Error(
+                `Join column name is not supported for relation fields`,
+              );
+            }
+
+            return fieldMetadata.settings.joinColumnName;
           }
 
           if (!isCompositeFieldMetadataType(fieldMetadata.type)) {
@@ -56,13 +76,16 @@ export const createIndexMigration = async (
             fieldMetadata.type,
           ) as CompositeType;
 
-          return compositeType.properties
+          const columns = compositeType.properties
             .filter((property) => property.isIncludedInUniqueConstraint)
             .map((property) =>
               computeCompositeColumnName(fieldMetadata, property),
             );
+
+          return columns;
         })
-        .flat();
+        .flat()
+        .filter(isDefined);
 
       const defaultWhereClause = indexMetadata.isUnique
         ? `${columns.map((column) => `"${column}"`).join(" != '' AND ")} != '' AND "deletedAt" IS NULL`
