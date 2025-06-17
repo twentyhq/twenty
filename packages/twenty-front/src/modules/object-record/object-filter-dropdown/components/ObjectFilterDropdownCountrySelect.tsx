@@ -9,6 +9,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -96,7 +97,7 @@ export const ObjectFilterDropdownCountrySelect = () => {
   const { t } = useLingui();
 
   return (
-    <DropdownContent>
+    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
       <DropdownMenuSearchInput
         autoFocus
         type="text"
