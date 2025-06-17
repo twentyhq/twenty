@@ -23,6 +23,7 @@ import { PostgresCredentials } from 'src/engine/core-modules/postgres-credential
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
+import { TwoFactorPolicy } from 'src/engine/core-modules/two-factor-method/two-factor-policy.entity';
 
 registerEnumType(WorkspaceActivationStatus, {
   name: 'WorkspaceActivationStatus',
@@ -156,6 +157,10 @@ export class Workspace {
   @Field()
   @Column({ default: false })
   isCustomDomainEnabled: boolean;
+
+  @Field(() => TwoFactorPolicy, { nullable: true })
+  @Column({ type: 'jsonb', nullable: true })
+  twoFactorAuthenticationPolicy?: TwoFactorPolicy;
 
   @Column({ nullable: true, type: 'uuid' })
   defaultRoleId: string | null;
