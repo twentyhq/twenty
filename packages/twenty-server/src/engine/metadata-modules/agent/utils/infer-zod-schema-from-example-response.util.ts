@@ -1,7 +1,7 @@
 import { z, ZodTypeAny } from 'zod';
 
 export const inferZodSchemaFromExampleResponse = (
-  example: Record<string, unknown>,
+  example: unknown,
 ): ZodTypeAny => {
   if (typeof example === 'string') {
     return z.string();
@@ -32,7 +32,7 @@ export const inferZodSchemaFromExampleResponse = (
 
     for (const key in example as Record<string, unknown>) {
       shape[key] = inferZodSchemaFromExampleResponse(
-        example[key] as Record<string, unknown>,
+        (example as Record<string, unknown>)[key],
       );
     }
 
