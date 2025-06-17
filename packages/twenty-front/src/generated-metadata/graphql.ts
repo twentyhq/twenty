@@ -2202,9 +2202,14 @@ export enum SubscriptionStatus {
 
 export type Support = {
   __typename?: 'Support';
-  supportDriver: Scalars['String']['output'];
+  supportDriver: SupportDriver;
   supportFrontChatId?: Maybe<Scalars['String']['output']>;
 };
+
+export enum SupportDriver {
+  FRONT = 'FRONT',
+  NONE = 'NONE'
+}
 
 export type SystemHealth = {
   __typename?: 'SystemHealth';

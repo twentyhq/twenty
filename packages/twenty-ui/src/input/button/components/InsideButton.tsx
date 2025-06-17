@@ -31,6 +31,15 @@ const StyledButton = styled.button`
   }
 `;
 
+const StyledAnimatedIconWrapper = styled.span`
+  display: flex;
+  transition: transform 0.1s ease;
+
+  &:hover {
+    transform: translateY(-3%);
+  }
+`;
+
 export const InsideButton = ({
   className,
   Icon,
@@ -41,7 +50,11 @@ export const InsideButton = ({
 
   return (
     <StyledButton className={className} onClick={onClick} disabled={disabled}>
-      {Icon && <Icon size={theme.icon.size.sm} />}
+      {Icon && (
+        <StyledAnimatedIconWrapper>
+          <Icon size={theme.icon.size.sm} />
+        </StyledAnimatedIconWrapper>
+      )}
     </StyledButton>
   );
 };

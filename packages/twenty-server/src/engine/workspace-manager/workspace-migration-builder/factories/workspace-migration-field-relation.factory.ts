@@ -173,7 +173,6 @@ export class WorkspaceMigrationFieldRelationFactory {
               referencedTableName:
                 computeObjectTargetTable(targetObjectMetadata),
               referencedTableColumnName: 'id',
-              isUnique: false,
               onDelete: sourceFieldMetadata.settings.onDelete,
             },
           ],
@@ -280,7 +279,6 @@ export class WorkspaceMigrationFieldRelationFactory {
               referencedTableName:
                 computeObjectTargetTable(targetObjectMetadata),
               referencedTableColumnName: 'id',
-              isUnique: false,
               onDelete: sourceFieldMetadata.settings.onDelete,
             },
           ],
