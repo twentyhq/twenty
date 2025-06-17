@@ -36,42 +36,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ai-sdk/groq@npm:^1.2.9":
-  version: 1.2.9
-  resolution: "@ai-sdk/groq@npm:1.2.9"
-  dependencies:
-    "@ai-sdk/provider": "npm:1.1.3"
-    "@ai-sdk/provider-utils": "npm:2.2.8"
-  peerDependencies:
-    zod: ^3.0.0
-  checksum: 10c0/b268c337fb656d6b36e2a0ee7737c073ad22521acf20b6861a51c269d4f49f59c269d6184ce21cbc61316987e46ed64696dffef57d6d60fb9c45f069d0f30297
-  languageName: node
-  linkType: hard
-
-"@ai-sdk/mistral@npm:^1.2.8":
-  version: 1.2.8
-  resolution: "@ai-sdk/mistral@npm:1.2.8"
-  dependencies:
-    "@ai-sdk/provider": "npm:1.1.3"
-    "@ai-sdk/provider-utils": "npm:2.2.8"
-  peerDependencies:
-    zod: ^3.0.0
-  checksum: 10c0/d798ce75685f86f8a77c38745c71328fd1bd6b361601d1cb613b94c3c709e890e15e369f8b7e7b009e28394ec42c500c775ec293d506de2be08b13730ea7a924
-  languageName: node
-  linkType: hard
-
-"@ai-sdk/openai-compatible@npm:^0.2.14":
-  version: 0.2.14
-  resolution: "@ai-sdk/openai-compatible@npm:0.2.14"
-  dependencies:
-    "@ai-sdk/provider": "npm:1.1.3"
-    "@ai-sdk/provider-utils": "npm:2.2.8"
-  peerDependencies:
-    zod: ^3.0.0
-  checksum: 10c0/60980df8507c1e5d04ac51123bc15ea5cbf29eb88485f63da28d64ab5d9c3b335d2a2c9155a383605972ef5fa636929c8e2d360bf799153acf2b358e1af1fd47
-  languageName: node
-  linkType: hard
-
 "@ai-sdk/openai@npm:^1.3.22":
   version: 1.3.22
   resolution: "@ai-sdk/openai@npm:1.3.22"
