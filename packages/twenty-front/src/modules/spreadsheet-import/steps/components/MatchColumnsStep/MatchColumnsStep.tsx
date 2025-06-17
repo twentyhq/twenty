@@ -301,7 +301,7 @@ export const MatchColumnsStep = <T extends string>({
           onBack?.();
           setColumns([]);
         }}
-        isNextDisabled={!hasMatchedColumns}
+        isContinueDisabled={!hasMatchedColumns}
       />
     </>
   );

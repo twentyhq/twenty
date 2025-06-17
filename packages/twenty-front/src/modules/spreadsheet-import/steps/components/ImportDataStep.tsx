@@ -31,20 +31,22 @@ const StyledDescription = styled.span`
   margin-bottom: ${({ theme }) => theme.spacing(5)};
 `;
 
+type ImportDataStepProps = {
+  recordsToImportCount: number;
+};
+
 export const ImportDataStep = ({
   recordsToImportCount,
-}: {
-  recordsToImportCount: number;
-}) => {
-  const { onClose } = useSpreadsheetImportInternal();
-  const spreadsheetImportCreatedRecordsProgress = useRecoilValue(
-    spreadsheetImportCreatedRecordsProgressState,
-  );
-
+}: ImportDataStepProps) => {
   const setIsStepBarVisible = useSetRecoilState(
     spreadsheetImportIsStepBarVisibleState,
   );
   setIsStepBarVisible(false);
+
+  const { onClose } = useSpreadsheetImportInternal();
+  const spreadsheetImportCreatedRecordsProgress = useRecoilValue(
+    spreadsheetImportCreatedRecordsProgressState,
+  );
 
   const formattedCreatedRecordsProgress = formatNumber(
     spreadsheetImportCreatedRecordsProgress,

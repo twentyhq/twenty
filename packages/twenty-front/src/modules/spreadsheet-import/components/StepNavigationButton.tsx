@@ -18,10 +18,10 @@ const StyledFooter = styled(Modal.Footer)`
 type StepNavigationButtonProps = {
   onContinue?: () => void;
   continueTitle?: string;
+  isContinueDisabled?: boolean;
   isLoading?: boolean;
   onBack?: () => void;
   backTitle?: string;
-  isNextDisabled?: boolean;
 };
 
 export const StepNavigationButton = ({
@@ -30,7 +30,7 @@ export const StepNavigationButton = ({
   isLoading,
   onBack,
   backTitle = t`Back`,
-  isNextDisabled = false,
+  isContinueDisabled = false,
 }: StepNavigationButtonProps) => {
   return (
     <StyledFooter>
@@ -48,7 +48,7 @@ export const StepNavigationButton = ({
           title={continueTitle}
           onClick={!isLoading ? onContinue : undefined}
           variant="primary"
-          disabled={isNextDisabled}
+          disabled={isContinueDisabled}
         />
       )}
     </StyledFooter>
