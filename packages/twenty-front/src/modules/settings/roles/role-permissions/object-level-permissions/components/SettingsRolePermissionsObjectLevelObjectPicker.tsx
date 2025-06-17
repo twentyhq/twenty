@@ -104,7 +104,7 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
     () =>
       objectMetadataItems.filter(
         (objectMetadataItem) =>
-          objectMetadataItem.labelSingular
+          objectMetadataItem.labelPlural
             .toLowerCase()
             .includes(searchFilter.toLowerCase()) &&
           !excludedObjectMetadataIds.includes(objectMetadataItem.id) &&
@@ -149,7 +149,6 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
                   }
                 >
                   <SettingsCard
-                    key={objectMetadataItem.id}
                     Icon={
                       <Icon
                         size={theme.icon.size.xl}
