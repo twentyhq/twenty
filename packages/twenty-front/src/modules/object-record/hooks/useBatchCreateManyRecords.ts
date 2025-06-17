@@ -21,9 +21,11 @@ export const useBatchCreateManyRecords = <
   shouldMatchRootQueryFilter,
   mutationBatchSize = DEFAULT_MUTATION_BATCH_SIZE,
   setBatchedRecordsCount,
+  abortController,
 }: useCreateManyRecordsProps & {
   mutationBatchSize?: number;
   setBatchedRecordsCount?: (count: number) => void;
+  abortController?: AbortController;
 }) => {
   const { createManyRecords } = useCreateManyRecords({
     objectNameSingular,
@@ -43,8 +45,6 @@ export const useBatchCreateManyRecords = <
 
   const { enqueueSnackBar } = useSnackBar();
 
-  let currentAbortController: AbortController | null = null;
-
   const batchCreateManyRecords = async ({
     recordsToCreate,
     upsert,
@@ -52,8 +52,6 @@ export const useBatchCreateManyRecords = <
     recordsToCreate: Partial<CreatedObjectRecord>[];
     upsert?: boolean;
   }) => {
-    const abortController = new AbortController();
-    currentAbortController = abortController;
     const numberOfBatches = Math.ceil(
       recordsToCreate.length / mutationBatchSize,
     );
@@ -96,20 +94,13 @@ export const useBatchCreateManyRecords = <
       } else {
         throw error;
       }
-    } finally {
-      currentAbortController = null;
     }
 
     await refetchAggregateQueries();
     return allCreatedRecords;
   };
 
-  const abortBatchCreateManyRecords = () => {
-    currentAbortController?.abort();
-  };
-
   return {
     batchCreateManyRecords,
-    abortBatchCreateManyRecords,
   };
 };

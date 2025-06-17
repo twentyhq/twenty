@@ -26,12 +26,14 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
     spreadsheetImportCreatedRecordsProgressState,
   );
 
-  const { batchCreateManyRecords, abortBatchCreateManyRecords } =
-    useBatchCreateManyRecords({
-      objectNameSingular,
-      mutationBatchSize: SpreadsheetImportCreateRecordsBatchSize,
-      setBatchedRecordsCount: setCreatedRecordsProgress,
-    });
+  const abortController = new AbortController();
+
+  const { batchCreateManyRecords } = useBatchCreateManyRecords({
+    objectNameSingular,
+    mutationBatchSize: SpreadsheetImportCreateRecordsBatchSize,
+    setBatchedRecordsCount: setCreatedRecordsProgress,
+    abortController,
+  });
 
   const { buildAvailableFieldsForImport } = useBuildAvailableFieldsForImport();
 
@@ -83,7 +85,9 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
       },
       fields: availableFieldsForMatching,
       availableFieldMetadataItems: availableFieldMetadataItemsToImport,
-      onAbortSubmit: abortBatchCreateManyRecords,
+      onAbortSubmit: () => {
+        abortController.abort();
+      },
     });
   };
 
