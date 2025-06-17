@@ -3,13 +3,11 @@ import { default as request } from 'supertest';
 import { createRoleOperation } from 'test/integration/graphql/utils/create-custom-role-operation-factory.util';
 import { deleteRole } from 'test/integration/graphql/utils/delete-one-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { createUpsertObjectPermissionsOperation } from 'test/integration/graphql/utils/upsert-object-permission-operation-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -19,13 +17,6 @@ describe('Object Permissions Validation', () => {
   let companyObjectId: string;
 
   beforeAll(async () => {
-    const enablePermissionsQuery = updateFeatureFlagFactory(
-      SEED_APPLE_WORKSPACE_ID,
-      'IS_PERMISSIONS_V2_ENABLED',
-      true,
-    );
-
-    await makeGraphqlAPIRequest(enablePermissionsQuery);
     // Get object metadata IDs for Person and Company
     const getObjectMetadataOperation = {
       query: gql`
@@ -56,16 +47,6 @@ describe('Object Permissions Validation', () => {
 
     expect(personObjectId).toBeDefined();
     expect(companyObjectId).toBeDefined();
-  });
-
-  afterAll(async () => {
-    const disablePermissionsQuery = updateFeatureFlagFactory(
-      SEED_APPLE_WORKSPACE_ID,
-      'IS_PERMISSIONS_V2_ENABLED',
-      false,
-    );
-
-    await makeGraphqlAPIRequest(disablePermissionsQuery);
   });
 
   describe('cases with role with all rights by default', () => {
