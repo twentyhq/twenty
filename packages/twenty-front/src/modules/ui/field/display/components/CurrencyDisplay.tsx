@@ -40,7 +40,7 @@ export const CurrencyDisplay = ({ currencyValue }: CurrencyDisplayProps) => {
         </>
       )}
       {amountToDisplay !== null
-        ? currencyValue.format === 'short'
+        ? currencyValue.format === "'short'" || currencyValue.format === null
           ? formatAmount(amountToDisplay)
           : amountToDisplay
         : null}

@@ -54,7 +54,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
           .currencyCode,
     },
     exampleValue: {
-      format: 'short',
+      format: "'short'",
       amountMicros: 2000000000,
       currencyCode: CurrencyCode.USD,
     },

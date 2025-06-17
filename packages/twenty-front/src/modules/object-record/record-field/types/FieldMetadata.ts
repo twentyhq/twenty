@@ -212,7 +212,7 @@ export type FieldLinksValue = {
   secondaryLinks?: { label: string | null; url: string | null }[] | null;
 };
 
-export const fieldMetadataCurrencyFormat = ['short', 'full'] as const;
+export const fieldMetadataCurrencyFormat = ["'short'", "'full'"] as const;
 export type FieldCurrencyFormat = (typeof fieldMetadataCurrencyFormat)[number];
 export type FieldCurrencyValue = {
   currencyCode: CurrencyCode;
