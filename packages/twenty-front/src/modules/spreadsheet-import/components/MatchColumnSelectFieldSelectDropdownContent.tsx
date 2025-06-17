@@ -30,7 +30,6 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
   onSelectSuggestedOption,
   onCancelSelect,
   onDoNotImportSelect,
-  options,
   suggestedOptions,
 }: {
   selectedValue: SelectOption | undefined;
@@ -40,9 +39,6 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
   onSelectSuggestedOption: (selectedSuggestedOption: SelectOption) => void;
   onCancelSelect: () => void;
   onDoNotImportSelect: () => void;
-  options: readonly ReadonlyDeep<
-    SelectOption & { fieldMetadataTypeLabel?: string }
-  >[];
   suggestedOptions: readonly ReadonlyDeep<
     SelectOption & { fieldMetadataTypeLabel?: string }
   >[];
@@ -121,7 +117,6 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
                         key={option.value}
                         selected={selectedValue?.value === option.value}
                         onClick={() => handleSuggestedOptionClick(option)}
-                        disabled={option.disabled}
                         LeftIcon={option.Icon}
                         text={option.label}
                         contextualText={option.fieldMetadataTypeLabel}
@@ -140,10 +135,6 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
                 key={field.id}
                 selected={selectedValue?.value === field.name}
                 onClick={() => handleFieldClick(field)}
-                disabled={
-                  options.find((option) => option.value === field.name)
-                    ?.disabled && selectedValue?.value !== field.name
-                }
                 LeftIcon={getIcon(field.icon)}
                 text={field.label}
                 contextualText={getFieldMetadataTypeLabel(field.type)}
