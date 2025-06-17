@@ -1,3 +1,4 @@
+import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { FormCountryMultiSelectInput } from '@/object-record/record-field/form-types/components/FormCountryMultiSelectInput';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput';
@@ -7,6 +8,7 @@ import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { useContext } from 'react';
 import { JsonValue } from 'type-fest';
 
 export const WorkflowAdvancedFilterValueFormCompositeFieldInput = ({
@@ -22,6 +24,8 @@ export const WorkflowAdvancedFilterValueFormCompositeFieldInput = ({
 
   const filterType = recordFilter.type;
 
+  const { readonly } = useContext(AdvancedFilterContext);
+
   return (
     <>
       {filterType === 'ADDRESS' ? (
@@ -30,12 +34,14 @@ export const WorkflowAdvancedFilterValueFormCompositeFieldInput = ({
             defaultValue={recordFilter.value}
             onChange={onChange}
             VariablePicker={WorkflowVariablePicker}
+            readonly={readonly}
           />
         ) : (
           <FormTextFieldInput
             defaultValue={recordFilter.value}
             onChange={onChange}
             VariablePicker={WorkflowVariablePicker}
+            readonly={readonly}
           />
         )
       ) : filterType === 'CURRENCY' ? (
@@ -45,12 +51,14 @@ export const WorkflowAdvancedFilterValueFormCompositeFieldInput = ({
             onChange={onChange}
             VariablePicker={WorkflowVariablePicker}
             options={CURRENCIES}
+            readonly={readonly}
           />
         ) : recordFilter.subFieldName === 'amountMicros' ? (
           <FormNumberFieldInput
             defaultValue={recordFilter.value}
             onChange={onChange}
             VariablePicker={WorkflowVariablePicker}
+            readonly={readonly}
           />
         ) : null
       ) : filterType === 'PHONES' ? (
@@ -59,12 +67,14 @@ export const WorkflowAdvancedFilterValueFormCompositeFieldInput = ({
             defaultValue={recordFilter.value}
             onChange={onChange}
             VariablePicker={WorkflowVariablePicker}
+            readonly={readonly}
           />
         ) : (
           <FormTextFieldInput
             defaultValue={recordFilter.value}
             onChange={onChange}
             VariablePicker={WorkflowVariablePicker}
+            readonly={readonly}
           />
         )
       ) : (
@@ -72,6 +82,7 @@ export const WorkflowAdvancedFilterValueFormCompositeFieldInput = ({
           defaultValue={recordFilter.value}
           onChange={onChange}
           VariablePicker={WorkflowVariablePicker}
+          readonly={readonly}
         />
       )}
     </>
