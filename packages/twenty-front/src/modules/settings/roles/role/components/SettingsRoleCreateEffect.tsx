@@ -2,6 +2,7 @@ import { SETTINGS_ROLE_DETAIL_TABS } from '@/settings/roles/role/constants/Setti
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 
@@ -31,7 +32,7 @@ export const SettingsRoleCreateEffect = ({
 
     const newRole = {
       id: roleId,
-      label: '',
+      label: t`Role name`,
       description: '',
       icon: 'IconUser',
       canUpdateAllSettings: true,
