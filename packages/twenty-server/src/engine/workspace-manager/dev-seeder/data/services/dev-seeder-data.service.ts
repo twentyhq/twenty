@@ -69,17 +69,17 @@ import {
   SURVEY_RESULT_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/survey-result-data-seeds.constant';
 import {
-  WORKSPACE_MEMBER_DATA_SEED_COLUMNS,
-  WORKSPACE_MEMBER_DATA_SEEDS,
-} from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
-import { prefillViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-views';
-import { prefillWorkspaceFavorites } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workspace-favorites';
-import {
   WORKFLOW_DATA_SEED_COLUMNS,
   WORKFLOW_DATA_SEEDS,
   WORKFLOW_VERSION_DATA_SEED_COLUMNS,
   WORKFLOW_VERSION_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/workflow-data-seeds.constants';
+import {
+  WORKSPACE_MEMBER_DATA_SEED_COLUMNS,
+  WORKSPACE_MEMBER_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { prefillViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-views';
+import { prefillWorkspaceFavorites } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workspace-favorites';
 
 const RECORD_SEEDS_CONFIGS = [
   {
@@ -97,6 +97,16 @@ const RECORD_SEEDS_CONFIGS = [
     pgColumns: PERSON_DATA_SEED_COLUMNS,
     recordSeeds: PERSON_DATA_SEEDS,
   },
+  // {
+  //   tableName: 'note',
+  //   pgColumns: NOTE_DATA_SEED_COLUMNS,
+  //   recordSeeds: NOTE_DATA_SEEDS,
+  // },
+  // {
+  //   tableName: 'noteTarget',
+  //   pgColumns: NOTE_TARGET_DATA_SEED_COLUMNS,
+  //   recordSeeds: NOTE_TARGET_DATA_SEEDS,
+  // },
   {
     tableName: 'opportunity',
     pgColumns: OPPORTUNITY_DATA_SEED_COLUMNS,
