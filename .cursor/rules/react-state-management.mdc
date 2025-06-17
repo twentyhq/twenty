@@ -1,5 +1,171 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
+# React State Management Guidelines
+
+## State Management Principles
+
+### State Hierarchy
+- Use Recoil for global state management
+- Keep local state for component-specific data
+- Lift state up only when necessary
+- Avoid prop drilling with context or Recoil
+
+### Recoil Usage
+- Use atoms for primitive state values
+- Use selectors for derived state
+- Implement proper atom keys following our naming conventions
+  ```typescript
+  // ✅ Correct
+  export const currentUserState = atom<User | null>({
+    key: 'currentUserState',
+    default: null,
+  });
+
+  export const userDisplayNameSelector = selector({
+    key: 'userDisplayNameSelector',
+    get: ({ get }) => {
+      const user = get(currentUserState);
+      return user ? `${user.firstName} ${user.lastName}` : 'Guest';
+    },
+  });
+  ```
+
+## Local State Patterns
+
+### useState Guidelines
+- Keep state as simple as possible
+- Use multiple useState calls for unrelated state
+- Prefer primitive values over complex objects
+  ```typescript
+  // ✅ Correct
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [data, setData] = useState<User[]>([]);
+
+  // ❌ Incorrect
+  const [state, setState] = useState({
+    isLoading: false,
+    error: null,
+    data: [],
+  });
+  ```
+
+### useReducer for Complex State
+- Use useReducer for complex state logic
+- Define clear action types
+- Keep reducers pure
+  ```typescript
+  // ✅ Correct
+  type FormAction = 
+    | { type: 'SET_FIELD'; field: string; value: string }
+    | { type: 'SET_ERRORS'; errors: Record<string, string> }
+    | { type: 'RESET' };
+
+  const formReducer = (state: FormState, action: FormAction): FormState => {
+    switch (action.type) {
+      case 'SET_FIELD':
+        return { ...state, [action.field]: action.value };
+      case 'SET_ERRORS':
+        return { ...state, errors: action.errors };
+      case 'RESET':
+        return initialFormState;
+      default:
+        return state;
+    }
+  };
+  ```
+
+## Data Flow Best Practices
+
+### Unidirectional Data Flow
+- Props down, events up
+- Avoid bidirectional data binding
+- Use callback functions for child-to-parent communication
+  ```typescript
+  // ✅ Correct
+  const ParentComponent = () => {
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
+
+    return (
+      <UserList 
+        users={users}
+        onUserSelect={setSelectedUser}
+      />
+    );
+  };
+
+  const UserList = ({ users, onUserSelect }: UserListProps) => {
+    return (
+      <div>
+        {users.map(user => (
+          <UserCard 
+            key={user.id}
+            user={user}
+            onClick={() => onUserSelect(user)}
+          />
+        ))}
+      </div>
+    );
+  };
+  ```
+
+### State Normalization
+- Normalize complex nested data structures
+- Use lookup tables for efficient access
+- Keep arrays of IDs instead of nested objects
+  ```typescript
+  // ✅ Correct - Normalized state
+  type UsersState = {
+    byId: Record<string, User>;
+    allIds: string[];
+  };
+
+  // ❌ Incorrect - Nested structure
+  type UsersState = {
+    users: User[];
+    selectedUser: User | null;
+  };
+  ```
+
+## Performance Considerations
+
+### State Updates
+- Batch state updates when possible
+- Use functional updates for state based on previous state
+- Avoid unnecessary re-renders with proper dependencies
+  ```typescript
+  // ✅ Correct
+  const [count, setCount] = useState(0);
+  
+  const increment = useCallback(() => {
+    setCount(prev => prev + 1);
+  }, []);
+
+  // ❌ Incorrect
+  const increment = () => {
+    setCount(count + 1);
+  };
+  ```
+
+### Recoil Performance
+- Use atom families for dynamic atoms
+- Implement proper selector caching
+- Avoid heavy computations in selectors
+  ```typescript
+  // ✅ Correct
+  export const userByIdState = atomFamily<User | null, string>({
+    key: 'userByIdState',
+    default: null,
+  });
+
+  export const usersByDepartmentSelector = selectorFamily<User[], string>({
+    key: 'usersByDepartmentSelector',
+    get: (departmentId) => ({ get }) => {
+      // Efficient filtering logic
+      return get(allUsersState).filter(user => user.departmentId === departmentId);
+    },
+  });
+  ```
