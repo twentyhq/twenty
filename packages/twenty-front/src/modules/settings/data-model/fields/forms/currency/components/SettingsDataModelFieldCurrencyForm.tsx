@@ -35,21 +35,16 @@ export const SettingsDataModelFieldCurrencyForm = ({
     initialFormatValue,
   } = useCurrencySettingsFormInitialValues({ fieldMetadataItem });
 
-  const { control, formState, watch } =
+  const { control } =
     useFormContext<SettingsDataModelFieldCurrencyFormValues>();
 
-  console.log('Form values:', watch());
-  console.log('Form state:', formState);
   return (
     <>
       <Controller
         name="defaultValue.amountMicros"
         control={control}
         defaultValue={initialAmountMicrosValue}
-        render={({ field: { value } }) => {
-          console.log('amountMicros value:', value);
-          return <></>;
-        }}
+        render={() => <></>}
       />
       <Controller
         name="defaultValue.currencyCode"

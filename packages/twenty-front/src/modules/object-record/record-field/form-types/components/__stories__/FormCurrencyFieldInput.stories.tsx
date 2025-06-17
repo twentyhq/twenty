@@ -1,5 +1,5 @@
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
-import { FieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
+import { FieldMetadataCurrencySettings } from '@/object-record/record-field/types/FieldMetadata';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -19,10 +19,10 @@ export default meta;
 
 type Story = StoryObj<typeof FormCurrencyFieldInput>;
 
-const defaultSalaryValue: FieldCurrencyValue = {
+const defaultSalaryValue: FieldMetadataCurrencySettings = {
   currencyCode: CurrencyCode.USD,
-  format: "'short'",
   amountMicros: 44000000,
+  format: "'short'"
 };
 
 export const Default: Story = {
@@ -43,6 +43,7 @@ export const WithVariable: Story = {
     defaultValue: {
       currencyCode: `{{${MOCKED_STEP_ID}.amount.currencyCode}}` as CurrencyCode,
       amountMicros: `{{${MOCKED_STEP_ID}.amount.amountMicros}}`,
+      format: "'short'"
     },
   },
   play: async ({ canvasElement }) => {

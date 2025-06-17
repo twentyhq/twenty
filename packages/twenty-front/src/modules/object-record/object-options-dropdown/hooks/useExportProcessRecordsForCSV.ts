@@ -27,7 +27,6 @@ export const useExportProcessRecordsForCSV = (objectNameSingular: string) => {
                     record[field.name].amountMicros,
                   ),
                   currencyCode: record[field.name].currencyCode,
-                  format: record[field.name].format,
                 } satisfies FieldCurrencyValue,
               };
             case FieldMetadataType.RAW_JSON:

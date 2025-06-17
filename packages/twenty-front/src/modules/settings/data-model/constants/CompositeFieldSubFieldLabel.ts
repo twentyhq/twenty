@@ -7,7 +7,6 @@ export const COMPOSITE_FIELD_SUB_FIELD_LABELS: {
   [FieldMetadataType.CURRENCY]: {
     amountMicros: 'Amount',
     currencyCode: 'Currency',
-    format: 'Format',
   },
   [FieldMetadataType.EMAILS]: {
     primaryEmail: 'Primary Email',

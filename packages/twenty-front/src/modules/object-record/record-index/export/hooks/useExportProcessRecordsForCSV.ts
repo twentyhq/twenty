@@ -27,7 +27,6 @@ export const useExportProcessRecordsForCSV = (objectNameSingular: string) => {
               record[currencyField.name].amountMicros,
             ),
             currencyCode: record[currencyField.name].currencyCode,
-            format: record[currencyField.name].format,
           } satisfies FieldCurrencyValue;
         }
       }

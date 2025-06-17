@@ -11,7 +11,6 @@ export const useCurrencySettingsFormInitialValues = ({
 }: {
   fieldMetadataItem?: Pick<FieldMetadataItem, 'defaultValue'>;
 }) => {
-  console.log(fieldMetadataItem)
   const initialAmountMicrosValue =
     (fieldMetadataItem?.defaultValue?.amountMicros as number | null) ?? null;
   const initialCurrencyCodeValue =
@@ -29,7 +28,6 @@ export const useCurrencySettingsFormInitialValues = ({
     useFormContext<SettingsDataModelFieldCurrencyFormValues>();
 
   const resetDefaultValueField = () =>
-    // TODO
     resetField('defaultValue', { defaultValue: initialDefaultValue });
 
   return {

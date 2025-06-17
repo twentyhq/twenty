@@ -20,8 +20,6 @@ export const COMPOSITE_FIELD_IMPORT_LABELS = {
       SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS.FULL_NAME.labelBySubField.lastName,
   } satisfies CompositeFieldLabels<FieldFullNameValue>,
   [FieldMetadataType.CURRENCY]: {
-    formatLabel:
-      SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS.CURRENCY.labelBySubField.format,
     currencyCodeLabel:
       SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS.CURRENCY.labelBySubField
         .currencyCode,

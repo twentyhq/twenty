@@ -84,7 +84,7 @@ export type FieldLinksMetadata = BaseFieldMetadata & {
 export type FieldCurrencyMetadata = BaseFieldMetadata & {
   placeHolder: string;
   isPositive?: boolean;
-  settings?: null;
+  settings?: FieldMetadataCurrencySettings
 };
 
 export type FieldFullNameMetadata = BaseFieldMetadata & {
@@ -217,11 +217,11 @@ export type FieldCurrencyFormat = (typeof fieldMetadataCurrencyFormat)[number];
 export type FieldCurrencyValue = {
   currencyCode: CurrencyCode;
   amountMicros: number | null;
-  format: FieldCurrencyFormat;
 };
-export type FormFieldCurrencyValue = {
+export type FieldMetadataCurrencySettings = {
   currencyCode: CurrencyCode | null;
   amountMicros: number | string | null;
+  format: FieldCurrencyFormat | null
 };
 export type FieldFullNameValue = { firstName: string; lastName: string };
 export type FieldAddressValue = {

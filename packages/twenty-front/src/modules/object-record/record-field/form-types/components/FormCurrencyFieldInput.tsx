@@ -4,7 +4,7 @@ import { FormNumberFieldInput } from '@/object-record/record-field/form-types/co
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
-import { FormFieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
+import { FieldMetadataCurrencySettings } from '@/object-record/record-field/types/FieldMetadata';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { useMemo } from 'react';
@@ -12,8 +12,8 @@ import { IconCircleOff } from 'twenty-ui/display';
 
 type FormCurrencyFieldInputProps = {
   label?: string;
-  defaultValue?: FormFieldCurrencyValue | null;
-  onChange: (value: FormFieldCurrencyValue) => void;
+  defaultValue?: FieldMetadataCurrencySettings | null;
+  onChange: (value: FieldMetadataCurrencySettings) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
 };
@@ -42,6 +42,7 @@ export const FormCurrencyFieldInput = ({
     onChange({
       currencyCode: defaultValue?.currencyCode ?? null,
       amountMicros: newAmountMicros ?? null,
+      format: defaultValue?.format ?? null,
     });
   };
 
@@ -49,6 +50,7 @@ export const FormCurrencyFieldInput = ({
     onChange({
       currencyCode: (newCurrencyCode as CurrencyCode) ?? null,
       amountMicros: defaultValue?.amountMicros ?? null,
+      format: defaultValue?.format ?? null,
     });
   };
 
