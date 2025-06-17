@@ -11,18 +11,15 @@ import { availableTableColumnsComponentState } from '@/object-record/record-tabl
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { onColumnsChangeComponentState } from '@/object-record/record-table/states/onColumnsChangeComponentState';
-import { onEntityCountChangeComponentState } from '@/object-record/record-table/states/onEntityCountChangeComponentState';
 
 import { useRecordTableMove } from '@/object-record/record-table/hooks/useRecordTableMove';
 import { onToggleColumnSortComponentState } from '@/object-record/record-table/states/onToggleColumnSortComponentState';
-import { tableLastRowVisibleComponentState } from '@/object-record/record-table/states/tableLastRowVisibleComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useLeaveTableFocus } from './internal/useLeaveTableFocus';
 import { useResetTableRowSelection } from './internal/useResetTableRowSelection';
 import { useSelectAllRows } from './internal/useSelectAllRows';
-import { useSetRecordTableData } from './internal/useSetRecordTableData';
 import { useSetRecordTableFocusPosition } from './internal/useSetRecordTableFocusPosition';
 import { useSetRowSelectedState } from './internal/useSetRowSelectedState';
 type useRecordTableProps = {
@@ -56,11 +53,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     [availableTableColumnsState],
   );
 
-  const setOnEntityCountChange = useSetRecoilComponentStateV2(
-    onEntityCountChangeComponentState,
-    recordTableId,
-  );
-
   const setOnColumnsChange = useSetRecoilComponentStateV2(
     onColumnsChangeComponentState,
     recordTableId,
@@ -73,11 +65,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const setIsRecordTableInitialLoading = useSetRecoilComponentStateV2(
     isRecordTableInitialLoadingComponentState,
-    recordTableId,
-  );
-
-  const setRecordTableLastRowVisible = useSetRecoilComponentStateV2(
-    tableLastRowVisibleComponentState,
     recordTableId,
   );
 
@@ -99,29 +86,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     [onColumnsChangeState],
   );
 
-  const onEntityCountChangeState = useRecoilComponentCallbackStateV2(
-    onEntityCountChangeComponentState,
-    recordTableId,
-  );
-
-  const onEntityCountChange = useRecoilCallback(
-    ({ snapshot }) =>
-      (count?: number, currentRecordGroupId?: string) => {
-        const onEntityCountChange = getSnapshotValue(
-          snapshot,
-          onEntityCountChangeState,
-        );
-
-        onEntityCountChange?.(count, currentRecordGroupId);
-      },
-    [onEntityCountChangeState],
-  );
-
-  const setRecordTableData = useSetRecordTableData({
-    recordTableId,
-    onEntityCountChange,
-  });
-
   const leaveTableFocus = useLeaveTableFocus(recordTableId);
 
   const setRowSelected = useSetRowSelectedState(recordTableId);
@@ -139,8 +103,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
   return {
     onColumnsChange,
     setAvailableTableColumns,
-    setOnEntityCountChange,
-    setRecordTableData,
     leaveTableFocus,
     setRowSelected,
     resetTableRowSelection,
@@ -148,7 +110,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     selectAllRows,
     setOnColumnsChange,
     setIsRecordTableInitialLoading,
-    setRecordTableLastRowVisible,
     setFocusPosition,
     setHasUserSelectedAllRows,
     setOnToggleColumnSort,

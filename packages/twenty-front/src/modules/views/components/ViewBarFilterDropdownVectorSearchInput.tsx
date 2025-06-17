@@ -34,7 +34,7 @@ export const ViewBarFilterDropdownVectorSearchInput = ({
   };
 
   return (
-    <DropdownContent widthInPixels={GenericDropdownContentWidth.Medium}>
+    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
       <DropdownMenuSearchInput
         autoFocus
         type="text"

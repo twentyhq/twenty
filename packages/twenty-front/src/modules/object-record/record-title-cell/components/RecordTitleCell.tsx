@@ -32,7 +32,7 @@ export const RecordTitleCell = ({
   sizeVariant,
   containerType,
 }: RecordTitleCellProps) => {
-  const { fieldDefinition, recordId } = useContext(FieldContext);
+  const { fieldDefinition, recordId, isReadOnly } = useContext(FieldContext);
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
@@ -82,6 +82,7 @@ export const RecordTitleCell = ({
     displayModeContent: <RecordTitleCellFieldDisplay />,
     editModeContentOnly: isFieldInputOnly,
     loading: loading,
+    isReadOnly,
   };
 
   return (

@@ -20,6 +20,7 @@ import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/consta
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -81,7 +82,7 @@ export const ObjectFilterDropdownFilterInput = ({
 
   if (isOnlyOperand) {
     return (
-      <DropdownContent>
+      <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
         <ObjectFilterDropdownFilterInputHeader />
         <ObjectFilterDropdownInnerSelectOperandDropdown />
       </DropdownContent>
@@ -97,7 +98,7 @@ export const ObjectFilterDropdownFilterInput = ({
     );
   } else {
     return (
-      <DropdownContent>
+      <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
         <ObjectFilterDropdownFilterInputHeader />
         <ObjectFilterDropdownInnerSelectOperandDropdown />
         <DropdownMenuSeparator />

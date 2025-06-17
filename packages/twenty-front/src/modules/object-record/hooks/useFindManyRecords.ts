@@ -119,7 +119,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     loading,
     error,
     fetchMoreRecords,
-    queryStateIdentifier: queryIdentifier,
+    queryIdentifier,
     hasNextPage,
     pageInfo,
   };

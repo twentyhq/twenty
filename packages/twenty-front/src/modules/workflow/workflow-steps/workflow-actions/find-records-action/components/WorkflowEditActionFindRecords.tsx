@@ -185,6 +185,10 @@ export const WorkflowEditActionFindRecords = ({
                   <WorkflowFindRecordsFilters
                     objectMetadataItem={selectedObjectMetadataItem}
                     onChange={(filter: FindRecordsActionFilter) => {
+                      if (isFormDisabled === true) {
+                        return;
+                      }
+
                       const newFormData: FindRecordsFormData = {
                         ...formData,
                         filter,
@@ -194,6 +198,7 @@ export const WorkflowEditActionFindRecords = ({
 
                       saveAction(newFormData);
                     }}
+                    readonly={isFormDisabled}
                   />
                   <WorkflowFindRecordsFiltersEffect
                     defaultValue={formData.filter}

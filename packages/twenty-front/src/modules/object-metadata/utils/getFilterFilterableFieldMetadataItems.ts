@@ -9,6 +9,7 @@ export const getFilterFilterableFieldMetadataItems = ({
   return (field: FieldMetadataItem) => {
     const isSystemField = field.isSystem;
     const isFieldActive = field.isActive;
+    const isIdField = field.name === 'id';
 
     const isRelationFieldHandled = !(
       field.type === FieldMetadataType.RELATION &&
@@ -33,11 +34,12 @@ export const getFilterFilterableFieldMetadataItems = ({
       FieldMetadataType.ACTOR,
       FieldMetadataType.PHONES,
       FieldMetadataType.ARRAY,
+      FieldMetadataType.UUID,
       ...(isJsonFilterEnabled ? [FieldMetadataType.RAW_JSON] : []),
     ].includes(field.type);
 
     const isFieldFilterable =
-      !isSystemField &&
+      (!isSystemField || isIdField) &&
       isFieldActive &&
       isRelationFieldHandled &&
       isFieldTypeFilterable;
