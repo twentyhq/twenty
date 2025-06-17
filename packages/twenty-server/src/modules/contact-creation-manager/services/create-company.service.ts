@@ -8,6 +8,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { DeepPartial, ILike, Repository } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { lowercaseDomainAndRemoveTrailingSlash } from 'src/engine/api/graphql/workspace-query-runner/utils/query-runner-links.util';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -77,7 +78,7 @@ export class CreateCompanyService {
     // Remove trailing slash from domain names
     const companiesWithoutTrailingSlash = companies.map((company) => ({
       ...company,
-      domainName: company.domainName?.replace(/\/$/, ''),
+      domainName: lowercaseDomainAndRemoveTrailingSlash(company.domainName),
     }));
 
     // Avoid creating duplicate companies, e.g. example.com and example.com/

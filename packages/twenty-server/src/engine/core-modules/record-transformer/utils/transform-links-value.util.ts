@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { lowercaseDomain } from 'src/engine/api/graphql/workspace-query-runner/utils/query-runner-links.util';
+import { lowercaseDomainAndRemoveTrailingSlash } from 'src/engine/api/graphql/workspace-query-runner/utils/query-runner-links.util';
 import { removeEmptyLinks } from 'src/engine/core-modules/record-transformer/utils/remove-empty-links';
 import { LinkMetadataNullable } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 
@@ -46,13 +46,15 @@ export const transformLinksValue = (
   return {
     ...value,
     primaryLinkUrl: isDefined(primaryLinkUrl)
-      ? lowercaseDomain(primaryLinkUrl)
+      ? lowercaseDomainAndRemoveTrailingSlash(primaryLinkUrl)
       : primaryLinkUrl,
     primaryLinkLabel,
     secondaryLinks: JSON.stringify(
       secondaryLinks?.map((link) => ({
         ...link,
-        url: isDefined(link.url) ? lowercaseDomain(link.url) : link.url,
+        url: isDefined(link.url)
+          ? lowercaseDomainAndRemoveTrailingSlash(link.url)
+          : link.url,
       })),
     ),
   };
