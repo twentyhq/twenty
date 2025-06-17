@@ -120,6 +120,12 @@ export const ShowPageSubContainer = ({
   const displaySummaryAndFields =
     layout && !layout.hideSummaryAndFields && !isMobile && !isInRightDrawer;
 
+  console.log('in ShowPageSubContainer', {
+    summaryCard,
+    fieldsCard,
+    targetableObject,
+  });
+
   return (
     <TabListComponentInstanceContext.Provider
       value={{ instanceId: tabListComponentId }}

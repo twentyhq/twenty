@@ -1783,6 +1783,8 @@ export type Role = {
 export type RunWorkflowVersionInput = {
   /** Execution result in JSON format */
   payload?: InputMaybe<Scalars['JSON']>;
+  /** Workflow run ID */
+  workflowRunId?: InputMaybe<Scalars['String']>;
   /** Workflow version ID */
   workflowVersionId: Scalars['String'];
 };

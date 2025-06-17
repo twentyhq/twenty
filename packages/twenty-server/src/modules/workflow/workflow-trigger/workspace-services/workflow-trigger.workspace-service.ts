@@ -60,6 +60,7 @@ export class WorkflowTriggerWorkspaceService {
   }
 
   async runWorkflowVersion({
+    workflowRunId,
     workflowVersionId,
     payload,
     createdBy,
@@ -76,6 +77,7 @@ export class WorkflowTriggerWorkspaceService {
 
     return this.workflowRunnerWorkspaceService.run({
       workspaceId: this.getWorkspaceId(),
+      workflowRunId,
       workflowVersionId,
       payload,
       source: createdBy,
