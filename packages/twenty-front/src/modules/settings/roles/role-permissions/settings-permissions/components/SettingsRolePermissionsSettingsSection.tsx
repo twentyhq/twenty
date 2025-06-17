@@ -14,6 +14,7 @@ import {
   IconKey,
   IconLockOpen,
   IconSettings,
+  IconSettingsAutomation,
   IconUsers,
 } from 'twenty-ui/display';
 import { AnimatedExpandableContainer, Card, Section } from 'twenty-ui/layout';
@@ -89,6 +90,12 @@ export const SettingsRolePermissionsSettingsSection = ({
         name: t`Security`,
         description: t`Manage security policies`,
         Icon: IconKey,
+      },
+      {
+        key: SettingPermissionType.WORKFLOWS,
+        name: t`Workflows`,
+        description: t`Manage workflows`,
+        Icon: IconSettingsAutomation,
       },
     ];
 
