@@ -21,8 +21,6 @@ export const getActionIconColorOrThrow = ({
       return theme.font.color.tertiary;
     case 'SEND_EMAIL':
       return theme.color.blue;
-    case 'HTTP_REQUEST':
-      return theme.color.purple;
     case 'AI_AGENT':
       return theme.color.pink;
     default:
