@@ -38,7 +38,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
   const {
     initialAmountMicrosValue,
     initialCurrencyCodeValue,
-    initialFormatValue,
+    initialSettingsValue,
   } = useCurrencySettingsFormInitialValues({
     fieldMetadataItem,
   });
@@ -82,7 +82,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
       <Controller
         name="settings.format"
         control={control}
-        defaultValue={initialFormatValue}
+        defaultValue={initialSettingsValue.format}
         render={({ field: { onChange, value } }) => (
           <SettingsOptionCardContentSelect
             Icon={IconCheckbox}

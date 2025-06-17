@@ -16,26 +16,31 @@ export const useCurrencySettingsFormInitialValues = ({
   const initialCurrencyCodeValue =
     fieldMetadataItem?.defaultValue?.currencyCode ??
     applySimpleQuotesToString(CurrencyCode.USD);
-  const initialFormatValue = fieldMetadataItem?.settings?.format ?? 'short';
-  const initialDefaultValue: SettingsDataModelFieldCurrencyFormValues['defaultValue'] =
-    {
+  const initialFormValues: SettingsDataModelFieldCurrencyFormValues = {
+    settings: {
+      format: fieldMetadataItem?.settings?.format ?? 'short',
+    },
+    defaultValue: {
       amountMicros: initialAmountMicrosValue,
       currencyCode: initialCurrencyCodeValue,
-    };
+    },
+  };
 
   const { resetField } =
     useFormContext<SettingsDataModelFieldCurrencyFormValues>();
 
   const resetDefaultValueField = () => {
-    resetField('defaultValue', { defaultValue: initialDefaultValue });
-    resetField('settings', { defaultValue: { format: initialFormatValue } });
+    resetField('defaultValue', {
+      defaultValue: initialFormValues.defaultValue,
+    });
+    resetField('settings', { defaultValue: initialFormValues.settings });
   };
 
   return {
     initialAmountMicrosValue,
     initialCurrencyCodeValue,
-    initialFormatValue,
-    initialDefaultValue,
+    initialSettingsValue: initialFormValues.settings,
+    initialDefaultValue: initialFormValues.defaultValue,
     resetDefaultValueField,
   };
 };

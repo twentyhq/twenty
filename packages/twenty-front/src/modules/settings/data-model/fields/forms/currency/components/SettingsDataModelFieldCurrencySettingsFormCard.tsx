@@ -31,9 +31,10 @@ export const SettingsDataModelFieldCurrencySettingsFormCard = ({
   fieldMetadataItem,
   objectMetadataItem,
 }: SettingsDataModelFieldCurrencySettingsFormCardProps) => {
-  const { initialDefaultValue } = useCurrencySettingsFormInitialValues({
-    fieldMetadataItem,
-  });
+  const { initialDefaultValue, initialSettingsValue } =
+    useCurrencySettingsFormInitialValues({
+      fieldMetadataItem,
+    });
 
   const { watch: watchFormValue } =
     useFormContext<SettingsDataModelFieldCurrencyFormValues>();
@@ -45,6 +46,7 @@ export const SettingsDataModelFieldCurrencySettingsFormCard = ({
           fieldMetadataItem={{
             ...fieldMetadataItem,
             defaultValue: watchFormValue('defaultValue', initialDefaultValue),
+            settings: watchFormValue('settings', initialSettingsValue),
           }}
           objectMetadataItem={objectMetadataItem}
         />
