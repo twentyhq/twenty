@@ -12,7 +12,7 @@ export const useRefreshCachedViews = () => {
     ),
   });
 
-  const { findManyRecords: refreshCachedViews } = useLazyFindManyRecords({
+  const { findManyRecordsLazy: refreshCachedViews } = useLazyFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.View,
     filter: findAllViewsOperationSignature.variables.filter,
     recordGqlFields: findAllViewsOperationSignature.fields,
