@@ -97,8 +97,6 @@ export const useBatchCreateManyRecords = <
       } else {
         throw error;
       }
-    } finally {
-      setBatchedRecordsCount?.(0);
     }
 
     await refetchAggregateQueries();

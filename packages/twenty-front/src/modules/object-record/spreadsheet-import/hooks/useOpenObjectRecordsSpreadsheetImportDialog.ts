@@ -28,7 +28,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
   const { batchCreateManyRecords, abortBatchCreateManyRecords } =
     useBatchCreateManyRecords({
       objectNameSingular,
-      mutationBatchSize: 2000,
+      mutationBatchSize: 500,
       skipPostOptimisticEffect: true,
       setBatchedRecordsCount: setCreatedRecordsProgress,
     });
