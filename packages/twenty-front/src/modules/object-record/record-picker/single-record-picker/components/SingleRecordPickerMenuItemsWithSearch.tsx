@@ -122,9 +122,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
               onRecordSelected,
             }}
           />
-          {records.recordsToSelect.length > 0 && isDefined(onCreate) && (
-            <DropdownMenuSeparator />
-          )}
+          {isDefined(onCreate) && <DropdownMenuSeparator />}
           {isDefined(onCreate) && hasObjectUpdatePermissions && (
             <DropdownMenuItemsContainer scrollable={false}>
               {createNewButton}
