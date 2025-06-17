@@ -1,7 +1,9 @@
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isWorkflowRelatedObjectMetadata } from '@/object-metadata/utils/isWorkflowRelatedObjectMetadata';
 import { SettingsRolePermissionsObjectLevelTableHeader } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader';
 import { SettingsRolePermissionsObjectLevelTableRow } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRow';
+import { hasPermissionOverride } from '@/settings/roles/role-permissions/object-level-permissions/utils/hasPermissionOverride';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -13,7 +15,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { ObjectPermission } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledCreateObjectOverrideSection = styled(Section)`
@@ -48,9 +49,14 @@ export const SettingsRolePermissionsObjectLevelSection = ({
 
   const navigateSettings = useNavigateSettings();
 
-  const objectMetadataItems = useObjectMetadataItems();
+  const { alphaSortedActiveNonSystemObjectMetadataItems: objectMetadataItems } =
+    useFilteredObjectMetadataItems();
 
-  const objectMetadataMap = objectMetadataItems.objectMetadataItems.reduce(
+  const filteredObjectMetadataItems = objectMetadataItems.filter(
+    (item) => !isWorkflowRelatedObjectMetadata(item.nameSingular),
+  );
+
+  const objectMetadataMap = filteredObjectMetadataItems.reduce(
     (acc, item) => {
       acc[item.id] = item;
       return acc;
@@ -58,38 +64,16 @@ export const SettingsRolePermissionsObjectLevelSection = ({
     {} as Record<string, ObjectMetadataItem>,
   );
 
-  const hasPermissionOverride = (objectPermission: ObjectPermission) => {
-    const permissionChecks = [
-      {
-        permission: objectPermission.canReadObjectRecords,
-        globalPermission: settingsDraftRole.canReadAllObjectRecords,
-      },
-      {
-        permission: objectPermission.canUpdateObjectRecords,
-        globalPermission: settingsDraftRole.canUpdateAllObjectRecords,
-      },
-      {
-        permission: objectPermission.canSoftDeleteObjectRecords,
-        globalPermission: settingsDraftRole.canSoftDeleteAllObjectRecords,
-      },
-      {
-        permission: objectPermission.canDestroyObjectRecords,
-        globalPermission: settingsDraftRole.canDestroyAllObjectRecords,
-      },
-    ];
-
-    return permissionChecks.some(
-      ({ permission, globalPermission }) =>
-        isDefined(permission) && permission !== globalPermission,
-    );
-  };
-
   const filteredObjectPermissions = settingsDraftRole.objectPermissions?.filter(
-    hasPermissionOverride,
+    (objectPermission) =>
+      hasPermissionOverride(objectPermission, settingsDraftRole) &&
+      !isWorkflowRelatedObjectMetadata(
+        objectMetadataMap[objectPermission.objectMetadataId]?.nameSingular,
+      ),
   );
 
   const allObjectsHaveSetPermission =
-    settingsDraftRole.objectPermissions?.every(hasPermissionOverride);
+    filteredObjectPermissions?.length === filteredObjectMetadataItems.length;
 
   const handleAddRule = () => {
     navigateSettings(SettingsPath.RoleAddObjectLevel, {

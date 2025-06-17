@@ -1,5 +1,7 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { isWorkflowRelatedObjectMetadata } from '@/object-metadata/utils/isWorkflowRelatedObjectMetadata';
 import { SettingsCard } from '@/settings/components/SettingsCard';
+import { hasPermissionOverride } from '@/settings/roles/role-permissions/object-level-permissions/utils/hasPermissionOverride';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -8,7 +10,6 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconSearch, useIcons } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -92,20 +93,8 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
   const excludedObjectMetadataIds = useMemo(
     () =>
       settingsDraftRole.objectPermissions
-        ?.filter(
-          (objectPermission) =>
-            (isDefined(objectPermission.canReadObjectRecords) &&
-              objectPermission.canReadObjectRecords !==
-                settingsDraftRole.canReadAllObjectRecords) ||
-            (isDefined(objectPermission.canUpdateObjectRecords) &&
-              objectPermission.canUpdateObjectRecords !==
-                settingsDraftRole.canUpdateAllObjectRecords) ||
-            (isDefined(objectPermission.canSoftDeleteObjectRecords) &&
-              objectPermission.canSoftDeleteObjectRecords !==
-                settingsDraftRole.canSoftDeleteAllObjectRecords) ||
-            (isDefined(objectPermission.canDestroyObjectRecords) &&
-              objectPermission.canDestroyObjectRecords !==
-                settingsDraftRole.canDestroyAllObjectRecords),
+        ?.filter((objectPermission) =>
+          hasPermissionOverride(objectPermission, settingsDraftRole),
         )
         .map((p) => p.objectMetadataId) ?? [],
     [settingsDraftRole],
@@ -118,7 +107,8 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
           objectMetadataItem.labelSingular
             .toLowerCase()
             .includes(searchFilter.toLowerCase()) &&
-          !excludedObjectMetadataIds.includes(objectMetadataItem.id),
+          !excludedObjectMetadataIds.includes(objectMetadataItem.id) &&
+          !isWorkflowRelatedObjectMetadata(objectMetadataItem.nameSingular),
       ),
     [objectMetadataItems, searchFilter, excludedObjectMetadataIds],
   );

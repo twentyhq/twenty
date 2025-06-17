@@ -12,8 +12,7 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 export const SettingsRoleAddObjectLevel = () => {
   const { roleId } = useParams();
   const settingsDraftRole = useRecoilValue(
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    settingsDraftRoleFamilyState(roleId!),
+    settingsDraftRoleFamilyState(roleId ?? ''),
   );
 
   if (!roleId) {
