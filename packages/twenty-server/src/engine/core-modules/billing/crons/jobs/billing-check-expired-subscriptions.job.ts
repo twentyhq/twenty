@@ -13,7 +13,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
-export const CHECK_EXPIRED_SUBSCRIPTIONS_CRON_PATTERN = '* * * * *'; // Run at midnight every day
+export const CHECK_EXPIRED_SUBSCRIPTIONS_CRON_PATTERN = '15 * * * *'; // Run every 15 minutes
 
 @Processor(MessageQueue.cronQueue)
 export class CheckExpiredSubscriptionsJob {
@@ -58,6 +58,8 @@ export class CheckExpiredSubscriptionsJob {
 
       if (!subscription) continue;
 
+      let supendedWorkspacesCount = 0;
+
       if (
         subscription.currentPeriodEnd &&
         subscription.currentPeriodEnd < now
@@ -70,10 +72,21 @@ export class CheckExpiredSubscriptionsJob {
           status: SubscriptionStatus.Expired,
         });
 
-        this.logger.log(
+        supendedWorkspacesCount += 1;
+
+        this.logger.warn(
           `Suspended workspace ${workspace.id} due to expired subscription`,
         );
       }
+
+      const ExpiredCheckConclusionMsg =
+        supendedWorkspacesCount === 0
+          ? 'No workspaces have been suspended'
+          : `Suspended ${supendedWorkspacesCount} worksaces.`;
+
+      this.logger.log(
+        `Finished epxired subscription check. ${ExpiredCheckConclusionMsg}`,
+      );
     }
   }
 }
