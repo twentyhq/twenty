@@ -19,9 +19,13 @@ export class CreateAgentTable1747401483136 implements MigrationInterface {
         CONSTRAINT "PK_agent" PRIMARY KEY ("id")
       )`,
     );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_AGENT_ID_DELETED_AT" ON "core"."agent" ("id", "deletedAt")`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`DROP INDEX "core"."IDX_AGENT_ID_DELETED_AT"`);
     await queryRunner.query(`DROP TABLE "core"."agent"`);
   }
 }
