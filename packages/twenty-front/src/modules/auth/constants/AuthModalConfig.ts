@@ -17,7 +17,7 @@ export const AUTH_MODAL_CONFIG: {
     showScrollWrapper: true,
   },
   [AppPath.BookCall]: {
-    size: 'large',
+    size: 'extraLarge',
     variant: 'transparent',
     showScrollWrapper: false,
   },
