@@ -14,7 +14,8 @@ export const RecordTableRecordGroupSectionLoadMore = () => {
 
   const currentRecordGroupId = useCurrentRecordGroupId();
 
-  const { fetchMoreRecords } = useLazyLoadRecordIndexTable(objectNameSingular);
+  const { fetchMoreRecordsLazy } =
+    useLazyLoadRecordIndexTable(objectNameSingular);
 
   const hasFetchedAllRecords = useRecoilComponentFamilyValueV2(
     recordIndexHasFetchedAllRecordsByGroupComponentState,
@@ -30,7 +31,7 @@ export const RecordTableRecordGroupSectionLoadMore = () => {
   );
 
   const handleLoadMore = () => {
-    fetchMoreRecords();
+    fetchMoreRecordsLazy();
   };
 
   if (hasFetchedAllRecords || isLoadMoreLocked) {

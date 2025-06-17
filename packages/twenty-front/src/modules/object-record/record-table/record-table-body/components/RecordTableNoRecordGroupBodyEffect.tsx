@@ -92,12 +92,14 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
   ]);
 
   useEffect(() => {
-    if (showAuthModal) {
+    if (showAuthModal || isFetchingMoreObjects) {
       return;
     }
 
     const fetchRecords = async () => {
+      console.log('fetching records');
       const { records, totalCount, hasNextPage } = await findManyRecordsLazy();
+      setIsFetchingMoreObjects(true);
       setHasRecordTableFetchedAllRecordsComponents(!hasNextPage);
       if (isNonEmptyString(lastShowPageRecordId)) {
         const isRecordAlreadyFetched = records.some(
@@ -120,18 +122,22 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
         records,
         totalCount,
       });
+      setIsFetchingMoreObjects(false);
       setIsRecordTableInitialLoading(false);
     };
 
     fetchRecords();
   }, [
     findManyRecordsLazy,
-    hasInitializedScroll,
-    lastShowPageRecordId,
-    scrollToPosition,
-    setHasRecordTableFetchedAllRecordsComponents,
-    setIsRecordTableInitialLoading,
-    showAuthModal,
+    // hasInitializedScroll,
+    // isFetchingMoreObjects,
+    // lastShowPageRecordId,
+    // scrollToPosition,
+    // setHasRecordTableFetchedAllRecordsComponents,
+    // setIsFetchingMoreObjects,
+    // setIsRecordTableInitialLoading,
+    // setRecordTableData,
+    // showAuthModal,
   ]);
 
   return <></>;
