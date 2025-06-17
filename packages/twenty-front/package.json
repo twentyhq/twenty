@@ -54,6 +54,7 @@
     "docx": "^9.1.0",
     "file-saver": "^2.0.5",
     "firebase": "^11.2.0",
+    "onesignal": "^0.1.2",
     "transliteration": "^2.3.5",
     "twenty-shared": "workspace:*",
     "twenty-ui": "workspace:*"
