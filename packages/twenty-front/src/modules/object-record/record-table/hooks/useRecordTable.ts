@@ -20,7 +20,6 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { useLeaveTableFocus } from './internal/useLeaveTableFocus';
 import { useResetTableRowSelection } from './internal/useResetTableRowSelection';
 import { useSelectAllRows } from './internal/useSelectAllRows';
-import { useSetRecordTableData } from './internal/useSetRecordTableData';
 import { useSetRecordTableFocusPosition } from './internal/useSetRecordTableFocusPosition';
 import { useSetRowSelectedState } from './internal/useSetRowSelectedState';
 type useRecordTableProps = {
@@ -86,10 +85,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
       },
     [onColumnsChangeState],
   );
-
-  const setRecordTableData = useSetRecordTableData({
-    recordTableId,
-  });
 
   const leaveTableFocus = useLeaveTableFocus(recordTableId);
 

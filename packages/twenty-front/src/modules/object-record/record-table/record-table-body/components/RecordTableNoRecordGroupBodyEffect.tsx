@@ -40,10 +40,6 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
   const { scrollToPosition } = useScrollToPosition();
 
   useEffect(() => {
-    if (showAuthModal) {
-      return;
-    }
-
     if (!loading) {
       setRecordTableData({
         records,
