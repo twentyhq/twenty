@@ -6,7 +6,7 @@ import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpre
 import { StepBar } from '@/ui/navigation/step-bar/components/StepBar';
 import { useStepBar } from '@/ui/navigation/step-bar/hooks/useStepBar';
 
-import { spreadsheetImportIsStepBarVisibleState } from '@/spreadsheet-import/states/spreadsheetImportIsStepBarVisibleState';
+import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
@@ -28,9 +28,7 @@ const StyledHeader = styled(Modal.Header)`
 export const SpreadsheetImportStepperContainer = () => {
   const { t } = useLingui();
 
-  const spreadsheetImportIsStepBarVisible = useRecoilValue(
-    spreadsheetImportIsStepBarVisibleState,
-  );
+  const spreadsheetImportDialog = useRecoilValue(spreadsheetImportDialogState);
 
   const stepTitles = {
     uploadStep: t`Upload File`,
@@ -51,7 +49,7 @@ export const SpreadsheetImportStepperContainer = () => {
   return (
     <>
       <StyledHeader>
-        {spreadsheetImportIsStepBarVisible && (
+        {spreadsheetImportDialog.isStepBarVisible && (
           <StepBar activeStep={activeStep}>
             {steps.map((key) => (
               <StepBar.Step

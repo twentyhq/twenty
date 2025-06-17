@@ -1,9 +1,9 @@
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
+import { useHideStepBar } from '@/spreadsheet-import/hooks/useHideStepBar';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
-import { spreadsheetImportIsStepBarVisibleState } from '@/spreadsheet-import/states/spreadsheetImportIsStepBarVisibleState';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -38,10 +38,8 @@ type ImportDataStepProps = {
 export const ImportDataStep = ({
   recordsToImportCount,
 }: ImportDataStepProps) => {
-  const setIsStepBarVisible = useSetRecoilState(
-    spreadsheetImportIsStepBarVisibleState,
-  );
-  setIsStepBarVisible(false);
+  const hideStepBar = useHideStepBar();
+  hideStepBar();
 
   const { onClose } = useSpreadsheetImportInternal();
   const spreadsheetImportCreatedRecordsProgress = useRecoilValue(
