@@ -9,7 +9,6 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 
 const StyledIconButtonGroup = styled(IconButtonGroup)`
-  border: 1px solid ${({ theme }) => theme.border.color.strong};
   pointer-events: all;
 `;
 
