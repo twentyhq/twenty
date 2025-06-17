@@ -60,10 +60,7 @@ export class AgentExecutionService {
     }
   }
 
-  async executeAgent(
-    agent: AgentEntity,
-    context: Record<string, unknown>,
-  ): Promise<{ output: unknown; duration: number }> {
+  async executeAgent(agent: AgentEntity, context: Record<string, unknown>) {
     try {
       const { provider } = this.getModelConfig(agent.model);
 
