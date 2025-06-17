@@ -1,9 +1,11 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { ReactNode } from 'react';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
 import { useRecordIndexTableQuery } from '@/object-record/record-index/hooks/useRecordIndexTableQuery';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
+import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { MockedResponse } from '@apollo/client/testing';
 import gql from 'graphql-tag';
@@ -661,18 +663,24 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
   return (
     <HookMockWrapper>
       <ObjectNamePluralSetter>
-        <ViewComponentInstanceContext.Provider
-          value={{ instanceId: 'instanceId' }}
+        <RecordTableContextProvider
+          recordTableId={recordTableId}
+          viewBarId="viewBarId"
+          objectNameSingular={CoreObjectNameSingular.Person}
         >
-          <RecordTableComponentInstance
-            recordTableId={recordTableId}
-            onColumnsChange={onColumnsChange}
+          <ViewComponentInstanceContext.Provider
+            value={{ instanceId: 'instanceId' }}
           >
-            <RecordGroupContext.Provider value={{ recordGroupId: 'default' }}>
-              {children}
-            </RecordGroupContext.Provider>
-          </RecordTableComponentInstance>
-        </ViewComponentInstanceContext.Provider>
+            <RecordTableComponentInstance
+              recordTableId={recordTableId}
+              onColumnsChange={onColumnsChange}
+            >
+              <RecordGroupContext.Provider value={{ recordGroupId: 'default' }}>
+                {children}
+              </RecordGroupContext.Provider>
+            </RecordTableComponentInstance>
+          </ViewComponentInstanceContext.Provider>
+        </RecordTableContextProvider>
       </ObjectNamePluralSetter>
     </HookMockWrapper>
   );
