@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
 import { useRecordIndexTableQuery } from '@/object-record/record-index/hooks/useRecordIndexTableQuery';
@@ -8,6 +8,7 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useSetRecordTableData } from '@/object-record/record-table/hooks/internal/useSetRecordTableData';
 import { hasRecordTableFetchedAllRecordsComponentStateV2 } from '@/object-record/record-table/states/hasRecordTableFetchedAllRecordsComponentStateV2';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
+import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { useScrollToPosition } from '@/ui/utilities/scroll/hooks/useScrollToPosition';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -34,13 +35,16 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
   const setIsRecordTableInitialLoading = useSetRecoilComponentStateV2(
     isRecordTableInitialLoadingComponentState,
   );
+  const isFetchingMoreRecords = useRecoilValue(
+    isFetchingMoreRecordsFamilyState(recordTableId),
+  );
 
   const [lastShowPageRecordId] = useRecoilState(lastShowPageRecordIdState);
 
   const { scrollToPosition } = useScrollToPosition();
 
   useEffect(() => {
-    if (!loading) {
+    if (!loading && !isFetchingMoreRecords) {
       setRecordTableData({
         records,
       });
@@ -49,6 +53,7 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
     }
   }, [
     hasNextPage,
+    isFetchingMoreRecords,
     loading,
     records,
     setHasRecordTableFetchedAllRecordsComponents,
