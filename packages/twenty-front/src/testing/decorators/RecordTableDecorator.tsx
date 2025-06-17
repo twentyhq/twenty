@@ -154,12 +154,12 @@ export const RecordTableDecorator: Decorator = (Story, context) => {
                   instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
                 }}
               >
-                <InternalTableStateLoaderEffect
-                  objectMetadataItem={objectMetadataItem}
-                />
                 <InternalTableContextProviders
                   objectMetadataItem={objectMetadataItem}
                 >
+                  <InternalTableStateLoaderEffect
+                    objectMetadataItem={objectMetadataItem}
+                  />
                   <Story />
                 </InternalTableContextProviders>
               </ActionMenuComponentInstanceContext.Provider>

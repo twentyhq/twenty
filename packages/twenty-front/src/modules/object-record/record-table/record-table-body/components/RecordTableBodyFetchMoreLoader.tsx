@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { useInView } from 'react-intersection-observer';
-import { useRecoilCallback, useRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import { useRecordIndexTableFetchMore } from '@/object-record/record-index/hooks/useRecordIndexTableFetchMore';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -9,6 +9,7 @@ import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetch
 import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { GRAY_SCALE } from 'twenty-ui/theme';
+import { useDebouncedCallback } from 'use-debounce';
 
 const StyledText = styled.div`
   align-items: center;
@@ -30,17 +31,6 @@ export const RecordTableBodyFetchMoreLoader = () => {
     isFetchingMoreRecordsFamilyState(recordTableId),
   );
 
-  const onLastRowVisible = useRecoilCallback(
-    () => async (inView: boolean) => {
-      if (inView && !isFetchingMoreRecords) {
-        setIsFetchingMoreRecords(true);
-        await fetchMoreRecordsLazy();
-        setIsFetchingMoreRecords(false);
-      }
-    },
-    [isFetchingMoreRecords, fetchMoreRecordsLazy, setIsFetchingMoreRecords],
-  );
-
   const { scrollWrapperHTMLElement } = useScrollWrapperElement();
 
   const hasRecordTableFetchedAllRecordsComponents = useRecoilComponentValueV2(
@@ -48,9 +38,21 @@ export const RecordTableBodyFetchMoreLoader = () => {
   );
 
   const showLoadingMoreRow = !hasRecordTableFetchedAllRecordsComponents;
+  const debouncedFetchMoreRecordsLazy = useDebouncedCallback(
+    fetchMoreRecordsLazy,
+    100,
+  );
 
   const { ref: tbodyRef } = useInView({
-    onChange: onLastRowVisible,
+    onChange: async (inView) => {
+      if (isFetchingMoreRecords || !inView) {
+        return;
+      }
+
+      setIsFetchingMoreRecords(true);
+      await debouncedFetchMoreRecordsLazy();
+      setIsFetchingMoreRecords(false);
+    },
     delay: 1000,
     rootMargin: '1000px',
     root: scrollWrapperHTMLElement,
