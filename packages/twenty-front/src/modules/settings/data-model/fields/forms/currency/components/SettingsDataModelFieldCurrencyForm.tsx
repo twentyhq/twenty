@@ -85,10 +85,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
             <Select<string>
               dropdownWidth={140}
               value={value}
-              onChange={(e) => {
-                console.log({ e });
-                onChange(e);
-              }}
+              onChange={onChange}
               disabled={disabled}
               dropdownId="object-field-format-select"
               options={[

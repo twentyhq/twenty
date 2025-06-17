@@ -17,7 +17,8 @@ export const useCurrencySettingsFormInitialValues = ({
     fieldMetadataItem?.defaultValue?.currencyCode ??
     applySimpleQuotesToString(CurrencyCode.USD);
   const initialFormatValue =
-    (fieldMetadataItem?.defaultValue?.format as FieldCurrencyFormat) ?? applySimpleQuotesToString('short');
+    (fieldMetadataItem?.defaultValue?.format as FieldCurrencyFormat) ??
+    "'short'";
   const initialDefaultValue = {
     amountMicros: initialAmountMicrosValue,
     currencyCode: initialCurrencyCodeValue,
