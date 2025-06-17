@@ -7,7 +7,6 @@ type OpportunityDataSeed = {
   name: string;
   amountAmountMicros: number;
   amountCurrencyCode: string;
-  amountFormat: string;
   closeDate: Date;
   stage: string;
   position: number;
@@ -23,7 +22,6 @@ export const OPPORTUNITY_DATA_SEED_COLUMNS: (keyof OpportunityDataSeed)[] = [
   'name',
   'amountAmountMicros',
   'amountCurrencyCode',
-  'amountFormat',
   'closeDate',
   'stage',
   'position',
@@ -47,7 +45,6 @@ export const OPPORTUNITY_DATA_SEEDS: OpportunityDataSeed[] = [
     name: 'Opportunity 1',
     amountAmountMicros: 100000,
     amountCurrencyCode: 'USD',
-    amountFormat: 'short',
     closeDate: new Date(),
     stage: 'NEW',
     position: 1,
@@ -62,7 +59,6 @@ export const OPPORTUNITY_DATA_SEEDS: OpportunityDataSeed[] = [
     name: 'Opportunity 2',
     amountAmountMicros: 2000000,
     amountCurrencyCode: 'USD',
-    amountFormat: 'short',
     closeDate: new Date(),
     stage: 'MEETING',
     position: 2,
@@ -77,7 +73,6 @@ export const OPPORTUNITY_DATA_SEEDS: OpportunityDataSeed[] = [
     name: 'Opportunity 3',
     amountAmountMicros: 300000,
     amountCurrencyCode: 'USD',
-    amountFormat: 'short',
     closeDate: new Date(),
     stage: 'PROPOSAL',
     position: 3,
@@ -92,7 +87,6 @@ export const OPPORTUNITY_DATA_SEEDS: OpportunityDataSeed[] = [
     name: 'Opportunity 4',
     amountAmountMicros: 4000000,
     amountCurrencyCode: 'USD',
-    amountFormat: 'short',
     closeDate: new Date(),
     stage: 'PROPOSAL',
     position: 4,

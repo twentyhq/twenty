@@ -33,8 +33,7 @@ export function generateDefaultValue(
     case FieldMetadataType.CURRENCY:
       return {
         amountMicros: null,
-        currencyCode: "'USD'",
-        format: "'short'",
+        currencyCode: "''",
       };
     case FieldMetadataType.LINKS:
       return {

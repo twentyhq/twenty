@@ -17,17 +17,10 @@ export const currencyCompositeType: CompositeType = {
       hidden: false,
       isRequired: false,
     },
-    {
-      name: 'format',
-      type: FieldMetadataType.TEXT,
-      hidden: false,
-      isRequired: false,
-    },
   ],
 };
 
 export type CurrencyMetadata = {
   amountMicros: number;
   currencyCode: string;
-  format: string;
 };

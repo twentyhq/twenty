@@ -60,7 +60,6 @@ export class DevSeederService {
     const featureFlags =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
 
-    // An order issue right here ?
     await this.workspaceSyncMetadataService.synchronize({
       workspaceId: workspaceId,
       dataSourceId: dataSourceMetadata.id,

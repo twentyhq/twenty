@@ -2,7 +2,6 @@ import {
   IsArray,
   IsBoolean,
   IsDate,
-  IsIn,
   IsNotEmpty,
   IsNumber,
   IsNumberString,
@@ -11,7 +10,7 @@ import {
   IsString,
   IsUUID,
   Matches,
-  ValidateIf,
+  ValidateIf
 } from 'class-validator';
 
 import { IsQuotedString } from 'src/engine/metadata-modules/field-metadata/validators/is-quoted-string.validator';
@@ -90,14 +89,7 @@ export class FieldMetadataDefaultValueCurrency {
 
   @ValidateIf((object, value) => value !== null)
   @IsQuotedString()
-  // No integrity validation within decorators ?
   currencyCode: string | null;
-
-  @ValidateIf((object, value) => value !== null)
-  @IsQuotedString()
-  // TODO improve
-  @IsIn(["'short'", "'full'"])
-  format: string | null;
 }
 
 export class FieldMetadataDefaultValueFullName {

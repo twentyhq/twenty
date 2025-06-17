@@ -116,7 +116,6 @@ export const mapFieldMetadataToGraphqlQuery = (
       {
         amountMicros
         currencyCode
-        format
       }
     `;
   } else if (fieldType === FieldMetadataType.FULL_NAME) {

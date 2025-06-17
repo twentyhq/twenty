@@ -75,7 +75,6 @@ export const PET_CUSTOM_FIELD_SEEDS: FieldMetadataSeed[] = [
     name: 'pictures',
   },
   {
-    // HERE :thinking:
     type: FieldMetadataType.CURRENCY,
     label: 'Average cost of kibble per month',
     name: 'averageCostOfKibblePerMonth',

@@ -60,6 +60,7 @@ import {
   PERSON_DATA_SEED_COLUMNS,
   PERSON_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
+import { PET_DATA_SEED_COLUMNS, PET_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/pet-data-seeds.constant';
 import {
   SURVEY_RESULT_DATA_SEED_COLUMNS,
   SURVEY_RESULT_DATA_SEEDS,
@@ -163,12 +164,11 @@ const RECORD_SEEDS_CONFIGS = [
     pgColumns: WORKFLOW_VERSION_DATA_SEED_COLUMNS,
     recordSeeds: WORKFLOW_VERSION_DATA_SEEDS,
   },
-  // TODO debug too long columns name ?
-  // {
-  //   tableName: '_pet',
-  //   pgColumns: PET_DATA_SEED_COLUMNS,
-  //   recordSeeds: PET_DATA_SEEDS,
-  // },
+  {
+    tableName: '_pet',
+    pgColumns: PET_DATA_SEED_COLUMNS,
+    recordSeeds: PET_DATA_SEEDS,
+  },
   {
     tableName: '_surveyResult',
     pgColumns: SURVEY_RESULT_DATA_SEED_COLUMNS,
