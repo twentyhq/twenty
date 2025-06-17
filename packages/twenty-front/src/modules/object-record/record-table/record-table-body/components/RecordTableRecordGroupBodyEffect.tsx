@@ -7,7 +7,7 @@ import { useLazyLoadRecordIndexTable } from '@/object-record/record-index/hooks/
 import { recordIndexHasFetchedAllRecordsByGroupComponentState } from '@/object-record/record-index/states/recordIndexHasFetchedAllRecordsByGroupComponentState';
 import { ROW_HEIGHT } from '@/object-record/record-table/constants/RowHeight';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { useSetRecordTableData } from '@/object-record/record-table/hooks/internal/useSetRecordTableData';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useScrollToPosition } from '@/ui/utilities/scroll/hooks/useScrollToPosition';
 import { useSetRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyStateV2';
@@ -16,10 +16,13 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 export const RecordTableRecordGroupBodyEffect = () => {
   const { objectNameSingular } = useRecordTableContextOrThrow();
+  const { recordTableId } = useRecordTableContextOrThrow();
 
   const [hasInitialized, setHasInitialized] = useState(false);
 
-  const { setRecordTableData } = useRecordTable();
+  const setRecordTableData = useSetRecordTableData({
+    recordTableId,
+  });
 
   const setIsRecordTableInitialLoading = useSetRecoilComponentStateV2(
     isRecordTableInitialLoadingComponentState,
@@ -42,12 +45,11 @@ export const RecordTableRecordGroupBodyEffect = () => {
 
   useEffect(() => {
     const fetchRecords = async () => {
-      const { records, totalCount, hasNextPage } = await findManyRecordsLazy();
+      const { records, hasNextPage } = await findManyRecordsLazy();
       setHasRecordFetchedAllRecordsComponents(hasNextPage);
       setRecordTableData({
         records,
         currentRecordGroupId: recordGroupId,
-        totalCount,
       });
       if (isNonEmptyString(lastShowPageRecordId)) {
         const recordPosition = records.findIndex(
@@ -71,6 +73,9 @@ export const RecordTableRecordGroupBodyEffect = () => {
     recordGroupId,
     lastShowPageRecordId,
     scrollToPosition,
+    setHasRecordFetchedAllRecordsComponents,
+    setRecordTableData,
+    setIsRecordTableInitialLoading,
   ]);
 
   return <></>;

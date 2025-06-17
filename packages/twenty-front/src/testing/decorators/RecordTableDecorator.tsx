@@ -48,7 +48,6 @@ const InternalTableStateLoaderEffect = ({
     loadRecordIndexStates(view, objectMetadataItem);
     setRecordTableData({
       records: getCompaniesMock(),
-      totalCount: getCompaniesMock().length,
     });
   }, [loadRecordIndexStates, objectMetadataItem, setRecordTableData, view]);
 

@@ -11,7 +11,6 @@ import { availableTableColumnsComponentState } from '@/object-record/record-tabl
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { onColumnsChangeComponentState } from '@/object-record/record-table/states/onColumnsChangeComponentState';
-import { onEntityCountChangeComponentState } from '@/object-record/record-table/states/onEntityCountChangeComponentState';
 
 import { useRecordTableMove } from '@/object-record/record-table/hooks/useRecordTableMove';
 import { onToggleColumnSortComponentState } from '@/object-record/record-table/states/onToggleColumnSortComponentState';
@@ -56,11 +55,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     [availableTableColumnsState],
   );
 
-  const setOnEntityCountChange = useSetRecoilComponentStateV2(
-    onEntityCountChangeComponentState,
-    recordTableId,
-  );
-
   const setOnColumnsChange = useSetRecoilComponentStateV2(
     onColumnsChangeComponentState,
     recordTableId,
@@ -99,27 +93,8 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     [onColumnsChangeState],
   );
 
-  const onEntityCountChangeState = useRecoilComponentCallbackStateV2(
-    onEntityCountChangeComponentState,
-    recordTableId,
-  );
-
-  const onEntityCountChange = useRecoilCallback(
-    ({ snapshot }) =>
-      (count?: number, currentRecordGroupId?: string) => {
-        const onEntityCountChange = getSnapshotValue(
-          snapshot,
-          onEntityCountChangeState,
-        );
-
-        onEntityCountChange?.(count, currentRecordGroupId);
-      },
-    [onEntityCountChangeState],
-  );
-
   const setRecordTableData = useSetRecordTableData({
     recordTableId,
-    onEntityCountChange,
   });
 
   const leaveTableFocus = useLeaveTableFocus(recordTableId);
@@ -139,7 +114,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
   return {
     onColumnsChange,
     setAvailableTableColumns,
-    setOnEntityCountChange,
     setRecordTableData,
     leaveTableFocus,
     setRowSelected,
