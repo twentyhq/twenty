@@ -40,7 +40,7 @@ export const useHotkeysOnFocusedElementCallback = (
           .getValue();
 
         if (
-          currentFocusId !== focusId &&
+          currentFocusId !== focusId ||
           !currentHotkeyScopes.includes(scope)
         ) {
           if (DEBUG_HOTKEY_SCOPE) {

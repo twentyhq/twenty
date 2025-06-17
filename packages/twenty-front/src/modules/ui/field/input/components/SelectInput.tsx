@@ -1,4 +1,5 @@
 import { SelectInput as SelectBaseInput } from '@/ui/input/components/SelectInput';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectOption } from 'twenty-ui/input';
 
@@ -33,6 +34,7 @@ export const SelectInput = ({
       selectableListInstanceId={selectableListComponentInstanceId}
       selectableItemIdArray={selectableItemIdArray}
       focusId={focusId}
+      hotkeyScope={DropdownHotkeyScope.Dropdown}
     >
       <SelectBaseInput
         onOptionSelected={onOptionSelected}

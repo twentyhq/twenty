@@ -1,4 +1,5 @@
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { dropdownMaxHeightComponentState } from '@/ui/layout/dropdown/states/internal/dropdownMaxHeightComponentState';
@@ -46,7 +47,6 @@ export type DropdownInternalContainerProps = {
   floatingStyles: UseFloatingReturn['floatingStyles'];
   hotkey?: {
     key: Keys;
-    scope: string;
   };
   onHotkeyTriggered?: () => void;
   dropdownComponents: React.ReactNode;
@@ -114,7 +114,7 @@ export const DropdownInternalContainer = ({
       }
     },
     focusId: dropdownId,
-    scope: 'dropdown',
+    scope: DropdownHotkeyScope.Dropdown,
     dependencies: [
       closeDropdown,
       isDropdownOpen,
@@ -134,7 +134,11 @@ export const DropdownInternalContainer = ({
   return (
     <>
       {hotkey && onHotkeyTriggered && (
-        <HotkeyEffect hotkey={hotkey} onHotkeyTriggered={onHotkeyTriggered} />
+        <HotkeyEffect
+          hotkey={hotkey}
+          onHotkeyTriggered={onHotkeyTriggered}
+          focusId={dropdownId}
+        />
       )}
 
       <FloatingPortal>

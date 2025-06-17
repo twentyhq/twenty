@@ -10,6 +10,7 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -88,6 +89,7 @@ export const RecordIndexActionMenuDropdown = () => {
                 focusId={dropdownId}
                 selectableItemIdArray={selectedItemIdArray}
                 selectableListInstanceId={dropdownId}
+                hotkeyScope={DropdownHotkeyScope.Dropdown}
               >
                 {recordIndexActions.map((action) => (
                   <ActionComponent action={action} key={action.key} />

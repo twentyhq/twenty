@@ -25,6 +25,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -240,6 +241,7 @@ export const ObjectSortDropdownButton = () => {
             selectableListInstanceId={OBJECT_SORT_DROPDOWN_ID}
             selectableItemIdArray={selectableItemIdArray}
             focusId={OBJECT_SORT_DROPDOWN_ID}
+            hotkeyScope={DropdownHotkeyScope.Dropdown}
           >
             {isRecordSortDirectionMenuUnfolded && (
               <StyledSelectedSortDirectionContainer>

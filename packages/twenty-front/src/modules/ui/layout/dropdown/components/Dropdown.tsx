@@ -46,7 +46,6 @@ export type DropdownProps = {
   dropdownComponents: ReactNode;
   hotkey?: {
     key: Keys;
-    scope: string;
   };
   globalHotkeysConfig?: Partial<GlobalHotkeysConfig>;
   dropdownId: string;

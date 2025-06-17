@@ -11,10 +11,13 @@ export const useSelectableListListenToEnterHotkeyOnItem = ({
   focusId,
   itemId,
   onEnter,
+  hotkeyScope,
 }: {
   focusId: string;
   itemId: string;
   onEnter: () => void;
+  // TODO: Remove this after migration to focus stack
+  hotkeyScope: string;
 }) => {
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     SelectableListComponentInstanceContext,
@@ -39,7 +42,7 @@ export const useSelectableListListenToEnterHotkeyOnItem = ({
       [instanceId, itemId, onEnter],
     ),
     focusId,
-    scope: 'selectable-list', // Legacy scope for compatibility during migration
+    scope: hotkeyScope,
     dependencies: [itemId, onEnter],
   });
 };

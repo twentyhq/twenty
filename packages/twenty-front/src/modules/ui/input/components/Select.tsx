@@ -9,6 +9,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -168,6 +169,7 @@ export const Select = <Value extends SelectValue>({
                     selectableListInstanceId={dropdownId}
                     focusId={dropdownId}
                     selectableItemIdArray={selectableItemIdArray}
+                    hotkeyScope={DropdownHotkeyScope.Dropdown}
                   >
                     {filteredOptions.map((option) => (
                       <SelectableListItem

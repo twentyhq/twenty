@@ -12,6 +12,8 @@ type Direction = 'up' | 'down' | 'left' | 'right';
 
 export const useSelectableListHotKeys = (
   instanceId: string,
+  // TODO: Remove this after migration to focus stack
+  hotkeyScope: string,
   focusId: string,
   onSelect?: (itemId: string) => void,
 ) => {
@@ -138,7 +140,7 @@ export const useSelectableListHotKeys = (
     keys: Key.ArrowUp,
     callback: () => handleSelect('up'),
     focusId,
-    scope: 'selectable-list', // Legacy scope for compatibility during migration
+    scope: hotkeyScope,
     dependencies: [handleSelect],
   });
 
@@ -146,7 +148,7 @@ export const useSelectableListHotKeys = (
     keys: Key.ArrowDown,
     callback: () => handleSelect('down'),
     focusId,
-    scope: 'selectable-list', // Legacy scope for compatibility during migration
+    scope: hotkeyScope,
     dependencies: [handleSelect],
   });
 
@@ -154,7 +156,7 @@ export const useSelectableListHotKeys = (
     keys: Key.ArrowLeft,
     callback: () => handleSelect('left'),
     focusId,
-    scope: 'selectable-list', // Legacy scope for compatibility during migration
+    scope: hotkeyScope,
     dependencies: [handleSelect],
   });
 
@@ -162,7 +164,7 @@ export const useSelectableListHotKeys = (
     keys: Key.ArrowRight,
     callback: () => handleSelect('right'),
     focusId,
-    scope: 'selectable-list', // Legacy scope for compatibility during migration
+    scope: hotkeyScope,
     dependencies: [handleSelect],
   });
 };

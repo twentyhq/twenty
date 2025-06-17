@@ -12,6 +12,7 @@ import { SingleRecordPickerComponentInstanceContext } from '@/object-record/reco
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { getSingleRecordPickerSelectableListId } from '@/object-record/record-picker/single-record-picker/utils/getSingleRecordPickerSelectableListId';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -108,7 +109,8 @@ export const SingleRecordPickerMenuItems = ({
       <SelectableList
         selectableListInstanceId={selectableListComponentInstanceId}
         selectableItemIdArray={selectableItemIds}
-        focusId={selectableListComponentInstanceId}
+        focusId={focusId}
+        hotkeyScope={DropdownHotkeyScope.Dropdown}
       >
         <DropdownMenuItemsContainer hasMaxHeight>
           {loading && !isFiltered ? (

@@ -15,6 +15,7 @@ type SelectableListProps = {
   onSelect?: (selected: string) => void;
   selectableListInstanceId: string;
   focusId: string;
+  hotkeyScope: string;
 };
 
 export const SelectableList = ({
@@ -24,8 +25,14 @@ export const SelectableList = ({
   selectableListInstanceId,
   onSelect,
   focusId,
+  hotkeyScope,
 }: SelectableListProps) => {
-  useSelectableListHotKeys(selectableListInstanceId, focusId, onSelect);
+  useSelectableListHotKeys(
+    selectableListInstanceId,
+    hotkeyScope,
+    focusId,
+    onSelect,
+  );
 
   const setSelectableItemIds = useSetRecoilComponentStateV2(
     selectableItemIdsComponentState,
@@ -54,7 +61,7 @@ export const SelectableList = ({
         instanceId: selectableListInstanceId,
       }}
     >
-      <SelectableListContextProvider value={{ focusId }}>
+      <SelectableListContextProvider value={{ focusId, hotkeyScope }}>
         {children}
       </SelectableListContextProvider>
     </SelectableListComponentInstanceContext.Provider>

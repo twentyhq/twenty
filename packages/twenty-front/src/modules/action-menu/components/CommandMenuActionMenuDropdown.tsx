@@ -3,9 +3,11 @@ import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getRightDrawerActionMenuDropdownIdFromActionMenuId';
+import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -35,7 +37,7 @@ export const CommandMenuActionMenuDropdown = () => {
     callback: () => {
       toggleDropdown(dropdownId);
     },
-    focusId: 'global', // TODO: Update this
+    focusId: SIDE_PANEL_FOCUS_ID,
     scope: AppHotkeyScope.CommandMenuOpen,
     dependencies: [toggleDropdown],
   });
@@ -73,6 +75,7 @@ export const CommandMenuActionMenuDropdown = () => {
               selectableListInstanceId={actionMenuId}
               focusId={dropdownId}
               selectableItemIdArray={selectableItemIdArray}
+              hotkeyScope={DropdownHotkeyScope.Dropdown}
             >
               {recordSelectionActions.map((action) => (
                 <ActionComponent action={action} key={action.key} />
