@@ -1,5 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
+
 import { ClientConfigService } from 'src/engine/core-modules/client-config/services/client-config.service';
 
 import { ClientConfigController } from './client-config.controller';
@@ -56,7 +58,7 @@ describe('ClientConfigController', () => {
         frontDomain: 'localhost',
         debugMode: true,
         support: {
-          supportDriver: 'none',
+          supportDriver: SupportDriver.NONE,
           supportFrontChatId: undefined,
         },
         sentry: {

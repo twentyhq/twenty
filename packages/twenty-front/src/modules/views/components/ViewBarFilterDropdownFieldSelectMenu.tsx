@@ -16,6 +16,7 @@ import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/
 import { ViewBarFilterDropdownBottomMenu } from '@/views/components/ViewBarFilterDropdownBottomMenu';
 import { ViewBarFilterDropdownFieldSelectMenuItem } from '@/views/components/ViewBarFilterDropdownFieldSelectMenuItem';
 
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS } from '@/views/constants/ViewBarFilterBottomMenuItemIds';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 import { useLingui } from '@lingui/react/macro';
@@ -81,7 +82,7 @@ export const ViewBarFilterDropdownFieldSelectMenu = () => {
   const { t } = useLingui();
 
   return (
-    <DropdownContent>
+    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
       <StyledInput
         value={objectFilterDropdownSearchInput}
         autoFocus

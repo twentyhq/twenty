@@ -1,13 +1,13 @@
 import { useRecordFilterField } from '@/object-record/advanced-filter/hooks/useRecordFilterField';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 
-type AdvancedFilterFieldSelectDropdownButtonClickableSelectProps = {
+type WorkflowAdvancedFilterFieldSelectDisabledProps = {
   recordFilterId: string;
 };
 
-export const AdvancedFilterFieldSelectDropdownButtonClickableSelect = ({
+export const WorkflowAdvancedFilterFieldSelectDisabled = ({
   recordFilterId,
-}: AdvancedFilterFieldSelectDropdownButtonClickableSelectProps) => {
+}: WorkflowAdvancedFilterFieldSelectDisabledProps) => {
   const { label, icon } = useRecordFilterField(recordFilterId);
 
   return (
@@ -17,6 +17,7 @@ export const AdvancedFilterFieldSelectDropdownButtonClickableSelect = ({
         value: null,
         Icon: icon,
       }}
+      isDisabled
     />
   );
 };

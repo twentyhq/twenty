@@ -23,6 +23,7 @@ import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/uti
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useLingui } from '@lingui/react/macro';
@@ -140,7 +141,7 @@ export const AdvancedFilterFieldSelectMenu = ({
   const { t } = useLingui();
 
   return (
-    <DropdownContent>
+    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
       <AdvancedFilterFieldSelectSearchInput />
       <SelectableList
         focusId={advancedFilterFieldSelectDropdownId}
