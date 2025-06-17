@@ -6,10 +6,7 @@ import { SettingsDataModelFieldCurrencyFormValues } from '@/settings/data-model/
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 
 type UseCurrencySettingsFormInitialValuesArgs = {
-  fieldMetadataItem?: Pick<
-    FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'defaultValue' | 'settings'
-  >;
+  fieldMetadataItem?: Pick<FieldMetadataItem, 'defaultValue' | 'settings'>;
 };
 export const useCurrencySettingsFormInitialValues = ({
   fieldMetadataItem,
@@ -19,7 +16,7 @@ export const useCurrencySettingsFormInitialValues = ({
   const initialCurrencyCodeValue =
     fieldMetadataItem?.defaultValue?.currencyCode ??
     applySimpleQuotesToString(CurrencyCode.USD);
-  const initialFormatValue = fieldMetadataItem?.settings?.format ?? "'short'";
+  const initialFormatValue = fieldMetadataItem?.settings?.format ?? 'short';
   const initialDefaultValue: SettingsDataModelFieldCurrencyFormValues['defaultValue'] =
     {
       amountMicros: initialAmountMicrosValue,

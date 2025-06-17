@@ -50,7 +50,7 @@ export const CurrencyDisplay = ({
         </>
       )}
       {amountToDisplay !== null
-        ? !isDefined(format) || format === "'short'"
+        ? !isDefined(format) || format === 'short'
           ? formatAmount(amountToDisplay)
           : amountToDisplay
         : null}

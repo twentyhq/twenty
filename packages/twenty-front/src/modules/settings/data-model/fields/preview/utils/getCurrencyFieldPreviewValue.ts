@@ -11,7 +11,7 @@ export const getCurrencyFieldPreviewValue = ({
 }: {
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'defaultValue' | 'options' | 'type'
+    'defaultValue' | 'options' | 'type' | 'settings'
   >;
 }): FieldCurrencyValue | null => {
   if (fieldMetadataItem.type !== FieldMetadataType.CURRENCY) return null;
@@ -24,7 +24,6 @@ export const getCurrencyFieldPreviewValue = ({
 
   return currencyFieldDefaultValueSchema
     .transform((value) => ({
-      format: value.format || placeholderDefaultValue.format,
       amountMicros: value.amountMicros || placeholderDefaultValue.amountMicros,
       currencyCode: stripSimpleQuotesFromString(
         value.currencyCode,
