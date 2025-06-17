@@ -22,7 +22,6 @@ type Story = StoryObj<typeof FormCurrencyFieldInput>;
 const defaultSalaryValue: FormFieldCurrencyValue = {
   currencyCode: CurrencyCode.USD,
   amountMicros: 44000000,
-  format: 'short',
 };
 
 export const Default: Story = {
@@ -43,7 +42,6 @@ export const WithVariable: Story = {
     defaultValue: {
       currencyCode: `{{${MOCKED_STEP_ID}.amount.currencyCode}}` as CurrencyCode,
       amountMicros: `{{${MOCKED_STEP_ID}.amount.amountMicros}}`,
-      format: 'short',
     },
   },
   play: async ({ canvasElement }) => {

@@ -84,7 +84,9 @@ export type FieldLinksMetadata = BaseFieldMetadata & {
 export type FieldCurrencyMetadata = BaseFieldMetadata & {
   placeHolder: string;
   isPositive?: boolean;
-  settings?: FormFieldCurrencyValue;
+  settings?: {
+    format: FieldCurrencyFormat | null
+  };
 };
 
 export type FieldFullNameMetadata = BaseFieldMetadata & {
