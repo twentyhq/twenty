@@ -17,10 +17,8 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowExecutorInput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
 import { WorkflowExecutorOutput } from 'src/modules/workflow/workflow-executor/types/workflow-executor-output.type';
-import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
 
 import { isWorkflowAiAgentAction } from './guards/is-workflow-ai-agent-action.guard';
-import { WorkflowAiAgentActionInput } from './types/workflow-ai-agent-action-input.type';
 
 @Injectable()
 export class AiAgentWorkflowAction implements WorkflowExecutor {
@@ -51,12 +49,7 @@ export class AiAgentWorkflowAction implements WorkflowExecutor {
       );
     }
 
-    const workflowActionInput = resolveInput(
-      step.settings.input,
-      context,
-    ) as WorkflowAiAgentActionInput;
-
-    const { agentId } = workflowActionInput;
+    const { agentId } = step.settings.input;
 
     try {
       const agent = await this.agentRepository.findOne({
@@ -73,7 +66,10 @@ export class AiAgentWorkflowAction implements WorkflowExecutor {
         );
       }
 
-      const response = await this.agentExecutionService.executeAgent(agent);
+      const response = await this.agentExecutionService.executeAgent(
+        agent,
+        context,
+      );
 
       return { result: response };
     } catch (error) {

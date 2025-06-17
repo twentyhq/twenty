@@ -7,6 +7,8 @@ import { generateObject } from 'ai';
 import { Repository } from 'typeorm';
 import { z } from 'zod';
 
+import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
+
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
 
@@ -65,6 +67,7 @@ export class AgentExecutionService {
 
   async executeAgent(
     agent: AgentEntity,
+    context: Record<string, unknown>,
   ): Promise<{ output: unknown; duration: number }> {
     try {
       const { provider } = this.getModelConfig(agent.model);
@@ -86,7 +89,7 @@ export class AgentExecutionService {
 
       const output = await generateObject({
         model: this.getModel(agent.model),
-        prompt: agent.prompt,
+        prompt: resolveInput(agent.prompt, context) as string,
         schema,
       });
 
