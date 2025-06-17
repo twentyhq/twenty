@@ -37,6 +37,7 @@ export const RecordTableBodyFocusKeyboardEffect = () => {
         setHotkeyScope(RecordIndexHotkeyScope.RecordIndex, {
           goto: true,
           keyboardShortcutMenu: true,
+          searchRecords: true,
         });
       }
     },

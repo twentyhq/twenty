@@ -1,0 +1,14 @@
+{
+  "install": "yarn install",
+  "start": "sudo service docker start && echo 'Waiting for Docker to start...' && sleep 5 && echo 'Starting PostgreSQL and Redis containers...' && make postgres-on-docker && make redis-on-docker && sleep 15 && echo 'Containers started successfully! Checking status...' && docker ps --filter name=twenty_",
+  "terminals": [
+    {
+      "name": "Development Server",
+      "command": "sleep 20 && echo 'Starting Twenty development server...' && export SERVER_URL=http://localhost:3000 && yarn start"
+    },
+    {
+      "name": "Logs & Status",
+      "command": "sleep 10 && echo '=== Waiting for containers to be ready ===' && until docker exec twenty_pg pg_isready -U postgres 2>/dev/null; do echo 'Waiting for PostgreSQL...'; sleep 2; done && echo 'PostgreSQL is ready!' && echo '=== Container Status ===' && docker ps --filter name=twenty_ --format 'table {{.Names}}\\t{{.Status}}\\t{{.Ports}}' && echo '\\n=== Following PostgreSQL logs ===' && docker logs -f twenty_pg"
+    }
+  ]
+} 
