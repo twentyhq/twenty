@@ -4,15 +4,9 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
-  JoinColumn,
-  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-
-import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
-
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity('agent')
 @Index('IDX_AGENT_ID_DELETED_AT', ['id', 'deletedAt'])
@@ -37,12 +31,6 @@ export class AgentEntity {
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
-
-  @ManyToOne(() => Workspace, (workspace) => workspace.agents, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<Workspace>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
