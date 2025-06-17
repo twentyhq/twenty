@@ -205,6 +205,21 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
         },
       });
     } else {
+      if (isDefined(dirtyFields.settingPermissions)) {
+        await upsertSettingPermissions({
+          variables: {
+            upsertSettingPermissionsInput: {
+              roleId: roleId,
+              settingPermissionKeys:
+                settingsDraftRole.settingPermissions?.map(
+                  (settingPermission) => settingPermission.setting,
+                ) ?? [],
+            },
+          },
+          refetchQueries: [getOperationName(GET_ROLES) ?? ''],
+        });
+      }
+
       if (ROLE_BASIC_KEYS.some((key) => key in dirtyFields)) {
         await updateRole({
           variables: {
@@ -226,21 +241,6 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
               },
             },
           },
-        });
-      }
-
-      if (isDefined(dirtyFields.settingPermissions)) {
-        await upsertSettingPermissions({
-          variables: {
-            upsertSettingPermissionsInput: {
-              roleId: roleId,
-              settingPermissionKeys:
-                settingsDraftRole.settingPermissions?.map(
-                  (settingPermission) => settingPermission.setting,
-                ) ?? [],
-            },
-          },
-          refetchQueries: [getOperationName(GET_ROLES) ?? ''],
         });
       }
 
@@ -310,7 +310,11 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
           />
         )}
         {activeTabId === SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.SETTINGS && (
-          <SettingsRoleSettings roleId={roleId} isEditable={isRoleEditable} />
+          <SettingsRoleSettings
+            roleId={roleId}
+            isEditable={isRoleEditable}
+            isCreateMode={isCreateMode}
+          />
         )}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
