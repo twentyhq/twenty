@@ -57,8 +57,6 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
       availableFieldMetadataItemsForMatching,
     );
 
-    const abortController = new AbortController();
-
     openSpreadsheetImportDialog({
       ...options,
       onSubmit: async (data) => {
