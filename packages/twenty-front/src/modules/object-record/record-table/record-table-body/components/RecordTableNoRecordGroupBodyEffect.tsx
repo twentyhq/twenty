@@ -2,7 +2,10 @@ import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
-import { useLazyLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLazyLoadRecordIndexTable';
+import {
+  useLazyLoadRecordIndexTable,
+  useRecordIndexTableQuery,
+} from '@/object-record/record-index/hooks/useRecordIndexTableQuery';
 import { ROW_HEIGHT } from '@/object-record/record-table/constants/RowHeight';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useSetRecordTableData } from '@/object-record/record-table/hooks/internal/useSetRecordTableData';
@@ -20,6 +23,9 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
   const setIsRecordTableInitialLoading = useSetRecoilComponentStateV2(
     isRecordTableInitialLoadingComponentState,
   );
+
+  const { records, loading, hasNextPage } =
+    useRecordIndexTableQuery(objectNameSingular);
 
   const { recordTableId } = useRecordTableContextOrThrow();
 
@@ -48,40 +54,43 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
   const { scrollToPosition } = useScrollToPosition();
 
   useEffect(() => {
+    if (!loading) {
+      setRecordTableData({
+        records,
+      });
+    }
+  }, [loading, records, setRecordTableData]);
+
+  useEffect(() => {
     if (showAuthModal || isFetchingMoreObjects) {
       return;
     }
 
-    const fetchRecords = async () => {
-      setIsFetchingMoreObjects(true);
+    setIsFetchingMoreObjects(true);
 
-      const { records, hasNextPage } = await findManyRecordsLazy();
-      setHasRecordTableFetchedAllRecordsComponents(!hasNextPage);
-      if (isNonEmptyString(lastShowPageRecordId)) {
-        const isRecordAlreadyFetched = records.some(
+    setHasRecordTableFetchedAllRecordsComponents(!hasNextPage);
+    if (isNonEmptyString(lastShowPageRecordId)) {
+      const isRecordAlreadyFetched = records.some(
+        (record) => record.id === lastShowPageRecordId,
+      );
+
+      if (isRecordAlreadyFetched) {
+        const recordPosition = records.findIndex(
           (record) => record.id === lastShowPageRecordId,
         );
 
-        if (isRecordAlreadyFetched) {
-          const recordPosition = records.findIndex(
-            (record) => record.id === lastShowPageRecordId,
-          );
+        const positionInPx = recordPosition * ROW_HEIGHT;
 
-          const positionInPx = recordPosition * ROW_HEIGHT;
+        scrollToPosition(positionInPx);
 
-          scrollToPosition(positionInPx);
-
-          setHasInitializedScroll(true);
-        }
+        setHasInitializedScroll(true);
       }
-      setRecordTableData({
-        records,
-      });
-      setIsFetchingMoreObjects(false);
-      setIsRecordTableInitialLoading(false);
-    };
-
-    fetchRecords();
+    }
+    setRecordTableData({
+      records,
+    });
+    setIsFetchingMoreObjects(false);
+    setIsRecordTableInitialLoading(false);
   }, [
     findManyRecordsLazy,
     hasInitializedScroll,

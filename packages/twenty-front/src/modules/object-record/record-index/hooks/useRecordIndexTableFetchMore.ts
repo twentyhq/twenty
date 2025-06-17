@@ -3,7 +3,7 @@ import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRec
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { useRecordTableRecordGqlFields } from '@/object-record/record-index/hooks/useRecordTableRecordGqlFields';
 
-export const useLazyLoadRecordIndexTable = (objectNameSingular: string) => {
+export const useRecordIndexTableFetchMore = (objectNameSingular: string) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
@@ -12,14 +12,12 @@ export const useLazyLoadRecordIndexTable = (objectNameSingular: string) => {
 
   const recordGqlFields = useRecordTableRecordGqlFields({ objectMetadataItem });
 
-  const { findManyRecordsLazy, fetchMoreRecordsLazy, queryIdentifier } =
-    useLazyFindManyRecords({
-      ...params,
-      recordGqlFields,
-    });
+  const { fetchMoreRecordsLazy, queryIdentifier } = useLazyFindManyRecords({
+    ...params,
+    recordGqlFields,
+  });
 
   return {
-    findManyRecordsLazy,
     fetchMoreRecordsLazy,
     queryIdentifier,
   };

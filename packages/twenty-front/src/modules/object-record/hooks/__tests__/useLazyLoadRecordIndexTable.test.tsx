@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { ReactNode, act } from 'react';
 
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
-import { useLazyLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLazyLoadRecordIndexTable';
+import { useLazyLoadRecordIndexTable } from '@/object-record/record-index/hooks/useRecordIndexTableQuery';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { MockedResponse } from '@apollo/client/testing';

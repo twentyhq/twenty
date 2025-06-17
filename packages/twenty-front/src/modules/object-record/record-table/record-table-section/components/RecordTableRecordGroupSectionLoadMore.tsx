@@ -1,5 +1,5 @@
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
-import { useLazyLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLazyLoadRecordIndexTable';
+import { useRecordIndexTableFetchMore } from '@/object-record/record-index/hooks/useRecordIndexTableFetchMore';
 import { isRecordIndexLoadMoreLockedComponentState } from '@/object-record/record-index/states/isRecordIndexLoadMoreLockedComponentState';
 import { recordIndexHasFetchedAllRecordsByGroupComponentState } from '@/object-record/record-index/states/recordIndexHasFetchedAllRecordsByGroupComponentState';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
@@ -15,7 +15,7 @@ export const RecordTableRecordGroupSectionLoadMore = () => {
   const currentRecordGroupId = useCurrentRecordGroupId();
 
   const { fetchMoreRecordsLazy } =
-    useLazyLoadRecordIndexTable(objectNameSingular);
+    useRecordIndexTableFetchMore(objectNameSingular);
 
   const hasFetchedAllRecords = useRecoilComponentFamilyValueV2(
     recordIndexHasFetchedAllRecordsByGroupComponentState,
