@@ -39,7 +39,7 @@ export const usePageChangeEffectNavigateLocation = () => {
     AppPath.InviteTeam,
     AppPath.PlanRequired,
     AppPath.PlanRequiredSuccess,
-    AppPath.BookOnboardingDecision,
+    AppPath.BookCallDecision,
     AppPath.BookCall,
   ];
 
@@ -66,7 +66,7 @@ export const usePageChangeEffectNavigateLocation = () => {
       AppPath.PlanRequired,
       AppPath.PlanRequiredSuccess,
       AppPath.BookCall,
-      AppPath.BookOnboardingDecision,
+      AppPath.BookCallDecision,
     ])
   ) {
     if (
@@ -92,7 +92,7 @@ export const usePageChangeEffectNavigateLocation = () => {
     !someMatchingLocationOf([
       AppPath.CreateWorkspace,
       AppPath.PlanRequiredSuccess,
-      AppPath.BookOnboardingDecision,
+      AppPath.BookCallDecision,
       AppPath.BookCall,
     ])
   ) {
@@ -122,9 +122,9 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (
     onboardingStatus === OnboardingStatus.BOOK_ONBOARDING &&
-    !someMatchingLocationOf([AppPath.BookOnboardingDecision, AppPath.BookCall])
+    !someMatchingLocationOf([AppPath.BookCallDecision, AppPath.BookCall])
   ) {
-    return AppPath.BookOnboardingDecision;
+    return AppPath.BookCallDecision;
   }
 
   if (

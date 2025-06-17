@@ -13,7 +13,7 @@ export enum AppPath {
   InviteTeam = '/invite-team',
   PlanRequired = '/plan-required',
   PlanRequiredSuccess = '/plan-required/payment-success',
-  BookOnboardingDecision = '/book-onboarding-decision',
+  BookCallDecision = '/book-call-decision',
   BookCall = '/book-call',
 
   // Onboarded

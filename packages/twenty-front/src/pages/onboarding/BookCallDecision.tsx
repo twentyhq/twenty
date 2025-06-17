@@ -39,7 +39,7 @@ const StyledLink = styled(Link)`
   text-decoration: none;
 `;
 
-export const BookOnboardingDecision = () => {
+export const BookCallDecision = () => {
   const { t } = useLingui();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const [skipBookOnboardingStepMutation] = useSkipBookOnboardingStepMutation();
