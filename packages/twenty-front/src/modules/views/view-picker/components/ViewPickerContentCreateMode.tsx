@@ -11,8 +11,7 @@ import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -22,6 +21,7 @@ import { ViewPickerCreateButton } from '@/views/view-picker/components/ViewPicke
 import { ViewPickerIconAndNameContainer } from '@/views/view-picker/components/ViewPickerIconAndNameContainer';
 import { ViewPickerSaveButtonContainer } from '@/views/view-picker/components/ViewPickerSaveButtonContainer';
 import { ViewPickerSelectContainer } from '@/views/view-picker/components/ViewPickerSelectContainer';
+import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { VIEW_PICKER_KANBAN_FIELD_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerKanbanFieldDropdownId';
 import { VIEW_PICKER_TYPE_SELECT_OPTIONS } from '@/views/view-picker/constants/ViewPickerTypeSelectOptions';
 import { VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerViewTypeDropdownId';
@@ -78,15 +78,13 @@ export const ViewPickerContentCreateMode = () => {
     viewPickerTypeComponentState,
   );
 
-  const setHotkeyScope = useSetHotkeyScope();
-
   const { createViewFromCurrentState } = useCreateViewFromCurrentState();
 
   const { availableFieldsForKanban } = useGetAvailableFieldsForKanban();
 
-  useScopedHotkeys(
-    Key.Enter,
-    async () => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Enter],
+    callback: async () => {
       if (viewPickerIsPersisting) {
         return;
       }
@@ -100,8 +98,15 @@ export const ViewPickerContentCreateMode = () => {
 
       await createViewFromCurrentState();
     },
-    DropdownHotkeyScope.Dropdown,
-  );
+    focusId: VIEW_PICKER_DROPDOWN_ID,
+    scope: DropdownHotkeyScope.Dropdown,
+    dependencies: [
+      viewPickerIsPersisting,
+      createViewFromCurrentState,
+      viewPickerType,
+      availableFieldsForKanban,
+    ],
+  });
 
   const defaultIcon = viewTypeIconMapping(viewPickerType).displayName;
 
@@ -141,11 +146,7 @@ export const ViewPickerContentCreateMode = () => {
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         <ViewPickerIconAndNameContainer>
-          <IconPicker
-            onChange={onIconChange}
-            selectedIconKey={selectedIcon}
-            onClose={() => setHotkeyScope(DropdownHotkeyScope.Dropdown)}
-          />
+          <IconPicker onChange={onIconChange} selectedIconKey={selectedIcon} />
           <TextInputV2
             value={viewPickerInputName}
             onChange={(value) => {
