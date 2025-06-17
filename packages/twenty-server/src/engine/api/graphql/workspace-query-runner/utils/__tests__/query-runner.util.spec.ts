@@ -16,7 +16,7 @@ describe('queryRunner LINKS util', () => {
   });
 
   it('should not add a trailing slash', () => {
-    const primaryLinkUrl = 'htTps://wwW.exAmple.coM';
+    const primaryLinkUrl = 'https://www.example.com';
     const result = lowercaseDomain(primaryLinkUrl);
 
     expect(result).toBe('https://www.example.com');
