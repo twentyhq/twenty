@@ -48,7 +48,7 @@ export const RecordTableRecordGroupBodyEffect = () => {
         currentRecordGroupId: recordGroupId,
       });
       setIsRecordTableInitialLoading(false);
-      setHasRecordFetchedAllRecordsComponents(hasNextPage);
+      setHasRecordFetchedAllRecordsComponents(!hasNextPage);
     }
   }, [
     hasNextPage,

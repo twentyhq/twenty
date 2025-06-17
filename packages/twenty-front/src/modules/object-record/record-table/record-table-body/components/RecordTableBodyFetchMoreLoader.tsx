@@ -1,10 +1,11 @@
 import styled from '@emotion/styled';
 import { useInView } from 'react-intersection-observer';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilCallback, useRecoilState } from 'recoil';
 
-import { isRecordIndexLoadMoreLockedComponentState } from '@/object-record/record-index/states/isRecordIndexLoadMoreLockedComponentState';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { useRecordIndexTableFetchMore } from '@/object-record/record-index/hooks/useRecordIndexTableFetchMore';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { hasRecordTableFetchedAllRecordsComponentStateV2 } from '@/object-record/record-table/states/hasRecordTableFetchedAllRecordsComponentStateV2';
+import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { GRAY_SCALE } from 'twenty-ui/theme';
@@ -20,21 +21,24 @@ const StyledText = styled.div`
 `;
 
 export const RecordTableBodyFetchMoreLoader = () => {
-  const { setRecordTableLastRowVisible } = useRecordTable();
+  const { recordTableId, objectNameSingular } = useRecordTableContextOrThrow();
 
-  const isRecordTableLoadMoreLocked = useRecoilComponentValueV2(
-    isRecordIndexLoadMoreLockedComponentState,
+  const { fetchMoreRecordsLazy } =
+    useRecordIndexTableFetchMore(objectNameSingular);
+
+  const [isFetchingMoreRecords, setIsFetchingMoreRecords] = useRecoilState(
+    isFetchingMoreRecordsFamilyState(recordTableId),
   );
 
   const onLastRowVisible = useRecoilCallback(
     () => async (inView: boolean) => {
-      if (isRecordTableLoadMoreLocked) {
-        return;
+      if (inView && !isFetchingMoreRecords) {
+        setIsFetchingMoreRecords(true);
+        await fetchMoreRecordsLazy();
+        setIsFetchingMoreRecords(false);
       }
-
-      setRecordTableLastRowVisible(inView);
     },
-    [setRecordTableLastRowVisible, isRecordTableLoadMoreLocked],
+    [isFetchingMoreRecords, fetchMoreRecordsLazy, setIsFetchingMoreRecords],
   );
 
   const { scrollWrapperHTMLElement } = useScrollWrapperElement();
@@ -43,8 +47,7 @@ export const RecordTableBodyFetchMoreLoader = () => {
     hasRecordTableFetchedAllRecordsComponentStateV2,
   );
 
-  const showLoadingMoreRow =
-    !hasRecordTableFetchedAllRecordsComponents && !isRecordTableLoadMoreLocked;
+  const showLoadingMoreRow = !hasRecordTableFetchedAllRecordsComponents;
 
   const { ref: tbodyRef } = useInView({
     onChange: onLastRowVisible,

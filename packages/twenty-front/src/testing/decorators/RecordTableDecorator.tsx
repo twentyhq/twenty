@@ -12,8 +12,11 @@ import { RecordIndexContextProvider } from '@/object-record/record-index/context
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { RecordTableBodyContextProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
-import { RecordTableContextProvider } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import {
+  RecordTableContextProvider,
+  useRecordTableContextOrThrow,
+} from '@/object-record/record-table/contexts/RecordTableContext';
+import { useSetRecordTableData } from '@/object-record/record-table/hooks/internal/useSetRecordTableData';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
@@ -31,9 +34,12 @@ const InternalTableStateLoaderEffect = ({
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
+  const { recordTableId } = useRecordTableContextOrThrow();
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
 
-  const { setRecordTableData } = useRecordTable();
+  const setRecordTableData = useSetRecordTableData({
+    recordTableId,
+  });
 
   const view = useMemo(() => {
     return {
