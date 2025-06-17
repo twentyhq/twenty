@@ -1,241 +1,86 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
 # File Structure Guidelines
 
-## Monorepo Organization
-
-### Package Structure
+## Directory Organization
 ```
-packages/
-├── twenty-front/              # Frontend React application
-│   ├── src/
-│   │   ├── components/        # Reusable UI components
-│   │   ├── pages/            # Route-based page components
-│   │   ├── modules/          # Feature-based modules
-│   │   ├── hooks/            # Custom React hooks
-│   │   ├── services/         # API and business logic
-│   │   ├── utils/            # Helper functions
-│   │   └── types/            # TypeScript type definitions
-│   ├── public/               # Static assets
-│   └── package.json
-├── twenty-server/             # Backend NestJS application
-│   ├── src/
-│   │   ├── modules/          # Feature modules
-│   │   ├── services/         # Business logic services
-│   │   ├── controllers/      # API controllers
-│   │   ├── entities/         # Database entities
-│   │   ├── dto/              # Data transfer objects
-│   │   └── utils/            # Helper utilities
-│   └── package.json
-└── twenty-ui/                 # Shared UI component library
-    ├── src/
-    │   ├── components/        # UI components
-    │   ├── themes/           # Theme definitions
-    │   └── types/            # Component prop types
-    └── package.json
+packages/twenty-front/src/
+├── components/      # Reusable UI components
+├── pages/          # Route components  
+├── modules/        # Feature modules
+├── hooks/          # Custom hooks
+├── services/       # API services
+└── types/          # Type definitions
+
+packages/twenty-server/src/
+├── modules/        # Feature modules
+├── entities/       # Database entities
+├── dto/           # Data transfer objects
+└── utils/         # Helper functions
 ```
 
-## Naming Conventions
-
-### File Naming
-- Use kebab-case for all file and directory names
-- Include file type in name for clarity
-- Use consistent suffixes for different file types
-  ```
-  // ✅ Correct
-  user-profile.component.tsx
-  user-profile.styles.ts
-  user-profile.test.tsx
-  user-profile.types.ts
-  user.service.ts
-  user.controller.ts
-  user.entity.ts
-
-  // ❌ Incorrect
-  UserProfile.tsx
-  userProfile.tsx
-  UserProfileComponent.tsx
-  ```
-
-### Directory Structure
-- Group related files in feature directories
-- Use singular names for directories
-- Keep directory nesting to 3-4 levels maximum
-  ```
-  // ✅ Correct
-  src/
-  ├── component/
-  │   ├── user/
-  │   │   ├── user-card/
-  │   │   │   ├── user-card.component.tsx
-  │   │   │   ├── user-card.styles.ts
-  │   │   │   └── index.ts
-  │   │   └── user-list/
-  │   └── index.ts
-  ```
-
-## Frontend Structure (twenty-front)
-
-### Component Organization
+## File Naming
+- **kebab-case** for all files and directories
+- **Descriptive suffixes** for clarity
 ```
-src/components/
-├── ui/                        # Base UI components
-│   ├── button/
-│   │   ├── button.component.tsx
-│   │   ├── button.styles.ts
-│   │   ├── button.test.tsx
-│   │   └── index.ts
-│   └── input/
-├── layout/                    # Layout components
-│   ├── header/
-│   ├── sidebar/
-│   └── footer/
-└── feature/                   # Feature-specific components
-    ├── user/
-    ├── order/
-    └── product/
+// ✅ Correct naming
+user-profile.component.tsx
+user-profile.styles.ts
+user-profile.test.tsx
+user.service.ts
+user.entity.ts
+create-user.dto.ts
 ```
 
-### Module Structure
-```
-src/modules/
-├── user/
-│   ├── components/            # Module-specific components
-│   ├── hooks/                 # Module-specific hooks
-│   ├── services/              # API services
-│   ├── types/                 # Type definitions
-│   ├── utils/                 # Helper functions
-│   └── index.ts              # Module exports
-├── order/
-└── product/
+## Index Files & Barrel Exports
+```typescript
+// ✅ Clean barrel exports in index.ts
+export { UserCard } from './user-card.component';
+export { UserList } from './user-list.component';
+export type { UserCardProps, UserListProps } from './types';
+
+// ✅ Usage - clean imports
+import { UserCard, UserList } from '@/components/user';
 ```
 
-### Page Structure
+## Module Structure
 ```
-src/pages/
-├── auth/
-│   ├── login/
-│   │   ├── login.page.tsx
-│   │   ├── login.styles.ts
-│   │   └── index.ts
-│   └── register/
-├── dashboard/
-└── settings/
-```
-
-## Backend Structure (twenty-server)
-
-### Module Organization
-```
-src/modules/
-├── user/
-│   ├── user.module.ts         # NestJS module definition
-│   ├── user.controller.ts     # API endpoints
-│   ├── user.service.ts        # Business logic
-│   ├── user.entity.ts         # Database entity
-│   ├── dto/                   # Data transfer objects
-│   │   ├── create-user.dto.ts
-│   │   └── update-user.dto.ts
-│   └── user.repository.ts     # Data access layer
-├── auth/
-├── order/
-└── shared/                    # Shared utilities
-    ├── decorators/
-    ├── guards/
-    ├── pipes/
-    └── interceptors/
-```
-
-### Database Structure
-```
-src/database/
-├── entities/                  # TypeORM entities
-├── migrations/                # Database migrations
-├── seeds/                     # Database seeding
-└── config/                    # Database configuration
-```
-
-## Shared Libraries
-
-### UI Library Structure (twenty-ui)
-```
-src/
-├── components/
-│   ├── base/                  # Base components
-│   │   ├── button/
-│   │   ├── input/
-│   │   └── card/
-│   ├── layout/                # Layout components
-│   └── form/                  # Form components
-├── themes/                    # Theme definitions
-├── utils/                     # Utility functions
-└── types/                     # TypeScript types
-```
-
-### Utils Library Structure (twenty-utils)
-```
-src/
-├── validation/                # Validation utilities
-├── formatting/                # Data formatting
-├── date/                      # Date utilities
-├── string/                    # String utilities
-└── types/                     # Shared types
+src/modules/user/
+├── components/     # Module-specific components
+├── hooks/         # Module hooks
+├── services/      # API services
+├── types/         # Type definitions
+└── index.ts       # Module exports
 ```
 
 ## Import/Export Patterns
+```typescript
+// ✅ Import organization
+// 1. External libraries
+import React from 'react';
+import styled from 'styled-components';
 
-### Index Files
-- Use index.ts files for clean imports
-- Export only what's needed publicly
-- Keep barrel exports organized
-  ```typescript
-  // ✅ Correct - index.ts
-  export { UserCard } from './user-card.component';
-  export { UserList } from './user-list.component';
-  export type { UserCardProps, UserListProps } from './types';
+// 2. Internal modules (absolute paths)
+import { Button } from '@/components/ui';
+import { UserService } from '@/services';
 
-  // Usage
-  import { UserCard, UserList } from '@/components/user';
-  ```
+// 3. Relative imports
+import { UserCardProps } from './types';
 
-### Import Organization
-- Group imports logically
-- External libraries first
-- Internal modules second
-- Relative imports last
-  ```typescript
-  // ✅ Correct import order
-  // External libraries
-  import React from 'react';
-  import { useMemo, useCallback } from 'react';
-  import styled from 'styled-components';
-
-  // Internal modules (absolute paths)
-  import { Button } from '@/components/ui';
-  import { UserService } from '@/services';
-  import { User } from '@/types';
-
-  // Relative imports
-  import { UserCardProps } from './types';
-  import { StyledCard } from './styles';
-  ```
+// ✅ Named exports only (no default exports)
+export const UserComponent = ({ user }: UserProps) => {
+  // Component implementation
+};
+```
 
 ## File Size Guidelines
-
-### Component Files
-- Keep components under 300 lines
-- Extract complex logic into hooks or utilities
-- Split large components into smaller ones
-- Use composition over large monolithic components
-
-### Service Files
-- Keep services focused on single responsibility
-- Extract common patterns into base classes
-- Limit file size to 500 lines maximum
-- Use dependency injection for better testability
+- **Components**: Under 300 lines
+- **Services**: Under 500 lines  
+- **Extract logic** into hooks/utilities when files grow large
+- **Use composition** over large monolithic components
 
 ## Configuration Files
 

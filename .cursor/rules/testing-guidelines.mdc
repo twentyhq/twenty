@@ -1,224 +1,89 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
 # Testing Guidelines
 
-## Testing Philosophy
-
-### Test Pyramid
-- Unit tests: 70% - Fast, isolated, focused
-- Integration tests: 20% - Component interactions
-- E2E tests: 10% - Full user workflows
-- Prioritize testing behavior over implementation
-
-### Testing Principles  
-- Write tests that reflect user behavior
-- Test the public API, not implementation details
-- Keep tests simple and focused
-- Use descriptive test names that explain the scenario
-
-## Unit Testing
-
-### Jest Configuration
-- Use Jest as the primary testing framework
-- Configure proper test environments (jsdom for React, node for backend)
-- Set up global test utilities and mocks
-  ```typescript
-  // setupTests.ts
-  import '@testing-library/jest-dom';
-  import { configure } from '@testing-library/react';
-
-  configure({ testIdAttribute: 'data-testid' });
-  ```
-
-### Test Structure
-- Follow AAA pattern: Arrange, Act, Assert
-- Use describe blocks for grouping related tests
-- Write clear, descriptive test names
-  ```typescript
-  // ✅ Correct
-  describe('UserService', () => {
-    describe('when getting user by ID', () => {
-      it('should return user data for valid ID', async () => {
-        // Arrange
-        const userId = '123';
-        const expectedUser = { id: '123', name: 'John' };
-        mockUserRepository.findById.mockResolvedValue(expectedUser);
-
-        // Act
-        const result = await userService.getUserById(userId);
-
-        // Assert
-        expect(result).toEqual(expectedUser);
-      });
-
-      it('should throw error for non-existent user', async () => {
-        // Arrange
-        const userId = 'non-existent';
-        mockUserRepository.findById.mockResolvedValue(null);
-
-        // Act & Assert
-        await expect(userService.getUserById(userId)).rejects.toThrow('User not found');
-      });
-    });
-  });
-  ```
-
-## React Testing
-
-### React Testing Library
-- Use React Testing Library for component testing
-- Test components as users would interact with them
-- Query by user-visible text, roles, and labels
-  ```typescript
-  // ✅ Correct
-  describe('LoginForm', () => {
-    it('should display error message for invalid credentials', async () => {
+## Test Structure (AAA Pattern)
+```typescript
+describe('UserService', () => {
+  describe('when getting user by ID', () => {
+    it('should return user data for valid ID', async () => {
       // Arrange
-      const mockOnSubmit = jest.fn().mockRejectedValue(new Error('Invalid credentials'));
-      render(<LoginForm onSubmit={mockOnSubmit} />);
+      const userId = '123';
+      const expectedUser = { id: '123', name: 'John' };
+      mockUserRepository.findById.mockResolvedValue(expectedUser);
 
       // Act
-      await user.type(screen.getByLabelText(/email/i), 'invalid@example.com');
-      await user.type(screen.getByLabelText(/password/i), 'wrongpassword');
-      await user.click(screen.getByRole('button', { name: /sign in/i }));
+      const result = await userService.getUserById(userId);
 
       // Assert
-      expect(await screen.findByText(/invalid credentials/i)).toBeInTheDocument();
+      expect(result).toEqual(expectedUser);
     });
   });
-  ```
+});
+```
 
-### Component Testing Best Practices
-- Test component behavior, not implementation
-- Mock external dependencies and API calls
-- Use proper test utilities for user interactions
-  ```typescript
-  // ✅ Correct
-  it('should call onUserSelect when user card is clicked', async () => {
-    const mockOnUserSelect = jest.fn();
-    const user = userEvent.setup();
-    
-    render(
-      <UserCard 
-        user={{ id: '1', name: 'John' }}
-        onUserSelect={mockOnUserSelect}
-      />
-    );
-
-    await user.click(screen.getByRole('button'));
-    
-    expect(mockOnUserSelect).toHaveBeenCalledWith({ id: '1', name: 'John' });
-  });
-  ```
-
-## Integration Testing
-
-### API Integration Tests
-- Test actual API endpoints with test database
-- Use proper test data setup and cleanup
-- Test both success and error scenarios
-  ```typescript
-  describe('POST /api/users', () => {
-    beforeEach(async () => {
-      await testDb.clear();
-    });
-
-    it('should create new user with valid data', async () => {
-      const userData = {
-        email: 'test@example.com',
-        name: 'Test User',
-      };
-
-      const response = await request(app)
-        .post('/api/users')
-        .send(userData)
-        .expect(201);
-
-      expect(response.body).toMatchObject({
-        id: expect.any(String),
-        email: userData.email,
-        name: userData.name,
-      });
-    });
-  });
-  ```
-
-## Mocking Strategies
-
-### Service Mocking
-- Mock external services and APIs
-- Use consistent mock patterns across tests
-- Provide meaningful mock implementations
-  ```typescript
-  // ✅ Correct
-  const mockEmailService = {
-    sendEmail: jest.fn().mockResolvedValue({ success: true }),
-    validateEmail: jest.fn().mockReturnValue(true),
-  };
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-  ```
-
-### Database Mocking
-- Use in-memory databases for integration tests
-- Create factory functions for test data
-- Ensure proper cleanup between tests
-  ```typescript
-  // ✅ Correct
-  const createTestUser = (overrides = {}) => ({
-    id: uuid(),
-    email: 'test@example.com',
-    name: 'Test User',
-    createdAt: new Date(),
-    ...overrides,
-  });
-  ```
-
-## Performance Testing
-
-### Test Performance
-- Keep tests fast and focused
-- Use appropriate test isolation
-- Avoid heavy setup in test suites
-- Run tests in parallel when possible
-
-### Test Coverage
-- Aim for 80%+ code coverage
-- Focus on critical business logic
-- Don't chase 100% coverage at expense of test quality
-- Use coverage reports to identify untested code paths
-
-## Best Practices
-
-### Test Organization
-- Group related tests in describe blocks
-- Use clear, descriptive test names
-- Keep tests independent and isolated
-- Follow consistent naming conventions
-
-### Common Patterns
+## React Component Testing
 ```typescript
-// Test naming pattern
-it('should [expected behavior] when [condition]', () => {});
+// ✅ Test user behavior, not implementation
+describe('LoginForm', () => {
+  it('should display error message for invalid credentials', async () => {
+    const mockOnSubmit = jest.fn().mockRejectedValue(new Error('Invalid credentials'));
+    render(<LoginForm onSubmit={mockOnSubmit} />);
 
-// Setup pattern
-describe('ComponentName', () => {
-  let mockProps: ComponentProps;
-  
-  beforeEach(() => {
-    mockProps = createMockProps();
+    await user.type(screen.getByLabelText(/email/i), 'invalid@example.com');
+    await user.type(screen.getByLabelText(/password/i), 'wrongpassword');
+    await user.click(screen.getByRole('button', { name: /sign in/i }));
+
+    expect(await screen.findByText(/invalid credentials/i)).toBeInTheDocument();
   });
 });
+```
 
-// Async testing pattern
-it('should handle async operations', async () => {
-  await waitFor(() => {
-    expect(screen.getByText('Loading...')).not.toBeInTheDocument();
-  });
+## Mocking Patterns
+```typescript
+// ✅ Service mocking
+const mockEmailService = {
+  sendEmail: jest.fn().mockResolvedValue({ success: true }),
+  validateEmail: jest.fn().mockReturnValue(true),
+};
+
+// ✅ Test data factories
+const createTestUser = (overrides = {}) => ({
+  id: uuid(),
+  email: 'test@example.com',
+  name: 'Test User',
+  ...overrides,
 });
+
+beforeEach(() => {
+  jest.clearAllMocks();
+});
+```
+
+## Testing Principles
+- **Test behavior, not implementation** - Focus on what users see/do
+- **Use descriptive test names** - "should [behavior] when [condition]"
+- **Query by user-visible elements** - text, roles, labels over test IDs
+- **Keep tests isolated** - Independent and repeatable
+- **70% unit, 20% integration, 10% E2E** - Test pyramid
+
+## Common Patterns
+```typescript
+// Async testing
+await waitFor(() => {
+  expect(screen.getByText('Loading...')).not.toBeInTheDocument();
+});
+
+// User interactions
+await user.click(screen.getByRole('button'));
+await user.type(screen.getByLabelText(/search/i), 'query');
+
+// API integration tests
+const response = await request(app)
+  .post('/api/users')
+  .send(userData)
+  .expect(201);
 ```
