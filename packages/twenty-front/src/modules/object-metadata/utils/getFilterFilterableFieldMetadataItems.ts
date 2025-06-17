@@ -17,7 +17,6 @@ export const getFilterFilterableFieldMetadataItems = ({
     );
 
     const isFieldTypeFilterable = [
-      FieldMetadataType.UUID,
       FieldMetadataType.BOOLEAN,
       FieldMetadataType.DATE_TIME,
       FieldMetadataType.DATE,
@@ -35,15 +34,16 @@ export const getFilterFilterableFieldMetadataItems = ({
       FieldMetadataType.ACTOR,
       FieldMetadataType.PHONES,
       FieldMetadataType.ARRAY,
+      FieldMetadataType.UUID,
       ...(isJsonFilterEnabled ? [FieldMetadataType.RAW_JSON] : []),
     ].includes(field.type);
 
     const isFieldFilterable =
-      !isSystemField &&
+      (!isSystemField || isIdField) &&
       isFieldActive &&
       isRelationFieldHandled &&
       isFieldTypeFilterable;
 
-    return isFieldFilterable || isIdField;
+    return isFieldFilterable;
   };
 };
