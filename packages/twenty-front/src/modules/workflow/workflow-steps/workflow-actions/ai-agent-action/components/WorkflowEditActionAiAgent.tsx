@@ -106,7 +106,7 @@ export const WorkflowEditActionAiAgent = ({
           disabled={actionOptions.readonly}
         />
         <FormTextFieldInput
-          key={`prompt-${formValues.prompt ? action.id : 'empty'}`}
+          key={`prompt-${formValues.model ? action.id : 'empty'}`}
           label="Prompt"
           placeholder="Enter prompt"
           readonly={actionOptions.readonly}
