@@ -37,7 +37,6 @@ type SettingsCompositeFieldTypeConfigArray = Record<
   SettingsCompositeFieldTypeConfig<any>
 >;
 
-// Should I modify this ?
 export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
   [FieldMetadataType.CURRENCY]: {
     label: 'Currency',

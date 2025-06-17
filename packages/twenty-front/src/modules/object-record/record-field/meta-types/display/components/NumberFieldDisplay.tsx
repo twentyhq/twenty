@@ -9,7 +9,6 @@ export const NumberFieldDisplay = () => {
   const decimals = fieldDefinition.metadata.settings?.decimals;
   const type = fieldDefinition.metadata.settings?.type;
 
-  console.log({fieldDefinition});
   if (!isDefined(fieldValue))
     return <NumberDisplay value={null} decimals={decimals} />;
   const value =
