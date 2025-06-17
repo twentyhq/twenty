@@ -3,8 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 
 import { AgentExecutionService } from './agent-execution.service';
@@ -16,29 +14,11 @@ export class AgentService {
   constructor(
     @InjectRepository(AgentEntity, 'core')
     private readonly agentRepository: Repository<AgentEntity>,
-    @InjectRepository(FeatureFlag, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlag>,
     private readonly throttlerService: ThrottlerService,
     private readonly agentExecutionService: AgentExecutionService,
   ) {}
 
-  private async checkFeatureFlag(workspaceId: string) {
-    const featureFlag = await this.featureFlagRepository.findOneBy({
-      key: FeatureFlagKey.IS_WORKFLOW_ENABLED,
-      workspaceId,
-    });
-
-    if (!featureFlag?.value) {
-      throw new AgentException(
-        'Workflow feature is not enabled for this workspace',
-        AgentExceptionCode.FEATURE_FLAG_INVALID,
-      );
-    }
-  }
-
   async findManyAgents(workspaceId: string) {
-    await this.checkFeatureFlag(workspaceId);
-
     return this.agentRepository.find({
       where: { workspaceId },
       order: { createdAt: 'DESC' },
@@ -46,8 +26,6 @@ export class AgentService {
   }
 
   async findOneAgent(id: string, workspaceId: string) {
-    await this.checkFeatureFlag(workspaceId);
-
     const agent = await this.agentRepository.findOne({
       where: { id, workspaceId },
     });
@@ -72,8 +50,6 @@ export class AgentService {
     },
     workspaceId: string,
   ) {
-    await this.checkFeatureFlag(workspaceId);
-
     const existingAgent = await this.agentRepository.findOne({
       where: { name: input.name, workspaceId },
     });
@@ -106,8 +82,6 @@ export class AgentService {
     },
     workspaceId: string,
   ) {
-    await this.checkFeatureFlag(workspaceId);
-
     const existingAgent = await this.findOneAgent(input.id, workspaceId);
 
     if (input.name && input.name !== existingAgent.name) {
@@ -137,8 +111,6 @@ export class AgentService {
   }
 
   async deleteOneAgent(id: string, workspaceId: string) {
-    await this.checkFeatureFlag(workspaceId);
-
     const agent = await this.findOneAgent(id, workspaceId);
 
     await this.agentRepository.softDelete({ id });
