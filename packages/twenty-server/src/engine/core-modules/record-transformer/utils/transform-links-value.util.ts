@@ -5,8 +5,18 @@ import { lowercaseDomain } from 'src/engine/api/graphql/workspace-query-runner/u
 import { removeEmptyLinks } from 'src/engine/core-modules/record-transformer/utils/remove-empty-links';
 import { LinkMetadataNullable } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const transformLinksValue = (value: any): any => {
+export type LinksFieldGraphQLInput =
+  | {
+      primaryLinkUrl?: string | null;
+      primaryLinkLabel?: string | null;
+      secondaryLinks?: string | null;
+    }
+  | null
+  | undefined;
+
+export const transformLinksValue = (
+  value: LinksFieldGraphQLInput,
+): LinksFieldGraphQLInput => {
   if (!value) {
     return value;
   }

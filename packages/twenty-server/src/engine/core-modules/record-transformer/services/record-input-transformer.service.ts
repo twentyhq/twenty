@@ -5,7 +5,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
-import { transformLinksValue } from 'src/engine/core-modules/record-transformer/utils/transform-links-value.util';
+import {
+  LinksFieldGraphQLInput,
+  transformLinksValue,
+} from 'src/engine/core-modules/record-transformer/utils/transform-links-value.util';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import {
   RichTextV2Metadata,
@@ -83,7 +86,7 @@ export class RecordInputTransformerService {
       case FieldMetadataType.RICH_TEXT_V2:
         return this.transformRichTextV2Value(value);
       case FieldMetadataType.LINKS:
-        return transformLinksValue(value);
+        return transformLinksValue(value as LinksFieldGraphQLInput);
       case FieldMetadataType.EMAILS:
         return this.transformEmailsValue(value);
       default:
