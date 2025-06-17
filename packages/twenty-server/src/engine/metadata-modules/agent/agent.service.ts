@@ -3,9 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
-
-import { AgentExecutionService } from './agent-execution.service';
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
 
@@ -14,8 +11,6 @@ export class AgentService {
   constructor(
     @InjectRepository(AgentEntity, 'core')
     private readonly agentRepository: Repository<AgentEntity>,
-    private readonly throttlerService: ThrottlerService,
-    private readonly agentExecutionService: AgentExecutionService,
   ) {}
 
   async findManyAgents(workspaceId: string) {
