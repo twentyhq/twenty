@@ -34,14 +34,16 @@ export class AgentExecutionService {
   }
 
   private getModel = (modelName: string) => {
-    if (modelName.startsWith('gpt-')) {
-      return openai(modelName);
-    }
-    if (modelName.startsWith('claude-')) {
-      return anthropic(modelName);
-    }
+    const { provider, modelId } = this.getModelConfig(modelName);
 
-    throw new Error(`Unsupported model: ${modelName}`);
+    switch (provider) {
+      case 'openai':
+        return openai(modelId);
+      case 'anthropic':
+        return anthropic(modelId);
+      default:
+        throw new Error(`Unsupported model: ${modelName}`);
+    }
   };
 
   private async validateApiKey(
