@@ -20,7 +20,7 @@ import { getCompanyNameFromDomainName } from 'src/modules/contact-creation-manag
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { computeDisplayName } from 'src/utils/compute-display-name';
 
-type CompanyToCreate = {
+export type CompanyToCreate = {
   domainName: string | undefined;
   createdBySource: FieldActorSource;
   createdByWorkspaceMember?: WorkspaceMemberWorkspaceEntity | null;
@@ -74,8 +74,14 @@ export class CreateCompanyService {
         },
       );
 
-    // Avoid creating duplicate companies
-    const uniqueCompanies = uniqBy(companies, 'domainName');
+    // Remove trailing slash from domain names
+    const companiesWithoutTrailingSlash = companies.map((company) => ({
+      ...company,
+      domainName: company.domainName?.replace(/\/$/, ''),
+    }));
+
+    // Avoid creating duplicate companies, e.g. example.com and example.com/
+    const uniqueCompanies = uniqBy(companiesWithoutTrailingSlash, 'domainName');
     const conditions = uniqueCompanies.map((companyToCreate) => ({
       domainName: {
         primaryLinkUrl: ILike(`%${companyToCreate.domainName}%`),
