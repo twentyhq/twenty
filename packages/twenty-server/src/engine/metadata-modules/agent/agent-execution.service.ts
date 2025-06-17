@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { anthropic } from '@ai-sdk/anthropic';
 import { openai } from '@ai-sdk/openai';
 import { generateObject } from 'ai';
-import { Repository } from 'typeorm';
 import { z } from 'zod';
 
 import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
@@ -16,10 +14,7 @@ import { inferZodSchemaFromExampleResponse } from './utils/infer-zod-schema-from
 
 @Injectable()
 export class AgentExecutionService {
-  constructor(
-    @InjectRepository(AgentEntity, 'core')
-    private readonly agentRepository: Repository<AgentEntity>,
-  ) {}
+  constructor() {}
 
   private getModelConfig(model: string): {
     provider: 'openai' | 'anthropic';
