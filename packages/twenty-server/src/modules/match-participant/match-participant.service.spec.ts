@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { MatchParticipantService } from 'src/modules/match-participant/match-participant.service';
@@ -12,7 +12,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 describe('MatchParticipantService', () => {
   let service: MatchParticipantService<MessageParticipantWorkspaceEntity>;
-  let twentyORMManager: TwentyORMManager;
+  let twentyORMGlobalManager: TwentyORMGlobalManager;
   let workspaceEventEmitter: WorkspaceEventEmitter;
   let scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory;
 
@@ -95,22 +95,24 @@ describe('MatchParticipantService', () => {
       providers: [
         MatchParticipantService,
         {
-          provide: TwentyORMManager,
+          provide: TwentyORMGlobalManager,
           useValue: {
-            getRepository: jest.fn().mockImplementation((entityName) => {
-              switch (entityName) {
-                case 'messageParticipant':
-                  return mockMessageParticipantRepository;
-                case 'calendarEventParticipant':
-                  return mockCalendarEventParticipantRepository;
-                case 'person':
-                  return mockPersonRepository;
-                case 'workspaceMember':
-                  return mockWorkspaceMemberRepository;
-                default:
-                  return {};
-              }
-            }),
+            getRepositoryForWorkspace: jest
+              .fn()
+              .mockImplementation((_workspaceId, entityName) => {
+                switch (entityName) {
+                  case 'messageParticipant':
+                    return mockMessageParticipantRepository;
+                  case 'calendarEventParticipant':
+                    return mockCalendarEventParticipantRepository;
+                  case 'person':
+                    return mockPersonRepository;
+                  case 'workspaceMember':
+                    return mockWorkspaceMemberRepository;
+                  default:
+                    return {};
+                }
+              }),
           },
         },
         {
@@ -133,7 +135,9 @@ describe('MatchParticipantService', () => {
     service = module.get<
       MatchParticipantService<MessageParticipantWorkspaceEntity>
     >(MatchParticipantService);
-    twentyORMManager = module.get<TwentyORMManager>(TwentyORMManager);
+    twentyORMGlobalManager = module.get<TwentyORMGlobalManager>(
+      TwentyORMGlobalManager,
+    );
     workspaceEventEmitter = module.get<WorkspaceEventEmitter>(
       WorkspaceEventEmitter,
     );
@@ -287,7 +291,7 @@ describe('MatchParticipantService', () => {
       const calendarService =
         new MatchParticipantService<CalendarEventParticipantWorkspaceEntity>(
           workspaceEventEmitter,
-          twentyORMManager,
+          twentyORMGlobalManager,
           scopedWorkspaceContextFactory,
         );
 
@@ -705,23 +709,25 @@ describe('MatchParticipantService', () => {
   describe('getParticipantRepository', () => {
     it('should return message participant repository for messageParticipant', async () => {
       const repository = await (service as any).getParticipantRepository(
+        mockWorkspaceId,
         'messageParticipant',
       );
 
-      expect(twentyORMManager.getRepository).toHaveBeenCalledWith(
-        'messageParticipant',
-      );
+      expect(
+        twentyORMGlobalManager.getRepositoryForWorkspace,
+      ).toHaveBeenCalledWith(mockWorkspaceId, 'messageParticipant');
       expect(repository).toBe(mockMessageParticipantRepository);
     });
 
     it('should return calendar event participant repository for calendarEventParticipant', async () => {
       const repository = await (service as any).getParticipantRepository(
+        mockWorkspaceId,
         'calendarEventParticipant',
       );
 
-      expect(twentyORMManager.getRepository).toHaveBeenCalledWith(
-        'calendarEventParticipant',
-      );
+      expect(
+        twentyORMGlobalManager.getRepositoryForWorkspace,
+      ).toHaveBeenCalledWith(mockWorkspaceId, 'calendarEventParticipant');
       expect(repository).toBe(mockCalendarEventParticipantRepository);
     });
   });

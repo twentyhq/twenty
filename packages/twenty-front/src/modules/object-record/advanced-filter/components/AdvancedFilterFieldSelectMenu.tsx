@@ -106,17 +106,17 @@ export const AdvancedFilterFieldSelectMenu = ({
       selectedFieldMetadataItem.type,
     );
 
+    selectFieldUsedInAdvancedFilterDropdown({
+      fieldMetadataItemId: selectedFieldMetadataItem.id,
+      recordFilterId,
+    });
+
     if (isCompositeFieldType(filterType)) {
       setObjectFilterDropdownSubMenuFieldType(filterType);
 
       setFieldMetadataItemIdUsedInDropdown(selectedFieldMetadataItem.id);
       setObjectFilterDropdownIsSelectingCompositeField(true);
     } else {
-      selectFieldUsedInAdvancedFilterDropdown({
-        fieldMetadataItemId: selectedFieldMetadataItem.id,
-        recordFilterId,
-      });
-
       closeAdvancedFilterFieldSelectDropdown();
     }
   };
@@ -150,7 +150,7 @@ export const AdvancedFilterFieldSelectMenu = ({
         {shouldShowVisibleFields && (
           <>
             <DropdownMenuSectionLabel label={t`Visible fields`} />
-            <DropdownMenuItemsContainer scrollWrapperHeightAuto>
+            <DropdownMenuItemsContainer>
               {visibleColumnsFieldMetadataItems.map(
                 (visibleFieldMetadataItem, index) => (
                   <SelectableListItem
@@ -173,8 +173,10 @@ export const AdvancedFilterFieldSelectMenu = ({
         {shouldShowSeparator && <DropdownMenuSeparator />}
         {shouldShowHiddenFields && (
           <>
-            <DropdownMenuSectionLabel label={t`Hidden fields`} />
-            <DropdownMenuItemsContainer scrollWrapperHeightAuto>
+            {visibleColumnsFieldMetadataItems.length > 0 && (
+              <DropdownMenuSectionLabel label={t`Hidden fields`} />
+            )}
+            <DropdownMenuItemsContainer>
               {hiddenColumnsFieldMetadataItems.map(
                 (hiddenFieldMetadataItem, index) => (
                   <SelectableListItem

@@ -1,4 +1,4 @@
-import { IconComponent, IconHttpPost, IconHttpGet } from 'twenty-ui/display';
+import { IconComponent, IconHttpGet, IconHttpPost } from 'twenty-ui/display';
 export type WebhookHttpMethods = 'GET' | 'POST';
 
 export const WEBHOOK_TRIGGER_HTTP_METHOD_OPTIONS: Array<{
@@ -7,12 +7,12 @@ export const WEBHOOK_TRIGGER_HTTP_METHOD_OPTIONS: Array<{
   Icon: IconComponent;
 }> = [
   {
-    label: 'Get',
+    label: 'GET',
     value: 'GET',
     Icon: IconHttpGet,
   },
   {
-    label: 'Post',
+    label: 'POST',
     value: 'POST',
     Icon: IconHttpPost,
   },

@@ -14,7 +14,7 @@ exports[`computeSchemaComponents Float without decimals 1`] = `
     ],
     "type": "object",
   },
-  "ObjectName for Response": {
+  "ObjectNameForResponse": {
     "description": undefined,
     "properties": {
       "number2": {
@@ -23,7 +23,7 @@ exports[`computeSchemaComponents Float without decimals 1`] = `
     },
     "type": "object",
   },
-  "ObjectName for Update": {
+  "ObjectNameForUpdate": {
     "description": undefined,
     "properties": {
       "number2": {
@@ -49,7 +49,7 @@ exports[`computeSchemaComponents Integer dataType with decimals 1`] = `
     ],
     "type": "object",
   },
-  "ObjectName for Response": {
+  "ObjectNameForResponse": {
     "description": undefined,
     "properties": {
       "number1": {
@@ -58,7 +58,7 @@ exports[`computeSchemaComponents Integer dataType with decimals 1`] = `
     },
     "type": "object",
   },
-  "ObjectName for Update": {
+  "ObjectNameForUpdate": {
     "description": undefined,
     "properties": {
       "number1": {
@@ -84,7 +84,7 @@ exports[`computeSchemaComponents Integer with a 0 decimals 1`] = `
     ],
     "type": "object",
   },
-  "ObjectName for Response": {
+  "ObjectNameForResponse": {
     "description": undefined,
     "properties": {
       "number3": {
@@ -93,7 +93,7 @@ exports[`computeSchemaComponents Integer with a 0 decimals 1`] = `
     },
     "type": "object",
   },
-  "ObjectName for Update": {
+  "ObjectNameForUpdate": {
     "description": undefined,
     "properties": {
       "number3": {

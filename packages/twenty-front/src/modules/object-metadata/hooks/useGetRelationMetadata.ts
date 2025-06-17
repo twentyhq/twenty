@@ -11,21 +11,18 @@ export const useGetRelationMetadata = () =>
       ({
         fieldMetadataItem,
       }: {
-        fieldMetadataItem: Pick<
-          FieldMetadataItem,
-          'type' | 'relationDefinition'
-        >;
+        fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'relation'>;
       }) => {
         if (fieldMetadataItem.type !== FieldMetadataType.RELATION) return null;
 
-        const relationDefinition = fieldMetadataItem.relationDefinition;
+        const relation = fieldMetadataItem.relation;
 
-        if (!relationDefinition) return null;
+        if (!relation) return null;
 
         const relationObjectMetadataItem = snapshot
           .getLoadable(
             objectMetadataItemFamilySelector({
-              objectName: relationDefinition.targetObjectMetadata.nameSingular,
+              objectName: relation.targetObjectMetadata.nameSingular,
               objectNameType: 'singular',
             }),
           )
@@ -35,7 +32,7 @@ export const useGetRelationMetadata = () =>
 
         const relationFieldMetadataItem =
           relationObjectMetadataItem.fields.find(
-            (field) => field.id === relationDefinition.targetFieldMetadata.id,
+            (field) => field.id === relation.targetFieldMetadata.id,
           );
 
         if (!relationFieldMetadataItem) return null;
@@ -43,7 +40,7 @@ export const useGetRelationMetadata = () =>
         return {
           relationFieldMetadataItem,
           relationObjectMetadataItem,
-          relationType: relationDefinition.direction,
+          relationType: relation.type,
         };
       },
     [],

@@ -37,14 +37,16 @@ const StyledModalDiv = styled(motion.div)<{
   z-index: ${RootStackingContextZIndices.RootModal}; // should be higher than Backdrop's z-index
 
   width: ${({ isMobile, size, theme }) => {
-    if (isMobile) return theme.modal.size.fullscreen;
+    if (isMobile) return theme.modal.size.fullscreen.width;
     switch (size) {
       case 'small':
-        return theme.modal.size.sm;
+        return theme.modal.size.sm.width;
       case 'medium':
-        return theme.modal.size.md;
+        return theme.modal.size.md.width;
       case 'large':
-        return theme.modal.size.lg;
+        return theme.modal.size.lg.width;
+      case 'extraLarge':
+        return theme.modal.size.xl.width;
       default:
         return 'auto';
     }
@@ -64,8 +66,16 @@ const StyledModalDiv = styled(motion.div)<{
         return 'auto';
     }
   }};
-  height: ${({ isMobile, theme }) =>
-    isMobile ? theme.modal.size.fullscreen : 'auto'};
+  height: ${({ isMobile, theme, size }) => {
+    if (isMobile) return theme.modal.size.fullscreen.height;
+
+    switch (size) {
+      case 'extraLarge':
+        return theme.modal.size.xl.height;
+      default:
+        return 'auto';
+    }
+  }};
   max-height: ${({ isMobile }) => (isMobile ? 'none' : '90dvh')};
 `;
 
@@ -165,7 +175,7 @@ const ModalFooter = ({ children, className }: ModalFooterProps) => (
   <StyledFooter className={className}>{children}</StyledFooter>
 );
 
-export type ModalSize = 'small' | 'medium' | 'large';
+export type ModalSize = 'small' | 'medium' | 'large' | 'extraLarge';
 export type ModalPadding = 'none' | 'small' | 'medium' | 'large';
 export type ModalVariants = 'primary' | 'secondary' | 'tertiary';
 
@@ -177,6 +187,7 @@ export type ModalProps = React.PropsWithChildren & {
   hotkeyScope?: ModalHotkeyScope;
   onEnter?: () => void;
   modalVariant?: ModalVariants;
+  dataGloballyPreventClickOutside?: boolean;
 } & (
     | { isClosable: true; onClose?: () => void }
     | { isClosable?: false; onClose?: never }
@@ -198,6 +209,7 @@ export const Modal = ({
   isClosable = false,
   onClose,
   modalVariant = 'primary',
+  dataGloballyPreventClickOutside = false,
 }: ModalProps) => {
   const isMobile = useIsMobile();
   const modalRef = useRef<HTMLDivElement>(null);
@@ -259,6 +271,9 @@ export const Modal = ({
                 transition={{ duration: theme.animation.duration.normal }}
                 className={className}
                 isMobile={isMobile}
+                data-globally-prevent-click-outside={
+                  dataGloballyPreventClickOutside
+                }
               >
                 {children}
               </StyledModalDiv>

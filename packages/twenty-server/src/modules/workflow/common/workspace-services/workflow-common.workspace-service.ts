@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import {
   WorkflowCommonException,
@@ -18,7 +19,6 @@ import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
-import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 
 export type ObjectMetadataInfo = {
   objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps;
@@ -28,14 +28,18 @@ export type ObjectMetadataInfo = {
 @Injectable()
 export class WorkflowCommonWorkspaceService {
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly serverlessFunctionService: ServerlessFunctionService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
 
-  async getWorkflowVersionOrFail(
-    workflowVersionId: string,
-  ): Promise<WorkflowVersionWorkspaceEntity> {
+  async getWorkflowVersionOrFail({
+    workspaceId,
+    workflowVersionId,
+  }: {
+    workspaceId: string;
+    workflowVersionId: string;
+  }): Promise<WorkflowVersionWorkspaceEntity> {
     if (!workflowVersionId) {
       throw new WorkflowTriggerException(
         'Workflow version ID is required',
@@ -44,8 +48,10 @@ export class WorkflowCommonWorkspaceService {
     }
 
     const workflowVersionRepository =
-      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+        workspaceId,
         'workflowVersion',
+        { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
       );
 
     const workflowVersion = await workflowVersionRepository.findOne({
@@ -124,18 +130,24 @@ export class WorkflowCommonWorkspaceService {
     operation: 'restore' | 'delete' | 'destroy';
   }): Promise<void> {
     const workflowVersionRepository =
-      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
+        workspaceId,
         'workflowVersion',
+        { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
       );
 
     const workflowRunRepository =
-      await this.twentyORMManager.getRepository<WorkflowRunWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowRunWorkspaceEntity>(
+        workspaceId,
         'workflowRun',
+        { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
       );
 
     const workflowAutomatedTriggerRepository =
-      await this.twentyORMManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowAutomatedTriggerWorkspaceEntity>(
+        workspaceId,
         'workflowAutomatedTrigger',
+        { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
       );
 
     for (const workflowId of workflowIds) {

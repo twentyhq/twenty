@@ -1,7 +1,7 @@
-import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/SignInUpWithCredentials';
-import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/SignInUpWithGoogle';
-import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/SignInUpWithMicrosoft';
-import { SignInUpWithSSO } from '@/auth/sign-in-up/components/SignInUpWithSSO';
+import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/internal/SignInUpWithCredentials';
+import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/internal/SignInUpWithGoogle';
+import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/internal/SignInUpWithMicrosoft';
+import { SignInUpWithSSO } from '@/auth/sign-in-up/components/internal/SignInUpWithSSO';
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
@@ -36,9 +36,13 @@ export const SignInUpWorkspaceScopeForm = () => {
   return (
     <>
       <StyledContentContainer>
-        {workspaceAuthProviders.google && <SignInUpWithGoogle />}
+        {workspaceAuthProviders.google && (
+          <SignInUpWithGoogle action="join-workspace" />
+        )}
 
-        {workspaceAuthProviders.microsoft && <SignInUpWithMicrosoft />}
+        {workspaceAuthProviders.microsoft && (
+          <SignInUpWithMicrosoft action="join-workspace" />
+        )}
 
         {workspaceAuthProviders.sso.length > 0 && <SignInUpWithSSO />}
 

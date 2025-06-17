@@ -22,6 +22,7 @@ declare global {
   const MEMBER_ACCESS_TOKEN: string;
   const GUEST_ACCESS_TOKEN: string;
   const API_KEY_ACCESS_TOKEN: string;
+  const WORKSPACE_AGNOSTIC_TOKEN: string;
 }
 
 export {};

@@ -23,4 +23,9 @@ export const OTHER_ACTIONS: Array<{
     type: 'FORM',
     icon: 'IconForms',
   },
+  {
+    label: 'HTTP Request',
+    type: 'HTTP_REQUEST',
+    icon: 'IconWorld',
+  },
 ];
