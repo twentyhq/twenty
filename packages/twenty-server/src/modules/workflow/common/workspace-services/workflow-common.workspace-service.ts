@@ -233,8 +233,15 @@ export class WorkflowCommonWorkspaceService {
     });
 
     if (workflow?.statuses?.includes(WorkflowStatus.ACTIVE)) {
+      const newStatuses = [
+        ...workflow.statuses.filter(
+          (status) => status !== WorkflowStatus.ACTIVE,
+        ),
+        WorkflowStatus.DEACTIVATED,
+      ];
+
       await workflowRepository.update(workflowId, {
-        statuses: [WorkflowStatus.DEACTIVATED],
+        statuses: newStatuses,
       });
     }
 
