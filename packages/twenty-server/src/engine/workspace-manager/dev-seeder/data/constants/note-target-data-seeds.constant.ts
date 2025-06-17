@@ -18,11 +18,9 @@ export const NOTE_TARGET_DATA_SEED_COLUMNS: (keyof NoteTargetDataSeed)[] = [
   'opportunityId',
 ];
 
-// Generate all note target IDs
 const GENERATE_NOTE_TARGET_IDS = (): Record<string, string> => {
   const NOTE_TARGET_IDS: Record<string, string> = {};
 
-  // Person note targets (ID_1 to ID_1200)
   for (let INDEX = 1; INDEX <= 1200; INDEX++) {
     const HEX_INDEX = INDEX.toString(16).padStart(4, '0');
 
@@ -30,7 +28,6 @@ const GENERATE_NOTE_TARGET_IDS = (): Record<string, string> => {
       `40404040-${HEX_INDEX}-4e7c-8001-123456789def`;
   }
 
-  // Company note targets (ID_1201 to ID_1800)
   for (let INDEX = 1201; INDEX <= 1800; INDEX++) {
     const HEX_INDEX = INDEX.toString(16).padStart(4, '0');
 
@@ -43,11 +40,9 @@ const GENERATE_NOTE_TARGET_IDS = (): Record<string, string> => {
 
 const NOTE_TARGET_DATA_SEED_IDS = GENERATE_NOTE_TARGET_IDS();
 
-// Generate note target data seeds
 const GENERATE_NOTE_TARGET_SEEDS = (): NoteTargetDataSeed[] => {
   const NOTE_TARGET_SEEDS: NoteTargetDataSeed[] = [];
 
-  // Person note targets (link each person note to its corresponding person)
   for (let INDEX = 1; INDEX <= 1200; INDEX++) {
     NOTE_TARGET_SEEDS.push({
       id: NOTE_TARGET_DATA_SEED_IDS[`ID_${INDEX}`],
@@ -61,7 +56,6 @@ const GENERATE_NOTE_TARGET_SEEDS = (): NoteTargetDataSeed[] => {
     });
   }
 
-  // Company note targets (link each company note to its corresponding company)
   for (let INDEX = 1201; INDEX <= 1800; INDEX++) {
     const COMPANY_INDEX = INDEX - 1200;
 

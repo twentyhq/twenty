@@ -26,18 +26,15 @@ export const NOTE_DATA_SEED_COLUMNS: (keyof NoteDataSeed)[] = [
   'createdByContext',
 ];
 
-// Generate all note IDs
 const GENERATE_NOTE_IDS = (): Record<string, string> => {
   const NOTE_IDS: Record<string, string> = {};
 
-  // Person notes (ID_1 to ID_1200)
   for (let INDEX = 1; INDEX <= 1200; INDEX++) {
     const HEX_INDEX = INDEX.toString(16).padStart(4, '0');
 
     NOTE_IDS[`ID_${INDEX}`] = `30303030-${HEX_INDEX}-4e7c-8001-123456789abc`;
   }
 
-  // Company notes (ID_1201 to ID_1800)
   for (let INDEX = 1201; INDEX <= 1800; INDEX++) {
     const HEX_INDEX = INDEX.toString(16).padStart(4, '0');
 
@@ -49,7 +46,6 @@ const GENERATE_NOTE_IDS = (): Record<string, string> => {
 
 export const NOTE_DATA_SEED_IDS = GENERATE_NOTE_IDS();
 
-// Sample credible note titles and contents
 const PERSON_NOTE_TEMPLATES = [
   {
     title: 'Meeting Follow-up',

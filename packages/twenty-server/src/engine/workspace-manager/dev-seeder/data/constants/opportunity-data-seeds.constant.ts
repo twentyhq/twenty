@@ -32,7 +32,6 @@ export const OPPORTUNITY_DATA_SEED_COLUMNS: (keyof OpportunityDataSeed)[] = [
   'createdByName',
 ];
 
-// Generate opportunity IDs
 const GENERATE_OPPORTUNITY_IDS = (): Record<string, string> => {
   const OPPORTUNITY_IDS: Record<string, string> = {};
 
@@ -158,7 +157,6 @@ const OPPORTUNITY_TEMPLATES = [
   },
 ];
 
-// Generate opportunity data seeds
 const GENERATE_OPPORTUNITY_SEEDS = (): OpportunityDataSeed[] => {
   const OPPORTUNITY_SEEDS: OpportunityDataSeed[] = [];
 
@@ -166,7 +164,6 @@ const GENERATE_OPPORTUNITY_SEEDS = (): OpportunityDataSeed[] => {
     const TEMPLATE_INDEX = (INDEX - 1) % OPPORTUNITY_TEMPLATES.length;
     const TEMPLATE = OPPORTUNITY_TEMPLATES[TEMPLATE_INDEX];
 
-    // Calculate close date (random between 1-90 days from now)
     const DAYS_AHEAD = Math.floor(Math.random() * 90) + 1;
     const CLOSE_DATE = new Date();
 
@@ -175,7 +172,7 @@ const GENERATE_OPPORTUNITY_SEEDS = (): OpportunityDataSeed[] => {
     OPPORTUNITY_SEEDS.push({
       id: OPPORTUNITY_DATA_SEED_IDS[`ID_${INDEX}`],
       name: TEMPLATE.name,
-      amountAmountMicros: TEMPLATE.amount * 1000000, // Convert to micros
+      amountAmountMicros: TEMPLATE.amount * 1000000,
       amountCurrencyCode: 'USD',
       closeDate: CLOSE_DATE,
       stage: TEMPLATE.stage,

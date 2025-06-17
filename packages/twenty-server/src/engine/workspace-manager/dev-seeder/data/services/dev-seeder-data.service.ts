@@ -77,6 +77,14 @@ import {
   SURVEY_RESULT_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/survey-result-data-seeds.constant';
 import {
+  TASK_DATA_SEED_COLUMNS,
+  TASK_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/task-data-seeds.constant';
+import {
+  TASK_TARGET_DATA_SEED_COLUMNS,
+  TASK_TARGET_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/task-target-data-seeds.constant';
+import {
   WORKFLOW_DATA_SEED_COLUMNS,
   WORKFLOW_DATA_SEEDS,
   WORKFLOW_VERSION_DATA_SEED_COLUMNS,
@@ -194,6 +202,16 @@ const RECORD_SEEDS_CONFIGS = [
     tableName: '_surveyResult',
     pgColumns: SURVEY_RESULT_DATA_SEED_COLUMNS,
     recordSeeds: SURVEY_RESULT_DATA_SEEDS,
+  },
+  {
+    tableName: 'task',
+    pgColumns: TASK_DATA_SEED_COLUMNS,
+    recordSeeds: TASK_DATA_SEEDS,
+  },
+  {
+    tableName: 'taskTarget',
+    pgColumns: TASK_TARGET_DATA_SEED_COLUMNS,
+    recordSeeds: TASK_TARGET_DATA_SEEDS,
   },
 ];
 

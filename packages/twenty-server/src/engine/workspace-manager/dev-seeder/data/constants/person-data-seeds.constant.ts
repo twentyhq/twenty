@@ -14,6 +14,9 @@ type PersonDataSeed = {
   createdBySource: string;
   createdByWorkspaceMemberId: string;
   createdByName: string;
+  phonesPrimaryPhoneNumber: string;
+  phonesPrimaryPhoneCountryCode: string;
+  phonesPrimaryPhoneCallingCode: string;
 };
 
 export const PERSON_DATA_SEED_COLUMNS: (keyof PersonDataSeed)[] = [
@@ -29,6 +32,9 @@ export const PERSON_DATA_SEED_COLUMNS: (keyof PersonDataSeed)[] = [
   'createdBySource',
   'createdByWorkspaceMemberId',
   'createdByName',
+  'phonesPrimaryPhoneNumber',
+  'phonesPrimaryPhoneCountryCode',
+  'phonesPrimaryPhoneCallingCode',
 ];
 
 // prettier-ignore
@@ -1250,6 +1256,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_2,
@@ -1264,6 +1273,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_3,
@@ -1278,6 +1290,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_4,
@@ -1292,6 +1307,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_5,
@@ -1306,6 +1324,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_6,
@@ -1320,6 +1341,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 678-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_7,
@@ -1334,6 +1358,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 789-0123',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_8,
@@ -1348,6 +1375,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 890-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_9,
@@ -1362,6 +1392,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 901-2345',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_10,
@@ -1376,6 +1409,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 012-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_11,
@@ -1390,6 +1426,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(212) 555-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_12,
@@ -1404,6 +1443,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(415) 555-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_13,
@@ -1418,6 +1460,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(312) 555-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_14,
@@ -1432,6 +1477,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(617) 555-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_15,
@@ -1446,6 +1494,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(206) 555-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_16,
@@ -1460,6 +1511,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_17,
@@ -1474,6 +1528,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_18,
@@ -1488,6 +1545,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_19,
@@ -1502,6 +1562,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_20,
@@ -1516,6 +1579,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_21,
@@ -1530,6 +1596,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0161 123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_22,
@@ -1544,6 +1613,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0121 234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_23,
@@ -1558,6 +1630,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0113 345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_24,
@@ -1572,6 +1647,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0117 456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_25,
@@ -1586,6 +1664,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0131 567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_26,
@@ -1600,6 +1681,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_27,
@@ -1614,6 +1698,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_28,
@@ -1628,6 +1715,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_29,
@@ -1642,6 +1732,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 45 67 89 01',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_30,
@@ -1656,6 +1749,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 46 78 90 12',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_31,
@@ -1670,6 +1766,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '04 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_32,
@@ -1684,6 +1783,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '05 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_33,
@@ -1698,6 +1800,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_34,
@@ -1712,6 +1817,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_35,
@@ -1726,6 +1834,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_36,
@@ -1740,6 +1851,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 34567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_37,
@@ -1754,6 +1868,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '040 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_38,
@@ -1768,6 +1885,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '089 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_39,
@@ -1782,6 +1902,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0221 3456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_40,
@@ -1796,6 +1919,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0711 4567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_41,
@@ -1810,6 +1936,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_42,
@@ -1824,6 +1953,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '02 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_43,
@@ -1838,6 +1970,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '011 345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_44,
@@ -1852,6 +1987,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '055 456 7890',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_45,
@@ -1866,6 +2004,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '081 567 8901',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_46,
@@ -1880,6 +2021,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '91 123 45 67',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_47,
@@ -1894,6 +2038,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '93 234 56 78',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_48,
@@ -1908,6 +2055,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '95 345 67 89',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_49,
@@ -1922,6 +2072,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '94 456 78 90',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_50,
@@ -1936,6 +2089,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '96 567 89 01',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_51,
@@ -1950,6 +2106,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(416) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_52,
@@ -1964,6 +2123,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(604) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_53,
@@ -1978,6 +2140,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(514) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_54,
@@ -1992,6 +2157,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(403) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_55,
@@ -2006,6 +2174,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(613) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_56,
@@ -2020,6 +2191,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(02) 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_57,
@@ -2034,6 +2208,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(03) 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_58,
@@ -2048,6 +2225,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(07) 3456 7890',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_59,
@@ -2062,6 +2242,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(08) 4567 8901',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_60,
@@ -2076,6 +2259,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_61,
@@ -2090,6 +2276,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_62,
@@ -2104,6 +2293,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '052-345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_63,
@@ -2118,6 +2310,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '092-456-7890',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_64,
@@ -2132,6 +2327,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '010-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_65,
@@ -2146,6 +2344,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '021-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_66,
@@ -2160,6 +2361,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020-3456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_67,
@@ -2174,6 +2378,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0755-456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_68,
@@ -2188,6 +2395,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_69,
@@ -2202,6 +2412,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_70,
@@ -2216,6 +2429,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_71,
@@ -2230,6 +2446,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_72,
@@ -2244,6 +2463,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_73,
@@ -2258,6 +2480,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 678-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_74,
@@ -2272,6 +2497,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 789-0123',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_75,
@@ -2286,6 +2514,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 890-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_76,
@@ -2300,6 +2531,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 901-2345',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_77,
@@ -2314,6 +2548,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 012-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_78,
@@ -2328,6 +2565,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(212) 555-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_79,
@@ -2342,6 +2582,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(415) 555-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_80,
@@ -2356,6 +2599,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(312) 555-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_81,
@@ -2370,6 +2616,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(617) 555-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_82,
@@ -2384,6 +2633,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(206) 555-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_83,
@@ -2398,6 +2650,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_84,
@@ -2412,6 +2667,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_85,
@@ -2426,6 +2684,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_86,
@@ -2440,6 +2701,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_87,
@@ -2454,6 +2718,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_88,
@@ -2468,6 +2735,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0161 123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_89,
@@ -2482,6 +2752,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0121 234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_90,
@@ -2496,6 +2769,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0113 345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_91,
@@ -2510,6 +2786,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0117 456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_92,
@@ -2524,6 +2803,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0131 567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_93,
@@ -2538,6 +2820,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_94,
@@ -2552,6 +2837,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_95,
@@ -2566,6 +2854,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_96,
@@ -2580,6 +2871,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 45 67 89 01',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_97,
@@ -2594,6 +2888,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 46 78 90 12',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_98,
@@ -2608,6 +2905,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '04 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_99,
@@ -2622,6 +2922,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '05 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_100,
@@ -2636,6 +2939,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_101,
@@ -2650,6 +2956,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_102,
@@ -2664,6 +2973,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_103,
@@ -2678,6 +2990,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 34567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_104,
@@ -2692,6 +3007,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '040 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_105,
@@ -2706,6 +3024,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '089 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_106,
@@ -2720,6 +3041,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0221 3456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_107,
@@ -2734,6 +3058,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0711 4567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_108,
@@ -2748,6 +3075,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_109,
@@ -2762,6 +3092,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '02 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_110,
@@ -2776,6 +3109,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '011 345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_111,
@@ -2790,6 +3126,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '055 456 7890',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_112,
@@ -2804,6 +3143,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '081 567 8901',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_113,
@@ -2818,6 +3160,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '91 123 45 67',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_114,
@@ -2832,6 +3177,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '93 234 56 78',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_115,
@@ -2846,6 +3194,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '95 345 67 89',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_116,
@@ -2860,6 +3211,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '94 456 78 90',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_117,
@@ -2874,6 +3228,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '96 567 89 01',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_118,
@@ -2888,6 +3245,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(416) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_119,
@@ -2902,6 +3262,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(604) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_120,
@@ -2916,6 +3279,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(514) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_121,
@@ -2930,6 +3296,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(403) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_122,
@@ -2944,6 +3313,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(613) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_123,
@@ -2958,6 +3330,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(02) 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_124,
@@ -2972,6 +3347,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(03) 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_125,
@@ -2986,6 +3364,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(07) 3456 7890',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_126,
@@ -3000,6 +3381,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(08) 4567 8901',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_127,
@@ -3014,6 +3398,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_128,
@@ -3028,6 +3415,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_129,
@@ -3042,6 +3432,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '052-345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_130,
@@ -3056,6 +3449,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '092-456-7890',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_131,
@@ -3070,6 +3466,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '010-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_132,
@@ -3084,6 +3483,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '021-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_133,
@@ -3098,6 +3500,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020-3456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_134,
@@ -3112,6 +3517,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0755-456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_135,
@@ -3126,6 +3534,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_136,
@@ -3140,6 +3551,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_137,
@@ -3154,6 +3568,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_138,
@@ -3168,6 +3585,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_139,
@@ -3182,6 +3602,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_140,
@@ -3196,6 +3619,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 678-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_141,
@@ -3210,6 +3636,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 789-0123',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_142,
@@ -3224,6 +3653,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 890-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_143,
@@ -3238,6 +3670,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 901-2345',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_144,
@@ -3252,6 +3687,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 012-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_145,
@@ -3266,6 +3704,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(212) 555-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_146,
@@ -3280,6 +3721,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(415) 555-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_147,
@@ -3294,6 +3738,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(312) 555-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_148,
@@ -3308,6 +3755,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(617) 555-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_149,
@@ -3322,6 +3772,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(206) 555-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_150,
@@ -3336,6 +3789,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_151,
@@ -3350,6 +3806,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_152,
@@ -3364,6 +3823,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_153,
@@ -3378,6 +3840,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_154,
@@ -3392,6 +3857,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_155,
@@ -3406,6 +3874,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0161 123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_156,
@@ -3420,6 +3891,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0121 234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_157,
@@ -3434,6 +3908,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0113 345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_158,
@@ -3448,6 +3925,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0117 456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_159,
@@ -3462,6 +3942,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0131 567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_160,
@@ -3476,6 +3959,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_161,
@@ -3490,6 +3976,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_162,
@@ -3504,6 +3993,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_163,
@@ -3518,6 +4010,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 45 67 89 01',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_164,
@@ -3532,6 +4027,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 46 78 90 12',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_165,
@@ -3546,6 +4044,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '04 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_166,
@@ -3560,6 +4061,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '05 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_167,
@@ -3574,6 +4078,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_168,
@@ -3588,6 +4095,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_169,
@@ -3602,6 +4112,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_170,
@@ -3616,6 +4129,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 34567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_171,
@@ -3630,6 +4146,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '040 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_172,
@@ -3644,6 +4163,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '089 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_173,
@@ -3658,6 +4180,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0221 3456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_174,
@@ -3672,6 +4197,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0711 4567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_175,
@@ -3686,6 +4214,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_176,
@@ -3700,6 +4231,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '02 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_177,
@@ -3714,6 +4248,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '011 345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_178,
@@ -3728,6 +4265,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '055 456 7890',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_179,
@@ -3742,6 +4282,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '081 567 8901',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_180,
@@ -3756,6 +4299,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '91 123 45 67',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_181,
@@ -3770,6 +4316,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '93 234 56 78',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_182,
@@ -3784,6 +4333,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '95 345 67 89',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_183,
@@ -3798,6 +4350,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '94 456 78 90',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_184,
@@ -3812,6 +4367,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '96 567 89 01',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_185,
@@ -3826,6 +4384,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(416) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_186,
@@ -3840,6 +4401,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(604) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_187,
@@ -3854,6 +4418,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(514) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_188,
@@ -3868,6 +4435,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(403) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_189,
@@ -3882,6 +4452,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(613) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_190,
@@ -3896,6 +4469,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(02) 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_191,
@@ -3910,6 +4486,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(03) 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_192,
@@ -3924,6 +4503,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(07) 3456 7890',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_193,
@@ -3938,6 +4520,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(08) 4567 8901',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_194,
@@ -3952,6 +4537,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_195,
@@ -3966,6 +4554,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_196,
@@ -3980,6 +4571,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '052-345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_197,
@@ -3994,6 +4588,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '092-456-7890',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_198,
@@ -4008,6 +4605,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '010-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_199,
@@ -4022,6 +4622,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '021-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_200,
@@ -4036,6 +4639,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020-3456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_201,
@@ -4050,6 +4656,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0755-456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_202,
@@ -4064,6 +4673,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_203,
@@ -4078,6 +4690,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_204,
@@ -4092,6 +4707,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_205,
@@ -4106,6 +4724,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_206,
@@ -4120,6 +4741,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_207,
@@ -4134,6 +4758,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 678-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_208,
@@ -4148,6 +4775,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 789-0123',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_209,
@@ -4162,6 +4792,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 890-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_210,
@@ -4176,6 +4809,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 901-2345',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_211,
@@ -4190,6 +4826,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 012-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_212,
@@ -4204,6 +4843,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(212) 555-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_213,
@@ -4218,6 +4860,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(415) 555-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_214,
@@ -4232,6 +4877,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(312) 555-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_215,
@@ -4246,6 +4894,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(617) 555-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_216,
@@ -4260,6 +4911,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(206) 555-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_217,
@@ -4274,6 +4928,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_218,
@@ -4288,6 +4945,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_219,
@@ -4302,6 +4962,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_220,
@@ -4316,6 +4979,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_221,
@@ -4330,6 +4996,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_222,
@@ -4344,6 +5013,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0161 123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_223,
@@ -4358,6 +5030,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0121 234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_224,
@@ -4372,6 +5047,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0113 345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_225,
@@ -4386,6 +5064,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0117 456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_226,
@@ -4400,6 +5081,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0131 567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_227,
@@ -4414,6 +5098,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_228,
@@ -4428,6 +5115,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_229,
@@ -4442,6 +5132,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_230,
@@ -4456,6 +5149,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 45 67 89 01',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_231,
@@ -4470,6 +5166,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 46 78 90 12',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_232,
@@ -4484,6 +5183,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '04 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_233,
@@ -4498,6 +5200,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '05 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_234,
@@ -4512,6 +5217,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_235,
@@ -4526,6 +5234,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_236,
@@ -4540,6 +5251,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_237,
@@ -4554,6 +5268,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 34567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_238,
@@ -4568,6 +5285,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '040 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_239,
@@ -4582,6 +5302,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '089 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_240,
@@ -4596,6 +5319,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0221 3456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_241,
@@ -4610,6 +5336,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0711 4567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_242,
@@ -4624,6 +5353,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_243,
@@ -4638,6 +5370,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '02 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_244,
@@ -4652,6 +5387,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '011 345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_245,
@@ -4666,6 +5404,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '055 456 7890',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_246,
@@ -4680,6 +5421,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '081 567 8901',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_247,
@@ -4694,6 +5438,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '91 123 45 67',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_248,
@@ -4708,6 +5455,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '93 234 56 78',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_249,
@@ -4722,6 +5472,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '95 345 67 89',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_250,
@@ -4736,6 +5489,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '94 456 78 90',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_251,
@@ -4750,6 +5506,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '96 567 89 01',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_252,
@@ -4764,6 +5523,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(416) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_253,
@@ -4778,6 +5540,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(604) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_254,
@@ -4792,6 +5557,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(514) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_255,
@@ -4806,6 +5574,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(403) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_256,
@@ -4820,6 +5591,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(613) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_257,
@@ -4834,6 +5608,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(02) 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_258,
@@ -4848,6 +5625,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(03) 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_259,
@@ -4862,6 +5642,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(07) 3456 7890',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_260,
@@ -4876,6 +5659,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(08) 4567 8901',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_261,
@@ -4890,6 +5676,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_262,
@@ -4904,6 +5693,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_263,
@@ -4918,6 +5710,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '052-345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_264,
@@ -4932,6 +5727,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '092-456-7890',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_265,
@@ -4946,6 +5744,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '010-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_266,
@@ -4960,6 +5761,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '021-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_267,
@@ -4974,6 +5778,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020-3456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_268,
@@ -4988,6 +5795,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0755-456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_269,
@@ -5002,6 +5812,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_270,
@@ -5016,6 +5829,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_271,
@@ -5030,6 +5846,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_272,
@@ -5044,6 +5863,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_273,
@@ -5058,6 +5880,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_274,
@@ -5072,6 +5897,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 678-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_275,
@@ -5086,6 +5914,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 789-0123',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_276,
@@ -5100,6 +5931,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 890-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_277,
@@ -5114,6 +5948,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 901-2345',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_278,
@@ -5128,6 +5965,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 012-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_279,
@@ -5142,6 +5982,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(212) 555-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_280,
@@ -5156,6 +5999,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(415) 555-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_281,
@@ -5170,6 +6016,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(312) 555-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_282,
@@ -5184,6 +6033,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(617) 555-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_283,
@@ -5198,6 +6050,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(206) 555-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_284,
@@ -5212,6 +6067,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_285,
@@ -5226,6 +6084,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_286,
@@ -5240,6 +6101,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_287,
@@ -5254,6 +6118,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_288,
@@ -5268,6 +6135,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_289,
@@ -5282,6 +6152,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0161 123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_290,
@@ -5296,6 +6169,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0121 234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_291,
@@ -5310,6 +6186,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0113 345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_292,
@@ -5324,6 +6203,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0117 456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_293,
@@ -5338,6 +6220,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0131 567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_294,
@@ -5352,6 +6237,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_295,
@@ -5366,6 +6254,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_296,
@@ -5380,6 +6271,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_297,
@@ -5394,6 +6288,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 45 67 89 01',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_298,
@@ -5408,6 +6305,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 46 78 90 12',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_299,
@@ -5422,6 +6322,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '04 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_300,
@@ -5436,6 +6339,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '05 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_301,
@@ -5450,6 +6356,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_302,
@@ -5464,6 +6373,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_303,
@@ -5478,6 +6390,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_304,
@@ -5492,6 +6407,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 34567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_305,
@@ -5506,6 +6424,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '040 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_306,
@@ -5520,6 +6441,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '089 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_307,
@@ -5534,6 +6458,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0221 3456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_308,
@@ -5548,6 +6475,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0711 4567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_309,
@@ -5562,6 +6492,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_310,
@@ -5576,6 +6509,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '02 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_311,
@@ -5590,6 +6526,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '011 345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_312,
@@ -5604,6 +6543,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '055 456 7890',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_313,
@@ -5618,6 +6560,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '081 567 8901',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_314,
@@ -5632,6 +6577,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '91 123 45 67',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_315,
@@ -5646,6 +6594,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '93 234 56 78',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_316,
@@ -5660,6 +6611,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '95 345 67 89',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_317,
@@ -5674,6 +6628,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '94 456 78 90',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_318,
@@ -5688,6 +6645,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '96 567 89 01',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_319,
@@ -5702,6 +6662,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(416) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_320,
@@ -5716,6 +6679,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(604) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_321,
@@ -5730,6 +6696,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(514) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_322,
@@ -5744,6 +6713,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(403) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_323,
@@ -5758,6 +6730,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(613) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_324,
@@ -5772,6 +6747,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(02) 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_325,
@@ -5786,6 +6764,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(03) 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_326,
@@ -5800,6 +6781,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(07) 3456 7890',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_327,
@@ -5814,6 +6798,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(08) 4567 8901',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_328,
@@ -5828,6 +6815,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_329,
@@ -5842,6 +6832,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_330,
@@ -5856,6 +6849,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '052-345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_331,
@@ -5870,6 +6866,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '092-456-7890',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_332,
@@ -5884,6 +6883,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '010-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_333,
@@ -5898,6 +6900,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '021-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_334,
@@ -5912,6 +6917,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020-3456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_335,
@@ -5926,6 +6934,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0755-456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_336,
@@ -5940,6 +6951,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_337,
@@ -5954,6 +6968,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_338,
@@ -5968,6 +6985,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_339,
@@ -5982,6 +7002,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_340,
@@ -5996,6 +7019,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_341,
@@ -6010,6 +7036,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 678-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_342,
@@ -6024,6 +7053,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 789-0123',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_343,
@@ -6038,6 +7070,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 890-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_344,
@@ -6052,6 +7087,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 901-2345',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_345,
@@ -6066,6 +7104,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 012-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_346,
@@ -6080,6 +7121,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(212) 555-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_347,
@@ -6094,6 +7138,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(415) 555-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_348,
@@ -6108,6 +7155,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(312) 555-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_349,
@@ -6122,6 +7172,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(617) 555-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_350,
@@ -6136,6 +7189,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(206) 555-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_351,
@@ -6150,6 +7206,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_352,
@@ -6164,6 +7223,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_353,
@@ -6178,6 +7240,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_354,
@@ -6192,6 +7257,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_355,
@@ -6206,6 +7274,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_356,
@@ -6220,6 +7291,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0161 123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_357,
@@ -6234,6 +7308,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0121 234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_358,
@@ -6248,6 +7325,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0113 345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_359,
@@ -6262,6 +7342,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0117 456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_360,
@@ -6276,6 +7359,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0131 567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_361,
@@ -6290,6 +7376,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_362,
@@ -6304,6 +7393,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_363,
@@ -6318,6 +7410,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_364,
@@ -6332,6 +7427,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 45 67 89 01',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_365,
@@ -6346,6 +7444,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 46 78 90 12',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_366,
@@ -6360,6 +7461,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '04 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_367,
@@ -6374,6 +7478,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '05 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_368,
@@ -6388,6 +7495,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_369,
@@ -6402,6 +7512,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_370,
@@ -6416,6 +7529,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_371,
@@ -6430,6 +7546,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 34567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_372,
@@ -6444,6 +7563,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '040 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_373,
@@ -6458,6 +7580,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '089 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_374,
@@ -6472,6 +7597,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0221 3456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_375,
@@ -6486,6 +7614,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0711 4567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_376,
@@ -6500,6 +7631,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_377,
@@ -6514,6 +7648,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '02 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_378,
@@ -6528,6 +7665,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '011 345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_379,
@@ -6542,6 +7682,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '055 456 7890',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_380,
@@ -6556,6 +7699,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '081 567 8901',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_381,
@@ -6570,6 +7716,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '91 123 45 67',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_382,
@@ -6584,6 +7733,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '93 234 56 78',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_383,
@@ -6598,6 +7750,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '95 345 67 89',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_384,
@@ -6612,6 +7767,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '94 456 78 90',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_385,
@@ -6626,6 +7784,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '96 567 89 01',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_386,
@@ -6640,6 +7801,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(416) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_387,
@@ -6654,6 +7818,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(604) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_388,
@@ -6668,6 +7835,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(514) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_389,
@@ -6682,6 +7852,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(403) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_390,
@@ -6696,6 +7869,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(613) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_391,
@@ -6710,6 +7886,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(02) 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_392,
@@ -6724,6 +7903,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(03) 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_393,
@@ -6738,6 +7920,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(07) 3456 7890',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_394,
@@ -6752,6 +7937,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(08) 4567 8901',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_395,
@@ -6766,6 +7954,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_396,
@@ -6780,6 +7971,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_397,
@@ -6794,6 +7988,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '052-345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_398,
@@ -6808,6 +8005,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '092-456-7890',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_399,
@@ -6822,6 +8022,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '010-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_400,
@@ -6836,6 +8039,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '021-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_401,
@@ -6850,6 +8056,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020-3456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_402,
@@ -6864,6 +8073,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0755-456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_403,
@@ -6878,6 +8090,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_404,
@@ -6892,6 +8107,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_405,
@@ -6906,6 +8124,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_406,
@@ -6920,6 +8141,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_407,
@@ -6934,6 +8158,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_408,
@@ -6948,6 +8175,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 678-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_409,
@@ -6962,6 +8192,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 789-0123',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_410,
@@ -6976,6 +8209,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 890-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_411,
@@ -6990,6 +8226,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 901-2345',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_412,
@@ -7004,6 +8243,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 012-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_413,
@@ -7018,6 +8260,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(212) 555-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_414,
@@ -7032,6 +8277,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(415) 555-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_415,
@@ -7046,6 +8294,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(312) 555-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_416,
@@ -7060,6 +8311,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(617) 555-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_417,
@@ -7074,6 +8328,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(206) 555-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_418,
@@ -7088,6 +8345,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_419,
@@ -7102,6 +8362,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_420,
@@ -7116,6 +8379,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_421,
@@ -7130,6 +8396,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_422,
@@ -7144,6 +8413,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_423,
@@ -7158,6 +8430,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0161 123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_424,
@@ -7172,6 +8447,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0121 234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_425,
@@ -7186,6 +8464,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0113 345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_426,
@@ -7200,6 +8481,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0117 456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_427,
@@ -7214,6 +8498,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0131 567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_428,
@@ -7228,6 +8515,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_429,
@@ -7242,6 +8532,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_430,
@@ -7256,6 +8549,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_431,
@@ -7270,6 +8566,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 45 67 89 01',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_432,
@@ -7284,6 +8583,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 46 78 90 12',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_433,
@@ -7298,6 +8600,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '04 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_434,
@@ -7312,6 +8617,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '05 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_435,
@@ -7326,6 +8634,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_436,
@@ -7340,6 +8651,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_437,
@@ -7354,6 +8668,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_438,
@@ -7368,6 +8685,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 34567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_439,
@@ -7382,6 +8702,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '040 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_440,
@@ -7396,6 +8719,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '089 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_441,
@@ -7410,6 +8736,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0221 3456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_442,
@@ -7424,6 +8753,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0711 4567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_443,
@@ -7438,6 +8770,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_444,
@@ -7452,6 +8787,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '02 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_445,
@@ -7466,6 +8804,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '011 345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_446,
@@ -7480,6 +8821,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '055 456 7890',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_447,
@@ -7494,6 +8838,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '081 567 8901',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_448,
@@ -7508,6 +8855,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '91 123 45 67',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_449,
@@ -7522,6 +8872,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '93 234 56 78',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_450,
@@ -7536,6 +8889,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '95 345 67 89',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_451,
@@ -7550,6 +8906,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '94 456 78 90',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_452,
@@ -7564,6 +8923,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '96 567 89 01',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_453,
@@ -7578,6 +8940,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(416) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_454,
@@ -7592,6 +8957,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(604) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_455,
@@ -7606,6 +8974,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(514) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_456,
@@ -7620,6 +8991,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(403) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_457,
@@ -7634,6 +9008,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(613) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_458,
@@ -7648,6 +9025,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(02) 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_459,
@@ -7662,6 +9042,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(03) 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_460,
@@ -7676,6 +9059,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(07) 3456 7890',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_461,
@@ -7690,6 +9076,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(08) 4567 8901',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_462,
@@ -7704,6 +9093,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_463,
@@ -7718,6 +9110,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_464,
@@ -7732,6 +9127,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '052-345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_465,
@@ -7746,6 +9144,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '092-456-7890',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_466,
@@ -7760,6 +9161,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '010-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_467,
@@ -7774,6 +9178,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '021-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_468,
@@ -7788,6 +9195,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020-3456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_469,
@@ -7802,6 +9212,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0755-456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_470,
@@ -7816,6 +9229,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_471,
@@ -7830,6 +9246,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_472,
@@ -7844,6 +9263,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_473,
@@ -7858,6 +9280,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_474,
@@ -7872,6 +9297,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_475,
@@ -7886,6 +9314,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 678-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_476,
@@ -7900,6 +9331,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 789-0123',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_477,
@@ -7914,6 +9348,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 890-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_478,
@@ -7928,6 +9365,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 901-2345',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_479,
@@ -7942,6 +9382,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 012-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_480,
@@ -7956,6 +9399,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(212) 555-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_481,
@@ -7970,6 +9416,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(415) 555-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_482,
@@ -7984,6 +9433,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(312) 555-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_483,
@@ -7998,6 +9450,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(617) 555-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_484,
@@ -8012,6 +9467,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(206) 555-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_485,
@@ -8026,6 +9484,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_486,
@@ -8040,6 +9501,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_487,
@@ -8054,6 +9518,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_488,
@@ -8068,6 +9535,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_489,
@@ -8082,6 +9552,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_490,
@@ -8096,6 +9569,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0161 123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_491,
@@ -8110,6 +9586,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0121 234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_492,
@@ -8124,6 +9603,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0113 345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_493,
@@ -8138,6 +9620,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0117 456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_494,
@@ -8152,6 +9637,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0131 567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_495,
@@ -8166,6 +9654,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_496,
@@ -8180,6 +9671,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_497,
@@ -8194,6 +9688,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_498,
@@ -8208,6 +9705,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 45 67 89 01',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_499,
@@ -8222,6 +9722,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 46 78 90 12',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_500,
@@ -8236,6 +9739,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '04 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_501,
@@ -8250,6 +9756,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '05 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_502,
@@ -8264,6 +9773,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_503,
@@ -8278,6 +9790,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_504,
@@ -8292,6 +9807,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_505,
@@ -8306,6 +9824,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 34567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_506,
@@ -8320,6 +9841,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '040 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_507,
@@ -8334,6 +9858,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '089 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_508,
@@ -8348,6 +9875,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0221 3456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_509,
@@ -8362,6 +9892,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0711 4567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_510,
@@ -8376,6 +9909,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_511,
@@ -8390,6 +9926,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '02 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_512,
@@ -8404,6 +9943,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '011 345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_513,
@@ -8418,6 +9960,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '055 456 7890',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_514,
@@ -8432,6 +9977,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '081 567 8901',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_515,
@@ -8446,6 +9994,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '91 123 45 67',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_516,
@@ -8460,6 +10011,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '93 234 56 78',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_517,
@@ -8474,6 +10028,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '95 345 67 89',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_518,
@@ -8488,6 +10045,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '94 456 78 90',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_519,
@@ -8502,6 +10062,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '96 567 89 01',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_520,
@@ -8516,6 +10079,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(416) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_521,
@@ -8530,6 +10096,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(604) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_522,
@@ -8544,6 +10113,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(514) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_523,
@@ -8558,6 +10130,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(403) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_524,
@@ -8572,6 +10147,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(613) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_525,
@@ -8586,6 +10164,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(02) 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_526,
@@ -8600,6 +10181,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(03) 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_527,
@@ -8614,6 +10198,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(07) 3456 7890',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_528,
@@ -8628,6 +10215,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(08) 4567 8901',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_529,
@@ -8642,6 +10232,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_530,
@@ -8656,6 +10249,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_531,
@@ -8670,6 +10266,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '052-345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_532,
@@ -8684,6 +10283,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '092-456-7890',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_533,
@@ -8698,6 +10300,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '010-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_534,
@@ -8712,6 +10317,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '021-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_535,
@@ -8726,6 +10334,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020-3456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_536,
@@ -8740,6 +10351,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0755-456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_537,
@@ -8754,6 +10368,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_538,
@@ -8768,6 +10385,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_539,
@@ -8782,6 +10402,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_540,
@@ -8796,6 +10419,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_541,
@@ -8810,6 +10436,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_542,
@@ -8824,6 +10453,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 678-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_543,
@@ -8838,6 +10470,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 789-0123',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_544,
@@ -8852,6 +10487,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 890-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_545,
@@ -8866,6 +10504,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 901-2345',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_546,
@@ -8880,6 +10521,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 012-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_547,
@@ -8894,6 +10538,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(212) 555-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_548,
@@ -8908,6 +10555,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(415) 555-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_549,
@@ -8922,6 +10572,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(312) 555-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_550,
@@ -8936,6 +10589,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(617) 555-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_551,
@@ -8950,6 +10606,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(206) 555-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_552,
@@ -8964,6 +10623,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_553,
@@ -8978,6 +10640,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_554,
@@ -8992,6 +10657,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_555,
@@ -9006,6 +10674,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_556,
@@ -9020,6 +10691,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_557,
@@ -9034,6 +10708,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0161 123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_558,
@@ -9048,6 +10725,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0121 234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_559,
@@ -9062,6 +10742,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0113 345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_560,
@@ -9076,6 +10759,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0117 456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_561,
@@ -9090,6 +10776,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0131 567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_562,
@@ -9104,6 +10793,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_563,
@@ -9118,6 +10810,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_564,
@@ -9132,6 +10827,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_565,
@@ -9146,6 +10844,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 45 67 89 01',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_566,
@@ -9160,6 +10861,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 46 78 90 12',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_567,
@@ -9174,6 +10878,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '04 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_568,
@@ -9188,6 +10895,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '05 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_569,
@@ -9202,6 +10912,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_570,
@@ -9216,6 +10929,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_571,
@@ -9230,6 +10946,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_572,
@@ -9244,6 +10963,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 34567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_573,
@@ -9258,6 +10980,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '040 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_574,
@@ -9272,6 +10997,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '089 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_575,
@@ -9286,6 +11014,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0221 3456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_576,
@@ -9300,6 +11031,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0711 4567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_577,
@@ -9314,6 +11048,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_578,
@@ -9328,6 +11065,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '02 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_579,
@@ -9342,6 +11082,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '011 345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_580,
@@ -9356,6 +11099,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '055 456 7890',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_581,
@@ -9370,6 +11116,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '081 567 8901',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_582,
@@ -9384,6 +11133,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '91 123 45 67',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_583,
@@ -9398,6 +11150,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '93 234 56 78',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_584,
@@ -9412,6 +11167,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '95 345 67 89',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_585,
@@ -9426,6 +11184,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '94 456 78 90',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_586,
@@ -9440,6 +11201,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '96 567 89 01',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_587,
@@ -9454,6 +11218,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(416) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_588,
@@ -9468,6 +11235,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(604) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_589,
@@ -9482,6 +11252,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(514) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_590,
@@ -9496,6 +11269,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(403) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_591,
@@ -9510,6 +11286,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(613) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_592,
@@ -9524,6 +11303,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(02) 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_593,
@@ -9538,6 +11320,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(03) 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_594,
@@ -9552,6 +11337,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(07) 3456 7890',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_595,
@@ -9566,6 +11354,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(08) 4567 8901',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_596,
@@ -9580,6 +11371,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_597,
@@ -9594,6 +11388,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_598,
@@ -9608,6 +11405,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '052-345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_599,
@@ -9622,6 +11422,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '092-456-7890',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_600,
@@ -9636,6 +11439,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '010-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_601,
@@ -9650,6 +11456,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '021-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_602,
@@ -9664,6 +11473,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020-3456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_603,
@@ -9678,6 +11490,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0755-456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_604,
@@ -9692,6 +11507,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_605,
@@ -9706,6 +11524,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_606,
@@ -9720,6 +11541,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_607,
@@ -9734,6 +11558,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_608,
@@ -9748,6 +11575,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_609,
@@ -9762,6 +11592,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 678-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_610,
@@ -9776,6 +11609,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 789-0123',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_611,
@@ -9790,6 +11626,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 890-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_612,
@@ -9804,6 +11643,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 901-2345',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_613,
@@ -9818,6 +11660,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 012-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_614,
@@ -9832,6 +11677,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(212) 555-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_615,
@@ -9846,6 +11694,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(415) 555-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_616,
@@ -9860,6 +11711,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(312) 555-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_617,
@@ -9874,6 +11728,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(617) 555-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_618,
@@ -9888,6 +11745,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(206) 555-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_619,
@@ -9902,6 +11762,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_620,
@@ -9916,6 +11779,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_621,
@@ -9930,6 +11796,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_622,
@@ -9944,6 +11813,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_623,
@@ -9958,6 +11830,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_624,
@@ -9972,6 +11847,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0161 123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_625,
@@ -9986,6 +11864,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0121 234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_626,
@@ -10000,6 +11881,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0113 345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_627,
@@ -10014,6 +11898,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0117 456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_628,
@@ -10028,6 +11915,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0131 567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_629,
@@ -10042,6 +11932,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_630,
@@ -10056,6 +11949,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_631,
@@ -10070,6 +11966,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_632,
@@ -10084,6 +11983,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 45 67 89 01',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_633,
@@ -10098,6 +12000,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 46 78 90 12',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_634,
@@ -10112,6 +12017,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '04 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_635,
@@ -10126,6 +12034,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '05 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_636,
@@ -10140,6 +12051,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_637,
@@ -10154,6 +12068,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_638,
@@ -10168,6 +12085,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_639,
@@ -10182,6 +12102,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 34567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_640,
@@ -10196,6 +12119,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '040 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_641,
@@ -10210,6 +12136,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '089 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_642,
@@ -10224,6 +12153,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0221 3456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_643,
@@ -10238,6 +12170,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0711 4567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_644,
@@ -10252,6 +12187,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_645,
@@ -10266,6 +12204,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '02 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_646,
@@ -10280,6 +12221,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '011 345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_647,
@@ -10294,6 +12238,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '055 456 7890',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_648,
@@ -10308,6 +12255,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '081 567 8901',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_649,
@@ -10322,6 +12272,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '91 123 45 67',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_650,
@@ -10336,6 +12289,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '93 234 56 78',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_651,
@@ -10350,6 +12306,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '95 345 67 89',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_652,
@@ -10364,6 +12323,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '94 456 78 90',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_653,
@@ -10378,6 +12340,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '96 567 89 01',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_654,
@@ -10392,6 +12357,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(416) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_655,
@@ -10406,6 +12374,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(604) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_656,
@@ -10420,6 +12391,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(514) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_657,
@@ -10434,6 +12408,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(403) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_658,
@@ -10448,6 +12425,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(613) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_659,
@@ -10462,6 +12442,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(02) 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_660,
@@ -10476,6 +12459,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(03) 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_661,
@@ -10490,6 +12476,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(07) 3456 7890',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_662,
@@ -10504,6 +12493,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(08) 4567 8901',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_663,
@@ -10518,6 +12510,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_664,
@@ -10532,6 +12527,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_665,
@@ -10546,6 +12544,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '052-345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_666,
@@ -10560,6 +12561,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '092-456-7890',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_667,
@@ -10574,6 +12578,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '010-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_668,
@@ -10588,6 +12595,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '021-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_669,
@@ -10602,6 +12612,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020-3456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_670,
@@ -10616,6 +12629,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0755-456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_671,
@@ -10630,6 +12646,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_672,
@@ -10644,6 +12663,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_673,
@@ -10658,6 +12680,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_674,
@@ -10672,6 +12697,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_675,
@@ -10686,6 +12714,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_676,
@@ -10700,6 +12731,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 678-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_677,
@@ -10714,6 +12748,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 789-0123',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_678,
@@ -10728,6 +12765,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 890-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_679,
@@ -10742,6 +12782,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 901-2345',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_680,
@@ -10756,6 +12799,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 012-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_681,
@@ -10770,6 +12816,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(212) 555-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_682,
@@ -10784,6 +12833,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(415) 555-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_683,
@@ -10798,6 +12850,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(312) 555-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_684,
@@ -10812,6 +12867,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(617) 555-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_685,
@@ -10826,6 +12884,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(206) 555-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_686,
@@ -10840,6 +12901,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_687,
@@ -10854,6 +12918,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_688,
@@ -10868,6 +12935,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_689,
@@ -10882,6 +12952,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_690,
@@ -10896,6 +12969,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_691,
@@ -10910,6 +12986,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0161 123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_692,
@@ -10924,6 +13003,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0121 234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_693,
@@ -10938,6 +13020,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0113 345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_694,
@@ -10952,6 +13037,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0117 456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_695,
@@ -10966,6 +13054,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0131 567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_696,
@@ -10980,6 +13071,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_697,
@@ -10994,6 +13088,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_698,
@@ -11008,6 +13105,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_699,
@@ -11022,6 +13122,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 45 67 89 01',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_700,
@@ -11036,6 +13139,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 46 78 90 12',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_701,
@@ -11050,6 +13156,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '04 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_702,
@@ -11064,6 +13173,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '05 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_703,
@@ -11078,6 +13190,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_704,
@@ -11092,6 +13207,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_705,
@@ -11106,6 +13224,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_706,
@@ -11120,6 +13241,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 34567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_707,
@@ -11134,6 +13258,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '040 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_708,
@@ -11148,6 +13275,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '089 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_709,
@@ -11162,6 +13292,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0221 3456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_710,
@@ -11176,6 +13309,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0711 4567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_711,
@@ -11190,6 +13326,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_712,
@@ -11204,6 +13343,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '02 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_713,
@@ -11218,6 +13360,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '011 345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_714,
@@ -11232,6 +13377,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '055 456 7890',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_715,
@@ -11246,6 +13394,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '081 567 8901',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_716,
@@ -11260,6 +13411,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '91 123 45 67',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_717,
@@ -11274,6 +13428,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '93 234 56 78',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_718,
@@ -11288,6 +13445,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '95 345 67 89',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_719,
@@ -11302,6 +13462,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '94 456 78 90',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_720,
@@ -11316,6 +13479,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '96 567 89 01',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_721,
@@ -11330,6 +13496,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(416) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_722,
@@ -11344,6 +13513,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(604) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_723,
@@ -11358,6 +13530,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(514) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_724,
@@ -11372,6 +13547,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(403) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_725,
@@ -11386,6 +13564,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(613) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_726,
@@ -11400,6 +13581,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(02) 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_727,
@@ -11414,6 +13598,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(03) 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_728,
@@ -11428,6 +13615,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(07) 3456 7890',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_729,
@@ -11442,6 +13632,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(08) 4567 8901',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_730,
@@ -11456,6 +13649,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_731,
@@ -11470,6 +13666,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_732,
@@ -11484,6 +13683,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '052-345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_733,
@@ -11498,6 +13700,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '092-456-7890',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_734,
@@ -11512,6 +13717,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '010-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_735,
@@ -11526,6 +13734,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '021-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_736,
@@ -11540,6 +13751,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020-3456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_737,
@@ -11554,6 +13768,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0755-456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_738,
@@ -11568,6 +13785,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_739,
@@ -11582,6 +13802,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_740,
@@ -11596,6 +13819,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_741,
@@ -11610,6 +13836,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_742,
@@ -11624,6 +13853,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_743,
@@ -11638,6 +13870,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 678-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_744,
@@ -11652,6 +13887,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 789-0123',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_745,
@@ -11666,6 +13904,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 890-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_746,
@@ -11680,6 +13921,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 901-2345',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_747,
@@ -11694,6 +13938,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 012-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_748,
@@ -11708,6 +13955,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(212) 555-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_749,
@@ -11722,6 +13972,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(415) 555-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_750,
@@ -11736,6 +13989,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(312) 555-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_751,
@@ -11750,6 +14006,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(617) 555-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_752,
@@ -11764,6 +14023,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(206) 555-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_753,
@@ -11778,6 +14040,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_754,
@@ -11792,6 +14057,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_755,
@@ -11806,6 +14074,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_756,
@@ -11820,6 +14091,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_757,
@@ -11834,6 +14108,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_758,
@@ -11848,6 +14125,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0161 123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_759,
@@ -11862,6 +14142,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0121 234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_760,
@@ -11876,6 +14159,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0113 345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_761,
@@ -11890,6 +14176,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0117 456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_762,
@@ -11904,6 +14193,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0131 567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_763,
@@ -11918,6 +14210,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_764,
@@ -11932,6 +14227,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_765,
@@ -11946,6 +14244,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_766,
@@ -11960,6 +14261,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 45 67 89 01',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_767,
@@ -11974,6 +14278,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 46 78 90 12',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_768,
@@ -11988,6 +14295,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '04 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_769,
@@ -12002,6 +14312,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '05 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_770,
@@ -12016,6 +14329,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_771,
@@ -12030,6 +14346,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_772,
@@ -12044,6 +14363,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_773,
@@ -12058,6 +14380,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 34567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_774,
@@ -12072,6 +14397,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '040 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_775,
@@ -12086,6 +14414,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '089 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_776,
@@ -12100,6 +14431,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0221 3456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_777,
@@ -12114,6 +14448,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0711 4567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_778,
@@ -12128,6 +14465,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_779,
@@ -12142,6 +14482,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '02 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_780,
@@ -12156,6 +14499,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '011 345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_781,
@@ -12170,6 +14516,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '055 456 7890',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_782,
@@ -12184,6 +14533,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '081 567 8901',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_783,
@@ -12198,6 +14550,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '91 123 45 67',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_784,
@@ -12212,6 +14567,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '93 234 56 78',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_785,
@@ -12226,6 +14584,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '95 345 67 89',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_786,
@@ -12240,6 +14601,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '94 456 78 90',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_787,
@@ -12254,6 +14618,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '96 567 89 01',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_788,
@@ -12268,6 +14635,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(416) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_789,
@@ -12282,6 +14652,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(604) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_790,
@@ -12296,6 +14669,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(514) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_791,
@@ -12310,6 +14686,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(403) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_792,
@@ -12324,6 +14703,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(613) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_793,
@@ -12338,6 +14720,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(02) 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_794,
@@ -12352,6 +14737,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(03) 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_795,
@@ -12366,6 +14754,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(07) 3456 7890',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_796,
@@ -12380,6 +14771,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(08) 4567 8901',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_797,
@@ -12394,6 +14788,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_798,
@@ -12408,6 +14805,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_799,
@@ -12422,6 +14822,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '052-345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_800,
@@ -12436,6 +14839,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '092-456-7890',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_801,
@@ -12450,6 +14856,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '010-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_802,
@@ -12464,6 +14873,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '021-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_803,
@@ -12478,6 +14890,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020-3456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_804,
@@ -12492,6 +14907,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0755-456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_805,
@@ -12506,6 +14924,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_806,
@@ -12520,6 +14941,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_807,
@@ -12534,6 +14958,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_808,
@@ -12548,6 +14975,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_809,
@@ -12562,6 +14992,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_810,
@@ -12576,6 +15009,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 678-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_811,
@@ -12590,6 +15026,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 789-0123',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_812,
@@ -12604,6 +15043,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 890-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_813,
@@ -12618,6 +15060,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 901-2345',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_814,
@@ -12632,6 +15077,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 012-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_815,
@@ -12646,6 +15094,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(212) 555-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_816,
@@ -12660,6 +15111,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(415) 555-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_817,
@@ -12674,6 +15128,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(312) 555-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_818,
@@ -12688,6 +15145,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(617) 555-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_819,
@@ -12702,6 +15162,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(206) 555-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_820,
@@ -12716,6 +15179,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_821,
@@ -12730,6 +15196,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_822,
@@ -12744,6 +15213,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_823,
@@ -12758,6 +15230,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_824,
@@ -12772,6 +15247,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_825,
@@ -12786,6 +15264,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0161 123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_826,
@@ -12800,6 +15281,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0121 234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_827,
@@ -12814,6 +15298,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0113 345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_828,
@@ -12828,6 +15315,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0117 456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_829,
@@ -12842,6 +15332,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0131 567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_830,
@@ -12856,6 +15349,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_831,
@@ -12870,6 +15366,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_832,
@@ -12884,6 +15383,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_833,
@@ -12898,6 +15400,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 45 67 89 01',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_834,
@@ -12912,6 +15417,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 46 78 90 12',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_835,
@@ -12926,6 +15434,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '04 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_836,
@@ -12940,6 +15451,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '05 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_837,
@@ -12954,6 +15468,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_838,
@@ -12968,6 +15485,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_839,
@@ -12982,6 +15502,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_840,
@@ -12996,6 +15519,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 34567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_841,
@@ -13010,6 +15536,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '040 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_842,
@@ -13024,6 +15553,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '089 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_843,
@@ -13038,6 +15570,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0221 3456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_844,
@@ -13052,6 +15587,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0711 4567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_845,
@@ -13066,6 +15604,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_846,
@@ -13080,6 +15621,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '02 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_847,
@@ -13094,6 +15638,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '011 345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_848,
@@ -13108,6 +15655,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '055 456 7890',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_849,
@@ -13122,6 +15672,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '081 567 8901',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_850,
@@ -13136,6 +15689,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '91 123 45 67',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_851,
@@ -13150,6 +15706,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '93 234 56 78',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_852,
@@ -13164,6 +15723,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '95 345 67 89',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_853,
@@ -13178,6 +15740,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '94 456 78 90',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_854,
@@ -13192,6 +15757,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '96 567 89 01',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_855,
@@ -13206,6 +15774,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(416) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_856,
@@ -13220,6 +15791,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(604) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_857,
@@ -13234,6 +15808,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(514) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_858,
@@ -13248,6 +15825,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(403) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_859,
@@ -13262,6 +15842,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(613) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_860,
@@ -13276,6 +15859,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(02) 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_861,
@@ -13290,6 +15876,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(03) 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_862,
@@ -13304,6 +15893,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(07) 3456 7890',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_863,
@@ -13318,6 +15910,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(08) 4567 8901',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_864,
@@ -13332,6 +15927,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_865,
@@ -13346,6 +15944,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_866,
@@ -13360,6 +15961,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '052-345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_867,
@@ -13374,6 +15978,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '092-456-7890',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_868,
@@ -13388,6 +15995,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '010-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_869,
@@ -13402,6 +16012,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '021-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_870,
@@ -13416,6 +16029,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020-3456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_871,
@@ -13430,6 +16046,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0755-456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_872,
@@ -13444,6 +16063,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_873,
@@ -13458,6 +16080,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_874,
@@ -13472,6 +16097,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_875,
@@ -13486,6 +16114,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_876,
@@ -13500,6 +16131,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_877,
@@ -13514,6 +16148,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 678-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_878,
@@ -13528,6 +16165,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 789-0123',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_879,
@@ -13542,6 +16182,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 890-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_880,
@@ -13556,6 +16199,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 901-2345',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_881,
@@ -13570,6 +16216,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 012-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_882,
@@ -13584,6 +16233,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(212) 555-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_883,
@@ -13598,6 +16250,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(415) 555-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_884,
@@ -13612,6 +16267,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(312) 555-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_885,
@@ -13626,6 +16284,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(617) 555-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_886,
@@ -13640,6 +16301,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(206) 555-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_887,
@@ -13654,6 +16318,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_888,
@@ -13668,6 +16335,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_889,
@@ -13682,6 +16352,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_890,
@@ -13696,6 +16369,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_891,
@@ -13710,6 +16386,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_892,
@@ -13724,6 +16403,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0161 123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_893,
@@ -13738,6 +16420,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0121 234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_894,
@@ -13752,6 +16437,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0113 345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_895,
@@ -13766,6 +16454,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0117 456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_896,
@@ -13780,6 +16471,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0131 567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_897,
@@ -13794,6 +16488,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_898,
@@ -13808,6 +16505,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_899,
@@ -13822,6 +16522,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_900,
@@ -13836,6 +16539,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 45 67 89 01',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_901,
@@ -13850,6 +16556,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 46 78 90 12',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_902,
@@ -13864,6 +16573,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '04 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_903,
@@ -13878,6 +16590,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '05 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_904,
@@ -13892,6 +16607,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_905,
@@ -13906,6 +16624,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_906,
@@ -13920,6 +16641,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_907,
@@ -13934,6 +16658,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 34567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_908,
@@ -13948,6 +16675,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '040 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_909,
@@ -13962,6 +16692,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '089 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_910,
@@ -13976,6 +16709,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0221 3456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_911,
@@ -13990,6 +16726,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0711 4567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_912,
@@ -14004,6 +16743,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_913,
@@ -14018,6 +16760,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '02 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_914,
@@ -14032,6 +16777,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '011 345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_915,
@@ -14046,6 +16794,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '055 456 7890',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_916,
@@ -14060,6 +16811,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '081 567 8901',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_917,
@@ -14074,6 +16828,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '91 123 45 67',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_918,
@@ -14088,6 +16845,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '93 234 56 78',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_919,
@@ -14102,6 +16862,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '95 345 67 89',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_920,
@@ -14116,6 +16879,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '94 456 78 90',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_921,
@@ -14130,6 +16896,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '96 567 89 01',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_922,
@@ -14144,6 +16913,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(416) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_923,
@@ -14158,6 +16930,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(604) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_924,
@@ -14172,6 +16947,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(514) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_925,
@@ -14186,6 +16964,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(403) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_926,
@@ -14200,6 +16981,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(613) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_927,
@@ -14214,6 +16998,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(02) 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_928,
@@ -14228,6 +17015,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(03) 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_929,
@@ -14242,6 +17032,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(07) 3456 7890',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_930,
@@ -14256,6 +17049,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(08) 4567 8901',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_931,
@@ -14270,6 +17066,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_932,
@@ -14284,6 +17083,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_933,
@@ -14298,6 +17100,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '052-345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_934,
@@ -14312,6 +17117,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '092-456-7890',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_935,
@@ -14326,6 +17134,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '010-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_936,
@@ -14340,6 +17151,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '021-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_937,
@@ -14354,6 +17168,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020-3456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_938,
@@ -14368,6 +17185,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0755-456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_939,
@@ -14382,6 +17202,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_940,
@@ -14396,6 +17219,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_941,
@@ -14410,6 +17236,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_942,
@@ -14424,6 +17253,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_943,
@@ -14438,6 +17270,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_944,
@@ -14452,6 +17287,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 678-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_945,
@@ -14466,6 +17304,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 789-0123',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_946,
@@ -14480,6 +17321,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 890-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_947,
@@ -14494,6 +17338,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 901-2345',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_948,
@@ -14508,6 +17355,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 012-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_949,
@@ -14522,6 +17372,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(212) 555-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_950,
@@ -14536,6 +17389,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(415) 555-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_951,
@@ -14550,6 +17406,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(312) 555-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_952,
@@ -14564,6 +17423,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(617) 555-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_953,
@@ -14578,6 +17440,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(206) 555-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_954,
@@ -14592,6 +17457,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_955,
@@ -14606,6 +17474,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_956,
@@ -14620,6 +17491,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_957,
@@ -14634,6 +17508,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_958,
@@ -14648,6 +17525,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_959,
@@ -14662,6 +17542,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0161 123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_960,
@@ -14676,6 +17559,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0121 234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_961,
@@ -14690,6 +17576,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0113 345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_962,
@@ -14704,6 +17593,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0117 456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_963,
@@ -14718,6 +17610,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0131 567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_964,
@@ -14732,6 +17627,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_965,
@@ -14746,6 +17644,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_966,
@@ -14760,6 +17661,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_967,
@@ -14774,6 +17678,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 45 67 89 01',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_968,
@@ -14788,6 +17695,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 46 78 90 12',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_969,
@@ -14802,6 +17712,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '04 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_970,
@@ -14816,6 +17729,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '05 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_971,
@@ -14830,6 +17746,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_972,
@@ -14844,6 +17763,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_973,
@@ -14858,6 +17780,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_974,
@@ -14872,6 +17797,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 34567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_975,
@@ -14886,6 +17814,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '040 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_976,
@@ -14900,6 +17831,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '089 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_977,
@@ -14914,6 +17848,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0221 3456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_978,
@@ -14928,6 +17865,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0711 4567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_979,
@@ -14942,6 +17882,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_980,
@@ -14956,6 +17899,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '02 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_981,
@@ -14970,6 +17916,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '011 345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_982,
@@ -14984,6 +17933,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '055 456 7890',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_983,
@@ -14998,6 +17950,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '081 567 8901',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_984,
@@ -15012,6 +17967,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '91 123 45 67',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_985,
@@ -15026,6 +17984,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '93 234 56 78',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_986,
@@ -15040,6 +18001,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '95 345 67 89',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_987,
@@ -15054,6 +18018,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '94 456 78 90',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_988,
@@ -15068,6 +18035,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '96 567 89 01',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_989,
@@ -15082,6 +18052,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(416) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_990,
@@ -15096,6 +18069,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(604) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_991,
@@ -15110,6 +18086,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(514) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_992,
@@ -15124,6 +18103,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(403) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_993,
@@ -15138,6 +18120,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(613) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_994,
@@ -15152,6 +18137,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(02) 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_995,
@@ -15166,6 +18154,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(03) 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_996,
@@ -15180,6 +18171,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(07) 3456 7890',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_997,
@@ -15194,6 +18188,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(08) 4567 8901',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_998,
@@ -15208,6 +18205,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_999,
@@ -15222,6 +18222,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1000,
@@ -15236,6 +18239,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '052-345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1001,
@@ -15250,6 +18256,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '092-456-7890',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1002,
@@ -15264,6 +18273,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '010-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1003,
@@ -15278,6 +18290,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '021-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1004,
@@ -15292,6 +18307,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020-3456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1005,
@@ -15306,6 +18324,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0755-456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1006,
@@ -15320,6 +18341,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1007,
@@ -15334,6 +18358,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1008,
@@ -15348,6 +18375,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1009,
@@ -15362,6 +18392,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1010,
@@ -15376,6 +18409,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1011,
@@ -15390,6 +18426,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 678-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1012,
@@ -15404,6 +18443,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 789-0123',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1013,
@@ -15418,6 +18460,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 890-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1014,
@@ -15432,6 +18477,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 901-2345',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1015,
@@ -15446,6 +18494,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 012-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1016,
@@ -15460,6 +18511,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(212) 555-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1017,
@@ -15474,6 +18528,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(415) 555-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1018,
@@ -15488,6 +18545,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(312) 555-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1019,
@@ -15502,6 +18562,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(617) 555-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1020,
@@ -15516,6 +18579,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(206) 555-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1021,
@@ -15530,6 +18596,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1022,
@@ -15544,6 +18613,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1023,
@@ -15558,6 +18630,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1024,
@@ -15572,6 +18647,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1025,
@@ -15586,6 +18664,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1026,
@@ -15600,6 +18681,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0161 123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1027,
@@ -15614,6 +18698,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0121 234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1028,
@@ -15628,6 +18715,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0113 345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1029,
@@ -15642,6 +18732,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0117 456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1030,
@@ -15656,6 +18749,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0131 567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1031,
@@ -15670,6 +18766,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1032,
@@ -15684,6 +18783,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1033,
@@ -15698,6 +18800,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1034,
@@ -15712,6 +18817,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 45 67 89 01',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1035,
@@ -15726,6 +18834,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 46 78 90 12',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1036,
@@ -15740,6 +18851,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '04 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1037,
@@ -15754,6 +18868,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '05 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1038,
@@ -15768,6 +18885,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1039,
@@ -15782,6 +18902,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1040,
@@ -15796,6 +18919,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1041,
@@ -15810,6 +18936,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 34567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1042,
@@ -15824,6 +18953,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '040 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1043,
@@ -15838,6 +18970,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '089 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1044,
@@ -15852,6 +18987,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0221 3456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1045,
@@ -15866,6 +19004,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0711 4567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1046,
@@ -15880,6 +19021,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1047,
@@ -15894,6 +19038,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '02 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1048,
@@ -15908,6 +19055,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '011 345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1049,
@@ -15922,6 +19072,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '055 456 7890',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1050,
@@ -15936,6 +19089,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '081 567 8901',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1051,
@@ -15950,6 +19106,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '91 123 45 67',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1052,
@@ -15964,6 +19123,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '93 234 56 78',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1053,
@@ -15978,6 +19140,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '95 345 67 89',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1054,
@@ -15992,6 +19157,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '94 456 78 90',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1055,
@@ -16006,6 +19174,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '96 567 89 01',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1056,
@@ -16020,6 +19191,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(416) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1057,
@@ -16034,6 +19208,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(604) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1058,
@@ -16048,6 +19225,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(514) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1059,
@@ -16062,6 +19242,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(403) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1060,
@@ -16076,6 +19259,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(613) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1061,
@@ -16090,6 +19276,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(02) 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1062,
@@ -16104,6 +19293,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(03) 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1063,
@@ -16118,6 +19310,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(07) 3456 7890',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1064,
@@ -16132,6 +19327,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(08) 4567 8901',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1065,
@@ -16146,6 +19344,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1066,
@@ -16160,6 +19361,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1067,
@@ -16174,6 +19378,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '052-345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1068,
@@ -16188,6 +19395,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '092-456-7890',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1069,
@@ -16202,6 +19412,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '010-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1070,
@@ -16216,6 +19429,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '021-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1071,
@@ -16230,6 +19446,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020-3456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1072,
@@ -16244,6 +19463,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0755-456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1073,
@@ -16258,6 +19480,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1074,
@@ -16272,6 +19497,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1075,
@@ -16286,6 +19514,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1076,
@@ -16300,6 +19531,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1077,
@@ -16314,6 +19548,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1078,
@@ -16328,6 +19565,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 678-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1079,
@@ -16342,6 +19582,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 789-0123',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1080,
@@ -16356,6 +19599,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 890-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1081,
@@ -16370,6 +19616,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 901-2345',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1082,
@@ -16384,6 +19633,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 012-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1083,
@@ -16398,6 +19650,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(212) 555-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1084,
@@ -16412,6 +19667,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(415) 555-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1085,
@@ -16426,6 +19684,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(312) 555-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1086,
@@ -16440,6 +19701,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(617) 555-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1087,
@@ -16454,6 +19718,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(206) 555-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1088,
@@ -16468,6 +19735,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1089,
@@ -16482,6 +19752,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1090,
@@ -16496,6 +19769,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1091,
@@ -16510,6 +19786,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1092,
@@ -16524,6 +19803,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1093,
@@ -16538,6 +19820,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0161 123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1094,
@@ -16552,6 +19837,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0121 234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1095,
@@ -16566,6 +19854,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0113 345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1096,
@@ -16580,6 +19871,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0117 456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1097,
@@ -16594,6 +19888,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0131 567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1098,
@@ -16608,6 +19905,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1099,
@@ -16622,6 +19922,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1100,
@@ -16636,6 +19939,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1101,
@@ -16650,6 +19956,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 45 67 89 01',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1102,
@@ -16664,6 +19973,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 46 78 90 12',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1103,
@@ -16678,6 +19990,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '04 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1104,
@@ -16692,6 +20007,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '05 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1105,
@@ -16706,6 +20024,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1106,
@@ -16720,6 +20041,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1107,
@@ -16734,6 +20058,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1108,
@@ -16748,6 +20075,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 34567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1109,
@@ -16762,6 +20092,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '040 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1110,
@@ -16776,6 +20109,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '089 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1111,
@@ -16790,6 +20126,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0221 3456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1112,
@@ -16804,6 +20143,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0711 4567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1113,
@@ -16818,6 +20160,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1114,
@@ -16832,6 +20177,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '02 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1115,
@@ -16846,6 +20194,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '011 345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1116,
@@ -16860,6 +20211,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '055 456 7890',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1117,
@@ -16874,6 +20228,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '081 567 8901',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1118,
@@ -16888,6 +20245,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '91 123 45 67',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1119,
@@ -16902,6 +20262,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '93 234 56 78',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1120,
@@ -16916,6 +20279,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '95 345 67 89',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1121,
@@ -16930,6 +20296,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '94 456 78 90',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1122,
@@ -16944,6 +20313,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '96 567 89 01',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1123,
@@ -16958,6 +20330,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(416) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1124,
@@ -16972,6 +20347,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(604) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1125,
@@ -16986,6 +20364,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(514) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1126,
@@ -17000,6 +20381,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(403) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1127,
@@ -17014,6 +20398,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(613) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1128,
@@ -17028,6 +20415,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(02) 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1129,
@@ -17042,6 +20432,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(03) 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1130,
@@ -17056,6 +20449,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(07) 3456 7890',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1131,
@@ -17070,6 +20466,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(08) 4567 8901',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1132,
@@ -17084,6 +20483,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1133,
@@ -17098,6 +20500,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1134,
@@ -17112,6 +20517,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '052-345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1135,
@@ -17126,6 +20534,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '092-456-7890',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1136,
@@ -17140,6 +20551,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '010-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1137,
@@ -17154,6 +20568,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '021-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1138,
@@ -17168,6 +20585,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020-3456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1139,
@@ -17182,6 +20602,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0755-456-7890',
+    phonesPrimaryPhoneCountryCode: 'CN',
+    phonesPrimaryPhoneCallingCode: '+86',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1140,
@@ -17196,6 +20619,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1141,
@@ -17210,6 +20636,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1142,
@@ -17224,6 +20653,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1143,
@@ -17238,6 +20670,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1144,
@@ -17252,6 +20687,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1145,
@@ -17266,6 +20704,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 678-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1146,
@@ -17280,6 +20721,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 789-0123',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1147,
@@ -17294,6 +20738,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 890-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1148,
@@ -17308,6 +20755,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 901-2345',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1149,
@@ -17322,6 +20772,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(555) 012-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1150,
@@ -17336,6 +20789,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(212) 555-1234',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1151,
@@ -17350,6 +20806,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(415) 555-5678',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1152,
@@ -17364,6 +20823,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(312) 555-9012',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1153,
@@ -17378,6 +20840,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(617) 555-3456',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1154,
@@ -17392,6 +20857,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(206) 555-7890',
+    phonesPrimaryPhoneCountryCode: 'US',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1155,
@@ -17406,6 +20874,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1156,
@@ -17420,6 +20891,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1157,
@@ -17434,6 +20908,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1158,
@@ -17448,6 +20925,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1159,
@@ -17462,6 +20942,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '020 7567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1160,
@@ -17476,6 +20959,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0161 123 4567',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1161,
@@ -17490,6 +20976,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0121 234 5678',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1162,
@@ -17504,6 +20993,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0113 345 6789',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1163,
@@ -17518,6 +21010,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0117 456 7890',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1164,
@@ -17532,6 +21027,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0131 567 8901',
+    phonesPrimaryPhoneCountryCode: 'GB',
+    phonesPrimaryPhoneCallingCode: '+44',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1165,
@@ -17546,6 +21044,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1166,
@@ -17560,6 +21061,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1167,
@@ -17574,6 +21078,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1168,
@@ -17588,6 +21095,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 45 67 89 01',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1169,
@@ -17602,6 +21112,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '01 46 78 90 12',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1170,
@@ -17616,6 +21129,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '04 42 34 56 78',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1171,
@@ -17630,6 +21146,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '05 43 45 67 89',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1172,
@@ -17644,6 +21163,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03 44 56 78 90',
+    phonesPrimaryPhoneCountryCode: 'FR',
+    phonesPrimaryPhoneCallingCode: '+33',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1173,
@@ -17658,6 +21180,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1174,
@@ -17672,6 +21197,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1175,
@@ -17686,6 +21214,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '030 34567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1176,
@@ -17700,6 +21231,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '040 12345678',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1177,
@@ -17714,6 +21248,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '089 23456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1178,
@@ -17728,6 +21265,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0221 3456789',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1179,
@@ -17742,6 +21282,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '0711 4567890',
+    phonesPrimaryPhoneCountryCode: 'DE',
+    phonesPrimaryPhoneCallingCode: '+49',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1180,
@@ -17756,6 +21299,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1181,
@@ -17770,6 +21316,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '02 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1182,
@@ -17784,6 +21333,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '011 345 6789',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1183,
@@ -17798,6 +21350,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '055 456 7890',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1184,
@@ -17812,6 +21367,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '081 567 8901',
+    phonesPrimaryPhoneCountryCode: 'IT',
+    phonesPrimaryPhoneCallingCode: '+39',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1185,
@@ -17826,6 +21384,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '91 123 45 67',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1186,
@@ -17840,6 +21401,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '93 234 56 78',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1187,
@@ -17854,6 +21418,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '95 345 67 89',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1188,
@@ -17868,6 +21435,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '94 456 78 90',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1189,
@@ -17882,6 +21452,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '96 567 89 01',
+    phonesPrimaryPhoneCountryCode: 'ES',
+    phonesPrimaryPhoneCallingCode: '+34',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1190,
@@ -17896,6 +21469,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(416) 123-4567',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1191,
@@ -17910,6 +21486,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(604) 234-5678',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1192,
@@ -17924,6 +21503,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(514) 345-6789',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1193,
@@ -17938,6 +21520,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(403) 456-7890',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1194,
@@ -17952,6 +21537,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(613) 567-8901',
+    phonesPrimaryPhoneCountryCode: 'CA',
+    phonesPrimaryPhoneCallingCode: '+1',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1195,
@@ -17966,6 +21554,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(02) 1234 5678',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1196,
@@ -17980,6 +21571,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(03) 2345 6789',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1197,
@@ -17994,6 +21588,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(07) 3456 7890',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1198,
@@ -18008,6 +21605,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '(08) 4567 8901',
+    phonesPrimaryPhoneCountryCode: 'AU',
+    phonesPrimaryPhoneCallingCode: '+61',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1199,
@@ -18022,6 +21622,9 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '03-1234-5678',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   },
   {
     id: PERSON_DATA_SEED_IDS.ID_1200,
@@ -18036,5 +21639,8 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
+    phonesPrimaryPhoneNumber: '06-2345-6789',
+    phonesPrimaryPhoneCountryCode: 'JP',
+    phonesPrimaryPhoneCallingCode: '+81',
   }
 ];
