@@ -22,6 +22,7 @@ import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entitie
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { ChargeStatus } from 'src/engine/core-modules/billing/enums/billing-charge.status.enum';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { BillingPaymentProviders } from 'src/engine/core-modules/billing/enums/billing-payment-providers.enum';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
@@ -80,11 +81,16 @@ export class BillingSubscriptionService {
       });
 
     assert(
-      notCanceledSubscriptions.length >= 1,
-      `No subscriptions found for workspace ${criteria.workspaceId}`,
+      notCanceledSubscriptions.filter(
+        (subscription) =>
+          subscription.provider === BillingPaymentProviders.Stripe,
+      ).length <= 1,
+      `More than one not canceled subscriptiption found for workspace ${criteria.workspaceId}`,
     );
 
     const currentSubscription = notCanceledSubscriptions?.[0];
+
+    if (!isDefined(currentSubscription)) return currentSubscription;
 
     const currentCharge =
       await this.getCurrentSubscriptionCharge(currentSubscription);
@@ -95,7 +101,7 @@ export class BillingSubscriptionService {
         )
       : null;
 
-    return { ...notCanceledSubscriptions?.[0], currentChargeFileLink };
+    return { ...currentSubscription, currentChargeFileLink };
   }
 
   async getBaseProductCurrentBillingSubscriptionItemOrThrow(
@@ -510,7 +516,7 @@ export class BillingSubscriptionService {
   }
 
   async getCurrentSubscriptionCharge(
-    billingSubscription: BillingSubscription,
+    billingSubscription?: BillingSubscription,
   ): Promise<BillingCharge | null> {
     if (!billingSubscription) {
       return null;
