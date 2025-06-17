@@ -9,6 +9,7 @@ import { TrialCard } from '@/billing/components/TrialCard';
 import { useHandleCheckoutSession } from '@/billing/hooks/useHandleCheckoutSession';
 import { isBillingPriceLicensed } from '@/billing/utils/isBillingPriceLicensed';
 import { billingState } from '@/client-config/states/billingState';
+import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { AppPath } from '@/types/AppPath';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import styled from '@emotion/styled';
@@ -17,7 +18,11 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { CardPicker, MainButton } from 'twenty-ui/input';
-import { ClickToActionLink, TWENTY_PRICING_LINK } from 'twenty-ui/navigation';
+import {
+  CAL_LINK,
+  ClickToActionLink,
+  TWENTY_PRICING_LINK,
+} from 'twenty-ui/navigation';
 import {
   BillingPlanKey,
   BillingPriceLicensedDto,
@@ -93,6 +98,8 @@ export const ChooseYourPlan = () => {
   const [billingCheckoutSession, setBillingCheckoutSession] = useRecoilState(
     billingCheckoutSessionState,
   );
+
+  const calendarBookingPageId = useRecoilValue(calendarBookingPageIdState);
 
   const [verifyEmailNextPath, setVerifyEmailNextPath] = useRecoilState(
     verifyEmailNextPathState,
@@ -247,7 +254,11 @@ export const ChooseYourPlan = () => {
               <Trans>Change Plan</Trans>
             </ClickToActionLink>
             <span />
-            <ClickToActionLink href={AppPath.BookCall}>
+            <ClickToActionLink
+              href={calendarBookingPageId ? AppPath.BookCall : CAL_LINK}
+              target={calendarBookingPageId ? '_self' : '_blank'}
+              rel={calendarBookingPageId ? '' : 'noreferrer'}
+            >
               <Trans>Book a Call</Trans>
             </ClickToActionLink>
           </StyledLinkGroup>
