@@ -1,28 +1,28 @@
 import { OBJECT_MODEL_COMMON_FIELDS } from 'test/integration/constants/object-model-common-fields';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { performCreateManyOperation } from 'test/integration/graphql/utils/perform-create-many-operation.utils';
-import { searchFactory } from 'test/integration/graphql/utils/search-factory.util';
-import { EachTestingContext } from 'twenty-shared/testing';
+import { TEST_API_KEY_1_ID } from 'test/integration/constants/test-api-key-ids.constant';
 import {
   TEST_PERSON_1_ID,
   TEST_PERSON_2_ID,
   TEST_PERSON_3_ID,
 } from 'test/integration/constants/test-person-ids.constants';
-import { TEST_API_KEY_1_ID } from 'test/integration/constants/test-api-key-ids.constant';
 import {
   TEST_PET_ID_1,
   TEST_PET_ID_2,
 } from 'test/integration/constants/test-pet-ids.constants';
+import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { performCreateManyOperation } from 'test/integration/graphql/utils/perform-create-many-operation.utils';
+import { searchFactory } from 'test/integration/graphql/utils/search-factory.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
+import { EachTestingContext } from 'twenty-shared/testing';
 
-import { SearchResultEdgeDTO } from 'src/engine/core-modules/search/dtos/search-result-edge.dto';
 import {
   decodeCursor,
   encodeCursorData,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
-import { SearchCursor } from 'src/engine/core-modules/search/services/search.service';
 import { SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
+import { SearchResultEdgeDTO } from 'src/engine/core-modules/search/dtos/search-result-edge.dto';
+import { SearchCursor } from 'src/engine/core-modules/search/services/search.service';
 
 describe('SearchResolver', () => {
   const [firstPerson, secondPerson, thirdPerson] = [
@@ -48,6 +48,10 @@ describe('SearchResolver', () => {
     await deleteAllRecords('person');
     await deleteAllRecords('company');
     await deleteAllRecords('opportunity');
+    await deleteAllRecords('note');
+    await deleteAllRecords('task');
+    await deleteAllRecords('noteTarget');
+    await deleteAllRecords('taskTarget');
     await deleteAllRecords('_pet');
     await deleteAllRecords('_surveyResult');
 
