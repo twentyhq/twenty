@@ -19,16 +19,9 @@ export class CreateAgentTable1747401483136 implements MigrationInterface {
         CONSTRAINT "PK_agent" PRIMARY KEY ("id")
       )`,
     );
-
-    await queryRunner.query(
-      `ALTER TABLE "core"."agent" ADD CONSTRAINT "FK_agent_workspace" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `ALTER TABLE "core"."agent" DROP CONSTRAINT "FK_agent_workspace"`,
-    );
     await queryRunner.query(`DROP TABLE "core"."agent"`);
   }
 }
