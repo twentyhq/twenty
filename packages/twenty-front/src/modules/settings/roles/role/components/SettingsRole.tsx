@@ -310,7 +310,11 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
           />
         )}
         {activeTabId === SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.SETTINGS && (
-          <SettingsRoleSettings roleId={roleId} isEditable={isRoleEditable} />
+          <SettingsRoleSettings
+            roleId={roleId}
+            isEditable={isRoleEditable}
+            isCreateMode={isCreateMode}
+          />
         )}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
