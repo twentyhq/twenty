@@ -75,7 +75,6 @@ export const SettingsObjectNewFieldConfigure = () => {
       label: '',
       description: '',
       name: '',
-      // format: ''
     },
   });
 
