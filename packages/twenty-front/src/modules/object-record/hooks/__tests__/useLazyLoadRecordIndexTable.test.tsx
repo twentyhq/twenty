@@ -1,8 +1,8 @@
-import { renderHook } from '@testing-library/react';
-import { ReactNode, act } from 'react';
+import { renderHook, waitFor } from '@testing-library/react';
+import { ReactNode } from 'react';
 
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
-import { useLazyLoadRecordIndexTable } from '@/object-record/record-index/hooks/useRecordIndexTableQuery';
+import { useRecordIndexTableQuery } from '@/object-record/record-index/hooks/useRecordIndexTableQuery';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { MockedResponse } from '@apollo/client/testing';
@@ -682,12 +682,10 @@ describe('useLazyLoadRecordIndexTable', () => {
   it('should fetch', async () => {
     const { result } = renderHook(
       () => {
-        const { findManyRecordsLazy, fetchMoreRecordsLazy } =
-          useLazyLoadRecordIndexTable(objectNameSingular);
+        const { records } = useRecordIndexTableQuery(objectNameSingular);
 
         return {
-          findManyRecordsLazy,
-          fetchMoreRecordsLazy,
+          records,
         };
       },
       {
@@ -695,8 +693,8 @@ describe('useLazyLoadRecordIndexTable', () => {
       },
     );
 
-    await act(async () => {
-      await result.current.findManyRecordsLazy();
+    await waitFor(() => {
+      expect(result.current.records).toHaveLength(16);
     });
   });
 });
