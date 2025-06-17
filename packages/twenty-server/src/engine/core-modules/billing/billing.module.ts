@@ -10,6 +10,7 @@ import { BillingSyncCustomerDataCommand } from 'src/engine/core-modules/billing/
 import { BillingSyncPlansDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-plans-data.command';
 import { BillingUpdateSubscriptionPriceCommand } from 'src/engine/core-modules/billing/commands/billing-update-subscription-price.command';
 import { CheckInterPaymentExpirationCommand } from 'src/engine/core-modules/billing/crons/commands/check-expired-subscriptions.job';
+import { BillingCharge } from 'src/engine/core-modules/billing/entities/billing-charge.entity';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingMeter } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
@@ -59,6 +60,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     PermissionsModule,
     TypeOrmModule.forFeature(
       [
+        BillingCharge,
         BillingSubscription,
         BillingSubscriptionItem,
         BillingCustomer,

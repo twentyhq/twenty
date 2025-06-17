@@ -24,8 +24,9 @@ export class UpdateBillingSubscription1709914564361
     await queryRunner.query(
       `ALTER TABLE "core"."billingSubscription" ALTER COLUMN "status" TYPE text`,
     );
+    // TODO: The 'expired' status was inserted here manualy. After added and generated migration, the migration generated was not working properly, might be related to this issue https://stackoverflow.com/questions/76668441/get-operator-does-not-exist-when-update-an-enum-in-postgresql but we currently have no time to further investigate a proper solution.
     await queryRunner.query(
-      `CREATE TYPE "core"."billingSubscription_status_enum" AS ENUM('active', 'canceled', 'incomplete', 'incomplete_expired', 'past_due', 'paused', 'trialing', 'unpaid')`,
+      `CREATE TYPE "core"."billingSubscription_status_enum" AS ENUM('active', 'canceled', 'incomplete', 'incomplete_expired', 'past_due', 'paused', 'trialing', 'unpaid', 'expired')`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."billingSubscription" ALTER COLUMN "status" TYPE "core"."billingSubscription_status_enum" USING "status"::"core"."billingSubscription_status_enum"`,

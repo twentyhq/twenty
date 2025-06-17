@@ -6,6 +6,7 @@ import { billingState } from '@/client-config/states/billingState';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { SettingsBillingSwitchSubscriptionModal } from '@/settings/billing/components/SettingsBillingSwitchSubscriptonModal';
 import { SWITCH_PLAN_MODAL_ID } from '@/settings/billing/constants/ChangeSubscriptionModalId';
+import { useHandleUpdateSubscription } from '@/settings/billing/hooks/useHandleUpdateSubscription';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -13,6 +14,8 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useCurrentBillingChargeFileLink } from '@/workspace/hooks/useCurrentBillingChargeFileLink';
+import { useSubscriptioProvider } from '@/workspace/hooks/useSubscriptionProvider';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -20,10 +23,12 @@ import {
   IconCalendarEvent,
   IconCircleX,
   IconCreditCard,
+  IconDownload,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
+  BillingPaymentProviders,
   SubscriptionInterval,
   SubscriptionStatus,
   useBillingPortalSessionQuery,
@@ -52,6 +57,12 @@ export const SettingsBilling = () => {
     isDefined(subscriptionStatus) &&
     subscriptionStatus !== SubscriptionStatus.Canceled;
 
+  const currentBillingChargeFileLink = useCurrentBillingChargeFileLink();
+
+  const subscriptionPaymentProvider = useSubscriptioProvider();
+  const isOneTimePaidSubscription =
+    subscriptionPaymentProvider === BillingPaymentProviders.Inter;
+
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
 
   const [switchToYearlyInterval] =
@@ -64,12 +75,23 @@ export const SettingsBilling = () => {
   });
 
   const billingPortalButtonDisabled =
-    loading || !isDefined(data) || !isDefined(data.billingPortalSession.url);
+    subscriptionPaymentProvider === BillingPaymentProviders.Stripe &&
+    (loading || !isDefined(data) || !isDefined(data.billingPortalSession.url));
 
   const openBillingPortal = () => {
     if (isDefined(data) && isDefined(data.billingPortalSession.url)) {
       redirect(data.billingPortalSession.url);
     }
+  };
+
+  const { handleUpdateSubscription, loading: loadingUpdateSubscription } =
+    useHandleUpdateSubscription();
+
+  const handleDonwloadBankSlip = () => {
+    if (subscriptionStatus === SubscriptionStatus.Expired)
+      handleUpdateSubscription();
+    else if (isDefined(currentBillingChargeFileLink))
+      redirect(currentBillingChargeFileLink, '_blank');
   };
 
   const { openModal } = useModal();
@@ -118,11 +140,19 @@ export const SettingsBilling = () => {
             description={t`Edit payment method, see your invoices and more`}
           />
           <Button
-            Icon={IconCreditCard}
-            title={t`View billing details`}
+            Icon={isOneTimePaidSubscription ? IconDownload : IconCreditCard}
+            title={
+              isOneTimePaidSubscription
+                ? t`Donwload bank slip`
+                : t`View billing details`
+            }
             variant="secondary"
-            onClick={openBillingPortal}
-            disabled={billingPortalButtonDisabled}
+            onClick={
+              isOneTimePaidSubscription
+                ? handleDonwloadBankSlip
+                : openBillingPortal
+            }
+            disabled={billingPortalButtonDisabled || loadingUpdateSubscription}
           />
         </Section>
         <Section>

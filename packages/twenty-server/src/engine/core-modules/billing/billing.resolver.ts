@@ -6,6 +6,10 @@ import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
 import { BillingSwitchPlanInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-switch-plan.input';
@@ -14,6 +18,7 @@ import { BillingMeteredProductUsageOutput } from 'src/engine/core-modules/billin
 import { BillingPlanOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-plan.output';
 import { BillingSessionOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-session.output';
 import { BillingSwitchPlanOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-switch-plan.output';
+import { BillingUpdateOneTimePaidSubscriptionOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-update-onetime-pad-subscription.output';
 import { BillingUpdateOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-update.output';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
@@ -125,6 +130,46 @@ export class BillingResolver {
     };
   }
 
+  @Mutation(() => BillingUpdateOneTimePaidSubscriptionOutput)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  async updateOneTimePaidSubscription(
+    @AuthWorkspace() workspace: Workspace,
+    @AuthUser() user: User,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Context() context: I18nContext,
+    @AuthApiKey() apiKey?: string,
+  ): Promise<BillingUpdateOneTimePaidSubscriptionOutput> {
+    await this.validateCanCheckoutSessionPermissionOrThrow({
+      workspaceId: workspace.id,
+      userWorkspaceId,
+      isExecutedByApiKey: isDefined(apiKey),
+    });
+
+    const currentSubscription =
+      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+        {
+          workspaceId: workspace.id,
+        },
+      );
+
+    if (!currentSubscription)
+      throw new BillingException(
+        `Billing charge not found`,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
+      );
+
+    const bankSlipFileLink =
+      await this.billingSubscriptionService.updateOneTimePaymentSubscription({
+        subscription: currentSubscription,
+        user,
+        locale: context.req.headers['x-locale'],
+      });
+
+    return {
+      bankSlipFileLink,
+    };
+  }
+
   @Mutation(() => BillingUpdateOutput)
   @UseGuards(
     WorkspaceAuthGuard,
@@ -199,10 +244,6 @@ export class BillingResolver {
   ): Promise<BillingMeteredProductUsageOutput[]> {
     const result =
       await this.billingUsageService.getMeteredProductsUsage(workspace);
-
-    result.map((item) => {
-      console.log(typeof item.periodEnd);
-    });
 
     return result;
   }

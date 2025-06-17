@@ -6,10 +6,9 @@ import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
-import {
-  FlattenedCompany,
-  FlattenedPerson,
-} from 'src/modules/charges/types/inter';
+import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
+import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 import { InterApiService } from './inter/inter-api.service';
 import { ChargeWorkspaceEntity } from './standard-objects/charge.workspace-entity';
@@ -29,6 +28,8 @@ export class ChargeEventListener {
   ) {
     const { workspaceId, name: eventName, events } = payload;
 
+    this.logger.log(`Charge update triggered.`);
+
     if (!workspaceId || !eventName) {
       this.logger.error(
         `Missing workspaceId or eventName in payload ${JSON.stringify(payload)}`,
@@ -44,7 +45,7 @@ export class ChargeEventListener {
       );
 
     const attachmentRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<any>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<AttachmentWorkspaceEntity>(
         workspaceId,
         'attachment',
       );
@@ -66,13 +67,13 @@ export class ChargeEventListener {
           return;
         }
 
-        const person = charge.person as FlattenedPerson;
-        const company = charge.company as FlattenedCompany;
+        const contact = charge.person as PersonWorkspaceEntity;
+        const client = charge.company as CompanyWorkspaceEntity;
 
         const { chargeAction, id, price } = charge;
         const dataVencimento = '2025-10-21'; //temporario
 
-        if (!person || !company) {
+        if (!contact || !client) {
           this.logger.warn(
             `Charge ${id} não possui relação com person ou company. Ignorando.`,
           );
@@ -82,29 +83,26 @@ export class ChargeEventListener {
           return;
         }
 
-        this.logger.log('person', company);
+        this.logger.log('person', client);
 
         const cliente = {
-          telefone: person.phonesPrimaryPhoneNumber || '',
-          cpfCnpj: charge.taxId.replace(/\D/g, ''),
+          telefone: contact.phone || '',
+          cpfCnpj: client.cpfCnpj || '',
           tipoPessoa:
             charge.entityType === 'individual' ? 'FISICA' : 'JURIDICA',
-          nome: person.nameFirstName || '',
-          cidade: person.city || '',
-          uf: company.addressAddressState || 'SP',
-          cep: company.addressAddressPostcode || '18103418',
-          ddd: person.phonesPrimaryPhoneCallingCode?.replace(/^\+/, '') || '',
-          endereco: company.addressAddressStreet1 || 'Rua ...',
-          bairro: company.addressAddressStreet2 || '',
-          email: person.emailsPrimaryEmail || '',
+          nome: client.name || '',
+          cidade: client.address.addressCity || '',
+          uf: client.address.addressState || 'SP',
+          cep: client.address.addressZipCode || '18103418',
+          ddd: contact.phone?.replace(/^\+/, '') || '',
+          endereco: client.address.addressStreet1 || 'Rua ...',
+          bairro: client.address.addressStreet1 || '',
+          email: contact.emails.primaryEmail || '',
           complemento: '-',
           numero: '-',
         };
 
-        const authorId =
-          person.createdByWorkspaceMemberId ||
-          company.createdByWorkspaceMemberId ||
-          '';
+        const authorId = contact.id || client.id || '';
 
         try {
           switch (chargeAction) {

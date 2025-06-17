@@ -10,7 +10,7 @@ import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { SubscriptionStatus } from '~/generated-metadata/graphql';
+import { SubscriptionStatus } from '~/generated/graphql';
 
 const StyledInformationBannerWrapper = styled.div`
   height: 40px;
@@ -34,9 +34,13 @@ export const InformationBannerWrapper = () => {
   const displayBillingSubscriptionCanceledBanner =
     isWorkspaceSuspended && !isDefined(subscriptionStatus);
 
-  const displayFailPaymentInfoBanner =
-    subscriptionStatus === SubscriptionStatus.PastDue ||
-    subscriptionStatus === SubscriptionStatus.Unpaid;
+  const displayFailPaymentInfoBanner = (
+    [
+      SubscriptionStatus.PastDue,
+      SubscriptionStatus.Unpaid,
+      SubscriptionStatus.Expired,
+    ] as (typeof subscriptionStatus)[]
+  ).includes(subscriptionStatus);
 
   const displayEndTrialPeriodBanner =
     isSomeMeteredProductCapReached &&

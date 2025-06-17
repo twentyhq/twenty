@@ -278,8 +278,11 @@ export type BillingSubscription = {
   __typename?: 'BillingSubscription';
   billingSubscriptionItems?: Maybe<Array<BillingSubscriptionItem>>;
   chargeType?: Maybe<ChargeType>;
+  currentChargeFileLink?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
   interval?: Maybe<SubscriptionInterval>;
+  metadata?: Maybe<Scalars['JSON']['output']>;
+  provider: BillingPaymentProviders;
   status: SubscriptionStatus;
 };
 
@@ -301,6 +304,12 @@ export type BillingTrialPeriodDto = {
   __typename?: 'BillingTrialPeriodDTO';
   duration: Scalars['Float']['output'];
   isCreditCardRequired: Scalars['Boolean']['output'];
+};
+
+export type BillingUpdateOneTimePaidSubscriptionOutput = {
+  __typename?: 'BillingUpdateOneTimePaidSubscriptionOutput';
+  /** The link for the bankslip file */
+  bankSlipFileLink: Scalars['String']['output'];
 };
 
 export type BillingUpdateOutput = {
@@ -1458,6 +1467,7 @@ export type Mutation = {
   updateOneRemoteServer: RemoteServer;
   updateOneRole: Role;
   updateOneServerlessFunction: ServerlessFunction;
+  updateOneTimePaidSubscription: BillingUpdateOneTimePaidSubscriptionOutput;
   updatePasswordViaResetToken: InvalidatePassword;
   updateRoutingRules: UpdateRoutingRulesResponseType;
   updateSector: Sector;
@@ -3215,6 +3225,7 @@ export enum SubscriptionInterval {
 export enum SubscriptionStatus {
   Active = 'Active',
   Canceled = 'Canceled',
+  Expired = 'Expired',
   Incomplete = 'Incomplete',
   IncompleteExpired = 'IncompleteExpired',
   PastDue = 'PastDue',
