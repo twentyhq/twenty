@@ -5,7 +5,9 @@ import { WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
+import { getHttpRequestOutputSchema } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/getHttpRequestOutputSchema';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { CodeEditor } from 'twenty-ui/input';
 import { useDebouncedCallback } from 'use-debounce';
@@ -51,7 +53,28 @@ export const WorkflowEditActionAiAgent = ({
     if (actionOptions.readonly === true) {
       return;
     }
+
     setFormValues((prev) => ({ ...prev, [field]: value }));
+
+    if (field === 'responseFormat') {
+      try {
+        const parsedResponseFormat = JSON.parse(value);
+        const outputSchema = getHttpRequestOutputSchema(parsedResponseFormat);
+
+        if (isDefined(actionOptions.onActionUpdate)) {
+          actionOptions.onActionUpdate({
+            ...action,
+            settings: {
+              ...action.settings,
+              outputSchema,
+            },
+          });
+        }
+      } catch (error) {
+        // do nothing
+      }
+    }
+
     await handleSave({ ...formValues, [field]: value });
   };
 
