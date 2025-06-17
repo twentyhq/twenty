@@ -22,11 +22,14 @@ export type ConnectedAccountTokens = GoogleTokens | MicrosoftTokens;
 
 @Injectable()
 export class ConnectedAccountRefreshTokensService {
+  private readonly logger = new Logger(
+    ConnectedAccountRefreshTokensService.name,
+  );
+
   constructor(
     private readonly googleAPIRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
     private readonly microsoftAPIRefreshAccessTokenService: MicrosoftAPIRefreshAccessTokenService,
     private readonly twentyORMManager: TwentyORMManager,
-    private readonly logger: Logger,
   ) {}
 
   async refreshAndSaveTokens(

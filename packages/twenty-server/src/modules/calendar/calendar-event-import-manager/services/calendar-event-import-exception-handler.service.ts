@@ -21,11 +21,13 @@ export enum CalendarEventImportSyncStep {
 
 @Injectable()
 export class CalendarEventImportErrorHandlerService {
+  private readonly logger = new Logger(
+    CalendarEventImportErrorHandlerService.name,
+  );
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
-    private readonly logger: Logger,
   ) {}
 
   public async handleDriverException(
