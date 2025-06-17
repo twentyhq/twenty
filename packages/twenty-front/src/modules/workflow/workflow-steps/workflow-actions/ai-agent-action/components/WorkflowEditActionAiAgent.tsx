@@ -11,6 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { CodeEditor } from 'twenty-ui/input';
 import { useDebouncedCallback } from 'use-debounce';
+import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
 import { ALL_MODELS } from '../constants/AIAgent';
 import { useAgentUpdateFormState } from '../hooks/useAgentUpdateFormState';
 
@@ -78,59 +79,59 @@ export const WorkflowEditActionAiAgent = ({
     await handleSave({ ...formValues, [field]: value });
   };
 
-  return (
-    !loading && (
-      <>
-        <WorkflowStepHeader
-          onTitleChange={(newName: string) => {
-            if (actionOptions.readonly === true) {
-              return;
-            }
-            actionOptions.onActionUpdate?.({ ...action, name: newName });
-          }}
-          Icon={getIcon(headerIcon)}
-          iconColor={headerIconColor}
-          initialTitle={headerTitle}
-          headerType={headerType}
+  return loading ? (
+    <RightDrawerSkeletonLoader />
+  ) : (
+    <>
+      <WorkflowStepHeader
+        onTitleChange={(newName: string) => {
+          if (actionOptions.readonly === true) {
+            return;
+          }
+          actionOptions.onActionUpdate?.({ ...action, name: newName });
+        }}
+        Icon={getIcon(headerIcon)}
+        iconColor={headerIconColor}
+        initialTitle={headerTitle}
+        headerType={headerType}
+        disabled={actionOptions.readonly}
+      />
+      <WorkflowStepBody>
+        <Select
+          dropdownId="select-model"
+          label="Model"
+          options={ALL_MODELS}
+          value={formValues.model}
+          onChange={(value) => handleFieldChange('model', value)}
           disabled={actionOptions.readonly}
         />
-        <WorkflowStepBody>
-          <Select
-            dropdownId="select-model"
-            label="Model"
-            options={ALL_MODELS}
-            value={formValues.model}
-            onChange={(value) => handleFieldChange('model', value)}
-            disabled={actionOptions.readonly}
+        <FormTextFieldInput
+          label="Prompt"
+          placeholder="Enter prompt"
+          readonly={actionOptions.readonly}
+          defaultValue={formValues.prompt}
+          onChange={(value) => handleFieldChange('prompt', value)}
+          VariablePicker={WorkflowVariablePicker}
+        />
+        <div>
+          <InputLabel>Output Format (JSON)</InputLabel>
+          <CodeEditor
+            height={200}
+            value={formValues.responseFormat}
+            language="json"
+            onChange={(value) => handleFieldChange('responseFormat', value)}
+            options={{
+              readOnly: actionOptions.readonly,
+              domReadOnly: actionOptions.readonly,
+              minimap: { enabled: false },
+              scrollBeyondLastLine: false,
+              lineNumbers: 'on',
+              folding: true,
+              wordWrap: 'on',
+            }}
           />
-          <FormTextFieldInput
-            label="Prompt"
-            placeholder="Enter prompt"
-            readonly={actionOptions.readonly}
-            defaultValue={formValues.prompt}
-            onChange={(value) => handleFieldChange('prompt', value)}
-            VariablePicker={WorkflowVariablePicker}
-          />
-          <div>
-            <InputLabel>Output Format (JSON)</InputLabel>
-            <CodeEditor
-              height={200}
-              value={formValues.responseFormat}
-              language="json"
-              onChange={(value) => handleFieldChange('responseFormat', value)}
-              options={{
-                readOnly: actionOptions.readonly,
-                domReadOnly: actionOptions.readonly,
-                minimap: { enabled: false },
-                scrollBeyondLastLine: false,
-                lineNumbers: 'on',
-                folding: true,
-                wordWrap: 'on',
-              }}
-            />
-          </div>
-        </WorkflowStepBody>
-      </>
-    )
+        </div>
+      </WorkflowStepBody>
+    </>
   );
 };
