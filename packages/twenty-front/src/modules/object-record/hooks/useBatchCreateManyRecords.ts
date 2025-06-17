@@ -43,15 +43,17 @@ export const useBatchCreateManyRecords = <
 
   const { enqueueSnackBar } = useSnackBar();
 
+  let currentAbortController: AbortController | null = null;
+
   const batchCreateManyRecords = async ({
     recordsToCreate,
     upsert,
-    abortController,
   }: {
     recordsToCreate: Partial<CreatedObjectRecord>[];
     upsert?: boolean;
-    abortController?: AbortController;
   }) => {
+    const abortController = new AbortController();
+    currentAbortController = abortController;
     const numberOfBatches = Math.ceil(
       recordsToCreate.length / mutationBatchSize,
     );
@@ -67,16 +69,16 @@ export const useBatchCreateManyRecords = <
           (batchIndex + 1) * mutationBatchSize,
         );
 
+        createdRecordsCount =
+          batchIndex + 1 === numberOfBatches
+            ? recordsToCreate.length
+            : (batchIndex + 1) * mutationBatchSize;
+
         const createdRecords = await createManyRecords({
           recordsToCreate: batchedRecordsToCreate,
           upsert,
           abortController,
         });
-
-        createdRecordsCount =
-          batchIndex + 1 === numberOfBatches
-            ? recordsToCreate.length
-            : (batchIndex + 1) * mutationBatchSize;
 
         setBatchedRecordsCount?.(createdRecordsCount);
         allCreatedRecords.push(...createdRecords);
@@ -94,13 +96,20 @@ export const useBatchCreateManyRecords = <
       } else {
         throw error;
       }
+    } finally {
+      currentAbortController = null;
     }
 
     await refetchAggregateQueries();
     return allCreatedRecords;
   };
 
+  const abortBatchCreateManyRecords = () => {
+    currentAbortController?.abort();
+  };
+
   return {
     batchCreateManyRecords,
+    abortBatchCreateManyRecords,
   };
 };
