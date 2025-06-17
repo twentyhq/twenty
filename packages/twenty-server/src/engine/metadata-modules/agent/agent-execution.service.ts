@@ -10,7 +10,7 @@ import { z } from 'zod';
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
 
-import { inferZodSchemaFromExample } from './utils/infer-zod-schema-from-example.util';
+import { inferZodSchemaFromExampleResponse } from './utils/infer-zod-schema-from-example-response.util';
 
 @Injectable()
 export class AgentExecutionService {
@@ -74,7 +74,9 @@ export class AgentExecutionService {
       let schema: z.ZodType;
 
       try {
-        schema = inferZodSchemaFromExample(JSON.parse(agent.responseFormat));
+        schema = inferZodSchemaFromExampleResponse(
+          JSON.parse(agent.responseFormat),
+        );
       } catch (error) {
         throw new AgentException(
           `Invalid response format schema: ${error instanceof Error ? error.message : 'Unknown error'}`,

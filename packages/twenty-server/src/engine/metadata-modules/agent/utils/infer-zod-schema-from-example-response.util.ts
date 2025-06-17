@@ -1,6 +1,6 @@
 import { z, ZodTypeAny } from 'zod';
 
-export const inferZodSchemaFromExample = (
+export const inferZodSchemaFromExampleResponse = (
   example: Record<string, unknown>,
 ): ZodTypeAny => {
   if (typeof example === 'string') {
@@ -24,14 +24,14 @@ export const inferZodSchemaFromExample = (
       return z.array(z.any());
     }
 
-    return z.array(inferZodSchemaFromExample(example[0]));
+    return z.array(inferZodSchemaFromExampleResponse(example[0]));
   }
 
   if (typeof example === 'object' && example !== null) {
     const shape: Record<string, ZodTypeAny> = {};
 
     for (const key in example as Record<string, unknown>) {
-      shape[key] = inferZodSchemaFromExample(
+      shape[key] = inferZodSchemaFromExampleResponse(
         example[key] as Record<string, unknown>,
       );
     }
