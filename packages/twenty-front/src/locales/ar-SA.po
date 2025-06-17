@@ -1797,6 +1797,11 @@ msgstr "لا تقم بمزامنة رسائل البريد الإلكتروني 
 msgid "Download file"
 msgstr "تنزيل الملف"
 
+#. js-lingui-id: wrT4hq
+#: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
+msgid "Download sample file."
+msgstr ""
+
 #. js-lingui-id: 6D/BnN
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Drop file here..."
@@ -3206,6 +3211,11 @@ msgstr ""
 msgid "Max"
 msgstr "الأقصى"
 
+#. js-lingui-id: JGZq0R
+#: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
+msgid "Max import capacity: {SpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API."
+msgstr ""
+
 #. js-lingui-id: Sma10A
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignIn.tsx
 msgid "Member of"
@@ -4423,6 +4433,16 @@ msgstr "رمز البحث"
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 msgid "Search records"
 msgstr "\\\\"
+
+#. js-lingui-id: 8sgZS9
+#: src/modules/billing/components/SubscriptionPrice.tsx
+msgid "seat / month"
+msgstr ""
+
+#. js-lingui-id: aQnWwf
+#: src/modules/billing/components/SubscriptionPrice.tsx
+msgid "seat / month - billed yearly"
+msgstr ""
 
 #. js-lingui-id: grt0Pu
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx

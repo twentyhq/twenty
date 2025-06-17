@@ -1,15 +1,19 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { COMPOSITE_FIELD_IMPORT_LABELS } from '@/object-record/spreadsheet-import/constants/CompositeFieldImportLabels';
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
+import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constants/CompositeFieldSubFieldLabel';
 
 export const getSubFieldOptionKey = (
   fieldMetadataItem: FieldMetadataItem,
   subFieldName: string,
 ) => {
-  const subFieldNameLabelKey = `${subFieldName}Label`;
+  if (!isCompositeFieldType(fieldMetadataItem.type)) {
+    throw new Error(
+      `getSubFieldOptionKey can only be called for composite field types. Received: ${fieldMetadataItem.type}`,
+    );
+  }
 
-  const subFieldLabel = (
-    (COMPOSITE_FIELD_IMPORT_LABELS as any)[fieldMetadataItem.type] as any
-  )[subFieldNameLabelKey];
+  const subFieldLabel =
+    COMPOSITE_FIELD_SUB_FIELD_LABELS[fieldMetadataItem.type][subFieldName];
 
   const subFieldKey = `${subFieldLabel} (${fieldMetadataItem.name})`;
 

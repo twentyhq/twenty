@@ -1,6 +1,6 @@
 import { AdvancedFilterAddFilterRuleSelect } from '@/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect';
-import { AdvancedFilterRecordFilter } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilter';
-import { AdvancedFilterRecordFilterGroup } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroup';
+import { AdvancedFilterRecordFilterGroupRow } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupRow';
+import { AdvancedFilterRecordFilterRow } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterRow';
 
 import { ADVANCED_FILTER_DROPDOWN_CONTENT_WIDTH } from '@/object-record/advanced-filter/constants/AdvancedFilterDropdownContentWidth';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
@@ -45,14 +45,14 @@ export const AdvancedFilterRootRecordFilterGroup = () => {
               isRecordFilterGroupChildARecordFilterGroup(
                 recordFilterGroupChild,
               ) ? (
-                <AdvancedFilterRecordFilterGroup
+                <AdvancedFilterRecordFilterGroupRow
                   key={recordFilterGroupChild.id}
                   parentRecordFilterGroup={rootRecordFilterGroup}
                   recordFilterGroup={recordFilterGroupChild}
                   recordFilterGroupIndex={recordFilterGroupChildIndex}
                 />
               ) : (
-                <AdvancedFilterRecordFilter
+                <AdvancedFilterRecordFilterRow
                   key={recordFilterGroupChild.id}
                   recordFilterGroup={rootRecordFilterGroup}
                   recordFilter={recordFilterGroupChild}

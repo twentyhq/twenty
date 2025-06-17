@@ -2,7 +2,7 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { WorkflowActionType } from '@/workflow/types/Workflow';
 import { FieldMetadataType } from '~/generated/graphql';
 
-const DISPLAYABLE_FIELD_TYPES_FOR_UPDATE = [
+const COMMON_DISPLAYABLE_FIELD_TYPES = [
   FieldMetadataType.TEXT,
   FieldMetadataType.NUMBER,
   FieldMetadataType.DATE,
@@ -20,6 +20,12 @@ const DISPLAYABLE_FIELD_TYPES_FOR_UPDATE = [
   FieldMetadataType.UUID,
 ];
 
+const FIND_RECORDS_DISPLAYABLE_FIELD_TYPES = [
+  ...COMMON_DISPLAYABLE_FIELD_TYPES,
+  FieldMetadataType.ARRAY,
+  FieldMetadataType.RELATION,
+];
+
 export const shouldDisplayFormField = ({
   fieldMetadataItem,
   actionType,
@@ -28,6 +34,7 @@ export const shouldDisplayFormField = ({
   actionType: WorkflowActionType;
 }) => {
   let isTypeAllowedForAction = false;
+  const isIdField = fieldMetadataItem.name === 'id';
 
   switch (actionType) {
     case 'CREATE_RECORD':
@@ -37,8 +44,13 @@ export const shouldDisplayFormField = ({
       break;
     case 'UPDATE_RECORD':
       isTypeAllowedForAction =
-        DISPLAYABLE_FIELD_TYPES_FOR_UPDATE.includes(fieldMetadataItem.type) ||
+        COMMON_DISPLAYABLE_FIELD_TYPES.includes(fieldMetadataItem.type) ||
         fieldMetadataItem.settings?.['relationType'] === 'MANY_TO_ONE';
+      break;
+    case 'FIND_RECORDS':
+      isTypeAllowedForAction = FIND_RECORDS_DISPLAYABLE_FIELD_TYPES.includes(
+        fieldMetadataItem.type,
+      );
       break;
     default:
       throw new Error(`Action "${actionType}" is not supported`);
@@ -46,7 +58,7 @@ export const shouldDisplayFormField = ({
 
   return (
     isTypeAllowedForAction &&
-    !fieldMetadataItem.isSystem &&
+    (!fieldMetadataItem.isSystem || isIdField) &&
     fieldMetadataItem.isActive
   );
 };

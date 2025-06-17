@@ -4,6 +4,7 @@ import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
@@ -86,6 +87,7 @@ export class BillingResolver {
       workspaceId: workspace.id,
       userWorkspaceId,
       isExecutedByApiKey: isDefined(apiKey),
+      workspaceActivationStatus: workspace.activationStatus,
     });
 
     const checkoutSessionParams: BillingPortalCheckoutSessionParameters = {
@@ -169,15 +171,20 @@ export class BillingResolver {
     workspaceId,
     userWorkspaceId,
     isExecutedByApiKey,
+    workspaceActivationStatus,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
     isExecutedByApiKey: boolean;
+    workspaceActivationStatus: WorkspaceActivationStatus;
   }) {
     if (
-      await this.billingService.isSubscriptionIncompleteOnboardingStatus(
+      (await this.billingService.isSubscriptionIncompleteOnboardingStatus(
         workspaceId,
-      )
+      )) ||
+      workspaceActivationStatus ===
+        WorkspaceActivationStatus.PENDING_CREATION ||
+      workspaceActivationStatus === WorkspaceActivationStatus.ONGOING_CREATION
     ) {
       return;
     }

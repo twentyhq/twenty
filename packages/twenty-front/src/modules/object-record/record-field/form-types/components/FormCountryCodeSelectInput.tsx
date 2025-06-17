@@ -12,11 +12,13 @@ export type FormCountryCodeSelectInputUpdatedValue = CountryCode | '';
 export const FormCountryCodeSelectInput = ({
   selectedCountryCode,
   onChange,
+  label,
   readonly = false,
   VariablePicker,
 }: {
   selectedCountryCode: string;
   onChange: (countryCode: FormCountryCodeSelectInputUpdatedValue) => void;
+  label?: string;
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;
 }) => {
@@ -55,7 +57,7 @@ export const FormCountryCodeSelectInput = ({
 
   return (
     <FormSelectFieldInput
-      label="Country Code"
+      label={label}
       onChange={onCountryCodeChange}
       options={options}
       defaultValue={selectedCountryCode}

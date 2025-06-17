@@ -1,10 +1,10 @@
-import { Support } from '~/generated/graphql';
 import { createState } from 'twenty-ui/utilities';
+import { Support, SupportDriver } from '~/generated/graphql';
 
 export const supportChatState = createState<Support>({
   key: 'supportChatState',
   defaultValue: {
-    supportDriver: 'none',
+    supportDriver: SupportDriver.NONE,
     supportFrontChatId: null,
   },
 });
