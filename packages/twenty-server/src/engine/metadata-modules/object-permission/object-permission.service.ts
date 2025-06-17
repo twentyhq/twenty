@@ -4,7 +4,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { UpsertObjectPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-object-permissions.input';
+import {
+  ObjectPermissionInput,
+  UpsertObjectPermissionsInput,
+} from 'src/engine/metadata-modules/object-permission/dtos/upsert-object-permissions.input';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import {
   PermissionsException,
@@ -35,9 +38,18 @@ export class ObjectPermissionService {
     input: UpsertObjectPermissionsInput;
   }): Promise<ObjectPermissionEntity[]> {
     try {
-      await this.validateRoleIsEditableOrThrow({
+      const role = await this.getRoleOrThrow({
         roleId: input.roleId,
         workspaceId,
+      });
+
+      await this.validateRoleIsEditableOrThrow({
+        role,
+      });
+
+      await this.validateObjectPermissionsReadAndWriteConsistencyOrThrow({
+        objectPermissions: input.objectPermissions,
+        roleWithObjectPermissions: role,
       });
 
       const { byId: objectMetadataMapsById } =
@@ -117,6 +129,58 @@ export class ObjectPermissionService {
     }
   }
 
+  private async validateObjectPermissionsReadAndWriteConsistencyOrThrow({
+    objectPermissions: newObjectPermissions,
+    roleWithObjectPermissions,
+  }: {
+    objectPermissions: ObjectPermissionInput[];
+    roleWithObjectPermissions: RoleEntity;
+  }) {
+    const existingObjectPermissions =
+      roleWithObjectPermissions.objectPermissions;
+
+    for (const newObjectPermission of newObjectPermissions) {
+      const existingObjectRecordPermission = existingObjectPermissions.find(
+        (objectPermission) =>
+          objectPermission.objectMetadataId ===
+          newObjectPermission.objectMetadataId,
+      );
+
+      const hasReadPermissionAfterUpdate =
+        newObjectPermission.canReadObjectRecords ??
+        existingObjectRecordPermission?.canReadObjectRecords ??
+        roleWithObjectPermissions.canReadAllObjectRecords;
+
+      if (hasReadPermissionAfterUpdate === false) {
+        const hasUpdatePermissionAfterUpdate =
+          newObjectPermission.canUpdateObjectRecords ??
+          existingObjectRecordPermission?.canUpdateObjectRecords ??
+          roleWithObjectPermissions.canUpdateAllObjectRecords;
+
+        const hasSoftDeletePermissionAfterUpdate =
+          newObjectPermission.canSoftDeleteObjectRecords ??
+          existingObjectRecordPermission?.canSoftDeleteObjectRecords ??
+          roleWithObjectPermissions.canSoftDeleteAllObjectRecords;
+
+        const hasDestroyPermissionAfterUpdate =
+          newObjectPermission.canDestroyObjectRecords ??
+          existingObjectRecordPermission?.canDestroyObjectRecords ??
+          roleWithObjectPermissions.canDestroyAllObjectRecords;
+
+        if (
+          hasUpdatePermissionAfterUpdate ||
+          hasSoftDeletePermissionAfterUpdate ||
+          hasDestroyPermissionAfterUpdate
+        ) {
+          throw new PermissionsException(
+            PermissionsExceptionMessage.CANNOT_GIVE_WRITING_PERMISSION_ON_NON_READABLE_OBJECT,
+            PermissionsExceptionCode.CANNOT_GIVE_WRITING_PERMISSION_ON_NON_READABLE_OBJECT,
+          );
+        }
+      }
+    }
+  }
+
   private async handleForeignKeyError({
     error,
     roleId,
@@ -159,7 +223,7 @@ export class ObjectPermissionService {
     }
   }
 
-  private async validateRoleIsEditableOrThrow({
+  private async getRoleOrThrow({
     roleId,
     workspaceId,
   }: {
@@ -171,9 +235,21 @@ export class ObjectPermissionService {
         id: roleId,
         workspaceId,
       },
+      relations: ['objectPermissions'],
     });
 
-    if (!role?.isEditable) {
+    if (!isDefined(role)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.ROLE_NOT_FOUND,
+        PermissionsExceptionCode.ROLE_NOT_FOUND,
+      );
+    }
+
+    return role;
+  }
+
+  private async validateRoleIsEditableOrThrow({ role }: { role: RoleEntity }) {
+    if (!role.isEditable) {
       throw new PermissionsException(
         PermissionsExceptionMessage.ROLE_NOT_EDITABLE,
         PermissionsExceptionCode.ROLE_NOT_EDITABLE,

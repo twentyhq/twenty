@@ -3,13 +3,10 @@ import { createCustomRoleWithObjectPermissions } from 'test/integration/graphql/
 import { deleteRole } from 'test/integration/graphql/utils/delete-one-role.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlAPIRequestWithMemberRole as makeGraphqlAPIRequestWithJony } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -20,15 +17,6 @@ describe('granularObjectRecordsPermissions', () => {
     let customRoleId: string;
 
     beforeAll(async () => {
-      // Enable Permissions V2
-      const enablePermissionsQuery = updateFeatureFlagFactory(
-        SEED_APPLE_WORKSPACE_ID,
-        'IS_PERMISSIONS_V2_ENABLED',
-        true,
-      );
-
-      await makeGraphqlAPIRequest(enablePermissionsQuery);
-
       // Get the original Member role ID for restoration later
       const getRolesQuery = {
         query: `
@@ -69,15 +57,6 @@ describe('granularObjectRecordsPermissions', () => {
         .post('/graphql')
         .set('Authorization', `Bearer ${ADMIN_ACCESS_TOKEN}`)
         .send(restoreMemberRoleQuery);
-
-      // Disable Permissions V2
-      const disablePermissionsQuery = updateFeatureFlagFactory(
-        SEED_APPLE_WORKSPACE_ID,
-        'IS_PERMISSIONS_V2_ENABLED',
-        false,
-      );
-
-      await makeGraphqlAPIRequest(disablePermissionsQuery);
     });
 
     afterEach(async () => {

@@ -6,7 +6,9 @@ import { FormCountryCodeSelectInput } from '../FormCountryCodeSelectInput';
 const meta: Meta<typeof FormCountryCodeSelectInput> = {
   title: 'UI/Data/Field/Form/Input/FormCountryCodeSelectInput',
   component: FormCountryCodeSelectInput,
-  args: {},
+  args: {
+    label: 'Country Code',
+  },
   argTypes: {},
 };
 

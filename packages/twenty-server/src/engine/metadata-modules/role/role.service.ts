@@ -67,7 +67,7 @@ export class RoleService {
     input: CreateRoleInput;
     workspaceId: string;
   }): Promise<RoleEntity> {
-    await this.validateRoleInput({ input, workspaceId });
+    await this.validateRoleInputOrThrow({ input, workspaceId });
 
     const role = await this.roleRepository.save({
       label: input.label,
@@ -117,7 +117,7 @@ export class RoleService {
       );
     }
 
-    await this.validateRoleInput({
+    await this.validateRoleInputOrThrow({
       input: input.update,
       workspaceId,
       roleId: input.id,
@@ -243,7 +243,7 @@ export class RoleService {
     });
   }
 
-  private async validateRoleInput({
+  private async validateRoleInputOrThrow({
     input,
     workspaceId,
     roleId,
@@ -277,33 +277,64 @@ export class RoleService {
       }
     }
 
+    const workspaceRoles = await this.getWorkspaceRoles(workspaceId);
+
     if (isDefined(input.label)) {
-      let workspaceRoles = await this.getWorkspaceRoles(workspaceId);
+      let rolesForLabelComparison = workspaceRoles;
 
       if (isDefined(roleId)) {
-        workspaceRoles = workspaceRoles.filter((role) => role.id !== roleId);
+        rolesForLabelComparison = workspaceRoles.filter(
+          (role) => role.id !== roleId,
+        );
       }
 
-      if (workspaceRoles.some((role) => role.label === input.label)) {
+      if (rolesForLabelComparison.some((role) => role.label === input.label)) {
         throw new PermissionsException(
           PermissionsExceptionMessage.ROLE_LABEL_ALREADY_EXISTS,
           PermissionsExceptionCode.ROLE_LABEL_ALREADY_EXISTS,
         );
       }
     }
+
+    const existingRole = workspaceRoles.find((role) => role.id === roleId);
+
+    await this.validateRoleReadAndWirtePermissionsConsistencyOrThrow({
+      input,
+      existingRole,
+    });
   }
 
-  private async validateRoleIsNotDefaultRoleOrThrow({
-    roleId,
-    defaultRoleId,
+  private async validateRoleReadAndWirtePermissionsConsistencyOrThrow({
+    input,
+    existingRole,
   }: {
-    roleId: string;
-    defaultRoleId: string;
-  }): Promise<void> {
-    if (defaultRoleId === roleId) {
+    input: CreateRoleInput | UpdateRolePayload;
+    existingRole?: RoleEntity;
+  }) {
+    const hasReadingPermissionsAfterUpdate =
+      input.canReadAllObjectRecords ?? existingRole?.canReadAllObjectRecords;
+
+    const hasUpdatePermissionsAfterUpdate =
+      input.canUpdateAllObjectRecords ??
+      existingRole?.canUpdateAllObjectRecords;
+
+    const hasSoftDeletePermissionsAfterUpdate =
+      input.canSoftDeleteAllObjectRecords ??
+      existingRole?.canSoftDeleteAllObjectRecords;
+
+    const hasDestroyPermissionsAfterUpdate =
+      input.canDestroyAllObjectRecords ??
+      existingRole?.canDestroyAllObjectRecords;
+
+    if (
+      hasReadingPermissionsAfterUpdate === false &&
+      (hasUpdatePermissionsAfterUpdate ||
+        hasSoftDeletePermissionsAfterUpdate ||
+        hasDestroyPermissionsAfterUpdate)
+    ) {
       throw new PermissionsException(
-        PermissionsExceptionMessage.DEFAULT_ROLE_CANNOT_BE_DELETED,
-        PermissionsExceptionCode.DEFAULT_ROLE_CANNOT_BE_DELETED,
+        PermissionsExceptionMessage.CANNOT_GIVE_WRITING_PERMISSION_WITHOUT_READING_PERMISSION,
+        PermissionsExceptionCode.CANNOT_GIVE_WRITING_PERMISSION_WITHOUT_READING_PERMISSION,
       );
     }
   }
@@ -359,6 +390,21 @@ export class RoleService {
       throw new PermissionsException(
         PermissionsExceptionMessage.ROLE_NOT_EDITABLE,
         PermissionsExceptionCode.ROLE_NOT_EDITABLE,
+      );
+    }
+  }
+
+  private async validateRoleIsNotDefaultRoleOrThrow({
+    roleId,
+    defaultRoleId,
+  }: {
+    roleId: string;
+    defaultRoleId: string;
+  }): Promise<void> {
+    if (defaultRoleId === roleId) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.DEFAULT_ROLE_CANNOT_BE_DELETED,
+        PermissionsExceptionCode.DEFAULT_ROLE_CANNOT_BE_DELETED,
       );
     }
   }

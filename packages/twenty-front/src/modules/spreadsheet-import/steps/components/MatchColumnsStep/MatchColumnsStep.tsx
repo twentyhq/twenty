@@ -10,8 +10,6 @@ import { setColumn } from '@/spreadsheet-import/utils/setColumn';
 import { setIgnoreColumn } from '@/spreadsheet-import/utils/setIgnoreColumn';
 import { setSubColumn } from '@/spreadsheet-import/utils/setSubColumn';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
 
@@ -77,7 +75,6 @@ export const MatchColumnsStep = <T extends string>({
   onError,
 }: MatchColumnsStepProps) => {
   const { enqueueDialog } = useDialogManager();
-  const { enqueueSnackBar } = useSnackBar();
   const dataExample = data.slice(0, 2);
   const { fields } = useSpreadsheetImportInternal<T>();
   const [isLoading, setIsLoading] = useState(false);
@@ -131,10 +128,6 @@ export const MatchColumnsStep = <T extends string>({
             if (columnIndex === index) {
               return setColumn(column, field, data);
             } else if (index === existingFieldIndex) {
-              enqueueSnackBar('Another column unselected', {
-                detailedMessage: 'Columns cannot duplicate',
-                variant: SnackBarVariant.Error,
-              });
               return setColumn(column);
             } else {
               return column;
@@ -143,15 +136,7 @@ export const MatchColumnsStep = <T extends string>({
         );
       }
     },
-    [
-      columns,
-      onRevertIgnore,
-      onIgnore,
-      fields,
-      setColumns,
-      data,
-      enqueueSnackBar,
-    ],
+    [columns, onRevertIgnore, onIgnore, fields, setColumns, data],
   );
 
   const handleContinue = useCallback(

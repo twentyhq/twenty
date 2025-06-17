@@ -1,5 +1,7 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
+import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
+
 import { BillingTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/billing-trial-period.dto';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -23,8 +25,8 @@ class Billing {
 
 @ObjectType()
 class Support {
-  @Field(() => String)
-  supportDriver: string;
+  @Field(() => SupportDriver)
+  supportDriver: SupportDriver;
 
   @Field(() => String, { nullable: true })
   supportFrontChatId?: string;

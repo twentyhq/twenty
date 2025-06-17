@@ -5,6 +5,7 @@ import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
@@ -46,7 +47,7 @@ export const ObjectFilterDropdownOperandSelect = () => {
   };
 
   return (
-    <DropdownContent>
+    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
       <StyledDropdownMenuItemsContainer>
         {operandsForFilterType.map((filterOperand, index) => (
           <MenuItem

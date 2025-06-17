@@ -29,6 +29,9 @@ export const createCustomRoleWithObjectPermissions = async (options: {
   };
 
   const response = await makeGraphqlAPIRequest(createRoleOperation);
+
+  expect(response.body.errors).toBeUndefined();
+  expect(response.body.data.createOneRole).toBeDefined();
   const roleId = response.body.data.createOneRole.id;
 
   // Get object metadata IDs for Person and Company

@@ -21,6 +21,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { VisibilityHidden } from 'twenty-ui/accessibility';
 import { IconChevronDown } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 type FormMultiSelectFieldInputProps = {
   label?: string;
@@ -55,7 +56,7 @@ const StyledDisplayModeContainer = styled(StyledDisplayModeReadonlyContainer)`
 const StyledSelectInputContainer = styled.div`
   position: absolute;
   z-index: 1;
-  top: ${({ theme }) => theme.spacing(8)};
+  top: ${({ theme }) => theme.spacing(9)};
 `;
 
 const StyledPlaceholder = styled.div`
@@ -260,6 +261,7 @@ export const FormMultiSelectFieldInput = ({
                   onCancel={onCancel}
                   onOptionSelected={onOptionSelected}
                   values={selectedNames}
+                  dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
                 />
               </OverlayContainer>
             )}

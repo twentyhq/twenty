@@ -83,7 +83,7 @@ export const workflowsAllView = (
             (field) => field.standardId === WORKFLOW_STANDARD_FIELD_IDS.runs,
           )?.id ?? '',
         position: 5,
-        isVisible: true,
+        isVisible: false,
         size: 150,
       },
     ],
