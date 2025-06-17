@@ -40,10 +40,15 @@ export const ViewBarFilterDropdown = () => {
     removeEmptyVectorSearchFilter();
   };
 
+  const handleDropdownOpen = () => {
+    resetFilterDropdown();
+  };
+
   return (
     <Dropdown
       dropdownId={VIEW_BAR_FILTER_DROPDOWN_ID}
       onClose={handleDropdownClose}
+      onOpen={handleDropdownOpen}
       clickableComponent={<ViewBarFilterButton />}
       dropdownComponents={<ViewBarFilterDropdownContent />}
       dropdownOffset={{ y: 8 }}

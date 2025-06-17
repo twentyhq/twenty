@@ -6,7 +6,6 @@ import { OBJECT_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/co
 import { useCloseSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useCloseSortDropdown';
 import { useResetRecordSortDropdownSearchInput } from '@/object-record/object-sort-dropdown/hooks/useResetRecordSortDropdownSearchInput';
 import { useResetSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useResetSortDropdown';
-import { useToggleSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useToggleSortDropdown';
 import { isRecordSortDirectionDropdownMenuUnfoldedComponentState } from '@/object-record/object-sort-dropdown/states/isRecordSortDirectionDropdownMenuUnfoldedComponentState';
 import { objectSortDropdownSearchInputComponentState } from '@/object-record/object-sort-dropdown/states/objectSortDropdownSearchInputComponentState';
 import { selectedRecordSortDirectionComponentState } from '@/object-record/object-sort-dropdown/states/selectedRecordSortDirectionComponentState';
@@ -88,8 +87,6 @@ export type ObjectSortDropdownButtonProps = {
 };
 
 export const ObjectSortDropdownButton = () => {
-  const { toggleSortDropdown } = useToggleSortDropdown();
-
   const { resetRecordSortDropdownSearchInput } =
     useResetRecordSortDropdownSearchInput();
 
@@ -161,13 +158,14 @@ export const ObjectSortDropdownButton = () => {
   const shouldShowSeparator =
     visibleFieldMetadataItems.length > 0 && hiddenFieldMetadataItems.length > 0;
 
-  const handleButtonClick = () => {
-    toggleSortDropdown();
-  };
-
   const handleDropdownButtonClose = () => {
     resetRecordSortDropdownSearchInput();
     resetSortDropdown();
+  };
+
+  const handleDropdownOpen = () => {
+    resetSortDropdown();
+    setSelectedItemId(selectableItemIdArray[0]);
   };
 
   const { closeSortDropdown } = useCloseSortDropdown();
@@ -224,14 +222,9 @@ export const ObjectSortDropdownButton = () => {
     <Dropdown
       dropdownId={OBJECT_SORT_DROPDOWN_ID}
       dropdownOffset={{ y: 8 }}
+      onOpen={handleDropdownOpen}
       clickableComponent={
-        <StyledHeaderDropdownButton
-          onClick={() => {
-            handleButtonClick();
-            setSelectedItemId(selectableItemIdArray[0]);
-          }}
-          isUnfolded={isDropdownOpen}
-        >
+        <StyledHeaderDropdownButton isUnfolded={isDropdownOpen}>
           <Trans>Sort</Trans>
         </StyledHeaderDropdownButton>
       }
