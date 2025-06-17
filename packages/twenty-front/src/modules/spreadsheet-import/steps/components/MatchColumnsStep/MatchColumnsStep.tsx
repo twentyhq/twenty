@@ -10,7 +10,6 @@ import { setColumn } from '@/spreadsheet-import/utils/setColumn';
 import { setIgnoreColumn } from '@/spreadsheet-import/utils/setIgnoreColumn';
 import { setSubColumn } from '@/spreadsheet-import/utils/setSubColumn';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
 
@@ -76,7 +75,6 @@ export const MatchColumnsStep = <T extends string>({
   onError,
 }: MatchColumnsStepProps) => {
   const { enqueueDialog } = useDialogManager();
-  const { enqueueSnackBar } = useSnackBar();
   const dataExample = data.slice(0, 2);
   const { fields } = useSpreadsheetImportInternal<T>();
   const [isLoading, setIsLoading] = useState(false);
