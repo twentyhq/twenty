@@ -28,7 +28,7 @@ import {
   FieldRelationToOneValue,
   FieldRelationValue,
   FieldRichTextV2Value,
-  FormFieldCurrencyValue
+  FormFieldCurrencyValue,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';

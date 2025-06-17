@@ -85,7 +85,7 @@ export type FieldCurrencyMetadata = BaseFieldMetadata & {
   placeHolder: string;
   isPositive?: boolean;
   settings?: {
-    format: FieldCurrencyFormat | null
+    format: FieldCurrencyFormat | null;
   };
 };
 
