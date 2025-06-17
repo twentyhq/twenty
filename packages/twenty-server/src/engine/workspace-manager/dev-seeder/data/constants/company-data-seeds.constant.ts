@@ -1,5 +1,3 @@
-/* eslint-disable */
-// @ts-nocheck
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 type CompanyDataSeed = {
@@ -7907,7 +7905,7 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
   },
 
   {
-    id: COMPANY_DATA_SEED_IDS.ID_600,
+    id: COMPANY_DATA_SEED_IDS.ID_599,
     name: 'RSD',
     domainNamePrimaryLinkUrl: 'rocketsoftware.com',
     addressAddressCity: 'Waltham',

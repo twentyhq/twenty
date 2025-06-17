@@ -2,14 +2,13 @@ import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/d
 import { NOTE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/note-data-seeds.constant';
 import { PERSON_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
 
-export interface NoteTargetDataSeed {
+type NoteTargetDataSeed = {
   id: string;
   noteId: string | null;
   personId: string | null;
   companyId: string | null;
   opportunityId: string | null;
-  [key: string]: unknown;
-}
+};
 
 export const NOTE_TARGET_DATA_SEED_COLUMNS: (keyof NoteTargetDataSeed)[] = [
   'id',
@@ -25,14 +24,18 @@ const GENERATE_NOTE_TARGET_IDS = (): Record<string, string> => {
 
   // Person note targets (ID_1 to ID_1200)
   for (let INDEX = 1; INDEX <= 1200; INDEX++) {
+    const HEX_INDEX = INDEX.toString(16).padStart(4, '0');
+
     NOTE_TARGET_IDS[`ID_${INDEX}`] =
-      `40404040-nt${INDEX.toString().padStart(2, '0')}-4e7c-nt${INDEX.toString().padStart(2, '0')}-1234567890${((INDEX % 26) + 10).toString(36)}${(((INDEX + 1) % 26) + 10).toString(36)}`;
+      `40404040-${HEX_INDEX}-4e7c-8001-123456789def`;
   }
 
   // Company note targets (ID_1201 to ID_1800)
   for (let INDEX = 1201; INDEX <= 1800; INDEX++) {
+    const HEX_INDEX = INDEX.toString(16).padStart(4, '0');
+
     NOTE_TARGET_IDS[`ID_${INDEX}`] =
-      `40404040-ct${(INDEX - 1200).toString().padStart(2, '0')}-4e7c-ct${(INDEX - 1200).toString().padStart(2, '0')}-1234567890${((INDEX % 26) + 10).toString(36)}${(((INDEX + 1) % 26) + 10).toString(36)}`;
+      `40404040-${HEX_INDEX}-4e7c-9001-123456789def`;
   }
 
   return NOTE_TARGET_IDS;
@@ -48,8 +51,11 @@ const GENERATE_NOTE_TARGET_SEEDS = (): NoteTargetDataSeed[] => {
   for (let INDEX = 1; INDEX <= 1200; INDEX++) {
     NOTE_TARGET_SEEDS.push({
       id: NOTE_TARGET_DATA_SEED_IDS[`ID_${INDEX}`],
-      noteId: (NOTE_DATA_SEED_IDS as any)[`ID_${INDEX}`],
-      personId: (PERSON_DATA_SEED_IDS as any)[`ID_${INDEX}`],
+      noteId: NOTE_DATA_SEED_IDS[`ID_${INDEX}`],
+      personId:
+        PERSON_DATA_SEED_IDS[
+          `ID_${INDEX}` as keyof typeof PERSON_DATA_SEED_IDS
+        ],
       companyId: null,
       opportunityId: null,
     });
@@ -61,9 +67,12 @@ const GENERATE_NOTE_TARGET_SEEDS = (): NoteTargetDataSeed[] => {
 
     NOTE_TARGET_SEEDS.push({
       id: NOTE_TARGET_DATA_SEED_IDS[`ID_${INDEX}`],
-      noteId: (NOTE_DATA_SEED_IDS as any)[`ID_${INDEX}`],
+      noteId: NOTE_DATA_SEED_IDS[`ID_${INDEX}`],
       personId: null,
-      companyId: (COMPANY_DATA_SEED_IDS as any)[`ID_${COMPANY_INDEX}`],
+      companyId:
+        COMPANY_DATA_SEED_IDS[
+          `ID_${COMPANY_INDEX}` as keyof typeof COMPANY_DATA_SEED_IDS
+        ],
       opportunityId: null,
     });
   }

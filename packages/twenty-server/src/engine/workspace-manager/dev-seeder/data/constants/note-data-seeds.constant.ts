@@ -1,6 +1,6 @@
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
-export interface NoteDataSeed {
+type NoteDataSeed = {
   id: string;
   position: number;
   title: string;
@@ -11,8 +11,7 @@ export interface NoteDataSeed {
   createdByWorkspaceMemberId: string;
   createdByName: string;
   createdByContext: string | null;
-  [key: string]: unknown;
-}
+};
 
 export const NOTE_DATA_SEED_COLUMNS: (keyof NoteDataSeed)[] = [
   'id',
@@ -33,16 +32,16 @@ const GENERATE_NOTE_IDS = (): Record<string, string> => {
 
   // Person notes (ID_1 to ID_1200)
   for (let INDEX = 1; INDEX <= 1200; INDEX++) {
-    NOTE_IDS[`ID_${INDEX}`] =
-      `30303030-n${INDEX.toString().padStart(3, '0')}-4e7c-b${INDEX.toString().padStart(3, '0')}-1234567890${((INDEX % 26) + 10).toString(36)}${(((INDEX + 1) % 26) + 10).toString(36)}`;
+    const HEX_INDEX = INDEX.toString(16).padStart(4, '0');
+
+    NOTE_IDS[`ID_${INDEX}`] = `30303030-${HEX_INDEX}-4e7c-8001-123456789abc`;
   }
 
   // Company notes (ID_1201 to ID_1800)
   for (let INDEX = 1201; INDEX <= 1800; INDEX++) {
-    const COMPANY_INDEX = INDEX - 1200;
+    const HEX_INDEX = INDEX.toString(16).padStart(4, '0');
 
-    NOTE_IDS[`ID_${INDEX}`] =
-      `30303030-c${COMPANY_INDEX.toString().padStart(3, '0')}-4e7c-c${COMPANY_INDEX.toString().padStart(3, '0')}-1234567890${((COMPANY_INDEX % 26) + 10).toString(36)}${(((COMPANY_INDEX + 1) % 26) + 10).toString(36)}`;
+    NOTE_IDS[`ID_${INDEX}`] = `30303030-${HEX_INDEX}-4e7c-9001-123456789abc`;
   }
 
   return NOTE_IDS;

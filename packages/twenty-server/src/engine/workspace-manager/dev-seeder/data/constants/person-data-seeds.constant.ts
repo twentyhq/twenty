@@ -1,7 +1,5 @@
-/* eslint-disable */
-// @ts-nocheck
-import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 type PersonDataSeed = {
   id: string;
@@ -2550,6 +2548,7 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     avatarUrl: 'https://twentyhq.github.io/placeholder-images/people/image-94.png',
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-94',
     jobTitle: "Barrister's clerk",
+    companyId: COMPANY_DATA_SEED_IDS.ID_47,
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
@@ -5825,6 +5824,7 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     avatarUrl: 'https://twentyhq.github.io/placeholder-images/people/image-328.png',
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-328',
     jobTitle: "Politician's assistant",
+    companyId: COMPANY_DATA_SEED_IDS.ID_164,
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
@@ -6650,6 +6650,7 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     avatarUrl: 'https://twentyhq.github.io/placeholder-images/people/image-387.png',
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-387',
     jobTitle: "Politician's assistant",
+    companyId: COMPANY_DATA_SEED_IDS.ID_194,
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
@@ -11311,6 +11312,7 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     avatarUrl: 'https://twentyhq.github.io/placeholder-images/people/image-720.png',
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-720',
     jobTitle: "Nurse, children's",
+    companyId: COMPANY_DATA_SEED_IDS.ID_360,
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
@@ -13550,6 +13552,7 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     avatarUrl: 'https://twentyhq.github.io/placeholder-images/people/image-880.png',
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-880',
     jobTitle: "Politician's assistant",
+    companyId: COMPANY_DATA_SEED_IDS.ID_440,
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
@@ -18015,7 +18018,7 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     avatarUrl: 'https://twentyhq.github.io/placeholder-images/people/image-1199.png',
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1199',
     jobTitle: 'Chemical engineer',
-    companyId: COMPANY_DATA_SEED_IDS.ID_600,
+    companyId: COMPANY_DATA_SEED_IDS.ID_599,
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',
@@ -18029,7 +18032,7 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     avatarUrl: 'https://twentyhq.github.io/placeholder-images/people/image-1200.png',
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1200',
     jobTitle: 'Radiographer, diagnostic',
-    companyId: COMPANY_DATA_SEED_IDS.ID_600,
+    companyId: COMPANY_DATA_SEED_IDS.ID_599,
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     createdByName: 'Tim A',

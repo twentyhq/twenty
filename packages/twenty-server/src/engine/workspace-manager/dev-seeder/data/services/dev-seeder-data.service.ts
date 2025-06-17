@@ -53,6 +53,14 @@ import {
   MESSAGE_THREAD_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-thread-data-seeds.constant';
 import {
+  NOTE_DATA_SEED_COLUMNS,
+  NOTE_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/note-data-seeds.constant';
+import {
+  NOTE_TARGET_DATA_SEED_COLUMNS,
+  NOTE_TARGET_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/note-target-data-seeds.constant';
+import {
   OPPORTUNITY_DATA_SEED_COLUMNS,
   OPPORTUNITY_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/opportunity-data-seeds.constant';
@@ -97,16 +105,16 @@ const RECORD_SEEDS_CONFIGS = [
     pgColumns: PERSON_DATA_SEED_COLUMNS,
     recordSeeds: PERSON_DATA_SEEDS,
   },
-  // {
-  //   tableName: 'note',
-  //   pgColumns: NOTE_DATA_SEED_COLUMNS,
-  //   recordSeeds: NOTE_DATA_SEEDS,
-  // },
-  // {
-  //   tableName: 'noteTarget',
-  //   pgColumns: NOTE_TARGET_DATA_SEED_COLUMNS,
-  //   recordSeeds: NOTE_TARGET_DATA_SEEDS,
-  // },
+  {
+    tableName: 'note',
+    pgColumns: NOTE_DATA_SEED_COLUMNS,
+    recordSeeds: NOTE_DATA_SEEDS,
+  },
+  {
+    tableName: 'noteTarget',
+    pgColumns: NOTE_TARGET_DATA_SEED_COLUMNS,
+    recordSeeds: NOTE_TARGET_DATA_SEEDS,
+  },
   {
     tableName: 'opportunity',
     pgColumns: OPPORTUNITY_DATA_SEED_COLUMNS,
