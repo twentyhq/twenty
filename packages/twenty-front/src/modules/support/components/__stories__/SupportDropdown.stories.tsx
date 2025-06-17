@@ -15,6 +15,7 @@ import {
 } from '~/testing/mock-data/users';
 
 import { SupportDropdown } from '@/support/components/SupportDropdown';
+import { SupportDriver } from '~/generated-metadata/graphql';
 import { PrefetchLoadedDecorator } from '~/testing/decorators/PrefetchLoadedDecorator';
 
 const meta: Meta<typeof SupportDropdown> = {
@@ -32,7 +33,10 @@ const meta: Meta<typeof SupportDropdown> = {
       setCurrentWorkspace(mockCurrentWorkspace);
       setCurrentWorkspaceMember(mockedWorkspaceMemberData);
       setCurrentUser(mockedUserData);
-      setSupportChat({ supportDriver: 'front', supportFrontChatId: '1234' });
+      setSupportChat({
+        supportDriver: SupportDriver.FRONT,
+        supportFrontChatId: '1234',
+      });
 
       return <Story />;
     },
