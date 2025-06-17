@@ -6,6 +6,7 @@ import { lastShowPageRecordIdState } from '@/object-record/record-field/states/l
 import { useLazyLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLazyLoadRecordIndexTable';
 import { ROW_HEIGHT } from '@/object-record/record-table/constants/RowHeight';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { hasRecordTableFetchedAllRecordsComponentStateV2 } from '@/object-record/record-table/states/hasRecordTableFetchedAllRecordsComponentStateV2';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { tableEncounteredUnrecoverableErrorComponentState } from '@/object-record/record-table/states/tableEncounteredUnrecoverableErrorComponentState';
@@ -25,20 +26,14 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
     isRecordTableInitialLoadingComponentState,
   );
 
+  const { setRecordTableData } = useRecordTable();
+
   const showAuthModal = useShowAuthModal();
 
   const [hasInitializedScroll, setHasInitializedScroll] = useState(false);
 
-  const {
-    findManyRecords,
-    fetchMoreRecords,
-    records,
-    totalCount,
-    setRecordTableData,
-    loading,
-    queryStateIdentifier,
-    hasNextPage,
-  } = useLazyLoadRecordIndexTable(objectNameSingular);
+  const { findManyRecordsLazy, fetchMoreRecords, queryStateIdentifier } =
+    useLazyLoadRecordIndexTable(objectNameSingular);
 
   const isFetchingMoreObjects = useRecoilValue(
     isFetchingMoreRecordsFamilyState(queryStateIdentifier),
@@ -56,47 +51,11 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
       hasRecordTableFetchedAllRecordsComponentStateV2,
     );
 
-  const [lastShowPageRecordId, setLastShowPageRecordId] = useRecoilState(
+  const [lastShowPageRecordId] = useRecoilState(
     lastShowPageRecordIdState,
   );
 
   const { scrollToPosition } = useScrollToPosition();
-
-  useEffect(() => {
-    if (isNonEmptyString(lastShowPageRecordId) && !hasInitializedScroll) {
-      const isRecordAlreadyFetched = records.some(
-        (record) => record.id === lastShowPageRecordId,
-      );
-
-      if (isRecordAlreadyFetched) {
-        const recordPosition = records.findIndex(
-          (record) => record.id === lastShowPageRecordId,
-        );
-
-        const positionInPx = recordPosition * ROW_HEIGHT;
-
-        scrollToPosition(positionInPx);
-
-        setHasInitializedScroll(true);
-      }
-    }
-  }, [
-    loading,
-    lastShowPageRecordId,
-    records,
-    scrollToPosition,
-    hasInitializedScroll,
-    setLastShowPageRecordId,
-  ]);
-
-  useEffect(() => {
-    if (!loading) {
-      setRecordTableData({
-        records,
-        totalCount,
-      });
-    }
-  }, [records, totalCount, setRecordTableData, loading]);
 
   const fetchMoreDebouncedIfRequested = useDebouncedCallback(async () => {
     // We are debouncing here to give the user some room to scroll if they want to within this throttle window
@@ -104,17 +63,10 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
   }, 100);
 
   useEffect(() => {
-    const allRecordsHaveBeenFetched = !hasNextPage;
-
-    setHasRecordTableFetchedAllRecordsComponents(allRecordsHaveBeenFetched);
-  }, [hasNextPage, setHasRecordTableFetchedAllRecordsComponents]);
-
-  useEffect(() => {
     (async () => {
       if (
         !isFetchingMoreObjects &&
         tableLastRowVisible &&
-        hasNextPage &&
         !encounteredUnrecoverableError
       ) {
         const result = await fetchMoreDebouncedIfRequested();
@@ -130,8 +82,6 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
       }
     })();
   }, [
-    hasNextPage,
-    records,
     lastShowPageRecordId,
     scrollToPosition,
     fetchMoreDebouncedIfRequested,
@@ -147,12 +97,42 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
     }
 
     const fetchRecords = async () => {
-      await findManyRecords();
+      const { records, totalCount, hasNextPage } = await findManyRecordsLazy();
+      setHasRecordTableFetchedAllRecordsComponents(!hasNextPage);
+      if (isNonEmptyString(lastShowPageRecordId) && !hasInitializedScroll) {
+        const isRecordAlreadyFetched = records.some(
+          (record) => record.id === lastShowPageRecordId,
+        );
+
+        if (isRecordAlreadyFetched) {
+          const recordPosition = records.findIndex(
+            (record) => record.id === lastShowPageRecordId,
+          );
+
+          const positionInPx = recordPosition * ROW_HEIGHT;
+
+          scrollToPosition(positionInPx);
+
+          setHasInitializedScroll(true);
+        }
+      }
+      setRecordTableData({
+        records,
+        totalCount,
+      });
       setIsRecordTableInitialLoading(false);
     };
 
     fetchRecords();
-  }, [findManyRecords, setIsRecordTableInitialLoading, showAuthModal]);
+  }, [
+    findManyRecordsLazy,
+    hasInitializedScroll,
+    lastShowPageRecordId,
+    scrollToPosition,
+    setHasRecordTableFetchedAllRecordsComponents,
+    setIsRecordTableInitialLoading,
+    showAuthModal,
+  ]);
 
   return <></>;
 };

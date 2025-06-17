@@ -7,8 +7,7 @@ import {
 } from '@apollo/client';
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useMemo } from 'react';
-import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
@@ -27,7 +26,6 @@ import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { cursorFamilyState } from '../states/cursorFamilyState';
 import { hasNextPageFamilyState } from '../states/hasNextPageFamilyState';
-import { isFetchingMoreRecordsFamilyState } from '../states/isFetchingMoreRecordsFamilyState';
 
 export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
   RecordGqlOperationVariables & {
@@ -42,7 +40,7 @@ type UseFindManyRecordsStateParams<
   TData = RecordGqlOperationFindManyResult,
 > = Omit<
   UseFindManyRecordsParams<T>,
-  'skip' | 'recordGqlFields' | 'fetchPolicy'
+  'skip' | 'recordGqlFields' | 'fetchPolicy' | 'onCompleted'
 > & {
   data: RecordGqlOperationFindManyResult | undefined;
   error: ApolloError | undefined;
@@ -70,11 +68,9 @@ export const useFetchMoreRecordsWithPagination = <
   filter,
   orderBy,
   limit,
-  data,
   error,
   fetchMore,
   objectMetadataItem,
-  onCompleted,
 }: UseFindManyRecordsStateParams<T>) => {
   const queryIdentifier = getQueryIdentifier({
     objectNameSingular,
@@ -82,12 +78,6 @@ export const useFetchMoreRecordsWithPagination = <
     limit,
     orderBy,
   });
-
-  const [hasNextPage] = useRecoilState(hasNextPageFamilyState(queryIdentifier));
-
-  const setIsFetchingMoreObjects = useSetRecoilState(
-    isFetchingMoreRecordsFamilyState(queryIdentifier),
-  );
 
   const { handleFindManyRecordsError } = useHandleFindManyRecordsError({
     objectMetadataItem,
@@ -111,8 +101,6 @@ export const useFetchMoreRecordsWithPagination = <
           hasNextPageLocal ||
           (!isAggregationEnabled(objectMetadataItem) && !error)
         ) {
-          setIsFetchingMoreObjects(true);
-
           try {
             const { data: fetchMoreDataResult } = await fetchMore({
               variables: {
@@ -152,20 +140,6 @@ export const useFetchMoreRecordsWithPagination = <
                   );
                 }
 
-                const records = getRecordsFromRecordConnection({
-                  recordConnection: {
-                    edges: newEdges,
-                    pageInfo,
-                  },
-                }) as T[];
-
-                onCompleted?.(records, {
-                  pageInfo,
-                  totalCount:
-                    fetchMoreResult?.[objectMetadataItem.namePlural]
-                      ?.totalCount,
-                });
-
                 return Object.assign({}, prev, {
                   [objectMetadataItem.namePlural]: {
                     __typename: `${capitalize(
@@ -184,46 +158,37 @@ export const useFetchMoreRecordsWithPagination = <
 
             return {
               data: fetchMoreDataResult?.[objectMetadataItem.namePlural],
+              totalCount:
+                fetchMoreDataResult?.[objectMetadataItem.namePlural]
+                  ?.totalCount,
+              records: getRecordsFromRecordConnection({
+                recordConnection: {
+                  edges:
+                    fetchMoreDataResult?.[objectMetadataItem.namePlural]?.edges,
+                  pageInfo:
+                    fetchMoreDataResult?.[objectMetadataItem.namePlural]
+                      ?.pageInfo,
+                },
+              }) as T[],
             };
           } catch (error) {
             handleFindManyRecordsError(error as ApolloError);
             return { error: error as ApolloError };
-          } finally {
-            setIsFetchingMoreObjects(false);
           }
         }
       },
     [
+      queryIdentifier,
       objectMetadataItem,
       error,
-      setIsFetchingMoreObjects,
       fetchMore,
       filter,
       orderBy,
-      onCompleted,
       handleFindManyRecordsError,
-      queryIdentifier,
     ],
-  );
-
-  const totalCount = data?.[objectMetadataItem.namePlural]?.totalCount;
-
-  const recordConnection = data?.[objectMetadataItem.namePlural];
-
-  const records = useMemo(
-    () =>
-      isDefined(recordConnection)
-        ? getRecordsFromRecordConnection<T>({
-            recordConnection,
-          })
-        : [],
-    [recordConnection],
   );
 
   return {
     fetchMoreRecords,
-    totalCount,
-    records,
-    hasNextPage,
   };
 };
