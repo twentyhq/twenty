@@ -311,8 +311,6 @@ export class DevSeederDataService {
     entityType: string,
     entitySeed: Record<string, unknown>,
     index: number,
-    activityIndex: number,
-    baseDate: Date,
   ): Record<string, unknown> {
     const generateTimelineActivityId = (type: string, idx: number): string => {
       const prefix = '20202020';
@@ -440,7 +438,6 @@ export class DevSeederDataService {
     entitySeed: Record<string, unknown>,
     index: number,
     activityIndex: number,
-    baseDate: Date,
     linkedObjectMetadataId: string,
   ): Record<string, unknown>[] {
     const linkedActivities: Record<string, unknown>[] = [];
@@ -633,7 +630,6 @@ export class DevSeederDataService {
     schemaName: string;
     workspaceId: string;
   }) {
-    const baseDate = new Date('2023-01-01T10:00:00.000Z');
     const timelineActivities: Record<string, unknown>[] = [];
 
     const { noteMetadataId, taskMetadataId } =
@@ -651,13 +647,7 @@ export class DevSeederDataService {
 
     entityConfigs.forEach(({ type, seeds }) => {
       seeds.forEach((seed, index) => {
-        const activity = this.createTimelineActivity(
-          type,
-          seed,
-          index,
-          activityIndex,
-          baseDate,
-        );
+        const activity = this.createTimelineActivity(type, seed, index);
 
         timelineActivities.push(activity);
         activityIndex++;
@@ -671,7 +661,6 @@ export class DevSeederDataService {
             seed,
             index,
             activityIndex,
-            baseDate,
             linkedObjectMetadataId,
           );
 
@@ -713,10 +702,6 @@ export class DevSeederDataService {
           .values(batch)
           .execute();
       }
-
-      console.log(
-        `✅ Successfully seeded ${timelineActivities.length} timeline activities in batches of ${batchSize}`,
-      );
     }
   }
 }
