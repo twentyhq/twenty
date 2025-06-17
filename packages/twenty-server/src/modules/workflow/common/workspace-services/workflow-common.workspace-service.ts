@@ -136,13 +136,6 @@ export class WorkflowCommonWorkspaceService {
     workspaceId: string;
     operation: 'restore' | 'delete' | 'destroy';
   }): Promise<void> {
-    const workflowRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowWorkspaceEntity>(
-        workspaceId,
-        'workflow',
-        { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
-      );
-
     const workflowVersionRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
         workspaceId,
@@ -196,10 +189,10 @@ export class WorkflowCommonWorkspaceService {
           break;
       }
 
-      await this.handleSubEntitiesStatusUpdates({
-        workflowRepository,
+      await this.deactivateVersionOnDelete({
         workflowVersionRepository,
         workflowId,
+        workspaceId,
         operation,
       });
 
@@ -212,20 +205,27 @@ export class WorkflowCommonWorkspaceService {
     }
   }
 
-  async handleSubEntitiesStatusUpdates({
-    workflowRepository,
+  private async deactivateVersionOnDelete({
     workflowVersionRepository,
     workflowId,
+    workspaceId,
     operation,
   }: {
-    workflowRepository: WorkspaceRepository<WorkflowWorkspaceEntity>;
     workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
+    workspaceId: string;
     workflowId: string;
     operation: 'restore' | 'delete' | 'destroy';
   }) {
     if (operation !== 'delete') {
       return;
     }
+
+    const workflowRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowWorkspaceEntity>(
+        workspaceId,
+        'workflow',
+        { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
+      );
 
     const workflow = await workflowRepository.findOne({
       where: { id: workflowId },
