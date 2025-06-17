@@ -78,7 +78,9 @@ export class CreateCompanyService {
     // Remove trailing slash from domain names
     const companiesWithoutTrailingSlash = companies.map((company) => ({
       ...company,
-      domainName: lowercaseDomainAndRemoveTrailingSlash(company.domainName),
+      domainName: company.domainName
+        ? lowercaseDomainAndRemoveTrailingSlash(company.domainName)
+        : undefined,
     }));
 
     // Avoid creating duplicate companies, e.g. example.com and example.com/
