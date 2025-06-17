@@ -32,13 +32,13 @@ const GENERATE_NOTE_IDS = (): Record<string, string> => {
   for (let INDEX = 1; INDEX <= 1200; INDEX++) {
     const HEX_INDEX = INDEX.toString(16).padStart(4, '0');
 
-    NOTE_IDS[`ID_${INDEX}`] = `30303030-${HEX_INDEX}-4e7c-8001-123456789abc`;
+    NOTE_IDS[`ID_${INDEX}`] = `20202020-${HEX_INDEX}-4e7c-8001-123456789abc`;
   }
 
   for (let INDEX = 1201; INDEX <= 1800; INDEX++) {
     const HEX_INDEX = INDEX.toString(16).padStart(4, '0');
 
-    NOTE_IDS[`ID_${INDEX}`] = `30303030-${HEX_INDEX}-4e7c-9001-123456789abc`;
+    NOTE_IDS[`ID_${INDEX}`] = `20202020-${HEX_INDEX}-4e7c-9001-123456789abc`;
   }
 
   return NOTE_IDS;
