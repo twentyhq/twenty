@@ -2,10 +2,12 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { SettingsRolePermissionsObjectLevelObjectPicker } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { t } from '@lingui/core/macro';
-import { useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsRoleAddObjectLevel = () => {
   const { roleId } = useParams();
@@ -13,6 +15,10 @@ export const SettingsRoleAddObjectLevel = () => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     settingsDraftRoleFamilyState(roleId!),
   );
+
+  if (!roleId) {
+    return <Navigate to={getSettingsPath(SettingsPath.Roles)} />;
+  }
 
   return (
     <>
@@ -32,7 +38,7 @@ export const SettingsRoleAddObjectLevel = () => {
         ]}
       >
         <SettingsPageContainer>
-          <SettingsRolePermissionsObjectLevelObjectPicker />
+          <SettingsRolePermissionsObjectLevelObjectPicker roleId={roleId} />
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
     </>

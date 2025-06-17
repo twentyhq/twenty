@@ -1,33 +1,61 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { SettingsCard } from '@/settings/components/SettingsCard';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SettingsPath } from '@/types/SettingsPath';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { TextInput } from '@/ui/input/components/TextInput';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { ChangeEvent, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useMemo, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
+import { H2Title, IconSearch, useIcons } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-const StyledContainer = styled.div`
+const StyledTypeSelectContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledSearchInput = styled(DropdownMenuSearchInput)`
+  gap: inherit;
   width: 100%;
 `;
 
-export const SettingsRolePermissionsObjectLevelObjectPicker = () => {
-  const { roleId } = useParams();
+const StyledContainer = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  width: 100%;
+`;
+
+const StyledCardContainer = styled.div`
+  cursor: pointer;
+  display: flex;
+  position: relative;
+  width: calc(50% - ${({ theme }) => theme.spacing(1)});
+`;
+
+const StyledSearchContainer = styled.div`
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledSearchInput = styled(TextInput)`
+  input {
+    background: ${({ theme }) => theme.background.transparent.lighter};
+    border: 1px solid ${({ theme }) => theme.border.color.medium};
+  }
+`;
+
+export const SettingsRolePermissionsObjectLevelObjectPicker = ({
+  roleId,
+}: {
+  roleId: string;
+}) => {
+  const theme = useTheme();
   const navigate = useNavigateSettings();
   const [searchFilter, setSearchFilter] = useState('');
   const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
-    settingsDraftRoleFamilyState(roleId!),
+    settingsDraftRoleFamilyState(roleId),
   );
 
   const { alphaSortedActiveNonSystemObjectMetadataItems: objectMetadataItems } =
@@ -35,8 +63,8 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = () => {
 
   const { getIcon } = useIcons();
 
-  const handleSearchFilterChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setSearchFilter(event.target.value);
+  const handleSearchChange = (text: string) => {
+    setSearchFilter(text);
   };
 
   const handleSelectObjectMetadata = (objectMetadataId: string) => {
@@ -56,53 +84,126 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = () => {
       ],
     }));
     navigate(SettingsPath.RoleObjectLevel, {
-      roleId: roleId!,
+      roleId,
       objectMetadataId,
     });
   };
 
-  const excludedObjectMetadataIds =
-    settingsDraftRole.objectPermissions
-      ?.filter(
-        (objectPermission) =>
-          (isDefined(objectPermission.canReadObjectRecords) &&
-            objectPermission.canReadObjectRecords !==
-              settingsDraftRole.canReadAllObjectRecords) ||
-          (isDefined(objectPermission.canUpdateObjectRecords) &&
-            objectPermission.canUpdateObjectRecords !==
-              settingsDraftRole.canUpdateAllObjectRecords) ||
-          (isDefined(objectPermission.canSoftDeleteObjectRecords) &&
-            objectPermission.canSoftDeleteObjectRecords !==
-              settingsDraftRole.canSoftDeleteAllObjectRecords) ||
-          (isDefined(objectPermission.canDestroyObjectRecords) &&
-            objectPermission.canDestroyObjectRecords !==
-              settingsDraftRole.canDestroyAllObjectRecords),
-      )
-      .map((p) => p.objectMetadataId) ?? [];
+  const excludedObjectMetadataIds = useMemo(
+    () =>
+      settingsDraftRole.objectPermissions
+        ?.filter(
+          (objectPermission) =>
+            (isDefined(objectPermission.canReadObjectRecords) &&
+              objectPermission.canReadObjectRecords !==
+                settingsDraftRole.canReadAllObjectRecords) ||
+            (isDefined(objectPermission.canUpdateObjectRecords) &&
+              objectPermission.canUpdateObjectRecords !==
+                settingsDraftRole.canUpdateAllObjectRecords) ||
+            (isDefined(objectPermission.canSoftDeleteObjectRecords) &&
+              objectPermission.canSoftDeleteObjectRecords !==
+                settingsDraftRole.canSoftDeleteAllObjectRecords) ||
+            (isDefined(objectPermission.canDestroyObjectRecords) &&
+              objectPermission.canDestroyObjectRecords !==
+                settingsDraftRole.canDestroyAllObjectRecords),
+        )
+        .map((p) => p.objectMetadataId) ?? [],
+    [settingsDraftRole],
+  );
 
-  const filteredObjectMetadataItems = objectMetadataItems.filter(
-    (objectMetadataItem) =>
-      objectMetadataItem.labelSingular
-        .toLowerCase()
-        .includes(searchFilter.toLowerCase()) &&
-      !excludedObjectMetadataIds.includes(objectMetadataItem.id),
+  const filteredObjectMetadataItems = useMemo(
+    () =>
+      objectMetadataItems.filter(
+        (objectMetadataItem) =>
+          objectMetadataItem.labelSingular
+            .toLowerCase()
+            .includes(searchFilter.toLowerCase()) &&
+          !excludedObjectMetadataIds.includes(objectMetadataItem.id),
+      ),
+    [objectMetadataItems, searchFilter, excludedObjectMetadataIds],
+  );
+
+  const basicObjects = filteredObjectMetadataItems.filter(
+    (item) => !item.isCustom,
+  );
+  const customObjects = filteredObjectMetadataItems.filter(
+    (item) => item.isCustom,
   );
 
   return (
-    <StyledContainer>
-      <StyledSearchInput
-        value={searchFilter}
-        onChange={handleSearchFilterChange}
-        placeholder={t`Search objects`}
-      />
-      {filteredObjectMetadataItems.map((objectMetadataItem) => (
-        <MenuItem
-          key={objectMetadataItem.id}
-          text={objectMetadataItem.labelSingular}
-          LeftIcon={getIcon(objectMetadataItem.icon)}
-          onClick={() => handleSelectObjectMetadata(objectMetadataItem.id)}
-        />
-      ))}
-    </StyledContainer>
+    <StyledTypeSelectContainer>
+      <Section>
+        <StyledSearchContainer>
+          <StyledSearchInput
+            value={searchFilter}
+            onChange={handleSearchChange}
+            placeholder={t`Search an object`}
+            fullWidth
+            LeftIcon={IconSearch}
+            sizeVariant="lg"
+          />
+        </StyledSearchContainer>
+      </Section>
+
+      {basicObjects.length > 0 && (
+        <Section>
+          <H2Title title={t`Basics`} description={t`All the basic objects`} />
+          <StyledContainer>
+            {basicObjects.map((objectMetadataItem) => {
+              const Icon = getIcon(objectMetadataItem.icon);
+              return (
+                <StyledCardContainer
+                  key={objectMetadataItem.id}
+                  onClick={() =>
+                    handleSelectObjectMetadata(objectMetadataItem.id)
+                  }
+                >
+                  <SettingsCard
+                    key={objectMetadataItem.id}
+                    Icon={
+                      <Icon
+                        size={theme.icon.size.xl}
+                        stroke={theme.icon.stroke.sm}
+                      />
+                    }
+                    title={objectMetadataItem.labelPlural}
+                  />
+                </StyledCardContainer>
+              );
+            })}
+          </StyledContainer>
+        </Section>
+      )}
+
+      {customObjects.length > 0 && (
+        <Section>
+          <H2Title title={t`Custom`} description={t`All your custom objects`} />
+          <StyledContainer>
+            {customObjects.map((objectMetadataItem) => {
+              const Icon = getIcon(objectMetadataItem.icon);
+              return (
+                <StyledCardContainer
+                  key={objectMetadataItem.id}
+                  onClick={() =>
+                    handleSelectObjectMetadata(objectMetadataItem.id)
+                  }
+                >
+                  <SettingsCard
+                    key={objectMetadataItem.id}
+                    Icon={
+                      <Icon
+                        size={theme.icon.size.xl}
+                        stroke={theme.icon.stroke.sm}
+                      />
+                    }
+                    title={objectMetadataItem.labelPlural}
+                  />
+                </StyledCardContainer>
+              );
+            })}
+          </StyledContainer>
+        </Section>
+      )}
+    </StyledTypeSelectContainer>
   );
 };

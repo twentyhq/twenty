@@ -13,6 +13,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { ObjectPermission } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledCreateObjectOverrideSection = styled(Section)`
@@ -57,21 +58,38 @@ export const SettingsRolePermissionsObjectLevelSection = ({
     {} as Record<string, ObjectMetadataItem>,
   );
 
+  const hasPermissionOverride = (objectPermission: ObjectPermission) => {
+    const permissionChecks = [
+      {
+        permission: objectPermission.canReadObjectRecords,
+        globalPermission: settingsDraftRole.canReadAllObjectRecords,
+      },
+      {
+        permission: objectPermission.canUpdateObjectRecords,
+        globalPermission: settingsDraftRole.canUpdateAllObjectRecords,
+      },
+      {
+        permission: objectPermission.canSoftDeleteObjectRecords,
+        globalPermission: settingsDraftRole.canSoftDeleteAllObjectRecords,
+      },
+      {
+        permission: objectPermission.canDestroyObjectRecords,
+        globalPermission: settingsDraftRole.canDestroyAllObjectRecords,
+      },
+    ];
+
+    return permissionChecks.some(
+      ({ permission, globalPermission }) =>
+        isDefined(permission) && permission !== globalPermission,
+    );
+  };
+
   const filteredObjectPermissions = settingsDraftRole.objectPermissions?.filter(
-    (objectPermission) =>
-      (isDefined(objectPermission.canReadObjectRecords) &&
-        objectPermission.canReadObjectRecords !==
-          settingsDraftRole.canReadAllObjectRecords) ||
-      (isDefined(objectPermission.canUpdateObjectRecords) &&
-        objectPermission.canUpdateObjectRecords !==
-          settingsDraftRole.canUpdateAllObjectRecords) ||
-      (isDefined(objectPermission.canSoftDeleteObjectRecords) &&
-        objectPermission.canSoftDeleteObjectRecords !==
-          settingsDraftRole.canSoftDeleteAllObjectRecords) ||
-      (isDefined(objectPermission.canDestroyObjectRecords) &&
-        objectPermission.canDestroyObjectRecords !==
-          settingsDraftRole.canDestroyAllObjectRecords),
+    hasPermissionOverride,
   );
+
+  const allObjectsHaveSetPermission =
+    settingsDraftRole.objectPermissions?.every(hasPermissionOverride);
 
   const handleAddRule = () => {
     navigateSettings(SettingsPath.RoleAddObjectLevel, {
@@ -111,7 +129,7 @@ export const SettingsRolePermissionsObjectLevelSection = ({
           title={t`Add rule`}
           variant="secondary"
           size="small"
-          disabled={!isEditable}
+          disabled={!isEditable || allObjectsHaveSetPermission}
           onClick={handleAddRule}
         />
       </StyledCreateObjectOverrideSection>
