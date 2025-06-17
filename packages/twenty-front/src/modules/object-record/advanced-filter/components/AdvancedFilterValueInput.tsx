@@ -104,7 +104,10 @@ export const AdvancedFilterValueInput = ({
             />
           }
           dropdownComponents={
-            <AdvancedFilterDropdownFilterInput recordFilter={recordFilter} />
+            <AdvancedFilterDropdownFilterInput
+              recordFilter={recordFilter}
+              filterDropdownId={dropdownId}
+            />
           }
           dropdownOffset={dropdownContentOffset}
           dropdownPlacement="bottom-start"

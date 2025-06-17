@@ -22,7 +22,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { FieldMetadataType } from 'twenty-shared/types';
 
 type AdvancedFilterDropdownFilterInputProps = {
-  filterDropdownId?: string;
+  filterDropdownId: string;
   recordFilter: RecordFilter;
 };
 
@@ -70,7 +70,7 @@ export const AdvancedFilterDropdownFilterInput = ({
         <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
           <ObjectFilterDropdownSearchInput />
           <DropdownMenuSeparator />
-          <ObjectFilterDropdownOptionSelect />
+          <ObjectFilterDropdownOptionSelect focusId={filterDropdownId} />
         </DropdownContent>
       )}
       {filterType === 'BOOLEAN' && <ObjectFilterDropdownBooleanSelect />}
