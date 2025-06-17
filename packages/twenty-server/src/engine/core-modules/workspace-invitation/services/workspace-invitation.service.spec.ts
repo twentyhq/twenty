@@ -70,6 +70,7 @@ describe('WorkspaceInvitationService', () => {
           provide: OnboardingService,
           useValue: {
             setOnboardingInviteTeamPending: jest.fn(),
+            setOnboardingBookOnboardingPending: jest.fn(),
           },
         },
         {
@@ -177,6 +178,12 @@ describe('WorkspaceInvitationService', () => {
       ).toHaveBeenCalledWith({
         workspaceId: workspace.id,
         value: false,
+      });
+      expect(
+        onboardingService.setOnboardingBookOnboardingPending,
+      ).toHaveBeenCalledWith({
+        workspaceId: workspace.id,
+        value: true,
       });
     });
   });
