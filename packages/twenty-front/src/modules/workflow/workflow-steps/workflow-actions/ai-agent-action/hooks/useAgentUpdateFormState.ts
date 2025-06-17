@@ -1,8 +1,7 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { UPDATE_ONE_AGENT } from '../graphql/mutations/updateOneAgent';
-import { FIND_ONE_AGENT } from '../graphql/queries/findOneAgent';
+import { GetAgentDocument, UpdateAgentDocument } from '~/generated/graphql';
 
 type AgentFormValues = {
   name: string;
@@ -19,7 +18,7 @@ export const useAgentUpdateFormState = ({ agentId }: { agentId: string }) => {
     responseFormat: '',
   });
 
-  const { loading } = useQuery(FIND_ONE_AGENT, {
+  const { loading } = useQuery(GetAgentDocument, {
     variables: { id: agentId },
     skip: !agentId,
     onCompleted: (data) => {
@@ -35,7 +34,7 @@ export const useAgentUpdateFormState = ({ agentId }: { agentId: string }) => {
     },
   });
 
-  const [updateAgent] = useMutation(UPDATE_ONE_AGENT);
+  const [updateAgent] = useMutation(UpdateAgentDocument);
 
   const updateAgentMutation = async (updates: Partial<AgentFormValues>) => {
     if (!agentId) {
