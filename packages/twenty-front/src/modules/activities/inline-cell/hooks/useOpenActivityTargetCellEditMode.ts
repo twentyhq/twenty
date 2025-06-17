@@ -5,7 +5,7 @@ import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-pic
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
-import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useRecoilCallback } from 'recoil';
 
@@ -85,7 +85,7 @@ export const useOpenActivityTargetCellEditMode = () => {
         });
 
         setHotkeyScopeAndMemorizePreviousScope({
-          scope: MultipleRecordPickerHotkeyScope.MultipleRecordPicker,
+          scope: DropdownHotkeyScope.Dropdown,
         });
       },
     [multipleRecordPickerPerformSearch, setHotkeyScopeAndMemorizePreviousScope],

@@ -4,12 +4,12 @@ import { useUpdateObjectViewOptions } from '@/object-record/object-options-dropd
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { View } from '@/views/types/View';
-import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
 import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpdateViewFromCurrentState';
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
@@ -84,7 +84,7 @@ export const ObjectOptionsDropdownMenuViewName = ({
 
       await updateViewFromCurrentState();
     },
-    ViewsHotkeyScope.ListDropdown,
+    DropdownHotkeyScope.Dropdown,
   );
 
   const handleIconChange = ({ iconKey }: { iconKey: string }) => {

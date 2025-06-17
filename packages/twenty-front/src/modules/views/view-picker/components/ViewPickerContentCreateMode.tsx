@@ -10,6 +10,7 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
@@ -17,7 +18,6 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { viewObjectMetadataIdComponentState } from '@/views/states/viewObjectMetadataIdComponentState';
 import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
-import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
 import { ViewPickerCreateButton } from '@/views/view-picker/components/ViewPickerCreateButton';
 import { ViewPickerIconAndNameContainer } from '@/views/view-picker/components/ViewPickerIconAndNameContainer';
 import { ViewPickerSaveButtonContainer } from '@/views/view-picker/components/ViewPickerSaveButtonContainer';
@@ -100,7 +100,7 @@ export const ViewPickerContentCreateMode = () => {
 
       await createViewFromCurrentState();
     },
-    ViewsHotkeyScope.ListDropdown,
+    DropdownHotkeyScope.Dropdown,
   );
 
   const defaultIcon = viewTypeIconMapping(viewPickerType).displayName;
@@ -144,7 +144,7 @@ export const ViewPickerContentCreateMode = () => {
           <IconPicker
             onChange={onIconChange}
             selectedIconKey={selectedIcon}
-            onClose={() => setHotkeyScope(ViewsHotkeyScope.ListDropdown)}
+            onClose={() => setHotkeyScope(DropdownHotkeyScope.Dropdown)}
           />
           <TextInputV2
             value={viewPickerInputName}

@@ -7,12 +7,12 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
 import { ViewPickerEditButton } from '@/views/view-picker/components/ViewPickerEditButton';
 import { ViewPickerIconAndNameContainer } from '@/views/view-picker/components/ViewPickerIconAndNameContainer';
 import { ViewPickerSaveButtonContainer } from '@/views/view-picker/components/ViewPickerSaveButtonContainer';
@@ -52,7 +52,7 @@ export const ViewPickerContentEditMode = () => {
 
       await updateViewFromCurrentState();
     },
-    ViewsHotkeyScope.ListDropdown,
+    DropdownHotkeyScope.Dropdown,
   );
 
   const onIconChange = ({ iconKey }: { iconKey: string }) => {
@@ -83,7 +83,7 @@ export const ViewPickerContentEditMode = () => {
           <IconPicker
             onChange={onIconChange}
             selectedIconKey={viewPickerSelectedIcon}
-            onClose={() => setHotkeyScope(ViewsHotkeyScope.ListDropdown)}
+            onClose={() => setHotkeyScope(DropdownHotkeyScope.Dropdown)}
           />
           <TextInputV2
             value={viewPickerInputName}
