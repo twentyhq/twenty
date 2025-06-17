@@ -47,7 +47,9 @@ export class WorkflowStepResolver {
       );
 
       if (!isAiEnabled) {
-        throw new Error('AI feature is not enabled for this workspace');
+        throw new Error(
+          'AI features are not available in your current workspace. Please contact support to enable them.',
+        );
       }
     }
 
