@@ -1,5 +1,6 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
   FieldContext,
@@ -33,6 +34,10 @@ export const FieldContextProvider = ({
     objectNameSingular,
   });
 
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
+
   const fieldMetadataItem = objectMetadataItem?.fields.find(
     (field) => field.name === fieldMetadataName,
   );
@@ -56,6 +61,8 @@ export const FieldContextProvider = ({
     return null;
   }
 
+  const isObjectReadOnly = !objectPermissions.canUpdateObjectRecords;
+
   return (
     <FieldContext.Provider
       key={objectRecordId + fieldMetadataItem.id}
@@ -73,7 +80,7 @@ export const FieldContextProvider = ({
           customUseUpdateOneObjectHook ?? useUpdateOneObjectMutation,
         clearable,
         overridenIsFieldEmpty,
-        isReadOnly: false,
+        isReadOnly: isObjectReadOnly,
       }}
     >
       {children}

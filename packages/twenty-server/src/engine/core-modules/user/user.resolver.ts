@@ -24,7 +24,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { AvailableWorkspaces } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
@@ -46,9 +46,12 @@ import {
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions';
@@ -57,10 +60,6 @@ import { fromUserWorkspacePermissionsToUserWorkspacePermissionsDto } from 'src/e
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { AvailableWorkspaces } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
-import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
-import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -106,20 +105,7 @@ export class UserResolver {
       return this.permissionsService.getDefaultUserWorkspacePermissions();
     }
 
-    const isPermissionsV2Enabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
-        workspace.id,
-      );
-
-    if (!isPermissionsV2Enabled) {
-      return await this.permissionsService.getUserWorkspacePermissions({
-        userWorkspaceId: currentUserWorkspace.id,
-        workspaceId: workspace.id,
-      });
-    }
-
-    return await this.permissionsService.getUserWorkspacePermissionsV2({
+    return await this.permissionsService.getUserWorkspacePermissions({
       userWorkspaceId: currentUserWorkspace.id,
       workspaceId: workspace.id,
     });
