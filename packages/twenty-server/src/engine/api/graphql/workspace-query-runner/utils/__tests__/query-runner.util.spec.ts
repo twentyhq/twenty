@@ -14,4 +14,11 @@ describe('queryRunner LINKS util', () => {
 
     expect(result).toBe('https://www.example.com/TEST');
   });
+
+  it('should not add a trailing slash', () => {
+    const primaryLinkUrl = 'htTps://wwW.exAmple.coM';
+    const result = lowercaseDomain(primaryLinkUrl);
+
+    expect(result).toBe('https://www.example.com');
+  });
 });
