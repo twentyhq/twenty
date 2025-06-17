@@ -1629,7 +1629,7 @@ export type QueryGetIndicatorHealthStatusArgs = {
 
 
 export type QueryGetPublicWorkspaceDataByDomainArgs = {
-  origin: Scalars['String'];
+  origin?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1907,6 +1907,7 @@ export enum SettingPermissionType {
   DATA_MODEL = 'DATA_MODEL',
   ROLES = 'ROLES',
   SECURITY = 'SECURITY',
+  WORKFLOWS = 'WORKFLOWS',
   WORKSPACE = 'WORKSPACE',
   WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS'
 }
