@@ -10,7 +10,7 @@ import {
   IsString,
   IsUUID,
   Matches,
-  ValidateIf
+  ValidateIf,
 } from 'class-validator';
 
 import { IsQuotedString } from 'src/engine/metadata-modules/field-metadata/validators/is-quoted-string.validator';

@@ -60,7 +60,10 @@ import {
   PERSON_DATA_SEED_COLUMNS,
   PERSON_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
-import { PET_DATA_SEED_COLUMNS, PET_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/pet-data-seeds.constant';
+import {
+  PET_DATA_SEED_COLUMNS,
+  PET_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/pet-data-seeds.constant';
 import {
   SURVEY_RESULT_DATA_SEED_COLUMNS,
   SURVEY_RESULT_DATA_SEEDS,
