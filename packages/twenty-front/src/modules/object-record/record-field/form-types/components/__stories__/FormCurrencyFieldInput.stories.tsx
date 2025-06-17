@@ -1,5 +1,5 @@
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
-import { FieldMetadataCurrencySettings } from '@/object-record/record-field/types/FieldMetadata';
+import { FormFieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -19,7 +19,7 @@ export default meta;
 
 type Story = StoryObj<typeof FormCurrencyFieldInput>;
 
-const defaultSalaryValue: FieldMetadataCurrencySettings = {
+const defaultSalaryValue: FormFieldCurrencyValue = {
   currencyCode: CurrencyCode.USD,
   amountMicros: 44000000,
   format: 'short',

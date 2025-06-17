@@ -23,12 +23,12 @@ import {
   FieldFullNameValue,
   FieldLinksValue,
   FieldMetadata,
-  FieldMetadataCurrencySettings,
   FieldMultiSelectValue,
   FieldPhonesValue,
   FieldRelationToOneValue,
   FieldRelationValue,
   FieldRichTextV2Value,
+  FormFieldCurrencyValue
 } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
@@ -195,7 +195,7 @@ export const FormFieldInput = ({
   ) : isFieldCurrency(field) ? (
     <FormCurrencyFieldInput
       label={field.label}
-      defaultValue={defaultValue as FieldMetadataCurrencySettings | null}
+      defaultValue={defaultValue as FormFieldCurrencyValue | null}
       onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
