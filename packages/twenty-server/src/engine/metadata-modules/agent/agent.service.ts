@@ -50,17 +50,6 @@ export class AgentService {
     },
     workspaceId: string,
   ) {
-    const existingAgent = await this.agentRepository.findOne({
-      where: { name: input.name, workspaceId },
-    });
-
-    if (existingAgent) {
-      throw new AgentException(
-        `Agent with name ${input.name} already exists`,
-        AgentExceptionCode.AGENT_ALREADY_EXISTS,
-      );
-    }
-
     const agent = this.agentRepository.create({
       ...input,
       workspaceId,
