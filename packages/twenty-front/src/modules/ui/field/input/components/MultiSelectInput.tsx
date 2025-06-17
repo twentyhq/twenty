@@ -10,7 +10,7 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-shared/utils';
@@ -21,7 +21,7 @@ import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmp
 type MultiSelectInputProps = {
   selectableListComponentInstanceId: string;
   values: FieldMultiSelectValue;
-  hotkeyScope: string;
+  focusId: string;
   onCancel?: () => void;
   options: SelectOption[];
   onOptionSelected: (value: FieldMultiSelectValue) => void;
@@ -32,7 +32,7 @@ export const MultiSelectInput = ({
   selectableListComponentInstanceId,
   values,
   options,
-  hotkeyScope,
+  focusId,
   onCancel,
   onOptionSelected,
   dropdownWidth,
@@ -69,15 +69,16 @@ export const MultiSelectInput = ({
     }
   };
 
-  useScopedHotkeys(
-    Key.Escape,
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: Key.Escape,
+    callback: () => {
       onCancel?.();
       resetSelectedItem();
     },
-    hotkeyScope,
-    [onCancel, resetSelectedItem],
-  );
+    focusId,
+    scope: focusId,
+    dependencies: [onCancel, resetSelectedItem],
+  });
 
   useListenClickOutside({
     refs: [containerRef],
@@ -102,7 +103,7 @@ export const MultiSelectInput = ({
     <SelectableList
       selectableListInstanceId={selectableListComponentInstanceId}
       selectableItemIdArray={optionIds}
-      hotkeyScope={hotkeyScope}
+      focusId={focusId}
     >
       <DropdownContent
         ref={containerRef}

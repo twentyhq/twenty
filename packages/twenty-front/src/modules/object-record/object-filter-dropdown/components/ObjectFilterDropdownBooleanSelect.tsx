@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { useObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useObjectFilterDropdownFilterValue';
-import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { BooleanDisplay } from '@/ui/field/display/components/BooleanDisplay';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -56,7 +55,7 @@ export const ObjectFilterDropdownBooleanSelect = () => {
       <SelectableList
         selectableListInstanceId="boolean-select"
         selectableItemIdArray={options.map((option) => option.toString())}
-        hotkeyScope={SingleRecordPickerHotkeyScope.SingleRecordPicker}
+        focusId="boolean-select"
       >
         <DropdownMenuItemsContainer hasMaxHeight>
           {options.map((option) => (

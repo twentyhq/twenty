@@ -101,7 +101,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
       <DropdownMenuSeparator />
       <SelectableList
         selectableListInstanceId={OBJECT_OPTIONS_DROPDOWN_ID}
-        hotkeyScope={TableOptionsHotkeyScope.Dropdown}
+        focusId={OBJECT_OPTIONS_DROPDOWN_ID}
         selectableItemIdArray={selectableItemIdArray}
       >
         <DropdownMenuItemsContainer scrollable={false}>

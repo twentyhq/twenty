@@ -2,7 +2,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
@@ -19,7 +19,7 @@ interface SelectInputProps {
   onFilterChange?: (filteredOptions: SelectOption[]) => void;
   onClear?: () => void;
   clearLabel?: string;
-  hotkeyScope: string;
+  focusId: string;
 }
 
 export const SelectInput = ({
@@ -30,7 +30,7 @@ export const SelectInput = ({
   onCancel,
   defaultOption,
   onFilterChange,
-  hotkeyScope,
+  focusId,
 }: SelectInputProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -81,9 +81,9 @@ export const SelectInput = ({
     listenerId: 'select-input',
   });
 
-  useScopedHotkeys(
-    Key.Enter,
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: Key.Enter,
+    callback: () => {
       const selectedOption = optionsInDropDown.find((option) =>
         option.label.toLowerCase().includes(searchFilter.toLowerCase()),
       );
@@ -91,9 +91,10 @@ export const SelectInput = ({
         handleOptionChange(selectedOption);
       }
     },
-    hotkeyScope,
-    [searchFilter, optionsInDropDown],
-  );
+    focusId,
+    scope: focusId,
+    dependencies: [searchFilter, optionsInDropDown],
+  });
 
   return (
     <DropdownContent ref={containerRef} selectDisabled>

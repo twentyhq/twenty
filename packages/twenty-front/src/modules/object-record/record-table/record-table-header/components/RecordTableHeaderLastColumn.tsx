@@ -50,9 +50,6 @@ const StyledDropdownContainer = styled.div`
   cursor: pointer;
 `;
 
-const HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID =
-  'hidden-table-columns-dropdown-hotkey-scope-id';
-
 export const RecordTableHeaderLastColumn = () => {
   const theme = useTheme();
 

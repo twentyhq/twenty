@@ -85,9 +85,7 @@ export type ObjectSortDropdownButtonProps = {
   hotkeyScope: HotkeyScope;
 };
 
-export const ObjectSortDropdownButton = ({
-  hotkeyScope,
-}: ObjectSortDropdownButtonProps) => {
+export const ObjectSortDropdownButton = () => {
   const { toggleSortDropdown } = useToggleSortDropdown();
 
   const { resetRecordSortDropdownSearchInput } =
@@ -239,8 +237,8 @@ export const ObjectSortDropdownButton = ({
         <DropdownContent>
           <SelectableList
             selectableListInstanceId={OBJECT_SORT_DROPDOWN_ID}
-            hotkeyScope={hotkeyScope.scope}
             selectableItemIdArray={selectableItemIdArray}
+            focusId={OBJECT_SORT_DROPDOWN_ID}
           >
             {isRecordSortDirectionMenuUnfolded && (
               <StyledSelectedSortDirectionContainer>

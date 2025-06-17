@@ -148,7 +148,7 @@ export const ObjectFilterDropdownOptionSelect = () => {
     <SelectableList
       selectableListInstanceId={componentInstanceId}
       selectableItemIdArray={objectRecordsIds}
-      hotkeyScope={SingleRecordPickerHotkeyScope.SingleRecordPicker}
+      focusId={componentInstanceId}
     >
       <DropdownMenuItemsContainer hasMaxHeight>
         {showNoResult ? (

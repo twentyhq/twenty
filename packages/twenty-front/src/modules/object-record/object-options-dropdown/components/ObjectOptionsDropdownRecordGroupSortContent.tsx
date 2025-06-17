@@ -5,7 +5,6 @@ import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hook
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
 import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupSort';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
-import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -73,7 +72,7 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
       <DropdownMenuItemsContainer>
         <SelectableList
           selectableListInstanceId={OBJECT_OPTIONS_DROPDOWN_ID}
-          hotkeyScope={TableOptionsHotkeyScope.Dropdown}
+          focusId={OBJECT_OPTIONS_DROPDOWN_ID}
           selectableItemIdArray={selectableItemIdArray}
         >
           <SelectableListItem

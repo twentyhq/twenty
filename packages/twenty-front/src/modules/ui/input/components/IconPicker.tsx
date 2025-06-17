@@ -71,7 +71,7 @@ const IconPickerIcon = ({
   );
 
   useSelectableListListenToEnterHotkeyOnItem({
-    hotkeyScope: IconPickerHotkeyScope.IconPicker,
+    focusId: iconKey,
     itemId: iconKey,
     onEnter: onClick,
   });
@@ -202,7 +202,7 @@ export const IconPicker = ({
             <SelectableList
               selectableListInstanceId="icon-list"
               selectableItemIdMatrix={iconKeys2d}
-              hotkeyScope={IconPickerHotkeyScope.IconPicker}
+              focusId={dropdownId}
             >
               <DropdownMenuSearchInput
                 placeholder={t`Search icon`}

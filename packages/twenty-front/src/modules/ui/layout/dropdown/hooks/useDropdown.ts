@@ -33,9 +33,7 @@ export const useDropdown = (dropdownId?: string) => {
   const closeDropdown = useCallback(() => {
     if (isDropdownOpen) {
       setIsDropdownOpen(false);
-      // Keep existing dropdown focus management
       goBackToPreviousDropdownFocusId();
-      // Only replace hotkey scope with focus stack
       removeFocusId({
         focusId: dropdownId ?? scopeId,
         memoizeKey: 'global',
@@ -54,10 +52,8 @@ export const useDropdown = (dropdownId?: string) => {
     () => (globalHotkeysConfig?: Partial<GlobalHotkeysConfig>) => {
       if (!isDropdownOpen) {
         setIsDropdownOpen(true);
-        // Keep existing dropdown focus management
         setActiveDropdownFocusIdAndMemorizePrevious(dropdownId ?? scopeId);
 
-        // Only replace hotkey scope with focus stack
         pushFocusItem({
           focusId: dropdownId ?? scopeId,
           component: {

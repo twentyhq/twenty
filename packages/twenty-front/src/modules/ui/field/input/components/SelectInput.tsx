@@ -5,7 +5,7 @@ import { SelectOption } from 'twenty-ui/input';
 type SelectInputProps = {
   selectableListComponentInstanceId: string;
   selectableItemIdArray: string[];
-  hotkeyScope: string;
+  focusId: string;
   onEnter: (itemId: string) => void;
   onOptionSelected: (selectedOption: SelectOption) => void;
   options: SelectOption[];
@@ -19,7 +19,7 @@ type SelectInputProps = {
 export const SelectInput = ({
   selectableListComponentInstanceId,
   selectableItemIdArray,
-  hotkeyScope,
+  focusId,
   onOptionSelected,
   options,
   onCancel,
@@ -32,7 +32,7 @@ export const SelectInput = ({
     <SelectableList
       selectableListInstanceId={selectableListComponentInstanceId}
       selectableItemIdArray={selectableItemIdArray}
-      hotkeyScope={hotkeyScope}
+      focusId={focusId}
     >
       <SelectBaseInput
         onOptionSelected={onOptionSelected}
@@ -42,7 +42,7 @@ export const SelectInput = ({
         onFilterChange={onFilterChange}
         onClear={onClear}
         clearLabel={clearLabel}
-        hotkeyScope={hotkeyScope}
+        focusId={focusId}
       />
     </SelectableList>
   );

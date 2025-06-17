@@ -63,7 +63,7 @@ export const AdvancedFilterRecordFilterOperandSelectContent = ({
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
           <DropdownMenuItemsContainer>
             <SelectableList
-              hotkeyScope={dropdownId}
+              focusId={dropdownId}
               selectableItemIdArray={operandsForFilterType.map(
                 (operand) => operand,
               )}

@@ -17,7 +17,7 @@ export const MultiSelectFieldInput = ({
       selectableListComponentInstanceId={
         SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID
       }
-      hotkeyScope={DEFAULT_CELL_SCOPE.scope}
+      focusId={DEFAULT_CELL_SCOPE.scope}
       options={fieldDefinition.metadata.options}
       onCancel={onCancel}
       onOptionSelected={persistField}

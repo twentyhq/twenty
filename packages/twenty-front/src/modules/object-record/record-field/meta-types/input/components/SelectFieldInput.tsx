@@ -65,7 +65,7 @@ export const SelectFieldInput = ({
         SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID
       }
       selectableItemIdArray={optionIds}
-      hotkeyScope={DEFAULT_CELL_SCOPE.scope}
+      focusId={DEFAULT_CELL_SCOPE.scope}
       onEnter={(itemId) => {
         const option = filteredOptions.find(
           (option) => option.value === itemId,

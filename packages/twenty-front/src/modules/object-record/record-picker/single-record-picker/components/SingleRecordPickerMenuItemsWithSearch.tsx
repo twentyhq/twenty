@@ -88,6 +88,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
           )}
           {records.recordsToSelect.length > 0 && <DropdownMenuSeparator />}
           <SingleRecordPickerMenuItems
+            focusId={recordPickerInstanceId}
             recordsToSelect={records.recordsToSelect}
             loading={records.loading}
             selectedRecord={records.selectedRecords?.[0]}
@@ -111,6 +112,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
         <>
           <DropdownMenuSeparator />
           <SingleRecordPickerMenuItems
+            focusId={recordPickerInstanceId}
             recordsToSelect={records.recordsToSelect}
             loading={records.loading}
             selectedRecord={records.selectedRecords?.[0]}

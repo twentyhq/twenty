@@ -2,7 +2,6 @@ import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropd
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { useUpdateObjectViewOptions } from '@/object-record/object-options-dropdown/hooks/useUpdateObjectViewOptions';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
-import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -53,7 +52,7 @@ export const ObjectOptionsDropdownLayoutOpenInContent = () => {
       <DropdownMenuItemsContainer>
         <SelectableList
           selectableListInstanceId={OBJECT_OPTIONS_DROPDOWN_ID}
-          hotkeyScope={TableOptionsHotkeyScope.Dropdown}
+          focusId={OBJECT_OPTIONS_DROPDOWN_ID}
           selectableItemIdArray={selectableItemIdArray}
         >
           <SelectableListItem

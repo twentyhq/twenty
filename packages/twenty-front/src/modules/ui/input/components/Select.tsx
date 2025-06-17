@@ -19,7 +19,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconComponent } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
-import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 
 export type SelectSizeVariant = 'small' | 'default';
 
@@ -166,8 +165,8 @@ export const Select = <Value extends SelectValue>({
               {!!filteredOptions.length && (
                 <DropdownMenuItemsContainer hasMaxHeight>
                   <SelectableList
-                    hotkeyScope={SelectHotkeyScope.Select}
                     selectableListInstanceId={dropdownId}
+                    focusId={dropdownId}
                     selectableItemIdArray={selectableItemIdArray}
                   >
                     {filteredOptions.map((option) => (

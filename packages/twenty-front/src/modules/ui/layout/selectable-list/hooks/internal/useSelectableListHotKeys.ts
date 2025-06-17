@@ -5,14 +5,14 @@ import { Key } from 'ts-key-enum';
 import { selectableItemIdsComponentState } from '@/ui/layout/selectable-list/states/selectableItemIdsComponentState';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
 type Direction = 'up' | 'down' | 'left' | 'right';
 
 export const useSelectableListHotKeys = (
   instanceId: string,
-  hotkeyScope: string,
+  focusId: string,
   onSelect?: (itemId: string) => void,
 ) => {
   const findPosition = (
@@ -134,16 +134,35 @@ export const useSelectableListHotKeys = (
     [instanceId, onSelect],
   );
 
-  useScopedHotkeys(Key.ArrowUp, () => handleSelect('up'), hotkeyScope, []);
+  useHotkeysOnFocusedElement({
+    keys: Key.ArrowUp,
+    callback: () => handleSelect('up'),
+    focusId,
+    scope: 'selectable-list', // Legacy scope for compatibility during migration
+    dependencies: [handleSelect],
+  });
 
-  useScopedHotkeys(Key.ArrowDown, () => handleSelect('down'), hotkeyScope, []);
+  useHotkeysOnFocusedElement({
+    keys: Key.ArrowDown,
+    callback: () => handleSelect('down'),
+    focusId,
+    scope: 'selectable-list', // Legacy scope for compatibility during migration
+    dependencies: [handleSelect],
+  });
 
-  useScopedHotkeys(Key.ArrowLeft, () => handleSelect('left'), hotkeyScope, []);
+  useHotkeysOnFocusedElement({
+    keys: Key.ArrowLeft,
+    callback: () => handleSelect('left'),
+    focusId,
+    scope: 'selectable-list', // Legacy scope for compatibility during migration
+    dependencies: [handleSelect],
+  });
 
-  useScopedHotkeys(
-    Key.ArrowRight,
-    () => handleSelect('right'),
-    hotkeyScope,
-    [],
-  );
+  useHotkeysOnFocusedElement({
+    keys: Key.ArrowRight,
+    callback: () => handleSelect('right'),
+    focusId,
+    scope: 'selectable-list', // Legacy scope for compatibility during migration
+    dependencies: [handleSelect],
+  });
 };

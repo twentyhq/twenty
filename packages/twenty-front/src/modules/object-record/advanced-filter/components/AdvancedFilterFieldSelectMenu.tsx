@@ -143,7 +143,7 @@ export const AdvancedFilterFieldSelectMenu = ({
     <DropdownContent>
       <AdvancedFilterFieldSelectSearchInput />
       <SelectableList
-        hotkeyScope={advancedFilterFieldSelectDropdownId}
+        focusId={advancedFilterFieldSelectDropdownId}
         selectableItemIdArray={selectableItemIdArray}
         selectableListInstanceId={advancedFilterFieldSelectDropdownId}
       >

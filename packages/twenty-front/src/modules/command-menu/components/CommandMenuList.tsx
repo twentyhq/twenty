@@ -75,7 +75,7 @@ export const CommandMenuList = ({
         <StyledInnerList>
           <SelectableList
             selectableListInstanceId="command-menu-list"
-            hotkeyScope={AppHotkeyScope.CommandMenuOpen}
+            focusId={AppHotkeyScope.CommandMenuOpen}
             selectableItemIdArray={selectableItemIds}
             onSelect={() => {
               setHasUserSelectedCommand(true);

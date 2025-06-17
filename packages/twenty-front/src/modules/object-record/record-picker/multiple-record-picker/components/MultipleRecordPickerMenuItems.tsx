@@ -5,7 +5,6 @@ import { MultipleRecordPickerMenuItem } from '@/object-record/record-picker/mult
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
 import { multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector';
-import { MultipleRecordPickerHotkeyScope } from '@/object-record/record-picker/multiple-record-picker/types/MultipleRecordPickerHotkeyScope';
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
 import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -92,7 +91,7 @@ export const MultipleRecordPickerMenuItems = ({
         <SelectableList
           selectableListInstanceId={selectableListComponentInstanceId}
           selectableItemIdArray={pickableRecordIds}
-          hotkeyScope={MultipleRecordPickerHotkeyScope.MultipleRecordPicker}
+          focusId={selectableListComponentInstanceId}
         >
           {pickableRecordIds.map((recordId) => {
             return (

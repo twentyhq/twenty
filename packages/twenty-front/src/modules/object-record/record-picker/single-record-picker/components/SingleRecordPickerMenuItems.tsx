@@ -6,16 +6,15 @@ import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 import { SingleRecordPickerMenuItem } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPickerMenuItem';
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
-import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { getSingleRecordPickerSelectableListId } from '@/object-record/record-picker/single-record-picker/utils/getSingleRecordPickerSelectableListId';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
@@ -32,7 +31,7 @@ export type SingleRecordPickerMenuItemsProps = {
   onCancel?: () => void;
   onRecordSelected: (entity?: SingleRecordPickerRecord) => void;
   selectedRecord?: SingleRecordPickerRecord;
-  hotkeyScope?: string;
+  focusId: string;
   isFiltered: boolean;
 };
 
@@ -48,7 +47,7 @@ export const SingleRecordPickerMenuItems = ({
   onCancel,
   onRecordSelected,
   selectedRecord,
-  hotkeyScope = SingleRecordPickerHotkeyScope.SingleRecordPicker,
+  focusId,
   isFiltered,
 }: SingleRecordPickerMenuItemsProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -88,15 +87,16 @@ export const SingleRecordPickerMenuItems = ({
     'select-none',
   );
 
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: Key.Escape,
+    callback: () => {
       resetSelectedItem();
       onCancel?.();
     },
-    hotkeyScope,
-    [onCancel, resetSelectedItem],
-  );
+    focusId,
+    scope: focusId,
+    dependencies: [onCancel, resetSelectedItem],
+  });
 
   const selectableItemIds = recordsInDropdown.map((entity) => entity.id);
   const [selectedRecordId, setSelectedRecordId] = useRecoilComponentStateV2(
@@ -108,7 +108,7 @@ export const SingleRecordPickerMenuItems = ({
       <SelectableList
         selectableListInstanceId={selectableListComponentInstanceId}
         selectableItemIdArray={selectableItemIds}
-        hotkeyScope={hotkeyScope}
+        focusId={selectableListComponentInstanceId}
       >
         <DropdownMenuItemsContainer hasMaxHeight>
           {loading && !isFiltered ? (

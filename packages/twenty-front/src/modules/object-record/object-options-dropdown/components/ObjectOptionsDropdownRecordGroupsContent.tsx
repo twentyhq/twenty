@@ -9,7 +9,6 @@ import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-gr
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { recordIndexRecordGroupHideComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordGroupHideComponentFamilyState';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
-import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -109,7 +108,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
       <DropdownMenuItemsContainer>
         <SelectableList
           selectableListInstanceId={OBJECT_OPTIONS_DROPDOWN_ID}
-          hotkeyScope={TableOptionsHotkeyScope.Dropdown}
+          focusId={OBJECT_OPTIONS_DROPDOWN_ID}
           selectableItemIdArray={selectableItemIdArray}
         >
           {currentView?.key !== 'INDEX' && (
@@ -176,7 +175,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
           <DropdownMenuItemsContainer scrollable={false}>
             <SelectableList
               selectableListInstanceId={`${OBJECT_OPTIONS_DROPDOWN_ID}-hidden-groups`}
-              hotkeyScope={TableOptionsHotkeyScope.Dropdown}
+              focusId={`${OBJECT_OPTIONS_DROPDOWN_ID}-hidden-groups`}
               selectableItemIdArray={['HiddenGroups']}
             >
               <SelectableListItem

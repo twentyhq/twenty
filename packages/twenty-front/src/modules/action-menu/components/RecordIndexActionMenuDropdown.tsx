@@ -5,7 +5,6 @@ import { ACTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/action-menu/constants/A
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
-import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDropdownHotKeyScope';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -86,7 +85,7 @@ export const RecordIndexActionMenuDropdown = () => {
           >
             <DropdownMenuItemsContainer>
               <SelectableList
-                hotkeyScope={ActionMenuDropdownHotkeyScope.ActionMenuDropdown}
+                focusId={dropdownId}
                 selectableItemIdArray={selectedItemIdArray}
                 selectableListInstanceId={dropdownId}
               >
