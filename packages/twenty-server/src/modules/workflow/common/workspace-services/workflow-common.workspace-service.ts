@@ -13,12 +13,19 @@ import {
 } from 'src/modules/workflow/common/exceptions/workflow-common.exception';
 import { WorkflowAutomatedTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import {
+  WorkflowVersionStatus,
+  WorkflowVersionWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
+import {
+  WorkflowStatus,
+  WorkflowWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
 export type ObjectMetadataInfo = {
   objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps;
@@ -129,6 +136,13 @@ export class WorkflowCommonWorkspaceService {
     workspaceId: string;
     operation: 'restore' | 'delete' | 'destroy';
   }): Promise<void> {
+    const workflowRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowWorkspaceEntity>(
+        workspaceId,
+        'workflow',
+        { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
+      );
+
     const workflowVersionRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
         workspaceId,
@@ -182,12 +196,61 @@ export class WorkflowCommonWorkspaceService {
           break;
       }
 
+      await this.handleSubEntitiesStatusUpdates({
+        workflowRepository,
+        workflowVersionRepository,
+        workflowId,
+        operation,
+      });
+
       await this.handleServerlessFunctionSubEntities({
         workflowVersionRepository,
         workflowId,
         workspaceId,
         operation,
       });
+    }
+  }
+
+  async handleSubEntitiesStatusUpdates({
+    workflowRepository,
+    workflowVersionRepository,
+    workflowId,
+    operation,
+  }: {
+    workflowRepository: WorkspaceRepository<WorkflowWorkspaceEntity>;
+    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
+    workflowId: string;
+    operation: 'restore' | 'delete' | 'destroy';
+  }) {
+    if (operation !== 'delete') {
+      return;
+    }
+
+    const workflow = await workflowRepository.findOne({
+      where: { id: workflowId },
+      withDeleted: true,
+    });
+
+    if (workflow?.statuses?.includes(WorkflowStatus.ACTIVE)) {
+      await workflowRepository.update(workflowId, {
+        statuses: [WorkflowStatus.DEACTIVATED],
+      });
+    }
+
+    const workflowVersions = await workflowVersionRepository.find({
+      where: {
+        workflowId,
+      },
+      withDeleted: true,
+    });
+
+    for (const workflowVersion of workflowVersions) {
+      if (workflowVersion.status === WorkflowVersionStatus.ACTIVE) {
+        await workflowVersionRepository.update(workflowVersion.id, {
+          status: WorkflowVersionStatus.DEACTIVATED,
+        });
+      }
     }
   }
 
@@ -198,9 +261,7 @@ export class WorkflowCommonWorkspaceService {
     operation,
   }: {
     workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
-
     workflowId: string;
-
     workspaceId: string;
     operation: 'restore' | 'delete' | 'destroy';
   }) {
