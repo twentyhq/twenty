@@ -25,14 +25,14 @@ const GENERATE_NOTE_TARGET_IDS = (): Record<string, string> => {
     const HEX_INDEX = INDEX.toString(16).padStart(4, '0');
 
     NOTE_TARGET_IDS[`ID_${INDEX}`] =
-      `40404040-${HEX_INDEX}-4e7c-8001-123456789def`;
+      `20202020-${HEX_INDEX}-4e7c-8001-123456789def`;
   }
 
   for (let INDEX = 1201; INDEX <= 1800; INDEX++) {
     const HEX_INDEX = INDEX.toString(16).padStart(4, '0');
 
     NOTE_TARGET_IDS[`ID_${INDEX}`] =
-      `40404040-${HEX_INDEX}-4e7c-9001-123456789def`;
+      `20202020-${HEX_INDEX}-4e7c-9001-123456789def`;
   }
 
   return NOTE_TARGET_IDS;
