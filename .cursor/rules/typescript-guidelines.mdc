@@ -1,3 +1,14 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+---
+description: TypeScript best practices and conventions for the Twenty codebase, including strict typing, naming conventions, and type safety guidelines.
+globs: ["**/*.ts", "**/*.tsx"]
+alwaysApply: false
+---
+
 # TypeScript Guidelines
 
 ## Core TypeScript Principles
@@ -169,4 +180,4 @@ Twenty enforces strict TypeScript usage to ensure type safety and maintainable c
   type NonNullableProperties<T> = {
     [P in keyof T]: NonNullable<T[P]>;
   };
-  ``` 
+  ```
