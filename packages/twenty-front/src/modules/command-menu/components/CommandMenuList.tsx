@@ -4,9 +4,9 @@ import { ActionGroupConfig } from '@/command-menu/components/CommandMenu';
 import { CommandMenuDefaultSelectionEffect } from '@/command-menu/components/CommandMenuDefaultSelectionEffect';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
+import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
@@ -75,7 +75,7 @@ export const CommandMenuList = ({
         <StyledInnerList>
           <SelectableList
             selectableListInstanceId="command-menu-list"
-            focusId={AppHotkeyScope.CommandMenuOpen}
+            focusId={SIDE_PANEL_FOCUS_ID}
             selectableItemIdArray={selectableItemIds}
             onSelect={() => {
               setHasUserSelectedCommand(true);

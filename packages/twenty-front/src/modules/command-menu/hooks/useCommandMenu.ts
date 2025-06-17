@@ -3,12 +3,13 @@ import { useRecoilCallback } from 'recoil';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
+import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { isCommandMenuClosingState } from '@/command-menu/states/isCommandMenuClosingState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { isDragSelectionStartEnabledState } from '@/ui/utilities/drag-select/states/internal/isDragSelectionStartEnabledState';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { useRemoveFocusIdFromFocusStack } from '@/ui/utilities/focus/hooks/useRemoveFocusIdFromFocusStack';
 import { useCallback } from 'react';
 import { IconDotsVertical } from 'twenty-ui/display';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
@@ -16,7 +17,8 @@ import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 export const useCommandMenu = () => {
   const { navigateCommandMenu } = useNavigateCommandMenu();
   const { closeAnyOpenDropdown } = useCloseAnyOpenDropdown();
-  const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
+
+  const removeFocusIdFromFocusStack = useRemoveFocusIdFromFocusStack();
 
   const closeCommandMenu = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -30,10 +32,13 @@ export const useCommandMenu = () => {
           set(isCommandMenuClosingState, true);
           set(isDragSelectionStartEnabledState, true);
           closeAnyOpenDropdown();
-          goBackToPreviousHotkeyScope(COMMAND_MENU_COMPONENT_INSTANCE_ID);
+          removeFocusIdFromFocusStack({
+            focusId: SIDE_PANEL_FOCUS_ID,
+            memoizeKey: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+          });
         }
       },
-    [closeAnyOpenDropdown, goBackToPreviousHotkeyScope],
+    [closeAnyOpenDropdown, removeFocusIdFromFocusStack],
   );
 
   const openCommandMenu = useCallback(() => {
