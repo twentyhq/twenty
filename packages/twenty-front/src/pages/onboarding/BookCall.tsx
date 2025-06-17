@@ -1,18 +1,23 @@
 import Cal from '@calcom/embed-react';
 import styled from '@emotion/styled';
+import { Link } from 'react-router-dom';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
+import { AppPath } from '@/types/AppPath';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import { IconChevronRightPipe } from 'twenty-ui/display';
+import { IconChevronLeft, IconChevronRightPipe } from 'twenty-ui/display';
 import { LightButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { useSkipBookOnboardingStepMutation } from '~/generated/graphql';
+import {
+  OnboardingStatus,
+  useSkipBookOnboardingStepMutation,
+} from '~/generated/graphql';
 
 const StyledModalFooter = styled(Modal.Footer)`
   height: auto;
@@ -38,6 +43,8 @@ export const BookCall = () => {
   const [skipBookOnboardingStepMutation] = useSkipBookOnboardingStepMutation();
 
   const isMobile = useIsMobile();
+  const isPlanRequired =
+    currentUser?.onboardingStatus === OnboardingStatus.PLAN_REQUIRED;
 
   const handleCompleteOnboarding = async () => {
     await skipBookOnboardingStepMutation();
@@ -62,11 +69,17 @@ export const BookCall = () => {
         </StyledScrollWrapper>
       </StyledModalContent>
       <StyledModalFooter>
-        <LightButton
-          Icon={IconChevronRightPipe}
-          title={t`Skip`}
-          onClick={handleCompleteOnboarding}
-        />
+        {isPlanRequired ? (
+          <Link to={AppPath.PlanRequired}>
+            <LightButton Icon={IconChevronLeft} title={t`Back`} />
+          </Link>
+        ) : (
+          <LightButton
+            Icon={IconChevronRightPipe}
+            title={t`Skip`}
+            onClick={handleCompleteOnboarding}
+          />
+        )}
       </StyledModalFooter>
     </>
   );
