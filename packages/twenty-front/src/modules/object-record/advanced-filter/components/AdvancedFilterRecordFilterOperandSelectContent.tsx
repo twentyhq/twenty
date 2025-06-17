@@ -90,7 +90,6 @@ export const AdvancedFilterRecordFilterOperandSelectContent = ({
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }
-      dropdownHotkeyScope={{ scope: dropdownId }}
       dropdownOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET}
       dropdownPlacement="bottom-start"
     />

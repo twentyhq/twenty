@@ -1,7 +1,6 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
 import { SelectControl } from '@/ui/input/components/SelectControl';
-import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -9,6 +8,7 @@ import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
 import { WorkflowDatabaseEventTrigger } from '@/workflow/types/Workflow';
@@ -25,7 +25,6 @@ import { useCallback, useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 const StyledLabel = styled.span`
   color: ${({ theme }) => theme.font.color.light};
@@ -266,7 +265,6 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
                   ))}
               </>
             }
-            dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
             dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
           />
         </StyledRecordTypeSelectContainer>

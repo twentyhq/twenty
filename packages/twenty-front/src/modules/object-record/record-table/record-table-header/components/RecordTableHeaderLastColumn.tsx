@@ -89,9 +89,6 @@ export const RecordTableHeaderLastColumn = () => {
           }
           dropdownComponents={<RecordTableHeaderPlusButtonContent />}
           dropdownPlacement="bottom-start"
-          dropdownHotkeyScope={{
-            scope: HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID,
-          }}
         />
       </StyledDropdownContainer>
     </StyledPlusIconHeaderCell>

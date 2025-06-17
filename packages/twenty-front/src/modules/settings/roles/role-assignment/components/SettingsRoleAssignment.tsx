@@ -238,7 +238,6 @@ export const SettingsRoleAssignment = ({
         <StyledAssignToMemberContainer>
           <Dropdown
             dropdownId="role-member-select"
-            dropdownHotkeyScope={{ scope: 'roleAssignment' }}
             dropdownOffset={{ x: 0, y: 4 }}
             clickableComponent={
               <>

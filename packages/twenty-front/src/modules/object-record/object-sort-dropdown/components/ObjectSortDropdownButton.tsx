@@ -223,7 +223,6 @@ export const ObjectSortDropdownButton = ({
   return (
     <Dropdown
       dropdownId={OBJECT_SORT_DROPDOWN_ID}
-      dropdownHotkeyScope={hotkeyScope}
       dropdownOffset={{ y: 8 }}
       clickableComponent={
         <StyledHeaderDropdownButton

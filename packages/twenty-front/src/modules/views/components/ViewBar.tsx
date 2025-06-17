@@ -59,11 +59,7 @@ export const ViewBar = ({
             <ObjectFilterDropdownComponentInstanceContext.Provider
               value={{ instanceId: VIEW_BAR_FILTER_DROPDOWN_ID }}
             >
-              <ViewBarFilterDropdown
-                hotkeyScope={{
-                  scope: FiltersHotkeyScope.ObjectFilterDropdownButton,
-                }}
-              />
+              <ViewBarFilterDropdown />
             </ObjectFilterDropdownComponentInstanceContext.Provider>
             <ObjectSortDropdownButton
               hotkeyScope={{

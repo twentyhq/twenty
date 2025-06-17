@@ -106,7 +106,6 @@ export const AdvancedFilterValueInput = ({
           dropdownComponents={
             <AdvancedFilterDropdownFilterInput recordFilter={recordFilter} />
           }
-          dropdownHotkeyScope={{ scope: dropdownId }}
           dropdownOffset={dropdownContentOffset}
           dropdownPlacement="bottom-start"
           onClose={handleFilterValueDropdownClose}

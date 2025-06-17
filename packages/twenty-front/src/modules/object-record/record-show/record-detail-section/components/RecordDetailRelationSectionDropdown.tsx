@@ -208,7 +208,6 @@ export const RecordDetailRelationSectionDropdown = ({
             accent="tertiary"
           />
         }
-        dropdownHotkeyScope={{ scope: dropdownId }}
         dropdownComponents={
           isToOneObject ? (
             <SingleRecordPicker

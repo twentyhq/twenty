@@ -67,7 +67,6 @@ export const TabListDropdown = ({
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }
-      dropdownHotkeyScope={{ scope: dropdownId }}
     />
   );
 };

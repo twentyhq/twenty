@@ -72,9 +72,6 @@ export const RecordIndexActionMenuDropdown = () => {
   return (
     <Dropdown
       dropdownId={dropdownId}
-      dropdownHotkeyScope={{
-        scope: ActionMenuDropdownHotkeyScope.ActionMenuDropdown,
-      }}
       data-select-disable
       dropdownPlacement="bottom-start"
       dropdownStrategy="absolute"

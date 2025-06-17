@@ -5,7 +5,6 @@ import { RecordBoardColumnHeaderAggregateDropdownComponentInstanceContext } from
 import { RecordBoardColumnHeaderAggregateDropdownButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownButton';
 import { AggregateDropdownContent } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent';
 import { RecordBoardColumnHeaderAggregateDropdownContext } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContext';
-import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
 import { RecordBoardColumnHeaderAggregateContentId } from '@/object-record/record-board/types/RecordBoardColumnHeaderAggregateContentId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import styled from '@emotion/styled';
@@ -42,9 +41,6 @@ export const RecordBoardColumnHeaderAggregateDropdown = ({
         <Dropdown
           onClose={handleResetContent}
           dropdownId={dropdownId}
-          dropdownHotkeyScope={{
-            scope: RecordBoardColumnHotkeyScope.ColumnHeader,
-          }}
           dropdownOffset={{ y: DROPDOWN_OFFSET_Y }}
           clickableComponent={
             <RecordBoardColumnHeaderAggregateDropdownButton

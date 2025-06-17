@@ -211,7 +211,6 @@ export const Select = <Value extends SelectValue>({
               )}
             </DropdownContent>
           }
-          dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
         />
       )}
     </StyledContainer>

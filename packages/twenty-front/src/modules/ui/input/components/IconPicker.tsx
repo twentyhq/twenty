@@ -184,7 +184,6 @@ export const IconPicker = ({
     <div className={className}>
       <Dropdown
         dropdownId={dropdownId}
-        dropdownHotkeyScope={{ scope: IconPickerHotkeyScope.IconPicker }}
         clickableComponent={
           <IconButton
             ariaLabel={`Click to select icon ${

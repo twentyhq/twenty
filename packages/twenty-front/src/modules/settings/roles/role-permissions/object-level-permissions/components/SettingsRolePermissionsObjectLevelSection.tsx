@@ -126,7 +126,6 @@ export const SettingsRolePermissionsObjectLevelSection = ({
       <StyledCreateObjectOverrideSection>
         <Dropdown
           dropdownId="role-object-select"
-          dropdownHotkeyScope={{ scope: 'roleObject' }}
           clickableComponent={
             <Button
               Icon={IconPlus}

@@ -59,10 +59,6 @@ export const CommandMenuActionMenuDropdown = () => {
       dropdownId={getRightDrawerActionMenuDropdownIdFromActionMenuId(
         actionMenuId,
       )}
-      dropdownHotkeyScope={{
-        scope:
-          CommandMenuActionMenuDropdownHotkeyScope.CommandMenuActionMenuDropdown,
-      }}
       data-select-disable
       clickableComponent={
         <Button title="Options" hotkeys={[getOsControlSymbol(), 'O']} />
