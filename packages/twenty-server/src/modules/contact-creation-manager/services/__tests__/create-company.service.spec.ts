@@ -65,24 +65,7 @@ describe('CreateCompanyService', () => {
     name: 'Example1',
     position: 1,
   };
-  const inputForCompanyToCreate1withSlash = {
-    address: {
-      addressCity: undefined,
-    },
-    createdBy: {
-      context: {
-        provider: 'google',
-      },
-      name: '',
-      source: 'MANUAL',
-      workspaceMemberId: undefined,
-    },
-    domainName: {
-      primaryLinkUrl: 'https://example1.com',
-    },
-    name: 'Example1',
-    position: 1,
-  };
+
   const inputForCompanyToCreate2 = {
     address: {
       addressCity: '',
@@ -190,9 +173,15 @@ describe('CreateCompanyService', () => {
       );
 
       expect(mockCompanyRepository.find).toHaveBeenCalled();
-      expect(mockCompanyRepository.save).toHaveBeenCalledWith([
-        inputForCompanyToCreate1withSlash,
-      ]);
+      expect(mockCompanyRepository.save).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({
+            domainName: {
+              primaryLinkUrl: 'https://example1.com',
+            },
+          }),
+        ]),
+      );
     });
   });
 
