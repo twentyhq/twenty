@@ -77,17 +77,18 @@ export const useBatchCreateManyRecords = <
           abortController,
         );
 
-        setBatchedRecordsCount?.((batchIndex + 1) * mutationBatchSize);
+        setBatchedRecordsCount?.(
+          batchIndex + 1 === numberOfBatches
+            ? recordsToCreate.length
+            : (batchIndex + 1) * mutationBatchSize,
+        );
         allCreatedRecords.push(...createdRecords);
       }
-
-      await refetchAggregateQueries();
-      return allCreatedRecords;
     } catch (error) {
       if (error instanceof ApolloError && error.message.includes('aborted')) {
         const recordsCreated = formatNumber(allCreatedRecords.length);
         enqueueSnackBar(
-          t`Record creation stopped. ${recordsCreated} records created only.`,
+          t`Record creation stopped. ${recordsCreated} records created.`,
           {
             variant: SnackBarVariant.Warning,
             duration: 5000,
@@ -99,6 +100,9 @@ export const useBatchCreateManyRecords = <
     } finally {
       setBatchedRecordsCount?.(0);
     }
+
+    await refetchAggregateQueries();
+    return allCreatedRecords;
   };
 
   return {
