@@ -78,11 +78,17 @@ export const useCreateManyRecords = <
     objectMetadataNamePlural: objectMetadataItem.namePlural,
   });
 
-  const createManyRecords = async (
-    recordsToCreate: Partial<CreatedObjectRecord>[],
-    upsert?: boolean,
-    abortController?: AbortController,
-  ) => {
+  type createManyRecordsProps = {
+    recordsToCreate: Partial<CreatedObjectRecord>[];
+    upsert?: boolean;
+    abortController?: AbortController;
+  };
+
+  const createManyRecords = async ({
+    recordsToCreate,
+    upsert,
+    abortController,
+  }: createManyRecordsProps) => {
     const sanitizedCreateManyRecordsInput: PartialObjectRecordWithOptionalId[] =
       [];
     const recordOptimisticRecordsInput: PartialObjectRecordWithId[] = [];

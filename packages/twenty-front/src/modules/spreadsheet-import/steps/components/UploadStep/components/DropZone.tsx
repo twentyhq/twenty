@@ -11,6 +11,7 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { MainButton } from 'twenty-ui/input';
+import { formatNumber } from '~/utils/format/number';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -154,6 +155,10 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
 
   const { t } = useLingui();
 
+  const formatSpreadsheetMaxRecordImportCapacity = formatNumber(
+    SpreadsheetMaxRecordImportCapacity,
+  );
+
   return (
     <StyledContainer
       // eslint-disable-next-line react/jsx-props-no-spreading
@@ -179,7 +184,7 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
           </StyledText>
           <MainButton onClick={open} title={t`Select file`} />
           <StyledFooterText>
-            {t`Max import capacity: ${SpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API.`}{' '}
+            {t`Max import capacity: ${formatSpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API.`}{' '}
             <StyledTextAction onClick={downloadSample}>
               {t`Download sample file.`}
             </StyledTextAction>

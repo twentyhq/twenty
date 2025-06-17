@@ -43,18 +43,14 @@ export const useBatchCreateManyRecords = <
 
   const { enqueueSnackBar } = useSnackBar();
 
-  const abortController = new AbortController();
-
-  const abortBatchCreateManyRecords = () => {
-    abortController.abort();
-  };
-
   const batchCreateManyRecords = async ({
     recordsToCreate,
     upsert,
+    abortController,
   }: {
     recordsToCreate: Partial<CreatedObjectRecord>[];
     upsert?: boolean;
+    abortController?: AbortController;
   }) => {
     const numberOfBatches = Math.ceil(
       recordsToCreate.length / mutationBatchSize,
@@ -63,7 +59,7 @@ export const useBatchCreateManyRecords = <
     setBatchedRecordsCount?.(0);
 
     const allCreatedRecords = [];
-
+    let createdRecordsCount = 0;
     try {
       for (let batchIndex = 0; batchIndex < numberOfBatches; batchIndex++) {
         const batchedRecordsToCreate = recordsToCreate.slice(
@@ -71,24 +67,25 @@ export const useBatchCreateManyRecords = <
           (batchIndex + 1) * mutationBatchSize,
         );
 
-        const createdRecords = await createManyRecords(
-          batchedRecordsToCreate,
+        const createdRecords = await createManyRecords({
+          recordsToCreate: batchedRecordsToCreate,
           upsert,
           abortController,
-        );
+        });
 
-        setBatchedRecordsCount?.(
+        createdRecordsCount =
           batchIndex + 1 === numberOfBatches
             ? recordsToCreate.length
-            : (batchIndex + 1) * mutationBatchSize,
-        );
+            : (batchIndex + 1) * mutationBatchSize;
+
+        setBatchedRecordsCount?.(createdRecordsCount);
         allCreatedRecords.push(...createdRecords);
       }
     } catch (error) {
       if (error instanceof ApolloError && error.message.includes('aborted')) {
-        const recordsCreated = formatNumber(allCreatedRecords.length);
+        const formattedCreatedRecordsCount = formatNumber(createdRecordsCount);
         enqueueSnackBar(
-          t`Record creation stopped. ${recordsCreated} records created.`,
+          t`Record creation stopped. ${formattedCreatedRecordsCount} records created.`,
           {
             variant: SnackBarVariant.Warning,
             duration: 5000,
@@ -105,6 +102,5 @@ export const useBatchCreateManyRecords = <
 
   return {
     batchCreateManyRecords,
-    abortBatchCreateManyRecords,
   };
 };

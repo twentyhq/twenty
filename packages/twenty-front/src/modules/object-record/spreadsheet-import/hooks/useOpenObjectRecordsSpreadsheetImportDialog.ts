@@ -3,6 +3,7 @@ import { useBatchCreateManyRecords } from '@/object-record/hooks/useBatchCreateM
 import { useBuildAvailableFieldsForImport } from '@/object-record/spreadsheet-import/hooks/useBuildAvailableFieldsForImport';
 import { buildRecordFromImportedStructuredRow } from '@/object-record/spreadsheet-import/utils/buildRecordFromImportedStructuredRow';
 import { spreadsheetImportFilterAvailableFieldMetadataItems } from '@/object-record/spreadsheet-import/utils/spreadsheetImportFilterAvailableFieldMetadataItems.ts';
+import { SpreadsheetImportCreateRecordsBatchSize } from '@/spreadsheet-import/constants/SpreadsheetImportCreateRecordsBatchSize';
 import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOpenSpreadsheetImportDialog';
 import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
 import { SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
@@ -25,13 +26,11 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
     spreadsheetImportCreatedRecordsProgressState,
   );
 
-  const { batchCreateManyRecords, abortBatchCreateManyRecords } =
-    useBatchCreateManyRecords({
-      objectNameSingular,
-      mutationBatchSize: 500,
-      skipPostOptimisticEffect: true,
-      setBatchedRecordsCount: setCreatedRecordsProgress,
-    });
+  const { batchCreateManyRecords } = useBatchCreateManyRecords({
+    objectNameSingular,
+    mutationBatchSize: SpreadsheetImportCreateRecordsBatchSize,
+    setBatchedRecordsCount: setCreatedRecordsProgress,
+  });
 
   const { buildAvailableFieldsForImport } = useBuildAvailableFieldsForImport();
 
@@ -57,6 +56,8 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
       availableFieldMetadataItemsForMatching,
     );
 
+    const abortController = new AbortController();
+
     openSpreadsheetImportDialog({
       ...options,
       onSubmit: async (data) => {
@@ -74,6 +75,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
           await batchCreateManyRecords({
             recordsToCreate: createInputs,
             upsert: true,
+            abortController,
           });
         } catch (error: any) {
           enqueueSnackBar(error?.message || 'Something went wrong', {
@@ -83,7 +85,9 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
       },
       fields: availableFieldsForMatching,
       availableFieldMetadataItems: availableFieldMetadataItemsToImport,
-      onAbortSubmit: abortBatchCreateManyRecords,
+      onAbortSubmit: () => {
+        abortController.abort();
+      },
     });
   };
 
