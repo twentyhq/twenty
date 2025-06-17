@@ -4,11 +4,11 @@ import { useRecoilCallback } from 'recoil';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
-import { useFetchMoreRecordsWithPagination } from '@/object-record/hooks/useFetchMoreRecordsWithPagination';
 import { UseFindManyRecordsParams } from '@/object-record/hooks/useFindManyRecords';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { useHandleFindManyRecordsCompleted } from '@/object-record/hooks/useHandleFindManyRecordsCompleted';
 import { useHandleFindManyRecordsError } from '@/object-record/hooks/useHandleFindManyRecordsError';
+import { useLazyFetchMoreRecordsWithPagination } from '@/object-record/hooks/useLazyFetchMoreRecordsWithPagination';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { cursorFamilyState } from '@/object-record/states/cursorFamilyState';
 import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamilyState';
@@ -70,7 +70,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       onError: handleFindManyRecordsError,
     });
 
-  const { fetchMoreRecords } = useFetchMoreRecordsWithPagination<T>({
+  const { fetchMoreRecordsLazy } = useLazyFetchMoreRecordsWithPagination<T>({
     objectNameSingular,
     filter,
     orderBy,
@@ -144,6 +144,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
   return {
     findManyRecordsLazy,
-    fetchMoreRecords,
+    fetchMoreRecordsLazy,
+    queryIdentifier,
   };
 };

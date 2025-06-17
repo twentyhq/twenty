@@ -61,7 +61,7 @@ type UseFindManyRecordsStateParams<
   objectMetadataItem: ObjectMetadataItem;
 };
 
-export const useFetchMoreRecordsWithPagination = <
+export const useLazyFetchMoreRecordsWithPagination = <
   T extends ObjectRecord = ObjectRecord,
 >({
   objectNameSingular,
@@ -85,7 +85,7 @@ export const useFetchMoreRecordsWithPagination = <
 
   // TODO: put this into a util inspired from https://github.com/apollographql/apollo-client/blob/master/src/utilities/policies/pagination.ts
   // This function is equivalent to merge function + read function in field policy
-  const fetchMoreRecords = useRecoilCallback(
+  const fetchMoreRecordsLazy = useRecoilCallback(
     ({ snapshot, set }) =>
       async () => {
         const hasNextPageLocal = snapshot
@@ -189,6 +189,6 @@ export const useFetchMoreRecordsWithPagination = <
   );
 
   return {
-    fetchMoreRecords,
+    fetchMoreRecordsLazy,
   };
 };

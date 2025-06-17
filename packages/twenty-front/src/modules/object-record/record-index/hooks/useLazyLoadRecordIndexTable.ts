@@ -12,13 +12,15 @@ export const useLazyLoadRecordIndexTable = (objectNameSingular: string) => {
 
   const recordGqlFields = useRecordTableRecordGqlFields({ objectMetadataItem });
 
-  const { findManyRecordsLazy, fetchMoreRecords } = useLazyFindManyRecords({
-    ...params,
-    recordGqlFields,
-  });
+  const { findManyRecordsLazy, fetchMoreRecordsLazy, queryIdentifier } =
+    useLazyFindManyRecords({
+      ...params,
+      recordGqlFields,
+    });
 
   return {
     findManyRecordsLazy,
-    fetchMoreRecords,
+    fetchMoreRecordsLazy,
+    queryIdentifier,
   };
 };

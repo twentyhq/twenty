@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
@@ -32,11 +32,11 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
 
   const [hasInitializedScroll, setHasInitializedScroll] = useState(false);
 
-  const { findManyRecordsLazy, fetchMoreRecords, queryStateIdentifier } =
+  const { findManyRecordsLazy, fetchMoreRecordsLazy, queryIdentifier } =
     useLazyLoadRecordIndexTable(objectNameSingular);
 
-  const isFetchingMoreObjects = useRecoilValue(
-    isFetchingMoreRecordsFamilyState(queryStateIdentifier),
+  const [isFetchingMoreObjects, setIsFetchingMoreObjects] = useRecoilState(
+    isFetchingMoreRecordsFamilyState(queryIdentifier),
   );
 
   const tableLastRowVisible = useRecoilComponentValueV2(
@@ -51,15 +51,12 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
       hasRecordTableFetchedAllRecordsComponentStateV2,
     );
 
-  const [lastShowPageRecordId] = useRecoilState(
-    lastShowPageRecordIdState,
-  );
+  const [lastShowPageRecordId] = useRecoilState(lastShowPageRecordIdState);
 
   const { scrollToPosition } = useScrollToPosition();
 
   const fetchMoreDebouncedIfRequested = useDebouncedCallback(async () => {
-    // We are debouncing here to give the user some room to scroll if they want to within this throttle window
-    return await fetchMoreRecords();
+    return await fetchMoreRecordsLazy();
   }, 100);
 
   useEffect(() => {
@@ -69,6 +66,7 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
         tableLastRowVisible &&
         !encounteredUnrecoverableError
       ) {
+        setIsFetchingMoreObjects(true);
         const result = await fetchMoreDebouncedIfRequested();
 
         const isForbidden =
@@ -79,6 +77,7 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
         if (isForbidden) {
           setEncounteredUnrecoverableError(true);
         }
+        setIsFetchingMoreObjects(false);
       }
     })();
   }, [
@@ -89,6 +88,7 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
     tableLastRowVisible,
     encounteredUnrecoverableError,
     setEncounteredUnrecoverableError,
+    setIsFetchingMoreObjects,
   ]);
 
   useEffect(() => {
@@ -99,7 +99,7 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
     const fetchRecords = async () => {
       const { records, totalCount, hasNextPage } = await findManyRecordsLazy();
       setHasRecordTableFetchedAllRecordsComponents(!hasNextPage);
-      if (isNonEmptyString(lastShowPageRecordId) && !hasInitializedScroll) {
+      if (isNonEmptyString(lastShowPageRecordId)) {
         const isRecordAlreadyFetched = records.some(
           (record) => record.id === lastShowPageRecordId,
         );
