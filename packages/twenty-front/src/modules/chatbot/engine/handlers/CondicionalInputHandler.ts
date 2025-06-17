@@ -100,6 +100,7 @@ export class CondicionalInputHandler implements NodeHandler {
           : matchOption && matchSector;
 
       if (matched) {
+        this.askedNodes.delete(nodeId); // limpa para próxima vez que cair aqui
         return d.outgoingNodeId ?? null;
       }
     }

@@ -59,3 +59,6 @@ clean-local-dev:
 	
 clickhouse-on-docker:
 	docker run -d --name twenty_clickhouse -p 8123:8123 -p 9000:9000 -e CLICKHOUSE_PASSWORD=clickhousePassword clickhouse/clickhouse-server:latest \
+
+clean-stale-branches:
+	git fetch --prune && git branch -vv | grep ': gone]' | awk '{print $1}' | xargs -r git branch -D

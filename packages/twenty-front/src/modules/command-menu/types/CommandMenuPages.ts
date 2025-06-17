@@ -16,4 +16,5 @@ export enum CommandMenuPages {
   ChatbotFlow = 'chatbot-flow',
   ChatbotFlowStepEdit = 'chatbot-flow-step-edit',
   Traceable = CoreObjectNameSingular.Traceable,
+  Ticket = 'ticket',
 }

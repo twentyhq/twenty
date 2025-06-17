@@ -1,16 +1,24 @@
 /* @license Enterprise */
 
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
+import { BillingSwitchPlanInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-switch-plan.input';
 import { BillingEndTrialPeriodOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-end-trial-period.output';
 import { BillingMeteredProductUsageOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-metered-product-usage.output';
 import { BillingPlanOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-plan.output';
 import { BillingSessionOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-session.output';
+import { BillingSwitchPlanOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-switch-plan.output';
+import { BillingUpdateOneTimePaidSubscriptionOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-update-onetime-pad-subscription.output';
 import { BillingUpdateOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-update.output';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
@@ -19,7 +27,9 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
+import { formatBillingDatabaseProductToBaseProductDTO } from 'src/engine/core-modules/billing/utils/format-database-product-to-base-product-dto.util';
 import { formatBillingDatabaseProductToGraphqlDTO } from 'src/engine/core-modules/billing/utils/format-database-product-to-graphql-dto.util';
+import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
@@ -73,12 +83,15 @@ export class BillingResolver {
     @AuthWorkspace() workspace: Workspace,
     @AuthUser() user: User,
     @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Context() context: I18nContext,
     @Args()
     {
       recurringInterval,
       successUrlPath,
       plan,
       requirePaymentMethod,
+      paymentProvider,
+      interChargeData,
     }: BillingCheckoutSessionInput,
     @AuthApiKey() apiKey?: string,
   ) {
@@ -102,14 +115,58 @@ export class BillingResolver {
         interval: recurringInterval,
       },
     );
+
     const checkoutSessionURL =
       await this.billingPortalWorkspaceService.computeCheckoutSessionURL({
         ...checkoutSessionParams,
         billingPricesPerPlan,
+        paymentProvider,
+        interChargeData,
+        locale: context.req.headers['x-locale'] || SOURCE_LOCALE,
       });
 
     return {
       url: checkoutSessionURL,
+    };
+  }
+
+  @Mutation(() => BillingUpdateOneTimePaidSubscriptionOutput)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  async updateOneTimePaidSubscription(
+    @AuthWorkspace() workspace: Workspace,
+    @AuthUser() user: User,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Context() context: I18nContext,
+    @AuthApiKey() apiKey?: string,
+  ): Promise<BillingUpdateOneTimePaidSubscriptionOutput> {
+    await this.validateCanCheckoutSessionPermissionOrThrow({
+      workspaceId: workspace.id,
+      userWorkspaceId,
+      isExecutedByApiKey: isDefined(apiKey),
+    });
+
+    const currentSubscription =
+      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+        {
+          workspaceId: workspace.id,
+        },
+      );
+
+    if (!currentSubscription)
+      throw new BillingException(
+        `Billing charge not found`,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
+      );
+
+    const bankSlipFileLink =
+      await this.billingSubscriptionService.updateOneTimePaymentSubscription({
+        subscription: currentSubscription,
+        user,
+        locale: context.req.headers['x-locale'],
+      });
+
+    return {
+      bankSlipFileLink,
     };
   }
 
@@ -122,6 +179,40 @@ export class BillingResolver {
     await this.billingSubscriptionService.switchToYearlyInterval(workspace);
 
     return { success: true };
+  }
+
+  @Mutation(() => BillingSwitchPlanOutput)
+  async switchPlan(
+    @AuthWorkspace() workspace: Workspace,
+    @AuthUser() user: User,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Args() { plan }: BillingSwitchPlanInput,
+    @AuthApiKey() apiKey?: string,
+  ): Promise<BillingSwitchPlanOutput> {
+    await this.validateCanCheckoutSessionPermissionOrThrow({
+      workspaceId: workspace.id,
+      userWorkspaceId,
+      isExecutedByApiKey: isDefined(apiKey),
+    });
+
+    const billingSubscription =
+      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+        {
+          workspaceId: workspace.id,
+        },
+      );
+
+    const { baseProduct, planKey, subscription } =
+      await this.billingSubscriptionService.switchSubscriptionPlan(
+        billingSubscription,
+        plan,
+      );
+
+    return {
+      planKey,
+      subscription,
+      baseProduct: formatBillingDatabaseProductToBaseProductDTO(baseProduct),
+    };
   }
 
   @Query(() => [BillingPlanOutput])
@@ -151,7 +242,10 @@ export class BillingResolver {
   async getMeteredProductsUsage(
     @AuthWorkspace() workspace: Workspace,
   ): Promise<BillingMeteredProductUsageOutput[]> {
-    return await this.billingUsageService.getMeteredProductsUsage(workspace);
+    const result =
+      await this.billingUsageService.getMeteredProductsUsage(workspace);
+
+    return result;
   }
 
   private async validateCanCheckoutSessionPermissionOrThrow({

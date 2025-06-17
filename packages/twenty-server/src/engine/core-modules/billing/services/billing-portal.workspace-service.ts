@@ -1,9 +1,16 @@
 /* @license Enterprise */
 
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { randomUUID } from 'crypto';
+
 import Stripe from 'stripe';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -13,11 +20,15 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingPaymentProviders } from 'src/engine/core-modules/billing/enums/billing-payment-providers.enum';
+import { ChargeType } from 'src/engine/core-modules/billing/enums/billint-charge-type.enum';
 import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
 import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/services/stripe-checkout.service';
 import { BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
 import { BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { InterCreateChargeDto } from 'src/engine/core-modules/inter/dtos/inter-create-charge.dto';
+import { InterService } from 'src/engine/core-modules/inter/services/inter.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { assert } from 'src/utils/assert';
@@ -26,6 +37,7 @@ import { assert } from 'src/utils/assert';
 export class BillingPortalWorkspaceService {
   protected readonly logger = new Logger(BillingPortalWorkspaceService.name);
   constructor(
+    private readonly interService: InterService,
     private readonly stripeCheckoutService: StripeCheckoutService,
     private readonly stripeBillingPortalService: StripeBillingPortalService,
     private readonly domainManagerService: DomainManagerService,
@@ -44,10 +56,70 @@ export class BillingPortalWorkspaceService {
     successUrlPath,
     plan,
     requirePaymentMethod,
+    paymentProvider,
+    locale,
+    interChargeData,
+    chargeType = ChargeType.ONE_TIME,
   }: BillingPortalCheckoutSessionParameters): Promise<string> {
     const frontBaseUrl = this.domainManagerService.buildWorkspaceURL({
       workspace,
     });
+
+    if (paymentProvider === BillingPaymentProviders.Inter) {
+      if (!isDefined(interChargeData))
+        throw new BillingException(
+          'Missing Inter Billing customer data',
+          BillingExceptionCode.BILLING_MISSING_REQUEST_BODY,
+        );
+
+      const { cpfCnpj, legalEntity, name, address, city, stateUnity, cep } =
+        interChargeData;
+
+      // TODO: This looks kinda dumb since we a using the upsert but idk how to do it better for now
+      const existingCustomer = await this.billingCustomerRepository.findOneBy({
+        workspaceId: workspace.id,
+      });
+
+      await this.billingCustomerRepository.upsert(
+        {
+          workspaceId: workspace.id,
+          document: cpfCnpj,
+          legalEntity,
+          name,
+          address,
+          city,
+          stateUnity,
+          cep,
+          interBillingChargeId: workspace.id.slice(0, 15),
+          stripeCustomerId: existingCustomer?.stripeCustomerId || randomUUID(),
+        },
+        {
+          conflictPaths: ['workspaceId'],
+          skipUpdateIfNoValuesChanged: true,
+        },
+      );
+
+      const customer = await this.billingCustomerRepository.findOneByOrFail({
+        workspaceId: workspace.id,
+      });
+
+      //TODO: Call inter method to generate bolepix and sent through email
+      if (!isDefined(billingPricesPerPlan?.baseProductPrice.unitAmountDecimal))
+        throw new InternalServerErrorException('Plan price not found');
+
+      await this.interService.createBolepixCharge({
+        planPrice: billingPricesPerPlan.baseProductPrice.unitAmountDecimal,
+        workspaceId: workspace.id,
+        locale: locale || SOURCE_LOCALE,
+        userEmail: user.email,
+        ...(interChargeData as InterCreateChargeDto),
+        customer,
+        planKey: plan,
+      });
+
+      return `${frontBaseUrl.toString()}plan-required/payment-success`;
+    }
+
     const cancelUrl = frontBaseUrl.toString();
 
     if (successUrlPath) {
@@ -65,7 +137,7 @@ export class BillingPortalWorkspaceService {
     });
 
     const stripeSubscriptionLineItems = this.getStripeSubscriptionLineItems({
-      quantity,
+      quantity: chargeType === ChargeType.PER_SEAT ? quantity : 1,
       billingPricesPerPlan,
     });
 
@@ -79,8 +151,7 @@ export class BillingPortalWorkspaceService {
         stripeCustomerId: customer?.stripeCustomerId,
         plan,
         requirePaymentMethod,
-        withTrialPeriod:
-          !isDefined(customer) || customer.billingSubscriptions.length === 0,
+        withTrialPeriod: false,
       });
 
     assert(checkoutSession.url, 'Error: missing checkout.session.url');

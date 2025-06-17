@@ -2,6 +2,7 @@ import { statusEnum } from 'src/engine/core-modules/meta/types/statusEnum';
 
 export type WhatsappDocument = {
   integrationId: string;
+  workspaceId?: string;
   agent?: string;
   sector?: string;
   client: IClient;

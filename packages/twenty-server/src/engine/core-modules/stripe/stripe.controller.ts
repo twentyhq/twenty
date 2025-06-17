@@ -14,11 +14,10 @@ export class SripeController {
     private readonly stripeIntegrationService: StripeIntegrationService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {
+    if (this.twentyConfigService.get('IS_BILLING_ENABLED')) return;
+
     this.stripe = new Stripe(
-      this.twentyConfigService.get('WEBHOOK_STRIPE_SECRETKEY'),
-      {
-        apiVersion: '2024-10-28.acacia',
-      },
+      this.twentyConfigService.get('BILLING_STRIPE_API_KEY'),
     );
   }
 

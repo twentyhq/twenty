@@ -10,16 +10,19 @@ import { Repository } from 'typeorm';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { ChargeData, ChargeResponse } from 'src/modules/charges/types/inter';
 
 @Injectable()
 export class InterApiService {
   private readonly logger = new Logger(InterApiService.name);
-  private readonly baseUrl = process.env.BASE_URL_INTER_SANDBOX;
 
   private tokenCache: Map<string, { token: string; expiresAt: number }> =
     new Map();
+
+  private readonly baseUrl: string;
 
   private readonly SCOPES = {
     READ: 'boleto-cobranca.read',
@@ -32,7 +35,10 @@ export class InterApiService {
     @InjectRepository(Workspace, 'core')
     private workspaceRepository: Repository<Workspace>,
     private readonly fileStorageService: FileStorageService,
-  ) {}
+    private readonly twentyConfigService: TwentyConfigService,
+  ) {
+    this.baseUrl = this.twentyConfigService.get('INTER_BASE_URL');
+  }
 
   private formatCertificate(input: string): string {
     return input.replace(/\\n/g, '\n');
@@ -62,6 +68,7 @@ export class InterApiService {
       );
     }
 
+    // TODO: This shouldn't be stored as plain text on to the database
     const cert = this.formatCertificate(integration.certificate);
     const key = this.formatCertificate(integration.privateKey);
 
@@ -177,7 +184,7 @@ export class InterApiService {
     workspaceId: string,
     seuNumero: string,
     cancelReason: string,
-  ): Promise<any> {
+  ): Promise<void> {
     const integration = await this.getIntegration(workspaceId);
     const token = await this.getAccessToken(workspaceId, this.SCOPES.WRITE);
     const httpsAgent = await this.getHttpsAgentFromIntegration(integration);
@@ -257,13 +264,12 @@ export class InterApiService {
 
   async issueChargeAndStoreAttachment(
     workspaceId: string,
-    attachmentRepository: Repository<any>,
+    attachmentRepository: Repository<AttachmentWorkspaceEntity>,
     data: ChargeData,
   ): Promise<ChargeResponse> {
     this.logger.log(
       `Iniciando emissão de charge para workspace ${workspaceId}`,
     );
-    this.logger.log('Dados da charge:', data);
 
     const integration = await this.getIntegration(workspaceId);
     const token = await this.getAccessToken(workspaceId, this.SCOPES.WRITE);
@@ -309,7 +315,6 @@ export class InterApiService {
         name: filename,
         fullPath: `${folder}/${filename}`, // <--- caminho relativo para acesso posterior
         type: 'TextDocument',
-        authorId: data.authorId,
         chargeId: data.id,
       });
 

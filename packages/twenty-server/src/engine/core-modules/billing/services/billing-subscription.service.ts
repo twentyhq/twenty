@@ -7,18 +7,23 @@ import assert from 'assert';
 
 import { differenceInDays } from 'date-fns';
 import Stripe from 'stripe';
+import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
-import { Not, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 
 import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { BillingCharge } from 'src/engine/core-modules/billing/entities/billing-charge.entity';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { ChargeStatus } from 'src/engine/core-modules/billing/enums/billing-charge.status.enum';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { BillingPaymentProviders } from 'src/engine/core-modules/billing/enums/billing-payment-providers.enum';
+import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
@@ -29,7 +34,9 @@ import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/s
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
 import { getSubscriptionStatus } from 'src/engine/core-modules/billing/webhooks/utils/transform-stripe-subscription-event-to-database-subscription.util';
+import { InterService } from 'src/engine/core-modules/inter/services/inter.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 @Injectable()
 export class BillingSubscriptionService {
@@ -47,6 +54,9 @@ export class BillingSubscriptionService {
     private readonly stripeSubscriptionItemService: StripeSubscriptionItemService,
     @InjectRepository(BillingSubscriptionItem, 'core')
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
+    private readonly interService: InterService,
+    @InjectRepository(BillingCharge, 'core')
+    private readonly billingChargeRepository: Repository<BillingCharge>,
   ) {}
 
   async getCurrentBillingSubscriptionOrThrow(criteria: {
@@ -55,19 +65,43 @@ export class BillingSubscriptionService {
   }) {
     const notCanceledSubscriptions =
       await this.billingSubscriptionRepository.find({
-        where: { ...criteria, status: Not(SubscriptionStatus.Canceled) },
+        where: {
+          ...criteria,
+          status: Not(In([SubscriptionStatus.Canceled])),
+        },
+        order: {
+          createdAt: 'DESC',
+        },
         relations: [
+          'billingCustomer',
           'billingSubscriptionItems',
           'billingSubscriptionItems.billingProduct',
+          'billingSubscriptionItems.billingProduct.billingPrices',
         ],
       });
 
     assert(
-      notCanceledSubscriptions.length <= 1,
-      `More than one not canceled subscription for workspace ${criteria.workspaceId}`,
+      notCanceledSubscriptions.filter(
+        (subscription) =>
+          subscription.provider === BillingPaymentProviders.Stripe,
+      ).length <= 1,
+      `More than one not canceled subscriptiption found for workspace ${criteria.workspaceId}`,
     );
 
-    return notCanceledSubscriptions?.[0];
+    const currentSubscription = notCanceledSubscriptions?.[0];
+
+    if (!isDefined(currentSubscription)) return currentSubscription;
+
+    const currentCharge =
+      await this.getCurrentSubscriptionCharge(currentSubscription);
+
+    const currentChargeFileLink = currentCharge?.interBillingChargeFilePath
+      ? this.interService.getFileLinkFromPath(
+          currentCharge?.interBillingChargeFilePath,
+        )
+      : null;
+
+    return { ...currentSubscription, currentChargeFileLink };
   }
 
   async getBaseProductCurrentBillingSubscriptionItemOrThrow(
@@ -302,6 +336,160 @@ export class BillingSubscriptionService {
     );
   }
 
+  async switchSubscriptionPlan(
+    subscription: BillingSubscription,
+    plan: BillingPlanKey,
+  ) {
+    await this.billingSubscriptionRepository.save({
+      id: subscription.id,
+      metadata: {
+        ...subscription.metadata,
+        plan,
+      } as Stripe.Metadata,
+    });
+
+    const updatedSubscription =
+      await this.billingSubscriptionRepository.findOneOrFail({
+        where: {
+          id: subscription.id,
+        },
+        relations: {
+          billingSubscriptionItems: true,
+        },
+      });
+
+    assert(
+      updatedSubscription.metadata.plan === plan,
+      `Failed to switch subscription plan from ${subscription.metadata?.plan} to ${plan}`,
+    );
+
+    // TODO: Skip this block if the subscription was created from Inter as a payment provider
+    {
+      const planKey = getPlanKeyFromSubscription(updatedSubscription);
+
+      const baseProduct =
+        await this.billingPlanService.getPlanBaseProduct(planKey);
+
+      if (!baseProduct) {
+        throw new BillingException(
+          'Base product not found',
+          BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND,
+        );
+      }
+
+      for (const subscriptionItem of updatedSubscription.billingSubscriptionItems) {
+        const baseProductPrice = baseProduct.billingPrices.filter(
+          (price) => price.interval === subscription.interval && price.active,
+        );
+
+        if (!baseProductPrice || baseProductPrice.length === 0)
+          throw new BillingException(
+            `Cannot find base product price for ${plan} plan`,
+            BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
+          );
+
+        await this.stripeSubscriptionItemService.updateSubscriptionItem(
+          subscriptionItem.stripeSubscriptionItemId,
+          {
+            price: baseProductPrice[0].stripePriceId,
+          },
+        );
+
+        await this.billingSubscriptionItemRepository.save({
+          id: subscriptionItem.id,
+          stripePriceId: baseProductPrice[0].stripePriceId,
+          stripeProductId: baseProduct.stripeProductId,
+        });
+      }
+
+      const updatedStripeSubscription =
+        await this.stripeSubscriptionService.updateSubscription(
+          updatedSubscription.stripeSubscriptionId,
+          {
+            metadata: {
+              ...updatedSubscription.metadata,
+              plan,
+            },
+          },
+        );
+
+      assert(
+        updatedStripeSubscription.metadata.plan === plan,
+        `Failed to switch stripe subscription plan from ${updatedStripeSubscription.metadata.plan} to ${plan}`,
+      );
+    }
+
+    const baseProduct =
+      await this.getBaseProductCurrentBillingSubscriptionItemOrThrow(
+        subscription.workspaceId as string,
+      );
+
+    return {
+      baseProduct,
+      subscription: updatedSubscription,
+      planKey: updatedSubscription.metadata.plan as BillingPlanKey,
+    };
+  }
+
+  async updateOneTimePaymentSubscription({
+    subscription,
+    user,
+    locale,
+  }: {
+    subscription: BillingSubscription;
+    user: User;
+    locale?: keyof typeof APP_LOCALES;
+  }) {
+    const billingPricesPerPlan = await this.billingPlanService.getPricesPerPlan(
+      {
+        planKey: subscription.metadata.plan as BillingPlanKey,
+        interval: subscription.interval as SubscriptionInterval,
+      },
+    );
+
+    const { billingCustomer } = subscription;
+
+    if (!isDefined(billingCustomer))
+      throw new BillingException(
+        `Customer not found`,
+        BillingExceptionCode.BILLING_CUSTOMER_NOT_FOUND,
+      );
+
+    const { name, document, legalEntity, address, cep, stateUnity, city } =
+      billingCustomer;
+
+    const chargeDataArray: (string | null | undefined)[] = [
+      name,
+      document,
+      legalEntity,
+      address,
+      cep,
+      stateUnity,
+      city,
+    ];
+
+    if (chargeDataArray.includes(null) || chargeDataArray.includes(undefined))
+      throw new BillingException(
+        `Customer missing inter charge data`,
+        BillingExceptionCode.BILLING_MISSING_REQUEST_BODY,
+      );
+
+    if (!isDefined(billingPricesPerPlan?.baseProductPrice.unitAmountDecimal))
+      throw new BillingException(
+        `Plan price not found`,
+        BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
+      );
+
+    return await this.interService.createBolepixCharge({
+      planPrice: billingPricesPerPlan.baseProductPrice.unitAmountDecimal,
+      workspaceId: subscription.workspaceId as string,
+      userEmail: user.email,
+      locale: locale || SOURCE_LOCALE,
+      customer: billingCustomer,
+      planKey: subscription.metadata.plan as BillingPlanKey,
+    });
+  }
+
   private getTrialPeriodFreeWorkflowCredits(
     billingSubscription: BillingSubscription,
   ) {
@@ -325,5 +513,22 @@ export class BillingSubscriptionService {
           : 'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD',
       ),
     );
+  }
+
+  async getCurrentSubscriptionCharge(
+    billingSubscription?: BillingSubscription,
+  ): Promise<BillingCharge | null> {
+    if (!billingSubscription) {
+      return null;
+    }
+
+    const currentCharge = await this.billingChargeRepository.findOne({
+      where: {
+        billingSubscriptionId: billingSubscription.id,
+        status: ChargeStatus.PAID,
+      },
+    });
+
+    return currentCharge;
   }
 }

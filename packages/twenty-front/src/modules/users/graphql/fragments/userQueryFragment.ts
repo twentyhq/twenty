@@ -56,6 +56,9 @@ export const USER_QUERY_FRAGMENT = gql`
         id
         status
         interval
+        metadata
+        provider
+        currentChargeFileLink
         billingSubscriptionItems {
           id
           hasReachedCurrentPeriodCap

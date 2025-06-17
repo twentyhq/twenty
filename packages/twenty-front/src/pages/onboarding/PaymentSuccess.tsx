@@ -1,87 +1,82 @@
-import { SubTitle } from '@/auth/components/SubTitle';
-import { Title } from '@/auth/components/Title';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { currentUserState } from '@/auth/states/currentUserState';
+import { OnboardingSubscriptionStatusCard } from '@/onboarding/components/OnboarindPaymentStatusCard';
+import { AppPath } from '@/types/AppPath';
 import { Modal } from '@/ui/layout/modal/components/Modal';
-import { useTheme } from '@emotion/react';
+import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
+import { subscriptionStatusState } from '@/workspace/states/subscriptionStatusState';
+import { useQuery } from '@apollo/client';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
-import { useRecoilState } from 'recoil';
-import { IconCheck } from 'twenty-ui/display';
-import { MainButton } from 'twenty-ui/input';
-import { RGBA } from 'twenty-ui/theme';
-import { AnimatedEaseIn } from 'twenty-ui/utilities';
-import { useSaveBillingPlan } from '~/pages/onboarding/hooks/useSaveBillingPlan';
-import { Plan, selectedPlanState } from '~/pages/onboarding/Plans';
-
-const StyledCheckContainer = styled.div`
-  align-items: center;
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
+import { Loader } from 'twenty-ui/feedback';
+import {
+  GetCurrentUserQuery,
+  useGetCurrentUserLazyQuery,
+} from '~/generated/graphql';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
+const StyledLoaderContainer = styled.div`
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  border: 2px solid ${(props) => props.color};
-  border-radius: ${({ theme }) => theme.border.radius.rounded};
-  box-shadow: ${(props) =>
-    props.color && `-4px 4px 0 -2px ${RGBA(props.color, 1)}`};
-  height: 36px;
-  width: 36px;
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
-`;
-
-const StyledButtonContainer = styled.div`
-  margin-top: ${({ theme }) => theme.spacing(8)};
+  min-height: 250px;
 `;
 
 export const PaymentSuccess = () => {
-  const { t } = useLingui();
-  const setNextOnboardingStatus = useSetNextOnboardingStatus();
-  const theme = useTheme();
-  const color =
-    theme.name === 'light' ? theme.grayScale.gray90 : theme.grayScale.gray10;
+  const navigate = useNavigateApp();
+  const subscriptionStatus = useRecoilValue(subscriptionStatusState);
 
-  const { enqueueSnackBar } = useSnackBar();
-  const [currentWorkspaceMember] = useRecoilState(currentWorkspaceMemberState);
-  const { savePlan } = useSaveBillingPlan();
+  const [getCurrentUser] = useGetCurrentUserLazyQuery();
 
-  const params = new URLSearchParams(window.location.search);
-  const planId = params.get('planId');
+  const setCurrentUser = useSetRecoilState(currentUserState);
 
-  console.log('planId', planId);
-
-  const onSubmit = async () => {
-    try {
-      if (!currentWorkspaceMember?.id) {
-        throw new Error('User is not logged in');
-      }
-
-      await savePlan(String(planId));
-
-      setNextOnboardingStatus();
-    } catch (error: any) {
-      enqueueSnackBar(error?.message, {
-        variant: SnackBarVariant.Error,
-      });
+  const navigateWithSubscriptionCheck = async () => {
+    if (isDefined(subscriptionStatus)) {
+      navigate(AppPath.CreateWorkspace);
+      return;
     }
+
+    const result = await getCurrentUser({ fetchPolicy: 'network-only' });
+    const currentUser = result.data?.currentUser;
+    const refreshedSubscriptionStatus =
+      currentUser?.currentWorkspace?.currentBillingSubscription?.status;
+
+    if (isDefined(currentUser) && isDefined(refreshedSubscriptionStatus)) {
+      setCurrentUser(currentUser);
+      navigate(AppPath.CreateWorkspace);
+      return;
+    }
+
+    throw new Error(
+      "We're waiting for a confirmation from our payment provider.\n" +
+        'Please try again in a few seconds, sorry.',
+    );
   };
+
+  const { loading, refetch } = useQuery<GetCurrentUserQuery>(GET_CURRENT_USER, {
+    fetchPolicy: 'no-cache',
+    pollInterval: 10000, // Poll every 10 seconds
+    onCompleted: async (data) => {
+      const refreshedSubscriptionStatus =
+        data.currentUser.currentWorkspace?.currentBillingSubscription?.status;
+
+      if (isDefined(refreshedSubscriptionStatus)) {
+        await navigateWithSubscriptionCheck();
+      }
+    },
+  });
 
   return (
     <Modal.Content isVerticalCentered isHorizontalCentered>
-      <AnimatedEaseIn>
-        <StyledCheckContainer color={color}>
-          <IconCheck color={color} size={24} stroke={3} />
-        </StyledCheckContainer>
-      </AnimatedEaseIn>
-      <Title>All set!</Title>
-      <SubTitle>Your account has been activated.</SubTitle>
-      <StyledButtonContainer>
-        <MainButton
-          title={t`Continue`}
-          variant="primary"
-          onClick={() => onSubmit()}
-          fullWidth
+      {loading ? (
+        <StyledLoaderContainer>
+          <Loader />
+        </StyledLoaderContainer>
+      ) : (
+        <OnboardingSubscriptionStatusCard
+          {...{ navigateWithSubscriptionCheck, refetch }}
         />
-      </StyledButtonContainer>
+      )}
     </Modal.Content>
   );
 };

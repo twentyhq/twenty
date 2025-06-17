@@ -1,4 +1,5 @@
 import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
+import { getCleanName } from '@/chat/call-center/utils/getCleanName';
 
 import { IMessage, WhatsappDocument } from '@/chat/types/WhatsappDocument';
 import styled from '@emotion/styled';
@@ -46,7 +47,7 @@ export const UsernameComponent: React.FC<WhatsappProps> = ({ message }) => {
         margin: 0,
       }}
     >
-      {message.from}
+      {getCleanName(message.from)}
     </StyledUserName>
   );
 };

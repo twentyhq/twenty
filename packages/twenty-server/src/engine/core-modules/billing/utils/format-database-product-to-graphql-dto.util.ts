@@ -8,6 +8,7 @@ import { BillingPriceTiersMode } from 'src/engine/core-modules/billing/enums/bil
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { BillingGetPlanResult } from 'src/engine/core-modules/billing/types/billing-get-plan-result.type';
+import { getMarketingFeaturesList } from 'src/engine/core-modules/billing/utils/get-product-marketing-features-list.util';
 
 export const formatBillingDatabaseProductToGraphqlDTO = (
   plan: BillingGetPlanResult,
@@ -16,6 +17,9 @@ export const formatBillingDatabaseProductToGraphqlDTO = (
     planKey: plan.planKey,
     baseProduct: {
       ...plan.baseProduct,
+      marketingFeatures: getMarketingFeaturesList(
+        plan.baseProduct.marketingFeatures,
+      ),
       metadata: {
         ...plan.baseProduct.metadata,
         priceUsageBased: BillingUsageType.LICENSED,
@@ -34,6 +38,9 @@ export const formatBillingDatabaseProductToGraphqlDTO = (
         prices: product.billingPrices.map(
           formatBillingDatabasePriceToLicensedPriceDTO,
         ),
+        marketingFeatures: product.marketingFeatures.map(
+          (feat) => feat?.name || null,
+        ),
       };
     }),
     meteredProducts: plan.meteredProducts.map((product) => {
@@ -45,6 +52,9 @@ export const formatBillingDatabaseProductToGraphqlDTO = (
         },
         prices: product.billingPrices.map(
           formatBillingDatabasePriceToMeteredPriceDTO,
+        ),
+        marketingFeatures: product.marketingFeatures.map(
+          (feat) => feat?.name || null,
         ),
       };
     }),
@@ -71,7 +81,7 @@ const formatBillingDatabasePriceToMeteredPriceDTO = (
   };
 };
 
-const formatBillingDatabasePriceToLicensedPriceDTO = (
+export const formatBillingDatabasePriceToLicensedPriceDTO = (
   billingPrice: BillingPrice,
 ): BillingPriceLicensedDTO => {
   return {

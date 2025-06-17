@@ -136,7 +136,7 @@ msgstr "1. Тип"
 #~ msgstr "10 000 извршења чворова радног тока"
 
 #. js-lingui-id: 7IIx+y
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "10,000 workflow node executions"
 msgstr ""
 
@@ -162,7 +162,7 @@ msgstr "2. Конфигуришите поље"
 #~ msgstr "20 000 извршења чворова радног тока"
 
 #. js-lingui-id: YfwnsU
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "20,000 workflow node executions"
 msgstr ""
 
@@ -383,6 +383,12 @@ msgstr "Додато {beautifyPastDateRelative}"
 msgid "Added to blocklist"
 msgstr "Додато на црну листу"
 
+#. js-lingui-id: Du6bPw
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Address"
+msgstr ""
+
 #. js-lingui-id: Eis4ey
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 msgid "Adjust the role-related settings"
@@ -487,6 +493,11 @@ msgstr "Омогућите позивање нових корисника дељ
 msgid "Allow users to sign in with an email and password."
 msgstr "Омогућите корисницима да се пријаве са е-мејлом и лозинком."
 
+#. js-lingui-id: wgwm72
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Allows you to change your current subscription plan"
+msgstr ""
+
 #. js-lingui-id: LG4K0m
 #: src/pages/auth/PasswordReset.tsx
 msgid "An error occurred while updating password"
@@ -518,8 +529,8 @@ msgid "API"
 msgstr "АПИ"
 
 #. js-lingui-id: 0RqpZr
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "API & Webhooks"
 msgstr "API и Вебхукси"
 
@@ -610,6 +621,16 @@ msgstr ""
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
 #~ msgid "Are you sure you want to assign this role?"
 #~ msgstr "Are you sure you want to assign this role?"
+
+#. js-lingui-id: mupq7U
+#: src/pages/settings/billing/CancelSubscriptionPlan.tsx
+#~ msgid "Are you sure you want to cancel?"
+#~ msgstr ""
+
+#. js-lingui-id: QRW/xV
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Are you sure you want to change your subscripion plan? Your invoice amount will change at the end of the curent period."
+msgstr ""
 
 #. js-lingui-id: 8Y3Jbl
 #: src/modules/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction.tsx
@@ -735,6 +756,7 @@ msgstr "Просек"
 
 #. js-lingui-id: iH8pgl
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
 msgid "Back"
 msgstr ""
 
@@ -747,7 +769,6 @@ msgstr "Назад на садржај"
 #: src/pages/settings/SettingsBilling.tsx
 #: src/pages/settings/SettingsBilling.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Billing"
 msgstr "Наплата"
 
@@ -755,6 +776,11 @@ msgstr "Наплата"
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Blocklist"
 msgstr "Црна листа"
+
+#. js-lingui-id: HssMtJ
+#: src/modules/billing/hooks/useBillingPaymentProvidersMap.ts
+msgid "Boleto"
+msgstr ""
 
 #. js-lingui-id: 2yl5lQ
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -816,6 +842,7 @@ msgstr "Не могу се мењати API имена за стандардне
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
+#: src/modules/settings/billing/components/SettingsBillingSwitchSubscriptonModal.tsx
 msgid "Cancel"
 msgstr "Откажи"
 
@@ -834,10 +861,25 @@ msgstr "Откажи план"
 msgid "Cancel your subscription"
 msgstr "Откажите претплату"
 
+#. js-lingui-id: GHEVpv
+#: src/modules/billing/hooks/useBillingPaymentProvidersMap.ts
+msgid "Cartão de crédito"
+msgstr ""
+
 #. js-lingui-id: M1RLfx
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Catalan"
 msgstr "Каталонски"
+
+#. js-lingui-id: V9PU36
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "CEP"
+msgstr ""
+
+#. js-lingui-id: o+XJ9D
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Change"
+msgstr ""
 
 #. js-lingui-id: OfzMnb
 #: src/pages/settings/SettingsBilling.tsx
@@ -851,14 +893,25 @@ msgstr "Каталонски"
 msgid "Change Password"
 msgstr "Промени лозинку"
 
+#. js-lingui-id: /A54X+
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Change plan"
+msgstr ""
+
 #. js-lingui-id: wRtBJP
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "Change Plan"
-msgstr ""
+#~ msgid "Change Plan"
+#~ msgstr ""
 
 #. js-lingui-id: EYSFEW
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Change subdomain?"
+msgstr ""
+
+#. js-lingui-id: tGRbQa
+#: src/pages/settings/SettingsBilling.tsx
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Change subscription plan"
 msgstr ""
 
 #. js-lingui-id: b0h4XW
@@ -901,13 +954,18 @@ msgstr "Изаберите поља која ће идентификовати �
 msgid "Choose the format used to display date value"
 msgstr ""
 
+#. js-lingui-id: cnKeIQ
+#: src/modules/settings/billing/components/SettingsBillingSwitchSubscriptonModal.tsx
+msgid "Choose your new Plan"
+msgstr ""
+
 #. js-lingui-id: tjXxZj
-#: src/pages/onboarding/PaymentOptions.tsx
+#: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Choose your payment method"
 msgstr ""
 
 #. js-lingui-id: y1elF1
-#: src/pages/onboarding/Plans.tsx
+#: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Choose your plan"
 msgstr ""
 
@@ -920,6 +978,11 @@ msgstr "Изаберите провајдера"
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Choose your Trial"
 msgstr "Изаберите врсту пробе"
+
+#. js-lingui-id: 3wV73y
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "City"
+msgstr ""
 
 #. js-lingui-id: xCJdfg
 #: src/modules/ui/input/components/internal/date/components/InternalDatePicker.tsx
@@ -992,6 +1055,11 @@ msgstr "Компактан приказ"
 #. js-lingui-id: s2QZS6
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Companies"
+msgstr ""
+
+#. js-lingui-id: 7i8j3G
+#: src/modules/onboarding/hooks/useInterCustomerTypeOptions.ts
+msgid "Company"
 msgstr ""
 
 #. js-lingui-id: Vj43Y/
@@ -1069,15 +1137,13 @@ msgid "Context"
 msgstr "Контекст"
 
 #. js-lingui-id: xGVfLh
-#: src/pages/onboarding/Plans.tsx
-#: src/pages/onboarding/PaymentSuccess.tsx
-#: src/pages/onboarding/PaymentOptions.tsx
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/pages/onboarding/CreateWorkspace.tsx
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx
 msgid "Continue"
 msgstr "Настави"
@@ -1204,6 +1270,11 @@ msgstr "Број истинито"
 msgid "Count unique values"
 msgstr "Број јединствених вредности"
 
+#. js-lingui-id: Md8EZY
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+#~ msgid "Cpf/Cnpj"
+#~ msgstr ""
+
 #. js-lingui-id: hYgDIe
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
@@ -1312,8 +1383,8 @@ msgid "Custom domain updated"
 msgstr "Прилагођени домен ажуриран"
 
 #. js-lingui-id: 8skTDV
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "Custom objects"
 msgstr "Прилагођени објекти"
 
@@ -1726,6 +1797,16 @@ msgstr "Не креирајте контакте од/до Gmail, Outlook име
 msgid "Don’t sync emails from team@ support@ noreply@..."
 msgstr "Не синхронизујте имејлове од team@ support@ noreply@..."
 
+#. js-lingui-id: Iari6C
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Donwload bank slip"
+msgstr ""
+
+#. js-lingui-id: XxrnrL
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Download bank slip"
+msgstr ""
+
 #. js-lingui-id: WcWS//
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Download file"
@@ -1827,8 +1908,8 @@ msgid "Email cannot be empty"
 msgstr "Имејл не може бити празан"
 
 #. js-lingui-id: lfQsvW
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "Email integration"
 msgstr "Имејл интеграција"
 
@@ -1925,7 +2006,7 @@ msgid "English"
 msgstr "Енглески"
 
 #. js-lingui-id: /bfFKe
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/onboarding/components/OnboardingPlanCard.tsx
 msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
 msgstr "Уживајте у бесплатном пробном периоду од {withCreditCardTrialPeriodDuration} дана"
 
@@ -2027,6 +2108,11 @@ msgstr ""
 #. js-lingui-id: k06M7e
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Error while switching subscription to yearly."
+msgstr ""
+
+#. js-lingui-id: ON1CRr
+#: src/modules/settings/billing/hooks/useHandleUpdateSubscription.ts
+msgid "Error while updating subscription."
 msgstr ""
 
 #. js-lingui-id: JLxMta
@@ -2350,10 +2436,20 @@ msgstr "Француски"
 #~ msgstr "са годишњег на месечни"
 
 #. js-lingui-id: scmRyR
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "Full access"
 msgstr "Потпун приступ"
+
+#. js-lingui-id: 0W0FHK
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Full name"
+msgstr ""
+
+#. js-lingui-id: /4TFrF
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+#~ msgid "Full Name"
+#~ msgstr ""
 
 #. js-lingui-id: xANKBj
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -2381,8 +2477,8 @@ msgstr "Искористите максимално свој радни прос
 
 #. js-lingui-id: zSGbaR
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "Get your subscription"
-msgstr "Набави претплату"
+#~ msgid "Get your subscription"
+#~ msgstr "Набави претплату"
 
 #. js-lingui-id: 2GT3Hf
 #: src/modules/command-menu/components/CommandMenu.tsx
@@ -2593,6 +2689,11 @@ msgstr "Провајдер идентитета"
 msgid "Identity Provider Metadata XML"
 msgstr "XML метаподаци провајдера идентитета"
 
+#. js-lingui-id: HlNkTA
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+#~ msgid "Identy"
+#~ msgstr ""
+
 #. js-lingui-id: ZfP/Ap
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
 msgid "If this is unexpected, please verify your settings."
@@ -2644,6 +2745,11 @@ msgstr ""
 msgid "Indexes"
 msgstr "Индекси"
 
+#. js-lingui-id: fByw/g
+#: src/modules/onboarding/hooks/useInterCustomerTypeOptions.ts
+msgid "Individual"
+msgstr ""
+
 #. js-lingui-id: JE2tjr
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
@@ -2666,6 +2772,11 @@ msgstr "Појаве"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Integrations"
 msgstr "Интеграције"
+
+#. js-lingui-id: 26GmDR
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+#~ msgid "Inter Bolepix charge data"
+#~ msgstr ""
 
 #. js-lingui-id: GNRDhm
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -2944,6 +3055,16 @@ msgstr "Покрени"
 msgid "Layout"
 msgstr "Изглед"
 
+#. js-lingui-id: Ae7Hr2
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+#~ msgid "Legal entity"
+#~ msgstr ""
+
+#. js-lingui-id: /2pITc
+#: src/modules/onboarding/hooks/useInterCustomerTypeOptions.ts
+#~ msgid "Legal person"
+#~ msgstr ""
+
 #. js-lingui-id: haJ2Hb
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
@@ -2982,8 +3103,6 @@ msgid "Loading..."
 msgstr ""
 
 #. js-lingui-id: FgAxTj
-#: src/pages/onboarding/Plans.tsx
-#: src/pages/onboarding/PaymentOptions.tsx
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Log out"
@@ -3188,6 +3307,11 @@ msgstr "Име Вашег API кључа"
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Name of your workspace"
 msgstr "Име вашег простора"
+
+#. js-lingui-id: Rx5k5c
+#: src/modules/onboarding/hooks/useInterCustomerTypeOptions.ts
+#~ msgid "Natural person"
+#~ msgstr ""
 
 #. js-lingui-id: 2T8KCk
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -3672,6 +3796,11 @@ msgstr "Лозинка је ажурирана"
 msgid "Password reset link has been sent to the email"
 msgstr "Линк за ресетовање лозинке је послат на емаил"
 
+#. js-lingui-id: +Fx9ea
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Payment data"
+msgstr ""
+
 #. js-lingui-id: 1wdjme
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -3740,6 +3869,16 @@ msgstr "Трајно уништите радне процесе"
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Permissions"
 msgstr "Дозволе"
+
+#. js-lingui-id: 19jdAl
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Person type"
+msgstr ""
+
+#. js-lingui-id: sJYPeP
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Personal Details"
+msgstr ""
 
 #. js-lingui-id: qlqT9z
 #: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
@@ -4097,6 +4236,7 @@ msgstr "Руски"
 #. js-lingui-id: tfDRzk
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
+#: src/modules/settings/billing/components/SettingsBillingSwitchSubscriptonModal.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 msgid "Save"
 msgstr "Сачувај"
@@ -4546,7 +4686,7 @@ msgid "SSO"
 msgstr "Јединствена пријава"
 
 #. js-lingui-id: vlvAkg
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "SSO (SAML / OIDC)"
 msgstr "ССО (SAML / OIDC)"
 
@@ -4626,6 +4766,16 @@ msgstr ""
 #. js-lingui-id: uvY7Wk
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "Subscription activated."
+msgstr ""
+
+#. js-lingui-id: 8Ucb+k
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Subscription expired. Click on the 'Download bank slip' button to download yor bank slip."
+msgstr ""
+
+#. js-lingui-id: h69Gpa
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Subscription expired. Please contact your admin."
 msgstr ""
 
 #. js-lingui-id: B5jRKH
@@ -4767,6 +4917,11 @@ msgstr "Тестирање радног процеса"
 msgid "Text copied to clipboard"
 msgstr "Текст копиран у клипборд"
 
+#. js-lingui-id: jEOcvL
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+#~ msgid "The address data as it will used as payer infromation."
+#~ msgstr ""
+
 #. js-lingui-id: 1xQkU9
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "The default country code for new phone numbers."
@@ -4808,6 +4963,11 @@ msgstr "Име вашег домена"
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "The name of your organization"
 msgstr "Име ваше организације"
+
+#. js-lingui-id: hS1s+i
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+#~ msgid "The name/social reason as it will used as payer infromation."
+#~ msgstr ""
 
 #. js-lingui-id: L97sPr
 #: src/pages/not-found/NotFound.tsx
@@ -4865,6 +5025,11 @@ msgstr "Постоји проблем"
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
 #~ msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
 #~ msgstr "\"Ово су само параметри сервера. Уверите се да ваше радно окружење има исте променљиве и вредности, ово је потребно за асинхроне задатке као што је синхронизација имејла.\""
+
+#. js-lingui-id: Fb+kqj
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Theses are the necessary data to emit your bank slip"
+msgstr ""
 
 #. js-lingui-id: hqCwGc
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -4924,6 +5089,11 @@ msgstr "Ове недеље"
 #. js-lingui-id: 4YifBe
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 msgid "This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings."
+msgstr ""
+
+#. js-lingui-id: kjAL4v
+#: src/modules/chat/call-center/hooks/useCommandMenuTicket.ts
+msgid "Ticket"
 msgstr ""
 
 #. js-lingui-id: n9nSNJ
@@ -5026,6 +5196,11 @@ msgstr "Тип"
 msgid "Type anything"
 msgstr "Укуцајте било шта"
 
+#. js-lingui-id: VKRQFd
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "UF"
+msgstr ""
+
 #. js-lingui-id: V9+2pH
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Ukrainian"
@@ -5048,8 +5223,8 @@ msgid "Unknown error"
 msgstr "Непозната грешка"
 
 #. js-lingui-id: GQCXQS
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "Unlimited contacts"
 msgstr "Неограничени контакти"
 

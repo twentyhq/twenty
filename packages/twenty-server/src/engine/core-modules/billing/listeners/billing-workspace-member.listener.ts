@@ -1,9 +1,14 @@
 /* @license Enterprise */
 
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { ChargeType } from 'src/engine/core-modules/billing/enums/billint-charge-type.enum';
 import {
   UpdateSubscriptionQuantityJob,
   UpdateSubscriptionQuantityJobData,
@@ -22,6 +27,8 @@ export class BillingWorkspaceMemberListener {
     @InjectMessageQueue(MessageQueue.billingQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly twentyConfigService: TwentyConfigService,
+    @InjectRepository(BillingSubscription, 'core')
+    private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
   ) {}
 
   @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.CREATED)
@@ -32,6 +39,14 @@ export class BillingWorkspaceMemberListener {
     >,
   ) {
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+      return;
+    }
+
+    const subscription = await this.billingSubscriptionRepository.findOne({
+      where: { workspaceId: payload.workspaceId },
+    });
+
+    if (subscription?.chargeType != ChargeType.PER_SEAT) {
       return;
     }
 

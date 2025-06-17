@@ -5,11 +5,17 @@ import { User } from '@sentry/types';
 import { Repository } from 'typeorm';
 
 import {
+  CreateDialingPlanInput,
+  CreatePabxCompanyInput,
+  CreatePabxTrunkInput,
   CreateTelephonyInput,
+  SetupPabxEnvironmentInput,
+  UpdateRoutingRulesInput,
   UpdateTelephonyInput,
 } from 'src/engine/core-modules/telephony/inputs';
 import { PabxService } from 'src/engine/core-modules/telephony/services/pabx.service';
 import { TelephonyService } from 'src/engine/core-modules/telephony/services/telephony.service';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 
 import {
@@ -21,6 +27,12 @@ import {
   TelephonyExtension,
 } from './telephony.entity';
 
+import { PabxCompanyResponseType } from './types/Create/PabxCompanyResponse.type';
+import { PabxDialingPlanResponseType } from './types/Create/PabxDialingPlanResponse.type';
+import { PabxTrunkResponseType } from './types/Create/PabxTrunkResponse.type';
+import { UpdateRoutingRulesResponseType } from './types/Create/UpdateRoutingRulesResponse.type';
+import { SetupPabxEnvironmentResponseType } from './types/SetupPabxEnvironmentResponse.type';
+
 @Resolver(() => Telephony)
 export class TelephonyResolver {
   constructor(
@@ -28,9 +40,23 @@ export class TelephonyResolver {
     private readonly telephonyRepository: Repository<Telephony>,
     private readonly telephonyService: TelephonyService,
     private readonly pabxService: PabxService,
+    private readonly workspaceService: WorkspaceService,
   ) {}
 
-  getRamalBody(input: CreateTelephonyInput | UpdateTelephonyInput) {
+  async getRamalBody(
+    input: CreateTelephonyInput | UpdateTelephonyInput,
+    workspaceId: string,
+  ) {
+    const workspace = await this.workspaceService.findById(workspaceId);
+
+    if (!workspace) {
+      throw new Error('Workspace not found');
+    }
+
+    if (!workspace.pabxCompanyId) {
+      throw new Error('PABX company not found');
+    }
+
     return {
       dados: {
         tipo: input.type ? parseInt(input.type) : 1,
@@ -38,7 +64,7 @@ export class TelephonyResolver {
         numero: input.numberExtension,
         senha_sip: input.SIPPassword,
         caller_id_externo: input.callerExternalID,
-        cliente_id: this.pabxService.LIST_BODY.cliente_id,
+        cliente_id: workspace.pabxCompanyId,
         grupo_ramais: '1',
         centro_custo: '1',
         dupla_autenticacao_ip_permitido: '1',
@@ -149,9 +175,10 @@ export class TelephonyResolver {
       throw new Error('Workspace id not found');
     }
 
-    const ramalBody = this.getRamalBody(createTelephonyInput);
-
-    console.log('ramalBody: ', ramalBody);
+    const ramalBody = await this.getRamalBody(
+      createTelephonyInput,
+      createTelephonyInput.workspaceId,
+    );
 
     try {
       const createdRamal = await this.pabxService.createExtention(ramalBody);
@@ -171,8 +198,6 @@ export class TelephonyResolver {
         return result;
       }
     } catch (error) {
-      console.log('error da telefonia: ', error);
-
       return error;
     }
   }
@@ -210,7 +235,12 @@ export class TelephonyResolver {
     try {
       const ramalBody = {
         dados: {
-          ...this.getRamalBody(updateTelephonyInput).dados,
+          ...(
+            await this.getRamalBody(
+              updateTelephonyInput,
+              telephony.workspace.id,
+            )
+          ).dados,
           ramal_id: telephony.ramal_id,
         },
       };
@@ -239,29 +269,108 @@ export class TelephonyResolver {
   }
 
   @Query(() => [TelephonyExtension], { nullable: true })
-  async getAllExtensions(): Promise<TelephonyExtension[]> {
-    const extensions = await this.pabxService.listExtentions();
+  async getAllExtensions(
+    @Args('workspaceId', { type: () => ID }) workspaceId: string,
+  ): Promise<TelephonyExtension[]> {
+    const workspace = await this.workspaceService.findById(workspaceId);
+
+    if (!workspace) {
+      throw new Error('Workspace not found');
+    }
+
+    if (!workspace.pabxCompanyId) {
+      throw new Error('PABX company not found');
+    }
+
+    const extensions = await this.pabxService.listExtentions({
+      cliente_id: workspace.pabxCompanyId,
+    });
 
     return extensions.data.dados;
   }
 
+  @Query(() => TelephonyExtension, { nullable: true })
+  async getUserSoftfone(
+    @Args('workspaceId', { type: () => ID }) workspaceId: string,
+    @Args('extNum', { type: () => String, nullable: true }) extNum?: string,
+  ): Promise<TelephonyExtension | null> {
+    const workspace = await this.workspaceService.findById(workspaceId);
+
+    if (!workspace) {
+      throw new Error('Workspace not found');
+    }
+
+    if (!extNum) {
+      return null;
+    }
+
+    const extensions = await this.pabxService.listExtentions({
+      numero: extNum,
+      cliente_id: workspace.pabxCompanyId,
+    });
+
+    return extensions.data.dados[0];
+  }
+
   @Query(() => [TelephonyDialingPlan], { nullable: true })
-  async getTelephonyPlans(): Promise<TelephonyDialingPlan[]> {
-    const extensions = await this.pabxService.listDialingPlans();
+  async getTelephonyPlans(
+    @Args('workspaceId', { type: () => ID }) workspaceId: string,
+  ): Promise<TelephonyDialingPlan[]> {
+    const workspace = await this.workspaceService.findById(workspaceId);
+
+    if (!workspace) {
+      throw new Error('Workspace not found');
+    }
+
+    if (!workspace.pabxCompanyId) {
+      throw new Error('PABX company not found');
+    }
+
+    const extensions = await this.pabxService.listDialingPlans({
+      cliente_id: workspace.pabxCompanyId,
+    });
 
     return extensions.data.dados;
   }
 
   @Query(() => [TelephonyDids], { nullable: true })
-  async getTelephonyDids(): Promise<TelephonyDids[]> {
-    const extensions = await this.pabxService.listDids();
+  async getTelephonyDids(
+    @Args('workspaceId', { type: () => ID }) workspaceId: string,
+  ): Promise<TelephonyDids[]> {
+    const workspace = await this.workspaceService.findById(workspaceId);
+
+    if (!workspace) {
+      throw new Error('Workspace not found');
+    }
+
+    if (!workspace.pabxCompanyId) {
+      throw new Error('PABX company not found');
+    }
+
+    const extensions = await this.pabxService.listDids({
+      cliente_id: workspace.pabxCompanyId,
+    });
 
     return extensions.data.dados;
   }
 
   @Query(() => [Campaign], { nullable: true })
-  async getTelephonyURAs(): Promise<Campaign[]> {
-    const uras = await this.pabxService.listCampaigns();
+  async getTelephonyURAs(
+    @Args('workspaceId', { type: () => ID }) workspaceId: string,
+  ): Promise<Campaign[]> {
+    const workspace = await this.workspaceService.findById(workspaceId);
+
+    if (!workspace) {
+      throw new Error('Workspace not found');
+    }
+
+    if (!workspace.pabxCompanyId) {
+      throw new Error('PABX company not found');
+    }
+
+    const uras = await this.pabxService.listCampaigns({
+      cliente_id: workspace.pabxCompanyId,
+    });
 
     const data = uras.data.dados.map((ura: Campaign) => {
       const { campanha_id, cliente_id, nome } = ura;
@@ -273,8 +382,22 @@ export class TelephonyResolver {
   }
 
   @Query(() => [TelephonyCallFlow], { nullable: true })
-  async getTelephonyCallFlows(): Promise<TelephonyCallFlow[]> {
-    const callFlows = await this.pabxService.listIntegrationFlows();
+  async getTelephonyCallFlows(
+    @Args('workspaceId', { type: () => ID }) workspaceId: string,
+  ): Promise<TelephonyCallFlow[]> {
+    const workspace = await this.workspaceService.findById(workspaceId);
+
+    if (!workspace) {
+      throw new Error('Workspace not found');
+    }
+
+    if (!workspace.pabxCompanyId) {
+      throw new Error('PABX company not found');
+    }
+
+    const callFlows = await this.pabxService.listIntegrationFlows({
+      cliente_id: workspace.pabxCompanyId,
+    });
 
     const data = callFlows.data.dados.map((ura: TelephonyCallFlow) => {
       const { fluxo_chamada_id, fluxo_chamada_nome } = ura;
@@ -283,17 +406,6 @@ export class TelephonyResolver {
     });
 
     return data;
-  }
-
-  @Query(() => TelephonyExtension, { nullable: true })
-  async getUserSoftfone(
-    @Args('extNum', { type: () => String }) extNum: string,
-  ): Promise<TelephonyExtension> {
-    const extensions = await this.pabxService.listExtentions({
-      numero: extNum,
-    });
-
-    return extensions.data.dados[0];
   }
 
   @Mutation(() => Boolean)
@@ -325,5 +437,252 @@ export class TelephonyResolver {
     const result = await this.telephonyService.delete({ id: telephonyId });
 
     return result;
+  }
+
+  @Mutation(() => PabxCompanyResponseType, { name: 'createPabxCompany' })
+  async createPabxCompany(
+    @AuthUser() { id: userId }: User,
+    @Args('input') input: CreatePabxCompanyInput,
+  ): Promise<PabxCompanyResponseType> {
+    if (!userId) {
+      throw new Error('User id not found');
+    }
+
+    if (!input.workspaceId) {
+      throw new Error('Workspace id not found in input');
+    }
+
+    try {
+      const result = await this.pabxService.createCompany(input);
+
+      if (result && result.data && result.data.id) {
+        await this.workspaceService.updateWorkspaceById({
+          payload: {
+            id: input.workspaceId,
+            pabxCompanyId: result.data.id,
+          },
+        });
+      }
+
+      return {
+        success: true,
+        message: `Company created successfully: ${input.nome}, id: ${result.data.id}`,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: `Failed to create company: ${error.message}`,
+      };
+    }
+  }
+
+  @Mutation(() => PabxTrunkResponseType, { name: 'createPabxTrunk' })
+  async createPabxTrunk(
+    @AuthUser() { id: userId }: User,
+    @Args('input') input: CreatePabxTrunkInput,
+  ): Promise<PabxTrunkResponseType> {
+    if (!userId) {
+      throw new Error('User id not found');
+    }
+
+    if (!input.workspaceId) {
+      throw new Error('Workspace id not found in input');
+    }
+
+    try {
+      const result = await this.pabxService.createTrunk(input);
+
+      if (result && result.data && result.data.id) {
+        await this.workspaceService.updateWorkspaceById({
+          payload: {
+            id: input.workspaceId,
+            pabxTrunkId: result.data.id,
+          },
+        });
+      }
+
+      return {
+        success: true,
+        message: `Trunk created successfully: ${input.nome}`,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: `Failed to create trunk: ${error.message}`,
+      };
+    }
+  }
+
+  @Mutation(() => PabxDialingPlanResponseType, { name: 'createDialingPlan' })
+  async createDialingPlan(
+    @AuthUser() { id: userId }: User,
+    @Args('input') input: CreateDialingPlanInput,
+  ): Promise<PabxDialingPlanResponseType> {
+    if (!userId) {
+      throw new Error('User id not found');
+    }
+
+    if (!input.workspaceId) {
+      throw new Error('Workspace id not found in input');
+    }
+
+    try {
+      const result = await this.pabxService.createDialingPlan(input);
+
+      if (result && result.data && result.data.id) {
+        await this.workspaceService.updateWorkspaceById({
+          payload: {
+            id: input.workspaceId,
+            pabxDialingPlanId: result.data.id,
+          },
+        });
+      }
+
+      return {
+        success: true,
+        message: `Dialing plan created successfully: ${input.nome}`,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: `Failed to create dialing plan: ${error.message}`,
+      };
+    }
+  }
+
+  @Mutation(() => UpdateRoutingRulesResponseType, {
+    name: 'updateRoutingRules',
+  })
+  async updateRoutingRules(
+    @AuthUser() { id: userId }: User,
+    @Args('input') input: UpdateRoutingRulesInput,
+  ): Promise<UpdateRoutingRulesResponseType> {
+    if (!userId) {
+      throw new Error('User id not found');
+    }
+
+    try {
+      await this.pabxService.updateRoutingRules(input);
+
+      return {
+        success: true,
+        message: `Routing rules updated successfully for dialing plan ID: ${input.plano_discagem_id}`,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: `Failed to update routing rules: ${error.message}`,
+      };
+    }
+  }
+
+  @Mutation(() => SetupPabxEnvironmentResponseType, {
+    name: 'setupPabxEnvironment',
+  })
+  async setupPabxEnvironment(
+    @AuthUser() { id: userId }: User,
+    @Args('input') input: SetupPabxEnvironmentInput,
+  ): Promise<SetupPabxEnvironmentResponseType> {
+    if (!userId) {
+      throw new Error('User id not found');
+    }
+
+    if (!input.workspaceId) {
+      throw new Error('Workspace ID is required in input');
+    }
+
+    let companyId: number | undefined;
+    let trunkAPIId: number | undefined;
+    let dialingPlanAPIId: number | undefined;
+
+    try {
+      const companyInput: CreatePabxCompanyInput = {
+        ...input.companyDetails,
+        workspaceId: input.workspaceId,
+      };
+
+      const companyResult = await this.pabxService.createCompany(companyInput);
+
+      companyId = companyResult.data.id;
+
+      if (!companyResult || !companyResult.data || !companyId) {
+        throw new Error('Failed to create PABX company or retrieve ID.');
+      }
+
+      const trunkInput: CreatePabxTrunkInput = {
+        ...input.trunkDetails,
+        cliente_id: companyId,
+        workspaceId: input.workspaceId,
+      };
+
+      const trunkResult = await this.pabxService.createTrunk(trunkInput);
+
+      trunkAPIId = trunkResult.data.id;
+
+      if (!trunkResult || !trunkResult.data || !trunkAPIId) {
+        throw new Error('Failed to create PABX trunk or retrieve ID.');
+      }
+
+      // Step 3: Create Dialing Plan
+      const dialingPlanInput: CreateDialingPlanInput = {
+        ...input.dialingPlanDetails,
+        cliente_id: companyId,
+        workspaceId: input.workspaceId,
+      };
+
+      const dialingPlanResult =
+        await this.pabxService.createDialingPlan(dialingPlanInput);
+
+      dialingPlanAPIId = dialingPlanResult.data.id;
+
+      if (!dialingPlanResult || !dialingPlanResult.data || !dialingPlanAPIId) {
+        throw new Error('Failed to create PABX dialing plan or retrieve ID.');
+      }
+
+      await this.workspaceService.updateWorkspaceById({
+        payload: {
+          id: input.workspaceId,
+          pabxCompanyId: companyId,
+          pabxTrunkId: trunkAPIId,
+          pabxDialingPlanId: dialingPlanAPIId,
+        },
+      });
+
+      // Inject trunkAPIId into all routing rules
+      const routingRulesDataWithTrunkId = {
+        ...input.routingRulesData,
+        regioes: input.routingRulesData.regioes.map((region) => ({
+          ...region,
+          roteamentos: region.roteamentos.map((rule) => ({
+            ...rule,
+            tronco_id: trunkAPIId,
+          })),
+        })),
+      };
+
+      const routingRulesInput: UpdateRoutingRulesInput = {
+        plano_discagem_id: dialingPlanAPIId,
+        cliente_id: companyId,
+        dados: routingRulesDataWithTrunkId,
+      };
+
+      await this.pabxService.updateRoutingRules(routingRulesInput);
+
+      return {
+        success: true,
+        message: 'PABX environment set up successfully.',
+        companyId: companyId,
+        trunkId: trunkAPIId,
+        dialingPlanId: dialingPlanAPIId,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: `Failed to set up PABX environment: ${error.message}`,
+        companyId,
+        trunkId: trunkAPIId,
+        dialingPlanId: dialingPlanAPIId,
+      };
+    }
   }
 }

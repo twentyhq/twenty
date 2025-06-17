@@ -136,7 +136,7 @@ msgstr "1. 类型"
 #~ msgstr "10,000 次工作流节点执行"
 
 #. js-lingui-id: 7IIx+y
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "10,000 workflow node executions"
 msgstr ""
 
@@ -162,7 +162,7 @@ msgstr "2. 配置字段"
 #~ msgstr "20,000 次工作流节点执行"
 
 #. js-lingui-id: YfwnsU
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "20,000 workflow node executions"
 msgstr ""
 
@@ -383,6 +383,12 @@ msgstr "已添加 {beautifyPastDateRelative}"
 msgid "Added to blocklist"
 msgstr "已添加到拦截列表"
 
+#. js-lingui-id: Du6bPw
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Address"
+msgstr ""
+
 #. js-lingui-id: Eis4ey
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 msgid "Adjust the role-related settings"
@@ -487,6 +493,11 @@ msgstr "允许通过共享邀请链接来邀请新用户。"
 msgid "Allow users to sign in with an email and password."
 msgstr "允许用户使用电子邮件和密码登录。"
 
+#. js-lingui-id: wgwm72
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Allows you to change your current subscription plan"
+msgstr ""
+
 #. js-lingui-id: LG4K0m
 #: src/pages/auth/PasswordReset.tsx
 msgid "An error occurred while updating password"
@@ -518,8 +529,8 @@ msgid "API"
 msgstr "接口"
 
 #. js-lingui-id: 0RqpZr
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "API & Webhooks"
 msgstr "API 和 Webhooks"
 
@@ -610,6 +621,16 @@ msgstr ""
 #: src/pages/settings/roles/components/RoleAssignmentConfirmationModalSubtitle.tsx
 #~ msgid "Are you sure you want to assign this role?"
 #~ msgstr "Are you sure you want to assign this role?"
+
+#. js-lingui-id: mupq7U
+#: src/pages/settings/billing/CancelSubscriptionPlan.tsx
+#~ msgid "Are you sure you want to cancel?"
+#~ msgstr ""
+
+#. js-lingui-id: QRW/xV
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Are you sure you want to change your subscripion plan? Your invoice amount will change at the end of the curent period."
+msgstr ""
 
 #. js-lingui-id: 8Y3Jbl
 #: src/modules/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction.tsx
@@ -735,6 +756,7 @@ msgstr "平均"
 
 #. js-lingui-id: iH8pgl
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
 msgid "Back"
 msgstr ""
 
@@ -747,7 +769,6 @@ msgstr "返回内容"
 #: src/pages/settings/SettingsBilling.tsx
 #: src/pages/settings/SettingsBilling.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Billing"
 msgstr "账单"
 
@@ -755,6 +776,11 @@ msgstr "账单"
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Blocklist"
 msgstr "拦截列表"
+
+#. js-lingui-id: HssMtJ
+#: src/modules/billing/hooks/useBillingPaymentProvidersMap.ts
+msgid "Boleto"
+msgstr ""
 
 #. js-lingui-id: 2yl5lQ
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -816,6 +842,7 @@ msgstr "无法更改标准对象的 API 名称"
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
+#: src/modules/settings/billing/components/SettingsBillingSwitchSubscriptonModal.tsx
 msgid "Cancel"
 msgstr "取消"
 
@@ -834,10 +861,25 @@ msgstr "取消计划"
 msgid "Cancel your subscription"
 msgstr "取消订阅"
 
+#. js-lingui-id: GHEVpv
+#: src/modules/billing/hooks/useBillingPaymentProvidersMap.ts
+msgid "Cartão de crédito"
+msgstr ""
+
 #. js-lingui-id: M1RLfx
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Catalan"
 msgstr "加泰罗尼亚语"
+
+#. js-lingui-id: V9PU36
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "CEP"
+msgstr ""
+
+#. js-lingui-id: o+XJ9D
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Change"
+msgstr ""
 
 #. js-lingui-id: OfzMnb
 #: src/pages/settings/SettingsBilling.tsx
@@ -851,14 +893,25 @@ msgstr "加泰罗尼亚语"
 msgid "Change Password"
 msgstr "更改密码"
 
+#. js-lingui-id: /A54X+
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Change plan"
+msgstr ""
+
 #. js-lingui-id: wRtBJP
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "Change Plan"
-msgstr ""
+#~ msgid "Change Plan"
+#~ msgstr ""
 
 #. js-lingui-id: EYSFEW
 #: src/pages/settings/workspace/SettingsDomain.tsx
 msgid "Change subdomain?"
+msgstr ""
+
+#. js-lingui-id: tGRbQa
+#: src/pages/settings/SettingsBilling.tsx
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Change subscription plan"
 msgstr ""
 
 #. js-lingui-id: b0h4XW
@@ -901,13 +954,18 @@ msgstr "选择将标识您记录的字段"
 msgid "Choose the format used to display date value"
 msgstr ""
 
+#. js-lingui-id: cnKeIQ
+#: src/modules/settings/billing/components/SettingsBillingSwitchSubscriptonModal.tsx
+msgid "Choose your new Plan"
+msgstr ""
+
 #. js-lingui-id: tjXxZj
-#: src/pages/onboarding/PaymentOptions.tsx
+#: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Choose your payment method"
 msgstr ""
 
 #. js-lingui-id: y1elF1
-#: src/pages/onboarding/Plans.tsx
+#: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Choose your plan"
 msgstr ""
 
@@ -920,6 +978,11 @@ msgstr "选择服务提供商"
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Choose your Trial"
 msgstr "选择试用"
+
+#. js-lingui-id: 3wV73y
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "City"
+msgstr ""
 
 #. js-lingui-id: xCJdfg
 #: src/modules/ui/input/components/internal/date/components/InternalDatePicker.tsx
@@ -992,6 +1055,11 @@ msgstr "紧凑视图"
 #. js-lingui-id: s2QZS6
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Companies"
+msgstr ""
+
+#. js-lingui-id: 7i8j3G
+#: src/modules/onboarding/hooks/useInterCustomerTypeOptions.ts
+msgid "Company"
 msgstr ""
 
 #. js-lingui-id: Vj43Y/
@@ -1069,15 +1137,13 @@ msgid "Context"
 msgstr "上下文"
 
 #. js-lingui-id: xGVfLh
-#: src/pages/onboarding/Plans.tsx
-#: src/pages/onboarding/PaymentSuccess.tsx
-#: src/pages/onboarding/PaymentOptions.tsx
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/pages/onboarding/CreateWorkspace.tsx
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
 #: src/modules/auth/sign-in-up/components/SignInUpWithCredentials.tsx
 msgid "Continue"
 msgstr "继续"
@@ -1204,6 +1270,11 @@ msgstr "计算为真"
 msgid "Count unique values"
 msgstr "计算唯一值"
 
+#. js-lingui-id: Md8EZY
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+#~ msgid "Cpf/Cnpj"
+#~ msgstr ""
+
 #. js-lingui-id: hYgDIe
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
@@ -1312,8 +1383,8 @@ msgid "Custom domain updated"
 msgstr "自定义域已更新"
 
 #. js-lingui-id: 8skTDV
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "Custom objects"
 msgstr "自定义对象"
 
@@ -1726,6 +1797,16 @@ msgstr "不要从 Gmail、Outlook 邮件中创建联系人"
 msgid "Don’t sync emails from team@ support@ noreply@..."
 msgstr "不要同步来自 team@、support@、noreply@ 的电子邮件……"
 
+#. js-lingui-id: Iari6C
+#: src/pages/settings/SettingsBilling.tsx
+msgid "Donwload bank slip"
+msgstr ""
+
+#. js-lingui-id: XxrnrL
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Download bank slip"
+msgstr ""
+
 #. js-lingui-id: WcWS//
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Download file"
@@ -1827,8 +1908,8 @@ msgid "Email cannot be empty"
 msgstr "电子邮件不能为空"
 
 #. js-lingui-id: lfQsvW
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "Email integration"
 msgstr "电子邮件集成"
 
@@ -1925,7 +2006,7 @@ msgid "English"
 msgstr "英语"
 
 #. js-lingui-id: /bfFKe
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/onboarding/components/OnboardingPlanCard.tsx
 msgid "Enjoy a {withCreditCardTrialPeriodDuration}-days free trial"
 msgstr "享受 {withCreditCardTrialPeriodDuration} 天的免费试用期"
 
@@ -2027,6 +2108,11 @@ msgstr ""
 #. js-lingui-id: k06M7e
 #: src/pages/settings/SettingsBilling.tsx
 msgid "Error while switching subscription to yearly."
+msgstr ""
+
+#. js-lingui-id: ON1CRr
+#: src/modules/settings/billing/hooks/useHandleUpdateSubscription.ts
+msgid "Error while updating subscription."
 msgstr ""
 
 #. js-lingui-id: JLxMta
@@ -2350,10 +2436,20 @@ msgstr "法语"
 #~ msgstr "从每年到每月"
 
 #. js-lingui-id: scmRyR
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "Full access"
 msgstr "完全访问"
+
+#. js-lingui-id: 0W0FHK
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Full name"
+msgstr ""
+
+#. js-lingui-id: /4TFrF
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+#~ msgid "Full Name"
+#~ msgstr ""
 
 #. js-lingui-id: xANKBj
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -2381,8 +2477,8 @@ msgstr "邀请您的团队，充分利用您的工作区。"
 
 #. js-lingui-id: zSGbaR
 #: src/pages/onboarding/ChooseYourPlan.tsx
-msgid "Get your subscription"
-msgstr "获取订阅"
+#~ msgid "Get your subscription"
+#~ msgstr "获取订阅"
 
 #. js-lingui-id: 2GT3Hf
 #: src/modules/command-menu/components/CommandMenu.tsx
@@ -2593,6 +2689,11 @@ msgstr "身份提供商"
 msgid "Identity Provider Metadata XML"
 msgstr "身份提供商元数据 XML"
 
+#. js-lingui-id: HlNkTA
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+#~ msgid "Identy"
+#~ msgstr ""
+
 #. js-lingui-id: ZfP/Ap
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
 msgid "If this is unexpected, please verify your settings."
@@ -2644,6 +2745,11 @@ msgstr ""
 msgid "Indexes"
 msgstr "索引"
 
+#. js-lingui-id: fByw/g
+#: src/modules/onboarding/hooks/useInterCustomerTypeOptions.ts
+msgid "Individual"
+msgstr ""
+
 #. js-lingui-id: JE2tjr
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
@@ -2666,6 +2772,11 @@ msgstr "实例"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Integrations"
 msgstr "集成"
+
+#. js-lingui-id: 26GmDR
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+#~ msgid "Inter Bolepix charge data"
+#~ msgstr ""
 
 #. js-lingui-id: GNRDhm
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -2944,6 +3055,16 @@ msgstr "启动"
 msgid "Layout"
 msgstr "布局"
 
+#. js-lingui-id: Ae7Hr2
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+#~ msgid "Legal entity"
+#~ msgstr ""
+
+#. js-lingui-id: /2pITc
+#: src/modules/onboarding/hooks/useInterCustomerTypeOptions.ts
+#~ msgid "Legal person"
+#~ msgstr ""
+
 #. js-lingui-id: haJ2Hb
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than"
@@ -2982,8 +3103,6 @@ msgid "Loading..."
 msgstr ""
 
 #. js-lingui-id: FgAxTj
-#: src/pages/onboarding/Plans.tsx
-#: src/pages/onboarding/PaymentOptions.tsx
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 msgid "Log out"
@@ -3188,6 +3307,11 @@ msgstr "API 密钥名称"
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Name of your workspace"
 msgstr "工作区名称"
+
+#. js-lingui-id: Rx5k5c
+#: src/modules/onboarding/hooks/useInterCustomerTypeOptions.ts
+#~ msgid "Natural person"
+#~ msgstr ""
 
 #. js-lingui-id: 2T8KCk
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -3672,6 +3796,11 @@ msgstr "密码已更新"
 msgid "Password reset link has been sent to the email"
 msgstr "密码重置链接已发送至电子邮件"
 
+#. js-lingui-id: +Fx9ea
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Payment data"
+msgstr ""
+
 #. js-lingui-id: 1wdjme
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -3740,6 +3869,16 @@ msgstr "永久销毁工作流程序"
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Permissions"
 msgstr "权限"
+
+#. js-lingui-id: 19jdAl
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Person type"
+msgstr ""
+
+#. js-lingui-id: sJYPeP
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Personal Details"
+msgstr ""
 
 #. js-lingui-id: qlqT9z
 #: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
@@ -4097,6 +4236,7 @@ msgstr "俄语"
 #. js-lingui-id: tfDRzk
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
+#: src/modules/settings/billing/components/SettingsBillingSwitchSubscriptonModal.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 msgid "Save"
 msgstr "保存"
@@ -4546,7 +4686,7 @@ msgid "SSO"
 msgstr "SSO"
 
 #. js-lingui-id: vlvAkg
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "SSO (SAML / OIDC)"
 msgstr "SSO (SAML / OIDC)"
 
@@ -4626,6 +4766,16 @@ msgstr ""
 #. js-lingui-id: uvY7Wk
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "Subscription activated."
+msgstr ""
+
+#. js-lingui-id: 8Ucb+k
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Subscription expired. Click on the 'Download bank slip' button to download yor bank slip."
+msgstr ""
+
+#. js-lingui-id: h69Gpa
+#: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
+msgid "Subscription expired. Please contact your admin."
 msgstr ""
 
 #. js-lingui-id: B5jRKH
@@ -4767,6 +4917,11 @@ msgstr "测试工作流"
 msgid "Text copied to clipboard"
 msgstr "文本已复制到剪贴板"
 
+#. js-lingui-id: jEOcvL
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+#~ msgid "The address data as it will used as payer infromation."
+#~ msgstr ""
+
 #. js-lingui-id: 1xQkU9
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "The default country code for new phone numbers."
@@ -4808,6 +4963,11 @@ msgstr "您的域名"
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "The name of your organization"
 msgstr "您组织的名称"
+
+#. js-lingui-id: hS1s+i
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+#~ msgid "The name/social reason as it will used as payer infromation."
+#~ msgstr ""
 
 #. js-lingui-id: L97sPr
 #: src/pages/not-found/NotFound.tsx
@@ -4865,6 +5025,11 @@ msgstr "出现问题"
 #: src/modules/settings/admin-panel/components/SettingsAdminEnvVariables.tsx
 #~ msgid "These are only the server values. Ensure your worker environment has the same variables and values, this is required for asynchronous tasks like email sync."
 #~ msgstr "这些只是服务器值。确保您的工作环境具有相同的变量和值，这是异步任务如电子邮件同步所需的。"
+
+#. js-lingui-id: Fb+kqj
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "Theses are the necessary data to emit your bank slip"
+msgstr ""
 
 #. js-lingui-id: hqCwGc
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -4924,6 +5089,11 @@ msgstr "本周"
 #. js-lingui-id: 4YifBe
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 msgid "This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings."
+msgstr ""
+
+#. js-lingui-id: kjAL4v
+#: src/modules/chat/call-center/hooks/useCommandMenuTicket.ts
+msgid "Ticket"
 msgstr ""
 
 #. js-lingui-id: n9nSNJ
@@ -5026,6 +5196,11 @@ msgstr "类型"
 msgid "Type anything"
 msgstr "输入任何内容"
 
+#. js-lingui-id: VKRQFd
+#: src/modules/onboarding/components/OnboardingInterChargeDataForm.tsx
+msgid "UF"
+msgstr ""
+
 #. js-lingui-id: V9+2pH
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Ukrainian"
@@ -5048,8 +5223,8 @@ msgid "Unknown error"
 msgstr "未知错误"
 
 #. js-lingui-id: GQCXQS
-#: src/pages/onboarding/ChooseYourPlan.tsx
-#: src/pages/onboarding/ChooseYourPlan.tsx
+#: src/modules/billing/utils/getPlanBenefits.ts
+#: src/modules/billing/utils/getPlanBenefits.ts
 msgid "Unlimited contacts"
 msgstr "无限联系人"
 

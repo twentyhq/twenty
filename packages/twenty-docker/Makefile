@@ -17,6 +17,12 @@ prod-migrate-kvoipv2-db:
 prod-sync-metadata:
 	docker exec -it kvoipv2-server sh -c "yarn command:prod workspace:sync-metadata"
 
+prod-sync-billing-plans:
+	docker exec -it kvoipv2-server sh -c "yarn command:prod billing:sync-plans-data"
+
+prod-start-billin-cron-subscription-check:
+	docker exec -it kvoipv2-server sh -c "yarn command:prod cron:billing:check-inter-payment-expiration"
+
 dev-seed-workspace:
 	docker exec -it kvoipv2-server sh -c "yarn command:prod workspace:seed:dev"
 

@@ -1,3 +1,5 @@
+import { ChatbotFlowEventContainerForm } from '@/chatbot/components/actions/ChatbotFlowEventContainerForm';
+import { useDeleteSelectedNode } from '@/chatbot/hooks/useDeleteSelectedNode';
 import { useUpdateChatbotFlow } from '@/chatbot/hooks/useUpdateChatbotFlow';
 import { chatbotFlowSelectedNodeState } from '@/chatbot/state/chatbotFlowSelectedNodeState';
 import { chatbotFlowState } from '@/chatbot/state/chatbotFlowState';
@@ -103,6 +105,7 @@ export const ChatbotFlowTextEventForm = ({
   const [text, setText] = useState<string>(initialText);
 
   const { updateFlow } = useUpdateChatbotFlow();
+  const { deleteSelectedNode } = useDeleteSelectedNode();
 
   const chatbotFlow = useRecoilValue(chatbotFlowState);
   const setChatbotFlowSelectedNode = useSetRecoilState(
@@ -184,20 +187,24 @@ export const ChatbotFlowTextEventForm = ({
           </StyledHeaderType>
         </StyledHeaderInfo>
       </StyledHeader>
-      <StyledStepBody>
-        <StyledDiv>
-          <Label>Message body</Label>
-          <textarea
-            id="text"
-            ref={textareaRef}
-            value={text}
-            onChange={handleInputChange}
-            disabled={text.length >= 4000}
-            onBlur={() => handleFieldBlur('text', text)}
-          />
-          <StyledLabel>{text.length}/4000</StyledLabel>
-        </StyledDiv>
-      </StyledStepBody>
+      <ChatbotFlowEventContainerForm
+        onClick={() => deleteSelectedNode(selectedNode.id)}
+      >
+        <StyledStepBody>
+          <StyledDiv>
+            <Label>Message body</Label>
+            <textarea
+              id="text"
+              ref={textareaRef}
+              value={text}
+              onChange={handleInputChange}
+              disabled={text.length >= 4000}
+              onBlur={() => handleFieldBlur('text', text)}
+            />
+            <StyledLabel>{text.length}/4000</StyledLabel>
+          </StyledDiv>
+        </StyledStepBody>
+      </ChatbotFlowEventContainerForm>
     </>
   );
 };

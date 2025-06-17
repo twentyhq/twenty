@@ -68,7 +68,7 @@ export class BillingSubscriptionItem {
   @Column({ nullable: false })
   stripePriceId: string;
 
-  @Column({ nullable: false, unique: true })
+  @Column({ nullable: true, unique: true })
   stripeSubscriptionItemId: string;
 
   @Column({ nullable: true, type: 'numeric' })

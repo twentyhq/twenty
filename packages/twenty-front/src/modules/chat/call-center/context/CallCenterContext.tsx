@@ -1,16 +1,25 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 /* eslint-disable @nx/workspace-no-state-useref */
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { createContext, useEffect, useMemo, useRef, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import {
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useFirestoreDb } from '@/chat/call-center/hooks/useFirestoreDb';
 import { useGetTabUnreadMessages } from '@/chat/call-center/hooks/useGetTabUnreadMessages';
 import { useRealTimeChats } from '@/chat/call-center/hooks/useRealTimeChats';
 import { useSendWhatsappEventMessage } from '@/chat/call-center/hooks/useSendWhatsappEventMessage';
 import { useSendWhatsappMessages } from '@/chat/call-center/hooks/useSendWhatsappMessages';
+import { serviceActionsState } from '@/chat/call-center/state/serviceActionsState';
 import { CallCenterContextType } from '@/chat/call-center/types/CallCenterContextType';
 import {
   FilteredMessage,
@@ -254,7 +263,12 @@ export const CallCenterProvider = ({
           (bot: any) => bot.id === chatbotId,
         );
 
-        if (last.from === findChatbot.name) continue;
+        if (
+          last.from === findChatbot.name &&
+          last.from !==
+            `_${currentWorkspaceMember?.name.firstName} ${currentWorkspaceMember?.name.lastName}`
+        )
+          continue;
 
         if (!executor) {
           // Change the way the request is made to chatbot flow
@@ -299,11 +313,13 @@ export const CallCenterProvider = ({
     if (waitingChats.length) process();
   }, [waitingChats, whatsappIntegrations]);
 
+  const setServiceActions = useSetRecoilState(serviceActionsState);
+
   const sortChats = () => {
     setWhatsappChats(sort(whatsappChats));
   };
 
-  const startService = () => {
+  const startService = useCallback(() => {
     const today = new Date();
 
     // const platformSpecificMessage = isWhatsappDocument(selectedChat)
@@ -339,9 +355,9 @@ export const CallCenterProvider = ({
     }
 
     setActiveTabId('mine');
-  };
+  }, []);
 
-  const finalizeService = () => {
+  const finalizeService = useCallback(() => {
     const today = new Date();
 
     // const platformSpecificMessage = isWhatsappDocument(selectedChat)
@@ -366,7 +382,7 @@ export const CallCenterProvider = ({
       type: MessageType.END,
       message: `${currentMember?.name.firstName} ${currentMember?.name.lastName} ${MessageEventType.END} (${today.toISOString().split('T')[0].replaceAll('-', '/')} - ${today.getHours()}:${(today.getMinutes() < 10 ? '0' : '') + today.getMinutes()})`,
     });
-  };
+  }, []);
 
   const transferService = (agent?: WorkspaceMember, sector?: Sector) => {
     // const platformSpecificMessage = isWhatsappDocument(selectedChat)
@@ -407,7 +423,7 @@ export const CallCenterProvider = ({
     });
   };
 
-  const holdService = () => {
+  const holdService = useCallback(() => {
     const today = new Date();
 
     // const platformSpecificMessage = isWhatsappDocument(selectedChat)
@@ -432,7 +448,15 @@ export const CallCenterProvider = ({
       type: MessageType.ONHOLD,
       message: `${currentMember?.name.firstName} ${currentMember?.name.lastName} ${MessageEventType.ONHOLD} (${today.toISOString().split('T')[0].replaceAll('-', '/')} - ${today.getHours()}:${(today.getMinutes() < 10 ? '0' : '') + today.getMinutes()})`,
     });
-  };
+  }, []);
+
+  useEffect(() => {
+    setServiceActions({
+      startService,
+      finalizeService,
+      holdService,
+    });
+  }, [finalizeService, holdService, setServiceActions, startService]);
 
   const handleSearch = (
     searchTerm: string,
