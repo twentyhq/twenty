@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { currencyFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/currencyFieldDefaultValueSchema';
+import { currencyFieldSettingsSchema } from '@/object-record/record-field/validation-schemas/currencyFieldSettingsSchema';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
@@ -13,6 +14,7 @@ import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToStr
 
 export const settingsDataModelFieldCurrencyFormSchema = z.object({
   defaultValue: currencyFieldDefaultValueSchema,
+  settings: currencyFieldSettingsSchema,
 });
 
 export type SettingsDataModelFieldCurrencyFormValues = z.infer<
@@ -21,7 +23,10 @@ export type SettingsDataModelFieldCurrencyFormValues = z.infer<
 
 type SettingsDataModelFieldCurrencyFormProps = {
   disabled?: boolean;
-  fieldMetadataItem: Pick<FieldMetadataItem, 'defaultValue'>;
+  fieldMetadataItem: Pick<
+    FieldMetadataItem,
+    'icon' | 'label' | 'type' | 'defaultValue' | 'settings'
+  >;
 };
 
 export const SettingsDataModelFieldCurrencyForm = ({
@@ -33,8 +38,9 @@ export const SettingsDataModelFieldCurrencyForm = ({
     initialAmountMicrosValue,
     initialCurrencyCodeValue,
     initialFormatValue,
-  } = useCurrencySettingsFormInitialValues({ fieldMetadataItem });
-
+  } = useCurrencySettingsFormInitialValues({
+    fieldMetadataItem,
+  });
   const { control } =
     useFormContext<SettingsDataModelFieldCurrencyFormValues>();
 
@@ -73,7 +79,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
         )}
       />
       <Controller
-        name="defaultValue.format"
+        name="settings.format"
         control={control}
         defaultValue={initialFormatValue}
         render={({ field: { onChange, value } }) => (

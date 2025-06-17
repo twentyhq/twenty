@@ -1,5 +1,5 @@
-import { useFormContext } from 'react-hook-form';
 import styled from '@emotion/styled';
+import { useFormContext } from 'react-hook-form';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
@@ -17,7 +17,7 @@ type SettingsDataModelFieldCurrencySettingsFormCardProps = {
   disabled?: boolean;
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'defaultValue'
+    'icon' | 'label' | 'type' | 'defaultValue' | 'settings'
   >;
 } & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
 
