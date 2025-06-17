@@ -82,11 +82,13 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
       {layoutDirection === 'search-bar-on-bottom' && (
         <>
           {isDefined(onCreate) && hasObjectUpdatePermissions && (
-            <DropdownMenuItemsContainer scrollable={false}>
-              {createNewButton}
-            </DropdownMenuItemsContainer>
+            <>
+              <DropdownMenuItemsContainer scrollable={false}>
+                {createNewButton}
+              </DropdownMenuItemsContainer>
+              <DropdownMenuSeparator />
+            </>
           )}
-          {records.recordsToSelect.length > 0 && <DropdownMenuSeparator />}
           <SingleRecordPickerMenuItems
             focusId={recordPickerInstanceId}
             recordsToSelect={records.recordsToSelect}
@@ -124,13 +126,13 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
               onRecordSelected,
             }}
           />
-          {records.recordsToSelect.length > 0 && isDefined(onCreate) && (
-            <DropdownMenuSeparator />
-          )}
           {isDefined(onCreate) && hasObjectUpdatePermissions && (
-            <DropdownMenuItemsContainer scrollable={false}>
-              {createNewButton}
-            </DropdownMenuItemsContainer>
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItemsContainer scrollable={false}>
+                {createNewButton}
+              </DropdownMenuItemsContainer>
+            </>
           )}
         </>
       )}
