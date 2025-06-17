@@ -352,11 +352,13 @@ export class WorkflowVersionStepWorkspaceService {
   }): Promise<WorkflowAction> {
     // We don't enrich on the fly for code and HTTP request workflow actions.
     // For code actions, OutputSchema is computed and updated when testing the serverless function.
-    // For HTTP requests, OutputSchema is determined by the expamle response input
+    // For HTTP requests and AI agent, OutputSchema is determined by the expamle response input
     if (
-      [WorkflowActionType.CODE, WorkflowActionType.HTTP_REQUEST].includes(
-        step.type,
-      )
+      [
+        WorkflowActionType.CODE,
+        WorkflowActionType.HTTP_REQUEST,
+        WorkflowActionType.AI_AGENT,
+      ].includes(step.type)
     ) {
       return step;
     }
