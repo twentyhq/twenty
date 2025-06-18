@@ -108,6 +108,11 @@ msgstr ""
 msgid "{contextStoreNumberOfSelectedRecords} selected"
 msgstr "{contextStoreNumberOfSelectedRecords} נבחר"
 
+#. js-lingui-id: WS/avX
+#: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
+msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
+msgstr ""
+
 #. js-lingui-id: wapGcj
 #: src/modules/auth/components/VerifyEmailEffect.tsx
 msgid "{message}"
@@ -789,9 +794,9 @@ msgid "Average"
 msgstr "ממוצע"
 
 #. js-lingui-id: iH8pgl
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
-#~ msgid "Back"
-#~ msgstr ""
+#: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
+msgid "Back"
+msgstr ""
 
 #. js-lingui-id: Dht9W3
 #: src/pages/not-found/NotFound.tsx
@@ -876,6 +881,7 @@ msgstr "לא ניתן לשנות שמות API עבור עצמים סטנדרטי
 #: src/pages/auth/Authorize.tsx
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+#: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
@@ -1177,6 +1183,7 @@ msgstr "הקשר"
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
+#: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Continue"
@@ -2787,6 +2794,11 @@ msgstr "ייבוא זרימות עבודה"
 msgid "Importing"
 msgstr "מייבא"
 
+#. js-lingui-id: YgmSaz
+#: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
+msgid "Importing Data ..."
+msgstr ""
+
 #. js-lingui-id: NoNwIX
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -3274,10 +3286,15 @@ msgstr ""
 msgid "Max"
 msgstr "מקס"
 
+#. js-lingui-id: HFjNu6
+#: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
+msgid "Max import capacity: {formatSpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API."
+msgstr ""
+
 #. js-lingui-id: JGZq0R
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
-msgid "Max import capacity: {SpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API."
-msgstr ""
+#~ msgid "Max import capacity: {SpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API."
+#~ msgstr ""
 
 #. js-lingui-id: Sma10A
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignIn.tsx
@@ -4180,6 +4197,11 @@ msgstr "אירועים אחרונים (ישן → חדש)"
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Reconnect"
 msgstr "התחבר מחדש"
+
+#. js-lingui-id: 2CUci6
+#: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
+msgid "Record creation stopped. {formattedCreatedRecordsCount} records created."
+msgstr ""
 
 #. js-lingui-id: mj1fkT
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
