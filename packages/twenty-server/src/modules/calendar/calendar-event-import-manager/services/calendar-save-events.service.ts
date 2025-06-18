@@ -8,7 +8,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { injectIdsInCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/inject-ids-in-calendar-events.util';
+import { existingCalendarEventsMapper } from 'src/modules/calendar/calendar-event-import-manager/utils/inject-ids-in-calendar-events.util';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
@@ -40,139 +40,162 @@ export class CalendarSaveEventsService {
         'calendarEvent',
       );
 
+    const calendarChannelEventAssociationRepository =
+      await this.twentyORMManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+        'calendarChannelEventAssociation',
+      );
+
     const existingCalendarEvents = await calendarEventRepository.find({
       where: {
         iCalUID: Any(filteredEvents.map((event) => event.iCalUID as string)),
       },
     });
 
-    const iCalUIDCalendarEventIdMap = new Map(
-      existingCalendarEvents.map((calendarEvent) => [
-        calendarEvent.iCalUID,
-        calendarEvent.id,
-      ]),
+    const existingCalendarEventsMap = existingCalendarEventsMapper(
+      existingCalendarEvents,
     );
 
-    const calendarEventsWithIds = injectIdsInCalendarEvents(
-      filteredEvents,
-      iCalUIDCalendarEventIdMap,
-    );
-
-    // TODO: When we will be able to add unicity contraint on iCalUID, we will do a INSERT ON CONFLICT DO UPDATE
-
-    const existingEventsICalUIDs = existingCalendarEvents.map(
-      (calendarEvent) => calendarEvent.iCalUID,
-    );
-
-    const eventsToSave = calendarEventsWithIds.filter(
-      (calendarEvent) =>
-        !existingEventsICalUIDs.includes(calendarEvent.iCalUID),
-    );
-
-    const eventsToUpdate = calendarEventsWithIds.filter((calendarEvent) =>
-      existingEventsICalUIDs.includes(calendarEvent.iCalUID),
-    );
-
-    const calendarChannelEventAssociationRepository =
-      await this.twentyORMManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
-        'calendarChannelEventAssociation',
+    const filteredEventsWithAction = filteredEvents.map((event) => {
+      const existingEventWithSameiCalUID = existingCalendarEventsMap.get(
+        event.iCalUID,
       );
 
-    const existingCalendarChannelEventAssociations =
-      await calendarChannelEventAssociationRepository.find({
-        where: {
-          eventExternalId: Any(
-            calendarEventsWithIds.map((calendarEvent) => calendarEvent.id),
-          ),
-          calendarChannel: {
-            id: calendarChannel.id,
-          },
-        },
-      });
+      if (existingEventWithSameiCalUID) {
+        return { ...event, toBeSaved: false };
+      }
 
-    const calendarChannelEventAssociationsToSave = calendarEventsWithIds
-      .filter(
-        (calendarEvent) =>
-          !existingCalendarChannelEventAssociations.some(
-            (association) => association.eventExternalId === calendarEvent.id,
-          ),
-      )
-      .map((calendarEvent) => ({
-        calendarEventId: calendarEvent.id,
-        eventExternalId: calendarEvent.externalId,
-        calendarChannelId: calendarChannel.id,
-        recurringEventExternalId: calendarEvent.recurringEventExternalId,
-      }));
-
-    const participantsToSave = eventsToSave.flatMap(
-      (event) => event.participants,
-    );
-
-    const participantsToUpdate = eventsToUpdate.flatMap(
-      (event) => event.participants,
-    );
+      return { ...event, toBeSaved: true };
+    });
 
     const workspaceDataSource = await this.twentyORMManager.getDatasource();
 
     await workspaceDataSource?.transaction(
       async (transactionManager: WorkspaceEntityManager) => {
-        await calendarEventRepository.save(
-          eventsToSave.map(
-            (calendarEvent) =>
-              ({
-                id: calendarEvent.id,
-                iCalUID: calendarEvent.iCalUID,
-                title: calendarEvent.title,
-                description: calendarEvent.description,
-                startsAt: calendarEvent.startsAt,
-                endsAt: calendarEvent.endsAt,
-                location: calendarEvent.location,
-                isFullDay: calendarEvent.isFullDay,
-                isCanceled: calendarEvent.isCanceled,
-                conferenceSolution: calendarEvent.conferenceSolution,
-                conferenceLink: {
-                  primaryLinkLabel: calendarEvent.conferenceLinkLabel,
-                  primaryLinkUrl: calendarEvent.conferenceLinkUrl,
-                },
-                externalCreatedAt: calendarEvent.externalCreatedAt,
-                externalUpdatedAt: calendarEvent.externalUpdatedAt,
-              }) satisfies DeepPartial<CalendarEventWorkspaceEntity>,
-          ),
+        const savedCalendarEvents = await calendarEventRepository.save(
+          filteredEventsWithAction
+            .filter((event) => event.toBeSaved)
+            .map(
+              (calendarEvent) =>
+                ({
+                  iCalUID: calendarEvent.iCalUID,
+                  title: calendarEvent.title,
+                  description: calendarEvent.description,
+                  startsAt: calendarEvent.startsAt,
+                  endsAt: calendarEvent.endsAt,
+                  location: calendarEvent.location,
+                  isFullDay: calendarEvent.isFullDay,
+                  isCanceled: calendarEvent.isCanceled,
+                  conferenceSolution: calendarEvent.conferenceSolution,
+                  conferenceLink: {
+                    primaryLinkLabel: calendarEvent.conferenceLinkLabel,
+                    primaryLinkUrl: calendarEvent.conferenceLinkUrl,
+                  },
+                  externalCreatedAt: calendarEvent.externalCreatedAt,
+                  externalUpdatedAt: calendarEvent.externalUpdatedAt,
+                }) satisfies DeepPartial<CalendarEventWorkspaceEntity>,
+            ),
           {},
           transactionManager,
         );
 
         await calendarEventRepository.save(
-          eventsToUpdate.map(
-            (calendarEvent) =>
-              ({
-                id: calendarEvent.id,
-                iCalUID: calendarEvent.iCalUID,
-                title: calendarEvent.title,
-                description: calendarEvent.description,
-                startsAt: calendarEvent.startsAt,
-                endsAt: calendarEvent.endsAt,
-                location: calendarEvent.location,
-                isFullDay: calendarEvent.isFullDay,
-                isCanceled: calendarEvent.isCanceled,
-                conferenceSolution: calendarEvent.conferenceSolution,
-                conferenceLink: {
-                  primaryLinkLabel: calendarEvent.conferenceLinkLabel,
-                  primaryLinkUrl: calendarEvent.conferenceLinkUrl,
-                },
-                externalCreatedAt: calendarEvent.externalCreatedAt,
-                externalUpdatedAt: calendarEvent.externalUpdatedAt,
-              }) satisfies DeepPartial<CalendarEventWorkspaceEntity>,
-          ),
+          filteredEventsWithAction
+            .filter((event) => !event.toBeSaved)
+            .map(
+              (calendarEvent) =>
+                ({
+                  id: existingCalendarEventsMap.get(calendarEvent.iCalUID),
+                  iCalUID: calendarEvent.iCalUID,
+                  title: calendarEvent.title,
+                  description: calendarEvent.description,
+                  startsAt: calendarEvent.startsAt,
+                  endsAt: calendarEvent.endsAt,
+                  location: calendarEvent.location,
+                  isFullDay: calendarEvent.isFullDay,
+                  isCanceled: calendarEvent.isCanceled,
+                  conferenceSolution: calendarEvent.conferenceSolution,
+                  conferenceLink: {
+                    primaryLinkLabel: calendarEvent.conferenceLinkLabel,
+                    primaryLinkUrl: calendarEvent.conferenceLinkUrl,
+                  },
+                  externalCreatedAt: calendarEvent.externalCreatedAt,
+                  externalUpdatedAt: calendarEvent.externalUpdatedAt,
+                }) satisfies DeepPartial<CalendarEventWorkspaceEntity>,
+            ),
           {},
           transactionManager,
         );
+
+        const filteredEventsWithActionAndIds = filteredEventsWithAction.map(
+          (event) => {
+            if (event.toBeSaved) {
+              const savedCalendarEventId = savedCalendarEvents.find(
+                (savedEvent) => savedEvent.iCalUID === event.iCalUID,
+              )?.id;
+
+              if (!savedCalendarEventId) {
+                throw new Error(
+                  `Saved event with iCalUID ${event.iCalUID} not found - should never happen`,
+                );
+              }
+
+              return {
+                ...event,
+                id: savedCalendarEventId,
+              };
+            } else {
+              const id = existingCalendarEventsMap.get(event.iCalUID);
+
+              if (!id) {
+                throw new Error(
+                  `Updated event with iCalUID ${event.iCalUID} not found - should never happen`,
+                );
+              }
+
+              return {
+                ...event,
+                id,
+              };
+            }
+          },
+        );
+
+        const calendarChannelEventAssociationsToSave =
+          filteredEventsWithActionAndIds.map((calendarEvent) => ({
+            calendarEventId: calendarEvent.id,
+            eventExternalId: calendarEvent.externalId,
+            calendarChannelId: calendarChannel.id,
+            recurringEventExternalId: calendarEvent.recurringEventExternalId,
+          }));
 
         await calendarChannelEventAssociationRepository.save(
           calendarChannelEventAssociationsToSave,
           {},
           transactionManager,
         );
+
+        const participantsWithCalendarEventId =
+          filteredEventsWithActionAndIds.map((event) => {
+            const participantsWithCalendarEventId = event.participants.map(
+              (participant) => ({
+                ...participant,
+                calendarEventId: event.id,
+              }),
+            );
+
+            return {
+              ...event,
+              participants: participantsWithCalendarEventId,
+            };
+          });
+
+        const participantsToSave = participantsWithCalendarEventId
+          .filter((event) => event.toBeSaved)
+          .flatMap((event) => event.participants);
+
+        const participantsToUpdate = participantsWithCalendarEventId
+          .filter((event) => !event.toBeSaved)
+          .flatMap((event) => event.participants);
 
         await this.calendarEventParticipantService.upsertAndDeleteCalendarEventParticipants(
           participantsToSave,
@@ -181,6 +204,10 @@ export class CalendarSaveEventsService {
         );
       },
     );
+
+    const participantsToSave = filteredEventsWithAction
+      .filter((event) => event.toBeSaved)
+      .flatMap((event) => event.participants);
 
     if (calendarChannel.isContactAutoCreationEnabled) {
       await this.messageQueueService.add<CreateCompanyAndContactJobData>(
