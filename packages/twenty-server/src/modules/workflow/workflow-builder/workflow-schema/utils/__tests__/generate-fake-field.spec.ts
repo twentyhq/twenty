@@ -128,6 +128,7 @@ describe('generateFakeField', () => {
         isLeaf: false,
         icon: undefined,
         label: 'Links Field',
+        type: FieldMetadataType.LINKS,
         value: {
           label: {
             isLeaf: true,
@@ -166,6 +167,7 @@ describe('generateFakeField', () => {
         isLeaf: false,
         icon: 'IconCurrency',
         label: 'Currency Field',
+        type: FieldMetadataType.CURRENCY,
         value: {
           amount: {
             isLeaf: true,
