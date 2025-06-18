@@ -9,14 +9,12 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { useSearchParams } from 'react-router-dom';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
-import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 
 export const SignInUpGlobalScopeFormEffect = () => {
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const [searchParams, setSearchParams] = useSearchParams();
   const { setAuthTokens, loadCurrentUser } = useAuth();
   const availableWorkspaces = useRecoilValue(availableWorkspacesState);
-  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
   useEffect(() => {
     const tokenPair = searchParams.get('tokenPair');
@@ -37,7 +35,6 @@ export const SignInUpGlobalScopeFormEffect = () => {
     loadCurrentUser,
     setAuthTokens,
     availableWorkspaces,
-    redirectToWorkspaceDomain,
   ]);
 
   return <></>;
