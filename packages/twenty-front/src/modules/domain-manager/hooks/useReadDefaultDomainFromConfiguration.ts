@@ -10,7 +10,11 @@ export const useReadDefaultDomainFromConfiguration = () => {
     ? `${domainConfiguration.defaultSubdomain}.${domainConfiguration.frontDomain}`
     : domainConfiguration.frontDomain;
 
+  const defaultUrl = new URL(window.location.href);
+  defaultUrl.hostname = defaultDomain;
+
   return {
     defaultDomain,
+    defaultUrl,
   };
 };
