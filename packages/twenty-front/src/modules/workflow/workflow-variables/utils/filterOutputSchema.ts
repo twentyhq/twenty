@@ -1,4 +1,3 @@
-import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import {
   BaseOutputSchema,
   OutputSchema,
@@ -34,17 +33,8 @@ const filterRecordOutputSchema = (
   for (const key in outputSchema.fields) {
     const field = outputSchema.fields[key];
 
-    if (
-      isDefined(field?.type) &&
-      isCompositeFieldType(field.type as FieldMetadataType)
-    ) {
-      continue;
-    }
-
     if (field.isLeaf) {
       if (
-        (field.type === FieldMetadataType.UUID &&
-          outputSchema.object.nameSingular === objectNameSingularToSelect) ||
         !Object.values(FieldMetadataType).includes(
           field.type as FieldMetadataType,
         )
@@ -95,14 +85,6 @@ const filterBaseOutputSchema = (
 
     if (field.isLeaf) {
       if (
-        isDefined(field?.type) &&
-        isCompositeFieldType(field.type as FieldMetadataType)
-      ) {
-        continue;
-      }
-
-      if (
-        field.type === FieldMetadataType.UUID ||
         !Object.values(FieldMetadataType).includes(
           field.type as FieldMetadataType,
         )
