@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
 import {
-    CatalogDecorator,
-    CatalogStory,
-    ComponentDecorator,
+  CatalogDecorator,
+  CatalogStory,
+  ComponentDecorator,
 } from '@ui/testing';
 import { MAIN_COLORS } from '@ui/theme';
 import { useState } from 'react';
