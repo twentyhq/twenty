@@ -65,12 +65,6 @@ export const SummaryCard = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
-  console.log('in summary card', {
-    isPrefetchLoading,
-    recordLoading,
-    '!isDefined(recordCreatedAt)': !isDefined(recordCreatedAt),
-  });
-
   return (
     <ShowPageSummaryCard
       isMobile={isMobile}
