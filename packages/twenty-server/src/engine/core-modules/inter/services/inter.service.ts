@@ -252,7 +252,7 @@ export class InterService {
       },
     );
 
-    const fileFolder = FileFolder.InterCharge;
+    const fileFolder = FileFolder.BillingSubscriptionBill;
 
     // TODO: Check if there is are any existing files for this workspace and remove them before uploading a new one
     const { path } = await this.fileUploadService.uploadFile({

@@ -2,6 +2,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
+import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -10,7 +12,11 @@ import { ChargeEventListener } from './charge.listener';
 import { InterApiService } from './inter/inter-api.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([InterIntegration, Workspace], 'core')],
+  imports: [
+    FileModule,
+    FileUploadModule,
+    TypeOrmModule.forFeature([InterIntegration, Workspace], 'core'),
+  ],
   providers: [ChargeEventListener, InterApiService],
   exports: [InterApiService],
 })
