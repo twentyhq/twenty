@@ -1,4 +1,5 @@
 import { DynamicModule, Global, Provider } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import {
   AiDriver,
@@ -9,6 +10,8 @@ import { AI_DRIVER } from 'src/engine/core-modules/ai/ai.constants';
 import { AiService } from 'src/engine/core-modules/ai/ai.service';
 import { AiController } from 'src/engine/core-modules/ai/controllers/ai.controller';
 import { OpenAIDriver } from 'src/engine/core-modules/ai/drivers/openai.driver';
+import { AIModel } from 'src/engine/core-modules/ai/entities/ai-model.entity';
+import { AIModelService } from 'src/engine/core-modules/ai/services/ai-model.service';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 
 @Global()
@@ -31,10 +34,10 @@ export class AiModule {
 
     return {
       module: AiModule,
-      imports: [FeatureFlagModule],
+      imports: [FeatureFlagModule, TypeOrmModule.forFeature([AIModel], 'core')],
       controllers: [AiController],
-      providers: [AiService, provider],
-      exports: [AiService],
+      providers: [AiService, AIModelService, provider],
+      exports: [AiService, AIModelService],
     };
   }
 }

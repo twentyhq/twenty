@@ -1,6 +1,6 @@
 import { Field, Float, ID, ObjectType } from '@nestjs/graphql';
 
-import { ModelProvider } from 'src/engine/core-modules/billing/entities/ai-model.entity';
+import { ModelProvider } from 'src/engine/core-modules/ai/entities/ai-model.entity';
 
 @ObjectType('AIModel')
 export class AIModelDto {

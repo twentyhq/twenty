@@ -3,13 +3,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AiModule } from 'src/engine/core-modules/ai/ai.module';
 import { BillingController } from 'src/engine/core-modules/billing/billing.controller';
 import { BillingResolver } from 'src/engine/core-modules/billing/billing.resolver';
 import { BillingAddWorkflowSubscriptionItemCommand } from 'src/engine/core-modules/billing/commands/billing-add-workflow-subscription-item.command';
 import { BillingSyncCustomerDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-customer-data.command';
 import { BillingSyncPlansDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-plans-data.command';
 import { BillingUpdateSubscriptionPriceCommand } from 'src/engine/core-modules/billing/commands/billing-update-subscription-price.command';
-import { AIModel } from 'src/engine/core-modules/billing/entities/ai-model.entity';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingMeter } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
@@ -20,7 +20,6 @@ import { BillingSubscription } from 'src/engine/core-modules/billing/entities/bi
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { BillingFeatureUsedListener } from 'src/engine/core-modules/billing/listeners/billing-feature-used.listener';
 import { BillingWorkspaceMemberListener } from 'src/engine/core-modules/billing/listeners/billing-workspace-member.listener';
-import { AIModelService } from 'src/engine/core-modules/billing/services/ai-model.service';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
@@ -51,6 +50,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     DomainManagerModule,
     MessageQueueModule,
     PermissionsModule,
+    AiModule,
     TypeOrmModule.forFeature(
       [
         BillingSubscription,
@@ -63,7 +63,6 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
         Workspace,
         UserWorkspace,
         FeatureFlag,
-        AIModel,
       ],
       'core',
     ),
@@ -92,14 +91,12 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     BillingSyncPlansDataCommand,
     BillingAddWorkflowSubscriptionItemCommand,
     BillingUsageService,
-    AIModelService,
   ],
   exports: [
     BillingSubscriptionService,
     BillingPortalWorkspaceService,
     BillingService,
     BillingUsageService,
-    AIModelService,
   ],
 })
 export class BillingModule {}

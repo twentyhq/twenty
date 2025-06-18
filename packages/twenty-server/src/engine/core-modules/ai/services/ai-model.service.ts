@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import {
   AIModel,
   ModelProvider,
-} from 'src/engine/core-modules/billing/entities/ai-model.entity';
+} from 'src/engine/core-modules/ai/entities/ai-model.entity';
 
 export interface TokenUsage {
   inputTokens: number;

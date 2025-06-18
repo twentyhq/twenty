@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
-import { AIModelService } from 'src/engine/core-modules/billing/services/ai-model.service';
+import { AIModelService } from 'src/engine/core-modules/ai/services/ai-model.service';
 import { ClientConfig } from 'src/engine/core-modules/client-config/client-config.entity';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
