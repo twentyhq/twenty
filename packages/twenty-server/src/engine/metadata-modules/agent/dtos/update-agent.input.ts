@@ -29,7 +29,7 @@ export class UpdateAgentInput {
   @IsString()
   @IsOptional()
   @Field(() => String, { nullable: true })
-  model?: string;
+  modelId?: string;
 
   @IsString()
   @IsOptional()

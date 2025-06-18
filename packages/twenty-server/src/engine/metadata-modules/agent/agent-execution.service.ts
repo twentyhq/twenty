@@ -16,19 +16,19 @@ import { inferZodSchemaFromExampleResponse } from './utils/infer-zod-schema-from
 export class AgentExecutionService {
   constructor() {}
 
-  private getModelConfig(model: string): {
+  private getModelConfig(modelId: string): {
     provider: 'openai' | 'anthropic';
     modelId: string;
   } {
-    if (model.startsWith('gpt-')) {
-      return { provider: 'openai', modelId: model };
+    if (modelId.startsWith('gpt-')) {
+      return { provider: 'openai', modelId: modelId };
     }
-    if (model.startsWith('claude-')) {
-      return { provider: 'anthropic', modelId: model };
+    if (modelId.startsWith('claude-')) {
+      return { provider: 'anthropic', modelId: modelId };
     }
 
     throw new AgentException(
-      `Unsupported model: ${model}`,
+      `Unsupported model: ${modelId}`,
       AgentExceptionCode.UNSUPPORTED_MODEL,
     );
   }
@@ -64,7 +64,7 @@ export class AgentExecutionService {
 
   async executeAgent(agent: AgentEntity, context: Record<string, unknown>) {
     try {
-      const { provider } = this.getModelConfig(agent.model);
+      const { provider } = this.getModelConfig(agent.modelId);
 
       await this.validateApiKey(provider);
 
@@ -82,7 +82,7 @@ export class AgentExecutionService {
       }
 
       const output = await generateObject({
-        model: this.getModel(agent.model),
+        model: this.getModel(agent.modelId),
         prompt: resolveInput(agent.prompt, context) as string,
         schema,
       });

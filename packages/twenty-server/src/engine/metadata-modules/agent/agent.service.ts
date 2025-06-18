@@ -16,6 +16,7 @@ export class AgentService {
   async findManyAgents(workspaceId: string) {
     return this.agentRepository.find({
       where: { workspaceId },
+      relations: ['aiModel'],
       order: { createdAt: 'DESC' },
     });
   }
@@ -23,6 +24,7 @@ export class AgentService {
   async findOneAgent(id: string, workspaceId: string) {
     const agent = await this.agentRepository.findOne({
       where: { id, workspaceId },
+      relations: ['aiModel'],
     });
 
     if (!agent) {
@@ -40,7 +42,7 @@ export class AgentService {
       name: string;
       description?: string;
       prompt: string;
-      model: string;
+      modelId: string;
       responseFormat: string;
     },
     workspaceId: string,
@@ -52,7 +54,7 @@ export class AgentService {
 
     const createdAgent = await this.agentRepository.save(agent);
 
-    return createdAgent;
+    return this.findOneAgent(createdAgent.id, workspaceId);
   }
 
   async updateOneAgent(
@@ -61,22 +63,19 @@ export class AgentService {
       name?: string;
       description?: string;
       prompt?: string;
-      model?: string;
+      modelId?: string;
       responseFormat?: string;
     },
     workspaceId: string,
   ) {
-    await this.agentRepository.update(input.id, {
-      name: input.name,
-      description: input.description,
-      prompt: input.prompt,
-      model: input.model,
-      responseFormat: input.responseFormat,
+    const agent = await this.findOneAgent(input.id, workspaceId);
+
+    const updatedAgent = await this.agentRepository.save({
+      ...agent,
+      ...input,
     });
 
-    const updatedAgent = await this.findOneAgent(input.id, workspaceId);
-
-    return updatedAgent;
+    return this.findOneAgent(updatedAgent.id, workspaceId);
   }
 
   async deleteOneAgent(id: string, workspaceId: string) {

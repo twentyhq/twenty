@@ -8,6 +8,7 @@ import {
 import { IsDateString, IsNotEmpty, IsString, IsUUID } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { AIModelDto } from 'src/engine/core-modules/ai/dtos/ai-model.dto';
 
 @ObjectType('Agent')
 @Authorize({
@@ -40,7 +41,10 @@ export class AgentDTO {
   prompt: string;
 
   @Field(() => String)
-  model: string;
+  modelId: string;
+
+  @Field(() => AIModelDto, { nullable: true })
+  aiModel?: AIModelDto;
 
   @Field(() => String)
   responseFormat: string;

@@ -22,7 +22,7 @@ export class CreateAgentInput {
   @IsString()
   @IsNotEmpty()
   @Field(() => String)
-  model: string;
+  modelId: string;
 
   @IsString()
   @Field(() => String)

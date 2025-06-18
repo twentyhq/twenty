@@ -12,6 +12,7 @@ import {
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
+import { AIModel } from 'src/engine/core-modules/ai/entities/ai-model.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity('agent')
@@ -30,7 +31,13 @@ export class AgentEntity {
   prompt: string;
 
   @Column({ nullable: false, type: 'varchar' })
-  model: string;
+  modelId: string;
+
+  @ManyToOne(() => AIModel, (aiModel) => aiModel.modelId, {
+    onDelete: 'RESTRICT',
+  })
+  @JoinColumn({ name: 'modelId' })
+  aiModel: Relation<AIModel>;
 
   @Column({ nullable: false, type: 'text' })
   responseFormat: string;
