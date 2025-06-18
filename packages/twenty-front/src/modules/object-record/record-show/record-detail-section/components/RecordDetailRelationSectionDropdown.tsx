@@ -219,6 +219,7 @@ export const RecordDetailRelationSectionDropdown = ({
         dropdownComponents={
           isToOneObject ? (
             <SingleRecordPicker
+              focusId={dropdownId}
               componentInstanceId={dropdownId}
               EmptyIcon={IconForbid}
               onRecordSelected={handleRelationPickerEntitySelected}

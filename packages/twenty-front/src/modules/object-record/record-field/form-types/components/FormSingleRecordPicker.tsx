@@ -189,6 +189,7 @@ export const FormSingleRecordPicker = ({
             }
             dropdownComponents={
               <SingleRecordPicker
+                focusId={dropdownId}
                 componentInstanceId={dropdownId}
                 EmptyIcon={IconForbid}
                 emptyLabel={'No ' + objectNameSingular}

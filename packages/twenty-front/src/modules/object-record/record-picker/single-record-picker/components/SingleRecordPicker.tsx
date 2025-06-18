@@ -27,6 +27,7 @@ export const SingleRecordPicker = ({
   componentInstanceId,
   layoutDirection,
   dropdownWidth,
+  focusId,
 }: SingleRecordPickerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -53,6 +54,7 @@ export const SingleRecordPicker = ({
     >
       <DropdownContent ref={containerRef} widthInPixels={dropdownWidth}>
         <SingleRecordPickerMenuItemsWithSearch
+          focusId={focusId}
           {...{
             EmptyIcon,
             emptyLabel,

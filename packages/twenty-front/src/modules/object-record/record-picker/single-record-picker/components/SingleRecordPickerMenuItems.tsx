@@ -84,7 +84,7 @@ export const SingleRecordPickerMenuItems = ({
       onCancel?.();
     },
     focusId,
-    scope: focusId,
+    scope: DropdownHotkeyScope.Dropdown,
     dependencies: [onCancel, resetSelectedItem],
   });
 
