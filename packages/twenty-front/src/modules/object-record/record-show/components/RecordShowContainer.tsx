@@ -13,7 +13,9 @@ import { ShowPageSubContainer } from '@/ui/layout/show-page/components/ShowPageS
 import { useRecoilValue } from 'recoil';
 import styled from '@emotion/styled';
 
-const StyledShowPageBannerContainer = styled.div``; // Used to solve banner positioned below Canvas in workflow show page
+const StyledShowPageBannerContainer = styled.div`
+z-index: 1
+`;
 
 type RecordShowContainerProps = {
   objectNameSingular: string;
