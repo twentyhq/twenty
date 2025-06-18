@@ -57,12 +57,15 @@ export const AdvancedFilterDropdownFilterInput = ({
         <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
           <ObjectFilterDropdownSearchInput />
           <DropdownMenuSeparator />
-          <ObjectFilterDropdownRecordSelect recordFilterId={recordFilter.id} />
+          <ObjectFilterDropdownRecordSelect
+            recordFilterId={recordFilter.id}
+            dropdownId={filterDropdownId}
+          />
         </DropdownContent>
       )}
       {filterType === 'ACTOR' &&
         (isActorSourceCompositeFilter ? (
-          <ObjectFilterDropdownSourceSelect />
+          <ObjectFilterDropdownSourceSelect dropdownId={filterDropdownId} />
         ) : (
           <ObjectFilterDropdownTextInput />
         ))}

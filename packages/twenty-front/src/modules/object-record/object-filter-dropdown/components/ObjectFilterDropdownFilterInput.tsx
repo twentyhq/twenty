@@ -113,7 +113,10 @@ export const ObjectFilterDropdownFilterInput = ({
           <>
             <ObjectFilterDropdownSearchInput />
             <DropdownMenuSeparator />
-            <ObjectFilterDropdownRecordSelect recordFilterId={recordFilterId} />
+            <ObjectFilterDropdownRecordSelect
+              recordFilterId={recordFilterId}
+              dropdownId={filterDropdownId}
+            />
           </>
         )}
         {filterType === 'ACTOR' && <ObjectFilterDropdownTextInput />}

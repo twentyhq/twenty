@@ -5,7 +5,6 @@ import { useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -17,9 +16,12 @@ import {
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { getRelationToOneFieldInputInstanceId } from '@/object-record/record-field/meta-types/input/utils/getRelationToOneFieldInputInstanceId';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionLoadingComponentState';
-import { SingleRecordPickerHotkeyScope } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerHotkeyScope';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
@@ -62,11 +64,30 @@ const RelationToOneFieldInputWithContext = ({
   onSubmit,
   onCancel,
 }: RelationToOneFieldInputWithContextProps) => {
-  const setHotKeyScope = useSetHotkeyScope();
+  const pushFocusItemToFocusStack = usePushFocusItemToFocusStack();
 
   useEffect(() => {
-    setHotKeyScope(SingleRecordPickerHotkeyScope.SingleRecordPicker);
-  }, [setHotKeyScope]);
+    pushFocusItemToFocusStack({
+      focusId: getRelationToOneFieldInputInstanceId({
+        recordId: '123',
+        fieldName: 'Relation',
+      }),
+      component: {
+        type: FocusComponentType.DROPDOWN,
+        instanceId: getRelationToOneFieldInputInstanceId({
+          recordId: '123',
+          fieldName: 'Relation',
+        }),
+      },
+      hotkeyScope: {
+        scope: DropdownHotkeyScope.Dropdown,
+      },
+      memoizeKey: getRelationToOneFieldInputInstanceId({
+        recordId: '123',
+        fieldName: 'Relation',
+      }),
+    });
+  }, [pushFocusItemToFocusStack]);
 
   return (
     <div>

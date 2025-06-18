@@ -3,19 +3,20 @@ import { Key } from 'ts-key-enum';
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { Avatar } from 'twenty-ui/display';
 import { MenuItem, MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
 
 export const MultipleSelectDropdown = ({
   selectableListId,
-  hotkeyScope,
+  focusId,
   itemsToSelect,
   loadingItems,
   filteredSelectedItems,
@@ -23,7 +24,7 @@ export const MultipleSelectDropdown = ({
   searchFilter,
 }: {
   selectableListId: string;
-  hotkeyScope: string;
+  focusId: string;
   itemsToSelect: SelectableItem[];
   filteredSelectedItems: SelectableItem[];
   selectedItems: SelectableItem[];
@@ -61,15 +62,16 @@ export const MultipleSelectDropdown = ({
     ...(itemsToSelect ?? []),
   ];
 
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: () => {
       closeDropdown();
       resetSelectedItem();
     },
-    hotkeyScope,
-    [closeDropdown, resetSelectedItem],
-  );
+    focusId,
+    scope: DropdownHotkeyScope.Dropdown,
+    dependencies: [closeDropdown, resetSelectedItem],
+  });
 
   const showNoResult =
     itemsToSelect?.length === 0 &&
@@ -83,8 +85,8 @@ export const MultipleSelectDropdown = ({
     <SelectableList
       selectableListInstanceId={selectableListId}
       selectableItemIdArray={selectableItemIds}
-      focusId={selectableListId}
-      hotkeyScope={hotkeyScope}
+      focusId={focusId}
+      hotkeyScope={DropdownHotkeyScope.Dropdown}
     >
       <DropdownMenuItemsContainer hasMaxHeight>
         {itemsInDropdown?.map((item) => {
