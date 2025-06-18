@@ -1,8 +1,8 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { objectPermissionsFamilySelector } from '@/auth/states/objectPermissionsFamilySelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { BASE_RECORD_LAYOUT } from '@/object-record/record-show/constants/BaseRecordLayout';
 import { CardType } from '@/object-record/record-show/types/CardType';
 import { RecordLayout } from '@/object-record/record-show/types/RecordLayout';
@@ -10,7 +10,7 @@ import { RecordLayoutTab } from '@/ui/layout/tab-list/types/RecordLayoutTab';
 import { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useMemo } from 'react';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconCalendarEvent,
@@ -32,6 +32,7 @@ export const useRecordShowContainerTabs = (
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   // Object-specific layouts that override or extend the base layout
   const OBJECT_SPECIFIC_LAYOUTS: Partial<
@@ -216,20 +217,6 @@ export const useRecordShowContainerTabs = (
 
   const baseRecordLayout = BASE_RECORD_LAYOUT;
 
-  const getObjectReadPermission = useRecoilCallback(
-    ({ snapshot }) =>
-      (objectMetadataNameSingular: string) => {
-        return snapshot
-          .getLoadable(
-            objectPermissionsFamilySelector({
-              objectNameSingular: objectMetadataNameSingular,
-            }),
-          )
-          .getValue().canRead;
-      },
-    [],
-  );
-
   // Merge base layout with object-specific layout
   const recordLayout: RecordLayout = useMemo(() => {
     return {
@@ -275,10 +262,15 @@ export const useRecordShowContainerTabs = (
             );
           });
 
+        const targetObjectMetadataId = objectMetadataItems.find(
+          (item) => item.nameSingular === targetObjectNameSingular,
+        )?.id;
+
         const permissionHide =
           hide.ifNoReadPermission &&
           isDefined(targetObjectNameSingular) &&
-          !getObjectReadPermission(targetObjectNameSingular);
+          !objectPermissionsByObjectMetadataId[targetObjectMetadataId]
+            ?.canReadObjectRecords;
 
         const requiredObjectsInactive =
           hide.ifRequiredObjectsInactive.length > 0 &&
