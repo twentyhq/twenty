@@ -85,26 +85,10 @@ export class WorkspaceInvitationService {
     }
   }
 
-  async findInvitationByWorkspaceSubdomainAndUserEmail({
-    subdomain,
-    email,
-  }: {
-    subdomain: string;
-    email: string;
-  }) {
-    const workspace =
-      await this.domainManagerService.getWorkspaceBySubdomainOrDefaultWorkspace(
-        subdomain,
-      );
-
-    if (!workspace) return;
-
-    return await this.getOneWorkspaceInvitation(workspace.id, email);
-  }
-
   async findInvitationsByEmail(email: string) {
     return await this.appTokenRepository
       .createQueryBuilder('appToken')
+      .innerJoinAndSelect('appToken.workspace', 'workspace')
       .where('"appToken".type = :type', {
         type: AppTokenType.InvitationToken,
       })
@@ -113,7 +97,6 @@ export class WorkspaceInvitationService {
       .andWhere('appToken.expiresAt > :now', {
         now: new Date(),
       })
-      .leftJoinAndSelect('appToken.workspace', 'workspace')
       .getMany();
   }
 
