@@ -8,7 +8,7 @@ import { RecordTableHeaderDragDropColumn } from '@/object-record/record-table/re
 import { RecordTableHeaderLastColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderLastColumn';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
-export const FIRST_TH_WIDTH = '9px';
+export const FIRST_TH_WIDTH = '10px';
 
 const StyledTableHead = styled.thead`
   cursor: pointer;

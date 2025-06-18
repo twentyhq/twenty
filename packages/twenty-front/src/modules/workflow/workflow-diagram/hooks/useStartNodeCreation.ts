@@ -11,6 +11,7 @@ export const useStartNodeCreation = () => {
   const setWorkflowInsertStepIds = useSetRecoilComponentStateV2(
     workflowInsertStepIdsComponentState,
   );
+
   const { openStepSelectInCommandMenu } = useWorkflowCommandMenu();
 
   const workflowVisualizerWorkflowId = useRecoilComponentValueV2(

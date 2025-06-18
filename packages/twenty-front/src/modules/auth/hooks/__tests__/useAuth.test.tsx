@@ -15,6 +15,7 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { renderHook } from '@testing-library/react';
 import { iconsState } from 'twenty-ui/display';
 import { email, mocks, password, results, token } from '../__mocks__/useAuth';
+import { SupportDriver } from '~/generated/graphql';
 
 const redirectSpy = jest.fn();
 
@@ -160,7 +161,7 @@ describe('useAuth', () => {
     expect(state.billing).toBeNull();
     expect(state.isDeveloperDefaultSignInPrefilled).toBe(false);
     expect(state.supportChat).toEqual({
-      supportDriver: 'none',
+      supportDriver: SupportDriver.NONE,
       supportFrontChatId: null,
     });
   });

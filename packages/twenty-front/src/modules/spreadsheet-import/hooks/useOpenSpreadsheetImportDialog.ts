@@ -15,6 +15,7 @@ export const useOpenSpreadsheetImportDialog = <T extends string>() => {
     openModal(SPREADSHEET_IMPORT_MODAL_ID);
     setSpreadSheetImport({
       isOpen: true,
+      isStepBarVisible: true,
       options,
     });
   };

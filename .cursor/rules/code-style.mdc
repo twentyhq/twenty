@@ -1,0 +1,103 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Code Style Guidelines
+
+## Formatting Standards
+- **Prettier**: 2-space indentation, single quotes, trailing commas, semicolons
+- **Print width**: 80 characters
+- **ESLint**: No unused imports, consistent import ordering, prefer const over let
+
+## Naming Conventions
+```typescript
+// ✅ Variables and functions - camelCase
+const userAccountBalance = 1000;
+const calculateMonthlyPayment = () => {};
+
+// ✅ Constants - SCREAMING_SNAKE_CASE
+const API_ENDPOINTS = {
+  USERS: '/api/users',
+  ORDERS: '/api/orders',
+} as const;
+
+// ✅ Types and Classes - PascalCase
+class UserService {}
+type UserAccountData = {};
+type ButtonProps = {}; // Component props suffix with 'Props'
+
+// ✅ Files and directories - kebab-case
+// user-profile.component.tsx
+// user-profile.styles.ts
+```
+
+## Import Organization
+```typescript
+// ✅ Correct import order
+// 1. External libraries
+import React from 'react';
+import { useCallback } from 'react';
+import styled from 'styled-components';
+
+// 2. Internal modules (absolute paths)
+import { Button } from '@/components/ui';
+import { UserService } from '@/services';
+
+// 3. Relative imports
+import { UserCardProps } from './types';
+```
+
+## Function Structure
+```typescript
+// ✅ Small, focused functions
+// ✅ Required parameters first, optional last
+const processUserData = (
+  user: User,
+  options: ProcessingOptions,
+  callback?: (result: ProcessedUser) => void
+): ProcessedUser => {
+  const processedUser = transformUserData(user);
+  applyOptions(processedUser, options);
+  
+  if (callback) {
+    callback(processedUser);
+  }
+  
+  return processedUser;
+};
+```
+
+## Comments
+```typescript
+// ✅ Explain business logic and non-obvious intentions
+// Apply 15% discount for premium users with orders > $100
+const discount = isPremiumUser && orderTotal > 100 ? 0.15 : 0;
+
+// TODO: Replace with proper authentication service
+const isAuthenticated = localStorage.getItem('token') !== null;
+
+/**
+ * JSDoc for public APIs
+ * @param basePrice - The base price before modifications
+ * @returns The final price after tax and discount
+ */
+const calculateTotalPrice = (basePrice: number): number => {
+  // Implementation
+};
+```
+
+## Error Handling
+```typescript
+// ✅ Proper error types and meaningful messages
+try {
+  const user = await userService.findById(userId);
+  if (!user) {
+    throw new UserNotFoundError(`User with ID ${userId} not found`);
+  }
+  return user;
+} catch (error) {
+  logger.error('Failed to fetch user', { userId, error });
+  throw error;
+}
+```

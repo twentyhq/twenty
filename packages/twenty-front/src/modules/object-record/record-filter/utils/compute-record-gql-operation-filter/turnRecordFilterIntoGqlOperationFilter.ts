@@ -17,6 +17,7 @@ import {
   SelectFilter,
   StringFilter,
   TSVectorFilter,
+  UUIDFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { Field } from '~/generated/graphql';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
@@ -1175,6 +1176,24 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
           eq: recordFilter.value === 'true',
         } as BooleanFilter,
       };
+    }
+    case 'UUID': {
+      const recordIds = arrayOfUuidOrVariableSchema.parse(recordFilter.value);
+
+      if (recordIds.length === 0) return;
+
+      switch (recordFilter.operand) {
+        case RecordFilterOperand.Is:
+          return {
+            [correspondingFieldMetadataItem.name]: {
+              in: recordIds,
+            } as UUIDFilter,
+          };
+        default:
+          throw new Error(
+            `Unknown operand ${recordFilter.operand} for ${filterType} filter`,
+          );
+      }
     }
     default:
       throw new Error('Unknown filter type');

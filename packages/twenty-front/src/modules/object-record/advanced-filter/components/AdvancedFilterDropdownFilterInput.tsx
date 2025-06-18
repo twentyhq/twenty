@@ -17,6 +17,7 @@ import { isExpectedSubFieldName } from '@/object-record/object-filter-dropdown/u
 import { isFilterOnActorSourceSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorSourceSubField';
 import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -53,7 +54,7 @@ export const AdvancedFilterDropdownFilterInput = ({
         <ObjectFilterDropdownDateInput />
       )}
       {filterType === 'RELATION' && (
-        <DropdownContent>
+        <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
           <ObjectFilterDropdownSearchInput />
           <DropdownMenuSeparator />
           <ObjectFilterDropdownRecordSelect recordFilterId={recordFilter.id} />
@@ -66,7 +67,7 @@ export const AdvancedFilterDropdownFilterInput = ({
           <ObjectFilterDropdownTextInput />
         ))}
       {['SELECT', 'MULTI_SELECT'].includes(filterType) && (
-        <DropdownContent>
+        <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
           <ObjectFilterDropdownSearchInput />
           <DropdownMenuSeparator />
           <ObjectFilterDropdownOptionSelect />

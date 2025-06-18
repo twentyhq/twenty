@@ -2,7 +2,6 @@ import { Key } from 'ts-key-enum';
 
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -81,48 +80,46 @@ export const MultipleSelectDropdown = ({
   const selectableItemIds = itemsInDropdown.map((item) => item.id);
 
   return (
-    <DropdownContent>
-      <SelectableList
-        selectableListInstanceId={selectableListId}
-        selectableItemIdArray={selectableItemIds}
-        hotkeyScope={hotkeyScope}
-      >
-        <DropdownMenuItemsContainer hasMaxHeight>
-          {itemsInDropdown?.map((item) => {
-            return (
-              <SelectableListItem
-                itemId={item.id}
-                onEnter={() => {
+    <SelectableList
+      selectableListInstanceId={selectableListId}
+      selectableItemIdArray={selectableItemIds}
+      hotkeyScope={hotkeyScope}
+    >
+      <DropdownMenuItemsContainer hasMaxHeight>
+        {itemsInDropdown?.map((item) => {
+          return (
+            <SelectableListItem
+              itemId={item.id}
+              onEnter={() => {
+                resetSelectedItem();
+                handleItemSelectChange(item, !item.isSelected);
+              }}
+            >
+              <MenuItemMultiSelectAvatar
+                key={item.id}
+                selected={item.isSelected}
+                isKeySelected={item.id === selectedItemId}
+                onSelectChange={(newCheckedValue) => {
                   resetSelectedItem();
-                  handleItemSelectChange(item, !item.isSelected);
+                  handleItemSelectChange(item, newCheckedValue);
                 }}
-              >
-                <MenuItemMultiSelectAvatar
-                  key={item.id}
-                  selected={item.isSelected}
-                  isKeySelected={item.id === selectedItemId}
-                  onSelectChange={(newCheckedValue) => {
-                    resetSelectedItem();
-                    handleItemSelectChange(item, newCheckedValue);
-                  }}
-                  text={item.name}
-                  avatar={
-                    <Avatar
-                      avatarUrl={item.avatarUrl}
-                      placeholderColorSeed={item.id}
-                      placeholder={item.name}
-                      size="md"
-                      type={item.avatarType}
-                    />
-                  }
-                />
-              </SelectableListItem>
-            );
-          })}
-          {showNoResult && <MenuItem text="No results" />}
-          {loadingItems && <DropdownMenuSkeletonItem />}
-        </DropdownMenuItemsContainer>
-      </SelectableList>
-    </DropdownContent>
+                text={item.name}
+                avatar={
+                  <Avatar
+                    avatarUrl={item.avatarUrl}
+                    placeholderColorSeed={item.id}
+                    placeholder={item.name}
+                    size="md"
+                    type={item.avatarType}
+                  />
+                }
+              />
+            </SelectableListItem>
+          );
+        })}
+        {showNoResult && <MenuItem text="No results" />}
+        {loadingItems && <DropdownMenuSkeletonItem />}
+      </DropdownMenuItemsContainer>
+    </SelectableList>
   );
 };

@@ -8,7 +8,9 @@ export const absoluteUrlSchema = z.string().transform((value, ctx) => {
 
   const valueWithoutProtocol = absoluteUrl
     .replace('https://', '')
-    .replace('http://', '');
+    .replace('http://', '')
+    .replace('HTTPS://', '')
+    .replace('HTTP://', '');
 
   if (/^\d+(?:\/[a-zA-Z]*)?$/.test(valueWithoutProtocol)) {
     // if the hostname is a number, it's not a valid url
@@ -20,14 +22,11 @@ export const absoluteUrlSchema = z.string().transform((value, ctx) => {
 
     return z.NEVER;
   }
-
   try {
     const url = new URL(absoluteUrl);
-
     if (isValidHostname(url.hostname)) {
       return absoluteUrl;
     }
-
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: 'domain is not a valid url',

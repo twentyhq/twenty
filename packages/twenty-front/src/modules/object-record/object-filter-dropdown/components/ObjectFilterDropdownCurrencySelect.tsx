@@ -96,7 +96,7 @@ export const ObjectFilterDropdownCurrencySelect = () => {
     searchText !== '';
 
   return (
-    <DropdownContent widthInPixels={GenericDropdownContentWidth.Large}>
+    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
       <DropdownMenuSearchInput
         autoFocus
         type="text"
