@@ -5,7 +5,7 @@ import { useRecoilCallback } from 'recoil';
 export const useRemoveFocusIdFromFocusStack = () => {
   const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
 
-  return useRecoilCallback(
+  const removeFocusIdFromFocusStack = useRecoilCallback(
     ({ set }) =>
       ({ focusId, memoizeKey }: { focusId: string; memoizeKey: string }) => {
         set(focusStackState, (previousFocusStack) =>
@@ -19,4 +19,6 @@ export const useRemoveFocusIdFromFocusStack = () => {
       },
     [goBackToPreviousHotkeyScope],
   );
+
+  return { removeFocusIdFromFocusStack };
 };

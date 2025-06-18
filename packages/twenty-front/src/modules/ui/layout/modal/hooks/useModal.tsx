@@ -6,8 +6,8 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { useRecoilCallback } from 'recoil';
 
 export const useModal = () => {
-  const pushFocusItem = usePushFocusItemToFocusStack();
-  const removeFocusId = useRemoveFocusIdFromFocusStack();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { removeFocusIdFromFocusStack } = useRemoveFocusIdFromFocusStack();
 
   const closeModal = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -22,7 +22,7 @@ export const useModal = () => {
           return;
         }
 
-        removeFocusId({
+        removeFocusIdFromFocusStack({
           focusId: modalId,
           memoizeKey: modalId,
         });
@@ -32,7 +32,7 @@ export const useModal = () => {
           false,
         );
       },
-    [removeFocusId],
+    [removeFocusIdFromFocusStack],
   );
 
   const openModal = useRecoilCallback(
@@ -53,7 +53,7 @@ export const useModal = () => {
           true,
         );
 
-        pushFocusItem({
+        pushFocusItemToFocusStack({
           focusId: modalId,
           component: {
             type: FocusComponentType.MODAL,
@@ -76,7 +76,7 @@ export const useModal = () => {
           memoizeKey: modalId,
         });
       },
-    [pushFocusItem],
+    [pushFocusItemToFocusStack],
   );
 
   const toggleModal = useRecoilCallback(

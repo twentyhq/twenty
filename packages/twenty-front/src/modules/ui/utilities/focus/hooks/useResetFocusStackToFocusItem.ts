@@ -6,7 +6,7 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilCallback } from 'recoil';
 
 export const useResetFocusStackToFocusItem = () => {
-  return useRecoilCallback(
+  const resetFocusStackToFocusItem = useRecoilCallback(
     ({ set }) =>
       ({
         focusStackItem,
@@ -25,4 +25,6 @@ export const useResetFocusStackToFocusItem = () => {
       },
     [],
   );
+
+  return { resetFocusStackToFocusItem };
 };

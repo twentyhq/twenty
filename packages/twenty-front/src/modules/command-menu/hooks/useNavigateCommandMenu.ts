@@ -34,7 +34,7 @@ export const useNavigateCommandMenu = () => {
   const { commandMenuCloseAnimationCompleteCleanup } =
     useCommandMenuCloseAnimationCompleteCleanup();
 
-  const pushFocusItemToFocusStack = usePushFocusItemToFocusStack();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   const openCommandMenu = useRecoilCallback(
     ({ snapshot, set }) =>

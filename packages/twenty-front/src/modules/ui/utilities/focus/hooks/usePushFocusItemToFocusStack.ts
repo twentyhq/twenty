@@ -23,7 +23,7 @@ export const usePushFocusItemToFocusStack = () => {
     [],
   );
 
-  return useRecoilCallback(
+  const pushFocusItemToFocusStack = useRecoilCallback(
     () =>
       ({
         focusId,
@@ -68,4 +68,6 @@ export const usePushFocusItemToFocusStack = () => {
       },
     [setHotkeyScopeAndMemorizePreviousScope, addOrMoveItemToTheTopOfTheStack],
   );
+
+  return { pushFocusItemToFocusStack };
 };

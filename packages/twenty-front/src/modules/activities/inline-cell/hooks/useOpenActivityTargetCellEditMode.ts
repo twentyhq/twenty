@@ -20,7 +20,7 @@ export const useOpenActivityTargetCellEditMode = () => {
   const { performSearch: multipleRecordPickerPerformSearch } =
     useMultipleRecordPickerPerformSearch();
 
-  const pushFocusItemToFocusStack = usePushFocusItemToFocusStack();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   const openActivityTargetCellEditMode = useRecoilCallback(
     ({ set, snapshot }) =>

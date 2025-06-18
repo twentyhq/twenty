@@ -10,14 +10,14 @@ import { RecoilRoot, useRecoilValue } from 'recoil';
 const renderHooks = () => {
   const { result } = renderHook(
     () => {
-      const pushFocusItem = usePushFocusItemToFocusStack();
-      const removeFocusId = useRemoveFocusIdFromFocusStack();
+      const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+      const { removeFocusIdFromFocusStack } = useRemoveFocusIdFromFocusStack();
       const focusStack = useRecoilValue(focusStackState);
       const currentFocusId = useRecoilValue(currentFocusIdSelector);
 
       return {
-        pushFocusItem,
-        removeFocusId,
+        pushFocusItemToFocusStack,
+        removeFocusIdFromFocusStack,
         focusStack,
         currentFocusId,
       };
@@ -59,7 +59,7 @@ describe('useRemoveFocusIdFromFocusStack', () => {
     };
 
     await act(async () => {
-      result.current.pushFocusItem({
+      result.current.pushFocusItemToFocusStack({
         focusId: firstFocusItem.focusId,
         component: {
           type: firstFocusItem.componentInstance.componentType,
@@ -71,7 +71,7 @@ describe('useRemoveFocusIdFromFocusStack', () => {
     });
 
     await act(async () => {
-      result.current.pushFocusItem({
+      result.current.pushFocusItemToFocusStack({
         focusId: secondFocusItem.focusId,
         component: {
           type: secondFocusItem.componentInstance.componentType,
@@ -89,7 +89,7 @@ describe('useRemoveFocusIdFromFocusStack', () => {
     expect(result.current.currentFocusId).toEqual(secondFocusItem.focusId);
 
     await act(async () => {
-      result.current.removeFocusId({
+      result.current.removeFocusIdFromFocusStack({
         focusId: firstFocusItem.focusId,
         memoizeKey: 'global',
       });

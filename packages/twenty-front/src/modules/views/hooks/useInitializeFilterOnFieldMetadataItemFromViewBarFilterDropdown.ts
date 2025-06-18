@@ -47,7 +47,7 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
     const { upsertObjectFilterDropdownCurrentFilter } =
       useUpsertObjectFilterDropdownCurrentFilter();
 
-    const pushFocusItemToFocusStack = usePushFocusItemToFocusStack();
+    const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
     const initializeFilterOnFieldMetataItemFromViewBarFilterDropdown =
       useRecoilCallback(

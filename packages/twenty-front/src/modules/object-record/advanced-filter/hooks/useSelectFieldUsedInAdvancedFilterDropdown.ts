@@ -44,7 +44,7 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
     currentRecordFiltersComponentState,
   );
 
-  const pushFocusItemToFocusStack = usePushFocusItemToFocusStack();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   const { getFieldMetadataItemById } = useGetFieldMetadataItemById();
 

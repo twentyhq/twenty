@@ -11,8 +11,8 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useCallback } from 'react';
 
 export const useDropdown = (dropdownId?: string) => {
-  const pushFocusItem = usePushFocusItemToFocusStack();
-  const removeFocusId = useRemoveFocusIdFromFocusStack();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { removeFocusIdFromFocusStack } = useRemoveFocusIdFromFocusStack();
 
   const { scopeId, isDropdownOpenState, dropdownPlacementState } =
     useDropdownStates({ dropdownScopeId: dropdownId });
@@ -34,7 +34,7 @@ export const useDropdown = (dropdownId?: string) => {
     if (isDropdownOpen) {
       setIsDropdownOpen(false);
       goBackToPreviousDropdownFocusId();
-      removeFocusId({
+      removeFocusIdFromFocusStack({
         focusId: dropdownId ?? scopeId,
         memoizeKey: 'global',
       });
@@ -43,7 +43,7 @@ export const useDropdown = (dropdownId?: string) => {
     isDropdownOpen,
     setIsDropdownOpen,
     goBackToPreviousDropdownFocusId,
-    removeFocusId,
+    removeFocusIdFromFocusStack,
     dropdownId,
     scopeId,
   ]);
@@ -54,7 +54,7 @@ export const useDropdown = (dropdownId?: string) => {
         setIsDropdownOpen(true);
         setActiveDropdownFocusIdAndMemorizePrevious(dropdownId ?? scopeId);
 
-        pushFocusItem({
+        pushFocusItemToFocusStack({
           focusId: dropdownId ?? scopeId,
           component: {
             type: FocusComponentType.DROPDOWN,
@@ -71,7 +71,7 @@ export const useDropdown = (dropdownId?: string) => {
       isDropdownOpen,
       setIsDropdownOpen,
       setActiveDropdownFocusIdAndMemorizePrevious,
-      pushFocusItem,
+      pushFocusItemToFocusStack,
       dropdownId,
       scopeId,
     ],

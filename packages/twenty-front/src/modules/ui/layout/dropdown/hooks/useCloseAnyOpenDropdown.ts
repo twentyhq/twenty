@@ -1,14 +1,14 @@
 import { useCloseDropdownFromOutside } from '@/ui/layout/dropdown/hooks/useCloseDropdownFromOutside';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { previousDropdownFocusIdState } from '@/ui/layout/dropdown/states/previousDropdownFocusIdState';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { useRemoveFocusIdFromFocusStack } from '@/ui/utilities/focus/hooks/useRemoveFocusIdFromFocusStack';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useCloseAnyOpenDropdown = () => {
-  const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
-
   const { closeDropdownFromOutside } = useCloseDropdownFromOutside();
+
+  const { removeFocusIdFromFocusStack } = useRemoveFocusIdFromFocusStack();
 
   const closeAnyOpenDropdown = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -33,18 +33,24 @@ export const useCloseAnyOpenDropdown = () => {
 
         if (isDefined(activeDropdownFocusId)) {
           closeDropdownFromOutside(activeDropdownFocusId);
+          removeFocusIdFromFocusStack({
+            focusId: activeDropdownFocusId,
+            memoizeKey: 'global',
+          });
         }
 
         if (thereIsOneNestedDropdownOpen) {
           closeDropdownFromOutside(previousDropdownFocusId);
+          removeFocusIdFromFocusStack({
+            focusId: previousDropdownFocusId,
+            memoizeKey: 'global',
+          });
         }
 
         set(previousDropdownFocusIdState, null);
         set(activeDropdownFocusIdState, null);
-
-        goBackToPreviousHotkeyScope();
       },
-    [closeDropdownFromOutside, goBackToPreviousHotkeyScope],
+    [closeDropdownFromOutside, removeFocusIdFromFocusStack],
   );
 
   return { closeAnyOpenDropdown };

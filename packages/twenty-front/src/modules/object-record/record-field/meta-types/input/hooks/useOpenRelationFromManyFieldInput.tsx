@@ -18,7 +18,7 @@ import { useRecoilCallback } from 'recoil';
 export const useOpenRelationFromManyFieldInput = () => {
   const { performSearch } = useMultipleRecordPickerPerformSearch();
 
-  const pushFocusItemToFocusStack = usePushFocusItemToFocusStack();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   const openRelationFromManyFieldInput = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -92,8 +92,6 @@ export const useOpenRelationFromManyFieldInput = () => {
           forceSearchableObjectMetadataItems: [objectMetadataItem],
           forcePickableMorphItems: pickableMorphItems,
         });
-
-        console.log('recordPickerInstanceId', recordPickerInstanceId);
 
         pushFocusItemToFocusStack({
           focusId: recordPickerInstanceId,

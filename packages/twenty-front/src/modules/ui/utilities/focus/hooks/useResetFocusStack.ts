@@ -4,7 +4,7 @@ import { previousHotkeyScopeFamilyState } from '@/ui/utilities/hotkey/states/int
 import { useRecoilCallback } from 'recoil';
 
 export const useResetFocusStack = () => {
-  return useRecoilCallback(
+  const resetFocusStack = useRecoilCallback(
     ({ reset }) =>
       (memoizeKey = 'global') => {
         reset(focusStackState);
@@ -15,4 +15,6 @@ export const useResetFocusStack = () => {
       },
     [],
   );
+
+  return { resetFocusStack };
 };

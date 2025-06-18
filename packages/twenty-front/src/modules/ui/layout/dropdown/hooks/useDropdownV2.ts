@@ -12,9 +12,9 @@ export const useDropdownV2 = () => {
   const { goBackToPreviousDropdownFocusId } =
     useGoBackToPreviousDropdownFocusId();
 
-  const pushFocusItem = usePushFocusItemToFocusStack();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
-  const removeFocusId = useRemoveFocusIdFromFocusStack();
+  const { removeFocusIdFromFocusStack } = useRemoveFocusIdFromFocusStack();
 
   const closeDropdown = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -26,7 +26,7 @@ export const useDropdownV2 = () => {
           .getValue();
 
         if (isDropdownOpen) {
-          removeFocusId({
+          removeFocusIdFromFocusStack({
             focusId: scopeId,
             memoizeKey: 'global',
           });
@@ -39,7 +39,7 @@ export const useDropdownV2 = () => {
           );
         }
       },
-    [removeFocusId, goBackToPreviousDropdownFocusId],
+    [removeFocusIdFromFocusStack, goBackToPreviousDropdownFocusId],
   );
 
   const openDropdown = useRecoilCallback(
@@ -57,7 +57,7 @@ export const useDropdownV2 = () => {
           true,
         );
 
-        pushFocusItem({
+        pushFocusItemToFocusStack({
           focusId: scopeId,
           component: {
             type: FocusComponentType.DROPDOWN,
@@ -69,7 +69,7 @@ export const useDropdownV2 = () => {
           memoizeKey: 'global',
         });
       },
-    [pushFocusItem],
+    [pushFocusItemToFocusStack],
   );
 
   const toggleDropdown = useRecoilCallback(

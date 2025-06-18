@@ -12,7 +12,7 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useOpenRelationToOneFieldInput = () => {
-  const pushFocusItemToFocusStack = usePushFocusItemToFocusStack();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   const openRelationToOneFieldInput = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -45,9 +45,8 @@ export const useOpenRelationToOneFieldInput = () => {
             type: FocusComponentType.OPEN_FIELD_INPUT,
             instanceId: recordPickerInstanceId,
           },
-          hotkeyScope: {
-            scope: DropdownHotkeyScope.Dropdown,
-          },
+          // TODO: Remove this once we've fully migrated away from hotkey scopes
+          hotkeyScope: { scope: DropdownHotkeyScope.Dropdown },
           memoizeKey: recordPickerInstanceId,
         });
       },

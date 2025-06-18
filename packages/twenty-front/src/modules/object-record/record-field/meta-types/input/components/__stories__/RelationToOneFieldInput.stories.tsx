@@ -64,7 +64,7 @@ const RelationToOneFieldInputWithContext = ({
   onSubmit,
   onCancel,
 }: RelationToOneFieldInputWithContextProps) => {
-  const pushFocusItemToFocusStack = usePushFocusItemToFocusStack();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   useEffect(() => {
     pushFocusItemToFocusStack({

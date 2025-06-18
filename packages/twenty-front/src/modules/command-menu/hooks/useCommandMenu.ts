@@ -18,7 +18,7 @@ export const useCommandMenu = () => {
   const { navigateCommandMenu } = useNavigateCommandMenu();
   const { closeAnyOpenDropdown } = useCloseAnyOpenDropdown();
 
-  const removeFocusIdFromFocusStack = useRemoveFocusIdFromFocusStack();
+  const { removeFocusIdFromFocusStack } = useRemoveFocusIdFromFocusStack();
 
   const closeCommandMenu = useRecoilCallback(
     ({ set, snapshot }) =>
