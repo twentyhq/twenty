@@ -45,4 +45,5 @@ export enum SettingsPath {
   RoleCreate = 'roles/create',
   RoleDetail = 'roles/:roleId',
   RoleObjectLevel = 'roles/:roleId/object/:objectMetadataId',
+  RoleAddObjectLevel = 'roles/:roleId/add-object-permission',
 }

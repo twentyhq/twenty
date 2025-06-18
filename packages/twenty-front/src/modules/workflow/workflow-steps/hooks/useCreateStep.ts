@@ -1,4 +1,3 @@
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import { workflowLastCreatedStepIdComponentState } from '@/workflow/states/workflowLastCreatedStepIdComponentState';
@@ -11,6 +10,7 @@ import { useCreateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/us
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { isDefined } from 'twenty-shared/utils';
 import { useState } from 'react';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 
 export const useCreateStep = ({
   workflow,
@@ -26,9 +26,8 @@ export const useCreateStep = ({
     workflowLastCreatedStepIdComponentState,
   );
 
-  const workflowInsertStepIds = useRecoilComponentValueV2(
-    workflowInsertStepIdsComponentState,
-  );
+  const [workflowInsertStepIds, setWorkflowInsertStepIds] =
+    useRecoilComponentStateV2(workflowInsertStepIdsComponentState);
 
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
 
@@ -63,9 +62,10 @@ export const useCreateStep = ({
 
       setWorkflowSelectedNode(createdStep.id);
       setWorkflowLastCreatedStepId(createdStep.id);
-    } catch (error) {
-      setIsLoading(false);
-      throw error;
+      setWorkflowInsertStepIds({
+        parentStepId: undefined,
+        nextStepId: undefined,
+      });
     } finally {
       setIsLoading(false);
     }
