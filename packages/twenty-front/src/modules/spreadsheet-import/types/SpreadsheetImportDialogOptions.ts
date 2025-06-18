@@ -35,6 +35,8 @@ export type SpreadsheetImportDialogOptions<FieldNames extends string> = {
     validationResult: SpreadsheetImportImportValidationResult<FieldNames>,
     file: File,
   ) => Promise<void>;
+  // Function called when user aborts the importing flow
+  onAbortSubmit?: () => void;
   // Allows submitting with errors. Default: true
   allowInvalidSubmit?: boolean;
   // Theme configuration passed to underlying Chakra-UI

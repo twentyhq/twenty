@@ -108,6 +108,11 @@ msgstr ""
 msgid "{contextStoreNumberOfSelectedRecords} selected"
 msgstr "{contextStoreNumberOfSelectedRecords} selecionado"
 
+#. js-lingui-id: WS/avX
+#: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
+msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
+msgstr ""
+
 #. js-lingui-id: wapGcj
 #: src/modules/auth/components/VerifyEmailEffect.tsx
 msgid "{message}"
@@ -789,9 +794,9 @@ msgid "Average"
 msgstr "Média"
 
 #. js-lingui-id: iH8pgl
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
-#~ msgid "Back"
-#~ msgstr ""
+#: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
+msgid "Back"
+msgstr ""
 
 #. js-lingui-id: Dht9W3
 #: src/pages/not-found/NotFound.tsx
@@ -876,6 +881,7 @@ msgstr "Não é possível alterar nomes de API para objetos padrão"
 #: src/pages/auth/Authorize.tsx
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+#: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/components/SpreadSheetImportModalCloseButton.tsx
@@ -1122,11 +1128,17 @@ msgstr "Configure suas configurações de e-mail e calendário."
 
 #. js-lingui-id: 7VpPHA
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModal.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Confirm"
 msgstr "Confirmar"
+
+#. js-lingui-id: FbJ7Si
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
+msgid "Confirm deletion of {roleName} role? This cannot be undone. All members will be reassigned to the default role."
+msgstr ""
 
 #. js-lingui-id: D8ATlr
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
@@ -1171,6 +1183,7 @@ msgstr "Contexto"
 #: src/pages/onboarding/ChooseYourPlan.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
+#: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Continue"
@@ -1444,6 +1457,7 @@ msgstr "Tcheco"
 #. js-lingui-id: Zz6Cxn
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -1642,10 +1656,25 @@ msgstr ""
 msgid "Delete Records on All Objects"
 msgstr ""
 
+#. js-lingui-id: efjzvW
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
+msgid "Delete role"
+msgstr ""
+
+#. js-lingui-id: v41A6S
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModal.tsx
+msgid "Delete Role Permanently"
+msgstr ""
+
 #. js-lingui-id: T6S2Ns
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Delete this integration"
 msgstr "Excluir esta integração"
+
+#. js-lingui-id: c0vHQI
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
+msgid "Delete this role and assign a new role to its members"
+msgstr ""
 
 #. js-lingui-id: KSOhjo
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -2765,6 +2794,11 @@ msgstr "Importar workflows"
 msgid "Importing"
 msgstr "Importando"
 
+#. js-lingui-id: YgmSaz
+#: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
+msgid "Importing Data ..."
+msgstr ""
+
 #. js-lingui-id: NoNwIX
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -3215,6 +3249,11 @@ msgstr ""
 msgid "Manage the members of your workspace here"
 msgstr ""
 
+#. js-lingui-id: fEqDWx
+#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+msgid "Manage workflows"
+msgstr ""
+
 #. js-lingui-id: FyFNsd
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 msgid "Manage your internet accounts."
@@ -3247,10 +3286,15 @@ msgstr ""
 msgid "Max"
 msgstr "Máximo"
 
+#. js-lingui-id: HFjNu6
+#: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
+msgid "Max import capacity: {formatSpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API."
+msgstr ""
+
 #. js-lingui-id: JGZq0R
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
-msgid "Max import capacity: {SpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API."
-msgstr ""
+#~ msgid "Max import capacity: {SpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API."
+#~ msgstr ""
 
 #. js-lingui-id: Sma10A
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignIn.tsx
@@ -4154,6 +4198,11 @@ msgstr "Eventos Recentes (mais antigo → mais recente)"
 msgid "Reconnect"
 msgstr "Reconectar"
 
+#. js-lingui-id: 2CUci6
+#: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
+msgid "Record creation stopped. {formattedCreatedRecordsCount} records created."
+msgstr ""
+
 #. js-lingui-id: mj1fkT
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
 msgid "Record image"
@@ -4338,6 +4387,7 @@ msgstr ""
 
 #. js-lingui-id: iSfzXo
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
+#: src/modules/settings/roles/role/components/SettingsRoleCreateEffect.tsx
 msgid "Role name"
 msgstr ""
 
@@ -5728,6 +5778,11 @@ msgstr "Quando a chave será desativada"
 #: src/modules/workflow/hooks/useRunWorkflowVersion.tsx
 #~ msgid "Workflow run failed"
 #~ msgstr "Falha na execução do Workflow"
+
+#. js-lingui-id: woYYQq
+#: src/modules/settings/roles/role-permissions/settings-permissions/components/SettingsRolePermissionsSettingsSection.tsx
+msgid "Workflows"
+msgstr ""
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspaceMembers.tsx

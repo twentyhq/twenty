@@ -12,28 +12,31 @@ type ContainerProps = {
 };
 
 const StyledContainer = styled.label<ContainerProps>`
-  flex-shrink: 0;
   align-items: center;
   background-color: ${({ theme, isOn, color }) =>
     isOn ? (color ?? theme.color.blue) : theme.background.transparent.medium};
   border-radius: 10px;
   cursor: pointer;
   display: flex;
+  flex-shrink: 0;
   height: ${({ toggleSize }) => (toggleSize === 'small' ? 16 : 20)}px;
-  transition: background-color 0.3s ease;
-  width: ${({ toggleSize }) => (toggleSize === 'small' ? 24 : 32)}px;
   opacity: ${({ 'data-disabled': disabled }) => (disabled ? 0.5 : 1)};
   pointer-events: ${({ 'data-disabled': disabled }) =>
     disabled ? 'none' : 'auto'};
+  position: relative;
+  transition: background-color 0.3s ease;
+  width: ${({ toggleSize }) => (toggleSize === 'small' ? 24 : 32)}px;
 `;
 
 const StyledCircle = styled(motion.span)<{
   size: ToggleSize;
 }>`
-  display: block;
   background-color: ${({ theme }) => theme.background.primary};
   border-radius: 50%;
+  display: block;
   height: ${({ size }) => (size === 'small' ? 12 : 16)}px;
+  left: 0;
+  position: absolute;
   width: ${({ size }) => (size === 'small' ? 12 : 16)}px;
 `;
 
@@ -80,6 +83,7 @@ export const Toggle = ({
       />
 
       <StyledCircle
+        initial="off"
         animate={value ? 'on' : 'off'}
         variants={circleVariants}
         size={toggleSize}
