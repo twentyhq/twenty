@@ -9,15 +9,18 @@ import { ValidateApprovedAccessDomainInput } from 'src/engine/core-modules/appro
 import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 
 @UseGuards(WorkspaceAuthGuard)
 @UseFilters(ApprovedAccessDomainExceptionFilter)
 @Resolver()
 export class ApprovedAccessDomainResolver {
   constructor(
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly approvedAccessDomainService: ApprovedAccessDomainService,
   ) {}
 
@@ -27,10 +30,22 @@ export class ApprovedAccessDomainResolver {
     @AuthWorkspace() currentWorkspace: Workspace,
     @AuthUser() currentUser: User,
   ): Promise<ApprovedAccessDomain> {
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+        currentWorkspace.id,
+        'workspaceMember',
+      );
+
+    const workspaceMember = await workspaceMemberRepository.findOneOrFail({
+      where: {
+        userId: currentUser.id,
+      },
+    });
+
     return this.approvedAccessDomainService.createApprovedAccessDomain(
       domain,
       currentWorkspace,
-      currentUser,
+      workspaceMember,
       email,
     );
   }
