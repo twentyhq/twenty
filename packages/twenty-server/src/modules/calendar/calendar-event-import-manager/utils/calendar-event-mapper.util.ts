@@ -1,6 +1,6 @@
 import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 
-export const existingCalendarEventsMapper = (
+export const mapCalendarEventsByICalUID = (
   existingCalendarEvents: CalendarEventWorkspaceEntity[],
 ): Map<string, string> => {
   return new Map<string, string>(

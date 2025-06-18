@@ -8,7 +8,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { existingCalendarEventsMapper } from 'src/modules/calendar/calendar-event-import-manager/utils/calendar-event-mapper.util';
+import { mapCalendarEventsByICalUID } from 'src/modules/calendar/calendar-event-import-manager/utils/calendar-event-mapper.util';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
@@ -51,7 +51,7 @@ export class CalendarSaveEventsService {
       },
     });
 
-    const existingCalendarEventsMap = existingCalendarEventsMapper(
+    const existingCalendarEventsMap = mapCalendarEventsByICalUID(
       existingCalendarEvents,
     );
 
@@ -174,7 +174,7 @@ export class CalendarSaveEventsService {
           transactionManager,
         );
 
-        const participantsWithCalendarEventId =
+        const filteredEventsWithParticipantsCalendarEventId =
           filteredEventsWithActionAndIds.map((event) => {
             const participantsWithCalendarEventId = event.participants.map(
               (participant) => ({
@@ -189,13 +189,14 @@ export class CalendarSaveEventsService {
             };
           });
 
-        const participantsToSave = participantsWithCalendarEventId
+        const participantsToSave = filteredEventsWithParticipantsCalendarEventId
           .filter((event) => event.toBeSaved)
           .flatMap((event) => event.participants);
 
-        const participantsToUpdate = participantsWithCalendarEventId
-          .filter((event) => !event.toBeSaved)
-          .flatMap((event) => event.participants);
+        const participantsToUpdate =
+          filteredEventsWithParticipantsCalendarEventId
+            .filter((event) => !event.toBeSaved)
+            .flatMap((event) => event.participants);
 
         await this.calendarEventParticipantService.upsertAndDeleteCalendarEventParticipants(
           participantsToSave,
