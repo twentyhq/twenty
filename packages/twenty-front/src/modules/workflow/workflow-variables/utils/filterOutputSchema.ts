@@ -1,3 +1,4 @@
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import {
   BaseOutputSchema,
   OutputSchema,
@@ -7,6 +8,7 @@ import { isBaseOutputSchema } from '@/workflow/workflow-variables/utils/isBaseOu
 import { isLinkOutputSchema } from '@/workflow/workflow-variables/utils/isLinkOutputSchema';
 import { isRecordOutputSchema } from '@/workflow/workflow-variables/utils/isRecordOutputSchema';
 import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType } from '~/generated/graphql';
 
 const isValidRecordOutputSchema = (
   outputSchema: RecordOutputSchema,
@@ -32,7 +34,24 @@ const filterRecordOutputSchema = (
   for (const key in outputSchema.fields) {
     const field = outputSchema.fields[key];
 
+    if (
+      isDefined(field?.type) &&
+      isCompositeFieldType(field.type as FieldMetadataType)
+    ) {
+      continue;
+    }
+
     if (field.isLeaf) {
+      if (
+        (field.type === FieldMetadataType.UUID &&
+          outputSchema.object.nameSingular === objectNameSingularToSelect) ||
+        !Object.values(FieldMetadataType).includes(
+          field.type as FieldMetadataType,
+        )
+      ) {
+        filteredFields[key] = field;
+        hasValidFields = true;
+      }
       continue;
     }
 
@@ -75,6 +94,22 @@ const filterBaseOutputSchema = (
     const field = outputSchema[key];
 
     if (field.isLeaf) {
+      if (
+        isDefined(field?.type) &&
+        isCompositeFieldType(field.type as FieldMetadataType)
+      ) {
+        continue;
+      }
+
+      if (
+        field.type === FieldMetadataType.UUID ||
+        !Object.values(FieldMetadataType).includes(
+          field.type as FieldMetadataType,
+        )
+      ) {
+        filteredSchema[key] = field;
+        hasValidFields = true;
+      }
       continue;
     }
 

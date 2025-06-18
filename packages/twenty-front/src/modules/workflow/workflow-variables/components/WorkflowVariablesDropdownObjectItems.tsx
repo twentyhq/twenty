@@ -2,7 +2,11 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import {
+  BaseOutputSchema,
+  LinkOutputSchema,
+  StepOutputSchema,
+} from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/getCurrentSubStepFromPath';
 import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepHeaderLabel';
 import { isBaseOutputSchema } from '@/workflow/workflow-variables/utils/isBaseOutputSchema';
@@ -10,14 +14,21 @@ import { isRecordOutputSchema } from '@/workflow/workflow-variables/utils/isReco
 
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { workflowDiagramTriggerNodeSelectionComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramTriggerNodeSelectionComponentState';
+import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
+import { isLinkOutputSchema } from '@/workflow/workflow-variables/utils/isLinkOutputSchema';
+import { t } from '@lingui/core/macro';
 import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronLeft,
   OverflowingTextWithTooltip,
   useIcons,
 } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 type WorkflowVariablesDropdownObjectItemsProps = {
   step: StepOutputSchema;
@@ -33,11 +44,23 @@ export const WorkflowVariablesDropdownObjectItems = ({
   const [currentPath, setCurrentPath] = useState<string[]>([]);
   const [searchInputValue, setSearchInputValue] = useState('');
   const { getIcon } = useIcons();
+  const setWorkflowSelectedNode = useSetRecoilComponentStateV2(
+    workflowSelectedNodeComponentState,
+  );
+  const setActiveTabId = useSetRecoilComponentStateV2(
+    activeTabIdComponentState,
+    'workflow-serverless-function-tab-list-component-id',
+  );
+  const setWorkflowDiagramTriggerNodeSelection = useSetRecoilComponentStateV2(
+    workflowDiagramTriggerNodeSelectionComponentState,
+  );
 
   const getDisplayedSubStepFields = () => {
     const currentSubStep = getCurrentSubStepFromPath(step, currentPath);
 
-    if (isRecordOutputSchema(currentSubStep)) {
+    if (isLinkOutputSchema(currentSubStep)) {
+      return { link: currentSubStep.link };
+    } else if (isRecordOutputSchema(currentSubStep)) {
       return currentSubStep.fields;
     } else if (isBaseOutputSchema(currentSubStep)) {
       return currentSubStep;
@@ -67,8 +90,36 @@ export const WorkflowVariablesDropdownObjectItems = ({
   };
 
   const handleSelectField = (key: string) => {
-    setCurrentPath([...currentPath, key]);
-    setSearchInputValue('');
+    const currentSubStep = getCurrentSubStepFromPath(step, currentPath);
+
+    const handleSelectBaseOutputSchema = (
+      baseOutputSchema: BaseOutputSchema,
+    ) => {
+      if (!baseOutputSchema[key]?.isLeaf) {
+        setCurrentPath([...currentPath, key]);
+        setSearchInputValue('');
+      } else {
+        onSelect(`{{${step.id}.${[...currentPath, key].join('.')}}}`);
+      }
+    };
+
+    const handleSelectLinkOutputSchema = (
+      linkOutputSchema: LinkOutputSchema,
+    ) => {
+      setWorkflowSelectedNode(step.id);
+      setWorkflowDiagramTriggerNodeSelection(step.id);
+      if (isDefined(linkOutputSchema.link.tab)) {
+        setActiveTabId(linkOutputSchema.link.tab);
+      }
+    };
+
+    if (isLinkOutputSchema(currentSubStep)) {
+      handleSelectLinkOutputSchema(currentSubStep);
+    } else if (isRecordOutputSchema(currentSubStep)) {
+      handleSelectBaseOutputSchema(currentSubStep.fields);
+    } else if (isBaseOutputSchema(currentSubStep)) {
+      handleSelectBaseOutputSchema(currentSubStep);
+    }
   };
 
   const goBack = () => {
@@ -99,6 +150,10 @@ export const WorkflowVariablesDropdownObjectItems = ({
       )
     : options;
 
+  const shouldDisplayObject =
+    shouldDisplaySubStepObject && displayedSubStepObject?.label;
+  const nameSingular = displayedSubStepObject?.nameSingular;
+
   return (
     <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
       <DropdownMenuHeader
@@ -120,19 +175,23 @@ export const WorkflowVariablesDropdownObjectItems = ({
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
-        {shouldDisplaySubStepObject && displayedSubStepObject?.label && (
+        {shouldDisplayObject && (
           <MenuItemSelect
             selected={false}
             focused={false}
             onClick={handleSelectObject}
-            text={displayedSubStepObject.label}
+            text={displayedSubStepObject?.label || ''}
             hasSubMenu={false}
             LeftIcon={
               displayedSubStepObject.icon
                 ? getIcon(displayedSubStepObject.icon)
                 : undefined
             }
+            contextualText={t`Pick a ${nameSingular} record`}
           />
+        )}
+        {filteredOptions.length > 0 && shouldDisplayObject && (
+          <DropdownMenuSeparator />
         )}
         {filteredOptions.map(([key, value]) => (
           <MenuItemSelect
@@ -143,6 +202,7 @@ export const WorkflowVariablesDropdownObjectItems = ({
             text={value.label || key}
             hasSubMenu={!value.isLeaf}
             LeftIcon={value.icon ? getIcon(value.icon) : undefined}
+            contextualText={value.isLeaf ? value?.value?.toString() : undefined}
           />
         ))}
       </DropdownMenuItemsContainer>
