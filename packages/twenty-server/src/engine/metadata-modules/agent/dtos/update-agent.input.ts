@@ -26,9 +26,13 @@ export class UpdateAgentInput {
   @Field({ nullable: true })
   prompt?: string;
 
+  @IsString()
+  @IsOptional()
   @Field(() => String, { nullable: true })
   model?: string;
 
+  @IsString()
+  @IsOptional()
   @Field(() => String, { nullable: true })
   responseFormat?: string;
 }
