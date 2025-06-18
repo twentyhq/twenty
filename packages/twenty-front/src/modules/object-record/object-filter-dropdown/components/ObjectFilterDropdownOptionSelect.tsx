@@ -153,7 +153,7 @@ export const ObjectFilterDropdownOptionSelect = ({
     <SelectableList
       selectableListInstanceId={componentInstanceId}
       selectableItemIdArray={objectRecordsIds}
-      focusId={componentInstanceId}
+      focusId={focusId}
       hotkeyScope={DropdownHotkeyScope.Dropdown}
     >
       <DropdownMenuItemsContainer hasMaxHeight>

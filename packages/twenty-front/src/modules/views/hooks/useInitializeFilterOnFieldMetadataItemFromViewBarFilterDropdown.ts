@@ -14,6 +14,7 @@ import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotk
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -68,7 +69,7 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
 
             if (filterType === 'RELATION' || filterType === 'SELECT') {
               pushFocusItemToFocusStack({
-                focusId: fieldMetadataItem.id,
+                focusId: VIEW_BAR_FILTER_DROPDOWN_ID,
                 component: {
                   type: FocusComponentType.DROPDOWN,
                   instanceId: fieldMetadataItem.id,

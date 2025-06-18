@@ -127,7 +127,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer hasMaxHeight>
             <SingleRecordPickerMenuItems
-              focusId={recordPickerInstanceId}
+              focusId={focusId}
               recordsToSelect={records.recordsToSelect}
               loading={records.loading}
               selectedRecord={records.selectedRecords?.[0]}
