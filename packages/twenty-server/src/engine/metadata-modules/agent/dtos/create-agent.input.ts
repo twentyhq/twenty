@@ -19,6 +19,8 @@ export class CreateAgentInput {
   @Field()
   prompt: string;
 
+  @IsString()
+  @IsNotEmpty()
   @Field(() => String)
   model: string;
 
