@@ -14,7 +14,7 @@ import { useRecoilValue } from 'recoil';
 import styled from '@emotion/styled';
 
 const StyledShowPageBannerContainer = styled.div`
-z-index: 1
+  z-index: 1;
 `;
 
 type RecordShowContainerProps = {
