@@ -25,10 +25,12 @@ export const StyledSelectableItem = styled(SelectableListItem)`
 
 type MultipleRecordPickerMenuItemsProps = {
   onChange?: (morphItem: RecordPickerPickableMorphItem) => void;
+  focusId: string;
 };
 
 export const MultipleRecordPickerMenuItems = ({
   onChange,
+  focusId,
 }: MultipleRecordPickerMenuItemsProps) => {
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
     MultipleRecordPickerComponentInstanceContext,
@@ -85,7 +87,7 @@ export const MultipleRecordPickerMenuItems = ({
         <SelectableList
           selectableListInstanceId={selectableListComponentInstanceId}
           selectableItemIdArray={pickableRecordIds}
-          focusId={selectableListComponentInstanceId}
+          focusId={focusId}
           hotkeyScope={DropdownHotkeyScope.Dropdown}
         >
           {pickableRecordIds.map((recordId) => {

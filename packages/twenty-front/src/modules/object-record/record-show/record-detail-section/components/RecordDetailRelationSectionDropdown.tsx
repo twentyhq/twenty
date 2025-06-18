@@ -235,6 +235,7 @@ export const RecordDetailRelationSectionDropdown = ({
             />
           ) : (
             <MultipleRecordPicker
+              focusId={dropdownId}
               componentInstanceId={dropdownId}
               onCreate={() => {
                 closeDropdown();

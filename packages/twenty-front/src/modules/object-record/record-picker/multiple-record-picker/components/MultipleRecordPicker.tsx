@@ -36,6 +36,7 @@ type MultipleRecordPickerProps = {
   layoutDirection?: RecordPickerLayoutDirection;
   componentInstanceId: string;
   onClickOutside: () => void;
+  focusId: string;
 };
 
 export const MultipleRecordPicker = ({
@@ -45,6 +46,7 @@ export const MultipleRecordPicker = ({
   onClickOutside,
   layoutDirection = 'search-bar-on-bottom',
   componentInstanceId,
+  focusId,
 }: MultipleRecordPickerProps) => {
   const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
 
@@ -99,7 +101,7 @@ export const MultipleRecordPicker = ({
     callback: () => {
       handleSubmit();
     },
-    focusId: selectableListComponentInstanceId,
+    focusId,
     scope: DropdownHotkeyScope.Dropdown,
     dependencies: [handleSubmit],
   });
@@ -141,13 +143,19 @@ export const MultipleRecordPicker = ({
         {layoutDirection === 'search-bar-on-bottom' && (
           <>
             {createNewButtonSection}
-            <MultipleRecordPickerItemsDisplay onChange={onChange} />
+            <MultipleRecordPickerItemsDisplay
+              onChange={onChange}
+              focusId={focusId}
+            />
           </>
         )}
         <MultipleRecordPickerSearchInput />
         {layoutDirection === 'search-bar-on-top' && (
           <>
-            <MultipleRecordPickerItemsDisplay onChange={onChange} />
+            <MultipleRecordPickerItemsDisplay
+              onChange={onChange}
+              focusId={focusId}
+            />
             {createNewButtonSection}
           </>
         )}

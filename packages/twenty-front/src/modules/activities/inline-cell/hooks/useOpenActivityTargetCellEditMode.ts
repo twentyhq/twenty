@@ -6,7 +6,8 @@ import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-r
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilCallback } from 'recoil';
 
 type OpenActivityTargetCellEditModeProps = {
@@ -19,7 +20,7 @@ export const useOpenActivityTargetCellEditMode = () => {
   const { performSearch: multipleRecordPickerPerformSearch } =
     useMultipleRecordPickerPerformSearch();
 
-  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
+  const pushFocusItemToFocusStack = usePushFocusItemToFocusStack();
 
   const openActivityTargetCellEditMode = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -84,11 +85,19 @@ export const useOpenActivityTargetCellEditMode = () => {
           ),
         });
 
-        setHotkeyScopeAndMemorizePreviousScope({
-          scope: DropdownHotkeyScope.Dropdown,
+        pushFocusItemToFocusStack({
+          focusId: recordPickerInstanceId,
+          component: {
+            type: FocusComponentType.DROPDOWN,
+            instanceId: recordPickerInstanceId,
+          },
+          hotkeyScope: {
+            scope: DropdownHotkeyScope.Dropdown,
+          },
+          memoizeKey: recordPickerInstanceId,
         });
       },
-    [multipleRecordPickerPerformSearch, setHotkeyScopeAndMemorizePreviousScope],
+    [multipleRecordPickerPerformSearch, pushFocusItemToFocusStack],
   );
 
   return { openActivityTargetCellEditMode };

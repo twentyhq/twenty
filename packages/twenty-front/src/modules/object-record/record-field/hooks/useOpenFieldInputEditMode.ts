@@ -7,6 +7,7 @@ import { getActivityTargetObjectRecords } from '@/activities/utils/getActivityTa
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useOpenRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useOpenRelationFromManyFieldInput';
 import { useOpenRelationToOneFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useOpenRelationToOneFieldInput';
+import { getRelationFromManyFieldInputInstanceId } from '@/object-record/record-field/meta-types/input/utils/getRelationFromManyFieldInputInstanceId';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import {
   FieldMetadata,
@@ -72,7 +73,10 @@ export const useOpenFieldInputEditMode = () => {
           });
 
           openActivityTargetCellEditMode({
-            recordPickerInstanceId: `relation-from-many-field-input-${recordId}`,
+            recordPickerInstanceId: getRelationFromManyFieldInputInstanceId({
+              recordId,
+              fieldName: fieldDefinition.metadata.fieldName,
+            }),
             activityTargetObjectRecords,
           });
           return;

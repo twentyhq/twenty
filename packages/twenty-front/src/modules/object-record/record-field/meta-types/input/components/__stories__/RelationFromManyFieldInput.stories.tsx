@@ -18,6 +18,7 @@ import {
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/hooks/useOpenFieldInputEditMode';
+import { getRelationFromManyFieldInputInstanceId } from '@/object-record/record-field/meta-types/input/utils/getRelationFromManyFieldInputInstanceId';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { DropdownHotkeyScope } from '@/ui/layout/dropdown/constants/DropdownHotkeyScope';
@@ -87,7 +88,10 @@ const RelationManyFieldInputWithContext = () => {
     <div>
       <RecordFieldComponentInstanceContext.Provider
         value={{
-          instanceId: 'relation-from-many-field-record-id-people',
+          instanceId: getRelationFromManyFieldInputInstanceId({
+            recordId: 'recordId',
+            fieldName: 'people',
+          }),
         }}
       >
         <FieldContext.Provider
