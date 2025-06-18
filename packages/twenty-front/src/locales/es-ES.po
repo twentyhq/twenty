@@ -4387,7 +4387,7 @@ msgstr ""
 
 #. js-lingui-id: iSfzXo
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
-#: src/modules/settings/roles/role/components/SettingsRoleCreateEffect.tsx
+#: src/modules/settings/roles/role/components/SettingsRoleLabelContainer.tsx
 msgid "Role name"
 msgstr ""
 
@@ -5465,6 +5465,11 @@ msgstr "Error desconocido"
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Unlimited contacts"
 msgstr "Contactos ilimitados"
+
+#. js-lingui-id: xzOKup
+#: src/modules/settings/roles/role/components/SettingsRoleCreateEffect.tsx
+msgid "Untitled role"
+msgstr ""
 
 #. js-lingui-id: EkH9pt
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx

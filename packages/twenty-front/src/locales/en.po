@@ -4382,7 +4382,7 @@ msgstr "Revoked on {revokedBy} {pluralizedObject}"
 
 #. js-lingui-id: iSfzXo
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
-#: src/modules/settings/roles/role/components/SettingsRoleCreateEffect.tsx
+#: src/modules/settings/roles/role/components/SettingsRoleLabelContainer.tsx
 msgid "Role name"
 msgstr "Role name"
 
@@ -5460,6 +5460,11 @@ msgstr "Unknown error"
 #: src/pages/onboarding/ChooseYourPlan.tsx
 msgid "Unlimited contacts"
 msgstr "Unlimited contacts"
+
+#. js-lingui-id: xzOKup
+#: src/modules/settings/roles/role/components/SettingsRoleCreateEffect.tsx
+msgid "Untitled role"
+msgstr "Untitled role"
 
 #. js-lingui-id: EkH9pt
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
