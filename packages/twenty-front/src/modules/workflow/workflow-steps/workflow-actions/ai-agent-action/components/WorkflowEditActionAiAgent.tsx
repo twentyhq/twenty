@@ -45,7 +45,7 @@ export const WorkflowEditActionAiAgent = ({
     await updateAgent({
       name: formData.name,
       prompt: formData.prompt,
-      model: formData.model,
+      modelId: formData.modelId,
       responseFormat: formData.responseFormat,
     });
   }, 500);
@@ -101,12 +101,12 @@ export const WorkflowEditActionAiAgent = ({
           dropdownId="select-model"
           label="AI Model"
           options={ALL_MODELS}
-          value={formValues.model}
-          onChange={(value) => handleFieldChange('model', value)}
+          value={formValues.modelId}
+          onChange={(value) => handleFieldChange('modelId', value)}
           disabled={actionOptions.readonly}
         />
         <FormTextFieldInput
-          key={`prompt-${formValues.model ? action.id : 'empty'}`}
+          key={`prompt-${formValues.modelId ? action.id : 'empty'}`}
           label="Instructions for AI"
           placeholder="Describe what you want the AI to do..."
           readonly={actionOptions.readonly}

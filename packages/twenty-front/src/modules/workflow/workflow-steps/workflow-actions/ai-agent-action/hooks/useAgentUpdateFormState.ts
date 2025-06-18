@@ -7,7 +7,7 @@ import { FIND_ONE_AGENT } from '../graphql/queries/findOneAgent';
 type AgentFormValues = {
   name: string;
   prompt: string;
-  model: string;
+  modelId: string;
   responseFormat: string;
 };
 
@@ -15,7 +15,7 @@ export const useAgentUpdateFormState = ({ agentId }: { agentId: string }) => {
   const [formValues, setFormValues] = useState<AgentFormValues>({
     name: '',
     prompt: '',
-    model: '',
+    modelId: '',
     responseFormat: '',
   });
 
@@ -28,7 +28,7 @@ export const useAgentUpdateFormState = ({ agentId }: { agentId: string }) => {
         setFormValues({
           name: agent.name,
           prompt: agent.prompt,
-          model: agent.model,
+          modelId: agent.modelId,
           responseFormat: agent.responseFormat,
         });
       }

@@ -7,7 +7,7 @@ export const UPDATE_ONE_AGENT = gql`
       name
       description
       prompt
-      model
+      modelId
       responseFormat
     }
   }

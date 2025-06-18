@@ -7,7 +7,7 @@ export const FIND_ONE_AGENT = gql`
       name
       description
       prompt
-      model
+      modelId
       responseFormat
     }
   }
