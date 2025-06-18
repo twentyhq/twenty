@@ -37,9 +37,7 @@ const StyledCircle = styled(motion.span)<{
   height: ${({ size }) => (size === 'small' ? 12 : 16)}px;
   left: 0;
   position: absolute;
-  top: 50%;
   width: ${({ size }) => (size === 'small' ? 12 : 16)}px;
-  will-change: transform;
 `;
 
 export type ToggleProps = {
@@ -62,8 +60,8 @@ export const Toggle = ({
   disabled,
 }: ToggleProps) => {
   const circleVariants = {
-    on: { x: toggleSize === 'small' ? 10 : 14, y: '-50%' },
-    off: { x: 2, y: '-50%' },
+    on: { x: toggleSize === 'small' ? 10 : 14 },
+    off: { x: 2 },
   };
 
   return (
