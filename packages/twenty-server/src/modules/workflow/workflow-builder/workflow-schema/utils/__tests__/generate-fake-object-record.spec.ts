@@ -57,6 +57,7 @@ describe('generateFakeObjectRecord', () => {
 
     expect(generateObjectRecordFields).toHaveBeenCalledWith({
       objectMetadataInfo,
+      depth: 0,
     });
   });
 });
