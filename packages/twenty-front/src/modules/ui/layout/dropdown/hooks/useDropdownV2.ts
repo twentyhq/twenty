@@ -1,6 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
+import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { dropdownHotkeyComponentState } from '@/ui/layout/dropdown/states/dropdownHotkeyComponentState';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
@@ -13,6 +14,8 @@ export const useDropdownV2 = () => {
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
+  const { setActiveDropdownFocusIdAndMemorizePrevious } =
+    useSetActiveDropdownFocusIdAndMemorizePrevious();
   const { goBackToPreviousDropdownFocusId } =
     useGoBackToPreviousDropdownFocusId();
 
@@ -54,6 +57,7 @@ export const useDropdownV2 = () => {
           }),
           true,
         );
+        setActiveDropdownFocusIdAndMemorizePrevious(scopeId);
 
         if (isDefined(customHotkeyScope)) {
           setHotkeyScopeAndMemorizePreviousScope({
