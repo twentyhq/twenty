@@ -68,6 +68,22 @@ export class ConfigVariables {
   IS_EMAIL_VERIFICATION_REQUIRED = false;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TwoFactorAuthentication,
+    description: 'Enable or disable two factor authentication for workspaces',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_TWO_FACTOR_AUTHENTICATION_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TwoFactorAuthentication,
+    description: 'Enforce two factor authentication globally for all workspaces',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_TWO_FACTOR_AUTHENTICATION_REQUIRED = false;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TokensDuration,
     description: 'Duration for which the email verification token is valid',
     type: ConfigVariableType.STRING,
