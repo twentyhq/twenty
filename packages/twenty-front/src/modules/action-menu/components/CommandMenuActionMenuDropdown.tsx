@@ -32,14 +32,23 @@ export const CommandMenuActionMenuDropdown = () => {
     getRightDrawerActionMenuDropdownIdFromActionMenuId(actionMenuId);
   const { toggleDropdown } = useDropdownV2();
 
-  useHotkeysOnFocusedElement({
+  const hotkeysConfig = {
     keys: ['ctrl+o', 'meta+o'],
     callback: () => {
       toggleDropdown(dropdownId);
     },
-    focusId: SIDE_PANEL_FOCUS_ID,
     scope: AppHotkeyScope.CommandMenuOpen,
     dependencies: [toggleDropdown],
+  };
+
+  useHotkeysOnFocusedElement({
+    ...hotkeysConfig,
+    focusId: SIDE_PANEL_FOCUS_ID,
+  });
+
+  useHotkeysOnFocusedElement({
+    ...hotkeysConfig,
+    focusId: dropdownId,
   });
 
   const recordSelectionActions = actions.filter(
