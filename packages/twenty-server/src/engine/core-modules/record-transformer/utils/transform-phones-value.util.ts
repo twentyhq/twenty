@@ -1,5 +1,6 @@
 import { isDefined, parseJson } from 'twenty-shared/utils';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   CountryCallingCode,
   CountryCode,
@@ -7,7 +8,10 @@ import {
   getCountryCallingCode,
   parsePhoneNumber,
 } from 'libphonenumber-js';
-import { PhonesMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
+import {
+  PhoneMetadata,
+  PhonesMetadata,
+} from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
 
 const ALL_COUNTRIES_CODE = getCountries();
 
@@ -17,16 +21,14 @@ export type LinksFieldGraphQLInput =
     >
   | null
   | undefined;
-type DefinedLinksFieldGraphQLInput = NonNullable<LinksFieldGraphQLInput>;
-type LinksFieldGraphQLInputWithPrimaryPhoneNumber =
-  DefinedLinksFieldGraphQLInput &
-    Required<Pick<DefinedLinksFieldGraphQLInput, 'primaryPhoneNumber'>>;
+type PhoneMetadataWithNumber = Partial<PhoneMetadata> &
+  Required<Pick<PhoneMetadata, 'number'>>;
 
 const isValidCountryCode = (input: string): input is CountryCode => {
   return ALL_COUNTRIES_CODE.includes(input as unknown as CountryCode);
 };
 
-const getCountryCodesForCallingCode = (callingCode: string) => {
+const getCountryCodesForCallingCode = (callingCode: CountryCallingCode) => {
   const cleanCallingCode = callingCode.startsWith('+')
     ? callingCode.slice(1)
     : callingCode;
@@ -38,34 +40,26 @@ const getCountryCodesForCallingCode = (callingCode: string) => {
 };
 
 const validatePrimaryPhoneCountryCodeAndCallingCode = ({
-  primaryPhoneCallingCode,
-  primaryPhoneCountryCode,
-}: Omit<
-  DefinedLinksFieldGraphQLInput,
-  'primaryPhoneNumber' | 'additionalPhones'
->) => {
-  if (
-    isDefined(primaryPhoneCountryCode) &&
-    !isValidCountryCode(primaryPhoneCountryCode)
-  ) {
+  callingCode,
+  countryCode,
+}: Partial<Omit<PhoneMetadata, 'number'>>) => {
+  if (isNonEmptyString(countryCode) && !isValidCountryCode(countryCode)) {
     throw new Error('TOOD invalid country code');
   }
 
-  if (!isDefined(primaryPhoneCallingCode)) {
+  if (!isNonEmptyString(callingCode)) {
     return;
   }
 
-  const expectedCountryCodes = getCountryCodesForCallingCode(
-    primaryPhoneCallingCode,
-  );
+  const expectedCountryCodes = getCountryCodesForCallingCode(callingCode);
   if (expectedCountryCodes.length === 0) {
     throw new Error('TODO invalid country calling code');
   }
 
   if (
-    isDefined(primaryPhoneCountryCode) &&
+    isNonEmptyString(countryCode) &&
     expectedCountryCodes.every(
-      (expectedCountryCode) => expectedCountryCode !== primaryPhoneCountryCode,
+      (expectedCountryCode) => expectedCountryCode !== countryCode,
     )
   ) {
     throw new Error('TODO conflicting country code and calling code');
@@ -73,39 +67,38 @@ const validatePrimaryPhoneCountryCodeAndCallingCode = ({
 };
 
 const validateAndInferMetadataFromPrimaryPhoneNumber = ({
-  primaryPhoneNumber,
-  primaryPhoneCountryCode,
-  primaryPhoneCallingCode,
-}: Omit<LinksFieldGraphQLInputWithPrimaryPhoneNumber, 'additionalPhones'>) => {
+  callingCode,
+  countryCode,
+  number,
+}: PhoneMetadataWithNumber): Partial<PhoneMetadata> => {
   try {
-    const phone = parsePhoneNumber(primaryPhoneNumber);
+    const phone = parsePhoneNumber(number);
 
     if (
       isDefined(phone.country) &&
-      isDefined(primaryPhoneCountryCode) &&
-      phone.country !== primaryPhoneCountryCode
+      isDefined(countryCode) &&
+      phone.country !== countryCode
     ) {
-      throw new Error('TODO conflicting primaryPhoneCountryCode');
+      throw new Error('TODO conflicting countryCode');
     }
 
     if (
       isDefined(phone.countryCallingCode) &&
-      isDefined(primaryPhoneCallingCode) &&
-      phone.countryCallingCode !== primaryPhoneCallingCode
+      isDefined(callingCode) &&
+      phone.countryCallingCode !== callingCode
     ) {
-      throw new Error('TODO conficting primaryPhoneCallingCode');
+      throw new Error('TODO conficting callingCode');
     }
 
     const finalPrimaryPhoneCallingCode =
       (phone.countryCallingCode as undefined | CountryCallingCode) ??
-      primaryPhoneCallingCode;
-    const finalPrimaryPhoneCountryCode =
-      phone.country ?? primaryPhoneCountryCode;
+      callingCode;
+    const finalPrimaryPhoneCountryCode = phone.country ?? countryCode;
 
     return {
-      primaryPhoneCallingCode: finalPrimaryPhoneCountryCode,
-      primaryPhoneCountryCode: finalPrimaryPhoneCallingCode,
-      primaryPhoneNumber: phone.nationalNumber,
+      countryCode: finalPrimaryPhoneCountryCode,
+      callingCode: finalPrimaryPhoneCallingCode,
+      number: phone.nationalNumber,
     };
   } catch (e) {
     throw new Error('TODO invalid number format');
@@ -114,28 +107,28 @@ const validateAndInferMetadataFromPrimaryPhoneNumber = ({
 
 // TODO factorize types ?
 const validateAndInferPhoneInput = ({
-  primaryPhoneCallingCode,
-  primaryPhoneCountryCode,
-  primaryPhoneNumber,
-}: Omit<DefinedLinksFieldGraphQLInput, 'additionalPhones'>) => {
+  callingCode,
+  countryCode,
+  number,
+}: Partial<PhoneMetadata>) => {
   validatePrimaryPhoneCountryCodeAndCallingCode({
-    primaryPhoneCallingCode,
-    primaryPhoneCountryCode,
+    callingCode,
+    countryCode,
   });
 
   // Should we swallow only in case that's not a valid phonenumnber :thinking:
-  if (isDefined(primaryPhoneNumber) && primaryPhoneNumber.startsWith('+')) {
+  if (isDefined(number) && number.startsWith('+')) {
     return validateAndInferMetadataFromPrimaryPhoneNumber({
-      primaryPhoneNumber,
-      primaryPhoneCallingCode,
-      primaryPhoneCountryCode,
+      number,
+      callingCode,
+      countryCode,
     });
   }
 
   return {
-    primaryPhoneCallingCode,
-    primaryPhoneCountryCode,
-    primaryPhoneNumber,
+    callingCode,
+    countryCode,
+    number,
   };
 };
 
@@ -155,20 +148,25 @@ export const transformPhonesValue = ({
 
   const { additionalPhones, ...primary } = input;
   const parsedAdditionalPhones = isDefined(additionalPhones)
-    ? parseJson<Omit<DefinedLinksFieldGraphQLInput, 'additionalPhones'>[]>(
-        additionalPhones,
-      )
+    ? parseJson<PhoneMetadata[]>(additionalPhones)
     : undefined;
   const {
-    primaryPhoneCallingCode,
-    primaryPhoneCountryCode,
-    primaryPhoneNumber,
-  } = validateAndInferPhoneInput(primary);
+    callingCode: primaryPhoneCallingCode,
+    countryCode: primaryPhoneCountryCode,
+    number: primaryPhoneNumber,
+  } = validateAndInferPhoneInput({
+    callingCode: primary.primaryPhoneCallingCode,
+    countryCode: primary.primaryPhoneCountryCode,
+    number: primary.primaryPhoneNumber,
+  });
 
+  const updatedJson = JSON.stringify(
+    (parsedAdditionalPhones ?? []).map(validateAndInferPhoneInput),
+  );
+
+  console.log(updatedJson);
   return {
-    additionalPhones: JSON.stringify(
-      (parsedAdditionalPhones ?? []).map(validateAndInferPhoneInput),
-    ),
+    additionalPhones: updatedJson,
     primaryPhoneCallingCode,
     primaryPhoneCountryCode,
     primaryPhoneNumber,

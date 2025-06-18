@@ -1,5 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { CountryCallingCode, CountryCode } from 'libphonenumber-js';
 import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
 export const phonesCompositeType: CompositeType = {
@@ -33,10 +34,10 @@ export const phonesCompositeType: CompositeType = {
   ],
 };
 
-type PhoneMetadata = {
+export type PhoneMetadata = {
   number: string;
-  countryCode: string;
-  callingCode: string;
+  countryCode: CountryCode;
+  callingCode: CountryCallingCode;
 };
 
 type PrimaryPhoneMetadata<T extends PhoneMetadata = PhoneMetadata> = {
