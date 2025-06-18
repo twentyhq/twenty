@@ -279,14 +279,14 @@ export const MatchColumnsStep = <T extends string>({
         </ScrollWrapper>
       </StyledContent>
       <StepNavigationButton
-        onClick={handleOnContinue}
+        onContinue={handleOnContinue}
         isLoading={isLoading}
-        title={t`Next Step`}
+        continueTitle={t`Next Step`}
         onBack={() => {
           onBack?.();
           setColumns([]);
         }}
-        isNextDisabled={!hasMatchedColumns}
+        isContinueDisabled={!hasMatchedColumns}
       />
     </>
   );
