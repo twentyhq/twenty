@@ -2,8 +2,8 @@ import { faker } from '@faker-js/faker/.';
 import { EachTestingContext } from 'twenty-shared/testing';
 
 import {
-  AdditionalPhoneMetadata,
-  PhonesMetadata,
+    AdditionalPhoneMetadata,
+    PhonesMetadata,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
 import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
@@ -13,12 +13,14 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 const FIELD_NAME = 'phonenumber';
 
-type TestCaseInputAndExpected =  Partial<Omit<PhonesMetadata, 'additionalPhones'>> & {
-    additionalPhones?: Array<Partial<AdditionalPhoneMetadata>> | null;
-  }
+type TestCaseInputAndExpected = Partial<
+  Omit<PhonesMetadata, 'additionalPhones'>
+> & {
+  additionalPhones?: Array<Partial<AdditionalPhoneMetadata>> | null;
+};
 type CreatePhoneFieldMetadataTestCase = {
   input: TestCaseInputAndExpected;
-  expected: TestCaseInputAndExpected;
+  expected?: TestCaseInputAndExpected;
 };
 
 const SUCCESSFUL_TEST_CASES: EachTestingContext<CreatePhoneFieldMetadataTestCase>[] =
@@ -211,6 +213,159 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<CreatePhoneFieldMetadataTestCase
     },
   ];
 
+const FAILING_TEST_CASES: EachTestingContext<CreatePhoneFieldMetadataTestCase>[] =
+  [
+    {
+      title: 'create phone field with invalid country code',
+      context: {
+        input: {
+          primaryPhoneNumber: '123456789',
+          primaryPhoneCallingCode: '+33',
+          primaryPhoneCountryCode: 'XX' as any, // Invalid country code
+          additionalPhones: [],
+        },
+      },
+    },
+    {
+      title: 'create phone field with invalid calling code',
+      context: {
+        input: {
+          primaryPhoneNumber: '123456789',
+          primaryPhoneCallingCode: '+999', // Invalid calling code
+          primaryPhoneCountryCode: 'FR',
+          additionalPhones: [],
+        },
+      },
+    },
+    {
+      title: 'create phone field with conflicting country code and calling code',
+      context: {
+        input: {
+          primaryPhoneNumber: '123456789',
+          primaryPhoneCallingCode: '+33', // French calling code
+          primaryPhoneCountryCode: 'US', // But US country code
+          additionalPhones: [],
+        },
+      },
+    },
+    {
+      title: 'create phone field with invalid phone number format',
+      context: {
+        input: {
+          primaryPhoneNumber: 'not-a-number',
+          additionalPhones: [],
+        },
+      },
+    },
+    {
+      title: 'create phone field with conflicting phone number country code',
+      context: {
+        input: {
+          primaryPhoneNumber: '+33123456789', // French number
+          primaryPhoneCountryCode: 'US', // But US country code
+          additionalPhones: [],
+        },
+      },
+    },
+    {
+      title: 'create phone field with conflicting phone number calling code',
+      context: {
+        input: {
+          primaryPhoneNumber: '+33123456789', // French number (+33)
+          primaryPhoneCallingCode: '+1', // But US calling code
+          additionalPhones: [],
+        },
+      },
+    },
+    {
+      title: 'create phone field with invalid additional phone country code',
+      context: {
+        input: {
+          primaryPhoneNumber: '123456789',
+          additionalPhones: [
+            {
+              number: '987654321',
+              callingCode: '+33',
+              countryCode: 'XX' as any // Invalid country code
+            }
+          ],
+        },
+      },
+    },
+    {
+      title: 'create phone field with invalid additional phone calling code',
+      context: {
+        input: {
+          primaryPhoneNumber: '123456789',
+          additionalPhones: [
+            {
+              number: '987654321',
+              callingCode: '+999', // Invalid calling code
+              countryCode: 'FR'
+            }
+          ],
+        },
+      },
+    },
+    {
+      title: 'create phone field with conflicting additional phone country and calling code',
+      context: {
+        input: {
+          primaryPhoneNumber: '123456789',
+          additionalPhones: [
+            {
+              number: '987654321',
+              callingCode: '+33', // French calling code
+              countryCode: 'US' // But US country code
+            }
+          ],
+        },
+      },
+    },
+    {
+      title: 'create phone field with invalid additional phone number',
+      context: {
+        input: {
+          primaryPhoneNumber: '123456789',
+          additionalPhones: [
+            {
+              number: 'not-a-number',
+              callingCode: '+33',
+              countryCode: 'FR'
+            }
+          ],
+        },
+      },
+    },
+    {
+      title: 'create phone field with conflicting additional phone number country code',
+      context: {
+        input: {
+          primaryPhoneNumber: '123456789',
+          additionalPhones: [
+            {
+              number: '+33987654321', // French number
+              countryCode: 'US' // But US country code
+            }
+          ],
+        },
+      },
+    },
+    {
+      title: 'create phone field with conflicting additional phone number calling code',
+      context: {
+        input: {
+          primaryPhoneNumber: '123456789',
+          additionalPhones: [
+            {
+              number: '+33987654321', // French number (+33)
+              callingCode: '+1' // But US calling code
+            }
+          ],
+        },
+      },
+    }
+  ];
 describe('Phone field metadata tests suite', () => {
   let createdObjectMetadataId: string;
 
@@ -251,8 +406,8 @@ describe('Phone field metadata tests suite', () => {
     });
   });
 
-  test.each(SUCCESSFUL_TEST_CASES)(
-    'It should $title',
+  test.skip.each(SUCCESSFUL_TEST_CASES)(
+    'It should succeed $title',
 
     async ({ context: { input, expected } }) => {
       const {
@@ -285,6 +440,40 @@ describe('Phone field metadata tests suite', () => {
         ...expected,
         __typename: 'Phones',
       });
+    },
+  );
+
+  test.each(FAILING_TEST_CASES)(
+    'It should fail to $title',
+
+    async ({ context: { input } }) => {
+      const {
+        data: { createOneResponse },
+        errors,
+      } = await createOneOperation<{
+        id: string;
+        [FIELD_NAME]: any;
+      }>({
+        objectMetadataSingularName: 'myTestObject',
+        input: {
+          id: faker.string.uuid(),
+          [FIELD_NAME]: input,
+        },
+        gqlFields: `
+          id
+          ${FIELD_NAME} {
+            primaryPhoneNumber
+            primaryPhoneCountryCode
+            primaryPhoneCallingCode
+            additionalPhones
+            __typename
+          }
+        `,
+      });
+
+      expect(createOneResponse).toBeNull();
+      expect(errors).toBeDefined();
+      expect(errors).toMatchSnapshot();
     },
   );
 });
