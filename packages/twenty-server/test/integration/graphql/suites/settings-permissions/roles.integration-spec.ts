@@ -1,14 +1,11 @@
 import request from 'supertest';
 import { deleteOneRoleOperationFactory } from 'test/integration/graphql/utils/delete-one-role-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { SettingPermissionType } from 'src/engine/metadata-modules/permissions/constants/setting-permission-type.constants';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -38,14 +35,6 @@ describe('roles permissions', () => {
   let guestRoleId: string;
 
   beforeAll(async () => {
-    const enablePermissionsV2Query = updateFeatureFlagFactory(
-      SEED_APPLE_WORKSPACE_ID,
-      'IS_PERMISSIONS_V2_ENABLED',
-      true,
-    );
-
-    await makeGraphqlAPIRequest(enablePermissionsV2Query);
-
     const query = {
       query: `
       query GetRoles {
@@ -71,16 +60,6 @@ describe('roles permissions', () => {
       // @ts-expect-error legacy noImplicitAny
       (role) => role.label === 'Guest',
     ).id;
-  });
-
-  afterAll(async () => {
-    const disablePermissionsV2Query = updateFeatureFlagFactory(
-      SEED_APPLE_WORKSPACE_ID,
-      'IS_PERMISSIONS_V2_ENABLED',
-      false,
-    );
-
-    await makeGraphqlAPIRequest(disablePermissionsV2Query);
   });
 
   describe('getRoles', () => {
@@ -477,7 +456,7 @@ describe('roles permissions', () => {
         roleId: string;
       }) => `
       mutation UpsertObjectPermissions {
-          upsertObjectPermissions(upsertObjectPermissionsInput: { roleId: "${roleId}", objectPermissions: [{objectMetadataId: "${objectMetadataId}", canUpdateObjectRecords: true}]}) {
+          upsertObjectPermissions(upsertObjectPermissionsInput: { roleId: "${roleId}", objectPermissions: [{objectMetadataId: "${objectMetadataId}", canUpdateObjectRecords: true, canReadObjectRecords: true}]}) {
               objectMetadataId
               canUpdateObjectRecords
           }

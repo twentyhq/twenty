@@ -3,7 +3,7 @@ import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metad
 import { computeTableName } from './compute-table-name.util';
 
 export const computeObjectTargetTable = (
-  objectMetadata: ObjectMetadataInterface,
+  objectMetadata: Pick<ObjectMetadataInterface, 'nameSingular' | 'isCustom'>,
 ) => {
   return computeTableName(objectMetadata.nameSingular, objectMetadata.isCustom);
 };

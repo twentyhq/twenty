@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
-import { lowercaseDomain } from 'src/engine/api/graphql/workspace-query-runner/utils/query-runner-links.util';
-import { removeEmptyLinks } from 'src/engine/core-modules/record-transformer/utils/remove-empty-links';
+import {
+  LinksFieldGraphQLInput,
+  transformLinksValue,
+} from 'src/engine/core-modules/record-transformer/utils/transform-links-value.util';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
-import { LinkMetadataNullable } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import {
   RichTextV2Metadata,
   richTextV2ValueSchema,
@@ -86,7 +86,7 @@ export class RecordInputTransformerService {
       case FieldMetadataType.RICH_TEXT_V2:
         return this.transformRichTextV2Value(value);
       case FieldMetadataType.LINKS:
-        return this.transformLinksValue(value);
+        return transformLinksValue(value as LinksFieldGraphQLInput);
       case FieldMetadataType.EMAILS:
         return this.transformEmailsValue(value);
       default:
@@ -129,48 +129,6 @@ export class RecordInputTransformerService {
     return {
       markdown: parsedValue.markdown || convertedMarkdown,
       blocknote: parsedValue.blocknote || convertedBlocknote,
-    };
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private transformLinksValue(value: any): any {
-    if (!value) {
-      return value;
-    }
-
-    const primaryLinkUrlRaw = value.primaryLinkUrl as string | null;
-    const primaryLinkLabelRaw = value.primaryLinkLabel as string | null;
-    const secondaryLinksRaw = value.secondaryLinks as string | null;
-
-    let secondaryLinksArray: LinkMetadataNullable[] | null = null;
-
-    if (isNonEmptyString(secondaryLinksRaw)) {
-      try {
-        secondaryLinksArray = JSON.parse(secondaryLinksRaw);
-      } catch {
-        /* empty */
-      }
-    }
-
-    const { primaryLinkLabel, primaryLinkUrl, secondaryLinks } =
-      removeEmptyLinks({
-        primaryLinkUrl: primaryLinkUrlRaw,
-        primaryLinkLabel: primaryLinkLabelRaw,
-        secondaryLinks: secondaryLinksArray,
-      });
-
-    return {
-      ...value,
-      primaryLinkUrl: isDefined(primaryLinkUrl)
-        ? lowercaseDomain(primaryLinkUrl)
-        : primaryLinkUrl,
-      primaryLinkLabel,
-      secondaryLinks: JSON.stringify(
-        secondaryLinks?.map((link) => ({
-          ...link,
-          url: isDefined(link.url) ? lowercaseDomain(link.url) : link.url,
-        })),
-      ),
     };
   }
 

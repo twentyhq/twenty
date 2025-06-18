@@ -76,7 +76,9 @@ describe('useCreateManyRecords', () => {
     );
 
     await act(async () => {
-      const res = await result.current.createManyRecords(input);
+      const res = await result.current.createManyRecords({
+        recordsToCreate: input,
+      });
       expect(res).toEqual(response);
     });
 
@@ -96,7 +98,10 @@ describe('useCreateManyRecords', () => {
     );
 
     await act(async () => {
-      const res = await result.current.createManyRecords(input, true);
+      const res = await result.current.createManyRecords({
+        recordsToCreate: input,
+        upsert: true,
+      });
       expect(res).toEqual(response);
     });
 

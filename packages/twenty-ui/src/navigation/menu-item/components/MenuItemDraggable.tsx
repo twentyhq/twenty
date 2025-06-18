@@ -36,7 +36,7 @@ export const MenuItemDraggable = ({
 
   const cursorType = showGrip
     ? isDragDisabled
-      ? 'not-allowed'
+      ? 'default'
       : 'drag'
     : 'default';
 

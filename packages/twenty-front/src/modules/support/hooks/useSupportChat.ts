@@ -5,8 +5,8 @@ import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { User, WorkspaceMember } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import { User, WorkspaceMember } from '~/generated-metadata/graphql';
 
 const insertScript = ({
   src,
@@ -74,7 +74,7 @@ export const useSupportChat = () => {
 
   useEffect(() => {
     if (
-      supportChat?.supportDriver === 'front' &&
+      supportChat?.supportDriver === 'FRONT' &&
       isNonEmptyString(supportChat.supportFrontChatId) &&
       isNonEmptyString(currentUser?.email) &&
       isDefined(currentWorkspaceMember) &&

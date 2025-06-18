@@ -1,10 +1,13 @@
 import { TEST_COMPANY_1_ID } from 'test/integration/constants/test-company-ids.constants';
 import { TEST_PERSON_1_ID } from 'test/integration/constants/test-person-ids.constants';
-import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
+import {
+  TEST_PRIMARY_LINK_URL,
+  TEST_PRIMARY_LINK_URL_WIITHOUT_TRAILING_SLASH,
+} from 'test/integration/constants/test-primary-link-url.constant';
+import { TIM_ACCOUNT_ID } from 'test/integration/graphql/integration.constants';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
-import { TIM_ACCOUNT_ID } from 'test/integration/graphql/integration.constants';
 
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 
@@ -136,7 +139,7 @@ describe('Core REST API Create One endpoint', () => {
 
         expect(createdPerson.company).toBeDefined();
         expect(createdPerson.company.domainName.primaryLinkUrl).toBe(
-          TEST_PRIMARY_LINK_URL,
+          TEST_PRIMARY_LINK_URL_WIITHOUT_TRAILING_SLASH,
         );
         expect(createdPerson.company.people).not.toBeDefined();
       });

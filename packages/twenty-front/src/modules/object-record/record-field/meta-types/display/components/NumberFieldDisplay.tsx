@@ -1,6 +1,7 @@
 import { useNumberFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useNumberFieldDisplay';
 import { NumberDisplay } from '@/ui/field/display/components/NumberDisplay';
 import { isDefined } from 'twenty-shared/utils';
+import { formatAmount } from '~/utils/format/formatAmount';
 import { formatNumber } from '~/utils/format/number';
 
 export const NumberFieldDisplay = () => {
@@ -13,7 +14,9 @@ export const NumberFieldDisplay = () => {
   const value =
     type === 'percentage'
       ? `${formatNumber(Number(fieldValue) * 100, decimals)}%`
-      : formatNumber(Number(fieldValue), decimals);
+      : type === 'shortNumber'
+        ? formatAmount(Number(fieldValue))
+        : formatNumber(Number(fieldValue), decimals);
 
   return <NumberDisplay value={value} decimals={decimals} />;
 };

@@ -15,6 +15,7 @@ import { useTheme } from '@emotion/react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { SelectOption } from 'twenty-ui/input';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 type WorkflowEditTriggerManualFormProps = {
   trigger: WorkflowManualTrigger;
@@ -96,6 +97,8 @@ export const WorkflowEditTriggerManualForm = ({
               }),
             });
           }}
+          dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+          dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
 
         {manualTriggerAvailability === 'WHEN_RECORD_SELECTED' ? (
@@ -119,6 +122,8 @@ export const WorkflowEditTriggerManualForm = ({
                 },
               });
             }}
+            dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
+            dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
           />
         ) : null}
       </WorkflowStepBody>

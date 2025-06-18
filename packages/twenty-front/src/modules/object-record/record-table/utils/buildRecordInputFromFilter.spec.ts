@@ -497,4 +497,15 @@ describe('buildValueFromFilter', () => {
       expect(buildValueFromFilter({ filter })).toBeUndefined();
     });
   });
+
+  describe('UUID field type', () => {
+    it('should return the value', () => {
+      const filter = createTestFilter(
+        ViewFilterOperand.Is,
+        'test-uuid',
+        'UUID',
+      );
+      expect(buildValueFromFilter({ filter })).toBe('test-uuid');
+    });
+  });
 });

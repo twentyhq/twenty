@@ -5,8 +5,6 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
-import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/useIsRecordReadOnly';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordDetailRelationRecordsList } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsList';
 import { RecordDetailRelationSectionDropdown } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSectionDropdown';
@@ -117,17 +115,7 @@ export const RecordDetailRelationSection = ({
     },
   });
 
-  const isRecordReadOnly = useIsRecordReadOnly({
-    recordId,
-    objectMetadataId: relationObjectMetadataItem.id,
-  });
-
-  const isFieldReadOnly = useIsFieldValueReadOnly({
-    fieldDefinition,
-    isRecordReadOnly,
-  });
-
-  if (loading || isFieldReadOnly) return null;
+  if (loading) return null;
 
   const relationRecordsCount = relationAggregateResult?.id?.COUNT ?? 0;
 

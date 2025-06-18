@@ -25,6 +25,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 const StyledLabel = styled.span`
   color: ${({ theme }) => theme.font.color.light};
@@ -200,7 +201,9 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
               <>
                 {!triggerOptions.readonly &&
                   (isSystemObjectsOpen ? (
-                    <DropdownContent>
+                    <DropdownContent
+                      widthInPixels={GenericDropdownContentWidth.ExtraLarge}
+                    >
                       <DropdownMenuHeader
                         StartComponent={
                           <DropdownMenuHeaderLeftComponent
@@ -229,7 +232,9 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
                       </DropdownMenuItemsContainer>
                     </DropdownContent>
                   ) : (
-                    <DropdownContent>
+                    <DropdownContent
+                      widthInPixels={GenericDropdownContentWidth.ExtraLarge}
+                    >
                       <DropdownMenuSearchInput
                         autoFocus
                         value={searchInputValue}
@@ -262,6 +267,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
               </>
             }
             dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
+            dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
           />
         </StyledRecordTypeSelectContainer>
         {isDefined(selectedObjectMetadataItem) && isUpdateEvent && (
