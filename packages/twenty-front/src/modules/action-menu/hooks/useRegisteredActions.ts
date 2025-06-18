@@ -26,7 +26,9 @@ export const useRegisteredActions = (
     contextStoreTargetedRecordsRule,
   );
 
-  const recordActionConfig = getActionConfig(objectMetadataItem);
+  const recordActionConfig = getActionConfig({
+    objectMetadataItem,
+  });
 
   const recordAgnosticActionConfig = RECORD_AGNOSTIC_ACTIONS_CONFIG;
 

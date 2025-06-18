@@ -69,7 +69,9 @@ export const useCreateActivityInDB = ({
           activityToCreate.noteTargets ?? activityToCreate.taskTargets ?? [];
 
         if (isNonEmptyArray(activityTargetsToCreate)) {
-          await createManyActivityTargets(activityTargetsToCreate);
+          await createManyActivityTargets({
+            recordsToCreate: activityTargetsToCreate,
+          });
         }
 
         const activityTargetsConnection = getRecordConnectionFromRecords({
