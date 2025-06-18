@@ -1,6 +1,7 @@
 import { ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
 import { getActionViewType } from '@/action-menu/actions/utils/getActionViewType';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { objectPermissionsFamilySelector } from '@/auth/states/objectPermissionsFamilySelector';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -14,7 +15,7 @@ import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-t
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useShouldActionBeRegisteredParams = ({
@@ -77,6 +78,20 @@ export const useShouldActionBeRegisteredParams = ({
     contextStoreTargetedRecordsRule,
   );
 
+  const getObjectReadPermission = useRecoilCallback(
+    ({ snapshot }) =>
+      (objectMetadataNameSingular: string) => {
+        return snapshot
+          .getLoadable(
+            objectPermissionsFamilySelector({
+              objectNameSingular: objectMetadataNameSingular,
+            }),
+          )
+          .getValue().canRead;
+      },
+    [],
+  );
+
   return {
     objectMetadataItem,
     isFavorite,
@@ -89,5 +104,6 @@ export const useShouldActionBeRegisteredParams = ({
     isWorkflowEnabled,
     numberOfSelectedRecords,
     viewType: viewType ?? undefined,
+    getTargetObjectReadPermission: getObjectReadPermission,
   };
 };

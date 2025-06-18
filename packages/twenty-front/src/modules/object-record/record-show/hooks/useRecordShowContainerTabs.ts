@@ -2,6 +2,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { BASE_RECORD_LAYOUT } from '@/object-record/record-show/constants/BaseRecordLayout';
 import { CardType } from '@/object-record/record-show/types/CardType';
 import { RecordLayout } from '@/object-record/record-show/types/RecordLayout';
@@ -10,6 +11,7 @@ import { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconCalendarEvent,
   IconHome,
@@ -30,6 +32,7 @@ export const useRecordShowContainerTabs = (
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   // Object-specific layouts that override or extend the base layout
   const OBJECT_SPECIFIC_LAYOUTS: Partial<
@@ -212,17 +215,19 @@ export const useRecordShowContainerTabs = (
     [],
   );
 
+  const baseRecordLayout = BASE_RECORD_LAYOUT;
+
   // Merge base layout with object-specific layout
   const recordLayout: RecordLayout = useMemo(() => {
     return {
-      ...BASE_RECORD_LAYOUT,
+      ...baseRecordLayout,
       ...(OBJECT_SPECIFIC_LAYOUTS[targetObjectNameSingular] || {}),
       tabs: {
-        ...BASE_RECORD_LAYOUT.tabs,
+        ...baseRecordLayout.tabs,
         ...(OBJECT_SPECIFIC_LAYOUTS[targetObjectNameSingular]?.tabs || {}),
       },
     };
-  }, [OBJECT_SPECIFIC_LAYOUTS, targetObjectNameSingular]);
+  }, [OBJECT_SPECIFIC_LAYOUTS, baseRecordLayout, targetObjectNameSingular]);
 
   return {
     layout: recordLayout,
@@ -232,7 +237,7 @@ export const useRecordShowContainerTabs = (
           entry[1] !== null && entry[1] !== undefined,
       )
       .sort(([, a], [, b]) => a.position - b.position)
-      .map(([key, { title, Icon, hide, cards }]) => {
+      .map(([key, { title, Icon, hide, cards, targetObjectNameSingular }]) => {
         // Special handling for fields tab
         if (key === 'fields') {
           return {
@@ -256,6 +261,16 @@ export const useRecordShowContainerTabs = (
               (flag) => flag.key === flagKey && flag.value,
             );
           });
+
+        const targetObjectMetadataId = objectMetadataItems.find(
+          (item) => item.nameSingular === targetObjectNameSingular,
+        )?.id;
+
+        const permissionHide =
+          hide.ifNoReadPermission &&
+          isDefined(targetObjectNameSingular) &&
+          !objectPermissionsByObjectMetadataId[targetObjectMetadataId]
+            ?.canReadObjectRecords;
 
         const requiredObjectsInactive =
           hide.ifRequiredObjectsInactive.length > 0 &&
@@ -286,7 +301,8 @@ export const useRecordShowContainerTabs = (
             baseHide ||
             featureNotEnabled ||
             requiredObjectsInactive ||
-            relationsDontExist,
+            relationsDontExist ||
+            permissionHide,
         };
       })
       // When isInRightDrawer === true, we merge first and second tab into first tab

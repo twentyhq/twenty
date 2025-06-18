@@ -10,11 +10,14 @@ import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
   mockCurrentWorkspace,
+  mockedLimitedPermissionsUserData,
+  mockedUserData,
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 import { sleep } from '~/utils/sleep';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
@@ -72,6 +75,9 @@ const meta: Meta<typeof CommandMenu> = {
     I18nFrontDecorator,
     (Story) => {
       const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
+      const setCurrentUserWorkspace = useSetRecoilState(
+        currentUserWorkspaceState,
+      );
       const setCurrentWorkspaceMember = useSetRecoilState(
         currentWorkspaceMemberState,
       );
@@ -84,6 +90,8 @@ const meta: Meta<typeof CommandMenu> = {
 
       setCurrentWorkspace(mockCurrentWorkspace);
       setCurrentWorkspaceMember(mockedWorkspaceMemberData);
+      setCurrentUserWorkspace(mockedUserData.currentUserWorkspace);
+
       setIsCommandMenuOpened(true);
       setCommandMenuNavigationStack([
         {
@@ -120,6 +128,29 @@ export const DefaultWithoutSearch: Story = {
     expect(await canvas.findByText('Go to Tasks')).toBeVisible();
     expect(await canvas.findByText('Go to Notes')).toBeVisible();
   },
+};
+
+export const LimitedPermissions: Story = {
+  play: async () => {
+    const canvas = within(document.body);
+    await expect(canvas.findByText('Go to Opportunities')).rejects.toThrow();
+    await expect(canvas.findByText('Go to Tasks')).rejects.toThrow();
+    expect(await canvas.findByText('Go to People')).toBeVisible();
+    expect(await canvas.findByText('Go to Settings')).toBeVisible();
+    expect(await canvas.findByText('Go to Notes')).toBeVisible();
+  },
+  decorators: [
+    (Story) => {
+      const setCurrentUserWorkspace = useSetRecoilState(
+        currentUserWorkspaceState,
+      );
+      setCurrentUserWorkspace(
+        mockedLimitedPermissionsUserData.currentUserWorkspace,
+      );
+
+      return <Story />;
+    },
+  ],
 };
 
 export const MatchingNavigate: Story = {
