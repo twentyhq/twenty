@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import crypto from 'crypto';
 
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { RabbitSignKeyWorkspaceEntity } from './standard-objects/rabbitsignkey.workplace-entity';
+
 @Injectable()
 export class RabbitSignService {
-  constructor(private readonly configService: ConfigService) {}
+  constructor(private readonly twentyORMGlobalManager: TwentyORMGlobalManager) {}
 
   private getCurrentUtcTime(): string {
     return new Date().toISOString().split('.')[0] + 'Z';
@@ -21,19 +23,42 @@ export class RabbitSignService {
   }
 
   async signPdf(
-    pdfBuffer: Buffer,
-    fileName: string,
+    pdfUrl: string,
     signers: Array<{
       email: string;
       name: string;
       position: {
         x: number;
         y: number;
+        pageIndex: number;
+        width: number;
+        height: number;
       };
     }>,
+    workspaceId: string,
+    workspaceMemberId: string,
   ) {
-    const RABBITSIGN_API_KEY_ID = this.configService.get<string>('RABBITSIGN_API_KEY_ID');
-    const RABBITSIGN_API_KEY_SECRET = this.configService.get<string>('RABBITSIGN_API_KEY_SECRET');
+    // Get RabbitSign keys from database
+    const rabbitSignKeyRepository = await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+      workspaceId,
+      RabbitSignKeyWorkspaceEntity,
+      {
+        shouldBypassPermissionChecks: true,
+      },
+    );
+
+    const rabbitSignKey = await rabbitSignKeyRepository.findOne({
+      where: {
+        workspaceMemberId,
+      },
+    });
+
+    if (!rabbitSignKey) {
+      throw new Error('RabbitSign API credentials not found for this workspace member');
+    }
+
+    const RABBITSIGN_API_KEY_ID = rabbitSignKey.keyId;
+    const RABBITSIGN_API_KEY_SECRET = rabbitSignKey.keySecret;
 
     if (!RABBITSIGN_API_KEY_ID || !RABBITSIGN_API_KEY_SECRET) {
       throw new Error('RabbitSign API credentials not configured');
@@ -56,11 +81,13 @@ export class RabbitSignService {
     const uploadUrl = uploadUrlResp.data.uploadUrl;
 
     // Step 2: Upload PDF
-    await axios.put(uploadUrl, pdfBuffer, { 
+    const pdfBuffer = await axios.get(pdfUrl, { responseType: 'arraybuffer' });
+    await axios.put(uploadUrl, pdfBuffer.data, { 
       headers: { 'Content-Type': 'binary/octet-stream' } 
     });
 
     // Step 3: Create folder (signing request)
+    const fileName = pdfUrl.split('/').pop();
     const path2 = '/api/v1/folder';
     const httpMethod2 = 'POST';
     const utcTime2 = this.getCurrentUtcTime();
@@ -73,7 +100,7 @@ export class RabbitSignService {
     };
 
     // Transform signers into the required format
-    const signerInfo = signers.reduce((acc, signer, index) => {
+    const signerInfo = signers.reduce((acc: Record<string, any>, signer, index) => {
       acc[signer.email] = {
         name: signer.name,
         fields: [
@@ -83,11 +110,11 @@ export class RabbitSignService {
             currentValue: "",
             position: {
               docNumber: 0,
-              pageIndex: 0,
+              pageIndex: signer.position.pageIndex,
               x: signer.position.x,
               y: signer.position.y,
-              width: 120,
-              height: 40,
+              width: signer.position.width,
+              height: signer.position.height,
             },
           },
         ],

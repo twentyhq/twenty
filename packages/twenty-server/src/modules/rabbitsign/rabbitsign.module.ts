@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { RabbitSignService } from './rabbitsign.service';
 
 @Module({
-  imports: [ConfigModule],
+  imports: [TwentyORMModule],
   providers: [RabbitSignService],
   exports: [RabbitSignService],
 })
