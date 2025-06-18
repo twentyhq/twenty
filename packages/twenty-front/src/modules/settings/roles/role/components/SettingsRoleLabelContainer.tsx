@@ -3,6 +3,7 @@ import { useRecoilState } from 'recoil';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 
 const ROLE_LABEL_EDIT_HOTKEY_SCOPE = 'role-label-edit';
 
@@ -42,7 +43,7 @@ export const SettingsRoleLabelContainer = ({
         sizeVariant="md"
         value={settingsDraftRole.label}
         onChange={handleChange}
-        placeholder="Role name"
+        placeholder={t`Role name`}
         hotkeyScope={ROLE_LABEL_EDIT_HOTKEY_SCOPE}
       />
     </StyledHeaderTitle>

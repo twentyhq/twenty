@@ -6,8 +6,10 @@ import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpre
 import { StepBar } from '@/ui/navigation/step-bar/components/StepBar';
 import { useStepBar } from '@/ui/navigation/step-bar/hooks/useStepBar';
 
+import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useLingui } from '@lingui/react/macro';
+import { useRecoilValue } from 'recoil';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { SpreadsheetImportStepper } from './SpreadsheetImportStepper';
 
@@ -25,6 +27,8 @@ const StyledHeader = styled(Modal.Header)`
 
 export const SpreadsheetImportStepperContainer = () => {
   const { t } = useLingui();
+
+  const spreadsheetImportDialog = useRecoilValue(spreadsheetImportDialogState);
 
   const stepTitles = {
     uploadStep: t`Upload File`,
@@ -45,15 +49,17 @@ export const SpreadsheetImportStepperContainer = () => {
   return (
     <>
       <StyledHeader>
-        <StepBar activeStep={activeStep}>
-          {steps.map((key) => (
-            <StepBar.Step
-              activeStep={activeStep}
-              label={stepTitles[key]}
-              key={key}
-            />
-          ))}
-        </StepBar>
+        {spreadsheetImportDialog.isStepBarVisible && (
+          <StepBar activeStep={activeStep}>
+            {steps.map((key) => (
+              <StepBar.Step
+                activeStep={activeStep}
+                label={stepTitles[key]}
+                key={key}
+              />
+            ))}
+          </StepBar>
+        )}
       </StyledHeader>
       <SpreadsheetImportStepper nextStep={nextStep} prevStep={prevStep} />
     </>

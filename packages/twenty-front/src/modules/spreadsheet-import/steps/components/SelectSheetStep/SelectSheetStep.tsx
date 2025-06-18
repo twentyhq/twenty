@@ -11,8 +11,8 @@ import { mapWorkbook } from '@/spreadsheet-import/utils/mapWorkbook';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useLingui } from '@lingui/react/macro';
-import { WorkBook } from 'xlsx-ugnis';
 import { Radio, RadioGroup } from 'twenty-ui/input';
+import { WorkBook } from 'xlsx-ugnis';
 
 const StyledContent = styled(Modal.Content)`
   align-items: center;
@@ -116,10 +116,10 @@ export const SelectSheetStep = ({
         </StyledRadioContainer>
       </StyledContent>
       <StepNavigationButton
-        onClick={() => handleOnContinue(value)}
+        onContinue={() => handleOnContinue(value)}
         onBack={onBack}
         isLoading={isLoading}
-        title={t`Next Step`}
+        continueTitle={t`Next Step`}
       />
     </>
   );
