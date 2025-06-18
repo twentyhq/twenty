@@ -10,7 +10,7 @@ import {
   CountryCode,
   getCountries,
   getCountryCallingCode,
-  parsePhoneNumber,
+  parsePhoneNumberWithError
 } from 'libphonenumber-js';
 import {
   AdditionalPhoneMetadata,
@@ -74,7 +74,13 @@ const validatePrimaryPhoneCountryCodeAndCallingCode = ({
 
 const parsePhoneNumberExceptionWrapper = (phoneNumber: string) => {
   try {
-    return parsePhoneNumber(phoneNumber);
+    const phone = parsePhoneNumberWithError(phoneNumber);
+    console.log(phone)
+    if (!phone.isValid() && !phone.isPossible()) {
+      throw new Error("TODO invalid phone number A")
+    }
+
+    return phone
   } catch (error) {
     throw new Error('TODO invalid phone number');
   }
