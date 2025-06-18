@@ -12,6 +12,48 @@ import { PERSON_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/
 import { TASK_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/task-data-seeds.constant';
 import { TASK_TARGET_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/task-target-data-seeds.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+
+// Seeding-specific type based on TimelineActivityWorkspaceEntity for raw data insertion
+type TimelineActivitySeedData = Pick<
+  TimelineActivityWorkspaceEntity,
+  | 'id'
+  | 'name'
+  | 'linkedRecordCachedName'
+  | 'linkedRecordId'
+  | 'linkedObjectMetadataId'
+  | 'workspaceMemberId'
+  | 'companyId'
+  | 'personId'
+  | 'noteId'
+  | 'taskId'
+  | 'opportunityId'
+> & {
+  properties: string; // JSON stringified for raw insertion
+  createdAt: string; // ISO string for raw insertion
+  updatedAt: string; // ISO string for raw insertion
+  happensAt: string; // ISO string for raw insertion
+};
+
+type ActivityTargetInfo = {
+  targetType: string;
+  targetId: string;
+};
+
+type CreateTimelineActivityParams = {
+  entityType: string;
+  recordSeed: Record<string, unknown>;
+  index: number;
+};
+
+type CreateLinkedActivityParams = {
+  activityType: 'note' | 'task';
+  recordSeed: Record<string, unknown>;
+  index: number;
+  activityIndex: number;
+  linkedObjectMetadataId: string;
+  targetInfo: ActivityTargetInfo;
+};
 
 @Injectable()
 export class TimelineActivitySeederService {
@@ -26,7 +68,7 @@ export class TimelineActivitySeederService {
     schemaName: string;
     workspaceId: string;
   }) {
-    const timelineActivities: Record<string, unknown>[] = [];
+    const timelineActivities: TimelineActivitySeedData[] = [];
 
     const { noteMetadataId, taskMetadataId } =
       await this.getObjectMetadataIds(workspaceId);
@@ -43,7 +85,11 @@ export class TimelineActivitySeederService {
 
     entityConfigs.forEach(({ type, seeds }) => {
       seeds.forEach((seed, index) => {
-        const activity = this.createTimelineActivity(type, seed, index);
+        const activity = this.createTimelineActivity({
+          entityType: type,
+          recordSeed: seed,
+          index,
+        });
 
         timelineActivities.push(activity);
         activityIndex++;
@@ -52,13 +98,13 @@ export class TimelineActivitySeederService {
         if (type === 'note' || type === 'task') {
           const linkedObjectMetadataId =
             type === 'note' ? noteMetadataId : taskMetadataId;
-          const linkedActivities = this.createLinkedTimelineActivities(
-            type,
-            seed,
+          const linkedActivities = this.computeLinkedTimelineActivityRecords({
+            activityType: type,
+            recordSeed: seed,
             index,
             activityIndex,
             linkedObjectMetadataId,
-          );
+          });
 
           timelineActivities.push(...linkedActivities);
           activityIndex += linkedActivities.length;
@@ -100,11 +146,11 @@ export class TimelineActivitySeederService {
     }
   }
 
-  private createTimelineActivity(
-    entityType: string,
-    entitySeed: Record<string, unknown>,
-    index: number,
-  ): Record<string, unknown> {
+  private createTimelineActivity({
+    entityType,
+    recordSeed,
+    index,
+  }: CreateTimelineActivityParams): TimelineActivitySeedData {
     const generateTimelineActivityId = (type: string, idx: number): string => {
       const prefix = '20202020';
       const entityCodes: Record<string, string> = {
@@ -122,14 +168,17 @@ export class TimelineActivitySeederService {
 
     const creationDate = new Date().toISOString();
 
-    const timelineActivity: Record<string, unknown> = {
+    const timelineActivity: TimelineActivitySeedData = {
       id: generateTimelineActivityId(entityType, index + 1),
       name: `${entityType}.created`,
       properties: JSON.stringify({
-        after: this.getEntityProperties(entityType, entitySeed),
+        after: this.getEventAfterRecordProperties({
+          type: entityType,
+          recordSeed,
+        }),
       }),
       linkedRecordCachedName: '',
-      linkedRecordId: entitySeed.id,
+      linkedRecordId: recordSeed.id as string,
       linkedObjectMetadataId: null,
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
       companyId: null,
@@ -142,100 +191,114 @@ export class TimelineActivitySeederService {
       happensAt: creationDate,
     };
 
-    timelineActivity[`${entityType}Id`] = entitySeed.id;
+    // @ts-expect-error - This is okay for morph
+    // alternative is to be explicit but that makes
+    timelineActivity[`${entityType}Id`] = recordSeed.id;
 
     return timelineActivity;
   }
 
-  private getEntityProperties(
-    type: string,
-    seed: Record<string, unknown>,
-  ): Record<string, unknown> {
+  private getEventAfterRecordProperties({
+    type,
+    recordSeed,
+  }: {
+    type: string;
+    recordSeed: Record<string, unknown>;
+  }): Record<string, unknown> {
     const commonProperties = {
-      id: seed.id,
+      id: recordSeed.id,
     };
 
     switch (type) {
       case 'company':
         return {
           ...commonProperties,
-          name: seed.name,
-          domainName: seed.domainNamePrimaryLinkUrl,
-          employees: seed.employees,
-          city: seed.addressAddressCity,
+          name: recordSeed.name,
+          domainName: recordSeed.domainNamePrimaryLinkUrl,
+          employees: recordSeed.employees,
+          city: recordSeed.addressAddressCity,
         };
       case 'person':
         return {
           ...commonProperties,
           name: {
-            firstName: seed.nameFirstName,
-            lastName: seed.nameLastName,
+            firstName: recordSeed.nameFirstName,
+            lastName: recordSeed.nameLastName,
           },
-          email: seed.emailsPrimaryEmail,
-          jobTitle: seed.jobTitle,
+          email: recordSeed.emailsPrimaryEmail,
+          jobTitle: recordSeed.jobTitle,
         };
       case 'note':
         return {
           ...commonProperties,
-          title: seed.title,
-          body: seed.body,
+          title: recordSeed.title,
+          body: recordSeed.body,
         };
       case 'task':
         return {
           ...commonProperties,
-          title: seed.title,
-          body: seed.body,
-          status: seed.status,
-          dueAt: seed.dueAt,
+          title: recordSeed.title,
+          body: recordSeed.body,
+          status: recordSeed.status,
+          dueAt: recordSeed.dueAt,
         };
       case 'opportunity':
         return {
           ...commonProperties,
-          name: seed.name,
-          amount: seed.amountAmountMicros,
-          stage: seed.stage,
-          closeDate: seed.closeDate,
+          name: recordSeed.name,
+          amount: recordSeed.amountAmountMicros,
+          stage: recordSeed.stage,
+          closeDate: recordSeed.closeDate,
         };
       default:
         return commonProperties;
     }
   }
 
-  private createLinkedTimelineActivities(
-    entityType: 'note' | 'task',
-    entitySeed: Record<string, unknown>,
-    index: number,
-    activityIndex: number,
-    linkedObjectMetadataId: string,
-  ): Record<string, unknown>[] {
-    const targetInfo = this.getTargetInfo(entityType, entitySeed);
+  private computeLinkedTimelineActivityRecords({
+    activityType,
+    recordSeed,
+    index,
+    activityIndex,
+    linkedObjectMetadataId,
+  }: {
+    activityType: 'note' | 'task';
+    recordSeed: Record<string, unknown>;
+    index: number;
+    activityIndex: number;
+    linkedObjectMetadataId: string;
+  }): TimelineActivitySeedData[] {
+    const targetInfo = this.getActivityTargetInfo({
+      activityType,
+      recordSeed,
+    });
 
     if (!targetInfo) {
       return [];
     }
 
-    const linkedActivity = this.createLinkedActivity(
-      entityType,
-      entitySeed,
+    const linkedActivity = this.computeLinkedActivityRecord({
+      activityType,
+      recordSeed,
       index,
       activityIndex,
       linkedObjectMetadataId,
       targetInfo,
-    );
+    });
 
     return [linkedActivity];
   }
 
-  private getTargetInfo(
-    entityType: 'note' | 'task',
-    entitySeed: Record<string, unknown>,
-  ): {
-    targetType: string;
-    targetId: string;
-  } | null {
-    if (entityType === 'note') {
+  private getActivityTargetInfo({
+    activityType,
+    recordSeed,
+  }: {
+    activityType: 'note' | 'task';
+    recordSeed: Record<string, unknown>;
+  }): ActivityTargetInfo | null {
+    if (activityType === 'note') {
       const noteTargetSeed = NOTE_TARGET_DATA_SEEDS.find(
-        (target) => target.noteId === entitySeed.id,
+        (target) => target.noteId === recordSeed.id,
       );
 
       if (!noteTargetSeed) {
@@ -264,9 +327,9 @@ export class TimelineActivitySeederService {
       }
     }
 
-    if (entityType === 'task') {
+    if (activityType === 'task') {
       const taskTargetSeed = TASK_TARGET_DATA_SEEDS.find(
-        (target) => target.taskId === entitySeed.id,
+        (target) => target.taskId === recordSeed.id,
       );
 
       if (!taskTargetSeed) {
@@ -298,17 +361,14 @@ export class TimelineActivitySeederService {
     return null;
   }
 
-  private createLinkedActivity(
-    entityType: 'note' | 'task',
-    entitySeed: Record<string, unknown>,
-    index: number,
-    activityIndex: number,
-    linkedObjectMetadataId: string,
-    targetInfo: {
-      targetType: string;
-      targetId: string;
-    },
-  ): Record<string, unknown> {
+  private computeLinkedActivityRecord({
+    activityType,
+    recordSeed,
+    index,
+    activityIndex,
+    linkedObjectMetadataId,
+    targetInfo,
+  }: CreateLinkedActivityParams): TimelineActivitySeedData {
     const generateLinkedTimelineActivityId = (
       type: string,
       targetType: string,
@@ -334,23 +394,23 @@ export class TimelineActivitySeederService {
 
     const creationDate = new Date().toISOString();
 
-    const linkedActivity: Record<string, unknown> = {
+    const linkedActivity: TimelineActivitySeedData = {
       id: generateLinkedTimelineActivityId(
-        entityType,
+        activityType,
         targetInfo.targetType,
         activityIndex,
       ),
-      name: `linked-${entityType}.created`,
+      name: `linked-${activityType}.created`,
       properties: JSON.stringify({
         after: {
-          id: entitySeed.id,
-          title: entitySeed.title,
-          body: entitySeed.body,
+          id: recordSeed.id,
+          title: recordSeed.title,
+          body: recordSeed.body,
         },
       }),
       linkedRecordCachedName:
-        (entitySeed.title as string) || `${entityType} ${index + 1}`,
-      linkedRecordId: entitySeed.id,
+        (recordSeed.title as string) || `${activityType} ${index + 1}`,
+      linkedRecordId: recordSeed.id as string,
       linkedObjectMetadataId,
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
       companyId: null,
@@ -363,8 +423,11 @@ export class TimelineActivitySeederService {
       happensAt: creationDate,
     };
 
+    // @ts-expect-error - This is okay for morph
+    // alternative is to be explicit but it's very verbose
     linkedActivity[`${targetInfo.targetType}Id`] = targetInfo.targetId;
-    linkedActivity[`${entityType}Id`] = entitySeed.id;
+    // @ts-expect-error - This is okay for morph
+    linkedActivity[`${activityType}Id`] = recordSeed.id;
 
     return linkedActivity;
   }
