@@ -7,6 +7,7 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
   AuthException,
@@ -31,11 +32,11 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { isWorkEmail } from 'src/utils/is-work-email';
-import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -48,7 +49,7 @@ export class SignInUpService {
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly onboardingService: OnboardingService,
-    private readonly loginTokenService: LoginTokenService,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly httpService: HttpService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly domainManagerService: DomainManagerService,
@@ -286,6 +287,21 @@ export class SignInUpService {
       canImpersonate,
       canAccessFullAdminPanel,
     });
+
+    const savedUser = await this.userRepository.save(userCreated);
+
+    this.workspaceEventEmitter.emitCustomBatchEvent(
+      USER_SIGNUP_EVENT_NAME,
+      [
+        {
+          userId: savedUser.id,
+          userEmail: newUserWithPicture.email,
+          userFirstName: newUserWithPicture.firstName,
+          userLastName: newUserWithPicture.lastName,
+        },
+      ],
+      undefined,
+    );
 
     return await this.userRepository.save(userCreated);
   }
