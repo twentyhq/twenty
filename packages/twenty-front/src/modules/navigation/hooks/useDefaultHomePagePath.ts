@@ -5,6 +5,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
 import isEmpty from 'lodash.isempty';
 import { useCallback, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -100,7 +101,7 @@ export const useDefaultHomePagePath = () => {
     }
 
     if (isEmpty(readableAlphaSortedActiveNonSystemObjectMetadataItems)) {
-      return AppPath.SettingsProfile;
+      return `${AppPath.Settings}/${SettingsPath.ProfilePage}`;
     }
 
     if (!isDefined(defaultObjectPathInfo)) {
@@ -115,7 +116,11 @@ export const useDefaultHomePagePath = () => {
       { objectNamePlural: namePlural },
       viewId ? { viewId } : undefined,
     );
-  }, [currentUser, defaultObjectPathInfo]);
+  }, [
+    currentUser,
+    defaultObjectPathInfo,
+    readableAlphaSortedActiveNonSystemObjectMetadataItems,
+  ]);
 
   return { defaultHomePagePath };
 };
