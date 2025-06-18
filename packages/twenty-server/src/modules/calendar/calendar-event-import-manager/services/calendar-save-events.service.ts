@@ -8,7 +8,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { existingCalendarEventsMapper } from 'src/modules/calendar/calendar-event-import-manager/utils/inject-ids-in-calendar-events.util';
+import { existingCalendarEventsMapper } from 'src/modules/calendar/calendar-event-import-manager/utils/calendar-event-mapper.util';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
