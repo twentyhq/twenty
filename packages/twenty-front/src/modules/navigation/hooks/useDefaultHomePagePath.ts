@@ -5,6 +5,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { AppPath } from '@/types/AppPath';
+import isEmpty from 'lodash.isempty';
 import { useCallback, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -96,6 +97,10 @@ export const useDefaultHomePagePath = () => {
   const defaultHomePagePath = useMemo(() => {
     if (!isDefined(currentUser)) {
       return AppPath.SignInUp;
+    }
+
+    if (isEmpty(readableAlphaSortedActiveNonSystemObjectMetadataItems)) {
+      return AppPath.SettingsProfile;
     }
 
     if (!isDefined(defaultObjectPathInfo)) {
