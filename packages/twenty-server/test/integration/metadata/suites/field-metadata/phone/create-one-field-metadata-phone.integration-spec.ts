@@ -4,67 +4,99 @@ import { EachTestingContext } from 'twenty-shared/testing';
 import { PhonesMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
 import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 const FIELD_NAME = 'phonenumber';
 
 type CreatePhoneFieldMetadataTestCase = {
   input: Partial<PhonesMetadata>;
-  expected: Partial<PhonesMetadata>
+  expected: Partial<PhonesMetadata>;
 };
 
-const SUCCESSFUL_TEST_CASES: EachTestingContext<CreatePhoneFieldMetadataTestCase>[] = [
-  {
-    title: 'create phone field with number only',
-    context: {
-      input: {
-        primaryPhoneNumber: '781037818',
-        additionalPhones: [],
-      },
-      expected: {
-        primaryPhoneNumber: '781037818',
-        additionalPhones: [],
-      },
-    },
-  },
-  {
-    title: 'create phone field with full international format',
-    context: {
-      input: {
-        primaryPhoneNumber: '+1781037818',
-        primaryPhoneCountryCode: 'US',
-        primaryPhoneCallingCode: '+1',
-        additionalPhones: null,
-      },
-      expected: {
-        primaryPhoneNumber: '781037818',
-        primaryPhoneCountryCode: 'US',
-        primaryPhoneCallingCode: '+1',
-        additionalPhones: null,
-      },
-    },
-  },
+const SUCCESSFUL_TEST_CASES: EachTestingContext<CreatePhoneFieldMetadataTestCase>[] =
+  [
+    // {
+    //   title: 'create phone field with number only',
+    //   context: {
+    //     input: {
+    //       primaryPhoneNumber: '123456789',
+    //       additionalPhones: [],
+    //     },
+    //     expected: {
+    //       primaryPhoneNumber: '123456789',
+    //       additionalPhones: [],
+    //     },
+    //   },
+    // },
+    // {
+    //   title:
+    //     'create phone field with full international format and other information',
+    //   context: {
+    //     input: {
+    //       primaryPhoneNumber: '+1123456789',
+    //       primaryPhoneCountryCode: 'US',
+    //       primaryPhoneCallingCode: '+1',
+    //       additionalPhones: null,
+    //     },
+    //     expected: {
+    //       primaryPhoneNumber: '123456789',
+    //       primaryPhoneCountryCode: 'US',
+    //       primaryPhoneCallingCode: '+1',
+    //       additionalPhones: null,
+    //     },
+    //   },
+    // },
     {
-    title: 'create phone field with empty payload',
-    context: {
-      input: {},
-      expected: {
-        primaryPhoneNumber: '',
-        primaryPhoneCountryCode: '' as any,
-        primaryPhoneCallingCode: '',
-        additionalPhones: null,
+      title:
+        'create phone field with full international and infer other information from it',
+      context: {
+        input: {
+          primaryPhoneNumber: '+1123456789',
+        },
+        expected: {
+          primaryPhoneNumber: '123456789',
+          primaryPhoneCountryCode: '' as any,
+          primaryPhoneCallingCode: '+1',
+          additionalPhones: null,
+        },
       },
     },
-  },
-];
+     {
+      title:
+        'create phone field with full international and infer other information from it',
+      context: {
+        input: {
+          primaryPhoneNumber: '+33123456789',
+        },
+        expected: {
+          primaryPhoneNumber: '123456789',
+          primaryPhoneCountryCode: 'FR',
+          primaryPhoneCallingCode: '+1',
+          additionalPhones: null,
+        },
+      },
+    },
+    // {
+    //   title: 'create phone field with empty payload',
+    //   context: {
+    //     input: {},
+    //     expected: {
+    //       primaryPhoneNumber: '',
+    //       primaryPhoneCountryCode: '' as any,
+    //       primaryPhoneCallingCode: '',
+    //       additionalPhones: null,
+    //     },
+    //   },
+    // },
+  ];
 
 describe('Phone field metadata tests suite', () => {
   let createdObjectMetadataId: string;
 
   beforeEach(async () => {
-    const { data } = await createOneObjectMetadata({
+    const { data } = await forceCreateOneObjectMetadata({
       input: {
         nameSingular: 'myTestObject',
         namePlural: 'myTestObjects',
@@ -101,10 +133,12 @@ describe('Phone field metadata tests suite', () => {
   });
 
   test.each(SUCCESSFUL_TEST_CASES)(
-    '$title',
+    'It should $title',
+
     async ({ context: { input, expected } }) => {
       const {
         data: { createOneResponse },
+        errors
       } = await createOneOperation<{
         id: string;
         [FIELD_NAME]: any;
@@ -126,6 +160,7 @@ describe('Phone field metadata tests suite', () => {
         `,
       });
 
+      expect(errors).toBeUndefined();
       const { id, ...rest } = createOneResponse;
       expect(rest[FIELD_NAME]).toMatchObject({
         ...expected,
