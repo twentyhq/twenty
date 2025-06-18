@@ -9,7 +9,6 @@ import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetch
 import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { GRAY_SCALE } from 'twenty-ui/theme';
-import { useDebouncedCallback } from 'use-debounce';
 
 const StyledText = styled.div`
   align-items: center;
@@ -38,10 +37,6 @@ export const RecordTableBodyFetchMoreLoader = () => {
   );
 
   const showLoadingMoreRow = !hasRecordTableFetchedAllRecordsComponents;
-  const debouncedFetchMoreRecordsLazy = useDebouncedCallback(
-    fetchMoreRecordsLazy,
-    100,
-  );
 
   const { ref: tbodyRef } = useInView({
     onChange: async (inView) => {
@@ -50,7 +45,7 @@ export const RecordTableBodyFetchMoreLoader = () => {
       }
 
       setIsFetchingMoreRecords(true);
-      await debouncedFetchMoreRecordsLazy();
+      await fetchMoreRecordsLazy();
       setIsFetchingMoreRecords(false);
     },
     delay: 1000,
