@@ -50,7 +50,6 @@ export const FormSingleRecordFieldChip = ({
       <VariableChipStandalone
         rawVariableName={draftValue.value}
         onRemove={disabled ? undefined : onRemove}
-        isFullRecord
       />
     );
   }

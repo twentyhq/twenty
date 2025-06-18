@@ -1,10 +1,11 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { BaseOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { generateFakeField } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-field';
+import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-object-record';
 import { shouldGenerateFieldFakeValue } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/should-generate-field-fake-value';
-import { ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 
 const MAXIMUM_DEPTH = 1;
 
@@ -45,7 +46,7 @@ export const generateObjectRecordFields = ({
         isLeaf: false,
         icon: field.icon,
         label: field.label,
-        value: generateObjectRecordFields({
+        value: generateFakeObjectRecord({
           objectMetadataInfo: {
             objectMetadataItemWithFieldsMaps: relationTargetObjectMetadata,
             objectMetadataMaps: objectMetadataInfo.objectMetadataMaps,

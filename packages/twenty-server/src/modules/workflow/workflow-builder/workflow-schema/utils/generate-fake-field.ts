@@ -22,6 +22,7 @@ export const generateFakeField = ({
   if (compositeType) {
     return {
       isLeaf: false,
+      type: type,
       icon: icon,
       label: label,
       value: compositeType.properties.reduce((acc, property) => {
