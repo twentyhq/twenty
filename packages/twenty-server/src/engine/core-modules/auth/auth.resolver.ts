@@ -55,6 +55,7 @@ import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.
 import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { Host } from 'src/engine/decorators/host.decorator';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
@@ -256,9 +257,8 @@ export class AuthResolver {
   @UseGuards(CaptchaGuard, PublicEndpointGuard)
   async signUp(
     @Args() signUpInput: UserCredentialsInput,
-    @Context() context: { req: { headers: { host?: string } } },
+    @Host() host: string,
   ): Promise<AvailableWorkspacesAndAccessTokensOutput> {
-    const host = context.req?.headers?.host;
     const user = await this.signInUpService.signUpWithoutWorkspace(
       {
         email: signUpInput.email,
@@ -304,7 +304,7 @@ export class AuthResolver {
   async signUpInWorkspace(
     @Args() signUpInput: SignUpInput,
     @AuthProvider() authProvider: AuthProviderEnum,
-    @Context() context: { req: { headers: { host?: string } } },
+    @Host() host: string,
   ): Promise<SignUpOutput> {
     const currentWorkspace = await this.authService.findWorkspaceForSignInUp({
       workspaceInviteHash: signUpInput.workspaceInviteHash,
@@ -342,7 +342,6 @@ export class AuthResolver {
       workspace: currentWorkspace,
     });
 
-    const host = context.req?.headers?.host;
     const { user, workspace } = await this.authService.signInUp(
       {
         userData,
@@ -384,9 +383,8 @@ export class AuthResolver {
   async signUpInNewWorkspace(
     @AuthUser() currentUser: User,
     @AuthProvider() authProvider: AuthProviderEnum,
-    @Context() context: { req: { headers: { host?: string } } },
+    @Host() host: string,
   ): Promise<SignUpOutput> {
-    const host = context.req?.headers?.host;
     const { user, workspace } = await this.signInUpService.signUpOnNewWorkspace(
       { type: 'existingUser', existingUser: currentUser },
       host,
