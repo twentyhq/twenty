@@ -7,6 +7,7 @@ import {
   IconTrash,
   IconTrashOff,
   IconTrashX,
+  IconTrashXOff,
 } from 'twenty-ui/display';
 
 type SettingsRoleObjectPermissionIconConfig = {
@@ -38,6 +39,6 @@ export const SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG: Record<
   },
   canDestroyObjectRecords: {
     Icon: IconTrashX,
-    IconForbidden: IconTrashX,
+    IconForbidden: IconTrashXOff,
   },
 };
