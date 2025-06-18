@@ -1,10 +1,8 @@
 import { useApolloClient } from '@apollo/client';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { RecordGqlOperationVariables } from '@/object-record/graphql/types/RecordGqlOperationVariables';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { print } from 'graphql';
 
 export const useUpsertFindOneRecordQueryInCache = ({
   objectMetadataItem,
@@ -26,21 +24,15 @@ export const useUpsertFindOneRecordQueryInCache = ({
   const upsertFindOneRecordQueryInCache = <
     T extends ObjectRecord = ObjectRecord,
   >({
-    queryVariables,
+    objectRecordId,
     objectRecordToOverwrite,
   }: {
-    queryVariables: RecordGqlOperationVariables;
+    objectRecordId: string;
     objectRecordToOverwrite: T;
   }) => {
-    console.log(
-      'findOneRecordQuery',
-      print(findOneRecordQuery),
-      queryVariables,
-    );
-
     apolloClient.writeQuery({
       query: findOneRecordQuery,
-      variables: queryVariables,
+      variables: { objectRecordId },
       data: {
         [objectMetadataItem.nameSingular]: objectRecordToOverwrite,
       },

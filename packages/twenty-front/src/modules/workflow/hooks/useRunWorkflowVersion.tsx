@@ -1,3 +1,4 @@
+import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -8,10 +9,8 @@ import { useUpsertFindOneRecordQueryInCache } from '@/object-record/cache/hooks/
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
-import { useLazyFindOneRecord } from '@/object-record/hooks/useLazyFindOneRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { computeOptimisticCreateRecordBaseRecordInput } from '@/object-record/utils/computeOptimisticCreateRecordBaseRecordInput';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { RUN_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/runWorkflowVersion';
@@ -56,37 +55,34 @@ export const useRunWorkflowVersion = () => {
       recordGqlFields: computedRecordGqlFields,
     });
 
-  const { findOneRecord: findOneWorkflowRun } =
-    useLazyFindOneRecord<WorkflowRun>({
-      objectNameSingular: CoreObjectNameSingular.WorkflowRun,
-    });
-
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   const setRecordInStore = useRecoilCallback(
     ({ set }) =>
-      ({ recordId, record }: { recordId: string; record: ObjectRecord }) => {
-        set(recordStoreFamilyState(recordId), record);
+      (workflowRun: WorkflowRun) => {
+        set(recordStoreFamilyState(workflowRun.id), workflowRun);
       },
     [],
   );
 
   const runWorkflowVersion = async ({
+    workflowId,
     workflowVersionId,
     payload,
   }: {
+    workflowId: string;
     workflowVersionId: string;
     payload?: Record<string, any>;
   }) => {
     const workflowRunId = v4();
 
     const recordInput: Partial<WorkflowRun> = {
-      name: 'Workflow Run',
+      name: '#0',
       status: 'NOT_STARTED',
       output: null,
       context: null,
       workflowVersionId,
-      workflowId: workflowVersionId,
+      workflowId,
       createdAt: new Date().toISOString(),
     };
 
@@ -109,40 +105,32 @@ export const useRunWorkflowVersion = () => {
       __typename: getObjectTypename(objectMetadataItem.nameSingular),
     });
 
-    if (!isDefined(recordCreatedInCache)) {
-      throw new Error('Aie aie aie');
-    }
-
-    const optimisticRecordNode = getRecordNodeFromRecord({
+    const recordNodeCreatedInCache = getRecordNodeFromRecord({
       objectMetadataItem,
       objectMetadataItems,
       record: recordCreatedInCache,
-      recordGqlFields: computedRecordGqlFields,
       computeReferences: false,
     });
 
-    if (optimisticRecordNode !== null) {
-      upsertFindOneRecordQueryInCache({
-        objectRecordToOverwrite: recordCreatedInCache,
-        queryVariables: {
-          objectRecordId: workflowRunId,
-        },
-      });
-
-      setRecordInStore({
-        recordId: workflowRunId,
-        record: recordCreatedInCache,
-      });
-
-      // triggerCreateRecordsOptimisticEffect({
-      //   cache: apolloClient.cache,
-      //   objectMetadataItem,
-      //   recordsToCreate: [optimisticRecordNode],
-      //   objectMetadataItems,
-      //   shouldMatchRootQueryFilter: true,
-      //   objectPermissionsByObjectMetadataId,
-      // });
+    if (!isDefined(recordNodeCreatedInCache)) {
+      throw new Error('The record should have been created in cache');
     }
+
+    upsertFindOneRecordQueryInCache({
+      objectRecordToOverwrite: recordCreatedInCache,
+      objectRecordId: workflowRunId,
+    });
+
+    triggerCreateRecordsOptimisticEffect({
+      cache: apolloClient.cache,
+      objectMetadataItem,
+      recordsToCreate: [recordNodeCreatedInCache],
+      objectMetadataItems,
+      shouldMatchRootQueryFilter: true,
+      objectPermissionsByObjectMetadataId,
+    });
+
+    setRecordInStore(recordCreatedInCache);
 
     openRecordInCommandMenu({
       objectNameSingular: CoreObjectNameSingular.WorkflowRun,
@@ -152,16 +140,6 @@ export const useRunWorkflowVersion = () => {
     await mutate({
       variables: { input: { workflowVersionId, workflowRunId, payload } },
     });
-
-    // await findOneWorkflowRun({
-    //   objectRecordId: workflowRunId,
-    //   onCompleted: (workflowRun) => {
-    //     openRecordInCommandMenu({
-    //       objectNameSingular: CoreObjectNameSingular.WorkflowRun,
-    //       recordId: workflowRun.id,
-    //     });
-    //   },
-    // });
   };
 
   return { runWorkflowVersion };

@@ -3,7 +3,6 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
-import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -12,7 +11,6 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useOnDbEvent } from '@/subscription/hooks/useOnDbEvent';
 import { useApolloClient } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
 import { DatabaseEventAction } from '~/generated/graphql';
 
 type ListenRecordUpdatesEffectProps = {
@@ -43,8 +41,8 @@ export const ListenRecordUpdatesEffect = ({
 
   const setRecordInStore = useRecoilCallback(
     ({ set }) =>
-      ({ recordId, record }: { recordId: string; record: ObjectRecord }) => {
-        set(recordStoreFamilyState(recordId), record);
+      (record: ObjectRecord) => {
+        set(recordStoreFamilyState(record.id), record);
       },
     [],
   );
@@ -56,29 +54,12 @@ export const ListenRecordUpdatesEffect = ({
 
       const cachedRecord = getRecordFromCache<ObjectRecord>(recordId);
 
-      const cachedRecordWithConnection = getRecordNodeFromRecord<ObjectRecord>({
-        record: cachedRecord,
-        objectMetadataItem,
-        objectMetadataItems,
-        recordGqlFields: computedRecordGqlFields,
-        computeReferences: false,
-      });
-
-      const computedOptimisticRecord = {
+      const computedOptimisticRecord: ObjectRecord = {
         ...cachedRecord,
         ...updatedRecord,
         id: recordId,
         __typename: getObjectTypename(objectMetadataItem.nameSingular),
       };
-
-      const optimisticRecordWithConnection =
-        getRecordNodeFromRecord<ObjectRecord>({
-          record: updatedRecord,
-          objectMetadataItem,
-          objectMetadataItems,
-          recordGqlFields: computedRecordGqlFields,
-          computeReferences: false,
-        });
 
       updateRecordFromCache({
         objectMetadataItems,
@@ -89,23 +70,15 @@ export const ListenRecordUpdatesEffect = ({
         objectPermissionsByObjectMetadataId,
       });
 
-      setRecordInStore({
-        recordId,
-        record: computedOptimisticRecord,
+      triggerUpdateRecordOptimisticEffect({
+        cache: apolloClient.cache,
+        objectMetadataItem,
+        currentRecord: computedOptimisticRecord,
+        updatedRecord: updatedRecord,
+        objectMetadataItems,
       });
 
-      if (
-        isDefined(cachedRecordWithConnection) &&
-        isDefined(optimisticRecordWithConnection)
-      ) {
-        triggerUpdateRecordOptimisticEffect({
-          cache: apolloClient.cache,
-          objectMetadataItem,
-          currentRecord: computedOptimisticRecord,
-          updatedRecord: updatedRecord,
-          objectMetadataItems,
-        });
-      }
+      setRecordInStore(computedOptimisticRecord);
     },
     skip: listenedFields.length === 0,
   });
