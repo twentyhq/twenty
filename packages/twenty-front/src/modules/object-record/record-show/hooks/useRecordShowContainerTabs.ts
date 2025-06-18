@@ -9,9 +9,9 @@ import { RecordLayout } from '@/object-record/record-show/types/RecordLayout';
 import { RecordLayoutTab } from '@/ui/layout/tab-list/types/RecordLayoutTab';
 import { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useMemo } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconCalendarEvent,
   IconHome,
@@ -32,9 +32,6 @@ export const useRecordShowContainerTabs = (
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const isPermissionsV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_PERMISSIONS_V2_ENABLED,
-  );
 
   // Object-specific layouts that override or extend the base layout
   const OBJECT_SPECIFIC_LAYOUTS: Partial<
@@ -55,7 +52,6 @@ export const useRecordShowContainerTabs = (
               ifFeaturesDisabled: [],
               ifRequiredObjectsInactive: [],
               ifRelationsMissing: [],
-              ifNoReadPermission: !!isPermissionsV2Enabled,
             },
           },
           tasks: null,
@@ -76,7 +72,6 @@ export const useRecordShowContainerTabs = (
               ifFeaturesDisabled: [],
               ifRequiredObjectsInactive: [],
               ifRelationsMissing: [],
-              ifNoReadPermission: !!isPermissionsV2Enabled,
             },
           },
           tasks: null,
@@ -97,7 +92,6 @@ export const useRecordShowContainerTabs = (
               ifFeaturesDisabled: [],
               ifRequiredObjectsInactive: [],
               ifRelationsMissing: [],
-              ifNoReadPermission: !!isPermissionsV2Enabled,
             },
           },
           calendar: {
@@ -130,7 +124,6 @@ export const useRecordShowContainerTabs = (
               ifFeaturesDisabled: [],
               ifRequiredObjectsInactive: [],
               ifRelationsMissing: [],
-              ifNoReadPermission: !!isPermissionsV2Enabled,
             },
           },
           calendar: {
@@ -164,7 +157,6 @@ export const useRecordShowContainerTabs = (
               ifFeaturesDisabled: [FeatureFlagKey.IS_WORKFLOW_ENABLED],
               ifRequiredObjectsInactive: [],
               ifRelationsMissing: [],
-              ifNoReadPermission: !!isPermissionsV2Enabled,
             },
           },
           timeline: null,
@@ -188,7 +180,6 @@ export const useRecordShowContainerTabs = (
               ifFeaturesDisabled: [FeatureFlagKey.IS_WORKFLOW_ENABLED],
               ifRequiredObjectsInactive: [],
               ifRelationsMissing: [],
-              ifNoReadPermission: !!isPermissionsV2Enabled,
             },
           },
           timeline: null,
@@ -211,7 +202,6 @@ export const useRecordShowContainerTabs = (
               ifFeaturesDisabled: [FeatureFlagKey.IS_WORKFLOW_ENABLED],
               ifRequiredObjectsInactive: [],
               ifRelationsMissing: [],
-              ifNoReadPermission: !!isPermissionsV2Enabled,
             },
           },
           timeline: null,
@@ -221,7 +211,7 @@ export const useRecordShowContainerTabs = (
         },
       },
     }),
-    [isPermissionsV2Enabled],
+    [],
   );
 
   const baseRecordLayout = BASE_RECORD_LAYOUT;
@@ -260,7 +250,7 @@ export const useRecordShowContainerTabs = (
           entry[1] !== null && entry[1] !== undefined,
       )
       .sort(([, a], [, b]) => a.position - b.position)
-      .map(([key, { title, Icon, hide, cards }]) => {
+      .map(([key, { title, Icon, hide, cards, targetObjectNameSingular }]) => {
         // Special handling for fields tab
         if (key === 'fields') {
           return {
@@ -286,7 +276,9 @@ export const useRecordShowContainerTabs = (
           });
 
         const permissionHide =
-          hide.ifNoReadPermission && !getObjectReadPermission(key);
+          hide.ifNoReadPermission &&
+          isDefined(targetObjectNameSingular) &&
+          !getObjectReadPermission(targetObjectNameSingular);
 
         const requiredObjectsInactive =
           hide.ifRequiredObjectsInactive.length > 0 &&
