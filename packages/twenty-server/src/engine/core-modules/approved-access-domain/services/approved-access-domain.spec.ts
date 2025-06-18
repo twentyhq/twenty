@@ -11,8 +11,8 @@ import {
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 import { ApprovedAccessDomainService } from './approved-access-domain.service';
 
@@ -78,9 +78,8 @@ describe('ApprovedAccessDomainService', () => {
         isCustomDomainEnabled: false,
       } as Workspace;
       const fromUser = {
-        email: 'user@custom-domain.com',
-        isEmailVerified: true,
-      } as User;
+        userEmail: 'user@custom-domain.com',
+      } as WorkspaceMemberWorkspaceEntity;
 
       const expectedApprovedAccessDomain = {
         workspaceId: 'workspace-id',
@@ -118,7 +117,9 @@ describe('ApprovedAccessDomainService', () => {
         service.createApprovedAccessDomain(
           'gmail.com',
           { id: 'workspace-id' } as Workspace,
-          { email: 'user@gmail.com', isEmailVerified: true } as User,
+          {
+            userEmail: 'user@gmail.com',
+          } as WorkspaceMemberWorkspaceEntity,
           'user@gmail.com',
         ),
       ).rejects.toThrowError(
@@ -184,7 +185,7 @@ describe('ApprovedAccessDomainService', () => {
   describe('sendApprovedAccessDomainValidationEmail', () => {
     it('should throw an exception if the approved access domain is already validated', async () => {
       const approvedAccessDomainId = 'approved-access-domain-id';
-      const sender = {} as User;
+      const sender = {} as WorkspaceMemberWorkspaceEntity;
       const workspace = {} as Workspace;
       const email = 'validator@example.com';
 
@@ -214,7 +215,7 @@ describe('ApprovedAccessDomainService', () => {
 
     it('should throw an exception if the email does not match the approved access domain', async () => {
       const approvedAccessDomainId = 'approved-access-domain-id';
-      const sender = {} as User;
+      const sender = {} as WorkspaceMemberWorkspaceEntity;
       const workspace = {} as Workspace;
       const email = 'validator@different.com';
       const approvedAccessDomain = {
@@ -244,10 +245,9 @@ describe('ApprovedAccessDomainService', () => {
 
     it('should send a validation email if all conditions are met', async () => {
       const sender = {
-        email: 'sender@example.com',
-        firstName: 'John',
-        lastName: 'Doe',
-      } as User;
+        userEmail: 'sender@example.com',
+        name: { firstName: 'John', lastName: 'Doe' },
+      } as WorkspaceMemberWorkspaceEntity;
       const workspace = {
         displayName: 'Test Workspace',
         logo: '/logo.png',
