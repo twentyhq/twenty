@@ -132,4 +132,42 @@ describe('Phone field metadata tests suite', () => {
 `);
     }
   });
+
+  it.skip('Empty phone', async () => {
+    const {
+      data: { createOneResponse },
+    } = await createOneOperation<{
+      id: string;
+      [FIELD_NAME]: any;
+    }>({
+      objectMetadataSingularName: 'myTestObject',
+      input: {
+        id: faker.string.uuid(),
+        [FIELD_NAME]: {},
+      },
+      gqlFields: `
+        id
+        ${FIELD_NAME} {
+          primaryPhoneNumber
+          primaryPhoneCountryCode
+          primaryPhoneCallingCode
+          additionalPhones
+          __typename
+        }
+      `,
+    });
+
+    const { id, ...rest } = createOneResponse;
+    expect(rest).toMatchInlineSnapshot(`
+{
+  "phonenumber": {
+    "__typename": "Phones",
+    "additionalPhones": null,
+    "primaryPhoneCallingCode": "",
+    "primaryPhoneCountryCode": "",
+    "primaryPhoneNumber": "",
+  },
+}
+`);
+  });
 });

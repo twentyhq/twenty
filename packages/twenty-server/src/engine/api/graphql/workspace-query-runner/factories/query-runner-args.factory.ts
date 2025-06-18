@@ -21,9 +21,10 @@ import {
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
-import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
+import { isDefined } from 'twenty-shared/utils';
 
 type ArgPositionBackfillInput = {
   argIndex?: number;
@@ -51,6 +52,9 @@ export class QueryRunnerArgsFactory {
           field.type === FieldMetadataType.POSITION &&
           field.name === 'position',
       );
+    console.log('*'.repeat(100));
+    console.log(resolverArgsType);
+    console.log('*'.repeat(100));
 
     switch (resolverArgsType) {
       case ResolverArgsType.CreateOne:
@@ -168,7 +172,13 @@ export class QueryRunnerArgsFactory {
     fieldMetadataMapByNameByName: Record<string, FieldMetadataInterface>,
     argPositionBackfillInput: ArgPositionBackfillInput,
   ): Promise<Partial<ObjectRecord>> {
-    if (!data) {
+    console.log({
+      data,
+      options,
+      fieldMetadataMapByNameByName,
+      argPositionBackfillInput,
+    });
+    if (!isDefined(data)) {
       return Promise.resolve({});
     }
 
@@ -193,6 +203,7 @@ export class QueryRunnerArgsFactory {
         case FieldMetadataType.POSITION: {
           isFieldPositionPresent = true;
 
+          // Here ?
           const newValue = await this.recordPositionService.buildRecordPosition(
             {
               value,
@@ -210,6 +221,7 @@ export class QueryRunnerArgsFactory {
         }
         case FieldMetadataType.NUMBER:
         case FieldMetadataType.RICH_TEXT:
+        case FieldMetadataType.PHONES:
         case FieldMetadataType.RICH_TEXT_V2:
         case FieldMetadataType.LINKS:
         case FieldMetadataType.EMAILS: {

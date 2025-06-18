@@ -37,5 +37,5 @@ export type PhonesMetadata = {
   primaryPhoneNumber: string;
   primaryPhoneCountryCode: string;
   primaryPhoneCallingCode: string;
-  additionalPhones: object | null;
+  additionalPhones: Array<Omit<PhonesMetadata, 'additionalPhones'>> | null; // What kind of object is this ?
 };
