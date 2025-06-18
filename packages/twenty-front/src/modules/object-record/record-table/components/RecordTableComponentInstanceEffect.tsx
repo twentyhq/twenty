@@ -6,7 +6,6 @@ import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefin
 
 type RecordTableComponentInstanceEffectProps = {
   onColumnsChange: (columns: ColumnDefinition<FieldMetadata>[]) => void;
-  onEntityCountChange?: (count: number) => void | Promise<void>;
 };
 
 export const RecordTableComponentInstanceEffect = ({

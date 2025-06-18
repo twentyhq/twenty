@@ -69,46 +69,30 @@ export class StandardIndexFactory {
         );
       });
 
-    return (
-      workspaceIndexMetadataArgsCollection
-        .map((workspaceIndexMetadataArgs) => {
-          const objectMetadata =
-            originalStandardObjectMetadataMap[workspaceEntity.nameSingular];
+    return workspaceIndexMetadataArgsCollection.map(
+      (workspaceIndexMetadataArgs) => {
+        const objectMetadata =
+          originalStandardObjectMetadataMap[workspaceEntity.nameSingular];
 
-          if (!objectMetadata) {
-            throw new Error(
-              `Object metadata not found for ${workspaceEntity.nameSingular}`,
-            );
-          }
-
-          const indexMetadata: PartialIndexMetadata = {
-            workspaceId: context.workspaceId,
-            objectMetadataId: objectMetadata.id,
-            name: workspaceIndexMetadataArgs.name,
-            columns: workspaceIndexMetadataArgs.columns,
-            isUnique: workspaceIndexMetadataArgs.isUnique,
-            isCustom: false,
-            indexWhereClause: workspaceIndexMetadataArgs.whereClause,
-            indexType: workspaceIndexMetadataArgs.type,
-          };
-
-          return indexMetadata;
-        })
-        // TODO: remove this filter when we have a way to handle index on relations
-        .filter((workspaceIndexMetadataArgs) => {
-          const objectMetadata =
-            originalStandardObjectMetadataMap[workspaceEntity.nameSingular];
-
-          const hasAllFields = workspaceIndexMetadataArgs.columns.every(
-            (expectedField) => {
-              return objectMetadata.fields.some(
-                (field) => field.name === expectedField,
-              );
-            },
+        if (!objectMetadata) {
+          throw new Error(
+            `Object metadata not found for ${workspaceEntity.nameSingular}`,
           );
+        }
 
-          return hasAllFields;
-        })
+        const indexMetadata: PartialIndexMetadata = {
+          workspaceId: context.workspaceId,
+          objectMetadataId: objectMetadata.id,
+          name: workspaceIndexMetadataArgs.name,
+          columns: workspaceIndexMetadataArgs.columns,
+          isUnique: workspaceIndexMetadataArgs.isUnique,
+          isCustom: false,
+          indexWhereClause: workspaceIndexMetadataArgs.whereClause,
+          indexType: workspaceIndexMetadataArgs.type,
+        };
+
+        return indexMetadata;
+      },
     );
   }
 

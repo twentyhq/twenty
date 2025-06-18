@@ -8,7 +8,7 @@ export function isFieldMetadataInterfaceOfType<
   Field extends FieldMetadataInterface<FieldMetadataType>,
   Type extends FieldMetadataType,
 >(
-  fieldMetadata: Field,
+  fieldMetadata: Pick<Field, 'type'>,
   type: Type,
 ): fieldMetadata is Field & FieldMetadataInterface<Type> {
   return fieldMetadata.type === type;
@@ -18,7 +18,7 @@ export function isFieldMetadataEntityOfType<
   Field extends FieldMetadataEntity<FieldMetadataType>,
   Type extends FieldMetadataType,
 >(
-  fieldMetadata: Field,
+  fieldMetadata: Pick<Field, 'type'>,
   type: Type,
 ): fieldMetadata is Field & FieldMetadataEntity<Type> {
   return fieldMetadata.type === type;
