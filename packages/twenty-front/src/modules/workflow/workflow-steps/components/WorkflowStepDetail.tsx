@@ -89,12 +89,12 @@ export const WorkflowStepDetail = ({
             />
           );
         }
+        default:
+          return assertUnreachable(
+            stepDefinition.definition,
+            `Expected the step to have an handler; ${JSON.stringify(stepDefinition)}`,
+          );
       }
-
-      return assertUnreachable(
-        stepDefinition.definition,
-        `Expected the step to have an handler; ${JSON.stringify(stepDefinition)}`,
-      );
     }
     case 'action': {
       switch (stepDefinition.definition.type) {
@@ -184,12 +184,13 @@ export const WorkflowStepDetail = ({
             />
           );
         }
+
+        default:
+          return assertUnreachable(
+            stepDefinition.definition,
+            `Expected the step to have an handler; ${JSON.stringify(stepDefinition)}`,
+          );
       }
     }
   }
-
-  return assertUnreachable(
-    stepDefinition,
-    `Expected the step to have an handler; ${JSON.stringify(stepDefinition)}`,
-  );
 };
