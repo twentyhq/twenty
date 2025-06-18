@@ -8,10 +8,12 @@ import { URLSearchParams } from 'url';
 import axios, { AxiosResponse } from 'axios';
 import { Repository } from 'typeorm';
 
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+import { InterGetChargePDFResponse } from 'src/engine/core-modules/inter/interfaces/charge.interface';
+
+import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { InterIntegration } from 'src/engine/core-modules/inter/integration/inter-integration.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { ChargeData, ChargeResponse } from 'src/modules/charges/types/inter';
 
@@ -32,10 +34,8 @@ export class InterApiService {
   constructor(
     @InjectRepository(InterIntegration, 'core')
     private interIntegrationRepository: Repository<InterIntegration>,
-    @InjectRepository(Workspace, 'core')
-    private workspaceRepository: Repository<Workspace>,
-    private readonly fileStorageService: FileStorageService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly fileUploadService: FileUploadService,
   ) {
     this.baseUrl = this.twentyConfigService.get('INTER_BASE_URL');
   }
@@ -216,10 +216,7 @@ export class InterApiService {
     }
   }
 
-  async getChargePdf(
-    workspaceId: string,
-    seuNumero: string,
-  ): Promise<ArrayBuffer> {
+  async getChargePdf(workspaceId: string, seuNumero: string): Promise<string> {
     if (!seuNumero) {
       throw new Error('seuNumero is required to retrieve charge PDF');
     }
@@ -232,7 +229,7 @@ export class InterApiService {
     this.logger.log('PDF -SEU NUMERO INTER', seuNumero);
 
     try {
-      const response = await axios.get(
+      const response = await axios.get<InterGetChargePDFResponse>(
         `${this.baseUrl}/cobranca/v3/cobrancas/${seuNumero}/pdf`,
         {
           httpsAgent,
@@ -303,17 +300,24 @@ export class InterApiService {
       const filename = `${randomUUID()}_boleto.pdf`;
       const folder = 'attachment';
 
-      // ✅ Salva o arquivo no storage
-      await this.fileStorageService.write({
-        file: Buffer.from(pdfBuffer),
-        name: filename,
-        folder,
+      const fileFolder = FileFolder.ChargeBill;
+
+      const { path } = await this.fileUploadService.uploadFile({
+        file: Buffer.from(pdfBuffer, 'base64'),
+        fileFolder,
+        workspaceId,
+        filename: `bolepix-${requestCode}-${workspaceId}.pdf`,
         mimeType: 'application/pdf',
       });
 
+      const fullPath = this.extractFullPathFromFilePath(path);
+
+      if (!fullPath)
+        throw new Error(`Failed to extract full path from file path: ${path}`);
+
       await attachmentRepository.save({
         name: filename,
-        fullPath: `${folder}/${filename}`, // <--- caminho relativo para acesso posterior
+        fullPath: this.extractFullPathFromFilePath(path), // <--- caminho relativo para acesso posterior
         type: 'TextDocument',
         chargeId: data.id,
       });
@@ -328,5 +332,16 @@ export class InterApiService {
       });
       throw error;
     }
+  }
+
+  extractFullPathFromFilePath(path: string) {
+    /**
+     * Gets the path with a generated token and removes the token from it
+     * Expected input: "/charge-bill/0b954839-fda6-43ca-8120-9a9e5f3f4878.pdf?token=eyJhbGciOiJ..."
+     * output: /charge-bill/0b954839-fda6-43ca-8120-9a9e5f3f4878.pdf
+     */
+    const matchRegex = /([^?]+)/;
+
+    return path.match(matchRegex)?.[1];
   }
 }
