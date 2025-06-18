@@ -289,11 +289,11 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       await this.workspaceInvitationService.findInvitationsByEmail(email)
     )
       .filter(
-        ({ workspaceId }) =>
+        ({ workspace }) =>
           ![
             ...alreadyMemberWorkspacesIds,
             ...workspacesFromApprovedAccessDomainIds,
-          ].includes(workspaceId),
+          ].includes(workspace.id),
       )
       .map((appToken) => ({
         workspace: appToken.workspace,
