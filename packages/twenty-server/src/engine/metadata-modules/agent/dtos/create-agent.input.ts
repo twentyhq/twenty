@@ -24,6 +24,7 @@ export class CreateAgentInput {
   @Field(() => String)
   model: string;
 
+  @IsString()
   @Field(() => String)
   responseFormat: string;
 }
