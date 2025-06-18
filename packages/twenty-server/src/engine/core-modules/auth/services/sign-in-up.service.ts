@@ -303,7 +303,7 @@ export class SignInUpService {
       undefined,
     );
 
-    return await this.userRepository.save(userCreated);
+    return savedUser;
   }
 
   private async setDefaultImpersonateAndAccessFullAdminPanel() {
