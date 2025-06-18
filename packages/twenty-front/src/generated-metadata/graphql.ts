@@ -30,6 +30,19 @@ export type Scalars = {
   Upload: { input: any; output: any; }
 };
 
+export type AiModel = {
+  __typename?: 'AIModel';
+  createdAt: Scalars['DateTime']['output'];
+  displayName: Scalars['String']['output'];
+  inputCostPer1kTokensInCents: Scalars['Float']['output'];
+  isActive: Scalars['Boolean']['output'];
+  isDefault: Scalars['Boolean']['output'];
+  modelId: Scalars['ID']['output'];
+  outputCostPer1kTokensInCents: Scalars['Float']['output'];
+  provider: ModelProvider;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
 export type ActivateWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']['input']>;
 };
@@ -59,10 +72,11 @@ export type AdminPanelWorkerQueueHealth = {
 
 export type Agent = {
   __typename?: 'Agent';
+  aiModel?: Maybe<AiModel>;
   createdAt: Scalars['DateTime']['output'];
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
-  model: Scalars['String']['output'];
+  modelId: Scalars['String']['output'];
   name: Scalars['String']['output'];
   prompt: Scalars['String']['output'];
   responseFormat: Scalars['String']['output'];
@@ -339,6 +353,7 @@ export type CheckUserExistOutput = {
 
 export type ClientConfig = {
   __typename?: 'ClientConfig';
+  aiModels: Array<AiModel>;
   analyticsEnabled: Scalars['Boolean']['output'];
   api: ApiConfig;
   authProviders: AuthProviders;
@@ -431,7 +446,7 @@ export type ConfigVariablesOutput = {
 
 export type CreateAgentInput = {
   description?: InputMaybe<Scalars['String']['input']>;
-  model: Scalars['String']['input'];
+  modelId: Scalars['String']['input'];
   name: Scalars['String']['input'];
   prompt: Scalars['String']['input'];
   responseFormat: Scalars['String']['input'];
@@ -967,6 +982,11 @@ export enum MessageChannelVisibility {
   METADATA = 'METADATA',
   SHARE_EVERYTHING = 'SHARE_EVERYTHING',
   SUBJECT = 'SUBJECT'
+}
+
+export enum ModelProvider {
+  ANTHROPIC = 'ANTHROPIC',
+  OPENAI = 'OPENAI'
 }
 
 export type Mutation = {
@@ -2329,7 +2349,7 @@ export type UuidFilterComparison = {
 export type UpdateAgentInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['UUID']['input'];
-  model?: InputMaybe<Scalars['String']['input']>;
+  modelId?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   prompt?: InputMaybe<Scalars['String']['input']>;
   responseFormat?: InputMaybe<Scalars['String']['input']>;
