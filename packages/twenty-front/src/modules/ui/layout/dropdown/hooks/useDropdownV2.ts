@@ -1,6 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
+import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStack } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStack';
@@ -15,6 +16,9 @@ export const useDropdownV2 = () => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   const { removeFocusItemFromFocusStack } = useRemoveFocusItemFromFocusStack();
+
+  const { setActiveDropdownFocusIdAndMemorizePrevious } =
+    useSetActiveDropdownFocusIdAndMemorizePrevious();
 
   const closeDropdown = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -57,6 +61,8 @@ export const useDropdownV2 = () => {
           true,
         );
 
+        setActiveDropdownFocusIdAndMemorizePrevious(specificComponentId);
+
         pushFocusItemToFocusStack({
           focusId: scopeId,
           component: {
@@ -69,7 +75,7 @@ export const useDropdownV2 = () => {
           memoizeKey: 'global',
         });
       },
-    [pushFocusItemToFocusStack],
+    [pushFocusItemToFocusStack, setActiveDropdownFocusIdAndMemorizePrevious],
   );
 
   const toggleDropdown = useRecoilCallback(
