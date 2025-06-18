@@ -38,6 +38,7 @@ export const useOneSignal = () => {
               serviceWorker: {
                 path: '/OneSignalSDKWorker.js',
                 scope: '/',
+                useWorker: true,
               },
             });
 
