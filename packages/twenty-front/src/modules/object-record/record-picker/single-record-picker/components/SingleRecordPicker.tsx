@@ -6,6 +6,7 @@ import {
 } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPickerMenuItemsWithSearch';
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
+import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -42,10 +43,12 @@ export const SingleRecordPicker = ({
     onCancel?.();
   };
 
-  const handleCreateNew = (searchInput?: string | undefined) => {
-    onCreate?.(searchInput);
-
+  const handleRecordSelected = (
+    selectedRecord?: SingleRecordPickerRecord | undefined,
+  ) => {
     setRecordPickerSearchFilter('');
+
+    onRecordSelected?.(selectedRecord);
   };
 
   useListenClickOutside({
@@ -76,8 +79,8 @@ export const SingleRecordPicker = ({
             emptyLabel,
             excludedRecordIds,
             onCancel: handleCancel,
-            onCreate: handleCreateNew,
-            onRecordSelected,
+            onCreate,
+            onRecordSelected: handleRecordSelected,
             objectNameSingular,
             layoutDirection,
           }}

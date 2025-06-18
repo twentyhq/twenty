@@ -9,6 +9,7 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
+import { useApolloClient } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
@@ -18,6 +19,7 @@ type RecordDetailRelationSectionProps = {
   relationFieldMetadataItem?: FieldMetadataItem;
   recordId: string;
 };
+
 export const useAddNewRecordAndOpenRightDrawer = ({
   relationObjectMetadataNameSingular,
   relationObjectMetadataItem,
@@ -40,6 +42,8 @@ export const useAddNewRecordAndOpenRightDrawer = ({
   });
 
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
+
+  const apolloClient = useApolloClient();
 
   if (
     relationObjectMetadataNameSingular === 'workspaceMember' ||
@@ -103,10 +107,16 @@ export const useAddNewRecordAndOpenRightDrawer = ({
       setViewableRecordId(newRecordId);
       setViewableRecordNameSingular(relationObjectMetadataNameSingular);
 
+      apolloClient.refetchQueries({
+        include: ['Search'],
+      });
+
       openRecordInCommandMenu({
         recordId: newRecordId,
         objectNameSingular: relationObjectMetadataNameSingular,
       });
+
+      return newRecordId;
     },
   };
 };

@@ -15,7 +15,12 @@ import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinit
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
+import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
+import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 
 type RelationFromManyFieldInputProps = {
   onSubmit?: FieldInputEvent;
@@ -82,6 +87,55 @@ export const RelationFromManyFieldInput = ({
     recordFieldInputLayoutDirectionComponentState,
   );
 
+  const multipleRecordPickerPickableMorphItemsCallbackState =
+    useRecoilComponentCallbackStateV2(
+      multipleRecordPickerPickableMorphItemsComponentState,
+      recordPickerInstanceId,
+    );
+  const { performSearch: multipleRecordPickerPerformSearch } =
+    useMultipleRecordPickerPerformSearch();
+
+  const handleCreateNew = useRecoilCallback(
+    ({ snapshot, set }) =>
+      async (searchInput?: string) => {
+        const newRecordId =
+          await createNewRecordAndOpenRightDrawer?.(searchInput);
+
+        if (!isDefined(newRecordId)) {
+          return;
+        }
+
+        const multipleRecordPickerPickableMorphItems = snapshot
+          .getLoadable(multipleRecordPickerPickableMorphItemsCallbackState)
+          .getValue();
+
+        const newMorphItems = multipleRecordPickerPickableMorphItems.concat({
+          recordId: newRecordId,
+          objectMetadataId: relationObjectMetadataItem.id,
+          isSelected: true,
+          isMatchingSearchFilter: true,
+        });
+
+        set(multipleRecordPickerPickableMorphItemsCallbackState, newMorphItems);
+
+        multipleRecordPickerPerformSearch({
+          multipleRecordPickerInstanceId: recordPickerInstanceId,
+          forceSearchFilter: searchInput,
+          forceSearchableObjectMetadataItems: [relationObjectMetadataItem],
+          forcePickableMorphItems: newMorphItems,
+        });
+      },
+    [
+      createNewRecordAndOpenRightDrawer,
+      relationObjectMetadataItem,
+      recordPickerInstanceId,
+      multipleRecordPickerPickableMorphItemsCallbackState,
+      multipleRecordPickerPerformSearch,
+    ],
+  );
+
+  const canCreateNew = !isRelationFromActivityTargets;
+
   return (
     <MultipleRecordPicker
       componentInstanceId={recordPickerInstanceId}
@@ -97,11 +151,7 @@ export const RelationFromManyFieldInput = ({
           updateRelation(morphItem);
         }
       }}
-      onCreate={
-        !isRelationFromActivityTargets
-          ? createNewRecordAndOpenRightDrawer
-          : undefined
-      }
+      onCreate={canCreateNew ? handleCreateNew : undefined}
       onClickOutside={handleSubmit}
       layoutDirection={
         layoutDirection === 'downward'

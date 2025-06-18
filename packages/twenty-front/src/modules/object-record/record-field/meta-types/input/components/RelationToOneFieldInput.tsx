@@ -7,9 +7,12 @@ import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/r
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionLoadingComponentState';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
+import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
 import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { isDefined } from 'twenty-shared/utils';
 import { IconForbid } from 'twenty-ui/display';
 
 export type RelationToOneFieldInputProps = {
@@ -58,6 +61,19 @@ export const RelationToOneFieldInput = ({
     recordFieldInputLayoutDirectionLoadingComponentState,
   );
 
+  const setSingleRecordPickerSelectedId = useSetRecoilComponentStateV2(
+    singleRecordPickerSelectedIdComponentState,
+    recordPickerInstanceId,
+  );
+
+  const handleCreateNew = async (searchInput?: string) => {
+    const newRecordId = await createNewRecordAndOpenRightDrawer?.(searchInput);
+
+    if (isDefined(newRecordId)) {
+      setSingleRecordPickerSelectedId(newRecordId);
+    }
+  };
+
   if (isLoading) {
     return <></>;
   }
@@ -68,7 +84,7 @@ export const RelationToOneFieldInput = ({
       EmptyIcon={IconForbid}
       emptyLabel={'No ' + fieldDefinition.label}
       onCancel={onCancel}
-      onCreate={createNewRecordAndOpenRightDrawer}
+      onCreate={handleCreateNew}
       onRecordSelected={handleRecordSelected}
       objectNameSingular={
         fieldDefinition.metadata.relationObjectMetadataNameSingular
