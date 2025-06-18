@@ -33,9 +33,16 @@ export const phonesCompositeType: CompositeType = {
   ],
 };
 
-export type PhonesMetadata = {
-  primaryPhoneNumber: string;
-  primaryPhoneCountryCode: string;
-  primaryPhoneCallingCode: string;
-  additionalPhones: Array<Omit<PhonesMetadata, 'additionalPhones'>> | null; // What kind of object is this ?
+type PhoneMetadata = {
+  number: string;
+  countryCode: string;
+  callingCode: string;
+};
+
+type PrimaryPhoneMetadata<T extends PhoneMetadata = PhoneMetadata> = {
+  [Property in keyof PhoneMetadata as `primaryPhone${Capitalize<string & Property>}`]: T[Property];
+};
+
+export type PhonesMetadata = PrimaryPhoneMetadata & {
+  additionalPhones: Array<PhoneMetadata> | null;
 };
