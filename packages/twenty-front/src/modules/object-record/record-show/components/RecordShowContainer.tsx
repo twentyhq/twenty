@@ -11,6 +11,9 @@ import { useRecordShowContainerTabs } from '@/object-record/record-show/hooks/us
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { ShowPageSubContainer } from '@/ui/layout/show-page/components/ShowPageSubContainer';
 import { useRecoilValue } from 'recoil';
+import styled from '@emotion/styled';
+
+const StyledShowPageBannerContainer = styled.div``; // Used to solve banner positioned below Canvas in workflow show page
 
 type RecordShowContainerProps = {
   objectNameSingular: string;
@@ -55,10 +58,12 @@ export const RecordShowContainer = ({
         recordId={objectRecordId}
       />
       {recordDeletedAt && (
-        <InformationBannerDeletedRecord
-          recordId={objectRecordId}
-          objectNameSingular={objectNameSingular}
-        />
+        <StyledShowPageBannerContainer>
+          <InformationBannerDeletedRecord
+            recordId={objectRecordId}
+            objectNameSingular={objectNameSingular}
+          />
+        </StyledShowPageBannerContainer>
       )}
       <ShowPageContainer>
         <ShowPageSubContainer
