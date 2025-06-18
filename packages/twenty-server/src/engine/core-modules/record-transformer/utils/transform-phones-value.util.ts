@@ -9,26 +9,28 @@ import {
   parsePhoneNumber,
 } from 'libphonenumber-js';
 import {
-  PhoneMetadata,
+  AdditionalPhoneMetadata,
   PhonesMetadata,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
 
 const ALL_COUNTRIES_CODE = getCountries();
 
-export type LinksFieldGraphQLInput =
+export type PhonesFieldGraphQLInput =
   | Partial<
-      Omit<PhonesMetadata, 'additionalPhones'> & { additionalPhones: string }
+      Omit<PhonesMetadata, 'additionalPhones'> & {
+        additionalPhones: string | null;
+      }
     >
   | null
   | undefined;
-type PhoneMetadataWithNumber = Partial<PhoneMetadata> &
-  Required<Pick<PhoneMetadata, 'number'>>;
+type PhoneMetadataWithNumber = Partial<AdditionalPhoneMetadata> &
+  Required<Pick<AdditionalPhoneMetadata, 'number'>>;
 
 const isValidCountryCode = (input: string): input is CountryCode => {
   return ALL_COUNTRIES_CODE.includes(input as unknown as CountryCode);
 };
 
-const getCountryCodesForCallingCode = (callingCode: CountryCallingCode) => {
+const getCountryCodesForCallingCode = (callingCode: string) => {
   const cleanCallingCode = callingCode.startsWith('+')
     ? callingCode.slice(1)
     : callingCode;
@@ -42,7 +44,7 @@ const getCountryCodesForCallingCode = (callingCode: CountryCallingCode) => {
 const validatePrimaryPhoneCountryCodeAndCallingCode = ({
   callingCode,
   countryCode,
-}: Partial<Omit<PhoneMetadata, 'number'>>) => {
+}: Partial<Omit<AdditionalPhoneMetadata, 'number'>>) => {
   if (isNonEmptyString(countryCode) && !isValidCountryCode(countryCode)) {
     throw new Error('TOOD invalid country code');
   }
@@ -70,7 +72,7 @@ const validateAndInferMetadataFromPrimaryPhoneNumber = ({
   callingCode,
   countryCode,
   number,
-}: PhoneMetadataWithNumber): Partial<PhoneMetadata> => {
+}: PhoneMetadataWithNumber): Partial<AdditionalPhoneMetadata> => {
   try {
     const phone = parsePhoneNumber(number);
 
@@ -110,7 +112,7 @@ const validateAndInferPhoneInput = ({
   callingCode,
   countryCode,
   number,
-}: Partial<PhoneMetadata>) => {
+}: Partial<AdditionalPhoneMetadata>) => {
   validatePrimaryPhoneCountryCodeAndCallingCode({
     callingCode,
     countryCode,
@@ -133,11 +135,11 @@ const validateAndInferPhoneInput = ({
 };
 
 type TransformPhonesValueArgs = {
-  input: LinksFieldGraphQLInput;
+  input: PhonesFieldGraphQLInput;
 };
 export const transformPhonesValue = ({
   input,
-}: TransformPhonesValueArgs): LinksFieldGraphQLInput => {
+}: TransformPhonesValueArgs): PhonesFieldGraphQLInput => {
   console.log('*'.repeat(100));
   console.log(input);
   console.log('*'.repeat(100));
@@ -147,9 +149,7 @@ export const transformPhonesValue = ({
   }
 
   const { additionalPhones, ...primary } = input;
-  const parsedAdditionalPhones = isDefined(additionalPhones)
-    ? parseJson<PhoneMetadata[]>(additionalPhones)
-    : undefined;
+
   const {
     callingCode: primaryPhoneCallingCode,
     countryCode: primaryPhoneCountryCode,
@@ -160,13 +160,14 @@ export const transformPhonesValue = ({
     number: primary.primaryPhoneNumber,
   });
 
-  const updatedJson = JSON.stringify(
-    (parsedAdditionalPhones ?? []).map(validateAndInferPhoneInput),
-  );
-
-  console.log(updatedJson);
+  const parsedAdditionalPhones = isDefined(additionalPhones)
+    ? parseJson<AdditionalPhoneMetadata[]>(additionalPhones)
+    : additionalPhones;
+  const transformedAdditionalPhones = isDefined(parsedAdditionalPhones)
+    ? JSON.stringify(parsedAdditionalPhones.map(validateAndInferPhoneInput))
+    : parsedAdditionalPhones;
   return {
-    additionalPhones: updatedJson,
+    additionalPhones: transformedAdditionalPhones,
     primaryPhoneCallingCode,
     primaryPhoneCountryCode,
     primaryPhoneNumber,
