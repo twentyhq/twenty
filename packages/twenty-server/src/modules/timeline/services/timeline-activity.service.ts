@@ -32,15 +32,6 @@ export class TimelineActivityService {
     task: 'taskTarget',
   };
 
-  // Core business objects that should always have timeline activities
-  private readonly coreBusinessObjects = [
-    'company',
-    'person',
-    'note',
-    'task',
-    'opportunity',
-  ];
-
   async upsertEvent({
     event,
     eventName,
@@ -82,15 +73,6 @@ export class TimelineActivityService {
     workspaceId: string;
     eventName: string;
   }): Promise<TimelineActivity[] | undefined> {
-    // Handle core business object creation events
-    if (this.coreBusinessObjects.includes(event.objectMetadata.nameSingular)) {
-      return await this.handleCoreBusinessObjectEvent({
-        event,
-        workspaceId,
-        eventName,
-      });
-    }
-
     if (['note', 'task'].includes(event.objectMetadata.nameSingular)) {
       const linkedTimelineActivities = await this.getLinkedTimelineActivities({
         event,
@@ -119,96 +101,6 @@ export class TimelineActivityService {
     }
 
     return [{ ...event, name: eventName }] satisfies TimelineActivity[];
-  }
-
-  /**
-   * Handles timeline activity creation for core business objects
-   * Creates timeline activities for company, person, note, task, and opportunity events
-   */
-  private async handleCoreBusinessObjectEvent({
-    event,
-    workspaceId,
-    eventName,
-  }: {
-    event: ObjectRecordBaseEvent;
-    workspaceId: string;
-    eventName: string;
-  }): Promise<TimelineActivity[]> {
-    const objectName = event.objectMetadata.nameSingular;
-    const timelineActivities: TimelineActivity[] = [];
-
-    // Create main timeline activity for the object itself
-    const mainActivity: TimelineActivity = {
-      ...event,
-      name: eventName,
-      linkedRecordCachedName: await this.getRecordName(event, workspaceId),
-    };
-
-    timelineActivities.push(mainActivity);
-
-    // For note and task, also create linked timeline activities
-    if (['note', 'task'].includes(objectName)) {
-      const linkedActivities = await this.getLinkedTimelineActivities({
-        event,
-        workspaceId,
-        eventName,
-      });
-
-      if (linkedActivities && linkedActivities.length > 0) {
-        timelineActivities.push(...linkedActivities);
-      }
-    }
-
-    return timelineActivities;
-  }
-
-  /**
-   * Gets a human-readable name for the record to cache in timeline activity
-   */
-  private async getRecordName(
-    event: ObjectRecordBaseEvent,
-    workspaceId: string,
-  ): Promise<string> {
-    try {
-      const repository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-          workspaceId,
-          event.objectMetadata.nameSingular,
-          {
-            shouldBypassPermissionChecks: true,
-          },
-        );
-
-      const record = await repository.findOneBy({ id: event.recordId });
-
-      if (!record)
-        return `${event.objectMetadata.labelSingular} ${event.recordId}`;
-
-      // Try to get the most appropriate display name based on object type
-      switch (event.objectMetadata.nameSingular) {
-        case 'company':
-          return record.name || `Company ${event.recordId}`;
-        case 'person': {
-          const firstName = record.name?.firstName || '';
-          const lastName = record.name?.lastName || '';
-
-          return (
-            `${firstName} ${lastName}`.trim() || `Person ${event.recordId}`
-          );
-        }
-        case 'note':
-          return record.title || `Note ${event.recordId}`;
-        case 'task':
-          return record.title || `Task ${event.recordId}`;
-        case 'opportunity':
-          return record.name || `Opportunity ${event.recordId}`;
-        default:
-          return `${event.objectMetadata.labelSingular} ${event.recordId}`;
-      }
-    } catch (error) {
-      // Fallback to a basic name if we can't fetch the record
-      return `${event.objectMetadata.labelSingular} ${event.recordId}`;
-    }
   }
 
   private async getLinkedTimelineActivities({
