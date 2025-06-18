@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, parseJson } from 'twenty-shared/utils';
 
 import {
   CountryCallingCode,
@@ -11,7 +11,12 @@ import { PhonesMetadata } from 'src/engine/metadata-modules/field-metadata/compo
 
 const ALL_COUNTRIES_CODE = getCountries();
 
-export type LinksFieldGraphQLInput = Partial<PhonesMetadata> | null | undefined;
+export type LinksFieldGraphQLInput =
+  | Partial<
+      Omit<PhonesMetadata, 'additionalPhones'> & { additionalPhones: string }
+    >
+  | null
+  | undefined;
 type DefinedLinksFieldGraphQLInput = NonNullable<LinksFieldGraphQLInput>;
 type LinksFieldGraphQLInputWithPrimaryPhoneNumber =
   DefinedLinksFieldGraphQLInput &
@@ -92,7 +97,8 @@ const validateAndInferMetadataFromPrimaryPhoneNumber = ({
     }
 
     const finalPrimaryPhoneCallingCode =
-      (phone.countryCallingCode as undefined | CountryCallingCode) ?? primaryPhoneCallingCode;
+      (phone.countryCallingCode as undefined | CountryCallingCode) ??
+      primaryPhoneCallingCode;
     const finalPrimaryPhoneCountryCode =
       phone.country ?? primaryPhoneCountryCode;
 
@@ -117,7 +123,8 @@ const validateAndInferPhoneInput = ({
     primaryPhoneCountryCode,
   });
 
-  if (isDefined(primaryPhoneNumber)) {
+  // Should we swallow only in case that's not a valid phonenumnber :thinking:
+  if (isDefined(primaryPhoneNumber) && primaryPhoneNumber.startsWith('+')) {
     return validateAndInferMetadataFromPrimaryPhoneNumber({
       primaryPhoneNumber,
       primaryPhoneCallingCode,
@@ -138,24 +145,30 @@ type TransformPhonesValueArgs = {
 export const transformPhonesValue = ({
   input,
 }: TransformPhonesValueArgs): LinksFieldGraphQLInput => {
+  console.log('*'.repeat(100));
+  console.log(input);
+  console.log('*'.repeat(100));
+
   if (!isDefined(input)) {
     return input;
   }
 
-  console.log(input)
-
   const { additionalPhones, ...primary } = input;
+  const parsedAdditionalPhones = isDefined(additionalPhones)
+    ? parseJson<Omit<DefinedLinksFieldGraphQLInput, 'additionalPhones'>[]>(
+        additionalPhones,
+      )
+    : undefined;
   const {
     primaryPhoneCallingCode,
     primaryPhoneCountryCode,
     primaryPhoneNumber,
   } = validateAndInferPhoneInput(primary);
-  const tmp = (additionalPhones ?? []).map(validateAndInferPhoneInput);
 
   return {
-    // TODO determine if normal
-    // @ts-expect-error
-    additionalPhones: tmp,
+    additionalPhones: JSON.stringify(
+      (parsedAdditionalPhones ?? []).map(validateAndInferPhoneInput),
+    ),
     primaryPhoneCallingCode,
     primaryPhoneCountryCode,
     primaryPhoneNumber,

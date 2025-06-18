@@ -94,7 +94,7 @@ export class RecordInputTransformerService {
       case FieldMetadataType.EMAILS:
         return this.transformEmailsValue(value);
       case FieldMetadataType.PHONES:
-        return transformPhonesValue(value);
+        return transformPhonesValue({ input: value });
       default:
         return value;
     }
